@@ -807,7 +807,7 @@ else
   : good, it works
 fi
 
-# Make a new project.
+# Make a new project or projects.
 mkproj ()
 {
     for proj in "$@"; do
@@ -820,7 +820,7 @@ mkproj ()
     done
 }
 
-# Delete a project from the repository.
+# Delete a project or projects from the repository.
 rmproj ()
 {
     for proj in "$@"; do
@@ -829,6 +829,21 @@ rmproj ()
 	    # Could just sync here but since we know what is going on, this is
 	    # an optimization.
 	    rm -rf $SECONDARY_CVSROOT_DIRNAME/$proj
+	fi
+    done
+}
+
+# Touch a file or files in the repository.  It's possible I need to come up
+# with a more general way of doing this kind of thing.  It might be useful for
+# The :ext: tests too.
+touchproj ()
+{
+    for proj in "$@"; do
+	touch $CVSROOT_DIRNAME/$proj
+	if $proxy; then
+	    # Could just sync here but since we know what is going on, this is
+	    # an optimization.
+	    touch $SECONDARY_CVSROOT_DIRNAME/$proj
 	fi
     done
 }
@@ -3243,13 +3258,11 @@ new revision: delete; previous revision: 1\.1"
 		# continuing to piggyback them onto the tests here.
 
 		# First empty the history file
-		rm ${CVSROOT_DIRNAME}/CVSROOT/history
-		touch ${CVSROOT_DIRNAME}/CVSROOT/history
+		rmproj CVSROOT/history
+		touchproj CVSROOT/history
 
-### XXX maybe should use `cvs imprt -b1 -m new-module first-dir F F1' in an
-### empty directory to do this instead of hacking directly into $CVSROOT
 		mkproj first-dir
-		dotest basic2-1 "${testcvs} -q co first-dir" ''
+		dotest basic2-1 "$testcvs -q co first-dir"
 		for i in first-dir dir1 dir2 ; do
 			if test ! -d $i ; then
 				mkdir $i
@@ -3912,6 +3925,12 @@ ${SPROG} update: Updating dir1/dir2"
 		rm -r 1dir first-dir
 
 		# Test the cvs history command.
+		#
+		# Just skip these in write proxy mode for now.  We should only
+		# see write commands and maybe the last few reads in the
+		# secondary history file the way we currently sync, but I'm not
+		# going to try and test this yet.
+		if $proxy; then :; else
 
 		# The reason that there are two patterns rather than using
 		# \(${TESTDIR}\|<remote>\) is that we are trying to
@@ -3969,6 +3988,7 @@ T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
 O [0-9-]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= <remote>/\*
 P [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == <remote>
 W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == <remote>"
+	  fi
 
 	  dokeep
 	  rmproj first-dir
@@ -3991,10 +4011,10 @@ cvswrappers
 loginfo
 modules
 notify
-preproxy
 postadmin
 postproxy
 posttag
+preproxy
 rcsinfo
 taginfo
 verifymsg"
@@ -4010,15 +4030,15 @@ cvswrappers
 loginfo
 modules
 notify
-preproxy
 postadmin
 postproxy
 posttag
+preproxy
 rcsinfo
 taginfo
 verifymsg"
 	  # This used to cause a fatal error.
-	  mkdir $CVSROOT_DIRNAME/notcheckedout
+	  mkproj notcheckedout
 	  dotest ls-3 "$testcvs ls -RP" \
 "\.:
 CVSROOT
@@ -4032,10 +4052,10 @@ cvswrappers
 loginfo
 modules
 notify
-preproxy
 postadmin
 postproxy
 posttag
+preproxy
 rcsinfo
 taginfo
 verifymsg"
@@ -4057,10 +4077,10 @@ cvswrappers
 loginfo
 modules
 notify
-preproxy
 postadmin
 postproxy
 posttag
+preproxy
 rcsinfo
 taginfo
 verifymsg
@@ -4346,11 +4366,11 @@ initial revision: 1\.1"
 --> Using per-directory sticky tag .C'"
 	  cd dir
 	  touch .file
-	  dotest files-6 "${testcvs} add .file" \
+	  dotest files-7b "${testcvs} add .file" \
 "${SPROG} add: scheduling file .\.file' for addition on branch .C.
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  mkdir sdir
-	  dotest files-7 "${testcvs} add sdir" \
+	  dotest files-7c "${testcvs} add sdir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir/dir/sdir added to the repository
 --> Using per-directory sticky tag .C'"
 	  cd sdir
@@ -5736,8 +5756,11 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 new revision: 1\.1\.2\.1; previous revision: 1\.1"
 
 	  # Test diff of a nonexistent tag
-	  dotest_fail death2-diff-9 "${testcvs} -q diff -rtag -c file3" \
-"${SPROG} diff: tag tag is not in file file3"
+	  #
+	  # Second result is for $proxy.
+	  dotest_fail death2-diff-9 "$testcvs -q diff -rtag -c file3" \
+"$SPROG diff: tag tag is not in file file3" \
+"$SPROG \[diff aborted\]: no such tag tag"
 
 	  dotest_fail death2-diff-10 "${testcvs} -q diff -rtag -N -c file3" \
 "Index: file3
@@ -6812,10 +6835,10 @@ cvswrappers
 loginfo
 modules
 notify
-preproxy
 postadmin
 postproxy
 posttag
+preproxy
 rcsinfo
 taginfo
 verifymsg
@@ -6842,10 +6865,10 @@ CVSROOT:
 ---- $ISO8601DATE 1\.[0-9][0-9]*        loginfo
 ---- $ISO8601DATE 1\.[0-9][0-9]*        modules
 ---- $ISO8601DATE 1\.[0-9][0-9]*        notify
----- $ISO8601DATE 1\.[0-9][0-9]*        preproxy
 ---- $ISO8601DATE 1\.[0-9][0-9]*        postadmin
 ---- $ISO8601DATE 1\.[0-9][0-9]*        postproxy
 ---- $ISO8601DATE 1\.[0-9][0-9]*        posttag
+---- $ISO8601DATE 1\.[0-9][0-9]*        preproxy
 ---- $ISO8601DATE 1\.[0-9][0-9]*        rcsinfo
 ---- $ISO8601DATE 1\.[0-9][0-9]*        taginfo
 ---- $ISO8601DATE 1\.[0-9][0-9]*        verifymsg
@@ -6872,10 +6895,10 @@ CVSROOT:
 /loginfo/1\.[0-9][0-9]*/$DATE//
 /modules/1\.[0-9][0-9]*/$DATE//
 /notify/1\.[0-9][0-9]*/$DATE//
-/preproxy/1\.[0-9][0-9]*/$DATE//
 /postadmin/1\.[0-9][0-9]*/$DATE//
 /postproxy/1\.[0-9][0-9]*/$DATE//
 /posttag/1\.[0-9][0-9]*/$DATE//
+/preproxy/1\.[0-9][0-9]*/$DATE//
 /rcsinfo/1\.[0-9][0-9]*/$DATE//
 /taginfo/1\.[0-9][0-9]*/$DATE//
 /verifymsg/1\.[0-9][0-9]*/$DATE//
@@ -6901,10 +6924,10 @@ cvswrappers
 loginfo
 modules
 notify
-preproxy
 postadmin
 postproxy
 posttag
+preproxy
 rcsinfo
 taginfo
 verifymsg
@@ -10959,10 +10982,10 @@ U CVSROOT/cvswrappers
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
-U CVSROOT/preproxy
 U CVSROOT/postadmin
 U CVSROOT/postproxy
 U CVSROOT/posttag
+U CVSROOT/preproxy
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg'
@@ -11077,10 +11100,10 @@ U CVSROOT/cvswrappers
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
-U CVSROOT/preproxy
 U CVSROOT/postadmin
 U CVSROOT/postproxy
 U CVSROOT/posttag
+U CVSROOT/preproxy
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg'
@@ -11102,10 +11125,10 @@ U CVSROOT/cvswrappers
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
-U CVSROOT/preproxy
 U CVSROOT/postadmin
 U CVSROOT/postproxy
 U CVSROOT/posttag
+U CVSROOT/preproxy
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg'
@@ -11130,10 +11153,10 @@ U CVSROOT/cvswrappers
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
-U CVSROOT/preproxy
 U CVSROOT/postadmin
 U CVSROOT/postproxy
 U CVSROOT/posttag
+U CVSROOT/preproxy
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg'
@@ -11191,10 +11214,10 @@ U CVSROOT/cvswrappers
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
-U CVSROOT/preproxy
 U CVSROOT/postadmin
 U CVSROOT/postproxy
 U CVSROOT/posttag
+U CVSROOT/preproxy
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg"
@@ -11962,10 +11985,10 @@ U CVSROOT/cvswrappers
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
-U CVSROOT/preproxy
 U CVSROOT/postadmin
 U CVSROOT/postproxy
 U CVSROOT/posttag
+U CVSROOT/preproxy
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg"
@@ -14244,14 +14267,14 @@ ${CPROG} checkout: move away \`CVSROOT/modules'; it is in the way
 C CVSROOT/modules
 ${CPROG} checkout: move away \`CVSROOT/notify'; it is in the way
 C CVSROOT/notify
-${CPROG} checkout: move away \`CVSROOT/preproxy'; it is in the way
-C CVSROOT/preproxy
 ${CPROG} checkout: move away \`CVSROOT/postadmin'; it is in the way
 C CVSROOT/postadmin
 ${CPROG} checkout: move away \`CVSROOT/postproxy'; it is in the way
 C CVSROOT/postproxy
 ${CPROG} checkout: move away \`CVSROOT/posttag'; it is in the way
 C CVSROOT/posttag
+${CPROG} checkout: move away \`CVSROOT/preproxy'; it is in the way
+C CVSROOT/preproxy
 ${CPROG} checkout: move away \`CVSROOT/rcsinfo'; it is in the way
 C CVSROOT/rcsinfo
 ${CPROG} checkout: move away \`CVSROOT/taginfo'; it is in the way
@@ -28373,10 +28396,10 @@ U CVSROOT/cvswrappers
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
-U CVSROOT/preproxy
 U CVSROOT/postadmin
 U CVSROOT/postproxy
 U CVSROOT/posttag
+U CVSROOT/preproxy
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg"
@@ -28485,10 +28508,10 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $SECONDARY_CVS
   *-> RCS_checkout (loginfo,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (modules,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (notify,v, , , , \.#[0-9][0-9]*)
-  *-> RCS_checkout (preproxy,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (postadmin,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (postproxy,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (posttag,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (preproxy,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (rcsinfo,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (taginfo,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (verifymsg,v, , , , \.#[0-9][0-9]*)
@@ -28516,10 +28539,10 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $SECONDARY_CVS
   *-> unlink_file(\.#loginfo)
   *-> unlink_file(\.#modules)
   *-> unlink_file(\.#notify)
-  *-> unlink_file(\.#preproxy)
   *-> unlink_file(\.#postadmin)
   *-> unlink_file(\.#postproxy)
   *-> unlink_file(\.#posttag)
+  *-> unlink_file(\.#preproxy)
   *-> unlink_file(\.#rcsinfo)
   *-> unlink_file(\.#taginfo)
   *-> unlink_file(\.#verifymsg)
@@ -28542,10 +28565,10 @@ S -> RCS_checkout (cvswrappers,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (loginfo,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (modules,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (notify,v, , , , \.#[0-9][0-9]*)
-S -> RCS_checkout (preproxy,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (postadmin,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (postproxy,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (posttag,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (preproxy,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (rcsinfo,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (taginfo,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (verifymsg,v, , , , \.#[0-9][0-9]*)
@@ -28577,10 +28600,10 @@ S -> unlink_file(\.#cvswrappers)
 S -> unlink_file(\.#loginfo)
 S -> unlink_file(\.#modules)
 S -> unlink_file(\.#notify)
-S -> unlink_file(\.#preproxy)
 S -> unlink_file(\.#postadmin)
 S -> unlink_file(\.#postproxy)
 S -> unlink_file(\.#posttag)
+S -> unlink_file(\.#preproxy)
 S -> unlink_file(\.#rcsinfo)
 S -> unlink_file(\.#taginfo)
 S -> unlink_file(\.#verifymsg)" \

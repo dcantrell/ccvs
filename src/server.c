@@ -1214,7 +1214,7 @@ serve_max_dotdot (char *arg)
     int i;
     char *p;
 
-    assert (!secondary_log);
+    if (secondary_log) return;
 
     if (lim < 0 || lim > 10000)
 	return;
@@ -1499,9 +1499,7 @@ serve_static_directory (char *arg)
 {
     FILE *f;
 
-    if (error_pending ()) return;
-
-    assert (!secondary_log);
+    if (error_pending () || secondary_log) return;
 
     f = CVS_FOPEN (CVSADM_ENTSTAT, "w+");
     if (f == NULL)
@@ -2596,7 +2594,7 @@ serve_argumentx (char *arg)
     {
 	if (alloc_pending (80))
 	    sprintf (pending_error_text,
-		     "E Protocol error: called argumentx without prior call to argument");
+"E Protocol error: called argumentx without prior call to argument");
 	return;
     }
 
