@@ -1,3 +1,7 @@
+2004-10-22 Derek Price <derek@ximbiot.com>
+
+	* client.c, update.c: Use new MD5 interface.
+
 2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (find_tool): Search /usr/pkg/bin for NetBSD tools
