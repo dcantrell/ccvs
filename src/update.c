@@ -229,6 +229,8 @@ update (argc, argv)
 		send_arg("-P");
 	    client_prune_dirs = update_prune_dirs;
 	    option_with_arg ("-r", tag);
+	    if (options && options[0] != '\0')
+	      send_arg (options);
 	    if (date)
 		client_senddate (date);
 	    if (join_rev1)
