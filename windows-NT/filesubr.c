@@ -711,7 +711,7 @@ fncmp (const char *n1, const char *n2)
 	       == WNT_filename_classes[(unsigned char) *n2]))
         n1++, n2++;
     return (WNT_filename_classes[(unsigned char) *n1]
-            - WNT_filename_classes[(unsigned char) *n1]);
+            - WNT_filename_classes[(unsigned char) *n2]);
 }
 
 /* Fold characters in FILENAME to their canonical forms.  
