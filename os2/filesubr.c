@@ -268,7 +268,7 @@ int
 mkdir_if_needed (name)
     char *name;
 {
-    if (mkdir (name, 0777) < 0)
+    if (mkdir (name) < 0)
     {
 	/* Now, let me get this straight.  In IBM C/C++
 	   under OS/2, the error string for EEXIST is:
