@@ -30,11 +30,12 @@ C++ work.
 
 Send bug reports to bug-cvs@prep.ai.mit.edu.
 
-This port passes all of the tests in src/sanity.sh, save the one that
-deals with reserved all-upper-case tags (BASE and HEAD), due to a
-limitation in the NT command shell.  sanity.sh provides pretty minimal
-feature coverage, but still gives me some confidence it isn't totally
-broken.
+As of May 1996, this port passed all of the tests in src/sanity.sh,
+save the one that deals with reserved all-upper-case tags (BASE and
+HEAD), due to a limitation in the NT command shell.  sanity.sh
+provides pretty minimal feature coverage, but still gives me some
+confidence it isn't totally broken.  The tests were run by defining
+KLUDGE_FOR_WNT_TESTSUITE (see src/main.c).
 
 To operate in client mode with old versions of CVS (1.9 and older),
 you will need GNU patch.  To do compressed transfers with old versions

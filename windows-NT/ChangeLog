@@ -1,3 +1,7 @@
+Sun Aug  3 21:14:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Note KLUDGE_FOR_WNT_TESTSUITE when discussing tests.
+
 Fri Jul 18 09:49:52 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Adjust discussion of makefiles to deal with Visual C++
