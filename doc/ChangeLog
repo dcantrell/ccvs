@@ -1,5 +1,10 @@
 2000-12-26  Derek Price  <derek.price@openavenue.com>
 
+	* Makefile.in: update timestamp
+	* CVSvn.texi: ditto
+
+2000-12-26  Derek Price  <derek.price@openavenue.com>
+
 	* Makefile.am: new target for creation of CVSvn.texi
 	(EXTRA_DIST): add CVSvn.texi.in & CVSvn.texi
 	* Makefile.in: Regenerated
