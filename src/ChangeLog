@@ -1,5 +1,10 @@
 2004-08-24  Derek Price <derek@ximbiot.com>
 
+	* sanity.sh: Update a few tests to account for the recent error message
+	changes.
+
+2004-08-24  Derek Price <derek@ximbiot.com>
+
 	* rcs.c (RCS_valid_rev): Declare arg const.
 	* rcs.h: Likewise.
 

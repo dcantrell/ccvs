@@ -5382,8 +5382,8 @@ U first-dir/file3'
 		fi
 
 		# typo; try to get to the branch and fail
-		dotest_fail 92.1a "${testcvs} update -r brnach1" \
-		  "${SPROG}"' \[update aborted\]: no such tag brnach1'
+		dotest_fail 92.1a "$testcvs update -r brnach1" \
+		  "$SPROG \[update aborted\]: no such tag \`brnach1'"
 		# Make sure we are still on the trunk
 		if test -f file1 ; then
 		    fail 92.1b
@@ -5822,8 +5822,8 @@ ${SPROG} \[commit aborted\]: correct above errors first!"
 	  dotest_fail rmadd-5 "${testcvs} -q ci -r 1.2.2 -m add" \
 "${SPROG} commit: cannot add file .file1' with revision .1\.2\.2'; must be on trunk
 ${SPROG} \[commit aborted\]: correct above errors first!"
-	  dotest_fail rmadd-6 "${testcvs} -q ci -r mybranch -m add" \
-"${SPROG} \[commit aborted\]: no such tag mybranch"
+	  dotest_fail rmadd-6 "$testcvs -q ci -r mybranch -m add" \
+"$SPROG \[commit aborted\]: no such tag \`mybranch'"
 
 	  # The thing with the trailing periods strikes me as a very
 	  # bizarre behavior, but it would seem to be intentional
@@ -6856,7 +6856,7 @@ D/dir1////
 dir1:"
 	  # Nonexistant tags used to cause assertion failures.
 	  dotest_fail branches2-14-ls-7 "$testcvs ls -eRrnosuchtag" \
-"$SPROG \[ls aborted\]: no such tag nosuchtag"
+"$SPROG \[ls aborted\]: no such tag \`nosuchtag'"
 
 	  # FIXME: Just clobbering the directory like this is a bit
 	  # tacky, although people generally expect it to work.  Maybe
@@ -19697,8 +19697,8 @@ Annotations for file1
 1\.2          (${username} *[0-9a-zA-Z-]*): line
 1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): and some
 1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): branched content"
-	  dotest_fail ann-14 "${testcvs} ann -r bill-clintons-chastity file1" \
-"${SPROG} \[annotate aborted\]: no such tag bill-clintons-chastity"
+	  dotest_fail ann-14 "$testcvs ann -r bill-clintons-chastity file1" \
+"$SPROG \[annotate aborted\]: no such tag \`bill-clintons-chastity'"
 
 	  # Now get rid of the working directory and test rannotate
 
@@ -19748,8 +19748,8 @@ Annotations for first-dir/file1
 1\.2          (${username} *[0-9a-zA-Z-]*): line
 1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): and some
 1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): branched content"
-	  dotest_fail ann-r14 "${testcvs} rann -r bill-clintons-chastity first-dir/file1" \
-"${SPROG} \[rannotate aborted\]: no such tag bill-clintons-chastity"
+	  dotest_fail ann-r14 "$testcvs rann -r bill-clintons-chastity first-dir/file1" \
+"$SPROG \[rannotate aborted\]: no such tag \`bill-clintons-chastity'"
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
