@@ -1,3 +1,8 @@
+2003-12-17  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* main.c (main): Don't reference isremote without CLIENT_SUPPORT.
+	(Patch from Jim Salter <jsalterjim@earthlink.net>.)
+
 2003-12-18  Derek Price  <derek@ximbiot.com>
 
 	* server.c (switch_to_user): SysLog attempts to root from pserver.
