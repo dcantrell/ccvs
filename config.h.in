@@ -72,12 +72,6 @@
 /* Define if you want encryption support.  */
 #undef ENCRYPTION
 
-/* The number of bytes in a int.  */
-#undef SIZEOF_INT
-
-/* The number of bytes in a long.  */
-#undef SIZEOF_LONG
-
 /* Define if you have the connect function.  */
 #undef HAVE_CONNECT
 
