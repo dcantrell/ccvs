@@ -7,6 +7,13 @@ SERVER SECURITY ISSUES
   could have requested the contents of RCS archive files anywhere on a CVS
   server.
 
+CLIENT SECURITY ISSUES
+
+* Clients now check paths from the server to verify that they are within one of
+  the sandboxes the user requested be updated.  Previously, a trojan server
+  could have written or overwritten files anywhere the user had access,
+  presenting a serious security risk.
+
 GENERAL USER ISSUES
 
 * Method options (used by WinCVS & CVS 1.12.7+) in CVSROOTs are ignored.
