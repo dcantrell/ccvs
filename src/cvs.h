@@ -678,13 +678,13 @@ void resolve_symlink (char **filename);
 void sleep_past (time_t desttime);
 
 /* flags for run_exec(), the fast system() for CVS */
-#define	RUN_NORMAL		0x0000	/* no special behaviour */
-#define	RUN_COMBINED		0x0001	/* stdout is duped to stderr */
-#define	RUN_REALLY		0x0002	/* do the exec, even if noexec is on */
-#define	RUN_STDOUT_APPEND	0x0004	/* append to stdout, don't truncate */
-#define	RUN_STDERR_APPEND	0x0008	/* append to stderr, don't truncate */
-#define	RUN_SIGIGNORE		0x0010	/* ignore interrupts for command */
-#define	RUN_TTY		(char *)0	/* for the benefit of lint */
+#define	RUN_NORMAL            0x0000    /* no special behaviour */
+#define	RUN_COMBINED          0x0001    /* stdout is duped to stderr */
+#define	RUN_REALLY            0x0002    /* do the exec, even if noexec is on */
+#define	RUN_STDOUT_APPEND     0x0004    /* append to stdout, don't truncate */
+#define	RUN_STDERR_APPEND     0x0008    /* append to stderr, don't truncate */
+#define	RUN_SIGIGNORE         0x0010    /* ignore interrupts for command */
+#define	RUN_TTY               (char *)0 /* for the benefit of lint */
 
 void run_arg (const char *s);
 void run_print (FILE * fp);

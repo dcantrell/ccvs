@@ -3,6 +3,9 @@ Changes since 1.12.6:
 
 GENERAL USER ISSUES
 
+* A race condition between the ordering of messages from CVS and messages from
+  called scripts in client/server mode has been removed.
+
 * The check_cvs and cvscheck scripts in the contrib directory have been renamed
   validate_repo and sandbox_status, respectively, in the interests of clarity.
 
