@@ -981,6 +981,7 @@ NODEP_CPP_STATU=\
 SOURCE=.\src\root.c
 DEP_CPP_ROOT_=\
 	".\src\cvs.h"\
+	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\lib\fnmatch.h"\
@@ -1090,6 +1091,7 @@ NODEP_CPP_HASH_=\
 SOURCE=.\src\repos.c
 DEP_CPP_REPOS=\
 	".\src\cvs.h"\
+	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\lib\fnmatch.h"\
@@ -1865,6 +1867,7 @@ NODEP_CPP_PATCH=\
 SOURCE=.\src\release.c
 DEP_CPP_RELEA=\
 	".\src\cvs.h"\
+	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\lib\fnmatch.h"\
@@ -1974,6 +1977,7 @@ NODEP_CPP_IMPOR=\
 SOURCE=.\src\ignore.c
 DEP_CPP_IGNOR=\
 	".\src\cvs.h"\
+	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\lib\fnmatch.h"\
@@ -2046,6 +2050,7 @@ NODEP_CPP_LOG_C=\
 SOURCE=.\src\wrapper.c
 DEP_CPP_WRAPP=\
 	".\src\cvs.h"\
+	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\lib\fnmatch.h"\
