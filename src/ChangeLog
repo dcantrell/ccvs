@@ -1,3 +1,9 @@
+2000-08-23  Larry Jones  <larry.jones@sdrc.com>
+
+	* mkmodules.c (init): Create an empty val-tags file if it doesn't
+	already exist to avoid problems with users not having sufficient
+	permissions to create it later.
+
 2000-09-06  Jim Kingdon  <jkingdon@dhcp-net200-89.su.valinux.com>
 
 	* main.c (lookup_command_attribute): Add "release" to commands
