@@ -1,3 +1,7 @@
+Fri May  2 22:50:04 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* BUGS: Remove item about importing binary files; the bug is fixed.
+
 Sun Apr 27 19:54:34 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Refer to doc/DIFFUTILS-2.7-BUG.
