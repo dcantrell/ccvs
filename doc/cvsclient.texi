@@ -930,6 +930,16 @@ with the one difference that after the new copy of the file is enclosed,
 it will still not be up to date.  Used for the results of a merge, with
 or without conflicts.
 
+It is useful to preserve an copy of what the file looked like before the
+merge.  This is basically handled by the server; before sending
+@code{Merged} it will send a @code{Copy-file} response.  For example, if
+the file is @file{aa} and it derives from revision 1.3, the
+@code{Copy-file} response will tell the client to copy @file{aa} to
+@file{.#aa.1.3}.  It is up to the client to decide how long to keep this
+file around; traditionally clients have left it around forever, thus
+letting the user clean it up as desired.  But another answer, such as
+until the next commit, might be preferable.
+
 @item Patched @var{pathname} \n
 This is just like @code{Updated} and takes the same additional data,
 with the one difference that instead of sending a new copy of the file,
