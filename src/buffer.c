@@ -25,8 +25,9 @@ static void buf_default_memory_error (struct buffer *);
 static void allocate_buffer_datas (void);
 static struct buffer_data *get_buffer_data (void);
 
-/* Initialize a buffer structure.  */
 
+
+/* Initialize a buffer structure.  */
 struct buffer *
 buf_initialize (int (*input) (void *, char *, int, int, int *),
 	        int (*output) (void *, const char *, int, int *),
@@ -38,7 +39,7 @@ buf_initialize (int (*input) (void *, char *, int, int, int *),
 {
     struct buffer *buf;
 
-    buf = (struct buffer *) xmalloc (sizeof (struct buffer));
+    buf = xmalloc (sizeof (struct buffer));
     buf->data = NULL;
     buf->last = NULL;
     buf->nonblocking = 0;
@@ -52,8 +53,9 @@ buf_initialize (int (*input) (void *, char *, int, int, int *),
     return buf;
 }
 
-/* Free a buffer structure.  */
 
+
+/* Free a buffer structure.  */
 void
 buf_free (struct buffer *buf)
 {
@@ -70,8 +72,9 @@ buf_free (struct buffer *buf)
     free (buf);
 }
 
-/* Initialize a buffer structure which is not to be used for I/O.  */
 
+
+/* Initialize a buffer structure which is not to be used for I/O.  */
 struct buffer *
 buf_nonio_initialize( void (*memory) (struct buffer *) )
 {
@@ -85,16 +88,18 @@ buf_nonio_initialize( void (*memory) (struct buffer *) )
 	     (void *) NULL));
 }
 
-/* Default memory error handler.  */
 
+
+/* Default memory error handler.  */
 static void
 buf_default_memory_error (struct buffer *buf)
 {
     error (1, 0, "out of memory");
 }
 
-/* Allocate more buffer_data structures.  */
 
+
+/* Allocate more buffer_data structures.  */
 static void
 allocate_buffer_datas (void)
 {
@@ -105,9 +110,8 @@ allocate_buffer_datas (void)
     /* Allocate buffer_data structures in blocks of 16.  */
 # define ALLOC_COUNT (16)
 
-    alc = ((struct buffer_data *)
-	   xmalloc (ALLOC_COUNT * sizeof (struct buffer_data)));
-    space = (char *) valloc (ALLOC_COUNT * BUFFER_DATA_SIZE);
+    alc = xmalloc (ALLOC_COUNT * sizeof (struct buffer_data));
+    space = valloc (ALLOC_COUNT * BUFFER_DATA_SIZE);
     if (alc == NULL || space == NULL)
 	return;
     for (i = 0; i < ALLOC_COUNT; i++, alc++, space += BUFFER_DATA_SIZE)
@@ -118,8 +122,9 @@ allocate_buffer_datas (void)
     }	  
 }
 
-/* Get a new buffer_data structure.  */
 
+
+/* Get a new buffer_data structure.  */
 static struct buffer_data *
 get_buffer_data (void)
 {
@@ -172,7 +177,6 @@ buf_empty_p (struct buffer *buf)
  * Count how much data is stored in the buffer..
  * Note that each buffer is a xmalloc'ed chunk BUFFER_DATA_SIZE.
  */
-
 int
 buf_count_mem (struct buffer *buf)
 {
@@ -186,8 +190,9 @@ buf_count_mem (struct buffer *buf)
 }
 # endif /* SERVER_FLOWCONTROL */
 
-/* Add data DATA of length LEN to BUF.  */
 
+
+/* Add data DATA of length LEN to BUF.  */
 void
 buf_output (struct buffer *buf, const char *data, int len)
 {
@@ -238,8 +243,9 @@ buf_output (struct buffer *buf, const char *data, int len)
     /*NOTREACHED*/
 }
 
-/* Add a '\0' terminated string to BUF.  */
 
+
+/* Add a '\0' terminated string to BUF.  */
 void
 buf_output0 (struct buffer *buf, const char *string)
 {
@@ -276,8 +282,7 @@ buf_append_char (struct buffer *buf, int ch)
 int
 buf_send_output (struct buffer *buf)
 {
-    if (buf->output == NULL)
-	abort ();
+    assert (buf->output != NULL);
 
     while (buf->data != NULL)
     {
@@ -328,21 +333,21 @@ buf_send_output (struct buffer *buf)
     return 0;
 }
 
+
+
 /*
  * Flush any data queued up in the buffer.  If BLOCK is nonzero, then
  * if the buffer is in nonblocking mode, put it into blocking mode for
  * the duration of the flush.  This returns 0 on success, or an error
  * code.
  */
-
 int
 buf_flush (struct buffer *buf, int block)
 {
     int nonblocking;
     int status;
 
-    if (buf->flush == NULL)
-        abort ();
+    assert (buf->flush != NULL);
 
     nonblocking = buf->nonblocking;
     if (nonblocking && block)
@@ -368,11 +373,12 @@ buf_flush (struct buffer *buf, int block)
     return status;
 }
 
+
+
 /*
  * Set buffer BUF to nonblocking I/O.  Returns 0 for success or errno
  * code.
  */
-
 int
 set_nonblock (struct buffer *buf)
 {
@@ -380,8 +386,7 @@ set_nonblock (struct buffer *buf)
 
     if (buf->nonblocking)
 	return 0;
-    if (buf->block == NULL)
-        abort ();
+    assert (buf->block != NULL);
     status = (*buf->block) (buf->closure, 0);
     if (status != 0)
 	return status;
@@ -389,11 +394,12 @@ set_nonblock (struct buffer *buf)
     return 0;
 }
 
+
+
 /*
  * Set buffer BUF to blocking I/O.  Returns 0 for success or errno
  * code.
  */
-
 int
 set_block (struct buffer *buf)
 {
@@ -401,14 +407,15 @@ set_block (struct buffer *buf)
 
     if (! buf->nonblocking)
 	return 0;
-    if (buf->block == NULL)
-        abort ();
+    assert (buf->block != NULL);
     status = (*buf->block) (buf->closure, 1);
     if (status != 0)
 	return status;
     buf->nonblocking = 0;
     return 0;
 }
+
+
 
 /*
  * Send a character count and some output.  Returns errno code or 0 for
@@ -417,7 +424,6 @@ set_block (struct buffer *buf)
  * Sending the count in binary is OK since this is only used on a pipe
  * within the same system.
  */
-
 int
 buf_send_counted (struct buffer *buf)
 {
@@ -448,6 +454,8 @@ buf_send_counted (struct buffer *buf)
     return buf_send_output (buf);
 }
 
+
+
 /*
  * Send a special count.  COUNT should be negative.  It will be
  * handled speciallyi by buf_copy_counted.  This function returns 0 or
@@ -456,7 +464,6 @@ buf_send_counted (struct buffer *buf)
  * Sending the count in binary is OK since this is only used on a pipe
  * within the same system.
  */
-
 int
 buf_send_special_count (struct buffer *buf, int count)
 {
@@ -482,8 +489,9 @@ buf_send_special_count (struct buffer *buf, int count)
     return buf_send_output (buf);
 }
 
-/* Append a list of buffer_data structures to an buffer.  */
 
+
+/* Append a list of buffer_data structures to an buffer.  */
 void
 buf_append_data (struct buffer *buf, struct buffer_data *data,
                  struct buffer_data *last)
@@ -498,9 +506,10 @@ buf_append_data (struct buffer *buf, struct buffer_data *data,
     }
 }
 
+
+
 /* Append the data on one buffer to another.  This removes the data
    from the source buffer.  */
-
 void
 buf_append_buffer (struct buffer *to, struct buffer *from)
 {
@@ -508,6 +517,8 @@ buf_append_buffer (struct buffer *to, struct buffer *from)
     from->data = NULL;
     from->last = NULL;
 }
+
+
 
 /*
  * Copy the contents of file F into buffer_data structures.  We can't
@@ -518,7 +529,6 @@ buf_append_buffer (struct buffer *to, struct buffer *from)
  * this function sets *RETP and *LASTP, which may be passed to
  * buf_append_data.
  */
-
 int
 buf_read_file (FILE *f, long int size, struct buffer_data **retp,
                struct buffer_data **lastp)
@@ -577,6 +587,8 @@ buf_read_file (FILE *f, long int size, struct buffer_data **retp,
     return status;
 }
 
+
+
 /*
  * Copy the contents of file F into buffer_data structures.  We can't
  * copy directly into an buffer, because we want to handle failure and
@@ -584,7 +596,6 @@ buf_read_file (FILE *f, long int size, struct buffer_data **retp,
  * memory, or a status code on error.  On success, this function sets
  * *RETP and *LASTP, which may be passed to buf_append_data.
  */
-
 int
 buf_read_file_to_eof (FILE *f, struct buffer_data **retp,
                       struct buffer_data **lastp)
@@ -640,8 +651,9 @@ buf_read_file_to_eof (FILE *f, struct buffer_data **retp,
     return status;
 }
 
-/* Return the number of bytes in a chain of buffer_data structures.  */
 
+
+/* Return the number of bytes in a chain of buffer_data structures.  */
 int
 buf_chain_length (struct buffer_data *buf)
 {
@@ -654,13 +666,16 @@ buf_chain_length (struct buffer_data *buf)
     return size;
 }
 
-/* Return the number of bytes in a buffer.  */
 
+
+/* Return the number of bytes in a buffer.  */
 int
 buf_length (struct buffer *buf)
 {
     return buf_chain_length (buf->data);
 }
+
+
 
 /*
  * Read an arbitrary amount of data into an input buffer.  The buffer
@@ -669,12 +684,10 @@ buf_length (struct buffer *buf)
  * error code.  If COUNTP is not NULL, *COUNTP is set to the number of
  * bytes read.
  */
-
 int
 buf_input_data (struct buffer *buf, int *countp)
 {
-    if (buf->input == NULL)
-	abort ();
+    assert (buf->input != NULL);
 
     if (countp != NULL)
 	*countp = 0;
@@ -732,6 +745,8 @@ buf_input_data (struct buffer *buf, int *countp)
     /*NOTREACHED*/
 }
 
+
+
 /*
  * Read a line (characters up to a \012) from an input buffer.  (We
  * use \012 rather than \n for the benefit of non Unix clients for
@@ -742,12 +757,10 @@ buf_input_data (struct buffer *buf, int *countp)
  * LENP is not NULL, then *LENP is set to the number of bytes read;
  * strlen may not work, because there may be embedded null bytes.
  */
-
 int
 buf_read_line (struct buffer *buf, char **line, int *lenp)
 {
-    if (buf->input == NULL)
-        abort ();
+    assert (buf->input != NULL);
 
     *line = NULL;
 
@@ -867,6 +880,8 @@ buf_read_line (struct buffer *buf, char **line, int *lenp)
     }
 }
 
+
+
 /*
  * Extract data from the input buffer BUF.  This will read up to WANT
  * bytes from the buffer.  It will set *RETDATA to point at the bytes,
@@ -876,12 +891,10 @@ buf_read_line (struct buffer *buf, char **line, int *lenp)
  * made.  This returns 0 on success, or -1 on end of file, or -2 if
  * out of memory, or an error code.
  */
-
 int
 buf_read_data (struct buffer *buf, int want, char **retdata, int *got)
 {
-    if (buf->input == NULL)
-	abort ();
+    assert (buf->input != NULL);
 
     while (buf->data != NULL && buf->data->size == 0)
     {
@@ -941,13 +954,14 @@ buf_read_data (struct buffer *buf, int want, char **retdata, int *got)
     return 0;
 }
 
+
+
 /*
  * Copy lines from an input buffer to an output buffer.  This copies
  * all complete lines (characters up to a newline) from INBUF to
  * OUTBUF.  Each line in OUTBUF is preceded by the character COMMAND
  * and a space.
  */
-
 void
 buf_copy_lines (struct buffer *outbuf, struct buffer *inbuf, int command)
 {
@@ -1017,6 +1031,8 @@ buf_copy_lines (struct buffer *outbuf, struct buffer *inbuf, int command)
     }
 }
 
+
+
 /*
  * Copy counted data from one buffer to another.  The count is an
  * integer, host size, host byte order (it is only used across a
@@ -1028,7 +1044,6 @@ buf_copy_lines (struct buffer *outbuf, struct buffer *inbuf, int command)
  * returns the number of bytes it needs to see in order to actually
  * copy something over.
  */
-
 int
 buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 {
@@ -1171,8 +1186,9 @@ buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
     /*NOTREACHED*/
 }
 
-/* Shut down a buffer.  This returns 0 on success, or an errno code.  */
 
+
+/* Shut down a buffer.  This returns 0 on success, or an errno code.  */
 int
 buf_shutdown (struct buffer *buf)
 {
@@ -1324,7 +1340,7 @@ stdio_buffer_output (void *closure, const char *data, int have, int *wrote)
 static int
 stdio_buffer_flush (void *closure)
 {
-    struct stdio_buffer_closure *bc = (struct stdio_buffer_closure *) closure;
+    struct stdio_buffer_closure *bc = closure;
 
     if (fflush (bc->fp) != 0)
     {
@@ -1435,7 +1451,7 @@ stdio_buffer_shutdown (struct buffer *buf)
 	int w;
 
 	do
-	    w = waitpid (bc->child_pid, (int *) 0, 0);
+	    w = waitpid (bc->child_pid, NULL, 0);
 	while (w == -1 && errno == EINTR);
 	if (w == -1)
 	    error (1, errno, "waiting for process %d", bc->child_pid);
@@ -1524,7 +1540,7 @@ packetizing_buffer_initialize (struct buffer *buf,
 {
     struct packetizing_buffer *pb;
 
-    pb = (struct packetizing_buffer *) xmalloc (sizeof *pb);
+    pb = xmalloc (sizeof *pb);
     memset (pb, 0, sizeof *pb);
 
     pb->buf = buf;
@@ -1774,12 +1790,9 @@ packetizing_buffer_output (void *closure, const char *data, int have,
     char *outbuf;
     int size, status, translated;
 
-    if (have > BUFFER_DATA_SIZE)
-    {
-	/* It would be easy to xmalloc a buffer, but I don't think this
-           case can ever arise.  */
-	abort ();
-    }
+    /* It would be easy to xmalloc a buffer, but I don't think this
+       case can ever arise.  */
+    assert (have <= BUFFER_DATA_SIZE);
 
     inbuf[0] = (have >> 8) & 0xff;
     inbuf[1] = have & 0xff;
@@ -1815,8 +1828,7 @@ packetizing_buffer_output (void *closure, const char *data, int have,
 
     /* The output function is permitted to add up to PACKET_SLOP
        bytes.  */
-    if (translated > size + PACKET_SLOP)
-	abort ();
+    assert (translated <= size + PACKET_SLOP);
 
     outbuf[0] = (translated >> 8) & 0xff;
     outbuf[1] = translated & 0xff;
@@ -1843,7 +1855,7 @@ packetizing_buffer_output (void *closure, const char *data, int have,
 static int
 packetizing_buffer_flush (void *closure)
 {
-    struct packetizing_buffer *pb = (struct packetizing_buffer *) closure;
+    struct packetizing_buffer *pb = closure;
 
     /* Flush the underlying buffer.  Note that if the original call to
        buf_flush passed 1 for the BLOCK argument, then the buffer will
@@ -1858,7 +1870,7 @@ packetizing_buffer_flush (void *closure)
 static int
 packetizing_buffer_block (void *closure, int block)
 {
-    struct packetizing_buffer *pb = (struct packetizing_buffer *) closure;
+    struct packetizing_buffer *pb = closure;
 
     if (block)
 	return set_block (pb->buf);
