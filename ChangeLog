@@ -1,3 +1,8 @@
+1999-02-18  Jim Kingdon
+
+	* cvsnt.mak: Remove vasprintf.  Plus of course the usual
+	"because the IDE feels like it" changes.
+
 1999-02-09  Jim Kingdon  <http://www.cyclic.com>
 
 	* configure.in (AC_REPLACE_FUNCS): Remove vasprintf; see
