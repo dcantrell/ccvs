@@ -1025,10 +1025,7 @@ done"
 	  rm -r t2
 
 	  mkdir 1; cd 1
-	  # Note that -H is an illegal
-	  # option.  It probably should be an error message.  But 
-	  # currently it is one error message for each file operated on,
-	  # which in this case is zero files.
+	  # Note that -H is an illegal option.
 	  # I suspect that the choice between "illegal" and "invalid"
 	  # depends on the user's environment variables, the phase
 	  # of the moon (weirdness with optind), and who knows what else.
