@@ -1,5 +1,7 @@
 Sun Sep  8 15:20:37 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* rcs.c (RCS_checkout): Clarify handling of options parameter.
+
 	* rcs.c (RCS_checkout): Free buffer allocated by RCS_deltas.
 
 Sat Sep  7 21:28:27 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>

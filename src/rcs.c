@@ -2227,13 +2227,21 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
 	free_value = 1;
     }
 
-    /* I'm not completely sure that checking rcs->expand is necessary
-       or even desirable.  It would appear that Version_TS takes care
-       of that.  */
+    /* If OPTIONS is NULL or the empty string, then the old code would
+       invoke the RCS co program with no -k option, which means that
+       co would use the string we have stored in rcs->expand.  */
+    if (options != NULL && options[0] != '\0')
+    {
+	assert (options[0] == '-' && options[1] == 'k');
+	ouroptions = options + 2;
+    }
+    else if (rcs->expand != NULL)
+	ouroptions = rcs->expand;
+    else
+	ouroptions = "kv";
+
     keywords = 0;
-    ouroptions = (options != NULL && strlen (options) > 2
-		  ? options + 2
-		  : (rcs->expand != NULL ? rcs->expand : ""));
+
     if (strcmp (ouroptions, "o") != 0
 	&& strcmp (ouroptions, "b") != 0)
     {
