@@ -1,5 +1,8 @@
 Sun Feb  8 21:39:22 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Invoking CVS, rdiff options): Document rdiff -V
+	option as obsolete, since it was made a fatal error some time ago.
+
 	* cvs.texinfo (Invoking CVS): Add global options, keywords, and
 	keyword substitution modes.  Wording fix in reference to --help
 	and Index.

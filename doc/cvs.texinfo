@@ -9117,7 +9117,9 @@ you should probably not use @samp{-u}.
 @item -V @var{vn}
 Expand keywords according to the rules current in
 @sc{rcs} version @var{vn} (the expansion format changed with
-@sc{rcs} version 5).
+@sc{rcs} version 5).  Note that this option is no
+longer accepted.  CVS will always expand keywords the
+way that @sc{rcs} version 5 does.
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -10323,7 +10325,7 @@ Top two diffs - last change made to the file.  See
 Unidiff output format.  See @ref{rdiff options}.
 
 @item -V @var{vers}
-Use RCS Version @var{vers} for keyword expansion.  See
+Use RCS Version @var{vers} for keyword expansion (obsolete).  See
 @ref{rdiff options}.
 @end table
 
