@@ -70,12 +70,12 @@ error (int status, int errnum, const char *message, ...)
 	char buf[100];
 
 	cvs_outerr (program_name, 0);
-	if (command_name && *command_name)
+	if (cvs_cmd_name && *cvs_cmd_name)
 	{
 	    cvs_outerr (" ", 1);
 	    if (status != 0)
 		cvs_outerr ("[", 1);
-	    cvs_outerr (command_name, 0);
+	    cvs_outerr (cvs_cmd_name, 0);
 	    if (status != 0)
 		cvs_outerr (" aborted]", 0);
 	}

@@ -181,7 +181,7 @@ update (int argc, char **argv)
 #endif
 		    error (1, 0,
 			   "-q or -Q must be specified before \"%s\"",
-			   command_name);
+			   cvs_cmd_name);
 		break;
 	    case 'd':
 		update_build_dirs = 1;
@@ -819,7 +819,7 @@ update_filesdone_proc (void *callerdat, int err, char *repository, char *update_
     }
 
     /* Clean up CVS admin dirs if we are export */
-    if (strcmp (command_name, "export") == 0)
+    if (strcmp (cvs_cmd_name, "export") == 0)
     {
 	/* I'm not sure the existence_error is actually possible (except
 	   in cases where we really should print a message), but since
@@ -1416,7 +1416,7 @@ VERS: ", 0);
 	    }
 
 	    /* If this is really Update and not Checkout, recode history */
-	    if (strcmp (command_name, "update") == 0)
+	    if (strcmp (cvs_cmd_name, "update") == 0)
 		history_write ('U', finfo->update_dir, xvers_ts->vn_rcs, finfo->file,
 			       finfo->repository);
 
@@ -1762,7 +1762,7 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout, struct s
 	    error (1, errno, "could not stat %s", finfo->file);
 
 	/* If this is really Update and not Checkout, record history.  */
-	if (strcmp (command_name, "update") == 0)
+	if (strcmp (cvs_cmd_name, "update") == 0)
 	    history_write ('P', finfo->update_dir, xvers_ts->vn_rcs,
 	                   finfo->file, finfo->repository);
 

@@ -348,7 +348,7 @@ typedef enum direnter_type Dtype;
 /* Option flags for Parse_Info() */
 #define PIOPT_ALL 1	/* accept "all" keyword */
 
-extern char *program_name, *program_path, *command_name;
+extern char *program_name, *program_path, *cvs_cmd_name;
 extern char *Tmpdir, *Editor;
 extern int cvsadmin_root;
 extern char *CurDir;

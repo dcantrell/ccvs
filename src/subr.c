@@ -335,7 +335,7 @@ previous_rev (rcs, rev)
 		p = strrchr (tmp, '.');
 		if (p == NULL)
 		    /* We are on the trunk.  */
-		    retval == NULL;
+		    retval = NULL;
 		else
 		{
 		    *p = '\0';

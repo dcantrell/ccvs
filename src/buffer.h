@@ -119,6 +119,7 @@ extern struct buffer *packetizing_buffer_initialize
   (struct buffer *, int (*) (void *, const char *, char *, int),
 	 int (*) (void *, const char *, char *, int, int *), void *,
 	 void (*) (struct buffer *));
+extern int buf_empty (struct buffer *);
 extern int buf_empty_p (struct buffer *);
 extern void buf_output (struct buffer *, const char *, int);
 extern void buf_output0 (struct buffer *, const char *);

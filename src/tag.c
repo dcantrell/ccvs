@@ -108,7 +108,7 @@ cvstag (int argc, char **argv)
     int err = 0;
     int run_module_prog = 1;
 
-    is_rtag = (strcmp (command_name, "rtag") == 0);
+    is_rtag = (strcmp (cvs_cmd_name, "rtag") == 0);
 
     if (argc == -1)
 	usage (is_rtag ? rtag_usage : tag_usage);
@@ -154,7 +154,7 @@ cvstag (int argc, char **argv)
 #endif
 		    error (1, 0,
 			   "-q or -Q must be specified before \"%s\"",
-			   command_name);
+			   cvs_cmd_name);
 		break;
 	    case 'R':
 		local = 0;

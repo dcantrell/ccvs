@@ -274,7 +274,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		 * There is no user file, so note that it was lost and
 		 * extract a new version
 		 */
-		/* Comparing the command_name against "update", in
+		/* Comparing the cvs_cmd_name against "update", in
 		   addition to being an ugly way to operate, means
 		   that this message does not get printed by the
 		   server.  That might be considered just a straight
@@ -282,7 +282,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		   gets hit when a patch fails and the client fetches
 		   a file.  I'm not sure there is currently any way
 		   for the server to distinguish those two cases.  */
-		if (strcmp (command_name, "update") == 0)
+		if (strcmp (cvs_cmd_name, "update") == 0)
 		    if (!really_quiet)
 			error (0, 0, "warning: `%s' was lost", finfo->fullname);
 		ret = T_CHECKOUT;
@@ -352,7 +352,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 
 		/* See comment at other "update" compare, for more
 		   thoughts on this comparison.  */
-		if (strcmp (command_name, "update") == 0)
+		if (strcmp (cvs_cmd_name, "update") == 0)
 		    if (!really_quiet)
 			error (0, 0, "warning: `%s' was lost", finfo->fullname);
 		ret = T_CHECKOUT;

@@ -83,7 +83,7 @@ patch (int argc, char **argv)
 #endif
 		    error (1, 0,
 			   "-q or -Q must be specified before \"%s\"",
-			   command_name);
+			   cvs_cmd_name);
 		break;
 	    case 'f':
 		force_tag_match = 0;
