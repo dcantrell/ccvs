@@ -1,5 +1,10 @@
 1999-01-15  Jim Kingdon  <http://www.cyclic.com>
 
+	* sanity.sh (rcs3): Redirect awk's stdin to /dev/null like all the
+	other awk invocations.  GNU awk seems not to read stdin in this
+	case, but that behavior is hard to reconcile with the Single Unix
+	Spec and some awks don't do it.
+
 	* sanity.sh (binfiles, binfiles2, binfiles3, server): Use the same
 	tr trick as in rcs3.  People don't seem to have been complaining,
 	and this should fix server-4 for HPUX.
