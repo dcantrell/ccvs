@@ -1,5 +1,10 @@
 Changes since 1.7:
 
+* New "cvs annotate" command to display the last modification for each
+line of a file, with the revision number, user checking in the
+modification, and date of the modification.  For more information see
+the `annotate' node in cvs.texinfo.
+
 * Tag names containing only uppercase letters (no lowercase letters,
 digits, or punctuation) are now reserved for CVS; it will not let you
 add such tags (you can still use the tags if they were added with a
