@@ -1,5 +1,10 @@
 Sun Nov 24 17:27:24 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Common options): Remove -H; -H is not a command
+	option.
+	(Global options): Also list --help and --version.  Don't say that
+	-H gives a list of commands; it doesn't any more (directly).
+
 	* cvs.texinfo: Add comment pointing to paper size web page.
 
 	* cvs.texinfo (Common options): Rewrite section on date formats.

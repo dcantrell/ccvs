@@ -5170,10 +5170,15 @@ option to turn the display on.  So if you have
 you may need to use @samp{-f} to show the tag names.
 
 @item -H
+@itemx --help
 Display usage information about the specified @samp{cvs_command}
 (but do not actually execute the command).  If you don't specify
-a command name, @samp{cvs -H} displays a summary of all the
-commands available.
+a command name, @samp{cvs -H} displays overall help for
+@sc{cvs}, including a list of other help options.
+@c It seems to me it is better to document it this way
+@c rather than trying to update this documentation
+@c every time that we add a --help-foo option.  But
+@c perhaps that is confusing...
 
 @item -l
 Do not log the cvs_command in the command history (but execute it
@@ -5212,6 +5217,7 @@ Trace program execution; display messages showing the steps of
 potential impact of an unfamiliar command.
 
 @item -v
+@item --version
 Display version and copyright information for @sc{cvs}.
 
 @cindex CVSREAD, overriding
@@ -5366,7 +5372,7 @@ One such format is
 @code{@var{month}/@var{day}/@var{year}}.  This may
 confuse people who are accustomed to having the month
 and day in the other order; @samp{1/4/96} is January 4,
-not March 1.
+not April 1.
 
 Remember to quote the argument to the @samp{-D}
 flag so that your shell doesn't interpret spaces as
@@ -5394,10 +5400,6 @@ will be used).
 @strong{Warning:}  The @code{commit} command also has a
 @samp{-f} option, but it has a different behavior for
 that command.  @xref{commit options}.
-
-@item -H
-Help; describe the options available for this command.  This is
-the only option supported for all @sc{cvs} commands.
 
 @item -k @var{kflag}
 Alter the default @sc{rcs} processing of keywords.
