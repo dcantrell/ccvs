@@ -3224,8 +3224,8 @@ send_arg (string)
 	}
 	else
         {
-          buf[0] = *p;
-          send_to_server (buf, 1);
+	    buf[0] = *p;
+	    send_to_server (buf, 1);
         }
 	++p;
     }
@@ -3718,7 +3718,32 @@ send_file_names (argc, argv)
     }
 
     for (i = 0; i < argc; ++i)
-	send_arg (argv[i]);
+    {
+	char buf[1];
+	char *p = argv[i];
+
+	send_to_server ("Argument ", 0);
+
+	while (*p)
+	{
+	    if (*p == '\n')
+	    {
+		send_to_server ("\012Argumentx ", 0);
+	    }
+	    else if (ISDIRSEP (*p))
+	    {
+		buf[0] = '/';
+		send_to_server (buf, 1);
+	    }
+	    else
+	    {
+		buf[0] = *p;
+		send_to_server (buf, 1);
+	    }
+	    ++p;
+	}
+	send_to_server ("\012", 1);
+    }
 }
 
 

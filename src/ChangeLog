@@ -1,3 +1,10 @@
+Mon Feb 26 13:31:25 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (check_repository_password): Remove unused variables
+	linelen, ch.
+
+	* client.c (send_file_names): Translate ISDIRSEP characters to '/'.
+
 Sat Feb 24 21:25:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* checkout.c (safe_location): Re-indent one line.

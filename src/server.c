@@ -4163,8 +4163,8 @@ check_repository_password (username, password, repository, host_user_ptr)
     FILE *fp;
     char *filename;
     char *linebuf;
-    int ch;
-    int found_it = 0, namelen, linelen;
+    int found_it = 0;
+    int namelen;
 
     filename = xmalloc (strlen (repository)
 			+ 1
