@@ -1,5 +1,10 @@
 Changes since 1.12.1:
 
+* Experimental support for Pluggable Authentication Modules (PAM) has been
+added, though it is not compiled by default.  If you like this feature (or
+don't), please send us feedback.  See the Cederqvist, `./configure --help',
+and the INSTALL file for more.
+
 * Command line keyword expansion modes no longer override binary keyword
 expansion modes.
 
