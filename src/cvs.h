@@ -362,7 +362,7 @@ int RCS_checkout PROTO ((char *rcsfile, char *workfile, char *tag,
 #define RCS_FLAGS_QUIET 8
 #define RCS_FLAGS_MODTIME 16
 int RCS_checkin PROTO ((char *rcsfile, char *workfile, char *message,
-			char *rev, int flags, int noerr));
+			char *rev, int flags));
 
 
 

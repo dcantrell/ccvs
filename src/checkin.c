@@ -63,7 +63,7 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
 	}
     }
 
-    switch (RCS_checkin (rcs, NULL, message, rev, 0, 0))
+    switch (RCS_checkin (rcs, NULL, message, rev, 0))
     {
 	case 0:			/* everything normal */
 
