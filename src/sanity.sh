@@ -80,7 +80,7 @@ ${CVS} -d `pwd`/../cvsroot co CVSROOT 2>> ${LOGFILE} ${OUTPUT}
 cd .. ; rm -rf tmp
 
 # This one should succeed.  No warnings.
-touch cvsroot/CVSROOT/modules
+echo 'CVSROOT		-i mkmodules CVSROOT' > cvsroot/CVSROOT/modules
 mkdir tmp ; cd tmp
 if ${CVS} -d `pwd`/../cvsroot co CVSROOT ${OUTPUT} ; then
   echo "PASS: test 4" >>${LOGFILE}
@@ -1248,7 +1248,112 @@ for what in $tests; do
 		  echo 'FAIL: test 142' | tee -a ${LOGFILE}
 		fi
 
+		cd ../.. 
+		rm -rf 1 2 3 ; rm -rf ${CVSROOT_FILENAME}/first-dir
 		;;
+	modules)
+	  # The following line stolen from cvsinit.sh.  FIXME: create our
+	  # repository via cvsinit.sh; that way we test it too.
+	  (cd ${CVSROOT_FILENAME}/CVSROOT; ci -q -u -t/dev/null \
+	    -m'initial checkin of modules' modules)
+
+	  rm -rf first-dir ${CVSROOT_FILENAME}/first-dir
+	  mkdir ${CVSROOT_FILENAME}/first-dir
+
+	  mkdir 1
+	  cd 1
+
+	  if ${testcvs} -q co first-dir; then
+	    echo 'PASS: test 143' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 143' | tee -a ${LOGFILE}
+	  fi
+
+	  cd first-dir
+	  mkdir subdir
+	  ${testcvs} add subdir >>${LOGFILE}
+	  cd subdir
+
+	  touch a
+
+	  if ${testcvs} add a 2>>${LOGFILE} ; then
+	    echo 'PASS: test 144' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 144' | tee -a ${LOGFILE}
+	  fi
+
+	  if ${testcvs} ci -m added >>${LOGFILE} 2>&1; then
+	    echo 'PASS: test 145' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 145' | tee -a ${LOGFILE}
+	  fi
+
+	  cd ..
+	  if ${testcvs} -q co CVSROOT >>${LOGFILE}; then
+	    echo 'PASS: test 146' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 146' | tee -a ${LOGFILE}
+	  fi
+
+	  # Here we test that CVS can deal with CVSROOT (whose repository
+	  # is at top level) in the same directory as subdir (whose repository
+	  # is a subdirectory of first-dir).  TODO: Might want to check that
+	  # files can actually get updated in this state.
+	  if ${testcvs} -q update; then
+	    echo 'PASS: test 147' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 147' | tee -a ${LOGFILE}
+	  fi
+
+	  echo realmodule first-dir/subdir a >>CVSROOT/modules
+	  echo aliasmodule -a first-dir/subdir/a >>CVSROOT/modules
+	  if ${testcvs} ci -m 'add modules' CVSROOT/modules \
+	      >>${LOGFILE} 2>&1; then
+	    echo 'PASS: test 148' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 148' | tee -a ${LOGFILE}
+	  fi
+	  cd ..
+	  if ${testcvs} co realmodule >>${LOGFILE}; then
+	    echo 'PASS: test 149' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 149' | tee -a ${LOGFILE}
+	  fi
+	  if test -d realmodule && test -f realmodule/a; then
+	    echo 'PASS: test 150' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 150' | tee -a ${LOGFILE}
+	  fi
+	  if ${testcvs} co aliasmodule >>${LOGFILE}; then
+	    echo 'PASS: test 151' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 151' | tee -a ${LOGFILE}
+	  fi
+	  if test -d aliasmodule; then
+	    echo 'FAIL: test 152' | tee -a ${LOGFILE}
+	  else
+	    echo 'PASS: test 152' >>${LOGFILE}
+	  fi
+	  echo abc >>first-dir/subdir/a
+	  if (${testcvs} -q co aliasmodule | tee test153.tmp) \
+	      >>${LOGFILE}; then
+	    echo 'PASS: test 153' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 153' | tee -a ${LOGFILE}
+	  fi
+	  echo 'M first-dir/subdir/a' >ans153.tmp
+	  if cmp test153.tmp ans153.tmp; then
+	    echo 'PASS: test 154' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 154' | tee -a ${LOGFILE}
+	  fi
+	  if ${testcvs} -q co realmodule; then
+	    echo 'PASS: test 155' >>${LOGFILE}
+	  else
+	    echo 'FAIL: test 155' | tee -a ${LOGFILE}
+	  fi
+	  cd ..
+	  ;;
 
 	*) echo $what is not the name of a test -- ignored ;;
 	esac
@@ -1262,15 +1367,10 @@ echo Ok.
 # * Test `cvs update foo bar' (where foo and bar are both from the same
 #   repository).  Suppose one is a branch--make sure that both directories
 #   get updated with the respective correct thing.
-# * Also test updates on the case where a working directory is not a 
-#   subdirectory of the directory which contains it (for example, it is
-#   legal to check out a copy of the CVSROOT directory alongside some other
-#   directories which are not at the top level).
 # * Zero length files (check in, check out).
 # * `cvs update ../foo'.  Also ../../foo ./../foo foo/../../bar /foo/bar
 #   foo/.././../bar foo/../bar etc.
-# * Test ability to modify modules file and use new modules.
-#   Test all flags in modules file.
+# * Test all flags in modules file.
 #   Test that ciprog gets run both on checkin in that directory, or a
 #     higher-level checkin which recurses into it.
 # * Test that $ followed by "Header" followed by $ gets expanded on checkin.
