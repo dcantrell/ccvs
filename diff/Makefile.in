@@ -29,6 +29,7 @@ AR = ar
 
 CPPFLAGS = @CPPFLAGS@
 DEFS = @DEFS@
+RANLIB = @RANLIB@
 CFLAGS = @CFLAGS@
 
 prefix = @prefix@
@@ -63,6 +64,7 @@ COMPILE = $(CC) -c $(CPPFLAGS) $(DEFS) \
 
 libdiff libdiff.a: $(OBJECTS)
 	$(AR) cr libdiff.a $(OBJECTS)
+	-$(RANLIB) libdiff.a
 
 $(OBJECTS): diff.h system.h
 analyze.o cmpbuf.o: cmpbuf.h
