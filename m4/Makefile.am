@@ -26,6 +26,7 @@ EXTRA_DIST = \
 	cvs_func_printf_ptr.m4 \
 	alloca.m4 \
 	atexit.m4 \
+	clock_time.m4 \
 	codeset.m4 \
 	dirname.m4 \
 	dos.m4 \
@@ -37,6 +38,7 @@ EXTRA_DIST = \
 	getopt.m4 \
 	gettext.m4 \
 	glibc21.m4 \
+	gettime.m4 \
 	gettimeofday.m4 \
 	iconv.m4 \
 	intdiv0.m4 \
