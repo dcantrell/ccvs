@@ -110,7 +110,10 @@ with_default_rsh = @with_default_rsh@
 
 EXTRA_DIST = \
 	cvs_func_printf_ptr.m4 \
-	acx_have_gssapi.m4
+	acx_have_gssapi.m4 \
+	lstat.m4 \
+	malloc.m4 \
+	stat.m4
 
 subdir = m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs

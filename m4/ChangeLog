@@ -1,5 +1,12 @@
 2003-05-19  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.in (EXTRA_DIST): Add stat.m4, lstat.m4, malloc.m4.
+	* malloc.m4: New file from <https://savannah.gnu.org/projects/gnulib>.
+
+	* Makefile.in: Regenerated.
+
+2003-05-19  Derek Price  <derek@ximbiot.com>
+
 	* lstat.m4: New file from
 	<https://savannah.gnu.org/projects/gnulib>.
 	* stat.m4: Ditto.
