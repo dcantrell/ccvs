@@ -25,12 +25,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #include <sys/types.h>
 
-#ifdef __STDC__
-#include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #if defined __STDC__ && __STDC__
 #define DIFFPARAMS(args) args
 #else
@@ -45,17 +39,12 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 struct diff_callbacks
 {
-  /* Write output.  This function just writes a string to the output
-     file.  The default is to fwrite to OUTFILE.  If this callback is
-     defined, printf_output and flush_output must also be defined.  */
+  /* Write output.  This function just writes a string of a given
+     length to the output file.  The default is to fwrite to OUTFILE.
+     If this callback is defined, flush_output must also be defined.  */
   void (*write_output) DIFFPARAMS((char const *, size_t));
-  /* Printf output.  This function is vprintf-like.  The default is to
-     fprintf to OUTFILE.  If this callback is defined, write_output
-     and flush_output must also be defined.  */
-  void (*printf_output) DIFFPARAMS((char const *, va_list));
   /* Flush output.  The default is to fflush OUTFILE.  If this
-     callback is defined, write_output and printf_output must also be
-     defined.  */
+     callback is defined, write_output must also be defined.  */
   void (*flush_output) DIFFPARAMS((void));
   /* Write to stdout.  This is called for version and help messages.  */
   void (*write_stdout) DIFFPARAMS((char const *));

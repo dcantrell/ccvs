@@ -1,3 +1,13 @@
+Thu Jul  2 16:34:38 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	Simplify the callback interface:
+	* diffrun.h: Don't include <stdarg.h> or <varargs.h>.
+	(struct diff_callbacks): Remove printf_output field.
+	* util.c: Include <stdarg.h> or <varargs.h>.
+	(printf_output): Use vasprintf and write_output callback rather
+	than printf_output callback.
+	* diff3.c (read_diff): Don't set my_callbacks.printf_output.
+
 Thu Jun 18 12:43:53 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	* diffrun.h: New file.

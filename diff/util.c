@@ -19,6 +19,12 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #include "diff.h"
 
+#ifdef __STDC__
+#include <stdarg.h>
+#else
+#include <varargs.h>
+#endif
+
 #ifndef strerror
 extern char *strerror ();
 #endif
@@ -352,8 +358,17 @@ printf_output (format, va_alist)
   va_list args;
 
   VA_START (args, format);
-  if (callbacks && callbacks->printf_output)
-    (*callbacks->printf_output) (format, args);
+  if (callbacks && callbacks->write_output)
+    {
+      char *p;
+
+      p = NULL;
+      vasprintf (&p, format, args);
+      if (p == NULL)
+	fatal ("out of memory");
+      (*callbacks->write_output) (p, strlen (p));
+      free (p);
+    }
   else
     vfprintf (outfile, format, args);
   va_end (args);
