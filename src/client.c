@@ -2666,8 +2666,9 @@ handle_m (char *args, size_t len)
     fflush (stderr);
     FD_ZERO (&wfds);
     FD_SET (STDOUT_FILENO, &wfds);
+    errno = 0;
     s = select (STDOUT_FILENO+1, NULL, &wfds, NULL, NULL);
-    if (s < 1)
+    if (s < 1 && errno != 0)
         perror ("cannot write to stdout");
     fwrite (args, len, sizeof (*args), stdout);
     putc ('\n', stdout);
@@ -2722,6 +2723,7 @@ handle_e (char *args, size_t len)
     fflush (stdout);
     FD_ZERO (&wfds);
     FD_SET (STDERR_FILENO, &wfds);
+    errno = 0;
     s = select (STDERR_FILENO+1, NULL, &wfds, NULL, NULL);
     /*
      * If stderr has problems, then adding a call to
@@ -2729,7 +2731,7 @@ handle_e (char *args, size_t len)
      * will not work. So, try to write a message on stdout and
      * terminate cvs.
      */
-    if (s < 1)
+    if (s < 1 && errno != 0)
         fperrmsg (stdout, 1, errno, "cannot write to stderr");
     fwrite (args, len, sizeof (*args), stderr);
     putc ('\n', stderr);
