@@ -3668,7 +3668,6 @@ the :server: access method is not supported by this port of CVS");
 	walklist (variable_list, send_variable_proc, NULL);
 }
 
-#ifndef RSH_NOT_TRANSPARENT
 /* Contact the server by starting it with rsh.  */
 
 /* Right now, we have two different definitions for this function,
@@ -3820,7 +3819,6 @@ start_rsh_server (tofdp, fromfdp)
 }
 
 #endif /* START_RSH_WITH_POPEN_RW */
-#endif /* ! RSH_NOT_TRANSPARENT */
 
 
 
