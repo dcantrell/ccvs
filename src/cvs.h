@@ -469,9 +469,9 @@ void Sanitize_Repository_Name PROTO((char *repository));
 
 char *Name_Root PROTO((char *dir, char *update_dir));
 void free_cvsroot_t PROTO((cvsroot_t *root_in));
-cvsroot_t *parse_cvsroot PROTO((char *root)
+cvsroot_t *parse_cvsroot PROTO((const char *root)
 	__attribute__ ((__malloc__)));
-cvsroot_t *local_cvsroot PROTO((char *dir)
+cvsroot_t *local_cvsroot PROTO((const char *dir)
 	__attribute__ ((__malloc__)));
 void Create_Root PROTO((char *dir, char *rootdir));
 void root_allow_add PROTO ((char *));
