@@ -30,6 +30,10 @@ CFLAGS = -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm ${CINC}
 CFLAGS += -I${srcdir} -I${libdir} -I${cvs_srcdir}
 CFLAGS += -DIBM_CPP -DHAVE_CONFIG_H
 
+# needed to make command-line wildcard expansion work right.  That's
+# right, DOS-descendants handle this from the program, not the shell.
+ARGVLIB = s:${SL}ibmcpp${SL}lib${SL}setargv.obj
+
 # TCP/IP stuff
 TCPIPLIB = s:${SL}ibmtcpip${SL}lib${SL}tcp32dll.lib	s:${SL}ibmtcpip${SL}lib${SL}so32dll.lib
 
@@ -269,6 +273,7 @@ cvs.exe: ${OBJECTS}
 	echo ${LIB_OBJECTS}            >> icc.in
 	echo ${COMMON_OBJECTS}         >> icc.in
 	echo ${TCPIPLIB}               >> icc.in
+	echo ${ARGVLIB}                >> icc.in
 	echo Creating icc.in... done.
 	set LIB=${LIB} & icc @icc.in
 
