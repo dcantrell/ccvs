@@ -349,8 +349,7 @@ buf_flush (struct buffer *buf, int block)
     int nonblocking;
     int status;
 
-    if (buf->flush == NULL)
-        abort ();
+    assert (buf->flush);
 
     nonblocking = buf->nonblocking;
     if (nonblocking && block)

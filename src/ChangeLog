@@ -1,3 +1,14 @@
+2004-07-19  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (buf_flush): Replace abort w/assert.
+	* log-buffer.c (log_buffer_flush_log): New function for syncing a log.
+	(log_buffer_flush, log_buffer_flush): Don't sync log for speed.
+	* log-buffer.h (log_buffer_flush_log): New proto.
+	* sanity.sh: Tidy.
+	(run_filter): Accept file name to filter as argument.
+	(dotest_*): pass new arg to run_filter.
+	* server.c (read_secondary_log): Sync log before reopening.
+
 2004-07-16  Derek Price  <derek@ximbiot.com>
 
 	* buffer.c (fd_buffer_input): Back out previous two changes due to
