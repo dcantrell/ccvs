@@ -1,3 +1,9 @@
+2003-07-31  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (libcvs_a_SOURCES): Remove getpass.c per new getpass-gnu
+	API from GNULIB.
+	* Makefile: Regenerated.
+
 2003-07-29  Derek Price  <derek@ximbiot.com>
 
 	* getpass.c: New file, almost identical to GNULIB's currect version.

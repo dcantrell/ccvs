@@ -38,7 +38,6 @@ libcvs_a_SOURCES = \
 	getnline.c \
 	getopt.c \
 	getopt1.c \
-	getpass.c \
 	md5.c \
 	regex.c \
 	savecwd.c \
