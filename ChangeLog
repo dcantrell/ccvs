@@ -1,3 +1,9 @@
+1999-04-09  Jim Kingdon  <http://www.cyclic.com>
+
+	* HACKING: Add a sentence about sending patches somewhere other
+	than bug-cvs, while still granting permission for people to use
+	them under the GPL.
+
 1999-04-08  Jim Kingdon  <http://www.cyclic.com>
 
 	* configure.in (AC_OUTPUT): Remove macintosh/Makefile (overlooked
