@@ -807,6 +807,27 @@ get_homedir ()
 	return NULL;
 }
 
+/* Compose a path to a file in the home directory.  This is necessary because
+ * of different behavior on UNIX, Windows, and VMS.  See more notes in
+ * vms/filesubr.c.
+ *
+ * A more clean solution would be something more along the lines of a
+ * "join a directory to a filename" kind of thing which was not specific to
+ * the homedir.  This should aid portability between UNIX, Mac, Windows, VMS,
+ * and possibly others.  This is already handled by Perl - it might be
+ * interesting to see how much of the code was written in C since Perl is under
+ * the GPL and the Artistic license - we might be able to use it.
+ */
+char *
+strcat_filename_onto_homedir (dir, file)
+    const char *dir;
+    const char *file;
+{
+    char *path = xmalloc (strlen (dir) + 1 + strlen(file) + 1);
+    sprintf (path, "%s\\%s", dir, file);
+    return path;
+}
+
 /* See cvs.h for description.  */
 void
 expand_wild (argc, argv, pargc, pargv)

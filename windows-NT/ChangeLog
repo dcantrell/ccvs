@@ -1,3 +1,12 @@
+2002-12-27  Derek Price  <derek@ximbiot.com>
+
+	* config.h (PACKAGE_STRING): Define.
+	* filesubr.c (strcat_filename_onto_homedir): New function.
+	(Thanks to Stephane Rouleau <s.rouleau@videotron.ca>,
+	 Cristopher Seawood <cls@seawood.org>, and
+	 Frederico Costa <frederico.costa@tiscali.no> for all their hints,
+	 tips, and patches for this problem.)
+
 2002-12-19  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am: Remove reference to options.h.
