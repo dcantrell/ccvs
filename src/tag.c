@@ -300,6 +300,13 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     char *repository;
     char *where;
 
+    TRACE ( TRACE_FUNCTION,
+	    "rtag_proc ( argc=%d, argv=%x, xwhere=%s,\n"
+       "                 mwhere=%s, mfile=%s, shorten=%d,\n"
+       "                 local_specified=%d, mname=%s, msg=%s )",
+	    argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
+	    mname, msg );
+
     if (is_rtag)
     {
 	repository = xmalloc (strlen (current_parsed_root->directory) + strlen (argv[0])
@@ -353,14 +360,12 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 	    free (repository);
 	    return (1);
 	}
-	free (repository);
 	/* End section which is identical to patch_proc.  */
 
 	if (delete_flag || attic_too || (force_tag_match && numtag))
 	    which = W_REPOS | W_ATTIC;
 	else
 	    which = W_REPOS;
-	repository = NULL;
     }
     else
     {
@@ -371,7 +376,8 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 
     if (numtag != NULL && !numtag_validated)
     {
-	tag_check_valid (numtag, argc - 1, argv + 1, local_specified, 0, repository);
+	tag_check_valid ( numtag, argc - 1, argv + 1, local_specified, 0,
+			  repository );
 	numtag_validated = 1;
     }
 
@@ -379,10 +385,10 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
        specified files in the repository */
 
     mtlist = getlist();
-    err = start_recursion (check_fileproc, check_filesdoneproc,
-                           (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-			   argc - 1, argv + 1, local_specified, which, 0,
-			   CVS_LOCK_READ, where, 1);
+    err = start_recursion ( check_fileproc, check_filesdoneproc,
+                            (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
+			    argc - 1, argv + 1, local_specified, which, 0,
+			    CVS_LOCK_READ, where, 1, repository );
     
     if (err)
     {
@@ -394,11 +400,14 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
        Concurrency in cvs.texinfo and comment in do_recursion).  */
 
     /* start the recursion processor */
-    err = start_recursion (is_rtag ? rtag_fileproc : tag_fileproc,
-			   (FILESDONEPROC) NULL, tag_dirproc,
-			   (DIRLEAVEPROC) NULL, NULL, argc - 1, argv + 1,
-			   local_specified, which, 0, CVS_LOCK_WRITE, where, 1);
+    err = start_recursion
+	( is_rtag ? rtag_fileproc : tag_fileproc,
+	  (FILESDONEPROC) NULL, tag_dirproc,
+	  (DIRLEAVEPROC) NULL, NULL, argc - 1, argv + 1,
+	  local_specified, which, 0, CVS_LOCK_WRITE, where, 1,
+	  repository );
     dellist (&mtlist);
+    if ( which & W_REPOS ) free ( repository );
     if (where != NULL)
 	free (where);
     return (err);
@@ -415,7 +424,11 @@ check_fileproc (callerdat, finfo)
     char *xdir;
     Node *p;
     Vers_TS *vers;
-    
+
+    TRACE ( TRACE_FUNCTION, "check_fileproc ( %s, %s, %s )",
+	    finfo->repository, finfo->fullname,
+	    finfo->rcs ? finfo->rcs->path : "NULL" );
+
     if (check_uptodate) 
     {
 	switch (Classify_File (finfo, (char *) NULL, (char *) NULL,
@@ -1191,6 +1204,11 @@ tag_check_valid (name, argc, argv, local, aflag, repository)
     struct saved_cwd cwd;
     int which;
 
+    TRACE ( TRACE_FUNCTION,
+	    "tag_check_valid ( name=%s, argc=%d, argv=%x, local=%d,\n"
+       "                       aflag=%d, repository=%s )",
+	    name, argc, argv, local, aflag, repository );
+
     /* Numeric tags require only a syntactic check.  */
     if (isdigit ((unsigned char) name[0]))
     {
@@ -1281,11 +1299,11 @@ Numeric tag %s contains characters other than digits and '.'", name);
 	}
     }
 
-    err = start_recursion (val_fileproc, (FILESDONEPROC) NULL,
-			   val_direntproc, (DIRLEAVEPROC) NULL,
-			   (void *)&the_val_args,
-			   argc, argv, local, which, aflag,
-			   CVS_LOCK_READ, NULL, 1);
+    err = start_recursion
+	( val_fileproc, (FILESDONEPROC) NULL,
+	  val_direntproc, (DIRLEAVEPROC) NULL,
+	  (void *) &the_val_args, argc, argv, local, which, aflag,
+	  CVS_LOCK_READ, NULL, 1, repository );
     if (repository != NULL && repository[0] != '\0')
     {
 	if (restore_cwd (&cwd, NULL))

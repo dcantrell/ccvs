@@ -399,52 +399,66 @@ checkout (argc, argv)
 /* FIXME: This is and emptydir_name are in checkout.c for historical
    reasons, probably want to move them.  */
 
+/* int
+ * safe_location ( char *where )
+ *
+ * Return true if where is a safe destination for a checkout.
+ *
+ * INPUTS
+ *  where	The requested destination directory.
+ *
+ * GLOBALS
+ *  current_parsed_root->directory
+ *  current_parsed_root->isremote
+ *  		Used to locate our CVSROOT.
+ *
+ * RETURNS
+ *  true	If we are running in client mode or if where is not located
+ *  		within the CVSROOT.
+ *  false	Otherwise.
+ *
+ * ERRORS
+ *  Exits with a fatal error message when various events occur, such as not
+ *  being able to resolve a path or failing ot chdir to a path.
+ */
 int
 safe_location (where)
     char *where;
 {
     char *current;
     char *where_location;
-    char hardpath[PATH_MAX+5];
+    char *hardpath;
     size_t hardpath_len;
     int  x;
     int retval;
 
-#ifdef HAVE_READLINK
-    /* FIXME-arbitrary limit: should be retrying this like xgetwd.
-       But how does readlink let us know that the buffer was too small?
-       (by returning sizeof hardpath - 1?).  */
-    x = readlink(current_parsed_root->directory, hardpath, sizeof hardpath - 1);
-#else
-    x = -1;
-#endif
-    if (x == -1)
-    {
-        strcpy(hardpath, current_parsed_root->directory);
-    }
-    else
-    {
-        hardpath[x] = '\0';
-    }
+    TRACE ( TRACE_FUNCTION, "safe_location ( where=%s )", where );
+
+#ifdef CLIENT_SUPPORT
+    /* Don't compare remote CVSROOTs to our destination directory. */
+    if ( current_parsed_root->isremote ) return 1;
+#endif /* CLIENT_SUPPORT */
 
     /* set current - even if where is set we'll need to cd back... */
     current = xgetwd ();
     if (current == NULL)
 	error (1, errno, "could not get working directory");
 
+    hardpath = xresolvepath ( current_parsed_root->directory );
+
     /* if where is set, set current to where, where - last_component( where ),
      * or fail, depending on whether the directories exist or not.
      */
-    if( where != NULL )
+    if ( where != NULL )
     {
-	if( chdir( where ) != -1 )
+	if ( CVS_CHDIR ( where ) != -1 )
 	{
 	    /* where */
 	    where_location = xgetwd();
 	    if( where_location == NULL )
 		error( 1, errno, "could not get working directory" );
 
-	    if( chdir( current ) == -1 )
+	    if( CVS_CHDIR ( current ) == -1 )
 		error( 1, errno, "could not change directory to `%s'", current );
 
 	    free( current );
@@ -462,13 +476,13 @@ safe_location (where)
 		parent = last_component( where_location );
 		parent[-1] = '\0';
 
-		if( chdir( where_location ) != -1 )
+		if( CVS_CHDIR ( where_location ) != -1 )
 		{
 		    where_location = xgetwd();
 		    if( where_location == NULL )
 			error( 1, errno, "could not get working directory (nominally `%s')", where_location );
 
-		    if( chdir( current ) == -1 )
+		    if( CVS_CHDIR ( current ) == -1 )
 			error( 1, errno, "could not change directory to `%s'", current );
 
 		    free( current );
@@ -1083,11 +1097,12 @@ internal error: %s doesn't start with %s in checkout_proc",
 	if (!pipeout)
 	    history_write (m_type == CHECKOUT ? 'O' : 'E', preload_update_dir,
 			   history_name, where, repository);
-	err += do_update (0, (char **) NULL, options, tag, date,
-			  force_tag_match, 0 /* !local */ ,
-			  1 /* update -d */ , aflag, checkout_prune_dirs,
-			  pipeout, which, join_rev1, join_rev2,
-			  preload_update_dir, m_type == CHECKOUT);
+	err += do_update ( 0, (char **) NULL, options, tag, date,
+			   force_tag_match, 0 /* !local */ ,
+			   1 /* update -d */ , aflag, checkout_prune_dirs,
+			   pipeout, which, join_rev1, join_rev2,
+			   preload_update_dir, m_type == CHECKOUT,
+			   repository );
 	goto out;
     }
 
@@ -1140,10 +1155,11 @@ internal error: %s doesn't start with %s in checkout_proc",
 		       repository);
 
     /* go ahead and call update now that everything is set */
-    err += do_update (argc - 1, argv + 1, options, tag, date,
-		      force_tag_match, local_specified, 1 /* update -d */,
-		      aflag, checkout_prune_dirs, pipeout, which, join_rev1,
-		      join_rev2, preload_update_dir, m_type == CHECKOUT);
+    err += do_update ( argc - 1, argv + 1, options, tag, date,
+		       force_tag_match, local_specified, 1 /* update -d */,
+		       aflag, checkout_prune_dirs, pipeout, which, join_rev1,
+		       join_rev2, preload_update_dir, m_type == CHECKOUT,
+		       repository );
 out:
     free (preload_update_dir);
     preload_update_dir = oldupdate;

@@ -588,9 +588,11 @@ Copyright (c) 1989-2003 Brian Berliner, david d `zoo' zuhn, \n\
 		    free (CVSroot_cmdline);
 		CVSroot_cmdline = xstrdup (optarg);
 		if (free_CVSroot)
+		{
 		    free (CVSroot);
-		CVSroot = xstrdup (optarg);
-		free_CVSroot = 1;
+		    free_CVSroot = 0;
+		}
+		CVSroot = CVSroot_cmdline;
 		cvs_update_env = 1;	/* need to update environment */
 		break;
 	    case 'H':
@@ -1185,3 +1187,6 @@ usage (cpp)
 	(void) fprintf (stderr, *cpp);
     error_exit ();
 }
+
+/* vim:tabstop=8:shiftwidth=4
+ */

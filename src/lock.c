@@ -965,10 +965,11 @@ lock_tree_for_write (argc, argv, local, which, aflag)
      * the dirs
      */
     lock_tree_list = getlist ();
-    err = start_recursion ((FILEPROC) NULL, lock_filesdoneproc,
-			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL, argc,
-			   argv, local, which, aflag, CVS_LOCK_NONE,
-			   (char *) NULL, 0);
+    err = start_recursion
+	( (FILEPROC) NULL, lock_filesdoneproc,
+	  (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL, argc,
+	  argv, local, which, aflag, CVS_LOCK_NONE,
+	  (char *) NULL, 0, (char *) NULL );
     sortlist (lock_tree_list, fsortcmp);
     if (Writer_Lock (lock_tree_list) != 0)
 	error (1, 0, "lock failed - giving up");

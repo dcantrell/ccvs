@@ -224,14 +224,12 @@ rannotate_proc (argc, argv, xwhere, mwhere, mfile, shorten, local, mname, msg)
 	    free (repository);
 	    return (1);
 	}
-	free (repository);
 	/* End section which is identical to patch_proc.  */
 
 	if (force_tag_match && tag != NULL)
 	    which = W_REPOS | W_ATTIC;
 	else
 	    which = W_REPOS;
-	repository = NULL;
     }
     else
     {
@@ -246,10 +244,11 @@ rannotate_proc (argc, argv, xwhere, mwhere, mfile, shorten, local, mname, msg)
 	tag_validated = 1;
     }
 
-    err = start_recursion (annotate_fileproc, (FILESDONEPROC) NULL,
-			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-			   argc - 1, argv + 1, local, which, 0, CVS_LOCK_READ,
-			   where, 1);
+    err = start_recursion ( annotate_fileproc, (FILESDONEPROC) NULL,
+			    (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
+			    argc - 1, argv + 1, local, which, 0, CVS_LOCK_READ,
+			    where, 1, repository );
+    if ( which & W_REPOS ) free ( repository );
     return err;
 }
 
