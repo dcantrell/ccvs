@@ -116,8 +116,8 @@ release (argc, argv)
     if (server_active)
       arg_start_idx = 1;
     else
-      arg_start_idx = 0;
 #endif /* SERVER_SUPPORT */
+      arg_start_idx = 0;
 
     for (i = arg_start_idx; i < argc; i++)
     {
@@ -213,11 +213,12 @@ release (argc, argv)
 	if (!server_active)
 #endif
 	{
+	  /* We are chdir'ed into the directory in question.  
+	     So don't pass args to unedit.  */
 	  int argc = 1;
 	  char *argv[3];
 	  argv[0] = "dummy";
-	  argv[1] = thisarg;
-	  argv[2] = NULL;
+	  argv[1] = NULL;
 	  err += unedit (argc, argv);
 	}
 
