@@ -5468,6 +5468,7 @@ Notified}); this command is useful even if you are not
 using @code{cvs watch on}.
 
 @cindex taginfo
+@cindex exit status, of taginfo
 The @file{taginfo} file defines programs to execute
 when someone executes a @code{tag} or @code{rtag}
 command.  The @file{taginfo} file has the standard form
@@ -6160,6 +6161,7 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 
 @menu
 * Structure::                   Overall structure of CVS commands
+* Exit status::                 Indicating CVS's success or failure
 * ~/.cvsrc::                    Default options with the ~/.csvrc file
 * Global options::              Options you give to the left of cvs_command
 * Common options::              Options you give to the right of cvs_command
@@ -6223,6 +6225,40 @@ affects some of the commands.  When it is given as a
 is accepted by more commands.  In other words, do not
 take the above categorization too seriously.  Look at
 the documentation instead.
+
+@node Exit status
+@appendixsec CVS's exit status
+@cindex exit status, of CVS
+
+CVS can indicate to the calling environment whether it
+succeeded or failed by setting its @dfn{exit status}.
+The exact way of testing the exit status will vary from
+one operating system to another.  For example in a unix
+shell script the @samp{$?} variable will be 0 if the
+last command returned a successful exit status, or
+greater than 0 if the exit status indicated failure.
+
+If CVS is successful, it returns a successful status;
+if there is an error, it prints an error message and
+returns a failure status.  The one exception to this is
+the @code{cvs diff} command.  It will return a
+successful status if it found no differences, or a
+failure status if there were differences or if there
+was an error.  Because this behavior provides no good
+way to detect errors, in the future it is possible that
+@code{cvs diff} will be changed to behave like the
+other @sc{cvs} commands.
+@c It might seem like checking whether cvs -q diff
+@c produces empty or non-empty output can tell whether
+@c there were differences or not.  But it seems like
+@c there are cases with output but no differences
+@c (testsuite basica-8b).  It is not clear to me how
+@c useful it is for a script to be able to check
+@c whether there were differences.
+@c FIXCVS? In previous versions of CVS, cvs diff
+@c returned 0 for no differences, 1 for differences, or
+@c 2 for errors.  Is this behavior worth trying to
+@c bring back (but what does it mean for VMS?)?
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node ~/.cvsrc
@@ -7482,9 +7518,8 @@ If any file names are given, only those files are
 compared.  If any directories are given, all files
 under them will be compared.
 
-The exit status will be 0 if no differences were found,
-1 if some differences were found, and 2 if any error
-occurred.
+The exit status for diff is different than for other
+@sc{cvs} commands; for details @ref{Exit status}.
 
 @menu
 * diff options::                diff options
@@ -10131,6 +10166,7 @@ repository is appended to the template, followed by the
 file names of any files involved in the commit (added,
 removed, and modified files).
 
+@cindex exit status, of commitinfo
 The first line with a regular expression matching the
 relative path to the module will be used.  If the
 command returns a non-zero exit status the commit will
@@ -10201,6 +10237,7 @@ If the repository name does not match any of the
 regular expressions in this file, the @samp{DEFAULT}
 line is used, if it is specified.
 
+@cindex exit status, of verifymsg
 If the verification script exits with a non-zero exit status,
 the commit is aborted.
 
@@ -11136,6 +11173,7 @@ it might be sufficient to place GNU diff3 in your
 @c Should we mention the cvsaux binaries here?
 
 @item cvs commit: warning: editor session failed
+@cindex exit status, of editor
 This means that the editor which @sc{cvs} is using exits with a nonzero
 exit status.  Some versions of vi will do this even when there was not
 a problem editing the file.  If so, point the

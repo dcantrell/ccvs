@@ -1,5 +1,12 @@
 Sun May 18 10:24:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Exit status): New node.
+	(diff): Replace text on exit status with an xref to that node.
+	The previous text documented a behavior which CVS no longer
+	implements.
+	(user-defined logging, commitinfo, verifymsg, Error messages):
+	Add index entries for "exit status, of <something which CVS invokes>".
+
 	* cvs.texinfo (Administrative files): Add comment concerning
 	writing triggers and particularly performance issues.
 
