@@ -331,7 +331,7 @@ checkout (argc, argv)
 
 	return get_responses_and_close ();
     }
-#endif
+#endif /* CLIENT_SUPPORT */
 
     if (cat || status)
     {
