@@ -143,16 +143,28 @@ run_args (fmt, va_alist)
 static char *
 quote (const char *s)
 {
-    size_t s_len = strlen (s);
-    char *copy = xmalloc (s_len + 3);
-    char *scan = copy;
+    size_t s_len = 0;
+    char *copy = NULL;
+    char *scan = (char *) s;
 
+    /* scan string for extra quotes ... */
+    while (*scan)
+	if ('"' == *scan++)
+	    s_len += 2;   /* one extra for the quote character */
+	else
+	    s_len++;
+    /* allocate length + byte for ending zero + for double quotes around */
+    scan = copy = xmalloc(s_len + 3);
     *scan++ = '"';
-    strcpy (scan, s);
-    scan += s_len;
+    while (*s)
+    {
+	if ('"' == *s)
+	    *scan++ = '\\';
+	*scan++ = *s++;
+    }
+    /* ending quote and closing zero */
     *scan++ = '"';
     *scan++ = '\0';
-
     return copy;
 }
 
