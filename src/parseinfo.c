@@ -318,6 +318,31 @@ free_config (struct config *data)
 
 
 
+/* Return true if this function has already been called for line LN of file
+ * INFOPATH.
+ */
+bool
+parse_error (const char *infopath, unsigned int ln)
+{
+    static List *errors = NULL;
+    char *nodename = NULL;
+
+    if (!errors)
+	errors = getlist();
+
+    nodename = Xasprintf ("%s/%u", infopath, ln);
+    if (findnode (errors, nodename))
+    {
+	free (nodename);
+	return true;
+    }
+
+    push_string (errors, nodename);
+    return false;
+}
+
+
+
 /* Parse the CVS config file.  The syntax right now is a bit ad hoc
  * but tries to draw on the best or more common features of the other
  * *info files and various unix (or non-unix) config file syntaxes.
@@ -344,6 +369,7 @@ parse_config (const char *cvsroot)
     char *infopath;
     FILE *fp_info;
     char *line = NULL;
+    unsigned int ln;		/* Input file line counter.  */
     size_t line_allocated = 0;
     size_t len;
     char *p;
@@ -369,8 +395,11 @@ parse_config (const char *cvsroot)
 	return retval;
     }
 
+    ln = 0;  /* Have not read any lines yet.  */
     while (getline (&line, &line_allocated, fp_info) >= 0)
     {
+	ln++; /* Keep track of input file line number for error messages.  */
+
 	/* Skip comments.  */
 	if (line[0] == '#')
 	    continue;
@@ -408,9 +437,10 @@ parse_config (const char *cvsroot)
 	p = strchr (line, '=');
 	if (p == NULL)
 	{
-	    /* Probably should be printing line number.  */
-	    error (0, 0, "syntax error in %s: line '%s' is missing '='",
-		   infopath, line);
+	    if (!parse_error (infopath, ln))
+		error (0, 0,
+"%s [%d]: syntax error: missing `=' between keyword and value",
+		       infopath, ln);
 	    continue;
 	}
 
@@ -437,17 +467,21 @@ parse_config (const char *cvsroot)
 	}
 #endif
 	else if (strcmp (line, "LocalKeyword") == 0)
-	    RCS_setlocalid (&retval->keywords, p);
+	    RCS_setlocalid (infopath, ln, &retval->keywords, p);
 	else if (strcmp (line, "KeywordExpand") == 0)
 	    RCS_setincexc (&retval->keywords, p);
 	else if (strcmp (line, "PreservePermissions") == 0)
+	{
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 	    readBool (infopath, "PreservePermissions", p,
 		      &retval->preserve_perms);
 #else
-	    error (0, 0, "\
-warning: this CVS does not support PreservePermissions");
+	    if (!parse_error (infopath, ln))
+		error (0, 0, "\
+%s [%u]: warning: this CVS does not support PreservePermissions",
+		       infopath, ln);
 #endif
+	}
 	else if (strcmp (line, "TopLevelAdmin") == 0)
 	    readBool (infopath, "TopLevelAdmin", p, &retval->top_level_admin);
 	else if (strcmp (line, "LockDir") == 0)
@@ -496,8 +530,8 @@ warning: this CVS does not support PreservePermissions");
 	    if (readBool (infopath, "UseNewInfoFmtStrings", p, &dummy)
 		&& !dummy)
 		error (1, 0,
-"%s: Old style info format strings not supported by this executable.",
-		       infopath);
+"%s [%u]: Old style info format strings not supported by this executable.",
+		       infopath, ln);
 	}
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	else if (strcmp (line, "ImportNewFilesToVendorBranchOnly") == 0)
@@ -514,8 +548,8 @@ warning: this CVS does not support PreservePermissions");
 	         * really only useful for testing.
 		 */
 	        error (1, 0,
-"%s: Only PrimaryServers with :ext: methods are valid, not `%s'.",
-		       infopath, p);
+"%s [%u]: Only PrimaryServers with :ext: methods are valid, not `%s'.",
+		       infopath, ln, p);
 	    }
 	}
 	else if (!strcmp (line, "MaxProxyBufferSize"))
@@ -540,8 +574,9 @@ warning: this CVS does not support PreservePermissions");
 	       adding new keywords to your CVSROOT/config file is not
 	       particularly recommended unless you are planning on using
 	       the new features.  */
-	    error (0, 0, "%s: unrecognized keyword '%s'",
-		   infopath, line);
+	    if (!parse_error (infopath, ln))
+		error (0, 0, "%s [%u]: unrecognized keyword `%s'",
+		       infopath, ln, line);
     }
     if (ferror (fp_info))
 	error (0, errno, "cannot read %s", infopath);
