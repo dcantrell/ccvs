@@ -1,5 +1,7 @@
 Wed Sep 24 10:27:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* .cvsignore: New file.
+
 	* Makefile.in (COMPILE): Add -I options for srcdir (perhaps
 	unneeded) and change -I option for lib to use top_srcdir (needed
 	to avoid mixups with CVS's regex.h vs. the system one).
