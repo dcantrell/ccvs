@@ -1,3 +1,8 @@
+2002-12-16  Derek Price  <derek@ximbiot.com>
+
+	* admin.c: Disable cvsadmin group checking on the client.
+	(Reported by Dan Peterson <dbpete@aol.com>.)
+
 2002-12-06  Derek Price  <derek@ximbiot.com>
 
 	* buffer.c: Replace calls to malloc with calls to xmalloc and calls to
