@@ -4186,7 +4186,7 @@ send_variable_proc (node, closure)
 void
 start_server ()
 {
-    int tofd, fromfd;
+    int tofd, fromfd, rootless;
     char *log = getenv ("CVS_CLIENT_LOG");
 
 
@@ -4365,7 +4365,8 @@ the :server: access method is not supported by this port of CVS");
 	stored_mode = NULL;
     }
 
-    if (strcmp (command_name, "init") != 0)
+    rootless = (strcmp (command_name, "init") == 0);
+    if (!rootless)
     {
 	send_to_server ("Root ", 0);
 	send_to_server (CVSroot_directory, 0);
@@ -4489,7 +4490,7 @@ the :server: access method is not supported by this port of CVS");
 	}
     }
 
-    if (cvsencrypt)
+    if (cvsencrypt && !rootless)
     {
 #ifdef ENCRYPTION
 	/* Turn on encryption before turning on compression.  We do
@@ -4536,7 +4537,7 @@ the :server: access method is not supported by this port of CVS");
 #endif /* ! ENCRYPTION */
     }
 
-    if (gzip_level)
+    if (gzip_level && !rootless)
     {
 	if (supported_request ("Gzip-stream"))
 	{
@@ -4578,7 +4579,7 @@ the :server: access method is not supported by this port of CVS");
 	}
     }
 
-    if (cvsauthenticate && ! cvsencrypt)
+    if (cvsauthenticate && ! cvsencrypt && !rootless)
     {
 	/* Turn on authentication after turning on compression, so
 	   that we can compress the authentication information.  We
@@ -4609,7 +4610,7 @@ the :server: access method is not supported by this port of CVS");
     }
 
 #ifdef FILENAMES_CASE_INSENSITIVE
-    if (supported_request ("Case"))
+    if (supported_request ("Case") && !rootless)
 	send_to_server ("Case\012", 0);
 #endif
 
