@@ -601,7 +601,9 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 		    prog = real_prog;
 	    }
 
-	    run_setup ("%s %s", prog, real_where);
+	    /* XXX can we determine the line number for this entry??? */
+	    run_setup ("%s %s", expand_path(prog, "modules", -1), real_where);
+
 	    if (extra_arg)
 		run_arg (extra_arg);
 
