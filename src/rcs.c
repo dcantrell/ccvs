@@ -7960,7 +7960,7 @@ count_delta_actions (Node *np, void *ignore)
 /*
  * Clean up temporary files
  */
-RETSIGTYPE
+static RETSIGTYPE
 rcs_cleanup (void)
 {
     /* Note that the checks for existence_error are because we are
