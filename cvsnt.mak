@@ -101,6 +101,9 @@ CLEAN :
 	-@erase ".\WinRel\find_names.obj"
 	-@erase ".\WinRel\watch.obj"
 	-@erase ".\WinRel\getopt.obj"
+	-@erase ".\WinRel\exitfail.obj"
+	-@erase ".\WinRel\xmalloc.obj"
+	-@erase ".\WinRel\xstrdup.obj"
 	-@erase ".\WinRel\checkin.obj"
 	-@erase ".\WinRel\fileattr.obj"
 	-@erase ".\WinRel\modules.obj"
@@ -239,6 +242,9 @@ LINK32_OBJS= \
 	"$(INTDIR)/find_names.obj" \
 	"$(INTDIR)/watch.obj" \
 	"$(INTDIR)/getopt.obj" \
+	"$(INTDIR)/exitfail.obj" \
+	"$(INTDIR)/xstrdup.obj" \
+	"$(INTDIR)/xalloc.obj" \
 	"$(INTDIR)/checkin.obj" \
 	"$(INTDIR)/fileattr.obj" \
 	"$(INTDIR)/modules.obj" \
@@ -429,6 +435,9 @@ CLEAN :
 	-@erase ".\WinDebug\rcmd.obj"
 	-@erase ".\WinDebug\pwd.obj"
 	-@erase ".\WinDebug\getopt.obj"
+	-@erase ".\WinDebug\exitfail.obj"
+	-@erase ".\WinDebug\xstrdup.obj"
+	-@erase ".\WinDebug\xalloc.obj"
 	-@erase ".\WinDebug\entries.obj"
 	-@erase ".\WinDebug\getopt1.obj"
 	-@erase ".\WinDebug\2\version.obj"
@@ -569,6 +578,9 @@ LINK32_OBJS= \
 	"$(INTDIR)/rcmd.obj" \
 	"$(INTDIR)/pwd.obj" \
 	"$(INTDIR)/getopt.obj" \
+	"$(INTDIR)/exitfail.obj" \
+	"$(INTDIR)/xstrdup.obj" \
+	"$(INTDIR)/xalloc.obj" \
 	"$(INTDIR)/entries.obj" \
 	"$(INTDIR)/getopt1.obj" \
 	"$(INTDIR)/2/version.obj" \
