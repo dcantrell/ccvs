@@ -1,3 +1,8 @@
+Wed Dec 13 21:31:10 1995  Karl Fogel  (kfogel@floss.cyclic.com)
+
+        * waitpid.c (waitpid): Don't deal specially with statusp after all.
+        The problem lies elsewhere.
+
 Wed Dec 13 20:58:12 1995  Karl Fogel  (kfogel@floss.cyclic.com)
 
         * waitpid.c (waitpid): oops, make sure there is storage for
