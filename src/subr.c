@@ -77,12 +77,12 @@ copy_file (from, to)
     if (sb.st_size > 0)
     {
 	char buf[BUFSIZ];
-	size_t n;
+	int n;
 
 	for (;;) 
 	{
 	    n = read (fdin, buf, sizeof(buf));
-	    if (n == (size_t)-1)
+	    if (n == -1)
 	    {
 #ifdef EINTR
 		if (errno == EINTR)
