@@ -27,32 +27,6 @@ License, so if you don't like this, don't submit them.
   what pcl-cvs is looking for.
 
 
-* cvs co -c dumps core for me.  It complains:
-
-	wu-ftpd: invalid option -- -
-	Memory fault - core dumped
-
-  The stack backtrace is:
-
-	ttyp3:<woods@most> $ dbx cvs
-	Reading symbolic information...
-	Read 25647 symbols
-	warning: core file read error: address not in data space
-	program terminated by signal SEGV (no mapping at the fault address)
-	(dbx) where
-	warning: core file read error: address not in data space
-	warning: core file read error: address not in data space
-	strlen(0x0) at 0xdca1580
-	cat_module(status = 0), line 840 in "modules.c"
-	warning: core file read error: address not in data space
-	checkout(argc = 0, argv = 0x58e08), line 338 in "checkout.c"
-	main(argc = 2, argv = 0x58e00, 0xdfff728), line 755 in "main.c"
-
-  The line in the modules file might be this:
-
-	wu-ftpd         misc/wu-ftpd
-
-
 * From: Roland McGrath <roland@gnu.ai.mit.edu>
   To: Cyclic CVS Hackers <info-cvs@prep.ai.mit.edu>
   Subject: weird bug
