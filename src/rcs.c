@@ -583,6 +583,98 @@ RCS_reparsercsfile (rdata, pfp, rcsbufp)
     rdata->flags &= ~PARTIAL;
 }
 
+/* Move RCS into or out of the Attic, depending on TOATTIC.  If the
+   file is already in the desired place, return without doing
+   anything.  At some point may want to think about how this relates
+   to RCS_rewrite but that is a bit hairy (if one wants renames to be
+   atomic, or that kind of thing).  If there is an error, print a message
+   and return 1.  On success, return 0.  */
+int
+RCS_setattic (rcs, toattic)
+    RCSNode *rcs;
+    int toattic;
+{
+    char *newpath;
+    char *p;
+    char *q;
+
+    /* Some systems aren't going to let us rename an open file.  */
+    rcsbuf_cache_close ();
+
+    /* Could make the pathname computations in this file, and probably
+       in other parts of rcs.c too, easier if the REPOS and FILE
+       arguments to RCS_parse got stashed in the RCSNode.  */
+
+    if (toattic)
+    {
+	mode_t omask;
+
+	if (rcs->flags & INATTIC)
+	    return 0;
+
+	/* Example: rcs->path is "/foo/bar/baz,v".  */
+	newpath = xmalloc (strlen (rcs->path) + sizeof CVSATTIC + 5);
+	p = last_component (rcs->path);
+	strncpy (newpath, rcs->path, p - rcs->path);
+	strcpy (newpath + (p - rcs->path), CVSATTIC);
+
+	/* Create the Attic directory if it doesn't exist.  */
+	omask = umask (cvsumask);
+	if (CVS_MKDIR (newpath, 0777) < 0 && errno != EEXIST)
+	    error (0, errno, "cannot make directory %s", newpath);
+	(void) umask (omask);
+
+	strcat (newpath, "/");
+	strcat (newpath, p);
+
+	if (CVS_RENAME (rcs->path, newpath) < 0)
+	{
+	    int save_errno = errno;
+
+	    /* The checks for isreadable look awfully fishy, but
+	       I'm going to leave them here for now until I
+	       can think harder about whether they take care of
+	       some cases which should be handled somehow.  */
+
+	    if (isreadable (rcs->path) || !isreadable (newpath))
+	    {
+		error (0, save_errno, "cannot rename %s to %s",
+		       rcs->path, newpath);
+		free (newpath);
+		return 1;
+	    }
+	}
+    }
+    else
+    {
+	if (!(rcs->flags & INATTIC))
+	    return 0;
+
+	newpath = xmalloc (strlen (rcs->path));
+
+	/* Example: rcs->path is "/foo/bar/Attic/baz,v".  */
+	p = last_component (rcs->path);
+	strncpy (newpath, rcs->path, p - rcs->path - 1);
+	newpath[p - rcs->path - 1] = '\0';
+	q = newpath + (p - rcs->path - 1) - (sizeof CVSATTIC - 1);
+	assert (strncmp (q, CVSATTIC, sizeof CVSATTIC - 1) == 0);
+	strcpy (q, p);
+
+	if (CVS_RENAME (rcs->path, newpath) < 0)
+	{
+	    error (0, errno, "failed to move `%s' out of the attic",
+		   rcs->path);
+	    free (newpath);
+	    return 1;
+	}
+    }
+
+    free (rcs->path);
+    rcs->path = newpath;
+
+    return 0;
+}
+
 /*
  * Fully parse the RCS file.  Store all keyword/value pairs, fetch the
  * log messages for each revision, and fetch add and delete counts for
