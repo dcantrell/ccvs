@@ -153,6 +153,8 @@ static const char spacetab[] = {
 
 #define whitespace(c)	(spacetab[(unsigned char)c] != 0)
 
+static char *rcs_lockfile;
+
 /* A few generic thoughts on error handling, in particular the
    printing of unexpected characters that we find in the RCS file
    (that is, why we use '\x%x' rather than %c or some such).
@@ -8437,6 +8439,30 @@ count_delta_actions (np, ignore)
     return 0;
 }
 
+/*
+ * Clean up temporary files
+ */
+static RETSIGTYPE
+rcs_cleanup ()
+{
+    /* Note that the checks for existence_error are because we are
+       called from a signal handler, so we don't know whether the
+       files got created.  */
+
+    /* FIXME: Do not perform buffered I/O from an interrupt handler like
+       this (via error).  However, I'm leaving the error-calling code there
+       in the hope that on the rare occasion the error call is actually made
+       (e.g., a fluky I/O error or permissions problem prevents the deletion
+       of a just-created file) reentrancy won't be an issue.  */
+    if (rcs_lockfile != NULL)
+    {
+	if (unlink_file (rcs_lockfile) < 0
+	    && !existence_error (errno))
+	    error (0, errno, "cannot remove %s", rcs_lockfile);
+    }
+    rcs_lockfile = NULL;
+}
+
 /* RCS_internal_lockfile and RCS_internal_unlockfile perform RCS-style
    locking on the specified RCSFILE: for a file called `foo,v', open
    for writing a file called `,foo,'.
@@ -8461,10 +8487,6 @@ count_delta_actions (np, ignore)
    processes from stomping all over each other's laundry.  Hence,
    they are `internal' locking functions.
 
-   Note that we don't clean up the ,foo, file on ^C.  We probably should.
-   I'm not completely sure whether RCS does or not (I looked at the code
-   a little, and didn't find it).
-
    If there is an error, give a fatal error; if we return we always
    return a non-NULL value.  */
 
@@ -8476,9 +8498,32 @@ rcs_internal_lockfile (rcsfile)
     int fd;
     struct stat rstat;
     FILE *fp;
+    static int first_call = 1;
+
+    if (first_call)
+    {
+	first_call = 0;
+	/* clean up if we get a signal */
+#ifdef SIGHUP
+	(void) SIG_register (SIGHUP, rcs_cleanup);
+#endif
+#ifdef SIGINT
+	(void) SIG_register (SIGINT, rcs_cleanup);
+#endif
+#ifdef SIGQUIT
+	(void) SIG_register (SIGQUIT, rcs_cleanup);
+#endif
+#ifdef SIGPIPE
+	(void) SIG_register (SIGPIPE, rcs_cleanup);
+#endif
+#ifdef SIGTERM
+	(void) SIG_register (SIGTERM, rcs_cleanup);
+#endif
+    }
 
     /* Get the lock file name: `,file,' for RCS file `file,v'. */
-    lockfile = rcs_lockfilename (rcsfile);
+    assert (rcs_lockfile == NULL);
+    rcs_lockfile = rcs_lockfilename (rcsfile);
 
     /* Use the existing RCS file mode, or read-only if this is a new
        file.  (Really, this is a lie -- if this is a new file,
@@ -8504,12 +8549,13 @@ rcs_internal_lockfile (rcsfile)
        rely on O_EXCL these days.  This might be true for unix (I
        don't really know), but I am still pretty skeptical in the case
        of the non-unix systems.  */
-    fd = open (lockfile, OPEN_BINARY | O_WRONLY | O_CREAT | O_EXCL | O_TRUNC,
+    fd = open (rcs_lockfile,
+	       OPEN_BINARY | O_WRONLY | O_CREAT | O_EXCL | O_TRUNC,
 	       S_IRUSR | S_IRGRP | S_IROTH);
 
     if (fd < 0)
     {
-	error (1, errno, "could not open lock file `%s'", lockfile);
+	error (1, errno, "could not open lock file `%s'", rcs_lockfile);
     }
 
     /* Force the file permissions, and return a stream object. */
@@ -8517,13 +8563,11 @@ rcs_internal_lockfile (rcsfile)
        this in the non-HAVE_FCHMOD case.  */
 #ifdef HAVE_FCHMOD
     if (fchmod (fd, rstat.st_mode) < 0)
-	error (1, errno, "cannot change mode for %s", lockfile);
+	error (1, errno, "cannot change mode for %s", rcs_lockfile);
 #endif
     fp = fdopen (fd, FOPEN_BINARY_WRITE);
     if (fp == NULL)
-	error (1, errno, "cannot fdopen %s", lockfile);
-
-    free (lockfile);
+	error (1, errno, "cannot fdopen %s", rcs_lockfile);
 
     return fp;
 }
@@ -8533,10 +8577,7 @@ rcs_internal_unlockfile (fp, rcsfile)
     FILE *fp;
     char *rcsfile;
 {
-    char *lockfile;
-
-    /* Get the lock file name: `,file,' for RCS file `file,v'. */
-    lockfile = rcs_lockfilename (rcsfile);
+    assert (rcs_lockfile != NULL);
 
     /* Abort if we could not write everything successfully to LOCKFILE.
        This is not a great error-handling mechanism, but should prevent
@@ -8549,12 +8590,21 @@ rcs_internal_unlockfile (fp, rcsfile)
 	   fragile even if it happens to sometimes be true.  The real
 	   solution is to check each call to fprintf rather than waiting
 	   until the end like this.  */
-	error (1, 0, "error writing to lock file %s", lockfile);
+	error (1, 0, "error writing to lock file %s", rcs_lockfile);
     if (fclose (fp) == EOF)
-	error (1, errno, "error closing lock file %s", lockfile);
+	error (1, errno, "error closing lock file %s", rcs_lockfile);
 
-    rename_file (lockfile, rcsfile);
-    free (lockfile);
+    rename_file (rcs_lockfile, rcsfile);
+
+    {
+	/* Use a temporary to make sure there's no interval
+	   (after rcs_lockfile has been freed but before it's set to NULL)
+	   during which the signal handler's use of rcs_lockfile would
+	   reference freed memory.  */
+	char *tmp = rcs_lockfile;
+	rcs_lockfile = NULL;
+	free (tmp);
+    }
 }
 
 static char *

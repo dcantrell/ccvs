@@ -1,3 +1,15 @@
+1999-05-03  Jim Meyering  <meyering@ascend.com>
+
+	Remove rcs-style ,file, lock files upon signal.
+	* rcs.c (rcs_lockfile): New file-scoped global.
+	(rcs_cleanup): New function (similar to patch_cleanup).
+	(rcs_internal_lockfile): Register rcs_cleanup the first time this
+	function is called.  Rename uses of local `lockfile' to refer to new
+	global, `rcs_lockfile'.  Don't free the lock file name string, now
+	that it's global.
+	(rcs_internal_unlockfile): Rename `lockfile', as above, and carefully
+	free and NULL-out the global, rcs_lockfile.
+
 1999-04-30  Jim Kingdon  <http://www.cyclic.com>
 
 	* rcs.c (annotate_fileproc): Don't cast NULL in passing it to
@@ -178,7 +190,7 @@
 
 	Also, altered a few 'cvs commit' 's in regular expressions to
 	fit the .${PROG} commit. portability syntax.
-	
+
 	* recurse.c:  Stopped CVS from dumping core in the case tested
 	above.
 
