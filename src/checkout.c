@@ -88,6 +88,7 @@ static int tag_validated = 0;
 static char *date = NULL;
 static char *join_rev1 = NULL;
 static char *join_rev2 = NULL;
+static int join_tags_validated = 0;
 static char *preload_update_dir = NULL;
 
 int
@@ -741,8 +742,16 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
     if (tag != NULL || date != NULL)
 	which |= W_ATTIC;
 
-    /* FIXME: We don't call tag_check_valid on join_rev1 and join_rev2
-       yet (make sure to handle ':' correctly if we do, though).  */
+    if (! join_tags_validated)
+    {
+        if (join_rev1 != NULL)
+	    tag_check_valid_join (join_rev1, *pargc - 1, argv + 1, 0, aflag,
+				  repository);
+	if (join_rev2 != NULL)
+	    tag_check_valid_join (join_rev2, *pargc - 1, argv + 1, 0, aflag,
+				  repository);
+	join_tags_validated = 1;
+    }
 
     /*
      * if we are going to be recursive (building dirs), go ahead and call the
