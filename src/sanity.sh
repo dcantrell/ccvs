@@ -3276,7 +3276,9 @@ ${QUESTION} sdir"
 "${PROG} update: Updating \.
 ${QUESTION} sdir"
 	  fi
+	  cd ../..
 
+	  rm -r 1
 	  rm -rf ${TESTDIR}/cvsroot/first-dir
 	  ;;
 
