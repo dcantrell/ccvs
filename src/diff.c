@@ -630,7 +630,7 @@ RCS file: ", 0);
     switch (status)
     {
 	case -1:			/* fork failed */
-	    error (1, errno, "fork failed during rcsdiff of %s",
+	    error (1, errno, "fork failed while diffing %s",
 		   vers->srcfile->path);
 	case 0:				/* everything ok */
 	    err = 0;
