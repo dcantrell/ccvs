@@ -331,15 +331,6 @@ $CVSid: @(#)TODO 1.26 94/09/21 $
 		- What all the tags mean in an "import" command
 		- Tags are important; revision numbers are not
 
-167. "cvs log" doesn't understand about CVS magic branch numbers.  As such,
-     the command:
-
-		cvs log -r1.63.2
-		cvs log -rC2
-
-     where "C2" is a magic branch that resolves to 1.63.2 do not print the
-     same things.  Sigh.
-
 169. We are using CVS as the configuration control for a software reuse library.
      What we do is do system calls passing the needed arguments. In the next
      release, it would be nice to see an option to put cvs .o files into a

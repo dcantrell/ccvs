@@ -1,5 +1,8 @@
 Tue Aug  6 17:01:23 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* TODO: Remove item #167 (cvs log doesn't understand symbolic
+	branch names).  It works now.
+
 	* NEWS: Mention that "cvs log" no longer invokes "rlog".
 
 Wed Jul 31 16:06:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
