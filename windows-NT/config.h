@@ -34,11 +34,6 @@
    I have neither the CD-ROM nor a CD-ROM drive to put it in.  */
 #define HAVE_UTIME_NULL 1
 
-/* Define as __inline if that's what the C compiler calls it.  */
-/* We apparently do have inline functions.  The 'inline' keyword is only
-   available from C++, though.  You have to use '__inline' in C code.  */
-#define inline __inline
-
 /* Define if on MINIX.  */
 /* Hah.  */
 #undef _MINIX

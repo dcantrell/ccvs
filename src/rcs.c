@@ -2353,10 +2353,10 @@ struct linevector
     struct line **vector;
 };
 
-static inline void linevector_init PROTO ((struct linevector *));
+static void linevector_init PROTO ((struct linevector *));
 
 /* Initialize *VEC to be a linevector with no lines.  */
-static inline void
+static void
 linevector_init (vec)
     struct linevector *vec;
 {

@@ -1,5 +1,9 @@
 Tue Aug 20 12:22:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* configure.in (AC_C_INLINE): Removed; see src/ChangeLog.
+	* config.h.in, configure: Regenerated.
+	* os2/config.h, windows-NT/config.h: Remove #define of inline.
+
 	* configure.in (AC_C_CHAR_UNSIGNED): Removed; it is not used
 	anywhere.
 	* config.h.in, configure: Regenerated.
