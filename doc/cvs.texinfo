@@ -13762,7 +13762,6 @@ client uses @code{TMPDIR}, and if it is not set, uses
 if your server and client are both running @sc{cvs}
 1.9.10 or later, @sc{cvs} will not invoke an external
 @code{patch} program.
-@end table
 
 @cindex CVS_PID, environment variable
 @item $CVS_PID
@@ -13771,6 +13770,7 @@ the @sc{cvs} process. It is often useful in the
 programs and/or scripts specified by the
 @file{commitinfo}, @file{verifymsg}, @file{loginfo}
 files.
+@end table
 
 @node Compatibility
 @appendix Compatibility between CVS Versions

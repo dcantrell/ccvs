@@ -1,3 +1,11 @@
+2003-03-21  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Environment variables): Move @end table tag to after
+	the @item $CVSPID.
+
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
 2003-03-19  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs.texinfo (Connecting via rsh): Document that --with-rsh may
