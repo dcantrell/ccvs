@@ -372,6 +372,11 @@ typedef enum {
 extern char *method_names[];	/* change this in root.c if you change
 				   the enum above */
 
+/* This global variable holds the global -d option.  It is NULL if -d
+   was not used, which means that we must get the CVSroot information
+   from the CVSROOT environment variable or from a CVS/Root file.  */
+extern char *CVSroot_cmdline;
+
 extern char *CVSroot_original;	/* the active, complete CVSroot string */
 extern int client_active;	/* nonzero if we are doing remote access */
 extern CVSmethod CVSroot_method; /* one of the enum values above */

@@ -268,6 +268,11 @@ error 0 Server configuration missing --allow-root in inetd.conf\n");
     return 0;
 }
 
+/* This global variable holds the global -d option.  It is NULL if -d
+   was not used, which means that we must get the CVSroot information
+   from the CVSROOT environment variable or from a CVS/Root file.  */
+
+char *CVSroot_cmdline;
 
 /* Parse a CVSROOT variable into its constituent parts -- method,
  * username, hostname, directory.  The prototypical CVSROOT variable
