@@ -389,6 +389,60 @@ cd project ||
   { echo "$as_me: error: Couldn't cd to \`project'.  Did \$HOME get set incorrectly?" >&2
    { (exit 1); exit 1; }; }
 }
+#cvs_client_server_or_skip()
+#
+# Skip this test unless the relevant executables are capable of client and
+# server modes.
+cvs_client_server_or_skip() {
+$at_traceoff
+echo "atspecific.m4:70: cvs --version |grep client || exit 77"
+echo atspecific.m4:70 >$at_check_line_file
+( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo stdout:; cat $at_stdout
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "atspecific.m4:70: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+$at_traceoff
+echo "atspecific.m4:70: \$server --version |grep server || exit 77"
+echo atspecific.m4:70 >$at_check_line_file
+( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
+at_status=$?
+grep '^ *+' $at_stder1 >&2
+grep -v '^ *+' $at_stder1 >$at_stderr
+at_failed=false
+$at_diff $at_devnull $at_stderr || at_failed=:
+echo stdout:; cat $at_stdout
+case $at_status in
+   77) echo 77 > $at_status_file
+            exit 77;;
+   0) ;;
+   *) echo "atspecific.m4:70: exit code was $at_status, expected 0"
+      at_failed=:;;
+esac
+if $at_failed; then
+
+  echo 1 > $at_status_file
+  exit 1
+fi
+
+$at_traceon
+}
 
 SHELL=${CONFIG_SHELL-/bin/sh}
 
@@ -489,468 +543,15 @@ else
   as_cvs_have_username=false
 fi
 
-cvs_project_init_simple()
-{
-cvs_project_init
-
-mkdir sdir
-$at_traceoff
-echo "basic.at:136: cvs add sdir"
-echo basic.at:136 >$at_check_line_file
-( $at_traceon; cvs add sdir ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "Directory $CVSROOT_DIR/project/sdir added to the repository
-" | $at_diff - $at_stdout || at_failed=:
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:136: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-
-cd sdir
-mkdir ssdir
-$at_traceoff
-echo "basic.at:136: cvs add ssdir"
-echo basic.at:136 >$at_check_line_file
-( $at_traceon; cvs add ssdir ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "Directory $CVSROOT_DIR/project/sdir/ssdir added to the repository
-" | $at_diff - $at_stdout || at_failed=:
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:136: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-
-cd ssdir
-echo ssfile >ssfile
-$at_traceoff
-echo "basic.at:136: cvs add ssfile"
-echo basic.at:136 >$at_check_line_file
-( $at_traceon; cvs add ssfile ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-echo stderr:; tee stderr <$at_stderr
-echo stdout:; tee stdout <$at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:136: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-
-
-sed \
-    -e "s/[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000/RFCDATE/" \
-    -e "s/^P /U /" \
-    <stdout >nstdout
-rm stdout
-
-$at_traceoff
-echo "basic.at:136: (cat nstdout; cat stderr >&2)"
-echo basic.at:136 >$at_check_line_file
-( $at_traceon; (cat nstdout; cat stderr >&2) ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
-$SPROG add: use \`$SPROG commit' to add this file permanently
-" | $at_diff - $at_stderr || at_failed=:
-$at_diff $at_devnull $at_stdout || at_failed=:
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:136: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-
-rm stderr nstdout
-$at_traceoff
-echo "basic.at:136: cvs -q ci -m add-it"
-echo basic.at:136 >$at_check_line_file
-( $at_traceon; cvs -q ci -m add-it ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
-done
-Checking in ssfile;
-$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
-initial revision: 1.1
-done
-" | $at_diff - $at_stdout || at_failed=:
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:136: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-
-cd ../..
-}
-cvs_project_init_simple()
-{
-cvs_project_init
-
-mkdir sdir
-$at_traceoff
-echo "basic.at:136: cvs add sdir"
-echo basic.at:136 >$at_check_line_file
-( $at_traceon; cvs add sdir ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "Directory $CVSROOT_DIR/project/sdir added to the repository
-" | $at_diff - $at_stdout || at_failed=:
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:136: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-
-cd sdir
-mkdir ssdir
-$at_traceoff
-echo "basic.at:136: cvs add ssdir"
-echo basic.at:136 >$at_check_line_file
-( $at_traceon; cvs add ssdir ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "Directory $CVSROOT_DIR/project/sdir/ssdir added to the repository
-" | $at_diff - $at_stdout || at_failed=:
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:136: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-
-cd ssdir
-echo ssfile >ssfile
-$at_traceoff
-echo "basic.at:136: cvs add ssfile"
-echo basic.at:136 >$at_check_line_file
-( $at_traceon; cvs add ssfile ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-echo stderr:; tee stderr <$at_stderr
-echo stdout:; tee stdout <$at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:136: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-
-
-sed \
-    -e "s/[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000/RFCDATE/" \
-    -e "s/^P /U /" \
-    <stdout >nstdout
-rm stdout
-
-$at_traceoff
-echo "basic.at:136: (cat nstdout; cat stderr >&2)"
-echo basic.at:136 >$at_check_line_file
-( $at_traceon; (cat nstdout; cat stderr >&2) ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
-$SPROG add: use \`$SPROG commit' to add this file permanently
-" | $at_diff - $at_stderr || at_failed=:
-$at_diff $at_devnull $at_stdout || at_failed=:
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:136: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-
-rm stderr nstdout
-$at_traceoff
-echo "basic.at:136: cvs -q ci -m add-it"
-echo basic.at:136 >$at_check_line_file
-( $at_traceon; cvs -q ci -m add-it ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
-done
-Checking in ssfile;
-$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
-initial revision: 1.1
-done
-" | $at_diff - $at_stdout || at_failed=:
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:136: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-
-cd ../..
-}
-cvs_project_init_simple()
-{
-cvs_project_init
-
-mkdir sdir
-$at_traceoff
-echo "basic.at:136: cvs add sdir"
-echo basic.at:136 >$at_check_line_file
-( $at_traceon; cvs add sdir ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "Directory $CVSROOT_DIR/project/sdir added to the repository
-" | $at_diff - $at_stdout || at_failed=:
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:136: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-
-cd sdir
-mkdir ssdir
-$at_traceoff
-echo "basic.at:136: cvs add ssdir"
-echo basic.at:136 >$at_check_line_file
-( $at_traceon; cvs add ssdir ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "Directory $CVSROOT_DIR/project/sdir/ssdir added to the repository
-" | $at_diff - $at_stdout || at_failed=:
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:136: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-
-cd ssdir
-echo ssfile >ssfile
-$at_traceoff
-echo "basic.at:136: cvs add ssfile"
-echo basic.at:136 >$at_check_line_file
-( $at_traceon; cvs add ssfile ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-echo stderr:; tee stderr <$at_stderr
-echo stdout:; tee stdout <$at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:136: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-
-
-sed \
-    -e "s/[0-9][0-9]* [a-zA-Z][a-zA-Z]* [0-9][0-9]* [0-9:][0-9:]* -0000/RFCDATE/" \
-    -e "s/^P /U /" \
-    <stdout >nstdout
-rm stdout
-
-$at_traceoff
-echo "basic.at:136: (cat nstdout; cat stderr >&2)"
-echo basic.at:136 >$at_check_line_file
-( $at_traceon; (cat nstdout; cat stderr >&2) ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-echo >>$at_stderr; echo "$SPROG add: scheduling file \`ssfile' for addition
-$SPROG add: use \`$SPROG commit' to add this file permanently
-" | $at_diff - $at_stderr || at_failed=:
-$at_diff $at_devnull $at_stdout || at_failed=:
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:136: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-
-rm stderr nstdout
-$at_traceoff
-echo "basic.at:136: cvs -q ci -m add-it"
-echo basic.at:136 >$at_check_line_file
-( $at_traceon; cvs -q ci -m add-it ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo >>$at_stdout; echo "RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
-done
-Checking in ssfile;
-$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
-initial revision: 1.1
-done
-" | $at_diff - $at_stdout || at_failed=:
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:136: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-
-cd ../..
-}
+# cvs_project_init_simple()
+#
+# This function creates the following starter project.
+#
+#   project
+#     \-sdir
+#         \-ssdir
+#             \-ssfile
+#
 cvs_project_init_simple()
 {
 cvs_project_init
@@ -1950,54 +1551,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "init.at:16: cvs --version |grep client || exit 77"
-echo init.at:16 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "init.at:16: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "init.at:16: \$server --version |grep server || exit 77"
-echo init.at:16 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "init.at:16: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -2133,54 +1687,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "init.at:16: cvs --version |grep client || exit 77"
-echo init.at:16 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "init.at:16: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "init.at:16: \$server --version |grep server || exit 77"
-echo init.at:16 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "init.at:16: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -2705,54 +2212,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "version.at:16: cvs --version |grep client || exit 77"
-echo version.at:16 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "version.at:16: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "version.at:16: \$server --version |grep server || exit 77"
-echo version.at:16 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "version.at:16: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -2979,54 +2439,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "version.at:16: cvs --version |grep client || exit 77"
-echo version.at:16 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "version.at:16: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "version.at:16: \$server --version |grep server || exit 77"
-echo version.at:16 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "version.at:16: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -10606,54 +10019,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:16: cvs --version |grep client || exit 77"
-echo basic.at:16 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:16: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:16: \$server --version |grep server || exit 77"
-echo basic.at:16 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:16: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -10831,54 +10197,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:33: cvs --version |grep client || exit 77"
-echo basic.at:33 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:33: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:33: \$server --version |grep server || exit 77"
-echo basic.at:33 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:33: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -11231,54 +10550,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:140: cvs --version |grep client || exit 77"
-echo basic.at:140 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:140: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:140: \$server --version |grep server || exit 77"
-echo basic.at:140 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:140: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -11650,54 +10922,7 @@ rm stderr nstdout
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:200: cvs --version |grep client || exit 77"
-echo basic.at:200 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:200: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:200: \$server --version |grep server || exit 77"
-echo basic.at:200 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:200: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -12888,54 +12113,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:403: cvs --version |grep client || exit 77"
-echo basic.at:403 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:403: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:403: \$server --version |grep server || exit 77"
-echo basic.at:403 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:403: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -13110,54 +12288,7 @@ rm stderr nstdout
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:428: cvs --version |grep client || exit 77"
-echo basic.at:428 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:428: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:428: \$server --version |grep server || exit 77"
-echo basic.at:428 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:428: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -13468,54 +12599,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:485: cvs --version |grep client || exit 77"
-echo basic.at:485 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:485: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:485: \$server --version |grep server || exit 77"
-echo basic.at:485 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:485: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -14215,54 +13299,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:684: cvs --version |grep client || exit 77"
-echo basic.at:684 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:684: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:684: \$server --version |grep server || exit 77"
-echo basic.at:684 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:684: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -14438,54 +13475,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:729: cvs --version |grep client || exit 77"
-echo basic.at:729 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:729: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:729: \$server --version |grep server || exit 77"
-echo basic.at:729 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:729: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -14623,54 +13613,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:16: cvs --version |grep client || exit 77"
-echo basic.at:16 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:16: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:16: \$server --version |grep server || exit 77"
-echo basic.at:16 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:16: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -14880,54 +13823,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:33: cvs --version |grep client || exit 77"
-echo basic.at:33 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:33: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:33: \$server --version |grep server || exit 77"
-echo basic.at:33 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:33: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -15312,54 +14208,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:140: cvs --version |grep client || exit 77"
-echo basic.at:140 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:140: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:140: \$server --version |grep server || exit 77"
-echo basic.at:140 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:140: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -15763,54 +14612,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:200: cvs --version |grep client || exit 77"
-echo basic.at:200 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:200: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:200: \$server --version |grep server || exit 77"
-echo basic.at:200 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:200: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -17033,54 +15835,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:403: cvs --version |grep client || exit 77"
-echo basic.at:403 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:403: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:403: \$server --version |grep server || exit 77"
-echo basic.at:403 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:403: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -17287,54 +16042,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:428: cvs --version |grep client || exit 77"
-echo basic.at:428 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:428: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:428: \$server --version |grep server || exit 77"
-echo basic.at:428 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:428: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -17677,54 +16385,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:485: cvs --version |grep client || exit 77"
-echo basic.at:485 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:485: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:485: \$server --version |grep server || exit 77"
-echo basic.at:485 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:485: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -18456,54 +17117,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:684: cvs --version |grep client || exit 77"
-echo basic.at:684 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:684: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:684: \$server --version |grep server || exit 77"
-echo basic.at:684 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:684: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR
@@ -18711,54 +17325,7 @@ $at_traceon
 # Set CVSROOT_DIR, method, & CVSROOT
 #
 CVSROOT_DIR=$at_group_dir/cvsroot
-$at_traceoff
-echo "basic.at:729: cvs --version |grep client || exit 77"
-echo basic.at:729 >$at_check_line_file
-( $at_traceon; cvs --version |grep client || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:729: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
-$at_traceoff
-echo "basic.at:729: \$server --version |grep server || exit 77"
-echo basic.at:729 >$at_check_line_file
-( $at_traceon; $server --version |grep server || exit 77 ) >$at_stdout 2>$at_stder1
-at_status=$?
-grep '^ *+' $at_stder1 >&2
-grep -v '^ *+' $at_stder1 >$at_stderr
-at_failed=false
-$at_diff $at_devnull $at_stderr || at_failed=:
-echo stdout:; cat $at_stdout
-case $at_status in
-   77) echo 77 > $at_status_file
-            exit 77;;
-   0) ;;
-   *) echo "basic.at:729: exit code was $at_status, expected 0"
-      at_failed=:;;
-esac
-if $at_failed; then
-
-  echo 1 > $at_status_file
-  exit 1
-fi
-
-$at_traceon
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:
 CVSROOT=$method$CVSROOT_DIR

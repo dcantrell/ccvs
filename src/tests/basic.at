@@ -95,17 +95,17 @@ AT_CLEANUP # Adding files
 
 
 
-# cvs_project_init_simple()
+m4_expand_once([m4_divert_text([DEFAULTS],
+[# cvs_project_init_simple()
 #
-# This project creates the following starter project.
+# This function creates the following starter project.
 #
 #   project
 #     \-sdir
 #         \-ssdir
 #             \-ssfile
 #
-m4_divert_text([DEFAULTS],
-[cvs_project_init_simple()
+cvs_project_init_simple()
 {
 cvs_project_init
 
@@ -133,7 +133,7 @@ initial revision: 1.1
 done
 ])
 cd ../..
-}])dnl
+}])])dnl
 
 
 
