@@ -3513,10 +3513,17 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	RCS_putdtree (rcs, rcs->head, fout);
 	RCS_putdesc (rcs, fout);
 	rcs->delta_pos = ftell (fout);
+	if (rcs->delta_pos == -1)
+	    error (1, errno, "cannot ftell for %s", rcs->path);
 	putdeltatext (fout, dtext);
 	rcs_internal_unlockfile (fout, rcs->path);
 
-	unlink_file (workfile);
+	/* Removing the file here is an RCS user-visible behavior which
+	   we almost surely do not need in the CVS case.  In fact, getting
+	   rid of it should clean up link_file and friends in import.c.  */
+	if (unlink_file (workfile) < 0)
+	    /* FIXME-update-dir: message does not include update_dir.  */
+	    error (0, errno, "cannot remove %s", workfile);
 
 	if (!checkin_quiet)
 	    cvs_output ("done\n", 5);
@@ -3708,7 +3715,21 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	memset (commitpt->text, 0, sizeof (Deltatext));
 
 	bufsize = 0;
-	diff_exec (workfile, tmpfile, diffopts, changefile);
+	switch (diff_exec (workfile, tmpfile, diffopts, changefile))
+	{
+	    case 0:
+	    case 1:
+		break;
+	    case -1:
+		/* FIXME-update-dir: message does not include update_dir.  */
+		error (1, errno, "error diffing %s", workfile);
+		break;
+	    default:
+		/* FIXME-update-dir: message does not include update_dir.  */
+		error (1, 0, "error diffing %s", workfile);
+		break;
+	}
+
 	get_file (changefile, changefile, "r",
 		  &commitpt->text->text, &bufsize, &commitpt->text->len);
 
@@ -3729,7 +3750,20 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	/* This file is not being inserted at the head, but on a side
 	   branch somewhere.  Make a diff from the previous revision
 	   to the working file. */
-	diff_exec (tmpfile, workfile, diffopts, changefile);
+	switch (diff_exec (tmpfile, workfile, diffopts, changefile))
+	{
+	    case 0:
+	    case 1:
+		break;
+	    case -1:
+		/* FIXME-update-dir: message does not include update_dir.  */
+		error (1, errno, "error diffing %s", workfile);
+		break;
+	    default:
+		/* FIXME-update-dir: message does not include update_dir.  */
+		error (1, 0, "error diffing %s", workfile);
+		break;
+	}
 	get_file (changefile, changefile, "r", &dtext->text, &bufsize,
 		  &dtext->len);
 	if (dtext->text == NULL)
@@ -3783,9 +3817,16 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 
     RCS_rewrite (rcs, dtext, commitpt->version);
 
-    unlink_file (workfile);
-    unlink_file (tmpfile);
-    unlink_file (changefile);
+    /* Removing the file here is an RCS user-visible behavior which
+       we almost surely do not need in the CVS case.  In fact, getting
+       rid of it should clean up link_file and friends in import.c.  */
+    if (unlink_file (workfile) < 0)
+	/* FIXME-update-dir: message does not include update_dir.  */
+	error (1, errno, "cannot remove %s", workfile);
+    if (unlink_file (tmpfile) < 0)
+	error (0, errno, "cannot remove %s", tmpfile);
+    if (unlink_file (changefile) < 0)
+	error (0, errno, "cannot remove %s", changefile);
 
     if (!checkin_quiet)
 	cvs_output ("done\n", 5);
@@ -4675,7 +4716,10 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	    diffbuf = NULL;
 	    bufsize = 0;
 	    get_file (afterfile, afterfile, "r", &diffbuf, &bufsize, &len);
-	    unlink_file (afterfile);
+	    if (unlink_file (afterfile) < 0)
+		error (0, errno, "cannot remove %s", afterfile);
+	    free (afterfile);
+	    afterfile = NULL;
 
 	    free (rcs->head);
 	    rcs->head = xstrdup (after);
@@ -4801,17 +4845,20 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	free (after);
     if (beforefile != NULL)
     {
-	unlink_file (beforefile);
+	if (unlink_file (beforefile) < 0)
+	    error (0, errno, "cannot remove %s", beforefile);
 	free (beforefile);
     }
     if (afterfile != NULL)
     {
-	unlink_file (afterfile);
+	if (unlink_file (afterfile) < 0)
+	    error (0, errno, "cannot remove %s", afterfile);
 	free (afterfile);
     }
     if (outfile != NULL)
     {
-	unlink_file (outfile);
+	if (unlink_file (outfile) < 0)
+	    error (0, errno, "cannot remove %s", outfile);
 	free (outfile);
     }
 
@@ -6175,7 +6222,10 @@ RCS_copydeltas (rcs, fin, fout, newdtext, insertpt)
    These do not perform quite the same function as the RCS -l option
    for locking files: they are intended to prevent competing RCS
    processes from stomping all over each other's laundry.  Hence,
-   they are `internal' locking functions. */
+   they are `internal' locking functions.
+
+   If there is an error, give a fatal error; if we return we always
+   return a non-NULL value.  */
 
 static FILE *
 rcs_internal_lockfile (rcsfile)
@@ -6184,6 +6234,7 @@ rcs_internal_lockfile (rcsfile)
     char *lockfile;
     int fd;
     struct stat rstat;
+    FILE *fp;
 
     /* Get the lock file name: `,file,' for RCS file `file,v'. */
     lockfile = rcs_lockfilename (rcsfile);
@@ -6193,7 +6244,12 @@ rcs_internal_lockfile (rcsfile)
        RCS_checkin uses the permissions from the working copy.  For
        actually creating the file, we use 0444 as a safe default mode.) */
     if (stat (rcsfile, &rstat) < 0)
-       rstat.st_mode = S_IRUSR | S_IRGRP | S_IROTH;
+    {
+	if (existence_error (errno))
+	    rstat.st_mode = S_IRUSR | S_IRGRP | S_IROTH;
+	else
+	    error (1, errno, "cannot stat %s", rcsfile);
+    }
 
     /* Try to open exclusively.  POSIX.1 guarantees that O_EXCL|O_CREAT
        guarantees an exclusive open.  According to the RCS source, with
@@ -6210,13 +6266,9 @@ rcs_internal_lockfile (rcsfile)
     fd = open (lockfile, OPEN_BINARY | O_WRONLY | O_CREAT | O_EXCL | O_TRUNC,
 	       S_IRUSR | S_IRGRP | S_IROTH);
 
-    if (fd < 0) {
-	struct stat statbuf;
-	int e = errno;
-	if (e == EACCES && stat (lockfile, &statbuf) == 0)
-	    /* The RCS file is already locked; punt. */
-	    e = EEXIST;
-	error (1, e, "could not open lock file `%s'", lockfile);
+    if (fd < 0)
+    {
+	error (1, errno, "could not open lock file `%s'", lockfile);
     }
 
     free (lockfile);
@@ -6225,9 +6277,13 @@ rcs_internal_lockfile (rcsfile)
     /* Because we change the modes later, we don't worry about
        this in the non-HAVE_FCHMOD case.  */
 #ifdef HAVE_FCHMOD
-    fchmod (fd, rstat.st_mode);
+    if (fchmod (fd, rstat.st_mode) < 0)
+	error (1, errno, "cannot change mode for %s", lockfile);
 #endif
-    return (fdopen (fd, FOPEN_BINARY_WRITE));
+    fp = fdopen (fd, FOPEN_BINARY_WRITE);
+    if (fp == NULL)
+	error (1, errno, "cannot fdopen %s", lockfile);
+    return fp;
 }
 
 static void
@@ -6301,13 +6357,16 @@ RCS_rewrite (rcs, newdtext, insertpt)
     /* Open the original RCS file and seek to the first delta text. */
     if ((fin = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ)) == NULL) 
 	error (1, errno, "cannot open RCS file `%s' for reading", rcs->path);
-    (void) fseek (fin, rcs->delta_pos, SEEK_SET);
+    if (fseek (fin, rcs->delta_pos, SEEK_SET) < 0)
+	error (1, errno, "cannot fseek in RCS file %s", rcs->path);
 
     /* Update delta_pos to the current position in the output file.
        Do NOT move these statements: they must be done after fin has
        been positioned at the old delta_pos, but before any delta
        texts have been written to fout. */
     rcs->delta_pos = ftell (fout);
+    if (rcs->delta_pos == -1)
+	error (1, errno, "cannot ftell in RCS file %s", rcs->path);
 
     RCS_copydeltas (rcs, fin, fout, newdtext, insertpt);
 

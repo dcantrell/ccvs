@@ -1,3 +1,11 @@
+Sat Nov  8 15:58:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (rcs_internal_lockfile): Check for errors from system
+	calls.  If open() gives an error, don't muck with stat and errno
+	(I don't know what the RCS code that this comes from was trying to
+	do, but it clearly isn't accomplishing anything here).
+	(RCS_rewrite, RCS_delete_revs): Check for errors from system calls.
+
 Sat Nov  1 14:21:29 1997  Michael L.H. Brouwer  <michael@thi.nl>
 
 	* rcs.c (RCS_checkin): Change type of bufsize from int to size_t.
