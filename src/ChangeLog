@@ -1,3 +1,9 @@
+2004-12-19  Larry Jones  <lawrence.jones@ugs.com>
+
+	* expand_path.c (expand_path): Rewrite using offsets instead of
+	pointers to simplify and avoid reallocation bugs.
+	(Inspired by Jeremy Bopp <jeremy@motive.com>.)
+
 2004-12-09 Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (tests): Add modules7.
