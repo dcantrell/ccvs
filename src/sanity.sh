@@ -6566,11 +6566,15 @@ new revision: 1\.3; previous revision: 1\.2"
 
 	  # The next test is that CVS will resurrect a committed removal to a
 	  # branch.
-	  dotest_sort resurrection-6 "$testcvs add file1" \
+	  dotest_sort resurrection-6 "$testcvs -r add file1" \
 "U file1
 $SPROG add: Re-adding file \`file1' on branch \`resurrection' after dead revision 1\.1\.2\.1\.
 $SPROG add: Resurrecting file \`file1' from revision 1\.1\.
 $SPROG add: use \`$SPROG commit' to add this file permanently"
+	  # If the file is modified, it had better be read-write
+	  # regardless of what the user has requested with the CVSREAD
+	  # environment variable or the global -r switch
+          dotest resurrection-6b 'test -w file1' ''
 	  dotest resurrection-7 "$testcvs -Q diff -r1.1 file1" ""
 	  dotest resurrection-8 "$testcvs -q ci -mreadd" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
@@ -6587,9 +6591,16 @@ new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1"
 	  dotest resurrection-12 "$testcvs add file2" \
 "$SPROG add: File \`file2' has no previous revision to resurrect\."
 
+	  # Check what 'cvs -r add' does with resurrected files.
+	  dotest resurrection-13 "$testcvs -Q rm -f file1"
+	  dotest_sort resurrection-14 "$testcvs -r add file1" \
+"U file1
+$SPROG add: \`file1', version 1\.3, resurrected"
+	  dotest_fail resurrection-15 'test -w file1' ''
+
 	  dokeep
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
