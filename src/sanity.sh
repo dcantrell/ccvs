@@ -442,6 +442,13 @@ Checking in sdir/ssdir/ssfile;
 /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
 initial revision: 1.1
 done'
+	  dotest_fail basica-5a \
+	    "${testcvs} -q tag RESERVED sdir/ssdir/ssfile" \
+"${PROG} [a-z]*: tags containing only uppercase letters are reserved to cvs
+${PROG} \[[a-z]* aborted\]: failed to set tag RESERVED to revision 1.1 in /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v"
+	  dotest basica-5b "${testcvs} -q tag NOT_RESERVED" \
+'T sdir/ssdir/ssfile'
+
 	  dotest basica-6 "${testcvs} -q update" ''
 	  echo "ssfile line 2" >>sdir/ssdir/ssfile
 	  dotest basica-7 "${testcvs} -q ci -m modify-it" \
