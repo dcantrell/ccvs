@@ -1,3 +1,11 @@
+2000-12-26  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am: new target for creation of CVSvn.texi
+	(EXTRA_DIST): add CVSvn.texi.in & CVSvn.texi
+	* Makefile.in: Regenerated
+	* CVSvn.texi: new file
+	* .cvsignore: remove CVSvn.texi since it is now included in dist
+
 2000-12-22  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.in: Regenerated
