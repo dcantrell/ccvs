@@ -846,6 +846,7 @@ update_dirleave_proc (dir, err, update_dir)
 	free (repository);
     }
 
+    /* FIXME: chdir ("..") loses with symlinks.  */
     /* Prune empty dirs on the way out - if necessary */
     (void) chdir ("..");
     if (update_prune_dirs && isemptydir (dir))
