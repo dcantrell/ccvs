@@ -1,3 +1,14 @@
+Wed Dec 13 18:29:59 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.c (send_modified): make sure that vers and vers->options
+        are non-NULL before strcmp()'ing them with "-kb".
+        Initialize `bin' near where it is used, not at beginning of
+        function.
+        (update_entries): make sure `options' is non-NULL before
+        strcmp()'ing with "-kb".
+        Initialize `bin' near where it is used, not at beginning of
+        function.
+
 Tue Dec 12 18:56:38 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
 
         * options.h.in (RCSBIN_DFLT): document the probable need for this

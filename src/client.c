@@ -907,7 +907,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
     char *date;
     char *tag_or_date;
     char *scratch_entries;
-    int bin = 0;
+    int bin;
 
     read_line (&entries_line, 0);
 
@@ -996,7 +996,13 @@ update_entries (data_arg, ent_list, short_pathname, filename)
            flag, then we don't want to convert, else we do (because
            CVS assumes text files by default). */
 
-        bin = !(strcmp (options, "-kb"));
+        /* Actually, I don't believe options can be NULL here, but I'm
+           not dead certain of that. */
+        if (options)
+          bin = !(strcmp (options, "-kb"));
+        else
+          bin = 0;
+
         fd = open (temp_filename,
                    O_WRONLY | O_CREAT | O_TRUNC | (bin ? OPEN_BINARY : 0),
                    0777);
@@ -2859,7 +2865,7 @@ send_modified (file, short_pathname, vers)
     char *buf;
     char *mode_string;
     int bufsize;
-    int bin = 0;
+    int bin;
 
     /* Don't think we can assume fstat exists.  */
     if (stat (file, &sb) < 0)
@@ -2878,7 +2884,11 @@ send_modified (file, short_pathname, vers)
     /* Is the file marked as containing binary data by the "-kb" flag?
        If so, make sure to open it in binary mode: */
 
-    bin = !(strcmp (vers->options, "-kb"));
+    if (vers && vers->options)
+      bin = !(strcmp (vers->options, "-kb"));
+    else
+      bin = 0;
+
     fd = open (file, O_RDONLY | (bin ? OPEN_BINARY : 0));
 
     if (fd < 0)
