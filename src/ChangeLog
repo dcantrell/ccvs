@@ -1,5 +1,8 @@
 Sat Sep  6 09:48:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (join): Fix cut and paste error in join-28
+	(/home/kingdon/... -> ${TESTDIR}).
+
 	* recurse.c (start_recursion): If there is no CVSADM and no
 	subdirectories, give an error.
 	* sanity.sh (basicc): New tests, test for this fix.
