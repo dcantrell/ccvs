@@ -9094,7 +9094,7 @@ $ cvs checkout -r EXPR1 whatever_module
 
 @itemize @bullet
 @item
-Synopsis: diff [-lR] [format_options] [[-r rev1 | -D date1] [-r rev2 |  -D date2]] [files@dots{}]
+Synopsis: diff [-lR] [-k kflag] [format_options] [[-r rev1 | -D date1] [-r rev2 |  -D date2]] [files@dots{}]
 @item
 Requires: working directory, repository.
 @item
@@ -9177,56 +9177,502 @@ One or both @samp{-r} options can be replaced by a
 @c they are into that sort of thing.
 The following options specify the format of the
 output.  They have the same meaning as in GNU diff.
+Most options have two equivalent names, one of which is a single letter
+preceded by @samp{-}, and the other of which is a long name preceded by
+@samp{--}.
+
+@table @samp
+@item -@var{lines}
+Show @var{lines} (an integer) lines of context.  This option does not
+specify an output format by itself; it has no effect unless it is
+combined with @samp{-c} or @samp{-u}.  This option is obsolete.  For proper
+operation, @code{patch} typically needs at least two lines of context.
+
+@item -a
+Treat all files as text and compare them line-by-line, even if they
+do not seem to be text.
+
+@item -b
+Ignore trailing white space and consider all other sequences of one or
+more white space characters to be equivalent.
+
+@item -B
+Ignore changes that just insert or delete blank lines.
+
+@item --binary
+Read and write data in binary mode.
+
+@item --brief
+Report only whether the files differ, not the details of the
+differences.
+
+@item -c
+Use the context output format.
+
+@item -C @var{lines}
+@itemx --context@r{[}=@var{lines}@r{]}
+Use the context output format, showing @var{lines} (an integer) lines of
+context, or three if @var{lines} is not given.
+For proper operation, @code{patch} typically needs at least two lines of
+context.
+
+@item --changed-group-format=@var{format}
+Use @var{format} to output a line group containing differing lines from
+both files in if-then-else format.  @xref{Line group formats}.
+
+@item -d
+Change the algorithm to perhaps find a smaller set of changes.  This makes
+@code{diff} slower (sometimes much slower).
+
+@item -e
+@itemx --ed
+Make output that is a valid @code{ed} script.
+
+@item --expand-tabs
+Expand tabs to spaces in the output, to preserve the alignment of tabs
+in the input files.
+
+@item -f
+Make output that looks vaguely like an @code{ed} script but has changes
+in the order they appear in the file.
+
+@item -F @var{regexp}
+In context and unified format, for each hunk of differences, show some
+of the last preceding line that matches @var{regexp}.
+
+@item --forward-ed
+Make output that looks vaguely like an @code{ed} script but has changes
+in the order they appear in the file.
+
+@item -H
+Use heuristics to speed handling of large files that have numerous
+scattered small changes.
+
+@item --horizon-lines=@var{lines}
+Do not discard the last @var{lines} lines of the common prefix
+and the first @var{lines} lines of the common suffix.
+
+@item -i
+Ignore changes in case; consider upper- and lower-case letters
+equivalent.
+
+@item -I @var{regexp}
+Ignore changes that just insert or delete lines that match @var{regexp}.
+
+@item --ifdef=@var{name}
+Make merged if-then-else output using @var{name}.
+
+@item --ignore-all-space
+Ignore white space when comparing lines.
+
+@item --ignore-blank-lines
+Ignore changes that just insert or delete blank lines.
+
+@item --ignore-case
+Ignore changes in case; consider upper- and lower-case to be the same.
+
+@item --ignore-matching-lines=@var{regexp}
+Ignore changes that just insert or delete lines that match @var{regexp}.
+
+@item --ignore-space-change
+Ignore trailing white space and consider all other sequences of one or
+more white space characters to be equivalent.
+
+@item --initial-tab
+Output a tab rather than a space before the text of a line in normal or
+context format.  This causes the alignment of tabs in the line to look
+normal.
+
+@item -L @var{label}
+Use @var{label} instead of the file name in the context format
+and unified format headers.
+
+@item --label=@var{label}
+Use @var{label} instead of the file name in the context format
+and unified format headers.
+
+@item --left-column
+Print only the left column of two common lines in side by side format.
+
+@item --line-format=@var{format}
+Use @var{format} to output all input lines in if-then-else format.
+@xref{Line formats}.
+
+@item --minimal
+Change the algorithm to perhaps find a smaller set of changes.  This
+makes @code{diff} slower (sometimes much slower).
+
+@item -n
+Output RCS-format diffs; like @samp{-f} except that each command
+specifies the number of lines affected.
+
+@item -N
+@itemx --new-file
+In directory comparison, if a file is found in only one directory,
+treat it as present but empty in the other directory.
+
+@item --new-group-format=@var{format}
+Use @var{format} to output a group of lines taken from just the second
+file in if-then-else format.  @xref{Line group formats}.
+
+@item --new-line-format=@var{format}
+Use @var{format} to output a line taken from just the second file in
+if-then-else format.  @xref{Line formats}.
+
+@item --old-group-format=@var{format}
+Use @var{format} to output a group of lines taken from just the first
+file in if-then-else format.  @xref{Line group formats}.
+
+@item --old-line-format=@var{format}
+Use @var{format} to output a line taken from just the first file in
+if-then-else format.  @xref{Line formats}.
+
+@item -p
+Show which C function each change is in.
+
+@item --rcs
+Output RCS-format diffs; like @samp{-f} except that each command
+specifies the number of lines affected.
+
+@item --report-identical-files
+@itemx -s
+Report when two files are the same.
+
+@item --show-c-function
+Show which C function each change is in.
+
+@item --show-function-line=@var{regexp}
+In context and unified format, for each hunk of differences, show some
+of the last preceding line that matches @var{regexp}.
+
+@item --side-by-side
+Use the side by side output format.
+
+@item --speed-large-files
+Use heuristics to speed handling of large files that have numerous
+scattered small changes.
+
+@item --suppress-common-lines
+Do not print common lines in side by side format.
+
+@item -t
+Expand tabs to spaces in the output, to preserve the alignment of tabs
+in the input files.
+
+@item -T
+Output a tab rather than a space before the text of a line in normal or
+context format.  This causes the alignment of tabs in the line to look
+normal.
+
+@item --text
+Treat all files as text and compare them line-by-line, even if they
+do not appear to be text.
+
+@item -u
+Use the unified output format.
+
+@item --unchanged-group-format=@var{format}
+Use @var{format} to output a group of common lines taken from both files
+in if-then-else format.  @xref{Line group formats}.
+
+@item --unchanged-line-format=@var{format}
+Use @var{format} to output a line common to both files in if-then-else
+format.  @xref{Line formats}.
+
+@item -U @var{lines}
+@itemx --unified@r{[}=@var{lines}@r{]}
+Use the unified output format, showing @var{lines} (an integer) lines of
+context, or three if @var{lines} is not given.
+For proper operation, @code{patch} typically needs at least two lines of
+context.
+
+@item -w
+Ignore white space when comparing lines.
+
+@item -W @var{columns}
+@itemx --width=@var{columns}
+Use an output width of @var{columns} in side by side format.
+
+@item -y
+Use the side by side output format.
+@end table
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node Line group formats
+@appendixsubsubsec Line group formats
+
+Line group formats let you specify formats suitable for many
+applications that allow if-then-else input, including programming
+languages and text formatting languages.  A line group format specifies
+the output format for a contiguous group of similar lines.
+
+For example, the following command compares the TeX file @file{myfile}
+with the original version from the repository,
+and outputs a merged file in which old regions are
+surrounded by @samp{\begin@{em@}}-@samp{\end@{em@}} lines, and new
+regions are surrounded by @samp{\begin@{bf@}}-@samp{\end@{bf@}} lines.
 
 @example
--0 -1 -2 -3 -4 -5 -6 -7 -8 -9
---binary
---brief
---changed-group-format=@var{arg}
--c
-  -C @var{nlines}
-  --context[=@var{lines}]
--e --ed
--t --expand-tabs
--f --forward-ed
---horizon-lines=@var{arg}
---ifdef=@var{arg}
--w --ignore-all-space
--B --ignore-blank-lines
--i --ignore-case
--I @var{regexp}
-   --ignore-matching-lines=@var{regexp}
--h
--b --ignore-space-change
--T --initial-tab
--L @var{label}
-  --label=@var{label}
---left-column
--d --minimal
--N --new-file
---new-line-format=@var{arg}
---old-line-format=@var{arg}
---paginate
--n --rcs
--s --report-identical-files
--p
---show-c-function
--y --side-by-side
--F @var{regexp}
---show-function-line=@var{regexp}
--H --speed-large-files
---suppress-common-lines
--a --text
---unchanged-group-format=@var{arg}
--u
-  -U @var{nlines}
-  --unified[=@var{lines}]
-@c FIXCVS: This option is accepted by src/diff.c but
-@c not diff/diff.c; it would appear that any attempt to
-@c use it would get an error.
--V @var{arg}
--W @var{columns}
-  --width=@var{columns}
+cvs diff \
+   --old-group-format='\begin@{em@}
+%<\end@{em@}
+' \
+   --new-group-format='\begin@{bf@}
+%>\end@{bf@}
+' \
+   myfile
+@end example
+
+The following command is equivalent to the above example, but it is a
+little more verbose, because it spells out the default line group formats.
+
+@example
+cvs diff \
+   --old-group-format='\begin@{em@}
+%<\end@{em@}
+' \
+   --new-group-format='\begin@{bf@}
+%>\end@{bf@}
+' \
+   --unchanged-group-format='%=' \
+   --changed-group-format='\begin@{em@}
+%<\end@{em@}
+\begin@{bf@}
+%>\end@{bf@}
+' \
+   myfile
+@end example
+
+Here is a more advanced example, which outputs a diff listing with
+headers containing line numbers in a ``plain English'' style.
+
+@example
+cvs diff \
+   --unchanged-group-format='' \
+   --old-group-format='-------- %dn line%(n=1?:s) deleted at %df:
+%<' \
+   --new-group-format='-------- %dN line%(N=1?:s) added after %de:
+%>' \
+   --changed-group-format='-------- %dn line%(n=1?:s) changed at %df:
+%<-------- to:
+%>' \
+   myfile
+@end example
+
+To specify a line group format, use one of the options
+listed below.  You can specify up to four line group formats, one for
+each kind of line group.  You should quote @var{format}, because it
+typically contains shell metacharacters.
+
+@table @samp
+@item --old-group-format=@var{format}
+These line groups are hunks containing only lines from the first file.
+The default old group format is the same as the changed group format if
+it is specified; otherwise it is a format that outputs the line group as-is.
+
+@item --new-group-format=@var{format}
+These line groups are hunks containing only lines from the second
+file.  The default new group format is same as the the changed group
+format if it is specified; otherwise it is a format that outputs the
+line group as-is.
+
+@item --changed-group-format=@var{format}
+These line groups are hunks containing lines from both files.  The
+default changed group format is the concatenation of the old and new
+group formats.
+
+@item --unchanged-group-format=@var{format}
+These line groups contain lines common to both files.  The default
+unchanged group format is a format that outputs the line group as-is.
+@end table
+
+In a line group format, ordinary characters represent themselves;
+conversion specifications start with @samp{%} and have one of the
+following forms.
+
+@table @samp
+@item %<
+stands for the lines from the first file, including the trailing newline.
+Each line is formatted according to the old line format (@pxref{Line formats}).
+
+@item %>
+stands for the lines from the second file, including the trailing newline.
+Each line is formatted according to the new line format.
+
+@item %=
+stands for the lines common to both files, including the trailing newline.
+Each line is formatted according to the unchanged line format.
+
+@item %%
+stands for @samp{%}.
+
+@item %c'@var{C}'
+where @var{C} is a single character, stands for @var{C}.
+@var{C} may not be a backslash or an apostrophe.
+For example, @samp{%c':'} stands for a colon, even inside
+the then-part of an if-then-else format, which a colon would
+normally terminate.
+
+@item %c'\@var{O}'
+where @var{O} is a string of 1, 2, or 3 octal digits,
+stands for the character with octal code @var{O}.
+For example, @samp{%c'\0'} stands for a null character.
+
+@item @var{F}@var{n}
+where @var{F} is a @code{printf} conversion specification and @var{n} is one
+of the following letters, stands for @var{n}'s value formatted with @var{F}.
+
+@table @samp
+@item e
+The line number of the line just before the group in the old file.
+
+@item f
+The line number of the first line in the group in the old file;
+equals @var{e} + 1.
+
+@item l
+The line number of the last line in the group in the old file.
+
+@item m
+The line number of the line just after the group in the old file;
+equals @var{l} + 1.
+
+@item n
+The number of lines in the group in the old file; equals @var{l} - @var{f} + 1.
+
+@item E, F, L, M, N
+Likewise, for lines in the new file.
+
+@end table
+
+The @code{printf} conversion specification can be @samp{%d},
+@samp{%o}, @samp{%x}, or @samp{%X}, specifying decimal, octal,
+lower case hexadecimal, or upper case hexadecimal output
+respectively.  After the @samp{%} the following options can appear in
+sequence: a @samp{-} specifying left-justification; an integer
+specifying the minimum field width; and a period followed by an
+optional integer specifying the minimum number of digits.
+For example, @samp{%5dN} prints the number of new lines in the group
+in a field of width 5 characters, using the @code{printf} format @code{"%5d"}.
+
+@item (@var{A}=@var{B}?@var{T}:@var{E})
+If @var{A} equals @var{B} then @var{T} else @var{E}.
+@var{A} and @var{B} are each either a decimal constant
+or a single letter interpreted as above.
+This format spec is equivalent to @var{T} if
+@var{A}'s value equals @var{B}'s; otherwise it is equivalent to @var{E}.
+
+For example, @samp{%(N=0?no:%dN) line%(N=1?:s)} is equivalent to
+@samp{no lines} if @var{N} (the number of lines in the group in the the
+new file) is 0, to @samp{1 line} if @var{N} is 1, and to @samp{%dN lines}
+otherwise.
+@end table
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node Line formats
+@appendixsubsubsec Line formats
+
+Line formats control how each line taken from an input file is
+output as part of a line group in if-then-else format.
+
+For example, the following command outputs text with a one-column
+change indicator to the left of the text.  The first column of output
+is @samp{-} for deleted lines, @samp{|} for added lines, and a space
+for unchanged lines.  The formats contain newline characters where
+newlines are desired on output.
+
+@example
+cvs diff \
+   --old-line-format='-%l
+' \
+   --new-line-format='|%l
+' \
+   --unchanged-line-format=' %l
+' \
+   myfile
+@end example
+
+To specify a line format, use one of the following options.  You should
+quote @var{format}, since it often contains shell metacharacters.
+
+@table @samp
+@item --old-line-format=@var{format}
+formats lines just from the first file.
+
+@item --new-line-format=@var{format}
+formats lines just from the second file.
+
+@item --unchanged-line-format=@var{format}
+formats lines common to both files.
+
+@item --line-format=@var{format}
+formats all lines; in effect, it sets all three above options simultaneously.
+@end table
+
+In a line format, ordinary characters represent themselves;
+conversion specifications start with @samp{%} and have one of the
+following forms.
+
+@table @samp
+@item %l
+stands for the the contents of the line, not counting its trailing
+newline (if any).  This format ignores whether the line is incomplete.
+
+@item %L
+stands for the the contents of the line, including its trailing newline
+(if any).  If a line is incomplete, this format preserves its
+incompleteness.
+
+@item %%
+stands for @samp{%}.
+
+@item %c'@var{C}'
+where @var{C} is a single character, stands for @var{C}.
+@var{C} may not be a backslash or an apostrophe.
+For example, @samp{%c':'} stands for a colon.
+
+@item %c'\@var{O}'
+where @var{O} is a string of 1, 2, or 3 octal digits,
+stands for the character with octal code @var{O}.
+For example, @samp{%c'\0'} stands for a null character.
+
+@item @var{F}n
+where @var{F} is a @code{printf} conversion specification,
+stands for the line number formatted with @var{F}.
+For example, @samp{%.5dn} prints the line number using the
+@code{printf} format @code{"%.5d"}.  @xref{Line group formats}, for
+more about printf conversion specifications.
+
+@end table
+
+The default line format is @samp{%l} followed by a newline character.
+
+If the input contains tab characters and it is important that they line
+up on output, you should ensure that @samp{%l} or @samp{%L} in a line
+format is just after a tab stop (e.g.@: by preceding @samp{%l} or
+@samp{%L} with a tab character), or you should use the @samp{-t} or
+@samp{--expand-tabs} option.
+
+Taken together, the line and line group formats let you specify many
+different formats.  For example, the following command uses a format
+similar to @code{diff}'s normal format.  You can tailor this command
+to get fine control over @code{diff}'s output.
+
+@example
+cvs diff \
+   --old-line-format='< %l
+' \
+   --new-line-format='> %l
+' \
+   --old-group-format='%df%(f=l?:,%dl)d%dE
+%<' \
+   --new-group-format='%dea%dF%(F=L?:,%dL)
+%>' \
+   --changed-group-format='%df%(f=l?:,%dl)c%dF%(F=L?:,%dL)
+%<---
+%>' \
+   --unchanged-group-format='' \
+   myfile
 @end example
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
