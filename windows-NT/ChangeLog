@@ -1,3 +1,18 @@
+Thu May 16 01:18:22 1996  noel  <noel@BOAT_ANCHOR>
+
+	* sanity.sh: Hacked version of src/sanity.sh for use under
+ 	CYGWIN32.
+
+	* filesubr.c (expand_wild): Since FindFirstFile and FindNextFile
+ 	don't return the pathname of a file, we need to keep track of it
+ 	ourselves.
+
+	* options.h: Fix defines for DIFF and GREP. 
+
+	* run.c (run_exec): Flush stdout and stderr so we end up with the
+ 	correct interleaving of output for sanity.sh.  This can be removed
+ 	later, if desired.
+
 Wed May 15 23:51:49 1996  Noel Cragg  <noel@gargle.rain.org>
 
 	* README: mention that grep is mandatory.
