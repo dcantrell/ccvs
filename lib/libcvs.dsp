@@ -165,7 +165,7 @@ SOURCE=.\regex.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\savecwd.c
+SOURCE=".\save-cwd.c"
 # End Source File
 # Begin Source File
 
@@ -193,7 +193,11 @@ SOURCE=.\vasnprintf.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\xgetwd.c
+SOURCE=".\xalloc-die.c"
+# End Source File
+# Begin Source File
+
+SOURCE=.\xgetcwd.c
 # End Source File
 # Begin Source File
 
@@ -347,7 +351,7 @@ SOURCE=.\regex.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\savecwd.h
+SOURCE=".\save-cwd.h"
 # End Source File
 # Begin Source File
 
@@ -380,6 +384,10 @@ SOURCE=.\vasnprintf.h
 # Begin Source File
 
 SOURCE=.\xalloc.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\xgetcwd.h
 # End Source File
 # Begin Source File
 
