@@ -232,16 +232,6 @@
  */
 #define AUTH_CLIENT_SUPPORT 1
 
-/*
- * This tells the client that it must use send()/recv() to talk to the
- * server if it is connected to the server via a socket; Win95 is said to
- * need it because _open_osfhandle doesn't work.  This is only
- * implemented for pserver, not rsh.  Furthermore, NT doesn't seem to have send()
- * and recv(), or maybe one has to link against a different library or something,
- * I don't know.  So this is commented out.
- */
-#define NO_SOCKET_TO_FD 1
-
 /* End of CVS configuration section */
 
 /*
