@@ -674,7 +674,7 @@ if test x"$*" = x; then
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	tests="${tests} clean"
 	# Checking out various places (modules, checkout -d, &c)
-	tests="${tests} modules modules2 modules3 modules4 modules5"
+	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
 	tests="${tests} mkmodules-temp-file-removal"
 	tests="${tests} cvsadm emptydir abspath toplevel toplevel2"
         tests="${tests} checkout_repository"
@@ -8664,6 +8664,7 @@ fish"
 	  # -d: modules, modules3, cvsadm
 	  # -i, -o, -u, -e, -t: modules5
 	  # slashes in module names: modules3
+	  # invalid module definitions: modules6
 
 	  ############################################################
 	  # These tests are to make sure that administrative files get
@@ -9989,6 +9990,60 @@ Are you sure you want to release (and delete) directory .mydir.: "
 
 	  cd ..
 	  rm -rf 1 ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/*.sh
+	  ;;
+
+	modules6)
+	  #
+	  # Test invalid module definitions
+	  #
+	  # See the header comment for the `modules' test for an index of
+	  # the complete suite of modules tests.
+	  #
+
+	  #
+	  # There was a bug in CVS through 1.11.1p1 where a bad module name
+	  # would cause the previous line to be parsed as the module
+	  # definition.  This test proves this doesn't happen anymore.
+	  #
+	  mkdir modules6
+	  cd modules6
+	  dotest module6-setup-1 "${testcvs} -Q co CVSROOT" ""
+	  cd CVSROOT
+	  echo "longmodulename who cares" >modules
+	  echo "badname" >>modules
+	  # This test almost isn't setup since it generates the error message
+	  # we are looking for if `-Q' isn't specified, but I want to test the
+	  # filename in the message later.
+	  dotest modules6-setup-2 "${testcvs} -Q ci -mbad-modules" \
+"Checking in modules;
+${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
+new revision: [0-9.]*; previous revision: [0-9.]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+
+	  # Here's where CVS would report not being able to find `lename'
+	  cd ..
+	  dotest_fail modules6-1 "${testcvs} -q co badname" \
+"${PROG} [a-z]*: warning: NULL value for key .badname. at line 2 of .${CVSROOT_DIRNAME}/CVSROOT/modules.
+${PROG} [a-z]*: cannot find module .badname. - ignored" \
+"${PROG} [a-z]*: warning: NULL value for key .badname. at line 2 of .${CVSROOT_DIRNAME}/CVSROOT/modules.
+${PROG} [a-z]*: cannot find module .badname. - ignored
+${PROG} \[checkout aborted\]: cannot expand modules"
+
+	  # cleanup
+	  cd CVSROOT
+	  echo "# empty modules file" >modules
+	  dotest modules6-cleanup-1 "${testcvs} -Q ci -mempty-modules" \
+"Checking in modules;
+${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
+new revision: [0-9.]*; previous revision: [0-9.]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ../..
+
+	  if $keep; then :; else
+	    rm -r modules6
+	  fi
 	  ;;
 
 	mkmodules-temp-file-removal)
