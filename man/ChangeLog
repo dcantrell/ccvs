@@ -1,3 +1,8 @@
+2001-11-27  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvsbug.8: Fixed typo.
+	(Correction from Mark D. Baushke <mdb@cvshome.org>.)
+
 2001-09-04  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated with automake 1.5.
