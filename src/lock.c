@@ -428,7 +428,7 @@ set_lockers_name (statp)
 	(void) strcpy (lockers_name, pw->pw_name);
     }
     else
-	(void) sprintf (lockers_name, "uid%d", statp->st_uid);
+	(void) sprintf (lockers_name, "uid%lu", (unsigned long) statp->st_uid);
 }
 
 /*

@@ -40,8 +40,6 @@ static int process_import_file PROTO((char *message, char *vfile, char *vtag,
 static int update_rcs_file PROTO((char *message, char *vfile, char *vtag, int targc,
 			    char *targv[], int inattic));
 static void add_log PROTO((int ch, char *fname));
-static int str2expmode PROTO((char const* expstring));
-static int strn2expmode PROTO((char const* expstring, size_t n));
 
 static int repos_len;
 static char vhead[50];
@@ -126,10 +124,11 @@ import (argc, argv)
 		ign_add (optarg, 0);
 		break;
             case 'k':
-		if (str2expmode(optarg) != -1)
-		  keyword_opt = optarg;
-		else
-		  usage (keyword_usage);
+		/* RCS_check_kflag returns strings of the form -kxx.  We
+		   only use it for validation, so we can free the value
+		   as soon as it is returned. */
+		free (RCS_check_kflag(optarg));	
+		keyword_opt = optarg;
 		break;
 	    case '?':
 	    default:
@@ -352,25 +351,22 @@ import_descend (message, vtag, targc, targv)
 	    {
 		has_dirs = 1;
 	    }
+	    else if (islink (dp->d_name))
+	    {
+		add_log ('L', dp->d_name);
+		err++;
+	    }
 	    else
 	    {
-		if (islink (dp->d_name))
-		{
-		    add_log ('L', dp->d_name);
-		    err++;
-		}
-		else
-		{
 #ifdef CLIENT_SUPPORT
-		    if (client_active)
-			err += client_process_import_file (message, dp->d_name,
+		if (client_active)
+		    err += client_process_import_file (message, dp->d_name,
 							   vtag, targc, targv,
 							   repository);
-		    else
+		else
 #endif
 		    err += process_import_file (message, dp->d_name,
 						vtag, targc, targv);
-		}
 	    }
 	}
 	(void) closedir (dirp);
@@ -1110,36 +1106,3 @@ import_descend_dir (message, dir, vtag, targc, targv)
 	error (1, errno, "cannot chdir to %s", cwd);
     return (err);
 }
-
-/* the following code is taken from code in rcs/src/rcssyn.c, and returns a
- * positive value if 'expstring' contains a valid RCS expansion token for
- * the -k option.  If an invalid expansion is named, then return -1.
- */
-
-char const *const expand_names[] = {
-	/* These must agree with *_EXPAND in rcs/src/rcsbase.h.  */
-	"kv","kvl","k","v","o",
-	0
-};
-
-static int
-str2expmode(s)
-     char const *s;
-/* Yield expand mode corresponding to S, or -1 if bad.  */
-{
-	return strn2expmode(s, strlen(s));
-}
-
-static int
-strn2expmode(s, n)
-     char const *s;
-     size_t n;
-{
-  char const *const *p;
-  
-  for (p = expand_names;  *p;  ++p)
-    if (memcmp(*p,s,n) == 0  &&  !(*p)[n])
-      return p - expand_names;
-  return -1;
-}
-
