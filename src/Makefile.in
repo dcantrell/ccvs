@@ -11,6 +11,22 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
+@SET_MAKE@
+
+# Makefile for GNU CVS program.
+# Copyright (C) 1986, 1988-1990, 2000 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -54,9 +70,6 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-
-@SET_MAKE@
-AMDEP = @AMDEP@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
@@ -80,22 +93,9 @@ TEXI2DVI = @TEXI2DVI@
 VERSION = @VERSION@
 YACC = @YACC@
 _am_include = @_am_include@
+_am_quote = @_am_quote@
 includeopt = @includeopt@
 install_sh = @install_sh@
-
-# Makefile for GNU CVS program.
-# Copyright (C) 1986, 1988-1990, 2000 Free Software Foundation, Inc.
-
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2, or (at your option)
-# any later version.
-
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
 
 SHELL = /bin/sh
 
@@ -211,61 +211,71 @@ CONFIG_CLEAN_FILES = cvsbug
 bin_PROGRAMS = cvs$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
+am_cvs_OBJECTS = add.$(OBJEXT) admin.$(OBJEXT) annotate.$(OBJEXT) \
+	buffer.$(OBJEXT) checkin.$(OBJEXT) checkout.$(OBJEXT) \
+	classify.$(OBJEXT) client.$(OBJEXT) commit.$(OBJEXT) \
+	create_adm.$(OBJEXT) cvsrc.$(OBJEXT) diff.$(OBJEXT) \
+	edit.$(OBJEXT) entries.$(OBJEXT) error.$(OBJEXT) \
+	expand_path.$(OBJEXT) fileattr.$(OBJEXT) filesubr.$(OBJEXT) \
+	find_names.$(OBJEXT) hardlink.$(OBJEXT) hash.$(OBJEXT) \
+	history.$(OBJEXT) ignore.$(OBJEXT) import.$(OBJEXT) \
+	lock.$(OBJEXT) log.$(OBJEXT) login.$(OBJEXT) logmsg.$(OBJEXT) \
+	main.$(OBJEXT) mkmodules.$(OBJEXT) modules.$(OBJEXT) \
+	myndbm.$(OBJEXT) no_diff.$(OBJEXT) parseinfo.$(OBJEXT) \
+	patch.$(OBJEXT) rcs.$(OBJEXT) rcscmds.$(OBJEXT) \
+	recurse.$(OBJEXT) release.$(OBJEXT) remove.$(OBJEXT) \
+	repos.$(OBJEXT) root.$(OBJEXT) run.$(OBJEXT) scramble.$(OBJEXT) \
+	server.$(OBJEXT) status.$(OBJEXT) subr.$(OBJEXT) tag.$(OBJEXT) \
+	update.$(OBJEXT) vers_ts.$(OBJEXT) watch.$(OBJEXT) \
+	wrapper.$(OBJEXT) zlib.$(OBJEXT)
+cvs_OBJECTS = $(am_cvs_OBJECTS)
+cvs_DEPENDENCIES = ../diff/libdiff.a ../lib/libcvs.a ../zlib/libz.a \
+	version.o
+cvs_LDFLAGS =
+SCRIPTS = $(bin_SCRIPTS)
+
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CFLAGS = @CFLAGS@
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir) -I.
 DEFS = @DEFS@
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-am_cvs_OBJECTS = add.$(OBJEXT) admin.$(OBJEXT) annotate.$(OBJEXT) buffer.$(OBJEXT) \
-checkin.$(OBJEXT) checkout.$(OBJEXT) classify.$(OBJEXT) \
-client.$(OBJEXT) commit.$(OBJEXT) create_adm.$(OBJEXT) cvsrc.$(OBJEXT) \
-diff.$(OBJEXT) edit.$(OBJEXT) entries.$(OBJEXT) error.$(OBJEXT) \
-expand_path.$(OBJEXT) fileattr.$(OBJEXT) filesubr.$(OBJEXT) \
-find_names.$(OBJEXT) hardlink.$(OBJEXT) hash.$(OBJEXT) \
-history.$(OBJEXT) ignore.$(OBJEXT) import.$(OBJEXT) lock.$(OBJEXT) \
-log.$(OBJEXT) login.$(OBJEXT) logmsg.$(OBJEXT) main.$(OBJEXT) \
-mkmodules.$(OBJEXT) modules.$(OBJEXT) myndbm.$(OBJEXT) \
-no_diff.$(OBJEXT) parseinfo.$(OBJEXT) patch.$(OBJEXT) rcs.$(OBJEXT) \
-rcscmds.$(OBJEXT) recurse.$(OBJEXT) release.$(OBJEXT) remove.$(OBJEXT) \
-repos.$(OBJEXT) root.$(OBJEXT) run.$(OBJEXT) scramble.$(OBJEXT) \
-server.$(OBJEXT) status.$(OBJEXT) subr.$(OBJEXT) tag.$(OBJEXT) \
-update.$(OBJEXT) vers_ts.$(OBJEXT) watch.$(OBJEXT) wrapper.$(OBJEXT) \
-zlib.$(OBJEXT)
-cvs_OBJECTS = $(am_cvs_OBJECTS)
-cvs_DEPENDENCIES = ../diff/libdiff.a ../lib/libcvs.a ../zlib/libz.a \
-version.o
-cvs_LDFLAGS = 
-SCRIPTS = $(bin_SCRIPTS)
-
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CFLAGS = @CFLAGS@
-CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = $(cvs_SOURCES)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
-@AMDEP@DEP_FILES = $(DEPDIR)/add.Po $(DEPDIR)/admin.Po  $(DEPDIR)/annotate.Po \
-@AMDEP@ $(DEPDIR)/buffer.Po $(DEPDIR)/checkin.Po $(DEPDIR)/checkout.Po \
-@AMDEP@ $(DEPDIR)/classify.Po $(DEPDIR)/client.Po $(DEPDIR)/commit.Po \
-@AMDEP@ $(DEPDIR)/create_adm.Po $(DEPDIR)/cvsrc.Po $(DEPDIR)/diff.Po \
-@AMDEP@ $(DEPDIR)/edit.Po $(DEPDIR)/entries.Po $(DEPDIR)/error.Po \
-@AMDEP@ $(DEPDIR)/expand_path.Po $(DEPDIR)/fileattr.Po \
-@AMDEP@ $(DEPDIR)/filesubr.Po $(DEPDIR)/find_names.Po \
-@AMDEP@ $(DEPDIR)/hardlink.Po $(DEPDIR)/hash.Po $(DEPDIR)/history.Po \
-@AMDEP@ $(DEPDIR)/ignore.Po $(DEPDIR)/import.Po $(DEPDIR)/lock.Po \
-@AMDEP@ $(DEPDIR)/log.Po $(DEPDIR)/login.Po $(DEPDIR)/logmsg.Po \
-@AMDEP@ $(DEPDIR)/main.Po $(DEPDIR)/mkmodules.Po $(DEPDIR)/modules.Po \
-@AMDEP@ $(DEPDIR)/myndbm.Po $(DEPDIR)/no_diff.Po $(DEPDIR)/parseinfo.Po \
-@AMDEP@ $(DEPDIR)/patch.Po $(DEPDIR)/rcs.Po $(DEPDIR)/rcscmds.Po \
-@AMDEP@ $(DEPDIR)/recurse.Po $(DEPDIR)/release.Po $(DEPDIR)/remove.Po \
-@AMDEP@ $(DEPDIR)/repos.Po $(DEPDIR)/root.Po $(DEPDIR)/run.Po \
-@AMDEP@ $(DEPDIR)/scramble.Po $(DEPDIR)/server.Po $(DEPDIR)/status.Po \
-@AMDEP@ $(DEPDIR)/subr.Po $(DEPDIR)/tag.Po $(DEPDIR)/update.Po \
-@AMDEP@ $(DEPDIR)/vers_ts.Po $(DEPDIR)/watch.Po $(DEPDIR)/wrapper.Po \
-@AMDEP@ $(DEPDIR)/zlib.Po
+@AMDEP_TRUE@DEP_FILES = $(DEPDIR)/add.Po $(DEPDIR)/admin.Po \
+@AMDEP_TRUE@	$(DEPDIR)/annotate.Po $(DEPDIR)/buffer.Po \
+@AMDEP_TRUE@	$(DEPDIR)/checkin.Po $(DEPDIR)/checkout.Po \
+@AMDEP_TRUE@	$(DEPDIR)/classify.Po $(DEPDIR)/client.Po \
+@AMDEP_TRUE@	$(DEPDIR)/commit.Po $(DEPDIR)/create_adm.Po \
+@AMDEP_TRUE@	$(DEPDIR)/cvsrc.Po $(DEPDIR)/diff.Po \
+@AMDEP_TRUE@	$(DEPDIR)/edit.Po $(DEPDIR)/entries.Po \
+@AMDEP_TRUE@	$(DEPDIR)/error.Po $(DEPDIR)/expand_path.Po \
+@AMDEP_TRUE@	$(DEPDIR)/fileattr.Po $(DEPDIR)/filesubr.Po \
+@AMDEP_TRUE@	$(DEPDIR)/find_names.Po $(DEPDIR)/hardlink.Po \
+@AMDEP_TRUE@	$(DEPDIR)/hash.Po $(DEPDIR)/history.Po \
+@AMDEP_TRUE@	$(DEPDIR)/ignore.Po $(DEPDIR)/import.Po \
+@AMDEP_TRUE@	$(DEPDIR)/lock.Po $(DEPDIR)/log.Po \
+@AMDEP_TRUE@	$(DEPDIR)/login.Po $(DEPDIR)/logmsg.Po \
+@AMDEP_TRUE@	$(DEPDIR)/main.Po $(DEPDIR)/mkmodules.Po \
+@AMDEP_TRUE@	$(DEPDIR)/modules.Po $(DEPDIR)/myndbm.Po \
+@AMDEP_TRUE@	$(DEPDIR)/no_diff.Po $(DEPDIR)/parseinfo.Po \
+@AMDEP_TRUE@	$(DEPDIR)/patch.Po $(DEPDIR)/rcs.Po \
+@AMDEP_TRUE@	$(DEPDIR)/rcscmds.Po $(DEPDIR)/recurse.Po \
+@AMDEP_TRUE@	$(DEPDIR)/release.Po $(DEPDIR)/remove.Po \
+@AMDEP_TRUE@	$(DEPDIR)/repos.Po $(DEPDIR)/root.Po \
+@AMDEP_TRUE@	$(DEPDIR)/run.Po $(DEPDIR)/scramble.Po \
+@AMDEP_TRUE@	$(DEPDIR)/server.Po $(DEPDIR)/status.Po \
+@AMDEP_TRUE@	$(DEPDIR)/subr.Po $(DEPDIR)/tag.Po \
+@AMDEP_TRUE@	$(DEPDIR)/update.Po $(DEPDIR)/vers_ts.Po \
+@AMDEP_TRUE@	$(DEPDIR)/watch.Po $(DEPDIR)/wrapper.Po \
+@AMDEP_TRUE@	$(DEPDIR)/zlib.Po
 DIST_COMMON = ./stamp-h2.in ChangeLog Makefile.am Makefile.in cvsbug.in \
-options.h.in
-
+	options.h.in
 SOURCES = $(cvs_SOURCES)
 OBJECTS = $(am_cvs_OBJECTS)
 
@@ -273,13 +283,13 @@ all: options.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .h .o .obj
+.SUFFIXES: .c .o .obj
 
-$(srcdir)/Makefile.in: Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+$(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  src/Makefile
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && \
 	  CONFIG_HEADERS= CONFIG_LINKS= \
 	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
@@ -296,7 +306,7 @@ stamp-h2: $(srcdir)/options.h.in $(top_builddir)/config.status
 	  && CONFIG_FILES= CONFIG_HEADERS=src/options.h \
 	     $(SHELL) ./config.status
 	@mv stamp-h2T stamp-h2
-$(srcdir)/options.h.in: $(srcdir)/./stamp-h2.in
+$(srcdir)/options.h.in:  $(srcdir)/./stamp-h2.in
 	@if test ! -f $@; then \
 		rm -f $(srcdir)/./stamp-h2.in; \
 		$(MAKE) $(srcdir)/./stamp-h2.in; \
@@ -333,14 +343,8 @@ uninstall-binPROGRAMS:
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 
-mostlyclean-compile:
-	-rm -f *.$(OBJEXT) core *.core
-
-distclean-compile:
-	-rm -f *.tab.c
-
-cvs: $(cvs_OBJECTS) $(cvs_DEPENDENCIES)
-	@rm -f cvs
+cvs$(EXEEXT): $(cvs_OBJECTS) $(cvs_DEPENDENCIES)
+	@rm -f cvs$(EXEEXT)
 	$(LINK) $(cvs_LDFLAGS) $(cvs_OBJECTS) $(cvs_LDADD) $(LIBS)
 install-binSCRIPTS: $(bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
@@ -364,6 +368,12 @@ uninstall-binSCRIPTS:
 	  rm -f $(DESTDIR)$(bindir)/$$f; \
 	done
 
+mostlyclean-compile:
+	-rm -f *.$(OBJEXT) core *.core
+
+distclean-compile:
+	-rm -f *.tab.c
+
 tags: TAGS
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
@@ -375,7 +385,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	       END { for (i in files) print i; }'`; \
 	mkid -fID $$unique $(LISP)
 
-TAGS: $(HEADERS) $(SOURCES) options.h.in $(TAGS_DEPENDENCIES) \
+TAGS:  $(HEADERS) $(SOURCES) options.h.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
@@ -396,75 +406,75 @@ GTAGS:
 distclean-tags:
 	-rm -f TAGS ID
 
-@AMDEP@@_am_include@ $(DEPDIR)/add.Po
-@AMDEP@@_am_include@ $(DEPDIR)/admin.Po
-@AMDEP@@_am_include@ $(DEPDIR)/annotate.Po
-@AMDEP@@_am_include@ $(DEPDIR)/buffer.Po
-@AMDEP@@_am_include@ $(DEPDIR)/checkin.Po
-@AMDEP@@_am_include@ $(DEPDIR)/checkout.Po
-@AMDEP@@_am_include@ $(DEPDIR)/classify.Po
-@AMDEP@@_am_include@ $(DEPDIR)/client.Po
-@AMDEP@@_am_include@ $(DEPDIR)/commit.Po
-@AMDEP@@_am_include@ $(DEPDIR)/create_adm.Po
-@AMDEP@@_am_include@ $(DEPDIR)/cvsrc.Po
-@AMDEP@@_am_include@ $(DEPDIR)/diff.Po
-@AMDEP@@_am_include@ $(DEPDIR)/edit.Po
-@AMDEP@@_am_include@ $(DEPDIR)/entries.Po
-@AMDEP@@_am_include@ $(DEPDIR)/error.Po
-@AMDEP@@_am_include@ $(DEPDIR)/expand_path.Po
-@AMDEP@@_am_include@ $(DEPDIR)/fileattr.Po
-@AMDEP@@_am_include@ $(DEPDIR)/filesubr.Po
-@AMDEP@@_am_include@ $(DEPDIR)/find_names.Po
-@AMDEP@@_am_include@ $(DEPDIR)/hardlink.Po
-@AMDEP@@_am_include@ $(DEPDIR)/hash.Po
-@AMDEP@@_am_include@ $(DEPDIR)/history.Po
-@AMDEP@@_am_include@ $(DEPDIR)/ignore.Po
-@AMDEP@@_am_include@ $(DEPDIR)/import.Po
-@AMDEP@@_am_include@ $(DEPDIR)/lock.Po
-@AMDEP@@_am_include@ $(DEPDIR)/log.Po
-@AMDEP@@_am_include@ $(DEPDIR)/login.Po
-@AMDEP@@_am_include@ $(DEPDIR)/logmsg.Po
-@AMDEP@@_am_include@ $(DEPDIR)/main.Po
-@AMDEP@@_am_include@ $(DEPDIR)/mkmodules.Po
-@AMDEP@@_am_include@ $(DEPDIR)/modules.Po
-@AMDEP@@_am_include@ $(DEPDIR)/myndbm.Po
-@AMDEP@@_am_include@ $(DEPDIR)/no_diff.Po
-@AMDEP@@_am_include@ $(DEPDIR)/parseinfo.Po
-@AMDEP@@_am_include@ $(DEPDIR)/patch.Po
-@AMDEP@@_am_include@ $(DEPDIR)/rcs.Po
-@AMDEP@@_am_include@ $(DEPDIR)/rcscmds.Po
-@AMDEP@@_am_include@ $(DEPDIR)/recurse.Po
-@AMDEP@@_am_include@ $(DEPDIR)/release.Po
-@AMDEP@@_am_include@ $(DEPDIR)/remove.Po
-@AMDEP@@_am_include@ $(DEPDIR)/repos.Po
-@AMDEP@@_am_include@ $(DEPDIR)/root.Po
-@AMDEP@@_am_include@ $(DEPDIR)/run.Po
-@AMDEP@@_am_include@ $(DEPDIR)/scramble.Po
-@AMDEP@@_am_include@ $(DEPDIR)/server.Po
-@AMDEP@@_am_include@ $(DEPDIR)/status.Po
-@AMDEP@@_am_include@ $(DEPDIR)/subr.Po
-@AMDEP@@_am_include@ $(DEPDIR)/tag.Po
-@AMDEP@@_am_include@ $(DEPDIR)/update.Po
-@AMDEP@@_am_include@ $(DEPDIR)/vers_ts.Po
-@AMDEP@@_am_include@ $(DEPDIR)/watch.Po
-@AMDEP@@_am_include@ $(DEPDIR)/wrapper.Po
-@AMDEP@@_am_include@ $(DEPDIR)/zlib.Po
+@_am_include@ @_am_quote@$(DEPDIR)/add.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/admin.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/annotate.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/buffer.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/checkin.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/checkout.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/classify.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/client.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/commit.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/create_adm.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/cvsrc.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/diff.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/edit.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/entries.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/error.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/expand_path.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/fileattr.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/filesubr.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/find_names.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/hardlink.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/hash.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/history.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/ignore.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/import.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/lock.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/log.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/login.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/logmsg.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/main.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/mkmodules.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/modules.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/myndbm.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/no_diff.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/parseinfo.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/patch.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/rcs.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/rcscmds.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/recurse.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/release.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/remove.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/repos.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/root.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/run.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/scramble.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/server.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/status.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/subr.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/tag.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/update.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/vers_ts.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/watch.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/wrapper.Po@_am_quote@
+@_am_include@ @_am_quote@$(DEPDIR)/zlib.Po@_am_quote@
 
 distclean-depend:
 	-rm -rf $(DEPDIR)
 
-@AMDEP@CCDEPMODE = @CCDEPMODE@
+CCDEPMODE = @CCDEPMODE@
 
 .c.o:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(COMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
 
 .c.obj:
-@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(COMPILE) -c -o $@ `cygpath -w $<`
 
 
