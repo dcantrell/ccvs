@@ -1,3 +1,16 @@
+2000-10-11  Derek Price  <derek.price@openavenue.com>
+
+	* client.c (auth_server_port_number -> get_port_number, start_pserver,
+	start_tcp_server): use a port specified in CVSROOT instead of the
+	default port.  Failing that, use the CVS_CLIENT_PORT environment
+	variable.
+	* cvs.h: Added global CVSroot_port & renamed auth_server_port_number.
+	* root.c (parse_cvsroot): Parse the new CVSROOT format properly.
+	Incidentally reformated some error messages for uniformity and
+	readability.
+	* sanity.sh (crerepos): fix two tests which were now expecting the
+	wrong error message.
+
 2000-10-11  Larry Jones  <larry.jones@sdrc.com>
 
 	* server.c (pserver_authenticate_connection): Fix stupid mistake

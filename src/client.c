@@ -3698,14 +3698,29 @@ init_sockaddr (name, hostname, port)
 static int auth_server_port_number PROTO ((void));
 
 static int
-auth_server_port_number ()
+get_port_number (const char *envname, const char *portname, int defaultport)
 {
-    struct servent *s = getservbyname ("cvspserver", "tcp");
+    struct servent *s;
+    char *port_s;
 
-    if (s)
+    if (envname && (port_s = getenv (envname)))
+    {
+	int port = atoi (port_s);
+	if (port <= 0)
+	{
+	    error (0, 0, "CVS_CLIENT_PORT must be a positive number!  If you");
+	    error (0, 0, "are trying to force a connection via rsh, please");
+	    error (0, 0, "put \":server:\" at the beginning of your CVSROOT");
+	    error (1, 0, "variable.");
+	}
+	if (trace)
+	    fprintf(stderr, "Using TCP port %d to contact server.\n", port);
+	return (port);
+    }
+    else if (portname && (s = getservbyname (portname, "tcp")))
 	return ntohs (s->s_port);
     else
-	return CVS_AUTH_PORT;
+	return defaultport;
 }
 
 
@@ -3815,7 +3830,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
     {
 	error (1, 0, "cannot create socket: %s", SOCK_STRERROR (SOCK_ERRNO));
     }
-    port_number = auth_server_port_number ();
+    port_number = CVSroot_port ? CVSroot_port : get_port_number ("CVS_CLIENT_PORT", "cvspserver", CVS_AUTH_PORT);
     hostinfo = init_sockaddr (&client_sai, CVSroot_hostname, port_number);
     if (connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai))
 	< 0)
@@ -4027,30 +4042,7 @@ start_tcp_server (tofdp, fromfdp)
 	error (1, 0, "cannot create socket: %s", SOCK_STRERROR (SOCK_ERRNO));
 
     /* Get CVS_CLIENT_PORT or look up cvs/tcp with CVS_PORT as default */
-    portenv = getenv ("CVS_CLIENT_PORT");
-    if (portenv != NULL)
-    {
-	port = atoi (portenv);
-	if (port <= 0)
-	{
-	    error (0, 0, "CVS_CLIENT_PORT must be a positive number!  If you");
-	    error (0, 0, "are trying to force a connection via rsh, please");
-	    error (0, 0, "put \":server:\" at the beginning of your CVSROOT");
-	    error (1, 0, "variable.");
-	}
-	if (trace)
-	    fprintf(stderr, "Using TCP port %d to contact server.\n", port);
-    }
-    else
-    {
-	struct servent *sp;
-
-	sp = getservbyname ("cvs", "tcp");
-	if (sp == NULL)
-	    port = CVS_PORT;
-	else
-	    port = ntohs (sp->s_port);
-    }
+    port = CVSroot_port ? CVSroot_port : get_port_number ("CVS_CLIENT_PORT", "cvs", CVS_PORT);
 
     hp = init_sockaddr (&sin, CVSroot_hostname, port);
 

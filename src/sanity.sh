@@ -13636,13 +13636,13 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	    # Test that CVS rejects a relative path in CVSROOT.
 	    mkdir 1; cd 1
 	    dotest_fail crerepos-6a "${testcvs} -q -d ../crerepos get ." \
-"${PROG} \[[a-z]* aborted\]: CVSROOT ../crerepos must be an absolute pathname"
+"${PROG} \[[a-z]* aborted\]: CVSROOT \"../crerepos\" must be an absolute pathname"
 	    cd ..
 	    rm -r 1
 
 	    mkdir 1; cd 1
 	    dotest_fail crerepos-6b "${testcvs} -d crerepos init" \
-"${PROG} \[[a-z]* aborted\]: CVSROOT crerepos must be an absolute pathname"
+"${PROG} \[[a-z]* aborted\]: CVSROOT \"crerepos\" must be an absolute pathname"
 	    cd ..
 	    rm -r 1
 	  else # remote
