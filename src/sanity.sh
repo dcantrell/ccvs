@@ -7875,8 +7875,17 @@ ${PROG} \[server aborted\]: cannot rename file CVS/Entries.Backup to CVS/Entries
 	  dotest abspath-7c "${testcvs} -q co mod1" \
 "U mod1/file1"
 	  cd mod1
+	  if test "$remote" = yes; then
+	    # Work around the http://www.cyclic.com/cvs/dev-abspath.html race.
+	    ${testcvs} -q co -d ${TESTDIR}/3 mod2 >${TESTDIR}/abspath.tmp 2>&1
+	    dotest abspath-7d "cat ${TESTDIR}/abspath.tmp" \
+"U ${TESTDIR}/3/file2" \
+"U ${TESTDIR}/3/file2
+${PROG} \[server aborted\]: cannot rename file CVS/Entries.Backup to CVS/Entries: No such file or directory"
+	  else
 	  dotest abspath-7d "${testcvs} -q co -d ${TESTDIR}/3 mod2" \
 "U ${TESTDIR}/3/file2"
+	  fi # remote workaround
 	  dotest abspath-7e "${testcvs} -q update -d" ""
 	  cd ../..
 	  rm -r 1 2 3
