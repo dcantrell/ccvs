@@ -4036,6 +4036,11 @@ EOF
 	  fi
 
 	  dotest devcom-a0 "${testcvs} watchers" ''
+
+	  # FIXME: This probably should be an error message instead
+	  # of silently succeeding and printing nothing.
+	  dotest devcom-a-nonexist "${testcvs} watchers nonexist" ''
+
 	  dotest devcom-a1 "${testcvs} watch add" ''
 	  dotest devcom-a2 "${testcvs} watchers" \
 'abb	[a-z0-9]*	edit	unedit	commit
@@ -4052,6 +4057,13 @@ T abc'
 	  cd ../..
 	  mkdir 3
 	  cd 3
+
+	  # Test commented out because the bug it tests for is not fixed
+	  # The error is:
+	  # cvs watchers: cannot open CVS/Entries for reading: No such file or directory
+	  # cvs: ../../work/ccvs/src/fileattr.c:75: fileattr_read: Assertion `fileattr_stored_repos != ((void *)0)' failed.
+:	  dotest devcom-t-nonexist "${testcvs} watchers nonexist" fixme
+
 	  dotest devcom-t1 "${testcvs} -q co -rtag first-dir/abb" \
 'U first-dir/abb'
 	  cd ..
