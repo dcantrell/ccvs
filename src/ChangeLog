@@ -1,3 +1,8 @@
+Tue Jan 30 18:06:12 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* recurse.c (do_recursion): Add comment about the fact that we
+	don't have locks in place at certain points.
+
 Tue Jan 30 09:43:34 1996  Vince Demarco  <vdemarco@bou.shl.com>
 
 	* edit.c (notify_proc): have notify_proc call expand_path with
