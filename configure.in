@@ -177,5 +177,4 @@ test -f src/options.h && (
 
 AC_OUTPUT(Makefile lib/Makefile src/Makefile doc/Makefile \
 	  man/Makefile contrib/Makefile contrib/pcl-cvs/Makefile \
-	  examples/Makefile windows-NT/Makefile os2/Makefile \
-	  macintosh/Makefile stamp-h)
+	  windows-NT/Makefile os2/Makefile macintosh/Makefile stamp-h)
