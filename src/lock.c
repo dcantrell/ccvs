@@ -697,6 +697,9 @@ readers_exist (repository)
 
 	CVS_CLOSEDIR (dirp);
     } while (ret < 0);
+
+    if (lockdir != NULL)
+	free (lockdir);
     return (ret);
 }
 
