@@ -1,5 +1,7 @@
 Thu Sep 25 14:22:54 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* build_src.com: Also link with diff.olb.
+
 	* main.c (Make_Date): If gmtime returns NULL, try localtime.
 
 Wed Sep 24 08:31:46 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
