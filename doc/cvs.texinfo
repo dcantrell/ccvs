@@ -13234,6 +13234,10 @@ find the log file which inetd writes
 your system).  For details, see @ref{Connection}, and
 @ref{Password authentication server}.
 
+@item cvs server: cannot open /root/.cvsignore: Permission denied
+@itemx cvs [server aborted]: can't chdir(/root): Permission denied
+See @ref{Connection}.
+
 @item cvs commit: Up-to-date check failed for `@var{file}'
 This means that someone else has committed a change to
 that file since the last time that you did a @code{cvs
@@ -13381,6 +13385,15 @@ for programs being run by inetd.  In the latter case, you can either
 have inetd run a shell script that unsets @code{HOME} and then runs
 @sc{cvs}, or you can use @code{env} to run @sc{cvs} with a pristine
 environment.
+
+If you can connect successfully for awhile but then can't,
+you've probably hit inetd's rate limit.
+(If inetd receives too many requests for the same service
+in a short period of time, it assumes that something is wrong
+and temporarily disables the service.)
+Check your inetd documentation to find out how to adjust the
+rate limit (some versions of inetd have a single rate limit,
+others allow you to set the limit for each service separately.)
 @end table
 
 @node Other problems
