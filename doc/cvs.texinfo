@@ -10689,6 +10689,7 @@ a future release of @sc{cvs}.
 @node Excluding directories
 @appendixsubsec Excluding directories
 @cindex excluding directories, in modules file
+@cindex !, in modules file
 
 An alias module may exclude particular directories from
 other modules by using an exclamation mark (@samp{!})
