@@ -60,8 +60,6 @@ control system with Kerberos authentication and encryption.
 %setup -q
 
 %build
-autoconf
-
 # The Kerberized binary
 %if %gssapi
 %configure --with-gssapi=/usr/kerberos --enable-encryption
@@ -82,14 +80,13 @@ make -C doc info
 rm -rf $RPM_BUILD_ROOT
 
 %makeinstall install-info
-#mkdir -p $RPM_BUILD_ROOT%{prefix}/kerberos/bin
 # The Kerberized binary
 %if %gssapi
 ./install-sh src/cvs.krb5 $RPM_BUILD_ROOT%{prefix}/kerberos/bin/cvs
 %endif
 
-gzip -9nf $RPM_BUILD_ROOT%{prefix}/share/info/cvs*
-strip $RPM_BUILD_ROOT%{prefix}/bin/cvs
+gzip -9nf $RPM_BUILD_ROOT%{_infodir}/cvs*
+strip $RPM_BUILD_ROOT%{_bindir}/cvs
 %if %gssapi
 strip $RPM_BUILD_ROOT%{prefix}/kerberos/bin/cvs
 %endif
@@ -98,27 +95,23 @@ strip $RPM_BUILD_ROOT%{prefix}/kerberos/bin/cvs
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/install-info %{prefix}/share/info/cvs.info.gz %{prefix}/share/info/dir
-/sbin/install-info %{prefix}/share/info/cvsclient.info.gz %{prefix}/share/info/dir 
+/sbin/install-info %{_infodir}/cvs.info.gz %{_infodir}/dir
+/sbin/install-info %{_infodir}/cvsclient.info.gz %{_infodir}/dir 
 
 %preun
 if [ $1 = 0 ]; then
-    /sbin/install-info --delete %{prefix}/share/info/cvs.info.gz %{prefix}/share/info/dir
-    /sbin/install-info --delete %{prefix}/share/info/cvsclient.info.gz %{prefix}/share/info/dir
+    /sbin/install-info --delete %{_infodir}/cvs.info.gz %{_infodir}/dir
+    /sbin/install-info --delete %{_infodir}/cvsclient.info.gz %{_infodir}/dir
 fi
 
 %files
 %defattr(-,root,root)
 %doc BUGS FAQ MINOR-BUGS NEWS PROJECTS TODO README
 %doc doc/*.ps
-%{prefix}/bin/cvs
-%{prefix}/bin/cvsbug
-%{prefix}/bin/rcs2log
-%{prefix}/share/man/man1/cvs.1*
-%{prefix}/share/man/man5/cvs.5*
-%{prefix}/share/man/man8/cvsbug.8*
-%{prefix}/share/info/cvs*
-%{prefix}/lib/cvs
+%{_bindir}
+%{_mandir}
+%{_infodir}
+%{_libdir}
 
 %if %gssapi
 %files krb5
@@ -127,6 +120,10 @@ fi
 %endif
 
 %changelog
+* Wed Nov 29 2000 Derek Price <dprice@openavenue.com>
+- Use _infodir consistently for info pages and _bindir for binaries.
+- use more succinct file list
+
 * Wed Oct 18 2000 Derek Price <dprice@openavenue.com>
 - Make the Kerberos binary a subpackage.
 - fix the info & man pages too
