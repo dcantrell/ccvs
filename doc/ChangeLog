@@ -1,3 +1,12 @@
+2003-07-20  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Setting up the server for password authentication): 
+	Added documentation for PAM support.
+	(Original patch from Brian Murphy <brian@murphy.dk>.)
+
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
 2003-07-18  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Substitution modes):  Improve the phrasing of the
