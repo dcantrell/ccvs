@@ -1,5 +1,11 @@
 2003-09-02  Derek Price  <derek@ximbiot.com>
 
+	* pvcs2rcs.in: Don't rely on `which' to exit with a non-zero exit
+	status when it fails to find the requested executable.  Use split in an
+	undeprecated manner.  Don't assign to $_ just for split.
+
+2003-09-02  Derek Price  <derek@ximbiot.com>
+
 	* pvcs2rcs.in: Use UNIX EOL instead of DOS EOL.
 
 2003-09-02  Derek Price  <derek@ximbiot.com>

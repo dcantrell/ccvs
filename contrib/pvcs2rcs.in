@@ -79,6 +79,15 @@
 #   /^\s*Rev/ (Perl regexp notation) in it.  Fix the comment and start over.
 #   (The directory locks and existance checking make this a fairly quick
 #   process.)
+#   Binary files which do not have their mode set properly are likely to look
+#   corrupted on initial checkout and use, but using
+#   `cvs admin -kb <workfilename>' to retroactively change the RCS keyword
+#   substitution mode of the file to binary (and refreshing the files in any
+#   local workspaces they are checked out in: `rm <workfilename>; update'
+#   should do the trick) should end any problems with the original import.
+#   If anyone has checked in changes since the import, those revisions may
+#   be corrupted in the imported archive and therefore those changes (commits
+#   of corrupted data) may need to be backed out.
 # * This script writes lockfiles in the RCS/ directories.  It will also not
 #   convert an archive if it finds the RCS Archive existant in the RCS/
 #   directory.  This enables the conversion to quickly pick up where it left
@@ -136,8 +145,11 @@ my %bin_ext =
 	'\.(?i)t8u$' => "",
 	'\.(?i)c8u$' => "",
 	'\.(?i)lku$' => "",
-	'\.(?i)(bmp|gif|jpg|jpeg|jfif|tif|tiff|xbm)$' => "Image",
+	'\.(?i)(bmp|gif|jpg|jpeg|jfif|tif|tiff|xbm|png)$' => "Image",
 	'\.(?i)dll$' => "DOS/Wintel Dynamically Linked Library",
+	'\.(?i)class$' => "Compliled Java Class File",
+	'\.(?i)jar$' => "Java Archive File",
+	'\.(?i)war$' => "Java Web Archive File",
 	'\.o$' => "UNIX Compiler Object",
 	'\.a$' => "UNIX Compiler Library",
 	'\.so(\.\d+\.\d+)?$' => "UNIX Shared Library"
@@ -153,16 +165,18 @@ my $tmpdir = $ENV{TMPDIR} ? $ENV{TMPDIR} : "/var/tmp";
 use strict;
 
 use Cwd;
+use File::Basename;			# For the usage message.
 use File::Path;
 use IO::File;
 use Getopt::Long;
 	$Getopt::Long::bundling = 1;
 #	$Getopt::Long::ignorecase = 0;
 
+my $program = basename $0;
 my $usage = "\
-usage:  $0 -h
-        $0 [-lt] [-i vcsid] [-r flat|leaf] [-p flat|leaf] [-x rcs_extension]
-		        [-v none|locks|exists] [options] [path...]
+usage:  $program -h
+        $program [-lt] [-i vcsid] [-r flat|leaf] [-p flat|leaf] [-x rcs_extension]
+                 [-v none|locks|exists] [options] [path...]
 ";
 
 my $help = "\
@@ -569,10 +583,9 @@ sub execdir
 
 		print "vlog $pvcsarchive\n";
 		my $vlog_output = `vlog $pvcsarchive`;
-		$_ = $vlog_output;
 
 		# Split the vcs status output into individual lines
-		my @vlog_strings = split /\n/;
+		my @vlog_strings = split /\n/, $vlog_output;
 		my $num_vlog_strings = @vlog_strings;
 		$_ = $vlog_strings[0];
 		if ( /^\s*$/ || /^vlog: warning/ )
@@ -598,8 +611,7 @@ sub execdir
 				$got_workfile = 1;
 				# get the string to the right of the above search (with any path stripped)
 				$workfile = $';
-				$_ = $workfile;
-				$num_fields = split /[\/\\]/;
+				$num_fields = split /[\/\\]/, $workfile;
 				if ( $num_fields > 1 ) 
 					{ 
 					$workfile = $_[$num_fields - 1 ];
@@ -629,8 +641,8 @@ sub execdir
 			elsif ( ( /^Description:\s*/ ) && (!$got_description ) )
 				{
 				$got_description = 1;
-				$description = "\"" . $vlog_strings[$num+1] . "\"";
-				print "Description is $description\n" if ($options{debug});
+				$description = $vlog_strings[$num+1];
+				print "Description is `$description'\n" if ($options{debug});
 				$last_vl = $num - 1;
 				}
 
@@ -657,8 +669,8 @@ sub execdir
 
 					$_ = $vlog_strings[$num+3];
 					/^\s*Author id:\s*/;
-					split;
-					$author{$rev_num[$rev_index]} = "\"" . $_[2] . "\"";
+					my @fields = split;
+					$author{$rev_num[$rev_index]} = "\"" . $fields[2] . "\"";
 					print "Author: $author{$rev_num[$rev_index]}\n" if ($options{debug});
 
 					my @branches = ();
@@ -723,11 +735,11 @@ sub execdir
 			$label_index = $i - $first_vl;
 			$_=$vlog_strings[$i];
 			print "Starting with string '$_'\n" if ($options{debug});
-			split /\"/;
-			$label = $_[1];
+			my @fields = split /\"/;
+			$label = $fields[1];
 			print "Got label '$label'\n" if ($options{debug});
-			split /\s+/, $_[2];
-			$label_revision[$label_index] = $_[2];
+			@fields = split /\s+/, $fields[2];
+			$label_revision[$label_index] = $fields[2];
 			print "Original label is $label_revision[$label_index]\n" if ($options{debug});
 
 			# Create RCS revision numbers corresponding to PVCS version numbers by
@@ -781,7 +793,6 @@ sub execdir
 						. (@hits ? "file type is '$bin_ext{$hits[0]}' for extension '$&'" : "forced")
 						. ")\n";
 					}
-				$first_time and $ci_command .= " -t-$description";
 
 				$rcs_command .= " $workfile";
 
@@ -919,8 +930,7 @@ sub pvcs_to_rcs_rev_number
 	my($input, $num_fields, @rev_string, $return_rev_num, $i);
 
 	$input = $_[0];
-	$_ = $input;
-	$num_fields = split /\./;
+	$num_fields = split /\./, $input;
 	@rev_string = @_;
 	# @rev_string[$num_fields-1] += 1;
 
@@ -1060,7 +1070,9 @@ if ($options{'test-binaries'})
 	{
 	foreach (@bin_dependancies)
 		{
-		if (system "which", $_)
+		my $output = qx/which $_ 2>&1/;
+		print $output if $options{verbose} && $output;
+		if ($? || $output =~ /^no/)
 			{
 			push @missing_binaries, $_;
 			}
