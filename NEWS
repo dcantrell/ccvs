@@ -1,5 +1,11 @@
 Changes since 1.12.1:
 
+* A chmod 0600 that CVS performed on temp files it created designed to work
+around a bug in versions of GLIBC eariler than 2.0.7 has been removed since it
+still left a race condition open to exploitation and provided a false sense of
+security.  If you are linking CVS against a version of GLIBC prior to 2.0.7,
+you should consider upgrading GLIBC.
+
 * The CVSROOT/editinfo file is no longer referenced by CVS.  This funcitonality
 has been deprecated for over six years and removing it will presumably not
 cause anyone any problems.

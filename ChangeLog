@@ -1,3 +1,9 @@
+2003-09-08  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note removal of the workaround for a bug in GLIBC prior to
+	GLIBC 2.0.7 and advise upgrading GLIBC rather than depending on silly
+	hacks that don't fix other programs installed on the system.
+
 2003-08-29  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note removal of CVSROOT/editinfo functionality.
