@@ -1,3 +1,11 @@
+2003-10-23  Mark D. Baushke  <mdb@cvshome.org>
+
+	* update.c (join_file): Do the -jrev1 -jrev2 merge even when
+	the file is already at rev2.
+	* sanity.sh (join6): New testcase for above.
+	(Suggested by Paul Edwards, from somewhere in Australia.)
+	(import): Fix collateral damage.
+	
 2003-10-23  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (fail): Refer the user to the `TESTS' and `check.log' files

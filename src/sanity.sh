@@ -899,8 +899,8 @@ if test x"$*" = x; then
 	tests="${tests} branches4 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} update-p import-after-initial branch-after-import"
-	tests="${tests} join join2 join3 join4 join5 join-readonly-conflict"
-	tests="${tests} join-admin join-admin-2"
+	tests="${tests} join join2 join3 join4 join5 join6"
+	tests="${tests} join-readonly-conflict join-admin join-admin-2"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	tests="${tests} clean"
 	tests="${tests} keywordexpand"
@@ -7654,7 +7654,15 @@ RCS file: ${CVSROOT_DIRNAME}/first-dir/imported-f2,v
 retrieving revision 1\.1\.1\.1
 retrieving revision 1\.1\.1\.2
 Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into imported-f2
-rcsmerge: warning: conflicts during merge"
+rcsmerge: warning: conflicts during merge
+RCS file: ${CVSROOT_DIRNAME}/first-dir/imported-f3,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.1\.1\.2
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into imported-f3
+RCS file: ${CVSROOT_DIRNAME}/first-dir/imported-f4,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.1\.1\.3
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.3 into imported-f4"
 
 		cd first-dir
 
@@ -9116,6 +9124,103 @@ C -file"
 	  cd ..
 	  rm -r join5
 	  rm -rf ${CVSROOT_DIRNAME}/join5
+	  ;;
+
+        join6)
+	  mkdir join6; cd join6
+          mkdir 1; cd 1
+	  dotest join6-init-1 "${testcvs} -Q co -l ."
+	  mkdir join6
+	  dotest join6-init-2 "${testcvs} -Q add join6"
+	  cd join6
+          echo aaa >temp.txt
+	  echo bbb >>temp.txt
+	  echo ccc >>temp.txt
+	  dotest join6-1 "${testcvs} -Q add temp.txt"
+	  dotest join6-2 "${testcvs} -q commit -minitial temp.txt" \
+"RCS file: ${CVSROOT_DIRNAME}/join6/temp\.txt,v
+done
+Checking in temp\.txt;
+${CVSROOT_DIRNAME}/join6/temp.txt,v  <--  temp\.txt
+initial revision: 1\.1
+done"
+	  cp temp.txt temp2.txt
+	  echo ddd >>temp.txt
+	  dotest join6-3 "${testcvs} -q commit -madd temp.txt" \
+"Checking in temp\.txt;
+${CVSROOT_DIRNAME}/join6/temp.txt,v  <--  temp\.txt
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  cp temp2.txt temp.txt
+	  dotest_fail join6-4 "${testcvs} diff temp.txt" \
+"Index: temp.txt
+===================================================================
+RCS file: ${CVSROOT_DIRNAME}/join6/temp\.txt,v
+retrieving revision 1\.2
+diff -r1\.2 temp\.txt
+4d3
+< ddd"
+
+	  dotest join6-5 "${testcvs} update -j1.1 -j1.2 temp.txt" \
+"M temp\.txt
+RCS file: ${CVSROOT_DIRNAME}/join6/temp\.txt,v
+retrieving revision 1\.1
+retrieving revision 1\.2
+Merging differences between 1\.1 and 1\.2 into temp\.txt"
+	  dotest join6-6 "${testcvs} diff temp.txt" ""
+	  mv temp.txt temp3.txt
+	  dotest join6-7 "sed 's/ddd/dddd/' < temp3.txt > temp.txt" ""
+	  dotest join6-8 "${testcvs} update -j1.1 -j1.2 temp.txt" \
+"M temp\.txt
+RCS file: ${CVSROOT_DIRNAME}/join6/temp\.txt,v
+retrieving revision 1\.1
+retrieving revision 1\.2
+Merging differences between 1\.1 and 1\.2 into temp\.txt
+rcsmerge: warning: conflicts during merge"
+	  dotest_fail join6-9 "${testcvs} diff temp.txt" \
+"Index: temp\.txt
+===================================================================
+RCS file: ${CVSROOT_DIRNAME}/join6/temp.txt,v
+retrieving revision 1\.2
+diff -r1\.2 temp\.txt
+3a4,6
+> <<<<<<< temp\.txt
+> dddd
+> =======
+4a8
+> >>>>>>> 1\.2"
+	  cp temp2.txt temp.txt
+	  dotest join6-10 "${testcvs} -q ci -m del temp.txt" \
+"Checking in temp\.txt;
+${CVSROOT_DIRNAME}/join6/temp.txt,v  <--  temp\.txt
+new revision: 1\.3; previous revision: 1\.2
+done"
+          cp temp3.txt temp.txt
+	  dotest_fail join6-11 "${testcvs} diff temp.txt" \
+"Index: temp\.txt
+===================================================================
+RCS file: ${CVSROOT_DIRNAME}/join6/temp.txt,v
+retrieving revision 1\.3
+diff -r1\.3 temp\.txt
+3a4
+> ddd"
+	  dotest join6-12 "${testcvs} update -j1.2 -j1.3 temp.txt" \
+"M temp\.txt
+RCS file: ${CVSROOT_DIRNAME}/join6/temp\.txt,v
+retrieving revision 1\.2
+retrieving revision 1\.3
+Merging differences between 1\.2 and 1\.3 into temp\.txt"
+	  dotest join6-13 "${testcvs} diff temp.txt" ""
+
+	  cd ../../..
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+            exit 0
+	  fi
+
+	  rm -r join6
+	  rm -rf ${CVSROOT_DIRNAME}/join6
 	  ;;
 
 	join-readonly-conflict)

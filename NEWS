@@ -1,5 +1,11 @@
 Changes since 1.12.1:
 
+* A behavior change in `cvs up -jrev1 -jrev2' for files with a base
+  revision of rev2 (ie, checked-out version matches rev2). The
+  operation is no longer ignored and instead passed to diff3. This
+  will potentially re-apply the diffs between the two revisions to
+  a modified local file.
+
 * A build problem that caused warnings and slower builds on systems without a
 working getline() function (e.g. Mac OS X 10.1) has been fixed.
 
