@@ -238,3 +238,8 @@ m4/md5.m4
 m4/uint32_t.m4
 
 m4/onceonly_2_57.m4
+lib/stdint_.h
+m4/stdint.m4
+m4/inttypes.m4
+
+m4/onceonly_2_57.m4

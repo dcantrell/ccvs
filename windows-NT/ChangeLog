@@ -1,3 +1,8 @@
+2004-10-22  Mark D. Baushke  <mdb@juniper.net>
+
+	* confi.h.in.in (HAVE_SYS_INTTYPES_H): Update from GNULIB.
+	* Makefile.am (stamp-sh2): Add stdint from GNULIB.
+
 2004-10-22  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in (UINT32_MAX, WORDS_BIGENDIAN, uint32_t): Guess that

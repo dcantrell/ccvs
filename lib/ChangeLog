@@ -1,3 +1,11 @@
+2004-10-22  Mark D. Baushke  <mdb@juniper.net>
+
+	* Makefile.am (libcvs_a_SOURCES): Add stdint GNULIB module.
+	Fix typos in alloca and stdbool sections.
+	* stdint_.h: New file from GNULIB.
+	* getpagesize.h: Update from GNULIB.
+	* mktime.c: Update from GNULIB.
+
 2004-10-22  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (libcvs_a_SOURCES): Move md5 to its own section.
