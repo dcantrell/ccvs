@@ -1,3 +1,8 @@
+2004-09-08  Derek Price  <derek@ximbiot.com>
+
+	* JmgStat.c, JmgStat.h: Convert to use UNIX line endings on UNIX.
+	(Thanks to report from Conrad T. Pino <conrad@pino.com>.)
+
 2004-09-07  Derek Price  <derek@ximbiot.com>
 
 	* JmgStat.c, JmgStat.h: New files.
