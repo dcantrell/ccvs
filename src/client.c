@@ -3371,10 +3371,7 @@ connect_to_forked_server( struct buffer **to_server_p,
     command[1] = "server";
     command[2] = NULL;
 
-    if (trace)
-    {
-	fprintf (stderr, " -> Forking server: %s %s\n", command[0], command[1]);
-    }
+    TRACE (TRACE_FUNCTION, "Forking server: %s %s\n", command[0], command[1]);
 
     child_pid = piped_child (command, &tofd, &fromfd);
     if (child_pid < 0)
