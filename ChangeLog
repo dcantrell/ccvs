@@ -1,3 +1,10 @@
+2004-03-31  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.spec.in (BuildRequires): Do not fail if info DIR file does
+	not exist. (Not everyone has an install-info that generates the
+	dir file that we want deleted.)
+	(Report from Geoff Beier <geoff@caradas.com>.)
+
 2004-03-29  Derek Price  <derek@ximbiot.com>
 
 	* cvsnt.mak: Regenerated with VC++ 5.0.
