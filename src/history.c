@@ -713,7 +713,7 @@ history_write (type, update_dir, revs, name, repository)
 
     if (logoff)			/* History is turned off by cmd line switch */
 	return;
-    if ( strchr(logHistory,(const char *) type) == NULL )	
+    if ( strchr(logHistory, type) == NULL )	
 	return;
     fname = xmalloc (strlen (CVSroot_directory) + sizeof (CVSROOTADM)
 		     + sizeof (CVSROOTADM_HISTORY) + 10);
