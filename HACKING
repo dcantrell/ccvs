@@ -26,20 +26,23 @@ to use:
 CVS mostly uses a consistent indentation style which looks like this:
 
 void
-foo (arg)
-    char *arg;
+foo (char *arg, int c)
 {
+    long aflag;
+
     if (arg != NULL)
     {
 	bar (arg);
 	baz (arg);
     }
+
     switch (c)
     {
 	case 'A':
 	    aflag = 1;
 	    break;
     }
+
     printf ("Literal string line 1\n"
 	    "Literal string line 2\n"
 	    "Literal string line 3\n");
@@ -63,11 +66,13 @@ portability cruft for systems on which people are actually testing and
 using new CVS releases.  Without testing, CVS will fail to be portable
 for any number of unanticipated reasons.
 
-The current consequence of that general rule seems to be that if it
-is in ANSI C and it is in SunOS4 (using /bin/cc), generally it is OK
-to use it without ifdefs (for example, assert() and void * as long as
-you add more casts to and from void * than ANSI requires).  Such constructs
-are generally portable enough, including to NT, OS/2, VMS, etc.
+CVS is now assuming a freestanding C89 compiler.  If you don't have one, you
+should find an old release of GCC that did not require a freestanding C89
+compiler to build, build that on your system, build a newer release of GCC
+if you wish, then build CVS using GCC as your freestanding C89 compiler.
+
+A freestanding C89 compiler is guaranteed to support function prototypes,
+void *, and assert().
 
 The following headers can be assumed and are included from lib/system.h for a
 freestanding C89 implementation: <float.h>, <limits.h>, <stdarg.h>, <stddef.h>.
