@@ -1,5 +1,8 @@
 Changes since 1.9:
 
+* The client no longer needs an external patch program (assuming both
+the client and the server have been updated to the new version).
+
 * "cvs admin [options]" will now recurse.  In previous versions of
 CVS, it was an error and one needed to specify "cvs admin [options] ."
 to recurse.  This change brings admin in line with the other CVS
