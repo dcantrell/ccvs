@@ -1991,6 +1991,13 @@ isn't worth it.
 @cindex Remote repositories
 @cindex Client/Server Operation
 @cindex Server, CVS
+@cindex Remote repositories, port specification
+@cindex Repositories, remote, port specification
+@cindex Client/Server Operation, port specification
+@cindex pserver (client/server connection method), port specification
+@cindex kserver (client/server connection method), port specification
+@cindex gserver (client/server connection method), port specification
+@cindex port, specifying for remote repositories
 
         Your working copy of the sources can be on a
 different machine than the repository.  Using @sc{cvs}
@@ -2004,7 +2011,7 @@ repository is just like using a local one, except that
 the format of the repository name is:
 
 @example
-:@var{method}:@var{user}@@@var{hostname}:/path/to/repository
+:@var{method}:[[@var{user}][:@var{password}]@@]@var{hostname}[:[@var{port}]]/path/to/repository
 @end example
 
 The details of exactly what needs to be set up depend
@@ -2214,7 +2221,7 @@ the module @file{foo} in the repository
 @file{faun.example.org}, you are ready to go:
 
 @example
-cvs -d :ext:bach@@faun.example.org:/usr/local/cvsroot checkout foo
+cvs -d :ext:bach@@faun.example.org/usr/local/cvsroot checkout foo
 @end example
 
 (The @file{bach@@} can be omitted if the username is
@@ -2253,6 +2260,13 @@ permissions on the @file{$CVSROOT} and
 authentication security}, for more details.
 
 @cindex pserver (subcommand)
+@cindex Remote repositories, port specification
+@cindex Repositories, remote, port specification
+@cindex Client/Server Operation, port specification
+@cindex pserver (client/server connection method), port specification
+@cindex kserver (client/server connection method), port specification
+@cindex gserver (client/server connection method), port specification
+@cindex port, specifying for remote repositories
 @cindex Password server, setting up
 @cindex Authenticating server, setting up
 @c FIXME: this isn't quite right regarding port
@@ -2264,7 +2278,9 @@ command @code{cvs pserver} when it receives a
 connection on the right port.  By default, the port
 number is 2401; it would be different if your client
 were compiled with @code{CVS_AUTH_PORT} defined to
-something else, though.
+something else, though.  This can also be sepcified in the CVSROOT variable
+(@pxref{Remote repositories}) or overridden with the CVS_CLIENT_PORT
+environment variable (@pxref{Environment variables}).
 
         If your @code{inetd} allows raw port numbers in
 @file{/etc/inetd.conf}, then the following (all on a
@@ -2448,30 +2464,37 @@ want to include the @file{passwd} file in checkouts of
 @cindex :pserver:, setting up
 To run a @sc{cvs} command on a remote repository via
 the password-authenticating server, one specifies the
-@code{pserver} protocol, username, repository host, and
-path to the repository.  For example:
+@code{pserver} protocol, optional username, repository host, an
+optional port number, and path to the repository.  For example:
 
 @example
-cvs -d :pserver:bach@@faun.example.org:/usr/local/cvsroot checkout someproj
+cvs -d :pserver:faun.example.org:/usr/local/cvsroot checkout someproj
 @end example
 
 or
 
 @example
-CVSROOT=:pserver:bach@@faun.example.org:/usr/local/cvsroot
+CVSROOT=:pserver:bach@@faun.example.org:2401/usr/local/cvsroot
 cvs checkout someproj
 @end example
 
 However, unless you're connecting to a public-access
 repository (i.e., one where that username doesn't
-require a password), you'll need to @dfn{log in} first.
-Logging in verifies your password with the repository.
+require a password), you'll need to supply a password or @dfn{log in} first.
+Logging in verifies your password with the repository and stores it in a file.
 It's done with the @code{login} command, which will
-prompt you interactively for the password:
+prompt you interactively for the password if you didn't supply one as part of
+@var{$CVSROOT}:
 
 @example
 cvs -d :pserver:bach@@faun.example.org:/usr/local/cvsroot login
 CVS password:
+@end example
+
+or
+
+@example
+cvs -d :pserver:bach:p4ss30rd@@faun.example.org:/usr/local/cvsroot login
 @end example
 
 After you enter the password, @sc{cvs} verifies it with
@@ -2683,8 +2706,8 @@ request encryption.
 You need to edit @file{inetd.conf} on the server
 machine to run @code{cvs kserver}.  The client uses
 port 1999 by default; if you want to use another port
-specify it in the @code{CVS_CLIENT_PORT} environment
-variable on the client.
+specify it in the @code{CVSROOT} (@pxref{Remote repositories})
+or the @code{CVS_CLIENT_PORT} environment variable on the client.
 
 @cindex kinit
 When you want to use @sc{cvs}, get a ticket in the
@@ -12732,8 +12755,9 @@ login server}.  Default value is @file{$HOME/.cvspass}.
 
 @item $CVS_CLIENT_PORT
 Used in client-server mode when accessing the server
-via Kerberos.
-@pxref{Kerberos authenticated}
+via Kerberos, GSSAPI, or @sc{cvs}'s password authentication if the port is not
+specified in $CVSROOT.
+@pxref{Remote repositories}
 
 @cindex CVS_RCMD_PORT, environment variable
 @item $CVS_RCMD_PORT

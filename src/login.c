@@ -127,9 +127,15 @@ login (argc, argv)
     size_t linebuf_len;
     int root_len, already_entered = 0;
     int line_length;
+    char *cvsroot_canonical;
 
     if (argc < 0)
 	usage (login_usage);
+
+    /* FIXME - should be removing ':password' from CVSroot_original and
+     * saving CVSroot_password into .cvspass if the password was
+     * specified in CVSROOT
+     */
 
     if (CVSroot_method != pserver_method)
     {
@@ -137,25 +143,28 @@ login (argc, argv)
 	error (1, 0, "CVSROOT: %s", CVSroot_original);
     }
 
-    if (! CVSroot_username)
-    {
-	error (0, 0, "CVSROOT \"%s\" is not fully-qualified.",
-	       CVSroot_original);
-	error (1, 0, "Please make sure to specify \"user@host\"!");
-    }
-
-    printf ("(Logging in to %s@%s)\n", CVSroot_username, CVSroot_hostname);
+    cvsroot_canonical = normalize_cvsroot(	getcaller(),
+		    				get_port_number ("CVS_CLIENT_PORT", "cvspserver", CVS_AUTH_PORT));
+    printf ("Logging in to %s\n", cvsroot_canonical);
     fflush (stdout);
 
-    passfile = construct_cvspass_filename ();
-    typed_password = GETPASS ("CVS password: ");
-    typed_password = scramble (typed_password);
+    if (CVSroot_password)
+    {
+	typed_password = scramble (CVSroot_password);
+    }
+    else
+    {
+	char *tmp;
+	tmp = GETPASS ("CVS password: ");
+	typed_password = scramble (tmp);
+	memset (tmp, 0, strlen (tmp));
+    }
+
 
     /* Force get_cvs_password() to use this one (when the client
      * confirms the new password with the server), instead of
      * consulting the file.  We make a new copy because cvs_password
      * will get zeroed by connect_to_server().  */
-
     cvs_password = xstrdup (typed_password);
 
     connect_to_pserver (NULL, NULL, 1, 0);
@@ -171,7 +180,8 @@ login (argc, argv)
      *    append new entry to the end of the file.
      */
 
-    root_len = strlen (CVSroot_original);
+    passfile = construct_cvspass_filename ();
+    root_len = strlen (cvsroot_canonical);
 
     /* Yes, the method below reads the user's password file twice.  It's
        inefficient, but we're not talking about a gig of data here. */
@@ -184,7 +194,7 @@ login (argc, argv)
 	/* Check each line to see if we have this entry already. */
 	while ((line_length = getline (&linebuf, &linebuf_len, fp)) >= 0)
         {
-          if (strncmp (CVSroot_original, linebuf, root_len) == 0)
+          if (strncmp (cvsroot_canonical, linebuf, root_len) == 0)
             {
 		already_entered = 1;
 		break;
@@ -235,14 +245,14 @@ login (argc, argv)
 
 	    while ((line_length = getline (&linebuf, &linebuf_len, fp)) >= 0)
             {
-		if (strncmp (CVSroot_original, linebuf, root_len))
+		if (strncmp (cvsroot_canonical, linebuf, root_len))
 		{
 		    if (fprintf (tmp_fp, "%s", linebuf) == EOF)
 			error (0, errno, "cannot write %s", tmp_name);
 		}
 		else
 		{
-		    if (fprintf (tmp_fp, "%s %s\n", CVSroot_original,
+		    if (fprintf (tmp_fp, "%s %s\n", cvsroot_canonical,
 				 typed_password) == EOF)
 			error (0, errno, "cannot write %s", tmp_name);
 		}
@@ -277,7 +287,7 @@ login (argc, argv)
 	    return 1;
         }
 
-	if (fprintf (fp, "%s %s\n", CVSroot_original, typed_password) == EOF)
+	if (fprintf (fp, "%s %s\n", cvsroot_canonical, typed_password) == EOF)
 	    error (0, errno, "cannot write %s", passfile);
 	if (fclose (fp) < 0)
 	    error (0, errno, "cannot close %s", passfile);
@@ -290,13 +300,14 @@ login (argc, argv)
 
     free (passfile);
     free (cvs_password);
+    free (cvsroot_canonical);
     cvs_password = NULL;
     return 0;
 }
 
 /* Returns the _scrambled_ password.  The server must descramble
    before hashing and comparing.  If password file not found, or
-   password not found in the file, just return NULL. */  
+   password not found in the file, just return NULL. */
 char *
 get_cvs_password ()
 {
@@ -308,6 +319,10 @@ get_cvs_password ()
     FILE *fp;
     char *passfile;
     int line_length;
+    char *cvsroot_canonical;
+
+    if (CVSroot_password)
+	return (scramble(CVSroot_password));
 
     /* If someone (i.e., login()) is calling connect_to_pserver() out of
        context, then assume they have supplied the correct, scrambled
@@ -337,12 +352,7 @@ get_cvs_password ()
 	error (1, 0, "CVSROOT: %s", CVSroot_original);
     }
 
-    if (! CVSroot_username)
-    {
-	error (0, 0, "CVSROOT \"%s\" is not fully-qualified.",
-	       CVSroot_original);
-	error (1, 0, "Please make sure to specify \"user@host\"!");
-    }
+    cvsroot_canonical = normalize_cvsroot(getcaller(), get_port_number ("CVS_CLIENT_PORT", "cvspserver", CVS_AUTH_PORT));
 
     passfile = construct_cvspass_filename ();
     fp = CVS_FOPEN (passfile, "r");
@@ -352,12 +362,12 @@ get_cvs_password ()
 	return NULL;
     }
 
-    root_len = strlen (CVSroot_original);
+    root_len = strlen (cvsroot_canonical);
 
     /* Check each line to see if we have this entry already. */
     while ((line_length = getline (&linebuf, &linebuf_len, fp)) >= 0)
     {
-	if (strncmp (CVSroot_original, linebuf, root_len) == 0)
+	if (strncmp (cvsroot_canonical, linebuf, root_len) == 0)
         {
 	    /* This is it!  So break out and deal with linebuf. */
 	    found_it = 1;
@@ -377,7 +387,7 @@ get_cvs_password ()
 	strtok (linebuf, " ");
 	tmp = strtok (NULL, "\n");
 	if (tmp == NULL)
-	    error (1, 0, "bad entry in %s for %s", passfile, CVSroot_original);
+	    error (1, 0, "bad entry in %s for %s", passfile, cvsroot_canonical);
 
 	/* Give it permanent storage. */
 	password = xstrdup (tmp);
@@ -387,6 +397,7 @@ get_cvs_password ()
     if (linebuf)
         free (linebuf);
     free (passfile);
+    free (cvsroot_canonical);
     return password;
 }
 
@@ -409,8 +420,9 @@ logout (argc, argv)
     FILE *tmp_fp;
     char *linebuf = (char *) NULL;
     size_t linebuf_len;
-    int root_len, found = 0;
+    int root_len, root_len_no_port, found = 0;
     int line_length;
+    char *cvsroot_canonical, *cvsroot_canonical_no_port;
 
     if (argc < 0)
 	usage (logout_usage);
@@ -421,13 +433,6 @@ logout (argc, argv)
 	error (1, 0, "CVSROOT: %s", CVSroot_original);
     }
     
-    if (! CVSroot_username)
-    {
-	error (0, 0, "CVSROOT \"%s\" is not fully-qualified.",
-	       CVSroot_original);
-	error (1, 0, "Please make sure to specify \"user@host\"!");
-    }
-
     /* Hmm.  Do we want a variant of this command which deletes _all_
        the entries from the current .cvspass?  Might be easier to
        remember than "rm ~/.cvspass" but then again if people are
@@ -436,10 +441,15 @@ logout (argc, argv)
        of security, in that it wouldn't delete entries from any
        .cvspass files but the current one.  */
 
-    printf ("(Logging out of %s@%s)\n", CVSroot_username, CVSroot_hostname);
+    cvsroot_canonical = normalize_cvsroot(	getcaller(),
+		    				get_port_number ("CVS_CLIENT_PORT", "cvspserver", CVS_AUTH_PORT));
+    printf ("Logging out of %s\n", cvsroot_canonical);
     fflush (stdout);
 
-    /* IF we have a password for this "[user@]host:/path" already
+    /* for backwards compatibility */
+    cvsroot_canonical_no_port = normalize_cvsroot(	getcaller(), 0);
+
+    /* IF we have a password for this "user@host:[port]/path" already
      *  THEN
      *    drop the entry
      *  ELSE
@@ -448,7 +458,11 @@ logout (argc, argv)
 
     passfile = construct_cvspass_filename ();
     /* FIXME: This should not be in /tmp; that is almost surely a security
-       hole.  Probably should just keep it in memory.  */
+     * hole.  Probably should just keep it in memory.
+     *
+     * yeah it is.  anyone with permissions to write /tmp (read, "everybody")
+     * can just chmod the file into readability
+     */
     tmp_name = cvs_temp_name ();
     if ((tmp_fp = CVS_FOPEN (tmp_name, "w")) == NULL)
     {
@@ -457,7 +471,8 @@ logout (argc, argv)
     }
     chmod (tmp_name, 0600);
 
-    root_len = strlen (CVSroot_original);
+    root_len = strlen (cvsroot_canonical);
+    root_len_no_port = strlen (cvsroot_canonical_no_port);
 
     fp = CVS_FOPEN (passfile, "r");
     if (fp == NULL)
@@ -467,7 +482,8 @@ logout (argc, argv)
     /* Copy only those lines that do not match this entry */
     while ((line_length = getline (&linebuf, &linebuf_len, fp)) >= 0)
     {
-	if (strncmp (CVSroot_original, linebuf, root_len))
+	if (strncmp (cvsroot_canonical, linebuf, root_len)
+		&& strncmp (cvsroot_canonical_no_port, linebuf, root_len_no_port))
 	{
 	    if (fprintf (tmp_fp, "%s", linebuf) == EOF)
 		error (0, errno, "cannot write %s", tmp_name);
@@ -487,7 +503,7 @@ logout (argc, argv)
 
     if (! found) 
     {
-	printf ("Entry not found for %s\n", CVSroot_original);
+	printf ("Entry not found for %s\n", cvsroot_canonical);
 	if (unlink_file (tmp_name) < 0)
 	    error (0, errno, "cannot remove %s", tmp_name);
     }
@@ -503,6 +519,9 @@ logout (argc, argv)
 
     if (tmp_name)
         free (tmp_name);
+
+    free (cvsroot_canonical);
+    free (cvsroot_canonical_no_port);
 
     return 0;
 }
