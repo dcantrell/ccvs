@@ -1,3 +1,7 @@
+2004-11-17  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (distclean-local): Clean check.plog~.
+
 2004-11-11  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: s/cp -r/cp -R/ to meet POSIX specification.

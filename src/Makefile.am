@@ -141,7 +141,7 @@ proxycheck: all sanity.config.sh
 
 # Our distclean targets
 distclean-local:
-	rm -f check.log check.plog
+	rm -f check.log check.plog check.plog~
 
 ## MAINTAINER Targets
 
