@@ -1,3 +1,7 @@
+Sat May 27 08:08:18 1995  Jim Meyering  (meyering@comco.com)
+
+	* doc/Makefile.in (realclean): Remove more postscript and info files.
+
 Fri Apr 28 22:44:06 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* Makefile.in (DISTFILES): Updated.
