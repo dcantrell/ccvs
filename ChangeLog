@@ -1,3 +1,11 @@
+Sun May  5 15:49:00 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* configure.in: autoconf 2.9 handles AC_CHECK_LIB in a
+	way that it can not be used to check for main().  Check
+	for printf() instead. (Reported by ian@cygnus.com)
+
+	* configure: Regenerated.
+
 Thu May  2 13:34:37 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* Version 1.7.88
