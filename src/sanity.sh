@@ -3720,7 +3720,7 @@ modify-on-br1
 		mkdir import-dir ; cd import-dir
 
 		for i in 1 2 3 4 ; do
-			echo imported file"$i" > imported-f"$i"
+		  echo imported file"$i" > imported-f"$i"
 		done
 
 		# This directory should be on the default ignore list,
@@ -3731,157 +3731,164 @@ modify-on-br1
 		echo 'import should not expand $''Id$' >>imported-f2
 		cp imported-f2 ../imported-f2-orig.tmp
 
-		if ${CVS} import -m first-import first-dir vendor-branch junk-1_0  ; then
-		    pass 96
-		else
-		    fail 96
-		fi
+		dotest_sort import-96 \
+"${testcvs} import -m first-import first-dir vendor-branch junk-1_0" \
+"
 
-		if cmp ../imported-f2-orig.tmp imported-f2; then
-		  pass 96.5
-		else
-		  fail 96.5
-		fi
+I first-dir/RCS
+N first-dir/imported-f1
+N first-dir/imported-f2
+N first-dir/imported-f3
+N first-dir/imported-f4
+No conflicts created by this import"
+
+		dotest import-96.5 "cmp ../imported-f2-orig.tmp imported-f2" ''
+
 		cd ..
 
 		# co
-		if ${CVS} co first-dir  ; then
-		    pass 97
-		else
-		    fail 97
-		fi
+		dotest import-97 "${testcvs} -q co first-dir" \
+"U first-dir/imported-f1
+U first-dir/imported-f2
+U first-dir/imported-f3
+U first-dir/imported-f4"
 
 		cd first-dir
+
 		for i in 1 2 3 4 ; do
-			if test -f imported-f"$i" ; then
-			    pass 98-$i
-			else
-			    fail 98-$i
-			fi
+		  dotest import-98-$i "test -f imported-f$i" ''
 		done
-		if test -d RCS; then
-		    fail 98.5
-		else
-		    pass 98.5
-		fi
+		dotest_fail import-98.5 "test -d RCS" ''
 
 		# remove
 		rm imported-f1
-		if ${CVS} rm imported-f1  2>> ${LOGFILE}; then
-		    pass 99
-		else
-		    fail 99
-		fi
+		dotest import-99 "${testcvs} rm imported-f1" \
+"${PROG}"' [a-z]*: scheduling `imported-f1'\'' for removal
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to remove this file permanently'
 
 		# change
 		echo local-change >> imported-f2
 
 		# commit
-		if ${CVS} ci -m local-changes  >> ${LOGFILE} 2>&1; then
-		    pass 100
-		else
-		    fail 100
-		fi
+		dotest import-100 "${testcvs} ci -m local-changes" \
+"${PROG} [a-z]*: Examining .
+Removing imported-f1;
+${TESTDIR}/cvsroot/first-dir/imported-f1,v  <--  imported-f1
+new revision: delete; previous revision: 1\.1\.1\.1
+done
+Checking in imported-f2;
+${TESTDIR}/cvsroot/first-dir/imported-f2,v  <--  imported-f2
+new revision: 1\.2; previous revision: 1\.1
+done"
 
 		# log
-		if ${CVS} log imported-f1 | grep '1.1.1.2 (dead)'  ; then
-		    fail 101
-		else
-		    pass 101
-		fi
+		dotest import-101 "${testcvs} log imported-f1" \
+"
+RCS file: ${TESTDIR}/cvsroot/first-dir/Attic/imported-f1,v
+Working file: imported-f1
+head: 1\.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	junk-1_0: 1\.1\.1\.1
+	vendor-branch: 1\.1\.1
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: ${username};  state: dead;  lines: ${PLUS}0 -0
+local-changes
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+branches:  1\.1\.1;
+Initial revision
+----------------------------
+revision 1\.1\.1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+first-import
+============================================================================="
 
 		# update into the vendor branch.
-		if ${CVS} update -rvendor-branch  ; then
-		    pass 102
-		else
-		    fail 102
-		fi
+		dotest import-102 "${testcvs} update -rvendor-branch" \
+"${PROG} [a-z]*: Updating .
+[UP] imported-f1
+[UP] imported-f2"
 
 		# remove file4 on the vendor branch
 		rm imported-f4
-
-		if ${CVS} rm imported-f4  2>> ${LOGFILE}; then
-		    pass 103
-		else
-		    fail 103
-		fi
+		dotest import-103 "${testcvs} rm imported-f4" \
+"${PROG}"' [a-z]*: scheduling `imported-f4'\'' for removal
+'"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to remove this file permanently'
 
 		# commit
-		if ${CVS} ci -m vendor-removed imported-f4 >>${LOGFILE}; then
-		    pass 104
-		else
-		    fail 104
-		fi
+		dotest import-104 \
+"${testcvs} ci -m vendor-removed imported-f4" \
+"Removing imported-f4;
+${TESTDIR}/cvsroot/first-dir/imported-f4,v  <--  imported-f4
+new revision: delete; previous revision: 1\.1\.1\.1
+done"
 
 		# update to main line
-		if ${CVS} update -A  2>> ${LOGFILE}; then
-		    pass 105
-		else
-		    fail 105
-		fi
+		dotest import-105 "${testcvs} -q update -A" \
+"${PROG} [a-z]*: warning: imported-f1 is not (any longer) pertinent
+[UP] imported-f2"
 
 		# second import - file4 deliberately unchanged
 		cd ../import-dir
 		for i in 1 2 3 ; do
-			echo rev 2 of file $i >> imported-f"$i"
+		  echo rev 2 of file $i >> imported-f"$i"
 		done
 		cp imported-f2 ../imported-f2-orig.tmp
 
-		if ${CVS} import -m second-import first-dir vendor-branch junk-2_0  ; then
-		    pass 106
-		else
-		    fail 106
-		fi
-		if cmp ../imported-f2-orig.tmp imported-f2; then
-		  pass 106.5
-		else
-		  fail 106.5
-		fi
+		dotest_sort import-106 \
+"${testcvs} import -m second-import first-dir vendor-branch junk-2_0" \
+"
+
+
+	${PROG} checkout -jvendor-branch:yesterday -jvendor-branch first-dir
+2 conflicts created by this import.
+C first-dir/imported-f1
+C first-dir/imported-f2
+I first-dir/RCS
+U first-dir/imported-f3
+U first-dir/imported-f4
+Use the following command to help the merge:"
+
+		dotest import-106.5 "cmp ../imported-f2-orig.tmp imported-f2" \
+''
+
 		cd ..
+
 		rm imported-f2-orig.tmp
 
 		# co
-		if ${CVS} co first-dir  ; then
-		    pass 107
-		else
-		    fail 107
-		fi
+		dotest import-107 "${testcvs} co first-dir" \
+"${PROG} [a-z]*: Updating first-dir
+[UP] first-dir/imported-f3
+[UP] first-dir/imported-f4"
 
 		cd first-dir
 
-		if test -f imported-f1 ; then
-		    fail 108
-		else
-		    pass 108
-		fi
+		dotest_fail import-108 "test -f imported-f1" ''
 
 		for i in 2 3 ; do
-			if test -f imported-f"$i" ; then
-			    pass 109-$i
-			else
-			    fail 109-$i
-			fi
+		  dotest import-109-$i "test -f imported-f$i" ''
 		done
 
 		# check vendor branch for file4
-		if ${CVS} update -rvendor-branch  ; then
-		    pass 110
-		else
-		    fail 110
-		fi
+		dotest import-110 "${testcvs} -q update -rvendor-branch" \
+"[UP] imported-f1
+[UP] imported-f2"
 
-		if test -f imported-f4 ; then
-		    pass 111
-		else
-		    fail 111
-		fi
+		dotest import-111 "test -f imported-f4" ''
 
 		# update to main line
-		if ${CVS} update -A  2>> ${LOGFILE}; then
-		    pass 112
-		else
-		    fail 112
-		fi
+		dotest import-112 "${testcvs} -q update -A" \
+"${PROG} [a-z]*: warning: imported-f1 is not (any longer) pertinent
+[UP] imported-f2"
 
 		cd ..
 
@@ -3896,18 +3903,10 @@ rcsmerge: warning: conflicts during merge"
 
 		cd first-dir
 
-		if test -f imported-f1 ; then
-		    fail 114
-		else
-		    pass 114
-		fi
+		dotest_fail import-114 "test -f imported-f1" ''
 
 		for i in 2 3 ; do
-			if test -f imported-f"$i" ; then
-			    pass 115-$i
-			else
-			    fail 115-$i
-			fi
+		  dotest import-115-$i "test -f imported-f$i" ''
 		done
 
 		dotest import-116 'cat imported-f2' \
