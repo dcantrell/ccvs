@@ -27,6 +27,7 @@ EXTRA_DIST = \
 	alloca.m4 \
 	atexit.m4 \
 	codeset.m4 \
+	exitfail.m4 \
 	getline.m4 \
 	getnline.m4 \
 	getopt.m4 \
@@ -65,4 +66,5 @@ EXTRA_DIST = \
 	vasnprintf.m4 \
 	wchar_t.m4 \
 	wint_t.m4 \
+	xalloc.m4 \
 	xsize.m4

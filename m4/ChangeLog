@@ -1,3 +1,12 @@
+2004-02-20  Derek Price  <derek@ximbiot.com>
+
+	Import xalloc module from GNULIB, as well as its remaining unimported
+	dependency, the exitfail module.
+
+	* Makefile.am (EXTRA_DIST): Add exitfail.m4 & xalloc.m4.
+	* exitfail.m4, xalloc.m4: New files.
+	* Makefile.in: Regenerated.
+
 2004-02-18  Derek Price  <derek@ximbiot.com>
 
 	* xsize.m4: Update to a more recent version which AC_REQUIREs
