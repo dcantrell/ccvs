@@ -6140,11 +6140,10 @@ filename is without a path.
 
 @cindex Name keyword
 @item $@asis{Name}$
-Tag name used to check out this file.
-@c FIXME: should supply an example (e.g. "if you use
-@c "cvs update -r foo" then Name expands to "foo").  Also
-@c should add Name to testsuite (best way to ensure
-@c that the example is correct!)
+Tag name used to check out this file.  The keyword is
+expanded only if one checks out with an explicit tag
+name.  For example, when running the command @code{cvs
+co -r first}, the keyword expands to @samp{Name: first}.
 
 @cindex Locker keyword
 @item $@asis{Locker}$
