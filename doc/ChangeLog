@@ -1,3 +1,14 @@
+2004-05-13  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.texinfo (Adding files): Minor cleanup.
+	(Using keywords): Minor cleanup.
+	(annotate): Move into the manual section, split into three nodes.
+	(annotate options): New node.
+	(annotate example): New node.
+	(based on patch from Steve McIntyre <steve@einval.com>.)
+	* cvs.1, stamp-1, stamp-vti, version-client.texi, version.texi:
+	Regenerated.
+	
 2004-05-12  Derek Price  <derek@ximbiot.com>
 
 	* mkman.in: Clarify status messages.

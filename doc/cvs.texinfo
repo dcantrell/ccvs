@@ -3319,6 +3319,9 @@ $ cd tc
 $ cvs import -m "Created directory structure" yoyodyne/@var{dir} yoyo start
 @end example
 
+This will add yoyodyne/@var{dir} as a directory under
+@code{$CVSROOT}.
+
 Then, use @code{add} to add files (and new directories)
 as they appear.
 
@@ -4856,15 +4859,18 @@ directory.
 @c changing right away.
 
 Unlike most other commands, the @code{add} command is
-not recursive.  You cannot even type @samp{cvs add
-foo/bar}!  Instead, you have to
-@c FIXCVS: This is, of course, not a feature.  It is
-@c just that no one has gotten around to fixing "cvs add
-@c foo/bar".
+not recursive.  You have to expcicitly name files and
+directories that you wish to add to the repository.
+However, each directory will need to be added
+separately before you will be able to add new files
+to those directories. 
 
 @example
-$ cd foo
-$ cvs add bar
+$ mkdir -p foo/bar
+$ cp ~/myfile foo/bar/myfile
+$ cvs add foo
+$ cvs add foo/bar
+$ cvs add foo/bar/myfile
 @end example
 
 @cindex add (subcommand)
@@ -5543,45 +5549,6 @@ the way of keeping centralized scripts up to date, use
 the @code{cvs watch add} command (@pxref{Getting
 Notified}); this command is useful even if you are not
 using @code{cvs watch on}.
-
-@node annotate
-@section Annotate command
-@cindex annotate (subcommand)
-
-@deffn Command {cvs annotate} [@code{-FflR}] [@code{-r rev}|@code{-D date}] files @dots{}
-
-For each file in @var{files}, print the head revision
-of the trunk, together with information on the last
-modification for each line.  For example:
-
-@example
-$ cvs annotate ssfile
-Annotations for ssfile
-***************
-1.1          (mary     27-Mar-96): ssfile line 1
-1.2          (joe      28-Mar-96): ssfile line 2
-@end example
-
-The file @file{ssfile} currently contains two lines.
-The @code{ssfile line 1} line was checked in by
-@code{mary} on March 27.  Then, on March 28, @code{joe}
-added a line @code{ssfile line 2}, without modifying
-the @code{ssfile line 1} line.  This report doesn't
-tell you anything about lines which have been deleted
-or replaced; you need to use @code{cvs diff} for that
-(@pxref{diff}).
-
-@end deffn
-
-The options to @code{cvs annotate} are listed in
-@ref{Invoking CVS}, and can be used to select the files
-and revisions to annotate.  The options are described
-in more detail there and in @ref{Common options}.
-
-@c FIXME: maybe an example using the options?  Just
-@c what it means to select a revision might be worth a
-@c few words of explanation ("you want to see who
-@c changed this line *before* 1.4"...).
 
 @c ---------------------------------------------------------------------
 @node Binary files
@@ -7115,8 +7082,9 @@ the @file{CVSROOT/config} file---see
 
 To include a keyword string you simply include the
 relevant text string, such as @code{$@splitrcskeyword{Id}$}, inside the
-file, and commit the file.  @sc{cvs} will automatically
-expand the string as part of the commit operation.
+file, and commit the file.  @sc{cvs} will automatically (Or,
+more accurately, as part of the update run that
+automatically happens after a commit.)
 
 It is common to embed the @code{$@splitrcskeyword{Id}$} string in
 the source files so that it gets passed through to
@@ -7898,6 +7866,7 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * Global options::              Options you give to the left of cvs_command
 * Common options::              Options you give to the right of cvs_command
 * admin::                       Administration
+* annotate::                    Show last revision where each line was changed.
 * checkout::                    Checkout sources for editing
 * commit::                      Check files into the repository
 * diff::                        Show differences between revisions
@@ -8956,6 +8925,89 @@ this option has never done anything useful.
 @c never been documented as a cvs admin option.
 @end table
 
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node annotate
+@appendixsec annotate---Show last revision where each line was changed.
+@cindex annotate (subcommand)
+
+@itemize @bullet
+@item
+Synopsis: annotate [options] files@dots{}
+@item
+Requires: repository.
+@item
+Changes: nothing.
+@end itemize
+
+For each file in @var{files}, print the head revision
+of the trunk, together with information on the last
+modification for each line.  
+
+@menu
+* annotate options::            annotate options
+* annotate examples::           annotate examples
+@end menu
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node annotate options
+@appendixsubsec annotate options
+
+These standard options are supported by @code{annotate}
+(@pxref{Common options}, for a complete description of
+them):
+
+@table @code
+@item -l
+Local directory only, no recursion.
+
+@item -R
+Process directories recursively.
+
+@item -f
+Use head revision if tag/date not found.
+
+@item -F
+Annotate binary files.
+
+@item -r @var{revision}
+Annotate file as of specified revision/tag.
+
+@item -D @var{date}
+Annotate file as of specified date.
+@end table
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node annotate example
+@appendixsubsec annotate example
+
+For example:
+
+@example
+$ cvs annotate ssfile
+Annotations for ssfile
+***************
+1.1          (mary     27-Mar-96): ssfile line 1
+1.2          (joe      28-Mar-96): ssfile line 2
+@end example
+
+The file @file{ssfile} currently contains two lines.
+The @code{ssfile line 1} line was checked in by
+@code{mary} on March 27.  Then, on March 28, @code{joe}
+added a line @code{ssfile line 2}, without modifying
+the @code{ssfile line 1} line.  This report doesn't
+tell you anything about lines which have been deleted
+or replaced; you need to use @code{cvs diff} for that
+(@pxref{diff}).
+
+The options to @code{cvs annotate} are listed in
+@ref{Invoking CVS}, and can be used to select the files
+and revisions to annotate.  The options are described
+in more detail there and in @ref{Common options}.
+
+@c FIXME: maybe an example using the options?  Just
+@c what it means to select a revision might be worth a
+@c few words of explanation ("you want to see who
+@c changed this line *before* 1.4"...).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node checkout
