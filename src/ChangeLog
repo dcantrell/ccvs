@@ -1,5 +1,9 @@
 2002-04-28  Derek Price  <oberon@umich.edu>
 
+	* cvs.h: Use `"'s around includes when we mean a local file.
+
+2002-04-28  Derek Price  <oberon@umich.edu>
+
 	* cvs.h: #define new names for functions and variables when they
 	might conflict with system definitions (namely on Mac OS X 10.1 with
 	the most recent dev packages - This should be removable after the Mac
