@@ -5331,6 +5331,9 @@ to the @code{update} command, that is, any new
 directories that have been created in the repository
 will appear in your work area.  @xref{update}.
 
+For the output produced by the @code{checkout} command
+see @ref{update output}.
+
 @menu
 * checkout options::            checkout options
 * checkout examples::           checkout examples
@@ -6123,7 +6126,8 @@ you to do.
 
 If @sc{cvs} decides a file should be ignored
 (@pxref{cvsignore}), it does not import it and prints
-@samp{I } followed by the filename
+@samp{I } followed by the filename (@pxref{import output}, for a
+complete description of the output).
 
 If the file @file{$CVSROOT/CVSROOT/cvswrappers} exists,
 any file whose names match the specifications in that
@@ -6147,6 +6151,7 @@ the leaves created each time you execute @code{import}.
 
 @menu
 * import options::              import options
+* import output::               import output
 * import examples::             import examples
 @end menu
 
@@ -6200,6 +6205,36 @@ import.  You can use this option repeatedly.
 @var{spec} can be a file name pattern of the same type
 that you can specify in the @file{.cvswrappers}
 file. @xref{Wrappers}.
+@end table
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node import output
+@appendixsubsec import output
+
+@code{import} keeps you informed of its progress by printing a line
+for each file, preceded by one character indicating the status of the file:
+
+@table @code
+@item U @var{file}
+The file already exists in the repository and has not been locally
+modified; a new revision has been created (if necessary).
+
+@item N @var{file}
+The file is a new file which has been added to the repository.
+
+@item C @var{file}
+The file already exists in the repository but has been locally modified;
+you will have to merge the changes.
+
+@item I @var{file}
+The file is being ignored (@pxref{cvsignore}).
+
+@item L @var{file}
+The file is a symbolic link; at the moment (and for the forseeable
+future), symbolic links are ignored.
+(Various options in the @file{modules} file can be used
+to recreate symbolic links on checkout, update, etc.;
+@pxref{modules}.)
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -6532,7 +6567,7 @@ history log.
 
 @menu
 * release options::             release options
-* release output::              release options
+* release output::              release output
 * release examples::            release examples
 @end menu
 
@@ -7052,9 +7087,9 @@ date.  An optional date is specified by adding a colon
 @node update output
 @appendixsubsec update output
 
-@code{update} keeps you informed of its progress by
-printing a line for each file, preceded by one
-character indicating the status of the file:
+@code{update} and @code{checkout} keep you informed of
+its progress by printing a line for each file, preceded
+by one character indicating the status of the file:
 
 @table @code
 @item U @var{file}
