@@ -1,5 +1,9 @@
 Sat Nov 22 10:54:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* recurse.c (do_dir_proc): Check that CVS/Repository and
+	CVS/Entries exist.
+	* sanity.sh (conflicts3-14 through conflicts3-17): New tests, for this.
+
 	* client.c (send_fileproc): Send options field from
 	vers->entdata->options not vers->options.
 	* cvs.h (struct entnode): Add comment (options and timestamp must

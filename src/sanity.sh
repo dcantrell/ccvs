@@ -4859,6 +4859,46 @@ ${PROG} [a-z]*: warning: file2 is not (any longer) pertinent"
 	  dotest conflicts3-13 "${testcvs} -q update" \
 "${PROG} [a-z]*: warning: file1 is not (any longer) pertinent
 ${PROG} [a-z]*: warning: file2 is not (any longer) pertinent"
+
+	  # OK, now add a directory to both working directories
+	  # and see that CVS doesn't lose its mind.
+	  mkdir sdir
+	  dotest conficts3-14 "${testcvs} add sdir" \
+"Directory ${TESTDIR}/cvsroot/first-dir/sdir added to the repository"
+	  cd ../../2/first-dir
+
+	  # Create a CVS directory without the proper administrative
+	  # files in it.  This can happen for example if you hit ^C
+	  # in the middle of a checkout.
+	  mkdir sdir
+	  mkdir sdir/CVS
+	  # OK, in the local case CVS sees that the directory exists
+	  # in the repository and recurses into it.  In the remote case
+	  # CVS can't see the repository and has no way of knowing
+	  # that sdir is even a directory (stat'ing everything would be
+	  # too slow).  The remote behavior makes more sense to me (but
+	  # would this affect other cases?).
+	  if test "$remote" = yes; then
+	    dotest conflicts3-15 "${testcvs} -q update" \
+"${QUESTION} sdir"
+	  else
+	    dotest conflicts3-15 "${testcvs} -q update" \
+"${QUESTION} sdir
+${PROG} [a-z]*: ignoring sdir (CVS/Repository missing)"
+	    touch sdir/CVS/Repository
+	    dotest conflicts3-16 "${testcvs} -q update" \
+"${QUESTION} sdir
+${PROG} [a-z]*: ignoring sdir (CVS/Entries missing)"
+	  fi
+	  rm -r sdir
+
+	  # OK, now the same thing, but the directory doesn't exist
+	  # in the repository.
+	  mkdir newdir
+	  mkdir newdir/CVS
+	  dotest conflicts3-17 "${testcvs} -q update" "${QUESTION} newdir"
+	  rm -r newdir
+
 	  cd ../..
 
 	  rm -r 1 2
