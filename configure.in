@@ -91,8 +91,8 @@ if test "$ac_cv_func_fnmatch_works" = no; then
 fi
 
 # Try to find connect and gethostbyname.
-AC_SEARCH_LIBS(connect, xnet nsl_s nsl socket inet, AC_DEFINE(HAVE_CONNECT))
-AC_SEARCH_LIBS(gethostbyname, netinet)
+AC_SEARCH_LIBS(connect, xnet socket inet, AC_DEFINE(HAVE_CONNECT))
+AC_SEARCH_LIBS(gethostbyname, netinet nsl)
 
 dnl
 dnl set $(KRB4) from --with-krb4=value -- WITH_KRB4
