@@ -1176,6 +1176,19 @@ description of the file format, see the @code{man} page
 file format has become very common---many systems other
 than @sc{cvs} or @sc{rcs} can at least import history
 files in this format.
+@c FIXME: Think about including documentation for this
+@c rather than citing it?  In the long run, getting
+@c this to be a standard (not sure if we can cope with
+@c a standards process as formal as IEEE/ANSI/ISO/etc,
+@c though...) is the way to go, so maybe citing is
+@c better.
+
+The @sc{rcs} files used in @sc{cvs} differ in a few
+ways from the standard format.  The biggest difference
+is magic branches; for more information see @ref{Magic
+branch numbers}.  Also in @sc{cvs} the valid tag names
+are a subset of what @sc{rcs} accepts; for @sc{cvs}'s
+rules see @ref{Tags}.
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node File permissions
@@ -3011,7 +3024,8 @@ rcsutil.c       5.10
 You can use the @code{tag} command to give a symbolic name to a
 certain revision of a file.  You can use the @samp{-v} flag to the
 @code{status} command to see all tags that a file has, and
-which revision numbers they represent.  Tag names can
+which revision numbers they represent.  Tag names must
+start with an uppercase or lowercase letter and can
 contain uppercase and lowercase letters, digits,
 @samp{-}, and @samp{_}.  The two tag names @code{BASE}
 and @code{HEAD} are reserved for use by @sc{cvs}.  It
