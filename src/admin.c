@@ -98,14 +98,11 @@ admin (argc, argv)
 	for (i = 0; i <= ac; ++i)	/* XXX send -ko too with i = 0 */
 	    send_arg (av[i]);
 
-#if 0
+	send_file_names (argc, argv);
 	/* FIXME:  We shouldn't have to send current files, but I'm not sure
 	   whether it works.  So send the files --
 	   it's slower but it works.  */
-	send_file_names (argc, argv);
-#else
 	send_files (argc, argv, 0, 0);
-#endif
 	send_to_server ("admin\n", 0);
         return get_responses_and_close ();
     }

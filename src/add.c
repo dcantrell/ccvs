@@ -128,6 +128,7 @@ add (argc, argv)
 		free (date);
 	      free (rcsdir);
 	    }
+	send_file_names (argc, argv);
 	send_files (argc, argv, 0, 0);
 	send_to_server ("add\n", 0);
 	return get_responses_and_close ();

@@ -91,14 +91,11 @@ watch_onoff (argc, argv)
 
 	if (local)
 	    send_arg ("-l");
-#if 0
+	send_file_names (argc, argv);
 	/* FIXME:  We shouldn't have to send current files, but I'm not sure
 	   whether it works.  So send the files --
 	   it's slower but it works.  */
-	send_file_names (argc, argv);
-#else
 	send_files (argc, argv, local, 0);
-#endif
 	send_to_server (turning_on ? "watch-on\n" : "watch-off\n", 0);
 	return get_responses_and_close ();
     }
@@ -949,14 +946,11 @@ editors (argc, argv)
 
 	if (local)
 	    send_arg ("-l");
-#if 0
+	send_file_names (argc, argv);
 	/* FIXME:  We shouldn't have to send current files, but I'm not sure
 	   whether it works.  So send the files --
 	   it's slower but it works.  */
-	send_file_names (argc, argv);
-#else
 	send_files (argc, argv, local, 0);
-#endif
 	send_to_server ("editors\n", 0);
 	return get_responses_and_close ();
     }

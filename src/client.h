@@ -83,9 +83,7 @@ send_file_names PROTO((int argc, char **argv));
 /*
  * Send Repository, Modified and Entry.  argc and argv contain only
  * the files to operate on (or empty for everything), not options.
- * local is nonzero if we should not recurse (-l option).  Also sends
- * Argument lines for argc and argv, so should be called after options
- * are sent.
+ * local is nonzero if we should not recurse (-l option).
  */
 void
 send_files PROTO((int argc, char **argv, int local, int aflag));

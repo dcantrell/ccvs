@@ -67,14 +67,11 @@ cvslog (argc, argv)
 	for (i = 1; i < argc && argv[i][0] == '-'; i++)
 	  send_arg (argv[i]);
 
-#if 0
+	send_file_names (argc - i, argv + i);
 /* FIXME:  We shouldn't have to send current files to get log entries, but it
    doesn't work yet and I haven't debugged it.  So send the files --
    it's slower but it works.  gnu@cygnus.com  Apr94  */
-	send_file_names (argc - i, argv + i);
-#else
 	send_files (argc - i, argv + i, local, 0);
-#endif
 
 	send_to_server ("log\n", 0);
         err = get_responses_and_close ();
