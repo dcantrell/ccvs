@@ -460,10 +460,9 @@ directory_cmp ()
 CVSROOT_DIRNAME=${TESTDIR}/cvsroot
 CVSROOT=${CVSROOT_DIRNAME} ; export CVSROOT
 if test "x$remote" = xyes; then
-	CVSROOT=`hostname`:${CVSROOT_DIRNAME} ; export CVSROOT
 	# Use rsh so we can test it without having to muck with inetd or anything 
 	# like that.  Also needed to get CVS_SERVER to work.
-	CVS_CLIENT_PORT=-1; export CVS_CLIENT_PORT
+	CVSROOT=:server:`hostname`:${CVSROOT_DIRNAME} ; export CVSROOT
 	CVS_SERVER=${testcvs}; export CVS_SERVER
 fi
 
