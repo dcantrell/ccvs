@@ -12584,6 +12584,10 @@ U dir/dir2/dir2d2/sub2d2/file2"
 	  rm -rf ${CVSROOT_DIRNAME}/1mod-2
 	  rm -rf ${CVSROOT_DIRNAME}/2mod
 	  rm -rf ${CVSROOT_DIRNAME}/2mod-2
+	  rm -rf ${CVSROOT_DIRNAME}/mod1
+	  rm -rf ${CVSROOT_DIRNAME}/mod1-2
+	  rm -rf ${CVSROOT_DIRNAME}/mod2
+	  rm -rf ${CVSROOT_DIRNAME}/mod2-2
 	  ;;
 
         diffmerge1)
@@ -13444,6 +13448,9 @@ d472 12
 	  dotest diffmerge2_diff \
 	    "${testcvs} diff -r Review_V1p3 sgrid.h" ''
 
+	  cd ..
+	  rm -rf diffmerge2
+	  rm -rf ${CVSROOT_DIRNAME}/diffmerge2
 	  ;;
 
 	abspath)
