@@ -1,3 +1,9 @@
+2004-10-16  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dsp: Add "lib/vasprintf.h" to project.
+	* cvsnt.dep: Regenerate for "cvsnt.dsp" change.
+	* cvsnt.mak: Regenerate for "cvsnt.dsp" change.
+
 2004-10-15  Derek Price  <derek@ximbiot.com>
 
 	* gnulib-update (MODULES): Add vasprintf.

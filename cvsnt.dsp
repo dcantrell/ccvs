@@ -588,6 +588,10 @@ SOURCE=.\lib\vasnprintf.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\vasprintf.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\wait.h
 # End Source File
 # Begin Source File
