@@ -1604,9 +1604,7 @@ remove_file (finfo, tag, message)
     char *tag;
     char *message;
 {
-    mode_t omask;
     int retcode;
-    char *tmp;
 
     int branch;
     int lockflag;
@@ -1732,48 +1730,9 @@ remove_file (finfo, tag, message)
     if (rev != NULL)
 	free (rev);
 
-    old_path = finfo->rcs->path;
+    old_path = xstrdup (finfo->rcs->path);
     if (!branch)
-    {
-	/* this was the head; really move it into the Attic */
-	tmp = xmalloc(strlen(finfo->repository) +
-		      sizeof('/') +
-		      sizeof(CVSATTIC) +
-		      sizeof('/') +
-		      strlen(finfo->file) +
-		      sizeof(RCSEXT) + 1);
-	(void) sprintf (tmp, "%s/%s", finfo->repository, CVSATTIC);
-	omask = umask (cvsumask);
-	if (CVS_MKDIR (tmp, 0777) < 0 && errno != EEXIST)
-	    error (0, errno, "cannot make directory %s", tmp);
-	(void) umask (omask);
-	(void) sprintf (tmp, "%s/%s/%s%s", finfo->repository, CVSATTIC,
-			finfo->file, RCSEXT);
-
-	if (strcmp (finfo->rcs->path, tmp) != 0)
-	{
-	    if (CVS_RENAME (finfo->rcs->path, tmp) < 0)
-	    {
-		int save_errno = errno;
-
-		/* The checks for isreadable look awfully fishy, but
-		   I'm going to leave them here for now until I
-		   can think harder about whether they take care of
-		   some cases which should be handled somehow.  */
-
-		if (isreadable (finfo->rcs->path) || !isreadable (tmp))
-		{
-		    error (0, save_errno, "cannot rename %s to %s",
-			   finfo->rcs->path, tmp);
-		    free (tmp);
-		    return 1;
-		}
-	    }
-	}
-	/* The old value of finfo->rcs->path is in old_path, and is
-           freed below.  */
-	finfo->rcs->path = tmp;
-    }
+	RCS_setattic (finfo->rcs, 1);
 
     /* Print message that file was removed. */
     cvs_output (old_path, 0);
@@ -1784,8 +1743,7 @@ remove_file (finfo, tag, message)
     cvs_output ("\ndone\n", 0);
     free(prev_rev);
 
-    if (old_path != finfo->rcs->path)
-	free (old_path);
+    free (old_path);
 
     Scratch_Entry (finfo->entries, finfo->file);
     return (0);
@@ -1941,39 +1899,23 @@ checkaddfile (file, repository, tag, options, rcsnode)
 
 	if (tag == NULL)
 	{
-	    char *oldfile;
-
-	    /* we are adding on the trunk, so move the file out of the
-	       Attic. */
-	    oldfile = xstrdup (rcs);
-	    sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);
-
-	    if (strcmp (oldfile, rcs) == 0)
+	    /* We are adding on the trunk, so move the file out of the
+	       Attic.  */
+	    if (!(rcsfile->flags & INATTIC))
 	    {
 		error (0, 0, "internal error: confused about attic for %s",
-		       oldfile);
-	    out1:
-		free (oldfile);
+		       rcsfile->path);
 		retval = 1;
 		goto out;
 	    }
-	    if (CVS_RENAME (oldfile, rcs) != 0)
+
+	    sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);
+
+	    if (RCS_setattic (rcsfile, 0))
 	    {
-		error (0, errno, "failed to move `%s' out of the attic",
-		       oldfile);
-		goto out1;
+		retval = 1;
+		goto out;
 	    }
-	    if (isreadable (oldfile)
-		|| !isreadable (rcs))
-	    {
-		error (0, 0, "\
-internal error: `%s' didn't move out of the attic",
-		       oldfile);
-		goto out1;
-	    }
-	    free (oldfile);
-	    free (rcsfile->path);
-	    rcsfile->path = xstrdup (rcs);
 	}
 
 	rev = RCS_getversion (rcsfile, tag, NULL, 1, (int *) NULL);

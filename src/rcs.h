@@ -184,6 +184,7 @@ RCSNode *RCS_parse PROTO((const char *file, const char *repos));
 RCSNode *RCS_parsercsfile PROTO((char *rcsfile));
 void RCS_fully_parse PROTO((RCSNode *));
 void RCS_reparsercsfile PROTO((RCSNode *, FILE **, struct rcsbuffer *));
+extern int RCS_setattic PROTO ((RCSNode *, int));
 
 char *RCS_check_kflag PROTO((const char *arg));
 char *RCS_getdate PROTO((RCSNode * rcs, char *date, int force_tag_match));
