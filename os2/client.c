@@ -2188,34 +2188,22 @@ start_server ()
   last_update_dir = NULL;
   stored_checksum_valid = 0;
   
-  KFF_DEBUG (printf ("*** Sending `Root %s\n' to server\n",
-                     server_cvsroot));
   if (fprintf (to_server, "Root %s\n", server_cvsroot) < 0)
     error (1, errno, "writing to server");
-  KFF_DEBUG (printf ("*** Sent.\n"));
   {
     struct response *rs;
-    KFF_DEBUG (printf ("*** Sending `Valid-responses ' to server\n"));
     if (fprintf (to_server, "Valid-responses") < 0)
       error (1, errno, "writing to server");
-    KFF_DEBUG (printf ("*** Sent.\n"));
     for (rs = responses; rs->name != NULL; ++rs)
       {
-        KFF_DEBUG (printf ("*** Sending `%s' to server\n",
-                           rs->name));
         if (fprintf (to_server, " %s", rs->name) < 0)
           error (1, errno, "writing to server");
-        KFF_DEBUG (printf ("*** Sent.\n"));
       }
-    KFF_DEBUG (printf ("*** Sending NEWLINE to server\n"));
     if (fprintf (to_server, "\n") < 0)
       error (1, errno, "writing to server");
-    KFF_DEBUG (printf ("*** Sent.\n"));
   }
-  KFF_DEBUG (printf ("*** Sending valid-requests\nto server\n"));
   if (fprintf (to_server, "valid-requests\n") < 0)
     error (1, errno, "writing to server");
-  KFF_DEBUG (printf ("*** Sent.\n"));
   if (get_server_responses ())
     exit (1);
   
