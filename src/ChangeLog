@@ -1,5 +1,10 @@
 2004-10-29 Derek Price <derek@ximbiot.com>
 
+	* server.c (server_root, move_file_offset, replace_file_offset):
+	Remove dead code.
+
+2004-10-29 Derek Price <derek@ximbiot.com>
+
 	* filesubr.c (xreadlink): Make sure allocation is tried once at the
 	maximum buffer size.  Protect against overflow.
 	
