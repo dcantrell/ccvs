@@ -1,5 +1,9 @@
 2004-03-13  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note server.c header comment fix.
+
+2004-03-13  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Restore since 1.12.5 section since 1.12.6 distcheck failed.
 
 2004-03-11  Derek Price  <derek@ximbiot.com>
