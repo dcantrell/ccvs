@@ -1,5 +1,7 @@
 Wed Oct  9 15:52:34 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
+	* sanity.sh: Barf immediately if run as root. 
+
 	* rcs.c (RCS_getrevtime): When giving a date to get_date, use the full
 	year, not the year - 1900, so that dates after 1999 are parsed
 	correctly.  (Change thanks to Paul Eggert.)
