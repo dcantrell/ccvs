@@ -327,13 +327,13 @@ watch_addremove (int argc, char **argv)
 
     the_args.setting_default = (argc <= 0);
 
-    lock_tree_for_write (argc, argv, local, W_LOCAL, 0);
+    lock_tree_promotably (argc, argv, local, W_LOCAL, 0);
 
     err = start_recursion
-	( addremove_fileproc, addremove_filesdoneproc,
-	  (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-	  argc, argv, local, W_LOCAL, 0, CVS_LOCK_NONE,
-	  (char *) NULL, 1, (char *) NULL );
+	(addremove_fileproc, addremove_filesdoneproc,
+	 NULL, NULL, NULL,
+	 argc, argv, local, W_LOCAL, 0, CVS_LOCK_WRITE,
+	 NULL, 1, NULL);
 
     Lock_Cleanup ();
     return err;

@@ -832,7 +832,7 @@ do_recursion (struct recursion_frame *frame)
 	    repository
 	    /* and when asked for a read or write lock. */
 	    && locktype != CVS_LOCK_NONE)
-	    Lock_Cleanup ();
+	    Simple_Lock_Cleanup ();
 
 	/* clean up */
 	dellist (&filelist);

@@ -90,13 +90,13 @@ watch_onoff (int argc, char **argv)
 
     setting_default = (argc <= 0);
 
-    lock_tree_for_write (argc, argv, local, W_LOCAL, 0);
+    lock_tree_promotably (argc, argv, local, W_LOCAL, 0);
 
     err = start_recursion
-	( onoff_fileproc, onoff_filesdoneproc,
-	  (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-	  argc, argv, local, W_LOCAL, 0, CVS_LOCK_NONE,
-	  (char *) NULL, 0, (char *) NULL );
+	(onoff_fileproc, onoff_filesdoneproc,
+	 NULL, NULL, NULL,
+	 argc, argv, local, W_LOCAL, 0, CVS_LOCK_WRITE,
+	 NULL, 0, NULL);
 
     Lock_Cleanup ();
     return err;
@@ -242,17 +242,18 @@ send_notifications (int argc, char **argv, int local)
     {
 	/* Local.  */
 
-	lock_tree_for_write (argc, argv, local, W_LOCAL, 0);
+	lock_tree_promotably (argc, argv, local, W_LOCAL, 0);
 	err += start_recursion
-	    ( ncheck_fileproc, (FILESDONEPROC) NULL,
-	      (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-	      argc, argv, local, W_LOCAL, 0, 0, (char *) NULL,
-	      0, (char *) NULL );
+	    (ncheck_fileproc, NULL, NULL, NULL, NULL,
+	     argc, argv, local, W_LOCAL, 0, CVS_LOCK_WRITE,
+	     NULL, 0, NULL);
 	Lock_Cleanup ();
     }
     return err;
 }
-
+
+
+
 static int edit_fileproc (void *callerdat, struct file_info *finfo);
 
 static int

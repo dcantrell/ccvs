@@ -19735,8 +19735,7 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  # The error message appears twice because Lock_Cleanup only
 	  # stops recursing after the first attempt.
 	  dotest_fail lockfiles-5 "${testcvs} -q update" \
-"${SPROG} \[update aborted\]: cannot stat ${TESTDIR}/locks: No such file or directory
-${SPROG} \[update aborted\]: cannot stat ${TESTDIR}/locks: No such file or directory"
+"${SPROG} \[update aborted\]: cannot stat ${TESTDIR}/locks: No such file or directory"
 	  mkdir ${TESTDIR}/locks
 	  # Grumble, mumble.  Cygwin.
 	  if test -n "$remotehost"; then
@@ -26176,22 +26175,23 @@ ${SPROG} update: Updating dir1/sdir/ssdir"
  *-> Write_Template (\., ${TESTDIR}/root1)
 ${CPROG} update: Updating \.
  *-> Reader_Lock(${TESTDIR}/root1)
- *-> Lock_Cleanup()
+ *-> Simple_Lock_Cleanup()
  *-> Write_Template (dir1, ${TESTDIR}/root1/dir1)
 ${CPROG} update: Updating dir1
  *-> Reader_Lock(${TESTDIR}/root1/dir1)
- *-> Lock_Cleanup()
+ *-> Simple_Lock_Cleanup()
  *-> parse_cvsroot ( ${TESTDIR}/root2 )
  *-> main loop with CVSROOT=${TESTDIR}/root2
  *-> Write_Template (dir1/sdir, ${TESTDIR}/root2/dir1/sdir)
 ${CPROG} update: Updating dir1/sdir
  *-> Reader_Lock(${TESTDIR}/root2/sdir)
- *-> Lock_Cleanup()
+ *-> Simple_Lock_Cleanup()
  *-> Write_Template (dir1/sdir/ssdir, ${TESTDIR}/root2/sdir/ssdir)
 ${CPROG} update: Updating dir1/sdir/ssdir
  *-> Reader_Lock(${TESTDIR}/root2/sdir/ssdir)
+ *-> Simple_Lock_Cleanup()
  *-> Lock_Cleanup()
- *-> Lock_Cleanup()"
+ *-> Simple_Lock_Cleanup()"
 	  fi
 
 	  dotest multiroot2-9 "${testcvs} -q tag tag1" \
