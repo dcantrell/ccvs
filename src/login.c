@@ -174,5 +174,14 @@ login (argc, argv)
  * But to what purpose?
  */
 
+
+char *
+get_cvs_password (user, host, cvsroot)
+{
+  /* todo: for now, just use getpass(). */
+  return getpass ("CVS password: ");
+}
+
+
 #endif /* AUTH_CLIENT_SUPPORT from beginning of file. */
 

@@ -1,3 +1,15 @@
+Wed Dec  6 14:42:57 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * server.c (authenticate_connection): send ACK or NACK to client.
+
+        * client.c (connect_to_pserver): check for ACK vs NACK response
+        from server after sending authorization request.
+
+        * login.c (get_cvs_password): new func.
+
+        * client.c (connect_to_pserver): use new func get_cvs_password().
+        Prototype it at top of file.  Hmmm.
+        
 Wed Dec  6 13:29:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * server.c: same as below (AUTH_SERVER_SUPPORT).
