@@ -736,3 +736,33 @@ Storing the metadata separately could speed up "cvs tag" enormously,
 which is a big problem for large repositories.  It could also probably
 make CVS's locking much less in the way (see comment in do_recursion
 about "two-pass design").
+
+195.  Many people using CVS over a slow link are interested in whether
+the remote protocol could be any more efficient with network
+bandwidth.  This item is about one aspect of that--how the server
+sends a new version of a file the client has a different version of,
+or vice versa.
+
+a.  Cases in which the status quo already sends a diff.  For most text
+files, this is probably already close to optimal.  For binary files,
+and anomalous text files, it might be worth looking into other
+difference algorithms (see item #191).
+
+b.  Cases in which the status quo does not send a diff (e.g. "cvs
+commit").
+
+b1.  With some frequency, people suggest rsync or a similar algorithm
+(see ftp://samba.anu.edu.au/pub/rsync/).  This could speed things up,
+and in some ways involves the most minimal changes to the default CVS
+paradigm.  There are some downsides though: (1) there is an extra
+network turnaround, (2) the algorithm is not as efficient with network
+bandwidth as difference type programs (it transmits a fair bit of data
+to discover what a difference program discovers locally).
+
+b2.  If one is willing to require that users use "cvs edit" before
+editing a file on the client side (in some cases, a development
+environment like emacs can make this fairly easy), then the Modified
+request in the protocol could be extended to allow the client to just
+send differences instead of entire files.  In the degenerate case
+(e.g. "cvs diff" without arguments) the required network traffic is
+reduced to zero, and the client need not even contact the server.
