@@ -63,7 +63,8 @@ unsigned sleep(unsigned seconds)
  * Sleep at least some number of microseconds, specified with nanosecond
  * resolution and rounding up to the nearest microsecond.
  */
-int my_usleep (const struct timespec *ts_delay)
+static int
+my_usleep (const struct timespec *ts_delay)
 {
     struct timeval tv_delay;
     tv_delay.tv_sec = ts_delay->tv_sec;
