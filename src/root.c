@@ -391,8 +391,8 @@ parse_cvsroot (CVSroot)
 
 	if ((p = strchr (cvsroot_copy, '@')) != NULL)
 	{
-	    CVSroot_username = xstrdup (cvsroot_copy);
 	    *p = '\0';
+	    CVSroot_username = xstrdup (cvsroot_copy);
 	    cvsroot_copy = ++p;
 	    if (*CVSroot_username == '\0')
 		CVSroot_username = NULL;
@@ -400,8 +400,8 @@ parse_cvsroot (CVSroot)
 
 	if ((p = strchr (cvsroot_copy, ':')) != NULL)
 	{
-	    CVSroot_hostname = xstrdup (cvsroot_copy);
 	    *p = '\0';
+	    CVSroot_hostname = xstrdup (cvsroot_copy);
 	    cvsroot_copy = ++p;
       
 	    if (*CVSroot_hostname == '\0')
