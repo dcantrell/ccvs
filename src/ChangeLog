@@ -1,3 +1,7 @@
+2005-02-26  Derek Price  <derek@ximbiot.com>
+
+	* server.c: Include netdb.h with server support.  Other reformatting.
+
 2005-02-25  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (multiroot2-9a): Correct for new TRACE message.
