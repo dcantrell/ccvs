@@ -58,7 +58,7 @@ expand_path (name)
 			
 			if (e)
 			{
-			    for (d = &p[-1]; **d++ = *e++);)
+			    for (d = &p[-1]; (*d++ = *e++);)
 				;
 			    --d;
 			    if (flag && *s)
