@@ -56,7 +56,7 @@ subdir = doc
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/mkman.pl $(srcdir)/stamp-1 $(srcdir)/stamp-vti \
 	$(srcdir)/version-client.texi $(srcdir)/version.texi ChangeLog \
-	mdate-sh texinfo.tex
+	mdate-sh
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/acx_with_external_zlib.m4 \
@@ -118,13 +118,14 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES = mkman
 SOURCES =
 DIST_SOURCES =
 INFO_DEPS = $(srcdir)/cvs.info $(srcdir)/cvsclient.info
-am__TEXINFO_TEX_DIR = $(srcdir)
+TEXINFO_TEX = $(top_srcdir)/build-aux/texinfo.tex
+am__TEXINFO_TEX_DIR = $(top_srcdir)/build-aux
 DVIS = cvs.dvi cvsclient.dvi
 HTMLS = cvs.html cvsclient.html
 TEXINFOS = cvs.texinfo cvsclient.texi
@@ -406,7 +407,7 @@ cvs.html: cvs.texinfo $(srcdir)/version.texi
 $(srcdir)/version.texi: @MAINTAINER_MODE_TRUE@ $(srcdir)/stamp-vti
 $(srcdir)/stamp-vti: cvs.texinfo $(top_srcdir)/configure
 	@(dir=.; test -f ./cvs.texinfo || dir=$(srcdir); \
-	set `$(SHELL) $(srcdir)/mdate-sh $$dir/cvs.texinfo`; \
+	set `$(SHELL) $(top_srcdir)/build-aux/mdate-sh $$dir/cvs.texinfo`; \
 	echo "@set UPDATED $$1 $$2 $$3"; \
 	echo "@set UPDATED-MONTH $$2 $$3"; \
 	echo "@set EDITION $(VERSION)"; \
@@ -473,7 +474,7 @@ cvsclient.html: cvsclient.texi $(srcdir)/version-client.texi
 $(srcdir)/version-client.texi: @MAINTAINER_MODE_TRUE@ $(srcdir)/stamp-1
 $(srcdir)/stamp-1: cvsclient.texi $(top_srcdir)/configure
 	@(dir=.; test -f ./cvsclient.texi || dir=$(srcdir); \
-	set `$(SHELL) $(srcdir)/mdate-sh $$dir/cvsclient.texi`; \
+	set `$(SHELL) $(top_srcdir)/build-aux/mdate-sh $$dir/cvsclient.texi`; \
 	echo "@set UPDATED $$1 $$2 $$3"; \
 	echo "@set UPDATED-MONTH $$2 $$3"; \
 	echo "@set EDITION $(VERSION)"; \
