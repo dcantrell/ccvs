@@ -366,7 +366,8 @@ mkdir_p (dir)
 		int saved_errno = errno;
 
 		if (saved_errno != EEXIST
-		    && (saved_errno != EACCES || !isdir (q)))
+		    && ((saved_errno != EACCES && saved_errno != EROFS)
+			|| !isdir (q)))
 		{
 		    retval = saved_errno;
 		    goto done;

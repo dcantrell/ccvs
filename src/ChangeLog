@@ -1,3 +1,7 @@
+1998-04-17  Petri Virkkula
+
+	* server.c (mkdir_p): Ignore EROFS error (like for EACCES).
+
 1998-04-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* checkout.c (checkout_proc): Don't create directories above the
