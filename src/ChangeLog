@@ -1,3 +1,10 @@
+2004-07-28  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (secondary-wrapper): Not all $TESTSHELL shells
+	are able to set a variable and export it at the same time.
+	Separate the value assignment from the export statement.
+	(writeproxy-secondary-wrapper): Ditto.
+
 2004-07-28  Derek Price  <derek@ximbiot.com>
 
 	* server.c (isSecondaryServer): Fix array out of bounds problem.
