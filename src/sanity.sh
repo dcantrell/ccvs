@@ -5756,11 +5756,8 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 new revision: 1\.1\.2\.1; previous revision: 1\.1"
 
 	  # Test diff of a nonexistent tag
-	  #
-	  # Second result is for $proxy.
 	  dotest_fail death2-diff-9 "$testcvs -q diff -rtag -c file3" \
-"$SPROG diff: tag tag is not in file file3" \
-"$SPROG \[diff aborted\]: no such tag tag"
+"$SPROG diff: tag tag is not in file file3"
 
 	  dotest_fail death2-diff-10 "${testcvs} -q diff -rtag -N -c file3" \
 "Index: file3

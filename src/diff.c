@@ -58,7 +58,7 @@ static char *options;
 static char *opts;
 static size_t opts_allocated = 1;
 static int diff_errors;
-static int empty_files = 0;
+static int empty_files;
 
 static const char *const diff_usage[] =
 {
@@ -408,7 +408,7 @@ diff (int argc, char **argv)
         err = get_responses_and_close ();
 	free (options);
 	options = NULL;
-	return (err);
+	return err;
     }
 #endif
 
@@ -903,12 +903,12 @@ diff_file_nodiff(struct file_info *finfo, Vers_TS *vers, enum diff_file empty_fi
 	    freevers_ts (&xvers);
 	}
 
-	if( use_rev1 == NULL || RCS_isdead( vers->srcfile, use_rev1 ) )
+	if (use_rev1 == NULL || RCS_isdead (vers->srcfile, use_rev1))
 	{
 	    /* The first revision does not exist.  If EMPTY_FILES is
                true, treat this as an added file.  Otherwise, warn
                about the missing tag.  */
-	    if( use_rev2 == NULL || RCS_isdead( vers->srcfile, use_rev2 ) )
+	    if (use_rev2 == NULL || RCS_isdead (vers->srcfile, use_rev2))
 		/* At least in the case where DIFF_REV1 and DIFF_REV2
 		 * are both numeric (and non-existant (NULL), as opposed to
 		 * dead?), we should be returning some kind of error (see
@@ -916,25 +916,25 @@ diff_file_nodiff(struct file_info *finfo, Vers_TS *vers, enum diff_file empty_fi
 		 * complicated.
 		 */
 		return DIFF_SAME;
-	    if( empty_files )
+	    if (empty_files)
 		return DIFF_ADDED;
-	    if( use_rev1 != NULL )
+	    if (use_rev1 != NULL)
 	    {
 		if (diff_rev1)
 		{
-		    error( 0, 0,
+		    error (0, 0,
 		       "Tag %s refers to a dead (removed) revision in file `%s'.",
-		       diff_rev1, finfo->fullname );
+		       diff_rev1, finfo->fullname);
 		}
 		else
 		{
-		    error( 0, 0,
+		    error (0, 0,
 		       "Date %s refers to a dead (removed) revision in file `%s'.",
-		       diff_date1, finfo->fullname );
+		       diff_date1, finfo->fullname);
 		}
-		error( 0, 0,
+		error (0, 0,
 		       "No comparison available.  Pass `-N' to `%s diff'?",
-		       program_name );
+		       program_name);
 	    }
 	    else if (diff_rev1)
 		error (0, 0, "tag %s is not in file %s", diff_rev1,

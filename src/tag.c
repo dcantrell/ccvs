@@ -103,6 +103,57 @@ static const char *const tag_usage[] =
 
 
 
+/* Add TAG_IN to the val-tags file.  If DB_IN or valtags_filename are set,
+ * use them as a cache.  Otherwise open val-tags.
+ */
+static void
+add_val_tag (DBM *db_in, char *valtags_filename, char *tag_in)
+{
+    datum tag, value;
+    DBM *db = db_in;
+    char *filename;
+
+    if (valtags_filename)
+	filename = valtags_filename;
+    else
+    {
+	filename = xmalloc (strlen (current_parsed_root->directory)
+			    + sizeof CVSROOTADM
+			    + sizeof CVSROOTADM_VALTAGS + 3);
+	sprintf (filename, "%s/%s/%s", current_parsed_root->directory,
+		 CVSROOTADM, CVSROOTADM_VALTAGS);
+    }
+
+    if (db == NULL)
+    {
+	mode_t omask;
+
+	omask = umask (cvsumask);
+	db = dbm_open (filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
+	(void)umask (omask);
+
+	if (db == NULL)
+	{
+	    error (0, errno, "warning: cannot open %s", filename);
+	    if (!valtags_filename) free (filename);
+	    return;
+	}
+    }
+
+    tag.dptr = tag_in;
+    tag.dsize = strlen (tag_in);
+    value.dptr = "y";
+    value.dsize = 1;
+    if (dbm_store (db, tag, value, DBM_REPLACE) < 0)
+	error (0, errno, "cannot store %s into %s", tag_in, filename);
+
+    if (!valtags_filename) free (filename);
+    if (!db_in) dbm_close (db);
+    return;
+}
+
+
+
 int
 cvstag (int argc, char **argv)
 {
@@ -272,6 +323,8 @@ cvstag (int argc, char **argv)
 	err = rtag_proc (argc + 1, argv - 1, NULL, NULL, NULL, 0, local, NULL,
 			 NULL);
     }
+
+    if (!err && !noexec) add_val_tag (NULL, NULL, symtag);
 
     return err;
 }
@@ -1533,8 +1586,6 @@ Numeric tag %s contains characters other than digits and '.'", name);
     else
     {
 	/* The tags is valid but not mentioned in val-tags.  Add it.  */
-	datum value;
-
 	if (noexec || nowrite)
 	{
 	    if (db != NULL)
@@ -1543,26 +1594,8 @@ Numeric tag %s contains characters other than digits and '.'", name);
 	    return;
 	}
 
-	if (db == NULL)
-	{
-	    mode_t omask;
-	    omask = umask (cvsumask);
-	    db = dbm_open (valtags_filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
-	    (void)umask (omask);
-
-	    if (db == NULL)
-	    {
-		error (0, errno, "warning: cannot create %s", valtags_filename);
-		free (valtags_filename);
-		return;
-	    }
-	}
-	value.dptr = "y";
-	value.dsize = 1;
-	if (dbm_store (db, mytag, value, DBM_REPLACE) < 0)
-	    error (0, errno, "cannot store %s into %s", name,
-		   valtags_filename);
-	dbm_close (db);
+	add_val_tag (db, valtags_filename, name);
+	if (db != NULL) dbm_close (db);
     }
     free (valtags_filename);
 }
@@ -1595,7 +1628,7 @@ tag_check_valid_join (char *join_tag, int argc, char **argv, int local,
 	 */
 	if (!*c)
 	    error (1, 0,
-		   "argument to join may not contain a date specifier without a tag");
+"argument to join may not contain a date specifier without a tag");
     }
 
     tag_check_valid (c, argc, argv, local, aflag, repository);

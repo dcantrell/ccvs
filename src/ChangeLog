@@ -1,3 +1,13 @@
+2004-07-09  Derek Price  <derek@ximbiot.com>
+
+	Cache tags in val-tags on successful creation to avoid problems with
+	write proxies.
+	* tag.c (add_val_tag): New function with content factored from...
+	(tag_check_valid): ...here.
+	(cvstag): Call add_val_tag() when needed.
+	* diff.c (*): Misc cleanup.
+	* sanity.sh (death2): Remove earlier hack.
+
 2004-07-08  Derek Price  <derek@ximbiot.com>
 
 	Intermediate checkin.  Adds some new server requests and test fixes.
