@@ -27,8 +27,10 @@
 
 #ifdef AUTH_SERVER_SUPPORT
 /* For initgroups().  */
+#if HAVE_INITGROUPS
 #include <grp.h>
-#endif
+#endif /* HAVE_INITGROUPS */
+#endif /* AUTH_SERVER_SUPPORT */
 
 
 /* Functions which the server calls.  */
@@ -4525,7 +4527,10 @@ authenticate_connection ()
              username);
     }
   
+#if HAVE_INITGROUPS
   initgroups (pw->pw_name, pw->pw_gid);
+#endif /* HAVE_INITGROUPS */
+
   setgid (pw->pw_gid);
   setuid (pw->pw_uid);
   /* Inhibit access by randoms.  Don't want people randomly

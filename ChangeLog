@@ -1,3 +1,16 @@
+Thu May  2 01:40:55 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* Compatibility fixes affecting QNX, NetBSD, and SCO
+
+	* configure.in (AC_CHECK_FUNCS): Added check for initgroups(),
+          (ac_cv_func_crypt) Added check for crypt() in -lcrypt;
+          define AUTH_SERVER_SUPPORT only if crypt() is found.
+
+	* configure: Regenerated.
+
+	* src/server.c (HAVE_INITGROUPS): Use initgroups() only if
+        located by configure.
+
 Wed May  1 15:38:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS: Remove item about reserving all-uppercase tag names.
