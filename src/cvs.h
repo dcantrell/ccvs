@@ -81,8 +81,11 @@ extern int errno;
 #include "system.h"
 
 #include "hash.h"
+
+#include "root.h"
+
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
-#include "client.h"
+# include "client.h"
 #endif
 
 #ifdef MY_NDBM
@@ -364,26 +367,7 @@ extern int use_editor;
 extern int cvswrite;
 extern mode_t cvsumask;
 
-/* Access method specified in CVSroot. */
-typedef enum {
-  null_method, local_method, server_method, pserver_method, kserver_method, gserver_method,
-  ext_method, fork_method
-} CVSmethod;
-extern char *method_names[];	/* change this in root.c if you change
-				   the enum above */
 
-typedef struct cvsroot_s {
-    char *original;		/* the complete source CVSroot string */
-    CVSmethod method;		/* one of the enum values above */
-    char *username;		/* the username or NULL if method == local */
-    char *password;		/* the username or NULL if method == local */
-    char *hostname;		/* the hostname or NULL if method == local */
-    int port;			/* the port or zero if method == local */
-    char *directory;		/* the directory name */
-#ifdef CLIENT_SUPPORT
-    unsigned char isremote;	/* nonzero if we are doing remote access */
-#endif /* CLIENT_SUPPORT */
-} cvsroot_t;
 
 /* This global variable holds the global -d option.  It is NULL if -d
    was not used, which means that we must get the CVSroot information
