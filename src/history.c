@@ -1179,8 +1179,9 @@ read_hrecs (fname)
 
 	oldcp = cp;
 	i = strlen(cp);
-	cp = xmalloc(i + STAT_BLOCKSIZE(st_buf) + 2);
+	cp = xmalloc(i + STAT_BLOCKSIZE(st_buf) + 1);
 	memcpy( cp , oldcp , i );
+	cp[i]=0;
 	free(cpstart);
 	cpstart = cp;
 	i += read (fd, cp + strlen(cp), STAT_BLOCKSIZE(st_buf));
