@@ -2420,7 +2420,20 @@ set_sticky (data, ent_list, short_pathname, filename)
     FILE *f;
 
     read_line (&tagspec);
-    f = open_file (CVSADM_TAG, "w+");
+
+    /* FIXME-update-dir: error messages should include the directory.  */
+    f = CVS_FOPEN (CVSADM_TAG, "w+");
+    if (f == NULL)
+    {
+	/* Making this non-fatal is a bit of a kludge (see dirs2
+	   in testsuite).  A better solution would be to avoid having
+	   the server tell us about a directory we shouldn't be doing
+	   anything with anyway (e.g. by handling directory
+	   addition/removal better).  */
+	error (0, errno, "cannot open %s", CVSADM_TAG);
+	free (tagspec);
+	return;
+    }
     if (fprintf (f, "%s\n", tagspec) < 0)
 	error (1, errno, "writing %s", CVSADM_TAG);
     if (fclose (f) == EOF)
