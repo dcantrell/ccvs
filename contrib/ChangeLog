@@ -1,3 +1,9 @@
+Tue Nov 14 15:28:25 1995  Greg A. Woods  <woods@most.weird.com>
+
+	* README: fix some spelling and other typos
+
+	* Makefile.in: if I need reminding to run cvsinit....
+
 Tue Nov 14 13:47:40 1995  Greg A. Woods  <woods@most.weird.com>
 
 	* log_accum.pl:
