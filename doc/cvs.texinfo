@@ -8021,9 +8021,11 @@ The tag specification is sticky when you use this
 with @code{checkout} or @code{update} to make your own
 copy of a file: @sc{cvs} remembers the tag and continues to use it on
 future update commands, until you specify otherwise (for more information
-on sticky tags/dates, @pxref{Sticky tags}).  The
-tag can be either a symbolic or numeric tag.
-@xref{Tags}.
+on sticky tags/dates, @pxref{Sticky tags}).
+
+The tag can be either a symbolic or numeric tag, as
+described in @ref{Tags}, or the name of a branch, as
+described in @ref{Branching and merging}.
 
 Specifying the @samp{-q} global option along with the
 @samp{-r} command option is often useful, to suppress
