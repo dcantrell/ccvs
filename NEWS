@@ -1,5 +1,10 @@
 Changes since 1.12.2:
 
+* We've standardized on Autoconf version 2.58 to avoid a bug and get at a few
+  new macros.  Again, this should only really affect developers.  See the
+  section of the INSTALL file about using the autotools if you are compiling
+  CVS yourself.
+
 * A minor problem that preveneted the correct version of a system ZLIB from
   being detected on some platforms has been fixed.
 
