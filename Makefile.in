@@ -46,7 +46,7 @@ LIBS = @LIBS@
 
 INCLUDES = -I. -I../lib @includeopt@
 CFLAGS = @CFLAGS@
-LDFLAGS = $(CDEBUG)
+LDFLAGS = @LDFLAGS@
 
 MAKEINFO = makeinfo
 TEXI2DVI = texi2dvi

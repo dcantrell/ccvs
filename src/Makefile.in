@@ -74,8 +74,8 @@ DEFS = @DEFS@ @includeopt@
 
 CC	 = @CC@
 CFLAGS = @CFLAGS@
-CPPFLAGS=
-LDFLAGS=
+CPPFLAGS =
+LDFLAGS =
 
 INCLUDES = -I. -I.. -I$(srcdir) -I$(top_srcdir)/lib
 .c.o:
