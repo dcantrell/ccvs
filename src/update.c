@@ -2689,7 +2689,7 @@ special_file_mismatch (finfo, rev1, rev2)
 	    rev1_symlink = xreadlink (finfo->file);
 	else
 	{
-# ifdef HAVE_ST_RDEV
+# ifdef HAVE_STRUCT_STAT_ST_RDEV
 	    if (CVS_LSTAT (finfo->file, &sb) < 0)
 		error (1, errno, "could not get file information for %s",
 		       finfo->file);
@@ -2767,7 +2767,7 @@ special_file_mismatch (finfo, rev1, rev2)
 	    rev2_symlink = xreadlink (finfo->file);
 	else
 	{
-# ifdef HAVE_ST_RDEV
+# ifdef HAVE_STRUCT_STAT_ST_RDEV
 	    if (CVS_LSTAT (finfo->file, &sb) < 0)
 		error (1, errno, "could not get file information for %s",
 		       finfo->file);

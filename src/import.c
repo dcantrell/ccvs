@@ -1228,7 +1228,7 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 		    case S_IFREG: break;
 		    case S_IFCHR:
 		    case S_IFBLK:
-#ifdef HAVE_ST_RDEV
+#ifdef HAVE_STRUCT_STAT_ST_RDEV
 			if (fprintf (fprcs, "special\t%s %lu;\012",
 				     (file_type == S_IFCHR
 				      ? "character"
@@ -1285,7 +1285,7 @@ userfile);
 			case S_IFREG: break;
 			case S_IFCHR:
 			case S_IFBLK:
-#ifdef HAVE_ST_RDEV
+#ifdef HAVE_STRUCT_STAT_ST_RDEV
 			    if (fprintf (fprcs, "special\t%s %lu;\012",
 					 (file_type == S_IFCHR
 					  ? "character"

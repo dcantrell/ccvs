@@ -52,7 +52,7 @@ copy_file (from, to)
 
     if (isdevice (from))
     {
-#if defined(HAVE_MKNOD) && defined(HAVE_ST_RDEV)
+#if defined(HAVE_MKNOD) && defined(HAVE_STRUCT_STAT_ST_RDEV)
 	if (stat (from, &sb) < 0)
 	    error (1, errno, "cannot stat %s", from);
 	mknod (to, sb.st_mode, sb.st_rdev);
@@ -624,7 +624,7 @@ xcmp (file1, file2)
        numbers match. */
     if (S_ISBLK (sb1.st_mode) || S_ISCHR (sb1.st_mode))
     {
-#ifdef HAVE_ST_RDEV
+#ifdef HAVE_STRUCT_STAT_ST_RDEV
 	if (sb1.st_rdev == sb2.st_rdev)
 	    return 0;
 	else
