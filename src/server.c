@@ -5494,6 +5494,7 @@ check_repository_password (username, password, repository, host_user_ptr)
 }
 
 
+
 /* Return a hosting username if password matches, else NULL. */
 static char *
 check_password (username, password, repository)

@@ -1,5 +1,9 @@
 2004-03-29  Derek Price  <derek@ximbiot.com>
 
+	* server.c: Gratuitous restyling.
+
+2004-03-29  Derek Price  <derek@ximbiot.com>
+
 	* login.c: Gratuitous restyling.
 
 2004-03-22  Derek Price  <derek@ximbiot.com>
