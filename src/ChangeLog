@@ -1,3 +1,9 @@
+Wed Oct  9 15:52:34 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* rcs.c (RCS_getrevtime): When giving a date to get_date, use the full
+	year, not the year - 1900, so that dates after 1999 are parsed
+	correctly.  (Change thanks to Paul Eggert.)
+
 Wed Oct  9 10:59:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	Clean up gcc -Wmissing-prototypes lint:
