@@ -1,3 +1,7 @@
+Fri May 17 11:49:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Refer to cvs.texinfo and say "filesystem" not "fs".
+
 Thu May 16 17:13:56 1996  Noel Cragg  <noel@gargle.rain.org>
 
 	* NEWS: Mention all access methods.
