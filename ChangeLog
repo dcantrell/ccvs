@@ -1,3 +1,7 @@
+2004-10-22  Derek Price  <derek@ximbiot.com>
+
+	* gnulib-update (MODULES): Add md5.
+
 2004-10-21  Derek Price  <derek@ximbiot.com>
 
 	* gnulib-update (MODULES): Backout addition of rpmatch & yesno.
