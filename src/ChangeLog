@@ -1,3 +1,11 @@
+2001-08-07  Derek Price  <dprice@collab.net>
+
+	* build_src.com: Add annotate.c/annotate.obj,verify, correct zlib name.
+	* patch.c: VMS time_t appears to be unsigned.   Add a cast when testing
+	for (time_t)-1.
+	* subr.c: #else,#endif for no symlinks should be moved.
+	(Patch from Mike Marciniszyn <Mike.Marciniszyn@sanchez.com>.)
+
 2001-08-06  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated.

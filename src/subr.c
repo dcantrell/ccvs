@@ -742,9 +742,6 @@ resolve_symlink (filename)
 	   But that would require editing each filesubr.c and so the
 	   expedient hack seems to be looking at HAVE_READLINK.  */
 	newname = xreadlink (*filename);
-#else
-	error (1, 0, "internal error: islink doesn't like readlink");
-#endif
 	
 	if (isabsolute (newname))
 	{
@@ -762,6 +759,9 @@ resolve_symlink (filename)
 	    free (*filename);
 	    *filename = fullnewname;
 	}
+#else
+	error (1, 0, "internal error: islink doesn't like readlink");
+#endif
     }
 }
 
