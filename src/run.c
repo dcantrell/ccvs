@@ -103,38 +103,6 @@ run_arg (s)
     run_add_arg (s);
 }
 
-/* VARARGS */
-#if defined (HAVE_VPRINTF) && (defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__))
-void 
-run_args (const char *fmt,...)
-#else
-void 
-run_args (fmt, va_alist)
-    char *fmt;
-    va_dcl
-#endif
-{
-#ifdef HAVE_VPRINTF
-    va_list args;
-#endif
-    char *run_prog;
-
-    /* process the varargs into run_prog */
-#ifdef HAVE_VPRINTF
-    VA_START (args, fmt);
-    (void) vasprintf (&run_prog, fmt, args);
-    va_end (args);
-#else
-    you lose
-#endif
-    if (run_prog == NULL)
-	error (1, 0, "out of memory");
-
-    /* and add the (single) argument to the run_argv list */
-    run_add_arg (run_prog);
-    free (run_prog);
-}
-
 static void
 run_add_arg (s)
     const char *s;
