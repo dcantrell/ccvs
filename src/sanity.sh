@@ -8848,9 +8848,20 @@ Enew	line	here
 G@#..!@#=&"
 
 	  cd ../..
+	  # OK, now change the tab to a space, and see that CVS gives
+	  # a reasonable error (this is database corruption but CVS should
+	  # not lose its mind).
+	  sed -e 's/Fw2	/Fw2 /' <${CVSROOT_DIRNAME}/first-dir/CVS/fileattr \
+	    >${CVSROOT_DIRNAME}/first-dir/CVS/fileattr.new
+	  mv ${CVSROOT_DIRNAME}/first-dir/CVS/fileattr.new \
+	    ${CVSROOT_DIRNAME}/first-dir/CVS/fileattr
+	  mkdir 2; cd 2
+	  dotest_fail devcom3-10 "${testcvs} -Q co ." \
+"${PROG} \[[a-z]* aborted\]: file attribute database corruption: tab missing in ${CVSROOT_DIRNAME}/first-dir/CVS/fileattr"
+	  cd ..
 
 	  # Use -f because of the readonly files.
-	  rm -rf 1
+	  rm -rf 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
