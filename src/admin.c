@@ -77,8 +77,6 @@ admin (argc, argv)
     av = argv + 1;
     argv += ac;
     ac--;
-    if (ac == 0 || argc == 0)
-	usage (admin_usage);
 
 #ifdef CLIENT_SUPPORT
     if (client_active)

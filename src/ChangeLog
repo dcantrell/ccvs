@@ -1,3 +1,9 @@
+Sun Mar  2 18:11:09 1997  Dan Wilder  <dan@gasboy.com>
+			  and Jim Kingdon
+
+	* admin.c (admin): Arrange to perform recursion if "cvs admin"
+	is passed only options.
+
 Sun Mar  2 18:11:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (basicb): New tests basicb-0* test for files at top
