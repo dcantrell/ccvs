@@ -3045,11 +3045,25 @@ expand_proc (pargc, argv, where, mwhere, mfile, shorten,
 {
     int i;
     char *dir = argv[0];
-    if (*pargc == 1)
-	printf ("Module-expansion %s\n", dir);
+
+    /* If mwhere has been specified, the thing we're expanding is a
+       module -- just return its name so the client will ask for the
+       right thing later.  If it is an alias or a real directory,
+       mwhere will not be set, so send out the appropriate
+       expansion. */
+
+    if (mwhere != NULL)
+      printf ("Module-expansion %s\n", mwhere);
     else
-	for (i = 1; i < *pargc; ++i)
+      {
+	/* We may not need to do this anymore -- check the definition
+           of aliases before removing */
+	if (*pargc == 1)
+	  printf ("Module-expansion %s\n", dir);
+	else
+	  for (i = 1; i < *pargc; ++i)
 	    printf ("Module-expansion %s/%s\n", dir, argv[i]);
+      }
     return 0;
 }
 
