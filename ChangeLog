@@ -1,5 +1,11 @@
 2004-03-11  Derek Price  <derek@ximbiot.com>
 
+	* cvsnt.mak (alloca.obj, alloca.h): New targets.
+	(CLEAN): Clean generated headers.
+	(vasnprintf.c): Add dependency on alloca.h.
+
+2004-03-11  Derek Price  <derek@ximbiot.com>
+
 	* srclist.txt: Note unfork of lib/xsize.h.
 
 2004-03-07  Derek Price  <derek@ximbiot.com>
