@@ -3708,23 +3708,20 @@ serve_editors (arg)
     do_cvs_command ("editors", editors);
 }
 
-static int noop PROTO ((int, char **));
-
-static int
-noop (argc, argv)
-    int argc;
-    char **argv;
-{
-    return 0;
-}
-
 static void serve_noop PROTO ((char *));
 
 static void
 serve_noop (arg)
     char *arg;
 {
-    do_cvs_command ("noop", noop);
+
+    server_write_entries ();
+    if (!print_pending_error ())
+    {
+	(void) server_notify ();
+	buf_output0 (buf_to_net, "ok\n");
+    }
+    buf_flush (buf_to_net, 1);
 }
 
 static void serve_version PROTO ((char *));
@@ -4715,7 +4712,7 @@ struct request requests[] =
   REQ_LINE("editors", serve_editors, 0),
   REQ_LINE("init", serve_init, RQ_ROOTLESS),
   REQ_LINE("annotate", serve_annotate, 0),
-  REQ_LINE("noop", serve_noop, 0),
+  REQ_LINE("noop", serve_noop, RQ_ROOTLESS),
   REQ_LINE("version", serve_version, RQ_ROOTLESS),
   REQ_LINE(NULL, NULL, 0)
 
