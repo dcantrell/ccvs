@@ -94,7 +94,7 @@ static const struct cmd
     { "edit",     NULL,	      NULL,	   edit },
     { "editors",  NULL,       NULL,	   editors },
     { "export",   "exp",      "ex",        checkout },
-    { "history",  "hi",       "hist",      history },
+    { "history",  "hi",       "his",       history },
     { "import",   "im",       "imp",       import },
     { "init",     NULL,       NULL,        init },
 #ifdef SERVER_SUPPORT
