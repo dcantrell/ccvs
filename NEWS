@@ -1,5 +1,9 @@
 Changes since 1.11.8:
 
+* Attempts to use the global `-l' option, removed from both client and server
+  as of version 1.11.6, will now elicit a warning rather than a fatal error
+  from the server.
+
 Changes from 1.11.7 to 1.11.8:
 
 * A problem in the CVS getpass library that could cause passwords to echo on
