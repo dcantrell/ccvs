@@ -83,7 +83,8 @@ login (argc, argv)
   char *passfile;
   FILE *fp;
   char *typed_password, *found_password;
-  char linebuf[MAXLINELEN];
+  char *linebuf = NULL;
+  size_t linebuf_len;
   int root_len, already_entered = 0;
 
   /* Make this a "fully-qualified" CVSroot if necessary. */
@@ -95,7 +96,7 @@ login (argc, argv)
       printf ("Repository \"%s\" not fully-qualified.\n", CVSroot);
       printf ("Please enter \"user@host:/path\": ");
       fflush (stdout);
-      fgets  (linebuf, MAXLINELEN, stdin);
+      getline (&linebuf, &linebuf_len, stdin);
 
       tmp = xmalloc (strlen (linebuf) + 1);
 
@@ -152,7 +153,7 @@ login (argc, argv)
   if (fp != NULL)
     {
       /* Check each line to see if we have this entry already. */
-      while (fgets (linebuf, MAXLINELEN, fp) != NULL)
+      while (getline (&linebuf, &linebuf_len, fp) >= 0)
         {
           if (strncmp (CVSroot, linebuf, root_len) == 0)
             {
@@ -200,7 +201,7 @@ login (argc, argv)
           /* I'm not paranoid, they really ARE out to get me: */
           chmod (passfile, 0600);
 
-          while (fgets (linebuf, MAXLINELEN, fp) != NULL)
+          while (getline (&linebuf, &linebuf_len, fp) >= 0)
             {
               if (strncmp (CVSroot, linebuf, root_len))
                 fprintf (tmp_fp, "%s", linebuf);
@@ -232,6 +233,7 @@ login (argc, argv)
   memset (typed_password, 0, strlen (typed_password));
 
   free (passfile);
+  free (linebuf);
   return 0;
 }
 
@@ -246,7 +248,8 @@ get_cvs_password ()
   int found_it = 0;
   int root_len;
   char *password;
-  char linebuf[MAXLINELEN];
+  char *linebuf;
+  size_t linebuf_len;
   FILE *fp;
   char *passfile;
 
@@ -262,7 +265,7 @@ get_cvs_password ()
   root_len = strlen (CVSroot);
 
   /* Check each line to see if we have this entry already. */
-  while (fgets (linebuf, MAXLINELEN, fp) != NULL)
+  while (getline (&linebuf, &linebuf_len, fp) >= 0)
     {
       if (strncmp (CVSroot, linebuf, root_len) == 0)
         {
@@ -292,6 +295,7 @@ get_cvs_password ()
     prompt_for_it:
       return getpass ("CVS password: ");
     }
+  free (linebuf);
 }
 
 #endif /* AUTH_CLIENT_SUPPORT from beginning of file. */

@@ -303,9 +303,9 @@ parse_cvsroot ()
 }
 
 /* Stream to write to the server.  */
-FILE *to_server;
+static FILE *to_server;
 /* Stream to read from the server.  */
-FILE *from_server;
+static FILE *from_server;
 
 #if ! RSH_NOT_TRANSPARENT
 /* Process ID of rsh subprocess.  */
@@ -2137,7 +2137,7 @@ struct response responses[] =
  * server goes through here.
  *
  * If len is 0, then send_to_server computes the string's length
- * itself.  So if len is 0, the string needs to be NULL-terminated.
+ * itself.  So if len is 0, the string needs to be '\0'-terminated.
  *
  * CALLERS BEWARE: This function no longer does printf-style formatting.
  *
@@ -2221,6 +2221,16 @@ get_server_responses ()
 /* Get the responses and then close the connection.  */
 int server_fd = -1;
 
+/*
+ * Flag var; we'll set it in start_server() and not one of its
+ * callees, such as start_rsh_server().  This means that there might
+ * be a small window between the starting of the server and the
+ * setting of this var, but all the code in that window shouldn't care
+ * because it's busy checking return values to see if the server got
+ * started successfully anyway.
+ */
+int server_started = 0;
+
 int
 get_responses_and_close ()
 {
@@ -2278,8 +2288,7 @@ get_responses_and_close ()
 	error (1, errno, "waiting for process %d", rsh_pid);
 #endif /* ! RSH_NOT_TRANSPARENT */
 
-    to_server = NULL;
-    from_server = NULL;
+    server_started = 0;
 
     return errs;
 }
@@ -2591,16 +2600,6 @@ start_kerberos_server (tofdp, fromfdp, log)
 }
 
 #endif /* HAVE_KERBEROS */
-
-/*
- * Flag var; we'll set it in start_server() and not one of its
- * callees, such as start_rsh_server().  This means that there might
- * be a small window between the starting of the server and the
- * setting of this var, but all the code in that window shouldn't care
- * because it's busy checking return values to see if the server got
- * started successfully anyway.
- */
-int server_started = 0;
 
 /* Contact the server.  */
 void
@@ -3128,13 +3127,17 @@ send_modified (file, short_pathname, vers)
 #endif /* LINES_CRLF_TERMINATED */
 
         {
-          char tmp[MAXLINELEN];
+          char tmp[80];
           int len;
-          
-          len = sprintf (tmp, "Modified %s\n%s\nz%lu\n",
-                         file, mode_string, (unsigned long) newsize);
 
-          send_to_server (tmp, len);
+	  send_to_server ("Modified ", 0);
+	  send_to_server (file, 0);
+	  send_to_server ("\n", 1);
+	  send_to_server (mode_string, 0);
+	  send_to_server ("\nz", 2);
+	  len = sprintf (tmp, "%lu\n", (unsigned long) newsize);
+	  send_to_server (tmp, len);
+
           send_to_server (buf, newsize);
           if (feof (to_server) || ferror (to_server))
 	    error (1, errno, "writing to server");
@@ -3160,12 +3163,15 @@ send_modified (file, short_pathname, vers)
 	    error (0, errno, "warning: can't close %s", short_pathname);
 
         {
-          char tmp[MAXLINELEN];
+          char tmp[80];
           int len;
-          
-          len = sprintf (tmp, "Modified %s\n%s\n%lu\n", file,
-                              mode_string, (unsigned long) newsize);
 
+	  send_to_server ("Modified ", 0);
+	  send_to_server (file, 0);
+	  send_to_server ("\n", 1);
+	  send_to_server (mode_string, 0);
+	  send_to_server ("\n", 1);
+          len = sprintf (tmp, "%lu\n", (unsigned long) newsize);
           send_to_server (tmp, len);
         }
 
@@ -3205,9 +3211,11 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
 
     if (vers->vn_user != NULL)
     {
-      char tmp[MAXLINELEN];
+      char *tmp;
       int len;
 
+      tmp = xmalloc (strlen (file) + strlen (vers->vn_user)
+		     + strlen (vers->options) + 200);
       len = sprintf (tmp, "Entry /%s/%s/%s%s/%s/", 
                      file, vers->vn_user,
 		     vers->ts_conflict == NULL ? "" : "+",
@@ -3221,6 +3229,7 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
 	/* The Entries request.  */
 	/* Not sure about whether this deals with -k and stuff right.  */
 	send_to_server (tmp, len);
+        free (tmp);
 	if (vers->entdata != NULL && vers->entdata->tag)
 	{
 	    send_to_server ("T", 0);
@@ -3649,15 +3658,17 @@ client_notify (repository, update_dir, filename, notif_type, val)
     int notif_type;
     char *val;
 {
-    char buf[MAXLINELEN];
-    int len;
+    char buf[2];
 
     send_a_repository ("", repository, update_dir);
-
-    len = sprintf (buf, "Notify %s\n%c\t%s",
-                   filename, notif_type, val);
-
-    send_to_server (buf, len);
+    send_to_server ("Notify ", 0);
+    send_to_server (filename, 0);
+    send_to_server ("\n", 1);
+    buf[0] = notif_type;
+    buf[1] = '\0';
+    send_to_server (buf, 1);
+    send_to_server ("\t", 1);
+    send_to_server (val, 0);
 }
 
 /*

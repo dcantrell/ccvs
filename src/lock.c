@@ -391,7 +391,7 @@ static int
 readers_exist (repository)
     char *repository;
 {
-    char line[MAXLINELEN];
+    char *line;
     DIR *dirp;
     struct dirent *dp;
     struct stat sb;
@@ -414,6 +414,7 @@ again:
 	    (void) time (&now);
 #endif
 
+	    line = xmalloc (strlen (repository) + strlen (dp->d_name) + 5);
 	    (void) sprintf (line, "%s/%s", repository, dp->d_name);
 	    if (stat (line, &sb) != -1)
 	    {
@@ -426,11 +427,13 @@ again:
 		if (now >= (sb.st_ctime + CVSLCKAGE) && unlink (line) != -1)
 		{
 		    (void) closedir (dirp);
+		    free (line);
 		    goto again;
 		}
 #endif
 		set_lockers_name (&sb);
 	    }
+	    free (line);
 
 	    ret = 1;
 	    break;

@@ -1,3 +1,13 @@
+Sun Dec 17 19:38:03 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* checkout.c (checkout_proc), client.c, lock.c (readers_exist),
+	login.c, modules.c (cat_module, do_module): Remove arbitrary limits.
+
+	* client.c (send_to_server): Fix typo (NULL -> '\0').
+	(get_responses_and_close): Set server_started to 0 instead of
+	setting to_server and from_server to NULL.
+	* client.c: Make to_server and from_server static.
+
 Sun Dec 17 17:59:04 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.h (to_server, from_server): don't declare these anymore.

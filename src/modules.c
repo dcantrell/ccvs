@@ -97,7 +97,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     char *tag_prog = NULL;
     char *update_prog = NULL;
     struct saved_cwd cwd;
-    char line[MAXLINELEN];
+    char *line;
     int modargc;
     int xmodargc;
     char **modargv;
@@ -393,10 +393,12 @@ do_module (db, mname, m_type, msg, callback_proc, where,
      */
 
     /* Put the value on a line with XXX prepended for getopt to eat */
+    line = xmalloc (strlen (value) + 10);
     (void) sprintf (line, "%s %s", "XXX", value);
 
     /* turn the line into an argv[] array */
     line2argv (&xmodargc, xmodargv, line);
+    free (line);
     modargc = xmodargc;
     modargv = xmodargv;
 
@@ -761,7 +763,8 @@ cat_module (status)
     int moduleargc;
     struct sortrec *s_h;
     char *cp, *cp2, **argv;
-    char line[MAXLINELEN], *moduleargv[MAXFILEPERDIR];
+    char *line;
+    char *moduleargv[MAXFILEPERDIR];
 
 #ifdef sun
 #ifdef TIOCGSIZE
@@ -813,8 +816,10 @@ cat_module (status)
 	}
 
 	/* Parse module file entry as command line and print options */
+	line = xmalloc (strlen (s_h->modname) + strlen (s_h->rest) + 10);
 	(void) sprintf (line, "%s %s", s_h->modname, s_h->rest);
 	line2argv (&moduleargc, moduleargv, line);
+	free (line);
 	argc = moduleargc;
 	argv = moduleargv;
 
