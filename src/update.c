@@ -1913,7 +1913,11 @@ ignore_files (ilist, update_dir)
 #endif
     	}
 	
-	if (ign_name (file))
+	/* We ignore any things which:
+	 *  1. not a file, or
+	 *  2. it is a file on the ignore list.
+	 */
+	if (!S_ISREG (sb.st_mode) || ign_name (file))
 	    continue;
 	(void) write_letter (file, '?', xdir);
     }

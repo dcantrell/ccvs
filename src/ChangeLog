@@ -1,3 +1,18 @@
+Sat Dec 16 21:35:31 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * checkout.c (checkout): use send_to_server() now.
+
+Sat Dec 16 21:18:16 1995  H.J. Lu (hjl@gnu.ai.mit.edu)
+                          (applied by kfogel@cyclic.com)
+        
+	* import.c (import_descend): We ignore an entry if it is
+		1. not a file, nor a link, nor a directory, or
+		2. a file and on the ignore list.
+
+	* update.c (ignore_files): We ignore any thing which is
+		1. not a file, or
+		2. it is a file on the ignore list.
+
 Sat Dec 16 00:14:19 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c (send_to_server): corrected comment.
