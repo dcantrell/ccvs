@@ -1,3 +1,8 @@
+Tue Jul 29 11:36:22 1997  Karl Fogel  <kfogel@harvey.cyclic.com>
+
+	* login.c (construct_cvspass_filename): error message informs user
+	she may need to set HOME environment variable by hand.
+
 Sun Jul 27 15:36:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* admin.c (admin): Remove comment "XXX send -ko too with i = 0".
