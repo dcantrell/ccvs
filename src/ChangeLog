@@ -1,3 +1,8 @@
+Mon Sep 23 09:55:22 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* options.h.in: Fixed some typos in the comments and reindented
+ 	them.
+
 Sat Sep 21 02:33:26 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* sanity.sh: If we're testing remote CVS, make sure rsh itself is
