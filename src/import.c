@@ -1171,7 +1171,10 @@ import_descend_dir (message, dir, vtag, targc, targv)
     if (!isdir (repository))
 #endif
     {
-	if (isfile (repository))
+	char rcs[PATH_MAX];
+
+	(void) sprintf (rcs, "%s%s", repository, RCSEXT);
+	if (isfile (repository) || isfile(rcs))
 	{
 	    fperror (logfp, 0, 0, "ERROR: %s is a file, should be a directory!",
 		     repository);

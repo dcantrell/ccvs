@@ -741,7 +741,8 @@ update_dirent_proc (dir, repository, update_dir)
 	    Create_Admin (dir, update_dir, repository, tag, date);
 	}
     }
-    else
+    /* Do we need to check noexec here? */
+    else if (!pipeout)
     {
 	char *cvsadmdir;
 

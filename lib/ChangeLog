@@ -1,3 +1,9 @@
+Thu Apr 25 18:26:34 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* getdate.y (get_date): Set Start from nowtime, not now->time,
+	which may not be set.
+	* getdate.c: Regenerated.
+
 Wed Apr 10 17:55:02 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* getdate.y (get_date): Use a time_t variable rather than a field
