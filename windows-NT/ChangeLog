@@ -1,3 +1,7 @@
+Sat Nov 30 15:33:22 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Grep is no longer required.  Specify when gzip is required.
+
 Tue Nov 19 17:19:35 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (SOURCES): Remove strippath.c.
