@@ -1,3 +1,8 @@
+Mon Jun 30 10:48:21 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Committing your changes): Add comment concerning
+	documentation of message prompting.
+
 Fri Jun 27 11:20:34 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Password scrambling): New node.
