@@ -56,7 +56,7 @@
 	(abspath-3.2): Use [a-z]* rather than "checkout".
 	(check_repository-1): Add server error messages about absolute paths
 	since the client now skips destination validity checks.
-	(check_repository-2): Process client error messages avout CVSROOT
+	(check_repository-2): Process client error messages about CVSROOT
 	files being in the way since the client skips destination validity
 	checks since it should be rare that a client is running in
 	client/server mode on the server and CVS has no current way to check if
