@@ -2115,6 +2115,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
     char *key;
     char *value;
     size_t len;
+    int free_value = 0;
     char *ouroptions;
     int keywords;
     int ret;
@@ -2223,6 +2224,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
 	}
 
 	RCS_deltas (rcs, fp, rev, RCS_FETCH, &value, &len);
+	free_value = 1;
     }
 
     /* I'm not completely sure that checking rcs->expand is necessary
@@ -2317,6 +2319,8 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
 		error (1, errno, "cannot close %s", sout);
 	}
 
+	if (free_value)
+	    free (value);
 	if (free_rev)
 	    free (rev);
 
@@ -2337,6 +2341,9 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
 	free (numtag);
     }
 #endif
+
+    if (free_value)
+	free (value);
 
     ret = RCS_exec_checkout (rcs->path, workfile,
 			     nametag != NULL ? nametag : rev,
