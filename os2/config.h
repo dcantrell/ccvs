@@ -132,10 +132,6 @@
 /* We don't need this for CLIENT side.  */
 #undef DIFF
 
-/* the path to the gnu grep program on your system  */
-/* We don't need this for CLIENT side.  */
-#undef GREP
-
 /* Define if you have the connect function.  */
 /* Not used?  */
 /* It appears to be used in client.c now... don't know yet it OS/2 has it. */
