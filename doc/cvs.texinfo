@@ -728,7 +728,7 @@ they should be in separate locations.
 @c as it is; need a little reorganization...
 
 @cindex :local:, setting up
-@sc{Cvs} can access a repository by a variety of
+@sc{cvs} can access a repository by a variety of
 means.  It might be on the local computer, or it might
 be on a computer across the room or across the world.
 To distinguish various ways to access a repository, the
@@ -1019,7 +1019,7 @@ out files, because @sc{cvs} needs to create lock files
 @c Like val-tags gets created by someone who doesn't
 @c have CVSUMASK set right?
 Also note that users must have write access to the
-@file{CVSROOT/val-tags} file.  @sc{Cvs} uses it to keep
+@file{CVSROOT/val-tags} file.  @sc{cvs} uses it to keep
 track of what tags are valid tag names (it is sometimes
 updated when tags are used, as well as when they are
 created).
@@ -5525,7 +5525,7 @@ is almost automatic.
 
 @c FIXME? should probably use the word "watch" here, to
 @c tie this into the text below and above.
-@sc{Cvs} also supports mechanisms which facilitate
+@sc{cvs} also supports mechanisms which facilitate
 various kinds of communication, without actually
 enforcing rules like reserved checkouts do.
 
@@ -5703,7 +5703,7 @@ resolve the conflict as described in @ref{Conflicts example}.
 
 @item Unknown
 @cindex Unknown
-@sc{Cvs} doesn't know anything about this file.  For
+@sc{cvs} doesn't know anything about this file.  For
 example, you have created a new file and have not run
 @code{add}.
 @c
@@ -6295,7 +6295,7 @@ instead of passing the name of the user to be notified
 to @file{notify}, @sc{cvs} will pass the @var{value}
 (normally an email address on some other machine).
 
-@sc{Cvs} does not notify you for your own changes.
+@sc{cvs} does not notify you for your own changes.
 Currently this check is done based on whether the user
 name of the person taking the action which triggers
 notification matches the user name of the person
@@ -9533,7 +9533,7 @@ available.  All other options restrict the output.
 Print information about the revisions on the default
 branch, normally the highest branch on the trunk.
 
-@item -d @var{dates}
+@item -d@var{dates}
 Print information about revisions with a checkin
 date/time in the range given by the
 semicolon-separated list of dates.  The date formats
@@ -9566,7 +9566,8 @@ The @samp{>} or @samp{<} characters may be followed by
 @samp{=} to indicate an inclusive range rather than an
 exclusive one.
 
-Note that the separator is a semicolon (;).
+There can be no space between the @samp{-d} option and its argument.
+Note also that the separator in the argument list is a semicolon (;).
 
 @item -h
 Print only the name of the @sc{rcs} file, name
@@ -9642,10 +9643,14 @@ revision on the default branch, normally the trunk.
 There can be no space between the @samp{-r} option and
 its argument.
 
-@item -s @var{states}
+@item -s@var{states}
 Print information about revisions whose state
 attributes match one of the states given in the
 comma-separated list @var{states}.
+
+There can be no space between the @samp{-s} option and
+its argument.  Note also that the separator in the
+argument list is a comma (,).
 
 @item -t
 Print the same as @samp{-h}, plus the descriptive text.
@@ -11710,7 +11715,7 @@ All occurrences of the name @samp{ALL} appearing as a
 regular expression are used in addition to the first
 matching regular expression or the name @samp{DEFAULT}.
 
-Note: when @sc{CVS} is accessing a remote repository,
+Note: when @sc{cvs} is accessing a remote repository,
 @file{commitinfo} will be run on the @emph{remote}
 (i.e., server) side, not the client side (@pxref{Remote
 repositories}).
@@ -11878,7 +11883,7 @@ line is used, if it is specified.
 If the edit script exits with a non-zero exit status,
 the commit is aborted.
 
-Note: when @sc{CVS} is accessing a remote repository,
+Note: when @sc{cvs} is accessing a remote repository,
 or when the @samp{-m} or @samp{-F} options to @code{cvs
 commit} are used, @file{editinfo} will not be consulted.
 There is no good workaround for this; use
@@ -12014,7 +12019,7 @@ might be:
 As another example, @samp{%@{@}} means that only the
 name of the repository will be generated.
 
-Note: when @sc{CVS} is accessing a remote repository,
+Note: when @sc{cvs} is accessing a remote repository,
 @file{loginfo} will be run on the @emph{remote}
 (i.e., server) side, not the client side (@pxref{Remote
 repositories}).
@@ -12156,7 +12161,7 @@ template.
 @xref{verifymsg}, for an example @file{rcsinfo}
 file.
 
-When @sc{CVS} is accessing a remote repository,
+When @sc{cvs} is accessing a remote repository,
 the contents of @file{rcsinfo} at the time a directory
 is first checked out will specify a template which does
 not then change.  If you edit @file{rcsinfo} or its
@@ -13165,7 +13170,7 @@ This is a normal message, not an error.  See
 This means that the editor which @sc{cvs} is using exits with a nonzero
 exit status.  Some versions of vi will do this even when there was not
 a problem editing the file.  If so, point the
-@sc{CVSEDITOR} environment variable to a small script
+@code{CVSEDITOR} environment variable to a small script
 such as:
 
 @example
