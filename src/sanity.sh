@@ -71,10 +71,6 @@ shift
 # special characters we are probably in big trouble.
 PROG=`basename ${testcvs}`
 
-# You may need to add '-b /path/to/rcsbin_dflt' if you didn't want to
-# set RCSBIN_DFLT in options.h...
-#testcvs="${testcvs} -b /local/bin -D /local/gnu/bin/diff"
-
 # FIXME: try things (what things? checkins?) without -m.
 #
 # Some of these tests are written to expect -Q.  But testing with
@@ -445,10 +441,10 @@ HOME=${TESTDIR}/home; export HOME
 # from a cvs or testsuite change, and to facilitate understanding the
 # tests.
 
+# We omit rdiff for now, because we have put off committing the changes that
+# make it work until after the 1.9 release.
 if test x"$*" = x; then
-	# This doesn't yet include log2, because the bug it tests for
-	# is not yet fixed, and/or we might want to wait until after 1.9.
-	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles binwrap info serverpatch log log2"
+	tests="basica basicb basic1 deep basic2 death death2 branches multibranch import join new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles binwrap info serverpatch log"
 else
 	tests="$*"
 fi
@@ -1242,21 +1238,6 @@ N second-dir/dir1/dir2/file6
 N second-dir/dir1/dir2/file7
 
 No conflicts created by this import'
-		dotest 56a "${testcvs} import -b1 -m main-branch-import third-dir first-immigration immigration1 immigration1_0" \
-'N third-dir/file14
-N third-dir/file6
-N third-dir/file7
-'"${PROG}"' [a-z]*: Importing /tmp/cvs-sanity/cvsroot/third-dir/dir1
-N third-dir/dir1/file14
-N third-dir/dir1/file6
-N third-dir/dir1/file7
-'"${PROG}"' [a-z]*: Importing /tmp/cvs-sanity/cvsroot/third-dir/dir1/dir2
-N third-dir/dir1/dir2/file14
-N third-dir/dir1/dir2/file6
-N third-dir/dir1/dir2/file7
-
-No conflicts created by this import'
-
 		cd ..
 
 		if ${CVS} export -r HEAD second-dir  ; then
@@ -1273,55 +1254,7 @@ No conflicts created by this import'
 			echo "PASS: test 58" >>${LOGFILE}
 		fi
 
-		if ${CVS} export -r HEAD third-dir  ; then
-			echo "PASS: test 57a" >>${LOGFILE}
-		else
-			echo "FAIL: test 57a" | tee -a ${LOGFILE} ; exit 1
-		fi
-
-		directory_cmp first-dir third-dir
-
-		if $ISDIFF ; then
-			echo "FAIL: test 58a" | tee -a ${LOGFILE} ; exit 1
-		else
-			echo "PASS: test 58a" >>${LOGFILE}
-		fi
-
-		rm -rf second-dir third-dir
-
-		dotest 56b "${testcvs} co third-dir" \
-'cvs [a-z]*: Updating third-dir
-U third-dir/file14
-U third-dir/file6
-U third-dir/file7
-cvs [a-z]*: Updating third-dir/dir1
-U third-dir/dir1/file14
-U third-dir/dir1/file6
-U third-dir/dir1/file7
-cvs [a-z]*: Updating third-dir/dir1/dir2
-U third-dir/dir1/dir2/file14
-U third-dir/dir1/dir2/file6
-U third-dir/dir1/dir2/file7'
-
-		# check to see that the main-branch import used branch "1"
-		cd third-dir
-		dotest 56c "${testcvs} status -v file7" \
-'===================================================================
-File: file7            	Status: Up-to-date
-
-   Working revision:	1\.1.*
-   Repository revision:	1\.1	/tmp/cvs-sanity/cvsroot/third-dir/file7,v
-   Sticky Tag:		(none)
-   Sticky Date:		(none)
-   Sticky Options:	(none)
-
-   Existing Tags:
-	first-immigration        	(branch: 1)
-	immigration1_0           	(revision: 1\.1)
-	immigration1             	(revision: 1\.1)'
-		# XXX there's probably much more that could be done here....
-		cd ..
-		rm -rf third-dir
+		rm -rf second-dir
 
 		rm -rf export-dir first-dir
 		mkdir first-dir
@@ -1404,7 +1337,6 @@ T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-hea
 T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-tag:rtagged-by-head\]
 T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-revision:1\.1\]
 O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* \[1\.1\] first-dir           =first-dir= '"${TMPPWD}"'/cvs-sanity/\*
-O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* third-dir           =third-dir= /tmp/cvs-sanity/\*
 U [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1\.2 file6     first-dir           == '"${TMPPWD}"'/cvs-sanity/first-dir
 U [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1\.2 file7     first-dir           == '"${TMPPWD}"'/cvs-sanity/first-dir' \
 'O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir           =first-dir= <remote>/\*
@@ -1424,12 +1356,10 @@ F [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]*                     =first
 T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-head:A\]
 T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-tag:rtagged-by-head\]
 T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-revision:1\.1\]
-O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* \[1\.1\] first-dir           =first-dir= <remote>/\*
-O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* third-dir           =third-dir= <remote>/\*'
+O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* \[1\.1\] first-dir           =first-dir= <remote>/\*'
 
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		rm -rf ${CVSROOT_DIRNAME}/second-dir
-		rm -rf ${CVSROOT_DIRNAME}/third-dir
 		;;
 
 	rdiff)
@@ -1439,10 +1369,10 @@ O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* third-dir           =third
 
 		mkdir testimport
 		cd testimport
-		echo '$''Id: foo,v 9.42 1995/03/20 01:00:54 someone Exp $' > foo
-		echo '$''Name: HELLO $' >> foo
-		echo '$''Id: bar,v 9.41 1995/03/20 01:01:45 someone Exp $' > bar
-		echo '$''Name: HELLO $' >> bar
+		echo '$''Id$' > foo
+		echo '$''Name$' >> foo
+		echo '$''Id$' > bar
+		echo '$''Name$' >> bar
 		dotest rdiff-1 \
 		  "${testcvs} import -I ! -m test-import-with-keyword trdiff TRDIFF T1" \
 'N trdiff/foo
@@ -1462,7 +1392,7 @@ U trdiff/foo'
 /tmp/cvs-sanity/cvsroot/trdiff/foo,v  <--  foo
 new revision: 1\.2; previous revision: 1\.1
 done'
-		echo '#ident	"@(#)trdiff:$''Name''$:$''Id''$"' > new
+		echo '#ident	"@(#)trdiff:$''Name$:$''Id$"' > new
 		echo "new file" >> new
 		dotest rdiff-4 \
 		  "${testcvs} add -m new-file-description new" \
@@ -1510,10 +1440,10 @@ diff -c trdiff/foo:1\.1\.1\.1 trdiff/foo:1\.2
 --- trdiff/foo	.*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1,2 \*\*\*\*
-! \$''Id: foo,v 9\.42 1995/03/20 01:00:54 someone Exp \$
-! \$''Name: HELLO \$
+! \$''Id\$
+! \$''Name\$
 --- 1,3 ----
-! \$''Id: foo,v 1\.2 .* Exp \$
+! \$''Id: foo,v 1\.2 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp \$
 ! \$''Name: local-v0 \$
 ! something
 Index: trdiff/new
@@ -1526,7 +1456,7 @@ diff -c /dev/null trdiff/new:1\.1
 '"${PLUS}"' #ident	"@(#)trdiff:\$''Name: local-v0 \$:\$''Id: new,v 1\.1 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp \$"
 '"${PLUS}"' new file'
 
-		#### XXX something is broken with the client/server here...
+		# This appears to be broken client/server
 		if test "x$remote" = xno; then
 		dotest rdiff-9 \
 		  "${testcvs} rdiff -Ko -kv -r T1 -r local-v0 trdiff" \
@@ -1537,10 +1467,10 @@ diff -c trdiff/foo:1\.1\.1\.1 trdiff/foo:1\.2
 --- trdiff/foo	.*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1,2 \*\*\*\*
-! \$''Id: foo,v 9\.42 1995/03/20 01:00:54 someone Exp \$
-! \$''Name: HELLO \$
+! \$''Id\$
+! \$''Name\$
 --- 1,3 ----
-! foo,v 1\.2 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp
+! foo,v 1\.2 .* Exp
 ! local-v0
 ! something
 Index: trdiff/new
@@ -1550,9 +1480,9 @@ diff -c /dev/null trdiff/new:1\.1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1,2 ----
-'"${PLUS}"' #ident	"@(#)trdiff:local-v0:new,v 1\.1 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp"
+'"${PLUS}"' #ident	"@(#)trdiff:local-v0:new,v 1\.1 .* Exp"
 '"${PLUS}"' new file'
-		fi #### XXX end of tests ignored
+		fi # end tests we are skipping for client/server
 
 # FIXME: will this work here?
 #		if test "$keep" = yes; then
@@ -2396,7 +2326,7 @@ rcsmerge: warning: conflicts during merge'
 1:ancest
 =======
 1:brbr
->>>>>>> 1\.1\.2\.1\.2\.1'
+[>]>>>>>> 1\.1\.2\.1\.2\.1'
 	  cd ..
 
 	  if test "$keep" = yes; then
@@ -2687,13 +2617,13 @@ rcsmerge: warning: conflicts during merge'
 
 		dotest import-116 'cat imported-file2' \
 'imported file2
-<<<<<<< imported-file2
+[<]<<<<<< imported-file2
 import should not expand \$''Id: imported-file2,v 1\.2 [0-9/]* [0-9:]* [a-z0-9@][a-z0-9@]* Exp \$
 local-change
-=======
+[=]======
 import should not expand \$''Id: imported-file2,v 1\.1\.1\.2 [0-9/]* [0-9:]* [a-z0-9@][a-z0-9@]* Exp \$
 rev 2 of file 2
->>>>>>> 1\.1\.1\.2'
+[>]>>>>>> 1\.1\.1\.2'
 
 		cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 		rm -rf import-dir
@@ -4810,52 +4740,6 @@ ${log_trailer}"
 
 	  cd ..
 	  rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
-	  ;;
-
-	log2)
-	  # More "cvs log" tests, for example the file description.
-
-	  # Setting the file description doesn't yet work client/server, so 
-	  # skip these tests for remote.
-	  if test "x$remote" = xno; then
-
-	  # Check in a file
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
-	  dotest log2-1 "${testcvs} -q co first-dir" ''
-	  cd first-dir
-	  echo 'first revision' > file1
-	  dotest log2-2 "${testcvs} add -m file1-is-for-testing file1" \
-"${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
-'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
-	  dotest log2-3 "${testcvs} -q commit -m 1" \
-'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
-done
-Checking in file1;
-/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
-initial revision: 1\.1
-done'
-	  dotest log2-4 "${testcvs} log -N file1" '
-RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
-Working file: file1
-head: 1\.1
-branch:
-locks: strict
-access list:
-keyword substitution: kv
-total revisions: 1;	selected revisions: 1
-description:
-file1-is-for-testing
-----------------------------
-revision 1\.1
-date: [0-9/]* [0-9:]*;  author: [a-zA-Z0-9@]*;  state: Exp;
-1
-============================================================================='
-
-	  cd ..
-	  rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
-
-	  fi # end of tests skipped for remote
-
 	  ;;
 
 	*)
