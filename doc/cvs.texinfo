@@ -1168,7 +1168,7 @@ rules see @ref{Tags}.
 @node File permissions
 @subsection File permissions
 @c -- Move this to @node Creating a repository or similar
-@cindex Security
+@cindex Security, file permissions in repository
 @cindex File permissions
 @cindex Group
 @cindex read-only files, in repository
@@ -1250,8 +1250,14 @@ of @sc{cvs}; do not rely on the setting of
 @c manually fixing permission, we better document a lot
 @c better just what we mean by "fix").
 
+Using pserver, you will generally need stricter
+permissions on the @sc{cvsroot} directory and
+directories above it in the tree; see @ref{Password
+authentication security}.
+
 @cindex setuid
 @cindex setgid
+@cindex security, setuid
 Since @sc{cvs} was not written to be run setuid, it is
 unsafe to try to run it setuid.  You cannot use the
 setuid features of @sc{rcs} together with @sc{cvs}.
@@ -2258,6 +2264,7 @@ password for transmission to the server.
 @node Password authentication security
 @subsubsection Security considerations with password authentication
 
+@cindex security, of pserver
 The passwords are stored on the client side in a
 trivial encoding of the cleartext, and transmitted in
 the same encoding.  The encoding is done only to
@@ -2324,7 +2331,10 @@ security, get Kerberos.
 @subsection Direct connection with kerberos
 
 @cindex kerberos
+@cindex security, kerberos
 @cindex :kserver:
+The easiest way to use kerberos is to use the kerberos
+@code{rsh}, as described in @ref{Connecting via rsh}.
 The main disadvantage of using rsh is that all the data
 needs to pass through additional programs, so it may be
 slower.  So if you have kerberos installed you can

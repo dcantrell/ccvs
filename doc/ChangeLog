@@ -1,3 +1,10 @@
+Thu Jun 26 09:18:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (File permissions): xref to the pserver thing about
+	permissions in CVSROOT.
+	(Kerberos authenticated): Explicitly mention kerberos rsh.
+	Add various index entries for "security, <foo>".
+
 Wed Jun 25 13:39:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Common options): Rewrite comments concerning HEAD
