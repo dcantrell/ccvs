@@ -70,7 +70,7 @@ void send_to_server (const char *str, size_t len);
 void read_from_server (char *buf, size_t len);
 
 /* Internal functions that handle client communication to server, etc.  */
-int supported_request (char *);
+bool supported_request (const char *);
 void option_with_arg (char *option, char *arg);
 
 /* Get the responses and then close the connection.  */
@@ -145,7 +145,8 @@ struct response
      * responses, and error indicates we should exit with nonzero
      * exitstatus.
      */
-    enum {response_type_normal, response_type_ok, response_type_error} type;
+    enum {response_type_normal, response_type_ok, response_type_error,
+	  response_type_redirect} type;
 #endif
 
     /* Used by the server to indicate whether response is supported by

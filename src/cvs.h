@@ -941,7 +941,7 @@ int cvsstatus (int argc, char **argv);
 int cvstag (int argc, char **argv);
 int version (int argc, char **argv);
 
-unsigned long int lookup_command_attribute (char *);
+unsigned long int lookup_command_attribute (const char *);
 
 #if defined(AUTH_CLIENT_SUPPORT) || defined(AUTH_SERVER_SUPPORT)
 char *scramble (char *str);

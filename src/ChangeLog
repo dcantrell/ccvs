@@ -1,3 +1,16 @@
+2004-08-17  Derek Price  <derek@ximbiot.com>
+
+	* client.c: Misc reformatting.
+	(handle_redirect, close_connection_to_server): New functions.
+	(failure_exit,*): s/int/bool/.
+	(responses): Add `Redirect'.
+	(get_server_responses): Handle response_type_redirect.
+	(get_responses_and_close): Use close_connection_to_server().
+	(supported_request): Change API to use bool & const.
+	(start_server): Handle response_type_redirect.
+	* client.h (supported_request): Update proto.
+	(type): Add response_type_redirect.
+
 2004-08-12  Derek Price  <derek@ximbiot.com>
 
 	* main.c (main): Don't process --primary-root without PROXY_SUPPORT.

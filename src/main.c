@@ -347,7 +347,7 @@ cmd_synonyms (void)
 
 
 unsigned long int
-lookup_command_attribute (char *cmd_name)
+lookup_command_attribute (const char *cmd_name)
 {
     const struct cmd *cm;
 
