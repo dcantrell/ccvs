@@ -422,3 +422,8 @@ extern void init_sockets();
  * todo: I don't know about OS/2 yet.  -kff
  */
 #undef CVS_BADROOT
+
+/* This prototype is unique to OS2 */
+#ifdef AUTH_CLIENT_SUPPORT
+char *getpass (char *passbuf);
+#endif /* AUTH_CLIENT_SUPPORT */
