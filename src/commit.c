@@ -651,17 +651,6 @@ commit (argc, argv)
 	error (1, 0, "correct above errors first!");
     }
 
-#ifdef PRESERVE_PERMISSIONS_SUPPORT
-    if (preserve_perms)
-    {
-	/* hardlist now includes a complete index of the files
-	   to be committed, indexed by inode.  For each inode,
-	   compile a list of the files that are linked to it,
-	   and save this list in each file's hardlink_info node. */
-	(void) walklist (hardlist, cache_hardlinks_proc, NULL);
-    }
-#endif
-
     /*
      * Run the recursion processor to commit the files
      */
@@ -1047,7 +1036,6 @@ warning: file `%s' seems to still contain conflict indicators",
 		    hlinfo = (struct hardlink_info *)
 			xmalloc (sizeof (struct hardlink_info));
 		    hlinfo->status = status;
-		    hlinfo->links = NULL;
 		    linkp->data = (char *) hlinfo;
 		}
 	    }

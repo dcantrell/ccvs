@@ -563,7 +563,9 @@ RCS_reparsercsfile (rdata, pfp, rcsbufp)
 		   key, rcsfile);
 	    free (rdata->desc);
 	}
-	rdata->desc = rcsbuf_valcopy (&rcsbuf, value, 0, (size_t *) NULL);
+	/* Don't need to rcsbuf_valcopy `value' because
+	   getdelta already did that. */
+	rdata->desc = xstrdup (value);
     }
 
     rdata->delta_pos = rcsbuf_ftell (&rcsbuf);
@@ -799,6 +801,9 @@ free_rcsnode_contents (rnode)
 
 /* free_rcsvers_contents -- free up the contents of an RCSVers node,
    but also free the pointer to the node itself. */
+/* Note: The `hardlinks' list is *not* freed, since it is merely a
+   pointer into the `hardlist' structure (defined in hardlink.c), and
+   that structure is freed elsewhere in the program. */
 
 static void
 free_rcsvers_contents (rnode)
@@ -1277,6 +1282,471 @@ rcsbuf_getkey (rcsbuf, keyp, valp)
 
 	ptr = pat + 1;
     }
+
+#undef my_whitespace
+}
+
+/* TODO: Eliminate redundant code in rcsbuf_getkey, rcsbuf_getid,
+   rcsbuf_getstring, rcsbuf_getword.  These last three functions were
+   all created by hacking monstrous swaths of code from rcsbuf_getkey,
+   and some engineering would make the code easier to read and
+   maintain. */
+
+/* Read an `id' (in the sense of rcsfile(5)) from RCSBUF, and store in
+   IDP. */
+
+static int
+rcsbuf_getid (rcsbuf, idp)
+    struct rcsbuffer *rcsbuf;
+    char **idp;
+{
+    register const char * const my_spacetab = spacetab;
+    register char *ptr, *ptrend;
+    char c;
+
+#define my_whitespace(c)	(my_spacetab[(unsigned char)c] != 0)
+
+    rcsbuf->vlen = 0;
+    rcsbuf->at_string = 0;
+    rcsbuf->embedded_at = 0;
+
+    ptr = rcsbuf->ptr;
+    ptrend = rcsbuf->ptrend;
+
+    /* Sanity check.  */
+    if (ptr < rcsbuf_buffer || ptr > rcsbuf_buffer + rcsbuf_buffer_size)
+	abort ();
+
+    /* If the pointer is more than RCSBUF_BUFSIZE bytes into the
+       buffer, move back to the start of the buffer.  This keeps the
+       buffer from growing indefinitely.  */
+    if (ptr - rcsbuf_buffer >= RCSBUF_BUFSIZE)
+    {
+	int len;
+
+	len = ptrend - ptr;
+
+	/* Sanity check: we don't read more than RCSBUF_BUFSIZE bytes
+           at a time, so we can't have more bytes than that past PTR.  */
+	if (len > RCSBUF_BUFSIZE)
+	    abort ();
+
+	/* Update the POS field, which holds the file offset of the
+           first byte in the RCSBUF_BUFFER buffer.  */
+	rcsbuf->pos += ptr - rcsbuf_buffer;
+
+	memcpy (rcsbuf_buffer, ptr, len);
+	ptr = rcsbuf_buffer;
+	ptrend = ptr + len;
+	rcsbuf->ptrend = ptrend;
+    }
+
+    /* Skip leading whitespace.  */
+
+    while (1)
+    {
+	if (ptr >= ptrend)
+	{
+	    ptr = rcsbuf_fill (rcsbuf, ptr, (char **) NULL, (char **) NULL);
+	    if (ptr == NULL)
+		return 0;
+	    ptrend = rcsbuf->ptrend;
+	}
+
+	c = *ptr;
+	if (! my_whitespace (c))
+	    break;
+
+	++ptr;
+    }
+
+    /* We've found the start of the key.  */
+
+    *idp = ptr;
+
+    if (c != ';')
+    {
+	while (1)
+	{
+	    ++ptr;
+	    if (ptr >= ptrend)
+	    {
+		ptr = rcsbuf_fill (rcsbuf, ptr, idp, (char **) NULL);
+		if (ptr == NULL)
+		    error (1, 0, "EOF in key in RCS file %s",
+			   rcsbuf->filename);
+		ptrend = rcsbuf->ptrend;
+	    }
+	    c = *ptr;
+	    if (c == ';' || my_whitespace (c))
+		break;
+	}
+    }
+
+    /* Here *IDP points to the id in the buffer, C is the character
+       we found at the end of the key, and PTR points to the location in
+       the buffer where we found C.  We may not set *PTR to \0, because
+       it may overwrite a terminating semicolon.  The calling function
+       must copy and terminate the id on its own. */
+
+    rcsbuf->ptr = ptr;
+    return 1;
+
+#undef my_whitespace;
+}
+
+/* Read an RCS @-delimited string.  Store the result in STRP. */
+
+static int
+rcsbuf_getstring (rcsbuf, strp)
+    struct rcsbuffer *rcsbuf;
+    char **strp;
+{
+    register const char * const my_spacetab = spacetab;
+    register char *ptr, *ptrend;
+    char *pat;
+    size_t vlen;
+    char c;
+
+#define my_whitespace(c)	(my_spacetab[(unsigned char)c] != 0)
+
+    rcsbuf->vlen = 0;
+    rcsbuf->at_string = 0;
+    rcsbuf->embedded_at = 0;
+
+    ptr = rcsbuf->ptr;
+    ptrend = rcsbuf->ptrend;
+
+    /* Sanity check.  */
+    if (ptr < rcsbuf_buffer || ptr > rcsbuf_buffer + rcsbuf_buffer_size)
+	abort ();
+
+    /* If the pointer is more than RCSBUF_BUFSIZE bytes into the
+       buffer, move back to the start of the buffer.  This keeps the
+       buffer from growing indefinitely.  */
+    if (ptr - rcsbuf_buffer >= RCSBUF_BUFSIZE)
+    {
+	int len;
+
+	len = ptrend - ptr;
+
+	/* Sanity check: we don't read more than RCSBUF_BUFSIZE bytes
+           at a time, so we can't have more bytes than that past PTR.  */
+	if (len > RCSBUF_BUFSIZE)
+	    abort ();
+
+	/* Update the POS field, which holds the file offset of the
+           first byte in the RCSBUF_BUFFER buffer.  */
+	rcsbuf->pos += ptr - rcsbuf_buffer;
+
+	memcpy (rcsbuf_buffer, ptr, len);
+	ptr = rcsbuf_buffer;
+	ptrend = ptr + len;
+	rcsbuf->ptrend = ptrend;
+    }
+
+    /* Skip leading whitespace.  */
+
+    while (1)
+    {
+	if (ptr >= ptrend)
+	{
+	    ptr = rcsbuf_fill (rcsbuf, ptr, (char **) NULL, (char **) NULL);
+	    if (ptr == NULL)
+		error (1, 0, "unexpected end of file reading %s",
+		       rcsbuf->filename);
+	    ptrend = rcsbuf->ptrend;
+	}
+
+	c = *ptr;
+	if (! my_whitespace (c))
+	    break;
+
+	++ptr;
+    }
+
+    /* PTR should now point to the start of a string. */
+    if (c != '@')
+	error (1, 0, "expected @-string at `%c' in %s", c, rcsbuf->filename);
+
+    /* Optimize the common case of a value composed of a single
+       '@' string.  */
+
+    rcsbuf->at_string = 1;
+    
+    ++ptr;
+    
+    *strp = ptr;
+    
+    while (1)
+    {
+	while ((pat = memchr (ptr, '@', ptrend - ptr)) == NULL)
+	{
+	    /* Note that we pass PTREND as the PTR value to
+	       rcsbuf_fill, so that we will wind up setting PTR to
+	       the location corresponding to the old PTREND, so
+	       that we don't search the same bytes again.  */
+	    ptr = rcsbuf_fill (rcsbuf, ptrend, NULL, strp);
+	    if (ptr == NULL)
+		error (1, 0,
+		       "EOF while looking for end of string in RCS file %s",
+		       rcsbuf->filename);
+	    ptrend = rcsbuf->ptrend;
+	}
+
+	/* Handle the special case of an '@' right at the end of
+	   the known bytes.  */
+	if (pat + 1 >= ptrend)
+	{
+	    /* Note that we pass PAT, not PTR, here.  */
+	    pat = rcsbuf_fill (rcsbuf, pat, NULL, strp);
+	    if (pat == NULL)
+	    {
+		/* EOF here is OK; it just means that the last
+		   character of the file was an '@' terminating a
+		   value for a key type which does not require a
+		   trailing ';'.  */
+		pat = rcsbuf->ptrend - 1;
+		
+	    }
+	    ptrend = rcsbuf->ptrend;
+	    
+	    /* Note that the value of PTR is bogus here.  This is
+	       OK, because we don't use it.  */
+	}
+	
+	if (pat + 1 >= ptrend || pat[1] != '@')
+	    break;
+	
+	/* We found an '@' pair in the string.  Keep looking.  */
+	++rcsbuf->embedded_at;
+	ptr = pat + 2;
+    }
+
+    /* Here PAT points to the final '@' in the string.  */
+    
+    *pat = '\0';
+    
+    vlen = pat - *strp;
+    if (vlen == 0)
+	*strp = NULL;
+    rcsbuf->vlen = vlen;
+    rcsbuf->ptr = pat + 1;
+    
+    return 1;
+
+#undef my_whitespace
+}
+
+/* Read an RCS `word', in the sense of rcsfile(5) (an id, a num, a
+   @-delimited string, or `:').  Store the result in WORDP.  If a
+   `;' is reached without reading any text, the result is NULL. */
+
+static int
+rcsbuf_getword (rcsbuf, wordp)
+    struct rcsbuffer *rcsbuf;
+    char **wordp;
+{
+    register const char * const my_spacetab = spacetab;
+    register char *ptr, *ptrend;
+    char c;
+
+#define my_whitespace(c)	(my_spacetab[(unsigned char)c] != 0)
+
+    rcsbuf->vlen = 0;
+    rcsbuf->at_string = 0;
+    rcsbuf->embedded_at = 0;
+
+    ptr = rcsbuf->ptr;
+    ptrend = rcsbuf->ptrend;
+
+    /* Sanity check.  */
+    if (ptr < rcsbuf_buffer || ptr > rcsbuf_buffer + rcsbuf_buffer_size)
+	abort ();
+
+    /* If the pointer is more than RCSBUF_BUFSIZE bytes into the
+       buffer, move back to the start of the buffer.  This keeps the
+       buffer from growing indefinitely.  */
+    if (ptr - rcsbuf_buffer >= RCSBUF_BUFSIZE)
+    {
+	int len;
+
+	len = ptrend - ptr;
+
+	/* Sanity check: we don't read more than RCSBUF_BUFSIZE bytes
+           at a time, so we can't have more bytes than that past PTR.  */
+	if (len > RCSBUF_BUFSIZE)
+	    abort ();
+
+	/* Update the POS field, which holds the file offset of the
+           first byte in the RCSBUF_BUFFER buffer.  */
+	rcsbuf->pos += ptr - rcsbuf_buffer;
+
+	memcpy (rcsbuf_buffer, ptr, len);
+	ptr = rcsbuf_buffer;
+	ptrend = ptr + len;
+	rcsbuf->ptrend = ptrend;
+    }
+
+    /* Skip leading whitespace.  */
+
+    while (1)
+    {
+	if (ptr >= ptrend)
+	{
+	    ptr = rcsbuf_fill (rcsbuf, ptr, (char **) NULL, (char **) NULL);
+	    if (ptr == NULL)
+		error (1, 0, "unexpected end of file reading %s",
+		       rcsbuf->filename);
+	    ptrend = rcsbuf->ptrend;
+	}
+
+	c = *ptr;
+	if (! my_whitespace (c))
+	    break;
+
+	++ptr;
+    }
+
+    /* If we have reached `;', there is no value. */
+    if (c == ';')
+    {
+	*wordp = NULL;
+	*ptr++ = '\0';
+	rcsbuf->ptr = ptr + 1;
+	rcsbuf->vlen = 0;
+	return 1;
+    }
+
+    /* PTR now points to the start of a value.  Find out whether it is
+       a num, an id, a string or a colon. */
+    if (c == ':')
+    {
+	*wordp = ptr++;
+	rcsbuf->ptr = ptr;
+	rcsbuf->vlen = 1;
+	return 1;
+    }
+
+    if (c == '@')
+    {
+	char *pat;
+	size_t vlen;
+
+	/* Optimize the common case of a value composed of a single
+	   '@' string.  */
+
+	rcsbuf->at_string = 1;
+
+	++ptr;
+
+	*wordp = ptr;
+
+	while (1)
+	{
+	    while ((pat = memchr (ptr, '@', ptrend - ptr)) == NULL)
+	    {
+		/* Note that we pass PTREND as the PTR value to
+                   rcsbuf_fill, so that we will wind up setting PTR to
+                   the location corresponding to the old PTREND, so
+                   that we don't search the same bytes again.  */
+		ptr = rcsbuf_fill (rcsbuf, ptrend, NULL, wordp);
+		if (ptr == NULL)
+		    error (1, 0,
+			   "EOF while looking for end of string in RCS file %s",
+			   rcsbuf->filename);
+		ptrend = rcsbuf->ptrend;
+	    }
+
+	    /* Handle the special case of an '@' right at the end of
+               the known bytes.  */
+	    if (pat + 1 >= ptrend)
+	    {
+		/* Note that we pass PAT, not PTR, here.  */
+		pat = rcsbuf_fill (rcsbuf, pat, NULL, wordp);
+		if (pat == NULL)
+		{
+		    /* EOF here is OK; it just means that the last
+		       character of the file was an '@' terminating a
+		       value for a key type which does not require a
+		       trailing ';'.  */
+		    pat = rcsbuf->ptrend - 1;
+
+		}
+		ptrend = rcsbuf->ptrend;
+
+		/* Note that the value of PTR is bogus here.  This is
+		   OK, because we don't use it.  */
+	    }
+
+	    if (pat + 1 >= ptrend || pat[1] != '@')
+		break;
+
+	    /* We found an '@' pair in the string.  Keep looking.  */
+	    ++rcsbuf->embedded_at;
+	    ptr = pat + 2;
+	}
+
+	/* Here PAT points to the final '@' in the string.  */
+
+	*pat = '\0';
+
+	vlen = pat - *wordp;
+	if (vlen == 0)
+	    *wordp = NULL;
+	rcsbuf->vlen = vlen;
+	rcsbuf->ptr = pat + 1;
+
+	return 1;
+    }
+
+    /* C is neither `:', `;' nor `@', so it should be the start of a num
+       or an id.  Make sure it is not another special character. */
+    if (c == '$' || c == '.' || c == ',')
+    {
+	error (1, 0, "illegal special character in RCS field in %s",
+	       rcsbuf->filename);
+    }
+
+    *wordp = ptr;
+    while (1)
+    {
+	if (ptr >= ptrend)
+	{
+	    ptr = rcsbuf_fill (rcsbuf, ptr, (char **) NULL, wordp);
+	    if (ptr == NULL)
+		error (1, 0, "unexpected end of file reading %s",
+		       rcsbuf->filename);
+	    ptrend = rcsbuf->ptrend;
+	}
+
+	/* Legitimate ID characters are digits, dots and any `graphic
+           printing character that is not a special.' This test ought
+	   to do the trick. */
+	c = *ptr;
+	if (isprint (c) &&
+	    c != ';' && c != '$' && c != ',' && c != '@' && c != ':')
+	{
+	    ++ptr;
+	    continue;
+	}
+	break;
+    }
+
+    /* PTR points to the last non-id character in this word, and C is
+       the character in its memory cell.  Check to make sure that it
+       is a legitimate word delimiter -- whitespace or semicolon. */
+    if (c == ';' || my_whitespace (c))
+    {
+	rcsbuf->vlen = ptr - *wordp;
+	rcsbuf->ptr = ptr;
+	return 1;
+    }
+
+    error (1, 0, "illegal special character in RCS field in %s",
+	   rcsbuf->filename);
+    /* Shut up compiler warnings.  */
+    return 0;
 
 #undef my_whitespace
 }
@@ -3681,7 +4151,6 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
     {
 	RCSVers *vers;
 	Node *info;
-	struct hardlink_info *hlinfo;
 
 	vp = findnode (rcs->versions, rev == NULL ? rcs->head : rev);
 	if (vp == NULL)
@@ -3730,64 +4199,36 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 
 	if (workfile != NULL)
 	{
-	    info = findnode (vers->other_delta, "hardlinks");
-	    if (info != NULL)
+	    List *links = vers->hardlinks;
+	    if (links != NULL)
 	    {
-		char *links = xstrdup (info->data);
-		char *working_dir = xgetwd();
-		char *p, *file = NULL;
-		Node *n, *uptodate_link;
+		Node *uptodate_link;
 
 		/* For each file in the hardlinks field, check to see
 		   if it exists, and if so, if it has been checked out
-		   this iteration. */
-		uptodate_link = NULL;
-		for (p = strtok (links, " ");
-		     p != NULL && uptodate_link == NULL;
-		     p = strtok (NULL, " "))
-		{
-		    file = (char *)
-			xmalloc (sizeof(char) *
-				 (strlen(working_dir) + strlen(p) + 2));
-		    sprintf (file, "%s/%s", working_dir, p);
-		    n = lookup_file_by_inode (file);
-		    if (n == NULL)
-		    {
-			if (strcmp (p, workfile) != 0)
-			{
-			    /* One of the files that WORKFILE should be
-			       linked to is not even in the working directory.
-			       The user should probably be warned. */
-			    error (0, 0,
-		"warning: %s should be hardlinked to %s, but is missing",
-				   p, workfile);
-			}
-			free (file);
-			continue;
-		    }
+		   this iteration.  When walklist returns, uptodate_link
+		   should point to a hardlist node representing a file
+		   in `links' which has recently been checked out, or
+		   NULL if no file in `links' has yet been checked out. */
 
-		    /* hlinfo may be NULL if, for instance, a file is being
-		       removed. */
-		    hlinfo = (struct hardlink_info *) n->data;
-		    if (hlinfo && hlinfo->checked_out)
-			uptodate_link = n;
-		    free (file);
-		}
-		free (links);
-		free (working_dir);
+		uptodate_link = NULL;
+		(void) walklist (links, find_checkedout_proc, &uptodate_link);
+		dellist (&links);
 
 		/* If we've found a file that `workfile' is supposed to be
 		   linked to, and it has been checked out since CVS was
-		   invoked, then simply link workfile to that file.
+		   invoked, then simply link workfile to that file and return.
 
-		   If one of these conditions is not met, then we're
-		   checking out workfile to a temp file or stdout, or
-		   workfile is the first one in its hardlink group to be
-		   checked out.  Either way we must continue with a full
+		   If one of these conditions is not met, then
+		   workfile is the first one in its hardlink group to
+		   be checked out, and we must continue with a full
 		   checkout. */
 
 		if (uptodate_link != NULL)
 		{
+		    struct hardlink_info *hlinfo =
+			(struct hardlink_info *) uptodate_link->data;
+
 		    if (link (uptodate_link->key, workfile) < 0)
 			error (1, errno, "cannot link %s to %s",
 			       workfile, uptodate_link->key);
@@ -4427,7 +4868,6 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	Node *np;
 	struct stat sb;
 	char buf[64];	/* static buffer should be safe: see usage. -twp */
-	char *fullpath;
 
 	delta->other_delta = getlist();
 
@@ -4482,25 +4922,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	    }
 
 	    /* Save hardlinks. */
-	    fullpath = xgetwd();
-	    fullpath = xrealloc (fullpath,
-				 strlen(fullpath) + strlen(workfile) + 2);
-	    sprintf (fullpath + strlen(fullpath), "/%s", workfile);
-
-	    np = lookup_file_by_inode (fullpath);
-	    if (np == NULL)
-	    {
-		error (1, 0, "lost information on %s's linkage", workfile);
-	    }
-	    else
-	    {
-		struct hardlink_info *hlinfo;
-		hlinfo = (struct hardlink_info *) np->data;
-		np = getnode();
-		np->key = xstrdup ("hardlinks");
-		np->data = xstrdup (hlinfo->links);
-		(void) addnode (delta->other_delta, np);
-	    }
+	    delta->hardlinks = list_linked_files_on_disk (workfile);
 	}
     }
 #endif
@@ -6771,7 +7193,7 @@ getdelta (rcsbuf, rcsfile, keyp, valp)
     char **valp;
 {
     RCSVers *vnode;
-    char *key, *value, *cp;
+    char *key, *value, *keybuf, *valbuf, *cp;
     Node *kv;
 
     /* Get revision number if it wasn't passed in. This uses
@@ -6886,11 +7308,80 @@ unable to parse %s; `state' not in the expected place", rcsfile);
      */
     while (1)
     {
-	if (! rcsbuf_getkey (rcsbuf, &key, &value))
+	int len;
+	size_t valbuflen;
+
+	key = NULL;
+
+	if (! rcsbuf_getid (rcsbuf, &keybuf))
 	    error (1, 0, "unexpected end of file reading %s", rcsfile);
 
+	/* rcsbuf_getid did not terminate the key, so copy it to new space. */
+	len = rcsbuf->ptr - keybuf;
+	key = (char *) xmalloc (sizeof(char) * (len + 1));
+	strncpy (key, keybuf, len);
+	key[len] = '\0';
+
+	/* The `desc' keyword has only a single string value, with no
+	   trailing semicolon, so it must be handled specially. */
 	if (STREQ (key, RCSDESC))
+	{
+	    (void) rcsbuf_getstring (rcsbuf, &valbuf);
+	    value = rcsbuf_valcopy (rcsbuf, valbuf, 1, &valbuflen);
 	    break;
+	}
+
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+	/* The `hardlinks' value is a group of words, which must
+	   be parsed separately and added as a list to vnode->hardlinks. */
+	if (STREQ (key, "hardlinks"))
+	{
+	    Node *n;
+
+	    vnode->hardlinks = getlist();
+	    while (1)
+	    {
+		if (! rcsbuf_getword (rcsbuf, &valbuf))
+		    error (1, 0, "unexpected end of file reading %s", rcsfile);
+		if (valbuf == NULL)
+		    break;
+		n = getnode();
+		n->key = rcsbuf_valcopy (rcsbuf, valbuf, 1, NULL);
+		addnode (vnode->hardlinks, n);
+	    }
+	    continue;
+	}
+#endif
+
+	/* Get the value. */
+	value = NULL;
+	while (1)
+	{
+	    if (! rcsbuf_getword (rcsbuf, &valbuf))
+		error (1, 0, "unexpected end of file reading %s", rcsfile);
+	    if (valbuf == NULL)
+		break;
+
+	    /* Copy valbuf to new space so we can polish it, then
+	       append it to value. */
+
+	    if (value == NULL)
+	    {
+		value = rcsbuf_valcopy (rcsbuf, valbuf, 1, &valbuflen);
+	    }
+	    else
+	    {
+		char *temp_value;
+
+		temp_value = rcsbuf_valcopy (rcsbuf, valbuf, 1, &valbuflen);
+		len = strlen (value);
+		value = (char *) xrealloc
+		    (value, sizeof(char) * (len + valbuflen + 2));
+		value[len] = ' ';
+		strcpy (value + len + 1, temp_value);
+		free (temp_value);
+	    }
+	}
 
 	/* Enable use of repositories created by certain obsolete
 	   versions of CVS.  This code should remain indefinately;
@@ -6919,8 +7410,8 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	    vnode->other_delta = getlist ();
 	kv = getnode ();
 	kv->type = RCSFIELD;
-	kv->key = xstrdup (key);
-	kv->data = rcsbuf_valcopy (rcsbuf, value, 1, (size_t *) NULL);
+	kv->key = key;
+	kv->data = value;
 	if (addnode (vnode->other_delta, kv) != 0)
 	{
 	    /* Complaining about duplicate keys in newphrases seems
@@ -7110,6 +7601,36 @@ putrcsfield_proc (node, vfp)
     return 0;
 }
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+
+/* Save a filename in a `hardlinks' RCS field.  NODE->KEY will contain
+   a full pathname, but currently only basenames are stored in the RCS
+   node.  Assume that the filename includes nasty characters and
+   @-escape it. */
+
+static int
+puthardlink_proc (node, vfp)
+    Node *node;
+    void *vfp;
+{
+    FILE *fp = (FILE *) vfp;
+    char *basename = strrchr (node->key, '/');
+
+    if (basename == NULL)
+	basename = node->key;
+    else
+	++basename;
+
+    putc ('\t', fp);
+    putc ('@', fp);
+    (void) expand_at_signs (basename, strlen (basename), fp);
+    putc ('@', fp);
+
+    return 0;
+}
+
+#endif
+
 /* Output the admin node for RCS into stream FP. */
 
 static void
@@ -7195,6 +7716,14 @@ putdelta (vers, fp)
 
     walklist (vers->other_delta, putrcsfield_proc, fp);
 
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+    if (vers->hardlinks)
+    {
+	fprintf (fp, "\nhardlinks");
+	walklist (vers->hardlinks, puthardlink_proc, fp);
+	putc (';', fp);
+    }
+#endif
     putc ('\n', fp);
 }
 

@@ -154,6 +154,10 @@ struct rcsversnode
     List *other;
     /* Newphrase fields from delta nodes.  */
     List *other_delta;
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+    /* Hard link information for each revision. */
+    List *hardlinks;
+#endif
 };
 typedef struct rcsversnode RCSVers;
 
