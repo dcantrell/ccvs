@@ -1,6 +1,6 @@
 
 Archive-name: cvs-faq
-Hand Revision: 3.4		<<== Include this in your comments
+Hand Revision: 3.5		<<== Include this in your comments
 Last Updated: 1995/03/09
 $Revision$
 $Date$
@@ -135,6 +135,7 @@ within each sub-section, though they are in no particular order.
 	   A. Contributors.
 	   B. Bugs and Patches
 	   C. Development
+	   D. Professional Support
 
 	6. Table of Contents
 
@@ -569,7 +570,7 @@ entry or two?]]
  1C.1	How does CVS differ from RCS?
  1C.2	How does CVS differ from SCCS?
  1C.3	How does CVS differ from ClearCase?
- 1C.4	How does CVS differ from TeamWare?
+#1C.4	How does CVS differ from TeamWare/SparcWorks?
  1C.5	How does CVS differ from Aegis?
  1C.6	How does CVS differ from Shapetools?
  1C.7	How does CVS differ from TeamNet?
@@ -703,31 +704,33 @@ entry or two?]]
 				Edited by the author of this FAQ.
 
 
- 1C.4	How does CVS differ from TeamWare?
+#1C.4	How does CVS differ from TeamWare/SparcWorks?
 
-	TeamWare is a configuration management tool from Sun Microsystems.
-	It uses the same copy and merge model as CVS.  The central
-	abstraction is a workspace, which corresponds to either a CVS
-	branch or a checked out module.	 TeamWare allows you to manipulate
-	workspaces directly, including moving and merging code between
-	workspaces.  You can put your workspace on tape and continue to
-	work with it at home, just like you can with CVS.  TeamWare is
-	built upon and compatible with SCCS.
+	TeamWare is a configuration management tool from Sun Microsystems,
+	a part of SparcWorks.  It uses the same copy and merge model as
+	CVS.  The central abstraction is a workspace, which corresponds to
+	either a CVS branch or a checked out module.  TeamWare allows you
+	to manipulate workspaces directly, including moving and merging
+	code between workspaces.  You can put your workspace on tape and
+	continue to work with it at home, just like you can with CVS.
+	TeamWare is built upon and compatible with SCCS.
 
-	All TeamWare tools are graphical.  The CodeManager tool will
-	display the project as a tree of workspaces, and allows you to
-	manipulate them with drag and drop.  The other tools are
-	VersionTool that displays and manipulates a dag with a version
-	history of a single file, CheckPoint that will create symbolic
-	tags, MakeTool, a make compatible tool with a GUI, and FileMerge
-	which will interactively merge files when needed (like emerge for
-	emacs).	 If you have a sun, you can try /usr/old/mergetool for an
-	old SunView version of FileMerge.
+	TeamWare provides both a command line interface and a graphical
+	interface.  The CodeManager tool will display the project as a
+	tree of workspaces, and allows you to manipulate them with drag
+	and drop.  The other tools are VersionTool that displays and
+	manipulates a dag with a version history of a single file,
+	CheckPoint that will create symbolic tags, MakeTool, a make
+	compatible tool with a GUI, and FileMerge which will interactively
+	merge files when needed (like emerge for emacs).  If you have a
+	sun, you can try /usr/old/mergetool for an old SunView version of
+	FileMerge.
 
 	Email: sunprosig@sun.com
 
-				Contributed by Per Abrahamsen
-			[Extracted from TeamWare Marketing literature.]
+				Originally extracted from TeamWare
+				Marketing literature by Per Abrahamsen.
+				Edited by the author of this FAQ.
 
 
 	For more information, contact:
@@ -8952,6 +8955,7 @@ systems have a few problems and non-Unix systems have a *lot* of problems.
 	93/06/??	~5000 lines
 	93/10/23	 7839 lines	278K
 	94/10/29	 9856 lines	360K
+	95/05/09	 9981 lines	365K
 
 	Because there are so many posers of questions, I will list only
 	those who contribute answers or help significantly with the
@@ -8977,6 +8981,7 @@ systems have a few problems and non-Unix systems have a *lot* of problems.
 	Per Abrahamsen		<amanda@iesd.auc.dk>
 	Donald Amby		<amby@mixcom.mixcom.com>
 	Mark D Baushke		<mdb@cisco.com>
+	Jim Blandy		<jimb@cyclic.com>
 	Tom Cunningham		<tomc@bouwsma,sps.mot.com>
 	Graydon Dodson		<grdodson@lexmark.com>
 	Joe Drumgoole		<joed@splatter.demon.co.uk>
@@ -9187,7 +9192,7 @@ See the Development section later for stuff being worked on.
  5C.1	Where do I send bug reports?
  5C.2	Where do I send fixes and patches?
  5C.3	Where do I send ideas for future development?
- 5C.4	What plans are there for new features?
+=5C.4	What plans are there for new features?
  5C.5	I have some time and I'd like to help.	What can I do for you?
 
 
@@ -9248,7 +9253,7 @@ See the Development section later for stuff being worked on.
 	send the diffs along too as described above.
 
 
- 5C.4	What plans are there for new features?
+=5C.4	What plans are there for new features?
 
 	A "rename" or "per-directory" database has been bandied about on
 	the net for years.  It is needed, but it is a lot of work.
@@ -9258,7 +9263,7 @@ See the Development section later for stuff being worked on.
 	of CVS (rCVS) that runs remotely.  It is available for testing.
 
 	    On the host "preprint.slac.stanford.edu", you can find:
-		  Paper:	pub/slacpubs/slac-pub-5923.ps.Z
+		  Paper:	slacpubs/5000/slac-pub-5923.ps.Z
 
 	    This was for a conference in Sept, 1993, before first beta.
 
@@ -9269,6 +9274,10 @@ See the Development section later for stuff being worked on.
 	   be considered an unreliable Beta release, you are invited to
 	   grab a copy and test it.
 
+
+	Jim Blandy <jimb@cyclic.com> and the company he works for ("Cyclic
+	Software") support a "Cyclic CVS" (CCVS) that can handle remote
+	repositories.  See Section 5D.2.
 
 
 	[[Others?]]
@@ -9294,6 +9303,100 @@ See the Development section later for stuff being worked on.
 	[[Is there some way we can register someone as working
 	  on something or should we just stay in the "implement it and
 	  send it to me" mode?]]
+
+----------------
+-- Section 5D --	Professional Support
+----------------
+
+
+ **** Questions:
+
++5D.1	Doesn't Cygnus support CVS?
++5D.2	What is Cyclic Software doing with CVS?
+
+
+ **** Answers:
+
++5D.1	Doesn't Cygnus support CVS?
+
+	Cygnus is a company that supports a variety of FSF software.  It
+	uses a version of CVS and people from Cygnus are on the info-cvs
+	mailing list.
+
+	[[Could someone from Cygnus state Cygnus's official and unofficial
+	  relationship with CVS?]]
+
+
++5D.2	What is Cyclic Software doing with CVS?
+
+	Cyclic Software exists to provide support for CCVS.  Here's a copy
+	of their Mini-FAQ:
+
+
+			 Cyclic CVS Mini-FAQ
+		ftp://ftp.cyclic.com/pub/cvs/mini-FAQ
+		     Jim Blandy <jimb@cyclic.com>
+				   
+
+	* What is Cyclic CVS?
+	
+	Cyclic CVS is a branch from version 1.4A2 of the original CVS
+	distribution, with further bug fixes and speedups installed, in
+	addition to the remote repository access features.
+	
+	Cyclic CVS can access repositories on remote machines.  This is
+	very helpful when collaborating on a project with someone across a
+	wide-area network.
+	
+	Here are some of Cyclic CVS's features:
+	- It uses reliable transport protocols (TCP/IP) for remote
+	  repository access, not NFS.  NFS is unusable over long distances
+	  (and sometimes over short distances)
+	- It transfers only those files that have changed in the
+	  repository or the working directory.  To save transmission time,
+	  it will transfer patches when appropriate, and can compress data
+	  for transmission.
+	- The server never holds CVS locks while waiting for a reply from
+	  the client; this makes the system robust when used over flaky
+	  networks.
+	
+	* Aren't there other similar CVS hacks out there?
+	
+	There have been several CVS variants designed with similar goals.
+	contrib/pcl-cvs/pcl-cvs.el mentions one or two, for example.
+	However, I've had a hard time finding more information about those
+	implementations, so I can't comment on them.  The sense of the
+	info-cvs mailing list seems to be that CCVS is the best extant
+	implementation.
+	
+	
+	* How can I get Cyclic CVS?
+	
+	If you'd like to try this implementation out, it's available via
+	anonymous ftp from ftp.cyclic.com, as /pub/cvs/ccvs.tar.gz.  The
+	mailing list cyclic-cvs@cyclic.com has been set up to handle bug
+	reports and questions; send mail to cyclic-cvs-request@cyclic.com
+	to subscribe or unsubscribe.
+	
+	Nota bene:
+	- It has not tested or ported much, with all that that entails ---
+	  bugs, portability problems, documentation inconsistencies.
+	- I can't promise any support for it for free.  If you're
+	  interested in a support or development contract, send me mail
+	  and we'll work something out.
+	- Nevertheless, please send bug reports to cyclic-cvs@cyclic.com.
+	  Most people on the info-cvs mailing list probably won't be able
+	  to fix them (since they don't use the package).
+	
+	
+	* Where are the remote features documented?
+	
+	Check out doc/cvsclient.texi in the Cyclic CVS distribution.  Would
+	you like to update the main doc file, cvs.texinfo to describe Cyclic
+	CVS's features?
+
+				Contributed by Jim Blandy
+
 
 
 =================================================
@@ -9341,6 +9444,7 @@ within each sub-section, though they are in no particular order.
 	   A. Contributors.
 	   B. Bugs and Patches
 	   C. Development
+	   D. Professional Support
 
 	6. Table of Contents
 
@@ -9375,7 +9479,7 @@ within each sub-section, though they are in no particular order.
  1C.1	How does CVS differ from RCS?
  1C.2	How does CVS differ from SCCS?
  1C.3	How does CVS differ from ClearCase?
- 1C.4	How does CVS differ from TeamWare?
+#1C.4	How does CVS differ from TeamWare/SparcWorks?
  1C.5	How does CVS differ from Aegis?
  1C.6	How does CVS differ from Shapetools?
  1C.7	How does CVS differ from TeamNet?
@@ -9857,8 +9961,14 @@ within each sub-section, though they are in no particular order.
  5C.1	Where do I send bug reports?
  5C.2	Where do I send fixes and patches?
  5C.3	Where do I send ideas for future development?
- 5C.4	What plans are there for new features?
+=5C.4	What plans are there for new features?
  5C.5	I have some time and I'd like to help.	What can I do for you?
+
+----------------
+-- Section 5D --	Professional Support
+----------------
++5D.1	Doesn't Cygnus support CVS?
++5D.2	What is Cyclic Software doing with CVS?
 
 
 =================================================
