@@ -1,3 +1,22 @@
+2003-03-17  Derek Price  <derek@ximbiot.com>
+
+	* add.c: Correct comment.
+	* client.c: Ditto.
+	* checkin.c (Checkin): Pass work file name to RCS_checkin so that this
+	function works properly in the case insensitive mode.
+	* commit.c (checkaddfile): Fix and factor add logic so that the
+	correct files and directories are created in the case insensitive mode.
+	Reuse code in RCS_parse() below.  This avoids a problem that could
+	cause corrupted RCS files to be created on an add from a case
+	insensitive system.  Corrupted RCS files could cause later assertion
+	failures for everyone.
+	(locate_rcs): Move this function...
+	* filesubr.c (locate_rcs): ...here and rewrite it.
+	(fopen_case): Remove this function.
+	(locate_file_in_dir): New function.
+	* cvs.h (locate_rcs): Prototype new function.
+	* rcs.c (RCS_parse): Factor out file location into locate_rcs.
+
 2003-03-17  Larry Jones  <lawrence.jones@eds.com>
 
 	* server.c (switch_to_user): Add syslog calls for setgid/setuid
