@@ -389,7 +389,7 @@ static const char *const logout_usage[] =
     NULL
 };
 
-/* Remove any entry for the CVSRoot repository found in "CVS/.cvspass". */
+/* Remove any entry for the CVSRoot repository found in .cvspass. */
 int
 logout (argc, argv)
     int argc;
@@ -397,7 +397,7 @@ logout (argc, argv)
 {
     char *passfile;
     FILE *fp;
-    char *tmp_name;
+    char *tmp_name = NULL;
     FILE *tmp_fp;
     char *linebuf = (char *) NULL;
     size_t linebuf_len;
@@ -492,6 +492,10 @@ logout (argc, argv)
 	    error (0, errno, "cannot remove %s", tmp_name);
 	chmod (passfile, 0600);
     }
+
+    if (tmp_name)
+        free (tmp_name);
+
     return 0;
 }
 
