@@ -57,7 +57,7 @@ char *alloca ();
 #include <stdlib.h>
 #else
 extern void exit ();
-extern char *getenv()
+extern char *getenv();
 #endif
  
 #ifdef HAVE_UNISTD_H
