@@ -1797,9 +1797,8 @@ handle_m (args, len)
     char *args;
     int len;
 {
-    for (; len > 0; --len)
-	putc (*args++, stdout);
-    putc ('\n', stdout);
+  fwrite (args, len, sizeof (*args), stdout);
+  putc ('\n', stdout);
 }
 
 static void
@@ -1807,9 +1806,8 @@ handle_e (args, len)
     char *args;
     int len;
 {
-    for (; len > 0; --len)
-	putc (*args++, stderr);
-    putc ('\n', stderr);
+  fwrite (args, len, sizeof (*args), stderr);
+  putc ('\n', stderr);
 }
 
 struct response responses[] =
