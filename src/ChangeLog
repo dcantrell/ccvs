@@ -1,3 +1,8 @@
+Tue Sep 19 18:02:16 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* Makefile.in (DISTFILES): Remove sanity.el from this list; the
+	file has been deleted.
+
 Thu Sep 14 14:17:52 1995  Peter Wemm  <peter@haywire.dialix.com>
 
 	* import.c: Recover from being unable to open the user file.
