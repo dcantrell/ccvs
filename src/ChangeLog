@@ -1,5 +1,13 @@
 2001-04-02  Derek Price  <dprice@collab.net>
 
+	* sanity.sh: Make sure the test for `id' fails when a nonstandard `id'
+	is used and the user is root.  Fix some quoting in error messages.
+	(fork): Take `cvs' out of the PATH.
+	(TODO): Add note about the test suite not working with user names over
+	eight characters in length.
+
+2001-04-02  Derek Price  <dprice@collab.net>
+
 	* sanity.sh (fork): New test for CVS_SERVER default.
 	(TODO): Note about eventually removing most of the references to
 	CVS_SERVER.

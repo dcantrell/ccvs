@@ -229,30 +229,41 @@ find_tool ()
   if test -z "$TOOL"; then
     :
   else
-    echo "Notice: The default version of $1 is defective, using" >&2
-    echo "$TOOL instead." >&2
+    echo "Notice: The default version of \`$1' is defective, using" >&2
+    echo "\`$TOOL' instead." >&2
   fi
   echo "$TOOL"
 }  
 
 # You can't run CVS as root; print a nice error message here instead
 # of somewhere later, after making a mess.
-case "`$ID -u 2>/dev/null`" in
-  "0")
-    echo "Test suite does not work correctly when run as root" >&2
-    exit 1
-    ;;
-
-  "")
-    ID=`find_tool id`
-    if test -z "$ID" ; then
-      echo 'Running these tests requires an "id" program that understands the' >&2
-      echo '-u and -n flags.  Make sure that such an id (GNU, or many but not' >&2
-      echo 'all vendor-supplied versions) is in your path.' >&2
+#
+# FIXME - find_tool() finds the 'gid' from GNU id-utils if I pull 'id' out of
+# my path.
+for pass in false :; do
+  case "`$ID -u 2>/dev/null`" in
+    "0")
+      echo "Test suite does not work correctly when run as root" >&2
       exit 1
-    fi
-    ;;
-esac
+      ;;
+
+    "")
+      if $pass; then :; else
+	ID=`find_tool id`
+      fi
+      if $pass || test -z "$ID" ; then
+	echo "Running these tests requires an \`id' program that understands the" >&2
+	echo "-u and -n flags.  Make sure that such an id (GNU, or many but not" >&2
+	echo "all vendor-supplied versions) is in your path." >&2
+	exit 1
+      fi
+      ;;
+
+    *)
+      break
+      ;;
+  esac
+done
 username=`$ID -un`
 if $EXPR "${username}" : "${username}" >/dev/null; then
   : good, it works
@@ -22702,14 +22713,22 @@ update"
 	  #
 	  # The client series of tests already tests that CVS_SERVER is
 	  # working, but that test might be better here.
-	  #
-	  # This isn't a complete test, but it should work a lot.
 	  if $remote; then
+	    mkdir fork; cd fork
 	    unset CVS_SERVER
+	    # So looking through $PATH for cvs won't work...
+	    echo "echo junk" >cvs
+	    chmod a+x cvs
+	    save_PATH=$PATH; PATH=.:$PATH
 	    dotest fork-1 "$testcvs -d:fork:$CVSROOT_DIRNAME version" \
 'Client: \(.*\)
 Server: \1'
 	    CVS_SERVER=${testcvs}; export CVS_SERVER
+	    PATH=$save_PATH; unset save_PATH
+	    cd ..
+	    if $keep; then :; else
+	      rm -rf fork
+	    fi
 	  fi
 	  ;;
 
@@ -22770,6 +22789,8 @@ echo "OK, all tests completed."
 #     1.11.0.1 was altered so that it would default to program_name (set from
 #     argv[0]) rather than "cvs", but I'd like this script to work on legacy
 #     versions of CVS for awhile.
+#   - Testsuite doesn't work with usernames over eight characters in length.
+#     Fix it.
 # End of TODO list.
 
 # Exit if keep set
