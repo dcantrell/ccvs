@@ -561,34 +561,7 @@ update_fileproc (callerdat, finfo)
 		}
 		else
 		{
-		    if (wrap_merge_is_copy (finfo->file))
-#if 0
-			/* Look, we can't clobber the user's file.  We
-			   know it is modified and we're going to
-			   overwrite their mod?  Puh-leeze.  The
-			   correct behavior is probably something like
-			   what merge_file does for -kb, which is to
-			   give the users both files and tell them
-			   what the two filenames are.  Of course, -m
-			   in wrappers needs to be documented *much*
-			   better.  Anyway, until then, make this a
-			   fatal error.  */
-
-			/* Should we be warning the user that we are
-			 * overwriting the user's copy of the file?  */
-			retval =
-			  checkout_file (finfo, vers, 0);
-#else
-		    {
-		        error (0, 0, "A -m 'COPY' wrapper is specified");
-			error (0, 0, "but file %s needs merge",
-			       finfo->fullname);
-			error (1, 0, "\
-You probably want to avoid -m 'COPY' wrappers");
-#endif
-		    }
-		    else
-			retval = merge_file (finfo, vers);
+		    retval = merge_file (finfo, vers);
 		}
 		break;
 	    case T_MODIFIED:		/* locally modified */
@@ -1594,7 +1567,8 @@ merge_file (finfo, vers)
     copy_file (finfo->file, backup);
     xchmod (finfo->file, 1);
 
-    if (strcmp (vers->options, "-kb") == 0)
+    if (strcmp (vers->options, "-kb") == 0
+	|| wrap_merge_is_copy (finfo->file))
     {
 	/* For binary files, a merge is always a conflict.  We give the
 	   user the two files, and let them resolve it.  It is possible
@@ -1613,7 +1587,11 @@ merge_file (finfo, vers)
 			    (struct stat *) NULL, (unsigned char *) NULL);
 	}
 #endif
-	error (0, 0, "binary file needs merge");
+	/* Is there a better term than "nonmergeable file"?  What we
+	   really mean is, not something that CVS cannot or does not
+	   want to merge (there might be an external manual or
+	   automatic merge process).  */
+	error (0, 0, "nonmergeable file needs merge");
 	error (0, 0, "revision %s from repository is now in %s",
 	       vers->vn_rcs, finfo->fullname);
 	error (0, 0, "file from working directory is now in %s", backup);
@@ -1734,14 +1712,6 @@ join_file (finfo, vers)
     jrev2 = join_rev2;
     jdate1 = date_rev1;
     jdate2 = date_rev2;
-
-    if (wrap_merge_is_copy (finfo->file))
-    {
-	error (0, 0,
-	       "Cannot merge %s because it is a merge-by-copy file.",
-	       finfo->fullname);
-	return;
-    }
 
     /* Determine if we need to do anything at all.  */
     if (vers->srcfile == NULL ||
@@ -2079,7 +2049,8 @@ join_file (finfo, vers)
 	/* This is because of the worry below about $Name.  If that
 	   isn't a problem, I suspect this code probably works for
 	   text files too.  */
-	&& strcmp (options, "-kb") == 0)
+	&& (strcmp (options, "-kb") == 0
+	    || wrap_merge_is_copy (finfo->file)))
     {
 	/* FIXME: what about nametag?  What does RCS_merge do with
 	   $Name?  */
@@ -2107,7 +2078,8 @@ join_file (finfo, vers)
 	   print.  */
 	write_letter (finfo->file, 'U', finfo->update_dir);
     }
-    else if (strcmp (options, "-kb") == 0)
+    else if (strcmp (options, "-kb") == 0
+	     || wrap_merge_is_copy (finfo->file))
     {
 	/* We are dealing with binary files, but real merging would
 	   need to take place.  This is a conflict.  We give the user
@@ -2135,7 +2107,9 @@ join_file (finfo, vers)
 	   provide them with a copy of the file from REV1, or even just
 	   told them what REV1 is so they can get it themself, but it
 	   might be worth thinking about.  */
-	error (0, 0, "binary file needs merge");
+	/* See comment in merge_file about the "nonmergeable file"
+	   terminology.  */
+	error (0, 0, "nonmergeable file needs merge");
 	error (0, 0, "revision %s from repository is now in %s",
 	       rev2, finfo->fullname);
 	error (0, 0, "file from working directory is now in %s", backup);
