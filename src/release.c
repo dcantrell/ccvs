@@ -229,7 +229,8 @@ release (argc, argv)
 }
 
 
-/* We want to "rm -r" the repository, but let us be a little paranoid. */
+/* We want to "rm -r" the working directory, but let us be a little
+   paranoid.  */
 static void
 release_delete (dir)
     char *dir;

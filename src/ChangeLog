@@ -1,3 +1,7 @@
+Mon Sep 11 09:56:33 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* release.c (release_delete): Fix comment.
+
 Sun Sep 10 18:48:35 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * release.c (release): made work with client/server.
