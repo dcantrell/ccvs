@@ -182,10 +182,7 @@ release (argc, argv)
            */
           if ((pclose (fp)) != 0)
           {
-            error (0, 0,
-                   "Unable to run update on `%s'.\n"
-                   "Maybe no `%s' in repository?",
-                   thisarg, thisarg);
+            error (0, 0, "unable to release `%s'", thisarg);
             continue;
           }
 
