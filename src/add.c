@@ -255,6 +255,10 @@ add (argc, argv)
 		error (1, errno, "could not chdir to %s", finfo.update_dir);
 	}
 
+	/* Add wrappers for this directory.  They exist only until
+	   the next call to wrap_add_file.  */
+	wrap_add_file (CVSDOTWRAPPER, 1);
+
 	finfo.rcs = NULL;
 
 	/* Find the repository associated with our current dir.  */

@@ -1,3 +1,9 @@
+Mon Dec 22 01:40:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* add.c (add): Also look for .cvswrappers files.
+	* sanity.sh (binwrap3): New tests binwrap3-2*, binwrap3-sub2-add*
+	test for this.
+
 Tue Jan  6 11:50:38 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (crerepos): New tests crerepos-8 through crerepos-18
