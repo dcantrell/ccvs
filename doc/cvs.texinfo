@@ -2298,7 +2298,13 @@ rcsutil.c       5.10
 You can use the @code{tag} command to give a symbolic name to a
 certain revision of a file.  You can use the @samp{-v} flag to the
 @code{status} command to see all tags that a file has, and
-which revision numbers they represent.
+which revision numbers they represent.  Tag names can
+contain uppercase and lowercase letters, digits,
+@samp{-}, and @samp{_}; tag names consisting entirely
+of uppercase letters (for example @code{BASE}) are
+reserved for @sc{cvs}'s use.
+@c FIXME: is the above list of valid characters in tag
+@c names complete?
 
 @cindex Adding a tag
 @cindex tag, example
