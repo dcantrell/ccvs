@@ -1,3 +1,8 @@
+Mon Feb 24 21:36:43 1997  Noel Cragg  <noel@gargle.rain.org>
+
+	* main.c (lookup_command_attribute): Add the "init" command to the
+ 	list of commands that don't use the current working directory.
+
 Sun Feb 23 09:54:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (devcom3): Clean up at end of test.
