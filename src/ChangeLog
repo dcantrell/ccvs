@@ -1,5 +1,14 @@
 Sun Dec  3 20:02:29 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.h (struct rcsnode), rcs.c (freercsnode): Add expand field.
+	* rcs.h (RCSEXPAND): New #define.
+	* rcs.c (RCS_reparsercsfile): Record keyword expansion in expand
+	field of struct rcsnode.
+	* update.c (checkout_file): Set keyword expansion in Entries file
+	from rcs file if there is nowhere else to set it from.
+	* client.c (send_modified, update_entries) [LINES_CRLF_TERMINATED]:
+	If -kb is in effect, don't convert.
+
 	* update.c (update_file_proc), commit.c (check_fileproc),
 	rcscmds.c (RCS_merge): Direct stdout to DEVNULL rather than
 	passing -s option to grep.  This avoids trouble with respect to
