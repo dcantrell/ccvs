@@ -1,5 +1,11 @@
 2003-07-25  Derek Price  <derek@ximbiot.com>
 
+	* subr.c (strip_trailing_newlines): Check len b4 str[len] to avoid
+	exceeding the array bounds when the string length == 0.
+	(Report from John Tytgat <JoTy@esko-graphics.com>.)
+
+2003-07-25  Derek Price  <derek@ximbiot.com>
+
 	* subr.c (strip_trailing_newlines): Generalize this function to watch
 	len so that it cannot walk past the beginning of the string passed in.
 	(Report from John Tytgat <JoTy@esko-graphics.com>.)
