@@ -475,8 +475,6 @@ diff3_run (argc, argv, out, callbacks_arg)
 
   free(content0);
   free(content1);
-  free_diff_blocks(thread0);
-  free_diff_blocks(thread1);
   free_diff3_blocks(diff3);
 
   if (! callbacks || ! callbacks->write_output)
@@ -765,6 +763,8 @@ make_3way_diff (thread0, thread1)
       tmpblock = using_to_diff3_block (using, last_using,
 				       base_water_thread, high_water_thread,
 				       last_diff3);
+      free_diff_blocks(using[0]);
+      free_diff_blocks(using[1]);
 
       if (!tmpblock)
 	diff3_fatal ("internal error: screwup in format of diff blocks");
