@@ -1,4 +1,8 @@
-2002-03-31  Derek Price  <oberon@umich.edu>
+2002-03-26  Derek Price  <oberon@umich.edu>
+
+	* configure.in: Add a FIXME comment.
+
+2002-03-21  Derek Price  <oberon@umich.edu>
 
 	* aclocal.m4: Regenerate with recent version of Autoconf.  It looks
 	like things changed because of some RedHat patches or the like which
