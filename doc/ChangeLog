@@ -1,3 +1,10 @@
+1998-03-07  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Tags, Sticky tags, Creating a branch, Accessing
+	branches): Rename release-0-1 tag to rel-0-1 and likewise for
+	release-0-1-patches and release-0-4.  This fixes an overfull hbox.
+	(diff options): Reformat table to fix underfull hboxes and such.
+
 1998-03-07  Tim Pierce  <twp@skepsis.com>
 
 	* cvs.texinfo (Editing files, Special Files): Document hardlinks.
