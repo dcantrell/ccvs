@@ -1,3 +1,9 @@
+1998-06-08  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Concurrency): Also mention #cvs.lock.  Don't
+	mention #cvs.tfl; it is quite old (before CVS 1.5).
+	(Locks, Backing up, Concurrency): Add more index entries.
+
 1998-06-03  Ian Lance Taylor  <ian@cygnus.com>
 
 	* cvs.texinfo (Tracking sources): Clarify that the vendor branch
