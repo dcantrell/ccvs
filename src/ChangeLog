@@ -1,3 +1,11 @@
+2001-05-26  Larry Jones  <larry.jones@sdrc.com>
+
+	* checkout.c (safe_location): Use old-style definition to keep
+	non-ANSI compilers happy.
+
+	* sanity.sh (check_respository): Use ${CVSROOT_DIRNAME} instead
+	of /tmp/cvs-sanity/cvsroot.
+
 2001-05-25  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (modules5): Add sleep to script to help avoid out of

@@ -11658,7 +11658,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  ;;
 
         checkout_repository)
-          dotest_fail check_repository "${testcvs} co -d /tmp/cvs-sanity/cvsroot CVSROOT" \
+          dotest_fail check_repository "${testcvs} co -d ${CVSROOT_DIRNAME} CVSROOT" \
 "${PROG} \[checkout aborted\]: Cannot check out files into the repository itself"
           ;;
 
