@@ -1,5 +1,10 @@
 2003-02-06  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (Common options): Add tag to the list of commands that
+	accept -D.
+
+2003-02-06  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (Working directory storage, Module options,
 	Module program options): Correct description of where Checkin.prog
 	and Update.prog are run.  Provide more index entries and cross

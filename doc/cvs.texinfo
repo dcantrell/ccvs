@@ -7996,7 +7996,7 @@ further updates in the same directory will use the same date
 
 @samp{-D} is available with the @code{annotate}, @code{checkout},
 @code{diff}, @code{export}, @code{history},
-@code{rdiff}, @code{rtag}, and @code{update} commands.
+@code{rdiff}, @code{rtag}, @code{tag}, and @code{update} commands.
 (The @code{history} command uses this option in a
 slightly different way; @pxref{history options}).
 
