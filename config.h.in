@@ -96,9 +96,6 @@
    clients.  */
 #undef SERVER_SUPPORT
 
-/* the path to the gnu diff program on your system  */
-#undef DIFF
-
 /* The number of bytes in a int.  */
 #undef SIZEOF_INT
 

@@ -54,9 +54,9 @@
 /*
  * The "diff" program to execute when creating patch output.  This "diff"
  * must support the "-c" option for context diffing.  Specify a full
- * pathname if your site wants to use a particular diff.  If you are
- * using the GNU version of diff (version 1.15 or later), this should
- * be "diff -a".  
+ * pathname if your site wants to use a particular diff.  Note that unlike
+ * the diff used with RCS, you *must not* supply -a here (doing so will cause
+ * the server to generate patches which patch cannot handle in some cases).
  * 
  * NOTE: this program is only used for the ``patch'' sub-command (and
  * for ``update'' if you are using the server).  The other commands
@@ -65,7 +65,7 @@
  */
 
 #ifndef DIFF
-#define	DIFF	"@gdiff_path@"
+#define	DIFF	"diff"
 #endif
 
 /*
