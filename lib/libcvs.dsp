@@ -97,6 +97,10 @@ SOURCE=.\basename.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\dirname.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\exitfail.c
 # End Source File
 # Begin Source File

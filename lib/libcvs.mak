@@ -25,6 +25,9 @@ NULL=
 NULL=nul
 !ENDIF 
 
+CPP=cl.exe
+RSC=rc.exe
+
 !IF  "$(CFG)" == "libcvs - Win32 Release"
 
 OUTDIR=.\WinRel
@@ -40,6 +43,7 @@ CLEAN :
 	-@erase "$(INTDIR)\argmatch.obj"
 	-@erase "$(INTDIR)\asnprintf.obj"
 	-@erase "$(INTDIR)\basename.obj"
+	-@erase "$(INTDIR)\dirname.obj"
 	-@erase "$(INTDIR)\exitfail.obj"
 	-@erase "$(INTDIR)\fncase.obj"
 	-@erase "$(INTDIR)\fnmatch.obj"
@@ -75,40 +79,7 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\windows-NT" /I "." /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\libcvs.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
 BSC32_SBRS= \
@@ -145,7 +116,8 @@ LIB32_OBJS= \
 	"$(INTDIR)\xgetwd.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xstrdup.obj" \
-	"$(INTDIR)\yesno.obj"
+	"$(INTDIR)\yesno.obj" \
+	"$(INTDIR)\dirname.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -167,6 +139,7 @@ CLEAN :
 	-@erase "$(INTDIR)\argmatch.obj"
 	-@erase "$(INTDIR)\asnprintf.obj"
 	-@erase "$(INTDIR)\basename.obj"
+	-@erase "$(INTDIR)\dirname.obj"
 	-@erase "$(INTDIR)\exitfail.obj"
 	-@erase "$(INTDIR)\fncase.obj"
 	-@erase "$(INTDIR)\fnmatch.obj"
@@ -201,40 +174,7 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /I "..\windows-NT" /I "." /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\libcvs.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
 BSC32_SBRS= \
@@ -271,7 +211,8 @@ LIB32_OBJS= \
 	"$(INTDIR)\xgetwd.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xstrdup.obj" \
-	"$(INTDIR)\yesno.obj"
+	"$(INTDIR)\yesno.obj" \
+	"$(INTDIR)\dirname.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -279,6 +220,36 @@ LIB32_OBJS= \
 <<
 
 !ENDIF 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
@@ -304,6 +275,11 @@ SOURCE=.\asnprintf.c
 SOURCE=.\basename.c
 
 "$(INTDIR)\basename.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\dirname.c
+
+"$(INTDIR)\dirname.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\exitfail.c

@@ -1,3 +1,9 @@
+2004-10-05  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libcvs.dsp: Add "dirname.c" to project to resolve link error.
+	* libcvs.dep: Regenerated for "libcvs.dsp" change.
+	* libcvs.mak: Regenerated for "libcvs.dsp" change.
+
 2004-10-05  Mark D. Baushke  <mdb@cvshome.org>
 
 	* regex.c (re_comp): Cast gettext return value to char * to
