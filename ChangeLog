@@ -1,5 +1,10 @@
 2004-08-24  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note r* . fix.
+	* BUGS: Remove r* . note.
+
+2004-08-24  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note invalid tag fix.
 
 2004-08-24  Derek Price  <derek@ximbiot.com>
