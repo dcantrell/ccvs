@@ -248,11 +248,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 
 	if (!wrap_name_has (argv[i], WRAP_TOCVS) && isdir (argv[i]))
 	{
-	    /* remove trailing slashes to prevent confusion */
-	    char *p = argv[i] + strlen(argv[i]);
-	    while (p > argv[i] && ISDIRSEP(p[-1]))
-		--p;
-	    *p = '\0';
+	    strip_trailing_slashes (argv[i]);
 	    addlist (&dirlist, argv[i]);
 	}
 	else
