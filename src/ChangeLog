@@ -1,3 +1,7 @@
+2004-02-10  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (stdio_buffer_shutdown): Add a helpful comment.
+
 2004-02-09  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (co-d): Update comments and tests to reflect the current
