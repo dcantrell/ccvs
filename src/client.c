@@ -998,6 +998,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    MD5Init (&context);
 	    while ((len = fread (buf, 1, sizeof buf, e)) != 0)
 		MD5Update (&context, buf, len);
+	    if (ferror (e))
+		error (1, errno, "could not read %s", short_pathname);
 	    MD5Final (checksum, &context);
 
 	    fclose (e);
