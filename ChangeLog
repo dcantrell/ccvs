@@ -1,3 +1,8 @@
+Thu Jan 11 12:03:10 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* NEWS: document loss of CVS_NOADMIN.  Also, mention the
+	  possibility to use "cvs" in .cvsrc.
+
 Wed Jan 10 20:40:23 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * configure: regenerated.
