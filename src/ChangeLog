@@ -1,3 +1,8 @@
+Thu Feb  1 13:07:15 1996  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* tag.c, rtag.c: Update various comments to reflect function name
+ 	changes.
+
 Thu Feb  1 14:14:31 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * recurse.c (do_recursion): comment #endif.

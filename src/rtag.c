@@ -582,7 +582,7 @@ rtag_fileproc (file, update_dir, repository, entries, srcfiles)
        
        /*
 	* As an enhancement for the case where a tag is being re-applied to
-	* a large body of a module, make one extra call to Version_Number to
+	* a large body of a module, make one extra call to RCS_getversion to
 	* see if the tag is already set in the RCS file.  If so, check to
 	* see if it needs to be moved.  If not, do nothing.  This will
 	* likely save a lot of time when simply moving the tag to the
@@ -643,7 +643,7 @@ rtag_fileproc (file, update_dir, repository, entries, srcfiles)
 
 /*
  * If -d is specified, "force_tag_match" is set, so that this call to
- * Version_Number() will return a NULL version string if the symbolic
+ * RCS_getversion() will return a NULL version string if the symbolic
  * tag does not exist in the RCS file.
  * 
  * If the -r flag was used, numtag is set, and we only delete the
