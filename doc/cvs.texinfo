@@ -287,9 +287,9 @@ if there is sufficient @sc{cvs} traffic on
 @c would need to take a more comprehensive look at the
 @c whole comp.software.config-mgmt.* hierarchy).
 
-You can also subscribe to the bug-cvs mailing list,
+You can also subscribe to the @code{bug-cvs} mailing list,
 described in more detail in @ref{BUGS}.  To subscribe
-send mail to bug-cvs-request@@gnu.org.
+send mail to @code{bug-cvs-request@@gnu.org}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node What is CVS not?
