@@ -1,3 +1,9 @@
+2000-01-10  Karl Fogel  <kfogel@red-bean.com>
+
+	* cvs.texinfo (loginfo): correctly describe CVSROOT/loginfo's
+	%-expansion behavior.  Thanks to Karl Heinz Marbaise
+	<kama@hippo.fido.de> for noticing the error.
+
 2000-01-07  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (Password authentication server): Use -f in example
