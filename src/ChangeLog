@@ -1,5 +1,7 @@
 2001-04-16  Larry Jones  <larry.jones@sdrc.com>
 
+	* logmsg.c (do_editor): Don't add a blank line to the message.
+
 	* checkout.c, update.c: Note in usage message that -k is sticky.
 
 	* server.c: (server_cleanup, wait_sig): Remove ancient SunOS kludge.
