@@ -1,0 +1,206 @@
+#! @PERL@
+
+use strict;
+use IO::File;
+
+my $texi_num = 0;
+for my $file (@ARGV)
+{
+	my $fh = new IO::File "< $file"
+		or die "Failed to open file \`$file': $!";
+
+	if ($file !~ /\.(texinfo|texi|txi)$/)
+	{
+		print stderr "Skipping $file.\n";
+		# Just cat any file that doesn't look like a Texinfo source.
+		while (my $line = $fh->getline)
+		{
+			print $line;
+		}
+		next;
+	}
+
+	print stderr "Processing $file.\n";
+	$texi_num++;
+	my $gotone = 0;
+	my $inblank = 0;
+	my $indent = 0;
+	my $inexample = 0;
+	my $inmenu = 0;
+	my $intable = 0;
+	my @table_headers;
+	my @table_footers;
+	my $table_header = "";
+	my $table_footer = "";
+	while ($_ = $fh->getline)
+	{
+		if (!$gotone && /^\@c ----- START MAN $texi_num -----$/)
+		{
+			$gotone = 1;
+			next;
+		}
+
+		# Skip ahead until our man section.
+		next unless $gotone;
+
+		# If we find the end tag we are done.
+		last if /^\@c ----- END MAN $texi_num -----$/;
+
+		# Need to do this everywhere.  i.e., before we print example
+		# lines, since literal back slashes can appear there too.
+		s/\\/\\\\/g;
+
+		# Examples should be indented and otherwise untouched
+		if (/^\@example$/)
+		{
+			$indent += 2;
+			print qq{.IP "" $indent\n};
+			$inexample = 1;
+			next;
+		}
+		if ($inexample)
+		{
+			if (/^\@end example$/)
+			{
+				$indent -= 2;
+				print qq{.IP "" $indent\n};
+				$inexample = 0;
+				next;
+			}
+			if (/^[ 	]*$/)
+			{
+				print ".SP\n";
+				next;
+			}
+
+			print $_;
+			next;
+		}
+
+		# Compress blank lines into a single line.  This and its
+		# corresponding skip purposely bracket the @menu and comment
+		# removal so that blanks on either side of a menu are
+		# compressed after the menu is removed.
+		if (/^[ 	]*$/)
+		{
+			$inblank = 1;
+			next;
+		}
+
+		# Not used
+		if (/^\@(ignore|menu)$/)
+		{
+			$inmenu++;
+			next;
+		}
+		# Delete menu contents.
+		if ($inmenu)
+		{
+			next unless /^\@end (ignore|menu)$/;
+			$inmenu--;
+			next;
+		}
+
+		# Remove comments
+		next if /^\@c(omment)?\b/;
+
+		# If we didn't hit the previous check and $inblank is set, then
+		# we just finished with some number of blanks.  Print the man
+		# page blank symbol before continuing processing of this line.
+		if ($inblank)
+		{
+			print ".SP\n";
+			$inblank = 0;
+		}
+
+		# Chapter headers.
+		s/^\@node (.*)$/.SH "$1"/;
+		s/^\@appendix\w* (.*)$/.SS "$1"/;
+
+		# Tables are similar to examples, except we need to handle the
+		# keywords.
+		if (/^\@(itemize|table)( (.*))?$/)
+		{
+			$indent += 2;
+			push @table_headers, $table_header;
+			push @table_footers, $table_footer;
+			my $content = $3;
+			if (/^\@itemize/)
+			{
+				my $bullet = "";
+				if ($content)
+				{
+					$bullet = "\\(bu"
+						if $content =~ /^\@bullet$/;
+				}
+				$table_header = qq{.IP "$bullet" $indent};
+				$table_footer = "";
+			}
+			else
+			{
+				my $hi = $indent - 2;
+				$table_header = qq{.IP "" $hi\n};
+				$table_footer = qq{\n.IP "" $indent};
+				if ($content)
+				{
+					$table_header .= "$content\{";
+					$table_footer = "\}$table_footer";
+				}
+			}
+			$intable++;
+			next;
+		}
+
+		if ($intable)
+		{
+			if (/^\@end (itemize|table)$/)
+			{
+				$table_header = pop @table_headers;
+				$table_footer = pop @table_footers;
+				$indent -= 2;
+				$intable--;
+				next;
+			}
+			s/^\@itemx?( (.*))?$/$table_header$2$table_footer/;
+			# Fall through so the rest of the table lines are
+			# processed normally.
+		}
+			
+		# Keywords
+		s/^\@noindent\s*//;
+		s/\@(p?x)?ref{([^}]+)}/see node \`$2' in the CVS manual/g;
+		s/\@(strong){([^}]+)}/\\fB$2\\fP/g;
+		s/\@(sc|code|file|samp){([^}]+)}/\\fB$2\\fP/g;
+		s/\@(emph|var|dfn){([^}]+)}/\\fI$2\\fP/g;
+		s/\@dots{}/.../g;
+		s/\@([{}])/$1/g;
+
+		# Index entries.
+		if (/^\@cindex (.*)$/)
+		{
+			print qq{.IX "$1"\n};
+			next;
+		}
+
+		# And print whatever's left.
+		print $_;
+	}
+}
+#	sed '
+#/^@c\( .*\)\?$/d;/^@comment\( .*\)\?$/d;
+#s/@sc{cvs}/[\
+#.B CVS\
+#]/g;
+#s/^@cindex \(.*\)$/.IX "\1"/;
+#s/^@node \(.*\)$/.SH "\1"/;
+#s/^@appendix[subec]* \(.*\)$/.SS "\1"/;
+#s/@\(px\?\)\?ref{\([^}]*\)}/see node `\2'"'"' in the Cederqvist/g;
+#/^@menu$/,/^@end menu$/d;
+#/^@table @code$/,/^@end table$/{
+#1d;
+#s/^@item \(.*\)$/.TP\
+#\1/;
+#/^@end table$/d;n;};
+#' <"$file".tmp >"$file".tmp2
+
+#done
