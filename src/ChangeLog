@@ -1,3 +1,11 @@
+2004-10-28  Mark D. Baushke  <mdb@cvshome.org>
+
+	* release.c (release): Allow builds of cvs with --disable-server
+	--disable-client both used for local installation configuration.
+	* root.c (Name_Root): Ditto.
+	* update.c (checkout_file): Ditto.
+	(Problem reported by Jean Olivier Caron <jecar@mlab.t.u-tokyo.ac.jp>.)
+
 2004-10-27  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs.h (RCS_FLAGS_USETIME): New flag.
