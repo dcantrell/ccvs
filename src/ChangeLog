@@ -1,3 +1,9 @@
+Fri Sep 26 14:19:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.h (CVS_CMD_USES_WORK_DIR): Fix comment (the sense of the
+	flag is not reversed from what it would seem; when I thought so it
+	was because I was misreading the lookup_command_attribute code).
+
 Thu Sep 25 23:14:47 1997  Noel Cragg  <noel@swish.red-bean.com>
 
 	* parseinfo.c (Parse_Info): fix typo in the trace message.
