@@ -1,3 +1,9 @@
+Thu Dec  4 20:01:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* configure.in (AC_CHECK_FUNCS): Remove mempcpy per change to
+	src/rcs.c.
+	* configure: Regenerated (never was regenerated after getwd change).
+
 1997-12-04  Jim Meyering  <meyering@na-net.ornl.gov>
 
 	* configure.in (AC_CHECK_FUNCS): Add mempcpy.
