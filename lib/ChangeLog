@@ -1,3 +1,7 @@
+2003-12-09  Larry Jones  <lawrence.jones@eds.com>
+
+	* getdate.c: Regenerated.
+
 2003-12-08  Mark D. Baushke  <mdb@cvshome.org>
 
 	* getdate.y: Remove #include <stdio.h> to avoid problems compiling
