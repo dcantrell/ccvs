@@ -3189,6 +3189,15 @@ add a line'
 '"${PROG}"' \[[a-z]* aborted\]: correct above errors first!'
 		mkdir dir1
 		mkdir sdir
+		dotest conflicts-status-0 "${testcvs} status a" \
+"===================================================================
+File: a                	Status: Needs Merge
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.2	/tmp/cvs-sanity/cvsroot/first-dir/a,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
 		dotest conflicts-130 "${testcvs} -q update" \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/a,v
 retrieving revision 1\.1
@@ -3210,22 +3219,58 @@ rcsmerge: warning: conflicts during merge
 C a'
 		rmdir dir1 sdir
 
+		dotest conflicts-status-1 "${testcvs} status a" \
+"===================================================================
+File: a                	Status: File had conflicts on merge
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	/tmp/cvs-sanity/cvsroot/first-dir/a,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
 		dotest_fail conflicts-131 "${testcvs} -q ci -m try" \
 "${PROG} [a-z]*: file .a. had a conflict and has not been modified
 ${PROG} \[[a-z]* aborted\]: correct above errors first!"
 
 		echo lame attempt at resolving it >>a
 		# Try to check in the file with the conflict markers in it.
+		dotest conflicts-status-2 "${testcvs} status a" \
+"===================================================================
+File: a                	Status: File had conflicts on merge
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	/tmp/cvs-sanity/cvsroot/first-dir/a,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
 		dotest_fail conflicts-132 "${testcvs} -q ci -m try" \
 "${PROG} [a-z]*: file .a. still contains conflict indicators
 ${PROG} \[[a-z]* aborted\]: correct above errors first!"
 
 		echo resolve conflict >a
+		dotest conflicts-status-3 "${testcvs} status a" \
+"===================================================================
+File: a                	Status: File had conflicts on merge
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	/tmp/cvs-sanity/cvsroot/first-dir/a,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
 		dotest conflicts-133 "${testcvs} -q ci -m resolved" \
 "Checking in a;
 /tmp/cvs-sanity/cvsroot/first-dir/a,v  <--  a
 new revision: 1\.3; previous revision: 1\.2
 done"
+		dotest conflicts-status-4 "${testcvs} status a" \
+"===================================================================
+File: a                	Status: Up-to-date
+
+   Working revision:	1\.3.*
+   Repository revision:	1\.3	/tmp/cvs-sanity/cvsroot/first-dir/a,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
 
 		# Now test that we can add a file in one working directory
 		# and have an update in another get it.

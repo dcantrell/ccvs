@@ -1,5 +1,13 @@
 Wed Jan 22 10:06:13 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* status.c (status_fileproc): Change message which is printed for
+	T_MODIFIED and ts_conflict set, so that it doesn't say "unresolved
+	confict".  This message occurs whether the conflict is resolved or
+	not.
+	* sanity.sh (conflicts): Add tests conflicts-status-* to test
+	output of "cvs status" in the context of conflicts.  Tests for
+	above fix.
+
 	* rtag.c (rtag): Send -n if run_module_prog is NOT true.
 
 Thu Jan 16 00:06:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
