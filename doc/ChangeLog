@@ -1,3 +1,8 @@
+Thu Aug 28 14:13:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Global options): Add comment about -w not
+	overriding cvs watch on.
+
 Wed Aug 27 08:09:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Password authentication server): Grammar fix ("under

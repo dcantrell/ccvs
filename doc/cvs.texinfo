@@ -6944,6 +6944,12 @@ Make new working files read-write.  Overrides the
 setting of the @code{$CVSREAD} environment variable.
 Files are created read-write by default, unless @code{$CVSREAD} is
 set or @samp{-r} is given.
+@c Note that -w only overrides -r and CVSREAD; it has
+@c no effect on files which are readonly because of
+@c "cvs watch on".  My guess is that is the way it
+@c should be (or should "cvs -w get" on a watched file
+@c be the same as a get and a cvs edit?), but I'm not
+@c completely sure whether to document it this way.
 
 @item -x
 Encrypt all communication between the client and the
