@@ -1,5 +1,18 @@
 2004-08-17  Derek Price  <derek@ximbiot.com>
 
+	* server.c (isProxyServer): Always compile.  Cache hostname lookup.
+	(serve_notify): Ignore notifications in conjunction with redirects.
+	(do_cvs_command): Send an error when !PROXY_SUPPORT and a client does
+	not support redirects.  Only close proxy logs when they exist.
+	(serve_command_prep): New function.
+	* sanity.sh (secondary-wrapper, writeproxy): Dynamically switch the
+	servers proxy/primary status for testing.
+	(basica): Gratuitous reformatting.
+	(devcom3, config, release): Handle some new proxy/redirect error
+	messages.
+
+2004-08-17  Derek Price  <derek@ximbiot.com>
+
 	* main.c (PrimaryServer): Include without PROXY_SUPPORT to support
 	redirects.
 	(main): Handle --primary-root without PROXY_SUPPORT.
