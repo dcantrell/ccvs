@@ -28,7 +28,9 @@ static int force_tag_match = 1;
 static int patch_short = 0;
 static int toptwo_diffs = 0;
 static int local = 0;
+static char *o_options = NULL;
 static char *options = NULL;
+static char *rcsver = NULL;
 static char *rev1 = NULL;
 static int rev1_validated = 0;
 static char *rev2 = NULL;
@@ -42,8 +44,8 @@ static int unidiff = 0;
 
 static const char *const patch_usage[] =
 {
-    "Usage: %s %s [-fl] [-c|-u] [-s|-t] [-V %%d]\n",
-    "    -r rev|-D date [-r rev2 | -D date2] modules...\n",
+    "Usage: %s %s [-fl] [-c|-u] [-s|-t] [-K opt] [-k opt|-V %%d]\n",
+    "    -r rev | -D date [-r rev2|-D date2] modules...\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, not recursive\n",
     "\t-c\tContext diffs (default)\n",
@@ -52,6 +54,8 @@ static const char *const patch_usage[] =
     "\t-t\tTop two diffs - last change made to the file.\n",
     "\t-D date\tDate.\n",
     "\t-r rev\tRevision - symbolic or numeric.\n",
+    "\t-k opt\tkeyword options for both files (if !-K).\n",
+    "\t-K opt\tkeyword options for the 'old' files.\n",
     "\t-V vers\tUse RCS Version \"vers\" for keyword expansion.\n",
     NULL
 };
@@ -70,7 +74,7 @@ patch (argc, argv)
 	usage (patch_usage);
 
     optind = 1;
-    while ((c = getopt (argc, argv, "V:k:cuftsQqlRD:r:")) != -1)
+    while ((c = getopt (argc, argv, "V:k:K:cuftsQqlRD:r:")) != -1)
     {
 	switch (c)
 	{
@@ -119,17 +123,16 @@ patch (argc, argv)
 		    rev1 = optarg;
 		break;
 	    case 'k':
-		if (options)
-		    free (options);
 		options = RCS_check_kflag (optarg);
+		break;
+	    case 'K':
+		o_options = RCS_check_kflag (optarg);
 		break;
 	    case 'V':
 		if (atoi (optarg) <= 0)
 		    error (1, 0, "must specify a version number to -V");
-		if (options)
-		    free (options);
-		options = xmalloc (strlen (optarg) + 1 + 2);	/* for the -V */
-		(void) sprintf (options, "-V%s", optarg);
+		rcsver = xmalloc (strlen (optarg) + 1 + 2);	/* for the -V */
+		(void) sprintf (rcsver, "-V%s", optarg);
 		break;
 	    case 'u':
 		unidiff = 1;		/* Unidiff */
@@ -163,9 +166,12 @@ patch (argc, argv)
 	if (RCS_datecmp (date1, date2) >= 0)
 	    error (1, 0, "second date must come after first date!");
 
-    /* if options is NULL, make it a NULL string */
     if (options == NULL)
 	options = xstrdup ("");
+    if (o_options == NULL)
+	o_options = xstrdup ("");
+    if (rcsver == NULL)
+	rcsver = xstrdup ("");
 
 #ifdef CLIENT_SUPPORT
     if (client_active)
@@ -177,7 +183,7 @@ patch (argc, argv)
 
 	if (local)
 	    send_arg("-l");
-	if (force_tag_match)
+	if (!force_tag_match)
 	    send_arg("-f");
 	if (toptwo_diffs)
 	    send_arg("-t");
@@ -194,8 +200,12 @@ patch (argc, argv)
 	    option_with_arg ("-r", rev2);
 	if (date2)
 	    client_senddate (date2);
-	if (options[0] != '\0')
-	    send_arg (options);
+	if (*options)
+	    send_arg (options);		/* XXX warning, no space before optarg */
+	if (*o_options)
+	    send_arg (o_options);	/* XXX warning, no space before optarg */
+	if (*rcsver)
+	    send_arg (rcsver);		/* XXX warning, no space before optarg */
 
 	{
 	    int i;
@@ -230,7 +240,9 @@ patch (argc, argv)
 	err += do_module (db, argv[i], PATCH, "Patching", patch_proc,
 			  (char *) NULL, 0, 0, 0, (char *) NULL);
     close_module (db);
+    free (o_options);
     free (options);
+    free(rcsver);
     patch_cleanup ();
     return (err);
 }
@@ -448,8 +460,12 @@ patch_fileproc (callerdat, finfo)
     }
     if (vers_tag != NULL)
     {
+	/* NOTE: we want this to run regardless of noexec, so we leave WORKFILE
+	   as null, thus forcing the output to stdout, i.e. SOUT.  */
 	retcode = RCS_checkout (rcsfile, (char *) NULL, vers_tag,
-				(char *) NULL, options, tmpfile1);
+				rev1, /* nametag, for $Name */
+				*o_options ? o_options : *options ? options : "-ko",
+				rcsver, tmpfile1);
 	if (retcode != 0)
 	{
 	    if (!really_quiet)
@@ -470,8 +486,11 @@ patch_fileproc (callerdat, finfo)
     }
     if (vers_head != NULL)
     {
+	/* NOTE: we want this to run regardless of noexec, so we leave WORKFILE
+	   as null, thus forcing the output to stdout, i.e. SOUT.  */
 	retcode = RCS_checkout (rcsfile, (char *) NULL, vers_head,
-				(char *) NULL, options, tmpfile2);
+				rev2, /* nametag, for $Name */
+				options, rcsver, tmpfile2);
 	if (retcode != 0)
 	{
 	    if (!really_quiet)

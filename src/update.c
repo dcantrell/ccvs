@@ -959,7 +959,7 @@ checkout_file (finfo, vers_ts, adding)
 	status = RCS_checkout (vers_ts->srcfile,
 			       pipeout ? NULL : finfo->file,
 			       vers_ts->vn_rcs, vers_ts->vn_tag,
-			       vers_ts->options, RUN_TTY);
+			       vers_ts->options, (char *) NULL, RUN_TTY);
     }
     if (file_is_dead || status == 0)
     {
@@ -1127,7 +1127,7 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
     else
 	retcode = RCS_checkout (vers_ts->srcfile, (char *) NULL,
 				vers_ts->vn_user, (char *) NULL,
-				vers_ts->options, file1);
+				vers_ts->options, (char *) NULL, file1);
     if (retcode != 0)
         fail = 1;
     else
@@ -1154,7 +1154,7 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
            to do that.  */
 	retcode = RCS_checkout (vers_ts->srcfile, finfo->file,
 				vers_ts->vn_rcs, (char *) NULL,
-				vers_ts->options, RUN_TTY);
+				vers_ts->options, (char *) NULL, RUN_TTY);
 	if (retcode != 0)
 	    fail = 1;
 	else
@@ -1778,7 +1778,7 @@ join_file (finfo, vers)
 	/* The file is up to date.  Need to check out the current contents.  */
 	retcode = RCS_checkout (vers->srcfile, finfo->file,
 				vers->vn_user, (char *) NULL,
-				(char *) NULL, RUN_TTY);
+				(char *) NULL, (char *) NULL, RUN_TTY);
 	if (retcode != 0)
 	    error (1, retcode == -1 ? errno : 0,
 		   "failed to check out %s file", finfo->fullname);

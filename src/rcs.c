@@ -2098,15 +2098,17 @@ RCS_getexpand (rcs)
    keyword.  OPTIONS is a string such as -kb or -kkv, for keyword
    expansion options, or NULL if there are none.  If WORKFILE is NULL,
    run regardless of noexec; if non-NULL, noexec inhibits execution.
-   SOUT is what to do with standard output (typically RUN_TTY).  */
+   RCSVER is for specifying a '-V' flag.  SOUT is what to do with
+   standard output (typically RUN_TTY).  */
 
 int
-RCS_checkout (rcs, workfile, rev, nametag, options, sout)
+RCS_checkout (rcs, workfile, rev, nametag, options, rcsver, sout)
      RCSNode *rcs;
      char *workfile;
      char *rev;
      char *nametag;
      char *options;
+    char *rcsver;		/* either NULL, empty, or a '-V' flag */
      char *sout;
 {
     int free_rev = 0;
@@ -2122,7 +2124,8 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
 
     if (trace)
     {
-	(void) fprintf (stderr, "%s-> checkout (%s, %s, %s, %s)\n",
+	(void) fprintf (stderr,
+			"%s-> checkout (rcs=%s, rev=%s, nametag=%s, optons=%s, rcsver=%s, output=%s)\n",
 #ifdef SERVER_SUPPORT
 			server_active ? "S" : " ",
 #else
@@ -2130,7 +2133,9 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
 #endif
 			rcs->path,
 			rev != NULL ? rev : "",
-			options != NULL ? options : "",
+			nametag ? nametag : "",
+			options ? options : "",
+			rcsver && *rcsver ? rcsver : "",
 			(workfile != NULL
 			 ? workfile
 			 : (sout != RUN_TTY ? sout : "(stdout)")));
@@ -2242,8 +2247,9 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
 
     keywords = 0;
 
-    if (strcmp (ouroptions, "o") != 0
-	&& strcmp (ouroptions, "b") != 0)
+    if (nametag || rcsver && *rcsver ||
+	(strcmp (ouroptions, "o") != 0
+	 && strcmp (ouroptions, "b") != 0))
     {
 	register int inkeyword;
 	register char *s, *send;
@@ -2355,7 +2361,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
 
     ret = RCS_exec_checkout (rcs->path, workfile,
 			     nametag != NULL ? nametag : rev,
-			     options, sout);
+			     options, rcsver, sout);
 
     if (free_rev)
 	free (rev);
