@@ -3442,7 +3442,7 @@ ac_given_INSTALL="$INSTALL"
 
 trap 'rm -fr `echo "Makefile lib/Makefile src/Makefile zlib/Makefile diff/Makefile doc/Makefile \
 	  man/Makefile tools/Makefile \
-	  contrib/Makefile contrib/elib/Makefile \
+	  contrib/Makefile \
 	  windows-NT/Makefile windows-NT/SCC/Makefile \
 	  os2/Makefile emx/Makefile macintosh/Makefile vms/Makefile \
 	  stamp-h config.h src/options.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
@@ -3496,7 +3496,7 @@ cat >> $CONFIG_STATUS <<EOF
 
 CONFIG_FILES=\${CONFIG_FILES-"Makefile lib/Makefile src/Makefile zlib/Makefile diff/Makefile doc/Makefile \
 	  man/Makefile tools/Makefile \
-	  contrib/Makefile contrib/elib/Makefile \
+	  contrib/Makefile \
 	  windows-NT/Makefile windows-NT/SCC/Makefile \
 	  os2/Makefile emx/Makefile macintosh/Makefile vms/Makefile \
 	  stamp-h"}
