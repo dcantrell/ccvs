@@ -1342,7 +1342,14 @@ log_version (log_data, revlist, rcs, ver, trunk)
     cvs_output ("\n", 1);
 
     p = findnode (ver->other, "log");
-    if (p == NULL || p->data[0] == '\0')
+    /* The p->date == NULL case is the normal one for an empty log
+       message (rcs-14 in sanity.sh).  I don't think the case where
+       p->data is "" can happen (getrcskey in rcs.c checks for an
+       empty string and set the value to NULL in that case).  My guess
+       would be the p == NULL case would mean an RCS file which was
+       missing the "log" keyword (which is illegal according to
+       rcsfile.5).  */
+    if (p == NULL || p->data == NULL || p->data[0] == '\0')
 	cvs_output ("*** empty log message ***\n", 0);
     else
     {

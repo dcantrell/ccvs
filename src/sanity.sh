@@ -7623,6 +7623,45 @@ done"
 
 	  fi # end of tests skipped for remote
 
+	  # OK, now make sure cvs log doesn't have any trouble with the
+	  # newphrases and such.
+	  dotest rcs-14 "${testcvs} -q log file2" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+Working file: file2
+head: 1\.5
+branch:
+locks:
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 6;	selected revisions: 6
+description:
+----------------------------
+revision 1\.5
+date: 1971/01/01 01:00:00;  author: joe;  state: bogus;  lines: ${PLUS}1 -1
+\*\*\* empty log message \*\*\*
+----------------------------
+revision 1\.4
+date: 1971/01/01 00:00:05;  author: joe;  state: bogus;  lines: ${PLUS}1 -1
+\*\*\* empty log message \*\*\*
+----------------------------
+revision 1\.3
+date: 1970/12/31 15:00:05;  author: joe;  state: bogus;  lines: ${PLUS}1 -1
+\*\*\* empty log message \*\*\*
+----------------------------
+revision 1\.2
+date: 1970/12/31 12:15:05;  author: me;  state: bogus;  lines: ${PLUS}1 -1
+branches:  1\.2\.6;
+\*\*\* empty log message \*\*\*
+----------------------------
+revision 1\.1
+date: 1970/12/31 11:00:05;  author: joe;  state: bogus;
+\*\*\* empty log message \*\*\*
+----------------------------
+revision 1\.2\.6\.1
+date: 1971/01/01 08:00:05;  author: joe;  state: Exp;  lines: ${PLUS}1 -1
+\*\*\* empty log message \*\*\*
+============================================================================="
 	  cd ..
 
 	  rm -r first-dir ${TESTDIR}/rcs4.tmp
