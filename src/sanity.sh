@@ -9047,8 +9047,11 @@ C file1"
 	  rm -f CVS/Baserev
 
 	  # This will fail on most systems.
-	  if echo "yes" | ${testcvs} -Q unedit $file >>${LOGFILE} ; then
-	    pass unedit-without-baserev-4
+	  if echo "yes" | ${testcvs} -Q unedit $file \
+	    >${TESTDIR}/test.tmp 2>&1 ; then
+	    dotest unedit-without-baserev-4 "cat ${TESTDIR}/test.tmp" \
+"m has been modified; revert changes? ${PROG} unedit: m not mentioned in CVS/Baserev
+${PROG} unedit: run update to complete the unedit"
 	  else
 	    fail unedit-without-baserev-4
 	  fi
@@ -9057,6 +9060,69 @@ C file1"
 	  # CVS/Entries file.  Demonstrate the corruption!
 	  dotest unedit-without-baserev-5 "cat CVS/Entries" \
 	    "/$file/1\.1\.1\.1/.*"
+
+	  if test "$remote" = yes; then
+	    dotest unedit-without-baserev-6 "${testcvs} -q update" "U m"
+	  else
+	    dotest unedit-without-baserev-6 "${testcvs} -q update" \
+"${PROG} update: warning: m was lost
+U m"
+	  fi
+
+	  # OK, those were the easy cases.  Now tackle the hard one
+	  # (the reason that CVS/Baserev was invented rather than just
+	  # getting the revision from CVS/Entries).  This is very
+	  # similar to watch4-10 through watch4-18 but with Baserev
+	  # missing.
+	  cd ../..
+	  mkdir 2; cd 2
+	  dotest unedit-without-baserev-7 "${testcvs} -Q co x" ''
+	  cd x
+
+	  dotest unedit-without-baserev-10 "${testcvs} edit m" ''
+	  echo 'edited in 2' >m
+	  cd ../..
+
+	  cd 1/x
+	  dotest unedit-without-baserev-11 "${testcvs} edit m" ''
+	  echo 'edited in 1' >m
+	  dotest unedit-without-baserev-12 "${testcvs} -q ci -m edit-in-1" \
+"Checking in m;
+${TESTDIR}/cvsroot/x/m,v  <--  m
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  cd ../..
+	  cd 2/x
+	  dotest unedit-without-baserev-13 "${testcvs} -q update" \
+"RCS file: ${TESTDIR}/cvsroot/x/m,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.2
+Merging differences between 1\.1\.1\.1 and 1\.2 into m
+rcsmerge: warning: conflicts during merge
+${PROG} [a-z]*: conflicts found in m
+C m"
+	  rm CVS/Baserev
+	  if (echo yes | ${testcvs} unedit m) >${TESTDIR}/test.tmp 2>&1; then
+	    dotest unedit-without-baserev-14 "cat ${TESTDIR}/test.tmp" \
+"m has been modified; revert changes? ${PROG} unedit: m not mentioned in CVS/Baserev
+${PROG} unedit: run update to complete the unedit"
+	  else
+	    fail unedit-without-baserev-14
+	  fi
+	  if test "$remote" = yes; then
+	    dotest unedit-without-baserev-15 "${testcvs} -q update" "U m"
+	  else
+	    dotest unedit-without-baserev-15 "${testcvs} -q update" \
+"${PROG} update: warning: m was lost
+U m"
+	  fi
+	  # The following tests are kind of degenerate compared with
+	  # watch4-16 through watch4-18 but might as well make sure that
+	  # nothing seriously wrong has happened to the working directory.
+	  dotest unedit-without-baserev-16 "cat m" 'edited in 1'
+	  # Make sure CVS really thinks we are at 1.2.
+	  dotest unedit-without-baserev-17 "${testcvs} -q update" ""
+	  dotest unedit-without-baserev-18 "cat m" "edited in 1"
 
 	  cd ../..
 	  rm -rf 1
