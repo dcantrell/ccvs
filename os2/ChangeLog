@@ -1,3 +1,8 @@
+Wed Apr 30 12:45:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* icc.compilation-errors: Removed; it was the error messages from
+	trying to compile CVS on OS/2, way out of date.
+
 Wed Mar 12 16:10:01 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* config.h (HAVE_SETVBUF): Removed; no longer used.
