@@ -119,6 +119,9 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     datum key, val;
     char *cp;
     int c, err = 0;
+#ifdef SERVER_SUPPORT
+    int changed_dir = 0;
+#endif
 
 #ifdef SERVER_SUPPORT
     if (trace)
@@ -519,6 +522,16 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     if (local_specified)
 	spec_opt = NULL;
 
+#ifdef SERVER_SUPPORT
+    /* We're recursing into a special sub-module.  It will be nested
+       as a subdirectory of the top-level module.  Tell the client
+       about the directory change.  */
+    if (server_active && spec_opt != NULL) {
+	server_change_dir (where ? where : (mwhere ? mwhere : mname));
+	changed_dir = 1;
+    } 
+#endif 
+
     while (spec_opt != NULL)
     {
 	char *next_opt;
@@ -552,7 +565,11 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     }
 
     /* write out the checkin/update prog files if necessary */
+
 #ifdef SERVER_SUPPORT
+    if (server_active && changed_dir) {
+	server_change_dir ("..");
+    }
     if (err == 0 && !noexec && m_type == CHECKOUT && server_expanding)
     {
 	if (checkin_prog != NULL)

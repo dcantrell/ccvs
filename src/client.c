@@ -65,6 +65,7 @@ int update PROTO((int argc, char **argv));
 static void handle_ok PROTO((char *, int));
 static void handle_error PROTO((char *, int));
 static void handle_valid_requests PROTO((char *, int));
+static void handle_change_dir PROTO((char*, int));
 static void handle_checked_in PROTO((char *, int));
 static void handle_new_entry PROTO((char *, int));
 static void handle_checksum PROTO((char *, int));
@@ -732,6 +733,7 @@ handle_valid_requests (args, len)
 }
 
 static int use_directory = -1;
+static char submodule_dir[PATH_MAX];
 
 static char *get_short_pathname PROTO((const char *));
 
@@ -886,6 +888,8 @@ call_in_directory (pathname, func, data)
 
 	if ( CVS_CHDIR (toplevel_wd) < 0)
 	    error (1, errno, "could not chdir to %s", toplevel_wd);
+	if (*submodule_dir[0] && CVS_CHDIR(submodule_dir) < 0) 
+	    error (1, errno, "could not chdir to %s", submodule_dir);
 	newdir = 0;
 	if ( CVS_CHDIR (dir_name) < 0)
 	{
@@ -1092,6 +1096,30 @@ call_in_directory (pathname, func, data)
     {
 	free (short_pathname);
 	free (reposname);
+    }
+}
+
+static void
+handle_change_dir (dir, len)
+     char *dir;
+     int len;
+{
+    if (strcmp (dir, "..") != 0) {
+        if (submodule_dir[0] != '\0')
+	    strcat (submodule_dir, "/");
+        strcat (submodule_dir, dir);
+    } else {
+      /* We're going up a directory. */
+        char* last_slash;
+
+	last_slash = strrchr (submodule_dir, '/');
+	
+	if (!last_slash) {
+	    /* We're all the way back to the top. */
+	    submodule_dir[0] = '\0';
+	} else {
+	    *last_slash = '\0';
+        }
     }
 }
 
@@ -2652,6 +2680,8 @@ struct response responses[] =
     RSP_LINE("error", handle_error, response_type_error, rs_essential),
     RSP_LINE("Valid-requests", handle_valid_requests, response_type_normal,
        rs_essential),
+    RSP_LINE("Change-dir", handle_change_dir, response_type_normal,
+	     rs_optional),
     RSP_LINE("Checked-in", handle_checked_in, response_type_normal,
        rs_essential),
     RSP_LINE("New-entry", handle_new_entry, response_type_normal, rs_optional),

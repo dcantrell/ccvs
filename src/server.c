@@ -2761,6 +2761,17 @@ serve_export (arg)
     serve_co (arg);
 }
 
+void 
+server_change_dir (dir)
+    char* dir;
+{
+    if (!supported_response ("Change-dir"))
+	return;
+    buf_output0 (&protocol, "Change-dir ");
+    buf_output0 (&protocol, dir);
+    buf_output0 (&protocol, "\n");
+}
+
 void
 server_copy_file (file, update_dir, repository, newfile)
     char *file;
