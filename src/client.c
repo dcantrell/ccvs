@@ -3579,13 +3579,11 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 
 #if HAVE_KERBEROS
 
-/*
- * FIXME: this function has not been changed to deal with
- * NO_SOCKET_TO_FD (i.e., systems on which sockets cannot be converted
- * to file descriptors) or with SOCK_ERRNO/SOCK_STRERROR.  The first
- * person to try building a kerberos client on such a system (OS/2,
- * Windows 95, and maybe others) will have to make take care of this.
- */
+/* This function has not been changed to deal with NO_SOCKET_TO_FD
+   (i.e., systems on which sockets cannot be converted to file
+   descriptors).  The first person to try building a kerberos client
+   on such a system (OS/2, Windows 95, and maybe others) will have to
+   make take care of this.  */
 void
 start_tcp_server (tofdp, fromfdp)
     int *tofdp, *fromfdp;
