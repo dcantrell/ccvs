@@ -3397,6 +3397,14 @@ called @dfn{releases}.  To avoid confusion, the word
 
 @c We avoid the "major revision" terminology.  It seems
 @c like jargon.  Hopefully "first number" is clear enough.
+@c
+@c Well, in the context of software release numbers,
+@c "major" and "minor" release or version numbers are
+@c documented in at least the GNU Coding Standards, but I'm
+@c still not sure I find that a valid reason to apply the
+@c terminology to RCS revision numbers.  "First", "Second",
+@c "subsequent", and so on is almost surely clearer,
+@c especially to a novice reader. -DRP
 By default, @sc{cvs} will assign numeric revisions by
 leaving the first number the same and incrementing the
 second number.  For example, @code{1.1}, @code{1.2},

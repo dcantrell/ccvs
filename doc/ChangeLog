@@ -1,3 +1,10 @@
+2003-07-21  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo: Expand comment on RCS terminology.
+
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
 2003-07-20  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Setting up the server for password authentication): 
