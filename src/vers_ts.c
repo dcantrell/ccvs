@@ -200,7 +200,6 @@ time_stamp_server (file, vers_ts)
 {
     struct stat sb;
     char *cp;
-    char *ts;
 
     if (stat (file, &sb) < 0)
     {
