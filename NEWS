@@ -3,6 +3,9 @@ Changes since 1.11.15:
 
 BUG FIXES
 
+* The cvs.1 man page is now generated automatically from a section of the CVS
+  Manual.
+
 * Thanks to a report from Mark Andrews at the Internet Systems Consortium, the
   :ext: connection method no longer relies on a transparent transport that uses
   an argument processor that can handle arbitrary ordering of options and other
