@@ -1,5 +1,10 @@
 Wed Aug  7 18:26:25 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* server.c (cvs_output): Change str parameter to const char *.
+	Correct loop to print from p, not str.
+	(cvs_outerr): Likewise.
+	* cvs.h (cvs_output, cvs_outerr): Update declarations.
+
 	* server.c (receive_partial_file): Read and discard remaining file
 	data on a write error.
 	(serve_modified): Discard data while size > 0, not >=.
