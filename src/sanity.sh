@@ -3603,7 +3603,8 @@ two
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file2
 new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done"
-	  dotest rcslib-symlink-4 "test -L ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  dotest rcslib-symlink-4 "ls -l $CVSROOT_DIRNAME/first-dir/file2,v" \
+".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
 
 	  cd ..
 
@@ -13621,14 +13622,13 @@ done"
 	  dotest tag8k-15 "$testcvs -Q tag $t-9 $file" ''
 	  dotest tag8k-16 "$testcvs -Q tag $t-a $file" ''
 
-	  # Determine the length of the author value.
+	  # Extract the author value.
 	  name=`sed -n 's/.*;	author \([^;]*\);.*/\1/p' ${TESTDIR}/cvsroot/$module/$file,v|head -1`
-	  name_len=`expr length $name`
 
+	  # Form a suffix string of length (16 - length($name)).
 	  # CAREFUL: this will lose if $name is longer than 16.
-	  # Then, form a string of length 16 - $name_len.
-	  add_len=`expr 16 - $name_len`
-	  suffix=`expr substr 1234567890123456 1 $add_len`
+	  sed_pattern=`echo $name|sed s/././g`
+	  suffix=`echo 1234567890123456|sed s/$sed_pattern//`
 
 	  # Add a final tag with length chosen so that it will push the
 	  # offset of the `;' in the 2nd occurrence of `;\tauthor' in the
