@@ -1,3 +1,11 @@
+Wed Sep 20 14:27:28 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+        * configure.in: #define the symbols DIFF and GREP to be the paths
+	to the DIFF and GREP programs; their values will be edited into
+	src/options.h (and config.h, coincidentally).
+	* acconfig.h (DIFF, GREP): Add these.
+	* configure, config.h.in: Rebuilt using autoconf and autoheader.
+
 Sun Sep 10 21:38:05 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO: CVS can already undo a change, suggest documenting how.
