@@ -1,3 +1,9 @@
+2000-10-23  Derek Price  <derek.price@openavenue.com>
+            James Youngman  <jay@gnu.org>
+
+	* sanity.sh: it's /gnu/bin, not /gun/bin.  Thanks go to James Youngman
+	<jay@gnu.org> for the bug report and patch.
+
 2000-10-20  Jim Kingdon  <http://sourceforge.net/users/kingdon/>
 	
 	* server.c (switch_to_user): Set CVS_USER.  Patch from Sudish

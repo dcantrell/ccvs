@@ -160,7 +160,7 @@ cd ${TESTDIR}
 
 find_tool ()
 {
-  GLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gun/bin"
+  GLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gnu/bin"
   TOOL=""
   for path in $GLOCS ; do
     if test -x $path/g$1 ; then
