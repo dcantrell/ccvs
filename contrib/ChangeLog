@@ -1,3 +1,8 @@
+2003-09-12  Derek Price  <derek@ximbiot.com>
+
+	* check_cvs.in (get_ignore_files_from_cvsroot): Handle error messages
+	specified in checkoutlist.
+
 2003-09-08  Derek Price  <derek@ximbiot.com>
 
 	* check_cvs.in (get_history, check_revision): Pass the STDERR of child
