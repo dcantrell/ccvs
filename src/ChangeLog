@@ -1,3 +1,8 @@
+Mon Aug 21 16:11:16 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* sanity.sh (basic1): Make sure first-dir is deleted before
+	running this set of tests.
+
 Mon Aug 21 12:54:14 1995  Rick Sladkey  <jrs@world.std.com>
 
 	* update.c (update_filesdone_proc): If pipeout, don't try to
