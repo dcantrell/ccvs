@@ -2494,6 +2494,8 @@ Advantages:
 
 @itemize @bullet
 @item
+@c FIXME: Is this true about -D now that we have death
+@c support?  See 5B.3 in the FAQ.
 Checking out old revisions works correctly, as long as
 you use @samp{-r@var{tag}} and not @samp{-D@var{date}}
 to retrieve the revisions.
