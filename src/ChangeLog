@@ -1,5 +1,8 @@
 Mon Mar 11 10:21:05 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: Add QUESTION variable, analogous to PLUS.  Use it
+	instead of \? to match a question mark.
+
 	* cvs.h (CVSMODULE_OPTS, CVSMODULE_SPEC): Move from here...
 	* modules.c: ...to here.  They are only used here and the code to
 	handle the syntax of modules files should not be scattered all over.
