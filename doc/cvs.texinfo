@@ -8231,16 +8231,13 @@ old version number (pre-checkin)
 new version number (post-checkin)
 @end table
 
-All other characters that appear in a format string are
-silently ignored.
+All other characters that appear in a format string
+expand to an empty field (commas separating fields are
+still provided).
 
 For example, some valid format strings are @samp{%},
 @samp{%s}, @samp{%@{s@}}, and @samp{%@{sVv@}}.
 
-If a space appears after the @samp{%} character (that
-is, the percent sign appears by itself), only the name
-of the repository will be generated.
-       
 The output will be a string of tokens separated by
 spaces.  For backwards compatibility, the the first
 token will be the repository name.  The rest of the
@@ -8254,6 +8251,9 @@ might be:
 @example
 /u/src/master ChangeLog,1.1,1.2 Makefile,1.3,1.4 foo.c,1.12,1.13
 @end example
+
+As another example, @samp{%@{@}} means that only the
+name of the repository will be generated.
 
 Note: when @sc{CVS} is accessing a remote repository,
 @file{loginfo} will be run on the @emph{remote}

@@ -1,3 +1,8 @@
+Fri Oct 25 07:49:21 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (loginfo): To get just the repository name, suggest
+	%{} instead of % "standing alone"; the latter is now an error.
+
 Tue Oct 22 13:08:54 1996  Noel Cragg  <noel@gargle.rain.org>
 
 	* cvs.texinfo (loginfo): add information on the new loginfo format
