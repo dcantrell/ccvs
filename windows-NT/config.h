@@ -349,6 +349,12 @@
    to 0 otherwise. */
 #define HAVE_MALLOC 1
 
+/* Define to 1 if you have the `mblen' function. */
+#undef HAVE_MBLEN
+
+/* Define to 1 if you have the `mbrlen' function. */
+#undef HAVE_MBRLEN
+
 /* Define to 1 if you have the `mbsrtowcs' function. */
 #undef HAVE_MBSRTOWCS
 
@@ -422,6 +428,9 @@
 /* Define to 1 if you have the `rename' function. */
 #undef HAVE_RENAME
 
+/* Define to 1 if you have run the test for working tzset. */
+#undef HAVE_RUN_TZSET_TEST
+
 /* Define if the diff library should use setmode for binary files. */
 #define HAVE_SETMODE 1
 
@@ -468,6 +477,9 @@
 
 /* Define to 1 if you have the `strerror_r' function. */
 #undef HAVE_STRERROR_R
+
+/* Define to 1 if you have the `strftime' function. */
+#undef HAVE_STRFTIME
 
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
@@ -794,6 +806,9 @@
 /* Define to 1 if your <sys/time.h> declares `struct tm'. */
 #undef TM_IN_SYS_TIME
 
+/* Define if tzset clobbers localtime's static buffer. */
+#undef TZSET_CLOBBERS_LOCALTIME_BUFFER
+
 /* The default umask to use when creating or otherwise setting file or
    directory permissions in the repository. Must be a value in the range of 0
    through 0777. For example, a value of 002 allows group rwx access and world
@@ -936,6 +951,9 @@
 /* Define to `int' if <sys/types.h> does not define. */
 #define mode_t int
 
+/* Define to the name of the strftime replacement function. */
+#undef my_strftime
+
 /* Define to rpl_nanosleep if the replacement function should be used. */
 #undef nanosleep
 
@@ -957,6 +975,9 @@
 
 /* Define as a signed type of the same size as size_t. */
 #undef ssize_t
+
+/* Define to rpl_tzset if the wrapper function should be used. */
+#undef tzset
 
 /* Define to `int' if <sys/types.h> doesn't define. */
 #define uid_t int
