@@ -1,3 +1,10 @@
+Wed Aug 14 13:59:11 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* configure.in (AC_REPLACE_FUNCS): add getspnam for reading shadow
+	password entries
+	* configure: regenerated
+	* config.h.in: regenerated
+
 Mon Aug 12 14:15:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (config.status): When running config.status
