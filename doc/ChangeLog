@@ -1,5 +1,8 @@
 Sat Jul  5 03:16:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Example): Refer to RFC2119 when referring to
+	terminology of MUST, SHALL, &c.
+
 	* cvs.texinfo (Windows permissions): New node.
 
 Fri Jul  4 15:27:43 1997  Ian Lance Taylor  <ian@cygnus.com>
