@@ -795,7 +795,12 @@ A one-line message for the user.
 Same as @code{M} but send to stderr not stdout.
 
 @item F \n
-Flush stderr.
+@c FIXME: The second sentence, defining "flush", is somewhat off the top
+@c of my head.  Is there some text we can steal from ANSI C or someplace
+@c which is more carefully thought out?
+Flush stderr.  That is, make it possible for the user to see what has
+been written to stderr (it is up to the implementation to decide exactly
+how far it should go to ensure this).
 
 @item error @var{errno-code} @samp{ } @var{text} \n
 The command completed with an error.  @var{errno-code} is a symbolic
