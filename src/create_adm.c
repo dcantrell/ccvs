@@ -33,6 +33,7 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
 {
     FILE *fout;
     char *cp;
+    char *reposcopy;
     char *tmp;
 
 #ifdef SERVER_SUPPORT
@@ -87,7 +88,8 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
 	else
 	    error (1, errno, "cannot open %s/%s", update_dir, CVSADM_REP);
     }
-    cp = xstrdup (repository);
+    reposcopy = xstrdup (repository);
+    cp = reposcopy;
     Sanitize_Repository_Name (cp);
 
     /* The top level of the repository is a special case -- we need to
@@ -170,7 +172,7 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
     }
 #endif
 
-    free (cp);
+    free (reposcopy);
     free (tmp);
     return 0;
 }
