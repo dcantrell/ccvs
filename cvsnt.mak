@@ -61,6 +61,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 BSC32_FLAGS=/nologo /o$(OUTDIR)/"cvsnt.bsc" 
 BSC32_SBRS= \
+	$(INTDIR)/mkmodules.sbr \
 	$(INTDIR)/subr.sbr \
 	$(INTDIR)/admin.sbr \
 	$(INTDIR)/server.sbr \
@@ -121,6 +122,7 @@ BSC32_SBRS= \
 	$(INTDIR)/getdate.sbr \
 	$(INTDIR)/getline.sbr \
 	$(INTDIR)/savecwd.sbr \
+	$(INTDIR)/vasprintf.sbr \
 	$(INTDIR)/mkdir.sbr \
 	$(INTDIR)/run.sbr \
 	$(INTDIR)/pwd.sbr \
@@ -147,6 +149,7 @@ LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  /PDB:$(OUTDIR)/"cvsnt.pdb" /MACHINE:I386 /OUT:"WinRel/cvs.exe" 
 DEF_FILE=
 LINK32_OBJS= \
+	$(INTDIR)/mkmodules.obj \
 	$(INTDIR)/subr.obj \
 	$(INTDIR)/admin.obj \
 	$(INTDIR)/server.obj \
@@ -207,6 +210,7 @@ LINK32_OBJS= \
 	$(INTDIR)/getdate.obj \
 	$(INTDIR)/getline.obj \
 	$(INTDIR)/savecwd.obj \
+	$(INTDIR)/vasprintf.obj \
 	$(INTDIR)/mkdir.obj \
 	$(INTDIR)/run.obj \
 	$(INTDIR)/pwd.obj \
@@ -256,6 +260,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 BSC32_FLAGS=/nologo /o$(OUTDIR)/"cvsnt.bsc" 
 BSC32_SBRS= \
+	$(INTDIR)/mkmodules.sbr \
 	$(INTDIR)/subr.sbr \
 	$(INTDIR)/admin.sbr \
 	$(INTDIR)/server.sbr \
@@ -316,6 +321,7 @@ BSC32_SBRS= \
 	$(INTDIR)/getdate.sbr \
 	$(INTDIR)/getline.sbr \
 	$(INTDIR)/savecwd.sbr \
+	$(INTDIR)/vasprintf.sbr \
 	$(INTDIR)/mkdir.sbr \
 	$(INTDIR)/run.sbr \
 	$(INTDIR)/pwd.sbr \
@@ -342,6 +348,7 @@ LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  /PDB:$(OUTDIR)/"cvsnt.pdb" /DEBUG /MACHINE:I386 /OUT:"WinDebug/cvs.exe" 
 DEF_FILE=
 LINK32_OBJS= \
+	$(INTDIR)/mkmodules.obj \
 	$(INTDIR)/subr.obj \
 	$(INTDIR)/admin.obj \
 	$(INTDIR)/server.obj \
@@ -402,6 +409,7 @@ LINK32_OBJS= \
 	$(INTDIR)/getdate.obj \
 	$(INTDIR)/getline.obj \
 	$(INTDIR)/savecwd.obj \
+	$(INTDIR)/vasprintf.obj \
 	$(INTDIR)/mkdir.obj \
 	$(INTDIR)/run.obj \
 	$(INTDIR)/pwd.obj \
@@ -433,6 +441,35 @@ $(OUTDIR)/cvs.exe : $(OUTDIR)  $(DEF_FILE) $(LINK32_OBJS)
 ################################################################################
 # Begin Group "src"
 
+################################################################################
+# Begin Source File
+
+SOURCE=.\src\mkmodules.c
+DEP_MKMOD=\
+	.\src\cvs.h\
+	.\lib\savecwd.h\
+	".\windows-NT\config.h"\
+	".\windows-NT\options.h"\
+	".\windows-NT\alloca.h"\
+	.\lib\fnmatch.h\
+	".\windows-NT\pwd.h"\
+	.\lib\system.h\
+	.\src\hash.h\
+	.\src\server.h\
+	.\src\client.h\
+	.\src\myndbm.h\
+	.\lib\regex.h\
+	.\lib\getopt.h\
+	.\lib\wait.h\
+	.\src\rcs.h\
+	.\src\error.h\
+	.\src\update.h\
+	".\windows-NT\ndir.h"
+
+$(INTDIR)/mkmodules.obj :  $(SOURCE)  $(DEP_MKMOD) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
 ################################################################################
 # Begin Source File
 
@@ -1933,6 +1970,17 @@ DEP_SAVEC=\
 	.\src\error.h
 
 $(INTDIR)/savecwd.obj :  $(SOURCE)  $(DEP_SAVEC) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\lib\vasprintf.c
+DEP_VASPR=\
+	".\windows-NT\config.h"
+
+$(INTDIR)/vasprintf.obj :  $(SOURCE)  $(DEP_VASPR) $(INTDIR)
    $(CPP) $(CPP_PROJ)  $(SOURCE) 
 
 # End Source File
