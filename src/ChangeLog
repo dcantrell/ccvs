@@ -1,3 +1,13 @@
+1998-03-25  Loren J. Rittle
+
+	* import.c (add_rev): Rewrite to use RCS_FLAGS_KEEPFILE option
+	of RCS_checkin() to avoid damage to imported files instead of
+	externally undoing damage after the fact.  The side effect is
+	that callers of add_rev() may now incrementally walk the
+	entries of the current directory without seeing gratuitous
+	changes to the directory structure (under at least one file
+	system under at least one OS).
+
 1998-03-18  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* error.c (error): Save and restore errno.  Should fix test case
