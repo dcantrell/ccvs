@@ -1,3 +1,9 @@
+Thu Jan  4 09:48:33 1996  Ben Laurie  <ben@gonzo.ben.algroup.co.uk>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (start_server): dup the file descriptor before
+	fdopening it.
+
 Wed Jan  3 18:25:25 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Remove tests 5, 5.5, and 5.75.  All that stuff is
