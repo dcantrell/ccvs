@@ -1,3 +1,9 @@
+2004-05-15  Derek Price  <derek@ximbiot.com>
+
+	* libz.dsp: Header file list updated for GNULIB updates.
+	* libz.mak: Regenerated for "libz.dsp" changes.
+	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
+
 2004-04-23  Derek Price  <derek@ximbiot.com>
 
 	* zlib.mak: Regenerated.
