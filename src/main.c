@@ -52,6 +52,10 @@ int top_level_admin = 0;
 int UseNewInfoFmtStrings = 0;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 
+/* Control default behavior of 'cvs import' (-X option on or off) in
+   CVSROOT/config.  Defaults to off, for backward compatibility. */
+int ImportNewFilesToVendorBranchOnly = 0;
+
 mode_t cvsumask = UMASK_DFLT;
 
 char *CurDir;
