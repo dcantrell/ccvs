@@ -1,3 +1,14 @@
+Thu Jul  4 15:57:34 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* buffer.c: New file; buffer support functions taken from
+	server.c.
+	* buffer.h: New file; declarations for buffer.c.
+	* server.c: Move buffer support functions into buffer.c and
+	buffer.h.  Include "buffer.h".
+	* Makefile.in (SOURCES): Add buffer.c.
+	(OBJECTS): Add buffer.o.
+	(HEADERS): Add buffer.h.
+
 Thu Jul  4 00:12:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* version.c: Increment version number to 1.8.6.
