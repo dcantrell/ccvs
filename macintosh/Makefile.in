@@ -16,24 +16,34 @@ exec_prefix = @exec_prefix@
 HEADERS = \
   config.h \
   options.h \
+  pwd.h \
+  SIOUXMenus.h \
+  SIOUXGlobals.h \
+  SIOUXWindows.h \
   maccvs.pch
   
 SOURCES = \
+  ae_if.c \
+  alloca.c \
+  filesubr.c \
+  mac_init.c \
   macos_filesys.c \
   pwd.c \
   rcmd.c \
   run.c \
-  server_if.c
+  server_if.c \
+  SIOUX.c
   
 DISTFILES = \
   ${HEADERS} \
   ${SOURCES} \
   README.MacCVS \
+  ChangeLog \
   Makefile.in \
   services \
-  maccvs.rsrc.sit.hqx \
-  maccvs165.patch \
-  maccvs.projects.sit.hqx
+  AE_example.pl \
+  MacCVS68K.sit.hqx \
+  MacCVSPPC.sit.hqx
 
 all:
 

@@ -25,8 +25,7 @@
    
 /* Stripped out stuff - MDLadwig <mike@twinpeaks.prc.com> --- Nov 1995 */
 
-#include <cvs.h>
-
+#include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,10 +34,7 @@ static char *home_dir = ".";	/* we feel (no|every)where at home */
 static struct passwd pw;	/* should we return a malloc()'d structure   */
 static struct group gr;		/* instead of pointers to static structures? */
 
-#if !__POWERPC__
 pid_t getpid( void ) { return 0; }					/* getpid */
-#endif
-
 pid_t waitpid(pid_t, int *, int) { return 0; }	/* waitpid */
 
 mode_t	umask(mode_t) { return 0; }				/* Umask */

@@ -1,46 +1,90 @@
-Tue Mar 19 17:51:52 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+Fri Jul 19 14:23:01 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
-	* server_if.c (macos_start_server): Added support for
-	  CVS_RCMD_PORT (and thus made consistent with WindowsNT and VMS)
+	* Added support for zlib (and Gzip-stream compression) to both the PPC and
+     68k ports.
 
-Wed Feb 28 11:31:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+Mon Jul 15 11:53:41 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
-	* config.h: Remove alloca cruft.
-	* server_if.c (macos_start_server): Don't use alloca.
+	* For the 68k port, setup memory allocation differently in order to keep the
+	   heap and stack from colliding in large recursive operations.  The 68k and PPC
+	   versions now both allocate 128k to the stack.
 
-Mon Feb 12 03:33:27 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+Tues Jun 25 09:26:32 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
-	* run.c: Changed Popen() to run_popen() for the benefit of
-	case-insensitive linkers (VMS) which confuse Popen() with popen()
+	* Removed the requirement for the 'services' file; it only needs to be there
+     if you want to use a non-standard port.
 
-Fri Feb  9 02:39:38 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+Mon Jun 24 10:12:17 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
-	* .cvsignore: Added Makefile, to placate the script that makes the
-	nightly snapshots.
+	* Fixed bug in NoLineBuffer that sent an AE for every character in certain CVS
+     modes (e.g. help).
+	* Fixed bug in 68K port that didn't set the HLE flag in the size resource
 
-Thu Feb  1 19:50:02 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+Thurs Jun 7 18:11:43 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
-	* options.h: Remove RM; no longer used.
+	* MacCVS fixes inserted into the "mainstream" CVS sources - thanks, Jim!
+	* Fixed bug with reading log information from a file
 
-Fri Jan 12 10:36:48 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+Thurs Jun 6 16:09:03 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
-	* Makefile.in (dist-dir, DISTFILES): Makefile is not in srcdir.
+	* Improved MacCVS builds by moving the maccvs.rsrc information to maccvs.r
+	* Fixed bug where MacCVS would crash if an error was encountered and
+     output was going to AppleEvents or a file
 
-Wed Jan 10 20:43:33 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+Thurs Jun 6 12:38:54 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
-        * Makefile.in (DISTFILES): added `Makefile'.
+	* Fixed bug keeping CRLF conversion code from getting called
+	* Modified "file results" code to use an intermediate file, and to
+     rename that file to the requested filename when complete.
 
-        * README.MacCVS (NOTE): added note at top saying that this port is
-        in-progress and should not be considered a finished product.
+Tue Jun 4 13:58:01 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
-        * Updated all files from Mike Ladwig's new tar.
-        
-Sat Dec 16 20:59:12 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+	* CVS Code base updated to cvs-1.8.2 (5/27/96 snapshot)
+	* Updated to CodeWarrier 9.  The SIOUX redirection stuff is broken under
+     CW9.  Using MSL seems promising, but MSL's ccommand is broken.
+  * Redid the 680x0 port.
 
-        * maccvs_projects.sit.hqx: replaced with new version mailed by
-        Michael.
+Fri May 16 14:54:21 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
-Sat Dec 16 20:55:36 1995    Michael Ladwig  <mike@twinpeaks.prc.com>
+	* CVS Code base updated to cvs-1.8.2 (5/16/96 snapshot)
+	* Bugs in macos_filesys.c related to relative pathnames fixed
 
-        * Makefile.in: new file.
+Fri May 1 15:58:41 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* Added AppleEvents support (undocumented)
+
+Fri Feb 9 11:26:32 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* CVS Code base updated to cvs-1.7
+
+Wed Jan 10 11:40:32 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* CVS Code base updated to cvs-1.6.5 1/8/95 snapshot
+
+Fri Dec 27 14:20:12 1995  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* Cleanup of rcmd code, removing inappropriate tests
+	* CVS Code base updated to cvs-1.6.3 12/27/95 snapshot
+	* Again fixed(?) binary/text file handling.
+	* OT problem traced to GUSI - OT bug.  Corresponding with Matthias.
+
+Fri Dec 08 12:39:22 1995  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* Fixed problem with 'stat' emulation
+	* Used better GUSI resource template so file type/creator was available
+
+Thurs Dec 07 16:13:09 1995  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* Port cleanup for inclusion into main cvs distribution
+	* Fixed(?) binary file handling
+	* Better SIOUX feedback
+	* Updates only via whole files (no '-u' to update)
+
+Wed Nov  29 09:33:16 1995  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* Initial port of CVS 1.6.1 snapshot 11/14/95
+	* Requires CW GUSI 1.6.4 and CodeWarrier 7
+	* 68k version is essentially untested, due to lack of a 68k machine
+	* 'release' doesn't work, due to cvs implementation approach
+	* Tons of obvious "TODOs", but at least the heavy stuff is done 
 
