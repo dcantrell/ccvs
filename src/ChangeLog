@@ -1,5 +1,8 @@
 2001-05-25  Larry Jones  <larry.jones@sdrc.com>
 
+	* sanity.sh (modules5): Add sleep to script to help avoid out of
+	order messages.
+
 	* filesubr.c (mkdir_if_needed): Return 1 if the directory exists
 	reguardless of what errno is set to.
 	(Reported by "Robinson, Greg" <greg.robinson@dsto.defence.gov.au>.)
