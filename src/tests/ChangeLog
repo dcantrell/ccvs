@@ -1,3 +1,9 @@
+2003-11-10  Derek R. Price  <derek@ximbiot.com>
+
+	* basic.at (Operations on empty projects): Add keywords for this test
+	group.
+	* suite: Regenerated.
+
 2003-11-09  Derek R. Price  <derek@ximbiot.com>
 
 	* Makefile.am (suite): Use autom4te cache for speed.
