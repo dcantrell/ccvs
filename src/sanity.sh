@@ -2019,6 +2019,7 @@ Merging differences between 1.1 and 1.2 into a
 rcsmerge: warning: conflicts during merge
 '"${PROG}"' [a-z]*: conflicts found in a
 C a'
+		rmdir dir1 sdir
 
 		# Try to check in the file with the conflict markers in it.
 		if ${CVS} ci -m try 2>>${LOGFILE}; then
@@ -2059,6 +2060,7 @@ C a'
 			echo 'FAIL: test 135' | tee -a ${LOGFILE}
 		fi
 		cd ../../2
+		mkdir first-dir/dir1 first-dir/sdir
 		dotest conflicts-136 "${testcvs} -q update" \
 '[UP] first-dir/abc
 '"${QUESTION}"' first-dir/dir1
@@ -2839,6 +2841,26 @@ ${QUESTION} defig.o
 ${QUESTION} envig.c
 ${QUESTION} optig.c
 ${QUESTION} notig.c"
+
+	  # Now test that commands other than update also print "? notig.c"
+	  # where appropriate.  Only test this for remote, because local
+	  # CVS only prints it on update.
+	  rm optig.c
+	  if test "x$remote" = xyes; then
+	    dotest 189e "${testcvs} -q diff" "${QUESTION} notig.c"
+
+	    # Force the server to be contacted.  Ugh.  Having CVS
+	    # contact the server for the sole purpose of checking
+	    # the CVSROOT/cvsignore file does not seem like such a
+	    # good idea, so I imagine this will continue to be
+	    # necessary.  Oh well, as least we test CVS's ablity to
+	    # handle a file with a modified timestamp but unmodified
+	    # contents.
+	    touch bar.c
+
+	    dotest 189f "${testcvs} -q ci -m commit-it" "${QUESTION} notig.c"
+	  fi
+
 	  cd ..
 	  rm -rf first-dir
 
