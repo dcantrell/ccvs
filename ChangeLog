@@ -1,3 +1,7 @@
+2004-11-01  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dep: Regenerated for "lib/libcvs.dsp" change.
+
 2004-11-01  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note new date format documentation.

@@ -3,6 +3,9 @@
 .\src\add.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -15,7 +18,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\fileattr.h"\
@@ -38,6 +40,9 @@
 .\src\admin.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -49,7 +54,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -71,6 +75,9 @@
 .\src\annotate.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -82,7 +89,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -104,6 +110,9 @@
 .\src\buffer.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -115,7 +124,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -137,6 +145,9 @@
 .\src\checkin.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -148,7 +159,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -172,6 +182,9 @@
 .\src\checkout.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -183,7 +196,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -205,6 +217,9 @@
 .\src\classify.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -216,7 +231,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -238,7 +252,10 @@
 .\src\client.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\md5.h"\
 	".\lib\pathmax.h"\
@@ -252,7 +269,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -278,7 +294,10 @@
 .\src\commit.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -290,7 +309,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -315,6 +333,9 @@
 .\src\create_adm.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -326,7 +347,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -348,7 +368,10 @@
 .\src\cvsrc.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -360,7 +383,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -382,6 +404,9 @@
 .\src\diff.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -393,7 +418,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -415,7 +439,10 @@
 .\src\edit.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -427,7 +454,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\lib\yesno.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -453,7 +479,10 @@
 .\src\entries.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -465,7 +494,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -487,6 +515,9 @@
 .\src\error.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -498,7 +529,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -520,6 +550,9 @@
 .\src\exithandle.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -531,7 +564,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -553,6 +585,9 @@
 .\src\expand_path.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -564,7 +599,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -586,7 +620,10 @@
 .\src\fileattr.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -598,7 +635,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\fileattr.h"\
@@ -621,6 +657,9 @@
 ".\windows-NT\filesubr.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -632,7 +671,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -655,6 +693,9 @@
 .\src\find_names.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -666,7 +707,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -688,6 +728,9 @@
 .\src\hash.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -699,7 +742,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -721,6 +763,9 @@
 .\src\history.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -733,7 +778,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -756,7 +800,10 @@
 .\src\ignore.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -768,7 +815,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -790,6 +836,9 @@
 .\src\import.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -802,7 +851,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -829,6 +877,9 @@
 .\src\lock.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -840,7 +891,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -862,6 +912,9 @@
 ".\src\log-buffer.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -873,7 +926,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -895,6 +947,9 @@
 .\src\log.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -906,7 +961,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -928,7 +982,10 @@
 .\src\login.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\getpass.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -941,7 +998,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -963,7 +1019,10 @@
 .\src\logmsg.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -975,7 +1034,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -997,6 +1055,9 @@
 .\src\ls.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1008,7 +1069,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1030,6 +1090,9 @@
 .\src\main.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1042,7 +1105,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1064,6 +1126,9 @@
 ".\windows-NT\mkdir.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1075,7 +1140,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1097,7 +1161,10 @@
 .\src\mkmodules.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1110,7 +1177,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1133,6 +1199,9 @@
 .\src\modules.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1145,7 +1214,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1167,7 +1235,10 @@
 .\src\myndbm.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1179,7 +1250,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1206,6 +1276,9 @@
 .\src\no_diff.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1217,7 +1290,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1239,7 +1311,10 @@
 .\src\parseinfo.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1251,7 +1326,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1274,7 +1348,10 @@
 .\src\patch.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1286,7 +1363,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1313,6 +1389,9 @@
 ".\windows-NT\rcmd.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1324,7 +1403,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1347,6 +1425,9 @@
 .\src\rcs.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1358,7 +1439,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -1383,6 +1463,9 @@
 	".\diff\diffrun.h"\
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1394,7 +1477,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1416,6 +1498,9 @@
 .\src\recurse.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1428,7 +1513,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -1452,7 +1536,10 @@
 .\src\release.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1465,7 +1552,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\lib\yesno.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1488,6 +1574,9 @@
 .\src\remove.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1499,7 +1588,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1521,7 +1609,10 @@
 .\src\repos.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1533,7 +1624,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1555,7 +1645,10 @@
 .\src\root.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1567,7 +1660,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1589,6 +1681,9 @@
 ".\src\rsh-client.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1600,7 +1695,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1623,6 +1717,9 @@
 ".\windows-NT\run.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1634,7 +1731,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1656,6 +1752,9 @@
 .\src\scramble.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1667,7 +1766,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1689,8 +1787,11 @@
 .\src\server.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getnline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1702,7 +1803,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -1732,6 +1832,9 @@
 ".\src\socket-client.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1743,7 +1846,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1766,6 +1868,9 @@
 .\src\stack.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1777,7 +1882,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1799,6 +1903,9 @@
 ".\windows-NT\startserver.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1810,7 +1917,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1833,6 +1939,9 @@
 .\src\status.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1844,7 +1953,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1866,7 +1974,10 @@
 .\src\subr.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1880,7 +1991,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1902,6 +2012,9 @@
 .\src\tag.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1914,7 +2027,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1936,7 +2048,10 @@
 .\src\update.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1949,7 +2064,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -1975,6 +2089,9 @@
 .\src\vers_ts.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1986,7 +2103,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -2008,6 +2124,9 @@
 .\src\version.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -2019,7 +2138,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -2045,6 +2163,9 @@
 .\src\watch.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -2056,7 +2177,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -2081,6 +2201,9 @@
 ".\windows-NT\woe32.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -2092,7 +2215,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -2114,7 +2236,10 @@
 .\src\wrapper.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -2126,7 +2251,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -2148,6 +2272,9 @@
 .\src\zlib.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -2159,7 +2286,6 @@
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xsize.h"\
-	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
