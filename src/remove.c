@@ -216,6 +216,22 @@ remove_fileproc (callerdat, finfo)
 	    error (0, 0, "file `%s' already scheduled for removal",
 		   finfo->fullname);
     }
+    else if (vers->tag != NULL && isdigit (*vers->tag))
+    {
+	/* Commit will just give an error, and so there seems to be
+	   little reason to allow the remove.  I mean, conflicts that
+	   arise out of parallel development are one thing, but conflicts
+	   that arise from sticky tags are quite another.
+
+	   I would have thought that non-branch sticky tags should be the
+	   same but at least now, removing a file with a non-branch sticky
+	   tag means to delete the tag from the file.  I'm not sure that
+	   is a good behavior, but until it is changed, we need to allow
+	   it.  */
+	error (0, 0, "\
+cannot remove file `%s' which has a numeric sticky tag of `%s'",
+	       finfo->fullname, vers->tag);
+    }
     else
     {
 	char *fname;

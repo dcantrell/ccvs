@@ -7002,6 +7002,9 @@ done"
 
 	sticky)
 	  # More tests of sticky tags, particularly non-branch sticky tags.
+	  # See many tests (e.g. multibranch) for ordinary sticky tag
+	  # operations such as adding files on branches.
+	  # See "head" test for interaction between stick tags and HEAD.
 	  mkdir 1; cd 1
 	  dotest sticky-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
@@ -7040,6 +7043,53 @@ ${QUESTION} file2" "${QUESTION} file2
 	  dotest sticky-13 "${testcvs} add file2" \
 "${PROG} [a-z]*: scheduling file .file2. for addition
 ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest sticky-14 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done
+Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+initial revision: 1\.1
+done"
+
+	  # Now back to tag1
+	  dotest sticky-15 "${testcvs} -q update -r tag1" "[UP] file1
+${PROG} [a-z]*: file2 is no longer in the repository"
+
+	  rm file1
+	  dotest sticky-16 "${testcvs} rm file1" \
+"${PROG} [a-z]*: scheduling .file1. for removal
+${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+	  # Hmm, this command seems to silently remove the tag from
+	  # the file.  This appears to be intentional.
+	  # The silently part especially strikes me as odd, though.
+	  dotest sticky-17 "${testcvs} -q ci -m remove-it" ""
+	  dotest sticky-18 "${testcvs} -q update -A" "U file1
+U file2"
+	  dotest sticky-19 "${testcvs} -q update -r tag1" \
+"${PROG} [a-z]*: file1 is no longer in the repository
+${PROG} [a-z]*: file2 is no longer in the repository"
+	  dotest sticky-20 "${testcvs} -q update -A" "U file1
+U file2"
+
+	  # Now try with a numeric revision.
+	  dotest sticky-21 "${testcvs} -q update -r 1.1 file1" "U file1"
+	  rm file1
+	  dotest sticky-22 "${testcvs} rm file1" \
+"${PROG} [a-z]*: cannot remove file .file1. which has a numeric sticky tag of .1\.1."
+	  # The old behavior was that remove allowed this and then commit
+	  # gave an error, which was somewhat hard to clear.  I mean, you
+	  # could get into a long elaborate discussion of this being a
+	  # conflict and two ways to resolve it, but I don't really see
+	  # why CVS should have a concept of conflict that arises, not from
+	  # parallel development, but from CVS's own sticky tags.
+
+	  # I'm kind of surprised that the "file1 was lost" doesn't crop
+	  # up elsewhere in the testsuite.  It is a long-standing
+	  # discrepency between local and remote CVS and should probably
+	  # be cleaned up at some point.
+	  dotest sticky-23 "${testcvs} -q update -A" \
+"${PROG} [a-z]*: warning: file1 was lost
+U file1" "U file1"
 
 	  cd ../..
 	  rm -r 1

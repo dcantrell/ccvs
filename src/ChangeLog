@@ -1,5 +1,12 @@
 Fri Jul 25 09:51:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* remove.c (remove_fileproc): If there is a numeric sticky tag,
+	don't allow the remove.
+	* commit.c (check_fileproc): Add comment about this case.
+	* sanity.sh (sticky): New tests sticky-15 through sticky-23
+	test for this behavior and the analogous behavior with
+	non-branch sticky tags (which is unchanged).
+
 	* client.c (update_entries): Clear the stored mode, modtime, and
 	checksum even on an error.
 	* sanity.sh (contents2-142d*): Also test cvs status.  Also test

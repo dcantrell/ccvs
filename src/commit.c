@@ -828,6 +828,11 @@ check_fileproc (callerdat, finfo)
 
 	    if (status == T_REMOVED && vers->tag && isdigit (*vers->tag))
 	    {
+		/* Remove also tries to forbid this, but we should check
+		   here.  I'm only _sure_ about somewhat obscure cases
+		   (hacking the Entries file, using an old version of
+		   CVS for the remove and a new one for the commit), but
+		   there might be other cases.  */
 		error (0, 0,
 	"cannot remove file `%s' which has a numeric sticky tag of `%s'",
 			   finfo->fullname, vers->tag);
