@@ -1,3 +1,10 @@
+27 Feb 1997  Jim Kingdon
+
+	* scc.c (SCC_max_init_path, SCC_max_name): Added.
+	(SccInitialize): Set and use more arguments.
+	(SccUninitialize): Might want to check ferror here.
+	(SccOpenProject): Print to debug log if we get here.
+
 Thu Feb 27 19:02:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README.txt (TOOLS IMPLEMENTING THE SCC): New section.
