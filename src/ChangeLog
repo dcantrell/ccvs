@@ -1,3 +1,7 @@
+Fri Jul 28 16:27:56 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* checkout.c (safe_location): Use PATH_MAX not MAXPATHLEN.
+
 Fri Jul 28 19:37:03 1995  Paul Eggert  <eggert@twinsun.com>
 
 	* log.c (cvslog, log_fileproc): Pass all options (except -l)

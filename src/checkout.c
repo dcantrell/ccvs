@@ -407,8 +407,8 @@ checkout (argc, argv)
 static int
 safe_location ()
 {
-    char current[MAXPATHLEN];
-    char hardpath[MAXPATHLEN+5];
+    char current[PATH_MAX];
+    char hardpath[PATH_MAX+5];
     int  x;
 
     x = readlink(CVSroot, hardpath, sizeof hardpath - 1);
