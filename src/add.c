@@ -647,7 +647,7 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 #endif
     }
     if (added_files && !really_quiet)
-	error (0, 0, "use '%s commit' to add %s permanently",
+	error (0, 0, "use `%s commit' to add %s permanently",
 	       program_name,
 	       (added_files == 1) ? "this file" : "these files");
 
