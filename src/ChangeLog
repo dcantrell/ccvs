@@ -1,3 +1,8 @@
+1999-04-14  Jim Kingdon  <http://www.cyclic.com>
+
+	* fileattr.h: Adjust comments to reflect the official version of
+	the fileattr format now being in cvs.texinfo.
+
 1999-04-05  Jim Kingdon
 
 	* sanity.sh (watch5): Remove nonstandard --keep code.  Don't pass
