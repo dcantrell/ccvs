@@ -1140,20 +1140,25 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	       to clobber a user's file.  */
 	    size_t nread;
 	    size_t toread;
+
+	    /* size should be unsigned, but until we get around to fixing that, work around
+	       it.  */
+	    size_t usize = size;
+
 	    char buf[8192];
 
 	    error (0, 0, "move away %s; it is in the way", short_pathname);
 
 	    /* Now read and discard the file contents.  */
 	    nread = 0;
-	    while (nread < size)
+	    while (nread < usize)
 	    {
-		toread = size - nread;
+		toread = usize - nread;
 		if (toread > sizeof buf)
 		    toread = sizeof buf;
 
 		nread += try_read_from_server (buf, toread);
-		if (nread == size)
+		if (nread == usize)
 		    break;
 	    }
 
@@ -1457,6 +1462,8 @@ handle_updated (args, len)
     call_in_directory (args, update_entries, (char *)&dat);
 }
 
+static void handle_created PROTO((char *, int));
+
 static void
 handle_created (args, len)
     char *args;
@@ -1468,6 +1475,8 @@ handle_created (args, len)
     dat.timestamp = NULL;
     call_in_directory (args, update_entries, (char *)&dat);
 }
+
+static void handle_update_existing PROTO((char *, int));
 
 static void
 handle_update_existing (args, len)
