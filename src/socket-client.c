@@ -86,15 +86,15 @@ struct buffer *
 socket_buffer_initialize( int socket, int input,
                           void *memory( struct buffer * ) )
 {
-    struct socket_buffer *n = xmalloc (sizeof *n);
-    n->socket = socket;
+    struct socket_buffer *sbuf = xmalloc (sizeof *sbuf);
+    sbuf->socket = socket;
     return buf_initialize (input ? socket_buffer_input : NULL,
 			   input ? NULL : socket_buffer_output,
 			   input ? NULL : socket_buffer_flush,
 			   NULL,
 			   socket_buffer_shutdown,
 			   memory,
-			   n);
+			   sbuf);
 }
 
 
