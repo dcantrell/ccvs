@@ -6153,6 +6153,7 @@ done"
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r 1
+	  unset CVSWRAPPERS
 
 	  fi # end of tests to be skipped for remote
 
