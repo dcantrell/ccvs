@@ -1799,7 +1799,7 @@ RCS_getbranchpoint (rcs, target)
     vp = findnode (rcs->versions, branch);
     if (vp == NULL)
     {	
-	rcserror (rcs->path, "can't find branch point %s", target);
+	error (0, 0, "%s: can't find branch point %s", rcs->path, target);
 	return NULL;
     }
     rev = (RCSVers *) vp->data;
@@ -1825,7 +1825,7 @@ RCS_getbranchpoint (rcs, target)
     free (branch);
     if (vp == rev->branches->list)
     {
-	rcserror (rcs->path, "can't find branch point %s", target);
+	error (0, 0, "%s: can't find branch point %s", rcs->path, target);
 	return NULL;
     }
     else
@@ -3246,8 +3246,8 @@ RCS_findlock_or_tip (rcs)
 	{
 	    if (lock != NULL)
 	    {
-		rcserror (rcs->path,
-"multiple revisions locked by %s; please specify one", user);
+		error (0, 0, "\
+%s: multiple revisions locked by %s; please specify one", rcs->path, user);
 		return NULL;
 	    }
 	    lock = p;
@@ -3260,8 +3260,9 @@ RCS_findlock_or_tip (rcs)
 	p = findnode (rcs->versions, lock->key);
 	if (p == NULL)
 	{
-	    rcserror (rcs->path, "can't unlock nonexistent revision %s",
-		      lock->key);
+	    error (0, 0, "%s: can't unlock nonexistent revision %s",
+		   rcs->path,
+		   lock->key);
 	    return NULL;
 	}
 	return (RCSVers *) p->data;
@@ -3309,7 +3310,7 @@ RCS_addbranch (rcs, branch)
     nodep = findnode (rcs->versions, branchpoint);
     if (nodep == NULL)
     {
-	rcserror (rcs->path, "can't find branch point %s", branchpoint);
+	error (0, 0, "%s: can't find branch point %s", rcs->path, branchpoint);
 	return NULL;
     }
     branchnode = (RCSVers *) nodep->data;
@@ -3352,8 +3353,9 @@ RCS_addbranch (rcs, branch)
     {
 	if (max != NULL && compare_revnums (branch, max) <= 0)
 	{
-	    rcserror (rcs->path, "revision %s too low; must be higher than %s",
-		      branch, max);
+	    error (0, 0, "%s: revision %s too low; must be higher than %s",
+		   rcs->path,
+		   branch, max);
 	    return NULL;
 	}
 	newrevnum = xstrdup (branch);
@@ -3446,9 +3448,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	struct stat ws;
 	if (stat (workfile, &ws) < 0)
 	{
-	    char *errstr = strerror (errno);
-	    rcserror (workfile, "%s", errstr);
-	    error_exit();
+	    error (1, errno, "cannot stat %s", workfile);
 	}
 	modtime = ws.st_mtime;
     }
@@ -3623,7 +3623,8 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	{
 	    if (isrevnum)
 	    {
-		rcserror (rcs->path, "can't find branch point %s", branch);
+		error (0, 0, "%s: can't find branch point %s",
+		       rcs->path, branch);
 		free (branch);
 		free (newrev);
 		status = 1;
@@ -3641,9 +3642,10 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 		/* NEWREV must be higher than TIP. */
 		if (compare_revnums (tip, newrev) >= 0)
 		{
-		    rcserror (rcs->path,
-			      "revision %s too low; must be higher than %s",
-			      newrev, tip);
+		    error (0, 0,
+			   "%s: revision %s too low; must be higher than %s",
+			   rcs->path,
+			   newrev, tip);
 		    free (branch);
 		    free (newrev);
 		    free (tip);
@@ -3674,8 +3676,9 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     {
 	if (strcmp (nodep->data, delta->author) != 0)
 	{
-	    rcserror (rcs->path, "revision %s locked by %s",
-		      nodep->key, nodep->data);
+	    error (0, 0, "%s: revision %s locked by %s",
+		   rcs->path,
+		   nodep->key, nodep->data);
 	    status = 1;
 	    goto checkin_done;
 	}
@@ -4141,7 +4144,7 @@ RCS_lock (rcs, rev, lock_quiet)
 	if (xrev == NULL)
 	{
 	    if (!lock_quiet)
-		rcserror (rcs->path, "branch %s absent", rev);
+		error (0, 0, "%s: branch %s absent", rcs->path, rev);
 	    return 1;
 	}
     }
@@ -4155,7 +4158,7 @@ RCS_lock (rcs, rev, lock_quiet)
     if (findnode (rcs->versions, xrev) == NULL)
     {
 	if (!lock_quiet)
-	    rcserror (rcs->path, "revision %s absent", xrev);
+	    error (0, 0, "%s: revision %s absent", rcs->path, xrev);
 	free (xrev);
 	return 1;
     }
@@ -4248,8 +4251,8 @@ RCS_unlock (rcs, rev, unlock_quiet)
 		if (lock != NULL)
 		{
 		    if (!unlock_quiet)
-			rcserror (rcs->path,
-"multiple revisions locked by %s; please specify one", user);
+			error (0, 0, "\
+%s: multiple revisions locked by %s; please specify one", rcs->path, user);
 		    return 1;
 		}
 		lock = p;
@@ -4266,7 +4269,7 @@ RCS_unlock (rcs, rev, unlock_quiet)
 	xrev = RCS_getbranch (rcs, (char *) rev, 1);
 	if (xrev == NULL)
 	{
-	    rcserror (rcs->path, "branch %s absent", rev);
+	    error (0, 0, "%s: branch %s absent", rcs->path, rev);
 	    return 1;
 	}
     }
@@ -4459,7 +4462,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	rev1 = RCS_gettag (rcs, tag1, 1, NULL);
 	if (rev1 == NULL || (nodep = findnode (rcs->versions, rev1)) == NULL)
 	{
-	    rcserror (rcs->path, "Revision %s doesn't exist.", tag1);
+	    error (0, 0, "%s: Revision %s doesn't exist.", rcs->path, tag1);
 	    goto delrev_done;
 	}
     }
@@ -4468,7 +4471,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	rev2 = RCS_gettag (rcs, tag2, 1, NULL);
 	if (rev2 == NULL || (nodep = findnode (rcs->versions, rev2)) == NULL)
 	{
-	    rcserror (rcs->path, "Revision %s doesn't exist.", tag2);
+	    error (0, 0, "%s: Revision %s doesn't exist.", rcs->path, tag2);
 	    goto delrev_done;
 	}
     }
@@ -4593,7 +4596,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	}
 	if (revp->next == NULL)
 	{
-	    rcserror (rcs->path, "Revision %s doesn't exist.", rev1);
+	    error (0, 0, "%s: Revision %s doesn't exist.", rcs->path, rev1);
 	    goto delrev_done;
 	}
 	if (rev1_inclusive)
@@ -4642,14 +4645,16 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	{
 	    if (findnode (RCS_getlocks (rcs), revp->version))
 	    {
-		rcserror (rcs->path, "can't remove locked revision %s",
-			  revp->version);
+		error (0, 0, "%s: can't remove locked revision %s",
+		       rcs->path,
+		       revp->version);
 		goto delrev_done;
 	    }
 	    if (revp->branches != NULL)
 	    {
-		rcserror (rcs->path, "can't remove branch point %s",
-			  revp->version);
+		error (0, 0, "%s: can't remove branch point %s",
+		       rcs->path,
+		       revp->version);
 		goto delrev_done;
 	    }
 
@@ -4700,7 +4705,8 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	assert (tag1 != NULL);
 	assert (tag2 != NULL);
 
-	rcserror (rcs->path, "invalid revision range %s:%s", tag1, tag2);
+	error (0, 0, "%s: invalid revision range %s:%s", rcs->path,
+	       tag1, tag2);
 	goto delrev_done;
     }
 
@@ -4770,7 +4776,9 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 
 	    if (status == 2)
 	    {
-		rcserror (rcs->path, "diff failed\nrcs aborted");
+		/* Not sure we need this message; will diff_exec already
+		   have printed an error?  */
+		error (0, 0, "%s: could not diff", rcs->path);
 		status = 1;
 		goto delrev_done;
 	    }

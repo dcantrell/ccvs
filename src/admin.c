@@ -666,8 +666,9 @@ admin_fileproc (callerdat, finfo)
 		{
 		    if (RCS_deltag (rcs, arg + 2) != 0)
 		    {
-			rcserror (rcs->path, "Symbolic name %s is undefined.",
-				  arg + 2);
+			error (0, 0, "%s: Symbolic name %s is undefined.",
+			       rcs->path, 
+			       arg + 2);
 			status = 1;
 			continue;
 		    }
@@ -683,9 +684,10 @@ admin_fileproc (callerdat, finfo)
 		    n = findnode (RCS_symbols (rcs), tag);
 		    if (n != NULL)
 		    {
-			rcserror (rcs->path,
-				  "symbolic name %s already bound to %s",
-				  tag, n->data);
+			error (0, 0,
+			       "%s: symbolic name %s already bound to %s",
+			       rcs->path,
+			       tag, n->data);
 			status = 1;
 			continue;
 		    }
@@ -718,9 +720,10 @@ admin_fileproc (callerdat, finfo)
 		    n = findnode (rcs->versions, revnum);
 		if (revnum == NULL || n == NULL)
 		{
-		    rcserror (rcs->path,
-			      "can't set state of nonexisting revision %s",
-			      rev);
+		    error (0, 0,
+			   "%s: can't set state of nonexisting revision %s",
+			   rcs->path,
+			   rev);
 		    if (revnum != NULL)
 			free (revnum);
 		    status = 1;
@@ -735,7 +738,8 @@ admin_fileproc (callerdat, finfo)
 	        p = strchr (arg, ':');
 		if (p == NULL)
 		{
-		    rcserror (rcs->path, "-m option lacks revision number");
+		    error (0, 0, "%s: -m option lacks revision number",
+			   rcs->path);
 		    status = 1;
 		    continue;
 		}

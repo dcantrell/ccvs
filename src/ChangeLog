@@ -1,5 +1,18 @@
 Sun Nov 30 18:03:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* error.c, error.h (rcserror): Remove.
+	* admin.c, rcs.c: Call error instead of rcserror.  This changes
+	the format of these messages from "rcs: <path>: error" to "cvs
+	<command>: <path>: error".  The former format wasn't quite what
+	RCS printed anyway (because RCS would sometimes print "ci", "co",
+	&c, not "rcs"), and preserving RCS's exact output probably is not
+	a good idea anyway (because it will make people think that the
+	error was caused by an external program).  In two cases, I tidied
+	up the message in a more drastic fashion ("cannot stat" in
+	RCS_checkin and "could not diff" in RCS_delete_revs).
+	* sanity.sh (basica-o2b, binfiles2-o1, admin-18, admin-22-o10,
+	admin-22-o17): Look for "cvs <command>" not "rcs".
+
 	* run.c, cvs.h (run_setup): Replace varargs nonsense with a single
 	argument which gets parsed as the result of the vasprintf
 	used to.
