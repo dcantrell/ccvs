@@ -1,3 +1,8 @@
+Tue Jun 27 22:37:28 1995  Vince Demarco  <vdemarco@bou.shl.com>
+
+	* subr.c: Don't try to do fancy waitstatus stuff for NeXT,
+	lib/wait.h is sufficient.
+
 Mon Jun 26 15:17:45 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (DISTFILES): Remove RCS-patches and convert.sh.
