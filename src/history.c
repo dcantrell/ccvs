@@ -191,8 +191,9 @@ static struct hrec
     char *end;		/* Ptr into repository to copy at end of workdir */
     char *mod;		/* The module within which the file is contained */
     time_t date;	/* Calculated from date stored in record */
-    int idx;		/* Index of record, for "stable" sort. */
+    long idx;		/* Index of record, for "stable" sort. */
 } *hrec_head;
+static long hrec_idx;
 
 
 static void fill_hrec PROTO((char *line, struct hrec * hr));
@@ -984,7 +985,12 @@ expand_modules ()
  * 
  */
 
-#define NEXT_BAR(here) do { while (isspace(*line)) line++; hr->here = line; while ((c = *line++) && c != '|') ; if (!c) return; *(line - 1) = '\0'; } while (0)
+#define NEXT_BAR(here) do { \
+	while (isspace(*line)) line++; \
+	hr->here = line; \
+	while ((c = *line++) && c != '|') ; \
+	if (!c) return; line[-1] = '\0'; \
+	} while (0)
 
 static void
 fill_hrec (line, hr)
@@ -993,37 +999,31 @@ fill_hrec (line, hr)
 {
     char *cp;
     int c;
-    int off;
-    static int idx = 0;
-    unsigned long date;
 
-    memset ((char *) hr, 0, sizeof (*hr));
+    hr->type = hr->user = hr->dir = hr->repos = hr->rev = hr->file =
+	hr->end = hr->mod = NULL;
+    hr->date = -1;
+    hr->idx = ++hrec_idx;
 
     while (isspace ((unsigned char) *line))
 	line++;
 
     hr->type = line++;
-    (void) sscanf (line, "%lx", &date);
-    hr->date = date;
-    while (*line && strchr ("0123456789abcdefABCDEF", *line))
-	line++;
-    if (*line == '\0')
+    hr->date = strtoul (line, &cp, 16);
+    if (cp == line || *cp != '|')
 	return;
-
-    line++;
+    line = cp + 1;
     NEXT_BAR (user);
     NEXT_BAR (dir);
     if ((cp = strrchr (hr->dir, '*')) != NULL)
     {
 	*cp++ = '\0';
-	(void) sscanf (cp, "%x", &off);
-	hr->end = line + off;
+	hr->end = line + strtoul (cp, NULL, 16);
     }
     else
 	hr->end = line - 1;		/* A handy pointer to '\0' */
     NEXT_BAR (repos);
     NEXT_BAR (rev);
-    hr->idx = idx++;
     if (strchr ("FOET", *(hr->type)))
 	hr->mod = line;
 
@@ -1076,6 +1076,7 @@ read_hrecs (fname)
 
     hrec_max = HREC_INCREMENT;
     hrec_head = xmalloc (hrec_max * sizeof (struct hrec));
+    hrec_idx = 0;
 
     for (;;)
     {
@@ -1191,6 +1192,14 @@ select_hrec (hr)
     char **cpp, *cp, *cp2;
     struct file_list_str *fl;
     int count;
+
+    /* basic validity checking */
+    if (!hr->type || !hr->user || !hr->dir || !hr->repos || !hr->rev ||
+	!hr->file || !hr->end)
+    {
+	error (0, 0, "warning: invalid history record at line %ld", hr->idx);
+	return (0);
+    }
 
     /* "Since" checking:  The argument parser guarantees that only one of the
      *			  following four choices is set:
