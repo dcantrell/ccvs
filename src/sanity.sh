@@ -8199,12 +8199,17 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	    # The directory tmp should be empty
 	    dotest crerepos-6 "rmdir tmp" ''
 
+	    CREREPOS_ROOT=${TESTDIR}/crerepos
+
 	  else
 	    # For remote, just create the repository.  We don't yet do
 	    # the various other tests above for remote but that should be
 	    # changed.
 	    mkdir crerepos
 	    mkdir crerepos/CVSROOT
+
+	    CREREPOS_ROOT=:ext:`hostname`:${TESTDIR}/crerepos
+
 	  fi
 
 	  if test "x$remote" = "xno"; then
@@ -8243,6 +8248,82 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	  dotest_fail crerepos-7 \
 "test -f ${TESTDIR}/crerepos/CVSROOT/history" ''
 
+	  # Now test mixing repositories.  This kind of thing tends to
+	  # happen accidentally when people work with several repositories.
+	  mkdir 1; cd 1
+	  dotest crerepos-8 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest crerepos-9 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  touch file1
+	  dotest crerepos-10 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest crerepos-11 "${testcvs} -q ci -m add-it" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  cd ../..
+	  rm -r 1
+
+	  mkdir 1; cd 1
+	  dotest crerepos-12 "${testcvs} -d ${CREREPOS_ROOT} -q co -l ." ''
+	  mkdir crerepos-dir
+	  dotest crerepos-13 "${testcvs} add crerepos-dir" \
+"Directory ${TESTDIR}/crerepos/crerepos-dir added to the repository"
+	  cd crerepos-dir
+	  touch cfile
+	  dotest crerepos-14 "${testcvs} add cfile" \
+"${PROG} [a-z]*: scheduling file .cfile. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest crerepos-15 "${testcvs} -q ci -m add-it" \
+"RCS file: ${TESTDIR}/crerepos/crerepos-dir/cfile,v
+done
+Checking in cfile;
+${TESTDIR}/crerepos/crerepos-dir/cfile,v  <--  cfile
+initial revision: 1\.1
+done"
+	  cd ../..
+	  rm -r 1
+
+	  mkdir 1; cd 1
+	  dotest crerepos-16 "${testcvs} co first-dir" \
+"${PROG} [a-z]*: Updating first-dir
+U first-dir/file1"
+	  dotest crerepos-17 "${testcvs} -d ${CREREPOS_ROOT} co crerepos-dir" \
+"${PROG} [a-z]*: Updating crerepos-dir
+U crerepos-dir/cfile"
+
+	  if test x`cat CVS/Repository` = x.; then
+	    # RELATIVE_REPOS
+	    # Fatal error so that we don't go traipsing through the
+	    # directories which happen to have the same names from the
+	    # wrong repository.
+	    dotest_fail crerepos-18 "${testcvs} -q update" \
+"${PROG} \[[a-z]* aborted\]: cannot open directory ${TESTDIR}/cvsroot/crerepos-dir: .*" ''
+	  else
+	    if test "$remote" = no; then
+	      # The lack of an error doesn't mean CVS is really
+	      # working (things are getting logged to the wrong
+	      # history file and such).
+	      dotest crerepos-18 "${testcvs} -q update" ''
+	    else
+	      # Fatal error so that we don't go traipsing through the
+	      # directories which happen to have the same names from the
+	      # wrong repository.
+	      dotest_fail crerepos-18 "${testcvs} -q update" \
+"protocol error: directory .${TESTDIR}/crerepos/crerepos-dir. not within root .${TESTDIR}/cvsroot."
+	    fi
+	  fi
+
+	  cd ..
+
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRECTORY}/first-dir ${TESTDIR}/crerepos
 	  ;;
 
 	rcs)

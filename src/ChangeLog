@@ -1,3 +1,8 @@
+Tue Jan  6 11:50:38 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (crerepos): New tests crerepos-8 through crerepos-18
+	test behaviors when mixing repositories.
+
 Sun Jan  4 17:40:22 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* version.c: Change version number to 1.9.23.
