@@ -1,3 +1,17 @@
+Thu Oct 30 17:42:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* admin.c (admin): Deal with new :: syntax for ranges.
+	* rcs.c, rcs.h (RCS_delete_revs): New arg inclusive (set for the old
+	behavior, clear to enable new code).
+	* admin.c (admin_fileproc): Set it if :, clear it if ::.
+	* sanity.sh (basica, head, branches, log): Add tests for this feature.
+
+	* admin.c (admin_fileproc): Clean up the error message which
+	happens if one of the RCS_* functions returns an error status; it
+	is confusing to say that "rcs" failed now that this is implemented
+	internally.
+	* sanity.sh (admin): Update accordingly.
+
 Wed Oct 29 07:07:36 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (admin-22-o24): New test, tests that admin -o

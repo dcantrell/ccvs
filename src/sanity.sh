@@ -728,6 +728,56 @@ diff -r1\.2 -r1\.3"
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.1          .'"${username}"' *[0-9a-zA-Z-]*.: ssfile
 1\.2          .'"${username}"' *[0-9a-zA-Z-]*.: ssfile line 2'
+
+	  # As long as we have a file with a few revisions, test
+	  # a few "cvs admin -o" invocations.
+	  cd sdir/ssdir
+	  dotest_fail basica-o1 "${testcvs} admin -o 1.2::1.2" \
+"${PROG} [a-z]*: while processing more than one file:
+${PROG} \[[a-z]* aborted\]: attempt to specify a numeric revision"
+	  dotest basica-o2 "${testcvs} admin -o 1.2::1.2 ssfile" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
+done"
+	  dotest basica-o3 "${testcvs} admin -o 1.2::1.3 ssfile" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
+done"
+	  dotest basica-o4 "${testcvs} admin -o 3.1:: ssfile" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
+done"
+	  dotest basica-o5 "${testcvs} admin -o ::1.1 ssfile" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
+done"
+	  dotest basica-o6 "${testcvs} admin -o 1.2::3.1 ssfile" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
+deleting revision 2\.0
+deleting revision 1\.3
+done"
+	  dotest basica-o7 "${testcvs} log -N ssfile" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
+Working file: ssfile
+head: 3\.1
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 3\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+bump-it
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+modify-it
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+add-it
+============================================================================="
+	  dotest basica-o8 "${testcvs} -q update -p -r 1.1 ssfile" "ssfile"
+	  cd ../..
+
 	  cd ..
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
@@ -2889,6 +2939,16 @@ rcsmerge: warning: conflicts during merge"
 =======
 1:brbr
 [>]>>>>>> 1\.1\.2\.1\.2\.1'
+
+	  dotest branches-o1 "${testcvs} -q admin -o ::brbr" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file3,v
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file4,v
+done"
 	  cd ..
 
 	  if test "$keep" = yes; then
@@ -6594,6 +6654,27 @@ File: nibfile          	Status: Up-to-date
    Sticky Options:	-kb"
 	  # Eventually we should test that -A removes the -kb here...
 
+	  dotest binfiles-o1 "${testcvs} admin -o1.3:: binfile" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/binfile,v
+deleting revision 1\.5
+deleting revision 1\.4
+done"
+	  dotest binfiles-o2 "${testcvs} admin -o::1.3 binfile" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/binfile,v
+deleting revision 1\.2
+deleting revision 1\.1
+done"
+	  dotest binfiles-o3 "${testcvs} -q log -h -N binfile" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/binfile,v
+Working file: binfile
+head: 1\.3
+branch:
+locks: strict
+access list:
+keyword substitution: v
+total revisions: 1
+============================================================================="
+
 	  cd ../..
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r 2
@@ -6751,7 +6832,7 @@ done"
 "RCS file: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v
 deleting revision 1\.2
 rcs: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v: can't remove branch point 1\.1
-${PROG} [a-z]*: rcs failed for .brmod-trmod."
+${PROG} [a-z]*: cannot modify RCS file for .brmod-trmod."
 	  dotest binfiles2-o2 "${testcvs} -q admin -o 1.1.2.1: brmod-trmod" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v
 deleting revision 1\.1\.2\.1
@@ -7581,6 +7662,29 @@ ${log_rev2}
 ${log_rev1}
 ${log_trailer}"
 
+	  dotest log-o0 "${testcvs} admin -o 1.2.2.2:: file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done"
+	  dotest log-o1 "${testcvs} admin -o ::1.2.2.1 file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done"
+	  dotest log-o2 "${testcvs} admin -o 1.2.2.1:: file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+deleting revision 1\.2\.2\.2
+done"
+	  dotest log-o3 "${testcvs} log file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 4;	selected revisions: 4
+description:
+${log_rev3}
+${log_rev2}
+${log_rev1}
+${log_rev1b}
+${log_trailer}"
+	  dotest log-o4 "${testcvs} -q update -p -r 1.2.2.1 file1" \
+"first branch revision"
 	  cd ..
 	  rm -r first-dir
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
@@ -9145,6 +9249,15 @@ ${PLUS} modify on branch after brtag"
 	  # behavior of "update -r <foo>" (without -p) depend on the
 	  # sticky tags before or after the update?
 
+	  # Note that we are testing both the case where this deletes
+	  # a revision (file1) and the case where it does not (file2)
+	  dotest head-o1 "${testcvs} admin -o ::br1" \
+"${PROG} [a-z]*: Administrating \.
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+deleting revision 1\.3\.2\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done"
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
@@ -9157,6 +9270,20 @@ ${PLUS} modify on branch after brtag"
 	  # "binfiles" test has a test of "cvs admin -k".
 	  # "log2" test has tests of -t and -q options to cvs admin.
 	  # "rcs" tests -b option also.
+	  # For -o, see:
+	  #   admin-22-o1 through admin-23 (various cases not involving ::)
+	  #   binfiles2-o* (:rev, rev on trunk; rev:, deleting entire branch)
+	  #   basica-o1 through basica-o3 (basic :: usage)
+	  #   head-o1 (::branch, where this deletes a revision or is noop)
+	  #   branches-o1 (::branch, similar, with different branch topology)
+	  #   log-o1 (1.3.2.1::)
+	  #   binfiles-o1 (1.3:: and ::1.3)
+	  #   Also could be testing:
+	  #     1.3.2.6::1.3.2.8
+	  #     1.3.2.6::1.3.2
+	  #     1.3.2.1::1.3.2.6
+	  #     1.3::1.3.2.6 (error?  or synonym for ::1.3.2.6?)
+
 	  mkdir 1; cd 1
 	  dotest admin-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
@@ -9362,7 +9489,7 @@ modify-on-branch
 	  dotest_fail admin-18 "${testcvs} -q admin -nbr:1.1.2 file1" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 rcs: ${TESTDIR}/cvsroot/first-dir/file1,v: symbolic name br already bound to 1\.1
-${PROG} [a-z]*: rcs failed for .file1."
+${PROG} [a-z]*: cannot modify RCS file for .file1."
 	  dotest admin-19 "${testcvs} -q admin -ebaz -ebar,auth3 -nbr file1" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done"
@@ -9439,7 +9566,6 @@ deleting revision 1\.1
 done"
 	  # Test admin -o.  More variants that we could be testing:
 	  # * REV: [on branch]
-	  # * :REV [on trunk]
 	  # * REV1:REV2 [deleting whole branch]
 	  # * high branch numbers (e.g. 1.2.2.3.2.3)
 	  # ... and probably others.  See RCS_delete_revs for ideas.
@@ -9509,7 +9635,7 @@ sixth
 	  dotest_fail admin-22-o10 "${testcvs} admin -o1.5: aaa" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
 rcs: ${TESTDIR}/cvsroot/first-dir/aaa,v: can't remove locked revision 1\.6
-${PROG} [a-z]*: rcs failed for .aaa."
+${PROG} [a-z]*: cannot modify RCS file for .aaa."
 	  dotest admin-22-o11 "${testcvs} admin -u aaa" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
 1\.6 unlocked
@@ -9560,7 +9686,7 @@ done"
 "RCS file: ${TESTDIR}/cvsroot/first-dir/aaa,v
 deleting revision 1\.4
 rcs: ${TESTDIR}/cvsroot/first-dir/aaa,v: can't remove branch point 1\.3
-${PROG} [a-z]*: rcs failed for .aaa."
+${PROG} [a-z]*: cannot modify RCS file for .aaa."
 	  dotest admin-22-o18 "${testcvs} update -p -r1.4 aaa" \
 "===================================================================
 Checking out aaa

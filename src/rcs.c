@@ -1282,6 +1282,8 @@ RCS_getversion (rcs, tag, date, force_tag_match, simple_tag)
  * and handle "magic" revisions specially.
  * 
  * If the matched tag is a branch tag, find the head of the branch.
+ * 
+ * Returns pointer to newly malloc'd string, or NULL.
  */
 char *
 RCS_gettag (rcs, symtag, force_tag_match, simple_tag)
@@ -1625,7 +1627,8 @@ RCS_whatbranch (rcs, rev)
 
 /*
  * Get the head of the specified branch.  If the branch does not exist,
- * return NULL or RCS_head depending on force_tag_match
+ * return NULL or RCS_head depending on force_tag_match.
+ * Returns NULL or a newly malloc'd string.
  */
 char *
 RCS_getbranch (rcs, tag, force_tag_match)
@@ -1742,12 +1745,17 @@ RCS_getbranch (rcs, tag, force_tag_match)
     return (xstrdup (vn->version));
 }
 
-/* Get the branch point for a particular branch.  TARGET may be either
-   a branch number or a revision number; if a revnum, find the branchpoint
-   of the branch to which TARGET belongs.
+/* Get the branch point for a particular branch, that is the first
+   revision on that branch.  For example, RCS_getbranchpoint (rcs,
+   "1.3.2") will normally return "1.3.2.1".  TARGET may be either a
+   branch number or a revision number; if a revnum, find the
+   branchpoint of the branch to which TARGET belongs.
 
    Return RCS_head if TARGET is on the trunk or if the root node could
-   not be found.  Return NULL on error. */
+   not be found (this is sort of backwards from our behavior on a branch;
+   the rationale is that the return value is a revision from which you
+   can start walking the next fields and end up at TARGET).
+   Return NULL on error.  */
 
 static char *
 RCS_getbranchpoint (rcs, target)
@@ -1817,7 +1825,8 @@ RCS_getbranchpoint (rcs, target)
 
 /*
  * Get the head of the RCS file.  If branch is set, this is the head of the
- * branch, otherwise the real head
+ * branch, otherwise the real head.
+ * Returns NULL or a newly malloc'd string.
  */
 char *
 RCS_head (rcs)
@@ -2131,6 +2140,7 @@ RCS_symbols(rcs)
 
 /*
  * Return the version associated with a particular symbolic tag.
+ * Returns NULL or a newly malloc'd string.
  */
 static char *
 translate_symtag (rcs, tag)
@@ -4314,13 +4324,20 @@ RCS_getaccess (rcs)
    with the new aggregate diff.  Alternatively, we could write a
    function that takes two change texts and combines them to produce a
    new change text, without checking out any revs or calling diff.  It
-   would be hairy, but so, so cool. */
+   would be hairy, but so, so cool.
+
+   If INCLUSIVE is set, then TAG1 and TAG2, if non-NULL, tell us to
+   delete that revision as well (cvs admin -o tag1:tag2).  If clear,
+   delete up to but not including that revision (cvs admin -o tag1::tag2).
+   This does not affect TAG1 or TAG2 being NULL; the meaning of the start
+   point in ::tag2 and :tag2 is the same and likewise for end points.  */
 
 int
-RCS_delete_revs (rcs, tag1, tag2)
+RCS_delete_revs (rcs, tag1, tag2, inclusive)
     RCSNode *rcs;
     char *tag1;
     char *tag2;
+    int inclusive;
 {
     char *next;
     Node *nodep;
@@ -4330,6 +4347,8 @@ RCS_delete_revs (rcs, tag1, tag2)
     char *branchpoint = NULL;
     char *rev1 = NULL;
     char *rev2 = NULL;
+    int rev1_inclusive = inclusive;
+    int rev2_inclusive = inclusive;
     char *before = NULL;
     char *after = NULL;
     char *beforefile = NULL;
@@ -4367,7 +4386,13 @@ RCS_delete_revs (rcs, tag1, tag2)
        instead.)  We need to check this special case early, in order
        to make sure that rev1 and rev2 get ordered correctly. */
     if (rev2 == NULL && numdots (rev1) == 1)
+    {
 	rev2 = xstrdup (rcs->head);
+	rev2_inclusive = 1;
+    }
+
+    if (rev2 == NULL)
+	rev2_inclusive = 1;
 
     if (rev1 != NULL && rev2 != NULL)
     {
@@ -4377,17 +4402,31 @@ RCS_delete_revs (rcs, tag1, tag2)
 	    rev1 = rev2 = RCS_getbranch (rcs, rev1, 0);
 	else
 	{
-	    /* Make sure REV1 and REV2 are ordered correctly.  For
-	       revisions on the trunk, REV1 should be higher than REV2;
-	       for branches, REV1 should be lower. */
+	    /* Make sure REV1 and REV2 are ordered correctly (in the
+	       same order as the next field).  For revisions on the
+	       trunk, REV1 should be higher than REV2; for branches,
+	       REV1 should be lower.  */
+	    /* Shouldn't we just be giving an error in the case where
+	       the user specifies the revisions in the wrong order
+	       (that is, always swap on the trunk, never swap on a
+	       branch, in the non-error cases)?  It is not at all
+	       clear to me that users who specify -o 1.4:1.2 really
+	       meant to type -o 1.2:1.4, and the out of order usage
+	       has never been documented, either by cvs.texinfo or
+	       rcs(1).  */
 	    char *temp;
+	    int temp_inclusive;
 	    if (numdots (rev1) == 1)
 	    {
-		if (compare_revnums (rev1, rev2) < 0)
+		if (compare_revnums (rev1, rev2) <= 0)
 		{
 		    temp = rev2;
 		    rev2 = rev1;
 		    rev1 = temp;
+
+		    temp_inclusive = rev2_inclusive;
+		    rev2_inclusive = rev1_inclusive;
+		    rev1_inclusive = temp_inclusive;
 		}
 	    }
 	    else if (compare_revnums (rev1, rev2) > 0)
@@ -4395,6 +4434,10 @@ RCS_delete_revs (rcs, tag1, tag2)
 		temp = rev2;
 		rev2 = rev1;
 		rev1 = temp;
+
+		temp_inclusive = rev2_inclusive;
+		rev2_inclusive = rev1_inclusive;
+		rev1_inclusive = temp_inclusive;
 	    }
 	}
     }
@@ -4407,15 +4450,23 @@ RCS_delete_revs (rcs, tag1, tag2)
 	if (numdots (rev2) == 1)
 	{
 	    /* Swap rev1 and rev2.  */
+	    int temp_inclusive;
+
 	    rev1 = rev2;
 	    rev2 = NULL;
+
+	    temp_inclusive = rev2_inclusive;
+	    rev2_inclusive = rev1_inclusive;
+	    rev1_inclusive = temp_inclusive;
 	}
     }
 
-    /* Put the revision number preceding REV1 into BEFORE.
-       If REV1 is the head of its branch, BEFORE should be the node
-       on the trunk at which REV1 is rooted.  If REV1 is the head
-       of the tree, set BEFORE to NULL.
+    /* Put the revision number preceding the first one to delete into
+       BEFORE (where "preceding" means according to the next field).
+       If the first revision to delete is the first revision on its
+       branch (e.g. 1.3.2.1), BEFORE should be the node on the trunk
+       at which the branch is rooted.  If the first revision to delete
+       is the head revision of the trunk, set BEFORE to NULL.
 
        Note that because BEFORE may not be on the same branch as REV1,
        it is not very handy for navigating the revision tree.  It's
@@ -4432,6 +4483,8 @@ RCS_delete_revs (rcs, tag1, tag2)
 	    while (*--bp != '.')
 		;
 	    *bp = '\0';
+	    /* Note that this is exclusive, always, because the inclusive
+	       flag doesn't affect the meaning when rev1 == NULL.  */
 	    before = xstrdup (branchpoint);
 	    *bp = '.';
 	}
@@ -4451,7 +4504,20 @@ RCS_delete_revs (rcs, tag1, tag2)
 	    rcserror (rcs->path, "Revision %s doesn't exist.", rev1);
 	    goto delrev_done;
 	}
-	before = xstrdup (revp->version);
+	if (rev1_inclusive)
+	    before = xstrdup (revp->version);
+	else
+	{
+	    before = rev1;
+	    nodep = findnode (rcs->versions, before);
+	    rev1 = xstrdup (((RCSVers *)nodep->data)->next);
+	}
+    }
+    else if (!rev1_inclusive)
+    {
+	before = rev1;
+	nodep = findnode (rcs->versions, before);
+	rev1 = xstrdup (((RCSVers *)nodep->data)->next);
     }
     else if (numdots (branchpoint) > 1)
     {
@@ -4487,26 +4553,46 @@ RCS_delete_revs (rcs, tag1, tag2)
 	    goto delrev_done;
 	}
 
-	/* It's misleading to print the `deleting revision' output
-	   here, since we may not actually delete these revisions.
-	   But that's how RCS does it.  Bleah.  Someday this should be
-	   moved to the point where the revs are actually marked for
-	   deletion. -twp */
-	cvs_output ("deleting revision ", 0);
-	cvs_output (revp->version, 0);
-	cvs_output ("\n", 1);
-
 	if (rev2 != NULL)
 	    found = (strcmp (revp->version, rev2) == 0);
 	next = revp->next;
+
+	if ((!found && next != NULL) || rev2_inclusive || rev2 == NULL)
+	{
+	    /* It's misleading to print the `deleting revision' output
+	       here, since we may not actually delete these revisions.
+	       But that's how RCS does it.  Bleah.  Someday this should be
+	       moved to the point where the revs are actually marked for
+	       deletion. -twp */
+	    cvs_output ("deleting revision ", 0);
+	    cvs_output (revp->version, 0);
+	    cvs_output ("\n", 1);
+	}
     }
 
     if (rev2 == NULL)
 	;
     else if (found)
-	after = xstrdup (next);
+    {
+	if (rev2_inclusive)
+	    after = xstrdup (next);
+	else
+	    after = xstrdup (revp->version);
+    }
+    else if (!inclusive)
+    {
+	/* In the case of an empty range, for example 1.2::1.2 or
+	   1.2::1.3, we want to just do nothing.  */
+	status = 0;
+	goto delrev_done;
+    }
     else
     {
+	/* This looks fishy in the cases where tag1 == NULL or tag2 == NULL.
+	   Are those cases really impossible?  */
+	assert (tag1 != NULL);
+	assert (tag2 != NULL);
+
 	rcserror (rcs->path, "invalid revision range %s:%s", tag1, tag2);
 	goto delrev_done;
     }
@@ -4631,7 +4717,11 @@ RCS_delete_revs (rcs, tag1, tag2)
 	   `prev', mucking with `next' and `prev' should not corrupt the
 	   delta tree's internal structure.  Much. -twp) */
 
-	if (strcmp (rev1, branchpoint) == 0)
+	if (rev1 == NULL)
+	    /* beforep's ->next field already should be equal to after,
+	       which I think is always NULL in this case.  */
+	    ;
+	else if (strcmp (rev1, branchpoint) == 0)
 	{
 	    nodep = findnode (rcs->versions, before);
 	    revp = (RCSVers *) nodep->data;

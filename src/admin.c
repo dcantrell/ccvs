@@ -377,8 +377,10 @@ admin (argc, argv)
 
 	check_numeric (admin_data.delete_revs + 2, argc, argv);
 	p = strchr (admin_data.delete_revs + 2, ':');
-	if (p != NULL)
+	if (p != NULL && isdigit (p[1]))
 	    check_numeric (p + 1, argc, argv);
+	else if (p != NULL && p[1] == ':' && isdigit(p[2]))
+	    check_numeric (p + 2, argc, argv);
     }
 
 #ifdef CLIENT_SUPPORT
@@ -503,8 +505,23 @@ admin_fileproc (callerdat, finfo)
     if (admin_data->delete_revs != NULL)
     {
 	char *s, *t, *rev1, *rev2;
+	/* Set for :, clear for ::.  */
+	int inclusive;
+	char *t2;
+
 	s = admin_data->delete_revs + 2;
+	inclusive = 1;
 	t = strchr (s, ':');
+	if (t != NULL)
+	{
+	    if (t[1] == ':')
+	    {
+		inclusive = 0;
+		t2 = t + 2;
+	    }
+	    else
+		t2 = t + 1;
+	}
 
 	/* Note that we don't support '-' for ranges.  RCS considers it
 	   obsolete and it is problematic with tags containing '-'.  "cvs log"
@@ -520,20 +537,19 @@ admin_fileproc (callerdat, finfo)
 	{
 	    /* -o:rev2 */
 	    rev1 = NULL;
-	    rev2 = xstrdup (s + 1);
+	    rev2 = xstrdup (t2);
 	}
 	else
 	{
 	    *t = '\0';
 	    rev1 = xstrdup (s);
 	    *t = ':';	/* probably unnecessary */
-	    s = t + 1;
-	    if (*s == '\0')
+	    if (*t2 == '\0')
 		/* -orev1: */
 		rev2 = NULL;
 	    else
 		/* -orev1:rev2 */
-		rev2 = xstrdup (s);
+		rev2 = xstrdup (t2);
 	}
 
 	if (rev1 == NULL && rev2 == NULL)
@@ -545,7 +561,7 @@ admin_fileproc (callerdat, finfo)
 	}
 	else
 	{
-	    status |= RCS_delete_revs (rcs, rev1, rev2);
+	    status |= RCS_delete_revs (rcs, rev1, rev2, inclusive);
 	    if (rev1)
 		free (rev1);
 	    if (rev2)
@@ -764,7 +780,12 @@ admin_fileproc (callerdat, finfo)
     }
     else
     {
-	error (0, 0, "%s failed for `%s'", RCS, finfo->file);
+	/* Note that this message should only occur after another
+	   message has given a more specific error.  The point of this
+	   additional message is to make it clear that the previous problems
+	   caused CVS to forget about the idea of modifying the RCS file.  */
+	error (0, 0, "cannot modify RCS file for `%s'", finfo->file);
+
 	/* Upon failure, we want to abandon any changes made to the
 	   RCS data structure.  Forcing a reparse does the trick,
 	   but leaks memory and is kludgey.  Should we export
