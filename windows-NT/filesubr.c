@@ -787,10 +787,37 @@ convert_file (char *infile,  int inflags,
         error (0, errno, "warning: couldn't close %s", infile);
 }
 
+
+/* NT has two evironment variables, HOMEPATH and HOMEDRIVE, which,
+   when combined as ${HOMEDRIVE}${HOMEPATH}, give the unix equivalent
+   of HOME.  Some NT users are just too unixy, though, and set the
+   HOME variable themselves.  Therefore, we check for HOME first, and
+   then try to combine the other two if that fails.  */
+
 char *
 get_homedir ()
 {
-    return getenv ("HOMEPATH");
+    static char pathbuf[PATH_MAX * 2];
+    char *hd, *hp;
+
+    if ((hd = getenv ("HOME")))
+	return hd;
+    else if ((hd = getenv ("HOMEDRIVE")) && (hp = getenv ("HOMEPATH")))
+    {
+	/* Watch for buffer overruns. */
+
+#define min(x,y) ((x <= y) ? (x) : (y))
+
+	int ld = min (PATH_MAX, strlen (hd));
+	int lp = min (PATH_MAX, strlen (hp));
+
+	strncpy (pathbuf, hd, ld);
+	strncpy (pathbuf + ld, hp, lp);
+
+	return pathbuf;
+    }
+    else
+	return NULL;
 }
 
 /* See cvs.h for description.  */

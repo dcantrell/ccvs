@@ -1,3 +1,8 @@
+Wed May 01 01:28:41 1996  noel  <noel@BOAT_ANCHOR>
+
+	* filesubr.c (get_homedir): use both HOMEDRIVE and HOMEPATH to
+ 	construct the user's home directory.
+
 Tue Apr  9 20:56:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Mention CRLF for src/server.c.
