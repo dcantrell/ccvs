@@ -1,5 +1,10 @@
 2004-02-11  Derek Price  <derek@ximbiot.com>
 
+	* buffer.c (stdio_buffer_shutdown): Add logic to avoid attempting to
+	print current_parsed_root->hostname when using the fork method.
+
+2004-02-11  Derek Price  <derek@ximbiot.com>
+
 	* server.c (do_cvs_command): Simplify stream & pipe closing.
 	(Suggestion from Eric Siegerman <erics@telepres.com>.)
 
