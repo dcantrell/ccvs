@@ -1,3 +1,8 @@
+Mon Feb 10 18:29:04 1997  Ullrich von Bassewitz <uz@musoftware.com>
+
+	* vasprintf.c: Added a #define for systems where a va_list is
+	defined as an array, not as a pointer.
+
 Mon Feb 10 09:31:38 1997  Ken Raeburn  <raeburn@cygnus.com>
 
 	* md5.c (MD5STEP): Truncate to 32 bits before shifting right.
