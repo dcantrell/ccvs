@@ -1,3 +1,7 @@
+2002-02-08  Larry Jones  <larry.jones@sdrc.com>
+
+	* NEWS (Changes since 1.11.1p1): Note read-only tag fix.
+
 2002-02-01  Larry Jones  <larry.jones@sdrc.com>
 
 	* NEWS (Changes from 1.9 to 1.10): Note -t/-f wrappers disabled.
