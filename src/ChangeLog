@@ -1,3 +1,10 @@
+1998-12-29  Jim Kingdon  <http://www.cyclic.com>
+
+	* sanity.sh (rcs2): New tests rcs2-6 through rcs2-8 test for fix
+	to lib/getdate.y (before the fix, "100 months" or "8 years" would
+	tend to mean the year 1969, thus the tests would give "cvs update:
+	file1 is no longer in the repository").
+
 1998-12-28  Larry Jones  <larry.jones@sdrc.com>
 
 	* entries.c (Register): Return if unable to open log file to avoid
