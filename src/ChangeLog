@@ -1,5 +1,9 @@
 2004-09-15  Derek Price  <derek@ximbiot.com>
 
+	* buffer.c (buf_copy_data): Pass args to buf_append_data correctly.
+
+2004-09-15  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh: Set $RSYNC in proxy mode.
 
 2004-09-15  Derek Price  <derek@ximbiot.com>
