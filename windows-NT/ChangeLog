@@ -1,3 +1,7 @@
+Sun, 9 Nov 1997  Jim Kingdon
+
+	* config.h: Define HAVE_SETMODE.
+
 Mon Nov 10 11:15:54 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* run.c (call_diff, call_diff3): Removed, per change to
