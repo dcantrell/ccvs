@@ -1,3 +1,8 @@
+1998-05-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README.MacCVS: Be more discouraging about MacCVS 2.x; merely say
+	there are many more Mac clients rather than singling out MacCVS 3.x.
+
 1998-04-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (link_file): Remove; no longer used.
