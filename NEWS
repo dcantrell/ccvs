@@ -1,6 +1,11 @@
 Changes since 1.12.7:
 *********************
 
+NEW FEATURES
+
+* Glob matches, as specified in ignore lists and wrapper options, now conform
+  to the POSIX.2 specification for fnmatch on all platforms.
+
 Changes from 1.12.6 to 1.12.7:
 ******************************
 
