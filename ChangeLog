@@ -1,3 +1,8 @@
+2002-11-12  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Update autom4te ignore pattern for version number
+	included in path name by new versions of autom4te.
+
 2002-10-28  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Flesh out some comments in regards to Sun Interactive
