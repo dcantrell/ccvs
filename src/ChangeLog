@@ -1,3 +1,8 @@
+1998-08-17  Ian Lance Taylor  <ian@cygnus.com>
+
+	* commit.c (checkaddfile): Don't call fix_rcs_modes.
+	(fix_rcs_modes): Remove.
+
 1998-08-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* create_adm.c (Create_Admin): Don't condition traces on

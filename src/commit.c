@@ -49,7 +49,6 @@ static int precommit_list_proc PROTO((Node * p, void *closure));
 static int precommit_proc PROTO((char *repository, char *filter));
 static int remove_file PROTO ((struct file_info *finfo, char *tag,
 			       char *message));
-static void fix_rcs_modes PROTO((char *rcs, char *user));
 static void fixaddfile PROTO((char *file, char *repository));
 static void fixbranch PROTO((RCSNode *, char *branch));
 static void unlockrcs PROTO((RCSNode *rcs));
@@ -2171,13 +2170,22 @@ internal error: `%s' didn't move out of the attic",
 
     fileattr_newfile (file);
 
-    /* I don't think fix_rcs_modes is needed any more.  In the
-       add_rcs_file case, the algorithms used by add_rcs_file and
-       fix_rcs_modes are the same, so there is no need to go through
-       it all twice.  In the other cases, I think we want to just
-       preserve the mode that the file had before we started.  That is
-       a behavior change, but I would think a desirable one.  */
-    fix_rcs_modes (rcs, file);
+    /* At this point, we used to set the file mode of the RCS file
+       based on the mode of the file in the working directory.  If we
+       are creating the RCS file for the first time, add_rcs_file does
+       this already.  If we are re-adding the file, then perhaps it is
+       consistent to preserve the old file mode, just as we preserve
+       the old keyword expansion mode.
+
+       If we decide that we should change the modes, then we can't do
+       it here anyhow.  At this point, the RCS file may be owned by
+       somebody else, so a chmod will fail.  We need to instead do the
+       chmod after rewriting it.
+
+       FIXME: In general, I think the file mode (and the keyword
+       expansion mode) should be associated with a particular revision
+       of the file, so that it is possible to have different revisions
+       of a file have different modes.  */
 
     retval = 0;
 
@@ -2266,69 +2274,6 @@ lock_RCS (user, rcs, rev, repository)
     if (branch)
 	free (branch);
     return (1);
-}
-
-/* Called when "add"ing files to the RCS respository.  It doesn't seem to
-   be possible to get RCS to use the right mode, so we change it after
-   the fact.  TODO: now that RCS has been librarified, we have the power
-   to change this. */
-
-static void
-fix_rcs_modes (rcs, user)
-    char *rcs;
-    char *user;
-{
-    struct stat sb;
-    mode_t rcs_mode;
-
-#ifdef PRESERVE_PERMISSIONS_SUPPORT
-    /* Do ye nothing to the modes on a symbolic link. */
-    if (preserve_perms && islink (user))
-	return;
-#endif
-
-    if (CVS_STAT (user, &sb) < 0)
-    {
-	/* FIXME: Should be ->fullname.  */
-	error (0, errno, "warning: cannot stat %s", user);
-	return;
-    }
-
-    /* Now we compute the new mode.
-
-       TODO: decide whether this whole thing can/should be skipped
-       when `preserve_perms' is set.  Almost certainly so. -twp
-
-       The algorithm that we use is:
-
-       Write permission is always off (this is what RCS and CVS have always
-       done).
-
-       If S_IRUSR is on (user read), then the read permission of
-       the RCS file will be on.  It would seem that if this is off,
-       then other users can't do "cvs update" and such, so perhaps this
-       should be hardcoded to being on (it is a strange case, though--the
-       case in which a user file doesn't have user read permission on).
-
-       If S_IXUSR is on (user execute), then set execute permission
-       on the RCS file.  This allows other users who check out the file
-       to get the right setting for whether a shell script (for example)
-       has the executable bit set.
-
-       The result of that calculation is modified by CVSUMASK.  The
-       reason, of course, that the read and execute settings take the
-       user bit and copy it to all three bits (user, group, other), is
-       that it should be CVSUMASK, not the umask of individual users,
-       which is the sole determiner of modes in the repository.  */
-
-    rcs_mode = 0;
-    if (sb.st_mode & S_IRUSR)
-	rcs_mode |= S_IRUSR | S_IRGRP | S_IROTH;
-    if (sb.st_mode & S_IXUSR)
-	rcs_mode |= S_IXUSR | S_IXGRP | S_IXOTH;
-    rcs_mode &= ~cvsumask;
-    if (chmod (rcs, rcs_mode) < 0)
-	error (0, errno, "warning: cannot change mode of %s", rcs);
 }
 
 /*
