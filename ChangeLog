@@ -1,3 +1,7 @@
+2004-04-07  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note ignoring of method options in CVSROOTs.
+
 2004-04-06  Derek Price  <derek@ximbiot.com>
 
 	* TODO (196, 217, 219, 220, 222, 226): Remove completed items.

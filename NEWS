@@ -3,6 +3,8 @@ Changes since 1.11.14:
 
 GENERAL USER ISSUES
 
+* Method options (used by WinCVS & CVS 1.12.7+) in CVSROOTs are ignored.
+
 * Configure no longer checks the $TMPDIR, $TMP, & $TEMP variables to set the
   default temporary directory.
 
