@@ -1,3 +1,9 @@
+2001-03-29  Derek Price  <dprice@collab.net>
+
+	* sanity.sh (conflicts-12[68].5): Remove sanity hack which has allowed
+	for a CVS bug since May 96/97.  Not sure when the bug went bye-bye, but
+	the tests broke when $TESTDIR != $TMPPWD.
+
 2001-03-26  Larry Jones  <larry.jones@sdrc.com>
 
 	* classify.c (Classify_File): Don't report a conflict for a removed
