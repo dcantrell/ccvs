@@ -1,5 +1,9 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* system.h: Include getopt.h.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (libcvs_a_SOURCES): Add getpass.h.
 	* getpass.h: New file from GNULIB.
 	* getpass.c: Update from GNULIB.

@@ -53,8 +53,9 @@
  */
 #include <stdbool.h>
 
-/* Ditto for this POSIX.2 header.  */
+/* Ditto for these POSIX.2 headers.  */
 #include <fnmatch.h>
+#include <getopt.h>	/* Has GNU extensions,  */
 
 /* For struct timespec.  */
 #include "timespec.h"
