@@ -3561,6 +3561,7 @@ get_responses_and_close ()
 	    if (shutdown (server_fd, 1) < 0)
 		error (1, 0, "shutting down connection to %s: %s",
 		       CVSroot_hostname, SOCK_STRERROR (SOCK_ERRNO));
+	    server_fd = -1;
             /*
              * This test will always be true because we dup the descriptor
              */

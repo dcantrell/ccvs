@@ -1,3 +1,9 @@
+2000-09-29  Larry Jones  <larry.jones@sdrc.com> 
+
+	* client.c (get_responses_and_close): Reset server_fd to -1 after
+	shutting down.
+	(Reported by Joerg Thoennes <Joerg.Thoennes@data-sciences.de>.)
+
 2000-09-27  Larry Jones  <larry.jones@sdrc.com> 
 
 	* commit.c (commit): Don't sleep before returning in server mode,
