@@ -13013,7 +13013,7 @@ ${PROG} \[log aborted\]: no repository"
 "${TESTDIR}/cvsroot/first-dir/file1,v"
 
 	  # OK, now put an extraneous '\0' at the end.
-	  awk 'BEGIN { printf "%c%c", 0, 10 }' \
+	  awk 'BEGIN { printf "@%c", 10 }' | tr '@' '\000' \
 	    >>${CVSROOT_DIRNAME}/first-dir/file1,v
 	  dotest_fail rcs3-7 "${testcvs} log -s nostate file1" \
 "${PROG} \[[a-z]* aborted\]: unexpected '.x0' reading revision number in RCS file ${TESTDIR}/cvsroot/first-dir/file1,v"
