@@ -470,7 +470,24 @@ do_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 
 	for (i = 0; i < modargc; i++)
 	{
-	    if (strcmp (mname, modargv[i]) == 0)
+	    /* FIXME: This recursion check is a hack.  It only catches
+	     * recursion if an alias module calls itself and not if a module
+	     * calls a module which causes the first to be called again.  We
+	     * should really be maintaining a stack of alias modules here.
+	     * Algorithm:
+	     *
+	     *   1. Check that MNAME isn't in the stack.
+	     *   2. Push MNAME onto the stack.
+	     *   3. Call do_module().
+	     *   4. Pop MNAME from the stack.
+	     *
+	     * Note that the strip_trailing_slashes() hackery below would no
+	     * longer be necessary with the above algorithm since MNAME has its
+	     * trailing slashes stripped early on in this function.
+	     */
+	    char *tmp = xstrdup (modargv[i]);
+	    strip_trailing_slashes (tmp);
+	    if (strcmp (mname, tmp) == 0)
 		error (0, 0,
 		       "module `%s' in modules file contains infinite loop",
 		       mname);
@@ -478,6 +495,7 @@ do_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 		err += do_module (db, modargv[i], m_type, msg, callback_proc,
 				  where, shorten, local_specified,
 				  run_module_prog, build_dirs, extra_arg);
+	    free (tmp);
 	}
 	goto do_module_return;
     }

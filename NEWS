@@ -3,6 +3,10 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* A minor bug that caused CVS to fail to report an inifinte alias loop in the
+  modules file when portions of the alias definition contained trailing slashes
+  has been fixed.
+
 * A bug in the gzip code that could cause heap corruption and segfaults in CVS
   servers talking to clients less than 1.8 and some modern third-party CVS
   clients has been fixed.

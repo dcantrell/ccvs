@@ -1,3 +1,7 @@
+2004-01-22  Derek Price  <derek@ximbiot.com>
+
+	* stamp-vti, version.texi: Regenerated.
+
 2004-01-08  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* cvs.texinfo (user-defined logging): Move taginfo stuff from here...
