@@ -383,7 +383,7 @@ watch (argc, argv)
     int argc;
     char **argv;
 {
-    if (argc == -1)
+    if (argc <= 1)
 	usage (watch_usage);
     if (strcmp (argv[1], "on") == 0)
     {

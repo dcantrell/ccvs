@@ -421,7 +421,7 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
 	   here.  */
 	if (client_active)
 	    notify_check (repository, update_dir);
-#endif
+#endif /* CLIENT_SUPPORT */
 
 	/* pre-parse the source files */
 	if (dosrcs && repository)

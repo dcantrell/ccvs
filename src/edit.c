@@ -871,6 +871,7 @@ notify_do (type, filename, who, val, watches, repository)
     }
 }
 
+#ifdef CLIENT_SUPPORT
 /* Check and send notifications.  This is only for the client.  */
 void
 notify_check (repository, update_dir)
@@ -925,6 +926,8 @@ notify_check (repository, update_dir)
     /* Leave the CVSADM_NOTIFY file there, until the server tells us it
        has dealt with it.  */
 }
+#endif /* CLIENT_SUPPORT */
+
 
 static const char *const editors_usage[] =
 {
