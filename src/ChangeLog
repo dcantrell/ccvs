@@ -1,5 +1,9 @@
 2004-05-12  Derek Price  <derek@ximbiot.com>
 
+	* entries.c, subr.c: Gratuitous reformatting.
+
+2004-05-12  Derek Price  <derek@ximbiot.com>
+
 	* subr.c (file_has_conflict), vers_ts.c (time_stamp_server): Only
 	special case "=" when it is the only character in a timestamp field.
 	Gratuitous reformatting.
