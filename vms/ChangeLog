@@ -1,3 +1,7 @@
+Thu Sep 12 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* config.h: Define ARGV0_NOT_PROGRAM_NAME.
+
 Thu Sep 12 14:56:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* config.h, filesubr.c: Add FOLD_FN_CHAR, VMS_filename_classes,

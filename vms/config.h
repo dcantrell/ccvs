@@ -208,3 +208,12 @@ extern void fnfold (char *FILENAME);
 #define optopt cvs_optopt
 #define optarg cvs_optarg
 #define opterr cvs_opterr
+
+/* argv[0] in VMS is the full pathname which would look really ugly in error
+   messages.  Even if we stripped out the directory and ".EXE;5", it would
+   still be misleading, as if one has used "OLDCVS :== ...CVS-JULY.EXE",
+   then argv[0] does not contain the name of the command which the user
+   invokes CVS with.  If there is a way for VMS to find the latter, that
+   might be worth messing with, but it also seems fine to just always call
+   it "cvs".  */
+#define ARGV0_NOT_PROGRAM_NAME
