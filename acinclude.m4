@@ -102,6 +102,8 @@ if test x$acx_gssapi_cv_gssapi != xno; then
 [Define if you have GSSAPI with Kerberos version 5 available.])
   CPPFLAGS=$CPPFLAGS$GSSAPI_INCLUDES
 
+  cvs_client_objects="$cvs_client_objects gssapi-client.o"
+
   # locate any other headers
   dnl We don't use HAVE_KRB5_H anywhere, but including it here might make it
   dnl easier to spot errors by reading configure output

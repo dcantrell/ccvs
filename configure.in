@@ -345,6 +345,9 @@ dnl just added libnsl above if we found it.
 AC_SEARCH_LIBS(gethostbyname, netinet)
 
 
+AC_SUBST(cvs_client_objects)
+
+
 dnl
 dnl begin --with-*
 dnl
