@@ -1,5 +1,11 @@
 2004-03-25  Derek Price  <derek@ximbiot.com>
 
+	* cvsnt.dep, cvsnt.mak: New files created by Visual C++ 6.0.
+	* cvsnt.dsp, cvsnt.dsw: Updated by Visual C++ 6.0.
+	* .cvsignore: Add and remove files for new MSVC++ setup.
+
+2004-03-25  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note Windows memory allocation fix.
 
 2004-03-22  Derek Price  <derek@ximbiot.com>
