@@ -8,6 +8,7 @@
 	on a lock.
 	* sanity.sh (lockfiles): Add tests for all operation (read, read
 	promotably, or write) and lock combinations.
+	(Original report from Mark <cm_mark@yahoo.com>.)
 
 2004-02-12  Larry Jones  <lawrence.jones@ugsplm.com>
 
