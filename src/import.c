@@ -315,7 +315,6 @@ import (argc, argv)
 	if (!really_quiet)
 	{
 	    char buf[20];
-	    char *buf2;
 
 	    cvs_output_tagged ("+importmergecmd", NULL);
 	    cvs_output_tagged ("newline", NULL);
@@ -335,12 +334,9 @@ import (argc, argv)
 		cvs_output_tagged ("text", CVSroot_cmdline);
 	    }
 	    cvs_output_tagged ("text", " checkout -j");
-	    buf2 = xmalloc (strlen (argv[1]) + 20);
-	    sprintf (buf2, "%s:yesterday", argv[1]);
-	    cvs_output_tagged ("mergetag1", buf2);
-	    free (buf2);
+	    cvs_output_tagged ("mergetag1", "<prev_rel_tag>");
 	    cvs_output_tagged ("text", " -j");
-	    cvs_output_tagged ("mergetag2", argv[1]);
+	    cvs_output_tagged ("mergetag2", argv[2]);
 	    cvs_output_tagged ("text", " ");
 	    cvs_output_tagged ("repository", argv[0]);
 	    cvs_output_tagged ("newline", NULL);

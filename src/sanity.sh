@@ -6465,7 +6465,7 @@ done"
 "
 
 
- ${PROG} checkout -jvendor-branch:yesterday -jvendor-branch first-dir
+ ${PROG} checkout -j<prev_rel_tag> -jjunk-2_0 first-dir
 2 conflicts created by this import.
 C first-dir/imported-f1
 C first-dir/imported-f2
@@ -6575,7 +6575,7 @@ No conflicts created by this import"
 "
 
 
- ${PROG} -d ${CVSROOT} checkout -jfreemunger:yesterday -jfreemunger first-dir
+ ${PROG} -d ${CVSROOT} checkout -j<prev_rel_tag> -jfreemunger-1_0 first-dir
 2 conflicts created by this import.
 C first-dir/file1
 C first-dir/file2
