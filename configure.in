@@ -213,7 +213,6 @@ AM_GNU_GETTEXT_VERSION dnl work around for autoconf-2.57 bug.
 AC_FUNC_STRERROR_R
 dnl Always use the GNULIB getpass to work around 8 character password limits on
 dnl HP-UX.
-gl_FUNC_GLIBC_UNLOCKED_IO
 gl_FUNC_GNU_STRFTIME
 gl_FUNC_MEMMOVE
 gl_FUNC_MKTIME

@@ -161,3 +161,7 @@ m4/clock_time.m4
 m4/gettime.m4
 
 m4/onceonly_2_57.m4
+lib/unlocked-io.h
+m4/unlocked-io.m4
+
+m4/onceonly_2_57.m4
