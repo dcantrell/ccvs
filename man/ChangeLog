@@ -1,3 +1,7 @@
+2001-06-28  Derek Price  <dprice@collab.net>
+
+	* Makefile.in: Regenerated with new version of Automake.
+
 2001-05-21  Derek Price  <dprice@collab.net>
 
 	* cvs.1: Correct a quoting error.

@@ -1,3 +1,7 @@
+2001-06-28  Derek Price  <dprice@collab.net>
+
+	* Makefile.in: Regenerated with new version of Automake.
+
 2001-05-07  Larry Jones  <larry.jones@sdrc.com>
 
 	* diff3.c (diff3_run): Put the name of the output file in the error

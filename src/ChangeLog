@@ -1,3 +1,7 @@
+2001-06-28  Derek Price  <dprice@collab.net>
+
+	* Makefile.in: Regenerated with new version of Automake.
+
 2001-06-28  Larry Jones  <larry.jones@sdrc.com>
 
 	* checkout.c (checkout): Set history_name for export as well as
