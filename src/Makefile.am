@@ -31,7 +31,7 @@ commit.c create_adm.c cvsrc.c diff.c edit.c entries.c error.c expand_path.c \
 fileattr.c find_names.c hardlink.c hash.c history.c ignore.c import.c \
 lock.c log.c login.c logmsg.c main.c mkmodules.c modules.c myndbm.c no_diff.c \
 parseinfo.c patch.c rcs.c rcscmds.c recurse.c release.c remove.c repos.c \
-root.c rtag.c scramble.c server.c status.c subr.c filesubr.c run.c \
+root.c scramble.c server.c status.c subr.c filesubr.c run.c \
 tag.c update.c watch.c wrapper.c vers_ts.c zlib.c \
 buffer.h cvs.h rcs.h hardlink.h hash.h myndbm.h \
 update.h server.h client.h error.h fileattr.h edit.h watch.h
