@@ -1,3 +1,11 @@
+Wed Nov 12 20:24:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Add item about RCS library.  Remove item about RCSBIN in
+	CVSROOT/config.
+	* INSTALL: Simplify instructions to reflect the fact that one need
+	not any longer install RCS and GNU diff.
+	* PROJECTS: Remove item about RCS library; it is done.
+
 Mon, 10 Nov 1997  Jim Kingdon
 
 	* cvsnt.dsp: For diff/diff.c, also look for include files in

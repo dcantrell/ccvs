@@ -259,23 +259,8 @@ Building from source code under Unix:
 
     Typically this can reduce the size of the executable by around 30%.
 
-    If you are using server or local CVS, RCS needs to be installed in
-    the user's PATH (or a path you have configured in src/options.h,
-    or a path specified with the -b option).  If you don't have RCS,
-    you will need to get it from GNU as well.  It is best to get the
-    version 5.7 (or later) version of RCS, available from
-    prep.ai.mit.edu in the file pub/gnu/rcs-5.7.tar.gz.  If you do not
-    have RCS version 5.x (for example, if you are using the old RCS
-    shipped with some versions of HPUX), CVS will probably fail to work
-    entirely.  To find out what version of RCS you have, invoke "co -V".
-    If it fails to print a version number, it is an old version.
-
-    If you want version control of files with binary data, make sure
-    that the RCS configure script finds GNU diff 1.15 or later and
-    notices that diff supports the -a option.  CVS itself is much less
-    picky about which version of diff it uses, and you shouldn't need
-    to worry about that.  If you are using GNU diff 2.6 or 2.7, you may
-    want to know about a (subtle) bug described in doc/DIFFUTILS-2.7-BUG.
+    Unlike previous versions of CVS, you do not need to install RCS
+    or GNU diff.  
 
     NOTE: The configure program will cache the results of the previous
     configure execution.  If you need to re-run configure from scratch, you
@@ -332,11 +317,8 @@ Building from source code under Unix:
 
     END OF NOTE FOR NDBM GUNK.
 
-2)  Edit src/options.h.  Appropriate things to look at may be the
-    invocation locations of programs like DIFF.
-    Also glance at the default values for the environment variables
-    that CVS uses, in particular, the RCSBIN variable, which holds the
-    path to where the RCS programs live on your system.
+2)  Edit src/options.h.  The defaults should be reasonable, and in fact
+    if you are lazy you can safely skip this step.
 
 3)  Try to build it:
 
