@@ -1,3 +1,8 @@
+2000-09-06  Jim Kingdon  <jkingdon@dhcp-net200-89.su.valinux.com>
+
+	* main.c (lookup_command_attribute): Add "release" to commands
+	which can be done by a read-only user.
+
 2000-08-23  Larry Jones  <larry.jones@sdrc.com>
 
 	* repos.c (Name_Repository): Use pathname_levels to detect attempts
