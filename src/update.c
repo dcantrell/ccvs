@@ -293,8 +293,10 @@ update (argc, argv)
 
     if (tag != NULL)
 	tag_check_valid (tag, argc, argv, local, aflag, "");
-    /* FIXME: We don't call tag_check_valid on join_rev1 and join_rev2
-       yet (make sure to handle ':' correctly if we do, though).  */
+    if (join_rev1 != NULL)
+        tag_check_valid_join (join_rev1, argc, argv, local, aflag, "");
+    if (join_rev2 != NULL)
+        tag_check_valid_join (join_rev2, argc, argv, local, aflag, "");
 
     /*
      * If we are updating the entire directory (for real) and building dirs

@@ -861,3 +861,36 @@ Numeric tag %s contains characters other than digits and '.'", name);
     }
     free (valtags_filename);
 }
+
+/*
+ * Check whether a join tag is valid.  This is just like
+ * tag_check_valid, but we must stop before the colon if there is one.
+ */
+
+void
+tag_check_valid_join (join_tag, argc, argv, local, aflag, repository)
+     char *join_tag;
+     int argc;
+     char **argv;
+     int local;
+     int aflag;
+     char *repository;
+{
+    char *c, *s;
+
+    c = xstrdup (join_tag);
+    s = strchr (c, ':');
+    if (s != NULL)
+    {
+        if (isdigit (join_tag[0]))
+	    error (1, 0,
+		   "Numeric join tag %s may not contain a date specifier",
+		   join_tag);
+
+        *s = '\0';
+    }
+
+    tag_check_valid (c, argc, argv, local, aflag, repository);
+
+    free (c);
+}
