@@ -3073,6 +3073,42 @@ server_copy_file (file, update_dir, repository, newfile)
 /* See server.h for description.  */
 
 void
+server_modtime (finfo, vers_ts)
+    struct file_info *finfo;
+    Vers_TS *vers_ts;
+{
+    char date[MAXDATELEN];
+    int year, month, day, hour, minute, second;
+    /* Note that these strings are specified in RFC822 and do not vary
+       according to locale.  */
+    static const char *const month_names[] =
+      {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+	 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+    if (!supported_response ("Mod-time"))
+	return;
+
+    /* The only hard part about this routine is converting the date
+       formats.  In terms of functionality it all boils down to the
+       call to RCS_getrevtime.  */
+    if (RCS_getrevtime (finfo->rcs, vers_ts->vn_rcs, date, 0) == (time_t) -1)
+	/* FIXME? should we be printing some kind of warning?  For one
+	   thing I'm not 100% sure whether this happens in non-error
+	   circumstances.  */
+	return;
+
+    sscanf (date, SDATEFORM, &year, &month, &day, &hour, &minute, &second);
+    sprintf (date, "%d %s %d %d:%d:%d -0000", day,
+	     month < 1 || month > 12 ? "???" : month_names[month - 1],
+	     year, hour, minute, second);
+    buf_output0 (protocol, "Mod-time ");
+    buf_output0 (protocol, date);
+    buf_output0 (protocol, "\n");
+}
+
+/* See server.h for description.  */
+
+void
 server_updated (finfo, vers, updated, file_info, checksum)
     struct file_info *finfo;
     Vers_TS *vers;

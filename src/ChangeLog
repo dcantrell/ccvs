@@ -1,3 +1,14 @@
+Mon May 26 15:31:30 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (handle_mod_time): New function.
+	(responses): Add "Mod-time".
+	(stored_modtime_valid, stored_modtime): New variables.
+	(update_entries): If it is set, change the file's modtime.
+	* server.c, server.h (server_modtime): New function.
+	* vers_ts.c (Version_TS): Call it.
+	* patch.c (patch_fileproc): Add comment about why we don't.
+	* sanity.sh (stamps): Added, tests for above fix.
+
 Fri May 16 13:14:30 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* subr.c (free_names): Update documentation to reflect fact that
