@@ -1,3 +1,10 @@
+Thu Sep 12 16:06:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README.VMS: Put authorship info at end.  Add disclaimer.  Say
+	that patch is mandatory not optional.  Don't mention gzip; we
+	don't require it any more.  Remove section on filename case; the
+	bugs described there are fixed.  Miscellaneous tweaks and updates.
+
 Wed Sep 11 11:08:39 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* configure.in (AC_OUTPUT): Don't forget to create vms/Makefile.

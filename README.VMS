@@ -1,17 +1,21 @@
-             Concurrent Versions System (CVS) Version 1.5
-                      ported to OpenVMS/AXP 6.2
+                             CVS port to VMS
 
-Benjamin J. Lee <benjamin@cyclic.com>
-Cyclic Software
-October 1, 1995 (Update March 1, 1996)
+DISCLAIMER: This port must be considered experimental.  Although
+previous versions have been in use at one large site since about
+October, 1995, and the port is believed to be quite usable, various
+VMS-specific quirks are known and the port cannot be considered as
+mature as, say, Windows NT or unix.  As always, future progress of
+this port will depend on volunteer and customer interest.
 
-Cyclic Software has ported the client side of CVS 1.5 to OpenVMS/AXP
-The port implements the full set of CVS commands, but cannot access
+This port is of the CVS client only.  Or in other words, the port
+implements the full set of CVS commands, but cannot access
 repositories located on the local machine.  The repository must live
 on another machine (a Unix box) which runs a complete port of CVS.
 
-For best results, you will also need GNU patch and gzip installed on
-your system,  CVS can be used without patch and gzip.  Here's a list
+Most (all?) work to date has been done on OpenVMS/AXP 6.2.  Other VMS
+variants might work too.
+
+You will also need GNU patch installed on your system.  Here's a list
 of ftp servers which have VMS GNU resources, taken from
 
     ftp://prep.ai.mit.edu/pub/gnu/vms.README
@@ -24,15 +28,16 @@ of ftp servers which have VMS GNU resources, taken from
 
 Please send bug reports to bug-cvs@prep.ai.mit.edu.
 
-This port is known to pass most of the tests in [.src]sanity.sh.  I say
-"most" because some tests to not apply to the CVS client.  The tests
-were run by hand because the VMS POSIX shell was incapable of running the
-script.  The tests that sanity.sh provides are not conclusive but at least
-provides some assurance that the client is usable.
+As of CVS 1.5.something, this port passed most of the tests in
+[.src]sanity.sh.  I say "most" because some tests to not apply to the
+CVS client.  The tests were run by hand because the VMS POSIX shell
+was incapable of running the script.  The tests that sanity.sh
+provides are not conclusive but at least provides some assurance that
+the client is usable.
 
-To compile, you will need DEC C (CC), DEC UCX, and of course DCL installed
-on your machine.  Just type "@build" in the top level directory.  This will
-build the sources in the directories [.lib], [.src], and [.vms], and link 
+To compile, you will need DEC C (CC), DEC UCX, and of course DCL
+installed on your machine.  Just type "@build" in the top level
+directory.  This will build the sources in each subdirectory, and link
 the executable [.src]cvs.exe
 
 Copy the executable to an appropriate directory, and define the symbol "CVS"
@@ -41,8 +46,9 @@ of what needs to be done.
 
 $ CVS :== $YOUR_DEVICE:[YOUR.DIRECTORY.CVS]CVS.EXE
 
-Accessing a remote repository can happen one of three ways.
+Accessing a remote repository can happen in several ways.
 
+0. pserver
 1. Direct TCP using a listener process running on the CVS server.
    (unprivileged)
 2. rsh - privileged (default)
@@ -51,7 +57,14 @@ Accessing a remote repository can happen one of three ways.
 Here's how to do each of the above:
 
 -------------------------------------------------------------------------------
-1. Using direct TCP to communicate with a CVS server.
+0.  pserver.  This is the preferred way.  It works just as it is
+documented in the CVS manual (see the README file in the CVS
+distribution for more information on the manual).
+
+1.  Using direct TCP to communicate with a CVS server.  This method is
+broken in the current version of CVS; the following text is included
+for historical information but will be removed once we have verified
+that the so-called "direct TCP" is not worth resurrecting.
 
 Compile the file contrib/listener.c on the machine which will be the CVS
 server.  For each developer using the CVS client, choose a unique TCP port
@@ -110,6 +123,11 @@ immediately aborted.  Only connections arriving from a privileged port will
 be authenticated and served.  The CVS client will therefore need privileges
 under VMS to produce such a connection.
 
+*** Please note that no careful examination has been done of the security
+    implications of installing CVS with the OPER privilege.  If some hole
+    exists, then by doing so, you will enable users who are already on
+    your system to gain unauthorized privileges ***
+
 -------------------------------------------------------------------------------
 3. Using CVS internal rsh support (non-privileged)
 
@@ -146,41 +164,9 @@ environments.  In fact, existing ports of CVS to these environment use this
 to their advantage.
 
 -------------------------------------------------------------------------------
-If you have used CVS before there are will be some important things to note
-with this release with respect to differences between CVS on UNIX and CVS on
-VMS.
-
-VMS filenames are case insensitive and have restrictions on the
-characters allowed in the file name.  This poses a problem for
-filenames like "Makefile" and "readme.txt.new".  The following few
-paragraphs describe how the VMS port used to work, but things might
-have changed since then.
-
-This means that for the VMS client, if I have a directory checked out,
-and it contains a Makefile to which I have made changes, I would
-commit it like this:
-
-$ CVS COMMIT -M "Added a comment to Makefile" "Makefile"
-
-The quotes are necessary to preserve case in VMS.
-
-$ CVS COMMIT 
-
-With the implicit argument "." will attempt to commit all the files in the
-directory recursively, which is implemented by reading directories to do
-filename expansion.  In this case the checked-out "Makefile" becomes
-MAKEFILE.;1, which CVS picks up as "makefile".  This is disgusting, and
-should probably change.
-
-There is not a trivial fix for the second problem, although the first cut
-would be expand CVS/Entries to store a checkout-specific file-mapping to
-file names that match local filesystem semantics (this would solve the first
-problem also, and make CVS filesystem independent).
-
-Remember also that anything depending on csh or sh features will be
-conspicuously absent on VMS. (i.e. CVS COMMIT *.c won't work.)  I have found
-GPL'd routine which does shell globbing, but I have not tried to put it in
-yet.
+Wildcard expansion is not yet implemented (i.e. CVS COMMIT *.c won't
+work.)  I have found GPL'd routine which does shell globbing, but I
+have not tried to put it in yet.
 
 Log messages must be entered on the command line using -m.  I wanted to start
 up TPU for editing log messages, but apparently SYS$SYSTEM:TPU.EXE requires
@@ -192,3 +178,8 @@ You can use -e or define the logical EDITOR to cause CVS to try other editors
 if you want to test what's available on your system.  I haven't tested this,
 but if you install vi or emacs, chances are it will probably work.  Just make
 sure the .EXE files are in a directory listed in VAXC$PATH.
+
+Credits:
+
+Initial VMS port by Benjamin J. Lee <benjamin@cyclic.com>, Cyclic
+Software, October 1, 1995 (Update March 1, 1996).
