@@ -194,7 +194,6 @@ init_sockaddr (struct sockaddr_in *name,
 }
 
 
-
 void
 connect_to_pserver (argc, argv)
 {
@@ -216,7 +215,10 @@ connect_to_pserver (argc, argv)
   connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai));
 
   len = write (sock, test_str, strlen (test_str));
-  printf ("+++ len written: %d\n", len);
+
+  /* This sends EOF to the server, which on receiving EOF breaks out
+     of the print loop. */
+  /* shutdown (sock, 1); */
 
   while (read (sock, read_buf, 1) > 0)
     {

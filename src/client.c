@@ -18,8 +18,8 @@
 extern char *krb_realmofhost ();
 #ifndef HAVE_KRB_GET_ERR_TEXT
 #define krb_get_err_text(status) krb_err_txt[status]
-#endif
-#endif
+#endif /* HAVE_KRB_GET_ERR_TEXT */
+#endif /* HAVE_KERBEROS */
 
 static void add_prune_candidate PROTO((char *));
 
@@ -76,10 +76,10 @@ static void handle_e PROTO((char *, int));
 char *
 #ifdef __STDC__
 mode_to_string (mode_t mode)
-#else
+#else /* ! __STDC__ */
 mode_to_string (mode)
 	mode_t mode;
-#endif
+#endif /* __STDC__ */
 {
 	char buf[18], u[4], g[4], o[4];
 	int i;
@@ -142,7 +142,13 @@ change_mode (filename, mode_string)
 		if (can_write)
 		    mode |= S_IWUSR;
 		if (can_execute)
-		    mode |= S_IXUSR;
+                  {
+#ifdef EXECUTE_PERMISSION_LOSES
+                    KFF_DEBUG (printf ("*** S_IXUSR in change_mode().\n"));
+#else /* ! EXECUTE_PERMISSION_LOSES */
+                    mode |= S_IXUSR;
+#endif /* EXECUTE_PERMISSION_LOSES */
+                  }
 	    }
 	    else if (p[0] == 'g')
 	    {
@@ -151,7 +157,13 @@ change_mode (filename, mode_string)
 		if (can_write)
 		    mode |= S_IWGRP;
 		if (can_execute)
+                  {
+#ifdef EXECUTE_PERMISSION_LOSES
+                    KFF_DEBUG (printf ("*** S_IXGRP in change_mode().\n"));
+#else /* ! EXECUTE_PERMISSION_LOSES */
 		    mode |= S_IXGRP;
+#endif /* EXECUTE_PERMISSION_LOSES */
+                  }
 	    }
 	    else if (p[0] == 'o')
 	    {
@@ -160,7 +172,13 @@ change_mode (filename, mode_string)
 		if (can_write)
 		    mode |= S_IWOTH;
 		if (can_execute)
+                  {
+#ifdef EXECUTE_PERMISSION_LOSES
+                    KFF_DEBUG (printf ("*** S_IXOTH in change_mode().\n"));
+#else /* ! EXECUTE_PERMISSION_LOSES */
 		    mode |= S_IXOTH;
+#endif /* EXECUTE_PERMISSION_LOSES */
+                  }
 	    }
 	}
 	/* Skip to the next field.  */
@@ -220,7 +238,8 @@ FILE *from_server;
 #if ! RSH_NOT_TRANSPARENT
 /* Process ID of rsh subprocess.  */
 static int rsh_pid = -1;
-#endif
+#endif /* ! RSH_NOT_TRANSPARENT */
+
 
 /*
  * Read a line from the server.
@@ -282,6 +301,7 @@ read_line (resultp, eof_ok)
 }
 
 #endif /* CLIENT_SUPPORT */
+
 
 #if defined(CLIENT_SUPPORT) || defined(SERVER_SUPPORT)
 
@@ -627,10 +647,31 @@ call_in_directory (pathname, func, data)
 
 		if (CVS_MKDIR (dir, 0777) < 0)
 		{
-		    if (errno != EEXIST)
-			error (1, errno, "cannot make directory %s", dir);
-		    
-		    /* It already existed, fine.  Just keep going.  */
+                  /* Now, let me get this straight.  In IBM C/C++
+                   * under OS/2, the error string for EEXIST is:
+                   *
+                   *     "The file already exists",
+                   *
+                   * and the error string for EACCESS is:
+                   *
+                   *     "The file or directory specified is read-only".
+                   *
+                   * Nonetheless, mkdir() will set EACCESS if the
+                   * directory *exists*, according both to the
+                   * documentation and its actual behavior.
+                   *
+                   * I'm sure that this made sense, to someone,
+                   * somewhere, sometime.  Just not me, here, now.
+                   */
+#ifdef EACCESS
+                  if ((errno != EACCESS) && (errno != EEXIST))
+                    error (1, errno, "cannot make directory %s", dir);
+#else /* ! defined(EACCESS) */
+                  if ((errno != EEXIST))
+                    error (1, errno, "cannot make directory %s", dir);
+#endif /* defined(EACCESS) */
+                  
+                  /* It already existed, fine.  Just keep going.  */
 		}
 		else if (strcmp (command_name, "export") == 0)
 		    /* Don't create CVSADM directories if this is export.  */
@@ -843,9 +884,9 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	temp_filename = xmalloc (strlen (filename) + 80);
 #ifdef _POSIX_NO_TRUNC
 	sprintf (temp_filename, ".new.%.9s", filename);
-#else
+#else /* _POSIX_NO_TRUNC */
 	sprintf (temp_filename, ".new.%s", filename);
-#endif
+#endif /* _POSIX_NO_TRUNC */
 	buf = xmalloc (size);
 	fd = open (temp_filename, O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (fd < 0)
@@ -907,9 +948,9 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    else
 		rename_file (temp_filename, filename);
 	        
-#else
+#else /* ! LINES_CRLF_TERMINATED */
 	    rename_file (temp_filename, filename);
-#endif
+#endif /* LINES_CRLF_TERMINATED */
 	}
 	else
 	{
@@ -1921,9 +1962,9 @@ struct response responses[] =
 {
 #ifdef CLIENT_SUPPORT
 #define RSP_LINE(n, f, t, s) {n, f, t, s}
-#else
+#else /* ! CLIENT_SUPPORT */
 #define RSP_LINE(n, f, t, s) {n, s}
-#endif
+#endif /* CLIENT_SUPPORT */
 
     RSP_LINE("ok", handle_ok, response_type_ok, rs_essential),
     RSP_LINE("error", handle_error, response_type_error, rs_essential),
@@ -2038,13 +2079,21 @@ get_responses_and_close ()
 	}
     }
     else
-#endif
+#endif /* HAVE_KERBEROS */
+
 #ifdef SHUTDOWN_SERVER
     SHUTDOWN_SERVER (fileno (to_server));
-#else
+#else /* ! SHUTDOWN_SERVER */
     {
+
+#ifdef START_RSH_WITH_POPEN_RW
+	if (pclose (to_server) == EOF)
+#else /* ! START_RSH_WITH_POPEN_RW */
 	if (fclose (to_server) == EOF)
-	    error (1, errno, "closing connection to %s", server_host);
+#endif /* START_RSH_WITH_POPEN_RW */
+        {
+          error (1, errno, "closing connection to %s", server_host);
+        }
     }
 
     if (getc (from_server) != EOF)
@@ -2053,20 +2102,25 @@ get_responses_and_close ()
 	error (0, errno, "reading from %s", server_host);
 
     fclose (from_server);
-#endif
+#endif /* SHUTDOWN_SERVER */
 
-#if !RSH_NOT_TRANSPARENT
+#if ! RSH_NOT_TRANSPARENT
     if (rsh_pid != -1
 	&& waitpid (rsh_pid, (int *) 0, 0) == -1)
-      error (1, errno, "waiting for process %d", rsh_pid);
-#endif
+      {
+        /* ECHILD most likely means the process has already exited,
+           which would be no surprise. */
+        if (errno != ECHILD)
+          error (1, errno, "waiting for process %d", rsh_pid);
+      }
+#endif /* ! RSH_NOT_TRANSPARENT */
 
     return errs;
 }
 	
 #ifndef RSH_NOT_TRANSPARENT
 static void start_rsh_server PROTO((int *, int *));
-#endif
+#endif /* RSH_NOT_TRANSPARENT */
 
 int
 supported_request (name)
@@ -2080,8 +2134,144 @@ supported_request (name)
   error (1, 0, "internal error: testing support for unknown option?");
 }
 
-/* Contact the server.  */
+#if HAVE_KERBEROS
+void
+start_kerberos_server (tofdp, fromfdp, log)
+     int *tofdp, *fromfdp;
+     char *log;
+{
+  int tofd, fromfd;
 
+  struct hostent *hp;
+  char *hname;
+  const char *realm;
+  const char *portenv;
+  int port;
+  struct sockaddr_in sin;
+  int s;
+  KTEXT_ST ticket;
+  int status;
+  
+  /*
+   * We look up the host to give a better error message if it
+   * does not exist.  However, we then pass server_host to
+   * krb_sendauth, rather than the canonical name, because
+   * krb_sendauth is going to do its own canonicalization anyhow
+   * and that lets us not worry about the static storage used by
+   * gethostbyname.
+   */
+  hp = gethostbyname (server_host);
+  if (hp == NULL)
+    error (1, 0, "%s: unknown host", server_host);
+  hname = xmalloc (strlen (hp->h_name) + 1);
+  strcpy (hname, hp->h_name);
+  
+  realm = krb_realmofhost (hname);
+  
+  portenv = getenv ("CVS_CLIENT_PORT");
+  if (portenv != NULL)
+    {
+      port = atoi (portenv);
+      if (port <= 0)
+        goto try_rsh_no_message;
+      port = htons (port);
+    }
+  else
+    {
+      struct servent *sp;
+      
+      sp = getservbyname ("cvs", "tcp");
+      if (sp == NULL)
+        port = htons (CVS_PORT);
+      else
+        port = sp->s_port;
+    }
+  
+  s = socket (AF_INET, SOCK_STREAM, 0);
+  if (s < 0)
+    error (1, errno, "socket");
+  
+  memset (&sin, 0, sizeof sin);
+  sin.sin_family = AF_INET;
+  sin.sin_addr.s_addr = INADDR_ANY;
+  sin.sin_port = 0;
+  
+  if (bind (s, (struct sockaddr *) &sin, sizeof sin) < 0)
+    error (1, errno, "bind");
+  
+  memcpy (&sin.sin_addr, hp->h_addr, hp->h_length);
+  sin.sin_port = port;
+  
+  tofd = -1;
+  if (connect (s, (struct sockaddr *) &sin, sizeof sin) < 0)
+    {
+      error (0, errno, "connect");
+      close (s);
+    }
+  else
+    {
+      struct sockaddr_in laddr;
+      int laddrlen;
+      MSG_DAT msg_data;
+      CREDENTIALS cred;
+      Key_schedule sched;
+      
+      laddrlen = sizeof (laddr);
+      if (getsockname (s, (struct sockaddr *) &laddr, &laddrlen) < 0)
+        error (1, errno, "getsockname");
+      
+      /* We don't care about the checksum, and pass it as zero.  */
+      status = krb_sendauth (KOPT_DO_MUTUAL, s, &ticket, "rcmd",
+                             hname, realm, (unsigned long) 0, &msg_data,
+                             &cred, sched, &laddr, &sin, "KCVSV1.0");
+      if (status != KSUCCESS)
+        {
+          error (0, 0, "kerberos: %s", krb_get_err_text(status));
+          close (s);
+        }
+      else
+        {
+          server_fd = s;
+          close_on_exec (server_fd);
+          /*
+           * If we do any filtering, TOFD and FROMFD will be
+           * closed.  So make sure they're copies of SERVER_FD,
+           * and not the same fd number.
+           */
+          if (log)
+            {
+              tofd = dup (s);
+              fromfd = dup (s);
+            }
+          else
+            tofd = fromfd = s;
+        }
+    }
+  
+  if (tofd == -1)
+    {
+      error (0, 0, "trying to start server using rsh");
+    try_rsh_no_message:
+      server_fd = -1;
+#if ! RSH_NOT_TRANSPARENT
+      start_rsh_server (&tofd, &fromfd);
+#else /* RSH_NOT_TRANSPARENT */
+#if defined (START_SERVER)
+      START_SERVER (&tofd, &fromfd, getcaller (),
+                    server_user, server_host, server_cvsroot);
+#endif /* defined (START_SERVER) */
+#endif /* ! RSH_NOT_TRANSPARENT */
+    }
+  free (hname);
+
+  /* Give caller the values it wants. */
+  *tofdp   = tofd;
+  *fromfdp = fromfd;
+}
+
+#endif /* HAVE_KERBEROS */
+
+/* Contact the server.  */
 void
 start_server ()
 {
@@ -2089,144 +2279,35 @@ start_server ()
     char *log = getenv ("CVS_CLIENT_LOG");
 
 #if HAVE_KERBEROS
-    {
-	struct hostent *hp;
-	char *hname;
-	const char *realm;
-	const char *portenv;
-	int port;
-	struct sockaddr_in sin;
-	int s;
-	KTEXT_ST ticket;
-	int status;
-
-	/*
-	 * We look up the host to give a better error message if it
-	 * does not exist.  However, we then pass server_host to
-	 * krb_sendauth, rather than the canonical name, because
-	 * krb_sendauth is going to do its own canonicalization anyhow
-	 * and that lets us not worry about the static storage used by
-	 * gethostbyname.
-	 */
-	hp = gethostbyname (server_host);
-	if (hp == NULL)
-	    error (1, 0, "%s: unknown host", server_host);
-	hname = xmalloc (strlen (hp->h_name) + 1);
-	strcpy (hname, hp->h_name);
-
-	realm = krb_realmofhost (hname);
-
-	portenv = getenv ("CVS_CLIENT_PORT");
-	if (portenv != NULL)
-	{
-	    port = atoi (portenv);
-	    if (port <= 0)
-		goto try_rsh_no_message;
-	    port = htons (port);
-	}
-	else
-	{
-	    struct servent *sp;
-
-	    sp = getservbyname ("cvs", "tcp");
-	    if (sp == NULL)
-		port = htons (CVS_PORT);
-	    else
-		port = sp->s_port;
-	}
-
-	s = socket (AF_INET, SOCK_STREAM, 0);
-	if (s < 0)
-	    error (1, errno, "socket");
-
-	memset (&sin, 0, sizeof sin);
-	sin.sin_family = AF_INET;
-	sin.sin_addr.s_addr = INADDR_ANY;
-	sin.sin_port = 0;
-
-	if (bind (s, (struct sockaddr *) &sin, sizeof sin) < 0)
-	    error (1, errno, "bind");
-
-	memcpy (&sin.sin_addr, hp->h_addr, hp->h_length);
-	sin.sin_port = port;
-
-	tofd = -1;
-	if (connect (s, (struct sockaddr *) &sin, sizeof sin) < 0)
-	{
-	    error (0, errno, "connect");
-	    close (s);
-	}
-	else
-	{
-	    struct sockaddr_in laddr;
-	    int laddrlen;
-	    MSG_DAT msg_data;
-	    CREDENTIALS cred;
-	    Key_schedule sched;
-
-	    laddrlen = sizeof (laddr);
-	    if (getsockname (s, (struct sockaddr *) &laddr, &laddrlen) < 0)
-	        error (1, errno, "getsockname");
-
-	    /* We don't care about the checksum, and pass it as zero.  */
-	    status = krb_sendauth (KOPT_DO_MUTUAL, s, &ticket, "rcmd",
-				   hname, realm, (unsigned long) 0, &msg_data,
-				   &cred, sched, &laddr, &sin, "KCVSV1.0");
-	    if (status != KSUCCESS)
-	    {
-	        error (0, 0, "kerberos: %s", krb_get_err_text(status));
-		close (s);
-	    }
-	    else
-	    {
-		server_fd = s;
-		close_on_exec (server_fd);
-		/*
-		 * If we do any filtering, TOFD and FROMFD will be
-		 * closed.  So make sure they're copies of SERVER_FD,
-		 * and not the same fd number.
-		 */
-		if (log)
-		{
-		    tofd = dup (s);
-		    fromfd = dup (s);
-		}
-		else
-		    tofd = fromfd = s;
-	    }
-	}
-
-	if (tofd == -1)
-	{
-	    error (0, 0, "trying to start server using rsh");
-	  try_rsh_no_message:
-	    server_fd = -1;
-#if ! RSH_NOT_TRANSPARENT
-	    start_rsh_server (&tofd, &fromfd);
-#else
-#if defined (START_SERVER)
-            START_SERVER (&tofd, &fromfd, getcaller (),
-                          server_user, server_host, server_cvsroot);
-#endif /* START_SERVER */
-#endif /* RSH_NOT_TRANSPARENT */
-	}
-	free (hname);
-    }
+    start_kerberos_server (&tofd, &fromfd, log);
 
 #else /* ! HAVE_KERBEROS */
-#if ! RSH_NOT_TRANSPARENT
-    start_rsh_server (&tofd, &fromfd);
-#else
-#if defined(START_SERVER)
-    /* This is all a real mess.  We now have three ways of connecting
-       to the server, and there's a fourth on the horizon.  We should
-       clean this all up before adding the fourth.  */
-    START_SERVER (&tofd, &fromfd, getcaller (),
-                  server_user, server_host, server_cvsroot);
-#endif /* START_SERVER */
-#endif /* RSH_NOT_TRANSPARENT */
-#endif /* ! HAVE_KERBEROS */
 
+#ifdef CVS_LOGIN
+    if (use_authenticating_server)
+      {
+        error (1, 0, "authenticating server not implemented yet");
+        exit (1); /* this should never be reached, actually */
+      }
+    else
+      {
+#endif /* CVS_LOGIN */
+
+#if ! RSH_NOT_TRANSPARENT
+        start_rsh_server (&tofd, &fromfd);
+#else /* RSH_NOT_TRANSPARENT */
+
+#if defined(START_SERVER)
+        START_SERVER (&tofd, &fromfd, getcaller (),
+                      server_user, server_host, server_cvsroot);
+#endif /* defined(START_SERVER) */
+#endif /* ! RSH_NOT_TRANSPARENT */
+#ifdef CVS_LOGIN
+      } /* closes an `else' that exists iff CVS_LOGIN */
+#endif /* CVS_LOGIN */
+#endif /* HAVE_KERBEROS */
+
+    /* todo: some OS's don't need these calls... */
     close_on_exec (tofd);
     close_on_exec (fromfd);
 
@@ -2250,11 +2331,10 @@ start_server ()
 	free (buf);
     }
 
-    /* Should be using binary mode on systems which have it.  */
+    /* These will use binary mode on systems which have it.  */
     to_server = fdopen (tofd, FOPEN_BINARY_WRITE);
     if (to_server == NULL)
 	error (1, errno, "cannot fdopen %d for write", tofd);
-    /* Should be using binary mode on systems which have it.  */
     from_server = fdopen (fromfd, FOPEN_BINARY_READ);
     if (from_server == NULL)
 	error (1, errno, "cannot fdopen %d for read", fromfd);
@@ -2395,6 +2475,81 @@ start_server ()
 #ifndef RSH_NOT_TRANSPARENT
 /* Contact the server by starting it with rsh.  */
 
+/* Right now, we have two different definitions for this function,
+   depending on whether we start the rsh server using popenRW or not.
+   This isn't ideal, and the best thing would probably be to change
+   the OS/2 port to be more like the regular Unix client (i.e., by
+   implementing piped_child)... but I'm doing something else at the
+   moment, and wish to make only one change at a time.  -Karl */
+
+#ifdef START_RSH_WITH_POPEN_RW
+
+static void
+start_rsh_server (tofdp, fromfdp)
+     int *tofdp, *fromfdp;
+{
+  int pipes[2];
+  
+  /* If you're working through firewalls, you can set the
+     CVS_RSH environment variable to a script which uses rsh to
+     invoke another rsh on a proxy machine.  */
+  char *cvs_rsh = getenv ("CVS_RSH");
+  char *cvs_server = getenv ("CVS_SERVER");
+  char command[PATH_MAX];
+  int i = 0;
+  /* This needs to fit "rsh", "-b", "-l", "USER", "host",
+	 "cmd (w/ args)", and NULL.  We leave some room to grow. */
+  char *rsh_argv[10];
+  
+  if (!cvs_rsh)
+    cvs_rsh = "rsh";
+  if (!cvs_server)
+    cvs_server = "cvs";
+  
+  /* If you are running a very old (Nov 3, 1994, before 1.5)
+   * version of the server, you need to make sure that your .bashrc
+   * on the server machine does not set CVSROOT to something
+   * containing a colon (or better yet, upgrade the server).  */
+  
+  /* The command line starts out with rsh. */
+  rsh_argv[i++] = cvs_rsh;
+  
+  /* "-b" for binary, under OS/2. */
+  rsh_argv[i++] = "-b";
+
+  /* Then we strcat more things on the end one by one. */
+  if (server_user != NULL)
+    {
+      rsh_argv[i++] = "-l";
+      rsh_argv[i++] = server_user;
+    }
+  
+  rsh_argv[i++] = server_host;
+  rsh_argv[i++] = cvs_server;
+  rsh_argv[i++] = "server";
+
+  /* Mark the end of the arg list. */
+  rsh_argv[i]   = (char *) NULL;
+
+  if (trace)
+    {
+      fprintf (stderr, " -> Starting server: ");
+      fprintf (stderr, "%s", command);
+      putc ('\n', stderr);
+    }
+  
+  /* Do the deed. */
+  rsh_pid = popenRW (rsh_argv, pipes);
+  if (rsh_pid < 0)
+    error (1, errno, "cannot start server via rsh");
+
+  /* Give caller the file descriptors. */
+  *tofdp   = pipes[0];
+  *fromfdp = pipes[1];
+}
+
+#else /* ! START_RSH_WITH_POPEN_RW */
+
 static void
 start_rsh_server (tofdp, fromfdp)
      int *tofdp;
@@ -2460,7 +2615,10 @@ start_rsh_server (tofdp, fromfdp)
 	    error (1, errno, "cannot start server via rsh");
     }
 }
-#endif
+
+#endif /* START_RSH_WITH_POPEN_RW */
+#endif /* ! RSH_NOT_TRANSPARENT */
+
 
 
 /* Send an argument STRING.  */
@@ -2524,7 +2682,7 @@ send_modified (file, short_pathname)
 	int readsize = 8192;
 #ifdef LINES_CRLF_TERMINATED
 	char tempfile[L_tmpnam];
-#endif
+#endif /* LINES_CRLF_TERMINATED */
 
 #ifdef LINES_CRLF_TERMINATED
 	/* gzip reads and writes files without munging CRLF sequences, as it
@@ -2554,7 +2712,7 @@ send_modified (file, short_pathname)
         fd = open (tempfile, O_RDONLY | OPEN_BINARY);
         if (fd < 0)
 	    error (1, errno, "reading %s", short_pathname);
-#endif
+#endif /* LINES_CRLF_TERMINATED */
 
 	fd = filter_through_gzip (fd, 1, gzip_level, &gzip_pid);
 	while (1)
@@ -3016,7 +3174,7 @@ client_senddate (date)
 #ifndef HAVE_RCS5
     /* We need to fix the timezone in this case; see Make_Date.  */
     abort ();
-#endif
+#endif /* HAVE_RCS5 */
 
     sprintf (buf, "%d/%d/%d %d:%d:%d GMT", month, day, year,
 	     hour, minute, second);

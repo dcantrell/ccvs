@@ -65,6 +65,9 @@ char *command_name = "cvs";
 
 char hostname[MAXHOSTNAMELEN];
 
+#ifdef CVS_LOGIN
+int use_authenticating_server = FALSE;
+#endif /* CVS_LOGIN */
 int use_editor = TRUE;
 int use_cvsrc = TRUE;
 int cvswrite = !CVSREAD_DFLT;
@@ -100,7 +103,6 @@ int import PROTO((int argc, char **argv));
 int cvslog PROTO((int argc, char **argv));
 #ifdef CVS_LOGIN
 int login PROTO((int argc, char **argv));
-int connect_to_pserver PROTO((int argc, char **argv));
 #endif
 int patch PROTO((int argc, char **argv));
 int release PROTO((int argc, char **argv));
@@ -141,8 +143,6 @@ const struct cmd
     CMD_ENTRY("log",      "lo",    "rlog",    cvslog,    client_log),
 #ifdef CVS_LOGIN
     CMD_ENTRY("login",    "logon", "lgn",     login,     login),
-    CMD_ENTRY("connect",  "conn",  "con",     connect_to_pserver, \
-                                                         connect_to_pserver),
 #endif
     CMD_ENTRY("rdiff",    "patch", "pa",      patch,     client_rdiff),
     CMD_ENTRY("release",  "re",    "rel",     release,   client_release),
@@ -172,6 +172,9 @@ static const char *const usg[] =
     "        -H           Displays Usage information for command\n",
     "        -Q           Cause CVS to be really quiet.\n",
     "        -q           Cause CVS to be somewhat quiet.\n",
+#ifdef CVS_LOGIN
+    "        -a           Use the authenticating server, not rsh.\n",
+#endif /* CVS_LOGIN */
     "        -r           Make checked-out files read-only\n",
     "        -w           Make checked-out files read-write (default)\n",
     "        -l           Turn History logging off\n",
@@ -198,7 +201,6 @@ static const char *const usg[] =
     "        log          Prints out 'rlog' information for files\n",
 #ifdef CVS_LOGIN
     "        login        Prompt for password for authenticating server.\n",
-    "        connect      Connect to the authenticating server.\n",
 #endif
     "        rdiff        'patch' format diffs between releases\n",
     "        release      Indicate that a Module is no longer in use\n",
@@ -334,6 +336,11 @@ main (argc, argv)
 	    case 'r':
 		cvswrite = FALSE;
 		break;
+#ifdef CVS_LOGIN
+	    case 'a':
+		use_authenticating_server = TRUE;
+		break;
+#endif /* CVS_LOGIN */
 	    case 'w':
 		cvswrite = TRUE;
 		break;
@@ -500,7 +507,6 @@ error 0 %s: no such user\n", user);
             printf ("%c", toupper (c));
             fflush (stdout);
           }
-        fclose (stdout);
         exit (0);
 
         /* todo:
