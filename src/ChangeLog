@@ -1,5 +1,10 @@
 Fri Feb  9 15:30:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* import.c (comtable): Remove SYSTEM_COMMENT_TABLE; the table
+	should *not* depend on what kind of machine the server happens to
+	be.  Add "mak", "rc", "dlg", "frm", and "bas" types which were
+	formerly included via SYSTEM_COMMENT_TABLE.
+
 	* cvs.h, rcs.h, add.c, checkin.c, classify.c, commit.c, diff.c,
 	import.c, patch.c, rcs.c, update.c, vers_ts.c: Remove
 	DEATH_SUPPORT ifdefs.  They were introduced to facilitate merging
