@@ -1,3 +1,23 @@
+2003-11-24  Mark D. Baushke  <mdb@cvshome.org>
+
+	* client.c (connect_to_forked_server): Avoid passing NULL strings
+	to TRACE. Calling printf("%s",NULL) is not defined and may
+	segfault on some systems.	
+	* diff.c (diff_file_nodiff): Ditto.
+	* main.c (main): Ditto.
+	* modules.c (do_module): Ditto.
+	* patch.c (patch_proc): Ditto.
+	* rcs.c (RCS_cmp_file): Ditto.
+	* recurse.c (start_recursion): Ditto.
+	* root.c (parse_cvsroot): Ditto.
+	* server.c (dirswitch, server_pathname_check, dirswitch,
+	serve_directory):  Ditto.
+	* tag.c (rtag_proc, check_fileproc, tag_check_valid): Ditto.
+	* sanity.sh (trace): New testcase to test the -t option.
+	(RCSDATE, ISODATE, HEX): New variables in aid of the trace tests.
+	(dotest_fail_sort): New function in aid of the trace tests.
+	(template): Fix cleanup.
+
 2003-11-24  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (modes3): Skip modes3-5 entirely under Cygwin since

@@ -171,7 +171,8 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 	       (void *) fileproc, (void *) filesdoneproc,
 	       (void *) direntproc, (void *) dirleaveproc,
 	       (void *) callerdat, argc, (void *) argv,
-	       local, which, aflag, locktype, update_preload, dosrcs,
+	       local, which, aflag, locktype,
+	       update_preload ? update_preload : "(null)", dosrcs,
 	       repository_in ? repository_in : "(null)");
 #else
     TRACE ( TRACE_FLOW,
@@ -184,7 +185,8 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 	       (unsigned long) fileproc, (unsigned long) filesdoneproc,
 	       (unsigned long) direntproc, (unsigned long) dirleaveproc,
 	       (unsigned long) callerdat, argc, (unsigned long) argv,
-	       local, which, aflag, locktype, update_preload, dosrcs,
+	       local, which, aflag, locktype,
+	       update_preload ? update_preload : "(null)", dosrcs,
 	       repository_in ? repository_in : "(null)");
 #endif
 

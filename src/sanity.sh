@@ -425,11 +425,19 @@ tempname="[-a-zA-Z0-9/.%_]*"
 # Regexp to match a date in RFC822 format (as amended by RFC1123).
 RFCDATE="[a-zA-Z0-9 ][a-zA-Z0-9 ]* [0-9:][0-9:]* -0000"
 RFCDATE_EPOCH="1 Jan 1970 00:00:00 -0000"
+RCSDATE="[0-9/]* [0-9:]*"
 
 # Regexp to match a date in standard Unix format as used by rdiff
 # FIXCVS: There's no reason for rdiff to use a different date format
 # than diff does
 DATE="[a-zA-Z]* [a-zA-Z]* [ 1-3][0-9] [0-9:]* [0-9]*"
+# ISO 8601 format "yyyy-dd-mm hh:mm -0000"
+ISODATE="[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9] [+-][0-9][0-9][0-9][0-9]"
+# %p format is not well defined (nil) and hex digits are common. Using
+# ..* is a bad idea as the tests take a very long time to run due to
+# the complexity of the expressions.  If you run into any other characters
+# that are used in a %p format, add them here.
+PFMT="[0-9a-zA-Z()][0-9a-zA-Z()]*"
 
 # On cygwin32, we may not have /bin/sh.
 if test -r /bin/sh; then
@@ -963,6 +971,21 @@ dotest_sort ()
   dotest_internal "$@"
 }
 
+# Like dotest_fail except output is sorted.
+dotest_fail_sort ()
+{
+  rm -f ${TESTDIR}/dotest.ex? 2>&1
+  eval "$2" >${TESTDIR}/dotest.tmp1 2>&1
+  status=$?
+  if test "$status" = 0; then
+    cat ${TESTDIR}/dotest.tmp1 >>${LOGFILE}
+    echo "exit status was $status" >>${LOGFILE}
+    fail "$1"
+  fi
+  ${TR} '	' ' ' < ${TESTDIR}/dotest.tmp1 | sort > ${TESTDIR}/dotest.tmp
+  dotest_internal "$@"
+}
+
 # Avoid picking up any stray .cvsrc, etc., from the user running the tests
 mkdir home
 HOME=${TESTDIR}/home; export HOME
@@ -1032,7 +1055,7 @@ if test x"$*" = x; then
 	# Multiple root directories and low-level protocol tests.
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
 	tests="${tests} rmroot reposmv pserver server server2 client"
-	tests="${tests} dottedroot fork commit-d template"
+	tests="${tests} dottedroot fork commit-d template trace"
 else
 	tests="$*"
 fi
@@ -27107,12 +27130,2769 @@ ${SPROG} update: Updating first/subdir"
 	  dokeep
 
 	  # cleanup
-	  rm -f ${CVS_DIRNAME}/CVSROOT/rcsinfo,v \
-                ${CVS_DIRNAME}/CVSROOT/rcsinfo \
-                ${CVS_DIRNAME}/first ${CVS_DIRNAME}/second
+	  rm -fr ${CVSROT_DIRNAME}/CVSROOT/rcsinfo,v \
+                 ${CVSROOT_DIRNAME}/CVSROOT/rcsinfo \
+                 ${CVSROOT_DIRNAME}/first ${CVSROOT_DIRNAME}/second
 	  dotest template-cleanup-1 "${testcvs} -Q init" ''
 	  cd ..
 	  rm -rf template
+	  ;;
+
+	trace)
+	  # Check that there are no core dumps lurking in the trace
+	  # options. 
+
+	  # Perform some cleanup for normalized testing...
+	  rm ${CVSROOT_DIRNAME}/CVSROOT/history
+	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/cvsignore
+	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/cvsignore,v
+
+	  # checkout the trace option
+
+	  mkdir trace && cd trace
+	  mkdir imp && cd imp
+	  touch file1
+
+	  dotest_sort trace-0 "${testcvs} -t -t -t init" \
+"  *-> Lock_Cleanup()
+  *-> RCS_checkout (checkoutlist,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (commitinfo,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (config,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (cvswrappers,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (loginfo,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (modules,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (notify,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (rcsinfo,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (taginfo,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (verifymsg,v, , , , \.#[0-9][0-9]*)
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#checkoutlist)
+  *-> unlink_file(\.#commitinfo)
+  *-> unlink_file(\.#config)
+  *-> unlink_file(\.#cvswrappers)
+  *-> unlink_file(\.#loginfo)
+  *-> unlink_file(\.#modules)
+  *-> unlink_file(\.#notify)
+  *-> unlink_file(\.#rcsinfo)
+  *-> unlink_file(\.#taginfo)
+  *-> unlink_file(\.#verifymsg)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )" \
+"
+  *-> Forking server: ${CVS_SERVER} server
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> RCS_checkout (checkoutlist,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (commitinfo,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (config,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (cvswrappers,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (loginfo,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (modules,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (notify,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (rcsinfo,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (taginfo,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (verifymsg,v, , , , \.#[0-9][0-9]*)
+S -> remove_locks()
+S -> remove_locks()
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#[0-9][0-9]*)
+S -> unlink_file(\.#checkoutlist)
+S -> unlink_file(\.#commitinfo)
+S -> unlink_file(\.#config)
+S -> unlink_file(\.#cvswrappers)
+S -> unlink_file(\.#loginfo)
+S -> unlink_file(\.#modules)
+S -> unlink_file(\.#notify)
+S -> unlink_file(\.#rcsinfo)
+S -> unlink_file(\.#taginfo)
+S -> unlink_file(\.#verifymsg)" \
+
+	  dotest_sort trace-1 \
+"${testcvs} -t -t -t import -mimport trace MYVENDOR version-1" \
+"
+
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> safe_location( where=(null) )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+N trace/file1
+No conflicts created by this import" \
+"
+
+
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Sending file \`file1' to server
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+N trace/file1
+No conflicts created by this import
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> remove_locks()
+S -> remove_locks()
+S -> safe_location( where=(null) )
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()"
+
+	  cd ..
+	  rm -fr imp
+
+	  dotest_sort trace-2 "${testcvs} -t -t -t co trace" \
+"  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *local=0, which=3, aflag=0,
+  *locktype=1, update_preload=trace
+  *-> Create_Admin
+  *-> Create_Admin (\., trace, ${CVSROOT_DIRNAME}/trace, , , 0, 0, 1)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, , , file1)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Register(file1, 1\.1\.1\.1, ${DATE}, ,  )
+  *-> Write_Template (trace, ${CVSROOT_DIRNAME}/trace)
+  *-> chmod(file1,[0-7][0-7]*)
+  *-> do_module (trace, Updating, NULL, NULL)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> safe_location( where=(null) )
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(\./CVS/Entries\.Static)
+  *-> unlink_file(\./CVS/Tag)
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> unlink_file_dir(CVS/,,file1)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+U trace/file1
+${SPROG} checkout: Updating trace" \
+"
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *local=0, which=3, aflag=0,
+  *locktype=1, update_preload=trace
+  *-> Create_Admin
+  *-> Create_Admin (trace, trace, ${CVSROOT_DIRNAME}/trace, , , 0, 0, 1)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Register(file1, 1\.1\.1\.1, ${DATE}, ,  )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(\.new\.file1,file1)
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> safe_location( where=(null) )
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> unlink_file(CVS/Entries\.Static)
+  *-> unlink_file(CVS/Tag)
+  *-> unlink_file(CVS/Template)
+  *-> unlink_file(trace/CVS/Tag)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> Create_Admin
+S -> Create_Admin (\., trace, ${CVSROOT_DIRNAME}/trace, , , 0, 0, 1)
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/rcsinfo, trace, ALL)
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, , , (function))
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Register(file1, 1\.1\.1\.1, , ,  )
+S -> Write_Template (trace, ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (\., ${CVSROOT_DIRNAME})
+S -> dirswitch (\., ${CVSROOT_DIRNAME})
+S -> do_module (trace, Updating, NULL, NULL)
+S -> do_module (trace, Updating, NULL, NULL)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> safe_location( where=(null) )
+S -> serve_directory (\.)
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_register(file1, 1\.1\.1\.1, , , , , )
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(\./CVS/Entries\.Static)
+S -> unlink_file(\./CVS/Tag)
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+U trace/file1
+${SPROG} checkout: Updating trace"
+
+	  cd trace
+	  mkdir subdir
+	  dotest_sort trace-3 "${testcvs} -t -t -t add subdir" \
+"  *-> Create_Admin
+  *-> Create_Admin (\., subdir, ${CVSROOT_DIRNAME}/trace/subdir, , , 0, 0, 1)
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace/subdir, ALL)
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> unlink_file(\./CVS/Tag)
+  *-> unlink_file(${CVSROOT_DIRNAME}/trace/subdir/CVS/fileattr)
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+Directory ${CVSROOT_DIRNAME}/trace/subdir added to the repository" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *-> Create_Admin
+  *-> Create_Admin (subdir, subdir, ${CVSROOT_DIRNAME}/trace/subdir, , , 0, 0, 1)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+${DOTSTAR}  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+${DOTSTAR}  *-> unlink_file(CVS/Template)
+  *-> unlink_file(subdir/CVS/Tag)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${DOTSTAR}Directory ${CVSROOT_DIRNAME}/trace/subdir added to the repository
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace/subdir, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/rcsinfo, trace/subdir, ALL)
+S -> Write_Template (subdir, ${CVSROOT_DIRNAME}/trace/subdir)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (subdir, ${CVSROOT_DIRNAME}/trace/subdir)
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> serve_directory (subdir)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> unlink_file(${CVSROOT_DIRNAME}/trace/subdir/CVS/fileattr)
+S -> unlink_file(CVS/Entries\.Log)
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )"
+	  touch file2
+	  dotest_sort trace-4 "${testcvs} -t -t -t add file2" \
+"  *-> Lock_Cleanup()
+  *-> Register(file2, 0, Initial file2, ,  )
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${SPROG} add: scheduling file \`file2' for addition
+${SPROG} add: use \`${SPROG} commit' to add this file permanently" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Register(file2, 0, dummy timestamp, ,  )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+${DOTSTAR}  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+${DOTSTAR}  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${DOTSTAR}S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Register(file2, 0, Initial file2, ,  )
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_register(file2, 0, Initial file2, , , , )
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${SPROG} add: scheduling file \`file2' for addition
+${SPROG} add: use \`${SPROG} commit' to add this file permanently"
+	  dotest_sort trace-5 "${testcvs} -t -t -t ci -mnew-file file2" \
+"  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/commitinfo, trace, ALL)
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file2,v, 1, , , (function))
+  *-> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file2,v, 1, (null), , file2 )
+  *-> Register(file2, 1\.1, ${DATE}, ,  )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, )
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> rcs_cleanup()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Base/file2)
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> unlink_file(CVS/file2,t)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> write_lock(${CVSROOT_DIRNAME}/trace)
+${CVSROOT_DIRNAME}/trace/file2,v  <--  file2
+Checking in file2;
+RCS file: ${CVSROOT_DIRNAME}/trace/file2,v
+done
+done
+initial revision: 1\.1" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Register(file2, 1\.1, ${DATE}, ,  )
+  *-> Sending file \`file2' to server
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Base/file2)
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${CVSROOT_DIRNAME}/trace/file2,v  <--  file2
+Checking in file2;
+RCS file: ${CVSROOT_DIRNAME}/trace/file2,v
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/commitinfo, trace, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file2,v, 1, , , (function))
+S -> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file2,v, 1, (null), , file2 )
+S -> Register(file2, 1\.1, ${DATE}, ,  )
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, )
+S -> lock_simple_remove()
+S -> rcs_cleanup()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+S -> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file2)
+S -> server_pathname_check (file2)
+S -> server_pathname_check (file2)
+S -> server_register(file2, 1\.1, ${DATE}, , , , )
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(CVS/Entries\.Log)
+S -> unlink_file(CVS/file2,t)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> write_lock(${CVSROOT_DIRNAME}/trace)
+done
+done
+initial revision: 1\.1"
+	  dotest_sort trace-6 "${testcvs} -t -t -t tag bp" \
+"  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in= )
+  *dosrcs=1, repository_in= )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=1, update_preload=(null)
+  *locktype=2, update_preload=(null)
+  *local_specified=0, mname=(null), msg=(null) )
+  *mwhere=(null), mfile=(null), shorten=0,
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/taginfo, trace, ALL)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+  *-> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file1, ${CVSROOT_DIRNAME}/trace/file1,v )
+  *-> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file2, ${CVSROOT_DIRNAME}/trace/file2,v )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, )
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> rcs_cleanup()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> rtag_proc ( argc=1, argv=${PFMT}, xwhere=(null),
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> write_lock(${CVSROOT_DIRNAME}/trace)
+  *-> write_lock(${CVSROOT_DIRNAME}/trace/subdir)
+T file1
+T file2
+${SPROG} tag: Tagging \.
+${SPROG} tag: Tagging subdir" \
+"
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in= )
+  *dosrcs=1, repository_in= )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+  *locktype=2, update_preload=(null)
+  *local_specified=0, mname=(null), msg=(null) )
+  *mwhere=(null), mfile=(null), shorten=0,
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/taginfo, trace, ALL)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+S -> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file1, ${CVSROOT_DIRNAME}/trace/file1,v )
+S -> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file2, ${CVSROOT_DIRNAME}/trace/file2,v )
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (subdir, ${CVSROOT_DIRNAME}/trace/subdir)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, )
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, )
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> rcs_cleanup()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+S -> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> rtag_proc ( argc=1, argv=${PFMT}, xwhere=(null),
+S -> serve_directory (\.)
+S -> serve_directory (\.)
+S -> serve_directory (subdir)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(CVS/Entries\.Log)
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> write_lock(${CVSROOT_DIRNAME}/trace)
+S -> write_lock(${CVSROOT_DIRNAME}/trace/subdir)
+T file1
+T file2
+${SPROG} tag: Tagging \.
+${SPROG} tag: Tagging subdir"
+
+	  dotest_sort trace-7 "${testcvs} -t -t -t tag -b branch1" \
+"  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in= )
+  *dosrcs=1, repository_in= )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=1, update_preload=(null)
+  *locktype=2, update_preload=(null)
+  *local_specified=0, mname=(null), msg=(null) )
+  *mwhere=(null), mfile=(null), shorten=0,
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/taginfo, trace, ALL)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+  *-> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file1, ${CVSROOT_DIRNAME}/trace/file1,v )
+  *-> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file2, ${CVSROOT_DIRNAME}/trace/file2,v )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, )
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> rcs_cleanup()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+  *-> rtag_proc ( argc=1, argv=${PFMT}, xwhere=(null),
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> write_lock(${CVSROOT_DIRNAME}/trace)
+  *-> write_lock(${CVSROOT_DIRNAME}/trace/subdir)
+T file1
+T file2
+${SPROG} tag: Tagging \.
+${SPROG} tag: Tagging subdir" \
+"
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in= )
+  *dosrcs=1, repository_in= )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+  *locktype=2, update_preload=(null)
+  *local_specified=0, mname=(null), msg=(null) )
+  *mwhere=(null), mfile=(null), shorten=0,
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/taginfo, trace, ALL)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+S -> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file1, ${CVSROOT_DIRNAME}/trace/file1,v )
+S -> check_fileproc ( ${CVSROOT_DIRNAME}/trace, file2, ${CVSROOT_DIRNAME}/trace/file2,v )
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (subdir, ${CVSROOT_DIRNAME}/trace/subdir)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, )
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, )
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> rcs_cleanup()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+S -> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> rtag_proc ( argc=1, argv=${PFMT}, xwhere=(null),
+S -> serve_directory (\.)
+S -> serve_directory (\.)
+S -> serve_directory (subdir)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(CVS/Entries\.Log)
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> write_lock(${CVSROOT_DIRNAME}/trace)
+S -> write_lock(${CVSROOT_DIRNAME}/trace/subdir)
+T file1
+T file2
+${SPROG} tag: Tagging \.
+${SPROG} tag: Tagging subdir"
+	  dotest_sort trace-8 "${testcvs} -t -t -t log" \
+"
+
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=7, aflag=0,
+  *locktype=1, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+ MYVENDOR: 1\.1\.1
+ bp: 1\.1
+ bp: 1\.1\.1\.1
+ branch1: 1\.1\.0\.2
+ branch1: 1\.1\.1\.1\.0\.2
+ version-1: 1\.1\.1\.1
+----------------------------
+----------------------------
+----------------------------
+=============================================================================
+=============================================================================
+Initial revision
+RCS file: ${CVSROOT_DIRNAME}/trace/file1,v
+RCS file: ${CVSROOT_DIRNAME}/trace/file2,v
+Working file: file1
+Working file: file2
+access list:
+access list:
+branch:
+branch: 1\.1\.1
+branches:  1\.1\.1;
+${SPROG} log: Logging \.
+${SPROG} log: Logging subdir
+date: ${RCSDATE};  author: ${username};  state: Exp;
+date: ${RCSDATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${RCSDATE};  author: ${username};  state: Exp;
+description:
+description:
+head: 1\.1
+head: 1\.1
+import
+keyword substitution: kv
+keyword substitution: kv
+locks: strict
+locks: strict
+new-file
+revision 1\.1
+revision 1\.1
+revision 1\.1\.1\.1
+symbolic names:
+symbolic names:
+total revisions: 1; selected revisions: 1
+total revisions: 2; selected revisions: 2" \
+"
+
+
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=7, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+ MYVENDOR: 1\.1\.1
+ bp: 1\.1
+ bp: 1\.1\.1\.1
+ branch1: 1\.1\.0\.2
+ branch1: 1\.1\.1\.1\.0\.2
+ version-1: 1\.1\.1\.1
+----------------------------
+----------------------------
+----------------------------
+=============================================================================
+=============================================================================
+Initial revision
+RCS file: ${CVSROOT_DIRNAME}/trace/file1,v
+RCS file: ${CVSROOT_DIRNAME}/trace/file2,v
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (subdir, ${CVSROOT_DIRNAME}/trace/subdir)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> serve_directory (\.)
+S -> serve_directory (subdir)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(CVS/Entries\.Log)
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+Working file: file1
+Working file: file2
+access list:
+access list:
+branch:
+branch: 1\.1\.1
+branches:  1\.1\.1;
+${SPROG} log: Logging \.
+${SPROG} log: Logging subdir
+date: ${RCSDATE};  author: ${username};  state: Exp;
+date: ${RCSDATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: ${RCSDATE};  author: ${username};  state: Exp;
+description:
+description:
+head: 1\.1
+head: 1\.1
+import
+keyword substitution: kv
+keyword substitution: kv
+locks: strict
+locks: strict
+new-file
+revision 1\.1
+revision 1\.1
+revision 1\.1\.1\.1
+symbolic names:
+symbolic names:
+total revisions: 1; selected revisions: 1
+total revisions: 2; selected revisions: 2"
+
+	  dotest_sort trace-9 "${testcvs} -t -t -t annotate file1" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in= )
+  *local=0, which=1, aflag=0,
+  *locktype=1, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+Annotations for file1" \
+"
+
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in= )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+Annotations for file1
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )"
+
+	  dotest_sort \
+trace-10 "${testcvs} -t -t -t rtag -r bp -b branch2 trace" \
+"  *aflag=0, repository=${CVSROOT_DIRNAME}/trace )
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *local=0, which=6, aflag=0,
+  *local=0, which=6, aflag=0,
+  *local=0, which=6, aflag=0,
+  *locktype=1, update_preload=(null)
+  *locktype=1, update_preload=trace
+  *locktype=2, update_preload=trace
+  *local_specified=0, mname=trace, msg=Tagging )
+  *mwhere=(null), mfile=(null), shorten=0,
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/taginfo, trace, ALL)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+  *-> check_fileproc ( ${CVSROOT_DIRNAME}/trace, trace/file1, ${CVSROOT_DIRNAME}/trace/file1,v )
+  *-> check_fileproc ( ${CVSROOT_DIRNAME}/trace, trace/file2, ${CVSROOT_DIRNAME}/trace/file2,v )
+  *-> do_module (trace, Tagging, NULL, branch2)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, )
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> rcs_cleanup()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+  *-> rtag_proc ( argc=1, argv=${PFMT}, xwhere=(null),
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> tag_check_valid ( name=bp, argc=0, argv=${PFMT}, local=0,
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> write_lock(${CVSROOT_DIRNAME}/trace)
+  *-> write_lock(${CVSROOT_DIRNAME}/trace/subdir)
+${SPROG} rtag: Tagging trace
+${SPROG} rtag: Tagging trace/subdir" \
+"
+  *aflag=0, repository=${CVSROOT_DIRNAME}/trace )
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *local=0, which=6, aflag=0,
+  *local=0, which=6, aflag=0,
+  *local=0, which=6, aflag=0,
+  *locktype=1, update_preload=(null)
+  *locktype=1, update_preload=trace
+  *locktype=2, update_preload=trace
+  *local_specified=0, mname=trace, msg=Tagging )
+  *mwhere=(null), mfile=(null), shorten=0,
+  *-> Forking server: ${CVS_SERVER} server
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/taginfo, trace, ALL)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace/subdir)
+S -> check_fileproc ( ${CVSROOT_DIRNAME}/trace, trace/file1, ${CVSROOT_DIRNAME}/trace/file1,v )
+S -> check_fileproc ( ${CVSROOT_DIRNAME}/trace, trace/file2, ${CVSROOT_DIRNAME}/trace/file2,v )
+S -> do_module (trace, Tagging, NULL, branch2)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, )
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace/subdir, )
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> lock_simple_remove()
+S -> rcs_cleanup()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+S -> rename(${CVSROOT_DIRNAME}/trace/,file2,,${CVSROOT_DIRNAME}/trace/file2,v)
+S -> rtag_proc ( argc=1, argv=${PFMT}, xwhere=(null),
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> tag_check_valid ( name=bp, argc=0, argv=${PFMT}, local=0,
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> write_lock(${CVSROOT_DIRNAME}/trace)
+S -> write_lock(${CVSROOT_DIRNAME}/trace/subdir)
+${SPROG} rtag: Tagging trace
+${SPROG} rtag: Tagging trace/subdir"
+
+	  dotest_sort trace-11 "${testcvs} -t -t -t status file1" \
+"
+
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *locktype=1, update_preload=(null)
+   Repository revision: 1\.1\.1\.1 ${CVSROOT_DIRNAME}/trace/file1,v
+   Sticky Date:  (none)
+   Sticky Options: (none)
+   Sticky Tag:  (none)
+   Working revision: 1\.1\.1\.1 ${DATE}
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+===================================================================
+File: file1  *Status: Up-to-date" \
+"
+
+
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+   Repository revision: 1\.1\.1\.1 ${CVSROOT_DIRNAME}/trace/file1,v
+   Sticky Date:  (none)
+   Sticky Options: (none)
+   Sticky Tag:  (none)
+   Working revision: 1\.1\.1\.1
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+===================================================================
+File: file1  *Status: Up-to-date
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )"
+
+	  echo foo >> file1
+	  dotest_sort trace-12 "${testcvs} -t -t -t up -C file1" \
+"  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=3, aflag=0,
+  *locktype=1, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, , , (function))
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, , , file1)
+  *-> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, (null), , file1 )
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Register(file1, 1\.1\.1\.1, ${DATE}, ,  )
+  *-> chmod(file1,[0-7][0-7]*)
+  *-> copy(file1,\.#file1\.1\.1\.1\.1)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> rename(file1,CVS/,,file1)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> unlink_file_dir(CVS/,,file1)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+(Locally modified file1 moved to \.#file1\.1\.1\.1\.1)
+U file1" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=3, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Register(file1, 1\.1\.1\.1, ${DATE}, ,  )
+  *-> copy(file1,\.#file1\.1\.1\.1\.1)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(\.new\.file1,file1)
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+(Locally modified file1 moved to \.#file1\.1\.1\.1\.1)
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, , , (function))
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Register(file1, 1\.1\.1\.1, M, ,  )
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> server_register(file1, 1\.1\.1\.1, M, , , , )
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+U file1"
+	  echo foo >> file1
+	  dotest_sort trace-13 "${testcvs} -t -t -t ci -madd-data file1" \
+"  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/commitinfo, trace, ALL)
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, , , , (function))
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1, , -ko, ${tempname})
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, , , (function))
+  *-> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file1,v, (null), (null), , file1 )
+  *-> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, (null), , file1 )
+  *-> Register(file1, 1\.2, ${DATE}, ,  )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, )
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> rcs_cleanup()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(${tempname})
+  *-> unlink_file(${tempname})
+  *-> unlink_file(CVS/Base/file1)
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> write_lock(${CVSROOT_DIRNAME}/trace)
+${CVSROOT_DIRNAME}/trace/file1,v  <--  file1
+Checking in file1;
+done
+new revision: 1\.2; previous revision: 1\.1" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Register(file1, 1\.2, ${DATE}, ,  )
+  *-> Sending file \`file1' to server
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Base/file1)
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${CVSROOT_DIRNAME}/trace/file1,v  <--  file1
+Checking in file1;
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/commitinfo, trace, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, , , , (function))
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1, , -ko, ${tempname})
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, , , (function))
+S -> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file1,v, (null), (null), , file1 )
+S -> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, (null), , file1 )
+S -> Register(file1, 1\.2, ${DATE}, ,  )
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, )
+S -> lock_simple_remove()
+S -> rcs_cleanup()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> server_pathname_check (file1)
+S -> server_pathname_check (file1)
+S -> server_register(file1, 1\.2, ${DATE}, , , , )
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(${tempname})
+S -> unlink_file(${tempname})
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> write_lock(${CVSROOT_DIRNAME}/trace)
+done
+new revision: 1\.2; previous revision: 1\.1"
+
+	  dotest_fail_sort trace-14 "${testcvs} -t -t -t diff -r1.1 file1" \
+"  *aflag=0, repository= )
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=7, aflag=0,
+  *locktype=1, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1, , , ${tempname})
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , , (function))
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , , ${tempname})
+  *-> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file1,v, 1\.1, 1\.2, , file1 )
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> diff_file_nodiff (file1, 3)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> tag_check_valid ( name=1\.1, argc=1, argv=${PFMT}, local=0,
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+0a1
+===================================================================
+> foo
+Index: file1
+RCS file: ${CVSROOT_DIRNAME}/trace/file1,v
+diff -r1\.1 -r1\.2
+retrieving revision 1\.1
+retrieving revision 1\.2" \
+"
+  *aflag=0, repository= )
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=7, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+0a1
+===================================================================
+> foo
+Index: file1
+RCS file: ${CVSROOT_DIRNAME}/trace/file1,v
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1, , , ${tempname})
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , , (function))
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , , ${tempname})
+S -> RCS_cmp_file( ${CVSROOT_DIRNAME}/trace/file1,v, 1\.1, 1\.2, , file1 )
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> diff_file_nodiff (file1, 3)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> tag_check_valid ( name=1\.1, argc=1, argv=${PFMT}, local=0,
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+diff -r1\.1 -r1\.2
+retrieving revision 1\.1
+retrieving revision 1\.2"
+
+	  dotest_sort trace-15 "${testcvs} -t -t -t rdiff -rbp trace/file1" \
+"  *aflag=0, repository=${CVSROOT_DIRNAME}/trace )
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *local=0, which=6, aflag=0,
+  *locktype=1, update_preload=trace
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, bp, , ${tempname})
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , , ${tempname})
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> do_module (trace/file1, Patching, NULL, NULL)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> patch_proc ( (null), (null), (null), 0, 0, trace/file1, Patching )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> tag_check_valid ( name=bp, argc=1, argv=${PFMT}, local=0,
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+\*\*\* 0 \*\*\*\*
+\*\*\* trace/file1:1\.1\.1\.1 ${DATE}
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+${PLUS} foo
+--- 1 ----
+--- trace/file1 ${DATE}
+Index: trace/file1
+diff -c trace/file1:1\.1\.1\.1 trace/file1:1\.2" \
+"
+  *aflag=0, repository=${CVSROOT_DIRNAME}/trace )
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=${CVSROOT_DIRNAME}/trace )
+  *local=0, which=6, aflag=0,
+  *locktype=1, update_preload=trace
+  *-> Forking server: ${CVS_SERVER} server
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+\*\*\* 0 \*\*\*\*
+\*\*\* trace/file1:1\.1\.1\.1 ${DATE}
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+${PLUS} foo
+--- 1 ----
+--- trace/file1 ${DATE}
+Index: trace/file1
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.1\.1\.1, bp, , ${tempname})
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , , ${tempname})
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> do_module (trace/file1, Patching, NULL, NULL)
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> patch_proc ( (null), (null), (null), 0, 0, trace/file1, Patching )
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> tag_check_valid ( name=bp, argc=1, argv=${PFMT}, local=0,
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+diff -c trace/file1:1\.1\.1\.1 trace/file1:1\.2"
+
+	  dotest_sort trace-16 "${testcvs} -t -t -t rm -f file1" \
+"  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *locktype=1, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+  *-> Register(file1, -1\.2, ${DATE}, ,  )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${SPROG} remove: scheduling \`file1' for removal
+${SPROG} remove: use \`${SPROG} commit' to remove this file permanently" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=1, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Register(file1, -1\.2, dummy timestamp, ,  )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Reader_Lock(${CVSROOT_DIRNAME}/trace)
+S -> Register(file1, -1\.2, , ,  )
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_simple_remove()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> server_register(file1, -1\.2, , , , , )
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(CVS/Entries\.Log)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${SPROG} remove: scheduling \`file1' for removal
+${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
+
+	  dotest_sort trace-17 "${testcvs} -t -t -t ci -mremove file1" \
+"  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/commitinfo, trace, ALL)
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+  *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, , , , file1)
+  *-> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , -ko, ${tempname})
+  *-> Scratch_Entry(file1)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, )
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> rcs_cleanup()
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+  *-> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(${tempname})
+  *-> unlink_file(${tempname})
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> unlink_file(file1)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> write_lock(${CVSROOT_DIRNAME}/trace)
+${CVSROOT_DIRNAME}/trace/file1,v  <--  file1
+Removing file1;
+done
+new revision: delete; previous revision: 1\.2" \
+"
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *callerdat=${PFMT}, argc=1, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *dosrcs=1, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Scratch_Entry(file1)
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> rename(CVS/Entries\.Backup,CVS/Entries)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file(CVS/Entries\.Log)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+${CVSROOT_DIRNAME}/trace/file1,v  <--  file1
+Removing file1;
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Leaving do_recursion ( frame=${PFMT} )
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/commitinfo, trace, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
+S -> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, , , , file1)
+S -> RCS_checkout (${CVSROOT_DIRNAME}/trace/file1,v, 1\.2, , -ko, ${tempname})
+S -> Scratch_Entry(file1)
+S -> dirswitch (\., ${CVSROOT_DIRNAME}/trace)
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> do_recursion ( frame=${PFMT} )
+S -> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+S -> lock_name (${CVSROOT_DIRNAME}/trace, )
+S -> lock_simple_remove()
+S -> rcs_cleanup()
+S -> remove_locks()
+S -> remove_locks()
+S -> remove_locks()
+S -> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+S -> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+S -> rename(${CVSROOT_DIRNAME}/trace/,file1,,${CVSROOT_DIRNAME}/trace/file1,v)
+S -> rename(CVS/Entries\.Backup,CVS/Entries)
+S -> serve_directory (\.)
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_pathname_check (file1)
+S -> server_pathname_check (file1)
+S -> server_pathname_check (file1)
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> unlink_file(${tempname})
+S -> unlink_file(${tempname})
+S -> unlink_file(CVS/Entries\.Log)
+S -> unlink_file(file1)
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+S -> write_lock(${CVSROOT_DIRNAME}/trace)
+done
+new revision: delete; previous revision: 1\.2"
+
+	  dotest_sort trace-18 "${testcvs} -t -t -t history file1" \
+"  *-> Lock_Cleanup()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+O ${ISODATE} ${username} trace =trace= ${TESTDIR}/trace/\*" \
+"
+  *-> Forking server: ${CVS_SERVER} server
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+O ${ISODATE} ${username} trace =trace= <remote>/\*
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> remove_locks()
+S -> remove_locks()
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()"
+
+	  cd ..
+	  dotest_sort \
+trace-20 "echo yes | ${testcvs} -t -t -t release -d trace" \
+"  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Lock_Cleanup()
+  *-> Lock_Cleanup()
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace, )
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.lock)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, #cvs\.wfl\.${hostname}\.[0-9][0-9]*)
+  *-> lock_name (${CVSROOT_DIRNAME}/trace/subdir, )
+  *-> lock_simple_remove()
+  *-> lock_simple_remove()
+  *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
+  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> remove_locks()
+  *-> remove_locks()
+  *-> run_popen(${testcvs} -n -q -d ${CVSROOT_DIRNAME} update,r)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file_dir(trace)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> write_lock(${CVSROOT_DIRNAME}/trace)
+  *-> write_lock(${CVSROOT_DIRNAME}/trace/subdir)
+Are you sure you want to release (and delete) directory \`trace':   *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+You have \[0\] altered files in this repository\." \
+"
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *callerdat=${PFMT}, argc=0, argv=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *direntproc=${PFMT}, dirleavproc=${PFMT},
+  *dosrcs=0, repository_in=(null) )
+  *dosrcs=0, repository_in=(null) )
+  *local=0, which=1, aflag=0,
+  *local=0, which=1, aflag=0,
+  *locktype=0, update_preload=(null)
+  *locktype=0, update_preload=(null)
+  *-> Forking server: ${CVS_SERVER} server
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> Leaving do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> do_recursion ( frame=${PFMT} )
+  *-> main loop with CVSROOT=${CVSROOT}
+  *-> parse_cvsroot ( ${CVSROOT} )
+  *-> run_popen(${testcvs} -n -q -d ${CVSROOT} update,r)
+  *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+  *-> unlink_file_dir(trace)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+Are you sure you want to release (and delete) directory \`trace':   *-> start_recursion ( fileproc=${PFMT}, filesdoneproc=${PFMT},
+S -> Lock_Cleanup()
+S -> Lock_Cleanup()
+S -> fopen(${CVSROOT_DIRNAME}/CVSROOT/history,a)
+S -> remove_locks()
+S -> remove_locks()
+S -> server_cleanup()
+S -> server_cleanup()
+S -> server_notify()
+S -> server_notify()
+S -> server_notify()
+You have \[0\] altered files in this repository\."
+
+	  cd ..
+
+	  dokeep
+
+	  rm -fr trace
+	  rm -fr ${CVSROOT_DIRNAME}/trace 
+
 	  ;;
 
 	*)
