@@ -30,7 +30,6 @@
 	
 
 .\diff.c : \
-	"..\lib\getopt.h"\
 	"..\lib\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
@@ -41,7 +40,6 @@
 	
 
 .\diff3.c : \
-	"..\lib\getopt.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\unistd.h"\
