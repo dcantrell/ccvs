@@ -1,3 +1,10 @@
+Tue Oct 22 10:34:21 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* configure.in: don't check for the existence of the /etc/security
+ 	directory, because it's possible to have PAM installed without
+ 	using shadow passwords.
+	* configure: regenerated.
+
 Sat Oct 19 18:34:29 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Say that the remote protocol is not interoperable before
