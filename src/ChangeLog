@@ -1,5 +1,8 @@
 Thu Dec 14 11:56:13 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * run.c (filter_stream_through_program): document return value and
+        error behavior.
+
         * client.c (filter_through_gunzip): pass the supposedly
         superfluous "-d" option to gunzip, to avoid stimulating what seems
         to be an argument-passing bug in spawn() under OS/2 with IBM
