@@ -155,6 +155,9 @@ libcvs_a_SOURCES += regex.h
 ## For GNULIB's save-cwd module.
 libcvs_a_SOURCES += save-cwd.h save-cwd.c
 
+## For GNULIB's stat module.
+libcvs_a_SOURCES += stat-macros.h
+
 ## For GNULIB's stdbool module.
 BUILT_SOURCES += $(STDBOOL_H)
 EXTRA_DIST += stdbool_.h
