@@ -126,6 +126,16 @@ restore_cwd (cwd, dest, current)
     }
 }
 
+static void
+free_cwd (cwd)
+     struct saved_cwd *cwd;
+{
+  if (cwd->desc >= 0)
+    close (cwd->desc);
+  if (cwd->name)
+    free (cwd->name);
+}
+
 /*
  * Called to start a recursive command.
  *
@@ -587,8 +597,7 @@ do_dir_proc (p, closure)
 
 	/* get back to where we started and restore state vars */
 	restore_cwd (&cwd, "saved working directory", NULL);
-	if (cwd.name)
-	    free (cwd.name);
+	free_cwd (&cwd);
 	dirlist = sdirlist;
 	repository = srepository;
     }
@@ -692,8 +701,7 @@ unroll_files_proc (p, closure)
 	free (save_update_dir);
 
 	restore_cwd (&cwd, "saved working directory", NULL);
-	if (cwd.name)
-	    free (cwd.name);
+	free_cwd (&cwd);
     }
 
     dirlist = save_dirlist;
