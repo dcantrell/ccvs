@@ -53,6 +53,9 @@ BUG FIXES
 * CVS now detects write errors on standard output.  Before, e.g.,
   `cvs update -p FILE > /dev/full' would fail to report the write error.
 
+* Thanks to a report and a patch from Georg Scwharz <georg.scwarz@freenet.de>
+  CVS now builds without error on IRIX 5.3
+
 Changes from 1.12.10 to 1.12.11:
 ********************************
 
