@@ -90,7 +90,7 @@ const struct cmd
     { "annotate", NULL,       NULL,        annotate },
     { "checkout", "co",       "get",       checkout },
     { "commit",   "ci",       "com",       commit },
-    { "diff",     "di",       "bdif",      diff },
+    { "diff",     "di",       "dif",      diff },
     { "edit",     "edit",     "edit",      edit },
     { "editors",  "editors",  "editors",   editors },
     { "export",   "exp",      "ex",        checkout },

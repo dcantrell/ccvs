@@ -1,5 +1,8 @@
 Thu May 30 10:07:24 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* main.c (cmds): Fix typo ("bdif" -> "dif") which was accidentally
+	introduced 24 May 96.
+
 	* main.c (main_cleanup): Add comment stating default case will
 	never be reached.
 
