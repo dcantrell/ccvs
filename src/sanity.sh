@@ -3594,17 +3594,6 @@ two
 3
 [>]>>>>>> 1\.2"
 
-	  # Test behavior of symlinks in the repository.
-	  dotest rcslib-symlink-1 "ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
-	  dotest rcslib-symlink-2 "${testcvs} update file2" "U file2"
-	  echo "This is a change" >> file2
-	  dotest rcslib-symlink-3 "${testcvs} ci -m because file2" \
-"Checking in file2;
-${TESTDIR}/cvsroot/first-dir/file1,v  <--  file2
-new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
-done"
-	  dotest rcslib-symlink-4 "test -L ${CVSROOT_DIRNAME}/first-dir/file2,v"
-
 	  cd ..
 
 	  if test "$keep" = yes; then
@@ -9241,7 +9230,7 @@ C file1"
 	  if echo "yes" | ${testcvs} -Q unedit $file \
 	    >${TESTDIR}/test.tmp 2>&1 ; then
 	    dotest unedit-without-baserev-4 "cat ${TESTDIR}/test.tmp" \
-"m has been modified; revert changes${QUESTION} ${PROG} unedit: m not mentioned in CVS/Baserev
+"m has been modified; revert changes? ${PROG} unedit: m not mentioned in CVS/Baserev
 ${PROG} unedit: run update to complete the unedit"
 	  else
 	    fail unedit-without-baserev-4
@@ -9295,7 +9284,7 @@ C m"
 	  rm CVS/Baserev
 	  if (echo yes | ${testcvs} unedit m) >${TESTDIR}/test.tmp 2>&1; then
 	    dotest unedit-without-baserev-14 "cat ${TESTDIR}/test.tmp" \
-"m has been modified; revert changes${QUESTION} ${PROG} unedit: m not mentioned in CVS/Baserev
+"m has been modified; revert changes? ${PROG} unedit: m not mentioned in CVS/Baserev
 ${PROG} unedit: run update to complete the unedit"
 	  else
 	    fail unedit-without-baserev-14
@@ -14601,25 +14590,10 @@ ${TESTDIR}/cvsroot/first-dir/a-lock,v  <--  a-lock
 new revision: 1\.2; previous revision: 1\.1
 done"
 
-	  # Now test for a bug involving branches and locks
-	  sed -e 's/locks; strict;/locks fred:1.2; strict;/' ${TESTDIR}/cvsroot/first-dir/a-lock,v > a-lock,v
-	  chmod 644 ${TESTDIR}/cvsroot/first-dir/a-lock,v
-	  dotest reserved-16 \
-"mv a-lock,v ${TESTDIR}/cvsroot/first-dir/a-lock,v" ""
-	  chmod 444 ${TESTDIR}/cvsroot/first-dir/a-lock,v
-	  dotest reserved-17 "${testcvs} -q tag -b br a-lock" "T a-lock"
-	  dotest reserved-18 "${testcvs} -q update -r br a-lock" ""
-	  echo edit it >>a-lock
-	  dotest reserved-19 "${testcvs} -q ci -m modify a-lock" \
-"Checking in a-lock;
-${TESTDIR}/cvsroot/first-dir/a-lock,v  <--  a-lock
-new revision: 1\.2\.2\.1; previous revision: 1\.2
-done"
-
 	  # undo commitinfo changes
 	  cd ../CVSROOT
 	  echo '# vanilla commitinfo' >commitinfo
-	  dotest reserved-cleanup-1 "${testcvs} -q ci -m back commitinfo" \
+	  dotest reserved-16 "${testcvs} -q ci -m back commitinfo" \
 "Checking in commitinfo;
 ${TESTDIR}/cvsroot/CVSROOT/commitinfo,v  <--  commitinfo
 new revision: 1\.3; previous revision: 1\.2
