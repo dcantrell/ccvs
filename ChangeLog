@@ -1,3 +1,7 @@
+2000-10-31  Derek Price  <derek.price@openavenue.com>
+
+	* NEWS: Mention zlib was updated to 1.1.3.
+
 2000-10-30  Derek Price  <derek.price@openavenue.com>
 
 	* cvs.spec: Fixed trapping for gssapi so that the RPM can be built
