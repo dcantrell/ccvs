@@ -1,5 +1,13 @@
 Fri Feb 23 09:23:20 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* options.h.in: Remove AUTH_SERVER_SUPPORT.
+	* client.h (authenticate_connection): Declare.
+	* scramble.c (scramble): Cast char to unsigned char before using
+	it to look up in table (char might be signed).
+	* server.c [AUTH_SERVER_SUPPORT]: Include grp.h
+	(authenticate_connection): Remove unused variables len and
+	server_user.
+
 	* sanity.sh (basica): Add comments regarding creating a top-level
 	directory.
 	(basic1): Don't try to remove first-dir and

@@ -25,6 +25,11 @@
 #define O_NONBLOCK O_NDELAY
 #endif
 
+#ifdef AUTH_SERVER_SUPPORT
+/* For initgroups().  */
+#include <grp.h>
+#endif
+
 
 /* Functions which the server calls.  */
 int add PROTO((int argc, char **argv));
@@ -4290,13 +4295,11 @@ check_password (username, password, repository)
 void
 authenticate_connection ()
 {
-  int len;
   char tmp[PATH_MAX];
   char repository[PATH_MAX];
   char username[PATH_MAX];
   char password[PATH_MAX];
   char *descrambled_password;
-  char server_user[PATH_MAX];
   struct passwd *pw;
   int verify_and_exit = 0;
 

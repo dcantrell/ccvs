@@ -224,13 +224,11 @@
 /* #define SETXID_SUPPORT */
 #endif
 
-/*
- * The client and server will not perform password-authentication
- * unless you explicitly ask for it.  You can build a binary that only
- * serves or only clients (sure it's a verb), or one that does both.
+/* The client will not perform password-authentication unless you
+ * explicitly ask for it.  Whether to include the authenticating
+ * server is set in config.h.
  */
 /* #define AUTH_CLIENT_SUPPORT 1 */
-/* #define AUTH_SERVER_SUPPORT 1 */
 
 /*
  * If you are working with a large remote repository and a 'cvs checkout' is
