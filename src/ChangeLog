@@ -1,4 +1,6 @@
-2003-03-03  Mark D. Baushke  <mdb@cvshome.org>
+2003-03-05  Mark D. Baushke  <mdb@cvshome.org>
+
+	* rcs.c (RCS_magicrev): Backout CVS_LOCAL_BRANCH_NUM feature.
 
 	* rcs.c (RCS_magicrev): CVS_LOCAL_BRANCH_NUM feature.
 	Port of the FreeBSD hack for setting the next magic branch number

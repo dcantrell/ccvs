@@ -1,4 +1,7 @@
-2003-03-03  Mark D. Baushke  <mdb@cvshome.org>
+2003-03-05  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.texinfo (CVS_LOCAL_BRANCH_NUM): Backout CVS_LOCAL_BRANCH_NUM 
+	feature.
 
 	* cvs.texinfo (CVS_LOCAL_BRANCH_NUM): Document new environment
 	variable.

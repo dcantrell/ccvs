@@ -1,5 +1,7 @@
 2003-03-05  Mark D Baushke <mdb@cvshome.org>
 
+	* NEWS (Changes since 1.11.5): Backout CVS_LOCAL_BRANCH_NUM feature.
+
 	* NEWS (Changes since 1.11.5): Mention CVS_LOCAL_BRANCH_NUM 
         environment varaible.
 
