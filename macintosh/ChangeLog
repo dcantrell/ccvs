@@ -1,5 +1,7 @@
 Fri Jul 26 16:17:48 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* run.c: Remove Popen; it has been replaced by run_popen.
+
 	* options.h: Remove RM and SORT; CVS no longer uses them (this
 	restores some changes which were wiped out by Ladwig's 26 Jul 96
 	submission).
