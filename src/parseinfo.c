@@ -11,16 +11,19 @@
 
 extern char *logHistory;
 
+
+
 /*
  * Parse the INFOFILE file for the specified REPOSITORY.  Invoke CALLPROC for
- * the first line in the file that matches the REPOSITORY, or if ALL != 0, any lines
- * matching "ALL", or if no lines match, the last line matching "DEFAULT".
+ * the first line in the file that matches the REPOSITORY, or if ALL != 0, any
+ * lines matching "ALL", or if no lines match, the last line matching
+ * "DEFAULT".
  *
  * Return 0 for success, -1 if there was not an INFOFILE, and >0 for failure.
  */
 int
-Parse_Info(char *infofile, char *repository, CALLPROC callproc, int opt,
-           void *closure)
+Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
+            int opt, void *closure)
 {
     int err = 0;
     FILE *fp_info;
@@ -31,7 +34,8 @@ Parse_Info(char *infofile, char *repository, CALLPROC callproc, int opt,
     int default_line = 0;
     char *expanded_value;
     int callback_done, line_number;
-    char *cp, *exp, *value, *srepos;
+    char *cp, *exp, *value;
+    const char *srepos;
     const char *regex_err;
 
     if (current_parsed_root == NULL)
@@ -133,14 +137,14 @@ Parse_Info(char *infofile, char *repository, CALLPROC callproc, int opt,
 	 */
 	if (strcmp (exp, "ALL") == 0)
 	{
-	    if (! (opt & PIOPT_ALL))
-		error(0, 0, "Keyword `ALL' is ignored at line %d in %s file",
-		      line_number, infofile);
-	    else if( ( expanded_value = expand_path( value, infofile,
-	                                             line_number, 1 ) )
+	    if (!(opt & PIOPT_ALL))
+		error (0, 0, "Keyword `ALL' is ignored at line %d in %s file",
+		       line_number, infofile);
+	    else if ((expanded_value = expand_path (value, infofile,
+	                                            line_number, 1))
 	             != NULL )
 	    {
-		err += callproc( repository, expanded_value, closure );
+		err += callproc (repository, expanded_value, closure);
 		free (expanded_value);
 	    }
 	    else

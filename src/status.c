@@ -10,9 +10,9 @@
 
 #include "cvs.h"
 
-static Dtype status_dirproc (void *callerdat, char *dir,
-				    char *repos, char *update_dir,
-				    List *entries);
+static Dtype status_dirproc (void *callerdat, const char *dir,
+                             const char *repos, const char *update_dir,
+                             List *entries);
 static int status_fileproc (void *callerdat, struct file_info *finfo);
 static int tag_list_proc (Node * p, void *closure);
 
@@ -315,17 +315,22 @@ status_fileproc (void *callerdat, struct file_info *finfo)
     return (0);
 }
 
+
+
 /*
  * Print a warm fuzzy message
  */
 /* ARGSUSED */
 static Dtype
-status_dirproc (void *callerdat, char *dir, char *repos, char *update_dir, List *entries)
+status_dirproc (void *callerdat, const char *dir, const char *repos,
+                const char *update_dir, List *entries)
 {
     if (!quiet)
 	error (0, 0, "Examining %s", update_dir);
     return (R_PROCESS);
 }
+
+
 
 /*
  * Print out a tag and its type

@@ -24,6 +24,8 @@ static Entnode *subdir_record (int, const char *, const char *);
 static FILE *entfile;
 static char *entfilename;		/* for error messages */
 
+
+
 /*
  * Construct an Entnode
  */
@@ -148,11 +150,13 @@ write_entries (List *list)
 	error (0, errno, "cannot remove %s", CVSADM_ENTLOG);
 }
 
+
+
 /*
  * Removes the argument file from the Entries file if necessary.
  */
 void
-Scratch_Entry (List *list, char *fname)
+Scratch_Entry (List *list, const char *fname)
 {
     Node *node;
 
@@ -184,12 +188,16 @@ Scratch_Entry (List *list, char *fname)
     }
 }
 
+
+
 /*
  * Enters the given file name/version/time-stamp into the Entries file,
  * removing the old entry first, if necessary.
  */
 void
-Register (List *list, char *fname, char *vn, char *ts, char *options, char *tag, char *date, char *ts_conflict)
+Register (List *list, const char *fname, const char *vn, const char *ts,
+          const char *options, const char *tag, const char *date,
+          const char *ts_conflict)
 {
     Entnode *entnode;
     Node *node;
@@ -589,11 +597,13 @@ AddEntryNode (List *list, Entnode *entdata)
     return (p);
 }
 
+
+
 /*
  * Write out the CVS/Template file.
  */
 void
-WriteTemplate (char *update_dir, int xdotemplate, char *repository)
+WriteTemplate (const char *update_dir, int xdotemplate, const char *repository)
 {
 #ifdef SERVER_SUPPORT
     TRACE (1, "Write_Template (%s, %s)", update_dir, repository);
@@ -615,11 +625,14 @@ WriteTemplate (char *update_dir, int xdotemplate, char *repository)
     return;
 }
 
+
+
 /*
  * Write out/Clear the CVS/Tag file.
  */
 void
-WriteTag (char *dir, char *tag, char *date, int nonbranch, char *update_dir, char *repository)
+WriteTag (const char *dir, const char *tag, const char *date, int nonbranch,
+          const char *update_dir, const char *repository)
 {
     FILE *fout;
     char *tmp;

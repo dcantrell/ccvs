@@ -471,9 +471,10 @@ check_numeric (const char *rev, int argc, char **argv)
  *  nonsense about non-empty log fields can be dropped.
  */
 char *
-make_message_rcsvalid (char *message)
+make_message_rcsvalid (const char *message)
 {
-    char *dst, *dp, *mp;
+    char *dst, *dp;
+    const char *mp;
 
     if (message == NULL) message = "";
 
@@ -713,7 +714,7 @@ resolve_symlink (char **filename)
 	}
 	else
 	{
-	    char *oldname = last_component (*filename);
+	    const char *oldname = last_component (*filename);
 	    int dirlen = oldname - *filename;
 	    char *fullnewname = xmalloc (dirlen + strlen (newname) + 1);
 	    strncpy (fullnewname, *filename, dirlen);
@@ -1033,9 +1034,9 @@ cmdlineescape (char quotes, char *s)
  */
 char *
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-format_cmdline (int oldway, char *srepos, char *format, ...)
+format_cmdline (int oldway, const char *srepos, const char *format, ...)
 #else /* SUPPORT_OLD_INFO_FMT_STRINGS */
-format_cmdline (char *format, ...)
+format_cmdline (const char *format, ...)
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 {
     va_list args;	/* our input function args */
@@ -1050,8 +1051,8 @@ format_cmdline (char *format, ...)
 			 */
     char *fmt;		/* buffer for format string which we are processing */
     size_t flen;	/* length of fmt buffer */
-    char *d, *q, *r,
-         *s;		/* for walking strings */
+    char *d, *q, *r;    /* for walking strings */
+    const char *s;
     size_t doff, qoff;
     char inquotes;
 

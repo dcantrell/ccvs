@@ -12,14 +12,16 @@
 
 static int find_type (Node * p, void *closure);
 static int fmt_proc (Node * p, void *closure);
-static int logfile_write (char *repository, char *filter,
-			  char *message, FILE * logfp, List * changes);
-static int logmsg_list_to_args_proc ( Node *p, void *closure );
-static int rcsinfo_proc ( char *repository, char *template, void *closure );
-static int update_logfile_proc ( char *repository, char *filter,
-                                 void *closure);
+static int logfile_write (const char *repository, const char *filter,
+			  const char *message, FILE * logfp, List * changes);
+static int logmsg_list_to_args_proc (Node *p, void *closure);
+static int rcsinfo_proc (const char *repository, const char *template,
+                         void *closure );
+static int update_logfile_proc (const char *repository, const char *filter,
+                                void *closure);
 static void setup_tmpfile (FILE * xfp, char *xprefix, List * changes);
-static int verifymsg_proc ( char *repository, char *script, void *closure );
+static int verifymsg_proc (const char *repository, const char *script,
+                           void *closure );
 
 static FILE *fp;
 static Ctype type;
@@ -190,7 +192,8 @@ fmt_proc (Node *p, void *closure)
  *              -e option to the CVS executable.
  */
 void
-do_editor (char *dir, char **messagep, char *repository, List *changes)
+do_editor (const char *dir, char **messagep, const char *repository,
+           List *changes)
 {
     static int reuse_log_message = 0;
     char *line;
@@ -400,7 +403,7 @@ do_editor (char *dir, char **messagep, char *repository, List *changes)
    independant of the running of an editor for getting a message.
  */
 void
-do_verify (char **messagep, char *repository)
+do_verify (char **messagep, const char *repository)
 {
     int err;
     struct verifymsg_proc_data data;
@@ -511,6 +514,8 @@ do_verify (char **messagep, char *repository)
     free (data.fname);
 }
 
+
+
 /*
  * callback proc for Parse_Info for rcsinfo templates this routine basically
  * copies the matching template onto the end of the tempfile we are setting
@@ -518,7 +523,7 @@ do_verify (char **messagep, char *repository)
  */
 /* ARGSUSED */
 static int
-rcsinfo_proc(char *repository, char *template, void *closure)
+rcsinfo_proc (const char *repository, const char *template, void *closure)
 {
     static char *last_template;
     FILE *tfp;
@@ -560,12 +565,15 @@ rcsinfo_proc(char *repository, char *template, void *closure)
  */
 struct ulp_data {
     FILE *logfp;
-    char *message;
+    const char *message;
     List *changes;
 };
 
+
+
 void
-Update_Logfile (char *repository, char *xmessage, FILE *xlogfp, List *xchanges)
+Update_Logfile (const char *repository, const char *xmessage, FILE *xlogfp,
+                List *xchanges)
 {
     struct ulp_data ud;
 
@@ -579,8 +587,8 @@ Update_Logfile (char *repository, char *xmessage, FILE *xlogfp, List *xchanges)
     ud.changes = xchanges;
 
     /* call Parse_Info to do the actual logfile updates */
-    (void) Parse_Info( CVSROOTADM_LOGINFO, repository, update_logfile_proc,
-		       PIOPT_ALL, &ud );
+    (void) Parse_Info (CVSROOTADM_LOGINFO, repository, update_logfile_proc,
+		       PIOPT_ALL, &ud);
 }
 
 
@@ -589,12 +597,12 @@ Update_Logfile (char *repository, char *xmessage, FILE *xlogfp, List *xchanges)
  * callback proc to actually do the logfile write from Update_Logfile
  */
 static int
-update_logfile_proc(char *repository, char *filter, void *closure)
+update_logfile_proc (const char *repository, const char *filter, void *closure)
 {
     struct ulp_data *udp = (struct ulp_data *)closure;
-    TRACE( TRACE_FUNCTION, "update_logfile_proc(%s,%s)", repository, filter );
-    return (logfile_write (repository, filter, udp->message, udp->logfp,
-			   udp->changes));
+    TRACE (TRACE_FUNCTION, "update_logfile_proc(%s,%s)", repository, filter);
+    return logfile_write (repository, filter, udp->message, udp->logfp,
+                          udp->changes);
 }
 
 
@@ -609,12 +617,13 @@ update_logfile_proc(char *repository, char *filter, void *closure)
  * where closure is undefined.
  */
 static int
-logmsg_list_to_args_proc(Node *p, void *closure)
+logmsg_list_to_args_proc (Node *p, void *closure)
 {
     struct format_cmdline_walklist_closure *c = closure;
     struct logfile_info *li;
     char *arg = NULL;
-    char *f, *d;
+    const char *f;
+    char *d;
     size_t doff;
 
     if (p->data == NULL) return 1;
@@ -708,19 +717,22 @@ logmsg_list_to_args_proc(Node *p, void *closure)
     return 0;
 }
 
+
+
 /*
  * Writes some stuff to the logfile "filter" and returns the status of the
  * filter program.
  */
 static int
-logfile_write (char *repository, char *filter, char *message, FILE *logfp, List *changes)
+logfile_write (const char *repository, const char *filter, const char *message,
+               FILE *logfp, List *changes)
 {
     char *cmdline;
     FILE *pipefp;
     char *cp;
     int c;
     int pipestatus;
-    char *srepos = Short_Repository (repository);
+    const char *srepos = Short_Repository (repository);
 
     /* The user may specify a format string as part of the filter.
        Originally, `%s' was the only valid string.  The string that
@@ -834,29 +846,27 @@ logfile_write (char *repository, char *filter, char *message, FILE *logfp, List 
  *  message verification script.
  */
 static int
-verifymsg_proc(char *repository, char *script, void *closure)
+verifymsg_proc (const char *repository, const char *script, void *closure)
 {
     char *verifymsg_script;
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-    int disposescript = 0;
+    char *newscript = NULL;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
     struct verifymsg_proc_data *vpd = (struct verifymsg_proc_data *) closure;
-    char *srepos = Short_Repository( repository );
+    const char *srepos = Short_Repository (repository);
 
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-    if( !strchr( script, '%' ) )
+    if (!strchr (script, '%'))
     {
-	char *tmpscript;
-	error( 0, 0,
+	error (0, 0,
 	       "warning: verifymsg line doesn't contain any format strings:\n"
                "    \"%s\"\n"
                "Appending default format string (\" %%l\"), but be aware that this usage is\n"
-               "deprecated.", script );
-	tmpscript = xmalloc( strlen( script ) + 4 );
-	strcpy( tmpscript, script );
-	strcat( tmpscript, " %l" );
-	script = tmpscript;
-	disposescript = 1;
+               "deprecated.", script);
+	newscript = xmalloc (strlen (script) + 4);
+	strcpy (newscript, script);
+	strcat (newscript, " %l");
+	script = newscript;
     }
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 
@@ -867,36 +877,36 @@ verifymsg_proc(char *repository, char *script, void *closure)
      * verifymsg script specified and we only create it once when there is
      * more than one verifymsg script specified.
      */
-    if( vpd->fname == NULL )
+    if (vpd->fname == NULL)
     {
 	FILE *fp;
-	if( ( fp = cvs_temp_file( &( vpd->fname ) ) ) == NULL )
-	    error( 1, errno, "cannot create temporary file %s", vpd->fname );
+	if ((fp = cvs_temp_file (&(vpd->fname))) == NULL)
+	    error (1, errno, "cannot create temporary file %s", vpd->fname);
 
-	if( vpd->message != NULL )
-	    fputs( vpd->message, fp );
-	if( vpd->message == NULL ||
-	    ( vpd->message )[0] == '\0' ||
-	    ( vpd->message )[strlen( vpd->message ) - 1] != '\n' )
-	    putc( '\n', fp );
-	if( fclose( fp ) == EOF )
-	    error( 1, errno, "%s", vpd->fname );
+	if (vpd->message != NULL)
+	    fputs (vpd->message, fp);
+	if (vpd->message == NULL ||
+	    (vpd->message)[0] == '\0' ||
+	    (vpd->message)[strlen (vpd->message) - 1] != '\n')
+	    putc ('\n', fp);
+	if (fclose (fp) == EOF)
+	    error (1, errno, "%s", vpd->fname);
 
-	if( RereadLogAfterVerify == LOGMSG_REREAD_STAT )
+	if (RereadLogAfterVerify == LOGMSG_REREAD_STAT)
 	{
 	    /* Remember the status of the temp file for later */
-	    if ( CVS_STAT( vpd->fname, &(vpd->pre_stbuf) ) != 0 )
-		error( 1, errno, "cannot stat temp file %s", vpd->fname );
+	    if (CVS_STAT (vpd->fname, &(vpd->pre_stbuf)) != 0)
+		error (1, errno, "cannot stat temp file %s", vpd->fname);
 
 	    /*
 	     * See if we need to sleep before running the verification
 	     * script to avoid time-stamp races.
 	     */
-	    sleep_past( vpd->pre_stbuf.st_mtime );
+	    sleep_past (vpd->pre_stbuf.st_mtime);
 	}
     } /* if( vpd->fname == NULL ) */
 
-    verifymsg_script = format_cmdline(
+    verifymsg_script = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
                                        0, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
@@ -906,21 +916,21 @@ verifymsg_proc(char *repository, char *script, void *closure)
                                        current_parsed_root->directory,
                                        "l", "s", vpd->fname,
                                        (char *)NULL
-                                     );
+                                      );
 
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-    if( disposescript ) free( script );
+    if (newscript) free (newscript);
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 
-    if( !verifymsg_script || !strlen( verifymsg_script ) )
+    if (!verifymsg_script || !strlen (verifymsg_script))
     {
-	if( verifymsg_script ) free( verifymsg_script );
+	if (verifymsg_script) free (verifymsg_script);
 	verifymsg_script = NULL;
-	error( 0, 0, "verifymsg proc resolved to the empty string!" );
+	error (0, 0, "verifymsg proc resolved to the empty string!");
 	return 1;
     }
 
-    run_setup( verifymsg_script );
+    run_setup (verifymsg_script);
 
     free (verifymsg_script);
 
@@ -946,6 +956,6 @@ verifymsg_proc(char *repository, char *script, void *closure)
      * believe the docs actually state that if the verifymsg_proc returns a
      * "non-zero" value we will fail.
      */
-    return abs( run_exec( RUN_TTY, RUN_TTY, RUN_TTY,
-			  RUN_NORMAL | RUN_SIGIGNORE ) );
+    return abs (run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
+			  RUN_NORMAL | RUN_SIGIGNORE));
 }

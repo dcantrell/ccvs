@@ -21,9 +21,9 @@
 extern int gethostname (char *, int);
 #endif
 
-char *program_name;
-char *program_path;
-char *cvs_cmd_name;
+const char *program_name;
+const char *program_path;
+const char *cvs_cmd_name;
 
 /* I'd dynamically allocate this, but it seems like gethostname
    requires a fixed size array.  If I'm remembering the RFCs right,

@@ -56,8 +56,9 @@ void pserver_authenticate_connection (void);
 void server_pathname_check (char *);
 
 /* We have a new Entries line for a file.  TAG or DATE can be NULL.  */
-void server_register (char *name, char *version, char *timestamp,
-                      char *options, char *tag, char *date, char *conflict);
+void server_register (const char *name, const char *version,
+                      const char *timestamp, const char *options,
+                      const char *tag, const char *date, const char *conflict);
 
 /* Set the modification time of the next file sent.  This must be
    followed by a call to server_updated on the same file.  */
@@ -67,7 +68,7 @@ void server_modtime (struct file_info *finfo, Vers_TS *vers_ts);
  * We want to nuke the Entries line for a file, and (unless
  * server_scratch_entry_only is subsequently called) the file itself.
  */
-void server_scratch (char *name);
+void server_scratch (const char *name);
 
 /*
  * The file which just had server_scratch called on it needs to have only
@@ -80,10 +81,11 @@ void server_scratch_entry_only (void);
  * filename, with no directory).  REPOSITORY is the directory for the
  * repository.
  */
-void server_checked_in (char *file, char *update_dir, char *repository);
+void server_checked_in (const char *file, const char *update_dir,
+                        const char *repository);
 
-void server_copy_file (char *file, char *update_dir, char *repository,
-                       char *newfile);
+void server_copy_file (const char *file, const char *update_dir,
+                       const char *repository, const char *newfile);
 
 /* Send the appropriate responses for a file described by FINFO and
    VERS.  This is called after server_register or server_scratch.  In
@@ -116,21 +118,22 @@ void server_updated (struct file_info *finfo, Vers_TS *vers,
 int server_use_rcs_diff (void);
 
 /* Set the Entries.Static flag.  */
-void server_set_entstat (char *update_dir, char *repository);
+void server_set_entstat (const char *update_dir, const char *repository);
 /* Clear it.  */
-void server_clear_entstat (char *update_dir, char *repository);
+void server_clear_entstat (const char *update_dir, const char *repository);
 
 /* Set or clear a per-directory sticky tag or date.  */
-void server_set_sticky (char *update_dir, char *repository,
-                        char *tag, char *date, int nonbranch);
+void server_set_sticky (const char *update_dir, const char *repository,
+                        const char *tag, const char *date, int nonbranch);
 
 /* Send Clear-template response.  */
-void server_clear_template (char *update_dir, char *repository);
+void server_clear_template (const char *update_dir, const char *repository);
 
 /* Send Template response.  */
-void server_template (char *update_dir, char *repository);
+void server_template (const char *update_dir, const char *repository);
 
-void server_update_entries (char *file, char *update_dir, char *repository,
+void server_update_entries (const char *file, const char *update_dir,
+                            const char *repository,
                             enum server_updated_arg4 updated);
 
 /* Pointer to a malloc'd string which is the directory which
@@ -190,5 +193,5 @@ struct request
 extern struct request requests[];
 
 /* Gzip library, see zlib.c.  */
-int gunzip_and_write (int, char *, unsigned char *, size_t);
-int read_and_gzip (int, char *, unsigned char **, size_t *, size_t *, int);
+int read_and_gzip (int, const char *, unsigned char **, size_t *, size_t *,
+                   int);

@@ -36,7 +36,7 @@
 #   include "kerberos4-client.h"
 # endif
 
-static void add_prune_candidate (char *);
+static void add_prune_candidate (const char *);
 
 /* All the commands.  */
 int add (int argc, char **argv);
@@ -2036,7 +2036,7 @@ struct save_dir {
 struct save_dir *prune_candidates;
 
 static void
-add_prune_candidate( char *dir )
+add_prune_candidate (const char *dir)
 {
     struct save_dir *p;
 
@@ -2093,10 +2093,10 @@ process_prune_candidates( void )
 static char *last_repos;
 static char *last_update_dir;
 
-static void send_repository (char *, char *, char *);
+
 
 static void
-send_repository( char *dir, char *repos, char *update_dir )
+send_repository (const char *dir, const char *repos, const char *update_dir)
 {
     char *adm_name;
 
@@ -2159,7 +2159,7 @@ send_repository( char *dir, char *repos, char *update_dir )
 	   sort of duplicates code elsewhere, but each
 	   case seems slightly different...  */
 	char buf[1];
-	char *p = update_dir;
+	const char *p = update_dir;
 	while (*p != '\0')
 	{
 	    assert (*p != '\012');
@@ -2235,11 +2235,16 @@ send_repository( char *dir, char *repos, char *update_dir )
     last_update_dir = xstrdup (update_dir);
 }
 
+
+
 /* Send a Repository line and set toplevel_repos.  */
 
 void
-send_a_repository( char *dir, char *repository, char *update_dir )
+send_a_repository (const char *dir, const char *repository,
+                   const char *update_dir_in)
 {
+    char *update_dir = xstrdup (update_dir_in);
+
     if (toplevel_repos == NULL && repository != NULL)
     {
 	if (update_dir[0] == '\0'
@@ -2325,8 +2330,11 @@ send_a_repository( char *dir, char *repository, char *update_dir )
     }
 
     send_repository (dir, repository, update_dir);
+    free (update_dir);
 }
-
+
+
+
 /* The "expanded" modules.  */
 static int modules_count;
 static int modules_allocated;
@@ -2710,6 +2718,8 @@ struct response responses[] =
 #endif /* CLIENT_SUPPORT or SERVER_SUPPORT */
 #ifdef CLIENT_SUPPORT
 
+
+
 /* 
  * If LEN is 0, then send_to_server_via() computes string's length itself.
  *
@@ -2717,7 +2727,7 @@ struct response responses[] =
  * contain 0's.
  */
 void
-send_to_server_via( struct buffer *via_buffer, char *str, size_t len )
+send_to_server_via (struct buffer *via_buffer, const char *str, size_t len)
 {
     static int nbytes;
 
@@ -2741,11 +2751,14 @@ send_to_server_via( struct buffer *via_buffer, char *str, size_t len )
     }
 }
 
+
+
 void
-send_to_server( char *str, size_t len )
+send_to_server (const char *str, size_t len)
 {
   send_to_server_via (global_to_server, str, len);
 }
+
 
 
 /* Read up to LEN bytes from the server.  Returns actual number of
@@ -3326,8 +3339,8 @@ auth_server( cvsroot_t *root, struct buffer *to_server,
  * Connect to a forked server process.
  */
 static void
-connect_to_forked_server( struct buffer **to_server_p,
-                          struct buffer **from_server_p )
+connect_to_forked_server (struct buffer **to_server_p,
+                          struct buffer **from_server_p)
 {
     int tofd, fromfd;
     int child_pid;
@@ -3335,12 +3348,23 @@ connect_to_forked_server( struct buffer **to_server_p,
     /* This is pretty simple.  All we need to do is choose the correct
        cvs binary and call piped_child. */
 
-    char *command[3];
+     char *command[3];
 
     command[0] = getenv ("CVS_SERVER");
-    if (! command[0])
+    if (!command[0])
 # ifdef SERVER_SUPPORT
-	command[0] = program_path;
+        /* FIXME:
+         * I'm casting out the const below because I know that piped_child, the
+         * only function we pass COMMAND to, accepts COMMAND as a
+         * (char *const *) and won't alter it, and we don't alter it in this
+         * function.  This is yucky, there should be a way to declare COMMAND
+         * such that this casting isn't needed, but I don't know how.  If I
+         * declare it as (const char *command[]), the compiler complains about
+         * an incompatible arg 1 being passed to piped_child and if I declare
+         * it as (char *const command[3]), then the compiler complains when I
+         * assign values to command[i].
+         */
+	command[0] = (char *)program_path;
 # else /* SERVER_SUPPORT */
     {
 	error( 0, 0, "You must set the CVS_SERVER environment variable when" );
@@ -3708,9 +3732,10 @@ start_server( void )
 }
 
 
+
 /* Send an argument STRING.  */
 void
-send_arg( char *string )
+send_arg (char *string)
 {
     char buf[1];
     char *p = string;
@@ -3732,15 +3757,15 @@ send_arg( char *string )
     }
     send_to_server ("\012", 1);
 }
-
-static void send_modified (char *, char *, Vers_TS *);
+
+
 
 /* VERS->OPTIONS specifies whether the file is binary or not.  NOTE: BEFORE
    using any other fields of the struct vers, we would need to fix
    client_process_import_file to set them up.  */
 
 static void
-send_modified( char *file, char *short_pathname, Vers_TS *vers)
+send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
 {
     /* File was modified, send it.  */
     struct stat sb;
@@ -3902,7 +3927,7 @@ send_fileproc( void *callerdat, struct file_info *finfo )
     struct file_info xfinfo;
     /* File name to actually use.  Might differ in case from
        finfo->file.  */
-    char *filename;
+    const char *filename;
 
     send_a_repository ("", finfo->repository, finfo->update_dir);
 
@@ -4043,10 +4068,10 @@ warning: ignoring -k options due to server limitations");
     return 0;
 }
 
-static void send_ignproc (char *, char *);
+
 
 static void
-send_ignproc( char *file, char *dir )
+send_ignproc (const char *file, const char *dir)
 {
     if (ign_inhibit_server || !supported_request ("Questionable"))
     {
@@ -4063,11 +4088,11 @@ send_ignproc( char *file, char *dir )
     }
 }
 
-static int send_filesdoneproc (void *, int, char *, char *, List *);
+
 
 static int
-send_filesdoneproc( void *callerdat, int err, char *repository,
-                    char *update_dir, List *entries )
+send_filesdoneproc (void *callerdat, int err, const char *repository,
+                    const char *update_dir, List *entries)
 {
     /* if this directory has an ignore list, process it then free it */
     if (ignlist)
@@ -4079,7 +4104,7 @@ send_filesdoneproc( void *callerdat, int err, char *repository,
     return (err);
 }
 
-static Dtype send_dirent_proc (void *, char *, char *, char *, List *);
+
 
 /*
  * send_dirent_proc () is called back by the recursion processor before a
@@ -4090,8 +4115,8 @@ static Dtype send_dirent_proc (void *, char *, char *, char *, List *);
  *
  */
 static Dtype
-send_dirent_proc( void *callerdat, char *dir, char *repository,
-                  char *update_dir, List *entries )
+send_dirent_proc (void *callerdat, const char *dir, const char *repository,
+                  const char *update_dir, List *entries)
 {
     struct send_data *args = (struct send_data *) callerdat;
     int dir_exists;
@@ -4160,7 +4185,7 @@ send_dirent_proc( void *callerdat, char *dir, char *repository,
     return (dir_exists ? R_PROCESS : R_SKIP_ALL);
 }
 
-static int send_dirleave_proc (void *, char *, int, char *, List *);
+
 
 /*
  * send_dirleave_proc () is called back by the recursion code upon leaving
@@ -4169,8 +4194,8 @@ static int send_dirleave_proc (void *, char *, int, char *, List *);
  */
 /* ARGSUSED */
 static int
-send_dirleave_proc( void *callerdat, char *dir, int err, char *update_dir,
-                    List *entries )
+send_dirleave_proc (void *callerdat, const char *dir, int err,
+                    const char *update_dir, List *entries )
 {
 
     /* Delete the ignore list if it hasn't already been done.  */
@@ -4546,7 +4571,9 @@ client_import_done( void )
 	toplevel_repos = xstrdup (current_parsed_root->directory);
     send_repository ("", toplevel_repos, ".");
 }
-
+
+
+
 static void
 notified_a_file( char *data, List *ent_list, char *short_pathname,
                  char *filename )
@@ -4658,9 +4685,11 @@ handle_notified( char *args, int len )
     call_in_directory (args, notified_a_file, NULL);
 }
 
+
+
 void
-client_notify( char *repository, char *update_dir, char *filename,
-               int notif_type, char *val )
+client_notify (const char *repository, const char *update_dir,
+               const char *filename, int notif_type, const char *val)
 {
     char buf[2];
 

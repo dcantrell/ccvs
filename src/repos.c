@@ -9,6 +9,8 @@
 #include "cvs.h"
 #include "getline.h"
 
+
+
 /* Determine the name of the RCS repository for directory DIR in the
    current working directory, or for the current working directory
    itself if DIR is NULL.  Returns the name in a newly-malloc'd
@@ -19,10 +21,10 @@
    invoked.  */
 
 char *
-Name_Repository (char *dir, char *update_dir)
+Name_Repository (const char *dir, const char *update_dir)
 {
     FILE *fpin;
-    char *xupdate_dir;
+    const char *xupdate_dir;
     char *repos = NULL;
     size_t repos_allocated = 0;
     char *tmp;
@@ -119,8 +121,9 @@ Name_Repository (char *dir, char *update_dir)
 	    error (0, 0, "`..'-relative repositories are not supported.");
 	    error (1, 0, "invalid source repository");
 	}
-	newrepos = xmalloc (strlen (current_parsed_root->directory) + strlen (repos) + 2);
-	(void) sprintf (newrepos, "%s/%s", current_parsed_root->directory, repos);
+	newrepos = xmalloc (strlen (current_parsed_root->directory)
+	                    + strlen (repos) + 2);
+	sprintf (newrepos, "%s/%s", current_parsed_root->directory, repos);
 	free (repos);
 	repos = newrepos;
     }
@@ -130,27 +133,31 @@ Name_Repository (char *dir, char *update_dir)
     return repos;
 }
 
+
+
 /*
  * Return a pointer to the repository name relative to CVSROOT from a
  * possibly fully qualified repository
  */
-char *
-Short_Repository (char *repository)
+const char *
+Short_Repository (const char *repository)
 {
     if (repository == NULL)
-	return (NULL);
+	return NULL;
 
     /* If repository matches CVSroot at the beginning, strip off CVSroot */
     /* And skip leading '/' in rep, in case CVSroot ended with '/'. */
     if (strncmp (current_parsed_root->directory, repository,
 		 strlen (current_parsed_root->directory)) == 0)
     {
-	char *rep = repository + strlen (current_parsed_root->directory);
+	const char *rep = repository + strlen (current_parsed_root->directory);
 	return (*rep == '/') ? rep+1 : rep;
     }
     else
-	return (repository);
+	return repository;
 }
+
+
 
 /* Sanitize the repository name (in place) by removing trailing
  * slashes and a trailing "." if present.  It should be safe for

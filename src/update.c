@@ -57,16 +57,17 @@ static void patch_file_write (void *, const char *, size_t);
 #endif
 static int merge_file (struct file_info *finfo, Vers_TS *vers);
 static int scratch_file (struct file_info *finfo, Vers_TS *vers);
-static Dtype update_dirent_proc (void *callerdat, char *dir,
-					char *repository, char *update_dir,
-					List *entries);
-static int update_dirleave_proc (void *callerdat, char *dir,
-					int err, char *update_dir,
-					List *entries);
+static Dtype update_dirent_proc (void *callerdat, const char *dir,
+                                 const char *repository,
+                                 const char *update_dir,
+                                 List *entries);
+static int update_dirleave_proc (void *callerdat, const char *dir,
+                                 int err, const char *update_dir,
+                                 List *entries);
 static int update_fileproc (void *callerdat, struct file_info *);
 static int update_filesdone_proc (void *callerdat, int err,
-					 char *repository, char *update_dir,
-					 List *entries);
+                                  const char *repository,
+                                  const char *update_dir, List *entries);
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 static int get_linkinfo_proc( void *_callerdat, struct _finfo * );
 #endif
@@ -496,10 +497,10 @@ do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate,
 #endif
 
     /* call the recursion processor */
-    err = start_recursion ( update_fileproc, update_filesdone_proc,
-			    update_dirent_proc, update_dirleave_proc, NULL,
-			    argc, argv, local, which, aflag, CVS_LOCK_READ,
-			    preload_update_dir, 1, repository );
+    err = start_recursion (update_fileproc, update_filesdone_proc,
+			   update_dirent_proc, update_dirleave_proc, NULL,
+			   argc, argv, local, which, aflag, CVS_LOCK_READ,
+			   preload_update_dir, 1, repository );
 
 #ifdef SERVER_SUPPORT
     if (server_active)
@@ -776,33 +777,38 @@ update_fileproc (void *callerdat, struct file_info *finfo)
     return (retval);
 }
 
-static void update_ignproc (char *, char *);
+
 
 static void
-update_ignproc (char *file, char *dir)
+update_ignproc (const char *file, const char *dir)
 {
     struct file_info finfo;
+    char *tmp;
 
     memset (&finfo, 0, sizeof (finfo));
     finfo.file = file;
     finfo.update_dir = dir;
     if (dir[0] == '\0')
-	finfo.fullname = xstrdup (file);
+	tmp = xstrdup (file);
     else
     {
-	finfo.fullname = xmalloc (strlen (file) + strlen (dir) + 10);
-	strcpy (finfo.fullname, dir);
-	strcat (finfo.fullname, "/");
-	strcat (finfo.fullname, file);
+	tmp = xmalloc (strlen (file) + strlen (dir) + 10);
+	strcpy (tmp, dir);
+	strcat (tmp, "/");
+	strcat (tmp, file);
     }
 
+    finfo.fullname = tmp;
     write_letter (&finfo, '?');
-    free (finfo.fullname);
+    free (tmp);
 }
+
+
 
 /* ARGSUSED */
 static int
-update_filesdone_proc (void *callerdat, int err, char *repository, char *update_dir, List *entries)
+update_filesdone_proc (void *callerdat, int err, const char *repository,
+                       const char *update_dir, List *entries)
 {
     if (nonbranch < 0) nonbranch = 0;
     if (rewrite_tag)
@@ -841,6 +847,8 @@ update_filesdone_proc (void *callerdat, int err, char *repository, char *update_
     return (err);
 }
 
+
+
 /*
  * update_dirent_proc () is called back by the recursion processor before a
  * sub-directory is processed for update.  In this case, update_dirent proc
@@ -850,7 +858,8 @@ update_filesdone_proc (void *callerdat, int err, char *repository, char *update_
  * recursion code should skip this directory.
  */
 static Dtype
-update_dirent_proc (void *callerdat, char *dir, char *repository, char *update_dir, List *entries)
+update_dirent_proc (void *callerdat, const char *dir, const char *repository,
+                    const char *update_dir, List *entries)
 {
     if (ignore_directory (update_dir))
     {
@@ -997,6 +1006,8 @@ update_dirent_proc (void *callerdat, char *dir, char *repository, char *update_d
     return (R_PROCESS);
 }
 
+
+
 /*
  * update_dirleave_proc () is called back by the recursion code upon leaving
  * a directory.  It will prune empty directories if needed and will execute
@@ -1004,7 +1015,8 @@ update_dirent_proc (void *callerdat, char *dir, char *repository, char *update_d
  */
 /* ARGSUSED */
 static int
-update_dirleave_proc (void *callerdat, char *dir, int err, char *update_dir, List *entries)
+update_dirleave_proc (void *callerdat, const char *dir, int err,
+                      const char *update_dir, List *entries)
 {
     /* Delete the ignore list if it hasn't already been done.  */
     if (ignlist)
@@ -1064,11 +1076,13 @@ isremoved (Node *node, void *closure)
     return (entdata->version && entdata->version[0] == '-') ? 1 : 0;
 }
 
+
+
 /* Returns 1 if the argument directory is completely empty, other than the
    existence of the CVS directory entry.  Zero otherwise.  If MIGHT_NOT_EXIST
    and the directory doesn't exist, then just return 0.  */
 int
-isemptydir (char *dir, int might_not_exist)
+isemptydir (const char *dir, int might_not_exist)
 {
     DIR *dirp;
     struct dirent *dp;

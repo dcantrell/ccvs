@@ -691,18 +691,22 @@ history (int argc, char **argv)
     free (backto);
     free (rec_types);
 
-    return (0);
+    return 0;
 }
 
+
+
 void
-history_write (int type, char *update_dir, char *revs, char *name, char *repository)
+history_write (int type, const char *update_dir, const char *revs,
+               const char *name, const char *repository)
 {
     char *fname;
     char *workdir;
     char *username = getcaller ();
     int fd;
     char *line;
-    char *slash = "", *cp, *cp2, *repos;
+    char *slash = "", *cp;
+    const char *cp2, *repos;
     int i;
     static char *tilde = "";
     static char *PrCurDir = NULL;

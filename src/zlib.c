@@ -593,7 +593,8 @@ gunzip_and_write (int fd, char *fullname, unsigned char *buf, size_t size)
    recover from it).  LEVEL is the compression level (1-9).  */
 
 int
-read_and_gzip (int fd, char *fullname, unsigned char **buf, size_t *size, size_t *len, int level)
+read_and_gzip (int fd, const char *fullname, unsigned char **buf, size_t *size,
+               size_t *len, int level)
 {
     z_stream zstr;
     int zstatus;

@@ -19,7 +19,7 @@
 #include "cvs.h"
 #include "savecwd.h"
 
-static char *get_comment (char *user);
+static char *get_comment (const char *user);
 static int add_rev (char *message, RCSNode *rcs, char *vfile,
 			  char *vers);
 static int add_tags (RCSNode *rcs, char *vfile, char *vtag, int targc,
@@ -920,8 +920,10 @@ static const struct compair comtable[] =
 /* must always be last		 */
 };
 
+
+
 static char *
-get_comment (char *user)
+get_comment (const char *user)
 {
     char *cp, *suffix;
     char *suffix_path;
@@ -966,48 +968,44 @@ get_comment (char *user)
 }
 
 /* Create a new RCS file from scratch.
-
-   This probably should be moved to rcs.c now that it is called from
-   places outside import.c.
-
-   Return value is 0 for success, or nonzero for failure (in which
-   case an error message will have already been printed).  */
+ *
+ * This probably should be moved to rcs.c now that it is called from
+ * places outside import.c.
+ *
+ * INPUTS
+ *   message    Log message for the addition.  Not used if add_vhead == NULL.
+ *   rcs        Filename of the RCS file to create.
+ *   user       Filename of the file to serve as the contents of the initial
+ *              revision.  Even if add_vhead is NULL, we use this to determine
+ *              the modes to give the new RCS file.
+ *   add_vhead  Revision number of head that we are adding.  Normally 1.1 but
+ *              could be another revision as long as ADD_VBRANCH is a branch
+ *              from it.  If NULL, then just add an empty file without any
+ *              revisions (similar to the one created by "rcs -i").
+ *   key_opt    Keyword expansion mode, e.g., "b" for binary.  NULL means the
+ *              default behavior.
+ *   add_vbranch
+ *              Vendor branch to import to, or NULL if none.  If non-NULL, then
+ *              vtag should also be non-NULL.
+ *   vtag
+ *   targc      Number of elements in TARGV.
+ *   targv      The list of tags to attached to this imported revision.
+ *   desctext   If non-NULL, description for the file.  If NULL, the
+ *              description will be empty.
+ *   desclen    The number of bytes in desctext.
+ *   add_logfp  Write errors to here as well as via error (), or NULL if we
+ *              should use only error ().
+ *
+ * RETURNS
+ *   Return value is 0 for success, or nonzero for failure (in which
+ *   case an error message will have already been printed).
+ */
 int
-add_rcs_file (char *message, char *rcs, char *user, char *add_vhead, char *key_opt, char *add_vbranch, char *vtag, int targc, char **targv, char *desctext, size_t desclen, FILE *add_logfp)
-    /* Log message for the addition.  Not used if add_vhead == NULL.  */
-                  
-    /* Filename of the RCS file to create.  */
-              
-    /* Filename of the file to serve as the contents of the initial
-       revision.  Even if add_vhead is NULL, we use this to determine
-       the modes to give the new RCS file.  */
-               
-
-    /* Revision number of head that we are adding.  Normally 1.1 but
-       could be another revision as long as ADD_VBRANCH is a branch
-       from it.  If NULL, then just add an empty file without any
-       revisions (similar to the one created by "rcs -i").  */
-                    
-
-    /* Keyword expansion mode, e.g., "b" for binary.  NULL means the
-       default behavior.  */
-                  
-
-    /* Vendor branch to import to, or NULL if none.  If non-NULL, then
-       vtag should also be non-NULL.  */
-                      
-               
-              
-                  
-
-    /* If non-NULL, description for the file.  If NULL, the description
-       will be empty.  */
-                   
-                   
-
-    /* Write errors to here as well as via error (), or NULL if we should
-       use only error ().  */
-                    
+add_rcs_file (const char *message, const char *rcs, const char *user,
+              const char *add_vhead, const char *key_opt,
+              const char *add_vbranch, const char *vtag, int targc,
+              char **targv, const char *desctext, size_t desclen,
+              FILE *add_logfp)
 {
     FILE *fprcs, *fpuser;
     struct stat sb;
@@ -1018,8 +1016,7 @@ add_rcs_file (char *message, char *rcs, char *user, char *add_vhead, char *key_o
     int i, ierrno, err = 0;
     mode_t mode;
     char *tocvsPath;
-    char *userfile;
-    char *local_opt = key_opt;
+    const char *userfile;
     char *free_opt = NULL;
     mode_t file_type;
 
@@ -1033,11 +1030,11 @@ add_rcs_file (char *message, char *rcs, char *user, char *add_vhead, char *key_o
        or the other.  Before making a change of this sort, should think
        about what is best, document it (in cvs.texinfo and NEWS), &c.  */
 
-    if (local_opt == NULL)
+    if (key_opt == NULL)
     {
 	if (wrap_name_has (user, WRAP_RCSOPTION))
 	{
-	    local_opt = free_opt = wrap_rcsoption (user, 0);
+	    key_opt = free_opt = wrap_rcsoption (user, 0);
 	}
     }
 
@@ -1074,7 +1071,7 @@ add_rcs_file (char *message, char *rcs, char *user, char *add_vhead, char *key_o
     if (!preserve_perms || file_type == S_IFREG)
     {
 	fpuser = CVS_FOPEN (userfile,
-			    ((local_opt != NULL && strcmp (local_opt, "b") == 0)
+			    ((key_opt != NULL && strcmp (key_opt, "b") == 0)
 			     ? "rb"
 			     : "r")
 	    );
@@ -1144,9 +1141,9 @@ add_rcs_file (char *message, char *rcs, char *user, char *add_vhead, char *key_o
 	goto write_error;
     }
 
-    if (local_opt != NULL && strcmp (local_opt, "kv") != 0)
+    if (key_opt != NULL && strcmp (key_opt, "kv") != 0)
     {
-	if (fprintf (fprcs, "expand   @%s@;\012", local_opt) < 0)
+	if (fprintf (fprcs, "expand   @%s@;\012", key_opt) < 0)
 	{
 	    goto write_error;
 	}
@@ -1443,15 +1440,17 @@ read_error:
     return (err + 1);
 }
 
+
+
 /*
  * Write SIZE bytes at BUF to FP, expanding @ signs into double @
  * signs.  If an error occurs, return a negative value and set errno
  * to indicate the error.  If not, return a nonnegative value.
  */
 int
-expand_at_signs (char *buf, off_t size, FILE *fp)
+expand_at_signs (const char *buf, off_t size, FILE *fp)
 {
-    register char *cp, *next;
+    register const char *cp, *next;
 
     cp = buf;
     while ((next = memchr (cp, '@', size)) != NULL)

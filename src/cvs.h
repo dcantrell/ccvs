@@ -348,7 +348,7 @@ typedef enum direnter_type Dtype;
 /* Option flags for Parse_Info() */
 #define PIOPT_ALL 1	/* accept "all" keyword */
 
-extern char *program_name, *program_path, *cvs_cmd_name;
+extern const char *program_name, *program_path, *cvs_cmd_name;
 extern char *Tmpdir, *Editor;
 extern int cvsadmin_root;
 extern char *CurDir;
@@ -398,7 +398,8 @@ extern char hostname[];
 
 /* Externs that are included directly in the CVS sources */
 
-int RCS_merge (RCSNode *, char *, char *, char *, char *, char *);
+int RCS_merge (RCSNode *, const char *, const char *, const char *,
+               const char *, const char *);
 /* Flags used by RCS_* functions.  See the description of the individual
    functions for which flags mean what for each function.  */
 #define RCS_FLAGS_FORCE 1
@@ -408,13 +409,14 @@ int RCS_merge (RCSNode *, char *, char *, char *, char *, char *);
 #define RCS_FLAGS_KEEPFILE 16
 
 int RCS_exec_rcsdiff (RCSNode *rcsfile,
-                      char *opts, char *options,
-                      char *rev1, char *rev1_cache, char *rev2,
-                      char *label1, char *label2,
-                      char *workfile);
-int diff_exec (char *file1, char *file2,
-               char *label1, char *label2,
-               char *options, char *out);
+                      const char *opts, const char *options,
+                      const char *rev1, const char *rev1_cache,
+                      const char *rev2,
+                      const char *label1, const char *label2,
+                      const char *workfile);
+int diff_exec (const char *file1, const char *file2,
+               const char *label1, const char *label2,
+               const char *options, const char *out);
 
 
 #include "error.h"
@@ -434,8 +436,8 @@ void date_to_internet (char *, const char *);
 void date_to_tm (struct tm *, const char *);
 void tm_to_internet (char *, const struct tm *);
 
-char *Name_Repository (char *dir, char *update_dir);
-char *Short_Repository (char *repository);
+char *Name_Repository (const char *dir, const char *update_dir);
+const char *Short_Repository (const char *repository);
 void Sanitize_Repository_Name (char *repository);
 
 char *Name_Root (char *dir, char *update_dir);
@@ -444,7 +446,7 @@ cvsroot_t *parse_cvsroot (const char *root)
 	__attribute__ ((__malloc__));
 cvsroot_t *local_cvsroot (const char *dir)
 	__attribute__ ((__malloc__));
-void Create_Root (char *dir, char *rootdir);
+void Create_Root (const char *dir, const char *rootdir);
 void root_allow_add (char *);
 void root_allow_free (void);
 int root_allow_ok (char *);
@@ -453,7 +455,7 @@ char *previous_rev (RCSNode *rcs, const char *rev);
 char *gca (const char *rev1, const char *rev2);
 void check_numeric (const char *, int, char **);
 char *getcaller (void);
-char *time_stamp (char *file);
+char *time_stamp (const char *file);
 
 void *xmalloc (size_t bytes)
 	__attribute__((__malloc__));
@@ -466,9 +468,10 @@ char *xstrdup (const char *str)
 int strip_trailing_newlines (char *str);
 int pathname_levels (const char *path);
 
-typedef	int (*CALLPROC)	(char *_repository, char *_value, void *_closure);
-int Parse_Info (char *_infofile, char *_repository, CALLPROC _callproc,
-                int _opt, void *_closure);
+typedef	int (*CALLPROC)	(const char *repository, const char *value,
+                         void *closure);
+int Parse_Info (const char *infofile, const char *repository,
+                CALLPROC callproc, int opt, void *closure);
 int parse_config (char *);
 
 typedef	RETSIGTYPE (*SIGCLEANUPPROC)	();
@@ -485,7 +488,7 @@ int isabsolute (const char *filename);
 char *xreadlink (const char *link);
 #endif /* HAVE_READLINK */
 char *xresolvepath (const char *path);
-char *last_component (char *path);
+const char *last_component (const char *path);
 char *get_homedir (void);
 char *strcat_filename_onto_homedir (const char *, const char *);
 char *cvs_temp_name (void);
@@ -502,23 +505,23 @@ int unlink_file_dir (const char *f);
 struct file_info
 {
     /* Name of the file, without any directory component.  */
-    char *file;
+    const char *file;
 
     /* Name of the directory we are in, relative to the directory in
        which this command was issued.  We have cd'd to this directory
        (either in the working directory or in the repository, depending
        on which sort of recursion we are doing).  If we are in the directory
        in which the command was issued, this is "".  */
-    char *update_dir;
+    const char *update_dir;
 
     /* update_dir and file put together, with a slash between them as
        necessary.  This is the proper way to refer to the file in user
        messages.  */
-    char *fullname;
+    const char *fullname;
 
     /* Name of the directory corresponding to the repository which contains
        this file.  */
-    char *repository;
+    const char *repository;
 
     /* The pre-parsed entries for this directory.  */
     List *entries;
@@ -537,10 +540,10 @@ int xcmp (const char *file1, const char *file2);
 int yesno (void);
 void *valloc (size_t bytes);
 time_t get_date (char *date, struct timeb *now);
-int Create_Admin (char *dir, char *update_dir,
-                  char *repository, char *tag, char *date,
+int Create_Admin (const char *dir, const char *update_dir,
+                  const char *repository, const char *tag, const char *date,
                   int nonbranch, int warn, int dotemplate);
-int expand_at_signs (char *, off_t, FILE *);
+int expand_at_signs (const char *, off_t, FILE *);
 
 /* Locking subsystem (implemented in lock.c).  */
 
@@ -562,12 +565,12 @@ extern char *lock_dir;
 /* AllowedAdminOptions setting from CVSROOT/config.  */
 extern char *UserAdminOptions;
 
-void Scratch_Entry (List * list, char *fname);
+void Scratch_Entry (List * list, const char *fname);
 void ParseTag (char **tagp, char **datep, int *nonbranchp);
-void WriteTag (char *dir, char *tag, char *date, int nonbranch,
-		      char *update_dir, char *repository);
-void WriteTemplate (char *update_dir, int dotemplate,
-			   char *repository);
+void WriteTag (const char *dir, const char *tag, const char *date,
+               int nonbranch, const char *update_dir, const char *repository);
+void WriteTemplate (const char *update_dir, int dotemplate,
+                    const char *repository);
 void cat_module (int status);
 void check_entries (char *dir);
 void close_module (DBM * db);
@@ -580,9 +583,9 @@ void ign_add (char *ign, int hold);
 void ign_add_file (char *file, int hold);
 void ign_setup (void);
 void ign_dir_add (char *name);
-int ignore_directory (char *name);
-typedef void (*Ignore_proc) (char *, char *);
-void ignore_files (List *, List *, char *, Ignore_proc);
+int ignore_directory (const char *name);
+typedef void (*Ignore_proc) (const char *, const char *);
+void ignore_files (List *, List *, const char *, Ignore_proc);
 extern int ign_inhibit_server;
 
 #include "update.h"
@@ -590,7 +593,7 @@ extern int ign_inhibit_server;
 void line2argv (int *pargc, char ***argv, char *line, char *sepchars);
 void make_directories (const char *name);
 void make_directory (const char *name);
-int mkdir_if_needed (char *name);
+int mkdir_if_needed (const char *name);
 void rename_file (const char *from, const char *to);
 /* Expand wildcards in each element of (ARGC,ARGV).  This is according to the
    files which exist in the current directory, and accordingly to OS-specific
@@ -614,18 +617,19 @@ void cleanup_register (void (*handler) (void));
 void strip_trailing_slashes (char *path);
 void update_delproc (Node * p);
 void usage (const char *const *cpp);
-void xchmod (char *fname, int writable);
+void xchmod (const char *fname, int writable);
 char *xgetwd (void);
 List *Find_Names (char *repository, int which, int aflag,
 		  List ** optentries);
-void Register (List * list, char *fname, char *vn, char *ts,
-	       char *options, char *tag, char *date, char *ts_conflict);
-void Update_Logfile (char *repository, char *xmessage, FILE * xlogfp,
-		     List * xchanges);
-void do_editor (char *dir, char **messagep,
-		      char *repository, List * changes);
+void Register (List * list, const char *fname, const char *vn, const char *ts,
+               const char *options, const char *tag, const char *date,
+               const char *ts_conflict);
+void Update_Logfile (const char *repository, const char *xmessage,
+                     FILE * xlogfp, List * xchanges);
+void do_editor (const char *dir, char **messagep,
+                const char *repository, List * changes);
 
-void do_verify (char **messagep, char *repository);
+void do_verify (char **messagep, const char *repository);
 
 typedef	int (*CALLBACKPROC)	(int argc, char *argv[], char *where,
 	char *mwhere, char *mfile, int shorten, int local_specified,
@@ -634,13 +638,13 @@ typedef	int (*CALLBACKPROC)	(int argc, char *argv[], char *where,
 
 typedef	int (*FILEPROC) (void *callerdat, struct file_info *finfo);
 typedef	int (*FILESDONEPROC) (void *callerdat, int err,
-                              char *repository, char *update_dir,
+                              const char *repository, const char *update_dir,
                               List *entries);
-typedef	Dtype (*DIRENTPROC) (void *callerdat, char *dir,
-				    char *repos, char *update_dir,
-				    List *entries);
-typedef	int (*DIRLEAVEPROC) (void *callerdat, char *dir, int err,
-				    char *update_dir, List *entries);
+typedef	Dtype (*DIRENTPROC) (void *callerdat, const char *dir,
+                             const char *repos, const char *update_dir,
+                             List *entries);
+typedef	int (*DIRLEAVEPROC) (void *callerdat, const char *dir, int err,
+                             const char *update_dir, List *entries);
 
 int mkmodules (char *dir);
 int init (int argc, char **argv);
@@ -649,8 +653,8 @@ int do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
 		CALLBACKPROC callback_proc, char *where, int shorten,
 		int local_specified, int run_module_prog, int build_dirs,
 		char *extra_arg);
-void history_write (int type, char *update_dir, char *revs, char *name,
-		    char *repository);
+void history_write (int type, const char *update_dir, const char *revs,
+                    const char *name, const char *repository);
 int start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 		     DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc,
 		     void *callerdat,
@@ -660,9 +664,9 @@ int start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 void SIG_beginCrSect (void);
 void SIG_endCrSect (void);
 int SIG_inCrSect (void);
-void read_cvsrc (int *argc, char ***argv, char *cmdname);
+void read_cvsrc (int *argc, char ***argv, const char *cmdname);
 
-char *make_message_rcsvalid (char *message);
+char *make_message_rcsvalid (const char *message);
 int file_has_conflict (const struct file_info *,
                        const char *ts_conflict);
 int file_has_markers (const struct file_info *);
@@ -693,7 +697,7 @@ int run_exec (const char *stin, const char *stout, const char *sterr,
  */
 struct format_cmdline_walklist_closure
 {
-    char *format;	/* the format string the user passed us */
+    const char *format;	/* the format string the user passed us */
     char **buf;		/* *dest = our NUL terminated and possibly too short
 			 * destination string
 			 */
@@ -705,25 +709,25 @@ struct format_cmdline_walklist_closure
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
     int onearg;
     int firstpass;
-    char *srepos;
+    const char *srepos;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
     void *closure;	/* our user defined closure */
 };
 char *cmdlinequote (char quotes, char *s);
 char *cmdlineescape (char quotes, char *s);
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-char *format_cmdline (int oldway, char *srepos, char *format, ...);
+char *format_cmdline (int oldway, const char *srepos, const char *format, ...);
 #else /* SUPPORT_OLD_INFO_FMT_STRINGS */
-char *format_cmdline (char *format, ...);
+char *format_cmdline (const char *format, ...);
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 
 /* other similar-minded stuff from run.c.  */
 FILE *run_popen (const char *, const char *);
-int piped_child (char **, int *, int *);
+int piped_child (char *const *, int *, int *);
 void close_on_exec (int);
 
 pid_t waitpid (pid_t, int *, int);
-
+
 /*
  * a struct vers_ts contains all the information about a file including the
  * user and rcs file names, and the version checked out and the head.
@@ -877,7 +881,8 @@ void wrap_unparse_rcs_options (char **, int);
 #endif /* SERVER_SUPPORT || CLIENT_SUPPORT */
 
 /* Pathname expansion */
-char *expand_path (char *name, char *file, int line, int formatsafe);
+char *expand_path (const char *name, const char *file, int line,
+                   int formatsafe);
 
 /* User variables.  */
 extern List *variable_list;
@@ -948,7 +953,7 @@ void cvs_output_binary (char *, size_t);
 void cvs_outerr (const char *, size_t);
 void cvs_flusherr (void);
 void cvs_flushout (void);
-void cvs_output_tagged (char *, char *);
+void cvs_output_tagged (const char *, const char *);
 
 /* The trace function from subr.c */
 void cvs_trace (int level, const char *fmt, ...)

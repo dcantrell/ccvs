@@ -310,7 +310,7 @@ ign_dir_add (char *name)
 /* Return nonzero if NAME is part of the list of directories to ignore.  */
 
 int
-ignore_directory (char *name)
+ignore_directory (const char *name)
 {
     int i;
 
@@ -326,7 +326,9 @@ ignore_directory (char *name)
 
     return 0;
 }
-
+
+
+
 /*
  * Process the current directory, looking for files not in ILIST and
  * not on the global ignore list for this directory.  If we find one,
@@ -336,14 +338,15 @@ ignore_directory (char *name)
  * directory with a CVS administration directory is known.
  */
 void
-ignore_files (List *ilist, List *entries, char *update_dir, Ignore_proc proc)
+ignore_files (List *ilist, List *entries, const char *update_dir,
+              Ignore_proc proc)
 {
     int subdirs;
     DIR *dirp;
     struct dirent *dp;
     struct stat sb;
     char *file;
-    char *xdir;
+    const char *xdir;
     List *files;
     Node *p;
 

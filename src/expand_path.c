@@ -15,9 +15,8 @@
 #include "cvs.h"
 #include <sys/types.h>
 
-static char *expand_variable (char *env, char *file, int line);
+static char *expand_variable (const char *env, const char *file, int line);
 
-
 /* User variables.  */
 
 List *variable_list = NULL;
@@ -78,7 +77,9 @@ variable_set (char *nameval)
 	free (name);
     }
 }
-
+
+
+
 /* This routine will expand the pathname to account for ~ and $
    characters as described above.  Returns a pointer to a newly
    malloc'd string.  If an error occurs, an error message is printed
@@ -87,9 +88,9 @@ variable_set (char *nameval)
    to something; LINE can be zero to indicate the line number is not
    known.  */
 char *
-expand_path (char *name, char *file, int line, int formatsafe)
+expand_path (const char *name, const char *file, int line, int formatsafe)
 {
-    char *s;
+    const char *s;
     char *d;
 
     char *mybuf = NULL;
@@ -237,8 +238,9 @@ expand_path (char *name, char *file, int line, int formatsafe)
     if (*s++ == '~')
     {
 	char *t;
-	char *p=s;
-	if (*s=='/' || *s==0)
+	char *p, *pstart;
+	pstart = p = xstrdup (s);
+	if (*pstart=='/' || *pstart==0)
 	    t = get_homedir ();
 	else
 	{
@@ -259,14 +261,14 @@ expand_path (char *name, char *file, int line, int formatsafe)
 	    for (; *p!='/' && *p; p++)
 		;
 	    *p = 0;
-	    ps = getpwnam (s);
+	    ps = getpwnam (pstart);
 	    if (ps == 0)
 	    {
 		if (line != 0)
 		    error (0, 0, "%s:%d: no such user %s",
-			   file, line, s);
+			   file, line, pstart);
 		else
-		    error (0, 0, "%s: no such user %s", file, s);
+		    error (0, 0, "%s: no such user %s", file, pstart);
 		return NULL;
 	    }
 	    t = ps->pw_dir;
@@ -285,9 +287,8 @@ expand_path (char *name, char *file, int line, int formatsafe)
 	    d = buf + doff;
 	}
 	--d;
-	if (*p == 0)
-	    *p = '/';	       /* always add / */
-	s=p;
+	s+=p-pstart;
+	free (pstart);
     }
     else
 	--s;
@@ -323,8 +324,10 @@ expand_path (char *name, char *file, int line, int formatsafe)
     return NULL;
 }
 
+
+
 static char *
-expand_variable (char *name, char *file, int line)
+expand_variable (const char *name, const char *file, int line)
 {
     if (strcmp (name, CVSROOT_ENV) == 0)
 	return current_parsed_root->directory;

@@ -524,7 +524,7 @@ start_child (char *command, HANDLE in, HANDLE out)
    construct a command line that one might pass to CreateProcess.
    Try to quote things appropriately.  */
 static char *
-build_command (char **argv)
+build_command (char *const *argv)
 {
     int len;
 
@@ -597,7 +597,7 @@ build_command (char **argv)
    Return the handle of the child process (this is what
    _cwait and waitpid expect).  */
 int
-piped_child (char **argv, int *to, int *from)
+piped_child (char *const *argv, int *to, int *from)
 {
   int child;
   HANDLE pipein[2], pipeout[2];
@@ -605,7 +605,7 @@ piped_child (char **argv, int *to, int *from)
 
   /* Turn argv into a form acceptable to CreateProcess.  */
   command = build_command (argv);
-  if (! command)
+  if (!command)
       return -1;
 
   /* Create pipes for communicating with child.  Arrange for

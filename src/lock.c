@@ -1120,6 +1120,8 @@ set_lock (struct lock *lock, int will_wait)
     }
 }
 
+
+
 /*
  * Clear master lock.  We don't have to recompute the lock name since
  * clear_lock is never called except after a successful set_lock().
@@ -1141,8 +1143,8 @@ clear_lock (struct lock *lock)
  */
 /* ARGSUSED */
 static int
-lock_filesdoneproc (void *callerdat, int err, char *repository,
-                    char *update_dir, List *entries)
+lock_filesdoneproc (void *callerdat, int err, const char *repository,
+                    const char *update_dir, List *entries)
 {
     Node *p;
 

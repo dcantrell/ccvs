@@ -340,20 +340,21 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 	     * (COMP).  DIR and COMP will each point to a newly malloc'd
 	     * string.
 	     */
-	    comp = last_component( argv[i] );
-	    if( comp == argv[i] )
+	    dir = xstrdup (argv[i]);
+	    /* It's okay to cast out last_component's const below since we know
+	     * we just allocated dir here and have control of it.
+	     */
+	    comp = (char *)last_component (dir);
+	    if (comp == dir)
 	    {
 		/* no dir component.  What we have is an implied "./" */
 		dir = xstrdup(".");
 	    }
 	    else
 	    {
-		size_t dirlen = comp - argv[i] - 1;
-		dir = xmalloc( dirlen + 1 );
-		strncpy( dir, argv[i], dirlen );
-		dir[dirlen] = '\0';
+		comp[-1] = '\0';
+		comp = xstrdup (comp);
 	    }
-	    comp = xstrdup( comp );
 
 	    /* if this argument exists as a file in the current
 	       working directory tree, then add it to the files list.  */
@@ -710,9 +711,9 @@ do_recursion (struct recursion_frame *frame)
     }
     else
     {
-	repository = (char *) frame->repository;
-	assert ( repository != NULL );
-	assert ( strstr ( repository, "/./" ) == NULL );
+	repository = frame->repository;
+	assert (repository != NULL);
+	assert (strstr (repository, "/./") == NULL);
     }
 
     fileattr_startdir (repository);
@@ -885,6 +886,8 @@ do_recursion (struct recursion_frame *frame)
     return err;
 }
 
+
+
 /*
  * Process each of the files in the list with the callback proc
  */
@@ -894,18 +897,19 @@ do_file_proc (Node *p, void *closure)
     struct frame_and_file *frfile = (struct frame_and_file *)closure;
     struct file_info *finfo = frfile->finfo;
     int ret;
+    char *tmp;
 
     finfo->file = p->key;
-    finfo->fullname = xmalloc (strlen (finfo->file)
+    tmp = xmalloc (strlen (finfo->file)
 			       + strlen (finfo->update_dir)
 			       + 2);
-    finfo->fullname[0] = '\0';
+    tmp[0] = '\0';
     if (finfo->update_dir[0] != '\0')
     {
-	strcat (finfo->fullname, finfo->update_dir);
-	strcat (finfo->fullname, "/");
+	strcat (tmp, finfo->update_dir);
+	strcat (tmp, "/");
     }
-    strcat (finfo->fullname, finfo->file);
+    strcat (tmp, finfo->file);
 
     if (frfile->frame->dosrcs && repository)
     {
@@ -920,26 +924,29 @@ do_file_proc (Node *p, void *closure)
 	if (finfo->rcs == NULL
 	    && !(frfile->frame->which & W_LOCAL))
 	{
-	    error (0, 0, "could not read RCS file for %s", finfo->fullname);
-	    free (finfo->fullname);
+	    error (0, 0, "could not read RCS file for %s", tmp);
+	    free (tmp);
 	    cvs_flushout ();
 	    return 0;
 	}
     }
     else
         finfo->rcs = (RCSNode *) NULL;
+    finfo->fullname = tmp;
     ret = frfile->frame->fileproc (frfile->frame->callerdat, finfo);
 
     freercsnode(&finfo->rcs);
-    free (finfo->fullname);
+    free (tmp);
 
     /* Allow the user to monitor progress with tail -f.  Doing this once
        per file should be no big deal, but we don't want the performance
        hit of flushing on every line like previous versions of CVS.  */
     cvs_flushout ();
 
-    return (ret);
+    return ret;
 }
+
+
 
 /*
  * Process each of the directories in the list (recursing as we go)
@@ -1173,7 +1180,7 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	dirlist = NULL;
 
 	/* cd to the sub-directory */
-	if ( CVS_CHDIR (dir) < 0)
+	if (CVS_CHDIR (dir) < 0)
 	    error (1, errno, "could not chdir to %s", dir);
 
 	/* honor the global SKIP_DIRS (a.k.a. local) */
@@ -1194,24 +1201,24 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	 * co, ...) to tag_check_valid, since all the other commands use
 	 * CVS/Repository to figure it out per directory.
 	 */
-	if ( repository )
+	if (repository)
 	{
-	    if ( strcmp ( dir, "." ) == 0 )
-		xframe.repository = xstrdup ( repository );
+	    if (strcmp (dir, ".") == 0)
+		xframe.repository = xstrdup (repository);
 	    else
 	    {
-		xframe.repository = xmalloc ( strlen ( repository )
-					      + strlen ( dir )
-					      + 2 );
-		sprintf ( xframe.repository, "%s/%s", repository, dir );
+		xframe.repository = xmalloc (strlen (repository)
+					     + strlen (dir)
+					     + 2);
+		sprintf (xframe.repository, "%s/%s", repository, dir);
 	    }
 	}
 	else
 	    xframe.repository = NULL;
 	err += do_recursion (&xframe);
-	if ( xframe.repository )
+	if (xframe.repository)
 	{
-	    free ( xframe.repository );
+	    free (xframe.repository);
 	    xframe.repository = NULL;
 	}
 
@@ -1235,7 +1242,7 @@ but CVS uses %s for its own purposes; skipping %s directory",
     free (update_dir);
     update_dir = saved_update_dir;
 
-    return (err);
+    return err;
 }
 
 /*
