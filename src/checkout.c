@@ -243,22 +243,17 @@ checkout (argc, argv)
 
 	ign_setup ();
 	
-	/* Turning on the EXPAND_MODULES has the effect of turning
-	   modules into aliases -- if you have module foo pointing to
-	   bar/baz, when you checkout foo it will be created in
-	   bar/baz instead of foo.  The whole reason for modules in
-	   the first place was so we didn't have to deal with this.
-
-	   I've left the original statement in here as a comment in
-	   case anyone ever discovers that they have to re-enable this
-	   functionality.
-	   
-	   expand_modules = (!cat && !status && !pipeout
-                             && supported_request ("expand-modules"));
-	   */
-
-	expand_modules = 0;
-
+	/* We have to expand names here because the "expand-modules"
+           directive to the server has the side-effect of having the
+           server send the check-in and update programs for the
+           various modules/dirs requested.  If we turn this off and
+           simply request the names of the modules and directories (as
+           below in !expand_modules), those files (CVS/Checking.prog
+           or CVS/Update.prog) don't get created.  Grrr.  */
+	
+	expand_modules = (!cat && !status && !pipeout
+			  && supported_request ("expand-modules"));
+	
 	if (expand_modules)
 	  {
 	    /* This is done here because we need to read responses

@@ -1,3 +1,12 @@
+Thu Apr 27 12:18:38 1995  Noel Cragg  <noel@vo.com>
+
+	* checkout.c (checkout): To fix new bug created by Apr 23 change,
+        re-enabled "expand-module" functionality, because it has the side
+        effect of setting the checkin/update programs for a directory.  To
+        solve the local/remote checkout problem that prompted this change
+        in the first place, I performed the next change.
+	* server.c (expand_proc): Now returns expansions for aliases only.
+
 Wed Apr 26 12:07:42 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* rcs.c (getrcskey): Rewritten to process runs of whitespace chars
