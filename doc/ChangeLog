@@ -1,3 +1,8 @@
+Fri Dec  6 09:08:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (syntax): Expand discussion of regular expression
+	syntax.
+
 Fri Nov 29 09:06:41 1996  fnf@ninemoons.com (Fred Fish)
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
