@@ -93,6 +93,7 @@ LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIB_CLOCK_GETTIME = @LIB_CLOCK_GETTIME@
+LIB_NANOSLEEP = @LIB_NANOSLEEP@
 LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
@@ -215,6 +216,7 @@ EXTRA_DIST = \
 	malloc.m4 \
 	mbstate_t.m4 \
 	mkstemp.m4 \
+	nanosleep.m4 \
 	nls.m4 \
 	onceonly_2_57.m4 \
 	pathmax.m4 \
