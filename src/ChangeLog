@@ -1,3 +1,12 @@
+Tue Jun  3 13:02:37 1997  Norbert Kiesel  <nk@cosa.de>
+
+	* checkout.c (checkout): Removed restriction of not sending -k in
+ 	remote export (I think this was introduced while the -k handling
+ 	was still broken in remote mode).  Give better error texts
+ 	regarding -c and -s options.  Use error() instead of usage() for
+ 	reporting errors in all places.  Reindented some lines.  Free
+ 	xmalloc'd space of options.
+
 Thu May 29 16:32:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcscmds.c (RCS_checkin), mkmodules.c (init): Pass -w option to
