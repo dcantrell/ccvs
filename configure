@@ -5751,6 +5751,10 @@ done
 
 
 
+cat >>confdefs.h <<\_ACEOF
+#define getpass cvs_getpass
+_ACEOF
+
 
 
 
