@@ -3,6 +3,11 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* Directories specified to `checkout -d' are no longer required to exist.  This
+  consolidates some behavior between `-d' options specified in the modules file
+  and `checkout -d' as well as removing some prior differences between local
+  and client/server mode operation.
+
 * A problem with `cvs release' of subdirs that could corrupt CVS/Entries files
   has been fixed (client/server).
 
