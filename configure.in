@@ -297,7 +297,8 @@ AC_ARG_WITH(
     [Kerberos 4 directory (default /usr/kerberos)]),
   [KRB4=$with_krb4],
 )dnl
-echo "will look for krb4 in $KRB4"
+AC_MSG_CHECKING([for KRB4 in $KRB4])
+AC_MSG_RESULT([])
 AC_SUBST(KRB4)])dnl
 WITH_KRB4
 
@@ -395,7 +396,9 @@ AC_ARG_WITH(
 
 
 if echo $with_editor |grep ^/ >/dev/null; then
-  # If $with_editor is an absolute path, just trust the user and use it
+  # If $with_editor is an absolute path, issue a warning if the executable
+  # doesn't exist or isn't usable, but then trust the user and use it
+  # regardless
   EDITOR=$with_editor
   AC_MSG_CHECKING([for an editor])
   AC_MSG_RESULT([$EDITOR])
