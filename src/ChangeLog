@@ -1,3 +1,7 @@
+2001-03-29  Derek Price  <dprice@collab.net>
+
+	* sanity.sh: Normalize TESTDIR even when the user set it.
+
 2001-03-29  Larry Jones  <larry.jones@sdrc.com>
 
 	* client.c (connect_to_pserver, start_tcp_server): Add IP address
