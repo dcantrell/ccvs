@@ -1,5 +1,12 @@
 2003-05-09  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Back out all the S_ISSOCK changes I just made and move
+	the equivalent to lib/system.h.
+
+	* configure.in: Regenerated.
+
+2003-05-09  Derek Price  <derek@ximbiot.com>
+
 	* acinclude.m4: set cvs_client_objects in order to support optional
 	compilation of src/gssapi-client.c.
 	* configure.in: AC_SUBST(cvs_client_objects).

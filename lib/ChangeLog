@@ -1,5 +1,9 @@
 2003-05-09  Derek Price  <derek@ximbiot.com>
 
+	* system.h: Define S_ISSOCK on SCO OpenServer.
+
+2003-05-09  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.in: Regenerated.
 
 2003-04-30  Derek Price  <derek@ximbiot.com>
