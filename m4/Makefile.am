@@ -27,6 +27,8 @@ EXTRA_DIST = \
 	alloca.m4 \
 	atexit.m4 \
 	codeset.m4 \
+	dirname.m4 \
+	dos.m4 \
 	exitfail.m4 \
 	fnmatch.m4 \
 	getline.m4 \
