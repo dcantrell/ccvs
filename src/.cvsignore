@@ -7,3 +7,4 @@ check.plog
 cvs
 cvsbug
 mkmodules
+sanity.config.sh

@@ -1,5 +1,7 @@
 2003-03-19  Mark D. Baushke  <mdb@cvshome.org>
 
+	* .cvsignore: Added sanity.config.sh, a new auto-generated file.
+
 	* cvs.h (CVS_PID_ENV): New environment variable CVS_PID has the
 	pid of the parent cvs process.
 	* main.c (main): Initialize it.
