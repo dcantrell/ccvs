@@ -3397,7 +3397,6 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     Deltatext *dtext;
     Node *nodep;
     char *tmpfile, *changefile, *chtext;
-    char *user;
     char *diffopts;
     int bufsize, buflen, chtextlen;
     int status, checkin_quiet, allocated_workfile;
@@ -3430,12 +3429,10 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	cvs_output ("\n", 1);
     }
 
-    user = getcaller();
-
     /* Create new delta node. */
     delta = (RCSVers *) xmalloc (sizeof (RCSVers));
     memset (delta, 0, sizeof (RCSVers));
-    delta->author = xstrdup (user);
+    delta->author = xstrdup (getcaller ());
     if (flags & RCS_FLAGS_MODTIME)
     {
 	struct stat ws;
@@ -3660,7 +3657,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     nodep = findnode (RCS_getlocks (rcs), commitpt->version);
     if (nodep != NULL)
     {
-	if (strcmp (nodep->data, user) != 0)
+	if (strcmp (nodep->data, delta->author) != 0)
 	{
 	    rcserror (rcs->path, "revision %s locked by %s",
 		      nodep->key, nodep->data);
