@@ -117,7 +117,26 @@ write_entries (list)
 
     /* open the new one and walk the list writing entries */
     entfilename = CVSADM_ENTBAK;
-    entfile = open_file (entfilename, "w+");
+    entfile = CVS_FOPEN (entfilename, "w+");
+    if (entfile == NULL)
+    {
+	/* Make this a warning, not an error.  For example, one user might
+	   have checked out a working directory which, for whatever reason,
+	   contains an Entries.Log file.  A second user, without write access
+	   to that working directory, might want to do a "cvs log".  The
+	   problem rewriting Entries shouldn't affect the ability of "cvs log"
+	   to work, although the warning is probably a good idea so that
+	   whether Entries gets rewritten is not an inexplicable process.  */
+	/* FIXME: should be including update_dir in message.  */
+	error (0, errno, "cannot rewrite %s", entfilename);
+
+	/* Now just return.  We leave the Entries.Log file around.  As far
+	   as I know, there is never any data lying around in 'list' that
+	   is not in Entries.Log at this time (if there is an error writing
+	   Entries.Log that is a separate problem).  */
+	return;
+    }
+
     (void) walklist (list, write_ent_proc, (void *) &sawdir);
     if (! sawdir)
     {
