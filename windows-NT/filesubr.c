@@ -654,21 +654,75 @@ xcmp (file1, file2)
     return (ret);
 }
 
-
 /* Generate a unique temporary filename.  Returns a pointer to a newly
-   malloc'd string containing the name.  Returns successfully or not at
-   all.  */
+ * malloc'd string containing the name.  Returns successfully or not at
+ * all.
+ *
+ *     THIS FUNCTION IS DEPRECATED!!!  USE cvs_temp_file INSTEAD!!!
+ *
+ * and yes, I know about the way the rcs commands use temp files.  I think
+ * they should be converted too but I don't have time to look into it right
+ * now.
+ */
 char *
 cvs_temp_name ()
 {
-    char *retval;
+    char *fn;
+    FILE *fp;
 
-    retval = _tempnam (NULL, NULL);
-    if (retval == NULL)
-	error (1, errno, "cannot generate temporary filename");
-    return retval;
+    fp = cvs_temp_file (&fn);
+    if (fp == NULL)
+	error (1, errno, "Failed to create temporary file");
+    if (fclose (fp) == EOF)
+	error (0, errno, "Failed to close temporary file %s", fn);
+    return fn;
 }
-
+
+/* Generate a unique temporary filename and return an open file stream
+ * to the truncated file by that name
+ *
+ *  INPUTS
+ *	filename	where to place the pointer to the newly allocated file
+ *   			name string
+ *
+ *  OUTPUTS
+ *	filename	dereferenced, will point to the newly allocated file
+ *			name string.  This value is undefined if the function
+ *			returns an error.
+ *
+ *  RETURNS
+ *	An open file pointer to a read/write mode empty temporary file with the
+ *	unique file name or NULL on failure.
+ *
+ *  ERRORS
+ *	on error, errno will be set to some value either by CVS_FOPEN or
+ *	whatever system function is called to generate the temporary file name
+ */
+FILE *cvs_temp_file (filename)
+    char **filename;
+{
+    char *fn;
+    FILE *fp;
+
+    /* FIXME - I'd like to be returning NULL here in noexec mode, but I think
+     * some of the rcs & diff functions which rely on a temp file run in
+     * noexec mode too.
+     */
+
+    /* assert (filename != NULL); */
+
+    fn = _tempnam (Tmpdir, "cvs");
+    if (fn == NULL) fp = NULL;
+    else if ((fp = CVS_FOPEN (fn, "w+")) == NULL) free (fn);
+
+    /* tempnam returns a pointer to a newly malloc'd string, so there's
+     * no need for a xstrdup
+     */
+
+    *filename = fn;
+    return fp;
+}
+
 /* Return non-zero iff FILENAME is absolute.
    Trivial under Unix, but more complicated under other systems.  */
 int

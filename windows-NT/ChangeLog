@@ -1,3 +1,9 @@
+2000-10-20  Derek Price  <derek.price@openavenue.com>
+
+	* filesubr.c (cvs_temp_file): add this function to match the one in
+	src/filesubr.c
+	(cvs_temp_name): wrap cvs_temp_file as in src/filesubr.c
+
 2000-10-18  Derek Price  <derek.price@openavenue.com>
 
 	* config.h: Add () to a macro function to supress a warning.
