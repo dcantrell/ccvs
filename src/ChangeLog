@@ -1,4 +1,7 @@
-2002-03-22  Larry Jones  <larry.jones@sdrc.com>
+2002-04-18  Larry Jones  <larry.jones@sdrc.com>
+
+	* admin.c (admin_fileproc): Allow admin to be used on RCS files with
+	no local version (e.g., removed files) like most other subcommands.
 
 	* wrapper.c (wrap_add): Update URL of -t/-f wrapper discussion.
 
