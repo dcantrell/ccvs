@@ -355,6 +355,11 @@ dnl Windows support code in lib/fncase.c to handle the case
 dnl insensitive file system.  We also need some support libraries.  We
 dnl do this at the end so that the new libraries are added at the end
 dnl of LIBS.
+dnl
+dnl FIXME: We should be trying to meet the autoconf ideal of checking for
+dnl the properties of the system rather than the name of the os here.  In other
+dnl words, we should check the case sensitivty of the system and then for
+dnl the support functions we are using and which library we find them in.
 AC_CACHE_CHECK(for cygwin32, ccvs_cv_sys_cygwin32,
 [AC_TRY_COMPILE([], [return __CYGWIN32__;],
 ccvs_cv_sys_cygwin32=yes, ccvs_cv_sys_cygwin32=no)])
