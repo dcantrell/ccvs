@@ -1,3 +1,10 @@
+2002-08-16  Derek Price  <derek@ximbiot.com>
+
+	* create_adm.c (Create_Admin): Assume RELATIVE_REPOS is set.
+	* server.c (outside_root): Add comment.
+	* options.h: Remove RELATIVE_REPOS & CVS_BADROOT.
+	* sanity.sh: Remove a lot of !RELATIVE_REPOS cruft from tests.
+
 2002-08-14  Derek Price  <oberon@umich.edu>
 
 	* server.c (server): Dispose of the correct pointer.  Tidy comment.
