@@ -971,6 +971,15 @@
 /* Define to the name of the strftime replacement function. */
 #define my_strftime nstrftime
 
+/* Define to rpl_optarg if the replacement variable should be used. */
+#define optarg rpl_optarg
+
+/* Define to rpl_optind if the replacement variable should be used. */
+#define optind rpl_optind
+
+/* Define to rpl_optopt if the replacement variable should be used. */
+#define optopt rpl_optopt
+
 /* Define to rpl_nanosleep if the replacement function should be used. */
 #undef nanosleep
 
