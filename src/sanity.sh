@@ -11124,13 +11124,15 @@ aliasnested -a first-dir/subdir/ssdir
 topfiles -a first-dir/file1 first-dir/file2
 world -a .
 statusmod -s Mungeable
-# Check for ability to block infinite loops.  This only works if a module calls
-# itself at the moment (A -> A), not for A -> B -> A or deeper.  See the FIXME
-# comment in domodule() in modules.c.
+# Check for ability to block infinite loops.
 infinitealias -a infinitealias
 # Prior to 1.11.12 & 1.12.6, the infinite alias loop check didn't strip
-# slashes.
+# slashes or work if a module called a module which then called itself
+# (A -> A was blocked, but not A -> B -> A or deeper).
 infinitealias2 -a infinitealias2/
+infinitealias3 -a infinitealias4/
+infinitealias4 -a aliasmodule infinitealias5
+infinitealias5 -a infinitealias3/
 # Options must come before arguments.  It is possible this should
 # be relaxed at some point (though the result would be bizarre for
 # -a); for now test the current behavior.
@@ -11154,6 +11156,9 @@ bogusalias   first-dir/subdir/a -a
 dirmodule    first-dir/subdir
 infinitealias -a infinitealias
 infinitealias2 -a infinitealias2/
+infinitealias3 -a infinitealias4/
+infinitealias4 -a aliasmodule infinitealias5
+infinitealias5 -a infinitealias3/
 namedmodule  -d nameddir first-dir/subdir
 realmodule   first-dir/subdir a
 statusmod    -s Mungeable
@@ -11180,6 +11185,12 @@ $SPROG checkout: module \`infinitealias' in modules file contains infinite loop"
 "$CPROG checkout: module \`infinitealias2' in modules file contains infinite loop" \
 "$SPROG server: module \`infinitealias2' in modules file contains infinite loop
 $SPROG checkout: module \`infinitealias2' in modules file contains infinite loop"
+	  # Prior to 1.11.12 & 1.12.6, the inifinte alias loop check did not
+	  # notice when A -> B -> A, it only noticed A -> A.
+	  dotest modules-148a1.3 "${testcvs} co infinitealias3/" \
+"$CPROG checkout: module \`infinitealias3' in modules file contains infinite loop" \
+"$SPROG server: module \`infinitealias3' in modules file contains infinite loop
+$SPROG checkout: module \`infinitealias3' in modules file contains infinite loop"
 
 	  # Test that real modules check out to realmodule/a, not subdir/a.
 	  dotest modules-149a1 "${testcvs} co realmodule" "U realmodule/a"
