@@ -111,7 +111,6 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn,
 
     cp = reposcopy;
 
-#ifdef RELATIVE_REPOS
     /*
      * If the Repository file is to hold a relative path, try to strip off
      * the leading CVSroot argument.
@@ -124,7 +123,6 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn,
 	cp += strlen (path);
     free (path);
     }
-#endif
 
     if (fprintf (fout, "%s\n", cp) < 0)
     {
