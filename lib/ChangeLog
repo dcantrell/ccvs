@@ -4,6 +4,12 @@ Thu Jul 20 12:38:03 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 	to register a callback via error_set_cleanup.  Avoids hassles with
 	include files and SERVER_SUPPORT and so on.
 
+Tue Jul 18 21:18:00 1995  Jim Blandy <jimb@cyclic.com>
+
+	* system.h: Include <sys/param.h> only if HAVE_SYS_PARAM_H
+	is #defined.  We've added a test to configure.in to #define this
+	on most systems.
+
 Thu Jul 13 11:22:21 1995  Jim Meyering  (meyering@comco.com)
 
 	* xgetwd.c: New file.
