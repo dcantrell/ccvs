@@ -1,5 +1,12 @@
 Fri Feb 23 09:23:20 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c (connect_to_pserver): Remove unused variable host.
+	* login.c: Include getline.h.
+	(login): Remove unused variables i and username.
+	(get_cvs_password): Move free of linebuf to where it actually will
+	be called.  Add a "return NULL" at the end of the function to shut
+	up gcc -Wall.
+
 	* options.h.in: Remove AUTH_SERVER_SUPPORT.
 	* client.h (authenticate_connection): Declare.
 	* scramble.c (scramble): Cast char to unsigned char before using

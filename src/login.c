@@ -8,6 +8,7 @@
  */
 
 #include "cvs.h"
+#include "getline.h"
 
 #ifdef AUTH_CLIENT_SUPPORT   /* This covers the rest of the file. */
 
@@ -85,8 +86,6 @@ login (argc, argv)
     int argc;
     char **argv;
 {
-  char *username;
-  int i;
   char *passfile;
   FILE *fp;
   char *typed_password, *found_password;
@@ -377,6 +376,7 @@ get_cvs_password ()
       strcpy (tmp, password);
       tmp[strlen (password)] = '\0';
       memset (password, 0, strlen (password));
+      free (linebuf);
       return tmp;
     }
   else
@@ -385,7 +385,8 @@ get_cvs_password ()
       error (0, 0, "use \"cvs login\" to log in first");
       error (1, 0, "or set the CVS_PASSWORD environment variable");
     }
-  free (linebuf);
+  /* NOTREACHED */
+  return NULL;
 }
 
 #endif /* AUTH_CLIENT_SUPPORT from beginning of file. */

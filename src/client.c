@@ -2523,7 +2523,6 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
     int sock;
     int tofd, fromfd;
     int port_number;
-    struct hostent *host;
     struct sockaddr_in client_sai;
 
     /* Does nothing if already called before now. */
