@@ -1,3 +1,8 @@
+Mon Jul 14 00:04:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Error messages): The "cannot change permissions on
+	temporary directory" error has been happening in various test cases.
+
 Sat Jul 12 11:12:18 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Repository files): Further comments about leading

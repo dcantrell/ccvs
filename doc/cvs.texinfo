@@ -11577,8 +11577,10 @@ you have any information to add, please let us know as
 described in @ref{BUGS}.  If you experience this error
 while using @sc{cvs}, retrying the operation which
 produced it should work fine.
-@c Most recently this was in the multibranch-5 test.
-@c But I'm not sure it is specific to that test.
+@c This has been seen in a variety of tests, including
+@c multibranch-2, multibranch-5, and basic1-24-rm-rm,
+@c so it doesn't seem particularly specific to any one
+@c test.
 
 @c For one example see basica-1a10 in the testsuite
 @c For another example, "cvs co ." on NT; see comment
