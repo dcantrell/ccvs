@@ -37,7 +37,7 @@ EMACS=emacs
 # Just in case...
 SHELL = /bin/sh
 
-ELFILES = pcl-cvs.el pcl-cvs-lucid.el
+ELFILES = pcl-cvs.el pcl-cvs-lucid.el pcl-cvs-startup.el
 ELCFILES = pcl-cvs.elc pcl-cvs-lucid.elc
 INFOFILES = pcl-cvs
 TEXTMPS = pcl-cvs.aux pcl-cvs.log pcl-cvs.toc pcl-cvs.dvi pcl-cvs.cp \
@@ -67,17 +67,35 @@ install_info: pcl-cvs
 	$(INSTALL_DATA) pcl-cvs $(infodir)/pcl-cvs
 
 info pcl-cvs: pcl-cvs.texinfo
-	makeinfo +fill-column=70 pcl-cvs.texinfo
+	makeinfo --fill-column=70 pcl-cvs.texinfo
 
-pcl-cvs.dvi: pcl-cvs.texinfo
+pcl-cvs.aux pcl-cvs.dvi: pcl-cvs.texinfo
 	tex pcl-cvs.texinfo
 	tex pcl-cvs.texinfo
 	-texindex pcl-cvs.cp pcl-cvs.fn pcl-cvs.vr pcl-cvs.tp pcl-cvs.ky \
 		pcl-cvs.pg
 	tex pcl-cvs.texinfo
 
+DVIPS=dvips
+pcl-cvs.ps: pcl-cvs.dvi
+	${DVIPS} pcl-cvs.dvi -o pcl-cvs.ps
+
 mostlyclean clean realclean:
 	rm -f *~ core $(ELCFILES) $(INFOFILES) $(TEXTMPS)
 
 tags TAGS:
 	etags *.el
+
+DISTFILES = \
+	.cvsignore ChangeLog INSTALL Makefile NEWS README \
+	${ELFILES} ${ELCFILES} compile-all.el \
+	pcl-cvs.texinfo pcl-cvs.aux pcl-cvs.ps pcl-cvs texinfo.tex
+
+dist-dir: ${DISTFILES}
+	mkdir ${DISTDIR}
+	ln ${DISTFILES} ${DISTDIR}
+	if [ -f pcl-cvs-1 ]; \
+	  then ln pcl-cvs-[0-9]* ${DISTDIR}; \
+	  else : Pacify Ultrix sh; \
+	fi
+.PHONY: dist-dir
