@@ -11,6 +11,7 @@ config.h
 config.log
 config.status
 cvs-*.tar.gz
+cvs.spec
 cvsinit
 cvsnt.mdp
 stamp-h1
