@@ -3454,8 +3454,18 @@ done"
 	  dotest join2-5 "${testcvs} -q tag -b br1" "T file1"
 	  dotest join2-6 "${testcvs} -q update -r br1" ""
 	  echo 'modify on branch' >>file1
+	  touch bradd
+	  dotest join2-6a "${testcvs} add bradd" \
+"${PROG} [a-z]*: scheduling file .bradd. for addition on branch .br1.
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
 	  dotest join2-7 "${testcvs} -q ci -m modify" \
-"Checking in file1;
+"RCS file: ${TESTDIR}/cvsroot/first-dir/Attic/bradd,v
+done
+Checking in bradd;
+${TESTDIR}/cvsroot/first-dir/Attic/bradd,v  <--  bradd
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
@@ -3498,6 +3508,40 @@ File: file1            	Status: Locally Modified
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
 done"
+
+	  # OK, the above is all well and good and has worked for some
+	  # time.  Now try the case where the file had been added on
+	  # the branch.
+	  dotest join2-16 "${testcvs} -q update -r br1" "[UP] file1"
+	  # The workaround is to update the whole directory.
+	  # The non-circumvented version won't work.  The reason is that
+	  # update removes the entry from CVS/Entries, so of course we get
+	  # the tag from CVS/Tag and not Entries.  I suppose maybe
+	  # we could invent some new format in Entries which would handle
+	  # this, but doing so, and handling it properly throughout
+	  # CVS, would be a lot of work and I'm not sure this case justifies
+	  # it.
+	  dotest join2-17-circumvent "${testcvs} -q update -A" \
+"${PROG} [a-z]*: warning: bradd is not (any longer) pertinent
+[UP] file1"
+:	  dotest join2-17 "${testcvs} -q update -A bradd" \
+"${PROG} [a-z]*: warning: bradd is not (any longer) pertinent"
+	  dotest join2-18 "${testcvs} -q update -j br1 bradd" "U bradd"
+	  dotest join2-19 "${testcvs} -q status bradd" \
+"===================================================================
+File: bradd            	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/Attic/bradd,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest join2-20 "${testcvs} -q ci -m modify bradd" \
+"Checking in bradd;
+${TESTDIR}/cvsroot/first-dir/bradd,v  <--  bradd
+new revision: 1\.2; previous revision: 1\.1
+done"
+
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
