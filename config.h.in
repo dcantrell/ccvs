@@ -191,5 +191,8 @@
 /* Define if you have the socket library (-lsocket).  */
 #undef HAVE_LIBSOCKET
 
+#undef CLIENT_SUPPORT
+#undef SERVER_SUPPORT
+
 /* This is always defined in CVS.  */
 #undef CVS_SUPPORT
