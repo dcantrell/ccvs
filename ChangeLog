@@ -1,3 +1,7 @@
+Wed Mar 26 15:51:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* BUGS: Further note on import -kb bug.
+
 Tue Mar 25 17:51:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs-format.el: Add comment concerning c-label-offset.
