@@ -1,3 +1,8 @@
+2003-01-28  Larry Jones  <lawrence.jones@eds.com>
+
+	* NEWS: Update for 1.11.5, add notes about bug fixes in older
+	versions.
+
 2003-01-23  Derek Price  <derek@ximbiot.com>
 
 	* aclocal.m4 (WITH_GSSAPI): Check for libcrypt before libroken to
