@@ -75,6 +75,18 @@ static Key_schedule sched;
 #endif /* HAVE_KERBEROS */
 
 #endif /* HAVE_KERBEROS */
+
+#ifdef HAVE_GSSAPI
+
+#include <gssapi/gssapi.h>
+#include <gssapi/gssapi_generic.h>
+
+/* This is needed for GSSAPI encryption.  */
+static gss_ctx_id_t gcontext;
+
+static int connect_to_gserver PROTO((int, struct hostent *));
+
+#endif /* HAVE_GSSAPI */
 
 static void add_prune_candidate PROTO((char *));
 
@@ -3399,12 +3411,16 @@ recv_line (sock, resultp)
 
    If VERIFY_ONLY is 0, then really connect to the server.
 
+   If DO_GSSAPI is non-zero, then we use GSSAPI authentication rather
+   than the pserver password authentication.
+
    If we fail to connect or if access is denied, then die with fatal
    error.  */
 void
-connect_to_pserver (tofdp, fromfdp, verify_only)
+connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
      int *tofdp, *fromfdp;
      int verify_only;
+     int do_gssapi;
 {
     int sock;
 #ifndef NO_SOCKET_TO_FD
@@ -3412,6 +3428,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 #endif
     int port_number;
     struct sockaddr_in client_sai;
+    struct hostent *hostinfo;
 
     sock = socket (AF_INET, SOCK_STREAM, 0);
     if (sock == -1)
@@ -3419,16 +3436,24 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 	error (1, 0, "cannot create socket: %s", SOCK_STRERROR (SOCK_ERRNO));
     }
     port_number = auth_server_port_number ();
-    init_sockaddr (&client_sai, CVSroot_hostname, port_number);
+    hostinfo = init_sockaddr (&client_sai, CVSroot_hostname, port_number);
     if (connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai))
 	< 0)
 	error (1, 0, "connect to %s:%d failed: %s", CVSroot_hostname,
 	       port_number, SOCK_STRERROR (SOCK_ERRNO));
 
     /* Run the authorization mini-protocol before anything else. */
+    if (do_gssapi)
     {
-	char *read_buf;
-
+#ifdef HAVE_GSSAPI
+	if (! connect_to_gserver (sock, hostinfo))
+	    goto rejected;
+#else
+	error (1, 0, "This client does not support GSSAPI authentication");
+#endif
+    }
+    else
+    {
 	char *begin      = NULL;
 	char *repository = CVSroot_directory;
 	char *username   = CVSroot_username;
@@ -3473,6 +3498,10 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 
 	/* Paranoia. */
 	memset (password, 0, strlen (password));
+    }
+
+    {
+	char *read_buf;
 
 	/* Loop, getting responses from the server.  */
 	while (1)
@@ -3482,21 +3511,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 	    if (strcmp (read_buf, "I HATE YOU") == 0)
 	    {
 		/* Authorization not granted. */
-	    rejected:
-		if (shutdown (sock, 2) < 0)
-		{
-		    error (0, 0, 
-			   "authorization failed: server %s rejected access", 
-			   CVSroot_hostname);
-		    error (1, 0,
-			   "shutdown() failed (server %s): %s",
-			   CVSroot_hostname,
-			   SOCK_STRERROR (SOCK_ERRNO));
-		}
-
-		error (1, 0, 
-		       "authorization failed: server %s rejected access", 
-		       CVSroot_hostname);
+		goto rejected;
 	    }
 	    else if (strncmp (read_buf, "E ", 2) == 0)
 	    {
@@ -3573,6 +3588,22 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
     }
 
     return;
+
+  rejected:
+    if (shutdown (sock, 2) < 0)
+    {
+	error (0, 0, 
+	       "authorization failed: server %s rejected access", 
+	       CVSroot_hostname);
+	error (1, 0,
+	       "shutdown() failed (server %s): %s",
+	       CVSroot_hostname,
+	       SOCK_STRERROR (SOCK_ERRNO));
+    }
+
+    error (1, 0, 
+	   "authorization failed: server %s rejected access", 
+	   CVSroot_hostname);
 }
 #endif /* AUTH_CLIENT_SUPPORT */
 
@@ -3674,6 +3705,108 @@ start_tcp_server (tofdp, fromfdp)
 
 #endif /* HAVE_KERBEROS */
 
+#ifdef HAVE_GSSAPI
+
+/* Receive a given number of bytes.  */
+
+static void
+recv_bytes (sock, buf, need)
+     int sock;
+     char *buf;
+     int need;
+{
+    while (need > 0)
+    {
+	int got;
+
+	got = recv (sock, buf, need, 0);
+	if (got < 0)
+	    error (1, 0, "recv() from server %s: %s", CVSroot_hostname,
+		   SOCK_STRERROR (SOCK_ERRNO));
+	buf += got;
+	need -= got;
+    }
+}
+
+/* Connect to the server using GSSAPI authentication.  */
+
+static int
+connect_to_gserver (sock, hostinfo)
+     int sock;
+     struct hostent *hostinfo;
+{
+    char *str;
+    char buf[1024];
+    gss_buffer_desc *tok_in_ptr, tok_in, tok_out;
+    OM_uint32 stat_min, stat_maj;
+    gss_name_t server_name;
+
+    str = "BEGIN GSSAPI REQUEST\012";
+
+    if (send (sock, str, strlen (str), 0) < 0)
+	error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
+
+    sprintf (buf, "cvs@%s", hostinfo->h_name);
+    tok_in.length = strlen (buf);
+    tok_in.value = buf;
+    gss_import_name (&stat_min, &tok_in, gss_nt_service_name, &server_name);
+
+    tok_in_ptr = GSS_C_NO_BUFFER;
+    gcontext = GSS_C_NO_CONTEXT;
+
+    do
+    {
+	stat_maj = gss_init_sec_context (&stat_min, GSS_C_NO_CREDENTIAL,
+					 &gcontext, server_name,
+					 GSS_C_NULL_OID,
+					 (GSS_C_MUTUAL_FLAG
+					  | GSS_C_REPLAY_FLAG),
+					 0, NULL, tok_in_ptr, NULL, &tok_out,
+					 NULL, NULL);
+	if (stat_maj != GSS_S_COMPLETE && stat_maj != GSS_S_CONTINUE_NEEDED)
+	  {
+	    OM_uint32 message_context;
+
+	    message_context = 0;
+	    gss_display_status (&stat_min, stat_maj, GSS_C_GSS_CODE,
+				GSS_C_NULL_OID, &message_context, &tok_out);
+	    error (1, 0, "GSSAPI authentication failed: %s",
+		   (char *) tok_out.value);
+	  }
+
+	if (tok_out.length == 0)
+	{
+	    tok_in.length = 0;
+	}
+	else
+	{
+	    char cbuf[2];
+	    int need;
+
+	    cbuf[0] = (tok_out.length >> 8) & 0xff;
+	    cbuf[1] = tok_out.length & 0xff;
+	    if (send (sock, cbuf, 2, 0) < 0)
+		error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
+	    if (send (sock, tok_out.value, tok_out.length, 0) < 0)
+		error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
+
+	    recv_bytes (sock, cbuf, 2);
+	    need = ((cbuf[0] & 0xff) << 8) | (cbuf[1] & 0xff);
+	    assert (need <= sizeof buf);
+	    recv_bytes (sock, buf, need);
+	    tok_in.length = need;
+	}
+
+	tok_in.value = buf;
+	tok_in_ptr = &tok_in;
+    }
+    while (stat_maj == GSS_S_CONTINUE_NEEDED);
+
+    return 1;
+}
+
+#endif /* HAVE_GSSAPI */
+
 static int send_variable_proc PROTO ((Node *, void *));
 
 static int
@@ -3708,13 +3841,20 @@ start_server ()
 	case pserver_method:
 	    /* Toss the return value.  It will die with error if anything
 	       goes wrong anyway. */
-	    connect_to_pserver (&tofd, &fromfd, 0);
+	    connect_to_pserver (&tofd, &fromfd, 0, 0);
 	    break;
 #endif
 
 #if HAVE_KERBEROS
 	case kserver_method:
 	    start_tcp_server (&tofd, &fromfd);
+	    break;
+#endif
+
+#if HAVE_GSSAPI
+	case gserver_method:
+	    /* GSSAPI authentication is handled by the pserver.  */
+	    connect_to_pserver (&tofd, &fromfd, 0, 1);
 	    break;
 #endif
 
@@ -3952,6 +4092,7 @@ the :server: access method is not supported by this port of CVS");
 		       "This server does not support the global -l option.");
 	}
     }
+
     if (cvsencrypt)
     {
 #ifdef ENCRYPTION
@@ -3975,11 +4116,28 @@ the :server: access method is not supported by this port of CVS");
 	}
 	else
 #endif /* HAVE_KERBEROS */
-	    error (1, 0, "Encryption is only supported when using Kerberos");
+#ifdef HAVE_GSSAPI
+	if (CVSroot_method == gserver_method)
+	{
+	    if (! supported_request ("Gssapi-encrypt"))
+		error (1, 0, "This server does not support encryption");
+	    send_to_server ("Gssapi-encrypt\012", 0);
+	    to_server = cvs_gssapi_wrap_buffer_initialize (to_server, 0,
+							   gcontext,
+							   buf_memory_error);
+	    from_server = cvs_gssapi_wrap_buffer_initialize (from_server, 1,
+							     gcontext,
+							     buf_memory_error);
+	    cvs_gssapi_encrypt = 1;
+	}
+	else
+#endif /* HAVE_GSSAPI */
+	    error (1, 0, "Encryption is only supported when using GSSAPI or Kerberos");
 #else /* ! ENCRYPTION */
 	error (1, 0, "This client does not support encryption");
 #endif /* ! ENCRYPTION */
     }
+
     if (gzip_level)
     {
 	if (supported_request ("Gzip-stream"))
@@ -4020,6 +4178,34 @@ the :server: access method is not supported by this port of CVS");
                to fetch unpatchable files.  */
 	    gzip_level = 0;
 	}
+    }
+
+    if (cvsauthenticate && ! cvsencrypt)
+    {
+	/* Turn on authentication after turning on compression, so
+	   that we can compress the authentication information.  We
+	   assume that encrypted data is always authenticated--the
+	   ability to decrypt the data stream is itself a form of
+	   authentication.  */
+#ifdef HAVE_GSSAPI
+	if (CVSroot_method == gserver_method)
+	{
+	    if (! supported_request ("Gssapi-authenticate"))
+		error (1, 0,
+		       "This server does not support stream authentication");
+	    send_to_server ("Gssapi-authenticate\012", 0);
+	    to_server = cvs_gssapi_wrap_buffer_initialize (to_server, 0,
+							   gcontext,
+							   buf_memory_error);
+	    from_server = cvs_gssapi_wrap_buffer_initialize (from_server, 1,
+							     gcontext,
+							     buf_memory_error);
+	}
+	else
+	    error (1, 0, "Stream authentication is only supported when using GSSAPI");
+#else /* ! HAVE_GSSAPI */
+	error (1, 0, "This client does not support stream authentication");
+#endif /* ! HAVE_GSSAPI */
     }
 
 #ifdef FILENAMES_CASE_INSENSITIVE
