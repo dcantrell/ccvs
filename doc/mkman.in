@@ -72,6 +72,7 @@ for my $file (@ARGV)
 				print ".SP\n";
 				next;
 			}
+			s/\@\@/\@/g;
 
 			print $_;
 			next;
@@ -174,6 +175,7 @@ for my $file (@ARGV)
 		s/\@(emph|var|dfn){([^}]+)}/\\fI$2\\fP/g;
 		s/\@dots{}/.../g;
 		s/\@([{}])/$1/g;
+		s/\@\@/\@/g;
 
 		# Index entries.
 		if (/^\@cindex (.*)$/)
