@@ -1,5 +1,9 @@
 2003-10-28  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (devcom): Renumber tests and use dotest function.
+
+2003-10-28  Derek Price  <derek@ximbiot.com>
+
 	* sever.h: Add the standard copyright notice.
 
 2003-10-28  Derek Price  <derek@ximbiot.com>
