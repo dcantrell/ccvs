@@ -709,7 +709,7 @@ log_fileproc (callerdat, finfo)
 	if (rcsfile->other != NULL)
 	{
 	    p = findnode (rcsfile->other, "desc");
-	    if (p != NULL)
+	    if (p != NULL && p->data != NULL)
 		cvs_output (p->data, 0);
 	}
     }
