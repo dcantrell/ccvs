@@ -6283,6 +6283,12 @@ done"
 
 	stamps)
 	  # Test timestamps.
+	  # This should not be necessary.  I'm putting it here to work
+	  # around the fact that some other test apparently is not ending
+	  # in the correct directory.  I don't know of any quick way to
+	  # track down which test.  If tests ended with "rm -r 1" instead
+	  # of "rm -rf 1" that would help a lot.
+	  cd ${TESTDIR}
 	  mkdir 1; cd 1
 	  dotest stamps-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
