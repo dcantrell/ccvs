@@ -1,3 +1,7 @@
+1997-11-29  Jim Meyering  <meyering@na-net.ornl.gov>
+
+	* xgetwd.c: Fix typo s/ifndef/ifdef/ in test of HAVE_GETWD.
+
 Wed Nov 26 10:12:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* system.h: Always use "rb" and "wb".  Check for O_BINARY with an
