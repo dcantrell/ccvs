@@ -97,10 +97,6 @@ struct admin_data
     /* Interactive (-I).  Problematic with client/server.  */
     int interactive;
 
-    /* Quiet (-q).  Not the same as the global -q option, which is a bit
-       on the confusing side, perhaps.  */
-    int quiet;
-
     /* This is the cheesy part.  It is a vector with the options which
        we don't deal with above (e.g. "-afoo" "-abar,baz").  In the future
        this presumably will be replaced by other variables which break
@@ -337,7 +333,15 @@ admin (argc, argv)
 		break;
 
 	    case 'q':
-		admin_data.quiet = 1;
+		/* Silently set the global really_quiet flag.  This keeps admin in
+		 * sync with the RCS man page and allows us to silently support
+		 * older servers when necessary.
+		 *
+		 * Some logic says we might want to output a deprecation warning
+		 * here, but I'm opting not to in order to stay quietly in sync
+		 * with the RCS man page.
+		 */
+		really_quiet = 1;
 		break;
 
 	    case 'x':
@@ -481,7 +485,10 @@ admin (argc, argv)
 	    }
 	    send_to_server ("\012", 1);
 	}
-	if (admin_data.quiet)
+	/* Send this for all really_quiets since we know that it will be silently
+	 * ignored when unneeded.  This supports old servers.
+	 */
+	if (really_quiet)
 	    send_arg ("-q");
 	if (admin_data.kflag != NULL)
 	    send_arg (admin_data.kflag);
@@ -557,7 +564,7 @@ admin_fileproc (callerdat, finfo)
 
     status = 0;
 
-    if (!admin_data->quiet)
+    if (!really_quiet)
     {
 	cvs_output ("RCS file: ", 0);
 	cvs_output (rcs->path, 0);
@@ -866,12 +873,10 @@ admin_fileproc (callerdat, finfo)
 	}
     }
 
-    /* TODO: reconcile the weird discrepancies between
-       admin_data->quiet and quiet. */
     if (status == 0)
     {
 	RCS_rewrite (rcs, NULL, NULL);
-	if (!admin_data->quiet)
+	if (!really_quiet)
 	    cvs_output ("done\n", 5);
     }
     else

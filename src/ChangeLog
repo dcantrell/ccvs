@@ -1,5 +1,11 @@
 2001-03-16  Derek Price  <dprice@collab.net>
 
+	* admin.c (admin_data): Remove 'quiet' member.
+	(admin_fileproc): Use global 'really_quiet' rather than
+	admin_data->quiet.
+
+2001-03-16  Derek Price  <dprice@collab.net>
+
 	* sanity.sh (admin): Replace hardcoded testdir path with the variable.
 
 2001-03-15  Derek Price  <derek.price@openavenue.com>
