@@ -1393,20 +1393,27 @@ expand_at_signs (buf, size, fp)
     off_t size;
     FILE *fp;
 {
-    char *cp, *end;
+    register char *cp, *next;
 
-    errno = 0;
-    for (cp = buf, end = buf + size; cp < end; cp++)
+    cp = buf;
+    while ((next = memchr (cp, '@', size)) != NULL)
     {
-	if (*cp == '@')
-	{
-	    if (putc ('@', fp) == EOF && errno != 0)
-		return EOF;
-	}
-	if (putc (*cp, fp) == EOF && errno != 0)
-	    return (EOF);
+	int len;
+
+	++next;
+	len = next - cp;
+	if (fwrite (cp, 1, len, fp) != len)
+	    return EOF;
+	if (putc ('@', fp) == EOF)
+	    return EOF;
+	cp = next;
+	size -= len;
     }
-    return (1);
+
+    if (fwrite (cp, 1, size, fp) != size)
+	return EOF;
+
+    return 1;
 }
 
 /*
