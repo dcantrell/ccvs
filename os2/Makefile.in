@@ -279,6 +279,9 @@ all install uninstall:
 info:
 .PHONY: info
 
+installcheck:
+.PHONY: installcheck
+
 installdirs:
 .PHONY: installdirs
 

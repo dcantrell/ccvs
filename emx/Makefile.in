@@ -281,8 +281,8 @@ DISTFILES = ${OS2_HEADERS} ${OS2_SOURCES} \
 all:
 
 # Automake
-.PHONY: all install uninstall check info
-all install uninstall check info:
+.PHONY: all install installcheck uninstall check info
+all install installcheck uninstall check info:
 
 installdirs:
 .PHONY: installdirs
