@@ -904,6 +904,8 @@ Optional Features:
                           optionally pass a low water mark in bytes and a high
                           water mark in bytes, separated by commas. (default
                           is enabled 1M,2M)
+  --enable-proxy          Include code for running as a transparent proxy
+                          server
   --enable-pam            Use to enable system authentication with PAM instead
                           of using the simple getpwnam interface. This allows
                           authentication (in theory) with any PAM module, e.g.
@@ -31111,6 +31113,24 @@ _ACEOF
   fi # enable_server_flow_control
 fi # enable_server
 
+
+
+
+# Check whether --enable-proxy or --disable-proxy was given.
+if test "${enable_proxy+set}" = set; then
+  enableval="$enable_proxy"
+
+else
+  enable_proxy=no
+fi;
+
+if test no != "$enable_proxy"; then
+
+cat >>confdefs.h <<\_ACEOF
+#define SECONDARY_SUPPORT 1
+_ACEOF
+
+fi
 
 
 

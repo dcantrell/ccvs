@@ -681,6 +681,10 @@
    environment variable. */
 #undef RSH_DFLT
 
+/* Define if you want CVS to be able to serve as a transparent proxy for write
+   operations. */
+#undef SECONDARY_SUPPORT
+
 /* If you are working with a large remote repository and a 'cvs checkout' is
    swamping your network and memory, define these to enable flow control. You
    will end up with even less probability of a consistent checkout (see
