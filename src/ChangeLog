@@ -1,5 +1,10 @@
 Sat Nov  8 15:58:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (cvsadm): Remove most of the tests which tested
+	CVS/Root.  This takes the run time for the cvsadm tests from
+	about 5 minutes 15 seconds to about 4 minutes 10 seconds with no
+	significant loss in coverage.
+
 	* rcs.c (rcs_internal_lockfile): Check for errors from system
 	calls.  If open() gives an error, don't muck with stat and errno
 	(I don't know what the RCS code that this comes from was trying to
