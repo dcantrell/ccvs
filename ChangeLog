@@ -1,5 +1,7 @@
 Thu Jul 24 12:22:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* NEWS: Also mention SystemAuth.
+
 	* INSTALL (MIPS): Add more detailed report concerning Irix 6.2,
 	as reported by larry.jones@sdrc.com (Larry Jones).
 
