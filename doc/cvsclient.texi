@@ -216,6 +216,7 @@ to a horizontal tab.
 * Responses::                   
 * Example::                     
 * Requirements::
+* Obsolete::                        Former protocol features
 @end menu
 
 @node Entries Lines
@@ -332,23 +333,19 @@ request-list is a space separated list of tokens.
 Response expected: yes.
 Ask the server to send back a @code{Valid-requests} response.
 
-@item Repository @var{repository} \n
-Response expected: no.  Tell the server what repository to use.  This
-should be a directory name from a previous server response.  Note that
-this both gives a default for @code{Entry } and @code{Modified } and
-also for @code{ci} and the other commands; normal usage is to send a
-@code{Repository } for each directory in which there will be an
-@code{Entry } or @code{Modified }, and then a final @code{Repository }
-for the original directory, then the command.
-
 @item Directory @var{local-directory} \n
 Additional data: @var{repository} \n.  Response expected: no.
-This is like @code{Repository},
-but the local name of the directory may differ from the repository name.
+Tell the server what directory to use.  The @var{repository} should be a
+directory name from a previous server response.  Note that
+this both gives a default for @code{Entry} and @code{Modified} and
+also for @code{ci} and the other commands; normal usage is to send 
+@code{Directory} for each directory in which there will be an
+@code{Entry} or @code{Modified}, and then a final @code{Directory}
+for the original directory, then the command.
 If the client uses this request, it affects the way the server returns
 pathnames; see @ref{Responses}.  @var{local-directory} is relative to
 the top level at which the command is occurring (i.e. the last
-@code{Directory} or @code{Repository} which is sent before the command);
+@code{Directory} which is sent before the command);
 to indicate that top level, @samp{.} should be send for
 @var{local-directory}.
 
@@ -364,7 +361,7 @@ request.
 
 @item Static-directory \n
 Response expected: no.  Tell the server that the directory most recently
-specified with @code{Repository} or @code{Directory} should not have
+specified with @code{Directory} should not have
 additional files checked out unless explicitly requested.  The client
 sends this if the @code{Entries.Static} flag is set, which is controlled
 by the @code{Set-static-directory} and @code{Clear-static-directory}
@@ -372,7 +369,7 @@ responses.
 
 @item Sticky @var{tagspec} \n
 Response expected: no.  Tell the server that the directory most recently
-specified with @code{Repository} has a sticky tag or date @var{tagspec}.
+specified with @code{Directory} has a sticky tag or date @var{tagspec}.
 The first character of @var{tagspec} is @samp{T} for a tag, or @samp{D}
 for a date.  The remainder of @var{tagspec} contains the actual tag or
 date.
@@ -392,42 +389,30 @@ Such a program would have been previously set with the
 @item Entry @var{entry-line} \n
 Response expected: no.  Tell the server what version of a file is on the
 local machine.  The name in @var{entry-line} is a name relative to the
-directory most recently specified with @code{Repository}.  If the user
+directory most recently specified with @code{Directory}.  If the user
 is operating on only some files in a directory, @code{Entry} requests
 for only those files need be included.  If an @code{Entry} request is
-sent without @code{Modified}, @code{Unchanged}, or @code{Lost} for that
-file the meaning depends on whether @code{UseUnchanged} has been sent;
-if it has been it means the file is lost, if not it means the file is
-unchanged.
+sent without @code{Modified} or @code{Unchanged}, it means the file is
+lost (does not exist in the working directory).
 
 @item Modified @var{filename} \n
 Response expected: no.  Additional data: mode, \n, file transmission.
 Send the server a copy of one locally modified file.  @var{filename} is
-relative to the most recent repository sent with @code{Repository}.  If
+relative to the most recent repository sent with @code{Directory}.  If
 the user is operating on only some files in a directory, only those
 files need to be included.  This can also be sent without @code{Entry},
 if there is no entry for the file.
 
-@item Lost @var{filename} \n
-Response expected: no.  Tell the server that @var{filename} no longer
-exists.  The name is relative to the most recent repository sent with
-@code{Repository}.  This is used for any case in which @code{Entry} is
-being sent but the file no longer exists.  If the client has issued the
-@code{UseUnchanged} request, then this request is not used.
-
 @item Unchanged @var{filename} \n
 Response expected: no.  Tell the server that @var{filename} has not been
 modified in the checked out directory.  The name is relative to the most
-recent repository sent with @code{Repository}.  This request can only be
-issued if @code{UseUnchanged} has been sent.
+recent repository sent with @code{Directory}.
 
 @item UseUnchanged \n
-Response expected: no.  Tell the server that the client will be
-indicating unmodified files with @code{Unchanged}, and that files for
-which no information is sent are nonexistent on the client side, not
-unchanged.  This is necessary for correct behavior since only the server
-knows what possible files may exist, and thus what files are
-nonexistent.
+Response expected: no.  If the server supports it, this request must be
+sent in order to specify the version of the protocol described in this
+document.  This is only for interoperability with CVS 1.5 through 1.9;
+new servers are not encouraged to support this request.
 
 @item Notify @var{filename} \n
 Response expected: no.
@@ -533,9 +518,9 @@ need to expand modules on the client side.
 @itemx editors \n
 @itemx annotate \n
 Response expected: yes.  Actually do a cvs command.  This uses any
-previous @code{Argument}, @code{Repository}, @code{Entry},
-@code{Modified}, or @code{Lost} requests, if they have been sent.  The
-last @code{Repository} sent specifies the working directory at the time
+previous @code{Argument}, @code{Directory}, @code{Entry}, or
+@code{Modified} requests, if they have been sent.  The
+last @code{Directory} sent specifies the working directory at the time
 of the operation.  No provision is made for any input from the user.
 This means that @code{ci} must use a @code{-m} argument if it wants to
 specify a log message.
@@ -548,18 +533,18 @@ directory and @emph{not} a fully qualified @code{CVSROOT} variable.  The
 
 @itemx update \n
 Response expected: yes.  Actually do a @code{cvs update} command.  This
-uses any previous @code{Argument}, @code{Repository}, @code{Entry},
-@code{Modified}, or @code{Lost} requests, if they have been sent.  The
-last @code{Repository} sent specifies the working directory at the time
+uses any previous @code{Argument}, @code{Directory}, @code{Entry},
+or @code{Modified} requests, if they have been sent.  The
+last @code{Directory} sent specifies the working directory at the time
 of the operation.  The @code{-I} option is not used--files which the
 client can decide whether to ignore are not mentioned and the client
 sends the @code{Questionable} request for others.
 
 @item import \n
 Response expected: yes.  Actually do a @code{cvs import} command.  This
-uses any previous @code{Argument}, @code{Repository}, @code{Entry},
-@code{Modified}, or @code{Lost} requests, if they have been sent.  The
-last @code{Repository} sent specifies the working directory at the time
+uses any previous @code{Argument}, @code{Directory}, @code{Entry}, or
+@code{Modified} requests, if they have been sent.  The
+last @code{Directory} sent specifies the working directory at the time
 of the operation.  The files to be imported are sent in @code{Modified}
 requests (files which the client knows should be ignored are not sent;
 the server must still process the CVSROOT/cvsignore file unless -I ! is
@@ -573,8 +558,8 @@ argument.
 Response expected: yes.  Actually do the @code{cvs watch on}, @code{cvs
 watch off}, @code{cvs watch add}, and @code{cvs watch remove} commands,
 respectively.  This uses any previous @code{Argument},
-@code{Repository}, @code{Entry}, @code{Modified}, or @code{Lost}
-requests, if they have been sent.  The last @code{Repository} sent
+@code{Directory}, @code{Entry}, or @code{Modified}
+requests, if they have been sent.  The last @code{Directory} sent
 specifies the working directory at the time of the operation.
 
 @item release \n
@@ -634,14 +619,13 @@ message and exiting---this should be investigated further).
 
 @c FIXME: should better document when the specified repository needs to
 @c end in "/.".
-Pathnames are of the actual files operated on (i.e. they do not contain
-@samp{,v} endings), and are suitable for use in a subsequent
-@code{Repository} request.  However, if the client has used the
-@code{Directory} request, then it is instead a local directory name
+In the following, @var{pathname} actually indicates a pair of
+pathnames.  First, a local directory name
 relative to the directory in which the command was given (i.e. the last
 @code{Directory} before the command).  Then a newline and a repository
-name (the pathname which is sent if @code{Directory} is not used).  Then
-the slash and the filename.  For example, for a file @file{i386.mh}
+name.  Then
+a slash and the filename (without a @samp{,v} ending).
+For example, for a file @file{i386.mh}
 which is in the local directory @file{gas.clean/config} and for which
 the repository is @file{/rel/cvsfiles/devo/gas/config}:
 
@@ -831,6 +815,9 @@ The command completed successfully.
 @c FIXME-less-important: Use Created and Update-existing, not Updated.
 @c FIXME: the presence of timestamps in the entries lines is not right.
 
+This example is out of date; the general feel of how the protocol works
+is the same but many details have changed since it was written.
+
 Lines beginning with @samp{c>} are sent by the client; lines beginning
 with @samp{s>} are sent by the server; lines beginning with @samp{#} are
 not part of the actual exchange.
@@ -884,20 +871,32 @@ s> ok
 @node Requirements
 @section Required versus optional parts of the protocol
 
-The following are part of every known implementation of the CVS
-protocol and it is considered reasonable behavior to completely fail
-to work if you are connected with an implementation which attempts to
-not support them.  Requests: Root, Valid-responses, valid-requests,
-Repository, Entry, Modified, Argument, Argumentx, ci, co, update.
-Responses: ok, error, Valid-requests, Checked-in, Updated, Merged,
-Removed, M, E.
+The following are part of every known implementation of the CVS protocol
+(except obsolete, pre-1.5, versions of CVS) and it is considered
+reasonable behavior to completely fail to work if you are connected with
+an implementation which attempts to not support them.  Requests: Root,
+Valid-responses, valid-requests, Directory, Entry, Modified, Unchanged,
+Argument, Argumentx, ci, co, update.  Responses: ok, error,
+Valid-requests, Checked-in, Updated, Merged, Removed, M, E.
 
-Failure to support the Directory, UseUnchanged, and Unchanged requests
-is deprecated.  CVS 1.5 and later have supported these requests and in
-the future it will be considered reasonable behavior to completely
-fail to work with an implementation which attempts to not support
-them.  Support for the Repository and Lost requests is deprecated; CVS
-clients 1.5 and later will not use them if communicating with a server
-which supports Directory and UseUnchanged.
+A server need not implement Repository, but in order to interoperate
+with CVS 1.5 through 1.9 it must claim to implement it (in
+Valid-requests).  The client will not actually send the request.
+
+@node Obsolete
+@section Obsolete protocol elements
+
+This section briefly describes protocol elements which are obsolete.
+There is no attempt to document them in full detail.
+
+There was a @code{Repository} request which was like @code{Directory}
+except it only provided @var{repository}, and the local directory was
+assumed to be similarly named.
+
+If the @code{UseUnchanged} request was not sent, there was a @code{Lost}
+request which was sent to indicate that a file did not exist in the
+working directory, and the meaning of sending @code{Entries} without
+@code{Lost} or @code{Modified} was different.  All current clients (CVS
+1.5 and later) will send @code{UseUnchanged} if it is supported.
 
 @bye
