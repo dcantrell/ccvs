@@ -8,29 +8,6 @@
   whether it is a good idea is a separate question).
 
 
-* If patch fails, CCVS tries to transfer the whole file, but it
-  doesn't seem to handle this correctly:
-
-    cvs server: Updating .
-    patch: **** malformed patch at line 98: 28978/socket: File name too long
-    cvs update: could not patch BUGS; will refetch
-    cvs server: Updating contrib
-    cvs server: Updating contrib/pcl-cvs
-    cvs server: Updating doc
-    cvs server: Updating examples
-    cvs server: Updating lib
-    cvs server: Updating man
-    cvs server: Updating src
-    P BUGS
-    cvs client: refetching unpatchable files
-    ? .//.new.BUGS
-    Is a directory
-
-
-* The build process isn't configure, make.  The stuff in options.h
-  could be derived by autoconf, couldn't it?
-
-
 * pcl-cvs doesn't like it when you try to check in a file which isn't
   up-to-date.  The messages produced by the server perhaps don't match
   what pcl-cvs is looking for.
