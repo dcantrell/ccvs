@@ -3,6 +3,9 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* Thanks to Alexey Mahotkin, a bug that prevented CVS from being compiled with
+  Kerberos 4 authentication enabled has been fixed.
+
 * A minor bug that caused CVS to fail to report an inifinte alias loop in the
   modules file when portions of the alias definition contained trailing slashes
   has been fixed.
