@@ -3,6 +3,11 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* CVSROOT/*info scripts may not work as expected with executables compiled
+  using VC++ under Windows since all quoting is currently done according to
+  Bourne Shell rules, which probably don't look like command.com rules.
+  Patches gratefully accepted.
+
 * Imports will now always ignore directories and files named `CVS' to avoid
   violating assumptions made by other parts of CVS.
 
