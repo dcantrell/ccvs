@@ -3,9 +3,18 @@ Low-priority bugs go here.  Actually, most every documented bug is
 has gotten around to fixing it.
 
 
+* commands which don't work in a local working directory should probably
+  ignore any CVS/Root values and revert to using CVSROOT alone.  The
+  current use of CVS/Root can be very confusing if you forget you're in
+  a working directory for a remote module -- something that's very easy
+  to do since CVS hides the client operation very well, esp. for
+  commands which fail for this reason.  The only clue might be the word
+  "server" in a message such as this:
+	cvs server: cannot find module `patch' - ignored
+
 * cvs init may gave a strange error at times:
-      ttyp4:<woods@clapton> $ cvs -d /local/src-CVS init
-      cvs [init aborted]: cannot open CVS/Root: No such file or directory
+	ttyp4:<woods@clapton> $ cvs -d /local/src-CVS init
+	cvs [init aborted]: cannot open CVS/Root: No such file or directory
   but it seemed to work just the same....  Note that at the time CVSROOT
   was set to point to a CVS server using the ":server:" option.
 
