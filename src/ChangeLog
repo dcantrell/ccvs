@@ -1,5 +1,9 @@
 2004-03-20  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (conflicts2): s/cvs/$testcvs/.
+
+2004-03-20  Derek Price  <derek@ximbiot.com>
+
 	* add.c (add): Correct longstanding resurrection bugs.  Remove FIXME
 	comment to this effect.  Set mode and Entries timestamps of resurrected
 	files correctly.

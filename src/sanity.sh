@@ -10056,7 +10056,7 @@ C a"
 	  # after all.
 	  dotest_sort conflicts2-142b5 "${testcvs} add a" "U a
 ${PROG} add: a, version 1\.1, resurrected"
-	  dotest conflicts2-142b5b1 "cvs status a" \
+	  dotest conflicts2-142b5b1 "$testcvs status a" \
 "===================================================================
 File: a                	Status: Needs Patch
 
