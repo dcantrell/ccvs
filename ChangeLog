@@ -1,3 +1,11 @@
+Thu Jun 15 14:33:37 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* CYCLIC-CVS-FAQ: Removed.
+	* Rename ChangeLog.fsf to NEWS.  Add information about changes
+	since 1.4A2.
+	* Makefile.in (DISTFILES): Adjust accordingly.
+	* README: Revise to reflect current status of releases.
+
 Thu Jun 15 12:22:42 1995  Jim Kingdon  (kingdon@cyclic.com)
 
 	* TODO: Remove various items already fixed.  Revise others.
