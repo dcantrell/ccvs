@@ -50,6 +50,11 @@ add_entries_proc (node, closure)
     return (0);
 }
 
+/* Find files in the repository and/or working directory.  On error,
+   may either print a nonfatal error and return NULL, or just give
+   a fatal error.  On success, return non-NULL (even if it is an empty
+   list).  */
+
 List *
 Find_Names (repository, which, aflag, optentries)
     char *repository;
@@ -85,7 +90,10 @@ Find_Names (repository, which, aflag, optentries)
     {
 	/* search the repository */
 	if (find_rcs (repository, files) != 0)
-	    error (1, errno, "cannot open directory %s", repository);
+	{
+	    error (0, errno, "cannot open directory %s", repository);
+	    goto error_exit;
+	}
 
 	/* search the attic too */
 	if (which & W_ATTIC)
@@ -95,6 +103,8 @@ Find_Names (repository, which, aflag, optentries)
 	    (void) sprintf (dir, "%s/%s", repository, CVSATTIC);
 	    if (find_rcs (dir, files) != 0
 		&& !existence_error (errno))
+		/* For now keep this a fatal error, seems less useful
+		   for access control than the case above.  */
 		error (1, errno, "cannot open directory %s", dir);
 	    free (dir);
 	}
@@ -103,6 +113,9 @@ Find_Names (repository, which, aflag, optentries)
     /* sort the list into alphabetical order and return it */
     sortlist (files, fsortcmp);
     return (files);
+ error_exit:
+    dellist (&files);
+    return NULL;
 }
 
 /*
@@ -238,6 +251,8 @@ Find_Directories (repository, which, entries)
  * Finds all the ,v files in the argument directory, and adds them to the
  * files list.  Returns 0 for success and non-zero if the argument directory
  * cannot be opened, in which case errno is set to indicate the error.
+ * In the error case LIST is left in some reasonable state (unchanged, or
+ * containing the files which were found before the error occurred).
  */
 static int
 find_rcs (dir, list)
