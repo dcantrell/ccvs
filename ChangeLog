@@ -1,3 +1,8 @@
+1999-07-12  Larry Jones  <larry.jones@sdrc.com>
+
+	* TESTS: Remove suspicion that setting LC_COLLATE has fixed the
+	problem with Solaris sort -- people are still reporting it.
+
 1999-05-17  Jim Kingdon  <http://www.cyclic.com>
 
 	(These changes were run by devel-cvs; feedback was "They look fine"
