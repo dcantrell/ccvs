@@ -483,7 +483,7 @@ if test x"$*" = x; then
 	tests="${tests} modules modules2 modules3 mflag errmsg1 devcom devcom2"
 	tests="${tests} devcom3 ignore binfiles binfiles2 binwrap mwrap info"
 	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
-	tests="${tests} sticky keyword toplevel"
+	tests="${tests} sticky keyword toplevel head"
 else
 	tests="$*"
 fi
@@ -6868,6 +6868,166 @@ U file1
 ${PROG} [a-z]*: Updating top-dir"
 
 	  cd ..
+	  rm -r 1
+	  ;;
+
+	head)
+	  # Testing handling of the HEAD special tag.
+	  # There are many cases involving added and removed files
+	  # which we don't yet try to deal with.
+	  # TODO: We also could be paying much closer attention to
+	  # "head of the trunk" versus "head of the default branch".
+	  # That is what "cvs import" is doing here (but I didn't really
+	  # fully follow through on writing the tests for that case).
+	  mkdir imp-dir
+	  cd imp-dir
+	  echo 'imported contents' >file1
+	  # It may seem like we don't do much with file2, but do note that
+	  # the "cvs diff" invocations do also diff file2 (and come up empty).
+	  echo 'imported contents' >file2
+	  dotest head-1 "${testcvs} import -m add first-dir tag1 tag2" \
+"N first-dir/file1
+N first-dir/file2
+
+No conflicts created by this import"
+	  cd ..
+	  rm -r imp-dir
+	  mkdir 1
+	  cd 1
+	  dotest head-2 "${testcvs} -q co first-dir" \
+"U first-dir/file1
+U first-dir/file2"
+	  cd first-dir
+	  echo 'add a line on trunk' >> file1
+	  dotest head-3 "${testcvs} -q ci -m modify" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  dotest head-4 "${testcvs} -q tag trunktag" "T file1
+T file2"
+	  echo 'add a line on trunk after trunktag' >> file1
+	  dotest head-5 "${testcvs} -q ci -m modify" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.3; previous revision: 1\.2
+done"
+	  dotest head-6 "${testcvs} -q tag -b br1" "T file1
+T file2"
+	  dotest head-7 "${testcvs} -q update -r br1" ""
+	  echo 'modify on branch' >>file1
+	  dotest head-8 "${testcvs} -q ci -m modify" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.3\.2\.1; previous revision: 1\.3
+done"
+	  dotest head-9 "${testcvs} -q tag brtag" "T file1
+T file2"
+	  echo 'modify on branch after brtag' >>file1
+	  dotest head-10 "${testcvs} -q ci -m modify" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.3\.2\.2; previous revision: 1\.3\.2\.1
+done"
+	  # With no sticky tags, HEAD is the head of the trunk.
+	  dotest head-trunk-setup "${testcvs} -q update -A" "[UP] file1"
+	  dotest head-trunk-update "${testcvs} -q update -r HEAD -p file1" \
+"imported contents
+add a line on trunk
+add a line on trunk after trunktag"
+	  # and diff thinks so too.  Case (a) from the comment in
+	  # cvs.texinfo (Common options).
+	  dotest_fail head-trunk-diff "${testcvs} -q diff -c -r HEAD -r br1" \
+"Index: file1
+===================================================================
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+retrieving revision 1\.3
+retrieving revision 1\.3\.2\.2
+diff -c -r1\.3 -r1\.3\.2\.2
+\*\*\* file1	[0-9/]* [0-9:]*	1\.3
+--- file1	[0-9/]* [0-9:]*	1\.3\.2\.2
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1,3 \*\*\*\*
+--- 1,5 ----
+  imported contents
+  add a line on trunk
+  add a line on trunk after trunktag
+${PLUS} modify on branch
+${PLUS} modify on branch after brtag"
+
+	  # With a branch sticky tag, HEAD is the head of the trunk.
+	  dotest head-br1-setup "${testcvs} -q update -r br1" "[UP] file1"
+	  dotest head-br1-update "${testcvs} -q update -r HEAD -p file1" \
+"imported contents
+add a line on trunk
+add a line on trunk after trunktag"
+	  # But diff thinks that HEAD is "br1".  Case (b) from cvs.texinfo.
+	  # Probably people are relying on it.
+	  dotest head-br1-diff "${testcvs} -q diff -c -r HEAD -r br1" ""
+
+	  # With a nonbranch sticky tag on a branch,
+	  # HEAD is the head of the trunk
+	  dotest head-brtag-setup "${testcvs} -q update -r brtag" "[UP] file1"
+	  dotest head-brtag-update "${testcvs} -q update -r HEAD -p file1" \
+"imported contents
+add a line on trunk
+add a line on trunk after trunktag"
+	  # But diff thinks that HEAD is "brtag".  Case (c) from
+	  # cvs.texinfo (the "strange, maybe accidental" case).
+	  dotest_fail head-brtag-diff "${testcvs} -q diff -c -r HEAD -r br1" \
+"Index: file1
+===================================================================
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+retrieving revision 1\.3\.2\.1
+retrieving revision 1\.3\.2\.2
+diff -c -r1\.3\.2\.1 -r1\.3\.2\.2
+\*\*\* file1	[0-9/]* [0-9:]*	1\.3\.2\.1
+--- file1	[0-9/]* [0-9:]*	1\.3\.2\.2
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 2,4 \*\*\*\*
+--- 2,5 ----
+  add a line on trunk
+  add a line on trunk after trunktag
+  modify on branch
+${PLUS} modify on branch after brtag"
+
+	  # With a nonbranch sticky tag on the trunk, HEAD is the head
+	  # of the trunk, I think.
+	  dotest head-trunktag-setup "${testcvs} -q update -r trunktag" \
+"[UP] file1"
+	  dotest head-trunktag-check "cat file1" "imported contents
+add a line on trunk"
+	  dotest head-trunktag-update "${testcvs} -q update -r HEAD -p file1" \
+"imported contents
+add a line on trunk
+add a line on trunk after trunktag"
+	  # Like head-brtag-diff, HEAD is the sticky tag.  Similarly
+	  # questionable.
+	  dotest_fail head-trunktag-diff \
+	    "${testcvs} -q diff -c -r HEAD -r br1" \
+"Index: file1
+===================================================================
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+retrieving revision 1\.2
+retrieving revision 1\.3\.2\.2
+diff -c -r1\.2 -r1\.3\.2\.2
+\*\*\* file1	[0-9/]* [0-9:]*	1\.2
+--- file1	[0-9/]* [0-9:]*	1\.3\.2\.2
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1,2 \*\*\*\*
+--- 1,5 ----
+  imported contents
+  add a line on trunk
+${PLUS} add a line on trunk after trunktag
+${PLUS} modify on branch
+${PLUS} modify on branch after brtag"
+
+	  # Also might test what happens if we setup with update -r
+	  # HEAD.  In general, if sticky tags matter, does the
+	  # behavior of "update -r <foo>" (without -p) depend on the
+	  # sticky tags before or after the update?
+
+	  cd ../..
 	  rm -r 1
 	  ;;
 
