@@ -409,6 +409,7 @@ Popen (cmd, mode)
 #else
 	(void) fprintf (stderr, "-> Popen(%s,%s)\n", cmd, mode);
 #endif
+    /* trivial change to Popen. */
     if (noexec)
 	return (NULL);
 
