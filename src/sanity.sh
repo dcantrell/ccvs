@@ -11121,8 +11121,8 @@ ${PROG} commit: Rebuilding administrative file database"
 	  dotest mkmodules-temp-file-removal-3 "echo $CVSROOT_DIRNAME/CVSROOT/.#[0-9]*" \
 	    "$CVSROOT_DIRNAME/CVSROOT/\.#\[0-9\]\*"
 
-	  # Versions 1.12.1 of CVS and printed most of the white space included
-	  # before error messages in checkoutlist.
+	  # Versions 1.11.6 & 1.12.1 and earlier of CVS printed most of the
+	  # white space included before error messages in checkoutlist.
 	  echo "no-such-file     Failed to update no-such-file." >checkoutlist
 	  dotest mkmodules-error-message-1 "${testcvs} -Q ci -m. checkoutlist" \
 "Checking in checkoutlist;
@@ -11132,7 +11132,7 @@ done
 ${PROG} commit: Rebuilding administrative file database
 ${PROG} commit: Failed to update no-such-file\."
 
-	  # Versions 1.11.6 & 1.12.1 and earlier of CVS user the error string
+	  # Versions 1.11.6 & 1.12.1 and earlier of CVS used the error string
 	  # from the checkoutlist file as the format string passed to error()'s
 	  # printf.  Check that this is no longer the case by verifying that
 	  # printf format patterns remain unchanged.
