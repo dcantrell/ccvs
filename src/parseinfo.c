@@ -537,21 +537,9 @@ parse_config (const char *cvsroot)
 	else if (strcmp (line, "ImportNewFilesToVendorBranchOnly") == 0)
 	    readBool (infopath, "ImportNewFilesToVendorBranchOnly", p,
 		      &retval->ImportNewFilesToVendorBranchOnly);
-#ifdef PROXY_SUPPORT
 	else if (strcmp (line, "PrimaryServer") == 0)
-	{
 	    retval->PrimaryServer = parse_cvsroot (p);
-	    if (retval->PrimaryServer->method != fork_method
-		&& retval->PrimaryServer->method != ext_method)
-	    {
-		/* I intentionally neglect to mention :fork: here.  It is
-	         * really only useful for testing.
-		 */
-	        error (1, 0,
-"%s [%u]: Only PrimaryServers with :ext: methods are valid, not `%s'.",
-		       infopath, ln, p);
-	    }
-	}
+#ifdef PROXY_SUPPORT
 	else if (!strcmp (line, "MaxProxyBufferSize"))
 	    readSizeT (infopath, "MaxProxyBufferSize", p,
 		       &retval->MaxProxyBufferSize);

@@ -346,11 +346,11 @@ edit_fileproc (void *callerdat, struct file_info *finfo)
     char *ascnow;
     Vers_TS *vers;
 
-#if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
+#if defined (CLIENT_SUPPORT)
     assert (!(current_parsed_root->isremote && check_edited));
-#else
+#else /* !CLIENT_SUPPORT */
     assert (!check_edited);
-#endif /* defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
+#endif /* CLIENT_SUPPORT */
 
     if (noexec)
 	return 0;

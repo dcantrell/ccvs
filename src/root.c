@@ -192,11 +192,11 @@ Create_Root (const char *dir, const char *rootdir)
 const char *
 primary_root_translate (const char *root_in)
 {
+#ifdef PROXY_SUPPORT
     char *translated;
     static char *previous = NULL;
     static size_t len;
 
-#ifdef PROXY_SUPPORT
     /* This can happen, for instance, during `cvs init'.  */
     if (!config) return root_in;
 
@@ -238,11 +238,11 @@ primary_root_translate (const char *root_in)
 const char *
 primary_root_inverse_translate (const char *root_in)
 {
+#ifdef PROXY_SUPPORT
     char *translated;
     static char *previous = NULL;
     static size_t len;
 
-#ifdef PROXY_SUPPORT
     /* This can happen, for instance, during `cvs init'.  */
     if (!config) return root_in;
 
@@ -472,14 +472,15 @@ parse_cvsroot (const char *root_in)
     cvsroot_t *newroot;			/* the new root to be returned */
     char *cvsroot_save;			/* what we allocated so we can dispose
 					 * it when finished */
+    char *cvsroot_copy, *p;		/* temporary pointers for parsing */
+#if defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
+    char *q;				/* temporary pointer for parsing */
     char *firstslash;			/* save where the path spec starts
 					 * while we parse
 					 * [[user][:password]@]host[:[port]]
 					 */
-    char *cvsroot_copy, *p, *q;		/* temporary pointers for parsing */
-#ifdef CLIENT_SUPPORT
     int check_hostname, no_port, no_password, no_proxy;
-#endif /* CLIENT_SUPPORT */
+#endif /* defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
     static List *cache = NULL;
     Node *node;
 
@@ -523,12 +524,12 @@ parse_cvsroot (const char *root_in)
 	*p = '\0';
 	cvsroot_copy = ++p;
 
-#ifdef CLIENT_SUPPORT
+#if defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
 	/* Look for method options, for instance, proxy, proxyport.
 	 * Calling strtok again is saved until after parsing the method.
 	 */
 	method = strtok (method, ";");
-#endif /* CLIENT_SUPPORT */
+#endif /* defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
 
 	/* Now we have an access method -- see if it's valid. */
 
@@ -552,7 +553,7 @@ parse_cvsroot (const char *root_in)
 	    goto error_exit;
 	}
 
-#ifdef CLIENT_SUPPORT
+#if defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
 	/* Parse the method options, for instance, proxy, proxyport */
 	while ((p = strtok (NULL, ";")))
 	{
@@ -610,7 +611,7 @@ parse_cvsroot (const char *root_in)
 	        goto error_exit;
 	    }
 	}
-#endif /* CLIENT_SUPPORT */
+#endif /* defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
     }
     else
     {
@@ -626,19 +627,8 @@ parse_cvsroot (const char *root_in)
      * There are a few sanity checks we can do now, only knowing the
      * method of this root.
      */
-#ifndef DEBUG
-    /* Why do we avoid these checks when DEBUG is set?  How is this used?  */
-# ifndef CLIENT_SUPPORT
-    if (newroot->method != local_method)
-    {
-	error (0, 0, "CVSROOT is set for a remote access method but your");
-	error (0, 0, "CVS executable doesn't support it.");
-	goto error_exit;
-    }
-# endif
-#endif /* ! DEBUG */
 
-#ifdef CLIENT_SUPPORT
+#if defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
     newroot->isremote = (newroot->method != local_method);
 
     if (readonlyfs && newroot->isremote)
@@ -647,9 +637,7 @@ parse_cvsroot (const char *root_in)
 	       cvsroot_copy);
 
     if ((newroot->method != local_method)
-#ifdef CLIENT_SUPPORT
 	&& (newroot->method != fork_method)
-#endif /* SERVER_SUPPORT */
        )
     {
 	/* split the string into [[user][:password]@]host[:[port]] & /path
@@ -739,7 +727,7 @@ parse_cvsroot (const char *root_in)
 	cvsroot_copy = firstslash;
 	*cvsroot_copy = '/';
     }
-#endif /* CLIENT_SUPPORT */
+#endif /* defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
 
     /*
      * Parse the path for all methods.
@@ -755,30 +743,32 @@ parse_cvsroot (const char *root_in)
      * Do various sanity checks.
      */
 
-#ifdef CLIENT_SUPPORT
+#if defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
     if (newroot->username && ! newroot->hostname)
     {
 	error (0, 0, "Missing hostname in CVSROOT.");
 	goto error_exit;
     }
 
-    /* We won't have attempted to parse these without CLIENT_SUPPORT */
+    /* We won't have attempted to parse these without CLIENT_SUPPORT or
+     * SERVER_SUPPORT.
+     */
     check_hostname = 0;
     no_password = 1;
     no_proxy = 1;
     no_port = 0;
-#endif /* CLIENT_SUPPORT */
+#endif /* defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
     switch (newroot->method)
     {
     case local_method:
-#ifdef CLIENT_SUPPORT
+#if defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
 	if (newroot->username || newroot->hostname)
 	{
 	    error (0, 0, "Can't specify hostname and username in CVSROOT");
 	    error (0, 0, "when using local access method.");
 	    goto error_exit;
 	}
-#endif /* CLIENT_SUPPORT */
+#endif /* defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
 	/* cvs.texinfo has always told people that CVSROOT must be an
 	   absolute pathname.  Furthermore, attempts to use a relative
 	   pathname produced various errors (I couldn't get it to work),
@@ -791,16 +781,16 @@ parse_cvsroot (const char *root_in)
 	    error (0, 0, "when using local access method.");
 	    goto error_exit;
 	}
-#ifdef CLIENT_SUPPORT
+#if defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
 	/* We don't need to check for these in :local: mode, really, since
 	 * we shouldn't be able to hit the code above which parses them, but
 	 * I'm leaving them here in lieu of assertions.
 	 */
 	no_port = 1;
 	/* no_password already set */
-#endif /* CLIENT_SUPPORT */
+#endif /* defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
 	break;
-#ifdef CLIENT_SUPPORT
+#if defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
     case fork_method:
 	/* We want :fork: to behave the same as other remote access
            methods.  Therefore, don't check to see that the repository
@@ -823,26 +813,14 @@ parse_cvsroot (const char *root_in)
 	/* no_password already set */
 	break;
     case kserver_method:
-# ifndef HAVE_KERBEROS
-       	error (0, 0, "CVSROOT is set for a kerberos access method but your");
-	error (0, 0, "CVS executable doesn't support it.");
-	goto error_exit;
-# else
 	check_hostname = 1;
 	/* no_password already set */
 	break;
-# endif
     case gserver_method:
-# ifndef HAVE_GSSAPI
-	error (0, 0, "CVSROOT is set for a GSSAPI access method but your");
-	error (0, 0, "CVS executable doesn't support it.");
-	goto error_exit;
-# else
 	check_hostname = 1;
 	no_proxy = 0;
 	/* no_password already set */
 	break;
-# endif
     case server_method:
     case ext_method:
 	no_port = 1;
@@ -854,12 +832,12 @@ parse_cvsroot (const char *root_in)
 	no_proxy = 0;
 	check_hostname = 1;
 	break;
-#endif /* CLIENT_SUPPORT */
+#endif /* defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
     default:
 	error (1, 0, "Invalid method found in parse_cvsroot");
     }
 
-#ifdef CLIENT_SUPPORT
+#if defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
     if (no_password && newroot->password)
     {
 	error (0, 0, "CVSROOT password specification is only valid for");
@@ -893,7 +871,7 @@ parse_cvsroot (const char *root_in)
         error (0, 0, "and pserver connection methods.");
         goto error_exit;
     }
-#endif /*CLIENT_SUPPORT */
+#endif /* defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
 
     if (*newroot->directory == '\0')
     {

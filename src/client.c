@@ -3755,7 +3755,7 @@ connect_to_forked_server (cvsroot_t *root, struct buffer **to_server_p,
     command[1] = "server";
     command[2] = NULL;
 
-    TRACE (TRACE_FUNCTION, "Forking server: %s %s\n",
+    TRACE (TRACE_FUNCTION, "Forking server: %s %s",
 	   command[0] ? command[0] : "(null)", command[1]);
 
     child_pid = piped_child (command, &tofd, &fromfd);
@@ -3798,29 +3798,38 @@ open_connection_to_server (cvsroot_t *root, struct buffer **to_server_p,
 
     switch (root->method)
     {
-
-#ifdef AUTH_CLIENT_SUPPORT
 	case pserver_method:
+#ifdef AUTH_CLIENT_SUPPORT
 	    /* Toss the return value.  It will die with an error message if
 	     * anything goes wrong anyway.
 	     */
 	    connect_to_pserver (root, to_server_p, from_server_p, 0, 0);
-	    break;
+#else /* AUTH_CLIENT_SUPPORT */
+	    error (0, 0, "CVSROOT is set for a pserver access method but your");
+	    error (1, 0, "CVS executable doesn't support it.");
 #endif /* AUTH_CLIENT_SUPPORT */
+	    break;
 
-#if HAVE_KERBEROS
 	case kserver_method:
+#if HAVE_KERBEROS
 	    start_kerberos4_server (root, to_server_p, 
                                     from_server_p);
-	    break;
+#else /* !HAVE_KERBEROS */
+	    error (0, 0,
+	           "CVSROOT is set for a kerberos access method but your");
+	    error (1, 0, "CVS executable doesn't support it.");
 #endif /* HAVE_KERBEROS */
+	    break;
 
-#ifdef HAVE_GSSAPI
 	case gserver_method:
+#ifdef HAVE_GSSAPI
 	    /* GSSAPI authentication is handled by the pserver.  */
 	    connect_to_pserver (root, to_server_p, from_server_p, 0, 1);
-	    break;
+#else /* !HAVE_GSSAPI */
+	    error (0, 0, "CVSROOT is set for a GSSAPI access method but your");
+	    error (1, 0, "CVS executable doesn't support it.");
 #endif /* HAVE_GSSAPI */
+	    break;
 
 	case ext_method:
 #ifdef NO_EXT_METHOD

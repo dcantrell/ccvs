@@ -621,7 +621,7 @@ isProxyServer (void)
     /* Must be :ext: method, then.  This is enforced when CVSROOT/config is
      * parsed.
      */
-    assert (config->PrimaryServer->method == ext_method);
+    assert (config->PrimaryServer->isremote);
 
     if (isThisHost (config->PrimaryServer->hostname))
 	return false;
