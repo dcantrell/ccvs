@@ -1,6 +1,7 @@
 2001-02-23  Derek Price  <derek.price@openavenue.com>
 
-	* main.c (main): Only check
+	* main.c (main): Only check a cvsroot_t's isremote member when client
+	support is enabled.
 	* server.c: Include GSSAPI headers with client support as well as
 	server support.
 
