@@ -5974,8 +5974,8 @@ done"
 
 	  dotest resurrection-init5 "$testcvs -Q rm -f file1"
 
-	  # The first test is that `cvs add' will resurrect a file before it
-	  # has been committed.
+	  # The first test is that `cvs add' will resurrect a file before its
+	  # removal has been committed.
 	  dotest_sort resurrection-1 "$testcvs add file1" \
 "U file1
 $PROG add: file1, version 1\.1, resurrected"
@@ -6023,6 +6023,24 @@ $PROG add: use 'cvs commit' to add this file permanently"
 $CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done"
+
+	  # The next few tests verify that an attempted resurrection of a file
+	  # with no previous revision on the trunk fails.
+	  touch file2
+	  dotest resurrection-9 "$testcvs -Q add file2"
+	  dotest resurrection-10 "$testcvs -Q ci -mnew-file2" \
+"RCS file: $CVSROOT_DIRNAME/first-dir/Attic/file2,v
+done
+Checking in file2;
+$CVSROOT_DIRNAME/first-dir/Attic/file2,v  <--  file2
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+	  dotest resurrection-11 "$testcvs -Q up -A"
+
+	  # This command once caused an assertion failure.
+	  dotest resurrection-12 "$testcvs add file2" \
+"$PROG add: File \`file2' has no previous revision to resurrect\."
+
 	  if $keep; then
 	    echo Keeping $TESTDIR and exiting due to --keep
 	    exit 0
