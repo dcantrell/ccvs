@@ -96,8 +96,7 @@ watch_onoff (argc, argv)
 #else
 	send_files (argc, argv, local, 0);
 #endif
-	if (fprintf (to_server,
-		     turning_on ? "watch-on\n" : "watch-off\n") < 0)
+	if (send_to_server (turning_on ? "watch-on\n" : "watch-off\n") < 0)
 	    error (1, errno, "writing to server");
 	return get_responses_and_close ();
     }
@@ -261,7 +260,7 @@ send_notifications (argc, argv, local)
 				argc, argv, local, W_LOCAL, 0, 1, (char *)NULL,
 				1, 0);
 
-	fprintf (to_server, "noop\n");
+	send_to_server ("noop\n");
 	if (strcmp (command_name, "release") == 0)
 	    err += get_server_responses ();
 	else
@@ -956,7 +955,7 @@ editors (argc, argv)
 #else
 	send_files (argc, argv, local, 0);
 #endif
-	if (fprintf (to_server, "editors\n") < 0)
+	if (send_to_server ("editors\n") < 0)
 	    error (1, errno, "writing to server");
 	return get_responses_and_close ();
     }

@@ -224,9 +224,9 @@ release (argc, argv)
 #ifdef CLIENT_SUPPORT
         if (client_active)
         {
-          if (fprintf (to_server, "Argument %s\n", thisarg) < 0)
+          if (send_to_server ("Argument %s\n", thisarg) < 0)
 	    error (1, errno, "writing to server");
-          if (fprintf (to_server, "release\n") < 0)
+          if (send_to_server ("release\n") < 0)
 	    error (1, errno, "writing to server");
         }
         else

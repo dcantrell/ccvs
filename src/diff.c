@@ -205,7 +205,7 @@ diff (argc, argv)
 	send_files (argc, argv, local, 0);
 #endif
 
-	if (fprintf (to_server, "diff\n") < 0)
+	if (send_to_server ("diff\n") < 0)
 	    error (1, errno, "writing to server");
         err = get_responses_and_close ();
 	free (options);

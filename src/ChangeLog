@@ -1,3 +1,16 @@
+Sat Dec 16 00:14:19 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.h: prototype new func send_to_server().
+
+        * add.c, admin.c, client.c, commit.c, diff.c, edit.c, history.c,
+        import.c, log.c, patch.c, release.c, remove.c, rtag.c, status.c,
+        tag.c, update.c, watch.c: 
+        Use send_to_server() instead of writing directly to to_server.
+
+        * client.c: conditionally include the right stuff for variable arg
+        lists.
+        (send_to_server): new func.
+        
 Fri Dec 15 23:10:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * error.c: expanded comments.
