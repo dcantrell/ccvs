@@ -595,7 +595,7 @@ if test x"$*" = x; then
 	tests="${tests} history"
 	tests="${tests} big modes modes2 modes3 stamps"
 	# PreservePermissions stuff: permissions, symlinks et al.
-	tests="${tests} perms symlinks hardlinks"
+	tests="${tests} perms symlinks symlinks2 hardlinks"
 	# More tag and branch tests, keywords.
 	tests="${tests} sticky keyword keyword2 keywordlog"
 	tests="${tests} head tagdate multibranch2 tag8k"
@@ -14756,6 +14756,45 @@ done"
 	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/config
 	  touch ${CVSROOT_DIRNAME}/CVSROOT/config
 	  chmod 444 ${CVSROOT_DIRNAME}/CVSROOT/config
+	  ;;
+
+	symlinks2)
+	  # Symlinks in working directory without PreservePermissions.
+	  # Also see: symlinks: with PreservePermissions
+	  # rcslib-symlink-*: symlinks in repository.
+	  mkdir 1; cd 1
+	  dotest symlinks2-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest symlinks2-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  echo nonsymlink > slink
+	  dotest symlinks2-3 "${testcvs} add slink" \
+"${PROG} [a-z]*: scheduling file .slink. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest symlinks2-4 "${testcvs} -q ci -m ''" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/slink,v
+done
+Checking in slink;
+${TESTDIR}/cvsroot/first-dir/slink,v  <--  slink
+initial revision: 1\.1
+done"
+	  rm slink
+	  # Choose name cvslog.* so it is in default ignore list.
+	  echo second file >cvslog.file2
+	  dotest symlinks2-5 "ln -s cvslog.file2 slink" ""
+	  dotest symlinks2-6 "${testcvs} -q ci -m linkify" \
+"Checking in slink;
+${TESTDIR}/cvsroot/first-dir/slink,v  <--  slink
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  dotest symlinks2-7 "${testcvs} -q update -r 1.1 slink" "[UP] slink"
+	  dotest symlinks2-8 "cat slink" "nonsymlink"
+	  dotest symlinks2-9 "ls -l slink" "-[-rwx]* .* slink"
+	  cd ../..
+
+	  rm -rf 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	hardlinks)
