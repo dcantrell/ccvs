@@ -177,10 +177,6 @@
    you don't. */
 #undef HAVE_DECL_FREAD_UNLOCKED
 
-/* Define to 1 if you have the declaration of `free', and to 0 if you don't.
-   */
-#undef HAVE_DECL_FREE
-
 /* Define to 1 if you have the declaration of `fwrite_unlocked', and to 0 if
    you don't. */
 #undef HAVE_DECL_FWRITE_UNLOCKED

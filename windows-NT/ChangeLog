@@ -1,5 +1,9 @@
 2004-10-09  Derek Price  <derek@ximbiot.com>
 
+	* config.h.in.in (HAVE_DECL_FREE): Remove this define.
+
+2004-10-09  Derek Price  <derek@ximbiot.com>
+
 	* config.h.in.in (optopt, optind, optarg): Define these for GNULIB.
 
 2004-10-07  Derek Price  <derek@ximbiot.com>
