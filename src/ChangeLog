@@ -1,5 +1,10 @@
 2004-04-22  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h: Move include of fnmatch.h into lib/system.h with the other
+        GNULIB headers.
+
+2004-04-22  Derek Price  <derek@ximbiot.com>
+
 	* tag.c: Use bool where appropriate.  Some gratuitous reformatting.
 
 2004-04-19  Derek Price  <derek@ximbiot.com>
