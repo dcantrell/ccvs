@@ -1,3 +1,7 @@
+2003-07-24  Derek Price  <derek@ximbiot.com>
+
+	* gethostname.c: Update from GNULIB.
+
 2003-07-23  Derek Price  <derek@ximbiot.com>
 
 	* system.h: Move some includes from src/cvs.h.
