@@ -1,3 +1,7 @@
+1998-05-12  Jim Meyering  <meyering@ascend.com>
+
+	* Makefile.in (distclean): New rule to remove Makefile.
+
 1998-04-18  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* getpass.c: Rewrite to use SYS$QIOW instead of curses.  This

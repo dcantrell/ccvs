@@ -1,3 +1,7 @@
+1998-05-12  Jim Meyering  <meyering@ascend.com>
+
+	* Makefile.in (distclean): New rule to remove Makefile.
+
 1998-05-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README.MacCVS: Be more discouraging about MacCVS 2.x; merely say
@@ -278,5 +282,5 @@ Wed Nov  29 09:33:16 1995  Mike Ladwig  <mike@twinpeaks.prc.com>
 	* Requires CW GUSI 1.6.4 and CodeWarrier 7
 	* 68k version is essentially untested, due to lack of a 68k machine
 	* 'release' doesn't work, due to cvs implementation approach
-	* Tons of obvious "TODOs", but at least the heavy stuff is done 
+	* Tons of obvious "TODOs", but at least the heavy stuff is done
 
