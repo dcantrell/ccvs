@@ -27,12 +27,12 @@ i386 family:
 	Solaris 2.4 using gcc (about 1.4A2)
 	UnixWare v1.1.1 using gcc (about 1.4A2)
 	Unixware 2.1 (1.8.86)
-	ISC 4.0.1 (1.5.94)
+	ISC 4.0.1 (1.8.87)
 	Linux (kernel 1.2.x) (1.8.86)
 	BSDI 2.0 (1.4.93) (footnote 5)
 	FreeBSD 2.0.5, i486, gcc (1.5.95)
 	NextSTEP 3.3 (1.7)
-	SCO Unix 3.2.4.2 (1.4.93) (footnote 4)
+	SCO Unix 3.2.4.2, gcc 2.7.2 (1.8.87) (footnote 4)
 	SCO OpenServer 5 (1.8.86)
 	Lynx 2.3.0 080695 (1.6.86) (footnote 9)
 	Windows NT 3.51 (1.8.86 client; 1.8.3 local)
@@ -51,7 +51,7 @@ MIPS:
 	DECstation running Ultrix 4.2a (1.4.90)
 	DECstation running Ultrix 4.3 (1.8.85)
 	SGI running Irix 4.0.5H using gcc and cc (about 1.4A2) (footnote 2)
-	SGI running Irix 5.3 (1.8)
+	SGI running Irix 5.3 using gcc 2.7.2 (1.8.87)
 	SGI running Irix-6 (about 1.4.90) (footnote 3)
 	Siemens-Nixdorf RM600 running SINIX-Y (1.6)
 PowerPC or RS/6000:
@@ -60,11 +60,12 @@ PowerPC or RS/6000:
 	IBM RS/6000 running AIX 4.1 using gcc and cc (about 1.4A2) (footnote 1)
 	Lynx 2.3.1 120495 (1.6.86) (footnote 9)
 SPARC:
-	Sun SPARC running SunOS 4.1.x (1.8.86)
+	Sun SPARC running SunOS 4.1.x (1.8.87)
 	Sun SPARCstation 10 running Solaris 2.3 using gcc and cc (about 1.4A2)
 	Sun SPARCstation running Solaris 2.4 using gcc and cc (about 1.5.91)
 	Sun SPARC running Solaris 2.5 (2.5 beta?) (1.8.86)
 	NextSTEP 3.3 (1.7)
+	Sun SparcClassing running Linux 2.0.17, gcc 2.7.2 (1.8.87)
 
 (footnote 1)
 	AIX 4.1 systems fail to run "configure" due to bugs in their
