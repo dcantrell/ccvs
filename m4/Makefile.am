@@ -24,6 +24,7 @@ EXTRA_DIST = \
 	acx_with_external_zlib.m4 \
 	asx_version_compare.m4 \
 	cvs_func_printf_ptr.m4 \
+	alloca.m4 \
 	atexit.m4 \
 	codeset.m4 \
 	getline.m4 \
