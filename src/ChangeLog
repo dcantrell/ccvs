@@ -1,3 +1,7 @@
+1998-06-01  Jim Meyering  <meyering@ascend.com>
+
+	* sanity.sh (tag8k): Add a test for the 1998-05-02 rcs.c bug fix.
+
 1998-05-26  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (annotate): Call tag_check_valid like the other functions
