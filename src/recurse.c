@@ -1208,7 +1208,10 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	    xframe.repository = NULL;
 	err += do_recursion (&xframe);
 	if ( xframe.repository )
+	{
 	    free ( xframe.repository );
+	    xframe.repository = NULL;
+	}
 
 	/* put the `.' back if necessary */
 	if (stripped_dot)
