@@ -2077,7 +2077,7 @@ start_server ()
   int pid;
   char *log = getenv ("CVS_CLIENT_LOG");
   
-  FILE *pipes[2];
+  int pipes[2];
   
   /* If you're working through firewalls, you can set the
      CVS_RSH environment variable to a script which uses rsh to
