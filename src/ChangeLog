@@ -1,3 +1,11 @@
+1998-08-19  Ian Lance Taylor  <ian@cygnus.com>
+
+	* cvs.h (CVSroot_cmdline): Declare.
+	* root.c (CVSroot_cmdline): Define.
+	* main.c (main): Set CVSroot_cmdline if the -d option is used.
+	* import.c (import): If CVSroot_cmdline is not NULL, then mention
+	an explicit -d option in the suggested merge command line.
+
 1998-08-18  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Don't assume that the shell leaves $^ unexpanded in

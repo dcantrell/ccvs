@@ -283,6 +283,11 @@ import (argc, argv)
 			0);
 	    cvs_output ("\t", 1);
 	    cvs_output (program_name, 0);
+	    if (CVSroot_cmdline != NULL)
+	    {
+		cvs_output (" -d ", 0);
+		cvs_output (CVSroot_cmdline, 0);
+	    }
 	    cvs_output (" checkout -j", 0);
 	    cvs_output (argv[1], 0);
 	    cvs_output (":yesterday -j", 0);
@@ -296,8 +301,11 @@ import (argc, argv)
 			conflicts);
 	(void) fprintf (logfp,
 			"Use the following command to help the merge:\n\n");
-	(void) fprintf (logfp, "\t%s checkout -j%s:yesterday -j%s %s\n\n",
-			program_name, argv[1], argv[1], argv[0]);
+	(void) fprintf (logfp, "\t%s checkout ", program_name);
+	if (CVSroot_cmdline != NULL)
+	    (void) fprintf (logfp, "-d %s ", CVSroot_cmdline);
+	(void) fprintf (logfp, "-j%s:yesterday -j%s %s\n\n",
+			argv[1], argv[1], argv[0]);
     }
     else
     {

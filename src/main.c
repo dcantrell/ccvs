@@ -562,6 +562,9 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 		free_Editor = 1;
 		break;
 	    case 'd':
+		if (CVSroot_cmdline != NULL)
+		    free (CVSroot_cmdline);
+		CVSroot_cmdline = xstrdup (optarg);
 		CVSroot = xstrdup (optarg);
 		free_CVSroot = 1;
 		cvs_update_env = 1;	/* need to update environment */
@@ -954,6 +957,8 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
     Lock_Cleanup ();
 
     free (program_path);
+    if (CVSroot_cmdline != NULL)
+	free (CVSroot_cmdline);
     if (free_CVSroot)
 	free (CVSroot);
     if (free_Editor)
