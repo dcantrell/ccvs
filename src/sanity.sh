@@ -16924,30 +16924,46 @@ U mod1-2/file1-2"
 	  # that there's not some kind of unexpected dependency on the
 	  # choice of which CVSROOT is specified on the command line.
 
-	  if test "$remote" = no; then
-	    # The basic idea is that -d overrides CVS/Root.
-	    # With RELATIVE_REPOS, CVS could print an error when it
-	    # tries to recurse to mod2-2, which doesn't exist in
-	    # this repository (?)  With absolute, CVS will just look at the
-	    # CVS/Repository for the other root (and log to the wrong
-	    # history file and that sort of thing).
+	  if test "${AREP1}" = ""; then
+	    # RELATIVE_REPOS.
 	    dotest multiroot-update-1a "${testcvs1} update" \
-"${PROG} update: Updating \.
+"${PROG} [a-z]*: Updating \.
 ${PROG} [a-z]*: Updating mod1-1
 ${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod1-2/mod2-2
+${PROG} [a-z]*: cannot open directory ${TESTDIR}/root1/mod2-2: No such file or directory
+${PROG} [a-z]*: skipping directory mod1-2/mod2-2
 ${PROG} [a-z]*: Updating mod2-1
+${PROG} [a-z]*: cannot open directory ${TESTDIR}/root1/mod2-1: No such file or directory
+${PROG} [a-z]*: skipping directory mod2-1
 ${PROG} [a-z]*: Updating mod2-2
-${PROG} [a-z]*: Updating mod2-2/mod1-2"
-	  else
-	    # Hmm, this one is specific to non-RELATIVE_REPOS too I think.
-	    dotest_fail multiroot-update-1a "${testcvs1} update" \
-"protocol error: directory '${TESTDIR}/root2/mod2-2' not within root '${TESTDIR}/root1'"
-	  fi
+${PROG} [a-z]*: cannot open directory ${TESTDIR}/root1/mod2-2: No such file or directory
+${PROG} [a-z]*: skipping directory mod2-2"
 
-	  # Same deal but with -d ${CVSROOT2}.
-	  if test "$remote" = no; then
+	    # Same deal but with -d ${CVSROOT2}.
 	    dotest multiroot-update-1b "${testcvs2} update" \
+"${PROG} [a-z]*: Updating \.
+${PROG} [a-z]*: Updating mod1-1
+${PROG} [a-z]*: cannot open directory ${TESTDIR}/root2/mod1-1: No such file or directory
+${PROG} [a-z]*: skipping directory mod1-1
+${PROG} [a-z]*: Updating mod1-2
+${PROG} [a-z]*: cannot open directory ${TESTDIR}/root2/mod1-2: No such file or directory
+${PROG} [a-z]*: skipping directory mod1-2
+${PROG} [a-z]*: Updating mod2-1
+${PROG} [a-z]*: Updating mod2-2
+${PROG} [a-z]*: Updating mod2-2/mod1-2
+${PROG} [a-z]*: cannot open directory ${TESTDIR}/root2/mod1-2: No such file or directory
+${PROG} [a-z]*: skipping directory mod2-2/mod1-2"
+	  else
+	    # non-RELATIVE_REPOS.
+	    if test "$remote" = no; then
+	      # The basic idea is that -d overrides CVS/Root.
+	      # With RELATIVE_REPOS, CVS could print an error when it
+	      # tries to recurse to mod2-2, which doesn't exist in
+	      # this repository (?)  With absolute, CVS will just look at the
+	      # CVS/Repository for the other root (and log to the wrong
+	      # history file and that sort of thing).
+	      dotest multiroot-update-1a "${testcvs1} update" \
 "${PROG} update: Updating \.
 ${PROG} [a-z]*: Updating mod1-1
 ${PROG} [a-z]*: Updating mod1-2
@@ -16955,10 +16971,27 @@ ${PROG} [a-z]*: Updating mod1-2/mod2-2
 ${PROG} [a-z]*: Updating mod2-1
 ${PROG} [a-z]*: Updating mod2-2
 ${PROG} [a-z]*: Updating mod2-2/mod1-2"
-	  else
-	    dotest_fail multiroot-update-1b "${testcvs2} update" \
+	    else
+	      # Hmm, this one is specific to non-RELATIVE_REPOS too I think.
+	      dotest_fail multiroot-update-1a "${testcvs1} update" \
+"protocol error: directory '${TESTDIR}/root2/mod2-2' not within root '${TESTDIR}/root1'"
+	    fi # non-remote
+
+	    # Same deal but with -d ${CVSROOT2}.
+	    if test "$remote" = no; then
+	      dotest multiroot-update-1b "${testcvs2} update" \
+"${PROG} update: Updating \.
+${PROG} [a-z]*: Updating mod1-1
+${PROG} [a-z]*: Updating mod1-2
+${PROG} [a-z]*: Updating mod1-2/mod2-2
+${PROG} [a-z]*: Updating mod2-1
+${PROG} [a-z]*: Updating mod2-2
+${PROG} [a-z]*: Updating mod2-2/mod1-2"
+	    else
+	      dotest_fail multiroot-update-1b "${testcvs2} update" \
 "protocol error: directory '${TESTDIR}/root1' not within root '${TESTDIR}/root2'"
-	  fi
+	    fi # non-remote
+	  fi # non-RELATIVE_REPOS
 
 	  # modify all files and do a diff
 
