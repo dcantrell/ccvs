@@ -1,3 +1,6 @@
+*.bb
+*.bbg
+*.da
 .deps
 .pure
 Makefile
