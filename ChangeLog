@@ -1,5 +1,13 @@
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
+	* INSTALL: Explain --with-tmpdir.
+	* configure.in (--with-tmpdir): New configure argument.
+
+	* configure: Regenerated.
+	* config.h.in: Ditto.
+
+2002-09-24  Derek Price  <derek@ximbiot.com>
+
 	* INSTALL: Explain --with-editor.
 	* configure.in (--with-editor): New configure argument.
 

@@ -297,6 +297,12 @@ Building from source code under Unix:
 
 	$ ./configure --enable-server-flow-control=1M,2M
 
+    The --with-tmpdir argument to configure may be used to set a
+    specific directory for use as a default temporary directory.  If not
+    set, configure will pick the first directory it finds which it has
+    read, write, and execute permissions to from $TMPDIR, $TMP, $TEMP,
+    /tmp, and /var/tmp, in that order.  Failing that, it will use /tmp.
+
     Unlike previous versions of CVS, you do not need to install RCS
     or GNU diff.  
 
