@@ -1,3 +1,7 @@
+1998-05-23  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Version 1.9.28.
+
 1998-05-22  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_cmp_file): Check for errors from CVS_FOPEN.  This
