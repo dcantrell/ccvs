@@ -9,6 +9,15 @@ be unable to log out.  The workaround for this is to log out using an old
 version of CVS or delete the appropriate line from ~/.cvspass, then log in
 with the new version.
 
+* A password and a port number may now be specified in CVSROOT for pserver
+connections.  The new format is:
+
+    :pserver:[[user][:password]@]host[:[port]]/path
+
+Note that passwords specified in a checkout command will be saved in the clear
+in the CVS/Root file in each created directory, so this is not recommended,
+except perhaps when accessing anonymous repositories or the like.
+
 Changes since 1.10:
 
 * The new "cvs version" command gives a short version message.  If

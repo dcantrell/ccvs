@@ -1,5 +1,10 @@
 2000-10-17  Derek Price  <derek.price@openavenue.com>
 
+	* cvs.texinfo (Remote repositories): added a comment about specifying
+	a password in the repository name when performaing a checkout.
+
+2000-10-17  Derek Price  <derek.price@openavenue.com>
+
 	* cvs.texinfo (Remote repositories, password authenticated, GSSAPI
 	authenticated, Kerberos authenticated, Environment variables):
 	Documented CVSROOT spec change & CVS_CLIENT_PORT.
