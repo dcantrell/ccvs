@@ -10873,6 +10873,11 @@ Create a @sc{cvs} repository if it doesn't exist.  See
 @ref{Creating a repository}.
 
 @c ------------------------------------------------------------
+@item kserver
+Kerberos authenticated server.
+See @ref{Kerberos authenticated}.
+
+@c ------------------------------------------------------------
 @item log [@var{options}] [@var{files}@dots{}]
 Print out history information for files.  See @ref{log}.
 
@@ -10919,6 +10924,35 @@ Prompt for password for authenticating server.  See
 @item logout
 Remove stored password for authenticating server.  See
 @ref{Password authentication client}.
+
+@c ------------------------------------------------------------
+@item pserver
+Password authenticated server.
+See @ref{Password authentication server}.
+
+@c ------------------------------------------------------------
+@item rannotate [@var{options}] [@var{modules}@dots{}]
+Show last revision where each line was modified.  See
+@ref{annotate}.
+
+@table @code
+@item -D @var{date}
+Annotate the most recent revision no later than
+@var{date}.  See @ref{Common options}.
+
+@item -f
+Use head revision if tag/date not found.  See
+@ref{Common options}.
+
+@item -l
+Local; run only in current working directory.  @xref{Recursive behavior}.
+
+@item -R
+Operate recursively (default).  @xref{Recursive behavior}.
+
+@item -r @var{tag}
+Annotate revision @var{tag}.  See @ref{Common options}.
+@end table
 
 @c ------------------------------------------------------------
 @item rdiff [@var{options}] @var{modules}@dots{}
@@ -10987,6 +11021,43 @@ behavior}.
 @end table
 
 @c ------------------------------------------------------------
+@item rlog [@var{options}] [@var{files}@dots{}]
+Print out history information for modules.  See @ref{log}.
+
+@table @code
+@item -b
+Only list revisions on the default branch.  See @ref{log options}.
+
+@item -d @var{dates}
+Specify dates (@var{d1}<@var{d2} for range, @var{d} for
+latest before).  See @ref{log options}.
+
+@item -h
+Only print header.  See @ref{log options}.
+
+@item -l
+Local; run only in current working directory.  See @ref{Recursive behavior}.
+
+@item -N
+Do not list tags.  See @ref{log options}.
+
+@item -R
+Only print name of RCS file.  See @ref{log options}.
+
+@item -r@var{revs}
+Only list revisions @var{revs}.  See @ref{log options}.
+
+@item -s @var{states}
+Only list revisions with specified states.  See @ref{log options}.
+
+@item -t
+Only print header and descriptive text.  See @ref{log options}.
+
+@item -w@var{logins}
+Only list revisions checked in by specified logins.  See @ref{log options}.
+@end table
+
+@c ------------------------------------------------------------
 @item rtag [@var{options}] @var{tag} @var{modules}@dots{}
 Add a symbolic tag to a module.
 See @ref{Revisions} and @ref{Branching and merging}.
@@ -11025,6 +11096,10 @@ behavior}.
 @item -r @var{rev}
 Tag existing tag @var{rev}.  See @ref{Tagging by date/tag}.
 @end table
+
+@c ------------------------------------------------------------
+@item server
+Rsh server.  See @ref{Connecting via rsh}.
 
 @c ------------------------------------------------------------
 @item status [@var{options}] @var{files}@dots{}
