@@ -295,6 +295,8 @@ checkout (argc, argv)
 	}
 	if (status)
 	    send_arg("-s");
+	/* Why not send -k for export?  This would appear to make
+	   remote export differ from local export.  FIXME.  */
 	if (strcmp (command_name, "export") != 0
 	    && options != NULL
 	    && options[0] != '\0')
