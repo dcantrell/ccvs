@@ -189,6 +189,10 @@ InputPath=.\fnmatch_.h
 
 SOURCE=.\regex.h
 # End Source File
+# Begin Source File
+
+SOURCE="..\windows-NT\stdbool.h"
+# End Source File
 # End Group
 # End Target
 # End Project

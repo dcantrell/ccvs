@@ -1,3 +1,7 @@
+2004-04-26  Derek Price  <derek@ximbiot.com>
+
+	* fix-msvc-mak.pl: Default to RECURSE=1 for cvsnt.mak.
+
 2004-04-25  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (stamp-sh): s/\$\(HAVE__BOOL\)/0/.  Windows does not
