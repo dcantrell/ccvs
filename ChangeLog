@@ -1,3 +1,12 @@
+2004-02-19  Derek Price <derek@ximbiot.com>
+
+	* configure.in: AC_REQUIRE some HAVE_TYPE functions to avoid using
+	post-C89 constructs in the new format_cmdline stuff when they are not
+	available.  Update comments.  s/_LONG_INT\>/_LONG/i;
+	s/\<long int\>/long/.  Don't check size of types that are not
+	available.  Check size of size_t and ptrdiff_t.
+	* config.h.in, configure:  Regenerated.
+
 2004-02-18  Derek Price <derek@ximbiot.com>
 
 	* configure.in: Don't require AC_C_INLINE, now that m4/xsize.m4 does

@@ -234,6 +234,17 @@ jm_FUNC_LSTAT
 jm_FUNC_MALLOC
 jm_FUNC_REALLOC
 jm_FUNC_STAT
+dnl The following four macros can be called by other GNULIB macros but are also
+dnl used by the UNIQUE_*_TYPE stuff below.  I don't want to rely on the GNULIB
+dnl macros which call these to continue to do so, so use AC_REQUIRE, which can
+dnl only be called from within another macro, to only call them only once.
+AC_DEFUN([CCVS_CALL_GNULIB_MACROS_ONCE],
+[AC_REQUIRE([gt_TYPE_LONGDOUBLE])
+AC_REQUIRE([gt_TYPE_WCHAR_T])
+AC_REQUIRE([gt_TYPE_WINT_T])
+AC_REQUIRE([jm_AC_TYPE_INTMAX_T])
+AC_REQUIRE([jm_AC_TYPE_LONG_LONG])])
+CCVS_CALL_GNULIB_MACROS_ONCE()
 
 dnl We always want to use the GNULIB getpass, so define its name to something
 dnl that won't conflict with system declarations.
@@ -293,14 +304,8 @@ dnl Find the sizes of various types and set a variable for some if they
 dnl are "unique", meaning it does not share a size with a lower precedence
 dnl type.
 dnl
-dnl I am skipping all the *_t sizes I should probably be checking (wint_t,
-dnl size_t, ptrdiff_t, intmax_t - see function make_cmdline in tag.c) on
-dnl the presumption that *_t types are always typedef'd from a well known
-dnl type.  besides, I can't find any autoconf functions for ascertaining
-dnl that those types are available.
-dnl
 dnl also, I snagged this cross_compiling line from openldap's autoconf,
-dnl but I can figure out how to stop autoconf from giving cross compiler
+dnl because I can't figure out how to stop autoconf from giving cross compiler
 dnl related warnings each time the AC_CHECK_SIZEOF function is run
 dnl
 if test $cross_compiling = yes ; then
@@ -319,6 +324,22 @@ else
 		AC_DEFINE( UNIQUE_INT_TYPE_CHAR, 1,
                            [Define if char is the first integer type
 		            detected with its size.])
+	fi
+	if test $gt_cv_c_wint_t != no; then
+		AC_CHECK_SIZEOF(wint_t)
+		AC_CACHE_CHECK(for uniquely sized wint_t,
+			ccvs_cv_unique_int_type_wint_t,
+			[if set |grep ^ccvs_cv_unique_int_type_ \
+				|grep -w $ac_cv_sizeof_wint_t >/dev/null ; then
+				ccvs_cv_unique_int_type_wint_t=no
+			else
+				ccvs_cv_unique_int_type_wint_t=yes\($ac_cv_sizeof_wint_t\)
+			fi])
+		if test $ccvs_cv_unique_int_type_wint_t != no ; then
+			AC_DEFINE( UNIQUE_INT_TYPE_WINT_T, 1,
+				   [Define if wint_t is the first integer type
+				    detected with its size.])
+		fi
 	fi
 	AC_CHECK_SIZEOF(short int)
 	AC_CACHE_CHECK(for uniquely sized short int,
@@ -348,39 +369,72 @@ else
                            [Define if int is the first integer type
 		            detected with its size.])
 	fi
-	AC_CHECK_SIZEOF(long int)
-	AC_CACHE_CHECK(for uniquely sized long int,
-		ccvs_cv_unique_int_type_long_int,
+	AC_CHECK_SIZEOF(long)
+	AC_CACHE_CHECK(for uniquely sized long,
+		ccvs_cv_unique_int_type_long,
 		[if set |grep ^ccvs_cv_unique_int_type_ \
-			|grep -w $ac_cv_sizeof_long_int >/dev/null ; then
-			ccvs_cv_unique_int_type_long_int=no
+			|grep -w $ac_cv_sizeof_long >/dev/null ; then
+			ccvs_cv_unique_int_type_long=no
 		else
-			ccvs_cv_unique_int_type_long_int=yes\($ac_cv_sizeof_long_int\)
+			ccvs_cv_unique_int_type_long=yes\($ac_cv_sizeof_long\)
 		fi])
-	if test $ccvs_cv_unique_int_type_long_int != no ; then
-		AC_DEFINE( UNIQUE_INT_TYPE_LONG_INT, 1,
-                           [Define if long int is the first integer type
-		            detected with its size.])
+	if test $ccvs_cv_unique_int_type_long != no ; then
+		AC_DEFINE(UNIQUE_INT_TYPE_LONG, 1,
+                          [Define if long int is the first integer type
+		           detected with its size.])
 	fi
-	AC_CHECK_SIZEOF(long long int)
-	AC_CACHE_CHECK(for uniquely sized long long int,
-		ccvs_cv_unique_int_type_long_long_int,
+	if test $ac_cv_type_long_long != no; then
+		AC_CHECK_SIZEOF(long long)
+		AC_CACHE_CHECK(for uniquely sized long long,
+			ccvs_cv_unique_int_type_long_long,
+			[if set |grep ^ccvs_cv_unique_int_type_ \
+				|grep -w $ac_cv_sizeof_long_long >/dev/null ; then
+				ccvs_cv_unique_int_type_long_long=no
+			else
+				ccvs_cv_unique_int_type_long_long=yes\($ac_cv_sizeof_long_long\)
+			fi])
+		if test $ccvs_cv_unique_int_type_long_long != no ; then
+			AC_DEFINE(UNIQUE_INT_TYPE_LONG_LONG, 1,
+				  [Define if long long is the first integer type
+				   detected with its size.])
+		fi
+	fi
+	AC_CHECK_SIZEOF(size_t)
+	AC_CACHE_CHECK(for uniquely sized size_t,
+		ccvs_cv_unique_int_type_size_t,
 		[if set |grep ^ccvs_cv_unique_int_type_ \
-			|grep -w $ac_cv_sizeof_long_long_int >/dev/null ; then
-			ccvs_cv_unique_int_type_long_long_int=no
+			|grep -w $ac_cv_sizeof_size_t >/dev/null ; then
+			ccvs_cv_unique_int_type_size_t=no
 		else
-			ccvs_cv_unique_int_type_long_long_int=yes\($ac_cv_sizeof_long_long_int\)
+			ccvs_cv_unique_int_type_size_t=yes\($ac_cv_sizeof_size_t\)
 		fi])
-	if test $ccvs_cv_unique_int_type_long_long_int != no ; then
-		AC_DEFINE( UNIQUE_INT_TYPE_LONG_LONG_INT, 1,
-                           [Define if long long int is the first integer type
-		            detected with its size.])
+	if test $ccvs_cv_unique_int_type_size_t != no ; then
+		AC_DEFINE(UNIQUE_INT_TYPE_SIZE_T, 1,
+                          [Define if size_t is the first integer type
+		           detected with its size.])
+	fi
+	AC_CHECK_SIZEOF(ptrdiff_t)
+	AC_CACHE_CHECK(for uniquely sized ptrdiff_t,
+		ccvs_cv_unique_int_type_ptrdiff_t,
+		[if set |grep ^ccvs_cv_unique_int_type_ \
+			|grep -w $ac_cv_sizeof_ptrdiff_t >/dev/null ; then
+			ccvs_cv_unique_int_type_ptrdiff_t=no
+		else
+			ccvs_cv_unique_int_type_ptrdiff_t=yes\($ac_cv_sizeof_ptrdiff_t\)
+		fi])
+	if test $ccvs_cv_unique_int_type_ptrdiff_t != no ; then
+		AC_DEFINE(UNIQUE_INT_TYPE_PTRDIFF_T, 1,
+                          [Define if ptrdiff_t is the first integer type
+		           detected with its size.])
 	fi
 	dnl
 	dnl skipping intmax_t for now since we aren't sure we have it
 	dnl and I'm not sure how to get #include <stdint.h> into the
 	dnl AC_CHECK_SIZEOF macro anyhow...
 	dnl AC_CHECK_SIZEOF(intmax_t)
+	dnl
+	dnl As long as intmax_t is already defined to long or long long this
+	dnl will not matter in run.c.
 	dnl
 
 	dnl
@@ -414,19 +468,21 @@ else
                            [Define if double is the first floating point type
 		            detected with its size.])
 	fi
-	AC_CHECK_SIZEOF(long double)
-	AC_CACHE_CHECK(for uniquely sized long double,
-		ccvs_cv_unique_float_type_long_double,
-		[if set |grep ^ccvs_cv_unique_float_type_ \
-			|grep -w $ac_cv_sizeof_long_double >/dev/null ; then
-			ccvs_cv_unique_float_type_long_double=no
-		else
-			ccvs_cv_unique_float_type_long_double=yes\($ac_cv_sizeof_long_double\)
-		fi])
-	if test $ccvs_cv_unique_float_type_long_double != no ; then
-		AC_DEFINE( UNIQUE_FLOAT_TYPE_LONG_DOUBLE, 1,
-                           [Define if long double is the first floating point
-		            type detected with its size.])
+	if test $gt_cv_c_long_double != no; then
+		AC_CHECK_SIZEOF(long double)
+		AC_CACHE_CHECK(for uniquely sized long double,
+			ccvs_cv_unique_float_type_long_double,
+			[if set |grep ^ccvs_cv_unique_float_type_ \
+				|grep -w $ac_cv_sizeof_long_double >/dev/null ; then
+				ccvs_cv_unique_float_type_long_double=no
+			else
+				ccvs_cv_unique_float_type_long_double=yes\($ac_cv_sizeof_long_double\)
+			fi])
+		if test $ccvs_cv_unique_float_type_long_double != no ; then
+			AC_DEFINE(UNIQUE_FLOAT_TYPE_LONG_DOUBLE, 1,
+				  [Define if long double is the first floating point
+				   type detected with its size.])
+		fi
 	fi
 fi
 
