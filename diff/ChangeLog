@@ -1,3 +1,8 @@
+2001-10-21  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libdiff.dep: Regenerated for "../zlib/lib.dsp" change.
+	* libdiff.mak: Regenerated for "../zlib/lib.dsp" change.
+
 2004-10-20  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.in: Regenerate for new configure.in.
