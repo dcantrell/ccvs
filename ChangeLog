@@ -1,3 +1,13 @@
+Fri Aug 16 13:37:19 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.spec (%description): Replace description with one that
+	resembles the release announcements we have been sending out.  The
+	previous one was out of date and not really focused on describing
+	what CVS does.
+	(%build): Don't define SERVER_FLOWCONTROL; if we are ready to make
+	this is the default it should be for all kinds of builds, not just
+	those via RPM.
+
 Fri Aug 16 16:09:59 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* cvs.spec: new file.  This is a template for a RPM specification

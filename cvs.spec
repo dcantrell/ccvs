@@ -8,19 +8,22 @@ Source: ftp.cyclic.com:/pub/cvs-@VERSION@.tar.gz
 Buildroot: /
 
 %description
-CVS is a freely available collection of programs that provide for
-software release and revision control functions in a UNIX environment.
-It is designed to work on top of the RCS distribution, V4 and later.
-CVS does understand how to parse older RCS formats, but cannot do any
-of the fancier features (like vendor branch support) without RCS
-branch support.
+CVS is a version control system, which allows you to keep old versions
+of files (usually source code), keep a log of who, when, and why
+changes occurred, etc., like RCS or SCCS.  It handles multiple
+developers, multiple directories, triggers to enable/log/control
+various operations, and can work over a wide area network.  The
+following tasks are not included; they can be done in conjunction with
+CVS but will tend to require some script-writing and software other
+than CVS: bug-tracking, build management (that is, make and make-like
+tools), and automated testing.
 
 %prep
 %setup
 
 %build
 ./configure --prefix=$RPM_BUILD_ROOT/usr
-make CFLAGS="$RPM_OPT_FLAGS -DRCSBIN_DFLT=\\\"/usr/bin\\\" -DSERVER_FLOWCONTROL" LDFLAGS=-s 
+make CFLAGS="$RPM_OPT_FLAGS -DRCSBIN_DFLT=\\\"/usr/bin\\\"" LDFLAGS=-s 
 
 %install
 make installdirs
