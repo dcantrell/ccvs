@@ -2160,7 +2160,9 @@ add_prune_candidate (dir)
 {
     struct save_dir *p;
 
-    if (dir[0] == '.' && dir[1] == '\0')
+    if ((dir[0] == '.' && dir[1] == '\0')
+	|| (prune_candidates != NULL
+	    && strcmp (dir, prune_candidates->dir) == 0))
 	return;
     p = (struct save_dir *) xmalloc (sizeof (struct save_dir));
     p->dir = xstrdup (dir);
