@@ -1,3 +1,8 @@
+Wed Nov 12 21:57:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo: Many edits to reflect the fact that CVS no longer
+	invokes external RCS programs.
+
 Tue Nov 11 15:15:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Locks, CVS in repository): New nodes, document the
