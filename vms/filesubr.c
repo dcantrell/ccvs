@@ -1104,7 +1104,7 @@ void expand_wild (int argc, char **argv, int *pargc, char ***pargv) {
     }
     largv = 0;
     if (totfiles) {
-        largv = malloc (sizeof*largv * (totfiles + 1));
+        largv = xmalloc (sizeof*largv * (totfiles + 1));
     }
     filesgotten = 0;
     if (largv != 0) {
@@ -1169,7 +1169,7 @@ void expand_wild (int argc, char **argv, int *pargc, char ***pargv) {
         release_globs();
     }
     if (!largv) {
-        (*pargv) = malloc (sizeof(char *));
+        (*pargv) = xmalloc (sizeof(char *));
         if ((*pargv) != 0) {
             *(*pargv) = 0;
         }
