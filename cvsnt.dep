@@ -3,7 +3,6 @@
 .\src\add.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -15,6 +14,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\fileattr.h"\
@@ -35,7 +35,6 @@
 .\src\admin.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -46,6 +45,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -65,7 +65,6 @@
 .\src\annotate.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -76,6 +75,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -95,7 +95,6 @@
 .\src\buffer.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -106,6 +105,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -125,7 +125,6 @@
 .\src\checkin.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -136,6 +135,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -157,7 +157,6 @@
 .\src\checkout.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -168,6 +167,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -187,7 +187,6 @@
 .\src\classify.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -198,6 +197,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -217,7 +217,6 @@
 .\src\client.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -231,6 +230,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -254,7 +254,6 @@
 .\src\commit.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -266,6 +265,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -288,7 +288,6 @@
 .\src\create_adm.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -299,6 +298,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -318,7 +318,6 @@
 .\src\cvsrc.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -330,6 +329,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -349,7 +349,6 @@
 .\src\diff.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -360,6 +359,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -379,7 +379,6 @@
 .\src\edit.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -391,6 +390,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -413,7 +413,6 @@
 .\src\entries.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -425,6 +424,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -444,7 +444,6 @@
 .\src\error.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -455,6 +454,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -474,7 +474,6 @@
 .\src\exithandle.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -485,6 +484,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -504,7 +504,6 @@
 .\src\expand_path.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -515,6 +514,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -534,7 +534,6 @@
 .\src\fileattr.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -546,6 +545,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\fileattr.h"\
@@ -566,7 +566,6 @@
 ".\windows-NT\filesubr.c" : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -577,6 +576,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -596,7 +596,6 @@
 .\src\find_names.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -607,6 +606,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -626,7 +626,6 @@
 .\src\hash.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -637,6 +636,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -656,7 +656,6 @@
 .\src\history.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -668,6 +667,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -688,7 +688,6 @@
 .\src\ignore.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -700,6 +699,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -719,7 +719,6 @@
 .\src\import.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -731,6 +730,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -750,7 +750,6 @@
 .\src\lock.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -761,6 +760,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -780,7 +780,6 @@
 ".\src\log-buffer.c" : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -791,6 +790,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -810,7 +810,6 @@
 .\src\log.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -821,6 +820,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -840,7 +840,6 @@
 .\src\login.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -852,6 +851,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -871,7 +871,6 @@
 .\src\logmsg.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -883,6 +882,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -902,7 +902,6 @@
 .\src\ls.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -913,6 +912,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -932,7 +932,6 @@
 .\src\main.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -943,6 +942,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -962,7 +962,6 @@
 ".\windows-NT\mkdir.c" : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -973,6 +972,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -992,7 +992,6 @@
 .\src\mkmodules.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1005,6 +1004,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1025,7 +1025,6 @@
 .\src\modules.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1037,6 +1036,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1056,7 +1056,6 @@
 .\src\myndbm.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1068,6 +1067,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1085,13 +1085,13 @@
 	
 
 ".\windows-NT\ndir.c" : \
+	".\lib\xalloc.h"\
 	".\windows-NT\ndir.h"\
 	
 
 .\src\no_diff.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1102,6 +1102,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1121,7 +1122,6 @@
 .\src\parseinfo.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1133,6 +1133,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1152,7 +1153,6 @@
 .\src\patch.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1164,6 +1164,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1181,13 +1182,13 @@
 	
 
 ".\windows-NT\pwd.c" : \
+	".\lib\xalloc.h"\
 	".\windows-NT\pwd.h"\
 	
 
 ".\windows-NT\rcmd.c" : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1198,6 +1199,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1218,7 +1220,6 @@
 .\src\rcs.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1229,6 +1230,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -1251,7 +1253,6 @@
 	".\diff\diffrun.h"\
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1262,6 +1263,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1281,7 +1283,6 @@
 .\src\recurse.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1293,6 +1294,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -1314,7 +1316,6 @@
 .\src\release.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1327,6 +1328,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1346,7 +1348,6 @@
 .\src\remove.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1357,6 +1358,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1376,7 +1378,6 @@
 .\src\repos.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1388,6 +1389,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1407,7 +1409,6 @@
 .\src\root.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1419,6 +1420,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1438,7 +1440,6 @@
 ".\src\rsh-client.c" : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1449,6 +1450,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1469,7 +1471,6 @@
 ".\windows-NT\run.c" : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1480,6 +1481,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1499,7 +1501,6 @@
 .\src\scramble.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1510,6 +1511,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1529,7 +1531,6 @@
 .\src\server.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getnline.h"\
 	".\lib\getopt.h"\
@@ -1542,6 +1543,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -1567,7 +1569,6 @@
 ".\src\socket-client.c" : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1578,6 +1579,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1598,7 +1600,6 @@
 .\src\stack.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1609,6 +1610,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1628,7 +1630,6 @@
 ".\windows-NT\startserver.c" : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1639,6 +1640,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1659,7 +1661,6 @@
 .\src\status.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1670,6 +1671,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1689,7 +1691,6 @@
 .\src\subr.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1701,6 +1702,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1720,7 +1722,6 @@
 .\src\tag.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1732,6 +1733,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1751,7 +1753,6 @@
 .\src\update.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1764,6 +1765,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -1787,7 +1789,6 @@
 .\src\vers_ts.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1798,6 +1799,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1817,7 +1819,6 @@
 .\src\version.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1828,6 +1829,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1851,7 +1853,6 @@
 .\src\watch.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1862,6 +1863,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
@@ -1884,7 +1886,6 @@
 ".\windows-NT\woe32.c" : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1895,6 +1896,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1914,7 +1916,6 @@
 .\src\wrapper.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
@@ -1926,6 +1927,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
@@ -1945,7 +1947,6 @@
 .\src\zlib.c : \
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1956,6 +1957,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\hash.h"\
