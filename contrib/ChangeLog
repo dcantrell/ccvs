@@ -1,3 +1,7 @@
+2002-04-30  Derek Price  <oberon@umich.edu>
+
+	* Makefile.in: Regenerated with automake 1.6.
+
 2002-03-21  Derek Price  <oberon@umich.edu>
 
 	* Makefile.am (install-data-local): Import a patch from RedHat which
