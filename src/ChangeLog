@@ -1,3 +1,17 @@
+Fri Jul 14 22:28:46 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* server.c (dirswitch, serve_static_directory, serve_sticky,
+	serve_lost, server_write_entries, serve_checkin_prog,
+	serve_update_prog): Include more information in error messages.
+	(Thanks, DJM.)
+
+	* cvsbug.sh: Use /usr/sbin/sendmail, unless it doesn't
+	exist, in which case use /usr/bin/sendmail.  (Thanks, DJM.)
+
+	* server.c (server, server_cleanup): Use "/tmp" instead of
+	"/usr/tmp" when the TMPDIR environment variable isn't set.  This
+	is what the rest of the code uses.
+
 Thu Jul 13 11:03:17 1995  Jim Meyering  (meyering@comco.com)
 
 	* recurse.c (free_cwd): New function.

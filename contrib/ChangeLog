@@ -1,3 +1,9 @@
+Fri Jul 14 22:38:44 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* rcs-to-cvs.sh: Changes from David J. Mackenzie.
+	Set permissions on new repository files correctly.
+	Ignore *~ files.
+
 Thu Jul 13 23:04:12 CDT 1995  Jim Meyering  (meyering@comco.com)
 
 	* Makefile.in (.pl, .csh): *Never* redirect output directly to
