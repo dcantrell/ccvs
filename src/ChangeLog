@@ -1,3 +1,17 @@
+2001-01-29  Derek Price  <derek.price@openavenue.com>
+
+	* client.c (get_cvs_port_number): change the prototype to accept a
+	const cvsroot_t * as input and add a FIXME comment
+	* cvs.h: new prototypes for get_cvs_port_number & normalize_cvsroot
+	* login.c (_password_entry_operation): consolidate all the ~/.cvspass
+	access into a single new function which reads ~/.cvspass in a backwards
+	compatible manner
+	(logout): use the new _password_entry_operation function
+	(login): ditto
+	(get_cvs_password): ditto
+	* root.c (normalize_cvsroot): move knowledge of default port & username
+	values inside
+
 2001-01-29  Larry Jones  <larry.jones@sdrc.com>
 
 	* subr.c (shell_escape): New function.

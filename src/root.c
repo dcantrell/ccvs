@@ -678,43 +678,48 @@ error_exit:
 
 
 #ifdef AUTH_CLIENT_SUPPORT
-/* Use current_parsed_root->username, current_parsed_root->hostname,
- * current_parsed_root->port, and current_parsed_root->directory
+/* Use root->username, root->hostname, root->port, and root->directory
  * to create a normalized CVSROOT fit for the .cvspass file
+ *
+ * username defaults to the result of getcaller()
+ * port defaults to the result of get_cvs_port_number()
+ *
+ * FIXME - we could cache the canonicalized version of a root inside the
+ * cvsroot_t, but we'd have to un'const the input here and stop expecting the
+ * caller to be responsible for our return value
  */
 char *
-normalize_cvsroot (default_user, default_port)
-    const char *default_user;
-    int default_port;
+normalize_cvsroot (root)
+    const cvsroot_t *root;
 {
     char *cvsroot_canonical;
-    char *p, *hostname;
-    char port_s[11];
+    char *p, *hostname, *username;
+    char port_s[64];
 
-    /* get the appropriate host string */
-    if (current_parsed_root->port || default_port)
-    {
-	sprintf (port_s, "%d", current_parsed_root->port ? current_parsed_root->port : default_port);
-    }
-    else
-    {
-        strcpy(port_s, "");
-    }
+    /* get the appropriate port string */
+    sprintf (port_s, "%d", get_cvs_port_number (root));
 
     /* use a lower case hostname since we know hostnames are case insensitive */
-    p = hostname = xstrdup(current_parsed_root->hostname);
+    /* Some logic says we should be tacking our domain name on too if it isn't
+     * there already, but for now this works.  Reverse->Forward lookups are
+     * almost certainly too much since that would make CVS immune to some of
+     * the DNS trickery that makes life easier for sysadmins when they want to
+     * move a repository or the like
+     */
+    p = hostname = xstrdup(root->hostname);
     while (*p)
     {
 	*p = tolower(*p);
 	p++;
     }
 
-    cvsroot_canonical = xmalloc ( strlen(current_parsed_root->username ? current_parsed_root->username : default_user)
+    /* get the username string */
+    username = root->username ? root->username : getcaller();
+    cvsroot_canonical = xmalloc ( strlen(username)
 				+ strlen(hostname) + strlen(port_s)
-				+ strlen(current_parsed_root->directory) + 12);
+				+ strlen(root->directory) + 12);
     sprintf (cvsroot_canonical, ":pserver:%s@%s:%s%s",
-	    current_parsed_root->username ? current_parsed_root->username : default_user,
-	    hostname, port_s, current_parsed_root->directory);
+	    username, hostname, port_s, root->directory);
 
     free (hostname);
     return cvsroot_canonical;
