@@ -1,3 +1,10 @@
+1999-06-05  Jim Kingdon  <http://www.cyclic.com>
+
+	* recurse.c (do_recursion, do_dir_proc): Make the SERVER_ACTIVE
+	#ifdef be only around the check for server_active.  Modulo a few
+	cosmetic tweaks, same as a patch submitted by Johannes Stezenbach
+	of propack-data.de.
+
 1999-06-01  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh: Add comment about rcs2-7 failures on certain days.
