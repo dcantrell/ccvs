@@ -1,3 +1,9 @@
+Wed May 28 22:31:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (update_fileproc): If wrap_merge_is_copy and we would
+	like to do a merge, give a fatal error.  See comment for why.
+	* sanity.sh (mwrap): New tests, tests for above fix.
+
 Tue May 27 21:59:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (stamps): cd to ${TESTDIR} before starting.

@@ -481,7 +481,7 @@ if test x"$*" = x; then
 	tests="basica basicb basic1 deep basic2 rdiff death death2 branches"
 	tests="${tests} multibranch import join new newb conflicts conflicts2"
 	tests="${tests} modules modules2 modules3 mflag errmsg1 devcom devcom2"
-	tests="${tests} devcom3 ignore binfiles binfiles2 binwrap info"
+	tests="${tests} devcom3 ignore binfiles binfiles2 binwrap mwrap info"
 	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
 	tests="${tests} sticky keyword"
 else
@@ -5370,6 +5370,73 @@ File: foo\.exe          	Status: Up-to-date
    Sticky Date:		(none)
    Sticky Options:	-kb"
 	  rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	mwrap)
+	  # Tests relating to the -m wrappers options.  -k tests are in
+	  # binwrap and -t/-f tests haven't been written yet.
+	  dotest mwrap-c1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
+	  cd CVSROOT
+	  echo "* -m 'COPY'" >>cvswrappers
+	  dotest mwrap-c2 "${testcvs} -q ci -m wrapper-mod" \
+"Checking in cvswrappers;
+${TESTDIR}/cvsroot/CVSROOT/cvswrappers,v  <--  cvswrappers
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ..
+	  mkdir m1; cd m1
+	  dotest mwrap-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest mwrap-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  touch aa
+	  dotest mwrap-3 "${testcvs} add aa" \
+"${PROG} [a-z]*: scheduling file .aa. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest mwrap-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/aa,v
+done
+Checking in aa;
+${TESTDIR}/cvsroot/first-dir/aa,v  <--  aa
+initial revision: 1\.1
+done"
+	  cd ../..
+	  mkdir m2; cd m2
+	  dotest mwrap-5 "${testcvs} -q co first-dir" "U first-dir/aa"
+	  cd first-dir
+	  echo "changed in m2" >aa
+	  dotest mwrap-6 "${testcvs} -q ci -m m2-mod" \
+"Checking in aa;
+${TESTDIR}/cvsroot/first-dir/aa,v  <--  aa
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  cd ../..
+	  cd m1/first-dir
+	  echo "changed in m1" >aa
+	  dotest_fail mwrap-7 "${testcvs} -nq update" "C aa"
+	  dotest_fail mwrap-8 "${testcvs} -q update" \
+"${PROG} [a-z]*: A -m .COPY. wrapper is specified
+${PROG} [a-z]*: but file aa needs merge
+${PROG} \[[a-z]* aborted\]: You probably want to avoid -m .COPY. wrappers"
+	  # Under the old, dangerous behavior, this would have been
+	  # "changed in m2" -- that is, the changes in the working directory
+	  # would have been clobbered (!).
+	  dotest mwrap-9 "cat aa" "changed in m1"
+	  cd ../..
+	  cd CVSROOT
+	  echo '# comment out' >cvswrappers
+	  dotest mwrap-ce "${testcvs} -q ci -m wrapper-mod" \
+"Checking in cvswrappers;
+${TESTDIR}/cvsroot/CVSROOT/cvswrappers,v  <--  cvswrappers
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ..
+	  rm -r CVSROOT
+	  rm -r m1 m2
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	info)
