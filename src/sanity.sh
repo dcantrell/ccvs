@@ -578,7 +578,7 @@ if test x"$*" = x; then
 	tests="${tests} serverpatch log log2 ann ann-id"
 	# Repository Storage (RCS file format, CVS lock files, creating
 	# a repository without "cvs init", &c).
-	tests="${tests} crerepos rcs rcs2 lockfiles"
+	tests="${tests} crerepos rcs rcs2 rcs3 lockfiles"
 	# More history browsing, &c.
 	tests="${tests} history"
 	tests="${tests} big modes modes2 modes3 stamps"
@@ -11594,6 +11594,7 @@ U file1'
 	  #   -N: log, log2, admin-19a-log
 	  #   -b, -r: log
 	  #   -d: rcs
+	  #   -s, -R: rcs3
 
 	  # Check in a file with a few revisions and branches.
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
@@ -12922,6 +12923,97 @@ EOF
 
 	  cd ..
 	  rm -r first-dir
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	rcs3)
+	  # More RCS file tests, in particular at least some of the
+	  # error handling issues.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file1,v
+head 1.1; access; symbols; locks; expand o; 1.1 date 2007.03.20.04.03.02
+; author jeremiah ;state ;  branches; next;desc@@1.1log@@text@head@
+EOF
+	  mkdir 1; cd 1
+	  # CVS requires whitespace between "desc" and its value.
+	  # The rcsfile(5) manpage doesn't really seem to answer the
+	  # question one way or the other (it has a grammar but almost
+	  # nothing about lexical analysis).
+	  dotest_fail rcs3-1 "${testcvs} -q co first-dir" \
+"${PROG} \[[a-z]* aborted\]: unexpected end of file reading ${TESTDIR}/cvsroot/first-dir/file1,v"
+	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file1,v
+head 1.1; access; symbols; locks; expand o; 1.1 date 2007.03.20.04.03.02
+; author jeremiah ;state ;  branches; next;desc @@1.1log@@text@head@
+EOF
+	  # Whitespace issues, likewise.
+	  dotest_fail rcs3-2 "${testcvs} -q co first-dir" \
+"${PROG} \[[a-z]* aborted\]: unexpected .l' reading revision number in RCS file ${TESTDIR}/cvsroot/first-dir/file1,v"
+	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file1,v
+head 1.1; access; symbols; locks; expand o; 1.1 date 2007.03.20.04.03.02
+; author jeremiah ;state ;  branches; next;desc @@1.1 log@@text@head@
+EOF
+	  # Charming array of different messages for similar
+	  # whitespace issues (depending on where the whitespace is).
+	  dotest_fail rcs3-3 "${testcvs} -q co first-dir" \
+"${PROG} \[[a-z]* aborted\]: EOF while looking for value in RCS file ${TESTDIR}/cvsroot/first-dir/file1,v"
+	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file1,v
+head 1.1; access; symbols; locks; expand o; 1.1 date 2007.03.20.04.03.02
+; author jeremiah ;state ;  branches; next;desc @@1.1 log @@text @head@
+EOF
+	  dotest rcs3-4 "${testcvs} -q co first-dir" 'U first-dir/file1'
+	  if test "$remote" = no; then
+	    # Ouch, didn't expect this one.  FIXCVS.  Or maybe just remove
+	    # the feature, if this is a -s problem?
+	    dotest_fail rcs3-5 "${testcvs} log -s nostate first-dir/file1" \
+"${PROG}: .*/hash.c:[0-9]*: findnode: Assertion .key != ((void \*)0)' failed.
+
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: first-dir/file1
+head: 1\.1
+branch:
+locks:
+access list:
+symbolic names:
+keyword substitution: o
+total revisions: 1;	selected revisions: "
+	  else # remote
+	    # Is this a reaction to the lack of TopLevelAdmin or something?
+	    # Seems pretty strange to me.  Seems vaguely similar to the
+	    # "no repository" message in errmsg2-16 although I'm leaving
+	    # it here in case there is a difference between "cvs add" and a
+	    # normal start_recursion command like "cvs log".
+	    dotest_fail rcs3-5 "${testcvs} log -s nostate first-dir/file1" \
+"${PROG} log: cannot open CVS/Entries for reading: No such file or directory
+${PROG} \[log aborted\]: no repository"
+	    cd first-dir
+	    dotest_fail rcs3-5a "${testcvs} log -s nostate file1" \
+"${PROG}: .*/hash.c:[0-9]*: findnode: Assertion .key != ((void \*)0)' failed.
+
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks:
+access list:
+symbolic names:
+keyword substitution: o
+Terminated with fatal signal 6"
+	    cd ..
+	  fi # remote
+
+	  # See remote code above for rationale for cd.
+	  cd first-dir
+	  dotest rcs3-6 "${testcvs} log -R file1" \
+"${TESTDIR}/cvsroot/first-dir/file1,v"
+
+	  # OK, now put an extraneous '\0' at the end.
+	  awk 'BEGIN { printf "%c%c", 0, 10 }' \
+	    >>${CVSROOT_DIRNAME}/first-dir/file1,v
+	  dotest_fail rcs3-7 "${testcvs} log -s nostate file1" \
+"${PROG} \[[a-z]* aborted\]: unexpected ."
+
+	  cd ../..
+	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
