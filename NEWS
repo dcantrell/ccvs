@@ -1,5 +1,14 @@
 Changes since 1.6:
 
+* If there is a group whose name matches a compiled in value which
+defaults to "cvsadmin", only members of that group can use "cvs
+admin".
+
+* CVS now sets the modes of files in the repository based on the
+CVSUMASK environment variable or a compiled in value defaulting to
+002.  This way other developers will be able to access the files in
+the repository regardless of the umask of the developer creating them.
+
 * The command name .cvsrc now matches the official name of the
 command, not the one (possibly an alias) by which it was invoked.  If
 you had previously relied on "cvs di" and "cvs diff" using different
