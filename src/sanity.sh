@@ -8102,21 +8102,50 @@ ${PROG} \[[a-z]* aborted\]: cannot expand modules"
 	  cd ..
 	  rm -r 1
 
-	  # Test for tag files when an ampermod is renamed more deeply than you
-	  # might expect.
+	  # Confirm that a rename with added depth nested in an ampersand
+	  # module works.
+	  mkdir 1; cd 1
+	  dotest modules2-nestedrename-1 "${testcvs} -q co messymod" \
+"U messymod/amper1"
+	  dotest modules2-nestedrename-2 "test -d messymod/sdir" ''
+	  dotest modules2-nestedrename-3 "test -d messymod/sdir/CVS" ''
+	  dotest modules2-nestedrename-4 "test -d messymod/sdir/child" ''
+	  dotest modules2-nestedrename-5 "test -d messymod/sdir/child/CVS" ''
+	  cd ..; rm -r 1
+
+	  # FIXME:  client/server has a bug.  It should be working like a local
+	  # repository in this case, but fails to check out the second module
+	  # in the list when a branch is specified.
+	  mkdir 1; cd 1
+	  dotest modules2-ampertag-setup-1 \
+"${testcvs} -Q rtag tag first-dir second-dir third-dir" \
+''
+	  dotest modules2-ampertag-1 "${testcvs} -q co -rtag ampermodule" \
+"U first-dir/amper1"
+	  if test $remote = yes; then
+	    dotest_fail modules2-ampertag-2 "test -d ampermodule/second-dir" ''
+	    dotest_fail modules2-ampertag-3 "test -d ampermodule/second-dir/CVS" ''
+	  else
+	    dotest modules2-ampertag-2 "test -d ampermodule/second-dir" ''
+	    dotest modules2-ampertag-3 "test -d ampermodule/second-dir/CVS" ''
+	  fi
+	  cd ..; rm -r 1
+
+	  # Test for tag files when an ampermod is renamed with more path
+	  # elements than it started with.
 	  #
 	  # FIXME: This is currently broken in the remote case, possibly only
 	  # because the messymodchild isn't being checked out at all.
 	  mkdir 1; cd 1
-	  dotest modules2-tagfiles-setup-1 \
-"${testcvs} -Q rtag -b branch first-dir second-dir" \
-''
-	  dotest modules2-tagfiles-1 "${testcvs} -q co -rbranch messymod" \
+#	  dotest modules2-tagfiles-setup-1 \
+#"${testcvs} -Q rtag -b branch first-dir second-dir" \
+#''
+	  dotest modules2-tagfiles-1 "${testcvs} -q co -rtag messymod" \
 "U messymod/amper1"
 	  if test $remote = yes; then
 	    dotest_fail modules2-tagfiles-2r "test -d messymod/sdir" ''
 	  else
-	    dotest modules2-tagfiles-2 "cat messymod/sdir/CVS/Tag" 'Tbranch'
+	    dotest modules2-tagfiles-2 "cat messymod/sdir/CVS/Tag" 'Ttag'
 	  fi
 	  cd ..; rm -r 1
 

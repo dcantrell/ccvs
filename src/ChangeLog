@@ -1,5 +1,13 @@
 2001-03-16  Derek Price  <dprice@collab.net>
 
+	* sanity.sh (modules2-nestedrename): New test.  Verifies behavior of
+	renames nested under an ampersand module.
+	(modules2-ampertag): New test.  Verifies an error condition which
+	prevents some ampersand modules from being checked out when a tag
+	is specified.
+
+2001-03-16  Derek Price  <dprice@collab.net>
+
 	* sanity.sh (modules2): Additional test for ampersand module behavior
 	with '-d'.
 
