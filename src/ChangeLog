@@ -1,3 +1,8 @@
+2004-11-18  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (skip_always, notproxy): New functions.
+	(skip, remoteonly, sshstdio, client): Use new functions.
+
 2004-11-17  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (basic2-21a): The val-tags file should have

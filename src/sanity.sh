@@ -1213,20 +1213,33 @@ pass ()
   passed=`expr $passed + 1`
 }
 
-remoteonly ()
+# Like skip(), but don't fail when $skipfail is set.
+skip_always ()
 {
-  echo "SKIP: $1 (only tested in remote mode)" >>$LOGFILE
+  echo "SKIP: $1${2+ ($2)}" >>$LOGFILE
   skipped=`expr $skipped + 1`
 }
 
 skip ()
 {
   if $skipfail; then
+    # exits
     fail "$1${2+ ($2)}"
-  else
-    echo "SKIP: $1${2+ ($2)}" >>$LOGFILE
   fi
-  skipped=`expr $skipped + 1`
+
+  skip_always ${1+"$@"}
+}
+
+# Convenience function for skipping tests run only in remote mode.
+remoteonly ()
+{
+  skip_always $1 "only tested in remote mode"
+}
+
+# Convenience function for skipping tests not run in proxy mode.
+notproxy ()
+{
+  skip_always $1 "not tested in proxy mode"
 }
 
 warn ()
@@ -2550,7 +2563,7 @@ if $proxy; then
     require_rsync
     if test $? -eq 77; then
 	echo "Unable to test in proxy mode: $skipreason" >&2
-	echo "SKIP: all - missing or broken rsync command." >>$LOGFILE
+	skip all "missing or broken rsync command."
 	exit 0
     fi
 
@@ -22434,7 +22447,7 @@ new revision: 1\.6; previous revision: 1\.5"
           # skip this test.
 
 	  if $proxy; then
-            skip sshstdio "ssh testing is skipped in proxy test mode."
+            notproxy sshstdio
 	    continue
 	  fi
 
@@ -30035,7 +30048,7 @@ EOF
 	    # writing through a proxy server.  There is no writeproxy-client
 	    # test currently.  The writeproxy & writeproxy-noredirect tests
 	    # test the writeproxy server.
-	    remoteonly client
+	    notproxy client
 	    continue
 	  fi
 
