@@ -1230,6 +1230,8 @@ buf_shutdown (buf)
     return 0;
 }
 
+
+
 /* The simplest type of buffer is one built on top of a stdio FILE.
    For simplicity, and because it is all that is required, we do not
    implement setting this type of buffer into nonblocking mode.  The
@@ -1240,13 +1242,16 @@ static int stdio_buffer_output PROTO((void *, const char *, int, int *));
 static int stdio_buffer_flush PROTO((void *));
 static int stdio_buffer_shutdown PROTO((struct buffer *buf));
 
-/* Initialize a buffer built on a stdio FILE.  */
 
+
+/* Initialize a buffer built on a stdio FILE.  */
 struct stdio_buffer_closure
 {
     FILE *fp;
     int child_pid;
 };
+
+
 
 struct buffer *
 stdio_buffer_initialize (fp, child_pid, input, memory)
@@ -1373,8 +1378,9 @@ stdio_buffer_output (closure, data, have, wrote)
     return 0;
 }
 
-/* The buffer flush function for a buffer built on a stdio FILE.  */
 
+
+/* The buffer flush function for a buffer built on a stdio FILE.  */
 static int
 stdio_buffer_flush (closure)
      void *closure;
@@ -1398,13 +1404,12 @@ static int
 stdio_buffer_shutdown (buf)
     struct buffer *buf;
 {
-    struct stdio_buffer_closure *bc =
-	(struct stdio_buffer_closure *) buf->closure;
+    struct stdio_buffer_closure *bc = buf->closure;
     struct stat s;
     int closefp = 1;
 
     /* Must be a pipe or a socket.  What could go wrong? */
-    assert (fstat ( fileno (bc->fp), &s ) != -1);
+    assert (fstat (fileno (bc->fp), &s) != -1);
 
     /* Flush the buffer if we can */
     if (buf->flush)
@@ -1427,8 +1432,8 @@ stdio_buffer_shutdown (buf)
 # ifndef NO_SOCKET_TO_FD
 	{
 	    /* shutdown() sockets */
-	    if (S_ISSOCK(s.st_mode))
-		shutdown ( fileno (bc->fp), 0);
+	    if (S_ISSOCK (s.st_mode))
+		shutdown (fileno (bc->fp), 0);
 	}
 # endif /* NO_SOCKET_TO_FD */
 # ifdef START_RSH_WITH_POPEN_RW
@@ -1450,13 +1455,13 @@ stdio_buffer_shutdown (buf)
 	 * SHUTDOWN_SERVER_OUTPUT
 	 */
 	if (current_parsed_root->method == server_method)
-	    SHUTDOWN_SERVER ( fileno (bc->fp) );
+	    SHUTDOWN_SERVER (fileno (bc->fp));
 	else
 # endif
 # ifndef NO_SOCKET_TO_FD
 	/* shutdown() sockets */
-	if (S_ISSOCK(s.st_mode))
-	    shutdown ( fileno (bc->fp), 1);
+	if (S_ISSOCK (s.st_mode))
+	    shutdown (fileno (bc->fp), 1);
 # else
 	{
 	/* I'm not sure I like this empty block, but the alternative
@@ -1469,9 +1474,22 @@ stdio_buffer_shutdown (buf)
     }
 
     if (closefp && fclose (bc->fp) == EOF)
-	error (1, errno,
-	       "closing down connection to %s",
-	       current_parsed_root->hostname);
+    {
+	if (0
+# ifdef SERVER_SUPPORT
+	    || server_active
+# endif /* SERVER_SUPPORT */
+           )
+	{
+            /* Syslog this? */
+	}
+# ifdef CLIENT_SUPPORT
+	else
+            error (1, errno,
+                   "closing down connection to %s",
+                   current_parsed_root->hostname);
+# endif /* CLIENT_SUPPORT */
+    }
 
     /* If we were talking to a process, make sure it exited */
     if (bc->child_pid)
@@ -1882,8 +1900,9 @@ packetizing_buffer_output (closure, data, have, wrote)
     return buf_send_output (pb->buf);
 }
 
-/* Flush data to a packetizing buffer.  */
 
+
+/* Flush data to a packetizing buffer.  */
 static int
 packetizing_buffer_flush (closure)
      void *closure;
@@ -1897,8 +1916,9 @@ packetizing_buffer_flush (closure)
     return buf_flush (pb->buf, 0);
 }
 
-/* The block routine for a packetizing buffer.  */
 
+
+/* The block routine for a packetizing buffer.  */
 static int
 packetizing_buffer_block (closure, block)
      void *closure;
