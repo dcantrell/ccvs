@@ -1,5 +1,9 @@
 Fri Oct 18 15:53:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* root.c (Name_Root): Use isabsolute to test whether a pathname is
+	absolute instead of checking for the first character being '/'.
+	(Reported by Antoine P. Brusseau <brusseau@jprc.com>).
+
 	* commit.c (checkaddfile): Free rev only if it is non-NULL (thanks
 	to cwong@world.std.com (Christopher Wong) for diagnosing this; the
 	death2-15 test in sanity.sh hits it).
