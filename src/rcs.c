@@ -3014,8 +3014,15 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 
 	if (workfile == NULL && sout == RUN_TTY)
 	{
-	    if (len > 0)
-		cvs_output (value, len);
+	    if (expand == KFLAG_B)
+		cvs_output_binary (value, len);
+	    else
+	    {
+		/* cvs_output requires the caller to check for zero
+		   length.  */
+		if (len > 0)
+		    cvs_output (value, len);
+	    }
 	}
 	else
 	{

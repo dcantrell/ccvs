@@ -2881,10 +2881,50 @@ handle_m (args, len)
     /* In the case where stdout and stderr point to the same place,
        fflushing stderr will make output happen in the correct order.
        Often stderr will be line-buffered and this won't be needed,
-       but not always.  */
+       but not always (is that true?  I think the comment is probably
+       based on being confused between default buffering between
+       stdout and stderr.  But I'm not sure).  */
     fflush (stderr);
     fwrite (args, len, sizeof (*args), stdout);
     putc ('\n', stdout);
+}
+
+static void handle_mbinary PROTO ((char *, int));
+
+static void
+handle_mbinary (args, len)
+    char *args;
+    int len;
+{
+    char *size_string;
+    size_t size;
+    size_t totalread;
+    size_t nread;
+    size_t toread;
+    char buf[8192];
+
+    /* See comment at handle_m about (non)flush of stderr.  */
+
+    /* Get the size.  */
+    read_line (&size_string);
+    size = atoi (size_string);
+    free (size_string);
+
+    /* OK, now get all the data.  The algorithm here is that we read
+       as much as the network wants to give us in
+       try_read_from_server, and then we output it all, and then
+       repeat, until we get all the data.  */
+    totalread = 0;
+    while (totalread < size)
+    {
+	toread = size - totalread;
+	if (toread > sizeof buf)
+	    toread = sizeof buf;
+
+	nread = try_read_from_server (buf, toread);
+	cvs_output_binary (buf, nread);
+	totalread += nread;
+    }
 }
 
 static void
@@ -2961,6 +3001,7 @@ struct response responses[] =
     RSP_LINE("Module-expansion", handle_module_expansion, response_type_normal,
        rs_optional),
     RSP_LINE("M", handle_m, response_type_normal, rs_essential),
+    RSP_LINE("Mbinary", handle_mbinary, response_type_normal, rs_optional),
     RSP_LINE("E", handle_e, response_type_normal, rs_essential),
     RSP_LINE("F", handle_f, response_type_normal, rs_optional),
     /* Possibly should be response_type_error.  */
