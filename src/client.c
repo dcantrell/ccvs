@@ -3241,6 +3241,66 @@ auth_server_port_number ()
 }
 
 
+/* Read a line from socket SOCK.  Result does not include the
+   terminating linefeed.  This is only used by the authentication
+   protocol, which we call before we set up all the buffering stuff.
+   It is possible it should use the buffers too, which would be faster
+   (unlike the server, there isn't really a security issue in terms of
+   separating authentication from the rest of the code).
+
+   Space for the result is malloc'd and should be freed by the caller.
+
+   Returns number of bytes read.  */
+static int
+recv_line (sock, resultp)
+    int sock;
+    char **resultp;
+{
+    int c;
+    char *result;
+    size_t input_index = 0;
+    size_t result_size = 80;
+
+    result = (char *) xmalloc (result_size);
+
+    while (1)
+    {
+	char ch;
+	if (recv (sock, &ch, 1, 0) < 0)
+	    error (1, 0, "recv() from server %s: %s", CVSroot_hostname,
+		   SOCK_STRERROR (SOCK_ERRNO));
+	c = ch;
+
+	if (c == EOF)
+	{
+	    free (result);
+
+	    /* It's end of file.  */
+	    error (1, 0, "end of file from server");
+	}
+
+	if (c == '\012')
+	    break;
+
+	result[input_index++] = c;
+	while (input_index + 1 >= result_size)
+	{
+	    result_size *= 2;
+	    result = (char *) xrealloc (result, result_size);
+	}
+    }
+
+    if (resultp)
+	*resultp = result;
+
+    /* Terminate it just for kicks, but we *can* deal with embedded NULs.  */
+    result[input_index] = '\0';
+
+    if (resultp == NULL)
+	free (result);
+    return input_index;
+}
+
 /* Connect to the authenticating server.
 
    If VERIFY_ONLY is non-zero, then just verify that the password is
@@ -3277,15 +3337,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 
     /* Run the authorization mini-protocol before anything else. */
     {
-	int i;
-	char ch;
-
-	/* Long enough to hold I LOVE YOU or I HATE YOU.  Using a fixed-size
-	   buffer seems better than letting an apeshit server chew up our
-	   memory with illegal responses, and the value comes from
-	   the protocol itself; it is not an arbitrary limit on data sent.  */
-#define LARGEST_RESPONSE 80
-	char read_buf[LARGEST_RESPONSE];
+	char *read_buf;
 
 	char *begin      = NULL;
 	char *repository = CVSroot_directory;
@@ -3295,13 +3347,13 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 
 	if (verify_only)
 	{
-	    begin = "BEGIN VERIFICATION REQUEST\n";
-	    end   = "END VERIFICATION REQUEST\n";
+	    begin = "BEGIN VERIFICATION REQUEST\012";
+	    end   = "END VERIFICATION REQUEST\012";
 	}
 	else
 	{
-	    begin = "BEGIN AUTH REQUEST\n";
-	    end   = "END AUTH REQUEST\n";
+	    begin = "BEGIN AUTH REQUEST\012";
+	    end   = "END AUTH REQUEST\012";
 	}
 
 	/* Get the password, probably from ~/.cvspass. */
@@ -3312,11 +3364,11 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 
 	/* Send the data the server needs. */
 	send (sock, repository, strlen (repository), 0);
-	send (sock, "\n", 1, 0);
+	send (sock, "\012", 1, 0);
 	send (sock, username, strlen (username), 0);
-	send (sock, "\n", 1, 0);
+	send (sock, "\012", 1, 0);
 	send (sock, password, strlen (password), 0);
-	send (sock, "\n", 1, 0);
+	send (sock, "\012", 1, 0);
 
 	/* Announce that we're ending the authorization protocol. */
 	send (sock, end, strlen (end), 0);
@@ -3324,59 +3376,76 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 	/* Paranoia. */
 	memset (password, 0, strlen (password));
 
-	/* Get ACK or NACK from the server. 
-	 * 
-	 * We could avoid this careful read-char loop by having the ACK
-	 * and NACK cookies be of the same length, so we'd simply read
-	 * that length and see what we got.  But then there'd be Yet
-	 * Another Protocol Requirement floating around, and someday
-	 * someone would make a change that breaks it and spend a hellish
-	 * day tracking it down.  Therefore, we use "\n" to mark off the
-	 * end of both ACK and NACK, and we loop, reading until "\n".
-	 */
-	ch = 0;
-	memset (read_buf, 0, LARGEST_RESPONSE);
-	for (i = 0; (i < (LARGEST_RESPONSE - 1)) && (ch != '\n'); i++)
+	/* Loop, getting responses from the server.  */
+	while (1)
 	{
-	    if (recv (sock, &ch, 1, 0) < 0)
-                error (1, 0, "recv() from server %s: %s", CVSroot_hostname,
-		       SOCK_STRERROR (SOCK_ERRNO));
+	    recv_line (sock, &read_buf);
 
-            read_buf[i] = ch;
-	}
-
-	if (strcmp (read_buf, "I HATE YOU\n") == 0)
-	{
-	    /* Authorization not granted. */
-	    if (shutdown (sock, 2) < 0)
+	    if (strcmp (read_buf, "I HATE YOU") == 0)
 	    {
-		error (0, 0, 
+		/* Authorization not granted. */
+	    rejected:
+		if (shutdown (sock, 2) < 0)
+		{
+		    error (0, 0, 
+			   "authorization failed: server %s rejected access", 
+			   CVSroot_hostname);
+		    error (1, 0,
+			   "shutdown() failed (server %s): %s",
+			   CVSroot_hostname,
+			   SOCK_STRERROR (SOCK_ERRNO));
+		}
+
+		error (1, 0, 
 		       "authorization failed: server %s rejected access", 
 		       CVSroot_hostname);
-		error (1, 0,
-		       "shutdown() failed (server %s): %s", CVSroot_hostname,
-		       SOCK_STRERROR (SOCK_ERRNO));
 	    }
-
-	    error (1, 0, 
-		   "authorization failed: server %s rejected access", 
-		   CVSroot_hostname);
-	}
-	else if (strcmp (read_buf, "I LOVE YOU\n") != 0)
-	{
-	    /* Unrecognized response from server. */
-	    if (shutdown (sock, 2) < 0)
+	    else if (strncmp (read_buf, "E ", 2) == 0)
 	    {
-		error (0, 0,
+		fprintf (stderr, "%s\n", read_buf + 2);
+
+		/* Continue with the authentication protocol.  */
+	    }
+	    else if (strncmp (read_buf, "error ", 6) == 0)
+	    {
+		char *p;
+
+		/* First skip the code.  */
+		p = read_buf + 6;
+		while (*p != ' ' && *p != '\0')
+		    ++p;
+
+		/* Skip the space that follows the code.  */
+		if (*p == ' ')
+		    ++p;
+
+		/* Now output the text.  */
+		fprintf (stderr, "%s\n", p);
+		goto rejected;
+	    }
+	    else if (strcmp (read_buf, "I LOVE YOU") == 0)
+	    {
+		free (read_buf);
+		break;
+	    }
+	    else
+	    {
+		/* Unrecognized response from server. */
+		if (shutdown (sock, 2) < 0)
+		{
+		    error (0, 0,
+			   "unrecognized auth response from %s: %s", 
+			   CVSroot_hostname, read_buf);
+		    error (1, 0,
+			   "shutdown() failed, server %s: %s",
+			   CVSroot_hostname,
+			   SOCK_STRERROR (SOCK_ERRNO));
+		}
+		error (1, 0, 
 		       "unrecognized auth response from %s: %s", 
 		       CVSroot_hostname, read_buf);
-		error (1, 0,
-		       "shutdown() failed, server %s: %s", CVSroot_hostname,
-		       SOCK_STRERROR (SOCK_ERRNO));
 	    }
-	    error (1, 0, 
-		   "unrecognized auth response from %s: %s", 
-		   CVSroot_hostname, read_buf);
+	    free (read_buf);
 	}
     }
 

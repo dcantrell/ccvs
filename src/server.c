@@ -4680,12 +4680,12 @@ pserver_authenticate_connection ()
 	error (1, 0, "bad auth protocol end: %s", tmp);
     }
     if (!root_allow_ok (repository))
-	/* At least for the moment I'm going to do the paranoid
-	   security thing and not tell them how it failed.  I'm not
-	   sure that is a good idea; it is a real pain when one needs
-	   to track down what is going on for legitimate reasons.
-	   The other issue is that the protocol doesn't really have
-	   a good way for anything other than I HATE YOU.  */
+	/* Just give a generic I HATE YOU.  This is because CVS 1.9.10
+	   and older clients do not support "error".  Once more recent
+	   clients are more widespread, probably want to fix this (it is
+	   a real pain to track down why it isn't letting you in if it
+	   won't say why, and I am not convinced that the potential
+	   information disclosure to an attacker outweighs this).  */
 	goto i_hate_you;
 
     /* We need the real cleartext before we hash it. */

@@ -1,3 +1,11 @@
+Tue Jun 24 10:14:18 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (recv_line): New function.
+	(connect_to_pserver): Call it, and rewrite accordingly.  Also
+	accept new "E" and "error" responses.  Change \n to \012.
+	* server.c (pserver_authenticate_connection): Adjust comment
+	accordingly, concerning sending I HATE YOU not "error".
+
 Sun, 22 Jun 1997  Jim Kingdon
 
 	* main.c (main): Move setting of server_active inside #ifdef
