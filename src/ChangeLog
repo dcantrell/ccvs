@@ -1,3 +1,9 @@
+8 May 1997  Larry Jones  <larry.jones@sdrc.com>
+	and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* hash.c: Add #ifdef's to disable caching.  This makes it easier
+	to track down memory allocation problems.
+
 Thu May  8 11:40:39 1997  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh: In setting "tests" use a number of statements rather
