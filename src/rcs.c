@@ -1752,6 +1752,7 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
         char *key;
 	char *value;
 	size_t len;
+	char *ouroptions;
 
         /* We want the head revision.  Try to read it directly.  */
 
@@ -1783,14 +1784,13 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 	if (fclose (fp) < 0)
 	    error (0, errno, "cannot close %s", rcs->path);
 
+	/* I'm not completely sure that checking rcs->expand is necessary or even
+	   desirable.  It would appear that Version_TS takes care of that.  */
+	ouroptions = options != NULL ? options + 2 : (rcs->expand != NULL ? rcs->expand : "");
 	if (found)
 	{
-	    if (options != NULL
-		? (strcmp (options, "-ko") != 0
-		   && strcmp (options, "-kb") != 0)
-		: (rcs->expand == NULL
-		   || (strcmp (rcs->expand, "o") != 0
-		       && strcmp (rcs->expand, "b") != 0)))
+	    if (strcmp (ouroptions, "o") != 0
+	        && strcmp (ouroptions, "b") != 0)
 	    {
 	        register int inkeyword;
 	        register char *s, *send;
@@ -1840,14 +1840,14 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 		    ofp = stdout;
 		else
 		{
-		    ofp = CVS_FOPEN (sout, FOPEN_BINARY_WRITE);
+		    ofp = CVS_FOPEN (sout, strcmp (ouroptions, "b") == 0 ? "wb" : "w");
 		    if (ofp == NULL)
 		        error (1, errno, "cannot open %s", sout);
 		}
 	    }
 	    else
 	    {
-	        ofp = CVS_FOPEN (workfile, FOPEN_BINARY_WRITE);
+	        ofp = CVS_FOPEN (workfile, strcmp (ouroptions, "b") == 0 ? "wb" : "w");
 		if (ofp == NULL)
 		    error (1, errno, "cannot open %s", workfile);
 	    }
