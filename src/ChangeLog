@@ -1,3 +1,12 @@
+Fri Oct 25 13:20:44 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* diff.c (diff_file_nodiff): When setting use_rev1, only return
+	DIFF_SAME if empty_file is DIFF_DIFFERENT and ts_user is not
+	NULL.  Don't get confused by a vn_user field of "0" or one
+	starting with '-'.
+	* sanity.sh (death2): Add new death2-diff-{1,2,7,8} tests for
+	above patch.  Renumber existing death2-diff tests to make room.
+
 Fri Oct 25 12:38:29 1996  Jim Wilson  <wilson@cygnus.com>
 
 	* sanity.sh (death2): In tests death2-diff-{2,4,6,8,10}, allow "_"

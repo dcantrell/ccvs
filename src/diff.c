@@ -828,16 +828,25 @@ diff_file_nodiff (finfo, vers, empty_file)
 	    return DIFF_DIFFERENT;
     }
 #endif /* SERVER_SUPPORT */
+
     if (use_rev1 == NULL
 	|| (vers->vn_user != NULL && strcmp (use_rev1, vers->vn_user) == 0))
     {
-	if (strcmp (vers->ts_rcs, vers->ts_user) == 0 &&
-	    (!(*options) || strcmp (options, vers->options) == 0))
+	if (empty_file == DIFF_DIFFERENT
+	    && vers->ts_user != NULL
+	    && strcmp (vers->ts_rcs, vers->ts_user) == 0
+	    && (!(*options) || strcmp (options, vers->options) == 0))
 	{
 	    return DIFF_SAME;
 	}
-	if (use_rev1 == NULL)
-	    use_rev1 = xstrdup (vers->vn_user);
+	if (use_rev1 == NULL
+	    && (vers->vn_user[0] != '0' || vers->vn_user[1] != '\0'))
+	{
+	    if (vers->vn_user[0] == '-')
+		use_rev1 = xstrdup (vers->vn_user + 1);
+	    else
+		use_rev1 = xstrdup (vers->vn_user);
+	}
     }
 
     /* If we already know that the file is being added or removed,

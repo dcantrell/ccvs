@@ -1899,6 +1899,23 @@ done'
 	  dotest death2-7 "${testcvs} rm file1" \
 "${PROG} [a-z]*: scheduling .file1. for removal
 ${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+
+	  # Test diff of the removed file before it is committed.
+	  dotest_fail death2-diff-1 "${testcvs} -q diff file1" \
+"${PROG} [a-z]*: file1 was removed, no comparison available"
+
+	  dotest_fail death2-diff-2 "${testcvs} -q diff -N -c file1" \
+"Index: file1
+===================================================================
+RCS file: file1
+diff -N file1
+\*\*\* [-a-zA-Z0-9/.%_]*[ 	][	]*[a-zA-Z0-9: ]*
+--- /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+- first revision
+--- 0 ----"
+
 	  dotest death2-8 "${testcvs} -q ci -m removed" \
 'Removing file1;
 /tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
@@ -1906,11 +1923,11 @@ new revision: delete; previous revision: 1\.1\.2
 done'
 
 	  # Test diff of a dead file.
-	  dotest_fail death2-diff-1 \
+	  dotest_fail death2-diff-3 \
 "${testcvs} -q diff -r1.1 -rbranch -c file1" \
 "${PROG} [a-z]*: file1 was removed, no comparison available"
 
-	  dotest_fail death2-diff-2 \
+	  dotest_fail death2-diff-4 \
 "${testcvs} -q diff -r1.1 -rbranch -N -c file1" \
 "Index: file1
 ===================================================================
@@ -1923,10 +1940,10 @@ diff -N file1
 - first revision
 --- 0 ----"
 
-	  dotest_fail death2-diff-3 "${testcvs} -q diff -rtag -c ." \
+	  dotest_fail death2-diff-5 "${testcvs} -q diff -rtag -c ." \
 "${PROG} [a-z]*: file1 no longer exists, no comparison available"
 
-	  dotest_fail death2-diff-4 "${testcvs} -q diff -rtag -N -c ." \
+	  dotest_fail death2-diff-6 "${testcvs} -q diff -rtag -N -c ." \
 "Index: file1
 ===================================================================
 RCS file: file1
@@ -1957,6 +1974,23 @@ diff -c first-dir/file1:1\.1 first-dir/file1:removed
 	  dotest death2-9 "${testcvs} add file1" \
 "${PROG}"' [a-z]*: file `file1'\'' will be added on branch `branch'\'' from version 1\.1\.2\.1
 '"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+
+	  # Test diff of the added file before it is committed.
+	  dotest_fail death2-diff-7 "${testcvs} -q diff file1" \
+"${PROG} [a-z]*: file1 is a new entry, no comparison available"
+
+	  dotest_fail death2-diff-8 "${testcvs} -q diff -N -c file1" \
+"Index: file1
+===================================================================
+RCS file: file1
+diff -N file1
+\*\*\* /dev/null[ 	][ 	]*[a-zA-Z0-9: ]*
+--- [-a-zA-Z0-9/.%_]*[ 	][ 	]*[a-zA-Z0-9: ]*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 0 \*\*\*\*
+--- 1 ----
+${PLUS} second revision"
+
 	  dotest death2-10 "${testcvs} -q commit -m add" \
 'Checking in file1;
 /tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
@@ -2014,10 +2048,10 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1
 done'
 
 	  # Test diff of a nonexistent tag
-	  dotest_fail death2-diff-5 "${testcvs} -q diff -rtag -c file3" \
+	  dotest_fail death2-diff-9 "${testcvs} -q diff -rtag -c file3" \
 "${PROG} [a-z]*: tag tag is not in file file3"
 
-	  dotest_fail death2-diff-6 "${testcvs} -q diff -rtag -N -c file3" \
+	  dotest_fail death2-diff-10 "${testcvs} -q diff -rtag -N -c file3" \
 "Index: file3
 ===================================================================
 RCS file: file3
@@ -2029,7 +2063,7 @@ diff -N file3
 --- 1 ----
 ${PLUS} first revision"
 
-	  dotest_fail death2-diff-7 "${testcvs} -q diff -rtag -c ." \
+	  dotest_fail death2-diff-11 "${testcvs} -q diff -rtag -c ." \
 "Index: file1
 ===================================================================
 RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
@@ -2046,7 +2080,7 @@ diff -c -r1\.1 -r1\.1\.2\.2
 ${PROG} [a-z]*: tag tag is not in file file2
 ${PROG} [a-z]*: tag tag is not in file file3"
 
-	  dotest_fail death2-diff-8 "${testcvs} -q diff -rtag -c -N ." \
+	  dotest_fail death2-diff-12 "${testcvs} -q diff -rtag -c -N ." \
 "Index: file1
 ===================================================================
 RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
@@ -2099,10 +2133,10 @@ ${PROG} [a-z]*: file3 is no longer in the repository"
 	  # dotest death2-21 "${testcvs} add file2" "some error message"
 
 	  # Make sure diff only reports appropriate files.
-	  dotest_fail death2-diff-9 "${testcvs} -q diff -r rdiff-tag" \
+	  dotest_fail death2-diff-13 "${testcvs} -q diff -r rdiff-tag" \
 "${PROG} [a-z]*: file1 is a new entry, no comparison available"
 
-	  dotest_fail death2-diff-10 "${testcvs} -q diff -r rdiff-tag -c -N" \
+	  dotest_fail death2-diff-14 "${testcvs} -q diff -r rdiff-tag -c -N" \
 "Index: file1
 ===================================================================
 RCS file: file1
