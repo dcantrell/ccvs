@@ -5,10 +5,8 @@
 ****************************************************************/
 
 #define TCPIP_IBM_NOHIDE
-//#include	<portable.h>
 #include	<stdio.h>
 #include	"tcpip.h"
-
 
 /*
  * Common unknown error buffer
@@ -26,7 +24,7 @@ static char ErrUnknownBuf[36];
 const char *
 SockStrError(int SockErrno)
 {
-#if defined (TCPIP_IBM)  && defined (IBM_CP P)
+#if defined (TCPIP_IBM)  && defined (IBM_CPP)
   switch (SockErrno)
     {
     case SOCEPERM:		return "Not owner";
@@ -126,17 +124,17 @@ HostStrError(int HostErrno)
  ****************************************************************/
 
 int
-IbmSockSend (int Socket, char *Buffer, int Len, int Flags)
+IbmSockSend (int Socket, const void *Buffer, int Len, int Flags)
 {
 	int Sent, ToSend, TotalSent = 0;
 
 	const char *Tmp = Buffer;
 
-	/*
-         * If Flags have been passed in, the 64K boundary optimization
-         * can not be performed.  For example, MSG_PEEK would not work
-         * correctly.
-         */
+    /*
+     * If Flags have been passed in, the 64K boundary optimization
+     * can not be performed.  For example, MSG_PEEK would not work
+     * correctly.
+     */
 	if (Flags)
           return send (Socket, (char *) Buffer, min (0x7FFF, Len), Flags);
 
@@ -183,7 +181,7 @@ IbmSockSend (int Socket, char *Buffer, int Len, int Flags)
  ****************************************************************/
 
 int
-IbmSockRecv (int Socket, char *Buffer, int Len, int Flags)
+IbmSockRecv (int Socket, const void *Buffer, int Len, int Flags)
 {
   int Recvd, ToRecv, TotalRecvd = 0;
 
