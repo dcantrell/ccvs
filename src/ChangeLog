@@ -1,8 +1,12 @@
-2001-04-02  Larry Jones  <larry.jones@sdrc.com>
+2001-04-04  Derek Price  <dprice@collab.net>
+
+	* sanity.sh (ignore-on-branch-3): Fix in the remote case.
+
+2001-04-03  Larry Jones  <larry.jones@sdrc.com>
 
 	* update.c (update_fileproc): Remove unused variable (resurrecting).
 
-2001-04-02  Derek Price  <dprice@collab.net>
+2001-04-03  Derek Price  <dprice@collab.net>
 	    Larry Jones  <larry.jones@sdrc.com>
 	    reported by Jakob Bøhm  <JB@Danware.dk>
 
