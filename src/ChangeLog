@@ -1,3 +1,7 @@
+2002-05-08  Derek Price  <oberon@umich.edu>
+
+	* cvs.h: Use the HAVE_CONFIG_H define.
+
 2002-05-07  Larry Jones  <lawrence.jones@eds.com>
 
 	* filesubr.c (isaccessible): Set errno before returning failure
