@@ -5860,6 +5860,9 @@ RCS_unlock (rcs, rev, unlock_quiet)
 	   is called with a NULL revision, since that means "whatever
 	   revision is currently locked by the caller." */
 	char *repos, *workfile;
+	if (!unlock_quiet)
+	    error (0, 0, "\
+%s: revision %s locked by %s; breaking lock", rcs->path, xrev, lock->data);
 	repos = xstrdup (rcs->path);
 	workfile = strrchr (repos, '/');
 	*workfile++ = '\0';

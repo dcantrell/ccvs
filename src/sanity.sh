@@ -19615,6 +19615,7 @@ ${PROG} \[[a-z]* aborted\]: Revision 1\.1 is already locked by fred"
 
 	  dotest reserved-14 "${testcvs} admin -u1.1 a-lock" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/a-lock,v
+${PROG} [a-z]*: ${CVSROOT_DIRNAME}/first-dir/a-lock,v: revision 1\.1 locked by fred; breaking lock
 1\.1 unlocked
 done"
 	  dotest reserved-15 "${testcvs} -q ci -m success a-lock" \
