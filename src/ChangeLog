@@ -1,3 +1,8 @@
+1999-11-08  Tom Tromey  <tromey@cygnus.com>
+
+	* client.c (connect_to_gserver): Print more error text if gssapi
+	initialization fails.  From Assar Westerlund <assar@sics.se>.
+
 1999-11-06  Larry Jones <larry.jones@sdrc.com>
 
 	*sanity.sh(rcs3-5): Remote output can be out-of-order, so need a
