@@ -7213,13 +7213,15 @@ created, but not added to the @sc{cvs} directory hierarchy
 with the @code{add} command (@pxref{Adding files}) will be
 silently ignored (and deleted, if @samp{-d} is
 specified), even if they contain files.
-@c FIXCVS: This is a bug.
+@c FIXCVS: This is a bug.  But is it true?  I think
+@c maybe they print "? dir" now.
 
 @table @code
 @item U @var{file}
+@itemx P @var{file}
 There exists a newer revision of this file in the
 repository, and you have not modified your local copy
-of the file.
+of the file (@samp{U} and @samp{P} mean the same thing).
 
 @item A @var{file}
 The file has been added to your private copy of the
@@ -7707,6 +7709,11 @@ repository.  This is done for any file that exists in
 the repository but not in your source, and for files
 that you haven't changed but are not the most recent
 versions available in the repository.
+
+@item P @var{file}
+Like @samp{U}, but the @sc{cvs} server sends a patch
+instead of an entire file.  These two things accomplish
+the same thing.
 
 @item A @var{file}
 The file has been added to your private copy of the
