@@ -1,3 +1,13 @@
+Thu Aug 31 12:00:08 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* Makefile.in (HEADERS, SOURCES): New variables.
+	(DISTFILES): Refer to them, and include README, Makefile.in, and
+	.cvsignore.
+
+	* filesubr.c (unlink_file_dir, deep_remove_dir): New functions,
+	originally added to src/filesubr.c and then adapted here for
+	Windows NT.
+
 Wed Aug 30 15:39:57 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
         * Windows NT port merged.
