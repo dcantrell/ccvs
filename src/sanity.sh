@@ -6185,6 +6185,49 @@ new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done"
 	  dotest rcslib-symlink-4 "ls -l $CVSROOT_DIRNAME/first-dir/file2,v" \
 ".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
+
+	  # CVS was failing to check both the symlink and the file
+	  # for timestamp changes for a while.  Test that.
+	  rm file1
+	  if $remote; then
+	    dotest rcslib-symlink-3ar "${testcvs} -q up file1" "U file1"
+	  else
+	    dotest rcslib-symlink-3a "${testcvs} -q up file1" \
+"${PROG} [a-z]*: warning: file1 was lost
+U file1"
+	  fi
+	  echo "This is a change" >> file1
+	  dotest rcslib-symlink-3b "${testcvs} ci -m because file1" \
+"Checking in file1;
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.[0-9]*; previous revision: 1\.1\.2\.[0-9]*
+done"
+	  dotest rcslib-symlink-3c "${testcvs} update file2" "[UP] file2"
+
+	  echo some new text >file3
+	  dotest rcslib-symlink-3d "cvs -Q add file3" ''
+	  dotest rcslib-symlink-3e "cvs -Q ci -mtest file3" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+done
+Checking in file3;
+${CVSROOT_DIRNAME}/first-dir/Attic/file3,v  <--  file3
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+	  rm ${CVSROOT_DIRNAME}/first-dir/file2,v
+	  dotest rcslib-symlink-3f "ln -s Attic/file3,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  dotest rcslib-symlink-3g "${testcvs} update file2" "U file2"
+
+	  # restore the link to file1 for the following tests
+	  dotest rcslib-symlink-3i "cvs -Q rm -f file3" ''
+	  dotest rcslib-symlink-3j "cvs -Q ci -mwhatever file3" \
+"Removing file3;
+${CVSROOT_DIRNAME}/first-dir/Attic/file3,v  <--  file3
+new revision: delete; previous revision: 1\.1\.2\.1
+done"
+	  rm ${CVSROOT_DIRNAME}/first-dir/file2,v
+	  rm -f ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+	  dotest rcslib-symlink-3h "ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+
 	  # Test 5 reveals a problem with having symlinks in the
 	  # repository.  CVS will try to tag both of the files
 	  # separately.  After processing one, it will do the same
@@ -6195,7 +6238,7 @@ done"
 	  dotest rcslib-symlink-5 "${testcvs} tag the_tag" \
 "${PROG} [a-z]*: Tagging .
 T file1
-W file2 : the_tag already exists on version 1.1.2.1 : NOT MOVING tag to version 1.1.2.2"
+W file2 : the_tag already exists on version 1.1.2.3 : NOT MOVING tag to version 1.1.2.1"
 	  dotest rcslib-symlink-6 "ls -l $CVSROOT_DIRNAME/first-dir/file2,v" \
 ".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
 
