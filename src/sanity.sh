@@ -148,6 +148,17 @@ if test -f check.log; then
 	mv check.log check.plog
 fi
 
+# clean any old remnants (we need the chmod because some tests make
+# directories read-only)
+if test -d ${TESTDIR}; then
+    chmod -R a+wx ${TESTDIR}
+    rm -rf ${TESTDIR}
+fi
+mkdir ${TESTDIR}
+cd ${TESTDIR}
+
+# Make sure various tools work the way we expect, or try to find
+# versions that do.
 GLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gun/bin"
 
 : ${AWK=awk}
@@ -212,6 +223,63 @@ c' >/dev/null; then
 else
   : good, it works
 fi
+
+# More SunOS lossage...
+echo 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ' >${TESTDIR}/foo
+cat ${TESTDIR}/foo ${TESTDIR}/foo ${TESTDIR}/foo ${TESTDIR}/foo >${TESTDIR}/bar
+cat ${TESTDIR}/bar ${TESTDIR}/bar ${TESTDIR}/bar ${TESTDIR}/bar >${TESTDIR}/foo
+cat ${TESTDIR}/foo ${TESTDIR}/foo ${TESTDIR}/foo ${TESTDIR}/foo >${TESTDIR}/bar
+if $EXPR "`cat ${TESTDIR}/bar`" : "`cat ${TESTDIR}/bar`" >/dev/null; then
+  : good, it works
+else
+  EXPR=""
+  for path in $GLOCS ; do
+    if test -x $path/gexpr ; then
+      if test "X`$path/gexpr --version`" != "X--version" ; then
+        EXPR=$path/gexpr
+        break
+      fi
+    fi
+    if test -x $path/expr ; then
+      if test "X`$path/expr --version`" != "X--version" ; then
+        EXPR=$path/expr
+        break
+      fi
+    fi
+  done
+  if test -z "$EXPR" ; then
+    echo 'Warning: you are using a version of expr which does not correctly'
+    echo 'match large patterns.  Some tests may spuriously fail.'
+    echo 'You may wish to make sure GNU expr is in your path.'
+    EXPR=expr
+  fi
+fi
+if $EXPR "`cat ${TESTDIR}/bar`x" : "`cat ${TESTDIR}/bar`y" >/dev/null; then
+  EXPR=""
+  for path in $GLOCS ; do
+    if test -x $path/gexpr ; then
+      if test "X`$path/gexpr --version`" != "X--version" ; then
+        EXPR=$path/gexpr
+        break
+      fi
+    fi
+    if test -x $path/expr ; then
+      if test "X`$path/expr --version`" != "X--version" ; then
+        EXPR=$path/expr
+        break
+      fi
+    fi
+  done
+  if test -z "$EXPR" ; then
+    echo 'Warning: you are using a version of expr which does not correctly'
+    echo 'match large patterns.  Some tests may spuriously pass.'
+    echo 'You may wish to make sure GNU expr is in your path.'
+    EXPR=expr
+  fi
+else
+  : good, it works
+fi
+rm -f ${TESTDIR}/foo ${TESTDIR}/bar
 
 # That we should have to do this is total bogosity, but GNU expr
 # version 1.9.4-1.12 uses the emacs definition of "$" instead of the unix
@@ -384,15 +452,15 @@ dotest_all_in_one ()
 dotest_line_by_line ()
 {
   line=1
-  while [ $line -le `wc -l ${TESTDIR}/dotest.tmp` ] ; do
-    echo "$line matched \c" >>$LOGFILE
+  while [ $line -le `wc -l <${TESTDIR}/dotest.tmp` ] ; do
     if $EXPR "`sed -n ${line}p ${TESTDIR}/dotest.tmp`" : \
        "`sed -n ${line}p ${TESTDIR}/dotest.exp`" >/dev/null; then
       :
     else
-      echo "**** expected line: " >>${LOGFILE}
+      echo "Line $line:" >> ${LOGFILE}
+      echo "**** expected: " >>${LOGFILE}
       sed -n ${line}p ${TESTDIR}/dotest.exp >>${LOGFILE}
-      echo "**** got line: " >>${LOGFILE}
+      echo "**** got: " >>${LOGFILE}
       sed -n ${line}p ${TESTDIR}/dotest.tmp >>${LOGFILE}
       unset line
       return 1
@@ -550,14 +618,6 @@ dotest_sort ()
   dotest_internal "$@"
 }
 
-# clean any old remnants (we need the chmod because some tests make
-# directories read-only)
-if test -d ${TESTDIR}; then
-    chmod -R a+wx ${TESTDIR}
-    rm -rf ${TESTDIR}
-fi
-mkdir ${TESTDIR}
-cd ${TESTDIR}
 # This will show up in cvs history output where it prints the working
 # directory.  It should *not* appear in any cvs output referring to the
 # repository; cvs should use the name of the repository as specified.
