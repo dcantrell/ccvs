@@ -1,5 +1,9 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Call gl_SAVE_CWD.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Call gl_XGETCWD.
 	* srclist.txt (xgetcwd): New module.
 
