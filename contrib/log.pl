@@ -145,7 +145,7 @@ if ($dostatus != 0) {
 			}
 			last;
 		}
-		open(RCS, "-|") || exec 'cvs', '-n', 'status', '-Qqv', $file;
+		open(RCS, "-|") || exec 'cvs', '-nQq', 'status', '-v', $file;
 		while (<RCS>) {
 			print OUT;
 			if (MAIL) {

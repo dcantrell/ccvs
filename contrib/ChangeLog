@@ -1,5 +1,7 @@
 Sat Jul 29 17:29:13 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
+	* log.pl: Use global options -Qq, not command options -Qq.
+
 	* Makefile.in (install): Look for $(PROGS) and
 	$(CONTRIB_PROGS) in build dir, not srcdir.
 
