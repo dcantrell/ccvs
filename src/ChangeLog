@@ -1,5 +1,10 @@
 2005-02-24 Derek Price <derek@ximbiot.com>
 
+	* sanity.sh (primary-wrapper): Rename CVS_SERVER_LOG for the primary in
+	writeproxy mode to avoid overwriting.
+
+2005-02-24 Derek Price <derek@ximbiot.com>
+
 	* client.c (open_connection_to_server): Fail with an expressive error
 	message when connection is attempted via an unsupported protocol since
 	this is no longer caught in parse_root().

@@ -2608,7 +2608,10 @@ exec $CVS_SERVER \$proot_arg "\$@"
 EOF
 	cat <<EOF >$TESTDIR/primary-wrapper
 #! $TESTSHELL
-CVS_SERVER_LOG=/tmp/cvsprimarylog; export CVS_SERVER_LOG
+if test -n "$CVS_SERVER_LOG"; then
+  CVS_SERVER_LOG=`dirname "$CVS_SERVER_LOG"`/cvsprimarylog
+  export CVS_SERVER_LOG
+fi
 exec $CVS_SERVER "\$@"
 EOF
 
