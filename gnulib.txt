@@ -107,3 +107,7 @@ lib/getopt_int.h
 m4/getopt.m4
 
 m4/onceonly_2_57.m4
+lib/stdbool_.h
+m4/stdbool.m4
+
+m4/onceonly_2_57.m4
