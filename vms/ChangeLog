@@ -1,3 +1,7 @@
+Tue May 14 13:38:51 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c (cvs_temp_name): New function.
+
 Tue Mar 19 17:49:16 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* startserver.c (vms_start_server): Added support for

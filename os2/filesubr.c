@@ -28,14 +28,6 @@
 
 #include "cvs.h"
 
-/*
- * I don't know of a convenient way to test this at configure time, or else
- * I'd certainly do it there.  -JimB
- */
-#if defined(NeXT)
-#define LOSING_TMPNAM_FUNCTION
-#endif
-
 static int deep_remove_dir PROTO((const char *path));
 
 /*
@@ -675,7 +667,23 @@ fnfold (char *filename)
     }
 }
 
+
+/* Generate a unique temporary filename.  Returns a pointer to a newly
+   malloc'd string containing the name.  Returns successfully or not at
+   all.  */
+char *
+cvs_temp_name ()
+{
+    char value[L_tmpnam + 1];
+    char *retval;
 
+    /* FIXME: Does OS/2 have some equivalent to TMPDIR?  */
+    retval = tmpnam (value);
+    if (retval == NULL)
+	error (1, errno, "cannot generate temporary filename");
+    return xstrdup (retval);
+}
+
 /* Return non-zero iff FILENAME is absolute.
    Trivial under Unix, but more complicated under other systems.  */
 int

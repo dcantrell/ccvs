@@ -673,6 +673,23 @@ xcmp (file1_file, file2_file)
     return (ret);
 }
 
+
+/* Generate a unique temporary filename.  Returns a pointer to a newly
+   malloc'd string containing the name.  Returns successfully or not at
+   all.  */
+char *
+cvs_temp_name ()
+{
+    char value[L_tmpnam + 1];
+    char *retval;
+
+    /* FIXME: what is the VMS equivalent to TMPDIR?  */
+    retval = tmpnam (value);
+    if (retval == NULL)
+	error (1, errno, "cannot generate temporary filename");
+    return xstrdup (retval);
+}
+
 /* Return non-zero iff FILENAME is absolute.
    Trivial under Unix, but more complicated under other systems.  */
 int
