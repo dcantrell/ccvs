@@ -1,5 +1,12 @@
 2005-02-22  Derek Price  <derek@ximbiot.com>
 
+	* run.c: Sync with src/run.c.
+	(Patch from Conrad Pino <conrad@pino.com>.)
+
+	* run.c (run_add_arg): Some cleanup.
+
+2005-02-22  Derek Price  <derek@ximbiot.com>
+
 	* run.c: Remove several unneeded declarations.
 	(Suggestion from Conrad Pino <conrad@pino.com>.)
 
