@@ -439,7 +439,7 @@ Lock_Cleanup (void)
 static int
 unlock_proc (Node *p, void *closure)
 {
-    remove_lock_files ((struct lock *)p->data, (int) closure);
+    remove_lock_files ((struct lock *)p->data, 0);
     return 0;
 }
 
@@ -464,10 +464,7 @@ remove_locks (void)
 	 */
 	List *tmp = locklist;
 	locklist = NULL;
-	/* The closure for unlock_proc() is actually an int, which I typecast
-	 * to (void *) below.
-	 */
-	walklist (tmp, unlock_proc, (void *) 0);
+	walklist (tmp, unlock_proc, NULL);
     }
     SIG_endCrSect();
 }
