@@ -353,7 +353,7 @@ commit (argc, argv)
 	send_file_names (find_args.argc, find_args.argv);
 	send_files (find_args.argc, find_args.argv, local, 0);
 
-	send_to_server ("ci\n", 0);
+	send_to_server ("ci\012", 0);
 	return get_responses_and_close ();
     }
 #endif

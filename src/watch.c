@@ -339,7 +339,7 @@ watch_addremove (argc, argv)
 	   it's slower but it works.  */
 	send_files (argc, argv, local, 0);
 	send_to_server (the_args.adding ?
-                        "watch-add\n" : "watch-remove\n",
+                        "watch-add\012" : "watch-remove\012",
                         0);
 	return get_responses_and_close ();
     }
@@ -518,7 +518,7 @@ watchers (argc, argv)
 	   whether it works.  So send the files --
 	   it's slower but it works.  */
 	send_files (argc, argv, local, 0);
-	send_to_server ("watchers\n", 0);
+	send_to_server ("watchers\012", 0);
 	return get_responses_and_close ();
     }
 #endif /* CLIENT_SUPPORT */

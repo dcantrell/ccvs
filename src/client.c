@@ -528,7 +528,7 @@ handle_valid_requests (args, len)
 		 * feature.
 		 */
 		send_to_server (rq->name, 0);
-                send_to_server ("\n", 0);
+                send_to_server ("\012", 0);
 
 		if (!strcmp("UseUnchanged",rq->name))
 		    use_unchanged = 1;
@@ -1795,15 +1795,15 @@ send_repository (dir, repos, update_dir)
     {
 	send_to_server ("Directory ", 0);
 	send_to_server (update_dir, 0);
-	send_to_server ("\n", 1);
+	send_to_server ("\012", 1);
 	send_to_server (repos, 0);
-	send_to_server ("\n", 1);
+	send_to_server ("\012", 1);
     }
     else
     {
 	send_to_server ("Repository ", 0);
 	send_to_server (repos, 0);
-	send_to_server ("\n", 1);
+	send_to_server ("\012", 1);
     }
     if (supported_request ("Static-directory"))
     {
@@ -1816,7 +1816,7 @@ send_repository (dir, repos, update_dir)
 	strcat (adm_name, CVSADM_ENTSTAT);
 	if (isreadable (adm_name))
 	{
-	    send_to_server ("Static-directory\n", 0);
+	    send_to_server ("Static-directory\012", 0);
 	}
     }
     if (supported_request ("Sticky"))
@@ -1846,7 +1846,7 @@ send_repository (dir, repos, update_dir)
 		    break;
 	    }
 	    if (nl == NULL)
-                send_to_server ("\n", 1);
+                send_to_server ("\012", 1);
 	    if (fclose (f) == EOF)
 		error (0, errno, "closing %s", adm_name);
 	}
@@ -1881,7 +1881,7 @@ send_repository (dir, repos, update_dir)
 		    break;
 	    }
 	    if (nl == NULL)
-		send_to_server ("\n", 1);
+		send_to_server ("\012", 1);
 	    if (fclose (f) == EOF)
 		error (0, errno, "closing %s", adm_name);
 	}
@@ -1916,7 +1916,7 @@ send_repository (dir, repos, update_dir)
 		    break;
 	    }
 	    if (nl == NULL)
-		send_to_server ("\n", 1);
+		send_to_server ("\012", 1);
 	    if (fclose (f) == EOF)
 		error (0, errno, "closing %s", adm_name);
 	}
@@ -2060,7 +2060,7 @@ client_expand_modules (argc, argv, local)
 	send_arg (argv[i]);
     send_a_repository ("", server_cvsroot, "");
 
-    send_to_server ("expand-modules\n", 0);
+    send_to_server ("expand-modules\012", 0);
 
     errs = get_server_responses ();
     if (last_repos != NULL)
@@ -2851,7 +2851,7 @@ start_server ()
 
     send_to_server ("Root ", 0);
     send_to_server (server_cvsroot, 0);
-    send_to_server ("\n", 1);
+    send_to_server ("\012", 1);
 
     {
 	struct response *rs;
@@ -2863,9 +2863,9 @@ start_server ()
 	    send_to_server (" ", 0);
 	    send_to_server (rs->name, 0);
 	}
-	send_to_server ("\n", 1);
+	send_to_server ("\012", 1);
     }
-    send_to_server ("valid-requests\n", 0);
+    send_to_server ("valid-requests\012", 0);
 
     if (get_server_responses ())
 	exit (1);
@@ -2891,7 +2891,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		send_to_server ("Global_option -n\n", 0);
+		send_to_server ("Global_option -n\012", 0);
 	    }
 	    else
 		error (1, 0,
@@ -2901,7 +2901,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		send_to_server ("Global_option -q\n", 0);
+		send_to_server ("Global_option -q\012", 0);
 	    }
 	    else
 		error (1, 0,
@@ -2911,7 +2911,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		send_to_server ("Global_option -Q\n", 0);
+		send_to_server ("Global_option -Q\012", 0);
 	    }
 	    else
 		error (1, 0,
@@ -2921,7 +2921,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		send_to_server ("Global_option -r\n", 0);
+		send_to_server ("Global_option -r\012", 0);
 	    }
 	    else
 		error (1, 0,
@@ -2931,7 +2931,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		send_to_server ("Global_option -t\n", 0);
+		send_to_server ("Global_option -t\012", 0);
 	    }
 	    else
 		error (1, 0,
@@ -2941,7 +2941,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		send_to_server ("Global_option -l\n", 0);
+		send_to_server ("Global_option -l\012", 0);
 	    }
 	    else
 		error (1, 0,
@@ -2957,7 +2957,7 @@ start_server ()
             sprintf (gzip_level_buf, "%d", gzip_level);
 	    send_to_server (gzip_level_buf, 0);
 
-	    send_to_server ("\n", 1);
+	    send_to_server ("\012", 1);
 	  }
 	else
 	  {
@@ -3137,7 +3137,7 @@ send_arg (string)
     {
 	if (*p == '\n')
 	{
-	    send_to_server ("\nArgumentx ", 0);
+	    send_to_server ("\012Argumentx ", 0);
 	}
 	else
         {
@@ -3146,7 +3146,7 @@ send_arg (string)
         }
 	++p;
     }
-    send_to_server ("\n", 1);
+    send_to_server ("\012", 1);
 }
 
 static void send_modified PROTO ((char *, char *, Vers_TS *));
@@ -3293,9 +3293,9 @@ send_modified (file, short_pathname, vers)
 
 	  send_to_server ("Modified ", 0);
 	  send_to_server (file, 0);
-	  send_to_server ("\n", 1);
+	  send_to_server ("\012", 1);
 	  send_to_server (mode_string, 0);
-	  send_to_server ("\nz", 2);
+	  send_to_server ("\012z", 2);
 	  sprintf (tmp, "%lu\n", (unsigned long) newsize);
 	  send_to_server (tmp, 0);
 
@@ -3326,10 +3326,10 @@ send_modified (file, short_pathname, vers)
 
 	  send_to_server ("Modified ", 0);
 	  send_to_server (file, 0);
-	  send_to_server ("\n", 1);
+	  send_to_server ("\012", 1);
 	  send_to_server (mode_string, 0);
-	  send_to_server ("\n", 1);
-          sprintf (tmp, "%lu\n", (unsigned long) newsize);
+	  send_to_server ("\012", 1);
+          sprintf (tmp, "%lu\012", (unsigned long) newsize);
           send_to_server (tmp, 0);
         }
 
@@ -3399,7 +3399,7 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
 	    send_to_server ("D", 0);
 	    send_to_server (vers->entdata->date, 0);
           }
-	send_to_server ("\n", 1);
+	send_to_server ("\012", 1);
     }
 
     if (vers->ts_user == NULL)
@@ -3414,7 +3414,7 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
 	    /* if the server is old, use the old request... */
 	    send_to_server ("Lost ", 0);
 	    send_to_server (file, 0);
-	    send_to_server ("\n", 1);
+	    send_to_server ("\012", 1);
 	    /*
 	     * Otherwise, don't do anything for missing files,
 	     * they just happen.
@@ -3433,7 +3433,7 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
           {
 	    send_to_server ("Unchanged ", 0);
 	    send_to_server (file, 0);
-	    send_to_server ("\n", 1);
+	    send_to_server ("\012", 1);
           }
     }
 
@@ -3471,7 +3471,7 @@ send_ignproc (file, dir)
     {
 	send_to_server ("Questionable ", 0);
 	send_to_server (file, 0);
-	send_to_server ("\n", 1);
+	send_to_server ("\012", 1);
     }
 }
 
@@ -3626,7 +3626,7 @@ send_file_names (argc, argv)
 
 	    send_to_server ("Max-dotdot ", 0);
 	    send_to_server (buf, 0);
-	    send_to_server ("\n", 1);
+	    send_to_server ("\012", 1);
 	}
 	else
 	    /*
@@ -3861,7 +3861,7 @@ client_notify (repository, update_dir, filename, notif_type, val)
     send_a_repository ("", repository, update_dir);
     send_to_server ("Notify ", 0);
     send_to_server (filename, 0);
-    send_to_server ("\n", 1);
+    send_to_server ("\012", 1);
     buf[0] = notif_type;
     buf[1] = '\0';
     send_to_server (buf, 1);
@@ -3883,7 +3883,7 @@ option_with_arg (option, arg)
 
     send_to_server ("Argument ", 0);
     send_to_server (option, 0);
-    send_to_server ("\n", 1);
+    send_to_server ("\012", 1);
 
     send_arg (arg);
 }

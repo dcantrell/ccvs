@@ -87,7 +87,7 @@ status (argc, argv)
 	 contents themselves will not be examined.  */
       send_files (argc, argv, local, 0);
 
-      send_to_server ("status\n", 0);
+      send_to_server ("status\012", 0);
       err = get_responses_and_close ();
 
       return err;

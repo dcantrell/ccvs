@@ -205,7 +205,7 @@ patch (argc, argv)
 		send_arg (argv[i]);
 	}
 
-	send_to_server ("rdiff\n", 0);
+	send_to_server ("rdiff\012", 0);
         return get_responses_and_close ();
     }
 #endif

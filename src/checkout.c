@@ -326,7 +326,7 @@ checkout (argc, argv)
 	  }
 
 	send_to_server (strcmp (command_name, "export") == 0 ?
-                        "export\n" : "co\n",
+                        "export\012" : "co\012",
                         0);
 
 	return get_responses_and_close ();

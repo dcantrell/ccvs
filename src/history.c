@@ -579,7 +579,7 @@ history (argc, argv)
 	    option_with_arg ("-x", rec_types);
 	option_with_arg ("-z", tz_name);
 
-	send_to_server ("history\n", 0);
+	send_to_server ("history\012", 0);
         return get_responses_and_close ();
     }
 #endif

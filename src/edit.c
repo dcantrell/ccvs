@@ -96,7 +96,7 @@ watch_onoff (argc, argv)
 	   whether it works.  So send the files --
 	   it's slower but it works.  */
 	send_files (argc, argv, local, 0);
-	send_to_server (turning_on ? "watch-on\n" : "watch-off\n", 0);
+	send_to_server (turning_on ? "watch-on\012" : "watch-off\012", 0);
 	return get_responses_and_close ();
     }
 #endif /* CLIENT_SUPPORT */
@@ -259,7 +259,7 @@ send_notifications (argc, argv, local)
 				argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
 				0, 0);
 
-	send_to_server ("noop\n", 0);
+	send_to_server ("noop\012", 0);
 	if (strcmp (command_name, "release") == 0)
 	    err += get_server_responses ();
 	else
@@ -951,7 +951,7 @@ editors (argc, argv)
 	   whether it works.  So send the files --
 	   it's slower but it works.  */
 	send_files (argc, argv, local, 0);
-	send_to_server ("editors\n", 0);
+	send_to_server ("editors\012", 0);
 	return get_responses_and_close ();
     }
 #endif /* CLIENT_SUPPORT */
