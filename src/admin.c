@@ -550,9 +550,7 @@ admin_fileproc (callerdat, finfo)
     vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
 
     version = vers->vn_user;
-    if (version == NULL)
-	goto exitfunc;
-    else if (strcmp (version, "0") == 0)
+    if (version != NULL && strcmp (version, "0") == 0)
     {
 	error (0, 0, "cannot admin newly added file `%s'", finfo->file);
 	goto exitfunc;
