@@ -1,3 +1,8 @@
+2001-08-09  Derek Price  <dprice@collab.net>
+
+	* system.h: Source some header files when present to eliminate warning
+	messages under Windows.
+
 2001-08-07  Derek Price  <dprice@collab.net>
 
 	* build_diff.com: Turn on verify to get a better trace of the DCL.
