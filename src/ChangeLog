@@ -1,3 +1,8 @@
+Sat Jul 26 11:34:51 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (join3): New tests, test a new branch topology and
+	greatest common ancestor.
+
 Fri Jul 25 09:51:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (serve_directory): Repository must start with

@@ -3092,6 +3092,23 @@ rev 2 of file 2
 	  # See also binfile2, which does similar things with binary files.
 	  # See also join2, which tests joining (and update -A) on only
 	  # a single file, rather than a directory.
+	  # See also join3, which tests some cases involving the greatest
+	  # common ancestor.  Here is a list of tests according to branch
+	  # topology:
+	  #
+	  # --->bp---->trunk          too many to mention
+	  #     \----->branch
+	  #
+	  #     /----->branch1
+	  # --->bp---->trunk          multibranch
+	  #     \----->branch2
+	  #
+	  # --->bp1----->bp2---->trunk   join3
+	  #     \->br1   \->br2
+	  #
+	  # --->bp1----->trunk
+	  #     \----bp2---->branch                branches
+	  #          \------>branch-of-branch
 
 	  # We check merging changes from T1 to T2 into the main line.
 	  # Here are the interesting cases I can think of:
@@ -3543,6 +3560,100 @@ File: bradd            	Status: Locally Added
 ${TESTDIR}/cvsroot/first-dir/bradd,v  <--  bradd
 new revision: 1\.2; previous revision: 1\.1
 done"
+
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	join3)
+	  # See "join" for a list of other joining/branching tests.
+	  # First the usual setup; create a directory first-dir, a file
+	  # first-dir/file1, and a branch br1.
+	  mkdir 1; cd 1
+	  dotest join3-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest join3-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  echo 'initial contents of file1' >file1
+	  dotest join3-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest join3-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  dotest join3-5 "${testcvs} -q tag -b br1" "T file1"
+	  dotest join3-6 "${testcvs} -q update -r br1" ""
+	  echo 'br1:line1' >>file1
+	  dotest join3-7 "${testcvs} -q ci -m modify" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+
+	  # Now back to the trunk for another revision and another branch.
+	  dotest join3-8 "${testcvs} -q update -A" "[UP] file1"
+	  echo 'trunk:line1' >>file1
+	  dotest join3-9 "${testcvs} -q ci -m modify" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  dotest join3-10 "${testcvs} -q tag -b br2" "T file1"
+
+	  # Before we actually have any revision on br2, let's try a join
+	  dotest join3-11 "${testcvs} -q update -r br1" "[UP] file1"
+	  dotest join3-12 "${testcvs} -q update -j br2" \
+"RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+retrieving revision 1\.1
+retrieving revision 1\.2
+Merging differences between 1\.1 and 1\.2 into file1
+rcsmerge: warning: conflicts during merge"
+	  dotest join3-13 "cat file1" \
+"initial contents of file1
+<<<<<<< file1
+br1:line1
+=======
+trunk:line1
+>>>>>>> 1\.2"
+	  rm file1
+
+	  # OK, we'll try the same thing with a revision on br2.
+	  dotest join3-14 "${testcvs} -q update -r br2" \
+"${PROG} [a-z]*: warning: file1 was lost
+U file1" "U file1"
+	  echo 'br2:line1' >>file1
+	  dotest join3-15 "${testcvs} -q ci -m modify" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2\.2\.1; previous revision: 1\.2
+done"
+
+	  # OK, now we can join br2 to br1
+	  dotest join3-16 "${testcvs} -q update -r br1" "[UP] file1"
+	  # It may seem odd, to merge a higher branch into a lower
+	  # branch, but in fact CVS defines the ancestor as 1.1
+	  # and so it merges both the 1.1->1.2 and 1.2->1.2.2.1 changes.
+	  # This seems like a reasonably plausible behavior.
+	  dotest join3-17 "${testcvs} -q update -j br2" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+retrieving revision 1\.1
+retrieving revision 1\.2\.2\.1
+Merging differences between 1\.1 and 1\.2\.2\.1 into file1
+rcsmerge: warning: conflicts during merge"
+	  dotest join3-18 "cat file1" \
+"initial contents of file1
+<<<<<<< file1
+br1:line1
+=======
+trunk:line1
+br2:line1
+>>>>>>> 1\.2\.2\.1"
 
 	  cd ../..
 	  rm -r 1
