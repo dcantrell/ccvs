@@ -873,12 +873,13 @@ RCS_getversion (rcs, tag, date, force_tag_match)
  * If the matched tag is a branch tag, find the head of the branch.
  */
 char *
-RCS_gettag (rcs, tag, force_tag_match)
+RCS_gettag (rcs, symtag, force_tag_match)
     RCSNode *rcs;
-    char *tag;
+    char *symtag;
     int force_tag_match;
 {
     Node *p;
+    char *tag = symtag;
 
     /* make sure we have something to look at... */
     if (rcs == NULL)
@@ -982,7 +983,12 @@ RCS_gettag (rcs, tag, force_tag_match)
 	else
 	    p = findnode (rcs->versions, tag);
 	if (p != NULL)
-	    return (xstrdup (tag));
+	    /*
+	     * we have found a numeric revision for the revision tag.  To
+	     * support the RCS keyword Name, return the supplied tag
+	     * (which might be symbolic).
+	     */
+	    return (xstrdup (symtag));
 	else
 	{
 	    /* The revision wasn't there, so return the head or NULL */

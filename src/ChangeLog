@@ -1,3 +1,7 @@
+Wed Oct 11 12:02:48 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* rcs.c (RCS_gettag): support RCS keyword Name
+
 Tue Oct 10 19:11:16 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * options.h.in (CVS_LOGIN): discuss, but leave commented out.
