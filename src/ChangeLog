@@ -1,5 +1,9 @@
 Fri May 16 13:14:30 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* subr.c (free_names): Update documentation to reflect fact that
+	free_names is now called to free vectors allocated by expand_wild
+	as well	as by line2argv.
+
 	* main.c (main): Use "xstrdup (foo)" not "xstrdup(foo)" as
 	specified in HACKING.
 
