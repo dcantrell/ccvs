@@ -1,3 +1,7 @@
+1998-12-12  Jim Kingdon, and Derek R. Price of Stortek.
+
+	* sanity.sh (multiroot): Change + to ${PLUS}.
+
 1998-12-12  Jim Kingdon, and Gary Young of Motorola
 
 	* sanity.sh (admin): In tests admin-13, admin-25, and admin-29,

@@ -17142,7 +17142,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
@@ -17180,7 +17180,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
@@ -17218,7 +17218,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
@@ -17256,7 +17256,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
@@ -17294,7 +17294,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
@@ -17332,7 +17332,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
@@ -17371,7 +17371,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
@@ -17409,7 +17409,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
@@ -17448,7 +17448,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
@@ -17488,7 +17488,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
@@ -17526,7 +17526,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
@@ -17564,7 +17564,7 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.2
-date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 actually
 ----------------------------
 revision 1\.1
