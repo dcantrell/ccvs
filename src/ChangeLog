@@ -1,5 +1,11 @@
 2004-08-18  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanity.sh (writeproxy): Use CVS_PID instead of PPID as the
+	former environment variable is set by cvs and the latter is
+	NOT set by all bourne shells.
+
+2004-08-18  Mark D. Baushke  <mdb@cvshome.org>
+
 	* log-buffer.c (log_buffer_rewind): Avoid FreeBSD compilation
 	error for dereferencing a void * pointer tmp as well as using it
 	as a buffer pointer under some conditions.
