@@ -838,14 +838,14 @@ directory_cmp ()
 	DIR_2=$2
 
 	cd $DIR_1
-	find . -print | fgrep -v /CVS | sort > /tmp/dc$$d1
+	find . -print | fgrep -v /CVS | sort > $TESTDIR/dc$$d1
 
 	# go back where we were to avoid symlink hell...
 	cd $OLDPWD
 	cd $DIR_2
-	find . -print | fgrep -v /CVS | sort > /tmp/dc$$d2
+	find . -print | fgrep -v /CVS | sort > $TESTDIR/dc$$d2
 
-	if diff /tmp/dc$$d1 /tmp/dc$$d2 >/dev/null 2>&1
+	if diff $TESTDIR/dc$$d1 $TESTDIR/dc$$d2 >/dev/null 2>&1
 	then
 		:
 	else
@@ -860,8 +860,8 @@ directory_cmp ()
 				return 1
 			fi
 		fi
-	done < /tmp/dc$$d1
-	rm -f /tmp/dc$$*
+	done < $TESTDIR/dc$$d1
+	rm -f $TESTDIR/dc$$*
 	return 0
 }
 
