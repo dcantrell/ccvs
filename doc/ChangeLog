@@ -1,3 +1,8 @@
+2000-01-18  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo: Minor editorial changes from Ken Foskey
+	<waratah@zip.com.au>.
+
 2000-01-11  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo: Add index entries for "Compression" and "Gzip".

@@ -13166,8 +13166,9 @@ other than CVS.  If not, it indicates a CVS bug
 This message will be followed by a usage message for
 @sc{rcs}.  It means that you have an old version of
 @sc{rcs} (probably supplied with your operating
-system).  CVS only works with @sc{rcs} version 5 and
-later.
+system), as well as an old version of @sc{cvs}.
+@sc{cvs} 1.9.18 and earlier only work with @sc{rcs} version 5 and
+later; current versions of @sc{cvs} do not run @sc{rcs} programs.
 @c For more information on installing @sc{cvs}, see
 @c (FIXME: where?  it depends on whether you are
 @c getting binaries or sources or what).
@@ -13218,9 +13219,9 @@ update}.  So before proceeding with your @code{cvs
 commit} you need to @code{cvs update}.  CVS will merge
 the changes that you made and the changes that the
 other person made.  If it does not detect any conflicts
-it will report @samp{M cacErrCodes.h} and you are ready
+it will report @samp{M @var{file}} and you are ready
 to @code{cvs commit}.  If it detects conflicts it will
-print a message saying so, will report @samp{C cacErrCodes.h},
+print a message saying so, will report @samp{C @var{file}},
 and you need to manually resolve the
 conflict.  For more details on this process see
 @ref{Conflicts example}.
