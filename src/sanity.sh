@@ -73,7 +73,7 @@ PROG=`basename ${testcvs}`
 
 # You may need to add '-b /path/to/rcsbin_dflt' if you didn't want to
 # set RCSBIN_DFLT in options.h...
-testcvs="${testcvs} -b /local/bin -D /local/gnu/bin/diff"
+#testcvs="${testcvs} -b /local/bin -D /local/gnu/bin/diff"
 
 # FIXME: try things (what things? checkins?) without -m.
 #
