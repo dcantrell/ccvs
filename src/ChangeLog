@@ -1,3 +1,9 @@
+Sat Aug 19 22:05:46 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* server.c (do_cvs_command): Clear error_use_protocol in the
+	child.
+	(server): Set error_use_protocol.
+
 Sun Aug 13 15:33:37 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (do_cvs_command): Don't select on exceptions.

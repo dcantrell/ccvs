@@ -1,3 +1,12 @@
+Sat Aug 19 22:00:51 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* error.c: Don't #define CVS_SUPPORT here.  config.h takes care of
+	that for us.
+	[CVS_SUPPORT] (error_use_protocol): New variable, with apology.
+	(error): If error_use_protocol is set, report errors using the
+	client/server protocol.
+	* error.h [CVS_SUPPORT]: Extern decl for error_use_protocol.
+
 Fri Aug  4 00:01:24 1995  Jim Meyering  (meyering@comco.com)
 
 	* xgetwd.c: Don't declare free.  A K&R style declaration gets
