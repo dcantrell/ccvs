@@ -1,5 +1,12 @@
 Mon Feb 19 09:00:29 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	This fixes a bug whereby old default attributes would get
+	clobbered instead of added to on "cvs watch add".
+	* hash.c (findnode): Don't check for key == NULL; let the
+	assertion in hashp take care of it.
+	* fileattr.h, fileattr.c (fileattr_get): If filename is NULL,
+	return default attributes.
+
 	* client.c (send_repository): Fix indentation.
 
 Mon Feb 19 01:10:01 1996  Karl Fogel  <kfogel@floss.red-bean.com>

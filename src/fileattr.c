@@ -149,12 +149,18 @@ fileattr_get (filename, attrname)
 	   an error message.  */
 	return NULL;
 
-    node = findnode (attrlist, filename);
-    if (node == NULL)
-	/* A file not mentioned has no attributes.  */
-	return NULL;
-    p = node->data;
-    while (1) {
+    if (filename == NULL)
+	p = fileattr_default_attrs;
+    else
+    {
+	node = findnode (attrlist, filename);
+	if (node == NULL)
+	    /* A file not mentioned has no attributes.  */
+	    return NULL;
+	p = node->data;
+    }
+    while (1)
+    {
 	if (strncmp (attrname, p, attrname_len) == 0
 	    && p[attrname_len] == '=')
 	{
