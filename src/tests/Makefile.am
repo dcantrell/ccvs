@@ -16,7 +16,8 @@ TESTSUITE = $(srcdir)/suite
 TESTSUITE_AT = \
 	suite.at \
 	init.at \
-	version.at
+	version.at \
+	basic.at
 
 EXTRA_DIST = \
 	$(TESTSUITE_AT) \

@@ -1,3 +1,21 @@
+2003-11-06  Derek R. Price  <derek@ximbiot.com>
+
+	Move more tests into the autotest suite.
+
+	* Makefile.am (TESTSUITE_AT): Add basic.at.
+	* Makefile.in: Regenerated.
+
+	* atspecific.at (AT_CVS_BANNER, AT_CVS_REMOTE, AT_CVS_LOCAL,
+	AT_CVS_INCLUDE): Expand and tidy comments.
+	(AT_CVS_SETUP): Misc reformatiing.  Set $SPROG.
+	(AT_CVS_CHECK_NORMALIZED, AT_CVS_CHECK_ANNOTATE, AS_CVS_FIND_TOOL):
+	New macros.
+	* basic.at: New file.
+
+	* suite.at: Add and tidy comments.  Set default value of $server from
+	$CPROG.  Include basic.at.
+	* suite: Regenerated.
+
 2003-08-19  Derek R. Price  <derek@ximbiot.com>
 
 	* README: Regenerating test suite no longer requires a patch to the
