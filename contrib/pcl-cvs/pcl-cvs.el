@@ -228,7 +228,7 @@ the process when a cvs update process is running.")
 ;;;			 slash.
 ;;;  file-name		 The file name.
 ;;;  base-revision       The revision that the working file was based on.
-;;;                      Onlyy valid for MERGED and CONFLICT files.
+;;;                      Only valid for MERGED and CONFLICT files.
 ;;;  cvs-diff-buffer	 A buffer that contains a 'cvs diff file'.
 ;;;  backup-diff-buffer	 A buffer that contains a 'diff file backup-file'.
 ;;;  full-log		 The output from cvs, unparsed.
@@ -1120,7 +1120,7 @@ ems during merge$")
 
 
 (defun cvs-parse-stdout (stdout-buffer stderr-buffer head root-dir)
-  "Parse the output from CVS that is written to stderr.
+  "Parse the output from CVS that is written to stdout.
 Args: STDOUT-BUFFER STDERR-BUFFER HEAD ROOT-DIR
 STDOUT-BUFFER is the buffer that holds the output to parse.
 STDERR-BUFFER holds the output that cvs sent to stderr. It is only
@@ -1140,11 +1140,11 @@ This function doesn't return anything particular."
        ;; A: The file is "cvs add"ed, but not "cvs ci"ed.
        ;; R: The file is "cvs remove"ed, but not "cvs ci"ed.
        ;; C: Conflict
-       ;; U: The file is copied from the repository.
+       ;; U, P: The file is copied from the repository.
        ;; ?: Unknown file.
 
 
-       ((looking-at "\\([MARCU?]\\) \\(.*\\)$")
+       ((looking-at "\\([MARCUP?]\\) \\(.*\\)$")
 	(let*
 	    ((c         (char-after (match-beginning 1)))
 	     (full-path
@@ -1156,12 +1156,16 @@ This function doesn't return anything particular."
 			      ((eq c ?R) 'REMOVED)
 			      ((eq c ?C) 'CONFLICT)
 			      ((eq c ?U) 'UPDATED)
+			      ;; generated when Cygnus remote CVS
+			      ;; sends a patch instead of the full
+			      ;; file:
+			      ((eq c ?P) 'UPDATED)
 			      ((eq c ??) 'UNKNOWN))
 			(substring (file-name-directory full-path) 0 -1)
 			(file-name-nondirectory full-path)
 			(buffer-substring (match-beginning 0) (match-end 0)))))
 	  ;; Updated files require no further action.
-	  (if (eq c ?U)
+	  (if (memq c '(?U ?P))
 	      (cvs-set-fileinfo->handled fileinfo t))
 
 	  ;; Link this last on the list.
