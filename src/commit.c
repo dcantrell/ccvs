@@ -794,6 +794,12 @@ check_fileproc (callerdat, finfo)
 
     size_t cvsroot_len = strlen (CVSroot_directory);
 
+    if (!finfo->repository)
+    {
+	error (0, 0, "nothing known about `%s'", finfo->fullname);
+	return (1);
+    }
+
     if (strncmp (finfo->repository, CVSroot_directory, cvsroot_len) == 0
 	&& ISDIRSEP (finfo->repository[cvsroot_len])
 	&& strncmp (finfo->repository + cvsroot_len + 1,
