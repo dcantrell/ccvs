@@ -1,3 +1,12 @@
+1998-09-10  Jim Kingdon
+
+	Check in Paul Eggert <eggert@twinsun.com>'s submission of
+	1998-08-15.  I also ran "cvs admin -ko" on this file so that his
+	version number would be intact (not an ideal solution, because
+	people will import it into other repositories, but I don't feel
+	like hacking the master version).
+	* rcs2log.sh: Sync with master version at gnu.org.
+
 1998-08-15  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Don't mention listener, since it was removed a while
