@@ -1,3 +1,9 @@
+Thu Jan 11 12:04:42 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* main.c: remove CVS_NOADMIN.
+
+	* options.h.in: remove CVS_NOADMIN
+
 Wed Jan 10 01:11:23 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (serve_notify): Cast return value from malloc.
