@@ -31,6 +31,8 @@ Cambridge, MA 02139, USA.  */
 #include <varargs.h>
 #endif
 
+extern int abs ();
+
 #ifdef TEST
 int global_total_width;
 #endif
