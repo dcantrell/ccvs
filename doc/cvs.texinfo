@@ -1284,7 +1284,7 @@ anklet.grunge.com  mozart
 Then test that @code{rsh} is working with
 
 @example
-rsh -l bach chainsaw.brickyard.com echo $PATH
+rsh -l bach chainsaw.brickyard.com 'echo $PATH'
 @end example
 
 @cindex CVS_SERVER
