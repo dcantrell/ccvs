@@ -3760,9 +3760,11 @@ recv_line (sock, resultp)
     while (1)
     {
 	char ch;
-	if (recv (sock, &ch, 1, 0) < 0)
+	int n;
+	n = recv (sock, &ch, 1, 0);
+	if (n <= 0)
 	    error (1, 0, "recv() from server %s: %s", CVSroot_hostname,
-		   SOCK_STRERROR (SOCK_ERRNO));
+		   n == 0 ? "EOF" : SOCK_STRERROR (SOCK_ERRNO));
 	c = ch;
 
 	if (c == EOF)
