@@ -114,6 +114,10 @@
 	".\xsize.h"\
 	
 
+.\readlink.c : \
+	"..\windows-NT\config.h"\
+	
+
 .\realloc.c : \
 	"..\windows-NT\config.h"\
 	

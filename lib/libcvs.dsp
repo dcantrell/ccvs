@@ -153,6 +153,10 @@ SOURCE=".\printf-parse.c"
 # End Source File
 # Begin Source File
 
+SOURCE=.\readlink.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\realloc.c
 # End Source File
 # Begin Source File

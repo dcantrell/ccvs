@@ -1,3 +1,9 @@
+2004-11-05  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libcvs.dsp: Add "readlink.c" to project.
+	* libcvs.dep: Regenerate for "libcvs.dsp" change.
+	* libcvs.mak: Regenerate for "libcvs.dsp" change.
+
 2004-11-05  Mark D. Baushke  <mdb@cvshome.org>
 
 	* readlink.c: Update from GNULIB.
