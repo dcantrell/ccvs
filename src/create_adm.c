@@ -89,8 +89,7 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
 	    error (1, errno, "cannot open %s/%s", update_dir, CVSADM_REP);
     }
     reposcopy = xstrdup (repository);
-    cp = reposcopy;
-    Sanitize_Repository_Name (cp);
+    Sanitize_Repository_Name (reposcopy);
 
     /* The top level of the repository is a special case -- we need to
        write it with an extra dot at the end.  This trailing `.' stuff
@@ -98,11 +97,13 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
        spend the time making sure all of the code can handle it if we
        don't do it. */
 
-    if (strcmp (cp, CVSroot_directory) == 0)
+    if (strcmp (reposcopy, CVSroot_directory) == 0)
     {
-	cp = xrealloc (cp, strlen (cp) + 2);
-	strcat (cp, "/.");
+	reposcopy = xrealloc (reposcopy, strlen (reposcopy) + 3);
+	strcat (reposcopy, "/.");
     }
+
+    cp = reposcopy;
 
 #ifdef RELATIVE_REPOS
     /*
