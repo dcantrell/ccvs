@@ -445,7 +445,7 @@ pretag_proc(repository, filter)
         }
         if (!isfile(s))
         {
-            error (0, errno, "cannot find pre-commit filter '%s'", s);
+            error (0, errno, "cannot find pre-tag filter '%s'", s);
             free(s);
             return (1);
         }
