@@ -1323,14 +1323,19 @@ serve_is_modified (arg)
     {
 	/* We got Is-modified but no Entry.  Add a dummy entry.
 	   The "D" timestamp is what makes it a dummy.  */
-	struct an_entry *p;
 	p = (struct an_entry *) malloc (sizeof (struct an_entry));
 	if (p == NULL)
 	{
 	    pending_error = ENOMEM;
 	    return;
 	}
-	p->entry = xmalloc (strlen (arg) + 80);
+	p->entry = malloc (strlen (arg) + 80);
+	if (p->entry == NULL)
+	{
+	    pending_error = ENOMEM;
+	    free (p);
+	    return;
+	}
 	strcpy (p->entry, "/");
 	strcat (p->entry, arg);
 	strcat (p->entry, "//D/");
