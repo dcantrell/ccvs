@@ -1,3 +1,11 @@
+1998-10-07  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* diff.c (diff): Set variables to NULL at the start, and free
+	memory at the end.
+	* sanity.sh (multiroot2): Add tests for this (before the fix,
+	multiroot2-12 would abort with "no more than two revisions/dates
+	can be specified").
+
 1998-10-06  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (installcheck check): Remove references to RCSBIN;
