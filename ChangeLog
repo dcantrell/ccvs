@@ -1,7 +1,8 @@
 1998-08-14  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
-	* INSTALL: Add entries for NetBSD/mac68k, alpha-dec-osf4.0.
-	Update SunOS and linux entries.
+	* INSTALL: Add NetBSD/mac68k (reported by Hauke Fath of melog.de).
+	Add alpha-dec-osf4.0 and update SunOS and linux entries (reported
+	by Jim Kingdon and Noel Cragg).
 
 1998-08-06  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
