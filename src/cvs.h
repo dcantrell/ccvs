@@ -546,7 +546,7 @@ void make_directories PROTO((const char *name));
 void make_directory PROTO((const char *name));
 extern int mkdir_if_needed PROTO ((char *name));
 void rename_file PROTO((const char *from, const char *to));
-char *backup_file PROTO((const char *file, char *suffix));
+char *backup_file PROTO((const char *file, const char *suffix));
 /* Expand wildcards in each element of (ARGC,ARGV).  This is according to the
    files which exist in the current directory, and accordingly to OS-specific
    conventions regarding wildcard syntax.  It might be desirable to change the
