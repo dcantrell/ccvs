@@ -1,3 +1,10 @@
+Wed May  1 15:43:21 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcscmds.c (RCS_settag): Instead of reserving all tag names
+	containing only uppercase letters, reserve only BASE and HEAD.
+	* sanity.sh (mflag): Revert 26 Mar change; use all-uppercase tag
+	name again.
+
 Wed May  1 15:15:11 1996  Tom Jarmolowski  <tjj@booklink.com>
 
 	* rcs.c (linevector_add): Move increment of i out of larger
