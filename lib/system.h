@@ -11,22 +11,38 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.  */
 
-/* Begin the default set of autoconf includes */
+/***
+ *** Begin the default set of autoconf includes.
+ ***/
+
+/* Headers assumed for C89 freestanding compilers.  See HACKING for more.  */
+#include <limits.h>
+#include <stdarg.h>
+#include <stddef.h>
+
+/* C89 hosted headers assumed since they were included in UNIX version 7.
+ * See HACKING for more.
+ */
+#include <assert.h>
+#include <ctype.h>
+#include <errno.h>
+#include <signal.h>
 #include <stdio.h>
+
+/* C89 hosted headers we _think_ GCC supplies even on freestanding systems.
+ * If we find any systems which do not have them, a replacement header should
+ * be discussed with the GNULIB folks.
+ * See HACKING for more.
+ */
+#include <stdlib.h>
+#include <string.h>
+
 #if HAVE_SYS_TYPES_H
 # include <sys/types.h>
 #endif /* HAVE_SYS_TYPES_H */
 #if HAVE_SYS_STAT_H
 # include <sys/stat.h>
 #endif /* HAVE_SYS_STAT_H */
-#include <stddef.h>
-#if STDC_HEADERS
-# include <stdlib.h>
-#else /* ! STDC_HEADERS */
-# if HAVE_STDLIB_H
-#   include <stdlib.h>
-# endif /* HAVE_STDLIB_H */
-#endif /* STDC_HEADERS */
 #if HAVE_STRING_H
 # if !STDC_HEADERS && HAVE_MEMORY_H
 #  include <memory.h>
@@ -49,9 +65,7 @@
 /* End the default set of autoconf includes */
 
 /* Assume these headers. */
-#include <ctype.h>
 #include <pwd.h>
-#include <signal.h>
 
 /* This include enables the use of the *_unlocked IO functions from glibc. */
 #include "unlocked-io.h"
@@ -198,7 +212,6 @@
 #endif /* !def S_IRUSR */
 #endif /* NEED_DECOY_PERMISSIONS */
 
-#include <limits.h>
 #if defined(POSIX) || defined(HAVE_UNISTD_H)
 # include <unistd.h>
 #else
@@ -237,19 +250,13 @@ int utime ();
 #  endif
 #endif
 
-#ifdef HAVE_ERRNO_H
-# include <errno.h>
-#else
-# ifndef errno
-extern int errno;
-# endif /* !errno */
-#endif /* HAVE_ERRNO_H */
-
-/* Not all systems set the same error code on a non-existent-file
-   error.  This tries to ask the question somewhat portably.
-   On systems that don't have ENOTEXIST, this should behave just like
-   x == ENOENT.  "x" is probably errno, of course. */
-
+/* errno.h variations:
+ *
+ * Not all systems set the same error code on a non-existent-file
+ * error.  This tries to ask the question somewhat portably.
+ * On systems that don't have ENOTEXIST, this should behave just like
+ * x == ENOENT.  "x" is probably errno, of course.
+ */
 #ifdef ENOTEXIST
 #  ifdef EOS2ERR
 #    define existence_error(x) \
