@@ -15,6 +15,8 @@
 #include <winsock.h>
 #include <stdlib.h>
 
+#include "cvs.h"
+
 void
 init_winsock ()
 {
@@ -32,6 +34,7 @@ wnt_cleanup (void)
 {
     if (WSACleanup ())
     {
+#ifdef SERVER_ACTIVE
 	if (server_active || error_use_protocol)
 	    /* FIXME: how are we supposed to report errors?  As of now
 	       (Sep 98), error() can in turn call us (if it is out of
@@ -39,6 +42,7 @@ wnt_cleanup (void)
 	       stuff.  */
 	    ;
 	else
+#endif
 	    fprintf (stderr, "cvs: cannot WSACleanup: %s\n",
 		     sock_strerror (WSAGetLastError ()));
     }

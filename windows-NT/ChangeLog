@@ -1,4 +1,9 @@
-1998-09-02  Jim Kingdon  <kingdon@harvey.cyclic.com>
+1998-10-03  Jim Kingdon
+
+	* win32.c: Include cvs.h and only check server_active if
+	SERVER_SUPPORT is defined.
+
+1998-10-02  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	(This was reported by someone else but I don't remember who).
 	* config.h: Define SYSTEM_CLEANUP.
