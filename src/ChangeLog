@@ -1,5 +1,10 @@
 2004-07-13  Derek Price  <derek@ximbiot.com>
 
+	* server.c (prepost_proxy_proc): Add the CVSROOT string for the primary
+	server, as documented.
+
+2004-07-13  Derek Price  <derek@ximbiot.com>
+
 	* tag.c (tag_filesdoneproc): Don't track posttag errors.
 	(cvstag): Move addition of successful tags to val-tags to...
 	(tag_fileproc): ...here and...

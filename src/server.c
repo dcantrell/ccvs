@@ -2343,6 +2343,7 @@ prepost_proxy_proc (const char *repository, const char *filter, void *closure)
 	                      "c", "s", cvs_cmd_name,
 	                      "p", "s", ".",
 	                      "r", "s", current_parsed_root->directory,
+	                      "P", "s", PrimaryServer->original,
 	                      (char *)NULL
 	                     );
 
