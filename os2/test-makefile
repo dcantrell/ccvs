@@ -7,7 +7,9 @@ LIB = s:\ibmcpp\lib;s:\toolkt21\os2lib;
 CINC = -Is:/ibmcpp/include -Is:/toolkt21/c/os2h
 CFLAGS = -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm ${CINC}
 CFLAGS += -DIBM_CPP
-CFLAGS += -I. -I../lib
+
+# "-I../os2" below ought to be equivalent to "-I."
+CFLAGS += -I../os2 -I../lib -I../src
 
 # TCP/IP stuff
 TCPIPLIB = s:\ibmtcpip\lib\tcp32dll.lib	s:\ibmtcpip\lib\so32dll.lib porttcp.obj
