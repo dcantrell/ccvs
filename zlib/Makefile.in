@@ -59,18 +59,35 @@ OBJA =
 
 TEST_OBJS = example.o minigzip.o
 
-DISTFILES = README FAQ INDEX ChangeLog configure Makefile.* *.[ch] *.mms \
-  algorithm.txt zlib.3 zlib.html \
-  msdos/Make*[a-z0-9] msdos/zlib.def msdos/zlib.rc \
-  nt/Make*[a-z0-9] nt/zlib.dnt amiga/Make*.??? os2/M*.os2 os2/zlib.def \
-  contrib/RE*.contrib contrib/*.txt contrib/asm386/*.asm contrib/asm386/*.c \
-  contrib/asm386/*.bat contrib/asm386/zlibvc.d?? contrib/asm[56]86/*.?86 \
-  contrib/asm[56]86/*.S contrib/iostream/*.cpp \
-  contrib/iostream/*.h  contrib/iostream2/*.h contrib/iostream2/*.cpp \
-  contrib/untgz/Makefile contrib/untgz/*.c contrib/untgz/*.w32 \
-  contrib/minizip/[CM]*[pe] contrib/minizip/*.[ch] contrib/minizip/*.[td]?? \
-  contrib/delphi*/*.??? \
-  Make_vms.com libz.dep libz.dsp libz.mak .cvsignore
+DISTFILES = README FAQ INDEX ChangeLog configure Makefile.* *.[ch] \
+  algorithm.txt zlib.3 \
+  amiga/[a-z0-9ABD-Z]* \
+  as400/[a-z0-9ABD-Z]* \
+  msdos/[a-z0-9ABD-Z]* \
+  qnx/package.qpg \
+  win32/[a-z0-9ABD-Z]* \
+  contrib/RE*.contrib contrib/*.txt \
+  contrib/ada/[a-z0-9]* \
+  contrib/asm586/match.S contrib/asm586/README.586 \
+  contrib/asm686/match.S contrib/asm686/README.686 \
+  contrib/blast/[a-z0-9ABD-Z]* \
+  contrib/delphi/[a-z0-9ABD-Z]* \
+  contrib/gzappend/[a-z0-9ABD-Z]* \
+  contrib/infback9/[a-z0-9ABD-Z]* \
+  contrib/iostream/[a-z0-9ABD-Z]* \
+  contrib/iostream2/[a-z0-9ABD-Z]* \
+  contrib/iostream3/[a-z0-9ABD-Z]* \
+  contrib/masm686/[a-z0-9ABD-Z]* \
+  contrib/masmx86/[a-z0-9ABD-Z]* \
+  contrib/minizip/[a-z0-9ABD-Z]* contrib/minizip/Ch* \
+  contrib/pascal/[a-z0-9ABD-Z]* \
+  contrib/puff/[a-z0-9ABD-Z]* \
+  contrib/testzlib/[a-z0-9ABD-Z]* \
+  contrib/untgz/[a-z0-9ABD-Z]* \
+  contrib/vstudio/readme.txt \
+  contrib/vstudio/vc7/[a-z0-9ABD-Z]* \
+  old/[a-np-z0-9ABD-Z]* old/os2/[a-z0-9ABD-Z]* \
+  libz.dep libz.dsp libz.mak .cvsignore
 
 # for CVS's distdir & Makefile targets
 subdir = zlib
