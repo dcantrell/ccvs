@@ -1,5 +1,11 @@
 2000-02-10  Larry Jones  <larry.jones@sdrc.com>
 
+	* edit.c (edit): Check for invalid characters in hostname and CurDir.
+	(Reported by "Andrew S. Townley" <atownley@informix.com>.)
+	* sanity.sh (devcom2): New tests for above.
+
+2000-02-10  Larry Jones  <larry.jones@sdrc.com>
+
 	* cvs.h: Always #include "server.h" to prevent compile errors when
 	neither CLIENT_SUPPORT nor SERVER_SUPPORT is defined.
 	(Reported by "Crow, Ian" <ian.crow@linklaters.com>.)
