@@ -288,7 +288,7 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 		    char *branch = NULL;
 
 		    if (RCS_nodeisbranch (finfo->rcs, edata->tag))
-			branch = RCS_whatbranch(finfo->rcs, edata->tag);
+			branch = RCS_whatbranch (finfo->rcs, edata->tag);
 
 		    cvs_output ("   Sticky Tag:\t\t", 0);
 		    cvs_output (edata->tag, 0);
@@ -371,7 +371,7 @@ tag_list_proc (Node *p, void *closure)
     char *buf;
 
     if (RCS_nodeisbranch (xrcsnode, p->key))
-	branch = RCS_whatbranch(xrcsnode, p->key) ;
+	branch = RCS_whatbranch (xrcsnode, p->key);
 
     buf = Xasprintf ("\t%-25s\t(%s: %s)\n", p->key,
 		     branch ? "branch" : "revision",

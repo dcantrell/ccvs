@@ -1,5 +1,27 @@
 2005-03-19  Derek Price  <derek@ximbiot.com>
 
+	Begin cleanup.  tag-ext test still broken.
+	* admin.c (admin_fileproc): Remove obfuscations.
+	* rcs.c (RCS_tag2rev): Remove obfuscations.  Gratuitous reformatting.
+	(is_symbolic): New function.
+	(RCS_gettag, RCS_nodeisbranch): s/isrevnumonly/!is_symbolic/.
+	(RCS_whatbranch): s/rev/tag/ where appropriate.  Improve comments.
+	Assert assumptions.  Gratuitous reformatting.  Process symbols first.
+	(RCS_branch_head): Remove obfuscations.  Gratuitous reformatting.
+	Assert assumptions.  Process symbols first.
+	(truncate_revnum_in_place): Declare inline.
+	(RCS_head): Improve comments.  Perform error checking.
+	(RCS_getprevious): Remove obfuscations.
+	(translate_tag): Improve comments.  Simplify.  Return branches when
+	input is a branch name.
+	(truncate_revnum): Simplify.
+	* status.c: Gratuitous reformatting.
+	* subr.c (isrevnumonly): Remove this function.
+	* subr.h (isrevnumonly): Remove this proto.
+	* sanity.sh (tag-ext): Cleanup.
+
+2005-03-19  Derek Price  <derek@ximbiot.com>
+
 	* admin.c, subr.h, update.c, rcs.h, subr.c, import.c, sanity.sh,
 	cvs.h, vers_ts.c, tag.c, commit.c, rcs.c: Tag extensions added
 	(Patch from Frank Hemer <frank@hemer.org>.)

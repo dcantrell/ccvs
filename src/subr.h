@@ -26,7 +26,6 @@ int pathname_levels (const char *path);
 void free_names (int *pargc, char *argv[]);
 void line2argv (int *pargc, char ***argv, char *line, char *sepchars);
 int numdots (const char *s);
-int isrevnumonly (const char *s);
 int compare_revnums (const char *, const char *);
 char *increment_revnum (const char *);
 char *getcaller (void);
