@@ -654,8 +654,8 @@ AC_ARG_WITH(
   AC_HELP_STRING(
     [--with-rsh],
     [The default remote shell CVS will use for :ext: transport
-     (default rsh)]), ,
-  [with_rsh="rsh ssh"])
+     (default ssh)]), ,
+  [with_rsh="ssh rsh"])
 
 if test no = "$with_rsh"; then
   AC_MSG_WARN([Failed to find usable remote shell. Using 'rsh'.])
