@@ -147,36 +147,6 @@
   
           Thoughts?
 
-
-* We don't understand the relationship between modules and subdirs
-  very well.  However, it is certainly the case that
-
-          CVSROOT=<local-cvs-repository> cvs checkout cvs
-
-                        and
-
-          CVSROOT=<remote-cvs-repository> cvs checkout cvs
-
-        ought to produce the same dir tree, and they don't.  On floss,
-  checking out cvs gets cygnus/cvs/..., whereas on totoro it gets
-  cvs/... bad, bad, bad, Bad, BAD.  Charles Hannum has noticed this too,
-  see immediately below:
-
-
-* From: "Charles M. Hannum" <mycroft@ai.mit.edu>
-  To: remote-cvs@cyclic.com
-  Subject: Yet another bug
-  Date: Thu, 23 Feb 1995 21:28:31 -0500
-  
-  Modules don't work correctly remotely.  e.g.  If I have a module `foo'
-  that points to `src/bin/foo', and I type `cvs get foo':
-  
-  1) Locally, CVS checks it out into a directory named `foo'.
-  2) Remotely, CVS checks it out into a directory named `src/bin/foo'.
-  
-  The latter is incorrect.
-
-
 * Is it still the case that cvs tries to use Perl and fails, so that
   installers need to fix by hand the line in
   $repository/CVSROOT/loginfo to read:

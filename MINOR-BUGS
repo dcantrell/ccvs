@@ -12,3 +12,15 @@ high-priority at the moment. :-)
 * In the gb-grep module, update-ChangeLog (and therefore, I assume,
   rcs2log) truncates file names --- I get entries for things called
   ring/lenstring.h instead of lenstring/lenstring.h.
+
+* On remote checkout, files don't have the right time/date stamps in
+  the CVS/Entries files.  Doesn't look like the C/S protocol has any
+  way to send this information along (according to cvsclient.texi).
+  Perhaps we can spiff it up a bit by using the conflict field for the
+  stamp on the checkout/update command.  Please note that this really
+  doesn't do very much for us even if we get it done.
+
+* Does the function that lists the available modules in the repository
+  belong under the "checkout" function?  Perhaps it is more logically
+  grouped with the "history" function or we should create a new "info"
+  function?
