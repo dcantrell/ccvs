@@ -7419,7 +7419,7 @@ rcs_internal_unlockfile (fp, rcsfile)
        corrupting the repository. */
 
     if (ferror (fp))
-	error (1, 0, "error writing to lock file %s", lockfile);
+	error (1, errno, "error writing to lock file %s", lockfile);
     if (fclose (fp) == EOF)
 	error (1, errno, "error closing lock file %s", lockfile);
 
