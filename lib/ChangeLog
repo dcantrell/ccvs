@@ -2,6 +2,12 @@ Mon Oct  2 18:11:23 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* system.h: Doc fix.
 
+Mon Oct  2 18:10:35 1995  Larry Jones  <larry.jones@sdrc.com>
+
+	* regex.c: compile 4.2 BSD compatible functions even when
+	_POSIX_SOURCE is defined since we need them and we wouldn't be
+	compiling this file unless they don't exist.
+
 Mon Oct  2 10:32:20 1995  Michael Finken  <finken@conware.de>
 
         * strstr.c (strstr): new file and func.

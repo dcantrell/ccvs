@@ -9,6 +9,9 @@ AC_PROG_CC
 AC_AIX
 AC_MINIX
 AC_ISC_POSIX
+if test "$ISC" = yes; then
+CFLAGS="$CFLAGS -D_SYSV3"
+fi
 
 AC_C_CONST
 AC_C_CHAR_UNSIGNED
@@ -74,7 +77,7 @@ rm -f conftest*
 AC_HEADER_STDC
 AC_CHECK_HEADERS(errno.h unistd.h string.h memory.h utime.h fcntl.h ndbm.h \
                  sys/param.h sys/select.h sys/time.h sys/timeb.h \
-                 io.h direct.h)
+                 io.h direct.h sys/bsdtypes.h)
 AC_HEADER_SYS_WAIT
 AC_HEADER_STAT
 AC_HEADER_TIME
@@ -87,7 +90,6 @@ AC_TYPE_PID_T
 AC_REPLACE_FUNCS(getwd mkdir rename strdup strstr dup2 strerror valloc waitpid memmove)
 AC_CHECK_FUNCS(fchmod fsync ftime mkfifo putenv setvbuf vfork vprintf ftruncate timezone getpagesize fchdir)
 AC_CHECK_FUNC(re_exec, :, LIBOBJS="$LIBOBJS regex.o")
-AC_CHECK_FUNC(gethostname, :, LIBOBJS="$LIBOBJS hostname.o")
 AC_FUNC_UTIME_NULL
 AC_FUNC_ALLOCA
 AC_SYS_LONG_FILE_NAMES
@@ -156,11 +158,12 @@ if test -n "$krb_h"; then
   fi
 fi
 AC_CHECK_FUNCS(krb_get_err_text)
-# If we can't find connect, try looking in -lsocket and -lnsl.  The
-# Irix 5 libc.so has connect and gethostbyname, but Irix 5 also has
+# If we can't find connect, try looking in -lsocket, -lnsl, and -linet.
+# The Irix 5 libc.so has connect and gethostbyname, but Irix 5 also has
 # libsocket.so which has a bad implementation of gethostbyname (it
 # only looks in /etc/hosts), so we only look for -lsocket if we need
 # it.
+unset ac_cv_func_connect
 AC_CHECK_FUNC(connect, :, 
 [case $LIBS in
 *-lnsl*) ;;
@@ -174,11 +177,20 @@ case $LIBS in
 *-lsocket*) ;;
 *) AC_CHECK_LIB(socket, connect) ;;
 esac
+case $LIBS in
+*-linet*) ;;
+*) AC_CHECK_LIB(inet, connect) ;;
+esac
+unset ac_cv_func_connect
 AC_CHECK_FUNCS(connect)])
 
-# On Unix systems, we want the full client & server arrangement.
-AC_DEFINE(SERVER_SUPPORT)
+AC_CHECK_FUNC(gethostname, :, LIBOBJS="$LIBOBJS hostname.o")
+
+# If we have connect(), we want the full client & server arrangement.
+if test "$ac_cv_func_connect" = yes; then
 AC_DEFINE(CLIENT_SUPPORT)
+AC_DEFINE(SERVER_SUPPORT)
+fi
 
 test -f src/options.h && (
   AC_MSG_WARN(saving ./src/options.h in ./src/options.h-SAVED)
