@@ -1,5 +1,8 @@
 1998-12-21  Jim Kingdon
 
+	* rcs.c (RCS_getdate): Reindent Jim Meyering's change; remove
+	unused variable x_vers.
+
 	* rcs.c: When printing an unexpected character we found in the RCS
 	file, print it in hex rather than as a character (see comment for
 	rationale).
