@@ -119,10 +119,12 @@ Parse_Info (infofile, repository, callproc, all)
 	/* save the default value so we have it later if we need it */
 	if (strcmp (exp, "DEFAULT") == 0)
 	{
-	    /* Is it OK to silently ignore all but the last DEFAULT
-               expression?  */
 	    if (default_value != NULL)
+	    {
+		error (0, 0, "Multiple `DEFAULT' lines (%d and %d) in %s file",
+		       default_line, line_number, infofile);
 		free (default_value);
+	    }
 	    default_value = xstrdup(value);
 	    default_line = line_number;
 	    continue;
