@@ -536,7 +536,7 @@ deep_remove_dir (path)
 		     * (e.g. what if something changes between readdir and
 		     * unlink?)
                      */
-		    if (errno == EISDIR || errno == EACCES || errno == ENOENT)
+		    if (errno == EISDIR || errno == EACCES || errno == ENOENT
                         || errno == ENOTEMPTY)
 		    {
 			if (deep_remove_dir (buf))

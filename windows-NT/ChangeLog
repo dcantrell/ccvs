@@ -1,5 +1,9 @@
 2004-04-20  Derek Price  <derek@ximbiot.com>
 
+	* filesubr.c (deep_remove_dir): Correct typo.
+
+2004-04-20  Derek Price  <derek@ximbiot.com>
+
 	* filesubr.c (unlink_file_dir, deep_remove_dir): Handle errno of
 	ENOTEMPTY from dirs under Windows XP.
 	(Report and suggested fix from Ken Raeburn <raeburn@mit.edu>.)
