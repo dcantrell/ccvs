@@ -113,12 +113,9 @@ fileattr_read (void)
 
 	    p = strchr (line, '\t');
 	    if (p == NULL)
-	    {
-		char *pfname = primary_root_inverse_translate (fname);
 		error (1, 0,
 		       "file attribute database corruption: tab missing in %s",
-		       pfname);
-	    }
+		       primary_root_inverse_translate (fname));
 	    *p++ = '\0';
 	    newnode = getnode ();
 	    newnode->type = FILEATTR;

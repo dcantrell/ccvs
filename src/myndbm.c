@@ -46,11 +46,8 @@ mydbm_open (char *file, int flags, int mode)
     {
 	mydbm_load_file (fp, db->dbm_list, file);
 	if (fclose (fp) < 0)
-	{
-	    char *pfile = primary_root_inverse_translate (file);
-	    error (0, errno, "cannot close %s", pfile);
-	    free (pfile);
-	}
+	    error (0, errno, "cannot close %s",
+		   primary_root_inverse_translate (file));
     }
     return db;
 }
@@ -299,13 +296,10 @@ mydbm_load_file (FILE *fp, List *list, char *filename)
 	    if (*vp == '\0')
 	    {
 		if (!really_quiet)
-		{
-		    char *pfile = primary_root_inverse_translate (filename);
 		    error (0, 0,
 			"warning: NULL value for key `%s' at line %d of `%s'",
-			p->key, line_num, pfile);
-		    free (pfile);
-		}
+			p->key, line_num,
+			primary_root_inverse_translate (filename));
 		freenode (p);
 		continue;
 	    }
@@ -313,25 +307,17 @@ mydbm_load_file (FILE *fp, List *list, char *filename)
 	    if (addnode (list, p) == -1)
 	    {
 		if (!really_quiet)
-		{
-		    char *pfile = primary_root_inverse_translate (filename);
 		    error (0, 0,
 			"duplicate key found for `%s' at line %d of `%s'",
-			p->key, line_num, pfile);
-		    free (pfile);
-		}
+			p->key, line_num,
+			primary_root_inverse_translate (filename));
 		freenode (p);
 	    }
 	}
     }
     if (line_length < 0 && !feof (fp))
-	/* FIXME: should give the name of the file.  */
-    {
-	char *pfile = primary_root_inverse_translate (filename);
 	error (0, errno, "cannot read file `%s' in mydbm_load_file",
-	       pfile);
-	free (pfile);
-    }
+	       primary_root_inverse_translate (filename));
 
     free (line);
     free (value);

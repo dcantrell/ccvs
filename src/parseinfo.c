@@ -98,10 +98,8 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	/* no value to match with the regular expression is an error */
 	if (*cp == '\0')
 	{
-	    char *pinfopath = primary_root_inverse_translate (infopath);
 	    error (0, 0, "syntax error at line %d file %s; ignored",
-		   line_number, pinfopath);
-	    free (pinfopath);
+		   line_number, infopath);
 	    continue;
 	}
 	value = cp;

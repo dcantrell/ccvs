@@ -2276,10 +2276,16 @@ CVSROOT=`newroot $CVSROOT_DIRNAME`; export CVSROOT
 ###
 dotest init-1 "$testcvs init"
 
-# Now hide the primary root above behind a secondary if requested.
+# Now hide the primary root behind a secondary if requested.
 if $proxy; then
     # Where the secondary root will be
     SECONDARY_CVSROOT_DIRNAME=$TESTDIR/secondary_cvsroot
+    SECONDARY_CVSROOT=`newroot $SECONDARY_CVSROOT_DIRNAME`
+    # Save the primary root.
+    PRIMARY_CVSROOT=$CVSROOT
+    PRIMARY_CVSROOT_DIRNAME=$CVSROOT_DIRNAME
+    # Now set the global CVSROOT to use the secondary.
+    CVSROOT=$SECONDARY_CVSROOT; export CVSROOT
 
     tryrsync=`Which rsync`
     if test -n "$RSYNC"; then :; else
@@ -2311,7 +2317,7 @@ case "\$dir" in
     # aren't many tests than need it and the alternative is an awful lot of
     # special casing.
     $RSYNC -rglop --delete --exclude '#cvs.*' \\
-           $CVSROOT_DIRNAME/ \\
+           $PRIMARY_CVSROOT_DIRNAME/ \\
            $SECONDARY_CVSROOT_DIRNAME
     ;;
 
@@ -2326,20 +2332,20 @@ case "\$dir" in
 	# For \`import', a recursive update is necessary since subdirs may have
 	# been added underneath the root dir we were passed. 
         $RSYNC -rglop \\
-	       $CVSROOT_DIRNAME/"\$dir" \\
+	       $PRIMARY_CVSROOT_DIRNAME/"\$dir" \\
 	       $SECONDARY_CVSROOT_DIRNAME/\`dirname -- "\$dir"\`
         ;;
 
       tag)
 	# \`tag' may have changed CVSROOT/val-tags too.
         $RSYNC -glop \\
-               $CVSROOT_DIRNAME/CVSROOT/val-tags \\
+               $PRIMARY_CVSROOT_DIRNAME/CVSROOT/val-tags \\
                $SECONDARY_CVSROOT_DIRNAME/CVSROOT
 	# Otherwise it is identical to other write commands.
         $RSYNC -rglop --delete \\
                --include Attic --include CVS \
                --exclude '#cvs.*' --exclude '*/' \\
-               $CVSROOT_DIRNAME/"\$dir"/ \\
+               $PRIMARY_CVSROOT_DIRNAME/"\$dir"/ \\
                $SECONDARY_CVSROOT_DIRNAME/"\$dir"
         ;;
 
@@ -2348,14 +2354,14 @@ case "\$dir" in
         $RSYNC -rglop --delete \\
                --include Attic --include CVS \
                --exclude '#cvs.*' --exclude '*/' \\
-               $CVSROOT_DIRNAME/"\$dir"/ \\
+               $PRIMARY_CVSROOT_DIRNAME/"\$dir"/ \\
                $SECONDARY_CVSROOT_DIRNAME/"\$dir"
         ;;
     esac # \$cmd
 
     # And keep the history file up to date for all commands.
     $RSYNC -glop \\
-           $CVSROOT_DIRNAME/CVSROOT/history \\
+           $PRIMARY_CVSROOT_DIRNAME/CVSROOT/history \\
            $SECONDARY_CVSROOT_DIRNAME/CVSROOT
     ;; # \$dir = *
 esac # \$dir
@@ -2371,10 +2377,10 @@ EOF
 
     # Initialize the primary repository
     mkdir proxy-init; cd proxy-init
-    dotest proxy-init-1 "$testcvs -Q co CVSROOT"
+    dotest proxy-init-1 "$testcvs -Qd$PRIMARY_CVSROOT co CVSROOT"
     cd CVSROOT
     cat >>config <<EOF
-PrimaryServer=$CVSROOT
+PrimaryServer=$PRIMARY_CVSROOT
 EOF
     cat >>loginfo <<EOF
 ALL $TESTDIR/sync-secondary loginfo %c %p %{sVv}
@@ -2401,42 +2407,6 @@ EOF
     # done in here
     cd ../..
     rm -rf proxy-init
-
-    # Wrap the CVS server to allow --primary-root to be set by the
-    # secondary.
-    cat <<EOF >$TESTDIR/secondary-wrapper
-#! $TESTSHELL
-CVS_SERVER=$TESTDIR/primary-wrapper
-export CVS_SERVER
-
-# Decide if we should be talking to the secondary or the primary.
-#
-# This is a hack which is only necessary when testing a redirect in :fork: mode
-# since the servers need to be able to tell the two roots apart given the same
-# \`Root' request from the client.
-#
-# The second time a server is launched by the same client, we must be the
-# primary server.
-if test -f $TESTDIR/last-client-pid \\
-   && expr \$CVS_PID : \`cat $TESTDIR/last-client-pid\` >/dev/null; then
-    proot_arg=
-else
-    proot_arg="--primary-root $CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME"
-fi
-echo \$CVS_PID >$TESTDIR/last-client-pid
-
-exec $CVS_SERVER \$proot_arg "\$@"
-EOF
-    cat <<EOF >$TESTDIR/primary-wrapper
-#! $TESTSHELL
-# Don't overwrite the log created by the secondary
-if test -n "$CVS_SERVER_LOG"; then
-    CVS_SERVER_LOG=$CVS_SERVER_LOG-primary
-fi
-exec $CVS_SERVER "\$@"
-EOF
-    chmod a+x $TESTDIR/secondary-wrapper $TESTDIR/primary-wrapper
-    CVS_SERVER=$TESTDIR/secondary-wrapper
 else # !$proxy
     # Set this even when not testing $proxy to match messages, like $SPROG.
     SECONDARY_CVSROOT_DIRNAME=$CVSROOT_DIRNAME
@@ -29004,9 +28974,22 @@ EOF
 
 	client)
 	  # Some tests of the client (independent of the server).
-	  if $remote; then
-	    cat >${TESTDIR}/serveme <<EOF
-#!${TESTSHELL}
+	  if $remote; then :; else
+	    remoteonly client
+	    continue
+	  fi
+
+	  if $proxy; then
+	    # Skip these tests in proxy mode since they assume we are not
+	    # writing through a proxy server.  There is no writeproxy-client
+	    # test currently.  The writeproxy & writeproxy-noredirect tests
+	    # test the writeproxy server.
+	    remoteonly client
+	    continue
+	  fi
+
+	  cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
 # This is admittedly a bit cheezy, in the sense that we make lots
 # of assumptions about what the client is going to send us.
 # We don't mention Repository, because current clients don't require it.
@@ -29016,7 +28999,7 @@ echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modifie
 echo "ok"
 echo "M special message"
 echo "Created first-dir/"
-echo "${CVSROOT_DIRNAME}/first-dir/file1"
+echo "$CVSROOT_DIRNAME/first-dir/file1"
 echo "/file1/1.1///"
 echo "u=rw,g=rw,o=rw"
 echo "4"
@@ -29024,29 +29007,29 @@ echo "xyz"
 echo "ok"
 cat >/dev/null
 EOF
-	    # Cygwin.  Pthffffffffft!
-	    if test -n "$remotehost"; then
-	      $CVS_RSH $remotehost "chmod +x ${TESTDIR}/serveme"
-	    else
-	      chmod +x ${TESTDIR}/serveme
-	    fi
-	    save_CVS_SERVER=$CVS_SERVER
-	    CVS_SERVER=${TESTDIR}/serveme; export CVS_SERVER
-	    mkdir 1; cd 1
-	    dotest_fail client-1 "${testcvs} -q co first-dir" \
-"${CPROG} \[checkout aborted\]: This server does not support the global -q option${DOTSTAR}"
-	    dotest client-2 "${testcvs} co first-dir" "special message"
+	  # Cygwin.  Pthffffffffft!
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod +x $TESTDIR/serveme"
+	  else
+	    chmod +x $TESTDIR/serveme
+	  fi
+	  save_CVS_SERVER=$CVS_SERVER
+	  CVS_SERVER=$TESTDIR/serveme; export CVS_SERVER
+	  mkdir 1; cd 1
+	  dotest_fail client-1 "$testcvs -q co first-dir" \
+"$CPROG \[checkout aborted\]: This server does not support the global -q option$DOTSTAR"
+	  dotest client-2 "$testcvs co first-dir" "special message"
 
-	    cat >${TESTDIR}/serveme <<EOF
-#!${TESTSHELL}
+	  cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
 echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
 echo "ok"
 echo "M merge-it"
 echo "Copy-file ./"
-echo "${CVSROOT_DIRNAME}/first-dir/file1"
-echo "${TESTDIR}/bogus/.#file1.1.1"
+echo "$CVSROOT_DIRNAME/first-dir/file1"
+echo "$TESTDIR/bogus/.#file1.1.1"
 echo "Merged ./"
-echo "${CVSROOT_DIRNAME}/first-dir/file1"
+echo "$CVSROOT_DIRNAME/first-dir/file1"
 echo "/file1/1.2///"
 echo "u=rw,g=rw,o=rw"
 echo "4"
@@ -29054,22 +29037,23 @@ echo "abd"
 echo "ok"
 cat >/dev/null
 EOF
-	    cd first-dir
-	    mkdir ${TESTDIR}/bogus
-	    # The ${DOTSTAR} is to match a potential "broken pipe" if the
-	    # client exits before the server script sends everything
-	    dotest_fail client-3 "${testcvs} update" "merge-it
-${CPROG} \[update aborted\]: protocol error: Copy-file tried to specify director${DOTSTAR}"
-	    cat >${TESTDIR}/serveme <<EOF
-#!${TESTSHELL}
+	  cd first-dir
+	  mkdir $TESTDIR/bogus
+	  # The ${DOTSTAR} is to match a potential "broken pipe" if the
+	  # client exits before the server script sends everything
+	  dotest_fail client-3 "$testcvs update" \
+"merge-it
+$CPROG \[update aborted\]: protocol error: Copy-file tried to specify director$DOTSTAR"
+	  cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
 echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
 echo "ok"
 echo "M merge-it"
 echo "Copy-file ./"
-echo "${CVSROOT_DIRNAME}/first-dir/file1"
+echo "$CVSROOT_DIRNAME/first-dir/file1"
 echo ".#file1.1.1"
 echo "Merged ./"
-echo "${CVSROOT_DIRNAME}/first-dir/file1"
+echo "$CVSROOT_DIRNAME/first-dir/file1"
 echo "/file1/1.2///"
 echo "u=rw,g=rw,o=rw"
 echo "4"
@@ -29077,48 +29061,48 @@ echo "abc"
 echo "ok"
 cat >/dev/null
 EOF
-	    dotest client-4 "${testcvs} update" "merge-it"
-	    dotest client-5 "cat .#file1.1.1" "xyz"
-	    dotest client-6 "cat CVS/Entries" "/file1/1.2/[A-Za-z0-9 :]*//
+	  dotest client-4 "$testcvs update" "merge-it"
+	  dotest client-5 "cat .#file1.1.1" "xyz"
+	  dotest client-6 "cat CVS/Entries" "/file1/1.2/[A-Za-z0-9 :]*//
 D"
-	    dotest client-7 "cat file1" "abc"
+	  dotest client-7 "cat file1" "abc"
 
-	    cat >${TESTDIR}/serveme <<EOF
-#!${TESTSHELL}
+	  cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
 echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
 echo "ok"
 echo "M OK, whatever"
 echo "ok"
-cat >${TESTDIR}/client.tmp
+cat >$TESTDIR/client.tmp
 EOF
-	    chmod u=rw,go= file1
-	    # By specifying the time zone in local time, we don't
-	    # know exactly how that will translate to GMT.
-	    dotest client-8 "${testcvs} update -D 99-10-04" "OK, whatever"
-	    # String 2 below is Cygwin again - ptoooey.
-	    dotest client-9 "cat ${TESTDIR}/client.tmp" \
-"Root ${CVSROOT_DIRNAME}
+	  chmod u=rw,go= file1
+	  # By specifying the time zone in local time, we don't
+	  # know exactly how that will translate to GMT.
+	  dotest client-8 "$testcvs update -D 99-10-04" "OK, whatever"
+	  # String 2 below is Cygwin again - ptoooey.
+	  dotest client-9 "cat $TESTDIR/client.tmp" \
+"Root $CVSROOT_DIRNAME
 Valid-responses [-a-zA-Z ]*
 valid-requests
 Argument -D
 Argument [34] Oct 1999 [0-9][0-9]:00:00 -0000
 Argument --
 Directory \.
-${CVSROOT_DIRNAME}/first-dir
+$CVSROOT_DIRNAME/first-dir
 Entry /file1/1\.2///
 Modified file1
 u=rw,g=,o=
 4
 abc
 update" \
-"Root ${CVSROOT_DIRNAME}
+"Root $CVSROOT_DIRNAME
 Valid-responses [-a-zA-Z ]*
 valid-requests
 Argument -D
 Argument [34] Oct 1999 [0-9][0-9]:00:00 -0000
 Argument --
 Directory \.
-${CVSROOT_DIRNAME}/first-dir
+$CVSROOT_DIRNAME/first-dir
 Entry /file1/1\.2///
 Modified file1
 u=rw,g=r,o=r
@@ -29126,17 +29110,17 @@ u=rw,g=r,o=r
 abc
 update"
 
-	    # The following test tests what was a potential client exploit in
-	    # CVS versions 1.11.14 and CVS versions 1.12.6 and earlier.  This
-	    # exploit would allow a trojan server to create arbitrary files,
-	    # anywhere the user had write permissions, even outside of the
-	    # user's sandbox.
-	    cat >$HOME/.bashrc <<EOF
+	  # The following test tests what was a potential client exploit in
+	  # CVS versions 1.11.14 and CVS versions 1.12.6 and earlier.  This
+	  # exploit would allow a trojan server to create arbitrary files,
+	  # anywhere the user had write permissions, even outside of the
+	  # user's sandbox.
+	  cat >$HOME/.bashrc <<EOF
 #!$TESTSHELL
 # This is where login scripts would usually be
 # stored.
 EOF
-	    cat >$TESTDIR/serveme <<EOF
+	  cat >$TESTDIR/serveme <<EOF
 #!$TESTSHELL
 echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
 echo "ok"
@@ -29150,24 +29134,24 @@ echo "echo 'gotcha!'"
 echo "ok"
 cat >/dev/null
 EOF
-	    
-	    # If I don't run the following sleep between the above cat and
-	    # the following calls to dotest, sometimes the serveme file isn't
-	    # completely written yet by the time CVS tries to execute it,
-	    # causing the shell to intermittantly report syntax errors (usually
-	    # early EOF).  There's probably a new race condition here, but this
-	    # works.
-	    #
-	    # Incidentally, I can reproduce this behavior with Linux 2.4.20 and
-	    # Bash 2.05 or Bash 2.05b.
-	    sleep 1
-	    dotest_fail client-10 "$testcvs update" \
+	  
+	  # If I don't run the following sleep between the above cat and
+	  # the following calls to dotest, sometimes the serveme file isn't
+	  # completely written yet by the time CVS tries to execute it,
+	  # causing the shell to intermittantly report syntax errors (usually
+	  # early EOF).  There's probably a new race condition here, but this
+	  # works.
+	  #
+	  # Incidentally, I can reproduce this behavior with Linux 2.4.20 and
+	  # Bash 2.05 or Bash 2.05b.
+	  sleep 1
+	  dotest_fail client-10 "$testcvs update" \
 "$CPROG update: Server attempted to update a file via an invalid pathname:
 $CPROG \[update aborted\]: \`$HOME/.bashrc'\."
 
-	    # A second try at a client exploit.  This one never actually
-	    # failed in the past, but I thought it wouldn't hurt to add a test.
-	    cat >$TESTDIR/serveme <<EOF
+	  # A second try at a client exploit.  This one never actually
+	  # failed in the past, but I thought it wouldn't hurt to add a test.
+	  cat >$TESTDIR/serveme <<EOF
 #!$TESTSHELL
 echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
 echo "ok"
@@ -29181,13 +29165,13 @@ echo "echo 'gotcha!'"
 echo "ok"
 cat >/dev/null
 EOF
-	    sleep 1
-	    dotest_fail client-11 "$testcvs update" \
+	  sleep 1
+	  dotest_fail client-11 "$testcvs update" \
 "$CPROG \[update aborted\]: patch original file \./\.bashrc does not exist"
 
-	    # A third try at a client exploit.  This one did used to fail like
-	    # client-10.
-	    cat >$TESTDIR/serveme <<EOF
+	  # A third try at a client exploit.  This one did used to fail like
+	  # client-10.
+	  cat >$TESTDIR/serveme <<EOF
 #!$TESTSHELL
 echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
 echo "ok"
@@ -29201,13 +29185,13 @@ echo "echo 'gotcha!'"
 echo "ok"
 cat >/dev/null
 EOF
-	    sleep 1
-	    dotest_fail client-12 "$testcvs update" \
+	  sleep 1
+	  dotest_fail client-12 "$testcvs update" \
 "$CPROG update: Server attempted to update a file via an invalid pathname:
 $CPROG \[update aborted\]: \`\.\./\.\./home/.bashrc'\."
 
-	    # Try the same exploit using the Created response.
-	    cat >$TESTDIR/serveme <<EOF
+	  # Try the same exploit using the Created response.
+	  cat >$TESTDIR/serveme <<EOF
 #!$TESTSHELL
 echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
 echo "ok"
@@ -29221,13 +29205,13 @@ echo "echo 'gotcha!'"
 echo "ok"
 cat >/dev/null
 EOF
-	    sleep 1
-	    dotest_fail client-13 "$testcvs update" \
+	  sleep 1
+	  dotest_fail client-13 "$testcvs update" \
 "$CPROG update: Server attempted to update a file via an invalid pathname:
 $CPROG \[update aborted\]: \`$HOME/.bashrc'\."
 
-	    # Now try using the Update-existing response
-	    cat >$TESTDIR/serveme <<EOF
+	  # Now try using the Update-existing response
+	  cat >$TESTDIR/serveme <<EOF
 #!$TESTSHELL
 echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
 echo "ok"
@@ -29241,13 +29225,13 @@ echo "echo 'gotcha!'"
 echo "ok"
 cat >/dev/null
 EOF
-	    sleep 1
-	    dotest_fail client-14 "$testcvs update" \
+	  sleep 1
+	  dotest_fail client-14 "$testcvs update" \
 "$CPROG update: Server attempted to update a file via an invalid pathname:
 $CPROG \[update aborted\]: \`\.\./\.\./home/.bashrc'\."
 
-	    # Try the same exploit using the Merged response.
-	    cat >$TESTDIR/serveme <<EOF
+	  # Try the same exploit using the Merged response.
+	  cat >$TESTDIR/serveme <<EOF
 #!$TESTSHELL
 echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
 echo "ok"
@@ -29261,13 +29245,13 @@ echo "echo 'gotcha!'"
 echo "ok"
 cat >/dev/null
 EOF
-	    sleep 1
-	    dotest_fail client-15 "$testcvs update" \
+	  sleep 1
+	  dotest_fail client-15 "$testcvs update" \
 "$CPROG update: Server attempted to update a file via an invalid pathname:
 $CPROG \[update aborted\]: \`$HOME/.bashrc'\."
 
-	    # Now try using the Updated response
-	    cat >$TESTDIR/serveme <<EOF
+	  # Now try using the Updated response
+	  cat >$TESTDIR/serveme <<EOF
 #!$TESTSHELL
 echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
 echo "ok"
@@ -29281,14 +29265,14 @@ echo "echo 'gotcha!'"
 echo "ok"
 cat >/dev/null
 EOF
-	    sleep 1
-	    dotest_fail client-16 "$testcvs update" \
+	  sleep 1
+	  dotest_fail client-16 "$testcvs update" \
 "$CPROG update: Server attempted to update a file via an invalid pathname:
 $CPROG \[update aborted\]: \`\.\./\.\./home/.bashrc'\."
 
-	    # Try the same exploit using the Copy-file response.
-	    # As far as I know, Copy-file was never exploitable either.
-	    cat >$TESTDIR/serveme <<EOF
+	  # Try the same exploit using the Copy-file response.
+	  # As far as I know, Copy-file was never exploitable either.
+	  cat >$TESTDIR/serveme <<EOF
 #!$TESTSHELL
 echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
 echo "ok"
@@ -29305,23 +29289,22 @@ echo "$HOME/innocuous"
 echo "ok"
 cat >/dev/null
 EOF
-	    sleep 1
-	    dotest_fail client-18 "$testcvs update" \
+	  sleep 1
+	  dotest_fail client-18 "$testcvs update" \
 "$CPROG \[update aborted\]: protocol error: Copy-file tried to specify directory"
 
-	    # And verify that none of the exploits was successful.
-	    dotest client-19 "cat $HOME/.bashrc" \
+	  # And verify that none of the exploits was successful.
+	  dotest client-19 "cat $HOME/.bashrc" \
 "#!$TESTSHELL
 # This is where login scripts would usually be
 # stored\."
 
-	    dokeep
-	    cd ../..
-	    rm -r 1
-	    rmdir ${TESTDIR}/bogus
-	    rm $TESTDIR/serveme $HOME/.bashrc
-	    CVS_SERVER=${save_CVS_SERVER}; export CVS_SERVER
-	  fi # skip the whole thing for local
+	  dokeep
+	  cd ../..
+	  rm -r 1
+	  rmdir $TESTDIR/bogus
+	  rm $TESTDIR/serveme $HOME/.bashrc
+	  CVS_SERVER=$save_CVS_SERVER; export CVS_SERVER
 	  ;;
 
 
@@ -29676,9 +29659,12 @@ ${SPROG} update: Updating first/subdir"
 	    continue
 	  fi
 
+	  PRIMARY_CVSROOT_DIRNAME_save=$PRIMARY_CVSROOT_DIRNAME
+	  PRIMARY_CVSROOT_save=$PRIMARY_CVSROOT
 	  PRIMARY_CVSROOT_DIRNAME=$TESTDIR/primary_cvsroot
 	  PRIMARY_CVSROOT=`newroot $PRIMARY_CVSROOT_DIRNAME`
 	  SECONDARY_CVSROOT_DIRNAME_save=$SECONDARY_CVSROOT_DIRNAME
+	  SECONDARY_CVSROOT_save=$SECONDARY_CVSROOT
 	  SECONDARY_CVSROOT_DIRNAME=$TESTDIR/writeproxy_cvsroot
 	  SECONDARY_CVSROOT=`newroot $SECONDARY_CVSROOT_DIRNAME`
 
@@ -29789,13 +29775,16 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	  touch loginfo
 	  dotest_fail writeproxy-14 "$testcvs up" \
 "$SPROG update: Updating \.
-$SPROG \[update aborted\]: could not find desired version 1\.4 in $SECONDARY_CVSROOT_DIRNAME/CVSROOT/loginfo,v"
+$SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSROOT_DIRNAME/CVSROOT/loginfo,v"
 
 	  dokeep
 	  cd ../../..
 	  rm -r writeproxy
 	  rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
+	  PRIMARY_CVSROOT_DIRNAME=$PRIMARY_CVSROOT_DIRNAME_save
+	  PRIMARY_CVSROOT=$PRIMARY_CVSROOT_save
 	  SECONDARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME_save
+	  SECONDARY_CVSROOT=$SECONDARY_CVSROOT_save
 	  ;;
 
 
@@ -29822,6 +29811,8 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $SECONDARY_CVS
 	    continue
 	  fi
 
+	  PRIMARY_CVSROOT_DIRNAME_save=$PRIMARY_CVSROOT_DIRNAME
+	  PRIMARY_CVSROOT_save=$PRIMARY_CVSROOT
 	  PRIMARY_CVSROOT_DIRNAME=$TESTDIR/primary_cvsroot
 	  PRIMARY_CVSROOT=`newroot $PRIMARY_CVSROOT_DIRNAME`
 	  SECONDARY_CVSROOT_DIRNAME_save=$SECONDARY_CVSROOT_DIRNAME
@@ -29860,7 +29851,7 @@ export CVS_SERVER
 
 # No need to check the PID of the last client since we are testing with
 # Redirect disabled.
-proot_arg="--primary-root $PRIMARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME"
+proot_arg="--allow-root $SECONDARY_CVSROOT_DIRNAME"
 exec $servercvs \$proot_arg "\$@"
 EOF
 	  cat <<EOF >$TESTDIR/writeproxy-primary-wrapper
@@ -29875,7 +29866,7 @@ EOF
 	  # Checkout from secondary
 	  #
 	  # It may look like we are checking out from the primary here, but
-	  # in fork mode, the deciding factor is the --primary-root translation
+	  # in fork mode, the deciding factor is the PrimaryServer translation
 	  # above.
 	  #
 	  # When the primary and secondary hostname were different, the server
@@ -30056,6 +30047,8 @@ EOF
 	  rm $TESTDIR/writeproxy-secondary-wrapper \
 	     $TESTDIR/writeproxy-primary-wrapper
 	  CVS_SERVER=$CVS_SERVER_save
+	  PRIMARY_CVSROOT_DIRNAME=$PRIMARY_CVSROOT_DIRNAME_save
+	  PRIMARY_CVSROOT=$PRIMARY_CVSROOT_save
 	  SECONDARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME_save
 	  ;;
 

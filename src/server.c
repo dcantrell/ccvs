@@ -875,27 +875,29 @@ serve_root (char *arg)
 	return;
     }
 
-    arg = primary_root_translate (arg);
+    /* Set original_parsed_root here, not because it can be changed in the
+     * client Redirect sense, but so we don't have to switch in code that
+     * runs in both modes to decide which to print.
+     */
+    original_parsed_root = current_parsed_root = local_cvsroot (arg);
 
 #ifdef AUTH_SERVER_SUPPORT
     if (Pserver_Repos != NULL)
     {
-	if (strcmp (Pserver_Repos, arg) != 0)
+	if (strcmp (Pserver_Repos, current_parsed_root->directory) != 0)
 	{
-	    if (alloc_pending (80 + strlen (Pserver_Repos) + strlen (arg)))
+	    if (alloc_pending (80 + strlen (Pserver_Repos)
+			       + strlen (current_parsed_root->directory)))
 		/* The explicitness is to aid people who are writing clients.
 		   I don't see how this information could help an
 		   attacker.  */
 		sprintf (pending_error_text, "\
 E Protocol error: Root says \"%s\" but pserver says \"%s\"",
-			 arg, Pserver_Repos);
+			 current_parsed_root->directory, Pserver_Repos);
 	    return;
 	}
     }
 #endif
-
-    original_parsed_root = current_parsed_root = local_cvsroot (arg);
-    free (arg);
 
     /* For pserver, this will already have happened, and the call will do
        nothing.  But for rsh, we need to do it now.  */
@@ -1362,17 +1364,16 @@ serve_directory (char *arg)
 	                       current_parsed_root->directory, short_repos);
 	    free (short_repos);
 	}
-	{
-	    char *lrepos = primary_root_translate (repos);
-	    free (repos);
-	    if (
+	else
+	    repos = xstrdup (primary_root_translate (repos));
+
+	if (
 #ifdef PROXY_SUPPORT
-		!proxy_log &&
+	    !proxy_log &&
 #endif /* PROXY_SUPPORT */
-		!outside_root (lrepos))
-		dirswitch (arg, lrepos);
-	    free (lrepos);
-	}
+	    !outside_root (repos))
+	    dirswitch (arg, repos);
+	free (repos);
     }
     else if (status == -2)
     {
