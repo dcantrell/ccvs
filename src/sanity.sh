@@ -42,7 +42,7 @@ exit_help ()
     echo "		test CVS using a symlink to a real CVSROOT"
     echo "-r|--remote	test client/server, as opposed to local, CVS"
     echo "-p|--proxy	test a secondary/primary CVS server (writeproxy)"
-    echo "              cnofiguration (implies --remote)."
+    echo "              configuration (implies --remote)."
     echo "-s CVS-FOR-CVS-SERVER"
     echo "--server=CVS-FOR-CVS-SERVER"
     echo "		use CVS-FOR-CVS-SERVER as the path to the CVS SERVER"
@@ -1234,7 +1234,7 @@ if test x"$*" = x; then
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
 	tests="${tests} rmroot reposmv pserver server server2 client"
 	tests="${tests} dottedroot fork commit-d template"
-	tests="${tests} writeproxy"
+	tests="${tests} writeproxy writeproxy-noredirect"
 else
 	tests="$*"
 fi
@@ -2282,9 +2282,12 @@ export CVS_SERVER
 
 # Decide if we should be talking to the secondary or the primary.
 #
-# This is a hack which is only necessary when testing in :fork: mode since the
-# servers need to be able to tell the two roots apart given the same \`Root'
-# request from the client.
+# This is a hack which is only necessary when testing a redirect in :fork: mode
+# since the servers need to be able to tell the two roots apart given the same
+# \`Root' request from the client.
+#
+# The second time a server is launched by the same client, we must be the
+# primary server.
 if test -f $TESTDIR/last-client-pid \\
    && expr \$CVS_PID : \`cat $TESTDIR/last-client-pid\` >/dev/null; then
     proot_arg=
@@ -2293,7 +2296,7 @@ else
 fi
 echo \$CVS_PID >$TESTDIR/last-client-pid
 
-$CVS_SERVER \$proot_arg "\$@"
+exec $CVS_SERVER \$proot_arg "\$@"
 EOF
     cat <<EOF >$TESTDIR/primary-wrapper
 #! $TESTSHELL
@@ -2301,7 +2304,7 @@ EOF
 if test -n "$CVS_SERVER_LOG"; then
     CVS_SERVER_LOG=$CVS_SERVER_LOG-primary
 fi
-$CVS_SERVER "\$@"
+exec $CVS_SERVER "\$@"
 EOF
     chmod a+x $TESTDIR/secondary-wrapper $TESTDIR/primary-wrapper
     CVS_SERVER=$TESTDIR/secondary-wrapper
@@ -29455,7 +29458,6 @@ ${SPROG} update: Updating first/subdir"
 	  PRIMARY_CVSROOT=`newroot $PRIMARY_CVSROOT_DIRNAME`
 	  SECONDARY_CVSROOT_DIRNAME_save=$SECONDARY_CVSROOT_DIRNAME
 	  SECONDARY_CVSROOT_DIRNAME=$TESTDIR/writeproxy_cvsroot
-	  SECONDARY_CVSROOT=`newroot $SECONDARY_CVSROOT_DIRNAME`
 
 	  # Initialize the primary repository
 	  dotest writeproxy-init-1 "$testcvs -d$PRIMARY_CVSROOT init"
@@ -29488,9 +29490,12 @@ export CVS_SERVER
 
 # Decide if we should be talking to the secondary or the primary.
 #
-# This is a hack which is only necessary when testing in :fork: mode since the
-# servers need to be able to tell the two roots apart given the same \`Root'
-# request from the client.
+# This is a hack which is only necessary when testing a redirect in :fork: mode
+# since the servers need to be able to tell the two roots apart given the same
+# \`Root' request from the client.
+#
+# The second time a server is launched by the same client, we must be the
+# primary server.
 if test -f $TESTDIR/last-client-pid \\
    && expr \$CVS_PID : \`cat $TESTDIR/last-client-pid\` >/dev/null; then
     proot_arg=
@@ -29499,12 +29504,12 @@ else
 fi
 echo \$CVS_PID >$TESTDIR/last-client-pid
 
-$servercvs \$proot_arg "\$@"
+exec $servercvs \$proot_arg "\$@"
 EOF
 	  cat <<EOF >$TESTDIR/writeproxy-primary-wrapper
 #! $TESTSHELL
 #CVS_SERVER_LOG=/tmp/cvsprimarylog
-$servercvs "\$@"
+exec $servercvs "\$@"
 EOF
 
 	  chmod a+x $TESTDIR/writeproxy-secondary-wrapper \
@@ -29513,9 +29518,11 @@ EOF
 	  # Checkout from secondary
 	  #
 	  # It may look like we are checking out from the primary here, but
-	  # the deciding factor is the --primary-root translation above.
-	  # If the primary and secondary hostname were different, this would
-	  # be more obvious.
+	  # in fork mode, the deciding factor is the --primary-root translation
+	  # above.
+	  #
+	  # When the primary and secondary hostname were different, the server
+	  # the client is talking directly to is more obvious.
 	  #
 	  # For now, move the primary root out of the way to satisfy
 	  # ourselves that the data is coming from the secondary.
@@ -29611,6 +29618,270 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSRO
 	  dokeep
 	  cd ../../..
 	  rm -r writeproxy
+	  rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
+	  rm $TESTDIR/writeproxy-secondary-wrapper \
+	     $TESTDIR/writeproxy-primary-wrapper
+	  CVS_SERVER=$CVS_SERVER_save
+	  SECONDARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME_save
+	  ;;
+
+
+
+	writeproxy-noredirect)
+	  # Various tests for a read-only CVS mirror set up as a write-proxy
+	  # for a central server.
+	  #
+	  # These tests are only meaningful in client/server mode.
+	  #
+	  # These tests are a few simple tests for a writeproxy setup with a
+	  # client that can't handle the `Redirect' response.  Mostly they
+	  # parallel the "writeproxy" tests but, in the style of the "server",
+	  # "server2", "pserver", and related tests, they bypass the CVS client
+	  # for write commands by piping data into a server on STDIN to mimic
+	  # a client that cannot handle the `Redirect' response.
+	  if $remote; then :; else
+	    skip writeproxy-noredirect 'remote-only test'
+	    continue
+	  fi
+
+	  tryrsync=`which rsync`
+	  if test -r "$tryrsync"; then
+	    RSYNC=$tryrsync
+	  else
+	    skip writeproxy-noredirect "No rsync found in $PATH"
+	    continue
+	  fi
+
+	  PRIMARY_CVSROOT_DIRNAME=$TESTDIR/primary_cvsroot
+	  PRIMARY_CVSROOT=`newroot $PRIMARY_CVSROOT_DIRNAME`
+	  SECONDARY_CVSROOT_DIRNAME_save=$SECONDARY_CVSROOT_DIRNAME
+	  SECONDARY_CVSROOT_DIRNAME=$TESTDIR/writeproxy_cvsroot
+
+	  # Initialize the primary repository
+	  dotest writeproxy-noredirect-init-1 \
+"$testcvs -d$PRIMARY_CVSROOT init"
+	  mkdir writeproxy-noredirect; cd writeproxy-noredirect
+	  mkdir primary; cd primary
+	  dotest writeproxy-noredirect-init-2 \
+"$testcvs -Qd$PRIMARY_CVSROOT co CVSROOT"
+	  cd CVSROOT
+	  cat >>loginfo <<EOF
+ALL $RSYNC -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+EOF
+	  cat >>config <<EOF
+PrimaryServer=$PRIMARY_CVSROOT
+EOF
+	  dotest writeproxy-noredirect-init-3 \
+"$testcvs -Q ci -mconfigure-writeproxy"
+
+	  # And now the secondary.
+	  $RSYNC -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+
+	  CVS_SERVER_save=$CVS_SERVER
+	  CVS_SERVER_secondary=$TESTDIR/writeproxy-secondary-wrapper
+	  CVS_SERVER=$CVS_SERVER_secondary
+
+	  # Wrap the CVS server to allow --primary-root to be set by the
+	  # secondary.
+	  cat <<EOF >$TESTDIR/writeproxy-secondary-wrapper
+#! $TESTSHELL
+CVS_SERVER=$TESTDIR/writeproxy-primary-wrapper
+export CVS_SERVER
+
+# No need to check the PID of the last client since we are testing with
+# Redirect disabled.
+proot_arg="--primary-root $PRIMARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME"
+exec $servercvs \$proot_arg "\$@"
+EOF
+	  cat <<EOF >$TESTDIR/writeproxy-primary-wrapper
+#! $TESTSHELL
+#CVS_SERVER_LOG=/tmp/cvsprimarylog
+exec $servercvs "\$@"
+EOF
+
+	  chmod a+x $TESTDIR/writeproxy-secondary-wrapper \
+	            $TESTDIR/writeproxy-primary-wrapper
+
+	  # Checkout from secondary
+	  #
+	  # It may look like we are checking out from the primary here, but
+	  # in fork mode, the deciding factor is the --primary-root translation
+	  # above.
+	  #
+	  # When the primary and secondary hostname were different, the server
+	  # the client is talking directly to is more obvious.
+	  #
+	  # For now, move the primary root out of the way to satisfy
+	  # ourselves that the data is coming from the secondary.
+	  mv $PRIMARY_CVSROOT_DIRNAME $TESTDIR/save-root
+	  cd ../..
+	  mkdir secondary; cd secondary
+	  dotest writeproxy-noredirect-1 \
+"$testcvs -qd$PRIMARY_CVSROOT co CVSROOT" \
+"U CVSROOT/checkoutlist
+U CVSROOT/commitinfo
+U CVSROOT/config
+U CVSROOT/cvswrappers
+U CVSROOT/loginfo
+U CVSROOT/modules
+U CVSROOT/notify
+U CVSROOT/postadmin
+U CVSROOT/postproxy
+U CVSROOT/posttag
+U CVSROOT/postwatch
+U CVSROOT/preproxy
+U CVSROOT/rcsinfo
+U CVSROOT/taginfo
+U CVSROOT/verifymsg"
+
+	  # Confirm data present
+	  cd CVSROOT
+	  dotest writeproxy-noredirect-2 "grep rsync loginfo" \
+"ALL $RSYNC -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME"
+	  dotest writeproxy-noredirect-3 "grep PrimaryServer config" \
+"${DOTSTAR}
+PrimaryServer=$PRIMARY_CVSROOT"
+
+	  # Checkin to secondary
+	  cd ..
+	  dotest writeproxy-noredirect-4 \
+"$testcvs -Qd$PRIMARY_CVSROOT co -ldtop ."
+	  cd top
+	  mkdir firstdir
+
+	  # Have to move the primary root back before we can perform write
+	  # operations.
+	  mv $TESTDIR/save-root $PRIMARY_CVSROOT_DIRNAME
+
+	  dotest writeproxy-noredirect-5 "$CVS_SERVER server" \
+"Valid-requests Root Valid-responses valid-requests Command-prep Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set Gssapi-authenticate expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors init annotate rannotate noop version
+ok
+ok
+ok
+Clear-template firstdir/
+firstdir/
+ok" \
+<< EOF
+Root $PRIMARY_CVSROOT_DIRNAME
+Valid-responses ok error Valid-requests Checked-in New-entry Checksum Copy-file Updated Created Update-existing Merged Patched Rcs-diff Mode Mod-time Removed Remove-entry Set-static-directory Clear-static-directory Set-sticky Clear-sticky Template Clear-template Notified Module-expansion Wrapper-rcsOption M Mbinary E F MT
+valid-requests
+UseUnchanged
+Command-prep add
+Global_option -q
+Global_option -Q
+wrapper-sendme-rcsOptions
+Argument --
+Directory firstdir
+firstdir
+Directory .
+
+Argument firstdir
+add
+EOF
+
+	  # Gotta update the workspace ourselves since we bypassed the client.
+	  cp -r CVS firstdir/CVS
+	  echo "firstdir" >firstdir/CVS/Repository
+
+	  cd firstdir
+	  echo now you see me >file1
+	  dotest writeproxy-noredirect-6 "$CVS_SERVER server" \
+"Valid-requests Root Valid-responses valid-requests Command-prep Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set Gssapi-authenticate expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors init annotate rannotate noop version
+ok
+ok
+ok
+Checked-in \./
+firstdir/file1
+/file1/0///
+ok" \
+<< EOF
+Root $PRIMARY_CVSROOT_DIRNAME
+Valid-responses ok error Valid-requests Checked-in New-entry Checksum Copy-file Updated Created Update-existing Merged Patched Rcs-diff Mode Mod-time Removed Remove-entry Set-static-directory Clear-static-directory Set-sticky Clear-sticky Template Clear-template Notified Module-expansion Wrapper-rcsOption M Mbinary E F MT
+valid-requests
+UseUnchanged
+Command-prep add
+Global_option -q
+Global_option -Q
+wrapper-sendme-rcsOptions
+Argument --
+Directory .
+firstdir
+Is-modified file1
+Argument file1
+add
+EOF
+
+	  # Have to add it to the workspace ourselves again since we are
+	  # bypassing the client.
+	  echo /file1/0/dummy+timestamp// >>CVS/Entries
+
+	  dotest writeproxy-noredirect-7 "$CVS_SERVER server" \
+"Valid-requests Root Valid-responses valid-requests Command-prep Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set Gssapi-authenticate expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors init annotate rannotate noop version
+ok
+ok
+Mode u=rw,g=rw,o=r
+Checked-in \./
+firstdir/file1
+/file1/1\.1///
+ok" \
+<< EOF
+Root $PRIMARY_CVSROOT_DIRNAME
+Valid-responses ok error Valid-requests Checked-in New-entry Checksum Copy-file Updated Created Update-existing Merged Patched Rcs-diff Mode Mod-time Removed Remove-entry Set-static-directory Clear-static-directory Set-sticky Clear-sticky Template Clear-template Notified Module-expansion Wrapper-rcsOption M Mbinary E F MT
+valid-requests
+UseUnchanged
+Command-prep commit
+Global_option -q
+Global_option -Q
+Argument -m
+Argument first-file
+Argument --
+Directory .
+firstdir
+Entry /file1/0/+modified//
+Modified file1
+u=rw,g=rw,o=r
+15
+now you see me
+Argument file1
+ci
+EOF
+
+	  # Have to add it to the workspace ourselves again since we are
+	  # bypassing the client.
+	  echo D >CVS/Entries
+	  echo /file1/1.1/dummy+timestamp// >>CVS/Entries
+
+	  # Make sure the sync took place
+	  dotest writeproxy-noredirect-7a "$testcvs -Q up"
+
+	  CVS_SERVER=$servercvs
+	  # Checkout from primary
+	  cd ../../../primary
+	  dotest writeproxy-noredirect-8 \
+"$testcvs -qd$PRIMARY_CVSROOT co firstdir" \
+"U firstdir/file1"
+
+	  # Confirm data present
+	  #  - This test indirectly confirms that the commit did not take
+	  #    place on the secondary.
+	  cd firstdir
+	  dotest writeproxy-noredirect-9 "cat file1" "now you see me"
+
+	  # Commit to primary
+	  echo now you see me again >file1
+	  dotest writeproxy-noredirect-10 "$testcvs -Q ci -medit file1"
+
+	  CVS_SERVER=$CVS_SERVER_secondary
+	  # Update from secondary
+	  cd ../../secondary/top/firstdir
+	  dotest writeproxy-noredirect-11 "$testcvs -q up" "U file1"
+
+	  # Confirm data present
+	  dotest writeproxy-noredirect-12 "cat file1" "now you see me again"
+
+	  dokeep
+	  cd ../../../..
+	  rm -r writeproxy-noredirect
 	  rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
 	  rm $TESTDIR/writeproxy-secondary-wrapper \
 	     $TESTDIR/writeproxy-primary-wrapper
