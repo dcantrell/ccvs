@@ -1,3 +1,10 @@
+2003-08-29  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Administrative files, Commit files): Remove references
+	to deleted nodes.
+	(editinfo, editinfo example): Remove these obsolete nodes.
+	* stamp-vti, version.texi: Regenerated.
+
 2003-08-27  Larry Jones  <lawrence.jones@eds.com>
 
 	* cvs.texinfo (history options): Note the 'P' record type which
