@@ -12,6 +12,11 @@
  * cross platform gssapi which configure doesn't perform itself.
  */
 
+/* Ensure the definitions we check below are set correctly. */
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif /* HAVE_CONFIG_H */
+
 /* Can't include both of these headers at the same time with Solaris 7 &
  * Heimdal Kerberos 0.3.  If some system ends up requiring both, a configure
  * test like TIME_AND_SYS_TIME will probably be necessary.
