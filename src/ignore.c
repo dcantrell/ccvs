@@ -333,9 +333,7 @@ ign_dir_add (name)
 				(dir_ign_max + 1) * sizeof (char *));
     }
 
-    dir_ign_list[dir_ign_current] = name;
-
-    dir_ign_current += 1 ;
+    dir_ign_list[dir_ign_current++] = xstrdup (name);
 }
 
 
