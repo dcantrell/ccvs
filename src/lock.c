@@ -152,12 +152,15 @@ lock_name (const char *repository, const char *name)
     mode_t save_umask = 0000;
     int saved_umask = 0;
 
-    TRACE (TRACE_FLOW, "lock_name (%s, %s)", repository, name);
+    TRACE (TRACE_FLOW, "lock_name (%s, %s)",
+	   repository  ? repository : "(null)", name ? name : "(null)");
 
     if (lock_dir == NULL)
     {
 	/* This is the easy case.  Because the lock files go directly
 	   in the repository, no need to create directories or anything.  */
+	assert (name != NULL);
+	assert (repository != NULL);
 	retval = xmalloc (strlen (repository) + strlen (name) + 10);
 	(void) sprintf (retval, "%s/%s", repository, name);
     }
@@ -701,7 +704,8 @@ promotable_lock (struct lock *lock)
     int status;
     FILE *fp;
 
-    TRACE (TRACE_FUNCTION, "promotable_lock(%s)", lock->repository);
+    TRACE (TRACE_FUNCTION, "promotable_lock(%s)",
+	   lock->repository ? lock->repository : "(null)");
 
     if (promotablelock == NULL)
     {
@@ -976,7 +980,8 @@ set_lock (struct lock *lock, int will_wait)
     time_t now;
 #endif
 
-    TRACE (TRACE_FLOW, "set_lock (%s, %d)", lock->repository, will_wait);
+    TRACE (TRACE_FLOW, "set_lock (%s, %d)",
+	   lock->repository ? lock->repository : "(null)", will_wait);
 
     if (masterlock != NULL)
 	free (masterlock);
