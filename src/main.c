@@ -121,7 +121,7 @@ const struct cmd
 #endif
 
     CMD_ENTRY("add",      "ad",    "new",     add,       client_add),
-#infdef CVS_NOADMIN
+#ifndef CVS_NOADMIN
     CMD_ENTRY("admin",    "adm",   "rcs",     admin,     client_admin),
 #endif
     CMD_ENTRY("checkout", "co",    "get",     checkout,  client_checkout),
