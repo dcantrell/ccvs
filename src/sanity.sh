@@ -7733,7 +7733,10 @@ done"
 	  # Try checking out the module in a local directory
 	  if test "$remote" = yes; then
 	    # Work around the http://www.cyclic.com/cvs/dev-abspath.html race.
-	    dotest abspath-2a "${testcvs} co -d ${TESTDIR}/1 mod1" \
+	    # The exit status differs between the "cannot rename" and the
+	    # normal case.
+	    ${testcvs} co -d ${TESTDIR}/1 mod1 >${TESTDIR}/abspath.tmp 2>&1
+	    dotest abspath-2a "cat ${TESTDIR}/abspath.tmp" \
 "${PROG} [a-z]*: Updating ${TESTDIR}/1
 U ${TESTDIR}/1/file1" \
 "${PROG} [a-z]*: Updating ${TESTDIR}/1
@@ -7778,8 +7781,9 @@ ${PROG} [a-z]*: ignoring module mod1"
 	  mkdir 1
 
 	  if test "$remote" = yes; then
-	    # Work around the http://www.cyclic.com/cvs/dev-abspath.html rac.
-	    dotest abspath-3a "${testcvs} co -d ${TESTDIR}/1/2 mod1" \
+	    # Work around the http://www.cyclic.com/cvs/dev-abspath.html race.
+	    ${testcvs} co -d ${TESTDIR}/1/2 mod1 >${TESTDIR}/abspath.tmp 2>&1
+	    dotest abspath-3a "cat ${TESTDIR}/abspath.tmp" \
 "${PROG} [a-z]*: Updating ${TESTDIR}/1/2
 U ${TESTDIR}/1/2/file1" \
 "${PROG} [a-z]*: Updating ${TESTDIR}/1/2
@@ -7854,7 +7858,8 @@ U ${TESTDIR}/1/mod2/file2"
 	  cd 1
 	  if test "$remote" = yes; then
 	    # Work around the http://www.cyclic.com/cvs/dev-abspath.html race.
-	    dotest abspath-7a "${testcvs} -q co -d ${TESTDIR}/2 mod2" \
+	    ${testcvs} -q co -d ${TESTDIR}/2 mod2 >${TESTDIR}/abspath.tmp 2>&1
+	    dotest abspath-7a "cat ${TESTDIR}/abspath.tmp" \
 "U ${TESTDIR}/2/file2" \
 "U ${TESTDIR}/2/file2
 ${PROG} \[server aborted\]: cannot rename file CVS/Entries.Backup to CVS/Entries: No such file or directory"

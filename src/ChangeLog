@@ -1,3 +1,8 @@
+1998-05-02  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (abspath): Revise the workarounds to deal with exit
+	status.
+
 1998-04-30  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (abspath): Work around the "cannot rename" bug.
