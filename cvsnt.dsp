@@ -392,6 +392,10 @@ SOURCE=.\diff\diffrun.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\dirname.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\edit.h
 # End Source File
 # Begin Source File
@@ -485,6 +489,10 @@ SOURCE=.\src\myndbm.h
 # Begin Source File
 
 SOURCE=".\windows-NT\ndir.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\parseinfo.h
 # End Source File
 # Begin Source File
 
