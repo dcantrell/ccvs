@@ -20,6 +20,7 @@
 #include "cvs.h"
 #include "xgethostname.h"
 #include "strftime.h"
+#include "closeout.h"
 
 const char *program_name;
 const char *program_path;
@@ -789,6 +790,7 @@ cause intermittent sandbox corruption.");
 	else
 #endif
 	{
+	    cleanup_register (close_stdout);
 	    CurDir = xgetcwd ();
             if (CurDir == NULL)
 		error (1, errno, "cannot get working directory");

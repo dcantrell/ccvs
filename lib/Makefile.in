@@ -58,9 +58,9 @@ host_triplet = @host@
 check_PROGRAMS = getdate$(EXEEXT)
 subdir = lib
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	ChangeLog alloca.c asnprintf.c asprintf.c atexit.c \
-	chdir-long.c chdir-long.h dup2.c fncase.c fnmatch.c fseeko.c \
-	ftello.c ftruncate.c getcwd.c getdate.c gethostname.c \
+	ChangeLog __fpending.c alloca.c asnprintf.c asprintf.c \
+	atexit.c chdir-long.c chdir-long.h dup2.c fncase.c fnmatch.c \
+	fseeko.c ftello.c ftruncate.c getcwd.c getdate.c gethostname.c \
 	getline.c getndelim2.c getopt.c getopt1.c getpass.c gettime.c \
 	gettimeofday.c lstat.c malloc.c memmove.c mempcpy.c mempcpy.h \
 	memrchr.c memrchr.h mkdir.c mkstemp.c mktime.c nanosleep.c \
@@ -77,13 +77,14 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/asx_version_compare.m4 \
 	$(top_srcdir)/m4/atexit.m4 $(top_srcdir)/m4/bison.m4 \
 	$(top_srcdir)/m4/chdir-long.m4 $(top_srcdir)/m4/clock_time.m4 \
+	$(top_srcdir)/m4/closeout.m4 \
 	$(top_srcdir)/m4/cvs_func_printf_ptr.m4 \
 	$(top_srcdir)/m4/d-ino.m4 $(top_srcdir)/m4/dirname.m4 \
 	$(top_srcdir)/m4/dos.m4 $(top_srcdir)/m4/dup2.m4 \
 	$(top_srcdir)/m4/eealloc.m4 $(top_srcdir)/m4/eoverflow.m4 \
 	$(top_srcdir)/m4/error.m4 $(top_srcdir)/m4/exitfail.m4 \
 	$(top_srcdir)/m4/extensions.m4 $(top_srcdir)/m4/fnmatch.m4 \
-	$(top_srcdir)/m4/ftruncate.m4 \
+	$(top_srcdir)/m4/fpending.m4 $(top_srcdir)/m4/ftruncate.m4 \
 	$(top_srcdir)/m4/getcwd-path-max.m4 $(top_srcdir)/m4/getcwd.m4 \
 	$(top_srcdir)/m4/getdate.m4 $(top_srcdir)/m4/gethostname.m4 \
 	$(top_srcdir)/m4/getline.m4 $(top_srcdir)/m4/getndelim2.m4 \
@@ -96,14 +97,15 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
 	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/longdouble.m4 \
 	$(top_srcdir)/m4/longlong.m4 $(top_srcdir)/m4/lstat.m4 \
-	$(top_srcdir)/m4/mbstate_t.m4 $(top_srcdir)/m4/md5.m4 \
-	$(top_srcdir)/m4/memmove.m4 $(top_srcdir)/m4/mempcpy.m4 \
-	$(top_srcdir)/m4/memrchr.m4 $(top_srcdir)/m4/mkdir-slash.m4 \
-	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
-	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/nls.m4 \
-	$(top_srcdir)/m4/onceonly_2_57.m4 $(top_srcdir)/m4/openat.m4 \
-	$(top_srcdir)/m4/pathmax.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/readlink.m4 \
+	$(top_srcdir)/m4/mbrtowc.m4 $(top_srcdir)/m4/mbstate_t.m4 \
+	$(top_srcdir)/m4/md5.m4 $(top_srcdir)/m4/memmove.m4 \
+	$(top_srcdir)/m4/mempcpy.m4 $(top_srcdir)/m4/memrchr.m4 \
+	$(top_srcdir)/m4/mkdir-slash.m4 $(top_srcdir)/m4/mkstemp.m4 \
+	$(top_srcdir)/m4/mktime.m4 $(top_srcdir)/m4/nanosleep.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/onceonly_2_57.m4 \
+	$(top_srcdir)/m4/openat.m4 $(top_srcdir)/m4/pathmax.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
+	$(top_srcdir)/m4/quotearg.m4 $(top_srcdir)/m4/readlink.m4 \
 	$(top_srcdir)/m4/regex.m4 $(top_srcdir)/m4/rename.m4 \
 	$(top_srcdir)/m4/restrict.m4 $(top_srcdir)/m4/rpmatch.m4 \
 	$(top_srcdir)/m4/save-cwd.m4 $(top_srcdir)/m4/setenv.m4 \
@@ -139,7 +141,8 @@ am_libcvs_a_OBJECTS = sighandle.$(OBJEXT) allocsa.$(OBJEXT) \
 	exitfail.$(OBJEXT) getdate.$(OBJEXT) getnline.$(OBJEXT) \
 	md5.$(OBJEXT) strftime.$(OBJEXT) xmalloc.$(OBJEXT) \
 	xalloc-die.$(OBJEXT) xgetcwd.$(OBJEXT) xgethostname.$(OBJEXT) \
-	xreadlink.$(OBJEXT) yesno.$(OBJEXT)
+	xreadlink.$(OBJEXT) yesno.$(OBJEXT) closeout.$(OBJEXT) \
+	quotearg.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 am_getdate_OBJECTS = getdate-allocsa.$(OBJEXT) getdate-error.$(OBJEXT) \
 	getdate-exitfail.$(OBJEXT) getdate-getdate.$(OBJEXT) \
@@ -313,7 +316,8 @@ libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	strftime.h strstr.h time_r.h timespec.h unlocked-io.h \
 	printf-args.h printf-parse.h vasnprintf.h vasprintf.h xalloc.h \
 	xmalloc.c xalloc-die.c xgetcwd.h xgetcwd.c xgethostname.h \
-	xgethostname.c xreadlink.h xreadlink.c xsize.h yesno.c yesno.h
+	xgethostname.c xreadlink.h xreadlink.c xsize.h yesno.c yesno.h \
+	closeout.c closeout.h quotearg.c quotearg.h __fpending.h
 libcvs_a_LIBADD = \
 	@LIBOBJS@ \
 	@ALLOCA@
@@ -393,6 +397,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/__fpending.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/alloca.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/asnprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/asprintf.Po@am__quote@
@@ -449,6 +454,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/waitpid.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/allocsa.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/basename.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/closeout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exitfail.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-allocsa.Po@am__quote@
@@ -462,6 +468,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getnline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/md5.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/quotearg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sighandle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strftime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stripslash.Po@am__quote@

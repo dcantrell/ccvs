@@ -55,3 +55,4 @@ ftruncate
 strtoul
 pathmax
 xalloc-die
+closeout

@@ -1,3 +1,9 @@
+2005-03-02  Jim Meyering  <jim@meyering.net>
+
+	* NEWS: Note that cvs now detects write errors on stdout.
+	* gnulib-modules: Add closeout.
+	* gnulib.txt: Regenerate.
+
 2005-03-02 Derek Price <derek@ximbiot.com>
 
 	* configure.in: Remove checks for funcs covered by GNULIB.
@@ -20,7 +26,7 @@
 	lib/error.c.
 	(MODULES): Move content to...
 	* gnulib-modules: This new file.
-	
+
 2005-02-25 Derek Price <derek@ximbiot.com>
 
 	* NEWS: Note commitid feature.
@@ -84,7 +90,7 @@
 	* README: Remove Dr. Pascal Molli's CVS URL from the
 	documentation.
 	* FAQ: Ditto.
-	
+
 2004-12-03  Mark D. Baushke  <mdb@cvshome.org>
 
 	* NEWS: Document new CVSROOT options and case insensitivity.
@@ -104,7 +110,7 @@
 
 	* cvsnt.dep: Add "xgethostname.h" to project.
 	* cvsnt.dsp: Add "xgethostname.h" to project.
-	
+
 2004-11-20  Derek Price  <derek@ximbiot.com>
 
 	* BUGS: Remove note about BSDI test failure.
@@ -158,7 +164,7 @@
 	* cvsnt.dep: Re-order sources in front of includes.
 	* Makefile.am: Update allocsa from GNULIB.
 	* gnulib.txt, Makefile.gnulib: Regenerated.
-	
+
 2004-11-03  Derek Price  <derek@ximbiot.com>
 
 	* HACKING, NEWS: Note new Autoconf & Automake versions.
@@ -167,7 +173,7 @@
 
 	* cvsnt.dsp: Add readlink.c, xreadlink.c and xreadlink.h.
 	* cvsnt.dep: Add readlink.c and xreadlink.c dependencies.
-	
+
 	* gnulib-update (MODULES): Add readlink xreadlink.
 	* Makefile.in, aclocal.m4, configure, configure.in, gnulib.txt:
 	Regenerated.
@@ -206,7 +212,7 @@
 
 	* configure.in: Add AC_SEARCH_LIBS for hstrerror in resolv.
 	* configure: Regenerated.
-	
+
 2004-10-29  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note xreadlink fix.
@@ -1587,7 +1593,7 @@
 	and ftello with AC_LIBOBJ.
 	(AC_REPLACE_FUNCS): Remove fseeko and ftello.
 	* config.h.in, configure: Regenerated.
-	
+
 2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvsnt.mak (CLEAN, CPP_SBRS): Add ftello, fseeko, exithandle and
@@ -1988,13 +1994,13 @@
 	* srclist.txt ($GNULIB/modules/getpass): Rename to...
 	($GNULIB/modules/getpass-gnu): ...this new module.
 	* aclocal.m4, configure: Regenerated.
-	
+
 2003-07-29  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Replace my recent misuse of AH_VERBATIM with a call to
 	AC_DEFINE.
 	* config.h.in, configure: Regenerated.
-	
+
 2003-07-29  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Do not check for getpassphrase.  Define `getpass' to
@@ -2429,7 +2435,7 @@
 	(Original patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
 
 	* aclocal.m4: Regenerated.
-	* configure: Ditto. 
+	* configure: Ditto.
 	* Makefile.in: Ditto.
 
 2003-05-09  Derek Price  <derek@ximbiot.com>
@@ -2509,7 +2515,7 @@
 
 	* BUGS: Remove a pcl-cvs bug.  pcl-cvs is no longer part of the CVS
 	source distribution.
-	
+
 2003-04-01  Derek Price  <derek@ximbiot.com>
 
 	* BUGS: Remove reference to cvs admin SEGV bug Larry Jones fixed
@@ -2559,7 +2565,7 @@
 	* configure: Regenerated.
 	* config.h.in: Ditto.
 	* Makefile.in: Ditto.
-	
+
 2003-03-19  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: AC_SUBST HAVE_PUTENV and create a dynamic config file
@@ -2588,7 +2594,7 @@
 
 2003-03-04  Mark D Baushke <mdb@cvshome.org>
 
-	* NEWS (Changes since 1.11.5): Mention CVS_LOCAL_BRANCH_NUM 
+	* NEWS (Changes since 1.11.5): Mention CVS_LOCAL_BRANCH_NUM
 	environment varaible.
 
 2003-02-28  Larry Jones  <lawrence.jones@eds.com>
@@ -3415,7 +3421,7 @@
 	* configure.in: Comment definition of PR_PROGRAM.
 
 	* configure: Regenerated.
-	
+
 2001-02-22  Derek Price  <derek.price@openavenue.com>
 	    Pavel Roskin  <proski@gnu.org>
 
@@ -3485,7 +3491,7 @@
 	acceptable to both Autoconf 1.13 and the new 1.49 beta.
 
 	* configure: regenerated
- 
+
 2001-01-29  Larry Jones  <larry.jones@sdrc.com>
 
 	* configure.in: Check for syslog.h.
@@ -3681,7 +3687,7 @@
 	* configure: regenerated
 
 2000-11-08  Larry Jones  <larry.jones@sdrc.com>
- 
+
 	* configure.in: Check for getgroups function.
 	* configure, config.h.in: Regenerated.
 
@@ -5265,7 +5271,7 @@ Fri Aug 16 16:09:59 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* Makefile.in (installdirs-local): new (empty) target
 	(all install uninstall installdirs): add installdirs to list of
-	targets which are done for all subdirs 
+	targets which are done for all subdirs
 	(spec): new target to create a rpm specification file (which can
 	be used to create RPM source and binary packages)
 	(dist): depend on spec (which now also creates .fname)
@@ -5581,9 +5587,9 @@ Sun Apr 14 11:06:44 1996  Karl Fogel  <kfogel@floss.red-bean.com>
         * configure.in (AC_OUTPUT): generate contrib/elib/Makefile,
         tools/Makefile, and tools/pcl-cvs/Makefile.  Do not any longer
         generate contrib/pcl-cvs/Makefile.
-        
+
         * Makefile.in: deal w/ above changes.
-        
+
         * configure: regenerated.
 
         * Added `tools' subdir (pcl-cvs will live there, as will other
@@ -5837,7 +5843,7 @@ Fri Jan 12 13:38:12 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 Fri Jan 12 12:46:23 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * configure: regenerated.
-        
+
         * configure.in: print "Checking user's gender... ok".  I mean,
         what the heck, you only live once.
 
@@ -5855,7 +5861,7 @@ Wed Jan 10 20:40:23 1996  Karl Fogel  <kfogel@floss.red-bean.com>
         * configure: regenerated.
 
         * configure.in (AC_OUTPUT): added `macintosh/Makefile'.
-        
+
         * Makefile.in (SUBDIRS): added `macintosh'.
 
 Wed Jan 10 01:17:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>

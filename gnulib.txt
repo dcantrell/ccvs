@@ -318,3 +318,8 @@ m4/onceonly_2_57.m4
 lib/xalloc-die.c
 
 m4/onceonly_2_57.m4
+lib/closeout.h
+lib/closeout.c
+m4/closeout.m4
+
+m4/onceonly_2_57.m4
