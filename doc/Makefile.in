@@ -66,6 +66,8 @@ CPP = @CPP@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
+ETAGS = @ETAGS@
+ETAGS_INCLUDE_OPTION = @ETAGS_INCLUDE_OPTION@
 GSSAPI = @GSSAPI@
 KRB4 = @KRB4@
 LN_S = @LN_S@
@@ -165,7 +167,7 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 GZIP_ENV = --best
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .aux .dvi .info .pdf .ps .texi .texinfo .txi .txt
+.SUFFIXES: .aux .txt .pdf .dvi .info .ps .texi .texinfo .txi
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu doc/Makefile
 

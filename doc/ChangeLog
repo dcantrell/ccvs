@@ -1,3 +1,7 @@
+2000-12-22  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.in: Regenerated
+
 2000-12-21  Derek Price  <derek.price@openavenue.com>
 
 	* cvs-paper.ps: Backout accidental regeneration.
