@@ -1,7 +1,19 @@
+2004-05-08  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* log.c (log_expand_revlist): Suppress warnings if really_quiet.
+
 2004-05-08  Derek Price  <derek@ximbiot.com>
 
 	* server.c: Gratuitous reformatting.  Remove unnecessary prototype &
 	unnecessary type cast.
+
+2004-05-07  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (basica): Remove unnecessary empty arguments.
+
+2004-05-07  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (fopen_case): Remove obsolescent prototype.
 
 2004-05-05  Derek Price  <derek@ximbiot.com>
 

@@ -2183,9 +2183,9 @@ done"
 	  dotest basica-8a5 "${testcvs} -q up -A ./" "[UP] ssfile"
 
 	  cd ../..
-	  dotest basica-8b "${testcvs} -q diff -r1.2 -r1.3" ""
+	  dotest basica-8b "${testcvs} -q diff -r1.2 -r1.3"
 
-	  dotest basica-8b1 "${testcvs} -q diff -r1.2 -r1.3 -C 3isacrowd" ""
+	  dotest basica-8b1 "${testcvs} -q diff -r1.2 -r1.3 -C 3isacrowd"
 
 	  # The .* here will normally be "No such file or directory",
 	  # but if memory serves some systems (AIX?) have a different message.

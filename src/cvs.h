@@ -603,7 +603,6 @@ void expand_wild (int argc, char **argv,
 
 #ifdef SERVER_SUPPORT
 int cvs_casecmp (const char *, const char *);
-int fopen_case (char *, char *, FILE **, char **);
 #endif
 
 /* exithandle.c */
