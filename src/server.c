@@ -342,7 +342,8 @@ fd_buffer_block (closure, block)
 }
 
 /* Populate all of the directories between BASE_DIR and its relative
-   subdirectory DIR with CVSADM directories.  */
+   subdirectory DIR with CVSADM directories.  Return 0 for success or
+   errno value.  */
 static int create_adm_p PROTO((char *, char *));
 
 static int
@@ -355,7 +356,7 @@ create_adm_p (base_dir, dir)
     FILE *f;
 
     if (strcmp (dir, ".") == 0)
-	return;			/* nothing to do */
+	return 0;			/* nothing to do */
 
     /* Allocate some space for our directory-munging string. */
     p = malloc (strlen (dir) + 1);
@@ -893,7 +894,14 @@ dirswitch (dir, repos)
        already-sent "Directory xxx" command.  See recurse.c
        (start_recursion) for a big discussion of this.  */
 
-    create_adm_p (server_temp_dir, dir);
+    status = create_adm_p (server_temp_dir, dir);
+    if (status != 0)
+    {
+	pending_error = status;
+	if (alloc_pending (80 + strlen (dir_name)))
+	    sprintf (pending_error_text, "E cannot create_adm_p %s", dir_name);
+	return;
+    }
 
     if ( CVS_CHDIR (dir_name) < 0)
     {

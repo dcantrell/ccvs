@@ -1,5 +1,9 @@
 1998-09-03  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* server.c (create_adm_p): Fix one "return" which didn't return a
+	value.
+	(dirswitch): Check for errors from create_adm_p.
+
 	* sanity.sh: Set LC_ALL rather than just LC_COLLATE.
 
 Wed Sep  2 02:30:22 1998  Jim Kingdon  <kingdon@pennington.cyclic.com>
