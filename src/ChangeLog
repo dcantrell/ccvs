@@ -1,5 +1,18 @@
 2001-07-03  Derek Price  <dprice@collab.net>
 
+	* rcs.c (rcsbuf_open): Use mmap when possible to reduce memory
+	consumption, especially with large (e.g. binary) files.
+	(rcsbuf_close): Call munmap.
+	(rcsbuf_getkey): Remove the buffer fill code when using mmap.
+	(rcsbuf_getrevnum): Ditto.
+	(rcsbuf_fill): Remove this function when using mmap.
+	(rcsbuf_cache_open): Mostly don't use this function with mmap.
+	(RCS_copydeltas): Don't depend on the file pointer with mmap.
+
+	* stamp-h2.in: Regenerated.
+
+2001-07-03  Derek Price  <dprice@collab.net>
+
 	* update.c: Indent compiler directives.
 
 2001-07-02  Larry Jones  <larry.jones@sdrc.com>
