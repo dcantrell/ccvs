@@ -4896,6 +4896,15 @@ are checking out contains any files in that directory.
 @cindex Tracking sources
 
 @c FIXME: Need discussion of added and removed files.
+@c FIXME: This doesn't really adequately introduce the
+@c concepts of "vendor" and "you".  They don't *have*
+@c to be separate organizations or separate people.
+@c We want a description which is somewhat more based on
+@c the technical issues of which sources go where, but
+@c also with enough examples of how this relates to
+@c relationships like customer-supplier, developer-QA,
+@c maintainer-contributor, or whatever, to make it
+@c seem concrete.
 If you modify a program to better fit your site, you
 probably want to include your modifications when the next
 release of the program arrives.  @sc{cvs} can help you with
@@ -4928,6 +4937,7 @@ revision.
 * Update imports::              Updating a module with the import command
 * Reverting local changes::     Reverting a module to the latest vendor release
 * Binary files in imports::     Binary files require special handling
+* Keywords in imports::         Keyword substitution might be undesirable
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -5047,6 +5057,33 @@ after the @samp{-b}.  @xref{admin options}.
 
 Use the @samp{-k} wrapper option to tell import which
 files are binary.  @xref{Wrappers}.
+
+@node Keywords in imports
+@section How to handle keyword substitution with cvs import
+
+The sources which you are importing may contain
+keywords (@pxref{Keyword substitution}).  For example,
+the vendor may use @sc{cvs} or some other system
+which uses similar keyword expansion syntax.  If you
+just import the files in the default fashion, then
+the keyword expansions supplied by the vendor will
+be replaced by keyword expansions supplied by your
+own copy of @sc{cvs}.  It may be more convenient to
+maintain the expansions supplied by the vendor, so
+that this information can supply information about
+the sources that you imported from the vendor.
+
+To maintain the keyword expansions supplied by the
+vendor, supply the @samp{-ko} option to @code{cvs
+import} the first time you import the file.
+This will turn off keyword expansion
+for that file entirely, so if you want to be more
+selective you'll have to think about what you want
+and use the @samp{-k} option to @code{cvs update} or
+@code{cvs admin} as appropriate.
+@c Supplying -ko to import if the file already existed
+@c has no effect.  Not clear to me whether it should
+@c or not.
 
 @c ---------------------------------------------------------------------
 @node Moving files
