@@ -232,6 +232,14 @@ extern int errno;
 #define	RCSBIN_ENV	"RCSBIN"	/* RCS binary directory */
 /* #define	RCSBIN_DFLT		   Set by options.h */
 
+/* XXX should this maybe be "DIFF"?  It's not a "bin" directory. */
+#define	DIFFBIN_ENV	"DIFFBIN"	/* Diff binary */
+/* #define	DIFFBIN_DFLT		   Set by options.h */
+
+/* XXX should this maybe be "GREP"?  It's not a "bin" directory. */
+#define	GREPBIN_ENV	"GREPBIN"	/* Grep binary */
+/* #define	GREPBIN_DFLT		   Set by options.h */
+
 #define	TMPDIR_ENV	"TMPDIR"	/* Temporary directory */
 /* #define	TMPDIR_DFLT		   Set by options.h */
 
@@ -331,7 +339,7 @@ typedef enum direnter_type Dtype;
 #endif
 
 extern char *program_name, *program_path, *command_name;
-extern char *Rcsbin, *Tmpdir, *Editor;
+extern char *Rcsbin, *Diffbin, *Grepbin, *Tmpdir, *Editor;
 extern int cvsadmin_root;
 extern char *CurDir;
 extern int really_quiet, quiet;

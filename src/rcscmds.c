@@ -153,7 +153,7 @@ RCS_merge(path, options, rev1, rev2)
     if (status == 0) 
     {
 	/* Run GREP to see if there appear to be conflicts in the file */
-	run_setup ("%s", GREP);
+	run_setup ("%s", Grepbin);
 	run_arg (RCS_MERGE_PAT);
 	run_arg (path);
 	status = (run_exec (RUN_TTY, DEVNULL, RUN_TTY, RUN_NORMAL) == 0);

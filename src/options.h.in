@@ -68,8 +68,8 @@
  * use rcsdiff which will use whatever version of diff was specified
  * when rcsdiff was built on your system.
  */
-#ifndef DIFF
-#define	DIFF	"diff"
+#ifndef DIFFBIN_DFLT
+#define	DIFFBIN_DFLT	"diff"
 #endif
 
 /*
@@ -78,8 +78,8 @@
  * regular expression as an argument.  Specify a full pathname if your
  * site wants to use a particular grep.
  */
-#ifndef GREP
-#define GREP "grep"
+#ifndef GREPBIN_DFLT
+#define GREPBIN_DFLT	"grep"
 #endif
 
 /*
@@ -113,6 +113,10 @@
  * alternative is to make sure that root has the right directory in
  * its path already.  Another, probably better alternative is to
  * specify -b in /etc/inetd.conf.
+ *
+ * You may also have to set RCSBIN_DFLT here if there's no global
+ * start-up script run for users by rshd and your RCS programs are not
+ * in a directory in the default PATH assigned by rshd.
  *
  * This define should be either the empty string ("") or a full
  * pathname to the directory containing all the installed programs

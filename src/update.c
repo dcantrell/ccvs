@@ -543,7 +543,7 @@ update_fileproc (callerdat, finfo)
 			 * If the timestamps differ, look for Conflict
 			 * indicators to see if 'C' anyway.
 			 */
-			run_setup ("%s", GREP);
+			run_setup ("%s", Grepbin);
 			run_arg (RCS_MERGE_PAT);
 			run_arg (finfo->file);
 			retcode = run_exec (RUN_TTY, DEVNULL,
@@ -1215,7 +1215,7 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 	   deltas or something equivalent.  */
 	/* This is -c, not -u, because we have no way of knowing which
 	   DIFF is in use.  */
-	run_setup ("%s -c %s %s", DIFF, file1, file2);
+	run_setup ("%s -c %s %s", Diffbin, file1, file2);
 
 	/* A retcode of 0 means no differences.  1 means some differences.  */
 	if ((retcode = run_exec (RUN_TTY, finfo->file, RUN_TTY, RUN_NORMAL)) != 0
