@@ -873,7 +873,7 @@ char *descramble PROTO ((char *str));
 
 #ifdef AUTH_CLIENT_SUPPORT
 char *get_cvs_password PROTO((void));
-int get_port_number PROTO((const char *envname, const char *portname, int defaultport));
+int get_cvs_port_number PROTO((cvsroot_t *root));
 char *normalize_cvsroot PROTO((const char *default_user, int default_port));
 #endif /* AUTH_CLIENT_SUPPORT */
 

@@ -1,5 +1,18 @@
 2001-01-10  Derek Price  <derek.price@openavenue.com>
 
+	* cvs.h (get_cvs_port_number): change name & prototype from
+	get_port_number
+	* client.c (get_cvs_port_number): new function which returns a port
+	number based on a cvsroot_t rather than requiring all possible sources
+	passed in
+	(connect_to_pserver): use new get_cvs_port_number function
+	(connect_to_server): ditto
+	* login.c (get_password): use new get_cvs_port_number function
+	(login): ditto
+	(logout): ditto
+
+2001-01-10  Derek Price  <derek.price@openavenue.com>
+
 	* Makefile.am ($(srcdir)/version.c): specify $(srcdir) for all subparts
 	of the build since some systems don't allow mv's across partitions
 	* Makefile.in: regenerated
