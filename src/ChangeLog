@@ -1,5 +1,13 @@
 2005-02-24 Derek Price <derek@ximbiot.com>
 
+	* subr.h (cvs_trace, TRACE*): Move to...
+	* server.h: ...here.
+	* subr.c: Ditto, but to...
+	* server.c: ...here, and print out 'P' instead of 'S' for traces from
+	secondary (proxy) servers.
+
+2005-02-24 Derek Price <derek@ximbiot.com>
+
 	* admin.c (admin): Suppress warning with -Wall and --disable-client.
 	* server.c: Don't declare functions that won't be defined when
 	--disable-server.

@@ -7833,3 +7833,30 @@ cvs_output_tagged (const char *tag, const char *text)
 	    cvs_output (text, 0);
     }
 }
+
+
+
+/*
+ * void cvs_trace(int level, const char *fmt, ...)
+ *
+ * Print tracing information to stderr on request.  Levels are implemented
+ * as with CVSNT.
+ */
+void
+cvs_trace (int level, const char *fmt, ...)
+{
+    if (trace >= level)
+    {
+	va_list va;
+
+	va_start (va, fmt);
+#ifdef SERVER_SUPPORT
+	fprintf (stderr,"%c -> ",server_active?(isProxyServer()?'P':'S'):' ');
+#else /* ! SERVER_SUPPORT */
+	fprintf (stderr,"  -> ");
+#endif
+	vfprintf (stderr, fmt, va);
+	fprintf (stderr,"\n");
+	va_end (va);
+    }
+}
