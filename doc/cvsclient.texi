@@ -377,6 +377,10 @@ C: /home/kingdon/zwork/cvsroot/1dir
 C: update
 @end example
 
+For a given working directory, the repository will be the same for each
+of the responses, so one can use the repository from whichever response
+is most convenient (there is nothing special about @code{Clear-sticky}).
+
 @item Max-dotdot @var{level} \n
 Response expected: no.
 Tell the server that @var{level} levels of directories above the
