@@ -54,7 +54,7 @@ MIPS:
 	Siemens-Nixdorf RM600 running SINIX-Y (1.6)
 PowerPC or RS/6000:
 	IBM RS/6000 running AIX 3.1 using gcc and cc (1.6.86)
-	IBM RS/6000 running AIX 3.2.5 using xlc (1.5)
+	IBM RS/6000 running AIX 3.2.5 (1.7.87)
 	IBM RS/6000 running AIX 4.1 using gcc and cc (about 1.4A2) (footnote 1)
 	Lynx 2.3.1 120495 (1.6.86) (footnote 9)
 SPARC:
