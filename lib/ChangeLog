@@ -1,3 +1,9 @@
+Tue Nov  7 19:38:48 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* system.h (STAT_MACROS_BROKEN): undo previous change, because
+	  else all regular files will be identified as links (the mask for
+	  links is S_IFREG|S_IFCHR).
+
 Mon Nov  6 19:20:56 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * system.h (STAT_MACROS_BROKEN): in defining the S_IF* macros,
