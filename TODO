@@ -849,9 +849,6 @@ glibc version.
 	  where this makes sense?  Would it be simpler?  It seems to me the
 	  major operational differences lie in the file list construction.
 
-216.  Avoid command-line keyword expansion modes overriding binary mode
-(or make binary mode completely separate from keyword expansion mode).
-
 217.  Fix assertion failures that occur when CVSROOT is a symlink to the
 actual repository location.
 

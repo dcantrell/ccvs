@@ -1,3 +1,16 @@
+2003-07-18  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Merging and keywords): Note that keyword expansion modes
+	requested on the command line no longer override binary mode.  Removed
+	an obsoleted @ignore section.
+	(Common options): Ditto minus the @ignore section.  Some reworking for
+	clarity.
+	(Original patch from Dieter Maurer <dieter@handshake.de>.)
+
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
+
 2003-07-12  Larry Jones  <lawrence.jones@eds.com>
 
 	* cvs.texinfo (Binary howto): Add note about how to determine whether

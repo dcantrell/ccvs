@@ -1,5 +1,10 @@
 2003-07-17  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note new keyword expansion mode behavior.
+	* TODO (216): Remove completed item.
+
+2003-07-17  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Use gl_GETNLINE rather than the obsolete
 	gl_FUNC_GETNLINE.
 	* aclocal.m4: Regenerated.
