@@ -137,16 +137,14 @@ RCS_merge(path, options, rev1, rev2)
    such as -kb or -kkv, for keyword expansion options, or NULL if there
    are none.  If WORKFILE is NULL, run regardless of noexec; if non-NULL,
    noexec inhibits execution.  SOUT is what to do with standard output
-   (typically RUN_TTY).  If FLAGS & RCS_FLAGS_FORCE, check out even on
-   top of an existing file.  */
+   (typically RUN_TTY).  */
 int
-RCS_exec_checkout (rcsfile, workfile, tag, options, sout, flags)
+RCS_exec_checkout (rcsfile, workfile, tag, options, sout)
     char *rcsfile;
     char *workfile;
     char *tag;
     char *options;
     char *sout;
-    int flags;
 {
     run_setup ("%s%s -x,v/ -q %s%s", Rcsbin, RCS_CO,
                tag ? "-r" : "", tag ? tag : "");
@@ -154,8 +152,6 @@ RCS_exec_checkout (rcsfile, workfile, tag, options, sout, flags)
 	run_arg (options);
     if (workfile == NULL)
 	run_arg ("-p");
-    if (flags & RCS_FLAGS_FORCE)
-	run_arg ("-f");
     run_arg (rcsfile);
     if (workfile != NULL)
 	run_arg (workfile);
