@@ -1,5 +1,7 @@
 2000-07-10  Larry Jones  <larry.jones@sdrc.com>
 
+	* zlib.c (gunzip_and_write): Fix type clashes.
+
 	* main.c (main): Remove unused variables.
 
 2000-07-10  Jim Meyering  <meyering@lucent.com>
