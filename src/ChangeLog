@@ -1,3 +1,14 @@
+Sun Jul 27 15:36:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* admin.c (admin, admin_fileproc): Parse options ourself rather
+	than blindly passing them to RCS.
+	Accordingly, add struct admin_data and function arg_add, and delete
+	global variables ac and av.
+	* sanity.sh (admin): Change admin-3 test to reflect cvs admin -i
+	now being an error.
+	(basicb): Change basicb-21 test to relect the improved error
+	message here.
+
 Sat Jul 26 11:34:51 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (join3): New tests, test a new branch topology and
