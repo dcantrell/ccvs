@@ -1476,7 +1476,8 @@ be done in a couple of different ways.
 @menu
 * From files::                  This method is useful with old projects
                                 where files already exists.
-
+* From other version control systems::  Old projects where you want to
+                                        preserve history from another system.
 * From scratch::                Creating a module from scratch.
 @end menu
 
@@ -1532,6 +1533,59 @@ It is a good idea to check that the permissions
 @sc{cvs} sets on the directories inside @samp{$CVSROOT}
 are reasonable, and that they belong to the proper
 groups.  @xref{File permissions}.
+
+@c The node name is too long, but I am having trouble
+@c thinking of something more concise.
+@node From other version control systems
+@subsection Creating Files From Other Version Control Systems
+@cindex Importing files, from other version control systesm
+
+If you have a project which you are maintaining with
+another version control system, such as @sc{rcs}, you
+may wish to put the files from that project into
+@sc{cvs}, and preserve the revision history of the
+files.
+
+@table @asis
+@cindex RCS, importing files from
+@item From RCS
+If you have been using @sc{rcs}, find the @sc{rcs}
+files---usually a file named @file{foo.c} will have its
+@sc{rcs} file in @file{RCS/foo.c,v} (but it could be
+other places; consult the @sc{rcs} documentation for
+details).  Then create the appropriate directories in
+@sc{cvs} if they do not already exist.  Then copy the
+files into the appropriate directories in the @sc{cvs}
+repository (the name in the repository must be the name
+of the source file with @samp{,v} added; the files go
+directly in the appopriate directory of the repository,
+not in an @file{RCS} subdirectory).  This is one of the
+few times when it is a good idea to access the @sc{cvs}
+repository directly, rather than using @sc{cvs}
+commands.  Then you are ready to check out a new
+working directory.
+@c Someday there probably should be a "cvs import -t
+@c rcs" or some such.  It could even create magic
+@c branches.  It could also do something about the case
+@c where the RCS file had a (non-magic) "0" branch.
+
+@c How many is "many"? Or do they just import RCS files?
+@item From another version control system
+Many version control systems have the ability to export
+@sc{rcs} files in the standard format.  If yours does,
+export the @sc{rcs} files and then follow the above
+instructions.
+
+@cindex SCCS, importing files from
+@item From SCCS
+There is a script in the @file{contrib} directory of
+the @sc{cvs} source distribution called @file{sccs2rcs}
+which converts @sc{sccs} files to @sc{rcs} files.
+Note: you must run it on a machine which has both
+@sc{sccs} and @sc{rcs} installed, and like everything
+else in contrib it is unsupported (your mileage may
+vary).
+@end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node From scratch

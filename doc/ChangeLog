@@ -1,3 +1,7 @@
+Tue Apr  9 19:59:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (From other version control systems): New node.
+
 Mon Apr  8 15:59:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Connection and Authentication): Revise kerberos
