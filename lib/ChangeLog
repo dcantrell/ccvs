@@ -1,3 +1,8 @@
+2004-03-19  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Add fnmatch.h for Windows and other platforms which build
+	it.
+
 2003-12-09  Derek Price  <derek@ximbiot.com>
 
 	* system.h: Correct spelling in comment.
