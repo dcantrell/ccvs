@@ -53,10 +53,6 @@ file's description.
   users who try to add the same directory at nearly the same time.
 
 
-* 'cvs admin' dumped core when files were missing from working directory
-  (and from the repository)?
-
-
 * The following bug was reported against CVS 1.9:
 
     Create a module named test with a file named test in it.
