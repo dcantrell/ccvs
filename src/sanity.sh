@@ -557,7 +557,7 @@ if test x"$*" = x; then
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4"
-	tests="${tests} cvsadm abspath toplevel"
+	tests="${tests} cvsadm emptydir abspath toplevel"
 	# Log messages, error messages.
 	tests="${tests} mflag editor errmsg1 errmsg2"
 	# Watches, binary files, history browsing, &c.
@@ -1071,31 +1071,6 @@ done"
 	  cd ../..
 	  rm -r 1
 
-	  # Let's see if we can add something to Emptydir.
-	  dotest basicb-18 "${testcvs} -q co -d t2/t3 first-dir second-dir" \
-"U t2/t3/first-dir/Emptydir/sfile1
-U t2/t3/first-dir/sdir2/sfile2
-U t2/t3/second-dir/aa"
-	  cd t2
-	  touch emptyfile
-	  # The fact that CVS lets us add a file here is a CVS bug, right?
-	  # I can just make this an error message (on the add and/or the
-	  # commit) without getting flamed, right?
-	  # Right?
-	  # Right?
-	  dotest basicb-19 "${testcvs} add emptyfile" \
-"${PROG} [a-z]*: scheduling file .emptyfile. for addition
-${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
-	  dotest basicb-20 "${testcvs} -q ci -m add" \
-"RCS file: ${TESTDIR}/cvsroot/CVSROOT/Emptydir/emptyfile,v
-done
-Checking in emptyfile;
-${TESTDIR}/cvsroot/CVSROOT/Emptydir/emptyfile,v  <--  emptyfile
-initial revision: 1\.1
-done"
-	  cd ..
-	  rm -r t2
-
 	  mkdir 1; cd 1
 	  # Note that -H is an illegal option.
 	  # I suspect that the choice between "illegal" and "invalid"
@@ -1110,18 +1085,6 @@ ${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information"
 	  cd ..
 	  rmdir 1
 
-	  # OK, while we have an Emptydir around, test a few obscure
-	  # things about it.
-	  mkdir edir; cd edir
-	  dotest basicb-edir-1 "${testcvs} -q co -l CVSROOT" \
-"U CVSROOT${DOTSTAR}"
-	  cd CVSROOT
-	  dotest_fail basicb-edir-2 "test -d Emptydir" ''
-	  # This tests the code in find_dirs which skips Emptydir.
-	  dotest basicb-edir-3 "${testcvs} -q -n update -d -P" ''
-	  cd ../..
-	  rm -r edir
-
 	  if test "$keep" = yes; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
@@ -1129,7 +1092,6 @@ ${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information"
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -rf ${CVSROOT_DIRNAME}/second-dir
-	  rm -rf ${CVSROOT_DIRNAME}/CVSROOT/Emptydir
 	  rm -f ${CVSROOT_DIRNAME}/topfile,v
 	  ;;
 
@@ -7644,6 +7606,88 @@ U dir/dir2/dir2d2/sub2d2/file2"
 	  rm -rf ${CVSROOT_DIRNAME}/mod2-2
 	  ;;
 
+	emptydir)
+	  # Various tests of the Emptydir (CVSNULLREPOS) code.  See also:
+	  #   cvsadm: tests of Emptydir in various module definitions
+	  #   basicb: Test that "Emptydir" is non-special in ordinary contexts
+
+	  mkdir 1; cd 1
+	  dotest emptydir-1 "${testcvs} co CVSROOT/modules" \
+"U CVSROOT/modules"
+	  echo "# Module defs for emptydir tests" > CVSROOT/modules
+	  echo "2d1mod -d dir2d1/sub2d1 mod1" >> CVSROOT/modules
+
+	  dotest emptydir-2 "${testcvs} ci -m add-modules" \
+"${PROG} [a-z]*: Examining .
+${PROG} [a-z]*: Examining CVSROOT
+Checking in CVSROOT/modules;
+${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  rm -rf CVS CVSROOT
+
+	  mkdir ${CVSROOT_DIRNAME}/mod1
+	  # Populate.  Not sure we really need to do this.
+	  dotest emptydir-3 "${testcvs} co mod1" \
+"${PROG} [a-z]*: Updating mod1"
+	  echo "file1" > mod1/file1
+	  dotest emptydir-4 "${testcvs} add mod1/file1" \
+"${PROG} [a-z]*: scheduling file .mod1/file1. for addition
+${PROG} [a-z]*: use '${PROG} commit' to add this file permanently"
+	  dotest emptydir-5 "${testcvs} -q ci -m yup mod1" \
+"RCS file: ${CVSROOT_DIRNAME}/mod1/file1,v
+done
+Checking in mod1/file1;
+${CVSROOT_DIRNAME}/mod1/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  rm -r mod1 CVS
+	  # End Populate.
+
+	  dotest emptydir-6 "${testcvs} co 2d1mod" \
+"${PROG} [a-z]*: Updating dir2d1/sub2d1
+U dir2d1/sub2d1/file1"
+	  cd dir2d1
+	  touch emptyfile
+	  # The fact that CVS lets us add a file here is a CVS bug, right?
+	  # I can just make this an error message (on the add and/or the
+	  # commit) without getting flamed, right?
+	  # Right?
+	  # Right?
+	  dotest emptydir-7 "${testcvs} add emptyfile" \
+"${PROG} [a-z]*: scheduling file .emptyfile. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest emptydir-8 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/CVSROOT/Emptydir/emptyfile,v
+done
+Checking in emptyfile;
+${TESTDIR}/cvsroot/CVSROOT/Emptydir/emptyfile,v  <--  emptyfile
+initial revision: 1\.1
+done"
+	  cd ..
+	  rm -r CVS dir2d1
+
+	  # OK, while we have an Emptydir around, test a few obscure
+	  # things about it.
+	  mkdir edir; cd edir
+	  dotest emptydir-9 "${testcvs} -q co -l CVSROOT" \
+"U CVSROOT${DOTSTAR}"
+	  cd CVSROOT
+	  dotest_fail emptydir-10 "test -d Emptydir" ''
+	  # This tests the code in find_dirs which skips Emptydir.
+	  dotest emptydir-11 "${testcvs} -q -n update -d -P" ''
+	  cd ../..
+	  rm -r edir
+
+	  cd ..
+
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/mod1
+	  # I guess for the moment the convention is going to be
+	  # that we don't need to remove ${CVSROOT_DIRNAME}/CVSROOT/Emptydir
+	  ;;
+
 	abspath)
 	
 	  # These tests test the thituations thin thwitch thoo theck
@@ -7818,7 +7862,9 @@ U ${TESTDIR}/1/mod2/file2"
 
 	  # Some test, somewhere, is creating Emptydir.  That test
 	  # should, perhaps, clean up for itself, but I don't know which
-	  # one it is.
+	  # one it is (cvsadm, emptydir, &c).
+	  # (On the other hand, should CVS care whether there is an
+	  # Emptydir?  That would seem a bit odd).
 	  rm -rf ${CVSROOT_DIRNAME}/CVSROOT/Emptydir
 
 	  mkdir 1; cd 1
