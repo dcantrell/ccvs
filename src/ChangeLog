@@ -1,3 +1,8 @@
+Sat Oct  7 22:40:17 1995  Stephen Bailey  <sjbailey@sand.npl.washington.edu>
+
+	* lock.c: Include AFSCVS ifdefs to deal with AFS's lack of
+	correspondance between userid's from stat and from geteuid.
+
 Sat Oct  7 22:28:49 1995  Scott Carson  <sdc@TracerTech.COM>
 
 	* add.c (add): Pass -ko, not -k -ko, to set keyword expansion options.
