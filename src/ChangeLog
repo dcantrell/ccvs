@@ -1,5 +1,16 @@
 Tue Aug  6 15:36:09 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	Finish the conversion of cvs log so that it never invokes rlog.
+	* log.c (struct log_data): Remove dorlog field.  Add nameonly,
+	header, long_header, statelist, and authorlist fields.
+	(log_usage): Remove rlog-options.  Add -R, -h, -t, -b, -s, -w.
+	(cvslog): Don't clear opterr.  Handle -h, -R, -s, -t, -w.  If an
+	unrecognized option is seen, call usage.
+	(log_parse_list): New static function.
+	(log_fileproc): Remove code that called rlog.  Check nameonly,
+	header, and long_header fields in log_data.
+	(log_version_requested): Check statelist and authorlist.
+
 	* log.c (struct datelist): Define.
 	(struct log_data): Add datelist and singledatelist fields.
 	(log_usage): Add -d.
