@@ -1,5 +1,9 @@
 2004-04-02  Derek Price  <derek@ximbiot.com>
 
+	* log.c, patch.c, rcs.c: Gratuitous restyling.
+
+2004-04-02  Derek Price  <derek@ximbiot.com>
+
 	* import.c (import): Use ISDIRSEP rather than testing paths against `/'
 	directly.  Some gratuitos reformatting.
 
