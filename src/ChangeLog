@@ -1,5 +1,10 @@
 2005-03-07  Derek Price  <derek@ximbiot.com>
 
+	* buffer.c (buf_free_data): Compile with proxy disabled.
+	(Thanks to report from Larry Jones <lawrence.jones@ugs.com>.)
+
+2005-03-07  Derek Price  <derek@ximbiot.com>
+
 	* buffer.c (packetizing_buffer_input, packetizing_buffer_output): Don't
 	assume BUFFER_DATA_SIZE is a constant.
 	(Thanks to report from Larry Jones <lawrence.jones@ugs.com>.)

@@ -518,6 +518,7 @@ buf_copy_data (struct buffer *buf, struct buffer_data *data,
 
     buf_append_data (buf, first, new);
 }
+# endif /* PROXY_SUPPORT */
 
 
 
@@ -529,7 +530,6 @@ buf_free_data (struct buffer *buffer)
     buf_free_datas (buffer->data, buffer->last);
     buffer->data = buffer->last = NULL;
 }
-# endif /* PROXY_SUPPORT */
 
 
 
