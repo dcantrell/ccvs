@@ -1,3 +1,8 @@
+1999-12-10  John P Cavanaugh <cavanaug@sr.hp.com>
+
+	* cvs.texinfo: document new -C option to update.
+	(Applied by Karl Fogel <kfogel@red-bean.com>.)
+
 1999-11-20  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo(history options): Document -f, -n, and -z.

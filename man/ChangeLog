@@ -1,3 +1,8 @@
+1999-12-10  John P Cavanaugh <cavanaug@sr.hp.com>
+
+	* cvs.1: document new -C option to update.
+	(Applied by Karl Fogel <kfogel@red-bean.com>.)
+
 1999-11-29  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvsbug.8: Change .TH from section 1 to section 8.

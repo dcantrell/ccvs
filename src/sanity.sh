@@ -600,6 +600,7 @@ if test x"$*" = x; then
 	tests="${tests} import-after-initial"
 	tests="${tests} join join2 join3 join-readonly-conflict"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
+	tests="${tests} undo"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4"
 	tests="${tests} mkmodules-temp-file-removal"
@@ -6822,6 +6823,62 @@ ${PROG} update: cannot open CVS/Entries for reading: No such file or directory"
 
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	undo)
+	  # Test update -C (overwrite local mods w/ repository copies)
+	  mkdir 1; cd 1
+	  dotest undo-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest undo-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  echo "The usual boring test text." > undo.txt
+          dotest undo-3 "${testcvs} add undo.txt" \
+"${PROG} [a-z]*: scheduling file .undo.txt. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest undo-4 "${testcvs} -q ci -m undo-3" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/undo.txt,v
+done
+Checking in undo.txt;
+${TESTDIR}/cvsroot/first-dir/undo.txt,v  <--  undo.txt
+initial revision: 1\.1
+done"
+          # Okay, preparation is done, now test.
+          # Check that updating an unmodified copy works.
+	  dotest undo-5 "${testcvs} -q update" ''
+          # Check that updating -C an unmodified copy works.
+	  dotest undo-6 "${testcvs} -q update -C" ''
+          # Check that updating a modified copy works.
+	  echo "fish" >> undo.txt
+	  dotest undo-7 "${testcvs} -q update" 'M undo.txt'
+          # Check that updating -C a modified copy works.
+	  dotest undo-8 "${testcvs} -q update -C" \
+'U undo.txt
+(Locally modified undo.txt moved to .#undo.txt.1.1)'
+	  # And check that the backup copy really was made.
+	  # We just `ls' to make sure it's there.  It would be
+          # preferable to diff the two files, but then sanity.sh would
+          # require a standalone `diff' command, which seems losing.
+          # Oh well.
+	  dotest undo-9 "ls .#undo.txt.1.1" '.#undo.txt.1.1'
+
+          # Do it all again, this time naming the file explicitly.
+	  rm .#undo.txt.1.1
+	  dotest undo-10 "${testcvs} -q update undo.txt" ''
+	  dotest undo-11 "${testcvs} -q update -C undo.txt" ''
+	  echo "fish" >> undo.txt
+	  dotest undo-12 "${testcvs} -q update undo.txt" 'M undo.txt'
+	  dotest undo-13 "${testcvs} -q update -C undo.txt" \
+'U undo.txt
+(Locally modified undo.txt moved to .#undo.txt.1.1)'
+	  # And check that the backup copy really was made.
+	  dotest undo-14 "ls .#undo.txt.1.1" '.#undo.txt.1.1'
+
+          # Done.  Clean up.
+	  cd ../..
+          rm -rf 1
+	  rm -rf ${TESTDIR}/cvsroot/first-dir
 	  ;;
 
 	modules)

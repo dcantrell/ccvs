@@ -1,3 +1,13 @@
+1999-12-10  John P Cavanaugh <cavanaug@sr.hp.com>
+        and Karl Fogel <kfogel@red-bean.com>
+	
+	* update.c: new -C option to update, overwrites local changes with
+	clean copies from the repository.
+	Also, fixed indentation and formatting for a particularly bad
+	stretch of code near these changes in update_fileproc().
+	
+	* sanity.sh: test new update -C option.
+	
 1999-12-10  Larry Jones <larry.jones@sdrc.com>
 
 	* commit.c (remove_file): Call history_write with update_dir NULL
