@@ -93,6 +93,9 @@ VAX:
 	You also may have to make sure TIME_WITH_SYS_TIME is undef'ed.
 
 (footnote 5) Change /usr/tmp to /var/tmp in src/server.c (2 places) (1.4.93).
+	(This should no longer be needed; CVS doesn't have /usr/tmp in
+	src/server.c any more.  Has anyone tried a more recent version
+	on BSDI?  If so, please report it so we can update this file).
 
 (footnote 6) Build in ucb universe with COFF compiler tools.  Put
 	/usr/local/bin first in PATH while doing a configure, make

@@ -1,3 +1,8 @@
+Sun Mar  2 22:01:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL (footnote 5): Add note about how /usr/tmp vs. /var/tmp
+	shouldn't be an issue anymore
+
 Thu Feb 20 13:53:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Update Cray entry per mail from John Bowman
