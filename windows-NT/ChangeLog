@@ -1,3 +1,8 @@
+2003-10-27  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (EXTRA_DIST): Add stamp-ch.
+	* Makefile.in: Regenerated.
+
 2003-07-30  Derek Price  <derek@ximbiot.com>
 
 	* README: Correct name and links to the Cygwin project.
