@@ -1,5 +1,13 @@
 2004-08-10  Derek Price  <derek@ximbiot.com>
 
+	* sever.c (secondary_log, secondary_log_out): Rename globals everywhere
+	to...
+	(proxy_log, proxy_log_out): ...these.
+	(isSecondaryServer): Rename function...
+	(isProxyServer): ...to this.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
 	* log-buffer.c: #ifdef PROXY_SUPPORT in appropriate places.
 
 2004-08-10  Derek Price  <derek@ximbiot.com>
