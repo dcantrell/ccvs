@@ -351,6 +351,54 @@ run_exec (stin, stout, sterr, flags)
     return (status);
 }
 
+/* Duplicating call_diff and call_diff3 between src/run.c, windows-NT/run.c,
+   &c, is pretty ugly.  Really, there is no good reason for call_diff
+   to have its interface so much tied up in run.c.  */
+int diff_run PROTO((int argc, char **argv, char *out));
+
+int
+call_diff (out)
+    char *out;
+{
+    /* Try to keep the out-of-order bugs at bay (protocol_pipe for cvs_output
+       with has "Index: foo" and such; stdout and/or stderr for diff's
+       output).  I think the only reason that this used to not be such
+       a problem is that the time spent on the fork() and exec() of diff
+       slowed us down enough to let the "Index:" make it through first.
+
+       The real fix, of course, will be to have the diff library do all
+       its output through callbacks (which CVS will supply as cvs_output
+       and cvs_outerr).  */
+    sleep (1);
+
+    if (out == RUN_TTY)
+	return diff_run (run_argc, run_argv, NULL);
+    else
+	return diff_run (run_argc, run_argv, out);
+}
+
+int diff3_run PROTO((int argc, char **argv, char *out));
+
+int
+call_diff3 (out)
+    char *out;
+{
+    /* Try to keep the out-of-order bugs at bay (protocol_pipe for cvs_output
+       with has "Index: foo" and such; stdout and/or stderr for diff's
+       output).  I think the only reason that this used to not be such
+       a problem is that the time spent on the fork() and exec() of diff
+       slowed us down enough to let the "Index:" make it through first.
+
+       The real fix, of course, will be to have the diff library do all
+       its output through callbacks (which CVS will supply as cvs_output
+       and cvs_outerr).  */
+    sleep (1);
+
+    if (out == RUN_TTY)
+	return diff3_run (run_argc, run_argv, NULL);
+    else
+	return diff3_run (run_argc, run_argv, out);
+}
 
 void
 run_print (fp)
