@@ -64,12 +64,13 @@ but we want to fix that code.  Of course, bad input data, a corrupt
 repository, bad options, etc., should always print a real error
 message instead.
 
-We realize that CVS contains many arbitrary limits (such as PATH_MAX).
-Do not do this in new code; we are trying to *fix* those arbitrary
-limits.  In particular, it should be possible to pass very long
-arguments (e.g. from a WWW cgi script) to CVS without having it
-overrun any buffers (which might create a security hole in the WWW
-example).
+Do not use arbitrary limits (such as PATH_MAX) except perhaps when the
+operating system or some external interface requires it.  We spent a
+lot of time getting rid of them, and we don't want to put them back.
+If you find any that we missed, please report it as with other bugs.
+In most cases such code will create security holes (for example, for
+anonymous readonly access via the CVS protocol, or if a WWW cgi script
+passes client-supplied arguments to CVS).
 
 Although this is a long-term goal, it also would be nice to move CVS
 in the direction of reentrancy.  This reduces the size of the data
