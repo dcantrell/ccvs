@@ -560,7 +560,7 @@ if test x"$*" = x; then
 	tests="basica basicb basicc basic1 deep basic2 commit-readonly"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff diff death death2 rmadd rmadd2 dirs dirs2"
-	tests="${tests} branches branches2"
+	tests="${tests} branches branches2 tagc"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} import-after-initial"
 	tests="${tests} join join2 join3 join-readonly-conflict"
@@ -3921,6 +3921,58 @@ File: file5            	Status: Up-to-date
 	  cd ../../..
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r trunk b1a b1b
+	  ;;
+
+	tagc)
+	  # Test the tag -c option.
+	  mkdir 1; cd 1
+	  dotest tagc-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest tagc-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  touch file1
+	  dotest tagc-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest tagc-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  dotest tagc-5 "${testcvs} -q tag -c tag1" "T file1"
+	  touch file1
+	  dotest tagc-6 "${testcvs} -q tag -c tag2" "T file1"
+	  # Avoid timestamp granularity bugs (FIXME: CVS should be
+	  # doing the sleep, right?).
+	  sleep 1
+	  echo myedit >>file1
+	  dotest_fail tagc-7 "${testcvs} -q tag -c tag3" \
+"${PROG} [a-z]*: file1 is locally modified
+${PROG} \[[a-z]* aborted\]: correct the above errors first!"
+	  cd ../..
+	  mkdir 2
+	  cd 2
+	  dotest tagc-8 "${testcvs} -q co first-dir" "U first-dir/file1"
+	  cd ../1/first-dir
+	  dotest tagc-9 "${testcvs} -q ci -m modify" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  cd ../../2/first-dir
+	  # That this is an error is a bug.  Although the bug has existed
+	  # since tag -c was created, I don't think there would be a
+	  # compatibility problem with just fixing it.
+	  dotest_fail tagc-10 "${testcvs} -q tag -c tag4" \
+"${PROG} [a-z]*: file1 is locally modified
+${PROG} \[[a-z]* aborted\]: correct the above errors first!"
+	  cd ../..
+
+	  rm -r 1 2
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	rcslib)

@@ -178,13 +178,12 @@ cvstag (argc, argv)
 
 	send_arg (symtag);
 
-	/* SEND_NO_CONTENTS has a mildly bizarre interaction with
-	   check_uptodate; if the timestamp is modified but the file
-	   is unmodified, the check will fail, only to have "cvs diff"
-	   show no differences (and one must do "update" or something to
-	   reset the client's notion of the timestamp).  */
+	send_files (argc, argv, local, 0,
 
-	send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
+		    /* I think the -c case is like "cvs status", in
+		       which we really better be correct rather than
+		       being fast; it is just too confusing otherwise.  */
+		    check_uptodate ? 0 : SEND_NO_CONTENTS);
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_to_server ("tag\012", 0);
         return get_responses_and_close ();
