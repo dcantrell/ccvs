@@ -1,3 +1,8 @@
+1998-02-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TODO (190): Remove "failed to check out" from commit.c from
+	lists of error messages suppressed by -q; it no longer is.
+
 4 Feb 1998  Jim Kingdon
 
 	* cvsnt.mak: The usual "because Visual C++ feels like it"
