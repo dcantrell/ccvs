@@ -1,3 +1,11 @@
+2004-03-20  Derek Price  <derek@ximbiot.com>
+
+	* add.c (add): Correct longstanding resurrection bugs.  Remove FIXME
+	comment to this effect.  Set mode and Entries timestamps of resurrected
+	files correctly.
+	* sanity.sh (basica, binfiles, conflicts2, recase, resurrection,
+	update-p): Update tests to compensate.  Remove FIXCVS comments.
+
 2004-03-19  Mark D. Baushke  <mdb@cvshome.org>
 
 	* server.c (gserver_authenticate_connection): Handle large
