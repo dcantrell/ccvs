@@ -1,3 +1,8 @@
+1998-10-12  Jim Kingdon
+
+	* sanity.sh (modules2-17): Update for 9 Oct 1998 change to
+	update_dirent_proc.
+
 1998-10-11  Jim Kingdon
 
 	* commit.c (checkaddfile, commit_fileproc): A numeric value for
