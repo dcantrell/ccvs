@@ -502,6 +502,10 @@
 /* Define to 1 if you have the `timezone' function. */
 #undef HAVE_TIMEZONE
 
+/* Define to 1 if localtime_r, etc. have the type signatures that POSIX
+   requires. */
+#undef HAVE_TIME_R_POSIX
+
 /* Define to 1 if you have the `tzset' function. */
 #undef HAVE_TZSET
 

@@ -1,5 +1,11 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Call gl_TIME_R.
+	* srclist.txt (time_r): New module.
+	* Makefile.in, aclocal.m4, config.h.in, configure: Regenerated.
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Call gl_FUNC_NANOSLEEP.
 	* srclist.txt (nanosleep): New module.
 	* Makefile.in, aclocal.m4, config.h.in, configure: Regenerated.
