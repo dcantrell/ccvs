@@ -11469,9 +11469,6 @@ Don't ``shorten'' module paths if -d specified.  See
 @item -n
 Do not run module program (if any).  See @ref{export options}.
 
-@item -P
-Prune empty directories.  See @ref{Moving directories}.
-
 @item -R
 Operate recursively (default).  @xref{Recursive
 behavior}.
