@@ -1,3 +1,7 @@
+2004-02-04  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note that alias module recursion is now more comprehensive.
+
 2004-02-03  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note case insensitive client directory case preservation.
