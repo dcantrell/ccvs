@@ -1216,6 +1216,10 @@ track of what tags are valid tag names (it is sometimes
 updated when tags are used, as well as when they are
 created).
 
+Each @sc{rcs} file will be owned by the user who last
+checked it in.  This has little significance; what
+really matters is who owns the directories.
+
 @cindex CVSUMASK
 @cindex umask, for repository files
 @sc{cvs} tries to set up reasonable file permissions
@@ -1232,8 +1236,8 @@ typical for newly created files, except that sometimes
 @sc{cvs} creates them read-only (see the sections on
 watches, @ref{Setting a watch}; -r, @ref{Global
 options}; or CVSREAD, @ref{Environment variables}).
-@c FIXME: Need more discussion of which users and
-@c groups should own the file in the repository.
+@c FIXME: Need more discussion of which
+@c group should own the file in the repository.
 @c Include a somewhat detailed example of the usual
 @c case where CVSUMASK is 007, the developers are all
 @c in a group, and that group owns stuff in the
