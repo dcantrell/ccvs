@@ -647,7 +647,7 @@ init (argc, argv)
     if (argc > 1)
 	usage (init_usage);
 
-    if (CVSroot_remote)
+    if (client_active)
     {
 	start_server ();
 

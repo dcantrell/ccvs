@@ -153,7 +153,7 @@ rtag (argc, argv)
     RCS_check_tag (symtag);
 
 #ifdef CLIENT_SUPPORT
-    if (CVSroot_remote)
+    if (client_active)
     {
 	/* We're the client side.  Fire up the remote server.  */
 	start_server ();

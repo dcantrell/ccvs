@@ -401,7 +401,6 @@ typedef enum direnter_type Dtype;
 
 extern char *program_name, *program_path, *command_name;
 extern char *Rcsbin, *Editor;
-extern char *CVSADM_Root;
 extern int cvsadmin_root;
 extern char *CurDir;
 extern int really_quiet, quiet;
@@ -415,7 +414,7 @@ typedef enum {
 } CVSmethod;
 
 extern char *CVSroot_original;	/* the active, complete CVSroot string */
-extern int CVSroot_remote;	/* nonzero if we are doing remote access */
+extern int client_active;	/* nonzero if we are doing remote access */
 extern CVSmethod CVSroot_method; /* one of the enum values above */
 extern char *CVSroot_username;	/* the username or NULL if method == local */
 extern char *CVSroot_hostname;	/* the hostname or NULL if method == local */

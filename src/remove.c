@@ -70,7 +70,7 @@ cvsremove (argc, argv)
     wrap_setup ();
 
 #ifdef CLIENT_SUPPORT
-    if (CVSroot_remote) {
+    if (client_active) {
 	start_server ();
 	ign_setup ();
 	if (local)

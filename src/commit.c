@@ -288,7 +288,7 @@ commit (argc, argv)
     }
 
 #ifdef CLIENT_SUPPORT
-    if (CVSroot_remote) 
+    if (client_active) 
     {
 	struct find_data find_args;
 

@@ -91,7 +91,7 @@ add (argc, argv)
     repository = Name_Repository ((char *) NULL, (char *) NULL);
 
 #ifdef CLIENT_SUPPORT
-    if (CVSroot_remote)
+    if (client_active)
       {
 	int i;
 	start_server ();

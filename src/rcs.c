@@ -2235,7 +2235,7 @@ annotate (argc, argv)
     argv += optind;
 
 #ifdef CLIENT_SUPPORT
-    if (CVSroot_remote)
+    if (client_active)
     {
 	start_server ();
 	ign_setup ();

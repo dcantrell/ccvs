@@ -203,7 +203,7 @@ update (argc, argv)
     argv += optind;
 
 #ifdef CLIENT_SUPPORT
-    if (CVSroot_remote) 
+    if (client_active) 
     {
 	/* The first pass does the regular update.  If we receive at least
 	   one patch which failed, we do a second pass and just fetch

@@ -525,7 +525,7 @@ history (argc, argv)
 	error (1, 0, "Only one report type allowed from: \"-Tcomx\".");
 
 #ifdef CLIENT_SUPPORT
-    if (CVSroot_remote)
+    if (client_active)
     {
 	struct file_list_str *f1;
 	char **mod;
