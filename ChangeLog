@@ -1,5 +1,7 @@
 1997-11-29  Jim Kingdon
 
+	* cvsnt.mak: Remove lib/getwd.c (see lib/ChangeLog for rationale).
+
 	* cvsnt.mak: The usual "because Developer Studio feels like
 	it" changes.
 
