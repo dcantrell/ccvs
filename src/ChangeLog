@@ -1,3 +1,7 @@
+2004-10-07  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (cvs_SOURCES): Add parseinfo.h.
+
 2004-10-07  Mark D. Baushke  <mdb@cvshome.org>
 
 	* vers_ts.c (entries_time): Use size_t pointers. sizeof(int)
