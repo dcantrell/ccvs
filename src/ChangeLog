@@ -1,5 +1,10 @@
 2000-02-14  Derek Price  <derek.price@openavenue.com>
 
+	* server.c: Include xselect.h.
+	* update.c (do_update): Use best available sleep function.
+
+2000-02-14  Derek Price  <derek.price@openavenue.com>
+
 	* Makefile.am (cvs_SOURCES): Alphabetize and split to one/line.
 	(cvs_LDADD): Alphabetize and split to one/line.
 	* Makefile.in: Regenerated.
