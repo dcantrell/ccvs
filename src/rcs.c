@@ -8,6 +8,7 @@
  * manipulation
  */
 
+#include <assert.h>
 #include "cvs.h"
 
 #ifndef lint
@@ -196,19 +197,15 @@ RCS_parsercsfile (rcsfile)
     return (rcs);
 }
 
+
 /*
- * Do the real work of parsing an RCS file
- */
+ */ 
 static RCSNode *
 RCS_parsercsfile_i (fp, rcsfile)
     FILE *fp;
     char *rcsfile;
 {
-    Node *q, *r;
     RCSNode *rdata;
-    RCSVers *vnode;
-    int n;
-    char *cp;
     char *key, *value;
 
     /* make a node */
@@ -216,6 +213,81 @@ RCS_parsercsfile_i (fp, rcsfile)
     memset ((char *) rdata, 0, sizeof (RCSNode));
     rdata->refcount = 1;
     rdata->path = xstrdup (rcsfile);
+
+    /* Process HEAD and BRANCH keywords from the RCS header.  
+     *
+     * Most cvs operatations on the main branch don't need any more
+     * information.  Those that do call XXX to completely parse the
+     * RCS file.  */
+
+    if (getrcskey (fp, &key, &value) == -1 || key == NULL)
+	goto error;
+
+    if (strcmp (RCSHEAD, key) == 0 && value != NULL)
+	rdata->head = xstrdup (value);
+
+    if (getrcskey (fp, &key, &value) == -1 || key == NULL)
+	goto error;
+
+    if (strcmp (RCSBRANCH, key) == 0 && value != NULL)
+    {
+	char *cp;
+
+	rdata->branch = xstrdup (value);
+	if ((numdots (rdata->branch) & 1) != 0)
+	{
+	    /* turn it into a branch if it's a revision */
+	    cp = strrchr (rdata->branch, '.');
+	    *cp = '\0';
+	}
+    }
+
+    rdata->flags |= PARTIAL;
+    return rdata;
+
+error:
+    if (!really_quiet)
+    {
+	if (ferror(fp))
+	{
+	    error (1, 0, "error reading `%s'", rcsfile);
+	}
+	else
+	{
+	    error (0, 0, "`%s' does not appear to be a valid rcs file",
+		   rcsfile);
+	}
+    }
+    freercsnode (&rdata);
+    return (NULL);
+}
+
+
+/*
+ * Do the real work of parsing an RCS file 
+ *
+ * There are no allowances for error here.
+ */
+void
+RCS_reparsercsfile (rdata)
+    RCSNode *rdata;
+{
+    FILE *fp;
+    char *rcsfile;
+
+    Node *q, *r;
+    RCSVers *vnode;
+    int n;
+    char *cp;
+    char *key, *value;
+
+    rcsfile = rdata->path;
+
+    fp = fopen(rcsfile, "r");
+    if (fp == NULL)
+	error (1, 0, "unable to reopen `%s'", rcsfile);
+
+    /* make a node */
     rdata->versions = getlist ();
     rdata->dates = getlist ();
 
@@ -231,40 +303,17 @@ RCS_parsercsfile_i (fp, rcsfile)
 	   or we had trouble reading the file. */
 	if (getrcskey (fp, &key, &value) == -1 || key == NULL)
 	{
-
-	    if (!really_quiet)
+	    if (ferror(fp))
 	    {
-		if (ferror(fp))
-		{
-		    error (1, 0, "error reading `%s'", rcsfile);
-		}
-		else
-		{
-		    error (0, 0, "`%s' does not appear to be a valid rcs file",
-			   rcsfile);
-		}
+		error (1, 0, "error reading `%s'", rcsfile);
 	    }
-	    freercsnode (&rdata);
-	    return (NULL);
+	    else
+	    {
+		error (1, 0, "`%s' does not appear to be a valid rcs file",
+		       rcsfile);
+	    }
 	}
 
-	/* process it */
-	if (strcmp (RCSHEAD, key) == 0 && value != NULL)
-	{
-	    rdata->head = xstrdup (value);
-	    continue;
-	}
-	if (strcmp (RCSBRANCH, key) == 0 && value != NULL)
-	{
-	    rdata->branch = xstrdup (value);
-	    if ((numdots (rdata->branch) & 1) != 0)
-	    {
-		/* turn it into a branch if it's a revision */
-		cp = strrchr (rdata->branch, '.');
-		*cp = '\0';
-	    }
-	    continue;
-	}
 	if (strcmp (RCSSYMBOLS, key) == 0)
 	{
 	    if (value != NULL)
@@ -451,7 +500,8 @@ unable to parse rcs file; `state' not in the expected place");
 	    break;
     }
 
-    return (rdata);
+    fclose (fp);
+    rdata->flags &= ~PARTIAL;
 }
 
 /*
@@ -877,6 +927,10 @@ RCS_gettag (rcs, tag, force_tag_match)
     if (rcs == NULL)
 	return ((char *) NULL);
 
+    /* XXX this is probably not necessary, --jtc */
+    if (rcs->flags & PARTIAL) 
+	RCS_reparsercsfile (rcs);
+
     /* If tag is "HEAD", special case to get head RCS revision */
     if (tag && (strcmp (tag, TAG_HEAD) == 0 || *tag == '\0'))
 #if 0 /* This #if 0 is only in the Cygnus code.  Why?  Death support?  */
@@ -1203,6 +1257,9 @@ RCS_getbranch (rcs, tag, force_tag_match)
     if (rcs == NULL)
 	return ((char *) NULL);
 
+    if (rcs->flags & PARTIAL)
+	RCS_reparsercsfile (rcs);
+
     /* find out if the tag contains a dot, or is on the trunk */
     cp = strrchr (tag, '.');
 
@@ -1342,6 +1399,9 @@ RCS_getdate (rcs, date, force_tag_match)
     if (rcs == NULL)
 	return ((char *) NULL);
 
+    if (rcs->flags & PARTIAL)
+	RCS_reparsercsfile (rcs);
+
     /* if the head is on a branch, try the branch first */
     if (rcs->branch != NULL)
 	retval = RCS_getdatebranch (rcs, date, rcs->branch);
@@ -1423,6 +1483,12 @@ RCS_getdatebranch (rcs, date, branch)
 	return (NULL);
     }
     *cp = '\0';				/* turn it into a revision */
+
+    assert (rcs != NULL);
+
+    if (rcs->flags & PARTIAL)
+	RCS_reparsercsfile (rcs);
+
     p = findnode (rcs->versions, xrev);
     free (xrev);
     if (p == NULL)
@@ -1506,6 +1572,9 @@ RCS_getrevtime (rcs, rev, date, fudge)
     if (rcs == NULL)
 	return (revdate);
 
+    if (rcs->flags & PARTIAL)
+	RCS_reparsercsfile (rcs);
+
     /* look up the revision */
     p = findnode (rcs->versions, rev);
     if (p == NULL)
@@ -1557,14 +1626,19 @@ List *
 RCS_symbols(rcs)
     RCSNode *rcs;
 {
-	if (rcs->symbols_data) {
-		rcs->symbols = getlist ();
-		do_symbols (rcs->symbols, rcs->symbols_data);
-		free(rcs->symbols_data);
-		rcs->symbols_data = NULL;
-	}
+    assert(rcs != NULL);
 
-	return rcs->symbols;
+    if (rcs->flags & PARTIAL)
+	RCS_reparsercsfile (rcs);
+
+    if (rcs->symbols_data) {
+	rcs->symbols = getlist ();
+	do_symbols (rcs->symbols, rcs->symbols_data);
+	free(rcs->symbols_data);
+	rcs->symbols_data = NULL;
+    }
+
+    return rcs->symbols;
 }
 
 /*
@@ -1652,6 +1726,9 @@ RCS_isdead (rcs, tag)
 {
     Node *p;
     RCSVers *version;
+
+    if (rcs->flags & PARTIAL)
+	RCS_reparsercsfile (rcs);
 
     p = findnode (rcs->versions, tag);
     if (p == NULL)
