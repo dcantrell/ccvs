@@ -1,3 +1,9 @@
+Thu Oct 26 11:15:40 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Tags): Update "version" vs. "revision" for CVS 1.5.
+	(Index,BUGS): Change bug reporting address from Per Cederqvist to
+	bug-cvs@prep.ai.mit.edu.
+
 Wed Oct 25 15:37:05 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo: Miscellaneous minor changes (clean up CVS/Root
