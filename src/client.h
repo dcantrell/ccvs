@@ -138,7 +138,7 @@ struct response
      * Note that although LEN is given, ARGS is also guaranteed to be
      * '\0' terminated.
      */
-    void (*func) (char *args, int len);
+    void (*func) (char *args, size_t len);
 
     /*
      * ok and error are special; they indicate we are at the end of the

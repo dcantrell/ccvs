@@ -1494,11 +1494,12 @@ serve_sticky (char *arg)
  * enough.  Or something.
  */
 static void
-receive_partial_file (int size, int file)
+receive_partial_file (size_t size, int file)
 {
     while (size > 0)
     {
-	int status, nread;
+	int status;
+	size_t nread;
 	char *data;
 
 	status = buf_read_data (buf_from_net, size, &data, &nread);
@@ -1531,7 +1532,7 @@ receive_partial_file (int size, int file)
 
 	while (nread > 0)
 	{
-	    int nwrote;
+	    size_t nwrote;
 
 	    nwrote = write (file, data, nread);
 	    if (nwrote < 0)
@@ -1544,7 +1545,8 @@ receive_partial_file (int size, int file)
 		/* Read and discard the file data.  */
 		while (size > 0)
 		{
-		    int status, nread;
+		    int status;
+		    size_t nread;
 		    char *data;
 
 		    status = buf_read_data (buf_from_net, size, &data, &nread);
@@ -1563,7 +1565,7 @@ receive_partial_file (int size, int file)
 
 /* Receive SIZE bytes, write to filename FILE.  */
 static void
-receive_file (int size, char *file, int gzipped)
+receive_file (size_t size, char *file, int gzipped)
 {
     int fd;
     char *arg = file;
@@ -1588,7 +1590,7 @@ receive_file (int size, char *file, int gzipped)
 	   bugs).  Given that this feature is mainly for
 	   compatibility, that is the better tradeoff.  */
 
-	int toread = size;
+	size_t toread = size;
 	char *filebuf;
 	char *p;
 
@@ -1598,7 +1600,8 @@ receive_file (int size, char *file, int gzipped)
 
 	while (toread > 0)
 	{
-	    int status, nread;
+	    int status;
+	    size_t nread;
 	    char *data;
 
 	    status = buf_read_data (buf_from_net, toread, &data, &nread);
@@ -1819,7 +1822,8 @@ serve_is_modified (char *arg)
 static void
 serve_modified (char *arg)
 {
-    int size, status;
+    size_t size;
+    int status;
     char *size_text;
     char *mode_text;
 
@@ -1900,7 +1904,8 @@ serve_modified (char *arg)
 	/* Now that we know the size, read and discard the file data.  */
 	while (size > 0)
 	{
-	    int status, nread;
+	    int status;
+	    size_t nread;
 	    char *data;
 
 	    status = buf_read_data (buf_from_net, size, &data, &nread);
@@ -3897,7 +3902,7 @@ error  \n");
 		&& (FD_ISSET (protocol_pipe[0], &readfds)))
 	    {
 		int status;
-		int count_read;
+		size_t count_read;
 
 		status = buf_input_data (protocol_inbuf, &count_read);
 
@@ -3971,7 +3976,7 @@ error  \n");
 	    {
 		int status;
 
-		status = buf_input_data (stdoutbuf, (int *) NULL);
+		status = buf_input_data (stdoutbuf, NULL);
 
 		buf_copy_lines (buf_to_net, stdoutbuf, 'M');
 
@@ -3996,7 +4001,7 @@ error  \n");
 	    {
 		int status;
 
-		status = buf_input_data (stderrbuf, (int *) NULL);
+		status = buf_input_data (stderrbuf, NULL);
 
 		buf_copy_lines (buf_to_net, stderrbuf, 'E');
 

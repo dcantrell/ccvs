@@ -69,30 +69,30 @@ int tag (int argc, char **argv);
 int update (int argc, char **argv);
 
 /* All the response handling functions.  */
-static void handle_ok (char *, int);
-static void handle_error (char *, int);
-static void handle_valid_requests (char *, int);
-static void handle_checked_in (char *, int);
-static void handle_new_entry (char *, int);
-static void handle_checksum (char *, int);
-static void handle_copy_file (char *, int);
-static void handle_updated (char *, int);
-static void handle_merged (char *, int);
-static void handle_patched (char *, int);
-static void handle_rcs_diff (char *, int);
-static void handle_removed (char *, int);
-static void handle_remove_entry (char *, int);
-static void handle_set_static_directory (char *, int);
-static void handle_clear_static_directory (char *, int);
-static void handle_set_sticky (char *, int);
-static void handle_clear_sticky (char *, int);
-static void handle_clear_template (char *, int);
-static void handle_module_expansion (char *, int);
-static void handle_wrapper_rcs_option (char *, int);
-static void handle_m (char *, int);
-static void handle_e (char *, int);
-static void handle_f (char *, int);
-static void handle_notified (char *, int);
+static void handle_ok (char *, size_t);
+static void handle_error (char *, size_t);
+static void handle_valid_requests (char *, size_t);
+static void handle_checked_in (char *, size_t);
+static void handle_new_entry (char *, size_t);
+static void handle_checksum (char *, size_t);
+static void handle_copy_file (char *, size_t);
+static void handle_updated (char *, size_t);
+static void handle_merged (char *, size_t);
+static void handle_patched (char *, size_t);
+static void handle_rcs_diff (char *, size_t);
+static void handle_removed (char *, size_t);
+static void handle_remove_entry (char *, size_t);
+static void handle_set_static_directory (char *, size_t);
+static void handle_clear_static_directory (char *, size_t);
+static void handle_set_sticky (char *, size_t);
+static void handle_clear_sticky (char *, size_t);
+static void handle_clear_template (char *, size_t);
+static void handle_module_expansion (char *, size_t);
+static void handle_wrapper_rcs_option (char *, size_t);
+static void handle_m (char *, size_t);
+static void handle_e (char *, size_t);
+static void handle_f (char *, size_t);
+static void handle_notified (char *, size_t);
 
 static size_t try_read_from_server (char *, size_t);
 
@@ -414,13 +414,13 @@ static struct buffer *global_from_server;
  *
  * Returns number of bytes read.
  */
-static int
+static size_t
 read_line_via (struct buffer *via_from_buffer, struct buffer *via_to_buffer,
                char **resultp)
 {
     int status;
     char *result;
-    int len;
+    size_t len;
 
     status = buf_flush (via_to_buffer, 1);
     if (status != 0)
@@ -448,7 +448,7 @@ read_line_via (struct buffer *via_from_buffer, struct buffer *via_to_buffer,
 
 
 
-static int
+static size_t
 read_line (char **resultp)
 {
   return read_line_via (global_from_server, global_to_server, resultp);
@@ -487,7 +487,7 @@ char *toplevel_wd;
 
 
 static void
-handle_ok (char *args, int len)
+handle_ok (char *args, size_t len)
 {
     return;
 }
@@ -495,7 +495,7 @@ handle_ok (char *args, int len)
 
 
 static void
-handle_error (char *args, int len)
+handle_error (char *args, size_t len)
 {
     int something_printed;
     
@@ -531,7 +531,7 @@ handle_error (char *args, int len)
 
 
 static void
-handle_valid_requests (char *args, int len)
+handle_valid_requests (char *args, size_t len)
 {
     char *p = args;
     char *q;
@@ -589,7 +589,7 @@ handle_valid_requests (char *args, int len)
  *   current_parsed_root	Updated to point to the new CVSROOT.
  */
 static void
-handle_redirect (char *args, int len)
+handle_redirect (char *args, size_t len)
 {
     TRACE (TRACE_FUNCTION, "handle_redirect (%s)", args);
 
@@ -1077,7 +1077,7 @@ copy_a_file (void *data, List *ent_list, const char *short_pathname,
 
 
 static void
-handle_copy_file (char *args, int len)
+handle_copy_file (char *args, size_t len)
 {
     call_in_directory (args, copy_a_file, NULL);
 }
@@ -1212,7 +1212,7 @@ static time_t last_register_time;
 static int stored_checksum_valid;
 static unsigned char stored_checksum[16];
 static void
-handle_checksum (char *args, int len)
+handle_checksum (char *args, size_t len)
 {
     char *s;
     char buf[3];
@@ -1245,7 +1245,7 @@ handle_checksum (char *args, int len)
 /* Mode that we got in a "Mode" response (malloc'd), or NULL if none.  */
 static char *stored_mode;
 static void
-handle_mode (char *args, int len)
+handle_mode (char *args, size_t len)
 {
     if (stored_mode != NULL)
 	error (1, 0, "protocol error: duplicate Mode");
@@ -1259,7 +1259,7 @@ static int stored_modtime_valid;
 /* Time specified in Mod-time.  */
 static time_t stored_modtime;
 static void
-handle_mod_time (char *args, int len)
+handle_mod_time (char *args, size_t len)
 {
     if (stored_modtime_valid)
 	error (0, 0, "protocol error: duplicate Mod-time");
@@ -1857,7 +1857,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 
 
 static void
-handle_checked_in (char *args, int len)
+handle_checked_in (char *args, size_t len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_CHECKIN;
@@ -1869,7 +1869,7 @@ handle_checked_in (char *args, int len)
 
 
 static void
-handle_new_entry (char *args, int len)
+handle_new_entry (char *args, size_t len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_CHECKIN;
@@ -1881,7 +1881,7 @@ handle_new_entry (char *args, int len)
 
 
 static void
-handle_updated (char *args, int len)
+handle_updated (char *args, size_t len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_UPDATE;
@@ -1893,7 +1893,7 @@ handle_updated (char *args, int len)
 
 
 static void
-handle_created (char *args, int len)
+handle_created (char *args, size_t len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_UPDATE;
@@ -1905,7 +1905,7 @@ handle_created (char *args, int len)
 
 
 static void
-handle_update_existing (char *args, int len)
+handle_update_existing (char *args, size_t len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_UPDATE;
@@ -1917,7 +1917,7 @@ handle_update_existing (char *args, int len)
 
 
 static void
-handle_merged (char *args, int len)
+handle_merged (char *args, size_t len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_UPDATE;
@@ -1930,7 +1930,7 @@ handle_merged (char *args, int len)
 
 
 static void
-handle_patched (char *args, int len)
+handle_patched (char *args, size_t len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_PATCH;
@@ -1943,7 +1943,7 @@ handle_patched (char *args, int len)
 
 
 static void
-handle_rcs_diff (char *args, int len)
+handle_rcs_diff (char *args, size_t len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_RCS_DIFF;
@@ -1965,7 +1965,7 @@ remove_entry (void *data, List *ent_list, const char *short_pathname,
 
 
 static void
-handle_remove_entry (char *args, int len)
+handle_remove_entry (char *args, size_t len)
 {
     call_in_directory (args, remove_entry, NULL);
 }
@@ -1989,7 +1989,7 @@ remove_entry_and_file (void *data, List *ent_list, const char *short_pathname,
 
 
 static void
-handle_removed (char *args, int len)
+handle_removed (char *args, size_t len)
 {
     call_in_directory (args, remove_entry_and_file, NULL);
 }
@@ -2021,7 +2021,7 @@ set_static (void *data, List *ent_list, const char *short_pathname,
 
 
 static void
-handle_set_static_directory (char *args, int len)
+handle_set_static_directory (char *args, size_t len)
 {
     if (strcmp (cvs_cmd_name, "export") == 0)
     {
@@ -2045,7 +2045,7 @@ clear_static (void *data, List *ent_list, const char *short_pathname,
 
 
 static void
-handle_clear_static_directory (char *pathname, int len)
+handle_clear_static_directory (char *pathname, size_t len)
 {
     if (strcmp (cvs_cmd_name, "export") == 0)
     {
@@ -2099,7 +2099,7 @@ set_sticky (void *data, List *ent_list, const char *short_pathname,
 
 
 static void
-handle_set_sticky (char *pathname, int len)
+handle_set_sticky (char *pathname, size_t len)
 {
     if (strcmp (cvs_cmd_name, "export") == 0)
     {
@@ -2139,7 +2139,7 @@ clear_sticky (void *data, List *ent_list, const char *short_pathname,
 
 
 static void
-handle_clear_sticky (char *pathname, int len)
+handle_clear_sticky (char *pathname, size_t len)
 {
     if (strcmp (cvs_cmd_name, "export") == 0)
     {
@@ -2165,7 +2165,7 @@ handle_clear_sticky (char *pathname, int len)
 /* Handle the client-side support for a successful edit.
  */
 static void
-handle_edit_file (char *pathname, int len)
+handle_edit_file (char *pathname, size_t len)
 {
     call_in_directory (pathname, edit_file, NULL);
 }
@@ -2187,7 +2187,7 @@ template (void *data, List *ent_list, const char *short_pathname,
 
 
 static void
-handle_template (char *pathname, int len)
+handle_template (char *pathname, size_t len)
 {
     call_in_directory (pathname, template, NULL);
 }
@@ -2205,7 +2205,7 @@ clear_template (void *data, List *ent_list, const char *short_pathname,
 
 
 static void
-handle_clear_template (char *pathname, int len)
+handle_clear_template (char *pathname, size_t len)
 {
     call_in_directory (pathname, clear_template, NULL);
 }
@@ -2528,7 +2528,7 @@ static int modules_allocated;
 static char **modules_vector;
 
 static void
-handle_module_expansion (char *args, int len)
+handle_module_expansion (char *args, size_t len)
 {
     if (modules_vector == NULL)
     {
@@ -2628,7 +2628,7 @@ client_nonexpanded_setup (void)
    We need to know the keyword expansion mode so we know whether to
    read the file in text or binary mode.  */
 static void
-handle_wrapper_rcs_option (char *args, int len)
+handle_wrapper_rcs_option (char *args, size_t len)
 {
     char *p;
 
@@ -2656,7 +2656,7 @@ handle_wrapper_rcs_option (char *args, int len)
 
 
 static void
-handle_m (char *args, int len)
+handle_m (char *args, size_t len)
 {
     fd_set wfds;
     int s;
@@ -2680,7 +2680,7 @@ handle_m (char *args, int len)
 
 
 static void
-handle_mbinary (char *args, int len)
+handle_mbinary (char *args, size_t len)
 {
     char *size_string;
     size_t size;
@@ -2716,7 +2716,7 @@ handle_mbinary (char *args, int len)
 
 
 static void
-handle_e (char *args, int len)
+handle_e (char *args, size_t len)
 {
     fd_set wfds;
     int s;
@@ -2743,7 +2743,7 @@ handle_e (char *args, int len)
 
 /*ARGSUSED*/
 static void
-handle_f  (char *args, int len)
+handle_f  (char *args, size_t len)
 {
     fflush (stderr);
 }
@@ -2751,7 +2751,7 @@ handle_f  (char *args, int len)
 
 
 static void
-handle_mt (char *args, int len)
+handle_mt (char *args, size_t len)
 {
     char *p;
     char *tag = args;
@@ -3008,7 +3008,8 @@ send_to_server (const char *str, size_t len)
 static size_t
 try_read_from_server( char *buf, size_t len )
 {
-    int status, nread;
+    int status;
+    size_t nread;
     char *data;
 
     status = buf_read_data (global_from_server, len, &data, &nread);
@@ -3061,13 +3062,13 @@ get_server_responses (void)
     do
     {
 	char *cmd;
-	int len;
+	size_t len;
 	
 	len = read_line (&cmd);
 	for (rs = responses; rs->name != NULL; ++rs)
 	    if (strncmp (cmd, rs->name, strlen (rs->name)) == 0)
 	    {
-		int cmdlen = strlen (rs->name);
+		size_t cmdlen = strlen (rs->name);
 		if (cmd[cmdlen] == '\0')
 		    ;
 		else if (cmd[cmdlen] == ' ')
@@ -5067,7 +5068,7 @@ notified_a_file (void *data, List *ent_list, const char *short_pathname,
 
 
 static void
-handle_notified (char *args, int len)
+handle_notified (char *args, size_t len)
 {
     call_in_directory (args, notified_a_file, NULL);
 }
