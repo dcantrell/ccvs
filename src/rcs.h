@@ -175,9 +175,7 @@ typedef struct rcsversnode RCSVers;
 /* The type of a function passed to RCS_checkout.  */
 typedef void (*RCSCHECKOUTPROC) (void *, const char *, size_t);
 
-#ifdef __STDC__
 struct rcsbuffer;
-#endif
 
 /* What RCS_deltas is supposed to do.  */
 enum rcs_delta_op {RCS_ANNOTATE, RCS_FETCH};

@@ -1,5 +1,10 @@
 2003-09-30  Derek Price  <derek@ximbiot.com>
 
+	* client.h, rcs.c, rcs.h, server.h: Assume __STDC__ since it is
+	defined as part of the C89 spec.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
 	* commit.c (commit): Optimize function towards a single exit point.
 
 2003-09-30  Derek Price  <derek@ximbiot.com>
