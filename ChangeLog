@@ -1,3 +1,7 @@
+Wed Jan  3 19:00:00 1996  Jim Kingdon  <kingdon@peary.cyclic.com>
+
+	* .cvsignore: Add cvsnt.vcp.
+
 Mon Jan  1 22:45:50 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* os2/Makefile.in (Makefile), windows-NT/Makefile.in (Makefile):
