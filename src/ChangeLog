@@ -1,5 +1,13 @@
 2003-10-04  Derek Price  <derek@ximbiot.com>
 
+	* error.c, error.h: Remove error_exit() function.
+	* add.c, client.c, history.c, import.c, main.c, mkmodules.c, modules.c,
+	rcscmds.c, recurse.c, release.c, root.c, server.c, socket-client.c,
+	tag.c, update.c: s/\<error_exit *();$/exit (EXIT_FAILURE);/.  Remove
+	related comments.
+
+2003-10-04  Derek Price  <derek@ximbiot.com>
+
 	* buffer.c: Reformat a few long function prototypes and lines.
 
 2003-10-04  Derek Price  <derek@ximbiot.com>

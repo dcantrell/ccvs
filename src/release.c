@@ -132,7 +132,7 @@ release (int argc, char **argv)
        all args are relative to this directory and we chdir around.
        */
     if (save_cwd (&cwd))
-        error_exit ();
+        exit (EXIT_FAILURE);
 
     arg_start_idx = 0;
 
@@ -153,7 +153,7 @@ release (int argc, char **argv)
 		if (!really_quiet)
 		    error (0, 0, "no repository directory: %s", thisarg);
 		if (restore_cwd (&cwd, NULL))
-		    error_exit ();
+		    exit (EXIT_FAILURE);
 		continue;
 	    }
 	}
@@ -200,7 +200,7 @@ release (int argc, char **argv)
 		error (0, 0, "unable to release `%s'", thisarg);
 		free (repository);
 		if (restore_cwd (&cwd, NULL))
-		    error_exit ();
+		    exit (EXIT_FAILURE);
 		continue;
 	    }
 
@@ -215,7 +215,7 @@ release (int argc, char **argv)
 				command_name);
 		free (repository);
 		if (restore_cwd (&cwd, NULL))
-		    error_exit ();
+		    exit (EXIT_FAILURE);
 		continue;
 	    }
 	}
@@ -254,7 +254,7 @@ release (int argc, char **argv)
         free (repository);
 
 	if (restore_cwd (&cwd, NULL))
-	    error_exit ();
+	    exit (EXIT_FAILURE);
 
 	if (delete_flag)
 	{
@@ -273,7 +273,7 @@ release (int argc, char **argv)
     }
 
     if (restore_cwd (&cwd, NULL))
-	error_exit ();
+	exit (EXIT_FAILURE);
     free_cwd (&cwd);
 
 #ifdef CLIENT_SUPPORT

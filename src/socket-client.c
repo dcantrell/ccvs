@@ -35,7 +35,7 @@ init_sockaddr( struct sockaddr_in *name, char *hostname, unsigned int port )
     if (hostinfo == NULL)
     {
 	fprintf (stderr, "Unknown host %s.\n", hostname);
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
     name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
     return hostinfo;

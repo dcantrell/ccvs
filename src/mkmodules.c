@@ -378,7 +378,7 @@ mkmodules (char *dir)
 	return 0;
 
     if (save_cwd (&cwd))
-	error_exit ();
+	exit (EXIT_FAILURE);
 
     if ( CVS_CHDIR (dir) < 0)
 	error (1, errno, "cannot chdir to %s", dir);
@@ -502,7 +502,7 @@ mkmodules (char *dir)
     }
 
     if (restore_cwd (&cwd, NULL))
-	error_exit ();
+	exit (EXIT_FAILURE);
     free_cwd (&cwd);
 
     return (0);

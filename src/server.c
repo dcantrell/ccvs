@@ -679,7 +679,7 @@ serve_valid_responses (char *arg)
 	       cause deadlock, as noted in server_cleanup.  */
 	    buf_flush (buf_to_net, 1);
 
-	    error_exit ();
+	    exit (EXIT_FAILURE);
 	}
 	else if (rs->status == rs_optional)
 	    rs->status = rs_not_supported;
@@ -2345,7 +2345,7 @@ error ENOMEM Virtual memory exhausted.\n";
 #ifdef HAVE_SYSLOG_H
     syslog (LOG_DAEMON | LOG_ERR, "virtual memory exhausted");
 #endif
-    error_exit ();
+    exit (EXIT_FAILURE);
 }
 
 static void
@@ -4846,7 +4846,7 @@ server (int argc, char **argv)
 		printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
 
-		error_exit ();
+		exit (EXIT_FAILURE);
 	    }
 	    strcpy (server_temp_dir, Tmpdir);
 
@@ -5019,8 +5019,7 @@ switch_to_user (const char *username)
 
 	printf ("E Fatal error, aborting.\n\
 error 0 %s: no such system user\n", username);
-	/* Don't worry about server_cleanup; server_active isn't set yet.  */
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
 #if HAVE_INITGROUPS
@@ -5038,8 +5037,7 @@ error 0 %s: no such system user\n", username);
 	   on every connection.  We could log it somewhere and not tell
 	   the user.  But at least for now make it an error.  */
 	printf ("error 0 initgroups failed: %s\n", strerror (errno));
-	/* Don't worry about server_cleanup; server_active isn't set yet.  */
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 #endif /* HAVE_INITGROUPS */
 
@@ -5051,9 +5049,7 @@ error 0 %s: no such system user\n", username);
 	{
 	    /* See comments at setuid call below for more discussion.  */
 	    printf ("error 0 setgid failed: %s\n", strerror (errno));
-	    /* Don't worry about server_cleanup;
-	       server_active isn't set yet.  */
-	    error_exit ();
+	    exit (EXIT_FAILURE);
 	}
     }
     else
@@ -5068,9 +5064,7 @@ error 0 %s: no such system user\n", username);
 		    "setgid to %d failed (%m): real %d/%d, effective %d/%d ",
 		    pw->pw_gid, getuid(), getgid(), geteuid(), getegid());
 #endif
-	    /* Don't worry about server_cleanup;
-	       server_active isn't set yet.  */
-	    error_exit ();
+	    exit (EXIT_FAILURE);
 	}
     }
 
@@ -5088,8 +5082,7 @@ error 0 %s: no such system user\n", username);
 		    "setuid to %d failed (%m): real %d/%d, effective %d/%d ",
 		    pw->pw_uid, getuid(), getgid(), geteuid(), getegid());
 #endif
-	/* Don't worry about server_cleanup; server_active isn't set yet.  */
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
     /* We don't want our umask to change file modes.  The modes should
@@ -5378,7 +5371,7 @@ check_system_password( char *username, char *password )
 	printf("E Fatal error, aborting.\n"
 		"pam failed to release authenticator\n"
 		"PAM error %s\n", pam_strerror(NULL, err));
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
     return (retval == PAM_SUCCESS);       /* indicate success */
@@ -5407,7 +5400,7 @@ check_system_password (char *username, char *password)
 	printf ("E Fatal error, aborting.\n\
 error 0 %s: no such user\n", username);
 
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
     /* Allow for dain bramaged HPUX passwd aging
@@ -5483,7 +5476,7 @@ check_password (char *username, char *password, char *repository)
 	   outweighs this.  */
 	printf ("error 0 no such user %s in CVSROOT/passwd\n", username);
 
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
     /* No cvs password found, so try /etc/passwd. */
@@ -5684,7 +5677,7 @@ pserver_authenticate_connection (void)
 
 	/* Don't worry about server_cleanup, server_active isn't set
 	   yet.  */
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
     memset (descrambled_password, 0, strlen (descrambled_password));
     free (descrambled_password);
@@ -5741,7 +5734,7 @@ kserver_authenticate_connection( void )
 	printf ("E Fatal error, aborting.\n\
 error %s getpeername or getsockname failed\n", strerror (errno));
 
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
 #ifdef SO_KEEPALIVE
@@ -5768,7 +5761,7 @@ error %s getpeername or getsockname failed\n", strerror (errno));
 	printf ("E Fatal error, aborting.\n\
 error 0 kerberos: %s\n", krb_get_err_text(status));
 
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
     memcpy (kblock, auth.session, sizeof (C_Block));
@@ -5781,7 +5774,7 @@ error 0 kerberos: %s\n", krb_get_err_text(status));
 		"error 0 kerberos: can't get local name: %s\n",
 		krb_get_err_text(status));
 
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
     /* Switch to run as this user. */

@@ -264,7 +264,7 @@ do_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 	       the case where we found a file/directory rather than
 	       finding an entry in the modules file.  */
 	    if (save_cwd (&cwd))
-		error_exit ();
+		exit (EXIT_FAILURE);
 	    cwd_saved = 1;
 
 	    err += callback_proc (modargc, modargv, where, mwhere, mfile,
@@ -275,7 +275,7 @@ do_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 
 	    /* cd back to where we started.  */
 	    if (restore_cwd (&cwd, NULL))
-		error_exit ();
+		exit (EXIT_FAILURE);
 	    free_cwd (&cwd);
 	    cwd_saved = 0;
 
@@ -345,7 +345,7 @@ do_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 
     /* remember where we start */
     if (save_cwd (&cwd))
-	error_exit ();
+	exit (EXIT_FAILURE);
     cwd_saved = 1;
 
     assert (value != NULL);
@@ -618,7 +618,7 @@ module `%s' is a request for a file in a module which is not a directory",
 
     /* cd back to where we started */
     if (restore_cwd (&cwd, NULL))
-	error_exit ();
+	exit (EXIT_FAILURE);
     free_cwd (&cwd);
     cwd_saved = 0;
 

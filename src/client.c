@@ -3296,7 +3296,7 @@ auth_server( cvsroot_t *root, struct buffer *to_server,
 		    error (0, 0,
 			    "used empty password; try \"cvs login\" with a real password");
 		}
-		error_exit();
+		exit (EXIT_FAILURE);
 	    }
 	    else if (strncmp (read_buf, "E ", 2) == 0)
 	    {
@@ -3319,7 +3319,7 @@ auth_server( cvsroot_t *root, struct buffer *to_server,
 
 		/* Now output the text.  */
 		fprintf (stderr, "%s\n", p);
-		error_exit();
+		exit (EXIT_FAILURE);
 	    }
 	    else if (strcmp (read_buf, "I LOVE YOU") == 0)
 	    {
@@ -3526,7 +3526,7 @@ start_server( void )
     send_to_server ("valid-requests\012", 0);
 
     if (get_server_responses ())
-	error_exit ();
+	exit (EXIT_FAILURE);
 
     /*
      * Now handle global options.
@@ -4394,7 +4394,7 @@ send_files( int argc, char **argv, int local, int aflag, unsigned int flags )
 	  argc, argv, local, W_LOCAL, aflag, CVS_LOCK_NONE, (char *) NULL, 0,
 	  (char *) NULL );
     if (err)
-	error_exit ();
+	exit (EXIT_FAILURE);
     if (toplevel_repos == NULL)
 	/*
 	 * This happens if we are not processing any files,
