@@ -1,3 +1,8 @@
+2003-07-24  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Remove gethostname from AC_REPLACE_FUNCS call and add a
+	call to gl_FUNC_GETHOSTNAME.
+
 2003-07-23  Derek Price  <derek@ximbiot.com>
 
 	* HACKING (Indentation style): Note the new C89 literal string
