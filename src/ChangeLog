@@ -1,5 +1,7 @@
 Thu Jul 11 22:01:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c (handle_f): Reindent.
+
 	* client.c (mode_to_string, handle_m, handle_e,
 	auth_server_port_number, get_responses_and_close), server.c
 	(pserver_authenticate_connection, serve_modified,

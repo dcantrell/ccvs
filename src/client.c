@@ -2588,8 +2588,8 @@ handle_e (args, len)
 /*ARGSUSED*/
 static void
 handle_f (args, len)
-     char *args;
-     int len;
+    char *args;
+    int len;
 {
     fflush (stderr);
 }
