@@ -262,7 +262,8 @@ patch (int argc, char **argv)
  */
 /* ARGSUSED */
 static int
-patch_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int shorten, int local_specified, char *mname, char *msg)
+patch_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
+            int shorten, int local_specified, char *mname, char *msg)
 {
     char *myargv[2];
     int err = 0;
@@ -273,10 +274,13 @@ patch_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int 
     TRACE ( TRACE_FUNCTION, "patch_proc ( %s, %s, %s, %d, %d, %s, %s )",
 	    xwhere, mwhere, mfile, shorten, local_specified, mname, msg );
 
-    repository = xmalloc (strlen (current_parsed_root->directory) + strlen (argv[0])
-			  + (mfile == NULL ? 0 : strlen (mfile) + 1) + 2);
-    (void) sprintf (repository, "%s/%s", current_parsed_root->directory, argv[0]);
-    where = xmalloc (strlen (argv[0]) + (mfile == NULL ? 0 : strlen (mfile) + 1)
+    repository = xmalloc (strlen (current_parsed_root->directory)
+                          + strlen (argv[0])
+                          + (mfile == NULL ? 0 : strlen (mfile) + 1) + 2);
+    (void) sprintf (repository, "%s/%s",
+                    current_parsed_root->directory, argv[0]);
+    where = xmalloc (strlen (argv[0])
+                     + (mfile == NULL ? 0 : strlen (mfile) + 1)
 		     + 1);
     (void) strcpy (where, argv[0]);
 
@@ -318,9 +322,10 @@ patch_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int 
     }
 
     /* cd to the starting repository */
-    if ( CVS_CHDIR (repository) < 0)
+    if (CVS_CHDIR (repository) < 0)
     {
 	error (0, errno, "cannot chdir to %s", repository);
+	free (repository);
 	return (1);
     }
 
