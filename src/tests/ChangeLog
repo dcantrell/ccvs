@@ -1,5 +1,0 @@
-2003-08-13  Derek R. Price  <derek@ximbiot.com>
-
-	* .cvsignore, ChangeLog, Makefile.am, Makefile.in, README,
-	atspecific.m4, init.at, package.m4.in, suite, suite.at:
-	New files.
