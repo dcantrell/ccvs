@@ -1,3 +1,7 @@
+Sun Oct  1 21:03:40 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
+
+        * regex.c: reverted below change.
+
 Thu Sep 28 13:37:04 1995  Larry Jones <larry.jones@sdrc.com>
         
         * regexp.c: check for ISC.
