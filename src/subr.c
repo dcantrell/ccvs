@@ -11,6 +11,7 @@
 #include "cvs.h"
 #include "getline.h"
 #include "vasprintf.h"
+#include "vasnprintf.h"
 
 /* Get wint_t.  */
 #ifdef HAVE_WINT_T
