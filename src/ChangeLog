@@ -1,3 +1,9 @@
+2003-08-13  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Add suite.dir & suite.log.
+	* Makefile.am: Add tests/suite to `make check'.  Remove localcheck and
+	remotecheck, at least temporarily.
+
 2003-08-03  Mark D. Baushke  <mdb@cvshome.org>
 
 	* lock.c: Do not include xtime.h (already included via system.h).
@@ -869,6 +875,12 @@
 
 	* sanity.sh (multiroot2-9): Add newly TRACEd parse_cvsroot() to
 	expected output.
+
+2003-03-31  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (SUBDIRS): Add `tests' subdir.
+
+	* Makefile.in: Regenerated.
 
 2003-03-31  Derek Price  <derek@ximbiot.com>
 
