@@ -75,14 +75,11 @@ release (argc, argv)
 	ign_setup ();
 
 	if (quiet)
-	    if (fprintf (to_server, "Argument -q\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-q");
 	if (really_quiet)
-	    if (fprintf (to_server, "Argument -Q\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-Q");
 	if (delete)
-	    if (fprintf (to_server, "Argument -d\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-d");
 
 	if (fprintf (to_server, "release\n") < 0)
 	    error (1, errno, "writing to server");

@@ -16,7 +16,7 @@ static const char rcsid[] = "$CVSid: @(#)rcs.c 1.40 94/10/07 $";
 USE(rcsid)
 #endif
 
-static RCSNode *RCS_parsercsfile_i PROTO((FILE * fp, char *rcsfile));
+static RCSNode *RCS_parsercsfile_i PROTO((FILE * fp, const char *rcsfile));
 static char *RCS_getdatebranch PROTO((RCSNode * rcs, char *date, char *branch));
 static int getrcskey PROTO((FILE * fp, char **keyp, char **valp));
 static int parse_rcs_proc PROTO((Node * file, void *closure));
@@ -109,7 +109,7 @@ parse_rcs_proc (file, closure)
 
 void
 RCS_addnode (file, rcs, list)
-    char *file;
+    const char *file;
     RCSNode *rcs;
     List *list;
 {
@@ -129,8 +129,8 @@ RCS_addnode (file, rcs, list)
  */
 RCSNode *
 RCS_parse (file, repos)
-    char *file;
-    char *repos;
+    const char *file;
+    const char *repos;
 {
     RCSNode *rcs;
     FILE *fp;
@@ -203,7 +203,7 @@ RCS_parsercsfile (rcsfile)
 static RCSNode *
 RCS_parsercsfile_i (fp, rcsfile)
     FILE *fp;
-    char *rcsfile;
+    const char *rcsfile;
 {
     RCSNode *rdata;
     char *key, *value;
@@ -1648,7 +1648,7 @@ RCS_symbols(rcs)
  */
 char *
 RCS_check_kflag (arg)
-    char *arg;
+    const char *arg;
 {
     static const char *const kflags[] =
     {"kv", "kvl", "k", "v", "o", (char *) NULL};
@@ -1664,7 +1664,7 @@ RCS_check_kflag (arg)
       NULL,
     };
     char karg[10];
-    char **cpp = NULL;
+    char const *const *cpp = NULL;
 
 #ifndef HAVE_RCS5
     error (1, 0, "%s %s: your version of RCS does not support the -k option",
@@ -1695,10 +1695,10 @@ RCS_check_kflag (arg)
  */
 void
 RCS_check_tag (tag)
-    char *tag;
+    const char *tag;
 {
     char *invalid = "$,.:;@";		/* invalid RCS tag characters */
-    char *cp;
+    const char *cp;
 
     /*
      * The first character must be an alphabetic letter. The remaining
@@ -1728,7 +1728,7 @@ RCS_check_tag (tag)
 int
 RCS_isdead (rcs, tag)
     RCSNode *rcs;
-    char *tag;
+    const char *tag;
 {
     Node *p;
     RCSVers *version;

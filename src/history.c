@@ -542,26 +542,19 @@ history (argc, argv)
 	ign_setup ();
 
 	if (tag_report)
-	    if (fprintf (to_server, "Argument -T\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-T");
 	if (all_users)
-	    if (fprintf (to_server, "Argument -a\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-a");
 	if (modified)
-	    if (fprintf (to_server, "Argument -c\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-c");
 	if (last_entry)
-	    if (fprintf (to_server, "Argument -l\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-l");
 	if (v_checkout)
-	    if (fprintf (to_server, "Argument -o\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-o");
 	if (working)
-	    if (fprintf (to_server, "Argument -w\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-w");
 	if (histfile)
-	    if (fprintf (to_server, "Argument -X\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-X");
 	if (since_date)
 	    option_with_arg ("-D", asctime (gmtime (&since_date)));
 	if (backto[0] != '\0')
@@ -574,8 +567,7 @@ history (argc, argv)
 		option_with_arg ("-f", f1->l_file);
 	}
 	if (module_report)
-	    if (fprintf (to_server, "Argument -m\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-m");
 	for (mod = mod_list; mod < &mod_list[mod_count]; ++mod)
 	    option_with_arg ("-n", *mod);
 	if (since_rev != NULL)

@@ -97,8 +97,8 @@ cvslog (argc, argv)
 	ign_setup ();
 
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") < 0)
-		error (1, errno, "writing to server");
+	    send_arg("-l");
+
 	send_option_string (options);
 	if (dates_opt) send_arg (dates_opt);
 	if (revisions_opt) send_arg (revisions_opt);

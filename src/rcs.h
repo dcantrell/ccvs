@@ -74,9 +74,9 @@ typedef struct rcsversnode RCSVers;
  * exported interfaces
  */
 List *RCS_parsefiles PROTO((List * files, char *xrepos));
-RCSNode *RCS_parse PROTO((char *file, char *repos));
+RCSNode *RCS_parse PROTO((const char *file, const char *repos));
 RCSNode *RCS_parsercsfile PROTO((char *rcsfile));
-char *RCS_check_kflag PROTO((char *arg));
+char *RCS_check_kflag PROTO((const char *arg));
 char *RCS_getdate PROTO((RCSNode * rcs, char *date, int force_tag_match));
 char *RCS_gettag PROTO((RCSNode * rcs, char *tag, int force_tag_match));
 char *RCS_getversion PROTO((RCSNode * rcs, char *tag, char *date,
@@ -89,7 +89,11 @@ char *RCS_head PROTO((RCSNode * rcs));
 int RCS_datecmp PROTO((char *date1, char *date2));
 time_t RCS_getrevtime PROTO((RCSNode * rcs, char *rev, char *date, int fudge));
 List *RCS_symbols PROTO((RCSNode *rcs));
-void RCS_check_tag PROTO((char *tag));
+void RCS_check_tag PROTO((const char *tag));
 void freercsnode PROTO((RCSNode ** rnodep));
-void RCS_addnode PROTO((char *file, RCSNode *rcs, List *list));
+void RCS_addnode PROTO((const char *file, RCSNode *rcs, List *list));
 char *RCS_getbranch PROTO((RCSNode * rcs, char *tag, int force_tag_match));
+
+#ifdef DEATH_SUPPORT
+int RCS_isdead PROTO((RCSNode *, const char *));
+#endif

@@ -73,13 +73,9 @@ status (argc, argv)
       start_server ();
 
       if (long_format)
-	fprintf (to_server, "Argument -v\n");
+	send_arg("-v");
       if (local)
-	fprintf (to_server, "Argument -l\n");
-      else
-	fprintf (to_server, "Argument -R\n");
-      if (feof (to_server) || ferror (to_server))
-	error (1, errno, "writing to server");
+	send_arg("-l");
 
       /* XXX This should only need to send file info; the file
 	 contents themselves will not be examined.  */

@@ -23,7 +23,7 @@ static void freenode_mem PROTO((Node * p));
 /* hash function */
 static int
 hashp (key)
-    char *key;
+    const char *key;
 {
     unsigned int h = 0;
     unsigned int g;
@@ -254,7 +254,7 @@ addnode (list, p)
 Node *
 findnode (list, key)
     List *list;
-    char *key;
+    const char *key;
 {
     Node *head, *p;
 
