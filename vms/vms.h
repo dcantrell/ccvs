@@ -1,5 +1,7 @@
 /* Determined from CC RTL function prototypes in online documentation */
 
+#define mode_t unsigned int
+
 #define fork(x) vfork(x)
 
 #include <sys/types.h>

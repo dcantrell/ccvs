@@ -8,6 +8,8 @@
    the group part of the UIC), so we are better off with higher-level
    hooks like get_homedir and SYSTEM_GETCALLER.  */
 
+#define pid_t int
+
 struct passwd {
    char  *pw_name;
 };
