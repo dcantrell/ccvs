@@ -1,3 +1,11 @@
+1998-08-06  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_checkin): When adding branch, if there is a lock on
+	the branchpoint owned by someone else, leave it alone.  This
+	restores CVS 1.9 (RCS 5.7) behavior, fixing a core dump.
+	* sanity.sh (reserved): New tests reserved-16 through reserved-19
+	test for this fix.
+
 1998-08-05  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (unedit-without-baserev): Use ${QUESTION} not "?".

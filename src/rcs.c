@@ -4996,6 +4996,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     int status, checkin_quiet, allocated_workfile;
     struct tm *ftm;
     time_t modtime;
+    int adding_branch = 0;
 
     commitpt = NULL;
 
@@ -5325,6 +5326,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 		goto checkin_done;
 	    }
 	    delta->version = RCS_addbranch (rcs, branch);
+	    adding_branch = 1;
 	    p = strrchr (branch, '.');
 	    *p = '\0';
 	    tip = xstrdup (branch);
@@ -5370,13 +5372,26 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     {
 	if (! STREQ (nodep->data, delta->author))
 	{
-	    error (0, 0, "%s: revision %s locked by %s",
-		   rcs->path,
-		   nodep->key, nodep->data);
-	    status = 1;
-	    goto checkin_done;
+	    /* If we are adding a branch, then leave the old lock around.
+	       That is sensible in the sense that when adding a branch,
+	       we don't need to use the lock to tell us where to check
+	       in.  It is fishy in the sense that if it is our own lock,
+	       we break it.  However, this is the RCS 5.7 behavior (at
+	       the end of addbranch in ci.c in RCS 5.7, it calls
+	       removelock only if it is our own lock, not someone
+	       else's).  */
+
+	    if (!adding_branch)
+	    {
+		error (0, 0, "%s: revision %s locked by %s",
+		       rcs->path,
+		       nodep->key, nodep->data);
+		status = 1;
+		goto checkin_done;
+	    }
 	}
-	delnode (nodep);
+	else
+	    delnode (nodep);
     }
 
     dtext->version = xstrdup (delta->version);
