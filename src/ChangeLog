@@ -1,3 +1,9 @@
+1998-04-19  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Move emptydir tests from basicb to new test emptydir.
+	This is because we now need a module definition to create Emptydir;
+	"co -d" doesn't cut it anymore.
+
 1998-04-17  Petri Virkkula
 
 	* server.c (mkdir_p): Ignore EROFS error (like for EACCES).
