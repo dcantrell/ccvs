@@ -4132,8 +4132,9 @@ check_repository_password (username, password, repository)
   int retval = 0;
   FILE *fp;
   char *filename;
-  char linebuf[MAXLINELEN];
-  int found_it = 0, len;
+  char *linebuf;
+  int ch;
+  int found_it = 0, namelen, linelen;
 
   filename = xmalloc (strlen (repository)
                       + 1
@@ -4146,6 +4147,16 @@ check_repository_password (username, password, repository)
   strcat (filename, "/CVSROOT");
   strcat (filename, "/passwd");
   
+  /* 32 is enough to cover the hashed password.  I don't know if this
+   * counts as an arbitrary limit or not; it really depends on how
+   * standardized crypt() is.
+   */
+
+  /*            USERNAME        :   PASSWD   \n      \0     */
+  linelen = strlen (username) + 1  +  32  +   1   +   1;
+  linebuf = xmalloc (linelen);
+  memset (linebuf, 0, linelen);
+
   fp = fopen (filename, "r");
   if (fp == NULL)
     {
@@ -4155,15 +4166,19 @@ check_repository_password (username, password, repository)
     }
 
   /* Look for a relevant line -- one with this user's name. */
-  len = strlen (username);
-  while (fgets (linebuf, MAXPATHLEN - 1, fp))
+  namelen = strlen (username);
+  while (fgets (linebuf, linelen, fp))
     {
-      if ((strncmp (linebuf, username, len) == 0)
-          && (linebuf[len] == ':'))
+      if ((strncmp (linebuf, username, namelen) == 0)
+          && (linebuf[namelen] == ':'))
         {
           found_it = 1;
           break;
         }
+      else if (! strchr (linebuf, '\n'))
+        while ((ch = getc (fp)) != '\n')
+          if (ch == EOF)
+            break;
     }
   fclose (fp);
 
@@ -4249,6 +4264,7 @@ authenticate_connection ()
   char repository[PATH_MAX];
   char username[PATH_MAX];
   char password[PATH_MAX];
+  char *descrambled_password;
   char server_user[PATH_MAX];
   struct passwd *pw;
   int verify_and_exit = 0;
@@ -4300,6 +4316,10 @@ authenticate_connection ()
    * will be redundantly retransmitted later, but that's no big deal.
    */
 
+  /* Since we're in the server parent process, error should use the
+     protocol to report error messages.  */
+  error_use_protocol = 1;
+
   /* Make sure the protocol starts off on the right foot... */
   fgets (tmp, PATH_MAX, stdin);
 
@@ -4308,11 +4328,8 @@ authenticate_connection ()
       verify_and_exit = 1;
     }
   else if (strcmp (tmp, "BEGIN AUTH REQUEST\n") != 0)
-    {
-      printf ("error: bad auth protocol start: %s", tmp);
-      fflush (stdout);
-      exit (1);
-    }
+    error (1, 0, "bad auth protocol start: %s", tmp);
+
     
   /* Get the three important pieces of information in order. */
   fgets (repository, PATH_MAX, stdin);
@@ -4331,23 +4348,25 @@ authenticate_connection ()
               "END VERIFICATION REQUEST\n" : "END AUTH REQUEST\n")
            != 0)
     {
-      printf ("error: bad auth protocol end: %s", tmp);
-      fflush (stdout);
-      exit (1);
+      error (1, 0, "bad auth protocol end: %s", tmp);
     }
 
   /* We need the real cleartext before we hash it. */
-  descramble (password);
+  descrambled_password = descramble (password);
 
-  if (check_password (username, password, repository))
+  if (check_password (username, descrambled_password, repository))
     {
       printf ("I LOVE YOU\n");
       fflush (stdout);
+      memset (descrambled_password, 0, strlen (descrambled_password));
+      free (descrambled_password);
     }
   else
     {
       printf ("I HATE YOU\n");
       fflush (stdout);
+      memset (descrambled_password, 0, strlen (descrambled_password));
+      free (descrambled_password);
       exit (1);
     }
   
@@ -4359,9 +4378,9 @@ authenticate_connection ()
   pw = getpwnam (username);
   if (pw == NULL)
     {
-      printf ("E Fatal error, aborting.\n"
-              "error 0 %s: no such user\n", username);
-      exit (1);
+      error (1, 0,
+             "fatal error, aborting.\nerror 0 %s: no such user\n",
+             username);
     }
   
   initgroups (pw->pw_name, pw->pw_gid);

@@ -597,6 +597,6 @@ int editors PROTO ((int argc, char **argv));
 int watchers PROTO ((int argc, char **argv));
 
 #if defined(AUTH_CLIENT_SUPPORT) || defined(AUTH_SERVER_SUPPORT)
-void scramble PROTO ((char *str));
-void descramble PROTO ((char *str));
+char *scramble PROTO ((char *str));
+char *descramble PROTO ((char *str));
 #endif /* AUTH_CLIENT_SUPPORT || AUTH_SERVER_SUPPORT */

@@ -1,3 +1,19 @@
+Fri Dec 22 16:35:57 1995  Karl Fogel  <kfogel@csxt.cs.oberlin.edu>
+
+        * login.c (login): deal with new scramble methods.
+        (get_cvs_password): same.
+
+        * server.c (check_repository_password): remove arbitrary limit on
+        line length.
+        (authenticate_connection): use a separate variable for the
+        descrambled password, now that we no longer scramble in place.
+        Set `error_use_protocol' to 1 and just use error() where used to
+        do its job inline.
+
+        * cvs.h (scramble, descramble): adjust prototype.
+
+        * scramble.c (scramble, descramble): return char *.
+
 Fri Dec 22 13:00:00 1995  Jim Kingdon  <kingdon@peary.cyclic.com>
 
 	* release.c (release): If SERVER_SUPPORT is not defined, still
