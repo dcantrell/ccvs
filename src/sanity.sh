@@ -2437,6 +2437,9 @@ exec $CVS_SERVER "\$@"
 EOF
     chmod a+x $TESTDIR/secondary-wrapper $TESTDIR/primary-wrapper
     CVS_SERVER=$TESTDIR/secondary-wrapper
+else # !$proxy
+    # Set this even when not testing $proxy to match messages, like $SPROG.
+    SECONDARY_CVSROOT_DIRNAME=$CVSROOT_DIRNAME
 fi # $proxy
 
 # Save a copy of the initial repository so that it may be restored after the
@@ -18830,7 +18833,7 @@ file1
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 	  dotest config-3a "$testcvs -Q update -jHEAD -jconfig-start" \
-"$SPROG [a-z]*: syntax error in $CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
+"$SPROG [a-z]*: syntax error in $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
 RCS file: $CVSROOT_DIRNAME/CVSROOT/config,v
 retrieving revision 1.[0-9]*
 retrieving revision 1.[0-9]*
@@ -18838,7 +18841,7 @@ Merging differences between 1.[0-9]* and 1.[0-9]* into config"
 	  echo 'BogusOption=yes' >>config
 	  if $proxy; then
 	    dotest config-4p "$testcvs -q ci -m change-to-bogus-opt" \
-"$SPROG [a-z]*: syntax error in $CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
+"$SPROG [a-z]*: syntax error in $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
 $SPROG [a-z]*: syntax error in $CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
 $CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
@@ -18851,14 +18854,14 @@ new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 	  fi
 	  dotest config-cleanup-1 "$testcvs -Q update -jHEAD -jconfig-start" \
-"$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
 RCS file: $CVSROOT_DIRNAME/CVSROOT/config,v
 retrieving revision 1.[0-9]*
 retrieving revision 1.[0-9]*
 Merging differences between 1.[0-9]* and 1.[0-9]* into config"
 	  if $proxy; then
 	    dotest config-cleanup-3 "$testcvs -q ci -m change-to-comment" \
-"$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
 $SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
 $CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
