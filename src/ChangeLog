@@ -1,5 +1,8 @@
 2002-07-09  Larry Jones  <lawrence.jones@eds.com>
 
+	* vers_ts.c (time_stamp_server, time_stamp): Eliminate unneeded
+	struct_tm copying.
+
 	* lock.c (lock_wait, lock_obtained): Display time in UTC if possible
 	to reduce confusion in client/server mode.
 	(Original patch from Eduardo Perez Ureta <eperez@it.uc3m.es>.)
