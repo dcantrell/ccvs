@@ -3078,12 +3078,11 @@ the documentation instead.
 There are some @code{command_options} that are used so
 often that you might have set up an alias or some other
 means to make sure you always specify that option.  One
-example @footnote{being the one that drove the
-implementation of the .cvsrc support} is that many
-people find the default output of the @samp{diff}
-command to be very hard to read, and that either
-context diffs or unidiffs are much easier to
-understand.
+example (the one that drove the implementation of the
+.cvsrc support, actually) is that many people find the
+default output of the @samp{diff} command to be very
+hard to read, and that either context diffs or unidiffs
+are much easier to understand.
 
 The @file{~/.cvsrc} file is a way that you can add
 default options to @code{cvs_commands} within cvs,
@@ -3098,9 +3097,10 @@ added to the command arguments @emph{before} any
 options from the command line.
 
 If a command has two names (e.g., @code{checkout} and
-@code{co}), only the name used on the command line will
-be used to match against the file.  So if this is the
-contents of the user's @file{~/.cvsrc} file:
+@code{co}), the official name, not necessarily the one
+used on the command line, will be used to match against
+the file.  So if this is the contents of the user's
+@file{~/.cvsrc} file:
 
 @example
 log -N
@@ -3110,17 +3110,17 @@ co -P
 @end example
 
 @noindent
-the command @samp{cvs checkout foo} would not have the
-@samp{-P} option added to the arguments, while
-@samp{cvs co foo} would.
+the command @samp{cvs checkout foo} would have the
+@samp{-P} option added to the arguments, as well as
+@samp{cvs co foo}.
 
 With the example file above, the output from @samp{cvs
 diff foobar} will be in unidiff format.  @samp{cvs diff
--c foobar} will provide context diffs, as usual.  Since
-@code{diff} doesn't have an option to specify use of
-the "old" format, you would need to use the @samp{-f}
-option to @samp{cvs} to turn off use of the
-@file{~/.cvsrc} options.
+-c foobar} will provide context diffs, as usual.
+Getting "old" format diffs would be slightly more
+complicated, because @code{diff} doesn't have an option
+to specify use of the "old" format, so you would need
+@samp{cvs -f diff foobar}.
 
 
 
