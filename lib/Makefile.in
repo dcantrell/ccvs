@@ -76,7 +76,7 @@ OBJECTS = \
 
 DISTFILES = \
 	.cvsignore ChangeLog ChangeLog.fsf Makefile.in \
-	${SOURCES} ${HEADERS}
+	${SOURCES} ${HEADERS} build_lib.com
 
 DEFS = @DEFS@
 RANLIB = @RANLIB@
