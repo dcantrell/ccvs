@@ -2,10 +2,27 @@
 #### this makefile.  However, we need this file in order for 'make
 #### dist' to work properly on Unix machines.
 
-DISTFILES = \
-  ChangeLog \
-  config.h options.h \
-  alloca.h pwd.h
+HEADERS = \
+  alloca.h \
+  config.h \
+  ndir.h \
+  options.h \
+  pwd.h \
+  rcmd.h
+SOURCES = \
+  filesubr.c \
+  mkdir.c \
+  ndir.c \
+  pwd.c \
+  rcmd.c \
+  run.c \
+  startserver.c \
+  strippath.c \
+  stripslash.c \
+  waitpid.c \
+  win32.c
+DISTFILES = ${HEADERS} ${SOURCES} \
+  README ChangeLog Makefile.in .cvsignore
 
 all:
 
