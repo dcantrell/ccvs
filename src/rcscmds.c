@@ -12,6 +12,30 @@
 #include "cvs.h"
 #include <assert.h>
 
+/* This file, rcs.h, and rcs.c, are intended to define our interface
+   to RCS files.  As of July, 1996, there are still a few places that
+   still exec RCS commands directly.  The intended long-term direction
+   is to have CVS access RCS files directly, for performance,
+   cleanliness (CVS has some awful hacks to work around RCS behaviors
+   which don't make sense for CVS), installation hassles, ease of
+   implementing the CVS server (I don't think that the
+   output-out-of-order bug can be completely fixed as long as CVS
+   calls RCS), and perhaps other reasons.
+
+   It is often suggested that this should be a common library shared
+   between RCS and CVS.  It is not clear that this is the most natural
+   way (at least for the first-cut implementation).  Some
+   considerations:
+
+   1.  CVS already has data structures and a fair bit of code dedicated
+   to handling RCS files.
+
+   2.  The existing RCS code can be hard to understand.  Too few
+   comments and too many layers of abstraction.  I don't know whether it
+   gets better if you know the code better.
+
+   3.  CVS does not need all the functionality of RCS.  */
+
 /* For RCS file PATH, make symbolic tag TAG point to revision REV.
    This validates that TAG is OK for a user to use.  Return value is
    -1 for error (and errno is set to indicate the error), positive for

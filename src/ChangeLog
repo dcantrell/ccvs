@@ -1,5 +1,10 @@
 Sun Jul  7 10:36:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcscmds.c: Add comment regarding librarifying RCS and related
+	issues.  This is a lightly edited version of a message I sent to
+	the CVS developers and didn't get flamed for, so it would appear
+	to be relatively uncontroversial.
+
 	* rcs.c (annotate): Remove comment suggesting -r option and
 	related functionality; it is done.
 
