@@ -13958,6 +13958,7 @@ ${PROG} \[[a-z]* aborted\]: cannot stat ${TESTDIR}/locks: No such file or direct
 
 	  cd ../../..
 	  dotest lockfiles-8 "${testcvs} -q update" ""
+	  dotest lockfiles-9 "${testcvs} -q co -l ." ""
 
 	  cd CVSROOT
 	  echo "# nobody here but us comments" >config
