@@ -1,3 +1,7 @@
+Wed Jan  8 23:07:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* add.c (add): Reindent a portion which needed it.
+
 1997-01-08  Jim Kingdon
 
 	* client.c (send_file_names): When looking name up in Entries,
