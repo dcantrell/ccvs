@@ -21,15 +21,11 @@ noinst_LIBRARIES = libcvs.a
 # matching?)
 libcvs_a_SOURCES = \
 	argmatch.c \
-	getnline.c \
 	md5.c \
 	sighandle.c \
 	strftime.c \
 	yesno.c \
 	error.h \
-	getline.h \
-	getndelim2.h \
-	getnline.h \
 	getpagesize.h \
 	md5.h \
 	minmax.h \
@@ -116,6 +112,16 @@ libcvs_a_SOURCES += getdate.h getdate.y
 #	@LIBOBJS@ \
 #	$(LIB_CLOCK_GETTIME) \
 #	$(LIBINTL)
+
+## For GNULIB's getline module.
+libcvs_a_SOURCES += getline.h
+EXTRA_DIST += getndelim2.h getndelim2.c
+
+## For GNULIB's getndelim2 module.
+EXTRA_DIST += getndelim2.h getndelim2.c
+
+## For GNULIB's getnline module.
+libcvs_a_SOURCES += getnline.h getnline.c
 
 ## For GNULIB's getopt module.
 BUILT_SOURCES += $(GETOPT_H)

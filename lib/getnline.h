@@ -1,6 +1,6 @@
-/* getnline - Read a line of n characters or less from a stream.
+/* getnline - Read a line from a stream, with bounded memory allocation.
 
-   Copyright (C) 2003 Free Software Foundation, Inc.
+   Copyright (C) 2003, 2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,29 +19,30 @@
 #ifndef GETNLINE_H
 #define GETNLINE_H 1
 
-#include <stddef.h>
 #include <stdio.h>
-
-/* Get ssize_t.  */
 #include <sys/types.h>
+
+#define GETNLINE_NO_LIMIT ((size_t) -1)
 
 /* Read a line, up to the next newline, from STREAM, and store it in *LINEPTR.
    *LINEPTR is a pointer returned from malloc (or NULL), pointing to *LINESIZE
-   bytes of space.  It is realloc'd as necessary.  Read a maximum of LIMIT
-   bytes.
+   bytes of space.  It is realloc'd as necessary.  Reallocation is limited to
+   NMAX bytes; if the line is longer than that, the extra bytes are read but
+   thrown away.
    Return the number of bytes read and stored at *LINEPTR (not including the
    NUL terminator), or -1 on error or EOF.  */
-extern ssize_t getnline (char **_lineptr, size_t *_linesize, size_t limit,
-                         FILE *_stream);
+extern ssize_t getnline (char **lineptr, size_t *linesize, size_t nmax,
+			 FILE *stream);
 
 /* Read a line, up to the next occurrence of DELIMITER, from STREAM, and store
    it in *LINEPTR.
    *LINEPTR is a pointer returned from malloc (or NULL), pointing to *LINESIZE
-   bytes of space.  It is realloc'd as necessary.  Read a maximum of LIMIT
-   bytes.
+   bytes of space.  It is realloc'd as necessary.  Reallocation is limited to
+   NMAX bytes; if the line is longer than that, the extra bytes are read but
+   thrown away.
    Return the number of bytes read and stored at *LINEPTR (not including the
    NUL terminator), or -1 on error or EOF.  */
-extern ssize_t getndelim (char **_lineptr, size_t *_linesize, size_t limit,
-                          int _delimiter, FILE *_stream);
+extern ssize_t getndelim (char **lineptr, size_t *linesize, size_t nmax,
+			  int delimiter, FILE *stream);
 
 #endif /* GETNLINE_H */

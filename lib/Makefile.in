@@ -182,29 +182,6 @@ noinst_LIBRARIES = libcvs.a
 # Should look into unifying regular expression matching in CVS
 # with the diff library (perhaps to have the caller, CVS, do the
 # matching?)
-
-# For the xsize module from GNULIB.
-libcvs_a_SOURCES = \
-	argmatch.c \
-	getnline.c \
-	md5.c \
-	sighandle.c \
-	strftime.c \
-	yesno.c \
-	error.h \
-	getline.h \
-	getndelim2.h \
-	getnline.h \
-	getpagesize.h \
-	md5.h \
-	minmax.h \
-	system.h \
-	wait.h \
-	xselect.h \
-	xtime.h\
-basename.c dirname.c dirname.h stripslash.c exit.h exitfail.h exitfail.c getdate.h getdate.y gettext.h gettime.c pathmax.h regex.h save-cwd.h save-cwd.c time_r.h timespec.h unlocked-io.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xalloc-die.c xgetcwd.h xgetcwd.c xsize.h
-libcvs_a_LIBADD = @LIBOBJS@
-
 # CVS test scripts for getdate.
 #TESTS += test-getdate.sh
 #MOSTLYCLEANFILES += getdate-expected getdate-got getdate.diff
@@ -225,6 +202,25 @@ libcvs_a_LIBADD = @LIBOBJS@
 #	@LIBOBJS@ \
 #	$(LIB_CLOCK_GETTIME) \
 #	$(LIBINTL)
+
+# For the xsize module from GNULIB.
+libcvs_a_SOURCES = \
+	argmatch.c \
+	md5.c \
+	sighandle.c \
+	strftime.c \
+	yesno.c \
+	error.h \
+	getpagesize.h \
+	md5.h \
+	minmax.h \
+	system.h \
+	wait.h \
+	xselect.h \
+	xtime.h\
+basename.c dirname.c dirname.h stripslash.c exit.h exitfail.h exitfail.c getdate.h getdate.y getline.h getnline.h getnline.c gettext.h gettime.c pathmax.h regex.h save-cwd.h save-cwd.c time_r.h timespec.h unlocked-io.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xalloc-die.c xgetcwd.h xgetcwd.c xsize.h
+libcvs_a_LIBADD = @LIBOBJS@
+
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) $(GETOPT_H) $(STDBOOL_H)
 MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t getopt.h getopt.h-t stdbool.h stdbool.h-t
 MAINTAINERCLEANFILES = 
@@ -238,7 +234,7 @@ EXTRA_DIST = \
 	libcvs.dep \
 	libcvs.dsp \
 	libcvs.mak\
-alloca_.h fnmatch_.h fnmatch_loop.c getopt_.h getopt_int.h stdbool_.h
+alloca_.h fnmatch_.h fnmatch_loop.c getndelim2.h getndelim2.c getndelim2.h getndelim2.c getopt_.h getopt_int.h stdbool_.h
 subdir = lib
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -248,10 +244,10 @@ LIBRARIES = $(noinst_LIBRARIES)
 
 libcvs_a_AR = $(AR) cru
 libcvs_a_DEPENDENCIES = @LIBOBJS@
-am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) getnline.$(OBJEXT) \
-	md5.$(OBJEXT) sighandle.$(OBJEXT) strftime.$(OBJEXT) \
-	yesno.$(OBJEXT) basename.$(OBJEXT) dirname.$(OBJEXT) \
-	stripslash.$(OBJEXT) exitfail.$(OBJEXT) getdate.$(OBJEXT) \
+am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) md5.$(OBJEXT) \
+	sighandle.$(OBJEXT) strftime.$(OBJEXT) yesno.$(OBJEXT) \
+	basename.$(OBJEXT) dirname.$(OBJEXT) stripslash.$(OBJEXT) \
+	exitfail.$(OBJEXT) getdate.$(OBJEXT) getnline.$(OBJEXT) \
 	gettime.$(OBJEXT) save-cwd.$(OBJEXT) xmalloc.$(OBJEXT) \
 	xalloc-die.$(OBJEXT) xgetcwd.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
