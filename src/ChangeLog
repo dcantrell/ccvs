@@ -1,3 +1,7 @@
+2004-02-13  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* rcs.c (locate_rcs): Remove unused variables.
+
 2004-02-12  Mark D. Baushke  <mdb@cvshome.org>
 
 	* lock.c (readers_exist): Plug a memory leak.

@@ -211,8 +211,6 @@ locate_rcs (repository, file, inattic)
     const char *file;
     int *inattic;
 {
-    char *rcsfile;
-    char *dir;
     char *retval;
 
     /* First, try to find the file as cased. */
