@@ -633,8 +633,7 @@ add_rev (message, rcs, vfile, vers)
     status = RCS_checkin (rcs, tocvsPath == NULL ? vfile : tocvsPath,
 			  message, vbranch,
 			  (RCS_FLAGS_QUIET
-			   | (use_file_modtime ? RCS_FLAGS_MODTIME : 0)),
-			  0);
+			   | (use_file_modtime ? RCS_FLAGS_MODTIME : 0)));
     ierrno = errno;
 
     if (tocvsPath == NULL)

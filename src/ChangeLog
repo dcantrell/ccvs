@@ -1,5 +1,10 @@
 Tue Jul 16 11:37:41 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* rcscmds.c (RCS_checkin): Remove noerr parameter.  Change all
+	callers.
+	* cvs.h (RCS_checkin): Update declaration.
+	* commit.c (remove_file): Pass RCS_FLAGS_QUIET to RCS_checkin.
+
 	* history.c (history): Cast sizeof to int to use correct type in
 	error printf string.
 	(report_hrecs): Cast strlen result to int to use correct type in

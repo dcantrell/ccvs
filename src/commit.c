@@ -1473,7 +1473,8 @@ remove_file (finfo, tag, message)
     if (corev != NULL)
 	free (corev);
 
-    retcode = RCS_checkin (rcs, NULL, message, rev, RCS_FLAGS_DEAD, 1);
+    retcode = RCS_checkin (rcs, NULL, message, rev,
+			   RCS_FLAGS_DEAD | RCS_FLAGS_QUIET);
     if (retcode	!= 0)
     {
 	if (!quiet)
@@ -1728,7 +1729,7 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	(void) sprintf (tmp, "file %s was initially added on branch %s.",
 			file, tag);
 	retcode = RCS_checkin (rcs, NULL, tmp, NULL,
-			       RCS_FLAGS_DEAD | RCS_FLAGS_QUIET, 0);
+			       RCS_FLAGS_DEAD | RCS_FLAGS_QUIET);
 	free (tmp);
 	if (retcode != 0)
 	{

@@ -181,20 +181,18 @@ RCS_checkout (rcsfile, workfile, tag, options, sout, flags)
 
 /* Check in to RCSFILE with revision REV (which must be greater than the
    largest revision) and message MESSAGE (which is checked for legality).
-   If FLAGS & RCS_FLAGS_DEAD, check in a dead revision.  If NOERR, do not
-   report errors.  If FLAGS & RCS_FLAGS_QUIET suppress errors somewhat more
-   selectively.  If FLAGS & RCS_FLAGS_MODTIME, use the working file's
-   modification time for the checkin time.  WORKFILE is the working file
-   to check in from, or NULL to use the usual RCS rules for deriving it
-   from the RCSFILE.  */
+   If FLAGS & RCS_FLAGS_DEAD, check in a dead revision.  If FLAGS &
+   RCS_FLAGS_QUIET, tell ci to be quiet.  If FLAGS & RCS_FLAGS_MODTIME,
+   use the working file's modification time for the checkin time.
+   WORKFILE is the working file to check in from, or NULL to use the usual
+   RCS rules for deriving it from the RCSFILE.  */
 int
-RCS_checkin (rcsfile, workfile, message, rev, flags, noerr)
+RCS_checkin (rcsfile, workfile, message, rev, flags)
     char *rcsfile;
     char *workfile;
     char *message;
     char *rev;
     int flags;
-    int noerr;
 {
     run_setup ("%s%s -x,v/ -f %s%s", Rcsbin, RCS_CI,
 	       rev ? "-r" : "", rev ? rev : "");
@@ -208,5 +206,5 @@ RCS_checkin (rcsfile, workfile, message, rev, flags, noerr)
     if (workfile != NULL)
 	run_arg (workfile);
     run_arg (rcsfile);
-    return run_exec (RUN_TTY, RUN_TTY, noerr ? DEVNULL : RUN_TTY, RUN_NORMAL);
+    return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
 }
