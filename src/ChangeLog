@@ -1,3 +1,11 @@
+Tue Jan 31 15:02:01 1995  Jim Blandy  <jimb@floss.life.uiuc.edu>
+
+	* server.c: #include <sys/stat.h> for the new stat call in mkdir_p.
+	(mkdir_p): Don't try to create the intermediate directory if it
+	exists already.  Some systems return EEXIST, but others return
+	EACCES, which we can't otherwise distinguish from a real access
+	problem.
+
 Sun Jan 22 15:25:45 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* update.c (merge_file): My rcsmerge doesn't accept a -E option,
