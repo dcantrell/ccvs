@@ -115,12 +115,12 @@ AR = ar
 ARFLAGS = cru
 libcvs_a_AR = $(AR) $(ARFLAGS)
 libcvs_a_DEPENDENCIES = @LIBOBJS@
-am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) md5.$(OBJEXT) \
-	sighandle.$(OBJEXT) yesno.$(OBJEXT) basename.$(OBJEXT) \
-	dirname.$(OBJEXT) stripslash.$(OBJEXT) exitfail.$(OBJEXT) \
-	getdate.$(OBJEXT) getnline.$(OBJEXT) gettime.$(OBJEXT) \
-	save-cwd.$(OBJEXT) strftime.$(OBJEXT) xmalloc.$(OBJEXT) \
-	xalloc-die.$(OBJEXT) xgetcwd.$(OBJEXT)
+am_libcvs_a_OBJECTS = md5.$(OBJEXT) sighandle.$(OBJEXT) \
+	yesno.$(OBJEXT) basename.$(OBJEXT) dirname.$(OBJEXT) \
+	stripslash.$(OBJEXT) exitfail.$(OBJEXT) getdate.$(OBJEXT) \
+	getnline.$(OBJEXT) gettime.$(OBJEXT) save-cwd.$(OBJEXT) \
+	strftime.$(OBJEXT) xmalloc.$(OBJEXT) xalloc-die.$(OBJEXT) \
+	xgetcwd.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -292,15 +292,15 @@ noinst_LIBRARIES = libcvs.a
 # For the vasprintf module from GNULIB.
 
 # For the xsize module from GNULIB.
-libcvs_a_SOURCES = argmatch.c md5.c sighandle.c yesno.c error.h \
-	getpagesize.h md5.h system.h wait.h xselect.h xtime.h \
-	basename.c dirname.c dirname.h stripslash.c exit.h exitfail.h \
-	exitfail.c getdate.h getdate.y getline.h getnline.h getnline.c \
-	getpass.h gettext.h gettime.c minmax.h pathmax.h regex.h \
-	save-cwd.h save-cwd.c stat-macros.h strcase.h strftime.c \
-	strftime.h time_r.h timespec.h unlocked-io.h printf-args.h \
-	printf-parse.h vasnprintf.h vasprintf.h xalloc.h xmalloc.c \
-	xalloc-die.c xgetcwd.h xgetcwd.c xsize.h
+libcvs_a_SOURCES = md5.c sighandle.c yesno.c error.h getpagesize.h \
+	md5.h system.h wait.h xselect.h xtime.h basename.c dirname.c \
+	dirname.h stripslash.c exit.h exitfail.h exitfail.c getdate.h \
+	getdate.y getline.h getnline.h getnline.c getpass.h gettext.h \
+	gettime.c minmax.h pathmax.h regex.h save-cwd.h save-cwd.c \
+	stat-macros.h strcase.h strftime.c strftime.h time_r.h \
+	timespec.h unlocked-io.h printf-args.h printf-parse.h \
+	vasnprintf.h vasprintf.h xalloc.h xmalloc.c xalloc-die.c \
+	xgetcwd.h xgetcwd.c xsize.h
 libcvs_a_LIBADD = @LIBOBJS@
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) $(GETOPT_H) $(STDBOOL_H)
 MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t getopt.h \
@@ -403,7 +403,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/vasnprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/vasprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/waitpid.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/argmatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/basename.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exitfail.Po@am__quote@
