@@ -512,9 +512,6 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* Define to 1 if the C compiler supports function prototypes. */
-#undef PROTOTYPES
-
 /* Path to the pr utility */
 #undef PR_PROGRAM
 
@@ -605,9 +602,6 @@
 
 /* Define to force lib/regex.c to define re_comp et al. */
 #undef _REGEX_RE_COMP
-
-/* Define like PROTOTYPES; this can be used by system headers. */
-#undef __PROTOTYPES
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const

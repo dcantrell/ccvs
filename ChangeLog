@@ -1,5 +1,12 @@
 2003-07-16  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Remove AC_C_PROTOTYPES call.
+
+	* config.h.in: Regenerated.
+	* configure: Ditto.
+
+2003-07-16  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Add calls to new pathmax macro.
 
 	* aclocal.m4: Regenerated.
