@@ -1,3 +1,8 @@
+2004-02-18  Derek Price  <derek@ximbiot.com>
+
+	* xsize.m4: Update to a more recent version which AC_REQUIREs
+	AC_C_INLINE.
+
 2004-02-15  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (EXTRA_DIST): Add alloca.m4.
