@@ -418,23 +418,23 @@ RCS_reparsercsfile (rdata, pfp)
 	if (strcmp (key, RCSDESC) == 0)
 	    break;
 
-	    if (strcmp (key, "comment") == 0)
-	    {
-		rdata->comment = xstrdup (value);
-		continue;
-	    }
-	    if (rdata->other == NULL)
-		rdata->other = getlist ();
-	    kv = getnode ();
-	    kv->type = RCSFIELD;
-	    kv->key = xstrdup (key);
-	    kv->data = xstrdup (value);
-	    if (addnode (rdata->other, kv) != 0)
-	    {
-		error (0, 0, "warning: duplicate key `%s' in RCS file `%s'",
-		       key, rcsfile);
-		freenode (kv);
-	    }
+	if (strcmp (key, "comment") == 0)
+	{
+	    rdata->comment = xstrdup (value);
+	    continue;
+	}
+	if (rdata->other == NULL)
+	    rdata->other = getlist ();
+	kv = getnode ();
+	kv->type = RCSFIELD;
+	kv->key = xstrdup (key);
+	kv->data = xstrdup (value);
+	if (addnode (rdata->other, kv) != 0)
+	{
+	    error (0, 0, "warning: duplicate key `%s' in RCS file `%s'",
+		   key, rcsfile);
+	    freenode (kv);
+	}
 
 	/* if we haven't grabbed it yet, we didn't want it */
     }
@@ -5157,11 +5157,11 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
 
     if (fp == NULL)
     {
-	    fp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
-	    if (fp == NULL)
-		error (1, 0, "unable to reopen `%s'", rcs->path);
-	    if (fseek (fp, rcs->delta_pos, SEEK_SET) != 0)
-		error (1, 0, "cannot fseek RCS file");
+	fp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
+	if (fp == NULL)
+	    error (1, 0, "unable to reopen `%s'", rcs->path);
+	if (fseek (fp, rcs->delta_pos, SEEK_SET) != 0)
+	    error (1, 0, "cannot fseek RCS file");
     }
 
     ishead = 1;
