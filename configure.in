@@ -20,7 +20,7 @@ AC_TYPE_PID_T
 AC_C_CHAR_UNSIGNED
 AC_STRUCT_TM
 AC_REPLACE_FUNCS(fnmatch getwd mkdir rename strdup dup2 strerror valloc waitpid memmove)
-AC_CHECK_FUNCS(fchmod fsync ftime mkfifo putenv setvbuf vfork vprintf ftruncate timezone getpagesize)
+AC_CHECK_FUNCS(fchmod fsync ftime mkfifo putenv setvbuf vfork vprintf ftruncate timezone getpagesize fchdir)
 AC_CHECK_FUNC(re_exec, :, LIBOBJS="$LIBOBJS regex.o")
 AC_CHECK_FUNC(gethostname, :, LIBOBJS="$LIBOBJS hostname.o")
 AC_FUNC_UTIME_NULL
@@ -76,7 +76,8 @@ AC_CHECK_FUNCS(krb_get_err_text)
 # libsocket.so which has a bad implementation of gethostbyname (it
 # only looks in /etc/hosts), so we only look for -lsocket if we need
 # it.
-AC_CHECK_FUNC(connect, :, [AC_HAVE_LIBRARY(-lsocket) AC_HAVE_LIBRARY(-lnsl)])
+AC_CHECK_FUNC(connect, :, 
+[AC_CHECK_LIB(socket, connect) AC_CHECK_LIB(nsl, connect)])
 
 AC_OUTPUT(Makefile lib/Makefile src/Makefile doc/Makefile man/Makefile \
  	  contrib/Makefile examples/Makefile stamp-h)
