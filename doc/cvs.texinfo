@@ -2239,6 +2239,47 @@ The rest of this chapter describes how these various
 models work, and some of the issues involved in
 choosing between them.
 
+@ignore
+Here is a draft reserved checkout design or discussion
+of the issues.  This seems like as good a place as any
+for this.
+
+Might want a cvs lock/cvs unlock--in which the names
+differ from edit/unedit because the network must be up
+for these to work.  unedit gives an error if there is a
+reserved checkout in place (so that people don't
+accidentally leave locks around); unlock gives an error
+if one is not in place (this is more arguable; perhaps
+it should act like unedit in that case).
+
+On the other hand, might want it so that emacs,
+scripts, etc., can get ready to edit a file without
+having to know which model is in use.  In that case we
+would have a "cvs watch lock" (or .cvsrc?) (that is,
+three settings, "on", "off", and "lock").  Having cvs
+watch lock set would cause a get to record in the CVS
+directory which model is in use, and cause "cvs edit"
+to change behaviors.  We'd want a way to query which
+setting is in effect (this would be handy even if it is
+only "on" or "off" as presently).  If lock is in
+effect, then commit would require a lock before
+allowing a checkin; chmod wouldn't suffice (might be
+debatable--see chmod comment below, in watches--but it
+is the way people expect RCS to work and I can't think
+of any significant downside.  On the other hand, maybe
+it isn't worth bothering, because people who are used
+to RCS wouldn't think to use chmod anyway).
+
+Implementation: use file attributes or use RCS
+locking.  The former avoids more dependence on RCS
+behaviors we will need to reimplement as we librarify
+RCS, and makes it easier to import/export RCS files (in
+that context, want to ignore the locker field).  But
+note that RCS locks are per-branch, which is the
+correct behavior (this is also an issue for the "watch
+on" features; they should be per-branch too).
+@end ignore
+
 @menu
 * File status::                 A file can be in several states
 * Updating a file::             Bringing a file up-to-date
