@@ -302,7 +302,7 @@ if test -n "$remotehost"; then
     fi
 fi
 
-case "${servercvs}" in
+case "$servercvs" in
 "")
   exit_usage
   ;;
@@ -311,11 +311,11 @@ false)
 /*)
   ;;
 *)
-  servercvs=`pwd`/${servercvs}
+  servercvs=`pwd`/$servercvs
   ;;
 esac
 
-if test false != ${servercvs}; then
+if test false != $servercvs; then
   # Allow command line to override $CVS_SERVER
   CVS_SERVER=$servercvs
 else
@@ -323,9 +323,10 @@ else
   : ${CVS_SERVER=$testcvs}
   # With the previous command, effectively defaults $servercvs to $CVS_SERVER,
   # then $testcvs
-  servercvs=${CVS_SERVER}
+  servercvs=$CVS_SERVER
 fi
 export CVS_SERVER
+servercvs_orig=$servercvs
 
 # Fail in client/server mode if our ${servercvs} does not contain server
 # support.
@@ -2061,7 +2062,7 @@ if $proxy; then
 
     # Script to sync the secondary root.
     cat >$TESTDIR/sync-secondary <<EOF
-#! /bin/sh
+#! $TESTSHELL
 date >>$TESTDIR/update-log
 echo "updating after \$1 for command \$2" >>$TESTDIR/update-log
 rsync -glopr --delete --exclude '#cvs.*' $CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
@@ -2108,12 +2109,12 @@ EOF
     # Wrap the CVS server to allow --primary-root to be set by the
     # secondary.
     cat <<EOF >$TESTDIR/secondary-wrapper
-#! /bin/sh
+#! $TESTSHELL
 export CVS_SERVER=$TESTDIR/primary-wrapper
 $CVS_SERVER --primary-root $CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME "\$@"
 EOF
     cat <<EOF >$TESTDIR/primary-wrapper
-#! /bin/sh
+#! $TESTSHELL
 # Don't overwrite the log created by the secondary
 if test -n "$CVS_SERVER_LOG"; then
     CVS_SERVER_LOG=$CVS_SERVER_LOG-primary
@@ -11977,7 +11978,7 @@ U CVSROOT/verifymsg"
 	  # cvs to prevent them in the first place.
 	  for i in checkout export tag; do
 	    cat >> ${CVSROOT_DIRNAME}/$i.sh <<EOF
-#! /bin/sh
+#! $TESTSHELL
 sleep 1
 echo "$i script invoked in \`pwd\`"
 echo "args: \$@"
@@ -19420,7 +19421,7 @@ Annotations for $file
 
                # Make sure server ignores real ${HOME}/.cvsrc:
             cat >$TESTDIR/cvs-setHome <<EOF
-#!/bin/sh
+#!$TESTSHELL
 HOME=$HOME
 export HOME
 exec $CVS_SERVER "\$@"
@@ -20718,7 +20719,7 @@ ${SPROG} \[update aborted\]: could not find desired version 1\.6 in ${CVSROOT_DI
 	  # create our workspace fixin' script
 	  cd ../..
 	  echo \
-"#!/bin/sh
+"#!$TESTSHELL
 
 # This script will copy the CVS database dirs from the checked out
 # version of a newly recovered repository and replace the CVS
@@ -27548,7 +27549,7 @@ $SPROG commit: Rebuilding administrative file database"
 	    cd ../..
 	    rm -r 1
 	    restore_adm
-	    servercvs=$save_severcvs
+	    servercvs=$save_servercvs
 	  fi # skip the whole thing for local
 	  ;;
 
@@ -27759,7 +27760,7 @@ EOF
 	    dokeep
 	    rm -rf ${TESTDIR}/crerepos
 	    rm gzipped.dat session.dat
-	    servercvs=$save_severcvs
+	    servercvs=$save_servercvs
 	  fi # skip the whole thing for local
 	  ;;
 
@@ -27811,7 +27812,7 @@ ${CVSROOT_DIRNAME}
 Unchanged foo/bar
 noop
 EOF
-	    servercvs=$save_severcvs
+	    servercvs=$save_servercvs
 	  fi
 	  ;;
 
@@ -28031,7 +28032,7 @@ echo "$HOME/.bashrc"
 echo "/.bashrc/73.50///"
 echo "u=rw,g=rw,o=rw"
 echo "26"
-echo "#! /bin/sh"
+echo "#! $TESTSHELL"
 echo "echo 'gotcha!'"
 echo "ok"
 cat >/dev/null
@@ -28051,7 +28052,7 @@ echo "../../home/.bashrc"
 echo "/.bashrc/73.50///"
 echo "u=rw,g=rw,o=rw"
 echo "26"
-echo "#! /bin/sh"
+echo "#! $TESTSHELL"
 echo "echo 'gotcha!'"
 echo "ok"
 cat >/dev/null
@@ -28071,7 +28072,7 @@ echo "$HOME/.bashrc"
 echo "/.bashrc/73.50///"
 echo "u=rw,g=rw,o=rw"
 echo "26"
-echo "#! /bin/sh"
+echo "#! $TESTSHELL"
 echo "echo 'gotcha!'"
 echo "ok"
 cat >/dev/null
@@ -28091,7 +28092,7 @@ echo "../../home/.bashrc"
 echo "/.bashrc/73.50///"
 echo "u=rw,g=rw,o=rw"
 echo "26"
-echo "#! /bin/sh"
+echo "#! $TESTSHELL"
 echo "echo 'gotcha!'"
 echo "ok"
 cat >/dev/null
@@ -28112,7 +28113,7 @@ echo "./innocuous"
 echo "/innocuous/73.50///"
 echo "u=rw,g=rw,o=rw"
 echo "26"
-echo "#! /bin/sh"
+echo "#! $TESTSHELL"
 echo "echo 'gotcha!'"
 echo "Copy-file ."
 echo "./innocuous"
@@ -31656,6 +31657,10 @@ You have \[0\] altered files in this repository\."
 	if $problem; then
 	    fail "cleanup: write proxy configuration not preserved"
 	fi
+    fi
+
+    if $remote && test "$servercvs_orig" != "$servercvs" >/dev/null 2>&1; then
+	fail "test slagged \$servercvs"
     fi
 
     # Test our temp directory for cvs-serv* directories and cvsXXXXXX temp

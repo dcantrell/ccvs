@@ -1,5 +1,9 @@
 2004-07-12  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Watch $servercvs and other minor fixes.
+
+2004-07-12  Derek Price  <derek@ximbiot.com>
+
 	* server.c: Gratuitous reformatting.
 	* sanity.sh: Misc write proxy accommodations.
 
