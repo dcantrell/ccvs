@@ -1140,10 +1140,20 @@ for what in $tests; do
 		# so it shouldn't get imported.
 		mkdir RCS
 		echo ignore.me >RCS/ignore.me
+
+		echo 'import should not expand $Id$' >>imported-file2
+		cp imported-file2 ../imported-file2-orig.tmp
+
 		if ${CVS} import -m first-import first-dir vendor-branch junk-1_0  ; then
 			echo "PASS: test 96" >>${LOGFILE}
 		else
 			echo "FAIL: test 96" | tee -a ${LOGFILE} ; exit 1
+		fi
+
+		if cmp ../imported-file2-orig.tmp imported-file2; then
+		  pass 96.5
+		else
+		  fail 96.5
 		fi
 		cd ..
 
@@ -1231,11 +1241,17 @@ for what in $tests; do
 		for i in 1 2 3 ; do
 			echo rev 2 of file $i >> imported-file"$i"
 		done
+		cp imported-file2 ../imported-file2-orig.tmp
 
 		if ${CVS} import -m second-import first-dir vendor-branch junk-2_0  ; then
 			echo "PASS: test 106" >>${LOGFILE}
 		else
 			echo "FAIL: test 106" | tee -a ${LOGFILE} ; exit 1
+		fi
+		if cmp ../imported-file2-orig.tmp imported-file2; then
+		  pass 106.5
+		else
+		  fail 106.5
 		fi
 		cd ..
 

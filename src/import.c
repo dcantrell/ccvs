@@ -576,7 +576,6 @@ add_rev (message, rcs, vfile, vers)
 {
     int locked, status, ierrno;
     char *tocvsPath;
-    struct stat vfile_stat;
 
     if (noexec)
 	return (0);
@@ -595,20 +594,29 @@ add_rev (message, rcs, vfile, vers)
 	locked = 1;
     }
     tocvsPath = wrap_tocvs_process_file (vfile);
+    if (tocvsPath == NULL)
+    {
+	/* We play with hard links rather than passing -u to ci to avoid
+	   expanding RCS keywords (see test 106.5 in sanity.sh).  */
+	if (link_file (vfile, FILE_HOLDER) < 0)
+	{
+	    if (errno == EEXIST)
+	    {
+		(void) unlink_file (FILE_HOLDER);
+		(void) link_file (vfile, FILE_HOLDER);
+	    }
+	    else
+	    {
+		ierrno = errno;
+		fperror (logfp, 0, ierrno,
+			 "ERROR: cannot create link to %s", vfile);
+		error (0, ierrno, "ERROR: cannot create link to %s", vfile);
+		return (1);
+	    }
+	}
+    }
 
-    /* We used to deposit the revision with -r; RCS would delete the
-       working file, but we'd keep a hard link to it, and rename it
-       back after running RCS (ooh, atomicity).  However, that
-       strategy doesn't work on operating systems without hard links
-       (like Windows NT).  Instead, let's deposit it using -u, and
-       restore its permission bits afterwards.  This also means the
-       file always exists under its own name.  */
-    if (! tocvsPath)
-        stat (vfile, &vfile_stat);
-
-    run_setup ("%s%s -q -f %s%s", Rcsbin, RCS_CI, 
-	       (tocvsPath ? "-r" : "-u"),
-	       vbranch);
+    run_setup ("%s%s -q -f -r%s", Rcsbin, RCS_CI, vbranch);
     run_args ("-m%s", make_message_rcslegal (message));
     if (use_file_modtime)
 	run_arg ("-d");
@@ -617,9 +625,11 @@ add_rev (message, rcs, vfile, vers)
     status = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
     ierrno = errno;
 
-    /* Restore the permissions on vfile.  */
-    if (! tocvsPath)
-        chmod (vfile, vfile_stat.st_mode);
+    if (tocvsPath == NULL)
+	rename_file (FILE_HOLDER, vfile);
+    else
+	if (unlink_file_dir (tocvsPath) < 0)
+		error (0, errno, "cannot remove %s", tocvsPath);
 
     if (status)
     {
