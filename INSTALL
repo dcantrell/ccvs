@@ -1,32 +1,27 @@
 First, read the README file.  If you're still happy...
 
-The CVS 1.4 Alpha release has been tested on the following platforms.  Your
-mileage may vary.  Please send updates to this list using the "cvsbug"
-program, specifying the "portability" category.  If your installation
-failed, you may need to run "cvsbug" directly from the "src" directory as
-"src/cvsbug.sh".
+CVS has been tested on the following platforms.  The most recent
+version of CVS reported to have been tested is indicated, but that
+doesn't mean that other versions of CVS will necessarily fail.  Please
+send updates to this list using the "cvsbug" program, specifying the
+"portability" category.  If your installation failed, you may need to
+run "cvsbug" directly from the "src" directory as "src/cvsbug.sh".
 
-	DEC Alpha running OSF/1 version 1.3 using cc
-	DEC Alpha running OSF/1 version 2.1
-	HP 9000/710 running HP-UX 8.07A using gcc
-	HP 9000/715 running HP-UX 9.01 using gcc
-	Gateway P5-66 (pentium) running Solaris 2.4 using gcc
-	IBM RS/6000 running AIX 3.2.5 using gcc and cc
-	IBM RS/6000 running AIX 4.1 using gcc and cc (*)
-	PC Clone running UnixWare v1.1.1 using gcc
-	PC Clone running Linux 1.1.48 using gcc
-	SGI Indigo 2 running Irix 4.0.5H using gcc and cc (**)
-	Sun SPARCstation 1+ running SunOS 4.1.3 using gcc and cc
-	Sun SPARCstation 10 running Solaris 2.3 using gcc and cc
-	Sun SPARCstation 10 running Solaris 2.4 using gcc
-	Sun SPARCstation 10 running SunOS 4.1.3_U1 using gcc and cc
-
-NOTE:	CVS relies on having some form of the opendir/readdir/closedir
-	functions being available.  Some older systems do not support these
-	calls.  CVS will not work with these systems unless a suitable
-	readdir implementation is installed on the system.  Take a look at
-	the file "contrib/dirfns", which contains some code that might add
-	this support to your system.
+	DEC Alpha running OSF/1 version 1.3 using cc (about 1.4A2)
+	DEC Alpha running OSF/1 version 2.1 (about 1.4A2)
+	HP 9000/710 running HP-UX 8.07A using gcc (about 1.4A2)
+	HP 9000/715 running HP-UX 9.01 using gcc (about 1.4A2)
+	Gateway P5-66 (pentium) running Solaris 2.4 using gcc (about 1.4A2)
+	IBM RS/6000 running AIX 3.2.5 using gcc and cc (about 1.4A2)
+	IBM RS/6000 running AIX 4.1 using gcc and cc (*) (about 1.4A2)
+	PC Clone running UnixWare v1.1.1 using gcc (about 1.4A2)
+	PC Clone running Linux 1.1.48 using gcc (about 1.4A2)
+	SGI Indigo 2 running Irix 4.0.5H using gcc and cc (**) (about 1.4A2)
+	Sun SPARCstation 1+ running SunOS 4.1.3 using cc (about 1.4A2)
+	Sun SPARC running SunOS 4.1.3 using gcc (1.4.90)
+	Sun SPARCstation 10 running Solaris 2.3 using gcc and cc (about 1.4A2)
+	Sun SPARCstation 10 running Solaris 2.4 using gcc (about 1.4A2)
+	Sun SPARCstation 10 with SunOS 4.1.3_U1 using gcc and cc (about 1.4A2)
 
 (*)	AIX 4.1 systems fail to run "configure" due to bugs in their
 	"/bin/sh" implementation.  You might want to try feeding the
@@ -115,8 +110,7 @@ Installation:
     that CVS uses, in particular, the RCSBIN variable, which holds the
     path to where the RCS programs live on your system.  The
     likelihood is that you don't have to change anything here, except
-    perhaps adding the -a option to DIFF if you are using GNU diff
-    (which is strongly recommended).
+    perhaps adding the -a option to DIFF if you are using GNU diff.
 
 3)  Try to build it:
 
@@ -203,8 +197,7 @@ Installation:
     can usually be retrieved with the "cvs checkout modules" command, and
     definitely with the "cvs checkout CVSROOT" command.  See cvs(5).
 
-11) Read the ChangeLog file to see what's new.  REALLY!  I use the
-    ChangeLog file as the Release Notes.
+11) Read the NEWS file to see what's new.
 
 12) Hack away.
 
