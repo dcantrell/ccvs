@@ -431,7 +431,8 @@ safe_location (where)
     size_t hardpath_len;
     int retval;
 
-    TRACE ( TRACE_FUNCTION, "safe_location ( where=%s )", where );
+    TRACE( TRACE_FUNCTION, "safe_location( where=%s )",
+           where ? where : "(null)" );
 
 #ifdef CLIENT_SUPPORT
     /* Don't compare remote CVSROOTs to our destination directory. */
