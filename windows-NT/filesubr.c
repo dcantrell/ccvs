@@ -300,6 +300,33 @@ make_directories (name)
     (void) mkdir (name);
 }
 
+/* Create directory NAME if it does not already exist; fatal error for
+   other errors.  Returns 0 if directory was created; 1 if it already
+   existed.  */
+int
+mkdir_if_needed (name)
+    char *name;
+{
+    if (mkdir (name, 0777) < 0)
+    {
+	if (errno != EEXIST
+#ifdef EACCESS
+	    /* This was copied over from the OS/2 code; I would guess it
+	       isn't needed here but that has not been verified.  */
+	    && errno != EACCESS
+#endif
+#ifdef EACCES
+	    /* This is said to be needed by NT on Alpha or PowerPC
+	       (not sure what version) --August, 1996.  */
+	    && errno != EACCES
+#endif
+	    )
+	    error (1, errno, "cannot make directory %s", name);
+	return 1;
+    }
+    return 0;
+}
+
 /*
  * Change the mode of a file, either adding write permissions, or removing
  * all write permissions.  Adding write permissions honors the current umask

@@ -1,3 +1,7 @@
+Mon Aug 26 12:47:58 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c (mkdir_if_needed): Added.
+
 Thu Aug 22 19:12:17 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	The following changes are said to be necessary (but not
