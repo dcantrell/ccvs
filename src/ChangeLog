@@ -1,3 +1,12 @@
+2000-02-16  Jim Meyering  <meyering@lucent.com>
+
+	Avoid race condition whereby a catchable signal could
+	end up corrupting the repository.
+	* commit.c (checkaddfile): Put a critical section around the code
+	that handles the first commit on the trunk of a file that's already
+	been committed on a branch.
+	* cvs.h (Sig_inCrSect): Declare new function.
+
 2000-02-21  Karl Fogel  <kfogel@red-bean.com>
 
 	* main.c (main): still check for repository, but not history file

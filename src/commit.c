@@ -1401,6 +1401,8 @@ out:
 	    }
 	}
     }
+    if (SIG_inCrSect ())
+	SIG_endCrSect ();
 
     return (err);
 }
@@ -1752,8 +1754,8 @@ remove_file (finfo, tag, message)
 		   "failed to commit dead revision for `%s'", finfo->fullname);
 	return (1);
     }
-/* At this point, the file has been committed as removed.  We should 
-        probably tell the history file about it  */
+    /* At this point, the file has been committed as removed.  We should
+       probably tell the history file about it  */
     history_write ('R', NULL, finfo->rcs->head, finfo->file, finfo->repository);
 
     if (rev != NULL)
@@ -1965,6 +1967,11 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	    }
 
 	    sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);
+
+	    /* Begin a critical section around the code that spans the
+	       first commit on the trunk of a file that's already been
+	       committed on a branch.  */
+	    SIG_beginCrSect ();
 
 	    if (RCS_setattic (rcsfile, 0))
 	    {
@@ -2198,6 +2205,8 @@ checkaddfile (file, repository, tag, options, rcsnode)
     retval = 0;
 
  out:
+    if (retval != 0 && SIG_inCrSect ())
+	SIG_endCrSect ();
     free (rcs);
     return retval;
 }

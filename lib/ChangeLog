@@ -1,3 +1,7 @@
+2000-02-16  Jim Meyering  <meyering@lucent.com>
+
+	* sighandle.c (SIG_inCrSect): New function.
+
 2000-01-03  Larry Jones  <larry.jones@sdrc.com>
 
 	* getdate.y (Convert): Add window to determine whether 2-digit dates
