@@ -36,7 +36,7 @@ Name_Root (const char *dir, const char *update_dir)
     char *cp;
     int len;
 
-    TRACE (TRACE_FUNCTION, "Name_Root (%s, %s)",
+    TRACE (TRACE_FLOW, "Name_Root (%s, %s)",
 	   dir ? dir : "(null)",
 	   update_dir ? update_dir : "(null)");
 
