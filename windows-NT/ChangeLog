@@ -1,3 +1,8 @@
+Tue Oct 10 16:04:18 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Update to remove obsolete information (e.g. ftp
+	distributions).
+
 Thu Oct  5 17:28:52 1995  Kevin Layer  <layer@franz.com>
 
 	* filesubr.c: Add semicolon after USE.
