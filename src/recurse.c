@@ -717,7 +717,7 @@ do_recursion (struct recursion_frame *frame)
 		    error (1, 0, "cannot add new CVSROOT %s",
 			   this_root->original);
 
-		process_this_directory = 0;
+		process_this_directory = false;
 	    }
 	}
     }
@@ -1167,7 +1167,7 @@ but CVS uses %s for its own purposes; skipping %s directory",
 		    error (1, 0, "cannot add new CVSROOT %s",
 			   this_root->original);
 
-		process_this_directory = 0;
+		process_this_directory = false;
 	    }
 	}
     }
