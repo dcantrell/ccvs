@@ -123,18 +123,6 @@ allocate_buffer_datas (void)
 
 
 
-/* Dispose of any remaining data in the buffer.  */
-void
-buf_free_data (struct buffer *buffer)
-{
-    if (buf_empty_p (buffer)) return;
-    buffer->last->next = free_buffer_data;
-    free_buffer_data = buffer->data;
-    buffer->data = buffer->last = NULL;
-}
-
-
-
 /* Get a new buffer_data structure.  */
 static struct buffer_data *
 get_buffer_data (void)
@@ -522,6 +510,7 @@ buf_append_data (struct buffer *buf, struct buffer_data *data,
 
 
 
+#ifdef PROXY_SUPPORT
 /* Copy data structures and append them to a buffer.
  *
  * ERRORS
@@ -556,6 +545,19 @@ buf_copy_data (struct buffer *buf, struct buffer_data *data,
 
     buf_append_data (buf, first, cur);
 }
+
+
+
+/* Dispose of any remaining data in the buffer.  */
+void
+buf_free_data (struct buffer *buffer)
+{
+    if (buf_empty_p (buffer)) return;
+    buffer->last->next = free_buffer_data;
+    free_buffer_data = buffer->data;
+    buffer->data = buffer->last = NULL;
+}
+#endif /* PROXY_SUPPORT */
 
 
 
