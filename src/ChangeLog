@@ -1,3 +1,8 @@
+2004-08-11  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (fd_buffer_input): Bracket misguided attempt at improved
+	I/O efficiency with TRUST_OS_FILE_CACHE pragmas.
+
 2004-08-10  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h, main.c, mkmodules.c, parseinfo.c, server.c:
