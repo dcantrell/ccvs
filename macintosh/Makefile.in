@@ -19,7 +19,7 @@ HEADERS = \
   options.h \
   pwd.h \
   maccvs.pch
-  
+
 SOURCES = \
   ae_if.c \
   filesubr.c \
@@ -29,7 +29,7 @@ SOURCES = \
   rcmd.c \
   run.c \
   server_if.c
-  
+
 DISTFILES = \
   ${HEADERS} \
   ${SOURCES} \
@@ -46,6 +46,9 @@ all:
 
 .PHONY: all install uninstall
 all install uninstall:
+
+installdirs:
+.PHONY: installdirs
 
 .PHONY: tags TAGS
 tags TAGS:

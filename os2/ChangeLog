@@ -1,3 +1,7 @@
+Fri Aug 16 16:05:29 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* Makefile.in (installdirs): new (empty) target
+
 Mon Aug 12 22:59:40 1996  Jim Kingdon  (unknown@beezley)
 
 	* filesubr.c (fncmp): Fix typo (n1 -> n2) which had caused the

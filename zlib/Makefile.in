@@ -70,6 +70,10 @@ minigzip: minigzip.o $(LIBS)
 # For CVS, remove the install and uninstall targets.
 install:
 uninstall:
+.PHONY: install uninstall
+
+installdirs:
+.PHONY: installdirs
 
 # mostlyclean added for CVS.
 clean mostlyclean:
