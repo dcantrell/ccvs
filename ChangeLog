@@ -1,5 +1,9 @@
 2003-12-12  Derek Price  <derek@ximbiot.com>
 
+	* cvs.spec.in (%post): Do the same for cvsclient.info.
+
+2003-12-12  Derek Price  <derek@ximbiot.com>
+
 	* cvs.spec.in (%post): Remove info's uncompressed info file cache after
 	installing the new gzipped files.
 
