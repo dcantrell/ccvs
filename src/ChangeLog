@@ -1,3 +1,10 @@
+2005-03-11  Derek Price  <derek@ximbiot.com>
+
+	* annotate.c (rannotate_proc), fileattr.c (fileattr_write), rcs.c
+	(RCS_deltas), server.c (check_repository_password), update.c (update):
+	Avoid memory leaks.
+	(Thanks to report from Alen Zukich <alen.zukich@klocwork.com>.)
+
 2005-03-10  Derek Price  <derek@ximbiot.com>
 
 	* diff.c (diff_fileproc): Remove unnecessary check for NULL.

@@ -6656,6 +6656,7 @@ check_repository_password (char *username, char *password, char *repository, cha
     {
 	if (!existence_error (errno))
 	    error (0, errno, "cannot open %s", filename);
+	free (filename);
 	return 0;
     }
 
