@@ -1,3 +1,7 @@
+Thu Feb  1 13:06:47 1996  Roland McGrath  <roland@baalperazim.frob.com>
+
+	* configure.in (WITH_KRB4): Escape $ in help text.
+
 Wed Jan 31 19:03:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* HACKING: Add info about NEWS file and release process.
