@@ -14,6 +14,8 @@
 	for remote crerepos, which causes Purify to choke) with *no* memory
 	leaks.
 
+	* server.c (pserver_authenticate_connection): Don't free null pointer.
+
 2000-06-21  Larry Jones  <larry.jones@sdrc.com>
 
 	* client.c (update_entries, get_responses_and_close): Plug memory leaks.
