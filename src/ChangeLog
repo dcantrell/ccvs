@@ -1,5 +1,7 @@
 Sun Jan  4 17:40:22 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* version.c: Change version number to 1.9.23.
+
 	* Version 1.9.22.
 
 1997-12-30  enami tsugutomo  <enami@but-b.or.jp>
