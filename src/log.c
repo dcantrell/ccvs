@@ -199,12 +199,13 @@ cvslog (argc, argv)
     int err = 0;
     int local = 0;
     struct log_data log_data;
-    struct option_revlist *rl, **prl;
+    struct option_revlist **prl;
 
     if (argc == -1)
 	usage (log_usage);
 
     memset (&log_data, 0, sizeof log_data);
+    prl = &log_data.revlist;
 
     optind = 0;
     while ((c = getopt (argc, argv, "+bd:hlNRr::s:tw::")) != -1)
@@ -230,12 +231,8 @@ cvslog (argc, argv)
 		log_data.nameonly = 1;
 		break;
 	    case 'r':
-		rl = log_parse_revlist (optarg);
-		for (prl = &log_data.revlist;
-		     *prl != NULL;
-		     prl = &(*prl)->next)
-		    ;
-		*prl = rl;
+		*prl = log_parse_revlist (optarg);
+		prl = &(*prl)->next;
 		break;
 	    case 's':
 		log_parse_list (&log_data.statelist, optarg);
@@ -348,6 +345,40 @@ cvslog (argc, argv)
 			   argc - optind, argv + optind, local,
 			   W_LOCAL | W_REPOS | W_ATTIC, 0, 1,
 			   (char *) NULL, 1);
+
+    while (log_data.revlist)
+    {
+	struct option_revlist *rl = log_data.revlist->next;
+	if (log_data.revlist->first)
+	    free (log_data.revlist->first);
+	if (log_data.revlist->last)
+	    free (log_data.revlist->last);
+	free (log_data.revlist);
+	log_data.revlist = rl;
+    }
+    while (log_data.datelist)
+    {
+	struct datelist *nd = log_data.datelist->next;
+	if (log_data.datelist->start)
+	    free (log_data.datelist->start);
+	if (log_data.datelist->end)
+	    free (log_data.datelist->end);
+	free (log_data.datelist);
+	log_data.datelist = nd;
+    }
+    while (log_data.singledatelist)
+    {
+	struct datelist *nd = log_data.singledatelist->next;
+	if (log_data.singledatelist->start)
+	    free (log_data.singledatelist->start);
+	if (log_data.singledatelist->end)
+	    free (log_data.singledatelist->end);
+	free (log_data.singledatelist);
+	log_data.singledatelist = nd;
+    }
+    dellist (&log_data.statelist);
+    dellist (&log_data.authorlist);
+
     return (err);
 }
 
@@ -359,7 +390,7 @@ static struct option_revlist *
 log_parse_revlist (argstring)
     const char *argstring;
 {
-    char *copy;
+    char *orig_copy, *copy;
     struct option_revlist *ret, **pr;
 
     /* Unfortunately, rlog accepts -r without an argument to mean that
@@ -373,9 +404,8 @@ log_parse_revlist (argstring)
 
     /* Copy the argument into memory so that we can change it.  We
        don't want to change the argument because, at least as of this
-       writing, we will use it if we send the arguments to the server.
-       We never bother to free up our copy.  */
-    copy = xstrdup (argstring);
+       writing, we will use it if we send the arguments to the server.  */
+    orig_copy = copy = xstrdup (argstring);
     while (copy != NULL)
     {
 	char *comma;
@@ -407,12 +437,18 @@ log_parse_revlist (argstring)
 	if (*r->last == '\0')
 	    r->last = NULL;
 
+	if (r->first != NULL)
+	    r->first = xstrdup (r->first);
+	if (r->last != NULL)
+	    r->last = xstrdup (r->last);
+
 	*pr = r;
 	pr = &r->next;
 
 	copy = comma;
     }
 
+    free (orig_copy);
     return ret;
 }
 
@@ -429,8 +465,7 @@ log_parse_date (log_data, argstring)
     /* Copy the argument into memory so that we can change it.  We
        don't want to change the argument because, at least as of this
        writing, we will use it if we send the arguments to the server.  */
-    copy = xstrdup (argstring);
-    orig_copy = copy;
+    orig_copy = copy = xstrdup (argstring);
     while (copy != NULL)
     {
 	struct datelist *nd, **pd;

@@ -160,7 +160,11 @@ add (argc, argv)
 
 	start_server ();
 	ign_setup ();
-	if (options) send_arg(options);
+	if (options)
+	{
+	    send_arg (options);
+	    free (options);
+	}
 	option_with_arg ("-m", message);
 
 	/* If !found_slash, refrain from sending "Directory", for
@@ -644,6 +648,8 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 
     if (message)
 	free (message);
+    if (options)
+	free (options);
 
     return (err);
 }

@@ -234,9 +234,12 @@ check_fileproc (callerdat, finfo)
 	if ((status != T_UPTODATE) && (status != T_CHECKOUT))
 	{
 	    error (0, 0, "%s is locally modified", finfo->fullname);
+	    freevers_ts (&vers);
 	    return (1);
 	}
     }
+    else
+	vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
     
     if (finfo->update_dir[0] == '\0')
 	xdir = ".";
@@ -266,7 +269,6 @@ check_fileproc (callerdat, finfo)
     p->key = xstrdup (finfo->file);
     p->type = UPDATE;
     p->delproc = tag_delproc;
-    vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
     if (vers->srcfile == NULL)
     {
         if (!really_quiet)

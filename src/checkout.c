@@ -1193,5 +1193,14 @@ build_dirs_and_chdir (dirs, sticky)
     }
 
  out:
+    while (dirs != NULL)
+    {
+	if (dirs->repository != NULL)
+	    free (dirs->repository);
+	nextdir = dirs->next;
+	free (dirs->dirpath);
+	free (dirs);
+	dirs = nextdir;
+    }
     return retval;
 }

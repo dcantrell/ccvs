@@ -745,20 +745,24 @@ admin_fileproc (callerdat, finfo)
 		    rev = xstrdup (p);
 		}
 		revnum = RCS_gettag (rcs, rev, 0, NULL);
-		free (rev);
 		if (revnum != NULL)
+		{
 		    n = findnode (rcs->versions, revnum);
-		if (revnum == NULL || n == NULL)
+		    free (revnum);
+		}
+		else
+		    n = NULL;
+		if (n == NULL)
 		{
 		    error (0, 0,
 			   "%s: can't set state of nonexisting revision %s",
 			   rcs->path,
 			   rev);
-		    if (revnum != NULL)
-			free (revnum);
+		    free (rev);
 		    status = 1;
 		    continue;
 		}
+		free (rev);
 		delta = (RCSVers *) n->data;
 		free (delta->state);
 		delta->state = tag;
@@ -785,6 +789,7 @@ admin_fileproc (callerdat, finfo)
 		msg = p;
 
 		n = findnode (rcs->versions, rev);
+		free (rev);
 		delta = (RCSVers *) n->data;
 		if (delta->text == NULL)
 		{
