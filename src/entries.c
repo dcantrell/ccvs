@@ -542,6 +542,7 @@ Entries_Open (aflag, update_dir)
 		break;
 	    default:
 		/* Ignore unrecognized commands.  */
+		Entnode_Destroy (ent);
 	        break;
 	    }
 	}

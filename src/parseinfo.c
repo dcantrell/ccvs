@@ -14,6 +14,7 @@
 #include "cvs.h"
 #include "getline.h"
 #include <assert.h>
+#include "history.h"
 
 extern char *logHistory;
 
@@ -275,8 +276,7 @@ parse_config (cvsroot)
 	       value, currently at least.  */
 	    error (0, errno, "cannot open %s", infopath);
 	}
-	free (infopath);
-	return 0;
+	goto set_defaults_and_return;
     }
 
     while (getline (&line, &line_allocated, fp_info) >= 0)
@@ -400,8 +400,8 @@ warning: this CVS does not support PreservePermissions");
 	{
 	    if (strcmp (p, "all") != 0)
 	    {
-		logHistory=xmalloc(strlen (p) + 1);
-		strcpy (logHistory, p);
+		if (logHistory) free (logHistory);
+		logHistory = xstrdup (p);
 	    }
 	}
 	else if (strcmp (line, "RereadLogAfterVerify") == 0)
@@ -441,12 +441,17 @@ warning: this CVS does not support PreservePermissions");
 	error (0, errno, "cannot close %s", infopath);
 	goto error_return;
     }
+set_defaults_and_return:
+    if (!logHistory)
+	logHistory = xstrdup (ALL_HISTORY_REC_TYPES);
     free (infopath);
     if (line != NULL)
 	free (line);
     return 0;
 
  error_return:
+    if (!logHistory)
+	logHistory = xstrdup (ALL_HISTORY_REC_TYPES);
     if (infopath != NULL)
 	free (infopath);
     if (line != NULL)
