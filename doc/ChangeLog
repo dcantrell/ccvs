@@ -1,5 +1,7 @@
 Sun Mar  2 12:33:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Outside): Add comment about renames and annotate.
+
 	* cvs.texinfo (Server requirements): New node.
 
 Thu Feb 27 15:20:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
