@@ -8289,6 +8289,11 @@ make_file_label (char *path, char *rev, RCSNode *rcs)
 	    (void) tm_to_internet (datebuf, wm);
 	    (void) sprintf (label, "-L%s\t%s", path, datebuf);
 	}
+	else
+	{
+	    free (label);
+	    label = NULL;
+	}
     }
     return label;
 }
