@@ -401,6 +401,11 @@ of the operation.  No provision is made for any input from the user.
 This means that @code{ci} must use a @code{-m} argument if it wants to
 specify a log message.
 
+@itemx init @var{root-name} \n
+Response expected: yes.  If it doesn't already exist, create a @sc{cvs}
+repository @var{root-name}.  The @code{Root} request need not have been
+previously sent.
+
 @itemx update \n
 Response expected: yes.  Actually do a @code{cvs update} command.  This
 uses any previous @code{Argument}, @code{Repository}, @code{Entry},

@@ -1,3 +1,12 @@
+Wed Mar 13 16:01:47 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (history file): Update to reflect cvsinit -> cvs
+	init.  Adjust discussion of whether history file format is
+	documented.
+	(Setting up): Update to reflect cvsinit -> cvs init.
+
+	* cvsclient.texi (Requests): Document init request.
+
 Thu Feb 29 10:08:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (loginfo example): Adjust example to reflect the way

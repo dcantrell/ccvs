@@ -1,5 +1,7 @@
 Changes since 1.7:
 
+* The cvsinit shell script has been replaced by a cvs init command.
+
 * Added the patterns *.olb *.exe _$* *$ to default ignore list.
 
 * There is now a $USER internal variable for *info files.
