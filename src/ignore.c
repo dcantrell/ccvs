@@ -364,6 +364,11 @@ ignore_files (ilist, update_dir, proc)
 	if (findnode_fn (ilist, file) != NULL)
 	    continue;
 
+	/* We could be ignoring FIFOs and other files which are neither
+	   regular files nor directories here.  */
+	if (ign_name (file))
+	    continue;
+
 	if (
 #ifdef DT_DIR
 		dp->d_type != DT_UNKNOWN ||
@@ -395,10 +400,6 @@ ignore_files (ilist, update_dir, proc)
 #endif
     	}
 
-	/* We could be ignoring FIFOs and other files which are neither
-	   regular files nor directories here.  */
-	if (ign_name (file))
-	    continue;
 	(*proc) (file, xdir);
     }
     (void) closedir (dirp);
