@@ -2352,7 +2352,7 @@ join_file (finfo, vers)
      * revision.  i.e. we know that diff3(file2,file1,file2) will produce
      * file2.
      */
-    if (vers->ts_user
+    if (vers->vn_user != NULL && vers->ts_user != NULL
         && strcmp (vers->ts_user, vers->ts_rcs) == 0
         && strcmp (rev2, vers->vn_user) == 0)
     {
