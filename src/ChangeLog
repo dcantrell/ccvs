@@ -1,4 +1,4 @@
-2003-07-28  Derek Price  <derek@ximbiot.com>
+2003-07-29  Derek Price  <derek@ximbiot.com>
 
 	* login.c: Remove GETPASS & HAVE_GETPASSPHRASE cruft in favor of always
 	using the GNULIB getpass since the system getpass was removed from the
