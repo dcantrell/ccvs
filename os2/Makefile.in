@@ -58,7 +58,6 @@ TCPIPLIB = s:${SL}ibmtcpip${SL}lib${SL}tcp32dll.lib	s:${SL}ibmtcpip${SL}lib${SL}
 OS2_HEADERS = \
        ${srcdir}${SL}tcpip.h \
        ${srcdir}${SL}config.h \
-       ${srcdir}${SL}options.h \
        ${srcdir}${SL}pwd.h \
        ${srcdir}${SL}dirent.h \
        ${srcdir}${SL}rcmd.h \
