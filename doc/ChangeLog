@@ -1,5 +1,8 @@
 Tue Sep 24 11:49:02 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (From other version control systems): The RCS file
+	must not be locked when you copy it to the CVS repository.
+
 	* cvs.texinfo (Editing files): Also discuss how to revert in the
 	non-watch case.  Add some index entries.
 
