@@ -9401,6 +9401,11 @@ Use an output width of @var{columns} in side by side format.
 Use the side by side output format.
 @end table
 
+@menu
+* Line group formats::          Line group formats
+* Line formats::                Line formats
+@end menu
+
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node Line group formats
 @appendixsubsubsec Line group formats
