@@ -587,6 +587,9 @@ lock_wait (repos)
     (void) time (&now);
     error (0, 0, "[%8.8s] waiting for %s's lock in %s", ctime (&now) + 11,
 	   lockers_name, repos);
+    /* Call cvs_flusherr to ensure that the user sees this message as
+       soon as possible.  */
+    cvs_flusherr ();
     (void) sleep (CVSLCKSLEEP);
 }
 
@@ -601,6 +604,9 @@ lock_obtained (repos)
 
     (void) time (&now);
     error (0, 0, "[%8.8s] obtained lock in %s", ctime (&now) + 11, repos);
+    /* Call cvs_flusherr to ensure that the user sees this message as
+       soon as possible.  */
+    cvs_flusherr ();
 }
 
 static int lock_filesdoneproc PROTO ((void *callerdat, int err,

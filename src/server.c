@@ -1958,19 +1958,9 @@ error  \n");
 	    {
 		int status;
 		int count_read;
+		int special;
 		
 		status = buf_input_data (protocol_inbuf, &count_read);
-
-		/*
-		 * We only call buf_copy_counted if we have read
-		 * enough bytes to make it worthwhile.  This saves us
-		 * from continually recounting the amount of data we
-		 * have.
-		 */
-		count_needed -= count_read;
-		if (count_needed <= 0)
-		    count_needed = buf_copy_counted (buf_to_net,
-						     protocol_inbuf);
 
 		if (status == -1)
 		    protocol_pipe[0] = -1;
@@ -1980,8 +1970,37 @@ error  \n");
 		    goto error_exit;
 		}
 
-		/* What should we do with errors?  syslog() them?  */
-		buf_send_output (buf_to_net);
+		/*
+		 * We only call buf_copy_counted if we have read
+		 * enough bytes to make it worthwhile.  This saves us
+		 * from continually recounting the amount of data we
+		 * have.
+		 */
+		count_needed -= count_read;
+		while (count_needed <= 0)
+		{
+		    count_needed = buf_copy_counted (buf_to_net,
+						     protocol_inbuf,
+						     &special);
+
+		    /* What should we do with errors?  syslog() them?  */
+		    buf_send_output (buf_to_net);
+
+		    /* If SPECIAL got set to -1, it means that the child
+		       wants us to flush the pipe.  We don't want to block
+		       on the network, but we flush what we can.  If the
+		       client supports the 'F' command, we send it.  */
+		    if (special == -1)
+		    {
+			if (supported_response ("F"))
+			{
+			    buf_append_char (buf_to_net, 'F');
+			    buf_append_char (buf_to_net, '\n');
+			}
+
+			cvs_flusherr ();
+		    }
+		}
 	    }
 	}
 
@@ -4128,4 +4147,27 @@ cvs_outerr (str, len)
 	    to_write -= written;
 	}
     }
+}
+
+/* Flush stderr.  stderr is normallyi flushed automatically, of
+   course, but this function is used to flush information from the
+   server back to the client.  */
+
+void
+cvs_flusherr ()
+{
+#ifdef SERVER_SUPPORT
+    if (error_use_protocol)
+    {
+	/* Flush what we can to the network, but don't block.  */
+	buf_flush (buf_to_net, 0);
+    }
+    else if (server_active)
+    {
+	/* Send a special count to tell the parent to flush.  */
+	buf_send_special_count (protocol, -1);
+    }
+    else
+#endif
+	fflush (stderr);
 }

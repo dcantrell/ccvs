@@ -1,5 +1,19 @@
 Thu Jul 11 20:10:21 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* server.c (do_cvs_command): Pass new special parameter to
+	buf_copy_counted.  If it gets set to -1, send an 'F' response if
+	the client supports it, and call cvs_flusherr.
+	(cvs_flusherr): New function.
+	* cvs.h (cvs_flusherr): Declare.
+	* client.c (handle_f): New static function.
+	(responses): Add "F".
+	* buffer.c (buf_send_special_count): New function.
+	(buf_copy_counted): Add special parameter.  Handle negative counts
+	specially.
+	* buffer.h (buf_send_sepcial_count): Declare.
+	(buf_copy_counted): Update declaration.
+	* lock.c (lock_wait, lock_obtained): Call cvs_flusherr.
+
 	Change the client to use the buffer data structure.
 	* client.c: Include "buffer.h".
 	(to_server): Change to be struct buffer *.

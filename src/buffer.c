@@ -407,6 +407,42 @@ buf_send_counted (buf)
     return buf_send_output (buf);
 }
 
+/*
+ * Send a special count.  COUNT should be negative.  It will be
+ * handled speciallyi by buf_copy_counted.  This function returns 0 or
+ * an errno code.
+ *
+ * Sending the count in binary is OK since this is only used on a pipe
+ * within the same system.
+ */
+
+int
+buf_send_special_count (buf, count)
+     struct buffer *buf;
+     int count;
+{
+    struct buffer_data *data;
+
+    data = get_buffer_data ();
+    if (data == NULL)
+    {
+	(*buf->memory_error) (buf);
+	return ENOMEM;
+    }
+
+    data->next = buf->data;
+    buf->data = data;
+    if (buf->last == NULL)
+	buf->last = data;
+
+    data->bufp = data->text;
+    data->size = sizeof (int);
+
+    *((int *) data->text) = count;
+
+    return buf_send_output (buf);
+}
+
 /* Append a list of buffer_data structures to an buffer.  */
 
 inline void
@@ -947,16 +983,22 @@ buf_copy_lines (outbuf, inbuf, command)
  * Copy counted data from one buffer to another.  The count is an
  * integer, host size, host byte order (it is only used across a
  * pipe).  If there is enough data, it should be moved over.  If there
- * is not enough data, it should remain on the original buffer.  This
+ * is not enough data, it should remain on the original buffer.  A
+ * negative count is a special case.  if one is seen, *SPECIAL is set
+ * to the (negative) count value and no additional data is gathered
+ * from the buffer; normally *SPECIAL is set to 0.  This function
  * returns the number of bytes it needs to see in order to actually
  * copy something over.
  */
 
 int
-buf_copy_counted (outbuf, inbuf)
+buf_copy_counted (outbuf, inbuf, special)
      struct buffer *outbuf;
      struct buffer *inbuf;
+     int *special;
 {
+    *special = 0;
+
     while (1)
     {
 	struct buffer_data *data;
@@ -997,33 +1039,43 @@ buf_copy_counted (outbuf, inbuf)
 	start = data;
 	startoff = need;
 
-	/*
-	 * We have an integer in COUNT.  We have gotten all the data
-	 * from INBUF in all buffers before START, and we have gotten
-	 * STARTOFF bytes from START.  See if we have enough bytes
-	 * remaining in INBUF.
-	 */
-	need = count - (start->size - startoff);
-	if (need <= 0)
+	if (count < 0)
 	{
+	    /* A negative COUNT is a special case meaning that we
+               don't need any further information.  */
 	    stop = start;
-	    stopwant = count;
+	    stopwant = 0;
 	}
 	else
 	{
-	    for (data = start->next; data != NULL; data = data->next)
+	    /*
+	     * We have an integer in COUNT.  We have gotten all the
+	     * data from INBUF in all buffers before START, and we
+	     * have gotten STARTOFF bytes from START.  See if we have
+	     * enough bytes remaining in INBUF.
+	     */
+	    need = count - (start->size - startoff);
+	    if (need <= 0)
 	    {
-		if (need <= data->size)
-		    break;
-		need -= data->size;
+		stop = start;
+		stopwant = count;
 	    }
-	    if (data == NULL)
+	    else
 	    {
-		/* We don't have enough bytes.  */
-		return need;
+		for (data = start->next; data != NULL; data = data->next)
+		{
+		    if (need <= data->size)
+			break;
+		    need -= data->size;
+		}
+		if (data == NULL)
+		{
+		    /* We don't have enough bytes.  */
+		    return need;
+		}
+		stop = data;
+		stopwant = need;
 	    }
-	    stop = data;
-	    stopwant = need;
 	}
 
 	/*
@@ -1049,6 +1101,13 @@ buf_copy_counted (outbuf, inbuf)
 	    inbuf->data = data->next;
 	    data->next = free_buffer_data;
 	    free_buffer_data = data;
+	}
+
+	/* If COUNT is negative, set *SPECIAL and get out now.  */
+	if (count < 0)
+	{
+	    *special = count;
+	    return 0;
 	}
 
 	/*
