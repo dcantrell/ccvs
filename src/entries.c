@@ -250,6 +250,7 @@ Register (list, fname, vn, ts, options, tag, date, ts_conflict)
 	    /* Warning, not error, as in write_entries.  */
 	    /* FIXME-update-dir: should be including update_dir in message.  */
 	    error (0, errno, "cannot open %s", entfilename);
+	    return;
 	}
 
 	if (fprintf (entfile, "A ") < 0)
