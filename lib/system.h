@@ -48,6 +48,13 @@
  */
 #include <sys/types.h>
 
+/* A GNULIB replacement for this C99 header is supplied when it is missing.
+ * See the comments in stdbool_.h for its limitations.
+ */
+#include <stdbool.h>
+
+
+
 #if HAVE_SYS_STAT_H
 # include <sys/stat.h>
 #endif /* HAVE_SYS_STAT_H */
