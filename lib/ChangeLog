@@ -1,3 +1,9 @@
+1999-01-22  Jim Kingdon  <http://www.cyclic.com>
+
+	* fnmatch.c: Include system.h; FOLD_FN_CHAR has moved there from
+	config.h (from Alexey Milov).  Don't define our own FOLD_FN_CHAR;
+	that just masks cases in which we got the includes tangled up.
+
 1999-01-12  Jim Kingdon  <http://www.cyclic.com>
 
 	* memmove.c: Remove paragraph which contained the FSF's old

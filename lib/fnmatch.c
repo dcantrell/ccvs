@@ -18,14 +18,7 @@ Library General Public License for more details.  */
 #include "config.h"
 #endif
 
-/* Some file systems are case-insensitive.  If FOLD_FN_CHAR is
-   #defined, it maps the character C onto its "canonical" form.  In a
-   case-insensitive system, it would map all alphanumeric characters
-   to lower case.  Under Windows NT, / and \ are both path component
-   separators, so FOLD_FN_CHAR would map them both to /.  */
-#ifndef FOLD_FN_CHAR
-#define FOLD_FN_CHAR(c) (c)
-#endif
+#include "system.h"
 
 /* IGNORE(@ */
 /* #include <ansidecl.h> */
