@@ -28,11 +28,6 @@
 # include <stdint.h>
 #endif
 
-/* Windows does not supply a definition for SIZE_MAX.  */
-#ifndef SIZE_MAX
-# define SIZE_MAX ((size_t) -1)
-#endif
-
 /* The size of memory objects is often computed through expressions of
    type size_t. Example:
       void* p = malloc (header_size + n * element_size).
