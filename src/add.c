@@ -291,8 +291,8 @@ add (int argc, char **argv)
 	if (save_cwd (&cwd))
 	    error (1, errno, "Failed to save current directory.");
 
-	finfo.fullname = xstrdup (argv[i]);
 	filename = xstrdup (argv[i]);
+	finfo.fullname = filename;
 	/* We know we can discard the const below since we just allocated
 	 * filename and can do as we like with it.
          */
@@ -676,8 +676,7 @@ add (int argc, char **argv)
 	/* It's okay to discard the const to free this - we allocated this
 	 * above.  The const is for everybody else.
 	 */
-	free ((char *) finfo.fullname);
-	free ((char *) filename);
+	free (filename);
     }
     if (added_files && !really_quiet)
 	error (0, 0, "use `%s commit' to add %s permanently",
