@@ -1,3 +1,8 @@
+Thu May  8 11:40:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsbug.sh: Remove $Id; we decided to get rid of these some time
+	ago.
+
 Thu May  8 11:34:02 1997  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvsbug.sh: Put separate statements on separate lines, so it
