@@ -5610,17 +5610,16 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
 		    ym = strchr (prvers->date, '.');
 		    if (ym == NULL)
 		    {
-			/* ??- is an ANSI trigraph; we use \? to avoid
-                           it.  Only do this if __STDC__ is defined,
-                           since some pre ANSI compilers complain
-                           about the unrecognized escape sequence.  */
-			cvs_output (
-#ifdef __STDC__
-				    "?\?-??\?-??",
-#else
-				    "??-???-??",
-#endif
-				    0);
+			/* ??- is an ANSI trigraph.  The ANSI way to
+			   avoid it is \? but some pre ANSI compilers
+			   complain about the unrecognized escape
+			   sequence.  Of course string concatenation
+			   ("??" "-???") is also an ANSI-ism.  Testing
+			   __STDC__ seems to be a can of worms, since
+			   compilers do all kinds of things with it.  */
+			cvs_output ("??", 0);
+			cvs_output ("-???", 0);
+			cvs_output ("-??", 0);
 		    }
 		    else
 		    {

@@ -1,3 +1,8 @@
+Wed Nov 19 15:57:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_deltas): Solve trigraph problem (once and for all, I
+	hope) with 3 calls to cvs_output.
+
 Wed Nov 19 01:52:57 1997  Andy Piper <andyp@parallax.co.uk>
 	and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
