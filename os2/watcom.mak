@@ -51,7 +51,6 @@ OS2_OBJECTS = &
         $(srcdir)\waitpid.obj &
         $(srcdir)\popen.obj &
         $(srcdir)\porttcp.obj &
-        $(srcdir)\strippath.obj &
         $(srcdir)\getpass.obj
 
 # object files from ..\src
