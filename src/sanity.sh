@@ -561,6 +561,7 @@ if test x"$*" = x; then
 	tests="${tests} rdiff diff death death2 rmadd dirs dirs2"
 	tests="${tests} branches branches2"
 	tests="${tests} rcslib multibranch import importb importc"
+	tests="${tests} import-after-initial"
 	tests="${tests} join join2 join3 join-readonly-conflict"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	# Checking out various places (modules, checkout -d, &c)
@@ -4592,6 +4593,62 @@ import-it
 	  cd ..
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	import-after-initial)
+	  # Properly handle the case in which the first version of a
+	  # file is created by a regular cvs add and commit, and there
+	  # is a subsequent cvs import of the same file.  cvs update with
+	  # a date tag must resort to searching the vendor branch only if
+	  # the initial version of the file was created at the same time
+	  # as the initial version on the vendor branch.
+
+	  mkdir 1; cd 1
+	  module=x
+
+	  echo > unused-file
+
+	  # Create the module.
+	  dotest import-after-initial-1 \
+	    "$testcvs -Q import -m. $module X Y" ''
+
+	  file=m
+	  # Check it out and add a file.
+	  dotest import-after-initial-2 "$testcvs -Q co $module" ''
+	  cd $module
+	  echo original > $file
+	  dotest import-after-initial-3 "${testcvs} -Q add $file" \
+"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
+	  dotest import-after-initial-4 "${testcvs} -Q ci -m. $file" \
+"RCS file: ${TESTDIR}/cvsroot/$module/$file,v
+done
+Checking in $file;
+${TESTDIR}/cvsroot/$module/$file,v  <--  $file
+initial revision: 1\.1
+done"
+
+	  # Delay a little so the following import isn't done in the same
+	  # second as the preceding commit.
+	  sleep 2
+
+	  # Do the first import of $file *after* $file already has an
+	  # initial version.
+	  mkdir sub
+	  cd sub
+	  echo newer-via-import > $file
+	  dotest import-after-initial-5 \
+	    "$testcvs -Q import -m. $module X Y2" ''
+	  cd ..
+
+	  # Sleep a second so we're sure to be after the second of the import.
+	  sleep 1
+
+	  dotest import-after-initial-6 \
+	    "$testcvs -Q update -p -D now $file" 'original'
+
+	  cd ../..
+	  rm -rf 1
+	  rm -rf ${CVSROOT_DIRNAME}/$module
 	  ;;
 
 	join)
