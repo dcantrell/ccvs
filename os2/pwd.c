@@ -29,7 +29,6 @@
 #include <string.h>
 #include <pwd.h>
 
-char* win32getlogin();
 static char *lookup_env (char **);
 
 /* where people might scribble their name into the environment ... */
@@ -48,7 +47,7 @@ static char *group_strings[] =
 static char *anonymous = "anonymous";	/* if all else fails ... */
 
 static char *home_dir = ".";	/* we feel (no|every)where at home */
-static char *login_shell = "not command.com!";
+static char *login_shell = "not cmd.exe!";
 
 static char *login = (char *) 0;/* cache the names here	*/
 static char *group = (char *) 0;
@@ -94,9 +93,6 @@ getgrnam (char *name)
 char *
 getlogin ()
 {
-  if (!login)
-     login = win32getlogin();
-
   if (!login)			/* have we been called before? */
     login = lookup_env (login_strings);
 

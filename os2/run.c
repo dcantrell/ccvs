@@ -485,3 +485,53 @@ pipe (int *filedesc)
              "Error: pipe() should not have been called in client.\n");
     exit (1);
 }
+
+
+void
+close_on_exec (int fd)
+{
+    fprintf (stderr,
+             "Error: pipe() should not have been called in client.\n");
+    exit (1);
+
+    /* Actually, we probably *can* implement this one.  Let's see... */
+
+    /* Nope.  OS/2 has <fcntl.h>, but no fcntl() !  Wow. */
+
+    /* Well, I'll leave this stuff in for future reference. */
+
+#if defined (FD_CLOEXEC) && defined (F_SETFD)
+  if (fcntl (fd, F_SETFD, 1))
+    error (1, errno, "can't set close-on-exec flag on %d", fd);
+#endif
+  
+}
+
+
+/* That's right, OS/2 doesn't have sleep(). */
+unsigned int
+sleep (unsigned int seconds)
+{
+  /* I don't want to interfere with alarm signals, so I'm going to do
+     this the nasty way. */
+
+  time_t base;
+  time_t tick;
+  int i;
+
+  /* Init. */
+  time (&base);
+  time (&tick);
+
+  /* Loop until time has passed. */
+  while (difftime (tick, base) < seconds)
+    {
+      /* This might be more civilized than calling time over and over
+         again. */
+      for (i = 0; i < 10000; i++)
+        ;
+      time (&tick);
+    }
+
+  return 0;
+}

@@ -183,6 +183,20 @@ iswritable (file)
 }
 
 /*
+ * Returns non-zero if the argument file is accessable according to
+ * mode.  If compiled with SETXID_SUPPORT also works if cvs has setxid
+ * bits set.
+ */
+int
+isaccessable (file, mode)
+    const char *file;
+    const int mode;
+{
+    return access(file, mode) == 0;
+}
+
+
+/*
  * Open a file and die if it fails
  */
 FILE *
