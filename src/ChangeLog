@@ -6,6 +6,8 @@
 	may be.
 	* sanity.sh (modules5-15): Update to match.
 
+	* version.c.in: Update to match Derek's change to version.c.
+
 2001-01-09  Derek Price  <derek.price@openavenue.com>
 
 	* cvs.h: Remove the various CVSroot_* bits and replace them with a

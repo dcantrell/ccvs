@@ -45,7 +45,7 @@ version (argc, argv)
 	usage (version_usage);
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (current_parsed_root->isremote)
         (void) fputs ("Client: ", stdout);
 #endif
 
@@ -56,7 +56,7 @@ version (argc, argv)
     (void) fputs (config_string, stdout);
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (current_parsed_root->isremote)
     {
 	(void) fputs ("Server: ", stdout);
 	start_server ();
