@@ -1,5 +1,13 @@
 2003-05-07  Derek Price  <derek@ximbiot.com>
 
+	* client.c (from_server, to_server): Rename these global buffer
+	pointers to...
+	(global_from_server, global_to_server): ...this in order to avoid
+	confusion.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+2003-05-07  Derek Price  <derek@ximbiot.com>
+
 	* client.c (make_bufs_from_fds, connect_to_forked_server,
 	start_tcp_server): Rename struct buffer ** arguments to s/$/_p/ in an
 	attempt to denote their pointerness more clearly.

@@ -408,10 +408,10 @@ int client_prune_dirs;
 static List *ignlist = (List *) NULL;
 
 /* Buffer to write to the server.  */
-static struct buffer *to_server;
+static struct buffer *global_to_server;
 
 /* Buffer used to read from the server.  */
-static struct buffer *from_server;
+static struct buffer *global_from_server;
 
 
 /* We want to be able to log data sent between us and the server.  We
@@ -585,11 +585,11 @@ read_line (resultp)
     char *result;
     int len;
 
-    status = buf_flush (to_server, 1);
+    status = buf_flush (global_to_server, 1);
     if (status != 0)
 	error (1, status, "writing to server");
 
-    status = buf_read_line (from_server, &result, &len);
+    status = buf_read_line (global_from_server, &result, &len);
     if (status != 0)
     {
 	if (status == -1)
@@ -3032,7 +3032,7 @@ send_to_server (str, len)
     if (len == 0)
 	len = strlen (str);
 
-    buf_output (to_server, str, len);
+    buf_output (global_to_server, str, len);
       
     /* There is no reason not to send data to the server, so do it
        whenever we've accumulated enough information in the buffer to
@@ -3042,7 +3042,7 @@ send_to_server (str, len)
     {
 	int status;
 
-        status = buf_send_output (to_server);
+        status = buf_send_output (global_to_server);
 	if (status != 0)
 	    error (1, status, "error writing to server");
 	nbytes = 0;
@@ -3060,7 +3060,7 @@ try_read_from_server (buf, len)
     int status, nread;
     char *data;
 
-    status = buf_read_data (from_server, len, &data, &nread);
+    status = buf_read_data (global_from_server, len, &data, &nread);
     if (status != 0)
     {
 	if (status == -1)
@@ -3203,22 +3203,22 @@ get_responses_and_close ()
     if (client_prune_dirs)
 	process_prune_candidates ();
 
-    /* First we shut down TO_SERVER.  That tells the server that its input is
+    /* First we shut down GLOBAL_TO_SERVER.  That tells the server that its input is
      * finished.  It then shuts down the buffer it is sending to us, at which
-     * point our shut down of FROM_SERVER will complete.
+     * point our shut down of GLOBAL_FROM_SERVER will complete.
      */
 
-    status = buf_shutdown (to_server);
+    status = buf_shutdown (global_to_server);
     if (status != 0)
 	error (0, status, "shutting down buffer to server");
-    buf_free (to_server);
-    to_server = NULL;
+    buf_free (global_to_server);
+    global_to_server = NULL;
 
-    status = buf_shutdown (from_server);
+    status = buf_shutdown (global_from_server);
     if (status != 0)
 	error (0, status, "shutting down buffer from server");
-    buf_free (from_server);
-    from_server = NULL;
+    buf_free (global_from_server);
+    global_from_server = NULL;
     server_started = 0;
 
     /* see if we need to sleep before returning to avoid time-stamp races */
@@ -3523,8 +3523,8 @@ auth_server (root, lto_server, lfrom_server, verify_only, do_gssapi, hostinfo)
      * verify_only mode.  We should be relying on the values we passed in, but
      * sent_to_server and read_line don't require an outside buf yet.
      */
-    to_server = lto_server;
-    from_server = lfrom_server;
+    global_to_server = lto_server;
+    global_from_server = lfrom_server;
 
     /* Run the authorization mini-protocol before anything else. */
     if (do_gssapi)
@@ -3986,20 +3986,20 @@ start_server ()
 	    /* Toss the return value.  It will die with an error message if
 	     * anything goes wrong anyway.
 	     */
-	    connect_to_pserver (current_parsed_root, &to_server, &from_server, 0, 0);
+	    connect_to_pserver (current_parsed_root, &global_to_server, &global_from_server, 0, 0);
 	    break;
 #endif /* AUTH_CLIENT_SUPPORT */
 
 #if HAVE_KERBEROS
 	case kserver_method:
-	    start_tcp_server (current_parsed_root, &to_server, &from_server);
+	    start_tcp_server (current_parsed_root, &global_to_server, &global_from_server);
 	    break;
 #endif /* HAVE_KERBEROS */
 
 #ifdef HAVE_GSSAPI
 	case gserver_method:
 	    /* GSSAPI authentication is handled by the pserver.  */
-	    connect_to_pserver (current_parsed_root, &to_server, &from_server, 0, 1);
+	    connect_to_pserver (current_parsed_root, &global_to_server, &global_from_server, 0, 1);
 	    break;
 #endif /* HAVE_GSSAPI */
 
@@ -4008,7 +4008,7 @@ start_server ()
 	    error (0, 0, ":ext: method not supported by this port of CVS");
 	    error (1, 0, "try :server: instead");
 #else /* ! NO_EXT_METHOD */
-	    start_rsh_server (current_parsed_root, &to_server, &from_server);
+	    start_rsh_server (current_parsed_root, &global_to_server, &global_from_server);
 #endif /* NO_EXT_METHOD */
 	    break;
 
@@ -4020,9 +4020,9 @@ start_server ()
 			  current_parsed_root->username, current_parsed_root->hostname,
 			  current_parsed_root->directory);
 # ifdef START_SERVER_RETURNS_SOCKET
-	    make_bufs_from_fds (tofd, fromfd, 0, &to_server, &from_server, 1);
+	    make_bufs_from_fds (tofd, fromfd, 0, &global_to_server, &global_from_server, 1);
 # else /* ! START_SERVER_RETURNS_SOCKET */
-	    make_bufs_from_fds (tofd, fromfd, 0, &to_server, &from_server, 0);
+	    make_bufs_from_fds (tofd, fromfd, 0, &global_to_server, &global_from_server, 0);
 # endif /* START_SERVER_RETURNS_SOCKET */
 	    }
 #else /* ! START_SERVER */
@@ -4035,12 +4035,11 @@ start_server ()
 	    break;
 
         case fork_method:
-	    connect_to_forked_server (&to_server, &from_server);
+	    connect_to_forked_server (&global_to_server, &global_from_server);
 	    break;
 
 	default:
-	    error (1, 0, "\
-(start_server internal error): unknown access method");
+	    error (1, 0, "(start_server internal error): unknown access method");
 	    break;
     }
 
@@ -4074,16 +4073,16 @@ start_server ()
         if (fp == NULL)
 	    error (0, errno, "opening to-server logfile %s", buf);
 	else
-	    to_server = log_buffer_initialize (to_server, fp, 0,
-					       (BUFMEMERRPROC) NULL);
+	    global_to_server = log_buffer_initialize (global_to_server, fp, 0,
+						      (BUFMEMERRPROC) NULL);
 
 	strcpy (p, ".out");
 	fp = open_file (buf, "wb");
         if (fp == NULL)
 	    error (0, errno, "opening from-server logfile %s", buf);
 	else
-	    from_server = log_buffer_initialize (from_server, fp, 1,
-						 (BUFMEMERRPROC) NULL);
+	    global_from_server = log_buffer_initialize (global_from_server, fp, 1,
+							(BUFMEMERRPROC) NULL);
 
 	free (buf);
     }
@@ -4248,12 +4247,12 @@ start_server ()
 	    if (! supported_request ("Kerberos-encrypt"))
 		error (1, 0, "This server does not support encryption");
 	    send_to_server ("Kerberos-encrypt\012", 0);
-	    to_server = krb_encrypt_buffer_initialize (to_server, 0, sched,
-						       kblock,
-						       (BUFMEMERRPROC) NULL);
-	    from_server = krb_encrypt_buffer_initialize (from_server, 1,
-							 sched, kblock,
-							 (BUFMEMERRPROC) NULL);
+	    global_to_server = krb_encrypt_buffer_initialize (global_to_server,
+							      0, sched, kblock,
+							      (BUFMEMERRPROC) NULL);
+	    global_from_server = krb_encrypt_buffer_initialize (global_from_server,
+								1, sched, kblock,
+								(BUFMEMERRPROC) NULL);
 	}
 	else
 #endif /* HAVE_KERBEROS */
@@ -4263,14 +4262,14 @@ start_server ()
 	    if (! supported_request ("Gssapi-encrypt"))
 		error (1, 0, "This server does not support encryption");
 	    send_to_server ("Gssapi-encrypt\012", 0);
-	    to_server = cvs_gssapi_wrap_buffer_initialize (to_server, 0,
-							   gcontext,
-							   ((BUFMEMERRPROC)
-							    NULL));
-	    from_server = cvs_gssapi_wrap_buffer_initialize (from_server, 1,
-							     gcontext,
-							     ((BUFMEMERRPROC)
-							      NULL));
+	    global_to_server = cvs_gssapi_wrap_buffer_initialize (global_to_server, 0,
+								  gcontext,
+								  ((BUFMEMERRPROC)
+								   NULL));
+	    global_from_server = cvs_gssapi_wrap_buffer_initialize (global_from_server, 1,
+								    gcontext,
+								    ((BUFMEMERRPROC)
+								     NULL));
 	    cvs_gssapi_encrypt = 1;
 	}
 	else
@@ -4294,11 +4293,10 @@ start_server ()
 	    /* All further communication with the server will be
                compressed.  */
 
-	    to_server = compress_buffer_initialize (to_server, 0, gzip_level,
-						    (BUFMEMERRPROC) NULL);
-	    from_server = compress_buffer_initialize (from_server, 1,
-						      gzip_level,
-						      (BUFMEMERRPROC) NULL);
+	    global_to_server = compress_buffer_initialize (global_to_server, 0, gzip_level,
+							   (BUFMEMERRPROC) NULL);
+	    global_from_server = compress_buffer_initialize (global_from_server, 1, gzip_level,
+							     (BUFMEMERRPROC) NULL);
 	}
 #ifndef NO_CLIENT_GZIP_PROCESS
 	else if (supported_request ("gzip-file-contents"))
@@ -4337,14 +4335,14 @@ start_server ()
 		error (1, 0,
 		       "This server does not support stream authentication");
 	    send_to_server ("Gssapi-authenticate\012", 0);
-	    to_server = cvs_gssapi_wrap_buffer_initialize (to_server, 0,
-							   gcontext,
-							   ((BUFMEMERRPROC)
-							    NULL));
-	    from_server = cvs_gssapi_wrap_buffer_initialize (from_server, 1,
-							     gcontext,
-							     ((BUFMEMERRPROC)
-							      NULL));
+	    global_to_server = cvs_gssapi_wrap_buffer_initialize (global_to_server, 0,
+								  gcontext,
+								  ((BUFMEMERRPROC)
+								   NULL));
+	    global_from_server = cvs_gssapi_wrap_buffer_initialize (global_from_server, 1,
+								    gcontext,
+								    ((BUFMEMERRPROC)
+								     NULL));
 	}
 	else
 	    error (1, 0, "Stream authentication is only supported when using GSSAPI");
