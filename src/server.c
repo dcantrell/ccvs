@@ -87,6 +87,13 @@ static Key_schedule sched;
 #endif /* AUTH_SERVER_SUPPORT */
 
 
+/* The cvs username sent by the client, which might or might not be
+   the same as the system username the server eventually switches to
+   run as.  CVS_Username gets set iff password authentication is
+   successful. */
+static char *CVS_Username = NULL;
+
+
 /* While processing requests, this buffer accumulates data to be sent to
    the client, and then once we are in do_cvs_command, we use it
    for all the data to be sent.  */
@@ -1608,6 +1615,169 @@ input_memory_error (buf)
     outbuf_memory_error (buf);
 }
 
+
+
+/* If command is legal, return 1.
+ * Else if command is illegal and croak_on_illegal is set, then die.
+ * Else just return 0 to indicate that command is illegal.
+ */
+static int
+check_command_legal_p (char *cmd_name, int croak_on_illegal)
+{
+    /* Right now, only pserver notices illegal commands -- namely,
+     * write attempts by a read-only user.  Therefore, if CVS_Username
+     * is not set, this just returns 1, because CVS_Username unset
+     * means pserver is not active.
+     */
+    if (CVS_Username == NULL)
+        return 1;
+
+    if (lookup_command_attribute (cmd_name) & CVS_CMD_MODIFIES_REPOSITORY)
+    {
+        /* This command has the potential to modify the repository, so
+         * we check if the user have permission to do that.
+         *
+         * (Only relevant for remote users -- local users can do
+         * whatever normal Unix file permissions allow them to do.)
+         *
+         * The decision method:
+         *
+         *    If $CVSROOT/CVSADMROOT_READERS exists and user is listed
+         *    in it, then read-only access for user.
+         *
+         *    Or if $CVSROOT/CVSADMROOT_WRITERS exists and user NOT
+         *    listed in it, then also read-only access for user.
+         *
+         *    Else read-write access for user.
+         */
+
+         char *linebuf = NULL;
+         int num_red = 0;
+         size_t linebuf_len = 0;
+         char *fname;
+         size_t flen;
+         FILE *fp;
+         int found_it = 0;
+         
+         /* else */
+         flen = strlen (CVSroot_directory)
+                + strlen (CVSROOTADM)
+                + strlen (CVSROOTADM_READERS)
+                + 3;
+
+         fname = xmalloc (flen);
+         (void) sprintf (fname, "%s/%s/%s", CVSroot_directory,
+			CVSROOTADM, CVSROOTADM_READERS);
+
+         fp = fopen (fname, "r");
+         free (fname);
+
+         if (fp == NULL)
+             goto do_writers;
+         else  /* successfully opened readers file */
+         {
+             while ((num_red = getline (&linebuf, &linebuf_len, fp)) >= 0)
+             {
+                 /* Hmmm, is it worth importing my own readline
+                    library into CVS?  It takes care of chopping
+                    leading and trailing whitespace, "#" comments, and
+                    newlines automatically when so requested.  Would
+                    save some code here...  -kff */
+
+                 /* Chop newline by hand, for strcmp()'s sake. */
+                 if (linebuf[num_red - 1] == '\n')
+                     linebuf[num_red - 1] = '\0';
+
+                 if (strcmp (linebuf, CVS_Username) == 0)
+                 {
+                     free (linebuf);
+                     linebuf = NULL;
+                     linebuf_len = 0;
+                     goto handle_illegal;
+                 }
+                 /* else */
+                 free (linebuf);
+                 linebuf = NULL;
+                 linebuf_len = 0;
+             }
+
+             /* If not listed specifically as a reader, then this user
+                has write access by default unless writers are also
+                specified in a file . */
+             fclose (fp);
+             goto do_writers;
+         }
+
+    do_writers:
+         
+         flen = strlen (CVSroot_directory)
+                + strlen (CVSROOTADM)
+                + strlen (CVSROOTADM_WRITERS)
+                + 3;
+
+         fname = xmalloc (flen);
+         (void) sprintf (fname, "%s/%s/%s", CVSroot_directory,
+			CVSROOTADM, CVSROOTADM_WRITERS);
+
+         fp = fopen (fname, "r");
+         free (fname);
+
+         if (fp == NULL)
+         {
+             /* writers file does not exist, so everyone is a writer,
+                by default */
+             return 1;
+         }
+
+         /* else */
+
+         found_it = 0;
+         while ((num_red = getline (&linebuf, &linebuf_len, fp)) >= 0)
+         {
+             /* Chop newline by hand, for strcmp()'s sake. */
+             if (linebuf[num_red - 1] == '\n')
+                 linebuf[num_red - 1] = '\0';
+           
+             if (strcmp (linebuf, CVS_Username) == 0)
+             {
+                 free (linebuf);
+                 linebuf = NULL;
+                 linebuf_len = 0;
+                 found_it = 1;
+                 break;
+             }
+             /* else */
+             free (linebuf);
+             linebuf = NULL;
+             linebuf_len = 0;
+         }
+
+         if (found_it)
+         {
+             fclose (fp);
+             return 1;
+         }
+         else   /* writers file exists, but this user not listed in it */
+         {
+         handle_illegal:
+             fclose (fp);
+             if (croak_on_illegal)
+             {
+                 error (1, 0,
+                        "\"%s %s\" requires write access to the repository",
+                        program_name, cmd_name);
+             }
+             else
+                 return 0;
+         }
+    }
+
+    /* If ever reach end of this function, command must be legal. */
+    return 1;
+}
+
+
+
 /* Execute COMMAND in a subprocess with the approriate funky things done.  */
 
 static struct fd_set_wrapper { fd_set fds; } command_fds_to_drain;
@@ -1618,7 +1788,8 @@ static int flowcontrol_pipe[2];
 #endif /* SERVER_FLOWCONTROL */
 
 static void
-do_cvs_command (command)
+do_cvs_command (cmd_name, command)
+    char *cmd_name;
     int (*command) PROTO((int argc, char **argv));
 {
     /*
@@ -1640,6 +1811,15 @@ do_cvs_command (command)
     int dev_null_fd = -1;
 
     int errs;
+
+    /* Global `command_name' is probably "server" right now -- only
+     * serve_export() sets it to anything else.  So we will use local
+     * parameter `cmd_name' to determine if this command is legal for
+     * this user.
+     *
+     * Second argument non-zero below means exit if cmd not legal.
+     */
+    check_command_legal_p (cmd_name, 1);
 
     command_pid = -1;
     stdout_pipe[0] = -1;
@@ -2385,11 +2565,12 @@ new_entries_line ()
     entries_line = NULL;
 }
 
+
 static void
 serve_ci (arg)
     char *arg;
 {
-    do_cvs_command (commit);
+    do_cvs_command ("commit", commit);
 }
 
 static void
@@ -2484,91 +2665,91 @@ static void
 serve_update (arg)
     char *arg;
 {
-    do_cvs_command (update);
+    do_cvs_command ("update", update);
 }
 
 static void
 serve_diff (arg)
     char *arg;
 {
-    do_cvs_command (diff);
+    do_cvs_command ("diff", diff);
 }
 
 static void
 serve_log (arg)
     char *arg;
 {
-    do_cvs_command (cvslog);
+    do_cvs_command ("cvslog", cvslog);
 }
 
 static void
 serve_add (arg)
     char *arg;
 {
-    do_cvs_command (add);
+    do_cvs_command ("add", add);
 }
 
 static void
 serve_remove (arg)
     char *arg;
 {
-    do_cvs_command (cvsremove);
+    do_cvs_command ("cvsremove", cvsremove);
 }
 
 static void
 serve_status (arg)
     char *arg;
 {
-    do_cvs_command (status);
+    do_cvs_command ("status", status);
 }
 
 static void
 serve_rdiff (arg)
     char *arg;
 {
-    do_cvs_command (patch);
+    do_cvs_command ("patch", patch);
 }
 
 static void
 serve_tag (arg)
     char *arg;
 {
-    do_cvs_command (cvstag);
+    do_cvs_command ("cvstag", cvstag);
 }
 
 static void
 serve_rtag (arg)
     char *arg;
 {
-    do_cvs_command (rtag);
+    do_cvs_command ("rtag", rtag);
 }
 
 static void
 serve_import (arg)
     char *arg;
 {
-    do_cvs_command (import);
+    do_cvs_command ("import", import);
 }
 
 static void
 serve_admin (arg)
     char *arg;
 {
-    do_cvs_command (admin);
+    do_cvs_command ("admin", admin);
 }
 
 static void
 serve_history (arg)
     char *arg;
 {
-    do_cvs_command (history);
+    do_cvs_command ("history", history);
 }
 
 static void
 serve_release (arg)
     char *arg;
 {
-    do_cvs_command (release);
+    do_cvs_command ("release", release);
 }
 
 static void serve_watch_on PROTO ((char *));
@@ -2577,7 +2758,7 @@ static void
 serve_watch_on (arg)
     char *arg;
 {
-    do_cvs_command (watch_on);
+    do_cvs_command ("watch_on", watch_on);
 }
 
 static void serve_watch_off PROTO ((char *));
@@ -2586,7 +2767,7 @@ static void
 serve_watch_off (arg)
     char *arg;
 {
-    do_cvs_command (watch_off);
+    do_cvs_command ("watch_off", watch_off);
 }
 
 static void serve_watch_add PROTO ((char *));
@@ -2595,7 +2776,7 @@ static void
 serve_watch_add (arg)
     char *arg;
 {
-    do_cvs_command (watch_add);
+    do_cvs_command ("watch_add", watch_add);
 }
 
 static void serve_watch_remove PROTO ((char *));
@@ -2604,7 +2785,7 @@ static void
 serve_watch_remove (arg)
     char *arg;
 {
-    do_cvs_command (watch_remove);
+    do_cvs_command ("watch_remove", watch_remove);
 }
 
 static void serve_watchers PROTO ((char *));
@@ -2613,7 +2794,7 @@ static void
 serve_watchers (arg)
     char *arg;
 {
-    do_cvs_command (watchers);
+    do_cvs_command ("watchers", watchers);
 }
 
 static void serve_editors PROTO ((char *));
@@ -2622,7 +2803,7 @@ static void
 serve_editors (arg)
     char *arg;
 {
-    do_cvs_command (editors);
+    do_cvs_command ("editors", editors);
 }
 
 static int noop PROTO ((int, char **));
@@ -2641,7 +2822,7 @@ static void
 serve_noop (arg)
     char *arg;
 {
-    do_cvs_command (noop);
+    do_cvs_command ("noop", noop);
 }
 
 static void serve_init PROTO ((char *));
@@ -2652,7 +2833,7 @@ serve_init (arg)
 {
     set_local_cvsroot (arg);
 
-    do_cvs_command (init);
+    do_cvs_command ("init", init);
 }
 
 static void serve_annotate PROTO ((char *));
@@ -2661,7 +2842,7 @@ static void
 serve_annotate (arg)
     char *arg;
 {
-    do_cvs_command (annotate);
+    do_cvs_command ("annotate", annotate);
 }
 
 static void
@@ -2710,7 +2891,15 @@ serve_co (arg)
 	}
 	free (tempdir);
     }
-    do_cvs_command (checkout);
+
+    /* Compensate for server_export()'s setting of command_name.
+     *
+     * [It probably doesn't matter if do_cvs_command() gets "export"
+     *  or "checkout", but we ought to be accurate where possible.]
+     */
+    do_cvs_command ((strcmp (command_name, "export") == 0) ?
+                    "export" : "checkout",
+                    checkout);
 }
 
 static void
@@ -3933,6 +4122,12 @@ extern char *crypt PROTO((const char *, const char *));
  * 0 means no entry found for this user.
  * 1 means entry found and password matches.
  * 2 means entry found, but password does not match.
+ *
+ * If success, host_user_ptr will be set to point at the system
+ * username (i.e., the "real" identity, which may or may not be the
+ * CVS username) of this user; caller may free this.  Global
+ * CVS_Username will point at an allocated copy of cvs username (i.e.,
+ * the username argument below).
  */
 static int
 check_repository_password (username, password, repository, host_user_ptr)
@@ -3986,16 +4181,27 @@ check_repository_password (username, password, repository, host_user_ptr)
     /* If found_it != 0, then linebuf contains the information we need. */
     if (found_it)
     {
-	char *found_password;
+	char *found_password, *host_user_tmp;
 
 	strtok (linebuf, ":");
 	found_password = strtok (NULL, ": \n");
-	*host_user_ptr = strtok (NULL, ": \n");
-	if (*host_user_ptr == NULL) *host_user_ptr = username;
+	host_user_tmp = strtok (NULL, ": \n");
+	if (host_user_tmp == NULL)
+            host_user_tmp = username;
+
 	if (strcmp (found_password, crypt (password, found_password)) == 0)
+        {
+            /* Give host_user_ptr permanent storage. */
+            *host_user_ptr = xmalloc (strlen (host_user_tmp) + 1);
+            strcpy (*host_user_ptr, host_user_tmp);
+
 	    retval = 1;
+        }
 	else
-	    retval = 2;
+        {
+            *host_user_ptr = NULL;
+	    retval         = 2;
+        }
     }
     else
     {
@@ -4015,7 +4221,7 @@ check_password (username, password, repository)
     char *username, *password, *repository;
 {
     int rc;
-    char *host_user;
+    char *host_user = NULL;
 
     /* First we see if this user has a password in the CVS-specific
        password file.  If so, that's enough to authenticate with.  If
@@ -4024,10 +4230,16 @@ check_password (username, password, repository)
     rc = check_repository_password (username, password, repository,
 				    &host_user);
 
+    if (rc == 2)
+	return NULL;
+
+    /* else */
+
     if (rc == 1)
-	return host_user;
-    else if (rc == 2)
-	return 0;
+    {
+        /* host_user already set by reference, so just return. */
+        goto handle_return;
+    }
     else if (rc == 0)
     {
 	/* No cvs password found, so try /etc/passwd. */
@@ -4070,19 +4282,41 @@ error 0 %s: no such user\n", username);
 	}
 	
 	if (found_passwd && *found_passwd)
-	    return ((! strcmp (found_passwd, crypt (password, found_passwd)))
-		    ? username : NULL);
+        {
+	    host_user = ((! strcmp (found_passwd,
+                                    crypt (password, found_passwd)))
+                         ? username : NULL);
+            goto handle_return;
+        }
 	else if (password && *password)
-	    return username;
+        {
+	    host_user = username;
+            goto handle_return;
+        }
 	else
-	    return NULL;
+        {
+	    host_user = NULL;
+            goto handle_return;
+        }
     }
     else
     {
 	/* Something strange happened.  We don't know what it was, but
 	   we certainly won't grant authorization. */
-	return NULL;
+	host_user = NULL;
+        goto handle_return;
     }
+
+handle_return:
+    if (host_user)
+    {
+        /* Set CVS_Username here, in allocated space. 
+           It might or might not be the same as host_user. */
+        CVS_Username = xmalloc (strlen (username) + 1);
+        strcpy (CVS_Username, username);
+    }
+
+    return host_user;
 }
 
 /* Read username and password from client (i.e., stdin).

@@ -1,3 +1,31 @@
+Thu Jan  2 09:06:20 1997  Karl Fogel  <kfogel@ynu38.ynu.edu.cn>
+
+        * server.c: Changes for pserver read-only repository access:
+        (check_command_legal_p): new func.  Right now, just checks if
+        repository modification is permitted, and that only if pserver is
+        active.
+        (do_cvs_command): take new parameter `cmd_name', a string.  All
+        callers changed.  Pass it on to new func check_command_legal_p()
+        before executing the command.
+        (CVS_Username): new global, init to NULL.  Used by
+        check_command_legal_p(), set in check_password().
+        (check_password): set above new global CVS_Username; reorganized a
+        bit to facilitate this.
+        (check_repository_password): give *host_user_ptr permanent
+        storage iff success.
+
+        * main.c: Changes for pserver read-only repository access:
+        (lookup_command_attribute): new func.
+        (main): use new func lookup_command_attribute() to establish if
+        CVS_CMD_IGNORE_ADMROOT and CVS_CMD_USES_WORK_DIR.
+
+        * cvs.h: Changes for pserver read-only repository access:
+        (CVSROOTADM_READERS, CVSROOTADM_WRITERS): new #defines.
+        Prototype lookup_command_attribute().
+        (CVS_CMD_IGNORE_ADMROOT, CVS_CMD_USES_WORK_DIR,
+        CVS_CMD_MODIFIES_REPOSITORY): new #defines for
+        lookup_command_attribute() and its callers.
+
 Wed Jan  1 19:50:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h.in: Reword comment for TMPDIR_DFLT to make it clear
