@@ -1,3 +1,10 @@
+2000-05-17  Jim Meyering  <meyering@lucent.com>
+
+	* sanity.sh: Set TESTDIR so that `make check' passes even when /tmp
+	is a symlink.
+	(join-36): Use $TESTDIR rather than hard-coding `/tmp/cvs-sanity'.
+	(conflicts-132): Remove unnecessary `rm aa'.
+
 2000-05-16  Jim Kingdon  <kingdon@redhat.com>
 
 	* cvs.h, checkout.c (safe_location): Make extern.
