@@ -47,8 +47,8 @@ SOURCES = add.c admin.c checkin.c checkout.c classify.c client.c commit.c \
 create_adm.c cvsrc.c diff.c entries.c find_names.c hash.c history.c ignore.c \
 import.c lock.c log.c logmsg.c main.c modules.c myndbm.c no_diff.c \
 parseinfo.c patch.c rcs.c rcscmds.c recurse.c release.c remove.c repos.c \
-root.c rtag.c server.c status.c subr.c tag.c update.c wrapper.c \
-vers_ts.c version.c
+root.c rtag.c server.c status.c subr.c filesubr.c run.c tag.c update.c \
+wrapper.c vers_ts.c version.c
 MSOURCES = mkmodules.c
 
 OBJECTS = add.o admin.o checkin.o checkout.o classify.o commit.o \
@@ -59,7 +59,7 @@ root.o rtag.o status.o tag.o update.o wrapper.o vers_ts.o server.o client.o
 
 MOBJECTS = hash.o mkmodules.o myndbm.o
 
-COMMON_OBJECTS = subr.o version.o
+COMMON_OBJECTS = subr.o filesubr.o run.o version.o
 
 HEADERS = cvs.h rcs.h hash.h myndbm.h patchlevel.h \
 	update.h server.h client.h
