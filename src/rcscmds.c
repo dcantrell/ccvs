@@ -224,7 +224,12 @@ RCS_checkin (rcsfile, workfile, message, rev, flags)
    It would be relatively easy to convert this to use RCS_checkout
    and DIFF.  The comments in options.h.in regarding the selection of
    a diff program would need some revision, but I don't see a big
-   issue here.  */
+   issue here.  Another issue (which probably is an issue with or without
+   changes to DIFF vs. rcsdiff), is what timezone is used for the dates
+   which appear in the diff output.  I suspect that rcsdiff's behavior
+   is different from DIFF's, but I'm not sure exactly how hard to worry
+   about this--any such features are undocumented in the context
+   of CVS, and I'm not sure how important to users.  */
 int
 RCS_exec_rcsdiff (rcsfile, opts, options, rev1, rev2)
     char *rcsfile;
