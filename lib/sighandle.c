@@ -234,7 +234,7 @@ RETSIGTYPE	(*fn)();
 			val = sigaction(sig, &act, &SIG_defaults[sig]);
 #else
 #ifdef BSD_SIGNALS
-			bzero((char *)&vec, sizeof(vec));
+			memset (&vec, 0, sizeof (vec));
 			vec.sv_handler = SIG_handle;
 			val = sigvec(sig, &vec, &SIG_defaults[sig]);
 #else
