@@ -40,6 +40,7 @@
 #define VALID	0x1			/* flags field contains valid data */
 #define	INATTIC	0x2			/* RCS file is located in the Attic */
 #define PARTIAL 0x4			/* RCS file not completly parsed */
+#define NODELTA 0x8			/* delta_pos no longer valid */
 
 struct rcsnode
 {
@@ -106,3 +107,8 @@ char *RCS_getbranch PROTO((RCSNode * rcs, char *tag, int force_tag_match));
 int RCS_isdead PROTO((RCSNode *, const char *));
 char *RCS_getexpand PROTO ((RCSNode *));
 int RCS_fast_checkout PROTO ((RCSNode *, char *, char *, char *, char *, int));
+int RCS_settag PROTO ((RCSNode *, const char *, const char *));
+int RCS_deltag PROTO ((RCSNode *, const char *, int));
+int RCS_setbranch PROTO((RCSNode *, const char *));
+int RCS_lock PROTO ((RCSNode *, const char *, int));
+int RCS_unlock PROTO ((RCSNode *, const char *, int));

@@ -464,7 +464,7 @@ tag_fileproc (callerdat, finfo)
 	}
 	free (version);
 
-	if ((retcode = RCS_deltag(vers->srcfile->path, symtag, 1)) != 0) 
+	if ((retcode = RCS_deltag(vers->srcfile, symtag, 1)) != 0) 
 	{
 	    if (!quiet)
 		error (0, retcode == -1 ? errno : 0,
@@ -564,7 +564,7 @@ tag_fileproc (callerdat, finfo)
 	free (oversion);
     }
 
-    if ((retcode = RCS_settag(vers->srcfile->path, symtag, rev)) != 0)
+    if ((retcode = RCS_settag(vers->srcfile, symtag, rev)) != 0)
     {
 	error (1, retcode == -1 ? errno : 0,
 	       "failed to set tag %s to revision %s in %s",

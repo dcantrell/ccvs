@@ -25,8 +25,9 @@ static char *get_comment PROTO((char *user));
 static int add_rcs_file PROTO((char *message, char *rcs, char *user, char *vtag,
 		         int targc, char *targv[]));
 static int expand_at_signs PROTO((char *buf, off_t size, FILE *fp));
-static int add_rev PROTO((char *message, char *rcs, char *vfile, char *vers));
-static int add_tags PROTO((char *rcs, char *vfile, char *vtag, int targc,
+static int add_rev PROTO((char *message, RCSNode *rcs, char *vfile,
+			  char *vers));
+static int add_tags PROTO((RCSNode *rcs, char *vfile, char *vtag, int targc,
 		     char *targv[]));
 static int import_descend PROTO((char *message, char *vtag, int targc, char *targv[]));
 static int import_descend_dir PROTO((char *message, char *dir, char *vtag,
@@ -551,7 +552,7 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 	     * "U", signifying that the file has changed, but needs no
 	     * attention, and we're done.
 	     */
-	    if (add_tags (vers->srcfile->path, vfile, vtag, targc, targv))
+	    if (add_tags (vers->srcfile, vfile, vtag, targc, targv))
 		retval = 1;
 	    add_log ('U', vfile);
 	    freevers_ts (&vers);
@@ -561,8 +562,8 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 
     /* We may have failed to parse the RCS file; check just in case */
     if (vers->srcfile == NULL ||
-	add_rev (message, vers->srcfile->path, vfile, vers->vn_rcs) ||
-	add_tags (vers->srcfile->path, vfile, vtag, targc, targv))
+	add_rev (message, vers->srcfile, vfile, vers->vn_rcs) ||
+	add_tags (vers->srcfile, vfile, vtag, targc, targv))
     {
 	freevers_ts (&vers);
 	return (1);
@@ -588,7 +589,7 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 static int
 add_rev (message, rcs, vfile, vers)
     char *message;
-    char *rcs;
+    RCSNode *rcs;
     char *vfile;
     char *vers;
 {
@@ -634,7 +635,7 @@ add_rev (message, rcs, vfile, vers)
 	}
     }
 
-    status = RCS_checkin (rcs, tocvsPath == NULL ? vfile : tocvsPath,
+    status = RCS_checkin (rcs->path, tocvsPath == NULL ? vfile : tocvsPath,
 			  message, vbranch,
 			  (RCS_FLAGS_QUIET
 			   | (use_file_modtime ? RCS_FLAGS_MODTIME : 0)));
@@ -650,8 +651,10 @@ add_rev (message, rcs, vfile, vers)
     {
 	if (!noexec)
 	{
-	    fperror (logfp, 0, status == -1 ? ierrno : 0, "ERROR: Check-in of %s failed", rcs);
-	    error (0, status == -1 ? ierrno : 0, "ERROR: Check-in of %s failed", rcs);
+	    fperror (logfp, 0, status == -1 ? ierrno : 0,
+		     "ERROR: Check-in of %s failed", rcs->path);
+	    error (0, status == -1 ? ierrno : 0,
+		   "ERROR: Check-in of %s failed", rcs->path);
 	}
 	if (locked)
 	{
@@ -670,7 +673,7 @@ add_rev (message, rcs, vfile, vers)
  */
 static int
 add_tags (rcs, vfile, vtag, targc, targv)
-    char *rcs;
+    RCSNode *rcs;
     char *vfile;
     char *vtag;
     int targc;
@@ -688,9 +691,9 @@ add_tags (rcs, vfile, vtag, targc, targv)
     {
 	ierrno = errno;
 	fperror (logfp, 0, retcode == -1 ? ierrno : 0,
-		 "ERROR: Failed to set tag %s in %s", vtag, rcs);
+		 "ERROR: Failed to set tag %s in %s", vtag, rcs->path);
 	error (0, retcode == -1 ? ierrno : 0,
-	       "ERROR: Failed to set tag %s in %s", vtag, rcs);
+	       "ERROR: Failed to set tag %s in %s", vtag, rcs->path);
 	return (1);
     }
 
@@ -709,9 +712,11 @@ add_tags (rcs, vfile, vtag, targc, targv)
 	{
 	    ierrno = errno;
 	    fperror (logfp, 0, retcode == -1 ? ierrno : 0,
-		     "WARNING: Couldn't add tag %s to %s", targv[i], rcs);
+		     "WARNING: Couldn't add tag %s to %s", targv[i],
+		     rcs->path);
 	    error (0, retcode == -1 ? ierrno : 0,
-		   "WARNING: Couldn't add tag %s to %s", targv[i], rcs);
+		   "WARNING: Couldn't add tag %s to %s", targv[i],
+		   rcs->path);
 	}
     }
     freevers_ts (&vers);

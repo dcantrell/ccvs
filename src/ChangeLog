@@ -1,3 +1,54 @@
+Wed Sep  4 14:42:28 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rcs.c (RCS_fast_checkout): Don't handle the case of workfile set
+	to "".
+	* rcscmds.c (RCS_checkout): Likewise.
+	* checkin.c (Checkin): Pass explicit file name, not "", to
+	RCS_fast_checkout.
+	* update.c (join_file): Likewise.
+	* commit.c (remove_file): Pass explicit file name to
+	RCS_fast_checkout and RCS_checkin.
+
+	* rcs.c (RCS_reparsercsfile): Always continue after seeing
+	RCSSYMBOLS, even if the value is NULL.  Clear the NODELTA flag
+	after setting delta_pos.
+	(free_rcsnode_contents): New static function.
+	(freercsnode): Call free_rcsnode_contents.
+	(RCS_fast_checkout): If NODELTA is set, reparse the RCS file.
+	(RCS_settag): New function.  Change all callers to old function.
+	(RCS_deltag, RCS_setbranch): Likewise.
+	(RCS_lock, RCS_unlock): Likewise.
+	(RCS_deltas): If NODELTA is set, reparse the RCS file.
+	* rcs.h (NODELTA): Define.
+	(RCS_settag, RCS_deltag, RCS_setbranch): Declare.
+	(RCS_lock, RCS_unlock): Declare.
+	* rcscmds.c (RCS_exec_settag): Rename from RCS_settag.  Don't
+	check tag against BASE or HEAD (now done in new RCS_settag).
+	(RCS_exec_deltag): Rename from RCS_deltag.
+	(RCS_exec_setbranch): Rename from RCS_setbranch.
+	(RCS_exec_lock): Rename from RCS_lock.
+	(RCS_exec_unlock): Rename from RCS_unlock.
+	* cvs.h: Update declarations of renamed functions.
+	* checkin.c (Checkin): Remove rcscopy variable (no longer needed
+	because of change in RCS_unlock call).
+	* commit.c: Include <assert.h>.
+	(remove_file): Update RCSNode path if the file is renamed.
+	(unblockrcs): Change rcs parameter to RCSNode.  Change all
+	callers.
+	(fixbranch): Likewise.
+	(lock_RCS): Likewise.  Don't call RCS_parsercsfile.
+	(checkaddfile): Update RCSNode path if the file is renamed.  After
+	creating a new file, call RCS_parse.  When stubbing a branch, use
+	the passed in RCSNode if there is one, rather than calling
+	RCS_Parse.  Don't call RCS_Parse again after calling RCS_settag.
+	Free head and magicrev even if RCS_settag fails.
+	* import.c (add_rev): Change rcs parameter to RCSNode.  Change all
+	callers.
+	(add_tag): Likewise.
+
+	* rcs.c (RCS_fast_checkout): Amend last patch: if workfile is
+	NULL, but sout is not NULL, use sout in error message.
+
 Wed Sep  4 13:35:09 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* version.c: Increment version number to 1.8.8.
