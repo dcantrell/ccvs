@@ -31,7 +31,7 @@ struct node
     struct node *hashprev;
     char *key;
     void *data;
-    void (*delproc) ();
+    void (*delproc) (struct node *);
 };
 typedef struct node Node;
 

@@ -1,3 +1,15 @@
+2004-10-07  Mark D. Baushke  <mdb@cvshome.org>
+
+	* client.h (struct response): Make name a const.
+	* cvs.h (RETSIGTYPE): Use a full prototype.
+	* hash.h (struct node): Use a full prototype for delproc.
+
+	* client.c (send_arg, send_option_string, option_with_arg): Make
+	args of function const.
+	* client.h (send_arg, send_option_string, option_with_arg): Ditto.
+	
+	* checkout.c (checkout): Make valid_options const.
+
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
 	* release.h: Silence gcc -Wall.

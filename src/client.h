@@ -71,7 +71,7 @@ void read_from_server (char *buf, size_t len);
 
 /* Internal functions that handle client communication to server, etc.  */
 bool supported_request (const char *);
-void option_with_arg (char *option, char *arg);
+void option_with_arg (const char *option, const char *arg);
 
 /* Get the responses and then close the connection.  */
 int get_responses_and_close (void);
@@ -110,11 +110,11 @@ send_files (int argc, char **argv, int local, int aflag,
 
 /* Send an argument to the remote server.  */
 void
-send_arg (char *string);
+send_arg (const char *string);
 
 /* Send a string of single-char options to the remote server, one by one.  */
 void
-send_option_string (char *string);
+send_option_string (const char *string);
 
 void send_a_repository (const char *, const char *, const char *);
 
@@ -128,7 +128,7 @@ void send_a_repository (const char *, const char *, const char *);
 struct response
 {
     /* Name of the response.  */
-    char *name;
+    const char *name;
 
 #ifdef CLIENT_SUPPORT
     /*
