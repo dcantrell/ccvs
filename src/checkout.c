@@ -900,8 +900,6 @@ internal error: %s doesn't start with %s in checkout_proc",
 			   reposcopy);
 			   
 		*rp = '\0';
-		new->repository = xmalloc (strlen (reposcopy) + 5);
-		(void) strcpy (new->repository, reposcopy);
 		    
 		if (strcmp (reposcopy, current_parsed_root->directory) == 0)
 		{
@@ -910,8 +908,10 @@ internal error: %s doesn't start with %s in checkout_proc",
 		       is important).  We might be able to get rid
 		       of this after the we check out the other
 		       code that handles repository names. */
-		    (void) strcat (new->repository, "/.");
+		    new-> repository = Xasprintf ("%s/.", reposcopy);
 		}
+		else
+		    new->repository = xstrdup (reposcopy);
 	    }
 	}
 

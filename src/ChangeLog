@@ -1,3 +1,8 @@
+2005-03-26  Mark D. Baushke  <mdb@cvshome.org>
+
+	* checkout.c (checkout_proc): Use Xasprintf/xstrdup instead of
+	xmalloc/strcpy+strcat.
+
 2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.in: Regenerated.
