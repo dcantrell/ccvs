@@ -1,5 +1,9 @@
 Thu Jan 22 10:05:55 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* server.c (serve_kopt): Check for length of arg.  Based on
+	inspection of the code, plugs a buffer overrun security hole which
+	was introduced Monday.
+
 	* server.c (serve_is_modified): Don't call xmalloc; we aren't
 	allowed to call error() here.  Remove duplicate (and potentially
 	confusing) variable 'p'.
