@@ -1,3 +1,7 @@
+Fri Jul 14 23:30:33 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* Makefile.in (prefix): Don't forget to give this a value.
+
 Sun Jul  9 21:22:56 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         Greg Woods' change:
