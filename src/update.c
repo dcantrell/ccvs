@@ -1138,13 +1138,10 @@ VERS: ", 0);
 	    }
 
 	    /* set the time from the RCS file iff it was unknown before */
-	    if (vers_ts->vn_user == NULL ||
-		strncmp (vers_ts->ts_rcs, "Initial", 7) == 0)
-	    {
-		set_time = 1;
-	    }
-	    else
-		set_time = 0;
+	    set_time =
+		(!noexec
+		 && (vers_ts->vn_user == NULL ||
+		     strncmp (vers_ts->ts_rcs, "Initial", 7) == 0));
 
 	    wrap_fromcvs_process_file (finfo->file);
 

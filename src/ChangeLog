@@ -1,3 +1,11 @@
+Thu Sep 26 16:30:00 1997  Larry Jones <larry.jones@sdrc.com>
+	and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (checkout_file): Don't set timestamp in noexec mode.
+	* vers_ts.c (Version_TS): Add comment about ignoring errors from
+	utime.
+	* sanity.sh (conflicts3): New tests, for this fix.
+
 Fri Oct  3 09:47:04 1997  Noel Cragg  <noel@swish.red-bean.com>
 
 	* sanity.sh (168): use PROG instead of CVSBASE, since they are
