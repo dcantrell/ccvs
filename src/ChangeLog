@@ -1,3 +1,9 @@
+2003-07-12  Larry Jones  <lawrence.jones@eds.com>
+
+	* sanity.sh (diffnl): New tests for diff on files with no newline
+	at end.
+	(Patch from Andrew Moise <chops@demiurgestudios.com>.)
+
 2003-07-11  Larry Jones  <lawrence.jones@eds.com>
 
 	* Makefile.am (cvs_DEPENDENCIES): Include the libraries.

@@ -905,7 +905,8 @@ if test x"$*" = x; then
 	tests="${tests} status"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff rdiff-short"
-	tests="${tests} rdiff2 diff death death2 rm-update-message rmadd"
+	tests="${tests} rdiff2 diff diffnl death death2"
+	tests="${tests} rm-update-message rmadd"
 	tests="${tests} rmadd2 dirs dirs2 branches branches2 branches3"
 	tests="${tests} branches4 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
@@ -4472,6 +4473,166 @@ extern int gethostname ();
 	  cd ../..
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r 1
+	  ;;
+
+	diffnl)
+	  # Test handling of 'cvs diff' of files without newlines
+	  mkdir 1; cd 1
+	  dotest diffnl-000 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest diffnl-001 "${testcvs} add first-dir" \
+"Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
+          cd first-dir
+
+	  ${AWK} 'BEGIN {printf("one\ntwo\nthree\nfour\nfive\nsix")}' </dev/null >abc
+	  dotest diffnl-002 "${testcvs} add abc" \
+"${SPROG} [a-z]*: scheduling file .abc. for addition
+${SPROG} [a-z]*: use .${SPROG} commit. to add this file permanently"
+          dotest diffnl-003 "${testcvs} -q ci -mtest" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
+done
+Checking in abc;
+${CVSROOT_DIRNAME}/first-dir/abc,v  <--  abc
+initial revision: 1\.1
+done"
+
+	  # change to line near EOF
+	  ${AWK} 'BEGIN {printf("one\ntwo\nthree\nfour\nsix")}' </dev/null >abc
+	  dotest_fail diffnl-100 "${testcvs} diff abc" \
+"Index: abc
+===================================================================
+RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
+retrieving revision 1\.1
+diff -r1\.1 abc
+5d4
+< five"
+          dotest_fail diffnl-101 "${testcvs} diff -u abc" \
+"Index: abc
+===================================================================
+RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
+retrieving revision 1\.1
+diff -u -r1\.1 abc
+--- abc	${RFCDATE}	1\.1
++++ abc	${RFCDATE}
+@@ -2,5 +2,4 @@
+ two
+ three
+ four
+-five
+ six
+\\\\ No newline at end of file"
+          dotest diffnl-102 "${testcvs} -q ci -mtest abc" \
+"Checking in abc;
+${CVSROOT_DIRNAME}/first-dir/abc,v  <--  abc
+new revision: 1\.2; previous revision: 1\.1
+done"
+
+          # Change to last line
+	  ${AWK} 'BEGIN {printf("one\ntwo\nthree\nfour\nseven")}' </dev/null >abc
+          dotest_fail diffnl-200 "${testcvs} diff abc" \
+"Index: abc
+===================================================================
+RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
+retrieving revision 1\.2
+diff -r1\.2 abc
+5c5
+< six
+\\\\ No newline at end of file
+---
+> seven
+\\\\ No newline at end of file"
+	  dotest_fail diffnl-201 "${testcvs} diff -u abc" \
+"Index: abc
+===================================================================
+RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
+retrieving revision 1\.2
+diff -u -r1\.2 abc
+--- abc	${RFCDATE}	1\.2
++++ abc	${RFCDATE}
+@@ -2,4 +2,4 @@
+ two
+ three
+ four
+-six
+\\\\ No newline at end of file
++seven
+\\\\ No newline at end of file"
+	  dotest diffnl-202 "${testcvs} ci -mtest abc" \
+"Checking in abc;
+${CVSROOT_DIRNAME}/first-dir/abc,v  <--  abc
+new revision: 1\.3; previous revision: 1\.2
+done"
+
+	  # Addition of newline
+	  echo "one
+two
+three
+four
+seven" > abc
+	  dotest_fail diffnl-300 "${testcvs} diff abc" \
+"Index: abc
+===================================================================
+RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
+retrieving revision 1\.3
+diff -r1\.3 abc
+5c5
+< seven
+\\\\ No newline at end of file
+---
+> seven"
+	  dotest_fail diffnl-301 "${testcvs} diff -u abc" \
+"Index: abc
+===================================================================
+RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
+retrieving revision 1\.3
+diff -u -r1\.3 abc
+--- abc	${RFCDATE}	1\.3
++++ abc	${RFCDATE}
+@@ -2,4 +2,4 @@
+ two
+ three
+ four
+-seven
+\\\\ No newline at end of file
++seven"
+	  dotest diffnl-302 "${testcvs} ci -mtest abc" \
+"Checking in abc;
+${CVSROOT_DIRNAME}/first-dir/abc,v  <--  abc
+new revision: 1\.4; previous revision: 1\.3
+done"
+
+	  # Removal of newline
+	  ${AWK} 'BEGIN {printf("one\ntwo\nthree\nfour\nseven")}' </dev/null >abc
+	  dotest_fail diffnl-400 "${testcvs} diff abc" \
+"Index: abc
+===================================================================
+RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
+retrieving revision 1\.4
+diff -r1\.4 abc
+5c5
+< seven
+---
+> seven
+\\\\ No newline at end of file"
+	  dotest_fail diffnl-401 "${testcvs} diff -u abc" \
+"Index: abc
+===================================================================
+RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
+retrieving revision 1\.4
+diff -u -r1\.4 abc
+--- abc	${RFCDATE}	1\.4
++++ abc	${RFCDATE}
+@@ -2,4 +2,4 @@
+ two
+ three
+ four
+-seven
++seven
+\\\\ No newline at end of file"
+	
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	death)
