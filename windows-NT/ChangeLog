@@ -1,3 +1,10 @@
+Wed Feb 28 11:08:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h: Remove C_ALLOCA, CRAY_STACKSEG_END, HAVE_ALLOCA,
+	HAVE_ALLOCA_H, and STACK_DIRECTION to reflect alloca removal.
+	* startserver.c (wnt_start_server): Don't use alloca.
+	* alloca.h: Removed.
+
 Fri Feb 23 18:00:00 1996  Jim Kingdon  <kingdon@cyclic.com>
 
 	* options.h: Define AUTH_CLIENT_SUPPORT and NO_SOCKET_TO_FD.
