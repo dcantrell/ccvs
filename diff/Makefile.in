@@ -1,120 +1,237 @@
-# Makefile for GNU DIFF
-# Copyright (C) 1988,1989,1991,1992,1993,1994,1997,1998 Free Software Foundation, Inc.
-#
-# This file is part of GNU DIFF.
-#
-# GNU DIFF is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2, or (at your option)
-# any later version.
-#
-# GNU DIFF is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# Makefile.in generated automatically by automake 1.4e from Makefile.am.
 
-#### Start of system configuration section. ####
+# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
+# Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
 
-srcdir     = @srcdir@
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+SHELL = @SHELL@
+
+srcdir = @srcdir@
 top_srcdir = @top_srcdir@
-VPATH      = @srcdir@
-subdir     = diff
-
-CC = @CC@
-AR = ar
-
-CPPFLAGS = @CPPFLAGS@
-DEFS = @DEFS@
-RANLIB = @RANLIB@
-CFLAGS = @CFLAGS@
-
+VPATH = @srcdir@
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 
-#### End of system configuration section. ####
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
 
-SHELL = /bin/sh
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
 
-# The source files for all of the programs.
-SOURCES = diff.c diff3.c analyze.c cmpbuf.c cmpbuf.h io.c context.c ed.c \
-	normal.c ifdef.c util.c dir.c version.c diff.h side.c system.h \
-	diffrun.h
-OBJECTS = diff.o diff3.o analyze.o cmpbuf.o dir.o io.o util.o \
-	context.o ed.o ifdef.o normal.o side.o version.o
-DISTFILES = $(SOURCES) ChangeLog build_diff.com Makefile.in diagmeet.note \
-	libdiff.dsp .cvsignore
+top_builddir = ..
 
-all: libdiff.a
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
 
-# $(top_srcdir)/lib is so we don't get the system-supplied headers for
-# functions that we supply ourselves in lib.  $(srcdir) is perhaps not
-# necessary if we assume the unix compiler behavior whereby "" looks
-# in the directory containing the .c file first.
-# -I. is probably unnecessary (I don't think we generate any .h files).
-# -I.. is for config.h.
-COMPILE = $(CC) -c $(CPPFLAGS) $(DEFS) \
-	-I. -I.. -I$(srcdir) -I$(top_srcdir)/lib $(CFLAGS)
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_HEADER = $(INSTALL_DATA)
+transform = @program_transform_name@
 
-.c.o:
-	$(COMPILE) $<
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
 
-libdiff libdiff.a: $(OBJECTS)
-	$(AR) cr libdiff.a $(OBJECTS)
-	-$(RANLIB) libdiff.a
+@SET_MAKE@
+AMDEP = @AMDEP@
+AMTAR = @AMTAR@
+AWK = @AWK@
+CC = @CC@
+CSH = @CSH@
+DEPDIR = @DEPDIR@
+ETAGS = @ETAGS@
+ETAGS_INCLUDE_OPTION = @ETAGS_INCLUDE_OPTION@
+INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+INSTALL_STRIP_PROGRAM_ENV = @INSTALL_STRIP_PROGRAM_ENV@
+KRB4 = @KRB4@
+LN_S = @LN_S@
+MAKEINFO = @MAKEINFO@
+PACKAGE = @PACKAGE@
+PERL = @PERL@
+PR = @PR@
+PS2PDF = @PS2PDF@
+RANLIB = @RANLIB@
+ROFF = @ROFF@
+STRIP = @STRIP@
+TEXI2DVI = @TEXI2DVI@
+VERSION = @VERSION@
+YACC = @YACC@
+_am_include = @_am_include@
+includeopt = @includeopt@
+install_sh = @install_sh@
 
-$(OBJECTS): diff.h diffrun.h system.h
-analyze.o cmpbuf.o: cmpbuf.h
 
-# For CVS, install is dependant on all and uninstall added
-install: all
-uninstall:
-.PHONY: install uninstall
+noinst_LIBRARIES = libdiff.a
 
-# Remove targeets for CVS
-info:
-.PHONY: info
+libdiff_a_SOURCES = diff.c diff3.c analyze.c cmpbuf.c cmpbuf.h io.c \
+        context.c ed.c normal.c ifdef.c util.c dir.c version.c diff.h \
+        side.c system.h diffrun.h
 
-installdirs:
-	@: nothing to do for installdirs
-.PHONY: installdirs
 
-.PHONY: tags
+EXTRA_DIST = ChangeLog build_diff.com diagmeet.note libdiff.dsp
+EXEEXT =
+OBJEXT = o
+subdir = diff
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = $(top_builddir)/config.h $(top_builddir)/src/options.h
+CONFIG_CLEAN_FILES =
+LIBRARIES = $(noinst_LIBRARIES)
+
+
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir) -I$(top_builddir)/src
+DEFS = @DEFS@
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+libdiff_a_AR = $(AR) cru
+libdiff_a_LIBADD = 
+am_libdiff_a_OBJECTS = diff.$(OBJEXT) diff3.$(OBJEXT) analyze.$(OBJEXT) \
+cmpbuf.$(OBJEXT) io.$(OBJEXT) context.$(OBJEXT) ed.$(OBJEXT) \
+normal.$(OBJEXT) ifdef.$(OBJEXT) util.$(OBJEXT) dir.$(OBJEXT) \
+version.$(OBJEXT) side.$(OBJEXT)
+libdiff_a_OBJECTS = $(am_libdiff_a_OBJECTS)
+AR = ar
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CFLAGS = @CFLAGS@
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+DIST_SOURCES = $(libdiff_a_SOURCES)
+depcomp = $(SHELL) $(top_srcdir)/depcomp
+@AMDEP@DEP_FILES = $(DEPDIR)/analyze.Po $(DEPDIR)/cmpbuf.Po \
+@AMDEP@ $(DEPDIR)/context.Po $(DEPDIR)/diff.Po $(DEPDIR)/diff3.Po \
+@AMDEP@ $(DEPDIR)/dir.Po $(DEPDIR)/ed.Po $(DEPDIR)/ifdef.Po \
+@AMDEP@ $(DEPDIR)/io.Po $(DEPDIR)/normal.Po $(DEPDIR)/side.Po \
+@AMDEP@ $(DEPDIR)/util.Po $(DEPDIR)/version.Po
+DIST_COMMON = ChangeLog Makefile.am Makefile.in
+
+SOURCES = $(libdiff_a_SOURCES)
+OBJECTS = $(am_libdiff_a_OBJECTS)
+
+all: all-am
+
+.SUFFIXES:
+.SUFFIXES: .c .h .o .obj
+
+$(srcdir)/Makefile.in: Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+	cd $(top_srcdir) && \
+	  $(AUTOMAKE) --gnu  diff/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) && \
+	  CONFIG_HEADERS= CONFIG_LINKS= \
+	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
+
+clean-noinstLIBRARIES:
+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+
+mostlyclean-compile:
+	-rm -f *.$(OBJEXT) core *.core
+
+distclean-compile:
+	-rm -f *.tab.c
+
+libdiff.a: $(libdiff_a_OBJECTS) $(libdiff_a_DEPENDENCIES)
+	-rm -f libdiff.a
+	$(libdiff_a_AR) libdiff.a $(libdiff_a_OBJECTS) $(libdiff_a_LIBADD)
+	$(RANLIB) libdiff.a
+
 tags: TAGS
 
-TAGS: $(SOURCES)
-	etags $(SOURCES)
+ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
+	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	mkid -fID $$unique $(LISP)
 
-clean:
-	rm -f *.o *.a core
-.PHONY: clean
+TAGS: $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+		$(TAGS_FILES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS) $(TAGS_FILES)'; \
+	unique=`for i in $$list @CONFIG@; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || $(ETAGS) $(ETAGS_ARGS) $$tags  $$unique $(LISP)
 
-mostlyclean: clean
-.PHONY: mostlyclean
+GTAGS:
+	here=`CDPATH=: && cd $(top_builddir) && pwd` \
+	  && cd $(top_srcdir) \
+	  && gtags -i $$here
 
-distclean: clean
-	rm -f TAGS tags Makefile
-.PHONY: distclean
+distclean-tags:
+	-rm -f TAGS ID
 
-# for backwards compatibility with the old makefiles
-realclean maintainer-clean: distclean
-.PHONY: realclean maintainer-clean
+@AMDEP@@_am_include@ $(DEPDIR)/analyze.Po
+@AMDEP@@_am_include@ $(DEPDIR)/cmpbuf.Po
+@AMDEP@@_am_include@ $(DEPDIR)/context.Po
+@AMDEP@@_am_include@ $(DEPDIR)/diff.Po
+@AMDEP@@_am_include@ $(DEPDIR)/diff3.Po
+@AMDEP@@_am_include@ $(DEPDIR)/dir.Po
+@AMDEP@@_am_include@ $(DEPDIR)/ed.Po
+@AMDEP@@_am_include@ $(DEPDIR)/ifdef.Po
+@AMDEP@@_am_include@ $(DEPDIR)/io.Po
+@AMDEP@@_am_include@ $(DEPDIR)/normal.Po
+@AMDEP@@_am_include@ $(DEPDIR)/side.Po
+@AMDEP@@_am_include@ $(DEPDIR)/util.Po
+@AMDEP@@_am_include@ $(DEPDIR)/version.Po
 
-Makefile: Makefile.in ../config.status
-	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status 
+distclean-depend:
+	-rm -rf $(DEPDIR)
 
-# distdir added for CVS.
-top_builddir = ..
-PACKAGE = @PACKAGE@
-VERSION = @VERSION@
-distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+@AMDEP@CCDEPMODE = @CCDEPMODE@
+
+.c.o:
+@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(COMPILE) -c -o $@ `test -f $< || echo '$(srcdir)/'`$<
+
+.c.obj:
+@AMDEP@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(COMPILE) -c -o $@ `cygpath -w $<`
+
+
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+
+top_distdir = ..
+distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
+
 distdir: $(DISTFILES)
-	@d=$(srcdir); \
-	for file in $(DISTFILES); do \
-	  if test -d $(distdir)/`dirname $$file`; then \
-	    :; \
-	  else \
-	    mkdir $(distdir)/`dirname $$file`; \
-	  fi; \
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
 	    cp -pR $$d/$$file $(distdir) \
 	    || exit 1; \
@@ -124,11 +241,84 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-.PHONY: distdir
+check-am: all-am
+check: check-am
+all-am: Makefile $(LIBRARIES)
 
-# check added for CVS
-check: all
-.PHONY: check
+installdirs:
 
-# Prevent GNU make v3 from overflowing arg limit on SysV.
+install: install-am
+install-exec: install-exec-am
+install-data: install-data-am
+uninstall: uninstall-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+
+installcheck: installcheck-am
+
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+	  INSTALL_PROGRAM_ENV='$(INSTALL_STRIP_PROGRAM_ENV)' install
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+	@echo "This command is intended for maintainers to use"
+	@echo "it deletes files that may require special tools to rebuild."
+	-rm -f Makefile.in
+clean: clean-am
+
+clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
+
+distclean: distclean-am
+
+distclean-am: clean-am distclean-compile distclean-depend \
+	distclean-generic distclean-tags
+
+dvi:
+
+dvi-am:
+
+info:
+
+info-am:
+
+install-data-am:
+
+install-exec-am:
+
+install-info:
+
+install-man:
+
+installcheck-am:
+
+maintainer-clean: maintainer-clean-am
+
+maintainer-clean-am: distclean-am maintainer-clean-generic
+
+mostlyclean: mostlyclean-am
+
+mostlyclean-am: mostlyclean-compile mostlyclean-generic
+
+.PHONY: all all-am check check-am clean clean-generic \
+	clean-noinstLIBRARIES distclean distclean-compile \
+	distclean-depend distclean-generic distclean-tags distdir dvi \
+	dvi-am info info-am install install-am install-data \
+	install-data-am install-exec install-exec-am install-info \
+	install-man install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic tags \
+	uninstall uninstall-am
+
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
