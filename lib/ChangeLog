@@ -1,3 +1,10 @@
+Fri Oct  4 01:22:06 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* getdate.c: don't keep this in the repository, as it's just too
+ 	confusing -- the release dist build can make a new one with byacc
+ 	to be included as getdate.c-dist, and those without a yacc can use
+ 	it if they need to.
+
 Wed Sep 25 10:25:00 1996  Larry Jones  <larry.jones@sdrc.com>
 
 	* vasprintf.c: Fix type clashes in calls to strtoul.
