@@ -477,3 +477,11 @@ filter_stream_through_program (oldfd, dir, prog, pidp)
              "Error: filter_stream_through_program() doesn't work.\n");
     exit (1);
 }
+
+int
+pipe (int *filedesc)
+{
+    fprintf (stderr,
+             "Error: pipe() should not have been called in client.\n");
+    exit (1);
+}
