@@ -287,7 +287,7 @@ parse_cvsroot ()
    cannot be converted to a file descriptor -- it must be treated as a
    socket and nothing else. */
 static int use_socket_style = 0;
-static int server_socket;
+static int server_sock;
 #endif /* NO_SOCKET_TO_FD */
 
 /* Stream to write to the server.  */
@@ -323,18 +323,43 @@ read_line (resultp, eof_ok)
     int input_index = 0;
     int result_size = 80;
 
-    fflush (to_server);
+#ifdef NO_SOCKET_TO_FD
+    if (! use_socket_style)
+#endif /* NO_SOCKET_TO_FD */
+      fflush (to_server);
+
     result = (char *) xmalloc (result_size);
 
     while (1)
     {
-	c = getc (from_server);
+
+#ifdef NO_SOCKET_TO_FD
+      if (use_socket_style)
+        {
+          char ch;
+          /* Yes, this sucks performance-wise.  Short of implementing
+             our own buffering, I'm not sure how to effect a big
+             improvement.  We could at least avoid calling
+             read_from_server() for each character if we were willing
+             to duplicate a lot of its code, but I'm not sure that's
+             worth it. */
+          read_from_server (&ch, 1);
+          c = ch;
+        }
+      else
+#endif /* NO_SOCKET_TO_FD */
+        c = getc (from_server);
 
 	if (c == EOF)
 	{
 	    free (result);
-	    if (ferror (from_server))
-		error (1, errno, "reading from server");
+
+#ifdef NO_SOCKET_TO_FD
+            if (! use_socket_style)
+#endif /* NO_SOCKET_TO_FD */
+              if (ferror (from_server))
+                error (1, errno, "reading from server");
+            
 	    /* It's end of file.  */
 	    if (eof_ok)
 		return 0;
@@ -359,10 +384,21 @@ read_line (resultp, eof_ok)
     /* Terminate it just for kicks, but we *can* deal with embedded NULs.  */
     result[input_index] = '\0';
 
-    /* Log, if that's what we're doing. */
-    if (from_server_logfile)
-      fprintf (from_server_logfile, "%s\n", result);
-
+#ifdef NO_SOCKET_TO_FD
+    if (! use_socket_style)
+#endif /* NO_SOCKET_TO_FD */
+      {
+        /*
+         * If we're using socket style, then everything has already
+         * been logged because read_from_server() was used to get the
+         * individual chars, and read_from_server() logs already.
+         */
+        if (from_server_logfile)
+          if (fwrite (result, 1, input_index, from_server_logfile)
+              < input_index)
+            error (0, errno, "writing to from-server logfile");
+      }
+    
     if (resultp == NULL)
 	free (result);
     return input_index;
@@ -2124,28 +2160,53 @@ send_to_server (str, len)
      char *str;
      int len;
 {
-  int wrtn = 0;
-
   if (len == 0)
     len = strlen (str);
-
-  while (wrtn < len)
+  
+#ifdef NO_SOCKET_TO_FD
+  if (use_socket_style)
     {
-      wrtn += fwrite (str + wrtn, 1, len - wrtn, to_server);
+      int just_wrtn = 0;
+      int wrtn = 0;
 
-      if (wrtn == len)
-        break;
+      while (wrtn < len)
+        {
+          just_wrtn = send (server_sock, str + wrtn, len - wrtn, 0);
 
-      if (ferror (to_server))
-        error (1, errno, "writing to server");
-      if (feof (to_server))
-        error (1, 0, "premature end-of-file on server");
+          if (just_wrtn == -1)
+            error (1, errno, "reading from server socket");
+          
+          wrtn += just_wrtn;
+          if (wrtn == len)
+            break;
+        }
     }
-
+  else
+#endif /* NO_SOCKET_TO_FD */
+    {
+      int wrtn = 0;
+      
+      if (len == 0)
+        len = strlen (str);
+      
+      while (wrtn < len)
+        {
+          wrtn += fwrite (str + wrtn, 1, len - wrtn, to_server);
+          
+          if (wrtn == len)
+            break;
+          
+          if (ferror (to_server))
+            error (1, errno, "writing to server");
+          if (feof (to_server))
+            error (1, 0, "premature end-of-file on server");
+        }
+    }
+      
   if (to_server_logfile)
-    fwrite (str, 1, len, to_server_logfile);
+    if (fwrite (str, 1, len, to_server_logfile) < len)
+      error (0, errno, "writing to to-server logfile");
 }
-
 
 /*
  * Read LEN bytes from the server or die trying.
@@ -2155,23 +2216,47 @@ read_from_server (buf, len)
      char *buf;
      int len;
 {
-  int red = 0;
-
-  while (red < len)
+#ifdef NO_SOCKET_TO_FD
+  if (use_socket_style)
     {
-      red += fread (buf + red, 1, len - red, from_server);
+      int just_red = 0;
+      int red = 0;
 
-      if (red == len)
-        break;
+      while (red < len)
+        {
+          just_red = recv (server_sock, buf + red, len - red, 0);
 
-      if (ferror (from_server))
-        error (1, errno, "reading from server");
-      if (feof (from_server))
-        error (1, 0, "premature end-of-file from server");
+          if (just_red == -1)
+            error (1, errno, "reading from server");
+
+          red += just_red;
+          if (red == len)
+            break;
+        }
     }
-
+  else
+#endif /* NO_SOCKET_TO_FD */
+    {
+      int red = 0;
+      
+      while (red < len)
+        {
+          red += fread (buf + red, 1, len - red, from_server);
+          
+          if (red == len)
+            break;
+          
+          if (ferror (from_server))
+            error (1, errno, "reading from server");
+          if (feof (from_server))
+            error (1, 0, "premature end-of-file from server");
+        }
+    }
+  
+  /* Log, if that's what we're doing. */
   if (from_server_logfile)
-    fwrite (buf, 1, len, from_server_logfile);
+    if (fwrite (buf, 1, len, from_server_logfile) < len)
+      error (0, errno, "writing to from-server logfile");
 }
 
 
@@ -2239,47 +2324,59 @@ get_responses_and_close ()
     if (client_prune_dirs)
 	process_prune_candidates ();
 
-#if defined(HAVE_KERBEROS) || defined(AUTH_CLIENT_SUPPORT)
-    if (server_fd != -1)
-    {
-	if (shutdown (server_fd, 1) < 0)
-	    error (1, errno, "shutting down connection to %s", server_host);
-	/*
-	 * In this case, both sides of the net connection will use the
-         * same fd.
-	 */
-	if (fileno (from_server) != fileno (to_server))
-	{
-	    if (fclose (to_server) != 0)
-		error (1, errno, "closing down connection to %s", server_host);
-	}
-    }
+#ifdef NO_SOCKET_TO_FD
+    if (use_socket_style)
+      {
+        if (shutdown (server_sock, 2) < 0)
+          error (1, errno, "shutting down server socket");
+      }
     else
+#endif /* NO_SOCKET_TO_FD */
+      {
+#if defined(HAVE_KERBEROS) || defined(AUTH_CLIENT_SUPPORT)
+        if (server_fd != -1)
+          {
+            if (shutdown (server_fd, 1) < 0)
+              error (1, errno, "shutting down connection to %s", server_host);
+            /*
+             * In this case, both sides of the net connection will use the
+             * same fd.
+             */
+            if (fileno (from_server) != fileno (to_server))
+              {
+                if (fclose (to_server) != 0)
+                  error (1, errno,
+                         "closing down connection to %s",
+                         server_host);
+              }
+          }
+        else
 #endif /* HAVE_KERBEROS || AUTH_CLIENT_SUPPORT */
-
+          
 #ifdef SHUTDOWN_SERVER
-    SHUTDOWN_SERVER (fileno (to_server));
+          SHUTDOWN_SERVER (fileno (to_server));
 #else /* ! SHUTDOWN_SERVER */
-    {
-
-#ifdef START_RSH_WITH_POPEN_RW
-	if (pclose (to_server) == EOF)
-#else /* ! START_RSH_WITH_POPEN_RW */
-	if (fclose (to_server) == EOF)
-#endif /* START_RSH_WITH_POPEN_RW */
         {
-          error (1, errno, "closing connection to %s", server_host);
+          
+#ifdef START_RSH_WITH_POPEN_RW
+          if (pclose (to_server) == EOF)
+#else /* ! START_RSH_WITH_POPEN_RW */
+            if (fclose (to_server) == EOF)
+#endif /* START_RSH_WITH_POPEN_RW */
+              {
+                error (1, errno, "closing connection to %s", server_host);
+              }
         }
-    }
 
-    if (getc (from_server) != EOF)
-	error (0, 0, "dying gasps from %s unexpected", server_host);
-    else if (ferror (from_server))
-	error (0, errno, "reading from %s", server_host);
-
-    fclose (from_server);
+        if (getc (from_server) != EOF)
+          error (0, 0, "dying gasps from %s unexpected", server_host);
+        else if (ferror (from_server))
+          error (0, errno, "reading from %s", server_host);
+        
+        fclose (from_server);
 #endif /* SHUTDOWN_SERVER */
-
+      }
+        
 #if ! RSH_NOT_TRANSPARENT
     if (rsh_pid != -1
 	&& waitpid (rsh_pid, (int *) 0, 0) == -1)
@@ -2436,18 +2533,33 @@ connect_to_pserver (tofdp, fromfdp)
     }
   }
 
+#ifdef NO_SOCKET_TO_FD
+  use_socket_style = 1;
+  server_sock = sock;
+  /* Try to break mistaken callers: */
+  *tofdp = 0;
+  *fromfdp = 0;
+#else /* ! NO_SOCKET_TO_FD */
   server_fd = sock;
   close_on_exec (server_fd);
   tofd = fromfd = sock;
-
   /* Hand them back to the caller. */
   *tofdp   = tofd;
   *fromfdp = fromfd;
+#endif /* NO_SOCKET_TO_FD */
 }
 #endif /* AUTH_CLIENT_SUPPORT */
 
 
 #if HAVE_KERBEROS
+
+/*
+ * FIXME: this function has not been changed to deal with
+ * NO_SOCKET_TO_FD (i.e., systems on which sockets cannot be converted
+ * to file descriptors.  The first person to try building a kerberos
+ * client on such a system (OS/2, Windows NT, and maybe others) will
+ * have to make take care of this.
+ */
 void
 start_kerberos_server (tofdp, fromfdp)
      int *tofdp, *fromfdp;
@@ -2611,10 +2723,6 @@ start_server ()
     /* "Hi, I'm Darlene and I'll be your server tonight..." */
     server_started = 1;
 
-    /* todo: some OS's don't need these calls... */
-    close_on_exec (tofd);
-    close_on_exec (fromfd);
-
     /* Set up logfiles, if any. */
     if (log)
     {
@@ -2627,20 +2735,33 @@ start_server ()
 
 	strcpy (p, ".in");
 	to_server_logfile = open_file (buf, "w");
+        if (to_server_logfile == NULL)
+          error (0, errno, "opening to-server logfile %s", buf);
 
 	strcpy (p, ".out");
 	from_server_logfile = open_file (buf, "w");
+        if (from_server_logfile == NULL)
+          error (0, errno, "opening from-server logfile %s", buf);
 
 	free (buf);
     }
 
-    /* These will use binary mode on systems which have it.  */
-    to_server = fdopen (tofd, FOPEN_BINARY_WRITE);
-    if (to_server == NULL)
-	error (1, errno, "cannot fdopen %d for write", tofd);
-    from_server = fdopen (fromfd, FOPEN_BINARY_READ);
-    if (from_server == NULL)
-	error (1, errno, "cannot fdopen %d for read", fromfd);
+#ifdef NO_SOCKET_TO_FD
+    if (! use_socket_style)
+#endif /* NO_SOCKET_TO_FD */
+      {
+        /* todo: some OS's don't need these calls... */
+        close_on_exec (tofd);
+        close_on_exec (fromfd);
+        
+        /* These will use binary mode on systems which have it.  */
+        to_server = fdopen (tofd, FOPEN_BINARY_WRITE);
+        if (to_server == NULL)
+          error (1, errno, "cannot fdopen %d for write", tofd);
+        from_server = fdopen (fromfd, FOPEN_BINARY_READ);
+        if (from_server == NULL)
+          error (1, errno, "cannot fdopen %d for read", fromfd);
+      }
 
     /* Clear static variables.  */
     if (toplevel_repos != NULL)
