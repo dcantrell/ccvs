@@ -1,3 +1,7 @@
+2004-10-30  Mark D. Baushke  <mdb@juniper.net>
+
+	* config.h.in.in, config.h.in, config.h: Regenerated
+
 2004-10-26  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (config.h.in): Allow this file to be built even when not
