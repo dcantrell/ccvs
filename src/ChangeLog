@@ -1,3 +1,8 @@
+2004-05-19  Derek Price  <derek@ximbiot.com>
+
+	* server.c (serve_unchanged, serve_is_modified): Overwrite existing
+	data in timefields.  Fixes CAN-2004-0396.
+
 2004-05-14  Derek Price  <derek@ximbiot.com>
 
 	* subr.c (file_has_conflict), vers_ts.c (time_stamp_server): Don't

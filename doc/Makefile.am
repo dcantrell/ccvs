@@ -37,6 +37,7 @@ EXTRA_DIST = \
 	ChangeLog.fsf \
 	RCSFILES \
 	mdate-sh \
+	cvs.1 \
 	cvs-paper.ms \
 	cvs.man.header \
 	cvs.man.footer
