@@ -32,15 +32,19 @@ provide a "Option-read-write" request which sends -w, in addition to
 "Global_option -r" which sends -r.
 
 
-* Symbolic links to files will not work with or without LockDir.
-In the repository, you should avoid using symbolic links to files.
+* Symbolic links to files will not work with or without LockDir.  In the
+repository, you should avoid using symbolic links to files since this issue
+can cause data loss.  Symlinks are only a problem when writing files.  If your
+repository does not allow any write access, symlinks are not a problem.
 
 
-* Symbolic links to directories will not work with LockDir. In the
+* Symbolic links to directories will not work with LockDir.  In the
 repository, you should avoid using symbolic links to directories if
 you intend to use LockDir as the correct directory will NOT be locked
-by cvs. Directory symlinks are not recommended, but should work
-as long as LockDir is not being used.
+by CVS during write.  Directory symlinks are not recommended, but should work
+as long as LockDir is not being used.  Symlinks are only a problem when
+writing files.  If your repository does not allow any write access, symlinks
+are never a problem, whether or not LockDir is in use.
 
 
 * "make remotecheck" sometimes fails on test 187a3 with
