@@ -1019,7 +1019,7 @@ static int ew_add_file (char *fname) {
         ;
     }
     if (i==CurArg && CurArg<MaxArgs) {
-        ArgvList[CurArg++] = strdup(fname);
+        ArgvList[CurArg++] = xstrdup(fname);
     }
     return ArgvList[CurArg-1] != 0; /* Stop if we couldn't dup the string */
 }
@@ -1135,7 +1135,7 @@ void expand_wild (int argc, char **argv, int *pargc, char ***pargv) {
                              || strcmp(arg,".") == 0
                              || strcmp(arg,"..") == 0) ) {
                 if (CurArg < MaxArgs) {
-                    ArgvList[CurArg++] = strdup(arg);
+                    ArgvList[CurArg++] = xstrdup(arg);
                 }
                 ++filesgotten;
             }else if (arg != 0) {
@@ -1146,7 +1146,7 @@ void expand_wild (int argc, char **argv, int *pargc, char ***pargv) {
                     *p = '\0';
                     num = decc$from_vms (arg, ew_add_file, 1);
                     if (num <= 0 && CurArg < MaxArgs) {
-                        ArgvList[CurArg++] = strdup(arg);
+                        ArgvList[CurArg++] = xstrdup(arg);
                     }
                     filesgotten += num>0 ? num : 1;
                     *p++ = ',';
@@ -1155,7 +1155,7 @@ void expand_wild (int argc, char **argv, int *pargc, char ***pargv) {
                 if (*arg != '\0') {
                     num = decc$from_vms (arg, ew_add_file, 1);
                     if (num <= 0 && CurArg < MaxArgs) {
-                        ArgvList[CurArg++] = strdup(arg);
+                        ArgvList[CurArg++] = xstrdup(arg);
                     }
                     filesgotten += num>0 ? num : 1;
                 }

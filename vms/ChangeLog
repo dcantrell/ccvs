@@ -1,3 +1,7 @@
+2002-12-06  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c: Change some calls to strdup to use xstrdup.
+
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
 	* options.h: Remove prototype of STDC exit().  Move definition of
