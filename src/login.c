@@ -322,8 +322,8 @@ password_entry_operation (operation, root, newpassword)
     fp = CVS_FOPEN (passfile, "r");
     if (fp == NULL)
     {
-	error (0, errno, "failed to open %s for reading", passfile);
-	goto error_exit;
+	error (0, errno, "warning: failed to open %s for reading", passfile);
+	goto process;
     }
 
     cvsroot_canonical = normalize_cvsroot (root);
@@ -360,6 +360,8 @@ password_entry_operation (operation, root, newpassword)
 	    *p = '\0';
 	password = xstrdup (password);
     }
+
+process:
 
     /* might as well return now */
     if (operation == password_entry_lookup)
