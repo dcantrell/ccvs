@@ -1,3 +1,8 @@
+1999-02-18  Jim Kingdon  <http://www.cyclic.com>
+
+	* main.c (lookup_command_attribute): Don't check for "history"
+	twice.
+
 1999-02-17  Jim Kingdon  <http://www.cyclic.com>
 	    and Hallvard B Furuseth
 
