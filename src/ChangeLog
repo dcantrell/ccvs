@@ -1,5 +1,8 @@
 Sun Nov 10 21:13:38 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* server.c (server): Only set a handler for SIGHUP if it is
+	defined.  Likewise for all the other signals.
+
 	* server.c (do_cvs_command): Use DEVNULL not /dev/null.
 
 Fri Nov 08 12:14:20 1996  Jim Kingdon
