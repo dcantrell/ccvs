@@ -111,6 +111,10 @@ extern void server_cleanup PROTO((int sig));
 extern void server_pause_check PROTO((void));
 #endif /* SERVER_FLOWCONTROL */
 
+#ifdef AUTH_SERVER_SUPPORT
+extern char *CVS_Username;
+#endif /* AUTH_SERVER_SUPPORT */
+
 #endif /* SERVER_SUPPORT */
 
 /* Stuff shared with the client.  */
