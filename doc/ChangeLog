@@ -1,3 +1,53 @@
+2003-12-09  Derek Price  <derek@ximbiot.com>
+
+	* stamp-1, stamp-vti, version-client.texi, version.texi: Regenerated
+	for release 1.12.4.
+
+2003-12-09  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Locks): Provide technical details for promotable
+	readlocks.
+
+2003-12-09  Derek Price  <derek@ximbiot.com>
+
+	* stamp-vti, version.texi: Regenerated.
+
+2003-12-05  Derek Price  <derek@ximbiot.com>
+
+	* stamp-1, stamp-vti, version-client.texi, version.texi: Regenerated
+	for dev version 1.12.3.1.
+
+2003-12-04  Derek Price  <derek@ximbiot.com>
+
+	* stamp-1, stamp-vti, version-client.texi, version.texi: Regenerated
+	for release 1.12.3.
+
+2003-11-26  Derek Price  <derek@ximbiot.com>
+
+	* stamp-vti, version.texi: Regenerated.
+
+2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.in: Regenerate for new configure.in.
+
+2003-11-18  Derek Price  <derek@ximbiot.com>
+
+	* stamp-vti, version.texi: Regenerated.
+
+2003-11-13  Larry Jones  <lawrence.jones@eds.com>
+
+	* cvs.texinfo (Reverting local changes): Use the same vendor tag
+	in the admin command as was used in the previous import commands.
+
+2003-11-10  Derek Price  <derek@ximbiot.com>
+
+	* stamp-vti, version.texi: Regenerated.
+
+2003-11-07  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.texinfo (CVS commands): Fix typo.
+	(FreeBSD PR docs/58669 reported by Ceri Davies <ceri@FreeBSD.org>.)
+
 2003-10-30  Derek Price  <derek@ximbiot.com>
 
 	* stamp-vti, version.texi: Regenerated.

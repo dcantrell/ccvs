@@ -122,11 +122,11 @@ EXTRA_DIST = \
 check-local: localcheck remotecheck
 
 .PHONY: localcheck
-localcheck:
+localcheck: sanity.config.sh
 	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs$(EXEEXT)
 
 .PHONY: remotecheck
-remotecheck: all
+remotecheck: all sanity.config.sh
 	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs$(EXEEXT)
 
 # Our distclean targets

@@ -15,10 +15,10 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.])
 
-AC_INIT([Concurrent Versions System (CVS)],[1.12.2.1],[bug-cvs@gnu.org],[cvs])
+AC_INIT([Concurrent Versions System (CVS)],[1.12.4],[bug-cvs@gnu.org],[cvs])
 AC_CONFIG_SRCDIR(src/cvs.h)
-AM_INIT_AUTOMAKE([gnu 1.7.5 dist-bzip2 no-define])
-AC_PREREQ(2.57)
+AM_INIT_AUTOMAKE([gnu 1.7.9 dist-bzip2 no-define])
+AC_PREREQ(2.58)
 
 AC_PREFIX_PROGRAM(cvs)
 AM_CONFIG_HEADER(config.h)
@@ -85,6 +85,7 @@ dnl
 AC_PROG_RANLIB
 AC_PROG_YACC
 AC_PROG_LN_S
+AC_SYS_LARGEFILE
 AC_EXEEXT
 
 AC_PATH_PROG(PERL, perl, no)
@@ -188,6 +189,8 @@ AC_CHECK_MEMBERS([struct stat.st_rdev])
 # Replace functions with versions in lib/ when they can't be found.
 AC_REPLACE_FUNCS(\
 	dup2 \
+	fseeko \
+	ftello \
 	ftruncate \
 	mkdir \
 	rename \
@@ -495,7 +498,8 @@ AC_DEFINE_UNQUOTED(
   [RSH_DFLT], ["$with_default_rsh"],
   [The default remote shell to use, if one does not specify the
    CVS_RSH environment variable.])
-
+RSH_DFLT=$with_default_rsh
+AC_SUBST(RSH_DFLT)
 dnl done with finding a default CVS_RSH value
 dnl
 dnl end --with-rsh
@@ -775,6 +779,10 @@ dnl begin --enables
 dnl
 
 
+dnl
+dnl begin --enable-client
+dnl
+
 # Check for options requesting client and server feature. If none are
 # given and we have connect(), we want the full client & server arrangement.
 AC_ARG_ENABLE(
@@ -791,6 +799,14 @@ if test no != "$enable_client"; then
     [Define if you want CVS to be able to be a remote repository client.])
 fi
 
+dnl
+dnl end --enable-client
+dnl
+
+
+dnl
+dnl begin --enable-password-authenticated-client
+dnl
 AC_ARG_ENABLE(
   [password-authenticated-client],
   AC_HELP_STRING(
@@ -811,37 +827,14 @@ if test no != "$enable_password_authenticated_client"; then
   fi
 fi
 
+dnl
+dnl begin --enable-password-authenticated-client
+dnl
 
 
 dnl
-dnl Check if PAM authentication is enabled
+dnl begin --enable-server
 dnl
-AC_ARG_ENABLE(
-  [pam],
-  AC_HELP_STRING(
-    [--enable-pam],
-    [Use to enable system authentication with PAM instead of using the 
-    simple getpwnam interface.  This allows authentication (in theory) 
-    with any PAM module, e.g. on systems with shadow passwords or via LDAP]), ,
-  [enable_pam=no]
-  )
-
-if test yes = $enable_pam; then
-  AC_CHECK_HEADER(security/pam_appl.h, 
-    AC_DEFINE(HAVE_PAM, 1, 
-    [Define to enable system authentication with PAM instead of using the 
-    simple getpwnam interface.  This allows authentication (in theory) 
-    with any PAM module, e.g. on systems with shadow passwords or via LDAP])
-    AC_CHECK_LIB(pam, pam_start, [LIBS="${LIBS} -lpam"],
-      AC_MSG_ERROR([Could not find PAM libraries but the headers exist.
-      Give the --disable-pam option to compile without PAM support (or fix
-      your broken configuration)])
-    ),
-    AC_MSG_ERROR([Could not find PAM headers])
-  )
-fi
-
-
 
 dnl
 dnl Give the confiscator control over whether the server code is compiled
@@ -943,6 +936,47 @@ if test no != "$enable_server"; then
   fi # enable_server_flow_control
 fi # enable_server
 
+dnl
+dnl end --enable-server
+dnl
+
+
+dnl
+dnl begin --enable-pam
+dnl
+
+dnl
+dnl Check if PAM authentication is enabled
+dnl
+AC_ARG_ENABLE(
+  [pam],
+  AC_HELP_STRING(
+    [--enable-pam],
+    [Use to enable system authentication with PAM instead of using the 
+    simple getpwnam interface.  This allows authentication (in theory) 
+    with any PAM module, e.g. on systems with shadow passwords or via LDAP]), ,
+  [enable_pam=no]
+  )
+
+if test yes = $enable_pam; then
+  AC_CHECK_HEADER(security/pam_appl.h, 
+    AC_DEFINE(HAVE_PAM, 1, 
+    [Define to enable system authentication with PAM instead of using the 
+    simple getpwnam interface.  This allows authentication (in theory) 
+    with any PAM module, e.g. on systems with shadow passwords or via LDAP])
+    AC_CHECK_LIB(pam, pam_start, [LIBS="${LIBS} -lpam"],
+      AC_MSG_ERROR([Could not find PAM libraries but the headers exist.
+      Give the --disable-pam option to compile without PAM support (or fix
+      your broken configuration)])
+    ),
+    AC_MSG_ERROR([Could not find PAM headers])
+  )
+fi
+
+dnl
+dnl end --enable-pam
+dnl
+
 
 dnl
 dnl begin --enable-case-sensitivity
@@ -952,7 +986,17 @@ AC_ARG_ENABLE(
   [case-sensitivity],
   AC_HELP_STRING(
     [--enable-case-sensitivity],
-    [Force CVS to expect a case sensitive file system (default autodetects)]),
+    [Force CVS to expect a case sensitive file system.  Enabling this on a case
+     insensitive system should have little effect on the server or client
+     operation, though client users may ocassionally be suprised that the CVS
+     server appears to be case sensitive.  Disabling this for a case sensitive
+     server disables server support for case insensitive clients, which can
+     confuse all users of case insensitive clients contacting the server.
+     Disabling this for a case sensitive client will cause the client to ask
+     servers to behave case insensitively, which could cause confusion for
+     users, but also probably no real harm.  (default autoselects based on the
+     case sensitivity of the file system containing the current working
+     directory)]),
     [case "$enable_case_sensitivity" in
        yes | no | auto) ;;
        *)
@@ -987,6 +1031,9 @@ if test $enable_case_sensitivity = no; then
              file systems.  In the client case, this means that it will request
              that the server pretend to be case insensitive if it isn't
              already.])
+  dnl Compile fncase.c (containing fncase() & fncmp()) to handle file name
+  dnl comparisons on case insensitive filesystems.
+  AC_LIBOBJ(fncase)
 fi
 
 dnl
@@ -1063,6 +1110,48 @@ dnl
 
 
 dnl
+dnl begin --enable-lock-compatibility
+dnl
+
+# Check for options requesting client and server feature. If none are
+# given and we have connect(), we want the full client & server arrangement.
+AC_ARG_ENABLE(
+  [lock-compatibility],
+  AC_HELP_STRING(
+    [--enable-lock-compatibility],
+    [Include locking code which prevents versions of CVS earlier than 1.12.4
+     directly accessing the same repositiory as this executable from ignoring
+     this executable's promotable read locks.  If only CVS versions 1.12.4 and
+     later will be accessing your repository directly (as a server or locally),
+     you can safely disable this option in return for fewer disk accesses and a
+     small speed increase.  Disabling this option when versions of CVS earlier
+     than 1,12,4 _will_ be accessing your repository, however, is *VERY* *VERY*
+     *VERY* dangerous and could result in data loss.  (enabled by default)]),,
+  [enable_lock_compatibility=yes])
+
+if test x$enable_lock_compatibility = xyes; then
+  AC_DEFINE([LOCK_COMPATIBILITY], [1],
+    [Define to include locking code which prevents versions of CVS earlier than
+     1.12.4 directly accessing the same repositiory as this executable from
+     ignoring this executable's promotable read locks.  If only CVS versions
+     1.12.4 and later will be accessing your repository directly (as a server
+     or locally), you can safely disable this option in return for fewer disk
+     accesses and a small speed increase.  Disabling this option when versions
+     of CVS earlier than 1,12,4 _will_ be accessing your repository, however,
+     is *VERY* *VERY* *VERY* dangerous and could result in data loss.
+
+     As such, by default, CVS is compiled with this code enabled.  If you are
+     sure you would like this code disabled, you can disable it by passing the
+     "--disable-lock-compatibility" option to configure or by commenting out
+     the lines below.])
+fi
+
+dnl
+dnl end --enable-lock-compatibility
+dnl
+
+
+dnl
 dnl begin --enable-rootcommit
 dnl
 
@@ -1115,11 +1204,9 @@ dnl things won't be that simple, before long.
 dnl AC_DEFINE(PRESERVE_PERMISSIONS_SUPPORT, 1,
 dnl [Define if this system supports chown(), link(), and friends.])
 
-dnl On cygwin32, we configure like a Unix system, but we use the
-dnl Windows support code in lib/fncase.c to handle the case
-dnl insensitive file system.  We also need some support libraries.  We
-dnl do this at the end so that the new libraries are added at the end
-dnl of LIBS.
+dnl On cygwin32, we configure like a Unix system, but we need some support
+dnl libraries.  We do this at the end so that the new libraries are added at
+dnl the end of LIBS.
 dnl
 dnl FIXME: We should be trying to meet the autoconf ideal of checking for
 dnl the properties of the system rather than the name of the os here.  In other
@@ -1129,7 +1216,6 @@ AC_CACHE_CHECK(for cygwin32, ccvs_cv_sys_cygwin32,
 [AC_TRY_COMPILE([], [return __CYGWIN32__;],
 ccvs_cv_sys_cygwin32=yes, ccvs_cv_sys_cygwin32=no)])
 if test $ccvs_cv_sys_cygwin32 = yes; then
-  AC_LIBOBJ(fncase)
   LIBS="$LIBS -ladvapi32"
 
   dnl On Windows you can only change file times if you can write to

@@ -79,25 +79,29 @@ struct lock {
        struct lock; it is allocated by the Reader_Lock caller or in the
        case of writelocks, it is just a pointer to the storage allocated
        for the ->key field.  */
-    char *repository;
+    const char *repository;
+
+    /* The name of the lock files. */
+    char *file1;
+#ifdef LOCK_COMPATIBILITY
+    char *file2;
+#endif /* LOCK_COMPATIBILITY */
+
     /* Do we have a lock named CVSLCK?  */
     int have_lckdir;
     /* Note there is no way of knowing whether the readlock and writelock
        exist.  The code which sets the locks doesn't use SIG_beginCrSect
        to set a flag like we do for CVSLCK.  */
+    int free_repository;
 };
 
 static void remove_locks (void);
-static int readers_exist (char *repository);
 static int set_lock (struct lock *lock, int will_wait);
 static void clear_lock (struct lock *lock);
 static void set_lockers_name (struct stat *statp);
 static int set_writelock_proc (Node * p, void *closure);
 static int unlock_proc (Node * p, void *closure);
-static int write_lock (struct lock *lock);
 static void lock_simple_remove (struct lock *lock);
-static void lock_wait (char *repository);
-static void lock_obtained (char *repository);
 
 /* Malloc'd array containing the username of the whoever has the lock.
    Will always be non-NULL in the cases where it is needed.  */
@@ -108,6 +112,9 @@ static char *readlock;
 /* Malloc'd array specifying name of a writelock within a directory.
    Or NULL if none.  */
 static char *writelock;
+/* Malloc'd array specifying name of a promotablelock within a directory.
+   Or NULL if none.  */
+static char *promotablelock;
 /* Malloc'd array specifying the name of a CVSLCK file (absolute pathname).
    Will always be non-NULL in the cases where it is used.  */
 static char *masterlock;
@@ -120,17 +127,11 @@ static List *locklist;
 /* This is the (single) readlock which is set by Reader_Lock.  The
    repository field is NULL if there is no such lock.  */
 static struct lock global_readlock;
+static struct lock global_writelock;
 
 /* List of locks set by lock_tree_for_write.  This is redundant
    with locklist, sort of.  */
 static List *lock_tree_list;
-
-/* If we set locks with lock_dir_for_write, then locked_dir contains
-   the malloc'd name of the repository directory which we have locked.
-   locked_list is the same thing packaged into a list and is redundant
-   with locklist the same way that lock_tree_list is.  */
-static char *locked_dir;
-static List *locked_list;
 
 /* LockDir from CVSROOT/config.  */
 char *lock_dir;
@@ -142,12 +143,12 @@ char *lock_dir;
    that only if the actual operation fails.  But for now we'll keep
    things simple).  */
 static char *
-lock_name (char *repository, char *name)
+lock_name (const char *repository, const char *name)
 {
     char *retval;
-    char *p;
+    const char *p;
     char *q;
-    char *short_repos;
+    const char *short_repos;
     mode_t save_umask = 0000;
     int saved_umask = 0;
 
@@ -277,6 +278,36 @@ lock_name (char *repository, char *name)
 
 
 /*
+ * Clean up outstanding read and write locks and free their storage.
+ */
+void
+Simple_Lock_Cleanup (void)
+{
+    TRACE (TRACE_FUNCTION, "Simple_Lock_Cleanup()");
+
+    /* Avoid interrupts while accessing globals the interrupt handlers might
+     * make use of.
+     */
+    SIG_beginCrSect();
+
+    /* clean up simple read locks (if any) */
+    if (global_readlock.repository != NULL)
+	lock_simple_remove (&global_readlock);
+    /* See note in Lock_Cleanup() below.  */
+    SIG_endCrSect();
+
+    SIG_beginCrSect();
+
+    /* clean up simple write locks (if any) */
+    if (global_writelock.repository != NULL)
+	lock_simple_remove (&global_writelock);
+    /* See note in Lock_Cleanup() below.  */
+    SIG_endCrSect();
+}
+
+
+
+/*
  * Clean up all outstanding locks and free their storage.
  */
 void
@@ -327,19 +358,6 @@ Lock_Cleanup (void)
      *  called, why not avoid having blocks of code run twice.
      */
     SIG_endCrSect();
-
-    SIG_beginCrSect();
-    if (locked_dir != NULL)
-    {
-	/* Use a tmp var since any of these functions could call exit, causing
-	 * us to be called a second time.
-	 */
-	char *tmp = locked_dir;
-	locked_dir = NULL;
-	dellist (&locked_list);
-	free (tmp);
-    }
-    SIG_endCrSect();
 }
 
 
@@ -352,22 +370,9 @@ remove_locks (void)
 {
     TRACE (TRACE_FLOW, "remove_locks()");
 
-    /* Avoid interrupts while accessing globals the interrupt handlers might
-     * make use of.
-     */
-    SIG_beginCrSect();
+    Simple_Lock_Cleanup ();
 
-    /* clean up simple locks (if any) */
-    if (global_readlock.repository != NULL)
-    {
-	struct lock tmp = global_readlock;
-	global_readlock.repository = NULL;
-	lock_simple_remove (&tmp);
-    }
-    /* See note in Lock_Cleanup() above.  */
-    SIG_endCrSect();
-
-    /* clean up multiple locks (if any) */
+    /* clean up promotable locks (if any) */
     SIG_beginCrSect();
     if (locklist != NULL)
     {
@@ -395,47 +400,79 @@ unlock_proc (Node *p, void *closure)
 
 
 
-/* Remove the lock files.  */
+/* Remove the lock files.  For interrupt purposes, it can be assumed that the
+ * first thing this function does is set lock->repository to NULL.  */
 static void
 lock_simple_remove (struct lock *lock)
 {
-    char *tmp;
-
     TRACE (TRACE_FLOW, "lock_simple_remove()");
 
-    /* If readlock is set, the lock directory *might* have been created, but
-       since Reader_Lock doesn't use SIG_beginCrSect the way that set_lock
-       does, we don't know that.  That is why we need to check for
-       existence_error here.  */
-    if (readlock != NULL)
+    /* If lock->file is set, the lock *might* have been created, but since
+     * Reader_Lock & lock_dir_for_write don't use SIG_beginCrSect the way that
+     * set_lock does, we don't know that.  That is why we need to check for
+     * existence_error here.
+     */
+    if (lock->file1)
     {
-	tmp = lock_name (lock->repository, readlock);
-	if ( CVS_UNLINK (tmp) < 0 && ! existence_error (errno))
+	char *tmp = lock->file1;
+	lock->file1 = NULL;
+	if (CVS_UNLINK (tmp) < 0 && ! existence_error (errno))
 	    error (0, errno, "failed to remove lock %s", tmp);
 	free (tmp);
     }
-
-    /* If writelock is set, the lock directory *might* have been created, but
-       since write_lock doesn't use SIG_beginCrSect the way that set_lock
-       does, we don't know that.  That is why we need to check for
-       existence_error here.  */
-    if (writelock != NULL)
+#ifdef LOCK_COMPATIBILITY
+    if (lock->file2)
     {
-	tmp = lock_name (lock->repository, writelock);
-	if ( CVS_UNLINK (tmp) < 0 && ! existence_error (errno))
+	char *tmp = lock->file2;
+	lock->file2 = NULL;
+	if (CVS_UNLINK (tmp) < 0 && ! existence_error (errno))
 	    error (0, errno, "failed to remove lock %s", tmp);
 	free (tmp);
     }
+#endif /* LOCK_COMPATIBILITY */
 
     if (lock->have_lckdir)
     {
-	tmp = lock_name (lock->repository, CVSLCK);
+	char *tmp = lock_name (lock->repository, CVSLCK);
 	SIG_beginCrSect ();
 	if (CVS_RMDIR (tmp) < 0)
 	    error (0, errno, "failed to remove lock dir %s", tmp);
 	lock->have_lckdir = 0;
 	SIG_endCrSect ();
 	free (tmp);
+    }
+
+    /* And free the repository string.  We don't really have to set the
+     * repository string to NULL first since there is no harm in running any of
+     * the above code twice.
+     */
+    if (lock->free_repository)
+    {
+	const char *tmp = lock->repository;
+	lock->repository = NULL;
+	free ((char *)tmp);
+    } else
+	lock->repository = NULL;
+}
+
+
+
+/*
+ * Set the global readlock variable if it isn't already.
+ */
+static void
+set_readlock_name (void)
+{
+    if (readlock == NULL)
+    {
+	readlock = xmalloc (strlen (hostname) + sizeof (CVSRFL) + 40);
+	(void) sprintf (readlock, 
+#ifdef HAVE_LONG_FILE_NAMES
+			"%s.%s.%ld", CVSRFL, hostname,
+#else
+			"%s.%ld", CVSRFL,
+#endif
+			(long) getpid ());
     }
 }
 
@@ -449,34 +486,23 @@ Reader_Lock (char *xrepository)
 {
     int err = 0;
     FILE *fp;
-    char *tmp;
 
-    TRACE (1, "Reader_Lock(%s)", xrepository);
+    TRACE (TRACE_FUNCTION, "Reader_Lock(%s)", xrepository);
 
     if (noexec || readonlyfs)
 	return (0);
 
-    /* we only do one directory at a time for read locks! */
+    /* we only do one directory at a time for read locks!  */
     if (global_readlock.repository != NULL)
     {
 	error (0, 0, "Reader_Lock called while read locks set - Help!");
 	return (1);
     }
 
-    if (readlock == NULL)
-    {
-	readlock = xmalloc (strlen (hostname) + sizeof (CVSRFL) + 40);
-	(void) sprintf (readlock, 
-#ifdef HAVE_LONG_FILE_NAMES
-			"%s.%s.%ld", CVSRFL, hostname,
-#else
-			"%s.%ld", CVSRFL,
-#endif
-			(long) getpid ());
-    }
+    set_readlock_name ();
 
     /* remember what we're locking (for Lock_Cleanup) */
-    global_readlock.repository = xrepository;
+    global_readlock.repository = xstrdup (xrepository);
 
     /* get the lock dir for our own */
     if (set_lock (&global_readlock, 1) != L_OK)
@@ -493,194 +519,46 @@ Reader_Lock (char *xrepository)
     }
 
     /* write a read-lock */
-    tmp = lock_name (xrepository, readlock);
-    if ((fp = CVS_FOPEN (tmp, "w+")) == NULL || fclose (fp) == EOF)
+    global_readlock.file1 = lock_name (xrepository, readlock);
+    if ((fp = CVS_FOPEN (global_readlock.file1, "w+")) == NULL
+	|| fclose (fp) == EOF)
     {
 	error (0, errno, "cannot create read lock in repository `%s'",
 	       xrepository);
-	if (readlock != NULL)
-	    free (readlock);
-	readlock = NULL;
 	err = 1;
     }
-    free (tmp);
 
     /* free the lock dir */
     clear_lock (&global_readlock);
 
-    return (err);
+    return err;
 }
 
-/*
- * Lock a list of directories for writing
- */
-static char *lock_error_repos;
-static int lock_error;
 
-static int Writer_Lock (List * list);
-
-static int
-Writer_Lock (List *list)
-{
-    char *wait_repos;
-
-    if (noexec)
-	return (0);
-
-    if (readonlyfs) {
-	error (0, 0,
-	       "write lock failed.\n\
-WARNING: Read-only repository access mode selected via `cvs -R'.\n\
-Attempting to write to a read-only filesystem is not allowed.");
-	return (1);
-    }
-
-    /* We only know how to do one list at a time */
-    if (locklist != (List *) NULL)
-    {
-	error (0, 0, "Writer_Lock called while write locks set - Help!");
-	return (1);
-    }
-
-    wait_repos = NULL;
-    for (;;)
-    {
-	/* try to lock everything on the list */
-	lock_error = L_OK;		/* init for set_writelock_proc */
-	lock_error_repos = (char *) NULL; /* init for set_writelock_proc */
-	locklist = list;		/* init for Lock_Cleanup */
-	if (lockers_name != NULL)
-	    free (lockers_name);
-	lockers_name = xstrdup ("unknown");
-
-	(void) walklist (list, set_writelock_proc, NULL);
-
-	switch (lock_error)
-	{
-	    case L_ERROR:		/* Real Error */
-		if (wait_repos != NULL)
-		    free (wait_repos);
-		Lock_Cleanup ();	/* clean up any locks we set */
-		error (0, 0, "lock failed - giving up");
-		return (1);
-
-	    case L_LOCKED:		/* Someone already had a lock */
-		remove_locks ();	/* clean up any locks we set */
-		lock_wait (lock_error_repos); /* sleep a while and try again */
-		wait_repos = xstrdup (lock_error_repos);
-		continue;
-
-	    case L_OK:			/* we got the locks set */
-	        if (wait_repos != NULL)
-		{
-		    lock_obtained (wait_repos);
-		    free (wait_repos);
-		}
-		return (0);
-
-	    default:
-		if (wait_repos != NULL)
-		    free (wait_repos);
-		error (0, 0, "unknown lock status %d in Writer_Lock",
-		       lock_error);
-		return (1);
-	}
-    }
-}
 
 /*
- * walklist proc for setting write locks
+ * _lock_exists() returns 0 if there is no lock file matching FILEPAT in
+ * the repository but not IGNORE; else 1 is returned, to indicate that the
+ * caller should sleep a while and try again.
+ *
+ * INPUTS
+ *   repository		The repository directory to search for locks.
+ *   filepat		The file name pattern to search for.
+ *   ignore		The name of a single file which can be ignored.
+ *
+ * GLOBALS
+ *   lockdir		The lock dir external to the repository, if any.
+ *
+ * RETURNS
+ *   0		No lock matching FILEPAT and not IGNORE exists.
+ *   1		Otherwise and on error.
+ *
+ * ERRORS
+ *  In the case where errors are encountered reading the directory, a warning
+ *  message is printed, 1 is is returned and ERRNO is left set.
  */
 static int
-set_writelock_proc (Node *p, void *closure)
-{
-    /* if some lock was not OK, just skip this one */
-    if (lock_error != L_OK)
-	return (0);
-
-    /* apply the write lock */
-    lock_error_repos = p->key;
-    lock_error = write_lock ((struct lock *)p->data);
-    return (0);
-}
-
-/*
- * Create a lock file for writers returns L_OK if lock set ok, L_LOCKED if
- * lock held by someone else or L_ERROR if an error occurred
- */
-static int
-write_lock (struct lock *lock)
-{
-    int status;
-    FILE *fp;
-    char *tmp;
-
-    TRACE (1, "write_lock(%s)", lock->repository);
-
-    if (writelock == NULL)
-    {
-	writelock = xmalloc (strlen (hostname) + sizeof (CVSWFL) + 40);
-	(void) sprintf (writelock,
-#ifdef HAVE_LONG_FILE_NAMES
-			"%s.%s.%ld", CVSWFL, hostname,
-#else
-			"%s.%ld", CVSWFL,
-#endif
-			(long) getpid());
-    }
-
-    /* make sure the lock dir is ours (not necessarily unique to us!) */
-    status = set_lock (lock, 0);
-    if (status == L_OK)
-    {
-	/* we now own a writer - make sure there are no readers */
-	if (readers_exist (lock->repository))
-	{
-	    /* clean up the lock dir if we created it */
-	    if (status == L_OK)
-	    {
-		clear_lock (lock);
-	    }
-
-	    /* indicate we failed due to read locks instead of error */
-	    return (L_LOCKED);
-	}
-
-	/* write the write-lock file */
-	tmp = lock_name (lock->repository, writelock);
-	if ((fp = CVS_FOPEN (tmp, "w+")) == NULL || fclose (fp) == EOF)
-	{
-	    int xerrno = errno;
-
-	    if ( CVS_UNLINK (tmp) < 0 && ! existence_error (errno))
-		error (0, errno, "failed to remove lock %s", tmp);
-
-	    /* free the lock dir if we created it */
-	    if (status == L_OK)
-	    {
-		clear_lock (lock);
-	    }
-
-	    /* return the error */
-	    error (0, xerrno, "cannot create write lock in repository `%s'",
-		   lock->repository);
-	    free (tmp);
-	    return (L_ERROR);
-	}
-	free (tmp);
-	return (L_OK);
-    }
-    else
-	return (status);
-}
-
-/*
- * readers_exist() returns 0 if there are no reader lock files remaining in
- * the repository; else 1 is returned, to indicate that the caller should
- * sleep a while and try again.
- */
-static int
-readers_exist (char *repository)
+_lock_exists (const char *repository, const char *filepat, const char *ignore)
 {
     char *lockdir;
     char *line;
@@ -693,6 +571,9 @@ readers_exist (char *repository)
     (void) time (&now);
 #endif
 
+    TRACE (TRACE_FLOW, "_lock_exists (%s, %s, %s)",
+	   repository, filepat, ignore ? ignore : "(null)");
+
     lockdir = lock_name (repository, "");
     lockdir[strlen (lockdir) - 1] = '\0';   /* remove trailing slash */
 
@@ -704,8 +585,15 @@ readers_exist (char *repository)
 	errno = 0;
 	while ((dp = CVS_READDIR (dirp)) != NULL)
 	{
-	    if (CVS_FNMATCH (CVSRFLPAT, dp->d_name, 0) == 0)
+	    if (CVS_FNMATCH (filepat, dp->d_name, 0) == 0)
 	    {
+		/* FIXME: the basename conversion below should be replaced with
+		 * a call to the GNULIB basename function once it is imported.
+		 */
+		/* ignore our plock, if any */
+		if (ignore && !fncmp (ignore, dp->d_name))
+		    continue;
+
 		line = xmalloc (strlen (lockdir) + 1 + strlen (dp->d_name) + 1);
 		(void) sprintf (line, "%s/%s", lockdir, dp->d_name);
 		if ( CVS_STAT (line, &sb) != -1)
@@ -728,9 +616,10 @@ readers_exist (char *repository)
 		}
 		else
 		{
-		    /* If the file doesn't exist, it just means that it disappeared
-		       between the time we did the readdir and the time we did
-		       the stat.  */
+		    /* If the file doesn't exist, it just means that it
+		     * disappeared between the time we did the readdir and the
+		     * time we did the stat.
+		     */
 		    if (!existence_error (errno))
 			error (0, errno, "cannot stat %s", line);
 		}
@@ -748,6 +637,298 @@ readers_exist (char *repository)
     } while (ret < 0);
     return (ret);
 }
+
+
+
+/*
+ * readers_exist() returns 0 if there are no reader lock files remaining in
+ * the repository; else 1 is returned, to indicate that the caller should
+ * sleep a while and try again.
+ *
+ * See _lock_exists() for argument detail.
+ */
+static int
+readers_exist (const char *repository)
+{
+    TRACE (TRACE_FLOW, "readers_exist (%s)", repository);
+
+    /* It is only safe to ignore a readlock set by our process if it was set as
+     * a safety measure to prevent older CVS processes from ignoring our
+     * promotable locks.  The code to ignore these readlocks can be removed
+     * once it is deemed unlikely that anyone will be using CVS servers earlier
+     * than version 1.12.4.
+     */
+    return _lock_exists (repository, CVSRFLPAT,
+#ifdef LOCK_COMPATIBILITY
+                         findnode (locklist, repository) ? readlock : 
+#endif /* LOCK_COMPATIBILITY */
+			 NULL);
+}
+
+
+
+/*
+ * promotable_exists() returns 0 if there is no promotable lock file in
+ * the repository; else 1 is returned, to indicate that the caller should
+ * sleep a while and try again.
+ *
+ * See _lock_exists() for argument detail.
+ */
+static int
+promotable_exists (const char *repository)
+{
+    TRACE (TRACE_FLOW, "promotable_exists (%s)", repository);
+    return _lock_exists (repository, CVSPFLPAT, promotablelock);
+}
+
+
+
+/*
+ * Lock a list of directories for writing
+ */
+static char *lock_error_repos;
+static int lock_error;
+
+
+
+/*
+ * Create a lock file for likely writers returns L_OK if lock set ok, L_LOCKED
+ * if lock held by someone else or L_ERROR if an error occurred.
+ */
+static int
+promotable_lock (struct lock *lock)
+{
+    int status;
+    FILE *fp;
+
+    TRACE (TRACE_FUNCTION, "promotable_lock(%s)", lock->repository);
+
+    if (promotablelock == NULL)
+    {
+	promotablelock = xmalloc (strlen (hostname) + sizeof (CVSPFL) + 40);
+	(void) sprintf (promotablelock,
+#ifdef HAVE_LONG_FILE_NAMES
+			"%s.%s.%ld", CVSPFL, hostname,
+#else
+			"%s.%ld", CVSPFL,
+#endif
+			(long) getpid());
+    }
+
+    /* make sure the lock dir is ours (not necessarily unique to us!) */
+    status = set_lock (lock, 0);
+    if (status == L_OK)
+    {
+	/* we now own a promotable lock - make sure there are no others */
+	if (promotable_exists (lock->repository))
+	{
+	    /* clean up the lock dir */
+	    clear_lock (lock);
+
+	    /* indicate we failed due to read locks instead of error */
+	    return L_LOCKED;
+	}
+
+	/* write the promotable-lock file */
+	lock->file1 = lock_name (lock->repository, promotablelock);
+	if ((fp = CVS_FOPEN (lock->file1, "w+")) == NULL || fclose (fp) == EOF)
+	{
+	    int xerrno = errno;
+
+	    if ( CVS_UNLINK (lock->file1) < 0 && ! existence_error (errno))
+		error (0, errno, "failed to remove lock %s", lock->file1);
+
+	    /* free the lock dir */
+	    clear_lock (lock);
+
+	    /* return the error */
+	    error (0, xerrno,
+		   "cannot create promotable lock in repository `%s'",
+		   lock->repository);
+	    return L_ERROR;
+	}
+
+#ifdef LOCK_COMPATIBILITY
+	/* write the read-lock file.  We only do this so that older versions of
+	 * CVS will not think it is okay to create a write lock.  When it is
+	 * decided that versions of CVS earlier than 1.12.4 are not likely to
+	 * be used, this code can be removed.
+	 */
+	set_readlock_name ();
+	lock->file2 = lock_name (lock->repository, readlock);
+	if ((fp = CVS_FOPEN (lock->file2, "w+")) == NULL || fclose (fp) == EOF)
+	{
+	    int xerrno = errno;
+
+	    if ( CVS_UNLINK (lock->file2) < 0 && ! existence_error (errno))
+		error (0, errno, "failed to remove lock %s", lock->file2);
+
+	    /* free the lock dir */
+	    clear_lock (lock);
+
+	    /* Remove the promotable lock.  */
+	    lock->file2 = NULL;
+	    lock_simple_remove (lock);
+
+	    /* return the error */
+	    error (0, xerrno,
+		   "cannot create read lock in repository `%s'",
+		   lock->repository);
+	    return L_ERROR;
+	}
+#endif /* LOCK_COMPATIBILITY */
+
+	clear_lock (lock);
+
+	return L_OK;
+    }
+    else
+	return status;
+}
+
+
+
+/*
+ * walklist proc for setting write locks
+ */
+static int
+set_promotablelock_proc (Node *p, void *closure)
+{
+    /* if some lock was not OK, just skip this one */
+    if (lock_error != L_OK)
+	return 0;
+
+    /* apply the write lock */
+    lock_error_repos = p->key;
+    lock_error = promotable_lock ((struct lock *)p->data);
+    return 0;
+}
+
+
+
+/*
+ * Print out a message that the lock is still held, then sleep a while.
+ */
+static void
+lock_wait (const char *repos)
+{
+    time_t now;
+    char *msg;
+    struct tm *tm_p;
+
+    (void) time (&now);
+    tm_p = gmtime (&now);
+    msg = xmalloc (100 + strlen (lockers_name) + strlen (repos));
+    sprintf (msg, "[%8.8s] waiting for %s's lock in %s",
+	     (tm_p ? asctime (tm_p) : ctime (&now)) + 11,
+	     lockers_name, repos);
+    error (0, 0, "%s", msg);
+    /* Call cvs_flusherr to ensure that the user sees this message as
+       soon as possible.  */
+    cvs_flusherr ();
+    free (msg);
+    (void) sleep (CVSLCKSLEEP);
+}
+
+
+
+/*
+ * Print out a message when we obtain a lock.
+ */
+static void
+lock_obtained (const char *repos)
+{
+    time_t now;
+    char *msg;
+    struct tm *tm_p;
+
+    (void) time (&now);
+    tm_p = gmtime (&now);
+    msg = xmalloc (100 + strlen (repos));
+    sprintf (msg, "[%8.8s] obtained lock in %s",
+	     (tm_p ? asctime (tm_p) : ctime (&now)) + 11, repos);
+    error (0, 0, "%s", msg);
+    /* Call cvs_flusherr to ensure that the user sees this message as
+       soon as possible.  */
+    cvs_flusherr ();
+    free (msg);
+}
+
+
+
+static int
+Promotable_Lock (List *list)
+{
+    char *wait_repos;
+
+    TRACE (TRACE_FLOW, "Promotable_Lock ()");
+
+    if (noexec)
+	return 0;
+
+    if (readonlyfs) {
+	error (0, 0,
+	       "promotable lock failed.\n\
+WARNING: Read-only repository access mode selected via `cvs -R'.\n\
+Attempting to write to a read-only filesystem is not allowed.");
+	return 1;
+    }
+
+    /* We only know how to do one list at a time */
+    if (locklist != (List *) NULL)
+    {
+	error (0, 0,
+	       "Promotable_Lock called while promotable locks set - Help!");
+	return 1;
+    }
+
+    wait_repos = NULL;
+    for (;;)
+    {
+	/* try to lock everything on the list */
+	lock_error = L_OK;		/* init for set_writelock_proc */
+	lock_error_repos = (char *) NULL; /* init for set_writelock_proc */
+	locklist = list;		/* init for Lock_Cleanup */
+	if (lockers_name != NULL)
+	    free (lockers_name);
+	lockers_name = xstrdup ("unknown");
+
+	(void) walklist (list, set_promotablelock_proc, NULL);
+
+	switch (lock_error)
+	{
+	    case L_ERROR:		/* Real Error */
+		if (wait_repos != NULL)
+		    free (wait_repos);
+		Lock_Cleanup ();	/* clean up any locks we set */
+		error (0, 0, "lock failed - giving up");
+		return 1;
+
+	    case L_LOCKED:		/* Someone already had a lock */
+		remove_locks ();	/* clean up any locks we set */
+		lock_wait (lock_error_repos); /* sleep a while and try again */
+		wait_repos = xstrdup (lock_error_repos);
+		continue;
+
+	    case L_OK:			/* we got the locks set */
+	        if (wait_repos != NULL)
+		{
+		    lock_obtained (wait_repos);
+		    free (wait_repos);
+		}
+		return 0;
+
+	    default:
+		if (wait_repos != NULL)
+		    free (wait_repos);
+		error (0, 0, "unknown lock status %d in Promotable_Lock",
+		       lock_error);
+		return 1;
+	}
+    }
+}
+
+
 
 /*
  * Set the static variable lockers_name appropriately, based on the stat
@@ -772,6 +953,8 @@ set_lockers_name (struct stat *statp)
     }
 }
 
+
+
 /*
  * Persistently tries to make the directory "lckdir", which serves as a
  * lock.
@@ -792,6 +975,8 @@ set_lock (struct lock *lock, int will_wait)
 #ifdef CVS_FUDGELOCKS
     time_t now;
 #endif
+
+    TRACE (TRACE_FLOW, "set_lock (%s, %d)", lock->repository, will_wait);
 
     if (masterlock != NULL)
 	free (masterlock);
@@ -911,55 +1096,7 @@ clear_lock (struct lock *lock)
     SIG_endCrSect ();
 }
 
-/*
- * Print out a message that the lock is still held, then sleep a while.
- */
-static void
-lock_wait (char *repos)
-{
-    time_t now;
-    char *msg;
-    struct tm *tm_p;
 
-    (void) time (&now);
-    tm_p = gmtime (&now);
-    msg = xmalloc (100 + strlen (lockers_name) + strlen (repos));
-    sprintf (msg, "[%8.8s] waiting for %s's lock in %s",
-	     (tm_p ? asctime (tm_p) : ctime (&now)) + 11,
-	     lockers_name, repos);
-    error (0, 0, "%s", msg);
-    /* Call cvs_flusherr to ensure that the user sees this message as
-       soon as possible.  */
-    cvs_flusherr ();
-    free (msg);
-    (void) sleep (CVSLCKSLEEP);
-}
-
-/*
- * Print out a message when we obtain a lock.
- */
-static void
-lock_obtained (char *repos)
-{
-    time_t now;
-    char *msg;
-    struct tm *tm_p;
-
-    (void) time (&now);
-    tm_p = gmtime (&now);
-    msg = xmalloc (100 + strlen (repos));
-    sprintf (msg, "[%8.8s] obtained lock in %s",
-	     (tm_p ? asctime (tm_p) : ctime (&now)) + 11, repos);
-    error (0, 0, "%s", msg);
-    /* Call cvs_flusherr to ensure that the user sees this message as
-       soon as possible.  */
-    cvs_flusherr ();
-    free (msg);
-}
-
-static int lock_filesdoneproc (void *callerdat, int err,
-				      char *repository, char *update_dir,
-				      List *entries);
 
 /*
  * Create a list of repositories to lock
@@ -976,7 +1113,12 @@ lock_filesdoneproc (void *callerdat, int err, char *repository,
     p->key = xstrdup (repository);
     p->data = xmalloc (sizeof (struct lock));
     ((struct lock *)p->data)->repository = p->key;
+    ((struct lock *)p->data)->file1 = NULL;
+#ifdef LOCK_COMPATIBILITY
+    ((struct lock *)p->data)->file2 = NULL;
+#endif /* LOCK_COMPATIBILITY */
     ((struct lock *)p->data)->have_lckdir = 0;
+    ((struct lock *)p->data)->free_repository = 0;
 
     /* FIXME-KRP: this error condition should not simply be passed by. */
     if (p->key == NULL || addnode (lock_tree_list, p) != 0)
@@ -984,10 +1126,16 @@ lock_filesdoneproc (void *callerdat, int err, char *repository,
     return (err);
 }
 
+
+
 void
-lock_tree_for_write (int argc, char **argv, int local, int which, int aflag)
+lock_tree_promotably (int argc, char **argv, int local, int which, int aflag)
 {
     int err;
+
+    TRACE (TRACE_FUNCTION, "lock_tree_promotably (%d, argv, %d, %d, %d)",
+	   argc, local, which, aflag);
+
     /*
      * Run the recursion processor to find all the dirs to lock and lock all
      * the dirs
@@ -999,35 +1147,106 @@ lock_tree_for_write (int argc, char **argv, int local, int which, int aflag)
 	  argv, local, which, aflag, CVS_LOCK_NONE,
 	  (char *) NULL, 0, (char *) NULL );
     sortlist (lock_tree_list, fsortcmp);
-    if (Writer_Lock (lock_tree_list) != 0)
+    if (Promotable_Lock (lock_tree_list) != 0)
 	error (1, 0, "lock failed - giving up");
 }
-
+
+
+
 /* Lock a single directory in REPOSITORY.  It is OK to call this if
-   a lock has been set with lock_dir_for_write; the new lock will replace
-   the old one.  If REPOSITORY is NULL, don't do anything.  */
+ * a lock has been set with lock_dir_for_write; the new lock will replace
+ * the old one.  If REPOSITORY is NULL, don't do anything.
+ *
+ * We do not clear the dir lock after writing the lock file name since write
+ * locks are exclusive to all other locks.
+ */
 void
-lock_dir_for_write (char *repository)
+lock_dir_for_write (const char *repository)
 {
+    int waiting = 0;
+
+    TRACE (TRACE_FLOW, "lock_dir_for_write (%s)", repository);
+
     if (repository != NULL
-	&& (locked_dir == NULL
-	    || strcmp (locked_dir, repository) != 0))
+	&& (global_writelock.repository == NULL
+	    || !strcmp (global_writelock.repository, repository)))
     {
-	Node *node;
+	if (writelock == NULL)
+	{
+	    writelock = xmalloc (strlen (hostname) + sizeof (CVSWFL) + 40);
+	    (void) sprintf (writelock,
+#ifdef HAVE_LONG_FILE_NAMES
+			    "%s.%s.%ld", CVSWFL, hostname,
+#else
+			    "%s.%ld", CVSWFL,
+#endif
+			    (long) getpid());
+	}
 
-	if (locked_dir != NULL)
-	    Lock_Cleanup ();
+	if (global_writelock.repository != NULL)
+	    lock_simple_remove (&global_writelock);
+	else
+	    global_writelock.free_repository = 1;
 
-	locked_dir = xstrdup (repository);
-	locked_list = getlist ();
-	node = getnode ();
-	node->type = LOCK;
-	node->key = xstrdup (repository);
-	node->data = xmalloc (sizeof (struct lock));
-	((struct lock *)node->data)->repository = node->key;
-	((struct lock *)node->data)->have_lckdir = 0;
+	global_writelock.repository = xstrdup (repository);
 
-	(void) addnode (locked_list, node);
-	Writer_Lock (locked_list);
+	for (;;)
+	{
+	    FILE *fp;
+
+	    if (set_lock (&global_writelock, 1) != L_OK)
+		error (1, 0, "failed to obtain write lock in repository `%s'",
+		       repository);
+
+	    /* check if readers exist */
+	    if (readers_exist (repository)
+		|| promotable_exists (repository))
+	    {
+		clear_lock (&global_writelock);
+		lock_wait (repository); /* sleep a while and try again */
+		waiting = 1;
+		continue;
+	    }
+
+	    if (waiting)
+		lock_obtained (repository);
+
+	    /* write the write-lock file */
+	    global_writelock.file1 = lock_name (global_writelock.repository,
+	                                        writelock);
+	    if ((fp = CVS_FOPEN (global_writelock.file1, "w+")) == NULL
+		|| fclose (fp) == EOF)
+	    {
+		int xerrno = errno;
+
+		if (CVS_UNLINK (global_writelock.file1) < 0
+		    && !existence_error (errno))
+		{
+		    error (0, errno, "failed to remove write lock %s",
+			   global_writelock.file1);
+		}
+
+		/* free the lock dir */
+		clear_lock (&global_writelock);
+
+		/* return the error */
+		error (1, xerrno,
+		       "cannot create write lock in repository `%s'",
+		       global_writelock.repository);
+	    }
+
+	    /* If we upgraded from a promotable lock, remove it. */
+	    if (locklist)
+	    {
+		Node *p = findnode (locklist, repository);
+		if (p)
+		{
+		    lock_simple_remove ((struct lock *)p->data);
+		    delnode (p);
+		}
+	    }
+
+	    break;
+	}
     }
 }
