@@ -934,7 +934,7 @@ cvs.1: @MAINTAINER_MODE_TRUE@ mkman cvs.man.header cvs.texinfo cvs.man.footer
 
 cvs.dvi cvs.html cvs.info cvs.pdf cvs.ps cvs.txt: getdate-cvs.texi
 getdate-cvs.texi: stamp-gdt
-stamp-gdt: getdate.texi $(top_srcdir)/configure
+stamp-gdt: getdate.texi
 	@echo "@c This file is generated via a rule in Makefile.am from the" \
 	  >getdate-cvs.tmp
 	@echo " * getdate.texi file." >>getdate-cvs.tmp
