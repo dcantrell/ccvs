@@ -310,10 +310,8 @@ EXTRA_DIST = \
 	mdate-sh \
 	writeproxy.rtf
 
-MOSTLYCLEANFILES = \
-	$(TXTS)
-
-DISTCLEANFILES = getdate-cvs.texi stamp-gdt getdate-cvs.tmp
+MOSTLYCLEANFILES = $(TXTS) getdate-cvs.tmp
+DISTCLEANFILES = getdate-cvs.texi stamp-gdt
 
 # These Automake generates MOSTLYCLEAN targets for PostScripts genersted from
 # TEXINFOS, but it shouldn't when those files are in EXTRA_DIST
