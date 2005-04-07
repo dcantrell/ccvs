@@ -1,5 +1,10 @@
 2005-04-07  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am: Make $(srcdir)/cvs.info, not cvs.info, dependent on
+	getdate-cvs.texi.
+
+2005-04-07  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (stampt-gdt): Remove dependency on configure.
 
 2005-04-07  Derek Price  <derek@ximbiot.com>
