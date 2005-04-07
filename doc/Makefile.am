@@ -91,7 +91,7 @@ cvs.1: @MAINTAINER_MODE_TRUE@ mkman cvs.man.header cvs.texinfo cvs.man.footer
 	        $(srcdir)/cvs.man.footer >$(srcdir)/$@
 MAINTAINERCLEANFILES += $(srcdir)/cvs.1
 
-cvs.dvi cvs.html cvs.info cvs.pdf cvs.ps cvs.txt: getdate-cvs.texi
+cvs.dvi cvs.html $(srcdir)/cvs.info cvs.pdf cvs.ps cvs.txt: getdate-cvs.texi
 getdate-cvs.texi: stamp-gdt
 stamp-gdt: getdate.texi
 	@echo "@c This file is generated via a rule in Makefile.am from the" \
