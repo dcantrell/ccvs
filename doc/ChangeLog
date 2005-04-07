@@ -1,3 +1,8 @@
+2005-04-07  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (DISTCLEANFILES): Move getdate-cvs.tmp to...
+	(MOSTLYCLEANFILES): ...here.
+
 2005-03-29  Mark D. Baushke  <mdb@cvshome.org>
 
 	* mdate-sh, texinfo.tex: Update from GNULIB.

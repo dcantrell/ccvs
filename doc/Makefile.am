@@ -110,7 +110,8 @@ stamp-gdt: getdate.texi $(top_srcdir)/configure
 	      cp getdate-cvs.tmp getdate-cvs.texi)
 	-@rm -f getdate-cvs.tmp
 	@cp getdate-cvs.texi $@
-DISTCLEANFILES += getdate-cvs.texi stamp-gdt getdate-cvs.tmp
+MOSTLYCLEANFILES += getdate-cvs.tmp
+DISTCLEANFILES += getdate-cvs.texi stamp-gdt
 
 # texinfo based targets automake neglects to include
 SUFFIXES = .txt
