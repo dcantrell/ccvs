@@ -1,5 +1,9 @@
 2005-04-07  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (stampt-gdt): Remove dependency on configure.
+
+2005-04-07  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (DISTCLEANFILES): Move getdate-cvs.tmp to...
 	(MOSTLYCLEANFILES): ...here.
 
