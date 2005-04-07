@@ -74,21 +74,23 @@ else
 fi
 
 # Extract the names of the files we imported.
-$GNULIB_TOOL --extract-filelist $MODULES >maint-aux/gnulib.new
+$GNULIB_TOOL --extract-filelist $MODULES |sort |uniq |sed '/^$/d' \
+	>maint-aux/gnulib-filelist.new
 
 # Warn the user if the filelist has changed.
-if cmp maint-aux/gnulib.txt maint-aux/gnulib.new >/dev/null; then
+if cmp maint-aux/gnulib-filelist.txt maint-aux/gnulib-filelist.new >/dev/null
+then
   # Avoid munging timestamps when nothing's changed.
-  rm maint-aux/gnulib.new
+  rm maint-aux/gnulib-filelist.new
 else
   cat >&2 <<\EOF
 ********************************************************************
 The file list has changed.  You may need to add or remove files from
-CVS.  Use `cvs diff maint-aux/gnulib.txt' to view changes.
+CVS.  Use `cvs diff maint-aux/gnulib-filelist.txt' to view changes.
 ********************************************************************
 EOF
   # Save the file list for next time.
-  mv maint-aux/gnulib.new maint-aux/gnulib.txt
+  mv maint-aux/gnulib-filelist.new maint-aux/gnulib-filelist.txt
 fi
 
 

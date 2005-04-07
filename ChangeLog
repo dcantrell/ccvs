@@ -1,5 +1,11 @@
 2005-04-06  Derek Price  <derek@ximbiot.com>
 
+	* gnulib.txt: Move to...
+	* gnulib-filelist.txt: ...this new file.
+	* gnulib-update: Clean up slightly.  Use new file.
+
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
 	* maint-aux/.cvsignore: New file.
 
 2005-04-06  Derek Price  <derek@ximbiot.com>
