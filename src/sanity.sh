@@ -16430,7 +16430,7 @@ U first-dir/abc"
 	  # strings should vary based on locale does not strike me as
 	  # self-evident.
 	  dotest devcom-12 "$testcvs editors" \
-"abb	${username}	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	${TESTDIR}/2/first-dir"
+"abb	${username}	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	[-a-zA-Z_.0-9]*	${TESTDIR}/2/first-dir"
 
 	  echo aaaa >>abb
 	  dotest devcom-13 "$testcvs ci -m modify abb" \
@@ -16734,7 +16734,7 @@ G@#..!@#=&"
 	    dotest_fail devcom3-9ar "$testcvs edit w1 2>/dev/null"
 	    dotest devcom3-9br "test -w w1"
 	    dotest devcom3-9cr "cat CVS/Notify" \
-"Ew1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	${TESTDIR}/1/first-dir	EUC"
+"Ew1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	[-a-zA-Z_.0-9]*	${TESTDIR}/1/first-dir	EUC"
 	    CVS_SERVER=${CVS_SERVER_save}; export CVS_SERVER
 	    if $proxy; then
 	      dotest_fail devcom3-9dp "$testcvs -q update" \
@@ -16840,7 +16840,7 @@ U first-dir/subdir/sfile"
             # NOTE: I'm leaving in '' as acceptable
             #  to maintain partial compatibility with CVS versions
             #  prior to the edit check patch.
-          editorsLineRE="file1	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR/2/first-dir"
+          editorsLineRE="file1	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	$hostname	$TESTDIR/2/first-dir"
 	  dotest watch4-11 "$testcvs edit file1" "$editorsLineRE"
 
 	  echo 'edited in 1' >file1
@@ -16970,16 +16970,16 @@ $SPROG [a-z]*: use .$SPROG commit. to add this file permanently"
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 initial revision: 1\.1"
 
-          editorsLineRE="file1	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR/edit-check/first-dir"
+          editorsLineRE="file1	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	$hostname	$TESTDIR/edit-check/first-dir"
 
-          R_editorsLineRE="first-dir/file1	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR/edit-check"
-          F3_editorsLineRE="second-dir/file3	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR/edit-check/first-dir"
+          R_editorsLineRE="first-dir/file1	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	$hostname	$TESTDIR/edit-check"
+          F3_editorsLineRE="second-dir/file3	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	$hostname	$TESTDIR/edit-check/first-dir"
 
-          A_editorsLineRE="file1	[-a-zA-Z0-9_]*	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR[0-9]*/edit-check/first-dir"
+          A_editorsLineRE="file1	[-a-zA-Z0-9_]*	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	$hostname	$TESTDIR[0-9]*/edit-check/first-dir"
 
-          AF_editorsLineRE="file[12]	[-a-zA-Z0-9_]*	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR/edit-check/first-dir"
+          AF_editorsLineRE="file[12]	[-a-zA-Z0-9_]*	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	$hostname	$TESTDIR/edit-check/first-dir"
 
-          NF_editorsLineRE="	[-a-zA-Z0-9_]*	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR/edit-check/first-dir"
+          NF_editorsLineRE="	[-a-zA-Z0-9_]*	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	$hostname	$TESTDIR/edit-check/first-dir"
 
           dotest edit-check-3 "$testcvs edit file1"
           dotest edit-check-4 "$testcvs edit file1" "$editorsLineRE"
@@ -17090,13 +17090,13 @@ new revision: 1\.4; previous revision: 1\.3"
 
           otherDir="`pwd | sed 's%/edit-check/%2/edit-check/%'`"
           echo \
-"Ffile1${tabChar}_watched=;_editors=$otherUser>Sat Oct  6 04:25:00 2001 GMT+`hostname`+$otherDir;_watchers=$otherUser>tedit+tunedit+tcommit
+"Ffile1${tabChar}_watched=;_editors=$otherUser>Sat Oct  6 04:25:00 2001 -0000+`hostname`+$otherDir;_watchers=$otherUser>tedit+tunedit+tcommit
 D${tabChar}_watched=" > $CVSROOT_DIRNAME/first-dir/CVS/fileattr 
 
           editFileattrName="$CVSROOT_DIRNAME/first-dir/CVS/edit.fileattr.$$"
           cp $CVSROOT_DIRNAME/first-dir/CVS/fileattr $editFileattrName
 
-          O_editorsLineRE="file1	$otherUser	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR[0-9]/edit-check/first-dir"
+          O_editorsLineRE="file1	$otherUser	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	$hostname	$TESTDIR[0-9]/edit-check/first-dir"
 
           dotest edit-check-19a "$testcvs edit file1" "$O_editorsLineRE"
           dotest edit-check-19b "$testcvs editors" \
@@ -17181,7 +17181,7 @@ new revision: 1\.6; previous revision: 1\.5"
 "$SPROG \[edit aborted\]: cannot exec $TESTDIR/cvs-none: $DOTSTAR"
             dotest edit-check-31br "test -w file1"
             dotest edit-check-31cr "cat CVS/Notify" \
-"Efile1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	$TESTDIR/edit-check/first-dir	EUC"
+"Efile1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	[-a-zA-Z_.0-9]*	$TESTDIR/edit-check/first-dir	EUC"
             CVS_SERVER=$CVS_SERVER_SAVED; export CVS_SERVER
 
             dotest_fail edit-check-31dr "$testcvs edit -c file1" \
@@ -17302,7 +17302,7 @@ U m"
 
 	  cd 1/x
 
-          editorsLineRE="m	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR/2/x"
+          editorsLineRE="m	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	$hostname	$TESTDIR/2/x"
 	  dotest unedit-without-baserev-11 "$testcvs edit m" "$editorsLineRE"
 
 	  echo 'edited in 1' >m
@@ -30326,18 +30326,18 @@ Root ${TESTDIR}/crerepos
 Directory .
 ${TESTDIR}/crerepos/dir1
 Notify file1
-E	Fri May  7 13:21:09 1999 GMT	myhost	some-work-dir	EUC
+E	Fri May  7 13:21:09 1999 -0000	myhost	some-work-dir	EUC
 noop
 EOF
 	    # Sending the second "noop" before waiting for the output
 	    # from the first is bogus but hopefully we can get away
 	    # with it.
 	    dotest server-7 "${servercvs} server" \
-"M file1	$username	Fri May  7 13:21:09 1999 GMT	myhost	some-work-dir
+"M file1	$username	Fri May  7 13:21:09 1999 -0000	myhost	some-work-dir
 Notified \./
 ${TESTDIR}/crerepos/dir1/file1
 ok
-M file1	$username	Fri May  7 13:21:09 1999 GMT	myhost	some-work-dir
+M file1	$username	Fri May  7 13:21:09 1999 -0000	myhost	some-work-dir
 Notified \./
 ${TESTDIR}/crerepos/dir1/file1
 ok" <<EOF
@@ -30345,7 +30345,7 @@ Root ${TESTDIR}/crerepos
 Directory .
 ${TESTDIR}/crerepos/dir1
 Notify file1
-E	Fri May  7 13:21:09 1999 GMT	myhost	some-work-dir	EUC
+E	Fri May  7 13:21:09 1999 -0000	myhost	some-work-dir	EUC
 noop
 Notify file1
 E	The 57th day of Discord in the YOLD 3165	myhost	some-work-dir	EUC
@@ -30419,7 +30419,7 @@ Root ${TESTDIR}/crerepos
 Directory .
 ${TESTDIR}/crerepos/dir1
 Notify file1
-U	7 May 1999 15:00 GMT	myhost	some-work-dir	EUC
+U	7 May 1999 15:00 -0000	myhost	some-work-dir	EUC
 noop
 EOF
 

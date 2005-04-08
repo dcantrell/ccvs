@@ -1,3 +1,11 @@
+2005-04-08  Derek Price  <derek@ximbiot.com>
+
+	* edit.c (edit_fileproc, unedit_fileproc): s/GMT/-0000/.
+	* rcs.c (RCS_getrevtime): Ditto, & replace a sprintf into a static
+	buffer with an Xasprintf which creates a dynamic one.
+	* sanity.sh: Update tests to compensate.
+	(Original bug report from Ian Abbott <abbotti@mev.co.uk>.)
+
 2005-03-26  Mark D. Baushke  <mdb@cvshome.org>
 
 	* checkout.c (checkout_proc): Use Xasprintf/xstrdup instead of

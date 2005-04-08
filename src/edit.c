@@ -394,7 +394,7 @@ edit_fileproc (void *callerdat, struct file_info *finfo)
     ascnow[24] = '\0';
     /* Fix non-standard format.  */
     if (ascnow[8] == '0') ascnow[8] = ' ';
-    fprintf (fp, "E%s\t%s GMT\t%s\t%s\t", finfo->file,
+    fprintf (fp, "E%s\t%s -0000\t%s\t%s\t", finfo->file,
 	     ascnow, hostname, CurDir);
     if (setting_tedit)
 	fprintf (fp, "E");
@@ -637,7 +637,7 @@ unedit_fileproc (void *callerdat, struct file_info *finfo)
     ascnow[24] = '\0';
     /* Fix non-standard format.  */
     if (ascnow[8] == '0') ascnow[8] = ' ';
-    fprintf (fp, "U%s\t%s GMT\t%s\t%s\t\n", finfo->file,
+    fprintf (fp, "U%s\t%s -0000\t%s\t%s\t\n", finfo->file,
 	     ascnow, hostname, CurDir);
 
     if (fclose (fp) < 0)
