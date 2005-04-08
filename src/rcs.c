@@ -3116,7 +3116,7 @@ RCS_datecmp (const char *date1, const char *date2)
 time_t
 RCS_getrevtime (RCSNode *rcs, const char *rev, char *date, int fudge)
 {
-    char tdate[MAXDATELEN];
+    char *tdate;
     struct tm xtm, *ftm;
     struct timespec revdate;
     Node *p;
@@ -3152,9 +3152,9 @@ RCS_getrevtime (RCSNode *rcs, const char *rev, char *date, int fudge)
 	xtm.tm_year -= 1900;
 
     /* put the date in a form getdate can grok */
-    (void) sprintf (tdate, "%d-%d-%d GMT %d:%d:%d",
-		    xtm.tm_year + 1900, xtm.tm_mon, xtm.tm_mday,
-		    xtm.tm_hour, xtm.tm_min, xtm.tm_sec);
+    tdate = Xasprintf ("%d-%d-%d %d:%d:%d -0000",
+		       xtm.tm_year + 1900, xtm.tm_mon, xtm.tm_mday,
+		       xtm.tm_hour, xtm.tm_min, xtm.tm_sec);
 
     /* Turn it into seconds since the epoch.
      *
@@ -3162,7 +3162,11 @@ RCS_getrevtime (RCSNode *rcs, const char *rev, char *date, int fudge)
      * truncate the nanoseconds.
      */
     if (!get_date (&revdate, tdate, NULL))
+    {
+	free (tdate);
 	return (time_t)-1;
+    }
+    free (tdate);
 
     revdate.tv_sec -= fudge;	/* remove "fudge" seconds */
     if (date)
