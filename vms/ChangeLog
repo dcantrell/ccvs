@@ -1,3 +1,7 @@
+2005-04-08  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Add stamp-ch.
+
 2005-04-07  Derek Price  <derek@ximbiot.com>
 
 	* stamp-ch: Remove this file.
