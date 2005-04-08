@@ -60,6 +60,12 @@ EXTRA_DIST = \
 
 
 
+# Empty vars to appease Automake so that it will allow values to be appended
+# later.
+DISTCLEANFILES =
+
+
+
 ###
 ### Maintainer targets
 ###
@@ -81,7 +87,7 @@ stamp-ch: config.h.in $(top_srcdir)/configure
 	      cp config.tmp $(srcdir)/config.h)
 	-@rm -f config.tmp
 	@cp $(srcdir)/config.h $@
-
+DISTCLEANFILES += stamp-ch
 
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean
