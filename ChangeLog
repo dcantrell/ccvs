@@ -1,3 +1,7 @@
+2005-04-12  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Avoid self-aggrandizement.
+
 2005-04-08  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note GMT/get_date fix.
