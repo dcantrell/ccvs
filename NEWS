@@ -1,6 +1,32 @@
 Changes since 1.11.19:
 **********************
 
+SERVER SECURITY FIXES
+
+* Thanks to a report from Craig Monson <craig@malachiarts.com>, minor
+  potential vulnerabilities in the contributed Perl scripts have been fixed.
+  The confirmed vulnerability could allow the execution of arbitrary code on
+  the CVS server, but only if a user already had commit access and if one of
+  the contrib scripts was installed improperly, a condition which should have
+  been quickly visible to any administrator.  The complete description of the
+  problem is here: <https://ccvs.cvshome.org/issues/show_bug.cgi?id=224>.  If
+  you were making use of any of the contributed trigger scripts on a CVS
+  server, you should probably still replace them with the new versions, to be
+  on the safe side.
+
+  Unfortunately, our fix is incomplete.  Taint-checking has been enabled in all
+  the contributed Perl scripts intended to be run as trigger scripts, but no
+  attempt has been made to ensure that they still run in taint mode.  You will
+  most likely have to tweak the scripts in some way to make them run.  Please
+  send any patches you find necessary back to <bug-cvs@gnu.org> so that we may
+  again ship fully enabled scripts in the future.
+
+  You should also make sure that any home-grown Perl scripts that you might
+  have installed as CVS triggers also have taint-checking enabled.  This can be
+  done by adding `-T' on the scripts' #! lines.  Please try running
+  `perldoc perlsec' if you would like more information on general Perl security
+  and taint-checking.
+
 BUG FIXES
 
 * Thanks to a report and a patch from Georg Scwharz <georg.scwarz@freenet.de>
