@@ -1,3 +1,7 @@
+2005-04-14  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note contrib Perl taint vulnerability fix.
+
 2005-03-23  Derek Price  <derek@ximbiot.com>
 
 	* ylwrap: New file.
