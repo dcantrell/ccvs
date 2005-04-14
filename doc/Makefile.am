@@ -88,7 +88,9 @@ cvs-paper.pdf: cvs-paper.ps
 # Targets to build a man page from cvs.texinfo.
 cvs.1: @MAINTAINER_MODE_TRUE@ mkman cvs.man.header cvs.texinfo cvs.man.footer
 	$(PERL) ./mkman $(srcdir)/cvs.man.header $(srcdir)/cvs.texinfo \
-	        $(srcdir)/cvs.man.footer >$(srcdir)/$@
+		$(srcdir)/cvs.man.footer >cvs.tmp
+	cp cvs.tmp $(srcdir)/$@
+	-@rm -f cvs.tmp
 MAINTAINERCLEANFILES += $(srcdir)/cvs.1
 
 cvs.dvi cvs.html $(srcdir)/cvs.info cvs.pdf cvs.ps cvs.txt: getdate-cvs.texi

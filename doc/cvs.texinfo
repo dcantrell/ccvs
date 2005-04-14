@@ -3086,7 +3086,7 @@ the primary server to write operations and pushing changes to the secondaries.
 
 Primary servers will not automatically push changes to secondaries.  This must
 be configured via @file{loginfo}, @file{postadmin}, @file{posttag}, &
-@file{postwatch} scripts (@pxref{script hooks}) like the following:
+@file{postwatch} scripts (@pxref{Trigger Scripts}) like the following:
 
 @example
 ALL	rsync -gopr -essh ./ secondary:/cvsroot/%p &
@@ -12500,7 +12500,7 @@ file, which defines the modules inside the repository.
 @menu
 * modules::                     Defining modules
 * Wrappers::                    Specify binary-ness based on file name
-* script hooks::		Launch scripts in response to server events
+* Trigger Scripts::		Launch scripts in response to server events
 * rcsinfo::                     Templates for the log messages
 * cvsignore::                   Ignoring files via cvsignore
 * checkoutlist::                Adding your own administrative files
@@ -12995,8 +12995,11 @@ cvs import -I ! -W "*.exe -k 'b'" first-dir vendortag reltag
 @c (probably a CVS bug, although I haven't thought it out).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node script hooks
-@appendixsec The scripting hooks
+@node Trigger Scripts
+@appendixsec The Trigger Scripts
+@cindex info files
+@cindex trigger scripts
+@cindex script hooks
 
 @c FIXME
 @c Somewhere there needs to be a more "how-to" guide to writing these.
@@ -13005,12 +13008,20 @@ cvs import -I ! -W "*.exe -k 'b'" first-dir vendortag reltag
 @c should probably remain outside the scope of this document, but at least
 @c _that_ much could be referenced, perhaps with links to other sources.
 
-Script hooks are used to launch external programs at various points during
+Several of the administrative files support triggers, or the launching external
+scripts or programs at specific times before or after particular events, during
 the execution of @sc{cvs} commands.  These hooks can be used to prevent certain
 actions, log them, and/or maintain anything else you deem practical.
 
+All the trigger scripts are launched in a copy of the user sandbox being
+committed, on the server, in client-server mode.  In local mode, the scripts
+are actually launched directly from the user sandbox directory being committed.
+For most intents and purposes, the same scripts can be run in both locations
+without alteration.
+
 @menu
 * syntax::                      The common syntax
+* Trigger Script Security::	Trigger script security
 
 * commit files::                The commit support files (commitinfo,
                                 verifymsg, loginfo)
@@ -13032,9 +13043,10 @@ actions, log them, and/or maintain anything else you deem practical.
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node syntax
 @appendixsubsec The common syntax
-@cindex Info files (syntax)
-@cindex Syntax of info files
-@cindex Common syntax of info files
+@cindex info files, common syntax
+@cindex script hooks, common syntax
+@cindex trigger script hooks, common syntax
+@cindex syntax of trigger script hooks
 
 @c FIXME: having this so totally separate from the
 @c Variables node is rather bogus.
@@ -13057,7 +13069,7 @@ also support the literal string @samp{ALL}.  Other than the @samp{ALL} and
 @samp{DEFAULT} keywords, this is a basic regular expression in the syntax used
 by GNU emacs.  See the descriptions of the individual script hooks for
 information on whether the @samp{ALL} keyword is supported
-(@pxref{script hooks}).
+(@pxref{Trigger Scripts}).
 @c FIXME: What we probably should be saying is "POSIX Basic
 @c Regular Expression with the following extensions (`\('
 @c `\|' '+' etc)"
@@ -13090,11 +13102,11 @@ in lieu of a regular expression is used and all lines containing @samp{ALL} is
 used for the hooks which support the @samp{ALL} keyword.  The rest of the line
 is used as a file name or command-line template as appropriate.  See the
 descriptions of the individual script hooks for information on whether the
-@samp{ALL} keyword is supported (@pxref{script hooks}).
+@samp{ALL} keyword is supported (@pxref{Trigger Scripts}).
 
 @cindex format strings
 @cindex format strings, common syntax
-@cindex Info files, common syntax, format strings
+@cindex info files, common syntax, format strings
 @cindex Common syntax of info files, format strings
 @noindent
 @emph{Note:  The following information on format strings is valid
@@ -13165,7 +13177,7 @@ server.  Should usually be set on a primary server with a write proxy setup.
 
 Other format strings are file specific.  See the docs on the
 particular script hooks for more information
-(@pxref{script hooks}).
+(@pxref{Trigger Scripts}).
 
 As an example, the following line in a @file{loginfo} file would
 match only the directory @file{module} and any subdirectories of
@@ -13192,6 +13204,33 @@ Modified Files:
 Log Message:
 A log message.
 @end example
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node Trigger Script Security
+@appendixsubsec Security and the Trigger Scripts
+@cindex info files, security
+@cindex script hooks, security
+@cindex trigger scripts, security
+
+Security is a huge subject, and implementing a secure system is a non-trivial
+task.  This section will barely touch on all the issues involved, but it is
+well to note that, as with any script you will be allowing an untrusted
+user to run on your server, there are measures you can take to help prevent
+your trigger scripts from being abused.
+
+For instance, since the CVS trigger scripts all run in a copy of the user's
+sandbox on the server, a naively coded Perl trigger script which attempts to
+use a Perl module that is not installed on the system can be hijacked by any
+user with commit access who is checking in a file with the correct name.  Other
+scripting languages may be vulnerable to similar hacks.
+
+One way to make a script more secure, at least with Perl, is to use scripts
+which invoke the @code{-T}, or "taint-check" switch on their @code{#!} line.
+In the most basic terms, this causes Perl to avoid running code that may have
+come from an external source.  Please run the @code{perldoc perlsec} command
+for more on Perl security.  Again, other languages may implement other security
+verification hooks which look more or less like Perl's "taint-check" mechanism.
+
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node commit files
 @appendixsubsec The commit support files
@@ -13240,7 +13279,7 @@ imagination is the limit!  @xref{loginfo}.
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node Updating Commit Files
 @appendixsubsubsec  Updating legacy repositories to stop using deprecated command line template formats
-@cindex Info files (syntax), updating legacy repositories
+@cindex info files, common syntax, updating legacy repositories
 @cindex Syntax of info files, updating legacy repositories
 @cindex Common syntax of info files, updating legacy repositories
 New repositories are created set to use the new format strings by default, so
@@ -13338,8 +13377,12 @@ put up with the deprecation warnings for awhile if you like.
 @cindex @file{commitinfo}
 @cindex Commits, precommit verification of
 @cindex commitinfo (admin file)
-@cindex Info files, commitinfo
-@cindex Info files, precommit verification of commits
+@cindex info files, commitinfo
+@cindex script hooks, commitinfo
+@cindex trigger scripts, commitinfo
+@cindex info files, precommit verification of commits
+@cindex script hooks, precommit verification of commits
+@cindex trigger scripts, precommit verification of commits
 
 The @file{commitinfo} file defines programs to execute
 whenever @samp{cvs commit} is about to execute.  These
@@ -13350,8 +13393,8 @@ instance, to verify that the changed files conform to
 to your site's standards for coding practice.
 
 The @file{commitinfo} file has the standard form for script hooks
-(@pxref{script hooks}), where each line is a regular expression followed by a
-command to execute.  It supports only the DEFAULT keywords.
+(@pxref{Trigger Scripts}), where each line is a regular expression followed by
+a command to execute.  It supports only the DEFAULT keywords.
 
 @cindex format strings, commitinfo admin file
 In addition to the common format strings (@pxref{syntax}),
@@ -13434,8 +13477,8 @@ with the @file{rcsinfo} file, which can be used to
 specify a log message template (@pxref{rcsinfo}).
 
 The @file{verifymsg} file has the standard form for script hooks
-(@pxref{script hooks}), where each line is a regular expression followed by a
-command to execute.  It supports only the DEFAULT keywords.
+(@pxref{Trigger Scripts}), where each line is a regular expression followed by
+a command to execute.  It supports only the DEFAULT keywords.
 
 @cindex format strings, verifymsg admin file
 In addition to the common format strings (@pxref{syntax}),
@@ -13595,8 +13638,8 @@ information and @ref{postadmin} for how to log changes due to the @code{admin}
 command.
 
 The @file{loginfo} file has the standard form for script hooks
-(@pxref{script hooks}), where each line is a regular expression followed by a
-command to execute.  It supports the ALL and DEFAULT keywords.
+(@pxref{Trigger Scripts}), where each line is a regular expression followed by
+a command to execute.  It supports the ALL and DEFAULT keywords.
 
 Any specified scripts are called:
 
@@ -13761,7 +13804,7 @@ out tree in @file{/u/www/local-docs}.
 
 The @file{postadmin} file defines programs to execute after an @code{admin}
 command modifies files.  The @file{postadmin} file has the standard form
-for script hooks (@pxref{script hooks}), where each line is a regular
+for script hooks (@pxref{Trigger Scripts}), where each line is a regular
 expression followed by a command to execute.  It supports the ALL and DEFAULT
 keywords.
 
@@ -13781,7 +13824,7 @@ ones (@pxref{syntax}),
 The @file{taginfo} file defines programs to execute
 when someone executes a @code{tag} or @code{rtag}
 command.  The @file{taginfo} file has the standard form
-for script hooks (@pxref{script hooks}), where each line
+for script hooks (@pxref{Trigger Scripts}), where each line
 is a regular expression followed by a command to execute.
 It supports the ALL and DEFAULT keywords.
 
@@ -13854,7 +13897,7 @@ echo "$@@" >>/home/kingdon/cvsroot/CVSROOT/taglog
 
 The @file{posttag} file defines programs to execute after a @code{tag} or
 @code{rtag} command modifies files.  The @file{posttag} file has the standard
-form for script hooks (@pxref{script hooks}), where each line is a regular
+form for script hooks (@pxref{Trigger Scripts}), where each line is a regular
 expression followed by a command to execute.  It supports the ALL and DEFAULT
 keywords.
 
@@ -13875,8 +13918,8 @@ The @file{postwatch} file defines programs to execute after any command (for
 instance, @code{watch}, @code{edit}, @code{unedit}, or @code{commit}) modifies
 any @file{CVS/fileattr} file in the repository (@pxref{Watches}).  The
 @file{postwatch} file has the standard form for script hooks
-(@pxref{script hooks}), where each line is a regular expression followed by a
-command to execute.  It supports the ALL and DEFAULT keywords.
+(@pxref{Trigger Scripts}), where each line is a regular expression followed by
+a command to execute.  It supports the ALL and DEFAULT keywords.
 
 @cindex format strings, postwatch admin file
 The @file{postwatch} file supports no format strings other than the common
@@ -13907,7 +13950,7 @@ the repository argument (if requested) set from the topmost directory sent by
 the client.
 
 The @file{preproxy} file has the standard form
-for script hooks (@pxref{script hooks}), where each line is a regular
+for script hooks (@pxref{Trigger Scripts}), where each line is a regular
 expression followed by a command to execute.  It supports the ALL and DEFAULT
 keywords.
 
@@ -13945,7 +13988,7 @@ repository on the secondary server.
 @file{postproxy} scripts are called once per directory.
 
 The @file{postproxy} file has the standard form
-for script hooks (@pxref{script hooks}), where each line is a regular
+for script hooks (@pxref{Trigger Scripts}), where each line is a regular
 expression followed by a command to execute.  It supports the ALL and DEFAULT
 keywords.
 
@@ -14019,8 +14062,6 @@ In versions of @sc{cvs} prior to version 1.12, the
 @sc{cvs} server is at version 1.12 or higher an older
 client may be used and the @file{CVS/Template} will
 be updated from the server.
-
-
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node cvsignore

@@ -1,3 +1,13 @@
+2005-04-14  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Administrative files): Rename "script hooks" node as
+	"Trigger Scripts".
+	(script hooks): Rename as...
+	(Trigger Scripts): ...this and add some clarifying text.
+	(Trigger Script Security): New node.
+	(-many *info nodes-): Rewrite to reference to Trigger Script node.
+	Add and/or rewrite index entries and cross-references.
+
 2005-04-07  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am: Make $(srcdir)/cvs.info, not cvs.info, dependent on
@@ -11,6 +21,11 @@
 
 	* Makefile.am (DISTCLEANFILES): Move getdate-cvs.tmp to...
 	(MOSTLYCLEANFILES): ...here.
+
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (cvs.1): Create intermediate file so that the original
+	isn't emptied on error.
 
 2005-03-29  Mark D. Baushke  <mdb@cvshome.org>
 
