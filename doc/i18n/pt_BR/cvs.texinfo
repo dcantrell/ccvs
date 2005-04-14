@@ -7662,10 +7662,9 @@ RCS, mesmo quando seu repositório contém arquivos binários.
 @c <en>recursively when you specify a directory as an
 @c <en>argument.  For instance, consider this directory
 @c <en>structure:
-Almost all of the subcommands of @sc{cvs} work
-recursively when you specify a directory as an
-argument.  For instance, consider this directory
-structure:
+Quase todos os subcomandos do @sc{cvs} trabalham de
+forma recursiva quando você passa um diretório como
+argumento.  Por exemplo, considere esta estrutura:
 
 @example
       @code{$HOME}
@@ -7699,13 +7698,12 @@ structure:
 @noindent
 @c <en>If @file{tc} is the current working directory, the
 @c <en>following is true:
-If @file{tc} is the current working directory, the
-following is true:
+Se @file{tc} é o diretório atual, então é verdade que:
 
 @itemize @bullet
 @item
 @c <en>@samp{cvs update testing} is equivalent to
-@samp{cvs update testing} is equivalent to
+@samp{cvs update testing} é equivalente a
 
 @example
 cvs update testing/testpgm.t testing/test2.t
@@ -7714,14 +7712,14 @@ cvs update testing/testpgm.t testing/test2.t
 @item
 @c <en>@samp{cvs update testing man} updates all files in the
 @c <en>subdirectories
-@samp{cvs update testing man} updates all files in the
-subdirectories
+@samp{cvs update testing man} atualiza todos os
+arquivos nos subdiretórios
 
 @item
 @c <en>@samp{cvs update .} or just @samp{cvs update} updates
 @c <en>all files in the @code{tc} directory
-@samp{cvs update .} or just @samp{cvs update} updates
-all files in the @code{tc} directory
+@samp{cvs update .} ou simplesmente @samp{cvs update}
+atualiza todos os arquivos no diretório @code{tc}
 @end itemize
 
 @c <en>If no arguments are given to @code{update} it will
@@ -7730,21 +7728,22 @@ all files in the @code{tc} directory
 @c <en>default argument to @code{update}.  This is also true
 @c <en>for most of the @sc{cvs} subcommands, not only the
 @c <en>@code{update} command.
-If no arguments are given to @code{update} it will
-update all files in the current working directory and
-all its subdirectories.  In other words, @file{.} is a
-default argument to @code{update}.  This is also true
-for most of the @sc{cvs} subcommands, not only the
-@code{update} command.
+Se nenhum argumento é dado ao @code{update} ele
+atualiza todos os arquivos no diretório atual e nos
+seus subdiretórios recursivamente.  Em outras palavras,
+O @file{.} é um argumento padrão para o @code{update}.
+O mesmo vale para a maioria dos subcomandos do
+@sc{cvs}, e não apenas para o @code{update}.
 
 @c <en>The recursive behavior of the @sc{cvs} subcommands can be
 @c <en>turned off with the @samp{-l} option.
 @c <en>Conversely, the @samp{-R} option can be used to force recursion if
 @c <en>@samp{-l} is specified in @file{~/.cvsrc} (@pxref{~/.cvsrc}).
-The recursive behavior of the @sc{cvs} subcommands can be
-turned off with the @samp{-l} option.
-Conversely, the @samp{-R} option can be used to force recursion if
-@samp{-l} is specified in @file{~/.cvsrc} (@pxref{~/.cvsrc}).
+O comportamento recursivo dos subcomandos do @sc{cvs}
+pode ser desligado com a opção @samp{-l}. De forma
+oposta, a opção @samp{-R} pode ser usada para forçar a
+recursão se o @samp{-l} estiver especificado no
+@file{~/.cvsrc} (@pxref{~/.cvsrc}).
 
 @example
 $ cvs update -l         # @r{Don't update files in subdirectories}
