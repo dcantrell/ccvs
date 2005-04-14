@@ -1,3 +1,11 @@
+2005-04-14  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Administrative files): Add "Trigger Scripts" node to
+	the menu.
+	(Trigger Scripts, Trigger Script Security): New nodes.
+	(syntax): Move under Trigger scripts node.
+	(commit files, taginfo): Rewrite to reference Trigger Script node.  
+
 2005-04-06  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (MAINTAINERCLEANFILES): Add cvs.1.
