@@ -38,6 +38,7 @@ libcvs_a_LIBADD = \
 ## Zero some variables so Automake will allow us to use += on them.
 BUILT_SOURCES =
 MOSTLYCLEANFILES =
+DISTCLEANFILES =
 MAINTAINERCLEANFILES =
 TESTS =
 check_PROGRAMS =
@@ -120,6 +121,7 @@ MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
 ## CVS test scripts for getdate.
 TESTS += test-getdate.sh
 MOSTLYCLEANFILES += getdate-expected getdate-got getdate.diff
+DISTCLEANFILES += getdate.log
 # Program required by test-getdate.sh for testing getdate.y.
 check_PROGRAMS += getdate
 getdate_SOURCES = \

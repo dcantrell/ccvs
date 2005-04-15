@@ -319,6 +319,7 @@ BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) $(GETOPT_H) $(STDBOOL_H) \
 MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t \
 	getdate-expected getdate-got getdate.diff getopt.h getopt.h-t \
 	stdbool.h stdbool.h-t stdint.h stdint.h-t
+DISTCLEANFILES = getdate.log
 MAINTAINERCLEANFILES = 
 TESTS = test-getdate.sh
 
@@ -707,6 +708,7 @@ clean-generic:
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"

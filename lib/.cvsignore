@@ -13,3 +13,4 @@ getopt.h
 stdbool.h
 stdint.h
 getdate
+getdate.log
