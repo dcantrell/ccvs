@@ -222,7 +222,8 @@ libcvs_a_SOURCES = argmatch.c getdate.y getline.c getopt.c getopt1.c \
 	regex.h savecwd.h system.h wait.h xselect.h xtime.h xsize.h
 libcvs_a_LIBADD = @LIBOBJS@
 EXTRA_DIST = .cvsignore ChangeLog.fsf build_lib.com libcvs.dep \
-	libcvs.dsp libcvs.mak xgssapi.h $(check_PROGRAMS)
+	libcvs.dsp libcvs.mak xgssapi.h test-getdate.sh \
+	$(check_PROGRAMS)
 
 # Test GNULIB getdate module.
 TESTS = test-getdate.sh
