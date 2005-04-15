@@ -88,7 +88,8 @@ EXTRA_DIST = \
 	ChangeLog.fsf \
 	build_lib.com \
 	libcvs.dep libcvs.dsp libcvs.mak \
-	xgssapi.h
+	xgssapi.h \
+	test-getdate.sh
 
 TESTS =
 MOSTLYCLEANFILES =
