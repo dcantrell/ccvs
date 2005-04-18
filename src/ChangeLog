@@ -1,3 +1,52 @@
+2005-04-08  Derek Price  <derek@ximbiot.com>
+
+	* edit.c (edit_fileproc, unedit_fileproc): s/GMT/-0000/.
+	* rcs.c (RCS_getrevtime): Ditto, & replace a sprintf into a static
+	buffer with an Xasprintf which creates a dynamic one.
+	* sanity.sh: Update tests to compensate.
+	(Original bug report from Ian Abbott <abbotti@mev.co.uk>.)
+
+2005-03-26  Mark D. Baushke  <mdb@cvshome.org>
+
+	* checkout.c (checkout_proc): Use Xasprintf/xstrdup instead of
+	xmalloc/strcpy+strcat.
+
+2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.in: Regenerated.
+
+2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* rcs.c (linevector_add): Use xnrealloc.
+	* server.c (serve_argument): Ditto.
+
+2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* rcs.c (linevector_copy): Use xtimes in argument.
+
+	* patch.c (patch): Remove dead code.
+
+	* lock.c (set_readlock_name): Use Xasprintf instead of
+	xmalloc/sprintf.
+	(lock_exists, set_promotable_lock, lock_wait): Ditto.
+	(lock_obtained, lock_dir_for_write): Ditto.
+	* log.c (rlog_proc): Ditto.
+
+	* ignore.c (ign_dir_add): Use xnrealloc.
+	* modules.c (save_d): Ditto.
+	* rcs.c (linevector_copy): Ditto.
+
+	* add.c (add): Use xstrdup instead of xmalloc/strcpy.
+	* client.c (client_process_import_file): Ditto.
+	* kerberos4-client.c (start_kerberos4_server): Ditto.
+	* logmsg.c (verifymsg_proc): Ditto.
+	* log.c (log_expand_revlist): Ditto.
+	* patch.c (patch_fileproc): Ditto.
+	* rcs.c (RCS_tag2rev, RCS_nodeisbranch, RCS_getbranch): Ditto.
+	(RCS_getdatebranch, expand_keywords, RCS_addbranch): Ditto.
+	(RCS_checkin): Ditto.
+	* remove.c (remove_fileproc): Ditto.
+
 2005-03-18  Derek Price  <derek@ximbiot.com>
 
 	* server.c: Reindent pragmas.
@@ -28,6 +77,16 @@
 2005-03-17  Derek Price  <derek@ximbiot.com>
 
 	* rcs.c (RCS_deltas): Use rcs->print_path.
+
+2005-03-17  Derek Price  <derek@ximbiot.com>
+
+	* login.c (password_entry_parseline): Avoid using uninitialized
+	variable.
+	* rcs.c (RCS_deltas): Avoid buffer overflow.
+	(RCS_checkout): Avoid using uninitialized loglen.
+	* patch.c (patch_fileproc): Free original pointer, not one that may
+	have been incremented.
+	(Thanks to report from Alen Zukich <alen.zukich@klocwork.com>.)
 
 2005-03-17  Derek Price  <derek@ximbiot.com>
 

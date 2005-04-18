@@ -124,7 +124,7 @@ GNULIB also assumes <sys/stat.h>.  I am unsure of the rationale.
 A substitute POSIX.2 <fnmatch.h> header and fnmatch() function is provided for
 systems that lack them.  Similarly for the non-standard <alloca.h> header and
 alloca() function.  Other substitute headers and functions are also provided
-when needed.  See the lib directory or the srclist.txt file for more
+when needed.  See the lib directory or the maint-aux/srclist.txt file for more
 information.
 
 Please do not use multi-line strings.  Despite their common acceptance by many

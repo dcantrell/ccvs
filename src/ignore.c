@@ -314,9 +314,8 @@ ign_dir_add (char *name)
     if (dir_ign_current <= dir_ign_max)
     {
 	dir_ign_max += IGN_GROW;
-	dir_ign_list =
-	    (char **) xrealloc (dir_ign_list,
-				(dir_ign_max + 1) * sizeof (char *));
+	dir_ign_list = xnrealloc (dir_ign_list,
+				  dir_ign_max + 1, sizeof (char *));
     }
 
     dir_ign_list[dir_ign_current++] = xstrdup (name);

@@ -1,3 +1,19 @@
+2005-04-08  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Add stamp-ch.
+
+2005-04-07  Derek Price  <derek@ximbiot.com>
+
+	* stamp-ch: Remove this file.
+
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (DISTCLEANFILES): Add stamp-ch for removal on distclean.
+
+2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.in: Regenerated.
+
 2005-03-16  Derek Price  <derek@ximbiot.com>
 
 	* filesubr.c (open_file): Remove this function.

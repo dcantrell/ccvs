@@ -119,7 +119,7 @@ password_entry_parseline (const char *cvsroot_canonical,
 
 	if (isspace(*(linebuf + 1)))
 	    /* special case since strtoul ignores leading white space */
-	    entry_version = 0;
+	    q = linebuf + 1;
 	else
 	    entry_version = strtoul (linebuf + 1, &q, 10);
 

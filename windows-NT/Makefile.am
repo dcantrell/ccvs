@@ -131,7 +131,7 @@ stamp-sh2: $(top_srcdir)/lib/stdint_.h
 	@echo " *" >>stdint.tmp
 	@echo " * Edit ../lib/stdint_.h instead." >>stdint.tmp
 	@echo " */" >>stdint.tmp
-	sed 's/@''HAVE_LONG_64BIT''@/0/g;s/@''HAVE_LONGLONG_64BIT@/0/g' \
+	sed 's/@''HAVE_LONG_64BIT''@/0/g;s/@''HAVE_LONG_LONG_64BIT@/0/g' \
 	  <$(top_srcdir)/lib/stdint_.h >>stdint.tmp
 	@cmp -s stdint.tmp $(srcdir)/stdint.h \
 	  || (echo "Updating stdint.h"; \

@@ -466,14 +466,13 @@ set_readlock_name (void)
 {
     if (readlock == NULL)
     {
-	readlock = xmalloc (strlen (hostname) + sizeof (CVSRFL) + 40);
-	(void) sprintf (readlock, 
+	readlock = Xasprintf (
 #ifdef HAVE_LONG_FILE_NAMES
-			"%s.%s.%ld", CVSRFL, hostname,
+			      "%s.%s.%ld", CVSRFL, hostname,
 #else
-			"%s.%ld", CVSRFL,
+			      "%s.%ld", CVSRFL,
 #endif
-			(long) getpid ());
+			      (long) getpid ());
     }
 }
 
@@ -596,8 +595,7 @@ lock_exists (const char *repository, const char *filepat, const char *ignore)
 		if (ignore && !fncmp (ignore, dp->d_name))
 		    continue;
 
-		line = xmalloc (strlen (lockdir) + 1 + strlen (dp->d_name) + 1);
-		(void)sprintf (line, "%s/%s", lockdir, dp->d_name);
+		line = Xasprintf ("%s/%s", lockdir, dp->d_name);
 		if (CVS_STAT (line, &sb) != -1)
 		{
 #ifdef CVS_FUDGELOCKS
@@ -711,14 +709,13 @@ set_promotable_lock (struct lock *lock)
 
     if (promotablelock == NULL)
     {
-	promotablelock = xmalloc (strlen (hostname) + sizeof (CVSPFL) + 40);
-	(void) sprintf (promotablelock,
+	promotablelock = Xasprintf (
 #ifdef HAVE_LONG_FILE_NAMES
-			"%s.%s.%ld", CVSPFL, hostname,
+				    "%s.%s.%ld", CVSPFL, hostname,
 #else
-			"%s.%ld", CVSPFL,
+				    "%s.%ld", CVSPFL,
 #endif
-			(long) getpid());
+				    (long) getpid());
     }
 
     /* make sure the lock dir is ours (not necessarily unique to us!) */
@@ -844,10 +841,9 @@ lock_wait (const char *repos)
 
     (void) time (&now);
     tm_p = gmtime (&now);
-    msg = xmalloc (100 + strlen (lockers_name) + strlen (repos));
-    sprintf (msg, "[%8.8s] waiting for %s's lock in %s",
-	     (tm_p ? asctime (tm_p) : ctime (&now)) + 11,
-	     lockers_name, repos);
+    msg = Xasprintf ("[%8.8s] waiting for %s's lock in %s",
+		     (tm_p ? asctime (tm_p) : ctime (&now)) + 11,
+		     lockers_name, repos);
     error (0, 0, "%s", msg);
     /* Call cvs_flusherr to ensure that the user sees this message as
        soon as possible.  */
@@ -870,9 +866,8 @@ lock_obtained (const char *repos)
 
     (void) time (&now);
     tm_p = gmtime (&now);
-    msg = xmalloc (100 + strlen (repos));
-    sprintf (msg, "[%8.8s] obtained lock in %s",
-	     (tm_p ? asctime (tm_p) : ctime (&now)) + 11, repos);
+    msg = Xasprintf ("[%8.8s] obtained lock in %s",
+		     (tm_p ? asctime (tm_p) : ctime (&now)) + 11, repos);
     error (0, 0, "%s", msg);
     /* Call cvs_flusherr to ensure that the user sees this message as
        soon as possible.  */
@@ -1182,14 +1177,13 @@ lock_dir_for_write (const char *repository)
     {
 	if (writelock == NULL)
 	{
-	    writelock = xmalloc (strlen (hostname) + sizeof (CVSWFL) + 40);
-	    (void) sprintf (writelock,
+	    writelock = Xasprintf (
 #ifdef HAVE_LONG_FILE_NAMES
-			    "%s.%s.%ld", CVSWFL, hostname,
+				   "%s.%s.%ld", CVSWFL, hostname,
 #else
-			    "%s.%ld", CVSWFL,
+				   "%s.%ld", CVSWFL,
 #endif
-			    (long) getpid());
+				   (long) getpid());
 	}
 
 	if (global_writelock.repository != NULL)

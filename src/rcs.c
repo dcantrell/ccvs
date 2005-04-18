@@ -2262,9 +2262,8 @@ RCS_tag2rev (RCSNode *rcs, char *tag)
 	     */
 	    error (1, 0, "revision `%s' does not exist", tag);
 
-	pb = xmalloc (strlen (rev) + 3);
 	*pa++ = 0;
-	(void) sprintf (pb, "%s.%d.%s", rev, RCS_MAGIC_BRANCH, pa);
+	pb = Xasprintf ("%s.%d.%s", rev, RCS_MAGIC_BRANCH, pa);
 	free (rev);
 	rev = pb;
 	if (RCS_exist_rev (rcs, rev))
@@ -2584,8 +2583,7 @@ RCS_nodeisbranch (RCSNode *rcs, const char *rev)
 	    cp--;
 
 	/* see if we have .magic-branch. (".0.") */
-	magic = xmalloc (strlen (version) + 1);
-	(void) sprintf (magic, ".%d.", RCS_MAGIC_BRANCH);
+	magic = Xasprintf (".%d.", RCS_MAGIC_BRANCH);
 	if (strncmp (magic, cp, strlen (magic)) == 0)
 	{
 	    free (magic);
@@ -2676,9 +2674,7 @@ RCS_getbranch (RCSNode *rcs, const char *tag, int force_tag_match)
     /* trunk processing is the special case */
     if (cp == NULL)
     {
-	xtag = xmalloc (strlen (tag) + 1 + 1);	/* +1 for an extra . */
-	(void) strcpy (xtag, tag);
-	(void) strcat (xtag, ".");
+	xtag = Xasprintf ("%s.", tag);
 	for (cp = rcs->head; cp != NULL;)
 	{
 	    if (strncmp (xtag, cp, strlen (xtag)) == 0)
@@ -2728,9 +2724,7 @@ RCS_getbranch (RCSNode *rcs, const char *tag, int force_tag_match)
     vn = p->data;
     if (vn->branches == NULL)
 	return NULL;
-    xtag = xmalloc (strlen (tag) + 1 + 1);	/* 1 for the extra '.' */
-    (void) strcpy (xtag, tag);
-    (void) strcat (xtag, ".");
+    xtag = Xasprintf ("%s.", tag);
     head = vn->branches->list;
     for (p = head->next; p != head; p = p->next)
 	if (strncmp (p->key, xtag, strlen (xtag)) == 0)
@@ -3003,8 +2997,7 @@ RCS_getdate (RCSNode *rcs, const char *date, int force_tag_match)
     if (retval != NULL)
 	return retval;
 
-    if (!force_tag_match ||
-	(vers != NULL && RCS_datecmp (vers->date, date) <= 0))
+    if (vers && (!force_tag_match || RCS_datecmp (vers->date, date) <= 0))
 	return xstrdup (vers->version);
     else
 	return NULL;
@@ -3056,9 +3049,7 @@ RCS_getdatebranch (RCSNode *rcs, const char *date, const char *branch)
 	return xstrdup (cur_rev);
 
     /* walk the branches list looking for the branch number */
-    xbranch = xmalloc (strlen (branch) + 1 + 1); /* +1 for the extra dot */
-    (void) strcpy (xbranch, branch);
-    (void) strcat (xbranch, ".");
+    xbranch = Xasprintf ("%s.", branch);
     for (p = vers->branches->list->next; p != vers->branches->list; p = p->next)
 	if (strncmp (p->key, xbranch, strlen (xbranch)) == 0)
 	    break;
@@ -3124,7 +3115,7 @@ RCS_datecmp (const char *date1, const char *date2)
 time_t
 RCS_getrevtime (RCSNode *rcs, const char *rev, char *date, int fudge)
 {
-    char tdate[MAXDATELEN];
+    char *tdate;
     struct tm xtm, *ftm;
     struct timespec revdate;
     Node *p;
@@ -3160,9 +3151,9 @@ RCS_getrevtime (RCSNode *rcs, const char *rev, char *date, int fudge)
 	xtm.tm_year -= 1900;
 
     /* put the date in a form getdate can grok */
-    (void) sprintf (tdate, "%d-%d-%d GMT %d:%d:%d",
-		    xtm.tm_year + 1900, xtm.tm_mon, xtm.tm_mday,
-		    xtm.tm_hour, xtm.tm_min, xtm.tm_sec);
+    tdate = Xasprintf ("%d-%d-%d %d:%d:%d -0000",
+		       xtm.tm_year + 1900, xtm.tm_mon, xtm.tm_mday,
+		       xtm.tm_hour, xtm.tm_min, xtm.tm_sec);
 
     /* Turn it into seconds since the epoch.
      *
@@ -3170,7 +3161,11 @@ RCS_getrevtime (RCSNode *rcs, const char *rev, char *date, int fudge)
      * truncate the nanoseconds.
      */
     if (!get_date (&revdate, tdate, NULL))
+    {
+	free (tdate);
 	return (time_t)-1;
+    }
+    free (tdate);
 
     revdate.tv_sec -= fudge;	/* remove "fudge" seconds */
     if (date)
@@ -3765,19 +3760,11 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
 			path = last_component (rcs->print_path);
 		    path = escape_keyword_value (path, &free_path);
 		    date = printable_date (ver->date);
-		    value = xmalloc (strlen (path)
-				     + strlen (ver->version)
-				     + strlen (date)
-				     + strlen (ver->author)
-				     + strlen (ver->state)
-				     + (locker == NULL ? 0 : strlen (locker))
-				     + 20);
-
-		    sprintf (value, "%s %s %s %s %s%s%s",
-			     path, ver->version, date, ver->author,
-			     ver->state,
-			     locker != NULL ? " " : "",
-			     locker != NULL ? locker : "");
+		    value = Xasprintf ("%s %s %s %s %s%s%s",
+				       path, ver->version, date, ver->author,
+				       ver->state,
+				       locker != NULL ? " " : "",
+				       locker != NULL ? locker : "");
 		    if (free_path)
 			/* If free_path is set then we know we allocated path
 			 * and we can discard the const.
@@ -4147,7 +4134,7 @@ RCS_checkout (RCSNode *rcs, const char *workfile, const char *rev,
     size_t len;
     int free_value = 0;
     char *log = NULL;
-    size_t loglen;
+    size_t loglen = 0;
     Node *vp = NULL;
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
     uid_t rcs_owner = (uid_t) -1;
@@ -4906,9 +4893,7 @@ RCS_addbranch (RCSNode *rcs, const char *branch)
 	{
 	    /* We have to create the first branch on this node, which means
 	       appending ".2" to the revision number. */
-	    newrevnum = xmalloc (strlen (branch) + 3);
-	    strcpy (newrevnum, branch);
-	    strcat (newrevnum, ".2");
+	    newrevnum = Xasprintf ("%s.2", branch);
 	}
 	else
 	{
@@ -5077,11 +5062,10 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
     else
 	(void) time (&modtime);
     ftm = gmtime (&modtime);
-    delta->date = xmalloc (MAXDATELEN);
-    (void) sprintf (delta->date, DATEFORM,
-		    ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
-		    ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
-		    ftm->tm_min, ftm->tm_sec);
+    delta->date = Xasprintf (DATEFORM,
+			     ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
+			     ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
+			     ftm->tm_min, ftm->tm_sec);
     if (flags & RCS_FLAGS_DEAD)
     {
 	delta->state = xstrdup (RCSDEAD);
@@ -5196,9 +5180,7 @@ workfile);
 	    newrev = xstrdup ("1.1");
 	else if (numdots (rev) == 0)
 	{
-	    newrev = xmalloc (strlen (rev) + 3);
-	    strcpy (newrev, rev);
-	    strcat (newrev, ".1");
+	    newrev = Xasprintf ("%s.1", rev);
 	}
 	else
 	    newrev = xstrdup (rev);
@@ -6874,8 +6856,8 @@ linevector_add (struct linevector *vec, const char *text, size_t len,
 	    vec->lines_alloced = 10;
 	while (vec->nlines + nnew >= vec->lines_alloced)
 	    vec->lines_alloced *= 2;
-	vec->vector = xrealloc (vec->vector,
-				vec->lines_alloced * sizeof (*vec->vector));
+	vec->vector = xnrealloc (vec->vector,
+				 vec->lines_alloced, sizeof (*vec->vector));
     }
 
     /* Make room for the new lines in VEC->VECTOR.  */
@@ -6966,12 +6948,12 @@ linevector_copy (struct linevector *to, struct linevector *from)
 	    to->lines_alloced = 10;
 	while (from->nlines > to->lines_alloced)
 	    to->lines_alloced *= 2;
-	to->vector = xrealloc (to->vector,
-			       xtimes (to->lines_alloced,
-				       sizeof (*to->vector)));
+	to->vector = xnrealloc (to->vector,
+				to->lines_alloced,
+				sizeof (*to->vector));
     }
     memcpy (to->vector, from->vector,
-	    from->nlines * sizeof (*to->vector));
+	    xtimes (from->nlines, sizeof (*to->vector)));
     to->nlines = from->nlines;
     for (ln = 0; ln < to->nlines; ++ln)
 	++to->vector[ln]->refcount;
@@ -7471,7 +7453,7 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
 
 		for (ln = 0; ln < headlines.nlines; ++ln)
 		{
-		    char buf[80];
+		    char *buf;
 		    /* Period which separates year from month in date.  */
 		    char *ym;
 		    /* Period which separates month from day in date.  */
@@ -7482,10 +7464,12 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
 		    if (prvers == NULL)
 			prvers = vers;
 
+		    buf = xmalloc (strlen (prvers->version) + 24);
 		    sprintf (buf, "%-12s (%-8.8s ",
 			     prvers->version,
 			     prvers->author);
 		    cvs_output (buf, 0);
+		    free (buf);
 
 		    /* Now output the date.  */
 		    ym = strchr (prvers->date, '.');
@@ -8610,11 +8594,6 @@ make_file_label (const char *path, const char *rev, RCSNode *rcs)
     char datebuf[MAXDATELEN + 1];
     char *label;
 
-    label = xmalloc (strlen (path)
-		     + (rev == NULL ? 0 : strlen (rev) + 1)
-		     + MAXDATELEN
-		     + 2);
-
     if (rev)
     {
 	char date[MAXDATELEN + 1];
@@ -8622,7 +8601,7 @@ make_file_label (const char *path, const char *rev, RCSNode *rcs)
 	assert (strcmp(DEVNULL, path));
 	RCS_getrevtime (rcs, rev, datebuf, 0);
 	(void) date_to_internet (date, datebuf);
-	(void) sprintf (label, "-L%s\t%s\t%s", path, date, rev);
+	label = Xasprintf ("-L%s\t%s\t%s", path, date, rev);
     }
     else
     {
@@ -8646,7 +8625,7 @@ make_file_label (const char *path, const char *rev, RCSNode *rcs)
 	}
 
 	(void) tm_to_internet (datebuf, wm);
-	(void) sprintf (label, "-L%s\t%s", path, datebuf);
+	label = Xasprintf ("-L%s\t%s", path, datebuf);
     }
     return label;
 }
