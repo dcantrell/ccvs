@@ -1,3 +1,71 @@
+2005-04-15  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note Klocwork fixes.
+
+2005-04-14  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note contrib Perl taint vulnerability fix.
+
+2005-04-12  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Avoid self-aggrandizement.
+
+2005-04-08  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note GMT/get_date fix.
+
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
+	* gnulib.txt: Move to...
+	* gnulib-filelist.txt: ...this new file.
+	* gnulib-update: Clean up slightly.  Use new file.
+
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
+	* maint-aux/.cvsignore: New file.
+
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Generate maint-aux/Makefile.
+	* Makefile.am (SUBDIRS): Add maint-aux.
+	* maint-aux/Makefile.am, maint-aux/Makefile.in: New files.
+
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
+	* gnulib-modules, gnulib-update, gnulib.txt, srclist.txt: Move these...
+	* maint-aux: ...to this new directory, with minor modifications.
+	* Makefile.am (EXTRA_DIST): Accomodate move of the above files.  Add
+	maint-aux/gnulib-modules.
+	* HACKING: s#srclist.txt#maint-aux/srclist.txt#.
+
+2005-04-05  Derek Price  <derek@ximbiot.com>
+
+	* mkinstalldirs: Remove this obsolete file.  It's work is now done by
+	`build-aux/install-sh -d'.
+
+2005-04-05  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Specify new build-aux directory for auxiliary build
+	files.
+	* compile, config.guess, config.rpath, config.sub, depcomp, install-sh,
+	mdate-sh, missing, texinfo.tex, ylwrap: Move to...
+	* build-aux: ...this new directory.
+	* INSTALL: Replace with generic version from Automake, moving...
+	* INSTALL-CVS: ...original to here.  Reference INSTALL for more
+	configure information.
+	* FAQ, README: Reference INSTALL-CVS rather than INSTALL.
+
+2005-03-29  Mark D. Baushke  <mdb@cvshome.org>
+
+	* config.guess, config.rpath, config.sub, depcomp, gnulib.txt,
+	install-sh, mdate-sh, missing, mkinstalldirs: Update from GNULIB.
+	* configure: Regenerated.
+	
+2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* aclocal.m4, gnulib.txt: Update from GNULIB.
+	* Makefile.in, config.h.in, configure: Regenerated.
+
 2005-03-16  Mark Baushke  <mdb@cvshome.org>
 
 	* cvs-format.el: Update to work with modern GNU Emacs versions

@@ -2871,8 +2871,8 @@ serve_argument (char *arg)
     if (argument_vector_size <= argument_count)
     {
 	argument_vector_size *= 2;
-	argument_vector = xrealloc (argument_vector,
-			            argument_vector_size * sizeof (char *));
+	argument_vector = xnrealloc (argument_vector,
+				     argument_vector_size, sizeof (char *));
 	if (argument_vector == NULL)
 	{
 	    pending_error = ENOMEM;

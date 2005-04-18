@@ -31,14 +31,14 @@ libcvs_a_SOURCES = \
 ## these files from configure.in, automake automatically knows about many of
 ## the *.c files in this directory.
 libcvs_a_LIBADD = \
-	@LIBOBJS@ \
-	@ALLOCA@
+	@LIBOBJS@
 
 
 
 ## Zero some variables so Automake will allow us to use += on them.
 BUILT_SOURCES =
 MOSTLYCLEANFILES =
+DISTCLEANFILES =
 MAINTAINERCLEANFILES =
 TESTS =
 check_PROGRAMS =
@@ -53,21 +53,39 @@ EXTRA_DIST = \
 	libcvs.mak \
 	test-getdate.sh
 
-## For GNULIB's alloca module.
+## begin gnulib module alloca
+
+
+libcvs_a_LIBADD += @ALLOCA@
+## end   gnulib module alloca
+
+## begin gnulib module alloca-opt
+
 BUILT_SOURCES += $(ALLOCA_H)
 EXTRA_DIST += alloca_.h
+
+# We need the following in order to create an <alloca.h> when the system
+# doesn't have one that works with the given compiler.
 all-local $(libcvs_a_OBJECTS): $(ALLOCA_H)
 alloca.h: alloca_.h
 	cp $(srcdir)/alloca_.h $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += alloca.h alloca.h-t
 
-## For GNULIB's allocsa module.
+## end   gnulib module alloca-opt
+
+## begin gnulib module allocsa
+
 libcvs_a_SOURCES += allocsa.h allocsa.c
 EXTRA_DIST += allocsa.valgrind
 
-## For GNULIB's dirname module.
-libcvs_a_SOURCES += basename.c dirname.c dirname.h stripslash.c
+## end   gnulib module allocsa
+
+## begin gnulib module dirname
+
+libcvs_a_SOURCES += basename.c stripslash.c
+
+## end   gnulib module dirname
 
 ## For GNULIB's error module.
 ##
@@ -77,17 +95,17 @@ libcvs_a_SOURCES += basename.c dirname.c dirname.h stripslash.c
 ## part of the getdate test program,
 libcvs_a_SOURCES += error.h
 
-## For GNULIB's exit module.
+## begin gnulib module exit
+
 libcvs_a_SOURCES += exit.h
 
-## For GNULIB's exitfail module.
-libcvs_a_SOURCES += exitfail.h exitfail.c
+## end   gnulib module exit
 
-## For GNULIB's fnmatch-posix module.
+## begin gnulib module fnmatch
+
 BUILT_SOURCES += $(FNMATCH_H)
 EXTRA_DIST += fnmatch_.h fnmatch_loop.c
 
-## For GNULIB's fnmatch module.
 # We need the following in order to create an <fnmatch.h> when the system
 # doesn't have one that supports the required API.
 all-local $(libcvs_a_OBJECTS): $(FNMATCH_H)
@@ -96,53 +114,56 @@ fnmatch.h: fnmatch_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
 
-## For GNULIB's getcwd module.
-libcvs_a_SOURCES += getcwd.h
+## end   gnulib module fnmatch
 
-## For GNULIB's getdate module.
-libcvs_a_SOURCES += getdate.h getdate.y
+## begin gnulib module getdate
+
 ## CVS test scripts for getdate.
 TESTS += test-getdate.sh
 MOSTLYCLEANFILES += getdate-expected getdate-got getdate.diff
+DISTCLEANFILES += getdate.log
 # Program required by test-getdate.sh for testing getdate.y.
 check_PROGRAMS += getdate
 getdate_SOURCES = \
-	allocsa.c \
 	error.c \
-	exitfail.c exitfail.h \
-	getdate.y \
-	xalloc-die.c \
-	xgetcwd.h xgetcwd.c \
-	xalloc.h \
-	xmalloc.c
+	getdate.y
 ## This source file was added only for the getdate test program when compiled
 ## with GNULIB's error.c.
 getdate_SOURCES += \
 	progname.c
 getdate_CPPFLAGS = -DTEST
 getdate_LDADD = \
-	@LIBOBJS@ \
-	@ALLOCA@ \
+	$(noinst_LIBRARIES) \
 	$(LIB_CLOCK_GETTIME) \
 	$(LIBINTL)
 
-## For GNULIB's getline module.
-libcvs_a_SOURCES += getline.h
+# We ship the getdate.c file due to requirements on particular bison
+# versions.
+#BUILT_SOURCES += getdate.c
+#MAINTAINERCLEANFILES += getdate.c
+
+## end   gnulib module getdate
+
+## begin gnulib module getline
+
 EXTRA_DIST += getndelim2.h getndelim2.c
 
-## For GNULIB's getndelim2 module.
+## end   gnulib module getline
+
+## begin gnulib module getndelim2
+
 EXTRA_DIST += getndelim2.h getndelim2.c
 
-## For GNULIB's getnline module.
+## end   gnulib module getndelim2
+
+## begin gnulib module getnline
+
 libcvs_a_SOURCES += getnline.h getnline.c
 
-## For GNULIB's getpagesize module.
-libcvs_a_SOURCES += getpagesize.h
+## end   gnulib module getnline
 
-## For GNULIB's getpass module.
-libcvs_a_SOURCES += getpass.h
+## begin gnulib module getopt
 
-## For GNULIB's getopt module.
 BUILT_SOURCES += $(GETOPT_H)
 EXTRA_DIST += getopt_.h getopt_int.h
 
@@ -154,30 +175,37 @@ getopt.h: getopt_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += getopt.h getopt.h-t
 
-## For GNULIB's gettext module.
+## end   gnulib module getopt
+
+## begin gnulib module gettext
+
 libcvs_a_SOURCES += gettext.h
 
-## For GNULIB's md5 module.
-libcvs_a_SOURCES += md5.c md5.h
+## end   gnulib module gettext
 
-## For GNULIB's minmax module.
+## begin gnulib module minmax
+
 libcvs_a_SOURCES += minmax.h
 
-## For GNULIB's pathmax module.
-libcvs_a_SOURCES += pathmax.h
+## end   gnulib module minmax
 
-## For GNULIB's regex module.
+## begin gnulib module regex
+
 libcvs_a_SOURCES += regex.h
 
-## For GNULIB's setenv module.
+## end   gnulib module regex
+
+## begin gnulib module setenv
+
 libcvs_a_SOURCES += setenv.h
 
-## For GNULIB's stat module.
-libcvs_a_SOURCES += stat-macros.h
+## end   gnulib module setenv
 
-## For GNULIB's stdbool module.
+## begin gnulib module stdbool
+
 BUILT_SOURCES += $(STDBOOL_H)
 EXTRA_DIST += stdbool_.h
+
 # We need the following in order to create an <stdbool.h> when the system
 # doesn't have one that works.
 all-local $(libcvs_a_OBJECTS): $(STDBOOL_H)
@@ -187,7 +215,10 @@ stdbool.h: stdbool_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += stdbool.h stdbool.h-t
 
-## For GNULIB's stdint module.
+## end   gnulib module stdbool
+
+## begin gnulib module stdint
+
 BUILT_SOURCES += $(STDINT_H)
 EXTRA_DIST += stdint_.h
 
@@ -195,60 +226,71 @@ EXTRA_DIST += stdint_.h
 # doesn't have one that works with the given compiler.
 all-local $(libcvs_a_OBJECTS): $(STDINT_H)
 stdint.h: stdint_.h
-	sed -e 's/@''HAVE_LONG_64BIT''@/$(HAVE_LONG_64BIT)/g;s/@''HAVE_LONGLONG_64BIT@/$(HAVE_LONGLONG_64BIT)/g' < $(srcdir)/stdint_.h > $@-t
+	sed -e 's/@''HAVE_LONG_64BIT''@/$(HAVE_LONG_64BIT)/g;s/@''HAVE_LONG_LONG_64BIT@/$(HAVE_LONG_LONG_64BIT)/g' < $(srcdir)/stdint_.h > $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += stdint.h stdint.h-t
 
-## For GNULIB's strcase module.
+## end   gnulib module stdint
+
+## begin gnulib module strcase
+
 libcvs_a_SOURCES += strcase.h
 
-## For GNULIB's strftime module.
-libcvs_a_SOURCES += strftime.c strftime.h
+## end   gnulib module strcase
 
-## For GNULIB's strstr module.
+## begin gnulib module strstr
+
 libcvs_a_SOURCES += strstr.h
 
-## For GNULIB's time_r module.
+## end   gnulib module strstr
+
+## begin gnulib module time_r
+
 libcvs_a_SOURCES += time_r.h
 
-## For GNULIB's timespec module.
-libcvs_a_SOURCES += timespec.h
+## end   gnulib module time_r
 
-## For GNULIB's unlocked-io module.
-libcvs_a_SOURCES += unlocked-io.h
+## begin gnulib module vasnprintf
 
-## For GNULIB's vasnprintf module.
 libcvs_a_SOURCES += printf-args.h printf-parse.h vasnprintf.h
 
-# For the vasprintf module from GNULIB.
+## end   gnulib module vasnprintf
+
+## begin gnulib module vasprintf
+
 libcvs_a_SOURCES += vasprintf.h
 
-## For GNULIB's xalloc module.
-libcvs_a_SOURCES += xalloc.h xmalloc.c
+## end   gnulib module vasprintf
 
-## For GNULIB's xalloc-die module.
+## begin gnulib module xalloc-die
+
 libcvs_a_SOURCES += xalloc-die.c
 
-## For GNULIB's xgetcwd module.
+## end   gnulib module xalloc-die
+
+## begin gnulib module xgetcwd
+
 libcvs_a_SOURCES += xgetcwd.h xgetcwd.c
 
-## For GNULIB's module xgethostname
+## end   gnulib module xgetcwd
+
+## begin gnulib module xgethostname
 
 libcvs_a_SOURCES += xgethostname.h xgethostname.c
 
-## For GNULIB's xreadlink module.
+## end   gnulib module xgethostname
+
+## begin gnulib module xreadlink
+
 libcvs_a_SOURCES += xreadlink.h xreadlink.c
 
-# For the xsize module from GNULIB.
+## end   gnulib module xreadlink
+
+## begin gnulib module xsize
+
 libcvs_a_SOURCES += xsize.h
 
-## For GNULIB's yesno module.
-libcvs_a_SOURCES += yesno.c yesno.h
-
-## For GNULIB's closeout module.
-libcvs_a_SOURCES += closeout.c closeout.h
-libcvs_a_SOURCES += quotearg.c quotearg.h
-libcvs_a_SOURCES += __fpending.h
+## end   gnulib module xsize
 
 # Until Automake gets its act together
 distclean-local:

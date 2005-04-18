@@ -55,9 +55,11 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/cvs.spec.in $(top_srcdir)/configure \
 	$(top_srcdir)/emx/Makefile.in $(top_srcdir)/os2/Makefile.in \
 	$(top_srcdir)/zlib/Makefile.in ABOUT-NLS AUTHORS COPYING \
-	COPYING.LIB ChangeLog INSTALL NEWS TODO compile config.guess \
-	config.rpath config.sub depcomp install-sh mdate-sh missing \
-	mkinstalldirs ylwrap
+	COPYING.LIB ChangeLog INSTALL NEWS TODO build-aux/compile \
+	build-aux/config.guess build-aux/config.rpath \
+	build-aux/config.sub build-aux/depcomp build-aux/install-sh \
+	build-aux/mdate-sh build-aux/missing build-aux/texinfo.tex \
+	build-aux/ylwrap
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
@@ -102,26 +104,27 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/rpmatch.m4 $(top_srcdir)/m4/save-cwd.m4 \
 	$(top_srcdir)/m4/setenv.m4 $(top_srcdir)/m4/signed.m4 \
 	$(top_srcdir)/m4/size_max.m4 $(top_srcdir)/m4/ssize_t.m4 \
-	$(top_srcdir)/m4/st_mtim.m4 $(top_srcdir)/m4/stat.m4 \
-	$(top_srcdir)/m4/stdbool.m4 $(top_srcdir)/m4/stdint.m4 \
-	$(top_srcdir)/m4/stdint_h.m4 $(top_srcdir)/m4/strcase.m4 \
-	$(top_srcdir)/m4/strerror.m4 $(top_srcdir)/m4/strftime.m4 \
-	$(top_srcdir)/m4/strstr.m4 $(top_srcdir)/m4/strtol.m4 \
-	$(top_srcdir)/m4/strtoul.m4 $(top_srcdir)/m4/sunos57-select.m4 \
-	$(top_srcdir)/m4/time_r.m4 $(top_srcdir)/m4/timespec.m4 \
-	$(top_srcdir)/m4/tm_gmtoff.m4 $(top_srcdir)/m4/tzset.m4 \
-	$(top_srcdir)/m4/uint32_t.m4 $(top_srcdir)/m4/uintmax_t.m4 \
-	$(top_srcdir)/m4/ulonglong.m4 $(top_srcdir)/m4/unlocked-io.m4 \
-	$(top_srcdir)/m4/vasnprintf.m4 $(top_srcdir)/m4/vasprintf.m4 \
-	$(top_srcdir)/m4/wchar_t.m4 $(top_srcdir)/m4/wint_t.m4 \
-	$(top_srcdir)/m4/xalloc.m4 $(top_srcdir)/m4/xgetcwd.m4 \
-	$(top_srcdir)/m4/xreadlink.m4 $(top_srcdir)/m4/xsize.m4 \
-	$(top_srcdir)/m4/yesno.m4 $(top_srcdir)/configure.in
+	$(top_srcdir)/m4/st_mtim.m4 $(top_srcdir)/m4/stat-macros.m4 \
+	$(top_srcdir)/m4/stat.m4 $(top_srcdir)/m4/stdbool.m4 \
+	$(top_srcdir)/m4/stdint.m4 $(top_srcdir)/m4/stdint_h.m4 \
+	$(top_srcdir)/m4/strcase.m4 $(top_srcdir)/m4/strerror.m4 \
+	$(top_srcdir)/m4/strftime.m4 $(top_srcdir)/m4/strstr.m4 \
+	$(top_srcdir)/m4/strtol.m4 $(top_srcdir)/m4/strtoul.m4 \
+	$(top_srcdir)/m4/sunos57-select.m4 $(top_srcdir)/m4/time_r.m4 \
+	$(top_srcdir)/m4/timespec.m4 $(top_srcdir)/m4/tm_gmtoff.m4 \
+	$(top_srcdir)/m4/tzset.m4 $(top_srcdir)/m4/uint32_t.m4 \
+	$(top_srcdir)/m4/uintmax_t.m4 $(top_srcdir)/m4/ulonglong.m4 \
+	$(top_srcdir)/m4/unlocked-io.m4 $(top_srcdir)/m4/vasnprintf.m4 \
+	$(top_srcdir)/m4/vasprintf.m4 $(top_srcdir)/m4/wchar_t.m4 \
+	$(top_srcdir)/m4/wint_t.m4 $(top_srcdir)/m4/xalloc.m4 \
+	$(top_srcdir)/m4/xgetcwd.m4 $(top_srcdir)/m4/xreadlink.m4 \
+	$(top_srcdir)/m4/xsize.m4 $(top_srcdir)/m4/yesno.m4 \
+	$(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno configure.status.lineno
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = cvs.spec emx/Makefile os2/Makefile zlib/Makefile
 SOURCES =
@@ -175,8 +178,8 @@ EXEEXT = @EXEEXT@
 FNMATCH_H = @FNMATCH_H@
 GETOPT_H = @GETOPT_H@
 GMSGFMT = @GMSGFMT@
-HAVE_LONGLONG_64BIT = @HAVE_LONGLONG_64BIT@
 HAVE_LONG_64BIT = @HAVE_LONG_64BIT@
+HAVE_LONG_LONG_64BIT = @HAVE_LONG_LONG_64BIT@
 HAVE_PUTENV = @HAVE_PUTENV@
 HAVE__BOOL = @HAVE__BOOL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -284,7 +287,7 @@ with_default_rsh = @with_default_rsh@
 USOURCE_SUBDIRS = lib $(ZLIB_SUBDIRS) diff src
 # All other subdirs:
 SUBDIRS = $(USOURCE_SUBDIRS) man doc contrib tools \
-	windows-NT os2 emx vms
+	windows-NT os2 emx vms maint-aux
 
 ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST = \
@@ -305,12 +308,9 @@ EXTRA_DIST = \
 	cvsnt.dsw \
 	cvsnt.mak \
 	cvs.spec \
-	gnulib.txt \
-	gnulib-update \
 	mktemp.sh \
-	srclist.txt \
-	$(top_srcdir)/m4/ChangeLog \
-	$(top_srcdir)/m4/README
+	m4/ChangeLog \
+	m4/README
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -511,7 +511,7 @@ distclean-tags:
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkdir_p) $(distdir)/$(top_srcdir)/m4 $(distdir)/. $(distdir)/contrib $(distdir)/doc $(distdir)/emx $(distdir)/m4 $(distdir)/os2 $(distdir)/src $(distdir)/zlib
+	$(mkdir_p) $(distdir)/. $(distdir)/build-aux $(distdir)/contrib $(distdir)/doc $(distdir)/emx $(distdir)/m4 $(distdir)/os2 $(distdir)/src $(distdir)/zlib
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

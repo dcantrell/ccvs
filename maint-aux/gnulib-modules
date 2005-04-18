@@ -4,6 +4,7 @@ regex
 atexit
 save-cwd
 dirname
+error
 exit
 exitfail
 extensions

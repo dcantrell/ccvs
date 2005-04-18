@@ -66,7 +66,7 @@ DISTFILES = README FAQ INDEX ChangeLog configure Makefile.* *.[ch] \
   msdos/[a-z0-9ABD-Z]* \
   qnx/package.qpg \
   win32/[a-z0-9ABD-Z]* \
-  contrib/RE*.contrib contrib/*.txt \
+  contrib/RE*.contrib \
   contrib/ada/[a-z0-9]* \
   contrib/asm586/match.S contrib/asm586/README.586 \
   contrib/asm686/match.S contrib/asm686/README.686 \

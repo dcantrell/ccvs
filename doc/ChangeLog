@@ -1,3 +1,56 @@
+2005-04-18  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (EXTRA_DIST): Restore getdate-cvs.texi.
+	(DISTCLEAN): Remove same.
+	(getdate-cvs.texi): Move to...
+	($(srcdir)/getdate-cvs.texi): ...here to avoid rebuild infos at
+	install.
+	(stamp-gdt): Generate $(srcdir)/getdate-cvs.texi.
+
+2005-04-15  Derek Price  <derek@ximbiot.com>
+
+	* mkman.pl: Minor changes to accomodate Perl 5.8.4.  Improve
+	commenting.
+	($nk, $ret, $debug): New globals.
+	(debug_print): New function.
+
+2005-04-14  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Administrative files): Rename "script hooks" node as
+	"Trigger Scripts".
+	(script hooks): Rename as...
+	(Trigger Scripts): ...this and add some clarifying text.
+	(Trigger Script Security): New node.
+	(-many *info nodes-): Rewrite to reference to Trigger Script node.
+	Add and/or rewrite index entries and cross-references.
+
+2005-04-07  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: Make $(srcdir)/cvs.info, not cvs.info, dependent on
+	getdate-cvs.texi.
+
+2005-04-07  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (stampt-gdt): Remove dependency on configure.
+
+2005-04-07  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (DISTCLEANFILES): Move getdate-cvs.tmp to...
+	(MOSTLYCLEANFILES): ...here.
+
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (cvs.1): Create intermediate file so that the original
+	isn't emptied on error.
+
+2005-03-29  Mark D. Baushke  <mdb@cvshome.org>
+
+	* mdate-sh, texinfo.tex: Update from GNULIB.
+
+2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.in: Regenerated.
+
 2005-03-01  Derek Price  <derek@ximbiot.com>
 
 	Update installed GNULIB modules.

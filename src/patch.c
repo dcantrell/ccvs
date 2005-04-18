@@ -148,14 +148,6 @@ patch (int argc, char **argv)
 		   quick and dirty error message for now.  */
 		error (1, 0,
 		       "the -V option is obsolete and should not be used");
-#if 0
-		if (atoi (optarg) <= 0)
-		    error (1, 0, "must specify a version number to -V");
-		if (options)
-		    free (options);
-		options = xmalloc (strlen (optarg) + 1 + 2);	/* for the -V */
-		(void) sprintf (options, "-V%s", optarg);
-#endif
 		break;
 	    case 'u':
 		unidiff = 1;		/* Unidiff */
@@ -385,6 +377,7 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
     struct utimbuf t;
     char *vers_tag, *vers_head;
     char *rcs = NULL;
+    char *rcs_orig = NULL;
     RCSNode *rcsfile;
     FILE *fp1, *fp2, *fp3;
     int ret = 0;
@@ -415,8 +408,7 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
     if ((rcsfile->flags & VALID) && (rcsfile->flags & INATTIC))
 	isattic = 1;
 
-    rcs = xmalloc (strlen (finfo->file) + sizeof (RCSEXT) + 5);
-    (void)sprintf (rcs, "%s%s", finfo->file, RCSEXT);
+    rcs_orig = rcs = Xasprintf ("%s%s", finfo->file, RCSEXT);
 
     /* if vers_head is NULL, may have been removed from the release */
     if (isattic && rev2 == NULL && date2 == NULL)
@@ -656,33 +648,19 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
 	    }
 	    assert (current_parsed_root != NULL);
 	    assert (current_parsed_root->directory != NULL);
-	    {
-		strippath = xmalloc (strlen (current_parsed_root->directory)
-                                     + 2);
-		(void)sprintf (strippath, "%s/",
-                               current_parsed_root->directory);
-	    }
-	    /*else
-		strippath = xstrdup (REPOS_STRIP); */
+
+	    strippath = Xasprintf ("%s/", current_parsed_root->directory);
+
 	    if (strncmp (rcs, strippath, strlen (strippath)) == 0)
 		rcs += strlen (strippath);
 	    free (strippath);
 	    if (vers_tag != NULL)
-	    {
-		file1 = xmalloc (strlen (finfo->fullname)
-				 + strlen (vers_tag)
-				 + 10);
-		(void)sprintf (file1, "%s:%s", finfo->fullname, vers_tag);
-	    }
+		file1 = Xasprintf ("%s:%s", finfo->fullname, vers_tag);
 	    else
-	    {
 		file1 = xstrdup (DEVNULL);
-	    }
-	    file2 = xmalloc (strlen (finfo->fullname)
-			     + (vers_head != NULL ? strlen (vers_head) : 10)
-			     + 10);
-	    (void)sprintf (file2, "%s:%s", finfo->fullname,
-			   vers_head ? vers_head : "removed");
+
+	    file2 = Xasprintf ("%s:%s", finfo->fullname,
+			       vers_head ? vers_head : "removed");
 
 	    /* Note that the string "diff" is specified by POSIX (for -c)
 	       and is part of the diff output format, not the name of a
@@ -754,8 +732,8 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
 	free (vers_tag);
     if (vers_head != NULL)
 	free (vers_head);
-    if (rcs != NULL)
-	free (rcs);
+    if (rcs_orig)
+	free (rcs_orig);
     return ret;
 }
 

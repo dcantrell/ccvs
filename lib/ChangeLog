@@ -1,3 +1,36 @@
+2005-04-15  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (DISTCLEANFILES): Add getdate.log.
+	* .cvsignore: Ditto.
+	* test-getdate.sh: Add new tests.
+	(verify, skip, valid_timezone): New functions.
+
+2005-04-12  Derek Price  <derek@ximbiot.com>
+
+	* getdate.y: Update from GNULIB.
+
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
+	* getdate.y: Update from GNULIB.
+
+2005-04-03  Mark D. Baushke  <mdb@cvshome.org>
+
+	* strtol.c: Update from GNULIB.
+
+2005-03-29  Mark D. Baushke  <mdb@cvshome.org>
+
+	* mktime.c, strftime.c: Update from GNULIB.
+
+2005-03-23  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (getdate_SOURCES): Remove sources that are now included
+	via $(noinst_LIBRARIES).
+
+2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* mktime.c, regex.c, stdint_.h, strftime.c, strtol.c: Update from
+	GNULIB.
+
 2005-03-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* mktime.c, save-cwd.c, strftime.c, strtol.c: Update from GNULIB.

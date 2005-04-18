@@ -513,8 +513,7 @@ rlog_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 	    }
 
 	    /* take care of the rest */
-	    path = xmalloc (strlen (repository) + strlen (mfile) + 5);
-	    (void)sprintf (path, "%s/%s", repository, mfile);
+	    path = Xasprintf ("%s/%s", repository, mfile);
 	    if (isdir (path))
 	    {
 		/* directory means repository gets the dir tacked on */
@@ -1210,9 +1209,7 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
 		{
 		    if (nr->fields <= dots2 && (nr->fields & 1))
 		    {
-			char *p = xmalloc (strlen (nr->first) + 3);
-			strcpy (p, nr->first);
-			strcat (p, ".0");
+			char *p = Xasprintf ("%s.0", nr->first);
 			free (nr->first);
 			nr->first = p;
 			++nr->fields;

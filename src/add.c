@@ -604,8 +604,7 @@ add (int argc, char **argv)
 		     * There is an RCS file, so remove the "-" from the
 		     * version number and restore the file
 		     */
-		    char *tmp = xmalloc (strlen (vers->vn_user));
-		    (void) strcpy (tmp, vers->vn_user + 1);
+		    char *tmp = xstrdup (vers->vn_user + 1);
 		    (void) strcpy (vers->vn_user, tmp);
 		    free (tmp);
 		    status = RCS_checkout (vers->srcfile, finfo.file,

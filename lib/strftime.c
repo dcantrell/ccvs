@@ -120,7 +120,7 @@ extern char *tzname[];
    ? (a) >> (b)		\
    : (a) / (1 << (b)) - ((a) % (1 << (b)) < 0))
 
-/* Bound on length of the string representing an integer value or type T.
+/* Bound on length of the string representing an integer type or expression T.
    Subtract 1 for the sign bit if t is signed; log10 (2.0) < 146/485;
    add 1 for integer division truncation; add 1 more for a minus sign
    if needed.  */
@@ -386,7 +386,7 @@ static CHAR_T const month_name[][10] =
    (including the terminating '\0') and returning number of
    characters written.  If S is NULL, nothing will be written
    anywhere, so to determine how many characters would be
-   written, use NULL for S and (size_t) UINT_MAX for MAXSIZE.  */
+   written, use NULL for S and (size_t) -1 for MAXSIZE.  */
 size_t
 my_strftime (CHAR_T *s, size_t maxsize, const CHAR_T *format,
 	     const struct tm *tp extra_args_spec LOCALE_PARAM_PROTO)
@@ -759,7 +759,7 @@ my_strftime (CHAR_T *s, size_t maxsize, const CHAR_T *format,
 	  {
 	    /* The relevant information is available only via the
 	       underlying strftime implementation, so use that.  */
-	    char ufmt[4];
+	    char ufmt[5];
 	    char *u = ufmt;
 	    char ubuf[1024]; /* enough for any single format in practice */
 	    size_t len;
@@ -771,15 +771,17 @@ my_strftime (CHAR_T *s, size_t maxsize, const CHAR_T *format,
 	    size_t strftime ();
 # endif
 
+	    /* The space helps distinguish strftime failure from empty
+	       output.  */
+	    *u++ = ' ';
 	    *u++ = '%';
 	    if (modifier != 0)
 	      *u++ = modifier;
 	    *u++ = format_char;
 	    *u = '\0';
 	    len = strftime (ubuf, sizeof ubuf, ufmt, tp);
-	    if (len == 0 && ubuf[0] != '\0')
-	      return 0;
-	    cpy (len, ubuf);
+	    if (len != 0)
+	      cpy (len - 1, ubuf + 1);
 	  }
 	  break;
 #endif
