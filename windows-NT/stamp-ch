@@ -454,7 +454,7 @@ typedef int ssize_t;
 /* The following macro is defined by running ./configure and then make
  * under UNIX OSs.
  */
-#define PACKAGE_STRING "Concurrent Versions System (CVS) 1.11.19.1"
+#define PACKAGE_STRING "Concurrent Versions System (CVS) 1.11.20"
 
 /* The following were added to make #include "xsize.h" work. */
 
