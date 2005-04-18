@@ -3,6 +3,15 @@ Changes since 1.12.11:
 
 SERVER SECURITY FIXES
 
+* Thanks to a report from Alen Zukich <alen.zukich@klocwork.com>, several minor
+  security issues have been addressed.  One was a buffer overflow that is
+  potentially serious but which may not be exploitable, assigned CAN-2005-0753
+  by the Common Vulnerabilities and Exposures Project
+  <http://www.cve.mitre.org>.  Other fixes resulting from Alen's report include
+  repair of an arbitrary free with no known exploit and several plugged memory
+  leaks and potentially freed NULL pointers which may have been exploitable for
+  a denial of service attack.
+
 * Thanks to a report from Craig Monson <craig@malachiarts.com>, minor
   potential vulnerabilities in the contributed Perl scripts have been fixed.
   The confirmed vulnerability could allow the execution of arbitrary code on

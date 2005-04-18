@@ -93,8 +93,8 @@ cvs.1: @MAINTAINER_MODE_TRUE@ mkman cvs.man.header cvs.texinfo cvs.man.footer
 	-@rm -f cvs.tmp
 MAINTAINERCLEANFILES += $(srcdir)/cvs.1
 
-cvs.dvi cvs.html $(srcdir)/cvs.info cvs.pdf cvs.ps cvs.txt: getdate-cvs.texi
-getdate-cvs.texi: stamp-gdt
+cvs.dvi cvs.html $(srcdir)/cvs.info cvs.pdf cvs.ps cvs.txt: $(srcdir)/getdate-cvs.texi
+$(srcdir)/getdate-cvs.texi: stamp-gdt
 stamp-gdt: getdate.texi
 	@echo "@c This file is generated via a rule in Makefile.am from the" \
 	  >getdate-cvs.tmp
@@ -107,13 +107,17 @@ stamp-gdt: getdate.texi
 	sed -e "s/^@chapter /@appendixsec /" \
 	    -e "s/^@section /@appendixsubsec /" \
 	  <$(srcdir)/getdate.texi >>getdate-cvs.tmp
-	@cmp -s getdate-cvs.tmp getdate-cvs.texi \
+	@cmp -s getdate-cvs.tmp $(srcdir)/getdate-cvs.texi \
 	  || (echo "Updating getdate-cvs.texi"; \
-	      cp getdate-cvs.tmp getdate-cvs.texi)
+	      cp getdate-cvs.tmp $(srcdir)/getdate-cvs.texi)
 	-@rm -f getdate-cvs.tmp
-	@cp getdate-cvs.texi $@
+	@cp $(srcdir)/getdate-cvs.texi $@
+
+## If getdate-cvs.texi is not distributed, infos get rebuilt at every install.
+## This is a pretty big no-no.
+EXTRA_DIST += getdate-cvs.texi
 MOSTLYCLEANFILES += getdate-cvs.tmp
-DISTCLEANFILES += getdate-cvs.texi stamp-gdt
+DISTCLEANFILES += stamp-gdt
 
 # texinfo based targets automake neglects to include
 SUFFIXES = .txt

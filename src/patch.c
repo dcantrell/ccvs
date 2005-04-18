@@ -377,6 +377,7 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
     struct utimbuf t;
     char *vers_tag, *vers_head;
     char *rcs = NULL;
+    char *rcs_orig = NULL;
     RCSNode *rcsfile;
     FILE *fp1, *fp2, *fp3;
     int ret = 0;
@@ -407,7 +408,7 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
     if ((rcsfile->flags & VALID) && (rcsfile->flags & INATTIC))
 	isattic = 1;
 
-    rcs = Xasprintf ("%s%s", finfo->file, RCSEXT);
+    rcs_orig = rcs = Xasprintf ("%s%s", finfo->file, RCSEXT);
 
     /* if vers_head is NULL, may have been removed from the release */
     if (isattic && rev2 == NULL && date2 == NULL)
@@ -731,8 +732,8 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
 	free (vers_tag);
     if (vers_head != NULL)
 	free (vers_head);
-    if (rcs != NULL)
-	free (rcs);
+    if (rcs_orig)
+	free (rcs_orig);
     return ret;
 }
 
