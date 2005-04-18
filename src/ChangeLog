@@ -1,5 +1,15 @@
 2005-03-17  Derek Price  <derek@ximbiot.com>
 
+	* login.c (password_entry_parseline): Avoid using uninitialized
+	variable.
+	* rcs.c (RCS_deltas): Avoid buffer overflow.
+	(RCS_checkout): Avoid using uninitialized loglen.
+	* patch.c (patch_fileproc): Free original pointer, not one that may
+	have been incremented.
+	(Thanks to report from Alen Zukich <alen.zukich@klocwork.com>.)
+
+2005-03-17  Derek Price  <derek@ximbiot.com>
+
 	* commit.c (checkaddfile): Avoid dereferencing a NULL pointer in
 	response to a rare error.
 	* admin.c (admin_fileproc), log.c (log_expand_revlist), mkmodules.c
