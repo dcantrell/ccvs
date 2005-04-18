@@ -1,3 +1,12 @@
+2005-04-18  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (EXTRA_DIST): Restore getdate-cvs.texi.
+	(DISTCLEAN): Remove same.
+	(getdate-cvs.texi): Move to...
+	($(srcdir)/getdate-cvs.texi): ...here to avoid rebuild infos at
+	install.
+	(stamp-gdt): Generate $(srcdir)/getdate-cvs.texi.
+
 2005-04-15  Derek Price  <derek@ximbiot.com>
 
 	* mkman.pl: Minor changes to accomodate Perl 5.8.4.  Improve

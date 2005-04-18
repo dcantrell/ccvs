@@ -803,7 +803,7 @@
 #undef PACKAGE_NAME
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Concurrent Versions System (CVS) 1.12.11.1"
+#define PACKAGE_STRING "Concurrent Versions System (CVS) 1.12.12"
 
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME

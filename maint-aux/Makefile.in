@@ -252,7 +252,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 with_default_rsh = @with_default_rsh@
 EXTRA_DIST = \
-	gnulib.txt \
+	gnulib-filelist.txt \
 	gnulib-modules \
 	gnulib-update \
 	srclist.txt
