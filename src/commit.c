@@ -700,6 +700,8 @@ commit (int argc, char **argv)
     Lock_Cleanup ();
     dellist (&mulist);
 
+    /* add the commitid to val-tags
+     */
     char *commitid = Xasprintf ("@%s", global_session_id);
     tag_check_valid (commitid, argc, argv, local, aflag, "", true);
     free (commitid);
@@ -890,16 +892,13 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 			   finfo->fullname);
 		    goto out;
 		}
-		if (status == T_MODIFIED && vers->tag)
+		if (status == T_MODIFIED && vers->tag &&
+		    !RCS_isbranch (finfo->rcs, vers->tag))
 		{
-		   if ( (*(vers->tag) != '.' || strcmp (vers->tag+1, TAG_TRUNK))
-			 && !RCS_isbranch (finfo->rcs, vers->tag) )
-		   {
-		      error (0, 0,
-			    "sticky tag `%s' for file `%s' is not a branch",
-			    vers->tag, finfo->fullname);
-		      goto out;
-		   }
+		    error (0, 0,
+			   "sticky tag `%s' for file `%s' is not a branch",
+			   vers->tag, finfo->fullname);
+		    goto out;
 		}
 	    }
 	    if (status == T_MODIFIED && !force_ci && vers->ts_conflict)
@@ -1362,7 +1361,6 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
     {
 	char *rev = RCS_getversion (finfo->rcs, write_dirtag, NULL, 1, NULL);
 	if (rev != NULL
-	    && !(*write_dirtag == '.' && !strcmp (write_dirtag+1, TAG_TRUNK))
 	    && !RCS_nodeisbranch (finfo->rcs, write_dirtag))
 	    write_dirnonbranch = 1;
 	if (rev != NULL)
@@ -1420,16 +1418,6 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
     }
     else if (ci->status == T_ADDED)
     {
-
-        /* prevent adding files to a branch named TAG_TRUNK as this
-	 * is a synonym for the trunk itself
-	 */
-        if (ci->tag && *ci->tag == '.' && !strcmp (ci->tag + 1, TAG_TRUNK))
-	{
-	    free (ci->tag);
-	    ci->tag = NULL;
-	}
-
 	if (checkaddfile (finfo->file, finfo->repository, ci->tag, ci->options,
 			  &finfo->rcs) != 0)
 	{
@@ -1448,7 +1436,7 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
 	    /* If numeric, it is on the trunk; check_fileproc enforced
 	       this.  */
 	    && !isdigit ((unsigned char) ci->tag[0]))
-	   {
+	{
 	    if (finfo->rcs == NULL)
 		error (1, 0, "internal error: no parsed RCS file");
 	    if (ci->rev)
@@ -1774,8 +1762,7 @@ remove_file (struct file_info *finfo, char *tag, char *message)
 	error (1, 0, "internal error: no parsed RCS file");
 
     branch = 0;
-    if (tag && !(branch = RCS_nodeisbranch (finfo->rcs, tag))
-	&& !(*tag == '.' && !strcmp (tag+1, TAG_TRUNK)))
+    if (tag && !(branch = RCS_nodeisbranch (finfo->rcs, tag)))
     {
 	/* a symbolic tag is specified; just remove the tag from the file */
 	if ((retcode = RCS_deltag (finfo->rcs, tag)) != 0)

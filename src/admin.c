@@ -659,9 +659,13 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 	char *branch = &admin_data->branch[2];
 	if (*branch != '\0' && !isdigit ((unsigned char) *branch))
 	{
-	    error (0, 0, "%s: Symbolic name %s is undefined.",
-		   rcs->path, admin_data->branch + 2);
-	    status = 1;
+	    branch = RCS_whatbranch (rcs, admin_data->branch + 2);
+	    if (branch == NULL)
+	    {
+	        error (0, 0, "%s: Symbolic name %s is undefined.",
+		              rcs->path, admin_data->branch + 2);
+		status = 1;
+	    }
 	}
 	if (status == 0)
 	    RCS_setbranch (rcs, branch);

@@ -12298,6 +12298,8 @@ $SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: LocalKeyword ign
 	  #   .prev
 	  #   .root
 	  #   .origin
+	  save_TZ=$TZ
+	  TZ=UTC0; export TZ
 	  module=tag-ext
 	  mkdir $module; cd $module
 	  mkdir top; cd top
@@ -12616,7 +12618,19 @@ U file3"
 	  dotest_fail tag-ext-26 "$testcvs -Q -n diff -r \.prev" \
 "${SPROG} \[diff aborted\]: Tag .\.prev. invalid\. Tag must not be relative: .\.prev."
 
-	  dotest_fail tag-ext-27 "$testcvs diff -r \.prev file2 file3" \
+	  echo tcontent >file4
+	  dotest tag-ext-27 "$testcvs -Q add file4"
+
+	  dotest tag-ext-28 "$testcvs -Q ci -maddtrunk"
+
+	  rm file4
+	  dotest tag-ext-29 "$testcvs remove file4" \
+"cvs remove: scheduling \`file4' for removal
+cvs remove: use \`cvs commit' to remove this file permanently"
+
+	  dotest tag-ext-30 "$testcvs -Q ci -mremtrunk"
+
+	  dotest_fail tag-ext-31 "$testcvs diff -r \.prev file2 file3" \
 "Index: file2
 ===================================================================
 RCS file: $CVSROOT_DIRNAME/$module/file2,v
@@ -12638,13 +12652,13 @@ diff -r1\.2 -r1\.3
 ---
 > tcontent"
 
-	  dotest_fail tag-ext-29 "$testcvs diff -r \.root file2 file3" \
+	  dotest_fail tag-ext-32 "$testcvs diff -r \.root file2 file3" \
 "cvs diff: tag \.root is not in file file2
 cvs diff: tag \.root is not in file file3"
 
-	  dotest tag-ext-30 "$testcvs diff -r \.origin.head file2 file3"
+	  dotest tag-ext-33 "$testcvs diff -r \.origin.head file2 file3"
 
-	  dotest_fail tag-ext-31 "$testcvs diff -r BRANCH1-1\.root file2 file3" \
+	  dotest_fail tag-ext-34 "$testcvs diff -r BRANCH1-1\.root file2 file3" \
 "Index: file2
 ===================================================================
 RCS file: $CVSROOT_DIRNAME/$module/file2,v
@@ -12666,8 +12680,175 @@ diff -r1\.1\.2\.1 -r1\.3
 ---
 > tcontent"
 
-	  dotest_fail tag-ext-32 "$testcvs diff -r BRANCH1-1\.root\.prev\.head file2 file3" \
+	  dotest_fail tag-ext-35 "$testcvs diff -r BRANCH1-1\.root\.prev\.head file2 file3" \
 "cvs diff: tag BRANCH1-1\.root\.prev\.head is not in file file3"
+
+	  dotest tag-ext-36 "$testcvs -q update -r BRANCH1 file3" \
+"U file3"
+
+	  dotest tag-ext-37 "$testcvs tag -b BRANCH1-2 file3" \
+"T file3"
+
+	  echo b1content3 >file3
+	  dotest tag-ext-38 "$testcvs -Q ci -maddbranch1 file3"
+
+	  dotest tag-ext-39 "$testcvs -q update -r BRANCH1-2 file3" \
+"U file3"
+
+	  echo b1-2content1 >file3
+	  dotest tag-ext-40 "$testcvs -Q ci -maddbranch1-2.1 file3"
+
+	  echo b1-2content2 >file3
+	  dotest tag-ext-41 "$testcvs -Q ci -maddbranch1-2.2 file3"
+
+	  dotest tag-ext-42 "$testcvs tag -b BRANCH1-2-1 file3" \
+"T file3"
+
+	  echo b1-2content3 >file3
+	  dotest tag-ext-43 "$testcvs -Q ci -maddbranch1-2.3 file3"
+
+	  dotest tag-ext-44 "$testcvs -q update -r BRANCH1-2-1 file3" \
+"U file3"
+
+	  echo b1-2-1content1 >file3
+	  dotest tag-ext-45 "$testcvs -Q ci -maddbranch1-2-1.1 file3"
+
+	  echo b1-2-1content2 >file3
+	  dotest tag-ext-46 "$testcvs -Q ci -maddbranch1-2-1.2 file3"
+
+
+	  echo b1-2-1content3 >file3
+	  dotest tag-ext-47 "$testcvs -Q ci -maddbranch1-2-1.3 file3"
+
+	  echo b1-2-1content4 >file3
+	  dotest tag-ext-48 "$testcvs -Q ci -maddbranch1-2-1.4 file3"
+
+	  echo b1-2-1content5 >file3
+	  dotest tag-ext-49 "$testcvs -Q ci -maddbranch1-2-1.5 file3"
+
+	  echo b1-2-1content6 >file3
+	  dotest tag-ext-50 "$testcvs -Q ci -maddbranch1-2-1.6 file3"
+
+	  echo b1-2-1content7 >file3
+	  dotest tag-ext-51 "$testcvs -Q ci -maddbranch1-2-1.7 file3"
+
+	  echo b1-2-1content8 >file3
+	  dotest tag-ext-52 "$testcvs -Q ci -maddbranch1-2-1.8 file3"
+
+	  echo b1-2-1content9 >file3
+	  dotest tag-ext-53 "$testcvs -Q ci -maddbranch1-2-1.9 file3"
+
+	  dotest tag-ext-54 "$testcvs tag -b BRANCH1-2-1-1 file3" \
+"T file3"
+
+	  echo b1-2-1content10 >file3
+	  dotest tag-ext-55 "$testcvs -Q ci -maddbranch1-2-1.10 file3"
+
+	  rm file3
+	  dotest tag-ext-56 "$testcvs remove file3" \
+"cvs remove: scheduling \`file3' for removal
+cvs remove: use \`cvs commit' to remove this file permanently"
+
+	  dotest tag-ext-57 "$testcvs -Q ci -mremBRANCH1-2-1.11 file3"
+
+	  dotest tag-ext-58 "$testcvs -q update -r BRANCH1-2-1-1 file3" \
+"U file3"
+
+	  echo b1-2-1-1content1 >file3
+	  dotest tag-ext-59 "$testcvs -Q ci -maddbranch1-2-1-1.1 file3"
+
+	  echo b1-2-1-1content2 >file3
+	  dotest tag-ext-60 "$testcvs -Q ci -maddbranch1-2-1-1.2 file3"
+
+	  dotest tag-ext-61 "$testcvs tag -b BRANCH1-2-1-1-1-1 file3" \
+"T file3"
+
+	  echo b1-2-1-1content3 >file3
+	  dotest tag-ext-62 "$testcvs -Q ci -maddbranch1-2-1-1.3 file3"
+
+	  dotest tag-ext-63 "$testcvs admin -o 1.1.2.2.2.2.2.4::1.1.2.2.2.2.2.8 file3" \
+"RCS file: $CVSROOT_DIRNAME/$module/file3,v
+deleting revision 1\.1\.2\.2\.2\.2\.2\.5
+deleting revision 1\.1\.2\.2\.2\.2\.2\.6
+deleting revision 1\.1\.2\.2\.2\.2\.2\.7
+done"
+
+	  dotest tag-ext-64 "$testcvs admin -o 1.1.2.2.2.2.2.2::1.1.2.2.2.2.2.4 file3" \
+"RCS file: $CVSROOT_DIRNAME/$module/file3,v
+deleting revision 1\.1\.2\.2\.2\.2\.2\.3
+done"
+
+	  dotest_fail tag-ext-65 "$testcvs diff -r \.root\.root\.root\.head file3" \
+"Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.3
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+diff -r1\.1\.2\.3 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+1c1
+< b1content3
+---
+> b1-2-1-1content3"
+
+	  dotest_fail tag-ext-66 "$testcvs diff -r \.origin -r \.origin\.head file3" \
+"Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.1
+retrieving revision 1\.1\.2\.3
+diff -r1\.1\.2\.1 -r1\.1\.2\.3
+1c1
+< b1content
+---
+> b1content3"
+
+	  dotest tag-ext-67 "$testcvs diff -r \.origin\.prev -r \.root\.head file3"
+
+	  dotest_fail tag-ext-68 "$testcvs diff -r \.origin\.prev -r \.root file3" \
+"cvs diff: tag \.origin\.prev is not in file file3"
+
+	  dotest_fail tag-ext-69 "$testcvs diff -r \.origin -r \.root\.head file3" \
+"cvs diff: Tag \.root\.head refers to a dead (removed) revision in file \`file3'\.
+cvs diff: No comparison available\.  Pass \`-N' to \`cvs diff'?"
+
+	  dotest_fail tag-ext-70 "$testcvs diff -r \.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev file3" \
+"Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.1
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+diff -r1\.1\.2\.1 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+1c1
+< b1content
+---
+> b1-2-1-1content3"
+
+	  date_T1=`getrlogdate -r1\.2 tag-ext/file3`
+	  date_T2=`getrlogdate -r1\.1\.2\.2\.2\.2\.2\.8 tag-ext/file3`
+	  
+	  dotest_fail tag-ext-71 "$testcvs diff -r \.trunk:'$date_T1' file3" \
+"Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.2
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+diff -r1\.2 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+1c1
+< content
+---
+> b1-2-1-1content3"
+
+	  dotest_fail tag-ext-72 "$testcvs diff -r BRANCH1-2-1:'$date_T2' file3" \
+"Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.8
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+diff -r1\.1\.2\.2\.2\.2\.2\.8 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+1c1
+< b1-2-1content8
+---
+> b1-2-1-1content3"
 
 	  # clean up
 	  dokeep
@@ -12675,6 +12856,7 @@ diff -r1\.1\.2\.1 -r1\.3
 	  cd ../..
 	  rm -r $module
 	  modify_repo rm -rf $CVSROOT_DIRNAME/tag-ext
+	  TZ = $save_TZ
 	  ;;
 
 
@@ -26587,7 +26769,7 @@ ${SPROG} \[admin aborted\]: revision .2\.1\.2. does not exist"
 	  #
 	  dotest_fail admin-28-4 "${testcvs} admin -ntagnine:1.a.2 file2"  \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
-${SPROG} \[admin aborted\]: Tag .1\.a\.2. invalid. Cannot resolve extension: 'a'"
+${SPROG} \[admin aborted\]: Tag .1\.a\.2. invalid. Cannot resolve extension: \`a'"
 
 	  # Confirm that a missing tag is not a fatal error.
 	  dotest admin-28-5.1 "${testcvs} -Q tag BO+GUS file1" ''

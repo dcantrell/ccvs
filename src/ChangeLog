@@ -1,3 +1,26 @@
+2005-04-19  Derek Price  <derek@ximbiot.com>
+
+	* admin.c (admin_fileproc): Undo last commit. TAG_TRUNK test removed.
+	* commit.c (check_fileproc): Imporve comments. TAG_TRUNK test removed.
+	(commit_fileproc): TAG_TRUNK test removed.
+	(remove_file): TAG_TRUNK test removed.
+	* update.c (update_fileproc): TAG_TRUNK test removed.
+	* rcs.c: Improve comments.
+	(RCS_gethead): Remove this fn.
+	(RCS_getversion): TAG_TRUNK test removed.
+	(RCS_gettag): Remove magic conversion.
+	(RCS_nodeisbranch): Properly detect magic for numeric rev.
+	Remove magic conversion.
+	(RCS_whatbranch): Gratious reformatting. Simplify.
+	(translate_tag): Always return non-magic branches for symbolic/extended
+	tags. Add param flag to prevent conversion for non-extended tags.
+	Improve assumption verification.
+	(RCS_extract_tag): Adapt error msg to cvs conventions.
+	(RCS_getprevious): Rootdate comparison fixed.
+	(RCS_getroot): Remove magic conversion.
+	* sanity.sh: More tests added.
+	(Patch from Frank Hemer <frank@hemer.org>.)
+
 2005-04-06  Derek Price  <derek@ximbiot.com>
 
 	* rcs.c (RCS_getprevious): Remove erroneous FIXME.
