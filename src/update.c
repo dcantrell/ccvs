@@ -612,7 +612,6 @@ update_fileproc (void *callerdat, struct file_info *finfo)
     {
 	char *rev = RCS_getversion (finfo->rcs, tag, NULL, 1, NULL);
 	if (rev != NULL
-	    && !(*tag == '.' && !strcmp (tag+1, TAG_TRUNK))
 	    && nonbranch != (nb = !RCS_nodeisbranch (finfo->rcs, tag)))
 	{
 	    if (nonbranch >= 0 && !warned && !quiet)

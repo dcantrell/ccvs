@@ -105,8 +105,7 @@ static char *RCS_getprevious (RCSNode *, const char *);
 static char *RCS_getnext (RCSNode *, const char *);
 static char *RCS_getorigin (RCSNode *, const char *);
 static char *RCS_getcommitid (RCSNode *, const char *, bool);
-static char *RCS_gethead (RCSNode *, const char *);
-static char *translate_tag (RCSNode *rcs, const char *tag);
+static char *translate_tag (RCSNode *rcs, const char *, bool);
 static char *translate_symtag (RCSNode *, const char *);
 static char *RCS_addbranch (RCSNode *, const char *);
 static char *truncate_revnum (const char *);
@@ -2150,6 +2149,24 @@ do_branches (List *list, char *val)
 
 
 
+/* Return true if TAG is does not start with a number and consist entirely of
+ * numbers and dots.
+ *
+ * (N.N.N.N.prev is now a valid tag).
+ */
+static inline bool
+is_symbolic (const char *tag)
+{
+    assert (tag && *tag);
+    if (!isdigit (*tag)) return true;
+    for (tag++; *tag; tag++)
+    	if (!(isdigit (*tag) || *tag == '.')) return true;
+    if (*--tag == '.') return true;
+    return false;
+}
+
+
+
 /*
  * Version Number
  * 
@@ -2172,30 +2189,29 @@ RCS_getversion (RCSNode *rcs, const char *tag, const char *date,
     {
 	char *branch, *rev;
 
-	if (*tag == '.' && !strcmp (tag+1, TAG_TRUNK))
+	if (! RCS_nodeisbranch (rcs, tag))
 	{
-	    return RCS_getdatetrunk (rcs, date, force_tag_match);
+	    /* We can't get a particular date if the tag is not a
+	       branch.  */
+	    return NULL;
 	}
+
+	/* Work out the branch.  */
+	if (is_symbolic (tag))
+	    branch = RCS_whatbranch (rcs, tag);
 	else
-	{
-	    if (! RCS_nodeisbranch (rcs, tag))
-	    {
-	        /* We can't get a particular date if the tag is not a
-		   branch.  */
-	        return NULL;
-	    }
+	    branch = xstrdup (tag);
 
-	    /* Work out the branch.  */
-	    if (! isdigit ((unsigned char) tag[0]))
-	        branch = RCS_whatbranch (rcs, tag);
-	    else
-	        branch = xstrdup (tag);
+	int dots = numdots (branch);
 
-	    /* Fetch the revision of branch as of date.  */
+	/* Fetch the revision of branch as of date.  */
+	if (!dots)
+	    rev = RCS_getdatetrunk (rcs, date, force_tag_match);
+	else 
 	    rev = RCS_getdatebranch (rcs, date, branch);
-	    free (branch);
-	    return rev;
-	}
+
+	free (branch);
+	return rev;
     }
     else if (tag)
 	return RCS_gettag (rcs, tag, force_tag_match, simple_tag);
@@ -2293,31 +2309,15 @@ RCS_tag2rev (RCSNode *rcs, char *tag)
     if (tag && STREQ (tag, TAG_HEAD))
         return RCS_head (rcs);
 
-    /* If valid tag let translate_tag say yea or nay. */
+    /* If valid tag let RCS_extract_tag say yea or nay. */
     char *tmp = RCS_extract_tag (tag, true);
     if (tmp) free (tmp);
-    rev = translate_tag (rcs, tag);
+
+    /* We need to preserve magic branch numbers here */
+    rev = translate_tag (rcs, tag, true);
 
     /* Trust the caller to print warnings. */
     return rev;
-}
-
-
-
-/* Return true if TAG is does not start with a number and consist entirely of
- * numbers and dots.
- *
- * (N.N.N.N.prev is now a valid tag).
- */
-static inline bool
-is_symbolic (const char *tag)
-{
-    assert (tag && *tag);
-    if (!isdigit (*tag)) return true;
-    for (tag++; *tag; tag++)
-    	if (!(isdigit (*tag) || *tag == '.')) return true;
-    if (*--tag == '.') return true;
-    return false;
 }
 
 
@@ -2361,46 +2361,29 @@ RCS_gettag (RCSNode *rcs, const char *symtag, int force_tag_match,
     {
 	char *version;
 
-	/* If we got a symbolic tag, resolve it to a numeric */
-	version = translate_tag (rcs, symtag);
-	if (version != NULL)
+	/* Resolve to a numeric revision number */
+	version = translate_tag (rcs, symtag, false);
+	if (version)
 	{
 	    int dots;
-	    char *magic, *branch, *cp;
-
 	    tag = version;
 
 	    /*
-	     * If this is a magic revision, we turn it into either its
+	     * If this is a branch tag, we turn it into either its
 	     * physical branch equivalent (if one exists) or into
 	     * its base revision, which we assume exists.
 	     */
 	    dots = numdots (tag);
-	    if (dots > 2 && (dots & 1) != 0)
+	    if (dots && !(dots & 1))
 	    {
-		branch = strrchr (tag, '.');
-		cp = branch++ - 1;
-		while (*cp != '.')
-		    cp--;
-
-		/* see if we have .magic-branch. (".0.") */
-		magic = xmalloc (strlen (tag) + 1);
-		(void) sprintf (magic, ".%d.", RCS_MAGIC_BRANCH);
-		if (strncmp (magic, cp, strlen (magic)) == 0)
+	        version = RCS_getbranch (rcs, tag, 1);
+		if (version != NULL)
 		{
-		    /* it's magic.  See if the branch exists */
-		    *cp = '\0';		/* turn it into a revision */
-		    (void) sprintf (magic, "%s.%s", tag, branch);
-		    branch = RCS_getbranch (rcs, magic, 1);
-		    free (magic);
-		    if (branch != NULL)
-		    {
-			free (tag);
-			return branch;
-		    }
-		    return tag;
+		    free (tag);
+		    return version;
 		}
-		free (magic);
+		*strrchr (tag, '.') = '\0';
+		return tag;
 	    }
 	}
 	else
@@ -2559,12 +2542,14 @@ checkmagic_proc (Node *p, void *closure)
  * or symbolic tag resolves to a "branch" within the rcs file.
  *
  * FIXME: this is the same as RCS_nodeisbranch except for the special 
- *        case for handling a null rcsnode.
+ *        case for handling a null rcsnode and numeric magic branches.
  */
 int
 RCS_isbranch (RCSNode *rcs, const char *rev)
 {
-    /* numeric revisions are easy -- even number of dots is a branch */
+    /* numeric revisions are easy -- even number of dots is a branch
+     * Note that magic branch numbers are not checked
+     */
     if (isdigit ((unsigned char) *rev))
 	return (numdots (rev) & 1) == 0;
 
@@ -2595,41 +2580,39 @@ RCS_nodeisbranch (RCSNode *rcs, const char *tag)
 
     assert (rcs);
 
-    /* numeric revisions are easy -- even number of dots is a branch */
+    /* numeric revisions are easy -- even number of dots is a branch
+     * Note that we need to care about magic branch numbers
+     */
     if (!is_symbolic (tag))
-        return !(numdots (tag) & 1);
+    {
+        dots = numdots (tag);
+        if (dots > 1)
+	{
+	    char *magic;
+	    char *p = strrchr (tag, '.') - 1;
+	    while (*p != '.') --p;
+	    magic = Xasprintf (".%d.", RCS_MAGIC_BRANCH);
+	    if (!strncmp (p, magic, strlen (magic)))
+	    {
+	        free (magic);
+		return (dots & 1);
+	    }
+	    free (magic);
+	}
+        return !(dots & 1);
+    }
 
-    version = translate_tag (rcs, tag);
+    /* resolve to its numeric equivalent and remove magic */
+    version = translate_tag (rcs, tag, false);
+
     if (!version) return false;
 
     dots = numdots (version);
-    if (!(dots & 1))
-    {
-	free (version);
-	return true;
-    }
-
-    /* got a symbolic tag match, but it's not a branch; see if it's magic */
-    if (dots > 2)
-    {
-	char *magic;
-	char *branch = strrchr (version, '.');
-	char *cp = branch - 1;
-	while (*cp != '.')
-	    cp--;
-
-	/* see if we have .magic-branch. (".0.") */
-	magic = xmalloc (strlen (version) + 1);
-	(void) sprintf (magic, ".%d.", RCS_MAGIC_BRANCH);
-	if (strncmp (magic, cp, strlen (magic)) == 0)
-	{
-	    free (magic);
-	    free (version);
-	    return true;
-	}
-	free (magic);
-    }
     free (version);
+
+    if (!(dots & 1))
+	return true;
+
     return false;
 }
 
@@ -2653,38 +2636,41 @@ RCS_whatbranch (RCSNode *rcs, const char *tag)
     if (is_symbolic (tag))
     {
 	/* now, look for a match in the symbols list */
-	version = translate_tag (rcs, tag);
+	version = translate_tag (rcs, tag, false);
 	if (!version) return NULL;
+	dots = numdots (version);
     }
     else
+    {
 	version = xstrdup (tag);
+	dots = numdots (version);
 
-    dots = numdots (version);
+	if (dots > 2 && (dots & 1))
+	{
+	    /* See if it's magic; Convert into physical equivalent if so */
+	    char *magic;
+	    char *branch = strrchr (version, '.');
+	    char *p = branch++ - 1;
+	    while (*p != '.') --p;
+
+	    /* see if we have .magic-branch. (".0.") */
+	    magic = Xasprintf (".%d.", RCS_MAGIC_BRANCH);
+	    if (!strncmp (p, magic, strlen (magic)))
+	    {
+	        /* It's magic! Construct the real branch */
+	        free (magic);
+	        *p = '\0';    /* turn it into a revision */
+		magic = Xasprintf ("%s.%s", version, branch);
+		free (version);
+		return magic;
+	    }
+	    free (magic);
+	}
+    }
+
     if (!(dots & 1))
 	return version;
 
-    /* got a symbolic tag match, but it's not a branch; see if it's magic */
-    if (dots > 2)
-    {
-	char *magic;
-	char *branch = strrchr (version, '.');
-	char *cp = branch++ - 1;
-	while (*cp != '.')
-	    cp--;
-
-	/* see if we have .magic-branch. (".0.") */
-	magic = xmalloc (strlen (version) + 1);
-	(void) sprintf (magic, ".%d.", RCS_MAGIC_BRANCH);
-	if (strncmp (magic, cp, strlen (magic)) == 0)
-	{
-	    /* yep.  it's magic.  now, construct the real branch */
-	    *cp = '\0';			/* turn it into a revision */
-	    (void) sprintf (magic, "%s.%s", version, branch);
-	    free (version);
-	    return magic;
-	}
-	free (magic);
-    }
     free (version);
     return NULL;
 }
@@ -2841,7 +2827,7 @@ RCS_branch_head (RCSNode *rcs, const char *tag)
 
     if (is_symbolic (tag))
     {
-	num = translate_tag (rcs, tag);
+	num = translate_tag (rcs, tag, false);
 	if (!num) return NULL;
     }
     else
@@ -3325,6 +3311,10 @@ RCS_symbols(RCSNode *rcs)
  * RETURN
  *     Branch: return the HEAD-1 revision or NULL
  *     Revision: return the previous revision or NULL
+ *
+ * ASSUMPTIONS
+ *   The tag is valid, it has been validated by RCS_check_tag
+ *   The Tag does not contain RCS_MAGIC_BRANCH
  */
 static char *
 RCS_getprevious (RCSNode *rcs, const char *rev)
@@ -3351,22 +3341,26 @@ RCS_getprevious (RCSNode *rcs, const char *rev)
     if (dots > 1) /* revision on a branch */
     {
         /* find the root revision */
-        *strrchr (trev, '.') = '\0';
+        char *p1 = strrchr (trev, '.');
+	*p1 = '\0';
 	int len = strlen (trev);
-        *strrchr (trev, '.') = '\0';
+        char *p2 = strrchr (trev, '.');
+	*p2 = '\0';
 
         RCSVers *vers = NULL;
         Node *node = findnode (rcs->versions, trev);
         if (node && (vers = node->data) && vers->branches)
 	{
-	   char *rootdate = vers->date;
+	    *p1 = '.';
+	    *p2 = '.';
+	    char *rootdate = vers->date;
 	    Node *head = vers->branches->list;
 	    Node *br;
 	    for (br = head->next; br != head; br = br->next)
 	    {
 	        if (node = findnode (rcs->versions, br->key))
 		{
-		    if (strncmp (((RCSVers *)node->data)->version, rev, len))
+		    if (strncmp (((RCSVers *)node->data)->version, trev, len))
 		        continue;
 		       
 		    ++len;
@@ -3374,12 +3368,15 @@ RCS_getprevious (RCSNode *rcs, const char *rev)
 		    while (node != NULL)
 		    {
 		        vers = node->data;
-			if (STREQ (vers->version + len, rev + len))
+			if (STREQ (vers->version + len, trev + len))
 			{
 			    if (p)
 			        retval = xstrdup (p);
 			    else if (RCS_datecmp (vers->date, rootdate))
-			        retval = xstrdup (trev);
+			    {
+			        *p2 = '\0';
+				retval = xstrdup (trev);
+			    }
 			    break;
 			}
 
@@ -3392,6 +3389,7 @@ RCS_getprevious (RCSNode *rcs, const char *rev)
 			else
 			    node = NULL;
 		    }
+		    break;
 		}
 	    }
 	}
@@ -3422,7 +3420,7 @@ RCS_getprevious (RCSNode *rcs, const char *rev)
         if (prev && STREQ (trev, "1.1"))
         {
             /* This is 1.1;  if the date of 1.1 is the same as that for
-	     * the VENDOR.1 version, then return the VENDOR version with
+	     * the VENDOR.1 version, then return the latest VENDOR version with
 	     * a timestamp before the 1.2 timestamp (point of merge). The
 	     * date of 1.1. and VENDOR.1 differs if the first version of
 	     * a file is created by a regular cvs add and commit, and there
@@ -3491,6 +3489,10 @@ RCS_getprevious (RCSNode *rcs, const char *rev)
  * RETURN
  *     Branch: NULL (There cannot be a revision)
  *     Revision: returns the next revision or NULL
+ *
+ * ASSUMPTIONS
+ *   The tag is valid, it has been validated by RCS_check_tag
+ *   The Tag does not contain RCS_MAGIC_BRANCH
  */
 static char *
 RCS_getnext (RCSNode *rcs, const char *rev)
@@ -3555,6 +3557,10 @@ RCS_getnext (RCSNode *rcs, const char *rev)
 /*
  * Find the origin revision, which is the first revision
  * on either the trunk or a branch if added there.
+ *
+ * ASSUMPTIONS
+ *   The tag is valid, it has been validated by RCS_check_tag
+ *   The Tag does not contain RCS_MAGIC_BRANCH
  */
 static char *
 RCS_getorigin (RCSNode *rcs, const char *rev)
@@ -3696,6 +3702,10 @@ RCS_getorigin (RCSNode *rcs, const char *rev)
 /*
  * Find the branchpoint, no matter if rev points
  * to a branch or a revision
+ *
+ * ASSUMPTIONS
+ *   The tag is valid, it has been validated by RCS_check_tag
+ *   The Tag does not contain RCS_MAGIC_BRANCH
  */
 static char *
 RCS_getroot (RCSNode *rcs, const char *rev)
@@ -3707,22 +3717,7 @@ RCS_getroot (RCSNode *rcs, const char *rev)
     if (dots > 1)
     {
         int len;
-        char *tmp = xstrdup (rev);
-
-	/* remove ev. magic branch num */
-	if (dots > 2 && (dots & 1))
-	{
-	    int i;
-	    const char *p = rev;
-	    for (i = 1; i < dots; ++i)
-	        p = strchr (p+1, '.');
-	    if (!strncmp (p, ".0.", 3))
-	    {
-	        strcpy (tmp + (p - rev), p + 2);
-		--dots;
-	    }
-	}
-	retval = xstrdup (tmp);
+	retval = xstrdup (rev);
 
         if (dots & 1)
 	{
@@ -3756,7 +3751,7 @@ RCS_getroot (RCSNode *rcs, const char *rev)
 		for (br = head->next; br != head; br = br->next)
 		{
 		   //check if br->key is on branch rev
-		   if (!strncmp (tmp, br->key, len))
+		   if (!strncmp (rev, br->key, len))
 		   {
 		       if (node = findnode (rcs->versions, br->key))
 		       {
@@ -3764,20 +3759,17 @@ RCS_getroot (RCSNode *rcs, const char *rev)
 			   if (vers->dead && !RCS_datecmp (rootdate, vers->date))
 			   {
 			       free (retval);
-			       free (tmp);
 			       if (STREQ (vers->version, rev))
 				   return NULL;
 			       else
 				   return xstrdup (vers->version);
 			   }
 		       }
-		       free (tmp);
 		       return retval;
 		   }
 		}
 	    }
 	}
-	free (tmp);
 	free (retval);
     }
     return NULL;
@@ -3827,64 +3819,26 @@ RCS_getcommitid (RCSNode *rcs, const char *commitid, bool prev)
 
 
 
-/*
- * Find the head of branch of current revision
- */
-static char *
-RCS_gethead (RCSNode *rcs, const char *rev)
-{
-    char *retval = NULL;
-    int dots = numdots (rev);
-    if (!dots)
-        return NULL;
-
-    char *tmp = xstrdup (rev);
-
-    /* remove ev. magic branch num */
-    if (dots > 2 && (dots & 1))
-    {
-        int i;
-        const char *p = rev;
-        for (i = 1; i < dots; ++i)
-            p = strchr (p+1, '.');
-        assert (p);
-        if (!strncmp (p, ".0.", 3))
-        {
-            strcpy (tmp + (p - rev), p + 2);
-	    --dots;
-        }
-    }
-
-    if (dots > 1)
-    {
-        if (dots & 1)
-	    *(strrchr (tmp, '.')) = '\0';
-	retval = RCS_branch_head (rcs, tmp);
-    }
-    else
-        retval = xstrdup (rcs->head);
-    free (tmp);
-
-    return retval;
-}
-
-
-
 /* Translate special/symbolic tags into their revision thus:
  *
  *   - If TAG starts numeric, rely on its formating up to the first
  *     non-numberic-tag character ([^0-9.]) to resolve a base revision.
  *   - Else, resolve everything before the first `.' as a symbolic tag to
- *     determine the base tag.
+ *     determine the base tag. Convert magic branch numbers into their
+ *     physical equivalent.
  *   - Resolve any remaining tag extensions (.trunk, .head, ...).
  *
  * RETURNS
  *   NULL on error.
  *   A newly malloc'd string containing the resolved revision, otherwise.
+ *
+ * ASSUMPTIONS
+ *   The Tag is valid, it has been validated by RCS_check_tag
  */
 static char *
-translate_tag (RCSNode *rcs, const char *tag)
+translate_tag (RCSNode *rcs, const char *tag, bool keepmagic)
 {
+/*     printf("translate_tag: %s\n",tag); */
     char c;
     char *retval = NULL;
     char *tmp, *tmpval;
@@ -3915,7 +3869,6 @@ translate_tag (RCSNode *rcs, const char *tag)
 	tmp = p;
 	if (*p--) *p = '\0';
 	retval = xstrdup (tmpval);
-	/* FIXME?  Validate numeric revision?  */
     }
     else
         tmp = tmpval;
@@ -3925,30 +3878,51 @@ translate_tag (RCSNode *rcs, const char *tag)
     if (token)
     {
         bool force;
+	if (!keepmagic && retval && RCS_nodeisbranch (rcs, retval))
+	{
+	    assert (*token); /* see => assumptions */
+	    /* We have an initial numeric revision, check
+	     * for magic rev numbers and convert to their
+	     * physical equivalent if so.
+	     */
+	    char *p = RCS_whatbranch (rcs, retval);
+	    free (retval);
+	    retval = p;
+	}
 	do
 	{
+	    assert (*token); /* see => assumptions */
 	    force = false;
 	    if (!retval)
 	    {
+	        /* there is no base revision and no initial numeric revision */
 	        if (token == tmp)
 		{
-		    if (*token)
+		    /* tag does not start with a dot */
+		    retval = translate_symtag (rcs, token);
+		    if (retval)
 		    {
-			retval = translate_symtag (rcs, token);
-			if (!retval)
-			    /* Return NULL.  Callers will generate the "TAG
-			     * not found" message.
+		        if (keepmagic && (token = strtok (NULL,".")))
+			{
+			    /* The next token needs to be evaluated here because
+			     * we need to know whether magic revision numbers
+			     * need to be converted to their physical equivalent.
+			     * Set force flag to not lose this token
 			     */
-			    break;
-		    }
-		    else
-			/* tags starting with `.' modify BASE.  */
-			continue;
-		    if (RCS_nodeisbranch (rcs, retval))
-		    {
-			char *p = RCS_whatbranch (rcs, retval);
-			free (retval);
-			retval = p;
+			    force = true;
+			    keepmagic = false;
+			}
+			    
+			if (!keepmagic && retval && RCS_nodeisbranch (rcs, retval))
+			{
+			    /* convert magic rev numbers into their
+			     * physical equivalent
+			     */
+			    char *p = RCS_whatbranch (rcs, retval);
+			    free (retval);
+			    retval = p;
+			    if (!retval) force = false;
+			}
 		    }
 		}
 		else if (STREQ (token, TAG_TRUNK))
@@ -3956,35 +3930,51 @@ translate_tag (RCSNode *rcs, const char *tag)
 		    /* .trunk is a branch tag, but rcs->head is a revision.  */
 		    char *p;
 		    retval = RCS_head (rcs);
-		    if (!retval) return NULL;
 
-		    /* A non-null return from RCS_head is guaranteed to not
-		     * specify a branch and to have at least one dot.
-		     */
-		    p = strrchr (retval, '.');
-		    *p = '\0';
+		    if (retval)
+		    {
+		        /* A non-null return from RCS_head is guaranteed to not
+			 * specify a branch and to have at least one dot.
+			 */
+		        p = strrchr (retval, '.');
+			*p = '\0';
+		    }
 		}
 		else if (STREQ (token, TAG_COMMITID))
 		{
 		    char *commitid = strtok (NULL,".");
 		    if (token = strtok (NULL,"."))
-		       force = true;
+		        /* The next token needs to be evaluated here because
+			 * RCS_getcommitid needs to know whether a previous
+			 * revision is requested (performance enhancement).
+			 * Set force flag to ensure the next token gets resolved
+			 * if it is not a '.prev' token.
+			 */
+		        force = true;
 		    if (commitid)
 		    {
-		       bool previous = (token && STREQ (token, TAG_PREVIOUS));
-		       retval = RCS_getcommitid (rcs, commitid, previous);
-		       if (previous || !retval)
-			   force = false;
+		        bool previous = (token && STREQ (token, TAG_PREVIOUS));
+			retval = RCS_getcommitid (rcs, commitid, previous);
+			if (previous || !retval)
+			    force = false;
 		    }
 		}
 		else if (!STREQ (token, TAG_DOTBASE))
+		    /* Does it make sense to output an error msg here?
+		     * Actualy this is more or less a help for debugging
+		     * since this only happens if the assumptions fail
+		     */
 		    error (1, 0, "Tag `%s': invalid head: `%s'", token, tag);
+
+		/* If no retval and no force flag => return NULL.
+		 * Callers will generate the "TAG not found" message.
+		 */
 	    }
 	    else
 	    {
 	        char *p = retval;
 		if (STREQ (token, TAG_DOTHEAD))
-		    retval = RCS_gethead (rcs, p);
+		    retval = RCS_branch_head (rcs, p);
 	        else if (STREQ (token, TAG_PREVIOUS))
 		    retval = RCS_getprevious (rcs, p);
 		else if (STREQ (token, TAG_ORIGIN))
@@ -3994,6 +3984,10 @@ translate_tag (RCSNode *rcs, const char *tag)
 		else if (STREQ (token, TAG_NEXT))
 		    retval = RCS_getnext (rcs, p);
 		else
+		    /* Does it make sense to output an error msg here?
+		     * Actualy this is more or less a help for debugging
+		     * since this only happens if the assumptions fail
+		     */
 		    error (1, 0,
 		           "Tag `%s': invalid extension: `%s'", token, tag);
 		free (p);
@@ -4002,7 +3996,7 @@ translate_tag (RCSNode *rcs, const char *tag)
 	while (force || (retval && (token = strtok (NULL, "."))) );
     }
     free (tmpval);
-
+/*     printf("translate_tag: '%s' => '%s'\n",tag,retval); */
     return retval;
 }
 
@@ -4187,7 +4181,7 @@ RCS_extract_tag (const char *tag, bool files)
 
     if (strstr (p,".."))
         error (1, 0, "\
-Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", tag);
+Numeric tag `%s' invalid.  Numeric tags should be of the form X[.X]...", tag);
 
     bool dot = false;
     while (p)
@@ -4198,7 +4192,7 @@ Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", tag);
 	    break;
 	else if (dot && first)
 	    error (1, 0, "\
-Numeric tag '%s' invalid. Numeric tags should be of the form X[.X]...", tag);
+Numeric tag `%s' invalid. Numeric tags should be of the form X[.X]...", tag);
 	else
 	{
 	    dot = false;
@@ -4209,7 +4203,7 @@ Numeric tag '%s' invalid. Numeric tags should be of the form X[.X]...", tag);
 
     if ( (*p && !first && !dot) || tag[strlen (tag)-1] == '.')
         error (1, 0, "\
-Tag '%s' is invalid. Combined tags should be of the form X[.X]...", tag);
+Tag `%s' invalid. Combined tags should be of the form X[.X]...", tag);
 
     bool deptag = false;
     bool multi = true;
@@ -4245,7 +4239,7 @@ Tag '%s' is invalid. Combined tags should be of the form X[.X]...", tag);
 		    }
 		    else
 		        error (1, 0,"\
-Tag '%s' invalid. Reserved expression without leading dot: '%s'", tag, token);
+Tag `%s' invalid. Reserved expression without leading dot: `%s'", tag, token);
 		}
 		else if (STREQ (token, TAG_TRUNK))
 		{
@@ -4267,7 +4261,7 @@ Tag '%s' invalid. Reserved expression without leading dot: '%s'", tag, token);
 		}
 		else if (!files)
 		    error (1, 0,"\
-Tag '%s' invalid. Tag must not be relative: '.%s'", tag, token);
+Tag `%s' invalid. Tag must not be relative: `.%s'", tag, token);
 		else if (STREQ (token, TAG_ORIGIN)
 		         || STREQ (token, TAG_DOTHEAD))
 		{
@@ -4282,14 +4276,14 @@ Tag '%s' invalid. Tag must not be relative: '.%s'", tag, token);
 		}
 		else
 		    error (1, 0,"\
-Tag '%s' invalid. Cannot resolve head: '.%s'", tag, token);
+Tag `%s' invalid. Cannot resolve head: `.%s'", tag, token);
 	    }
 	    else if (deptag)
 	        error (1, 0,"\
-Tag '%s' invalid. Deprecated prefix before extension: '%s'", tag, token);
+Tag `%s' invalid. Deprecated prefix before extension: `%s'", tag, token);
 	    else if (!multi)
 	        error (1, 0,"\
-Tag '%s' invalid. Extension not allowed: '%s'", tag, token);
+Tag `%s' invalid. Extension not allowed: `%s'", tag, token);
 	    else if (STREQ (token, TAG_ORIGIN)
 		     || STREQ (token, TAG_DOTHEAD))
 	    {
@@ -4297,14 +4291,14 @@ Tag '%s' invalid. Extension not allowed: '%s'", tag, token);
 		    prev = token;
 		else
 		    error (1, 0,"\
-Tag '%s' invalid. Duplicate extension: '%s'", tag, token);
+Tag `%s' invalid. Duplicate extension: `%s'", tag, token);
 
 	    }
 	    else if ((!STREQ (token, TAG_PREVIOUS))
 		      && (!STREQ (token, TAG_NEXT))
 		      && (!STREQ (token, TAG_ROOT)))
 	        error (1, 0,"\
-Tag '%s' invalid. Cannot resolve extension: '%s'", tag, token);
+Tag `%s' invalid. Cannot resolve extension: `%s'", tag, token);
 	    else
 	        prev = NULL;
 	}
