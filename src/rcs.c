@@ -3931,6 +3931,13 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
 		if (*snl == '\n')
 		    ++cnl;
 
+	    /* If the log message did not end in a newline, increment
+	     * the newline count so we have space for the extra leader.
+	     * Failure to do so results in a buffer overrun.
+	     */
+	    if (loglen && snl[-1] != '\n')
+		++cnl;
+
 	    date = printable_date (ver->date);
 	    sub = xrealloc (sub,
 			    (sublen
@@ -3939,6 +3946,10 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
 			     + strlen (date)
 			     + strlen (ver->author)
 			     + loglen
+			       /* Use CNL + 2 below:  One leader for each log
+				* line, plus the Revision/Author/Date line,
+				* plus a trailing blank line.
+				*/
 			     + (cnl + 2) * leader_len
 			     + 20));
 	    if (expand != KFLAG_V)
@@ -3978,6 +3989,14 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
 			++slnl;
 		    memcpy (sub + sublen, sl, slnl - sl);
 		    sublen += slnl - sl;
+		    if (slnl == logend && slnl[-1] != '\n')
+		    {
+			/* There was no EOL at the end of the log message.  Add
+			 * one.
+			 */
+			sub[sublen] = '\n';
+			++sublen;
+		    }
 		    sl = slnl;
 		}
 	    }
