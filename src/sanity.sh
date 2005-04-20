@@ -20432,6 +20432,7 @@ File: file1            	Status: Up-to-date
 	  # message without the trailing EOL doesn't actually violate the RCS
 	  # spec, though it doesn't appear to be possible to create such a log
 	  # message using RCS 5.7.
+
 	  mkdir $CVSROOT_DIRNAME/rcs5
 	  cat <<\EOF >$CVSROOT_DIRNAME/rcs5/file1,v
 head 1.1;

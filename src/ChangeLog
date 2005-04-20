@@ -1,5 +1,9 @@
 2005-04-20  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (rcs5): Minor cosmetic change.
+
+2005-04-20  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (tests): Add rcs4.
 	(rcs5): Add comments.
 
