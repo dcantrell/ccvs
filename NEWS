@@ -1,6 +1,11 @@
 Changes since 1.11.20:
 **********************
 
+BUG FIXES
+
+* Thanks to an old report and patch from Stewart Brodie <stewart@eh.org>, a
+  potential crash in response to a corrupt RCS file has been fixed.
+
 Changes from 1.11.19 to 1.11.20:
 ********************************
 
