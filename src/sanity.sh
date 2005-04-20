@@ -1634,7 +1634,7 @@ if test x"$*" = x; then
 	tests="${tests} serverpatch log log2 logopt ann ann-id"
 	# Repository Storage (RCS file format, CVS lock files, creating
 	# a repository without "cvs init", &c).
-	tests="${tests} crerepos rcs rcs2 rcs3 rcs5"
+	tests="${tests} crerepos rcs rcs2 rcs3 rcs4 rcs5"
 	tests="$tests lockfiles backuprecover"
 	tests="${tests} sshstdio"
 	# More history browsing, &c.
@@ -22301,6 +22301,18 @@ File: file1            	Status: Up-to-date
 
 
 	rcs5)
+	  # Some tests of the $Log keyword and log message without a trailing
+	  # EOL.  This used to look ugly and, in the worst case, could cause
+	  # a seg fault due to a buffer overflow.
+	  #
+	  # Note that it should not be possible to create this situation via a
+	  # CVS server (and any client), since the server itself inserts the
+	  # trailing EOL onto log messages that are missing one.  Still, we
+	  # shouldn't segfault due to a corrupt RCS file and I think that a log
+	  # message without the trailing EOL doesn't actually violate the RCS
+	  # spec, though it doesn't appear to be possible to create such a log
+	  # message using RCS 5.7.
+
 	  modify_repo mkdir $CVSROOT_DIRNAME/rcs5
 	  cat <<\EOF >$TESTDIR/file1,v
 head 1.1;

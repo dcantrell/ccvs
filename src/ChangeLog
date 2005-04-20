@@ -1,5 +1,14 @@
 2005-04-20  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (rcs5): Minor cosmetic change.
+
+2005-04-20  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (tests): Add rcs4.
+	(rcs5): Add comments.
+
+2005-04-20  Derek Price  <derek@ximbiot.com>
+
 	* rcs.c (expand_keywords): Avoid buffer overflow.
 	(Original patch from Stewart Brodie <stewart@eh.org>.)
 
