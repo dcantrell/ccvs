@@ -1108,7 +1108,8 @@ if test x"$*" = x; then
 	tests="${tests} serverpatch log log2 logopt ann ann-id"
 	# Repository Storage (RCS file format, CVS lock files, creating
 	# a repository without "cvs init", &c).
-	tests="${tests} crerepos rcs rcs2 rcs3 lockfiles backuprecover"
+	tests="${tests} crerepos rcs rcs2 rcs3 rcs5"
+	tests="$tests lockfiles backuprecover"
 	tests="${tests} sshstdio"
 	# More history browsing, &c.
 	tests="${tests} history"
@@ -20416,6 +20417,56 @@ File: file1            	Status: Up-to-date
           rm -r rcs4
           rm -rf ${CVSROOT_DIRNAME}/rcs4-dir
 	  ;;
+
+
+
+	rcs5)
+	  mkdir $CVSROOT_DIRNAME/rcs5
+	  cat <<\EOF >$CVSROOT_DIRNAME/rcs5/file1,v
+head 1.1;
+access;
+symbols;
+locks;
+expand kv;
+
+1.1 date 2007.03.20.04.03.02; author jeremiah; state Ext;  branches; next;
+
+desc
+@@
+
+1.1
+log
+@he always had very fine wine@
+text
+@line1
+/*
+EOF
+echo ' * Revision history: $''Log$' >>$CVSROOT_DIRNAME/rcs5/file1,v
+	  cat <<\EOF >>$CVSROOT_DIRNAME/rcs5/file1,v
+ */
+line5
+@
+EOF
+
+          mkdir rcs5
+          cd rcs5
+	  dotest rcs5-1 "$testcvs -Q co rcs5"
+	  dotest rcs5-2 "cat rcs5/file1" \
+"line1
+/\\*
+ \\* Revision history: "'\$'"Log: file1,v "'\$'"
+ \\* Revision history: Revision 1\.1  2007/03/20 04:03:02  jeremiah
+ \\* Revision history: he always had very fine wine
+ \\* Revision history:
+ \\*/
+line5"
+
+	  cd ..
+          rm -r rcs5
+          rm -rf $CVSROOT_DIRNAME/rcs5
+	  ;;
+
+
 
 	lockfiles)
 	  # Tests of CVS lock files.
