@@ -22286,7 +22286,7 @@ File: file1            	Status: Up-to-date
 
    Working revision:	1\.1\.1\.1.*
    Repository revision:	1\.1\.1\.1	'${CVSROOT_DIRNAME}'/rcs4-dir/file1,v
-   Commit Identifier:	${commitid}
+   Commit Identifier:	'${commitid}'
    Sticky Tag:		(none)
    Sticky Date:		2001\.10\.01\.00\.00\.00
    Sticky Options:	(none)'
