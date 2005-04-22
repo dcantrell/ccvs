@@ -14308,6 +14308,20 @@ When using pserver, this is the user specified in the repository
 specification which need not be the same as the username the
 server is running as (@pxref{Password authentication server}).
 Do not confuse this with the environment variable of the same name.
+
+@item SESSIONID
+@cindex COMMITID, internal variable
+Unique Session ID of the @sc{cvs} process. This is a
+random string of printable characters of at least 16
+characters length. Users should assume that it may
+someday grow to at most 256 characters in length.
+
+@item COMMITID
+@cindex COMMITID, internal variable
+Unique Session ID of the @sc{cvs} process. This is a
+random string of printable characters of at least 16
+characters length. Users should assume that it may
+someday grow to at most 256 characters in length.
 @end table
 
 If you want to pass a value to the administrative files

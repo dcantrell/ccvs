@@ -18683,7 +18683,7 @@ C aa"
 	  dotest info-2 "$testcvs -Q tag info-start"
 	  sed -e's/%p/ALL/' <loginfo >tmploginfo
 	  mv tmploginfo loginfo
-	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" >> loginfo
+	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$COMMITID=\$SESSIONID=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" >> loginfo
           # The following cases test the format string substitution
           echo "ALL echo %{} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %x >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
@@ -18774,7 +18774,8 @@ individual command lines and scripts to handle the new format at your
 leisure\."
 
 	  cd ..
-	  dotest info-9 "cat $TESTDIR/testlog" "xenv-valueyz=${username}=${CVSROOT_DIRNAME}="
+	  dotest info-9 "cat $TESTDIR/testlog" \
+"xenv-valueyz=${username}=${commitid}=${commitid}=${CVSROOT_DIRNAME}="
           dotest info-10 "cat $TESTDIR/testlog2" \
 'first-dir
 first-dir

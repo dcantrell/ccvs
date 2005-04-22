@@ -1,3 +1,13 @@
+2005-04-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* expand_path.c (expand_variable): Add SESSIONID and COMMITID
+	internal variables. Both return the unique global session id of
+	the CVS process. Passing this information to administrative
+	triggers seems reasonable. (The same feature exists in CVSNT and
+	the names were chosen to be the same as the CVSNT names.)
+
+	* sanity.sh (info): Add a test for $COMMITID and $SESSIONID.
+
 2005-04-20  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (rcs4): Fix a typo.
