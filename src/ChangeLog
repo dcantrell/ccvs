@@ -1,3 +1,7 @@
+2005-04-25  Derek Price  <derek@ximbiot.com>
+
+	* mkmodules.c (mkmodules): Remove `#if 0' and reformat comment.
+
 2005-04-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* expand_path.c (expand_variable): Add SESSIONID and COMMITID
