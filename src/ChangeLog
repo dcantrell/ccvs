@@ -1,3 +1,9 @@
+2005-04-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* server.c: Add support for <pam/pam_appl.h> to allow
+	--enable-pam to work on MacOSX 10.2 and newer.
+	(Pach from Moriyoshi Koizumi <moriyoshi@at.wakwak.com>.)
+
 2005-04-25  Derek Price  <derek@ximbiot.com>
 
 	* mkmodules.c (mkmodules): Remove `#if 0' and reformat comment.
