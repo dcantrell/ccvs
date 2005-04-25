@@ -107,7 +107,11 @@ static char *Pserver_Repos = NULL;
 # endif /* AUTH_SERVER_SUPPORT */
 
 # ifdef HAVE_PAM
-#   include <security/pam_appl.h>
+#   if defined(HAVE_SECURITY_PAM_APPL_H)
+#     include <security/pam_appl.h>
+#   elif defined(HAVE_PAM_PAM_APPL_H)
+#     include <pam/pam_appl.h>
+#   endif
 
 static pam_handle_t *pamh = NULL;
 

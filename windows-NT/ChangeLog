@@ -1,3 +1,10 @@
+2005-04-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* config.h.in.in: Syncronize with ../config.h.in file.
+	Added: #undef HAVE_DECL_MEMRCHR, #undef HAVE_PAM_PAM_APPL_H,
+	#undef HAVE_SECURITY_PAM_APPL_H
+	* config.h, config.h.in: Regenerated.
+
 2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.am, stdint.h: Updated from GNULIB.
