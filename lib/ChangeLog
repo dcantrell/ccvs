@@ -1,3 +1,7 @@
+2005-04-25  Derek Price  <derek@ximbiot.com>
+
+	* getdate.y: Update from GNULIB.
+
 2005-04-15  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (DISTCLEANFILES): Add getdate.log.
