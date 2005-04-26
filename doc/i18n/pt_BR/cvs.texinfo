@@ -984,8 +984,8 @@ Are you sure you want to release (and delete) directory `tc': n
 @c <en>committed.  If history logging is enabled it also makes a note in the
 @c <en>history file.  @xref{history file}.
 O comando @code{release} verifica se todas as suas
-modificações foram efetivadas. Se o log de
-histórico está ativo ele também escreve uma
+modificações foram efetivadas. Se o registro
+histórico (history log) está ativo ele também escreve uma
 observação no arquivo de histórico. @xref{arquivo history}.
 
 @c <en>When you use the @samp{-d} flag with @code{release}, it
@@ -3167,7 +3167,8 @@ rodar o @code{cvs init} num repositório já criado.
 @c <en>@code{cvs init} will enable history logging; if you
 @c <en>don't want that, remove the history file after running
 @c <en>@code{cvs init}.  @xref{history file}.
-@code{cvs init} pode guardar um registro histórico; se
+@code{cvs init} pode guardar um registro histórico
+(history log); se
 você não quer guardar isto, remova o arquivo history
 depois de rodar o @code{cvs init}.  @xref{arquivo history}.
 
@@ -7753,7 +7754,7 @@ $ cvs update -l         # @r{Don't update files in subdirectories}
 @c <en>@node Adding and removing
 @node Adicionando e removendo
 @c <en>@chapter Adding, removing, and renaming files and directories
-@chapter Adding, removing, and renaming files and directories
+@chapter Adicionando, removendo e renomeando arquivos e diretórios
 
 @c <en>In the course of a project, one will often add new
 @c <en>files.  Likewise with removing or renaming, or with
@@ -7763,70 +7764,74 @@ $ cvs update -l         # @r{Don't update files in subdirectories}
 @c <en>fact that a change has taken place, just as with
 @c <en>modifying an existing file.  The exact mechanisms to do
 @c <en>this in @sc{cvs} vary depending on the situation.
-In the course of a project, one will often add new
-files.  Likewise with removing or renaming, or with
-directories.  The general concept to keep in mind in
-all these cases is that instead of making an
-irreversible change you want @sc{cvs} to record the
-fact that a change has taken place, just as with
-modifying an existing file.  The exact mechanisms to do
-this in @sc{cvs} vary depending on the situation.
+No decorrer de um projeto, normalmente se adicionam
+arquivos.  Da mesma forma se remove e se renomeia. E
+tudo isto também para diretórios.  O conceito geral que
+se deve ter em mente em todos estes casos é que ao
+invés de fazer uma mudança irreversível você vai querer
+que o @sc{cvs} registre o fato de que uma mudança
+ocorreu, da mesma forma que é feito com a modificação
+de um arquivo existente.  O mecanismo exato para se
+fazer isto com o @sc{cvs} varia conforme o caso.
 
 @menu
 @c <en>* Adding files::                Adding files
-* Adding files::                Adding files
+* Adicionando arquivos::          Adicionando arquivos
 @c <en>* Removing files::              Removing files
-* Removing files::              Removing files
+* Removendo arquivos::            Removendo arquivos
 @c <en>* Removing directories::        Removing directories
-* Removing directories::        Removing directories
+* Removendo diretórios::          Removendo diretórios
 @c <en>* Moving files::                Moving and renaming files
-* Movendo arquivos::                Moving and renaming files
+* Movendo arquivos::              Movendo e renomeando arquivos
 @c <en>* Moving directories::          Moving and renaming directories
-* Moving directories::          Moving and renaming directories
+* Movendo diretórios::            Movendo e renomeando diretórios
 @end menu
 
 @c <en>@node Adding files
-@node Adding files
+@node Adicionando arquivos
 @c <en>@section Adding files to a directory
-@section Adding files to a directory
+@section Adicionando arquivos a um diretório
 @c <en>@cindex Adding files
-@cindex Adding files
+@cindex Adicionando arquivos
 
 @c <en>To add a new file to a directory, follow these steps.
-To add a new file to a directory, follow these steps.
+Para adicionar um novo arquivo a um diretório, siga
+estes passos.
 
 @itemize @bullet
 @item
 @c <en>You must have a working copy of the directory.
 @c <en>@xref{Getting the source}.
-You must have a working copy of the directory.
+Você deve ter uma cópia de trabalho do diretório.
 @xref{Obtendo os fontes}.
 
 @item
 @c <en>Create the new file inside your working copy of the directory.
-Create the new file inside your working copy of the directory.
+Crie o novo arquivo dentro da cópia local do diretório.
 
 @item
 @c <en>Use @samp{cvs add @var{filename}} to tell @sc{cvs} that you
 @c <en>want to version control the file.  If the file contains
 @c <en>binary data, specify @samp{-kb} (@pxref{Binary files}).
-Use @samp{cvs add @var{filename}} to tell @sc{cvs} that you
-want to version control the file.  If the file contains
-binary data, specify @samp{-kb} (@pxref{Arquivos binários}).
+Use @samp{cvs add @var{filename}} para dizer ao
+@sc{cvs} que você quer fazer controle de versões no
+arquivo.  Se o arquivo contém dados em binário,
+especifique @samp{-kb} (@pxref{Arquivos binários}).
 
 @item
 @c <en>Use @samp{cvs commit @var{filename}} to actually check
 @c <en>in the file into the repository.  Other developers
 @c <en>cannot see the file until you perform this step.
-Use @samp{cvs commit @var{filename}} to actually check
-in the file into the repository.  Other developers
-cannot see the file until you perform this step.
+Use @samp{cvs commit @var{filename}} para de fato
+colocar o arquivo no repositório.  Outros
+desenvolvedores não poderam ver o arquivo até que você
+tenha feito isto.
 @end itemize
 
 @c <en>You can also use the @code{add} command to add a new
 @c <en>directory.
-You can also use the @code{add} command to add a new
-directory.
+Você também pode usar o comando @code{add} para
+adicionar um novo diretório.
 @c FIXCVS and/or FIXME: Adding a directory doesn't
 @c require the commit step.  This probably can be
 @c considered a CVS bug, but it is possible we should
@@ -7836,9 +7841,9 @@ directory.
 @c <en>Unlike most other commands, the @code{add} command is
 @c <en>not recursive.  You cannot even type @samp{cvs add
 @c <en>foo/bar}!  Instead, you have to
-Unlike most other commands, the @code{add} command is
-not recursive.  You cannot even type @samp{cvs add
-foo/bar}!  Instead, you have to
+Ao contrário da maioria dos outros comandos, o comando
+@code{add} não é recursivo.  Você não pode sequer digitar @samp{cvs add
+foo/bar}!  Ao invés disso, você tem que fazer
 @c FIXCVS: This is, of course, not a feature.  It is
 @c just that no one has gotten around to fixing "cvs add
 @c foo/bar".
@@ -7849,9 +7854,9 @@ $ cvs add bar
 @end example
 
 @c <en>@cindex add (subcommand)
-@cindex add (subcommand)
+@cindex add (subcomando)
 @c <en>@deffn Command {cvs add} [@code{-k} kflag] [@code{-m} message] files @dots{}
-@deffn Command {cvs add} [@code{-k} kflag] [@code{-m} message] files @dots{}
+@deffn Comando {cvs add} [@code{-k} kflag] [@code{-m} mensagem] arquivos @dots{}
 
 @c <en>Schedule @var{files} to be added to the repository.
 @c <en>The files or directories specified with @code{add} must
@@ -7859,12 +7864,13 @@ $ cvs add bar
 @c <en>new directory hierarchy to the source repository (for
 @c <en>example, files received from a third-party vendor), use
 @c <en>the @code{import} command instead.  @xref{import}.
-Schedule @var{files} to be added to the repository.
-The files or directories specified with @code{add} must
-already exist in the current directory.  To add a whole
-new directory hierarchy to the source repository (for
-example, files received from a third-party vendor), use
-the @code{import} command instead.  @xref{import}.
+Agenda @var{arquivos} para serem adicionados ao repositório.
+Os arquivos ou diretórios especificados com @code{add}
+já devem existir no diretório atual.  Para adicionar
+toda uma estrutura de diretórios nova ao repositório
+de fontes (por exemplo, arquivos recebidos de um
+fornecedor terceiro), use o comando @code{import} ao
+invés do @code{add}.  @xref{import}.
 
 @c <en>The added files are not placed in the source repository
 @c <en>until you use @code{commit} to make the change
@@ -7873,20 +7879,20 @@ the @code{import} command instead.  @xref{import}.
 @c <en>effect of the @code{remove}, unless a @code{commit}
 @c <en>command intervened.  @xref{Removing files}, for an
 @c <en>example.
-The added files are not placed in the source repository
-until you use @code{commit} to make the change
-permanent.  Doing an @code{add} on a file that was
-removed with the @code{remove} command will undo the
-effect of the @code{remove}, unless a @code{commit}
-command intervened.  @xref{Removing files}, for an
-example.
+Os arquivos adicionados não são colocados no
+repositório de fontes até que você use o @code{commit}
+para tornar a mudança permanente.  Aplicar um
+@code{add} num arquivo que foi removido com o comando
+@code{remove} vai desfazer o efeito do @code{remove}, a
+menos que haja um @code{commit} entre os dois.
+@xref{Removendo arquivos}, para um exemplo.
 
 @c <en>The @samp{-k} option specifies the default way that
 @c <en>this file will be checked out; for more information see
 @c <en>@ref{Substitution modes}.
-The @samp{-k} option specifies the default way that
-this file will be checked out; for more information see
-@ref{Modos de substituição}.
+A opção @samp{-k} especifica a forma padrão como este
+arquivo vai ser ???checked out???; para mais
+informações veja @ref{Modos de substituição}.
 
 @c As noted in BUGS, -m is broken client/server (Nov
 @c 96).  Also see testsuite log2-* tests.
@@ -7899,21 +7905,22 @@ this file will be checked out; for more information see
 @c <en>@samp{admin -t}.  @xref{admin}.  If you omit the
 @c <en>@samp{-m @var{description}} flag, an empty string will
 @c <en>be used.  You will not be prompted for a description.
-The @samp{-m} option specifies a description for the
-file.  This description appears in the history log (if
-it is enabled, @pxref{arquivo history}).  It will also be
-saved in the version history inside the repository when
-the file is committed.  The @code{log} command displays
-this description.  The description can be changed using
-@samp{admin -t}.  @xref{admin}.  If you omit the
-@samp{-m @var{description}} flag, an empty string will
-be used.  You will not be prompted for a description.
+A opção @samp{-m} especifica uma descrição para o
+arquivo.  Esta descrição aparece no registro histórico (history log)
+(se este estiver habilitado, @pxref{arquivo history}).
+Ela também vai ser guardada no histórico de versões
+dentro do repositório quando o arquivo é
+???committed???.  O comando @code{log} mostra esta
+descrição.  A descrição pode ser alterada usando-se
+@samp{admin -t}.  @xref{admin}.  Se você omitir a opção
+@samp{-m @var{description}}, uma string vazia vai ser
+usada.  Não vai ser pedido a você uma descrição.
 @end deffn
 
 @c <en>For example, the following commands add the file
 @c <en>@file{backend.c} to the repository:
-For example, the following commands add the file
-@file{backend.c} to the repository:
+Por exemplo, os seguintes comandos adicionam o arquivo
+@file{backend.c} ao repositório:
 
 @c This example used to specify
 @c     -m "Optimizer and code generation passes."
@@ -7930,9 +7937,10 @@ $ cvs commit -m "Early version. Not yet compilable." backend.c
 @c <en>which you are working on (@pxref{Branching and merging}).  You can
 @c <en>later merge the additions to another branch if you want
 @c <en>(@pxref{Merging adds and removals}).
-When you add a file it is added only on the branch
-which you are working on (@pxref{Ramificando e mesclando}).  You can
-later merge the additions to another branch if you want
+Quando você adiciona um arquivo ele é adicionado apenas
+no ramo no qual você está trabalhando
+(@pxref{Ramificando e mesclando}).  Você pode mais
+tarde mesclar as adições a outro ramo se você quiser
 (@pxref{Mesclando adicionados e removidos}).
 @c Should we mention that earlier versions of CVS
 @c lacked this feature (1.3) or implemented it in a buggy
@@ -7948,11 +7956,11 @@ later merge the additions to another branch if you want
 
 @c ---------------------------------------------------------------------
 @c <en>@node Removing files
-@node Removing files
+@node Removendo arquivos
 @c <en>@section Removing files
-@section Removing files
+@section Removendo arquivos
 @c <en>@cindex Removing files
-@cindex Removing files
+@cindex Removendo arquivos
 @c <en>@cindex Deleting files
 @cindex Deleting files
 
@@ -7965,14 +7973,15 @@ later merge the additions to another branch if you want
 @c <en>Directories change.  New files are added, and old files
 @c <en>disappear.  Still, you want to be able to retrieve an
 @c <en>exact copy of old releases.
-Directories change.  New files are added, and old files
-disappear.  Still, you want to be able to retrieve an
-exact copy of old releases.
+Diretórios mudam.  Novos arquivos são adicionados, e
+arquivos velhos somem.  Ainda assim, você vai querer
+poder recuperar uma cópia exata de releases antigas.
 
 @c <en>Here is what you can do to remove a file,
 @c <en>but remain able to retrieve old revisions:
-Here is what you can do to remove a file,
-but remain able to retrieve old revisions:
+Aqui está o que você pode fazer para remover um
+arquivo, mas continuar sendo capaz de recuperar
+revisões antigas dele:
 
 @itemize @bullet
 @c FIXME: should probably be saying something about
@@ -7985,31 +7994,31 @@ but remain able to retrieve old revisions:
 @c <en>the file without committing your changes, you will of
 @c <en>course not be able to retrieve the file as it was
 @c <en>immediately before you deleted it.
-Make sure that you have not made any uncommitted
-modifications to the file.  @xref{Vendo as diferenças},
-for one way to do that.  You can also use the
-@code{status} or @code{update} command.  If you remove
-the file without committing your changes, you will of
-course not be able to retrieve the file as it was
-immediately before you deleted it.
+Certifique-se de não ter feito nenhuma alteração que
+falte fazer ???commit??? nele.  @xref{Vendo as diferenças},
+para uma forma de fazer isto.  Você também pode usar o comando
+@code{status} ou o @code{update}.  Se você remove o
+arquivo sem fazer ???commit??? nas suas mudanças,
+obviamente você não vai ser capaz de recuperar o
+arquivo na forma como ele era imediatamente antes da remoção.
 
 @item
 @c <en>Remove the file from your working copy of the directory.
 @c <en>You can for instance use @code{rm}.
-Remove the file from your working copy of the directory.
-You can for instance use @code{rm}.
+Remova o arquivo da cópia local do seu diretório.
+Você pode usar o @code{rm}, por exemplo.
 
 @item
 @c <en>Use @samp{cvs remove @var{filename}} to tell @sc{cvs} that
 @c <en>you really want to delete the file.
-Use @samp{cvs remove @var{filename}} to tell @sc{cvs} that
-you really want to delete the file.
+Use @samp{cvs remove @var{filename}} para dizer ao
+@sc{cvs} que você quer realmente apagar o arquivo.
 
 @item
 @c <en>Use @samp{cvs commit @var{filename}} to actually
 @c <en>perform the removal of the file from the repository.
-Use @samp{cvs commit @var{filename}} to actually
-perform the removal of the file from the repository.
+Use @samp{cvs commit @var{filename}} para realizar a
+remoção de fato do arquivo do repositório.
 @end itemize
 
 @c FIXME: Somehow this should be linked in with a more
@@ -8028,20 +8037,21 @@ perform the removal of the file from the repository.
 @c <en>name later.  @sc{cvs} will correctly create or not create
 @c <en>the file, based on the @samp{-r} and @samp{-D} options
 @c <en>specified to @code{checkout} or @code{update}.
-When you commit the removal of the file, @sc{cvs}
-records the fact that the file no longer exists.  It is
-possible for a file to exist on only some branches and
-not on others, or to re-add another file with the same
-name later.  @sc{cvs} will correctly create or not create
-the file, based on the @samp{-r} and @samp{-D} options
-specified to @code{checkout} or @code{update}.
+Quando você faz ???commit??? na remoção do arquivo, o
+@sc{cvs} registra o fato de que o arquivo não existe
+mais.  É possível para um arquivo existir apenas em
+alguns ramos e não em outros, ou re-adicionar outro
+arquivo com o mesmo nome depois.  O @sc{cvs} vai de
+forma correta criar ou não criar o arquivo, baseado nas
+opões @samp{-r} e @samp{-D} especificadas no
+@code{checkout} ou no @code{update}.
 
 @c FIXME: This style seems to clash with how we
 @c document things in general.
 @c <en>@cindex Remove (subcommand)
-@cindex Remove (subcommand)
+@cindex Remove (subcomando)
 @c <en>@deffn Command {cvs remove} [options] files @dots{}
-@deffn Command {cvs remove} [options] files @dots{}
+@deffn Comando {cvs remove} [options] files @dots{}
 
 @c <en>Schedule file(s) to be removed from the repository
 @c <en>(files which have not already been removed from the
@@ -8049,16 +8059,16 @@ specified to @code{checkout} or @code{update}.
 @c <en>does not actually remove the file from the repository
 @c <en>until you commit the removal.  For a full list of
 @c <en>options, see @ref{Invoking CVS}.
-Schedule file(s) to be removed from the repository
-(files which have not already been removed from the
-working directory are not processed).  This command
-does not actually remove the file from the repository
-until you commit the removal.  For a full list of
-options, see @ref{Chamando o CVS}.
+Prepara arquivo(s) para ser removido do reporitório
+(arquivos que ainda não foram removidos do diretório de
+trabalho não são processados).  Na verdade este comando
+não remove o arquivo do repositório até que você faça
+???commit??? no removido.  Para uma lista completa de
+opções, veja em @ref{Chamando o CVS}.
 @end deffn
 
 @c <en>Here is an example of removing several files:
-Here is an example of removing several files:
+Aqui está um exemplo de remoção de vários arquivos:
 
 @example
 $ cd test
@@ -8077,10 +8087,10 @@ cvs commit: Committing .
 @c <en>remove} it in one step, by specifying the @samp{-f}
 @c <en>option.  For example, the above example could also be
 @c <en>done like this:
-As a convenience you can remove the file and @code{cvs
-remove} it in one step, by specifying the @samp{-f}
-option.  For example, the above example could also be
-done like this:
+Por conveniência você pode remover o arquivo e fazer @code{cvs
+remove} nele de uma só vez, especificando a opção
+@samp{-f}.  Por exemplo, o exemplo acima poderia ser
+feito assim:
 
 @example
 $ cd test
@@ -8096,9 +8106,9 @@ cvs commit: Committing .
 @c <en>If you execute @code{remove} for a file, and then
 @c <en>change your mind before you commit, you can undo the
 @c <en>@code{remove} with an @code{add} command.
-If you execute @code{remove} for a file, and then
-change your mind before you commit, you can undo the
-@code{remove} with an @code{add} command.
+Se você executa @code{remove} para um arquivo, e então
+muda de idéia antes do ???commit???, você pode desfazer
+o @code{remove} com um @code{add}.
 @ignore
 @c is this worth saying or not?  Somehow it seems
 @c confusing to me.
@@ -8108,12 +8118,11 @@ change your mind before you commit, you can undo the
 @c <en>contents of the file from right before you executed
 @c <en>@code{remove}; instead it gets the file from the
 @c <en>repository again.
-Of course,
-since you have removed your copy of file in the working
-directory, @sc{cvs} does not necessarily bring back the
-contents of the file from right before you executed
-@code{remove}; instead it gets the file from the
-repository again.
+Obviamente, uma vez que você removeu a sua cópia local
+do arquivo no diretório de trabalho, o @sc{cvs} não vai
+trazer de volta necessariamente o conteúdo do arquivo
+exatamente como estava antes do @code{remove}; No lugar
+disto ele vai buscar o arquivo no repositório de novo.
 @end ignore
 
 @c FIXME: what if you change your mind after you commit
@@ -8136,9 +8145,9 @@ cvs add: oj.c, version 1.1.1.1, resurrected
 @c <en>If you realize your mistake before you run the
 @c <en>@code{remove} command you can use @code{update} to
 @c <en>resurrect the file:
-If you realize your mistake before you run the
-@code{remove} command you can use @code{update} to
-resurrect the file:
+Se você notar  o erro antes de rodar o comando
+@code{remove} você pode usar o @code{update} para
+resuscitar o arquivo:
 
 @example
 $ rm oj.c
@@ -8151,17 +8160,18 @@ U oj.c
 @c <en>which you are working on (@pxref{Branching and merging}).  You can
 @c <en>later merge the removals to another branch if you want
 @c <en>(@pxref{Merging adds and removals}).
-When you remove a file it is removed only on the branch
-which you are working on (@pxref{Ramificando e mesclando}).  You can
-later merge the removals to another branch if you want
+Quando você remove um arquivo ele é removido apenas do
+ramo no qual você está trabalhando (@pxref{Ramificando
+e mesclando}).  Você pode depois mesclar as remoções em
+outro ramo se quiser
 (@pxref{Mesclando adicionados e removidos}).
 
 @c <en>@node Removing directories
-@node Removing directories
+@node Removendo diretórios
 @c <en>@section Removing directories
-@section Removing directories
+@section Removendo diretórios
 @c <en>@cindex Removing directories
-@cindex Removing directories
+@cindex Removendo diretórios
 @c <en>@cindex Directories, removing
 @cindex Directories, removing
 
@@ -8239,7 +8249,7 @@ are checking out contains any files in that directory.
 Moving files to a different directory or renaming them
 is not difficult, but some of the ways in which this
 works may be non-obvious.  (Moving or renaming a
-directory is even harder.  @xref{Moving directories}.).
+directory is even harder.  @xref{Movendo diretórios}.).
 
 @c <en>The examples below assume that the file @var{old} is renamed to
 @c <en>@var{new}.
@@ -8461,11 +8471,11 @@ numbers will start at 1.0 again.
 
 @c ---------------------------------------------------------------------
 @c <en>@node Moving directories
-@node Moving directories
+@node Movendo diretórios
 @c <en>@section Moving and renaming directories
 @section Moving and renaming directories
 @c <en>@cindex Moving directories
-@cindex Moving directories
+@cindex Movendo diretórios
 @c <en>@cindex Renaming directories
 @cindex Renaming directories
 @c <en>@cindex Directories, moving
@@ -8478,7 +8488,7 @@ numbers will start at 1.0 again.
 The normal way to rename or move a directory is to
 rename or move each file within it as described in
 @ref{Outside}.  Then check out with the @samp{-P}
-option, as described in @ref{Removing directories}.
+option, as described in @ref{Removendo diretórios}.
 
 @c <en>If you really want to hack the repository to rename or
 @c <en>delete a directory in the repository, you can do it
@@ -10992,6 +11002,12 @@ goal, which is to get software written.
 @comment   version control, so we must not accidentally
 @comment   include a valid keyword in the running text.
 
+@c <en>As long as you edit source files inside a working
+@c <en>directory you can always find out the state of
+@c <en>your files via @samp{cvs status} and @samp{cvs log}.
+@c <en>But as soon as you export the files from your
+@c <en>development environment it becomes harder to identify
+@c <en>which revisions they are.
 As long as you edit source files inside a working
 directory you can always find out the state of
 your files via @samp{cvs status} and @samp{cvs log}.
@@ -10999,6 +11015,14 @@ But as soon as you export the files from your
 development environment it becomes harder to identify
 which revisions they are.
 
+@c <en>@sc{cvs} can use a mechanism known as @dfn{keyword
+@c <en>substitution} (or @dfn{keyword expansion}) to help
+@c <en>identifying the files.  Embedded strings of the form
+@c <en>@code{$@var{keyword}$} and
+@c <en>@code{$@var{keyword}:@dots{}$} in a file are replaced
+@c <en>with strings of the form
+@c <en>@code{$@var{keyword}:@var{value}$} whenever you obtain
+@c <en>a new revision of the file.
 @sc{cvs} can use a mechanism known as @dfn{keyword
 substitution} (or @dfn{keyword expansion}) to help
 identifying the files.  Embedded strings of the form
@@ -11024,8 +11048,11 @@ a new revision of the file.
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@c <en>@node Keyword list
 @node Keyword list
+@c <en>@section Keyword List
 @section Keyword List
+@c <en>@cindex Keyword List
 @cindex Keyword List
 
 @c FIXME: need some kind of example here I think,
@@ -11034,15 +11061,27 @@ a new revision of the file.
 @c substitution" node itself seems OK, but to launch
 @c into a list of the keywords somehow seems too abrupt.
 
+@c <en>This is a list of the keywords:
 This is a list of the keywords:
 
 @table @code
+@c <en>@cindex Author keyword
 @cindex Author keyword
+@c <en>@item $@splitrcskeyword{Author}$
 @item $@splitrcskeyword{Author}$
+@c <en>The login name of the user who checked in the revision.
 The login name of the user who checked in the revision.
 
+@c <en>@cindex CVSHeader keyword
 @cindex CVSHeader keyword
+@c <en>@item $@splitrcskeyword{CVSHeader}
 @item $@splitrcskeyword{CVSHeader}
+@c <en>A standard header (similar to $@splitrcskeyword{Header}$, but with
+@c <en>the CVS root stripped off). It contains the relative
+@c <en>pathname of the @sc{rcs} file to the CVS root, the
+@c <en>revision number, the date (UTC), the author, the state,
+@c <en>and the locker (if locked). Files will normally never
+@c <en>be locked when you use @sc{cvs}.
 A standard header (similar to $@splitrcskeyword{Header}$, but with
 the CVS root stripped off). It contains the relative
 pathname of the @sc{rcs} file to the CVS root, the
@@ -11673,11 +11712,11 @@ probably want to include your modifications when the next
 release of the program arrives.  @sc{cvs} can help you with
 this task.
 
+@c <en>@cindex Vendor
 @cindex Vendor
-@cindex Vendor
+@c <en>@cindex Vendor branch
 @cindex Vendor branch
-@cindex Vendor branch
-@cindex Branch, vendor-
+@c <en>@cindex Branch, vendor-
 @cindex Branch, vendor-
 @c <en>In the terminology used in @sc{cvs}, the supplier of the
 @c <en>program is called a @dfn{vendor}.  The unmodified
@@ -12828,11 +12867,16 @@ give an error if you mistype a tag name.
 @code{annotate}, @code{checkout}, @code{export},
 @code{rdiff}, @code{rtag}, and @code{update}.
 
+@c <en>@strong{WARNING:  The @code{commit} and @code{remove}
+@c <en>commands also have a
+@c <en>@samp{-f} option, but it has a different behavior for
+@c <en>those commands.  See @ref{commit options}, and
+@c <en>@ref{Removing files}.}
 @strong{WARNING:  The @code{commit} and @code{remove}
 commands also have a
 @samp{-f} option, but it has a different behavior for
 those commands.  See @ref{commit options}, and
-@ref{Removing files}.}
+@ref{Removendo arquivos}.}
 
 @c <en>@item -k @var{kflag}
 @item -k @var{kflag}
@@ -12923,7 +12967,8 @@ Available with the @code{checkout}, @code{commit}, @code{export},
 and @code{rtag} commands.
 
 @item -P
-Prune empty directories.  See @ref{Removing directories}.
+@c <en>Prune empty directories.  See @ref{Removing directories}.
+Prune empty directories.  See @ref{Removendo diretórios}.
 
 @item -p
 Pipe the files retrieved from the repository to standard output,
@@ -13129,10 +13174,14 @@ client/server @sc{cvs} and is likely to disappear in
 a future release of @sc{cvs}.
 
 @item -i
+@c <en>Useless with @sc{cvs}.  This creates and initializes a
+@c <en>new @sc{rcs} file, without depositing a revision.  With
+@c <en>@sc{cvs}, add files with the @code{cvs add} command
+@c <en>(@pxref{Adding files}).
 Useless with @sc{cvs}.  This creates and initializes a
 new @sc{rcs} file, without depositing a revision.  With
 @sc{cvs}, add files with the @code{cvs add} command
-(@pxref{Adding files}).
+(@pxref{Adicionando arquivos}).
 
 @c <en>@item -k@var{subst}
 @item -k@var{subst}
@@ -13621,7 +13670,8 @@ with the @samp{-o} option in the modules file;
 @pxref{modules}).
 
 @item -P
-Prune empty directories.  See @ref{Moving directories}.
+@c <en>Prune empty directories.  See @ref{Moving directories}.
+Prune empty directories.  See @ref{Movendo diretórios}.
 
 @item -p
 Pipe files to the standard output.
@@ -15484,12 +15534,19 @@ Delete your working copy of the file if the release
 succeeds.  If this flag is not given your files will
 remain in your working directory.
 
+@c <en>@strong{WARNING:  The @code{release} command deletes
+@c <en>all directories and files recursively.  This
+@c <en>has the very serious side-effect that any directory
+@c <en>that you have created inside your checked-out sources,
+@c <en>and not added to the repository (using the @code{add}
+@c <en>command; @pxref{Adding files}) will be silently deleted---even
+@c <en>if it is non-empty!}
 @strong{WARNING:  The @code{release} command deletes
 all directories and files recursively.  This
 has the very serious side-effect that any directory
 that you have created inside your checked-out sources,
 and not added to the repository (using the @code{add}
-command; @pxref{Adding files}) will be silently deleted---even
+command; @pxref{Adicionando arquivos}) will be silently deleted---even
 if it is non-empty!}
 @end table
 
@@ -15633,7 +15690,7 @@ Local; run only in current working directory.  @xref{Comportamento recursivo}.
 @c <en>@item -P
 @item -P
 @c <en>Prune empty directories.  See @ref{Moving directories}.
-Prune empty directories.  See @ref{Moving directories}.
+Prune empty directories.  See @ref{Movendo diretórios}.
 
 @c <en>@item -p
 @item -p
@@ -16035,7 +16092,7 @@ Commands, command options, and command arguments:
 @c <en>@item add [@var{options}] [@var{files}@dots{}]
 @item add [@var{options}] [@var{files}@dots{}]
 @c <en>Add a new file/directory.  See @ref{Adding files}.
-Add a new file/directory.  See @ref{Adding files}.
+Add a new file/directory.  See @ref{Adicionando arquivos}.
 
 @table @code
 @c <en>@item -k @var{kflag}
@@ -16248,7 +16305,7 @@ Do not run module program (if any).  See @ref{checkout options}.
 @c <en>@item -P
 @item -P
 @c <en>Prune empty directories.  See @ref{Moving directories}.
-Prune empty directories.  See @ref{Moving directories}.
+Prune empty directories.  See @ref{Movendo diretórios}.
 
 @c <en>@item -p
 @item -p
@@ -16877,13 +16934,13 @@ Delete the given directory.  See @ref{release options}.
 @c <en>@item remove [@var{options}] [@var{files}@dots{}]
 @item remove [@var{options}] [@var{files}@dots{}]
 @c <en>Remove an entry from the repository.  See @ref{Removing files}.
-Remove an entry from the repository.  See @ref{Removing files}.
+Remove an entry from the repository.  See @ref{Removendo arquivos}.
 
 @table @code
 @c <en>@item -f
 @item -f
 @c <en>Delete the file before removing it.  See @ref{Removing files}.
-Delete the file before removing it.  See @ref{Removing files}.
+Delete the file before removing it.  See @ref{Removendo arquivos}.
 
 @c <en>@item -l
 @item -l
@@ -17212,7 +17269,7 @@ Local; run only in current working directory.  @xref{Comportamento recursivo}.
 @c <en>@item -P
 @item -P
 @c <en>Prune empty directories.  See @ref{Moving directories}.
-Prune empty directories.  See @ref{Moving directories}.
+Prune empty directories.  See @ref{Movendo diretórios}.
 
 @c <en>@item -p
 @item -p
