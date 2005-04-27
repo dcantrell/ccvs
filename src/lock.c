@@ -88,8 +88,9 @@ struct lock {
     char *file2;
 #endif /* LOCK_COMPATIBILITY */
 
-    /* Do we have a lock named CVSLCK?  */
-    int have_lckdir;
+    /* The lock dir (usually CVSLCK), if we are currently holding it.  */
+    char *lockdir;
+
     /* Note there is no way of knowing whether the readlock and writelock
        exist.  The code which sets the locks doesn't use SIG_beginCrSect
        to set a flag like we do for CVSLCK.  */
@@ -113,9 +114,6 @@ static char *writelock;
 /* Malloc'd array specifying name of a promotablelock within a directory.
    Or NULL if none.  */
 static char *promotablelock;
-/* Malloc'd array specifying the name of a CVSLCK file (absolute pathname).
-   Will always be non-NULL in the cases where it is used.  */
-static char *masterlock;
 static List *locklist;
 
 #define L_OK		0		/* success */
@@ -313,15 +311,14 @@ remove_lock_files (struct lock *lock, int free_repository)
     }
 #endif /* LOCK_COMPATIBILITY */
 
-    if (lock->have_lckdir)
+    if (lock->lockdir)
     {
-	char *tmp = lock_name (lock->repository, CVSLCK);
 	SIG_beginCrSect ();
-	if (CVS_RMDIR (tmp) < 0)
-	    error (0, errno, "failed to remove lock dir %s", tmp);
-	lock->have_lckdir = 0;
+	if (CVS_RMDIR (lock->lockdir) < 0)
+	    error (0, errno, "failed to remove lock dir %s", lock->lockdir);
+	free (lock->lockdir);
+	lock->lockdir = NULL;
 	SIG_endCrSect ();
-	free (tmp);
     }
 
     /* And free the repository string.  We don't really have to set the
@@ -988,6 +985,8 @@ set_lock (struct lock *lock, int will_wait)
     long us;
     struct stat sb;
     mode_t omask;
+    char *masterlock;
+    int status;
 #ifdef CVS_FUDGELOCKS
     time_t now;
 #endif
@@ -995,8 +994,6 @@ set_lock (struct lock *lock, int will_wait)
     TRACE (TRACE_FLOW, "set_lock (%s, %d)",
 	   lock->repository ? lock->repository : "(null)", will_wait);
 
-    if (masterlock != NULL)
-	free (masterlock);
     masterlock = lock_name (lock->repository, CVSLCK);
 
     /*
@@ -1006,33 +1003,33 @@ set_lock (struct lock *lock, int will_wait)
      */
     waited = 0;
     us = 1;
-    lock->have_lckdir = 0;
     for (;;)
     {
-	int status = -1;
+	status = -1;
 	omask = umask (cvsumask);
 	SIG_beginCrSect ();
 	if (CVS_MKDIR (masterlock, 0777) == 0)
 	{
-	    lock->have_lckdir = 1;
+	    lock->lockdir = masterlock;
 	    SIG_endCrSect ();
 	    status = L_OK;
 	    if (waited)
 	        lock_obtained (lock->repository);
-	    goto out;
+	    goto after_sig_unblock;
 	}
 	SIG_endCrSect ();
-      out:
+    after_sig_unblock:
 	(void) umask (omask);
 	if (status != -1)
-	    return status;
+	    goto done;
 
 	if (errno != EEXIST)
 	{
 	    error (0, errno,
 		   "failed to create lock directory for `%s' (%s)",
 		   lock->repository, masterlock);
-	    return (L_ERROR);
+	    status = L_ERROR;
+	    goto done;
 	}
 
 	/* Find out who owns the lock.  If the lock directory is
@@ -1044,7 +1041,8 @@ set_lock (struct lock *lock, int will_wait)
 		continue;
 
 	    error (0, errno, "couldn't stat lock directory `%s'", masterlock);
-	    return (L_ERROR);
+	    status = L_ERROR;
+	    goto done;
 	}
 
 #ifdef CVS_FUDGELOCKS
@@ -1066,7 +1064,10 @@ set_lock (struct lock *lock, int will_wait)
 
 	/* if he wasn't willing to wait, return an error */
 	if (!will_wait)
-	    return (L_LOCKED);
+	{
+	    status = L_LOCKED;
+	    goto done;
+	}
 
 	/* if possible, try a very short sleep without a message */
 	if (!waited && us < 1000)
@@ -1084,21 +1085,26 @@ set_lock (struct lock *lock, int will_wait)
 	lock_wait (lock->repository);
 	waited = 1;
     }
+
+done:
+    if (!lock->lockdir)
+	free (masterlock);
+    return status;
 }
 
 
 
 /*
- * Clear master lock.  We don't have to recompute the lock name since
- * clear_lock is never called except after a successful set_lock().
+ * Clear master lock.
  */
 static void
 clear_lock (struct lock *lock)
 {
     SIG_beginCrSect ();
-    if (CVS_RMDIR (masterlock) < 0)
-	error (0, errno, "failed to remove lock dir `%s'", masterlock);
-    lock->have_lckdir = 0;
+    if (CVS_RMDIR (lock->lockdir) < 0)
+	error (0, errno, "failed to remove lock dir `%s'", lock->lockdir);
+    free (lock->lockdir);
+    lock->lockdir = NULL;
     SIG_endCrSect ();
 }
 
@@ -1123,7 +1129,7 @@ lock_filesdoneproc (void *callerdat, int err, const char *repository,
 #ifdef LOCK_COMPATIBILITY
     ((struct lock *)p->data)->file2 = NULL;
 #endif /* LOCK_COMPATIBILITY */
-    ((struct lock *)p->data)->have_lckdir = 0;
+    ((struct lock *)p->data)->lockdir = NULL;
     ((struct lock *)p->data)->free_repository = 0;
 
     /* FIXME-KRP: this error condition should not simply be passed by. */
