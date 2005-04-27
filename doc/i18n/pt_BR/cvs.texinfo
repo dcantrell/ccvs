@@ -15820,59 +15820,101 @@ date.  An optional date is specified by adding a colon
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@c <en>@node update output
 @node update output
+@c <en>@appendixsubsec update output
 @appendixsubsec update output
 
-@code{update} and @code{checkout} keep you informed of
-their progress by printing a line for each file, preceded
-by one character indicating the status of the file:
+@c <en>@code{update} and @code{checkout} keep you informed of
+@c <en>their progress by printing a line for each file, preceded
+@c <en>by one character indicating the status of the file:
+O @code{update} e o @code{checkout} mantém você
+informado de seu progresso escrevendo uma linha para
+cada arquivo, iniciando com um caractere que indica o
+status do arquivo:
 
 @table @code
-@item U @var{file}
-The file was brought up to date with respect to the
-repository.  This is done for any file that exists in
-the repository but not in your source, and for files
-that you haven't changed but are not the most recent
-versions available in the repository.
+@c <en>@item U @var{file}
+@item U @var{arquivo}
+@c <en>The file was brought up to date with respect to the
+@c <en>repository.  This is done for any file that exists in
+@c <en>the repository but not in your source, and for files
+@c <en>that you haven't changed but are not the most recent
+@c <en>versions available in the repository.
+O arquivo foi atualizado com base no repositório.  Isto
+é feito para qualquer arquivo que exista no
+repositório mas não esteja nos seus fontes (no seu
+diretório da trabalho) e para arquivos que você não
+mudou mas não estão na versão mais recente que está
+disponível no repositório.
 
-@item P @var{file}
-Like @samp{U}, but the @sc{cvs} server sends a patch instead of an entire
-file.  This accomplishes the same thing as @samp{U} using less bandwidth.
+@c <en>@item P @var{file}
+@item P @var{arquivo}
+@c <en>Like @samp{U}, but the @sc{cvs} server sends a patch instead of an entire
+@c <en>file.  This accomplishes the same thing as @samp{U} using less bandwidth.
 
-@item A @var{file}
-The file has been added to your private copy of the
-sources, and will be added to the source repository
-when you run @code{commit} on the file.  This is a
-reminder to you that the file needs to be committed.
+Como o @samp{U}, mas o servidor @sc{cvs} manda um patch
+(remendo) ao invés de mandar um arquivo inteiro.  Tem o
+mesmo resultado que @samp{U} usando menos largura de banda.
 
-@item R @var{file}
-The file has been removed from your private copy of the
-sources, and will be removed from the source repository
-when you run @code{commit} on the file.  This is a
-reminder to you that the file needs to be committed.
+@c <en>@item A @var{file}
+@item A @var{arquivo}
+@c <en>The file has been added to your private copy of the
+@c <en>sources, and will be added to the source repository
+@c <en>when you run @code{commit} on the file.  This is a
+@c <en>reminder to you that the file needs to be committed.
+O arquivo foi adicionado a sua cópia local dos fontes,
+e vai ser adicionado ao repositório quando você rodar o
+@code{commit} no arquivo.  Funciona como um lembrete de
+que o arquivo precisa ser ???commitado???.
 
-@item M @var{file}
-The file is modified in  your  working  directory.
+@c <en>@item R @var{file}
+@item R @var{arquivo}
+@c <en>The file has been removed from your private copy of the
+@c <en>sources, and will be removed from the source repository
+@c <en>when you run @code{commit} on the file.  This is a
+@c <en>reminder to you that the file needs to be committed.
+O arquivo foi removido de sua cópia local dos fontes, e
+será removido do repositório quando você executar um
+@code{commit} no arquivo.  Funciona como um lembrete de
+que o arquivo precisa ser ???commitado???.
 
-@samp{M} can indicate one of two states for a file
-you're working on: either there were no modifications
-to the same file in the repository, so that your file
-remains as you last saw it; or there were modifications
-in the repository as well as in your copy, but they
-were merged successfully, without conflict, in your
-working directory.
+@c <en>@item M @var{file}
+@item M @var{arquivo}
+@c <en>The file is modified in  your  working  directory.
+O arquivo está modificado no seu diretório de trabalho.
 
-@sc{cvs} will print some messages if it merges your work,
-and a backup copy of your working file (as it looked
-before you ran @code{update}) will be made.  The exact
-name of that file is printed while @code{update} runs.
+@c <en>@samp{M} can indicate one of two states for a file
+@c <en>you're working on: either there were no modifications
+@c <en>to the same file in the repository, so that your file
+@c <en>remains as you last saw it; or there were modifications
+@c <en>in the repository as well as in your copy, but they
+@c <en>were merged successfully, without conflict, in your
+@c <en>working directory.
+O @samp{M} pode indicar um dos dois estados para um
+arquivo no qual você esteja trabalhando: ou não existem
+modificações do arquivo equivalente no repositório, de forma
+que seu arquivo continua da forma como você o deixou;
+ou existem modificações no repositório assim como na
+sua cópia, mas elas foram mescladas com sucesso, sem
+conflito, no seu diretório de trabalho.
+
+@c <en>@sc{cvs} will print some messages if it merges your work,
+@c <en>and a backup copy of your working file (as it looked
+@c <en>before you ran @code{update}) will be made.  The exact
+@c <en>name of that file is printed while @code{update} runs.
+O @sc{cvs} vai escrever algumas mensagens se ele
+mesclar seu trabalho, e colocará uma cópia de segurança no seu
+diretório de trabalho (na forma que estava antes de
+executar o @code{update}).  O nome exato do arquivo
+será escrito quando o @code{update} rodar.
 
 @c <en>@item C @var{file}
-@item C @var{file}
+@item C @var{arquivo}
 @c <en>@cindex .# files
-@cindex .# files
+@cindex arquivos .#
 @c <en>@cindex __ files (VMS)
-@cindex __ files (VMS)
+@cindex __ arquivos (VMS)
 @c <en>A conflict was detected while trying to merge your
 @c <en>changes to @var{file} with changes from the source
 @c <en>repository.  @var{file} (the copy in your working
@@ -15883,15 +15925,15 @@ name of that file is printed while @code{update} runs.
 @c <en>is the revision that your modified file started
 @c <en>from.  Resolve the conflict as described in
 @c <en>@ref{Conflicts example}.
-A conflict was detected while trying to merge your
-changes to @var{file} with changes from the source
-repository.  @var{file} (the copy in your working
-directory) is now the result of attempting to merge
-the two revisions; an unmodified copy of your file
-is also in your working directory, with the name
-@file{.#@var{file}.@var{revision}} where @var{revision}
-is the revision that your modified file started
-from.  Resolve the conflict as described in
+Um conflito foi detectado quando se tentava mesclar
+suas mudanças no @var{arquivo} com as mudanças no
+repositório.  O @var{arquivo} (a cópia no seu diretório
+de trabalho) é agora o resultado da tentativa de
+mesclar as duas revisões; uma cópia inalterada do
+arquivo também está no diretório de trabalho, com o
+nome de @file{.#@var{arquivo}.@var{revisão}} onde
+@var{revisão} é a revisão de onde o seu arquivo
+modificado saiu.  Resolva o conflito como é mostrado em
 @ref{Exemplo de conflitos}.
 @c "some systems" as in out-of-the-box OSes?  Not as
 @c far as I know.  We need to advise sysadmins as well
@@ -15900,15 +15942,27 @@ from.  Resolve the conflict as described in
 @c We also might want to think about cleaner solutions,
 @c like having CVS remove the .# file once the conflict
 @c has been resolved or something like that.
-(Note that some systems automatically purge
-files that begin with @file{.#} if they have not been
-accessed for a few days.  If you intend to keep a copy
-of your original file, it is a very good idea to rename
-it.)  Under @sc{vms}, the file name starts with
-@file{__} rather than @file{.#}.
+@c <en>(Note that some systems automatically purge
+@c <en>files that begin with @file{.#} if they have not been
+@c <en>accessed for a few days.  If you intend to keep a copy
+@c <en>of your original file, it is a very good idea to rename
+@c <en>it.)  Under @sc{vms}, the file name starts with
+@c <en>@file{__} rather than @file{.#}.
+(Note que alguns sistemas eliminam automaticamente
+arquivos que começam com @file{.#} se eles não são
+acessados por alguns dias.  Se você pretende manter uma
+cópia do arquivo original, é um ótima idéia
+renomeá-lo.)  No @sc{vms}, o nome do arquivo começa com
+@file{__} ao invés de @file{.#}.
 
-@item ? @var{file}
-@var{file} is in your working directory, but does not
+@c <en>@item ? @var{file}
+@item ? @var{arquivo}
+@c <en>@var{file} is in your working directory, but does not
+@c <en>correspond to anything in the source repository, and is
+@c <en>not in the list of files for @sc{cvs} to ignore (see the
+@c <en>description of the @samp{-I} option, and
+@c <en>@pxref{cvsignore}).
+O @var{arquivo} is in your working directory, but does not
 correspond to anything in the source repository, and is
 not in the list of files for @sc{cvs} to ignore (see the
 description of the @samp{-I} option, and
@@ -15935,6 +15989,7 @@ references to where each command or feature is
 described in detail.  For other references run the
 @code{cvs --help} command, or see @ref{Indice}.
 
+@c <en>A @sc{cvs} command looks like:
 A @sc{cvs} command looks like:
 
 @example
