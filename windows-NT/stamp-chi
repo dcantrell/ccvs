@@ -465,6 +465,9 @@
    module, e.g. on systems with shadow passwords or via LDAP */
 #undef HAVE_PAM
 
+/* Define to 1 if pam/pam_appl.h is available */
+#undef HAVE_PAM_PAM_APPL_H
+
 /* Define to 1 if getcwd works, except it sometimes fails when it shouldn't,
    setting errno to ERANGE, ENAMETOOLONG, or ENOENT. If __GETCWD_PREFIX is not
    defined, it doesn't matter whether HAVE_PARTLY_WORKING_GETCWD is defined.
@@ -511,6 +514,9 @@
 
 /* Define to 1 if you have the <search.h> header file. */
 #undef HAVE_SEARCH_H
+
+/* Define to 1 if security/pam_appl.h is available */
+#undef HAVE_SECURITY_PAM_APPL_H
 
 /* Define to 1 if you have the `setenv' function. */
 #undef HAVE_SETENV
