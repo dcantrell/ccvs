@@ -1,3 +1,10 @@
+2005-04-28  Derek Price  <derek@ximbiot.com>
+
+	* mkman.pl: Minor changes to accomodate Perl 5.8.4.  Improve
+	commenting.
+	($nk, $ret, $debug): New globals.
+	(debug_print): New function.
+
 2005-04-14  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Administrative files): Add "Trigger Scripts" node to
