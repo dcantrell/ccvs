@@ -1096,6 +1096,19 @@ done:
 
 /*
  * Clear master lock.
+ *
+ * INPUTS
+ *   lock	The lock information.
+ *
+ * OUTPUTS
+ *   Sets LOCK->lockdir to NULL after removing the directory it names and
+ *   freeing the storage.
+ *
+ * ASSUMPTIONS
+ *   We own the master lock directory.
+ *   Its name is stored in LOCK->lockdir.
+ *   We may free LOCK->lockdir.
+ *
  */
 static void
 clear_lock (struct lock *lock)
