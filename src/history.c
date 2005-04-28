@@ -724,9 +724,10 @@ history_write (type, update_dir, revs, name, repository)
 				 * readonlyfs.
 				 */
 	return;
-    if ( strchr(logHistory, type) == NULL )	
+    if (strchr (logHistory, type) == NULL)
 	return;
-    fname = xmalloc (strlen (current_parsed_root->directory) + sizeof (CVSROOTADM)
+    fname = xmalloc (strlen (current_parsed_root->directory)
+		     + sizeof (CVSROOTADM)
 		     + sizeof (CVSROOTADM_HISTORY) + 3);
     (void) sprintf (fname, "%s/%s/%s", current_parsed_root->directory,
 		    CVSROOTADM, CVSROOTADM_HISTORY);
@@ -752,6 +753,11 @@ history_write (type, update_dir, revs, name, repository)
 		 CLIENT_SERVER_STR, fname);
     if (noexec)
 	goto out;
+
+    if (!history_lock (current_parsed_root->directory))
+	/* history_lock() will already have printed an error on failure.  */
+	goto out;
+
     fd = CVS_OPEN (fname, O_WRONLY | O_APPEND | OPEN_BINARY, 0666);
     if (fd < 0)
     {
@@ -789,7 +795,7 @@ history_write (type, update_dir, revs, name, repository)
 		if (save_cwd (&cwd))
 		    error_exit ();
 
-		if ( CVS_CHDIR (pwdir) < 0 || (homedir = xgetwd ()) == NULL)
+		if (CVS_CHDIR (pwdir) < 0 || (homedir = xgetwd ()) == NULL)
 		    homedir = pwdir;
 
 		if (restore_cwd (&cwd, NULL))
@@ -896,6 +902,7 @@ history_write (type, update_dir, revs, name, repository)
 	error (1, errno, "cannot close history file: %s", fname);
     free (workdir);
  out:
+    clear_history_lock ();
     free (fname);
 }
 
