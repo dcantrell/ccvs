@@ -1,5 +1,21 @@
 2005-04-28  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h (history_lock, clear_history_lock): New protos.
+	* lock.c (struct lock): Add lockdirname.
+	(global_history_lock): New global.
+	(global_read_lock): Initialize.
+	(lock_name): Handle const args.
+	(lock_simple_remove): Factor out code in favor of clear_lock call.
+	(set_lock): Handle variable lockdirname.
+	(lock_filesdoneproc): Set new lockdirname.
+	(history_lock, clear_history_lock): New functions.
+	(clear_lock): Avoid segfault on missing lock.
+	(Lock_Cleanup): Clean up history locks when necessary.
+	* history.c (history_write): Use new lock.
+	* sanity.sh (lockfiles-20): Test new lock.
+
+2005-04-28  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (lockfiles): Port some locking tests over from 1.12.x.
 
 2005-04-28  Derek Price  <derek@ximbiot.com>

@@ -20608,6 +20608,18 @@ $CVSROOT_DIRNAME/first-dir/sdir/ssdir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2
 done"
 
+	  # 10. Don't write when history locks are present...
+	  echo have you ever heard a poem quite so vile\? >>first-dir/sdir/ssdir/file1
+	  mkdir "$TESTDIR/locks/CVSROOT/#cvs.history.lock"
+	  (sleep 5; rmdir "$TESTDIR/locks/CVSROOT/#cvs.history.lock")&
+	  dotest lockfiles-20 "$testcvs -q ci -mnot-up-to-date first-dir" \
+"Checking in first-dir/sdir/ssdir/file1;
+$CVSROOT_DIRNAME/first-dir/sdir/ssdir/file1,v  <--  file1
+new revision: 1\.4; previous revision: 1\.3
+done
+$PROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/CVSROOT
+$PROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/CVSROOT"
+
 	  cd CVSROOT
 	  echo "# nobody here but us comments" >config
 	  dotest lockfiles-cleanup-1 "${testcvs} -q ci -m config-it" \

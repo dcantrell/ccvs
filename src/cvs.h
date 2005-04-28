@@ -212,6 +212,7 @@ extern int errno;
 #define	CVSATTIC	"Attic"
 
 #define	CVSLCK		"#cvs.lock"
+#define	CVSHISTLCK	"#cvs.history.lock"
 #define	CVSRFL		"#cvs.rfl"
 #define	CVSWFL		"#cvs.wfl"
 #define CVSRFLPAT	"#cvs.rfl.*"	/* wildcard expr to match read locks */
@@ -567,6 +568,10 @@ void lock_tree_for_write PROTO ((int argc, char **argv, int local, int which,
 
 /* See lock.c for description.  */
 extern void lock_dir_for_write PROTO ((char *));
+
+/* Get a write lock for the history file.  */
+int history_lock PROTO ((const char *));
+void clear_history_lock PROTO ((void));
 
 /* LockDir setting from CVSROOT/config.  */
 extern char *lock_dir;
