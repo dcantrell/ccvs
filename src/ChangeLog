@@ -1,3 +1,9 @@
+2005-04-28  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (struct lock): Store lockdir name.
+	(masterlock): Remove global.
+	(remove_lock_files, clear_lock, set_lock): Update to compensate.
+
 2005-04-20  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (rcs5): Minor cosmetic change.
