@@ -1,5 +1,9 @@
 2005-04-28  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (lockfiles): Port some locking tests over from 1.12.x.
+
+2005-04-28  Derek Price  <derek@ximbiot.com>
+
 	* lock.c (clear_lock): Improve comment.
 
 2005-04-28  Derek Price  <derek@ximbiot.com>

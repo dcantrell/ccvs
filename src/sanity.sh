@@ -20549,6 +20549,65 @@ ${PROG} \[update aborted\]: cannot stat ${TESTDIR}/locks: No such file or direct
 	  dotest lockfiles-8 "${testcvs} -q update" ""
 	  dotest lockfiles-9 "${testcvs} -q co -l ." ""
 
+	  ###
+	  ### There are race conditions in the following tests, but hopefully
+	  ### the 5 seconds the first process waits to remove the lockdir and
+	  ### the 30 seconds CVS waits betweens checks will be significant
+	  ### enough to render the case moot.
+	  ###
+	  # Considers the following cases:
+	  #
+	  #                    Lock Present
+	  # Operation          Allowed (case #)
+	  #
+	  #                    Read      Write
+	  #                    _______   ______
+	  # Read              |Yes (1)   No (3)
+	  # Write             |No (7)    No (9)
+	  #
+	  # Tests do not appear in same ordering as table.  The odd numbering
+	  # scheme maintains correspondance with a larger table on 1.12.x:
+	  # 1. Read when read locks are present...
+	  # 3. Don't read when write locks present...
+	  # 7. Don't write when read locks are present...
+	  # 9. Don't write when write locks are present...
+
+	  # 3. Don't read when write locks present...
+	  mkdir "$TESTDIR/locks/first-dir/#cvs.lock"
+	  (sleep 5; rmdir "$TESTDIR/locks/first-dir/#cvs.lock")&
+	  dotest lockfiles-10 "$testcvs -q co -l first-dir" \
+"$PROG checkout: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir
+$PROG checkout: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir"
+
+	  # 1. Read when read locks are present...
+	  touch "$TESTDIR/locks/first-dir/#cvs.rfl.test.lock"
+	  dotest lockfiles-11 "$testcvs -q co -l first-dir"
+	  rm "$TESTDIR/locks/first-dir/#cvs.rfl.test.lock"
+
+	  # 7. Don't write when read locks are present...
+	  echo I always have trouble coming up with witty text for the test files >>first-dir/sdir/ssdir/file1
+	  touch "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.rfl.test.lock"
+	  (sleep 5; rm "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.rfl.test.lock")&
+	  dotest lockfiles-13 "$testcvs -q ci -mconflict first-dir" \
+"$PROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
+$PROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
+Checking in first-dir/sdir/ssdir/file1;
+$CVSROOT_DIRNAME/first-dir/sdir/ssdir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+
+	  # 9. Don't write when write locks are present...
+	  echo yet this poem would probably only give longfellow bile >>first-dir/sdir/ssdir/file1
+	  mkdir "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.lock"
+	  (sleep 5; rmdir "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.lock")&
+	  dotest lockfiles-19 "$testcvs -q ci -mnot-up-to-date first-dir" \
+"$PROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
+$PROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
+Checking in first-dir/sdir/ssdir/file1;
+$CVSROOT_DIRNAME/first-dir/sdir/ssdir/file1,v  <--  file1
+new revision: 1\.3; previous revision: 1\.2
+done"
+
 	  cd CVSROOT
 	  echo "# nobody here but us comments" >config
 	  dotest lockfiles-cleanup-1 "${testcvs} -q ci -m config-it" \
