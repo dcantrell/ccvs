@@ -90,8 +90,9 @@ struct lock {
        case of writelocks, it is just a pointer to the storage allocated
        for the ->key field.  */
     char *repository;
-    /* Do we have a lock named CVSLCK?  */
-    int have_lckdir;
+    /* The lock dir (usually CVSLCK), if we are currently holding it.  */
+    char *lockdir;
+
     /* Note there is no way of knowing whether the readlock and writelock
        exist.  The code which sets the locks doesn't use SIG_beginCrSect
        to set a flag like we do for CVSLCK.  */
@@ -120,7 +121,6 @@ static char *readlock;
 static char *writelock;
 /* Malloc'd array specifying the name of a CVSLCK file (absolute pathname).
    Will always be non-NULL in the cases where it is used.  */
-static char *masterlock;
 static List *locklist;
 
 #define L_OK		0		/* success */
@@ -383,15 +383,14 @@ lock_simple_remove (lock)
 	free (tmp);
     }
 
-    if (lock->have_lckdir)
+    if (lock->lockdir)
     {
-	tmp = lock_name (lock->repository, CVSLCK);
 	SIG_beginCrSect ();
-	if (CVS_RMDIR (tmp) < 0)
-	    error (0, errno, "failed to remove lock dir %s", tmp);
-	lock->have_lckdir = 0;
+	if (CVS_RMDIR (lock->lockdir) < 0)
+	    error (0, errno, "failed to remove lock dir %s", lock->lockdir);
+	free (lock->lockdir);
+	lock->lockdir = NULL;
 	SIG_endCrSect ();
-	free (tmp);
     }
 }
 
@@ -766,12 +765,12 @@ set_lock (lock, will_wait)
     long us;
     struct stat sb;
     mode_t omask;
+    char *masterlock;
+    int status;
 #ifdef CVS_FUDGELOCKS
     time_t now;
 #endif
 
-    if (masterlock != NULL)
-	free (masterlock);
     masterlock = lock_name (lock->repository, CVSLCK);
 
     /*
@@ -781,33 +780,33 @@ set_lock (lock, will_wait)
      */
     waited = 0;
     us = 1;
-    lock->have_lckdir = 0;
     for (;;)
     {
-	int status = -1;
+	status = -1;
 	omask = umask (cvsumask);
 	SIG_beginCrSect ();
 	if (CVS_MKDIR (masterlock, 0777) == 0)
 	{
-	    lock->have_lckdir = 1;
+	    lock->lockdir = masterlock;
 	    SIG_endCrSect ();
 	    status = L_OK;
 	    if (waited)
 	        lock_obtained (lock->repository);
-	    goto out;
+	    goto after_sig_unblock;
 	}
 	SIG_endCrSect ();
-      out:
+    after_sig_unblock:
 	(void) umask (omask);
 	if (status != -1)
-	    return status;
+	    goto done;
 
 	if (errno != EEXIST)
 	{
 	    error (0, errno,
 		   "failed to create lock directory for `%s' (%s)",
 		   lock->repository, masterlock);
-	    return (L_ERROR);
+	    status = L_ERROR;
+	    goto done;
 	}
 
 	/* Find out who owns the lock.  If the lock directory is
@@ -819,7 +818,8 @@ set_lock (lock, will_wait)
 		continue;
 
 	    error (0, errno, "couldn't stat lock directory `%s'", masterlock);
-	    return (L_ERROR);
+	    status = L_ERROR;
+	    goto done;
 	}
 
 #ifdef CVS_FUDGELOCKS
@@ -841,7 +841,10 @@ set_lock (lock, will_wait)
 
 	/* if he wasn't willing to wait, return an error */
 	if (!will_wait)
-	    return (L_LOCKED);
+	{
+	    status = L_LOCKED;
+	    goto done;
+	}
 
 	/* if possible, try a very short sleep without a message */
 	if (!waited && us < 1000)
@@ -872,22 +875,29 @@ set_lock (lock, will_wait)
 	lock_wait (lock->repository);
 	waited = 1;
     }
+done:
+    if (!lock->lockdir) free (masterlock);
+    return status;
 }
 
+
+
 /*
- * Clear master lock.  We don't have to recompute the lock name since
- * clear_lock is never called except after a successful set_lock().
+ * Clear master lock.
  */
 static void
 clear_lock (lock)
     struct lock *lock;
 {
     SIG_beginCrSect ();
-    if (CVS_RMDIR (masterlock) < 0)
-	error (0, errno, "failed to remove lock dir `%s'", masterlock);
-    lock->have_lckdir = 0;
+    if (CVS_RMDIR (lock->lockdir) < 0)
+	error (0, errno, "failed to remove lock dir `%s'", lock->lockdir);
+    free (lock->lockdir);
+    lock->lockdir = NULL;
     SIG_endCrSect ();
 }
+
+
 
 /*
  * Print out a message that the lock is still held, then sleep a while.
@@ -963,7 +973,7 @@ lock_filesdoneproc (callerdat, err, repository, update_dir, entries)
     p->key = xstrdup (repository);
     p->data = xmalloc (sizeof (struct lock));
     ((struct lock *)p->data)->repository = p->key;
-    ((struct lock *)p->data)->have_lckdir = 0;
+    ((struct lock *)p->data)->lockdir = NULL;
 
     /* FIXME-KRP: this error condition should not simply be passed by. */
     if (p->key == NULL || addnode (lock_tree_list, p) != 0)
@@ -1016,7 +1026,7 @@ lock_dir_for_write (repository)
 	node->key = xstrdup (repository);
 	node->data = xmalloc (sizeof (struct lock));
 	((struct lock *)node->data)->repository = node->key;
-	((struct lock *)node->data)->have_lckdir = 0;
+	((struct lock *)node->data)->lockdir = NULL;
 
 	(void) addnode (locked_list, node);
 	Writer_Lock (locked_list);
