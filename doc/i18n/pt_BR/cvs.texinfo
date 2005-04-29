@@ -2076,6 +2076,8 @@ existe um caractere de tab e nenhum espaco.
 
 @c <en>@cindex #cvs.rfl, technical details
 @cindex #cvs.rfl, detalhes técnicos
+@c <en>@cindex #cvs.pfl, technical details
+@cindex #cvs.pfl, detalhes técnicos
 @c <en>@cindex #cvs.wfl, technical details
 @cindex #cvs.wfl, detalhes técnicos
 @c <en>@cindex #cvs.lock, technical details
@@ -2107,6 +2109,8 @@ sistemas operacionais e bancos de dados.
 @c <en>Any file in the repository with a name starting
 @c <en>with @file{#cvs.rfl.} is a read lock.  Any file in
 @c <en>the repository with a name starting with
+@c <en>@file{#cvs.pfl} is a promotable read lock.  Any file in
+@c <en>the repository with a name starting with
 @c <en>@file{#cvs.wfl} is a write lock.  Old versions of @sc{cvs}
 @c <en>(before @sc{cvs} 1.5) also created files with names starting
 @c <en>with @file{#cvs.tfl}, but they are not discussed here.
@@ -2116,6 +2120,9 @@ sistemas operacionais e bancos de dados.
 Qualquer arquivo no repositório com um nome começando
 com @file{#cvs.rfl.} é uma trava de leitura. Qualquer
 arquivo no repositório com um nome comçando com
+@file{#cvs.pfl} é uma trava de leitura
+???promotable???.  Qualquer arquivo no repositório com
+um nome começando com
 @file{#cvs.wfl} é uma trava de escrita.  versões antigas
 do @sc{cvs} (antes do @sc{cvs} 1.5) também criavam
 arquivos com nomes começando com @file{#cvs.tfl}, mas
@@ -2155,15 +2162,63 @@ mestra. Então começe a ler o repositório.  Quando você
 terminar, remova o arquivo @file{#cvs.rfl} para
 liberar a trava de leitura.
 
+@c <en>Promotable read locks are a concept you may not find in other literature on
+@c <en>concurrency.  They are used to allow a two (or more) pass process to only lock
+@c <en>a file for read on the first (read) pass(es), then upgrade its read locks to
+@c <en>write locks if necessary for a final pass, still assured that the files have
+@c <en>not changed since they were first read.  @sc{cvs} uses promotable read locks,
+@c <en>for example, to prevent commit and tag verification passes from interfering
+@c <en>with other reading processes.  It can then lock only a single directory at a
+@c <en>time for write during the write pass.
+Promotable read locks are a concept you may not find in other literature on
+concurrency.  They are used to allow a two (or more) pass process to only lock
+a file for read on the first (read) pass(es), then upgrade its read locks to
+write locks if necessary for a final pass, still assured that the files have
+not changed since they were first read.  @sc{cvs} uses promotable read locks,
+for example, to prevent commit and tag verification passes from interfering
+with other reading processes.  It can then lock only a single directory at a
+time for write during the write pass.
+
+@c <en>To obtain a promotable read lock, first create the @file{#cvs.lock} directory,
+@c <en>as with a non-promotable read lock.  Then check
+@c <en>that there are no files that start with
+@c <en>@file{#cvs.pfl}.  If there are, remove the master @file{#cvs.lock} directory,
+@c <en>wait awhile (CVS waits 30 seconds between lock attempts), and try again.  If
+@c <en>there are no other promotable locks, go ahead and create a file whose name is
+@c <en>@file{#cvs.pfl} followed by information of your choice (for example, CVS uses
+@c <en>its hostname and the process identification number of the CVS server process
+@c <en>creating the lock).  If versions of @sc{cvs} older than version 1.12.4 access
+@c <en>your repository directly (not via a @sc{cvs} server of version 1.12.4 or
+@c <en>later), then you should also create a read lock since older versions of CVS
+@c <en>will ignore the promotable lock when attempting to create their own write lock.
+@c <en>Then remove the master @file{#cvs.lock} directory in order to allow other
+@c <en>processes to obtain read locks.
+To obtain a promotable read lock, first create the @file{#cvs.lock} directory,
+as with a non-promotable read lock.  Then check
+that there are no files that start with
+@file{#cvs.pfl}.  If there are, remove the master @file{#cvs.lock} directory,
+wait awhile (CVS waits 30 seconds between lock attempts), and try again.  If
+there are no other promotable locks, go ahead and create a file whose name is
+@file{#cvs.pfl} followed by information of your choice (for example, CVS uses
+its hostname and the process identification number of the CVS server process
+creating the lock).  If versions of @sc{cvs} older than version 1.12.4 access
+your repository directly (not via a @sc{cvs} server of version 1.12.4 or
+later), then you should also create a read lock since older versions of CVS
+will ignore the promotable lock when attempting to create their own write lock.
+Then remove the master @file{#cvs.lock} directory in order to allow other
+processes to obtain read locks.
+
 @c <en>To obtain a writelock, first create the
-@c <en>@file{#cvs.lock} directory, as with a readlock.  Then
+@c <en>@file{#cvs.lock} directory, as with readlocks.  Then
 @c <en>check that there are no files whose names start with
-@c <en>@file{#cvs.rfl.}.  If there are, remove
-@c <en>@file{#cvs.lock}, wait for a while, and try again.  If
-@c <en>there are no readers, then create a file whose name is
-@c <en>@file{#cvs.wfl} followed by information of your choice
-@c <en>(for example, hostname and process identification
-@c <en>number).  Hang on to the @file{#cvs.lock} lock.  Proceed
+@c <en>@file{#cvs.rfl.} and no files whose names start with @file{#cvs.pfl} that are
+@c <en>not owned by the process attempting to get the write lock.  If either exist,
+@c <en>remove @file{#cvs.lock}, wait for a while, and try again.  If
+@c <en>there are no readers or promotable locks from other processes, then create a
+@c <en>file whose name is @file{#cvs.wfl} followed by information of your choice
+@c <en>(again, CVS uses the hostname and server process identification
+@c <en>number).  Remove your @file{#cvs.pfl} file if present.  Hang on to the
+@c <en>@file{#cvs.lock} lock.  Proceed
 @c <en>with writing the repository.  When you are done, first
 @c <en>remove the @file{#cvs.wfl} file and then the
 @c <en>@file{#cvs.lock} directory. Note that unlike the
@@ -2172,15 +2227,20 @@ liberar a trava de leitura.
 @c <en>beyond what is provided by holding on to the
 @c <en>@file{#cvs.lock} lock itself.
 Para obter uma trava de escrita, primeiro crie o
-diretório @file{#cvs.lock}, da mesma forma que com uma
-trava de leitura.  Então verifique se não existem
-arquivos cujos nomes começam com @file{#cvs.rfl.}.  Se
-existem, remova o @file{#cvs.lock}, espere um tempinho
-e tente de novo.  Se não existe nada lendo arquivos, então
-crie um arquivo cujo nome seja @file{#cvs.wfl} seguido
-pela informação de sua escolha (por exemplo, hostname e
-número de identificação de processo).  mantenha a trava
-@file{#cvs.lock}.  Escreva no repositório.  Quando
+diretório @file{#cvs.lock}, da mesma forma que com as
+travas de leitura.  Então verifique se não existem
+arquivos cujos nomes começam com @file{#cvs.rfl.} e se
+não existem arquivos cujo nome começa com
+@file{#cvs.pfl} que não tenha como dono o processo
+tentando ter a trava de escrita.  Se ???either???
+existe, remova o @file{#cvs.lock}, espere um momento, e
+tente de novo.  Se não existem ???readers??? ou travas
+???promotable??? de outros processos, então crie um
+arquivo cujo nome é @file{#cvs.wfl} seguido de
+informações da sua escolha (novamente, o CVS usa o
+hostname e o ???server process identification
+number??).  Remove your @file{#cvs.pfl} file if present.  Hang on to the
+@file{#cvs.lock} lock.  Escreva no repositório.  Quando
 tiver terminado, primeiro remova o arquivo
 @file{#cvs.wfl} e então o diretório
 @file{#cvs.lock}. Observe que ao contrário do arquivo
@@ -8233,42 +8293,43 @@ versão que você está fazendo ???check out???.
 @c <en>@node Moving files
 @node Movendo arquivos
 @c <en>@section Moving and renaming files
-@section Moving and renaming files
+@section Movendo e renomeando arquivos
 @c <en>@cindex Moving files
 @cindex Movendo arquivos
 @c <en>@cindex Renaming files
-@cindex Renaming files
+@cindex Renomeando arquivos
 @c <en>@cindex Files, moving
-@cindex Files, moving
+@cindex Arquivos, movendo
 
 @c <en>Moving files to a different directory or renaming them
 @c <en>is not difficult, but some of the ways in which this
 @c <en>works may be non-obvious.  (Moving or renaming a
 @c <en>directory is even harder.  @xref{Moving directories}.).
-Moving files to a different directory or renaming them
-is not difficult, but some of the ways in which this
-works may be non-obvious.  (Moving or renaming a
-directory is even harder.  @xref{Movendo diretórios}.).
+Mover arquivos para um diretório diferente ou
+renomeá-los não é difícil, mas algumas das formas de
+faze-lo podem não ser óbvias.  (Mover ou renomear
+diretórios é ainda mais difícil.  @xref{Movendo
+diretórios}.).
 
 @c <en>The examples below assume that the file @var{old} is renamed to
 @c <en>@var{new}.
-The examples below assume that the file @var{old} is renamed to
-@var{new}.
+O exemplos abaixo assumem que o arquivo @var{antigo} foi
+renomeado para @var{novo}.
 
 @menu
 @c <en>* Outside::                     The normal way to Rename
-* Outside::                     The normal way to Rename
+* Outside::                     A forma normal de renomear
 @c <en>* Inside::                      A tricky, alternative way
-* Inside::                      A tricky, alternative way
+* Inside::                      Uma forma ???tricky???, alternativa
 @c <en>* Rename by copying::           Another tricky, alternative way
-* Rename by copying::           Another tricky, alternative way
+* Renomear copiando::           outra forma ???tricky???, alternativa
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Outside
 @node Outside
 @c <en>@subsection The Normal way to Rename
-@subsection The Normal way to Rename
+@subsection A forma normal de renomear
 
 @c More rename issues.  Not sure whether these are
 @c worth documenting; I'm putting them here because
@@ -8287,10 +8348,10 @@ The examples below assume that the file @var{old} is renamed to
 @c <en>@var{new}, and then issue the normal @sc{cvs} commands
 @c <en>to remove @var{old} from the repository, and add
 @c <en>@var{new} to it.
-The normal way to move a file is to copy @var{old} to
-@var{new}, and then issue the normal @sc{cvs} commands
-to remove @var{old} from the repository, and add
-@var{new} to it.
+A forma normal de mover um arquivo é copiar
+@var{antigo} para @var{novo}, e então aplicar os
+comandos normais do @sc{cvs} para, no repositório,
+remover @var{antigo} e adicionar @var{novo}.
 @c The following sentence is not true: one must cd into
 @c the directory to run "cvs add".
 @c  (Both @var{old} and @var{new} could
@@ -8310,35 +8371,37 @@ $ cvs commit -m "Renamed @var{old} to @var{new}" @var{old} @var{new}
 @c <en>portion of the history you are accessing.  For example,
 @c <en>@code{cvs log @var{old}} will give the log up until the
 @c <en>time of the rename.
-This is the simplest way to move a file, it is not
-error-prone, and it preserves the history of what was
-done.  Note that to access the history of the file you
-must specify the old or the new name, depending on what
-portion of the history you are accessing.  For example,
-@code{cvs log @var{old}} will give the log up until the
-time of the rename.
+Esta é a forma mais simples de mover um arquivo, não é
+anti-falhas, e vai preservar o histórico do que foi
+feito.  Observe que para acessar o histórico do arquivo
+você vai precisar especificar o nome antigo ou o novo,
+dependendo de que porção do histórico você vai estar
+acessando.  Por exemplo, @code{cvs log @var{antigo}}
+vai mostrar o registro (log) até o momento onde o
+arquivo foi renomeado.
 
 @c <en>When @var{new} is committed its revision numbers will
 @c <en>start again, usually at 1.1, so if that bothers you,
 @c <en>use the @samp{-r rev} option to commit.  For more
 @c <en>information see @ref{Assigning revisions}.
-When @var{new} is committed its revision numbers will
-start again, usually at 1.1, so if that bothers you,
-use the @samp{-r rev} option to commit.  For more
-information see @ref{Atribuindo revisões}.
+Quando @var{novo} é ???committed??? seus números de
+revisão vão recomeçar, normalmente em 1.1. Portanto, se
+isto te incomoda, lembre de usar a opção @samp{-r rev}
+na hora do ???commit???.  Para mais informações veja em
+@ref{Atribuindo revisões}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Inside
 @node Inside
 @c <en>@subsection Moving the history file
-@subsection Moving the history file
+@subsection Movendo o arquivo com o histórico
 
 @c <en>This method is more dangerous, since it involves moving
 @c <en>files inside the repository.  Read this entire section
 @c <en>before trying it out!
-This method is more dangerous, since it involves moving
-files inside the repository.  Read this entire section
-before trying it out!
+Este método é mais perigoso, já que envolve
+movimentação de arquivos no repositório.  Leia a seção
+toda antes de sair tentando!
 
 @example
 $ cd $CVSROOT/@var{dir}
@@ -8347,42 +8410,45 @@ $ mv @var{old},v @var{new},v
 
 @noindent
 @c <en>Advantages:
-Advantages:
+Vantagens:
 
 @itemize @bullet
 @item
 @c <en>The log of changes is maintained intact.
-The log of changes is maintained intact.
+O registro (log) de alterações permanece intacto.
 
 @item
 @c <en>The revision numbers are not affected.
-The revision numbers are not affected.
+Os números de revisão não são alterados.
 @end itemize
 
 @noindent
 @c <en>Disadvantages:
-Disadvantages:
+Desvantagens:
 
 @itemize @bullet
 @item
 @c <en>Old releases cannot easily be fetched from the
 @c <en>repository.  (The file will show up as @var{new} even
 @c <en>in revisions from the time before it was renamed).
-Old releases cannot easily be fetched from the
-repository.  (The file will show up as @var{new} even
-in revisions from the time before it was renamed).
+Releases antigas não serão mais facilmente recuperadas
+a partir do repositório.  (O arquivo vai aparecer como
+@var{novo} mesmo em revisões do tempo anterior a ter
+sido renomeado).
 
 @item
 @c <en>There is no log information of when the file was renamed.
-There is no log information of when the file was renamed.
+Não há informação nos registros de quando o arquivo foi
+renomeado.
 
 @item
 @c <en>Nasty things might happen if someone accesses the history file
 @c <en>while you are moving it.  Make sure no one else runs any of the @sc{cvs}
 @c <en>commands while you move it.
-Nasty things might happen if someone accesses the history file
-while you are moving it.  Make sure no one else runs any of the @sc{cvs}
-commands while you move it.
+Coisas ???Nasty??? podem acontecer se alguém acessar o
+arquivo de histórico enquanto você estier movendo ele.
+Certifique-se de que ninguém mais rode qualquer dos
+comandos do @sc{cvs} durante a movimentação.
 @end itemize
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
