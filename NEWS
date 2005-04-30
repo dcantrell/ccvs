@@ -6,6 +6,11 @@ BUG FIXES
 * Thanks to an old report and patch from Stewart Brodie <stewart@eh.org>, a
   potential crash in response to a corrupt RCS file has been fixed.
 
+* CVS now locks the history file before writing to it.  Especially with large
+  repositories, users should no longer see new warnings about corrupt history
+  records when using the `cvs history' command.  Existing corrupt history
+  records will still need to be removed.
+
 Changes from 1.11.19 to 1.11.20:
 ********************************
 
