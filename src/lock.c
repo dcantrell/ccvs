@@ -129,11 +129,19 @@ static List *locklist;
 
 /* This is the (single) readlock which is set by Reader_Lock.  The
    repository field is NULL if there is no such lock.  */
+#ifdef LOCK_COMPATIBILITY
 static struct lock global_readlock = {NULL, NULL, NULL, CVSLCK, NULL, false};
 static struct lock global_writelock = {NULL, NULL, NULL, CVSLCK, NULL, false};
 
 static struct lock global_history_lock = {NULL, NULL, NULL, CVSHISTLCK,
 					  NULL, false};
+#else
+static struct lock global_readlock = {NULL, NULL, CVSLCK, NULL, false};
+static struct lock global_writelock = {NULL, NULL, CVSLCK, NULL, false};
+
+static struct lock global_history_lock = {NULL, NULL, CVSHISTLCK, NULL,
+					  false};
+#endif /* LOCK_COMPATIBILITY */
 
 /* List of locks set by lock_tree_for_write.  This is redundant
    with locklist, sort of.  */
