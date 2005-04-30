@@ -1,3 +1,7 @@
+2005-04-30  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note new history locks.
+
 2005-04-25  Mark D. Baushke  <mdb@cvshome.org>
 
 	* configure.in: Add support for <pam/pam_appl.h> to allow
