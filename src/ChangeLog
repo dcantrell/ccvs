@@ -1,3 +1,8 @@
+2005-04-30  Mark D. Baushke  <mdb@cvshome.org>
+
+	* lock.c (global_readlock, global_writelock, global_history_lock):
+	Add missing alternatives for non-LOCK_COMPATIBILITY initialization.
+
 2005-04-28  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h (history_lock, clear_history_lock): New protos.
