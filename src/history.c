@@ -735,6 +735,11 @@ history_write (int type, const char *update_dir, const char *revs,
 
     if (noexec)
 	goto out;
+
+    if (!history_lock (current_parsed_root->directory))
+	/* history_lock() will already have printed an error on failure.  */
+	goto out;
+
     fd = CVS_OPEN (fname, O_WRONLY | O_APPEND | OPEN_BINARY, 0666);
     if (fd < 0)
     {
@@ -875,6 +880,7 @@ history_write (int type, const char *update_dir, const char *revs,
 	error (1, errno, "cannot close history file: %s", fname);
     free (workdir);
  out:
+    clear_history_lock ();
     free (fname);
 }
 
