@@ -1,7 +1,22 @@
 Words and expressions hard to translate:
 
+- branch
+  'ramo'. should the 'galho' too, but in the documentation I'm using
+  just 'ramo'.
+
 - check out
+  If you think in 'check out' as the opposite of 'check in', then we
+  should translate as 'pegar emprestado', as the opposite of
+  'devolver'. This is open question.
 
 - commit
+  I think that 'efetivar' is good. But people don't like. And some
+  people are using commitar (argh!)
+
+- non-branch
+  translate to 'não-ramo' is not natural in portuguese. There is any
+  problem in translate to 'tronco'
 
 - update
+  'atualizar'
+
