@@ -8322,7 +8322,7 @@ renomeado para @var{novo}.
 @c <en>* Inside::                      A tricky, alternative way
 * Inside::                      Uma forma ???tricky???, alternativa
 @c <en>* Rename by copying::           Another tricky, alternative way
-* Renomear copiando::           outra forma ???tricky???, alternativa
+* Renomeando na base da cópia:: Outra forma ???tricky???, alternativa
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -8453,14 +8453,14 @@ comandos do @sc{cvs} durante a movimentação.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Rename by copying
-@node Rename by copying
+@node Renomeando na base da cópia
 @c <en>@subsection Copying the history file
-@subsection Copying the history file
+@subsection Copiando o arquivo de histórico
 
 @c <en>This way also involves direct modifications to the
 @c <en>repository.  It is safe, but not without drawbacks.
-This way also involves direct modifications to the
-repository.  It is safe, but not without drawbacks.
+Esta forma também envolve modificações diretas no
+repositório.  É segura, mas tem seus incovenientes.
 
 @example
 # @r{Copy the @sc{rcs} file inside the repository}
@@ -8481,12 +8481,12 @@ $ cvs tag -d @var{tag2} @var{new}
 
 @c <en>By removing the tags you will be able to check out old
 @c <en>revisions.
-By removing the tags you will be able to check out old
-revisions.
+Ao remover as etiquetas você vai ser capaz de ???check
+out??? revisões antigas.
 
 @noindent
 @c <en>Advantages:
-Advantages:
+Vantagens:
 
 @itemize @bullet
 @item
@@ -8495,27 +8495,28 @@ Advantages:
 @c <en>Checking out old revisions works correctly, as long as
 @c <en>you use @samp{-r@var{tag}} and not @samp{-D@var{date}}
 @c <en>to retrieve the revisions.
-Checking out old revisions works correctly, as long as
-you use @samp{-r@var{tag}} and not @samp{-D@var{date}}
-to retrieve the revisions.
+O ???check out??? de revisões antigas funciona corretamente,
+???as long as??? você usa @samp{-r@var{tag}} e não
+@samp{-D@var{date}} para recuperar as revisões.
 
 @item
 @c <en>The log of changes is maintained intact.
-The log of changes is maintained intact.
+O registro (log) de mudanças é mantido intacto.
 
 @item
 @c <en>The revision numbers are not affected.
-The revision numbers are not affected.
+Os números de revisão não são afetados.
 @end itemize
 
 @noindent
 @c <en>Disadvantages:
-Disadvantages:
+Desvantagens:
 
 @itemize @bullet
 @item
 @c <en>You cannot easily see the history of the file across the rename.
-You cannot easily see the history of the file across the rename.
+Você não pode ver de forma fácil os histórico do
+arquivo através das ações de renomear.
 
 @ignore
 @c Is this true?  I don't see how the revision numbers
@@ -8528,9 +8529,9 @@ You cannot easily see the history of the file across the rename.
 @c <en>Unless you use the @samp{-r rev} (@pxref{commit
 @c <en>options}) flag when @var{new} is committed its revision
 @c <en>numbers will start at 1.0 again.
-Unless you use the @samp{-r rev} (@pxref{commit
-options}) flag when @var{new} is committed its revision
-numbers will start at 1.0 again.
+A menos que você use a opção @samp{-r rev} (@pxref{commit
+options}) quando o @var{new} for ???committed??? seus
+números de revisão vão sempre recomeçar com 1.0.
 @end ignore
 @end itemize
 
@@ -8538,29 +8539,30 @@ numbers will start at 1.0 again.
 @c <en>@node Moving directories
 @node Movendo diretórios
 @c <en>@section Moving and renaming directories
-@section Moving and renaming directories
+@section Movendo e renomeando diretórios
 @c <en>@cindex Moving directories
 @cindex Movendo diretórios
 @c <en>@cindex Renaming directories
-@cindex Renaming directories
+@cindex Renomeando diretórios
 @c <en>@cindex Directories, moving
-@cindex Directories, moving
+@cindex Diretórios, movendo
 
 @c <en>The normal way to rename or move a directory is to
 @c <en>rename or move each file within it as described in
 @c <en>@ref{Outside}.  Then check out with the @samp{-P}
 @c <en>option, as described in @ref{Removing directories}.
-The normal way to rename or move a directory is to
-rename or move each file within it as described in
-@ref{Outside}.  Then check out with the @samp{-P}
-option, as described in @ref{Removendo diretórios}.
+A forma normal de renomear ou mover um diretório é
+renomear ou mover cada arquivo dentro dele como
+descrito em @ref{Outside}.  Então fazer um ???check
+out??? com a opção @samp{-P}, como descrito em
+@ref{Removendo diretórios}.
 
 @c <en>If you really want to hack the repository to rename or
 @c <en>delete a directory in the repository, you can do it
 @c <en>like this:
-If you really want to hack the repository to rename or
-delete a directory in the repository, you can do it
-like this:
+Se você realmente quer ???to hack??? o repositório para
+renomear ou apagar um diretório no repositório, você
+pode fazê-lo da seguinte forma:
 
 @enumerate
 @item
@@ -8568,14 +8570,15 @@ like this:
 @c <en>directory will be renamed.  They should commit all
 @c <en>their changes, and remove their working copies,
 @c <en>before you take the steps below.
-Inform everyone who has a checked out copy of the directory that the
-directory will be renamed.  They should commit all
-their changes, and remove their working copies,
-before you take the steps below.
+Avise a todos que fizeram checkout do diretório que o
+diretório vai ser renomeado.  Eles vão ter que fazer
+???commit??? de todas as mudanças, e remover suas
+cópias de trabalho antes que você faça os passos
+seguintes.
 
 @item
 @c <en>Rename the directory inside the repository.
-Rename the directory inside the repository.
+Renomeie o diretório dentro do repositório.
 
 @example
 $ cd $CVSROOT/@var{parent-dir}
@@ -8585,34 +8588,35 @@ $ mv @var{old-dir} @var{new-dir}
 @item
 @c <en>Fix the @sc{cvs} administrative files, if necessary (for
 @c <en>instance if you renamed an entire module).
-Fix the @sc{cvs} administrative files, if necessary (for
-instance if you renamed an entire module).
+Conserte os arquivos administrativos do @sc{cvs}, se
+necessário (por exemplo, se você está renomeando um
+módulo inteiro).
 
 @item
 @c <en>Tell everyone that they can check out again and continue
 @c <en>working.
-Tell everyone that they can check out again and continue
-working.
+Diga a todo mundo que  eles podem fazer check out
+novamente e continuar o trabalho.
 
 @end enumerate
 
 @c <en>If someone had a working copy the @sc{cvs} commands will
 @c <en>cease to work for him, until he removes the directory
 @c <en>that disappeared inside the repository.
-If someone had a working copy the @sc{cvs} commands will
-cease to work for him, until he removes the directory
-that disappeared inside the repository.
+Se alguém manteve uma cópia de trabalho, os comandos do
+@sc{cvs} vão parar de funcionar para esta pessoa até
+que ela remova o diretório que desapareceu do repositório.
 
 @c <en>It is almost always better to move the files in the
 @c <en>directory instead of moving the directory.  If you move the
 @c <en>directory you are unlikely to be able to retrieve old
 @c <en>releases correctly, since they probably depend on the
 @c <en>name of the directories.
-It is almost always better to move the files in the
-directory instead of moving the directory.  If you move the
-directory you are unlikely to be able to retrieve old
-releases correctly, since they probably depend on the
-name of the directories.
+Na maioria das vezes é melhor mover os arquivos do
+diretório ao invés de mover o diretório.  Se você mover
+o diretório não há garantias de que você seja capaz de
+recuperar releases antigas corretamente, já que elas
+dependem provavelmente do nome dos diretórios.
 
 @c ---------------------------------------------------------------------
 @c <en>@node History browsing
