@@ -18,7 +18,7 @@
 	* tag.c (is_in_val_tags, add_to_val_tags): New functions using the
 	write-lock for val-tags and factored from...
 	(tag_check_valid): ...this function.
-	* sanity.sh (lockfiles-21): Add val-tags lock test.
+	* sanity.sh (lockfiles-22): Add val-tags lock test.
 
 2005-04-28  Derek Price  <derek@ximbiot.com>
 
