@@ -1071,6 +1071,7 @@ lock_dir_for_write (repository)
  *   true, on success
  *   false, on error
  */
+static int internal_lock PROTO ((const char *xrepository, int type));
 static int
 internal_lock (xrepository, type)
     const char *xrepository;
@@ -1115,6 +1116,7 @@ internal_lock (xrepository, type)
 /* This is the internal implementation behind history_lock & val_tags_lock.  It
  * removes the write lock for the history or val-tags file, when it exists.
  */
+static void internal_clear_lock PROTO((int type));
 static void
 internal_clear_lock (type)
     int type;
@@ -1154,7 +1156,7 @@ int
 history_lock (xrepository)
     const char *xrepository;
 {
-    internal_lock (xrepository, L_HISTORY_LOCK);
+    return internal_lock (xrepository, L_HISTORY_LOCK);
 }
 
 
@@ -1175,7 +1177,7 @@ int
 val_tags_lock (xrepository)
     const char *xrepository;
 {
-    internal_lock (xrepository, L_VAL_TAGS_LOCK);
+    return internal_lock (xrepository, L_VAL_TAGS_LOCK);
 }
 
 
