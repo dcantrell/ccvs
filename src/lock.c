@@ -1061,9 +1061,6 @@ lock_dir_for_write (repository)
 
 
 
-#define L_HISTORY_LOCK	1
-#define L_VAL_TAGS_LOCK	2
-
 /* This is the internal implementation behind history_lock & val_tags_lock.  It
  * gets a write lock for the history or val-tags file.
  *
@@ -1071,28 +1068,12 @@ lock_dir_for_write (repository)
  *   true, on success
  *   false, on error
  */
-static int internal_lock PROTO ((const char *xrepository, int type));
+static int internal_lock PROTO ((struct lock *lock, const char *xrepository));
 static int
-internal_lock (xrepository, type)
-    const char *xrepository;
-    int type;
-{
+internal_lock (lock, xrepository)
     struct lock *lock;
-
-    switch (type)
-    {
-	case L_HISTORY_LOCK:
-	    lock = &global_history_lock;
-	    break;
-
-	case L_VAL_TAGS_LOCK:
-	    lock = &global_val_tags_lock;
-	    break;
-
-	default:
-	    error (1, 0, "internal error: unknown lock type requested");
-    }
-
+    const char *xrepository;
+{
     /* remember what we're locking (for Lock_Cleanup) */
     assert (!lock->repository);
     lock->repository = xmalloc (strlen (xrepository) + sizeof (CVSROOTADM) + 2);
@@ -1116,27 +1097,11 @@ internal_lock (xrepository, type)
 /* This is the internal implementation behind history_lock & val_tags_lock.  It
  * removes the write lock for the history or val-tags file, when it exists.
  */
-static void internal_clear_lock PROTO((int type));
+static void internal_clear_lock PROTO((struct lock *lock));
 static void
-internal_clear_lock (type)
-    int type;
-{
+internal_clear_lock (lock)
     struct lock *lock;
-
-    switch (type)
-    {
-	case L_HISTORY_LOCK:
-	    lock = &global_history_lock;
-	    break;
-
-	case L_VAL_TAGS_LOCK:
-	    lock = &global_val_tags_lock;
-	    break;
-
-	default:
-	    error (1, 0, "internal error: unknown lock type requested");
-    }
-
+{
     SIG_beginCrSect ();
     if (lock->repository)
     {
@@ -1156,7 +1121,7 @@ int
 history_lock (xrepository)
     const char *xrepository;
 {
-    return internal_lock (xrepository, L_HISTORY_LOCK);
+    return internal_lock (&global_history_lock, xrepository);
 }
 
 
@@ -1166,7 +1131,7 @@ history_lock (xrepository)
 void
 clear_history_lock ()
 {
-    internal_clear_lock (L_HISTORY_LOCK);
+    internal_clear_lock (&global_history_lock);
 }
 
 
@@ -1177,7 +1142,7 @@ int
 val_tags_lock (xrepository)
     const char *xrepository;
 {
-    return internal_lock (xrepository, L_VAL_TAGS_LOCK);
+    return internal_lock (&global_val_tags_lock, xrepository);
 }
 
 
@@ -1187,5 +1152,5 @@ val_tags_lock (xrepository)
 void
 clear_val_tags_lock ()
 {
-    internal_clear_lock (L_VAL_TAGS_LOCK);
+    internal_clear_lock (&global_val_tags_lock);
 }
