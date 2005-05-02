@@ -14,10 +14,14 @@ BUG FIXES
 * Thanks to an old report and patch from Stewart Brodie <stewart@eh.org>, a
   potential crash in response to a corrupt RCS file has been fixed.
 
-* CVS now locks the history file before writing to it.  Especially with large
-  repositories, users should no longer see new warnings about corrupt history
-  records when using the `cvs history' command.  Existing corrupt history
-  records will still need to be removed.
+* CVS now locks the history and val-tags files before writing to them.
+  Especially with large repositories, users should no longer see new warnings
+  about corrupt history records when using the `cvs history' command.  Existing
+  corrupt history records will still need to be removed manually.  val-tags
+  corruption should have had less obvious effects, but removing the
+  CVSROOT/val-tags file and allowing a 1.11.21 or later version of CVS to
+  regenerate it may eliminate a few odd behaviors and possibly cause a slight
+  speed up of read transactions in large repositories over time.
 
 Changes from 1.12.11 to 1.12.12:
 ********************************

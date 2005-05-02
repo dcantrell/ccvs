@@ -1,5 +1,9 @@
 2005-05-02  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note new val-tags locks.
+
+2005-05-02  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note that lock compatibility is now enabled on Windows by
 	default.
 
