@@ -47,7 +47,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = doc/i18n/pt_BR
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in ChangeLog
+DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/acx_with_external_zlib.m4 \

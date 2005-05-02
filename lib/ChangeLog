@@ -1,3 +1,7 @@
+2005-05-01  Mark D. Baushke  <mdb@cvshome.org>
+
+	* regex.c: Update from GNULIB.
+
 2005-04-25  Derek Price  <derek@ximbiot.com>
 
 	* getdate.y: Update from GNULIB.
