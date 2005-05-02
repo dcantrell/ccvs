@@ -859,7 +859,7 @@ wait interval.
 230.  Support for options like compression as part of the CVSROOT might be
 nice.  This should be fairly easy to implement now using the method options.
 
-231.  Noop commands should be logged in the history file.  Information can
+234.  Noop commands should be logged in the history file.  Information can
 still be obtained with noop commands, for instance via `cvs -n up -p', and
 paranoid admins might appreciate this.  Similarly, perhaps diff operations
 should be logged.

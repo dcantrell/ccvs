@@ -1,5 +1,10 @@
 2005-05-02  Derek Price  <derek@ximbiot.com>
 
+	* TODO (231): Renumber as...
+	(234): ...this to match numbering on 1.12.x.
+
+2005-05-02  Derek Price  <derek@ximbiot.com>
+
 	* TODO (231): New item.
 	(22, 30, 31): Remove completed items.
 
