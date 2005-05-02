@@ -22559,6 +22559,15 @@ new revision: 1\.5; previous revision: 1\.4
 $SPROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/CVSROOT
 $SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/CVSROOT"
 
+	  dotest lockfiles-21 "$testcvs -Q tag newtag first-dir"
+
+	  rm $CVSROOT_DIRNAME/CVSROOT/val-tags
+	  mkdir "$TESTDIR/locks/CVSROOT/#cvs.val-tags.lock"
+	  (sleep 5; rmdir "$TESTDIR/locks/CVSROOT/#cvs.val-tags.lock")&
+	  dotest lockfiles-22 "$testcvs -q up -r newtag first-dir" \
+"$SPROG update: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/CVSROOT
+$SPROG update: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/CVSROOT"
+
 	  cd CVSROOT
 	  dotest lockfiles-cleanup-1 "$testcvs -q up -pr1.1 config >config" ""
 	  dotest lockfiles-cleanup-2 "$testcvs -q ci -m config-it" \

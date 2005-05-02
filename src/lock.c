@@ -133,14 +133,18 @@ static List *locklist;
 static struct lock global_readlock = {NULL, NULL, NULL, CVSLCK, NULL, false};
 static struct lock global_writelock = {NULL, NULL, NULL, CVSLCK, NULL, false};
 
-static struct lock global_history_lock = {NULL, NULL, NULL, CVSHISTLCK,
+static struct lock global_history_lock = {NULL, NULL, NULL, CVSHISTORYLCK,
 					  NULL, false};
+static struct lock global_val_tags_lock = {NULL, NULL, NULL, CVSVALTAGSLCK,
+					   NULL, false};
 #else
 static struct lock global_readlock = {NULL, NULL, CVSLCK, NULL, false};
 static struct lock global_writelock = {NULL, NULL, CVSLCK, NULL, false};
 
-static struct lock global_history_lock = {NULL, NULL, CVSHISTLCK, NULL,
+static struct lock global_history_lock = {NULL, NULL, CVSHISTORYLCK, NULL,
 					  false};
+static struct lock global_val_tags_lock = {NULL, NULL, CVSVALTAGSLCK, NULL,
+					   false};
 #endif /* LOCK_COMPATIBILITY */
 
 /* List of locks set by lock_tree_for_write.  This is redundant
@@ -385,6 +389,12 @@ Simple_Lock_Cleanup (void)
     /* clean up simple write locks (if any) */
     if (global_history_lock.repository)
 	remove_lock_files (&global_history_lock, true);
+    SIG_endCrSect();
+
+    SIG_beginCrSect();
+
+    if (global_val_tags_lock.repository)
+	remove_lock_files (&global_val_tags_lock, true);
     /* See note in Lock_Cleanup() below.  */
     SIG_endCrSect();
 }
@@ -1294,21 +1304,42 @@ lock_dir_for_write (const char *repository)
 
 
 
-/* Get a write lock for the history file.  Return true on success and false on
- * error.
+#define L_HISTORY_LOCK	1
+#define L_VAL_TAGS_LOCK	2
+
+/* This is the internal implementation behind history_lock & val_tags_lock.  It
+ * gets a write lock for the history or val-tags file.
+ *
+ * RETURNS
+ *   true, on success
+ *   false, on error
  */
-int
-history_lock (xrepository)
-    const char *xrepository;
+static inline int
+internal_lock (const char *xrepository, int type)
 {
+    struct lock *lock;
+
+    switch (type)
+    {
+	case L_HISTORY_LOCK:
+	    lock = &global_history_lock;
+	    break;
+
+	case L_VAL_TAGS_LOCK:
+	    lock = &global_val_tags_lock;
+	    break;
+
+	default:
+	    error (1, 0, "internal error: unknown lock type requested");
+    }
+
     /* remember what we're locking (for Lock_Cleanup) */
-    assert (!global_history_lock.repository);
-    global_history_lock.repository = Xasprintf ("%s/%s", xrepository,
-						CVSROOTADM);
-    global_history_lock.free_repository = true;
+    assert (!lock->repository);
+    lock->repository = Xasprintf ("%s/%s", xrepository, CVSROOTADM);
+    lock->free_repository = true;
 
     /* get the lock dir for our own */
-    if (set_lock (&global_history_lock, 1) != L_OK)
+    if (set_lock (lock, 1) != L_OK)
     {
 	if (!really_quiet)
 	    error (0, 0, "failed to obtain history lock in repository `%s'",
@@ -1322,10 +1353,40 @@ history_lock (xrepository)
 
 
 
-/* Remove the history lock, if it exists.
+/* Lock the CVSROOT/history file for write.
+ */
+int
+history_lock (const char *xrepository)
+{
+    return internal_lock (xrepository, L_HISTORY_LOCK);
+}
+
+
+
+/* Remove the CVSROOT/history lock, if it exists.
  */
 void
 clear_history_lock ()
 {
     remove_lock_files (&global_history_lock, true);
+}
+
+
+
+/* Lock the CVSROOT/val-tags file for write.
+ */
+int
+val_tags_lock (const char *xrepository)
+{
+    return internal_lock (xrepository, L_VAL_TAGS_LOCK);
+}
+
+
+
+/* Remove the CVSROOT/val-tags lock, if it exists.
+ */
+void
+clear_val_tags_lock ()
+{
+    remove_lock_files (&global_val_tags_lock, true);
 }

@@ -1410,6 +1410,154 @@ val_fileproc (void *callerdat, struct file_info *finfo)
 
 
 
+/* This routine determines whether a tag appears in CVSROOT/val-tags.
+ *
+ * The val-tags file will be open read-only when IDB is NULL.  Since writes to
+ * val-tags always append to it, the lack of locking is okay.  The worst case
+ * race condition might misinterpret a partially written "foobar" matched, for
+ * instance,  a request for "f", "foo", of "foob".  Such a mismatch would be
+ * caught harmlessly later.
+ *
+ * Before CVS adds a tag to val-tags, it will lock val-tags for write and
+ * verify that the tag is still not present to avoid adding it twice.
+ *
+ * NOTES
+ *   This function expects its parent to handle any necessary locking of the
+ *   val-tags file.
+ *
+ * INPUTS
+ *   idb	When this value is NULL, the val-tags file is opened in
+ *   		in read-only mode.  When present, the val-tags file is opened
+ *   		in read-write mode and the DBM handle is stored in *IDB.
+ *   name	The tag to search for.
+ *
+ * OUTPUTS
+ *   *idb	The val-tags file opened for read/write, or NULL if it couldn't
+ *   		be opened.
+ *
+ * ERRORS
+ *   Exits with an error message if the val-tags file cannot be opened for
+ *   read (failure to open val-tags read/write is harmless - see below).
+ *
+ * RETURNS
+ *   true	1. If NAME exists in val-tags.
+ *   		2. If IDB is non-NULL and val-tags cannot be opened for write.
+ *   		   This allows callers to ignore the harmless inability to
+ *   		   update the val-tags cache.
+ *   false	If the file could be opened and the tag is not present.
+ */
+static int is_in_val_tags (DBM **idb, const char *name)
+{
+    DBM *db = NULL;
+    char *valtags_filename;
+    datum mytag;
+    int status;
+
+    /* Casting out const should be safe here - input datums are not
+     * written to by the myndbm functions.
+     */
+    mytag.dptr = (char *)name;
+    mytag.dsize = strlen (name);
+
+    valtags_filename = Xasprintf ("%s/%s/%s", current_parsed_root->directory,
+				  CVSROOTADM, CVSROOTADM_VALTAGS);
+
+    if (idb)
+    {
+	db = dbm_open (valtags_filename, O_RDWR, 0666);
+	if (!db)
+	{
+	    mode_t omask;
+
+	    if (!existence_error (errno))
+	    {
+		error (0, errno, "warning: cannot open %s read/write",
+		       valtags_filename);
+		*idb = NULL;
+		return 1;
+	    }
+
+	    omask = umask (cvsumask);
+	    db = dbm_open (valtags_filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
+	    umask (omask);
+	    if (!db)
+	    {
+		error (0, errno, "warning: cannot create %s",
+		       valtags_filename);
+		*idb = NULL;
+		return 1;
+	    }
+
+	    *idb = db;
+	    return 0;
+	}
+
+	*idb = db;
+    }
+    else
+    {
+	db = dbm_open (valtags_filename, O_RDONLY, 0444);
+	if (!db && !existence_error (errno))
+	    error (1, errno, "cannot read %s", valtags_filename);
+    }
+
+    /* If the file merely fails to exist, we just keep going and create
+       it later if need be.  */
+
+    status = 0;
+    if (db)
+    {
+	datum val;
+
+	val = dbm_fetch (db, mytag);
+	if (val.dptr != NULL)
+	    /* Found.  The tag is valid.  */
+	    status = 1;
+
+	/* FIXME: should check errors somehow (add dbm_error to myndbm.c?).  */
+
+	if (!idb) dbm_close (db);
+    }
+
+    free (valtags_filename);
+    return status;
+}
+
+
+
+/* Add a tag to the CVSROOT/val-tags cache.  Establishes a write lock and
+ * reverifies that the tag does not exist before adding it.
+ */
+static void add_to_val_tags (const char *name)
+{
+    DBM *db;
+    datum mytag;
+    datum value;
+
+    if (noexec) return;
+
+    val_tags_lock (current_parsed_root->directory);
+
+    /* Check for presence again since we have a lock now.  */
+    if (is_in_val_tags (&db, name)) return;
+
+    /* Casting out const should be safe here - input datums are not
+     * written to by the myndbm functions.
+     */
+    mytag.dptr = (char *)name;
+    mytag.dsize = strlen (name);
+    value.dptr = "y";
+    value.dsize = 1;
+
+    if (dbm_store (db, mytag, value, DBM_REPLACE) < 0)
+	error (0, errno, "failed to store %s into val-tags", name);
+    dbm_close (db);
+
+    clear_val_tags_lock ();
+}
+
+
+
 static Dtype
 val_direntproc (void *callerdat, const char *dir, const char *repository,
                 const char *update_dir, List *entries)
@@ -1458,10 +1606,6 @@ void
 tag_check_valid (const char *name, int argc, char **argv, int local, int aflag,
                  char *repository, bool valid)
 {
-    DBM *db;
-    char *valtags_filename;
-    int nowrite = 0;
-    datum mytag, val;
     struct val_args the_val_args;
     struct saved_cwd cwd;
     int which;
@@ -1507,46 +1651,7 @@ Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
      */
     RCS_check_tag (name);
 
-    /* FIXME: This routine doesn't seem to do any locking whatsoever
-       (and it is called from places which don't have locks in place).
-       If two processes try to write val-tags at the same time, it would
-       seem like we are in trouble.  */
-
-    mytag.dptr = xstrdup (name);
-    mytag.dsize = strlen (name);
-
-    valtags_filename = Xasprintf ("%s/%s/%s", current_parsed_root->directory,
-                                  CVSROOTADM, CVSROOTADM_VALTAGS);
-    db = dbm_open (valtags_filename, O_RDWR, 0666);
-    if (db == NULL)
-    {
-	if (!existence_error (errno))
-	{
-	    error (0, errno, "warning: cannot open %s read/write",
-		   valtags_filename);
-	    db = dbm_open (valtags_filename, O_RDONLY, 0666);
-	    if (db != NULL)
-		nowrite = 1;
-	    else if (!existence_error (errno))
-		error (1, errno, "cannot read %s", valtags_filename);
-	}
-	/* If the file merely fails to exist, we just keep going and create
-	   it later if need be.  */
-    }
-    if (db != NULL)
-    {
-	val = dbm_fetch (db, mytag);
-	if (val.dptr)
-	{
-	    /* The tag is already in val-tags - return valid and don't insert
-	     * it a second time.
-	     */
-	    dbm_close (db);
-	    free (valtags_filename);
-	    return;
-	}
-	/* FIXME: should check errors somehow (add dbm_error to myndbm.c?).  */
-    }
+    if (is_in_val_tags (NULL, name)) return;
 
     if (!valid)
     {
@@ -1586,35 +1691,9 @@ Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
 	    error (1, 0, "no such tag `%s'", name);
     }
 
-    /* The tags is valid but not mentioned in val-tags.  Add it.  */
-    if (noexec || nowrite)
-    {
-	if (db != NULL)
-	    dbm_close (db);
-	free (valtags_filename);
-	return;
-    }
-
-    if (db == NULL)
-    {
-	mode_t omask;
-	omask = umask (cvsumask);
-	db = dbm_open (valtags_filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
-	(void)umask (omask);
-
-	if (db == NULL)
-	{
-	    error (0, errno, "warning: cannot create %s", valtags_filename);
-	    free (valtags_filename);
-	    return;
-	}
-    }
-    val.dptr = "y";
-    val.dsize = 1;
-    if (dbm_store (db, mytag, val, DBM_REPLACE) < 0)
-	error (0, errno, "cannot store %s into %s", name,
-	       valtags_filename);
-    dbm_close (db);
-    free (mytag.dptr);
-    free (valtags_filename);
+    if (!the_val_args.found)
+	error (1, 0, "no such tag %s", name);
+    else
+	/* The tags is valid but not mentioned in val-tags.  Add it.  */
+	add_to_val_tags (name);
 }
