@@ -1,3 +1,20 @@
+2005-05-02  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (CVSHISTLCK): Rename macro to...
+	(CVSHISTORYLCK): ...this.
+	(CVSVALTAGSLCK): New macro.
+	(val_tags_lock, clear_val_tags_lock): New functions.
+	* lock.c (global_val_tags_lock): New global.
+	(Lock_Cleanup): Clean up after val-tags lock if necessary.
+	(L_HISTORY_LOCK, L_VAL_TAGS_LOCK): New local macros.
+	(internal_lock, internal_clear_lock, val_tags_lock,
+	clear_val_tags_lock): New functions.
+	(history_lock, clear_history_lock): Use new internal functions.
+	* tag.c (is_in_val_tags, add_to_val_tags): New functions using the
+	write-lock for val-tags and factored from...
+	(tag_check_valid): ...this function.
+	* sanity.sh (lockfiles-21): Add val-tags lock test.
+
 2005-04-28  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h (history_lock, clear_history_lock): New protos.
