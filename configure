@@ -12741,23 +12741,22 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
 fi
 rm -f conftest*
 
-    if test $gl_have_mmap_anonymous = no; then
+    if test $gl_have_mmap_anonymous != yes; then
       cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include <
+
 #include <sys/mman.h>
 #ifdef MAP_ANON
     I cant identify this map.
 #endif
->
 
 _ACEOF
 if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "MAP_ANON" >/dev/null 2>&1; then
+  $EGREP "I cant identify this map." >/dev/null 2>&1; then
 
 cat >>confdefs.h <<\_ACEOF
 #define MAP_ANONYMOUS MAP_ANON
