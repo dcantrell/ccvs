@@ -781,7 +781,7 @@
    like this code disabled, you can disable it by passing the
    "--disable-lock-compatibility" option to configure or by commenting out the
    lines below. */
-#undef LOCK_COMPATIBILITY
+#define LOCK_COMPATIBILITY
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
