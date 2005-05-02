@@ -1304,9 +1304,6 @@ lock_dir_for_write (const char *repository)
 
 
 
-#define L_HISTORY_LOCK	1
-#define L_VAL_TAGS_LOCK	2
-
 /* This is the internal implementation behind history_lock & val_tags_lock.  It
  * gets a write lock for the history or val-tags file.
  *
@@ -1315,24 +1312,8 @@ lock_dir_for_write (const char *repository)
  *   false, on error
  */
 static inline int
-internal_lock (const char *xrepository, int type)
+internal_lock (struct lock *lock, const char *xrepository)
 {
-    struct lock *lock;
-
-    switch (type)
-    {
-	case L_HISTORY_LOCK:
-	    lock = &global_history_lock;
-	    break;
-
-	case L_VAL_TAGS_LOCK:
-	    lock = &global_val_tags_lock;
-	    break;
-
-	default:
-	    error (1, 0, "internal error: unknown lock type requested");
-    }
-
     /* remember what we're locking (for Lock_Cleanup) */
     assert (!lock->repository);
     lock->repository = Xasprintf ("%s/%s", xrepository, CVSROOTADM);
@@ -1358,7 +1339,7 @@ internal_lock (const char *xrepository, int type)
 int
 history_lock (const char *xrepository)
 {
-    return internal_lock (xrepository, L_HISTORY_LOCK);
+    return internal_lock (&global_history_lock, xrepository);
 }
 
 
@@ -1378,7 +1359,7 @@ clear_history_lock ()
 int
 val_tags_lock (const char *xrepository)
 {
-    return internal_lock (xrepository, L_VAL_TAGS_LOCK);
+    return internal_lock (&global_val_tags_lock, xrepository);
 }
 
 

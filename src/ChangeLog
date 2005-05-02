@@ -1,5 +1,18 @@
 2005-05-02  Derek Price  <derek@ximbiot.com>
 
+	Remove unnecessary level of indirection.
+	* lock.c (L_HISTORY_LOCK, L_VAL_TAGS_LOCK): Remove macros.
+	(internal_lock, internal_clear_lock): Accept lock as argument.
+	(history_lock, clear_history_lock, val_tags_lock, clear_val_tags_lock):
+	Replace old macro arg with an actual lock pointer.
+
+2005-05-02  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (internal_lock, internal_clear_lock): Add protos.
+	(history_lock, val_tags_lock): Return the chartered true/false status.
+
+2005-05-02  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h (CVSHISTLCK): Rename macro to...
 	(CVSHISTORYLCK): ...this.
 	(CVSVALTAGSLCK): New macro.
