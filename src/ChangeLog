@@ -1,5 +1,10 @@
 2005-05-02  Derek Price  <derek@ximbiot.com>
 
+	* lock.c (internal_lock, internal_clear_lock): Add protos.
+	(history_lock, val_tags_lock): Return the chartered true/false status.
+
+2005-05-02  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h (CVSHISTLCK): Rename macro to...
 	(CVSHISTORYLCK): ...this.
 	(CVSVALTAGSLCK): New macro.
