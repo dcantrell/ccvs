@@ -1,5 +1,9 @@
 2005-05-03  Derek Price  <derek@ximbiot.com>
 
+	* cvsclient.texi (Goals): Remove typo.  Resolves cvshome issue #236.
+
+2005-05-03  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (Creating a repository):  Provide xref to the remote
 	repositries section.  Resolves issue #203 on cvshome.org.
 
