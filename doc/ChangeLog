@@ -1,3 +1,22 @@
+2005-05-03  Derek Price  <derek@ximbiot.com>
+
+	* cvsclient.texi (Goals): Remove typo.  Resolves cvshome issue #236.
+
+2005-05-03  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Creating a repository):  Provide xref to the remote
+	repositries section.  Resolves issue #203 on cvshome.org.
+
+2005-05-03  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Moving directories):  Clarify instructions on renaming a
+	directory.  Partially resolves issue #246 on cvshome.org.
+
+2005-05-03  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (update output): Use "working directory" in place of
+	"source" for clarity.  Closes issue #245 on cvshome.org.
+
 2005-04-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs.texinfo (Variables): Document SESSIONID and COMMITID
