@@ -1,3 +1,10 @@
+2005-05-03  Derek Price  <derek@ximbiot.com>
+
+	Update from GNULIB.
+	* clock_time.m4, gnulib.m4, lstat.m4, mkstemp.m4, nanosleep.m4,
+	stat-macros.m4: Updated.
+	* unistd-safer.m4: New file.
+
 2005-05-01  Mark D. Baushke  <mdb@cvshome.org>
 
 	* mmap-anon.m4: Update from GNULIB.
