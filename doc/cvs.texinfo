@@ -1867,6 +1867,13 @@ and server1, to update everything else.
 @cindex Creating a repository
 @cindex Setting up a repository
 
+This section describes how to set up a @sc{cvs} repository for any
+sort of access method.  After completing the setup described in this
+section, you should be able to access your @sc{cvs} repository immediately
+via the local access method and several remote access methods.  For
+more information on setting up remote access to the repository you create
+in this section, please read the section on @xref{Remote repositories}.
+
 To set up a @sc{cvs} repository, first choose the
 machine and disk on which you want to store the
 revision history of the source files.  CPU and memory
