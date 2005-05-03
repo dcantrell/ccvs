@@ -82,7 +82,7 @@ It does not depend on NFS, rdist, etc.
 @item
 Providing a reliable transport is outside this protocol.  The protocol
 expects a reliable transport that is transparent (that is, there is no
-translation of characters, including characters such as such as
+translation of characters, including characters such as
 linefeeds or carriage returns), and can transmit all 256 octets (for
 example for proper handling of binary files, compression, and
 encryption).  The encoding of characters specified by the protocol (the
