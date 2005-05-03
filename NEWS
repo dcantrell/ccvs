@@ -9,6 +9,8 @@ NEW FEATURES
   disable compatibility mode (because it is slightly faster), edit the
   LOCK_COMPATIBILITY flag in windows-NT/config.h and recompile.
 
+* Misc efficiency and portability improvements.
+
 BUG FIXES
 
 * Thanks to an old report and patch from Stewart Brodie <stewart@eh.org>, a
