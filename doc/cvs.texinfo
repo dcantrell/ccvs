@@ -1895,6 +1895,13 @@ and server1, to update everything else.
 @cindex Creating a repository
 @cindex Setting up a repository
 
+This section describes how to set up a @sc{cvs} repository for any
+sort of access method.  After completing the setup described in this
+section, you should be able to access your @sc{cvs} repository immediately
+via the local access method and several remote access methods.  For
+more information on setting up remote access to the repository you create
+in this section, please read the section on @xref{Remote repositories}.
+
 To set up a @sc{cvs} repository, first choose the
 machine and disk on which you want to store the
 revision history of the source files.  CPU and memory
@@ -5497,9 +5504,9 @@ like this:
 @enumerate
 @item
 Inform everyone who has a checked out copy of the directory that the
-directory will be renamed.  They should commit all
-their changes, and remove their working copies,
-before you take the steps below.
+directory will be renamed.  They should commit all their changes in all their
+copies of the project containing the directory to be removed, and remove
+all their working copies of said project, before you take the steps below.
 
 @item
 Rename the directory inside the repository.
@@ -11445,7 +11452,7 @@ by one character indicating the status of the file:
 @item U @var{file}
 The file was brought up to date with respect to the
 repository.  This is done for any file that exists in
-the repository but not in your source, and for files
+the repository but not in your working directory, and for files
 that you haven't changed but are not the most recent
 versions available in the repository.
 
