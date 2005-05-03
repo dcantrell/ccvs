@@ -537,6 +537,9 @@
 /* Define to 1 if you have the `sigblock' function. */
 #undef HAVE_SIGBLOCK
 
+/* Define to 1 if you have the `siginterrupt' function. */
+#undef HAVE_SIGINTERRUPT
+
 /* Define to 1 if you have the `sigprocmask' function. */
 #undef HAVE_SIGPROCMASK
 
