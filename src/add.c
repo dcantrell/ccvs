@@ -18,9 +18,9 @@
  * For a directory, it is added at the appropriate place in the source
  * repository and a CVS directory is generated within the directory.
  * 
- * The -m option is currently the only supported option.  Some may wish to
- * supply standard "rcs" options here, but I've found that this causes more
- * trouble than anything else.
+ * `cvs add' supports `-k <mode>' and `-m <description>' options.
+ * Some may wish to supply other standard "rcs" options here, but I've
+ * found that this causes more trouble than anything else.
  * 
  * The user files or directories must already exist.  For a directory, it must
  * not already have a CVS file in it.

@@ -1,3 +1,8 @@
+2005-05-03  Derek Price  <derek@ximbiot.com>
+
+	* add.c: Update comment to include the -k option.  This resolves issue
+	#226 on cvshome.org.
+
 2005-05-02  Derek Price  <derek@ximbiot.com>
 
 	Remove unnecessary level of indirection.
