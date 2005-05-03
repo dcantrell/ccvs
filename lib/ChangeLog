@@ -1,3 +1,9 @@
+2005-05-03  Derek Price  <derek@ximbiot.com>
+
+	Update from GNULIB.
+	* chdir-long.c, nanosleep.c, save-cwd.c, tempname.c: Updated.
+	* dup-safer.c, fd-safer.c, unistd-safer.h: New files.
+
 2005-05-01  Mark D. Baushke  <mdb@cvshome.org>
 
 	* regex.c: Update from GNULIB.
