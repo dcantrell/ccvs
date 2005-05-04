@@ -986,7 +986,8 @@ Are you sure you want to release (and delete) directory `tc': n
 O comando @code{release} verifica se todas as suas
 modificações foram efetivadas. Se o registro
 histórico (history log) está ativo ele também escreve uma
-observação no arquivo de histórico. @xref{arquivo history}.
+observação no arquivo de histórico. @xref{arquivo
+history (histórico)}.
 
 @c <en>When you use the @samp{-d} flag with @code{release}, it
 @c <en>also removes your working copy.
@@ -3230,7 +3231,8 @@ rodar o @code{cvs init} num repositório já criado.
 @code{cvs init} pode guardar um registro histórico
 (history log); se
 você não quer guardar isto, remova o arquivo history
-depois de rodar o @code{cvs init}.  @xref{arquivo history}.
+depois de rodar o @code{cvs init}.  @xref{arquivo
+history (histórico)}.
 
 @c <en>@node Backing up
 @node Fazendo backup
@@ -7967,7 +7969,7 @@ informações veja @ref{Modos de substituição}.
 @c <en>be used.  You will not be prompted for a description.
 A opção @samp{-m} especifica uma descrição para o
 arquivo.  Esta descrição aparece no registro histórico (history log)
-(se este estiver habilitado, @pxref{arquivo history}).
+(se este estiver habilitado, @pxref{arquivo history (histórico)}).
 Ela também vai ser guardada no histórico de versões
 dentro do repositório quando o arquivo é
 ???committed???.  O comando @code{log} mostra esta
@@ -8626,9 +8628,9 @@ dependem provavelmente do nome dos diretórios.
 @c <en>@cindex History browsing
 @cindex Navegação no Histórico
 @c <en>@cindex Traceability
-@cindex Traceability
+@cindex Rastreabilidade
 @c <en>@cindex Isolation
-@cindex Isolation
+@cindex Isolamento
 
 @ignore
 @c This is too long for an introduction (goal is
@@ -8644,8 +8646,8 @@ dependem provavelmente do nome dos diretórios.
 
 @c <en>@sc{cvs} tries to make it easy for a group of people to work
 @c <en>together.  This is done in two ways:
-@sc{cvs} tries to make it easy for a group of people to work
-together.  This is done in two ways:
+O @sc{cvs} tenta ajudar um grupo a trabalhar junto.
+Isto é feito de duas formas:
 
 @itemize @bullet
 @item
@@ -8653,22 +8655,23 @@ together.  This is done in two ways:
 @c <en>source.  You are not affected by modifications made by
 @c <en>others until you decide to incorporate those changes
 @c <en>(via the @code{update} command---@pxref{update}).
-Isolation---You have your own working copy of the
-source.  You are not affected by modifications made by
-others until you decide to incorporate those changes
-(via the @code{update} command---@pxref{update}).
+Isolamento---Você tem a sua própria cópia de trabalho
+dos fontes.  Você não é afetado por modificações feitas
+por outros até que você decida incorporar estas
+modificações (através do comando
+@code{update}---@pxref{update}).
 
 @item
 @c <en>Traceability---When something has changed, you can
 @c <en>always see @emph{exactly} what changed.
-Traceability---When something has changed, you can
-always see @emph{exactly} what changed.
+Rastreabilidade---Quando alguma coisa mudou, você pode
+ver @emph{exatamente} o que mudou.
 @end itemize
 
 @c <en>There are several features of @sc{cvs} that together lead
 @c <en>to traceability:
-There are several features of @sc{cvs} that together lead
-to traceability:
+Existem várias características do @sc{cvs} que juntas
+possibilitam a rastreabilidade:
 
 @itemize @bullet
 @item
@@ -8707,43 +8710,45 @@ even when you run @sc{cvs}, and things like that.
 @c <en>history---what files have changed when, how, and by
 @c <en>whom, there are a variety of mechanisms for looking
 @c <en>through the history.
-Once you have used @sc{cvs} to store a version control
-history---what files have changed when, how, and by
-whom, there are a variety of mechanisms for looking
-through the history.
+Uma vez usando o @sc{cvs} para guardar um histórico do
+controle de versões---que arquivos foram mudandos,
+quando, como e por quem, existe uma variedade de
+mecanismos para procurar ao longo do histórico.
 
 @c FIXME: should also be talking about how you look at
 @c old revisions (e.g. "cvs update -p -r 1.2 foo.c").
 @menu
 @c <en>* log messages::                Log messages
-* log messages::                Log messages
+* mensagens de registro::       Mensagens de registro (log)
 @c <en>* history database::            The history database
 * history database::            The history database
 @c <en>* user-defined logging::        User-defined logging
 * user-defined logging::        User-defined logging
 @c <en>* annotate::                    What revision modified each line of a file?
-* annotate::                    What revision modified each line of a file?
+* annotate::                    Que revisão modificou cada linha de um arquivo?
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node log messages
-@node log messages
+@node mensagens de registro
 @c <en>@section Log messages
-@section Log messages
+@section Mensagens de registro (log)
 
 @c FIXME: @xref to place where we talk about how to
 @c specify message to commit.
 @c <en>Whenever you commit a file you specify a log message.
-Whenever you commit a file you specify a log message.
+Sempre que você ???commit??? um arquivo você especifica
+uma mensagem de registro (log).
 
 @c FIXME: bring the information here, and get rid of or
 @c greatly shrink the "log" node.
 @c <en>To look through the log messages which have been
 @c <en>specified for every revision which has been committed,
 @c <en>use the @code{cvs log} command (@pxref{log}).
-To look through the log messages which have been
-specified for every revision which has been committed,
-use the @code{cvs log} command (@pxref{log}).
+Para ver todas as mensagens de registro que foram
+especificadas para cada revisão que foi
+???committed???, use o comando @code{cvs log}
+(@pxref{log}).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node history database
@@ -8759,16 +8764,17 @@ use the @code{cvs log} command (@pxref{log}).
 @c <en>log various @sc{cvs} actions.  To retrieve the
 @c <en>information from the history file, use the @code{cvs
 @c <en>history} command (@pxref{history}).
-You can use the history file (@pxref{arquivo history}) to
-log various @sc{cvs} actions.  To retrieve the
-information from the history file, use the @code{cvs
-history} command (@pxref{history}).
+Você pode usar o arquivo history (@pxref{arquivo
+history (histórico)}) para registrar várias ações do @sc{cvs}.
+Para recuperar a informação do arquivo history, use o
+comando @code{cvs history} (@pxref{history}).
 
 @c <en>Note: you can control what is logged to this file by using the
 @c <en>@samp{LogHistory} keyword in the @file{CVSROOT/config} file
 @c <en>(@pxref{config}).
-Note: you can control what is logged to this file by using the
-@samp{LogHistory} keyword in the @file{CVSROOT/config} file
+Observação: você pode controlar o que vai ser
+registrado neste arquivo usando a palavra-chave
+@samp{LogHistory} no arquivo @file{CVSROOT/config}
 (@pxref{config}).
 
 @c
@@ -8852,14 +8858,15 @@ Note: you can control what is logged to this file by using the
 @c <en>it, or send mail to a group of developers, or, perhaps,
 @c <en>post a message to a particular newsgroup.  To log
 @c <en>commits, use the @file{loginfo} file (@pxref{loginfo}).
-You can customize @sc{cvs} to log various kinds of
-actions, in whatever manner you choose.  These
-mechanisms operate by executing a script at various
-times.  The script might append a message to a file
-listing the information and the programmer who created
-it, or send mail to a group of developers, or, perhaps,
-post a message to a particular newsgroup.  To log
-commits, use the @file{loginfo} file (@pxref{loginfo}).
+Você pode personalizar o @sc{cvs} para registrar vários
+tipos de ação, da forma que você escolher.  Estes
+mecanismos operam executando um script várias vezes.  O
+script deve anexar uma mensagem a um arquivo que lista
+as informações e o programador que as criou, ou mandar
+um e-mail para um grupo de desenvolvedores, ou, talvez,
+mandar uma mensagem para um newsgroup em particular.
+Para registrar os commits, usar o arquivo
+@file{loginfo} (@pxref{loginfo}).
 @c FIXME: What is difference between doing it in the
 @c modules file and using loginfo/taginfo?  Why should
 @c user use one or the other?
@@ -8872,20 +8879,20 @@ commits, use the @file{loginfo} file (@pxref{loginfo}).
 @c <en>the @code{cvs watch add} command (@pxref{Getting
 @c <en>Notified}); this command is useful even if you are not
 @c <en>using @code{cvs watch on}.
-To log commits, checkouts, exports, and tags,
-respectively, you can also use the @samp{-i},
-@samp{-o}, @samp{-e}, and @samp{-t} options in the
-modules file.  For a more flexible way of giving
-notifications to various users, which requires less in
-the way of keeping centralized scripts up to date, use
-the @code{cvs watch add} command (@pxref{Getting
-Notified}); this command is useful even if you are not
-using @code{cvs watch on}.
+Para registrar ???commits???, ???checkouts???,
+exportações, e etiquetagens, você pode
+usar, respectivamente, as opções @samp{-i}, @samp{-o},
+@samp{-e} e @samp{-t} no arquivo modules.  Para uma
+forma mais flexível de notificar vários usuários, ???which requires less in
+the way of??? manter scripts centralizados atualizados,
+use o comando @code{cvs watch add} (@pxref{Recebendo
+Notificações}); este comando é útil mesmo se você não
+estiver usando @code{cvs watch on}.
 
 @c <en>@cindex taginfo
 @cindex taginfo
 @c <en>@cindex Exit status, of taginfo
-@cindex Exit status, of taginfo
+@cindex Status de saída, do taginfo
 @c <en>The @file{taginfo} file defines programs to execute
 @c <en>when someone executes a @code{tag} or @code{rtag}
 @c <en>command.  The @file{taginfo} file has the standard form
@@ -8899,24 +8906,26 @@ using @code{cvs watch on}.
 @c <en>pairs of @var{filename} @var{revision}.  A non-zero
 @c <en>exit of the filter program will cause the tag to be
 @c <en>aborted.
-The @file{taginfo} file defines programs to execute
-when someone executes a @code{tag} or @code{rtag}
-command.  The @file{taginfo} file has the standard form
-for administrative files
-(@pxref{Arquivos administrativos}), where each line is a regular expression
-followed by a command to execute.  The arguments passed
-to the command are, in order, the @var{tagname},
-@var{operation} (@code{add} for @code{tag},
-@code{mov} for @code{tag -F}, and @code{del} for
-@code{tag -d}), @var{repository}, and any remaining are
-pairs of @var{filename} @var{revision}.  A non-zero
-exit of the filter program will cause the tag to be
-aborted.
+O arquivo @file{taginfo} define programas para
+executar quando alguém executa um @code{tag} ou
+@code{rtag}.  O arquivo @file{taginfo} está no formato
+padrão para arquivos administrativos
+(@pxref{Arquivos administrativos}), onde cada linha é
+uma expressão regular seguida de um comando para ser
+executado.  Os argumentos passados para a linha de
+comando são, em ordem, o @var{tagname},
+@var{operation} (@code{add} para @code{tag},
+@code{mov} para @code{tag -F} e @code{del} para
+@code{tag -d}), @var{repository}, e qualquer outro são
+pares de @var{filename} @var{revision}.  Uma saída
+não-nula do programa filtro vai fazer com que o tag
+seja interrompido.
 
 @c <en>Here is an example of using taginfo to log tag and rtag
 @c <en>commands.  In the taginfo file put:
-Here is an example of using taginfo to log tag and rtag
-commands.  In the taginfo file put:
+Aqui está um exmeplo de uso do taginfo para registrar
+os comandos
+tag e rtag.  No arquivo taginfo bote:
 
 @example
 ALL /usr/local/cvsroot/CVSROOT/loggit
@@ -8925,8 +8934,8 @@ ALL /usr/local/cvsroot/CVSROOT/loggit
 @noindent
 @c <en>Where @file{/usr/local/cvsroot/CVSROOT/loggit} contains the
 @c <en>following script:
-Where @file{/usr/local/cvsroot/CVSROOT/loggit} contains the
-following script:
+Onde @file{/usr/local/cvsroot/CVSROOT/loggit} contém o
+seguinte script:
 
 @example
 #!/bin/sh
@@ -8946,9 +8955,9 @@ echo "$@@" >>/home/kingdon/cvsroot/CVSROOT/taglog
 @c <en>For each file in @var{files}, print the head revision
 @c <en>of the trunk, together with information on the last
 @c <en>modification for each line.  For example:
-For each file in @var{files}, print the head revision
-of the trunk, together with information on the last
-modification for each line.  For example:
+Para cada arquivo em @var{files}, imprime a revisão
+???head??? do tronco, junto com informações a respeito
+da última modificação em cada linha.  Por exemplo:
 
 @example
 $ cvs annotate ssfile
@@ -8966,13 +8975,14 @@ Annotations for ssfile
 @c <en>tell you anything about lines which have been deleted
 @c <en>or replaced; you need to use @code{cvs diff} for that
 @c <en>(@pxref{diff}).
-The file @file{ssfile} currently contains two lines.
-The @code{ssfile line 1} line was checked in by
-@code{mary} on March 27.  Then, on March 28, @code{joe}
-added a line @code{ssfile line 2}, without modifying
-the @code{ssfile line 1} line.  This report doesn't
-tell you anything about lines which have been deleted
-or replaced; you need to use @code{cvs diff} for that
+O arquivo @file{ssfile} atualmente contém duas
+linhas. a linha @code{ssfile line 1} foi submetida por
+@code{mary} em March 27 (27 de março).  Então, em March
+28 (28 de março), @code{joe} adicionou uma linha
+@code{ssfile line 2}, sem modificar a linha
+@code{ssfile line 1}.  Este relatório não te diz nada a
+respeito de linhas que foram deletadas ou substituídas;
+Você precisa usar o @code{cvs diff} para isto
 (@pxref{diff}).
 
 @end deffn
@@ -8981,10 +8991,10 @@ or replaced; you need to use @code{cvs diff} for that
 @c <en>@ref{Invoking CVS}, and can be used to select the files
 @c <en>and revisions to annotate.  The options are described
 @c <en>in more detail there and in @ref{Common options}.
-The options to @code{cvs annotate} are listed in
-@ref{Chamando o CVS}, and can be used to select the files
-and revisions to annotate.  The options are described
-in more detail there and in @ref{Opções comuns}.
+As opções para o @code{cvs annotate} são listadas em
+@ref{Chamando o CVS} e podem ser usadas para selecionar
+os arquivos e revisões para ???annotate???.  As opções
+são descritas com mais detalhes lá e em @ref{Opções comuns}.
 
 @c FIXME: maybe an example using the options?  Just
 @c what it means to select a revision might be worth a
@@ -10329,7 +10339,7 @@ but @sc{cvs} is not able to enforce this behavior.
 @c <en>* Setting a watch::             Telling CVS to watch certain files
 * Setting a watch::             Telling CVS to watch certain files
 @c <en>* Getting Notified::            Telling CVS to notify you
-* Getting Notified::            Telling CVS to notify you
+* Recebendo Notificações::      Dizendo ao CVS para te notificar
 @c <en>* Editing files::               How to edit a file which is being watched
 * Editing files::               How to edit a file which is being watched
 @c <en>* Watch information::           Information about who is watching and editing
@@ -10417,7 +10427,7 @@ watch on}.
 @end deffn
 
 @c <en>@node Getting Notified
-@node Getting Notified
+@node Recebendo Notificações
 @c <en>@subsection Telling CVS to notify you
 @subsection Telling CVS to notify you
 
@@ -13556,7 +13566,18 @@ checkin.  For use with @sc{cvs}, strict locking must be
 set; see the discussion under the @samp{-l} option
 above.
 
+@c <en>@item -u[@var{rev}]
 @item -u[@var{rev}]
+@c <en>See the option @samp{-l} above, for a discussion of
+@c <en>using this option with @sc{cvs}.  Unlock the revision
+@c <en>with number @var{rev}.  If a branch is given, unlock
+@c <en>the latest revision on that branch.  If @var{rev} is
+@c <en>omitted, remove the latest lock held by the caller.
+@c <en>Normally, only the locker of a revision may unlock it;
+@c <en>somebody else unlocking a revision breaks the lock.
+@c <en>This causes the original locker to be sent a @code{commit}
+@c <en>notification (@pxref{Getting Notified}).
+@c <en>There can be no space between @samp{-u} and its argument.
 See the option @samp{-l} above, for a discussion of
 using this option with @sc{cvs}.  Unlock the revision
 with number @var{rev}.  If a branch is given, unlock
@@ -13565,7 +13586,7 @@ omitted, remove the latest lock held by the caller.
 Normally, only the locker of a revision may unlock it;
 somebody else unlocking a revision breaks the lock.
 This causes the original locker to be sent a @code{commit}
-notification (@pxref{Getting Notified}).
+notification (@pxref{Recebendo Notificações}).
 There can be no space between @samp{-u} and its argument.
 
 @item -V@var{n}
@@ -15593,7 +15614,7 @@ isn't strictly necessary to use this command.  You can
 always simply delete your working directory, if you
 like; but you risk losing changes you may have
 forgotten, and you leave no trace in the @sc{cvs} history
-file (@pxref{arquivo history}) that you've abandoned your
+file (@pxref{arquivo history (histórico)}) that you've abandoned your
 checkout.
 
 Use @samp{cvs release} to avoid these problems.  This
@@ -17465,7 +17486,7 @@ on/off: turn on/off read-only checkouts of files.  See
 @c <en>add/remove: add or remove notification on actions.  See
 @c <en>@ref{Getting Notified}.
 add/remove: add or remove notification on actions.  See
-@ref{Getting Notified}.
+@ref{Recebendo Notificações}.
 
 @table @code
 @c <en>@item -a @var{actions}
@@ -17540,13 +17561,13 @@ Operate recursively (default).  @xref{Comportamento recursivo}.
 @c <en>properly they can help make life easier.  For a
 @c <en>discussion of how to edit them, see @ref{Intro
 @c <en>administrative files}.
-Inside the repository, in the directory
-@file{$CVSROOT/CVSROOT}, there are a number of
-supportive files for @sc{cvs}.  You can use @sc{cvs} in a limited
-fashion without any of them, but if they are set up
-properly they can help make life easier.  For a
-discussion of how to edit them, see
-@ref{Intro aos arquivos administrativos}.
+Dentro do repositório, no diretório
+@file{$CVSROOT/CVSROOT}, existem vários arquivos de
+suporte para o @sc{cvs}.  Você pode usar o @sc{cvs} de
+uma forma limitada sem se aproveitar deles, mas se eles
+estiverem ajustados corretamente eles podem facilitar
+muito seu trabalho.  Para uma discussão sobre como
+editá-los, veja em @ref{Intro aos arquivos administrativos}.
 
 The most important of these files is the @file{modules}
 file, which defines the modules inside the repository.
@@ -17567,7 +17588,7 @@ file, which defines the modules inside the repository.
 @c <en>* checkoutlist::                Adding your own administrative files
 * checkoutlist::                Adding your own administrative files
 @c <en>* history file::                History information
-* arquivo history::                History information
+* arquivo history (histórico)::                History information
 @c <en>* Variables::                   Various variables are expanded
 * Variables::                   Various variables are expanded
 @c <en>* config::                      Miscellaneous CVS configuration
@@ -18813,11 +18834,11 @@ copy}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node history file
-@node arquivo history
+@node arquivo history (histórico)
 @c <en>@appendixsec The history file
-@appendixsec O arquivo history
+@appendixsec O arquivo history (histórico)
 @c <en>@cindex History file
-@cindex Arquivo history
+@cindex Arquivo history (histórico)
 @c <en>@cindex Log information, saving
 @cindex Log information, saving
 
