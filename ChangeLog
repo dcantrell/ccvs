@@ -1,3 +1,9 @@
+2005-05-04  Mark D. Baushke  <mdb@cvshome.org>
+
+	* maint-aux/gnulib-update: Depend on maint-aux/gnulib-modules
+	which needs to exist relative to the top-level directory rather
+	than config.h which may be sitting in a build subdirectory.
+
 2005-05-03  Derek Price  <derek@ximbiot.com>
 
 	* INSTALL-CVS: Add footnote about compiling a CVS checkout of CVS on a

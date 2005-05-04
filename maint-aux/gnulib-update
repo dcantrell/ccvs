@@ -16,7 +16,7 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-if test -f config.h; then :; else
+if test -f maint-aux/gnulib-modules; then :; else
   >&2 echo \
 "This script expects to be run from the top level of the CVS source tree."
   exit 2
