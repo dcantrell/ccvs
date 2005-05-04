@@ -1464,32 +1464,19 @@ static int is_in_val_tags (DBM **idb, const char *name)
 
     if (idb)
     {
-	db = dbm_open (valtags_filename, O_RDWR, 0666);
+	mode_t omask;
+
+	omask = umask (cvsumask);
+	db = dbm_open (valtags_filename, O_RDWR | O_CREAT, 0666);
+	umask (omask);
+
 	if (!db)
 	{
-	    mode_t omask;
 
-	    if (!existence_error (errno))
-	    {
-		error (0, errno, "warning: cannot open %s read/write",
-		       valtags_filename);
-		*idb = NULL;
-		return 1;
-	    }
-
-	    omask = umask (cvsumask);
-	    db = dbm_open (valtags_filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
-	    umask (omask);
-	    if (!db)
-	    {
-		error (0, errno, "warning: cannot create %s",
-		       valtags_filename);
-		*idb = NULL;
-		return 1;
-	    }
-
-	    *idb = db;
-	    return 0;
+	    error (0, errno, "warning: cannot open `%s' read/write",
+		   valtags_filename);
+	    *idb = NULL;
+	    return 1;
 	}
 
 	*idb = db;
