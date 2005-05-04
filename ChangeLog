@@ -1,6 +1,6 @@
 2005-05-03  Derek Price  <derek@ximbiot.com>
 
-	* INSTALL: Add footnote about compiling a CVS checkout of CVS on a
+	* INSTALL-CVS: Add footnote about compiling a CVS checkout of CVS on a
 	case-insensitive UNIX file system like Mac OS X.
 
 2005-05-03  Derek Price  <derek@ximbiot.com>
