@@ -1,5 +1,10 @@
 2005-05-03  Derek Price  <derek@ximbiot.com>
 
+	* INSTALL: Add footnote about compiling a CVS checkout of CVS on a
+	case-insensitive UNIX file system like Mac OS X.
+
+2005-05-03  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note GNULIB updates as misc efficiency and portability fixes.
 
 2005-05-02  Derek Price  <derek@ximbiot.com>

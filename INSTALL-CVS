@@ -183,6 +183,7 @@ PowerPC or RS/6000:
 	Lynx 2.3.1 120495 (1.6.86) (footnote 9)
 	Lynx 2.5 (1.9) (footnote 10)
 	MkLinux DR3 GENERIC #6 (1.10.5.1) (presumably LinuxPPC too)
+	Mac OS X ALL (footnote 14)
 	Mac OS X Darwin 6.6 Darwin Kernel Version 6.6 (1.11.1p1)
 	Mac OS X Darwin 5.5 Darwin Kernel Version 5.5 (1.11.6) (footnote 12)
 	Mac OS X Darwin 5.5 Darwin Kernel Version 5.5 (1.12.1) (footnote 12)
@@ -252,6 +253,17 @@ VAX:
 (footnote 13)
     A build under HP PA-RISC 2.0 will probably not run under PA-RISC 1.1
     unless "+DAportable" is added to the HP ANSI cc compiler flags.
+
+(footnote 14)
+    Because of the case-insensitive file system on Mac OS X, you cannot build
+    CVS directly from a checkout from CVS.  The name of the built executable,
+    `cvs', conflicts with name of the CVS administration directory, `CVS'.
+    The work-around is to build the executable from a build directory separate
+    from the source directory.  i.e.:
+
+	cvs co ccvs; cd ccvs
+	mkdir build; cd build
+	../configure && make
 
 -------------------------------------------------------------------------------
 
