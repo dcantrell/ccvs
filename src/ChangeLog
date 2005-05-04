@@ -1,5 +1,10 @@
 2005-05-03  Derek Price  <derek@ximbiot.com>
 
+	* tag.c (is_in_val_tags): Remove unnecessary existance checking for the
+	val-tags file and just rely on open() to create it when necessary.
+
+2005-05-03  Derek Price  <derek@ximbiot.com>
+
 	* tag.c (tag_check_valid): Don't verify the_val_args.found when it is
 	not initialized.
 
