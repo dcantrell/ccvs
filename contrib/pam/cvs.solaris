@@ -6,3 +6,4 @@
 
 cvs     auth        required    /usr/lib/security/$ISA/pam_unix.so.1
 cvs     account     required    /usr/lib/security/$ISA/pam_unix.so.1
+cvs     session     required    /usr/lib/security/$ISA/pam_unix.so.1
