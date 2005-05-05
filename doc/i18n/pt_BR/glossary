@@ -1,5 +1,8 @@
 Words and expressions hard to translate:
 
+- annotate
+  hard to translate
+
 - branch
   'ramo'. should the 'galho' too, but in the documentation I'm using
   just 'ramo'.
@@ -9,14 +12,49 @@ Words and expressions hard to translate:
   should translate as 'pegar emprestado', as the opposite of
   'devolver'. This is open question.
 
+- check in
+  submeter, devolver
+
 - commit
   I think that 'efetivar' is good. But people don't like. And some
   people are using commitar (argh!)
+
+- head revision
+  'revisão cabeça'? 'revisão na cabeça'?
+
+- history
+  'histórico'. when talking about the history file, leave unchanged 
+
+- keyword
+  'palavra-chave'
+
+- log (verb)
+  'registrar'
+
+- log (noun)
+  'registro'
 
 - non-branch
   translate to 'não-ramo' is not natural in portuguese. There is any
   problem in translate to 'tronco'
 
+- release
+  'release' until I find a better translation. A good option is 'lançamento'
+
+- repository
+  'repositório'
+
+-tag (verb)
+  'etiquetar'
+
+-tag (noun)
+  'etiqueta'
+
+- traceability
+  'rastreabilidade'
+
 - update
   'atualizar'
 
+- working copy
+  'cópia de trabalho'
