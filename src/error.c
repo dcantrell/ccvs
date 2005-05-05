@@ -120,16 +120,26 @@ error (int status, int errnum, const char *message, ...)
     char *cmdbuf;
     char *emptybuf = "";
 
+    static const char *last_message = NULL;
+    static va_list last_args;
+    static int last_status;
+    static int last_errnum;
+
+    if (last_message) goto recursion_error;
+    last_message = message;
+    va_start (args, message);
+    last_args = args;
+    last_status = status;
+    last_errnum = errnum;
+
     /* Initialize these to avoid a lot of special case error handling.  */
     buf = statbuf;
     buf2 = statbuf2;
     cmdbuf = emptybuf;
 
     /* Expand the message the user passed us.  */
-    va_start (args, message);
     length = sizeof (statbuf);
     buf = vasnprintf (statbuf, &length, message, args);
-    va_end (args);
     if (!buf) goto memerror;
 
     /* Expand the cvs commmand name to <cmd> or [<cmd> aborted].
@@ -160,6 +170,12 @@ error (int status, int errnum, const char *message, ...)
 
     /* Send the final message to the client or log it.  */
     cvs_outerr (buf2, length);
+
+    /* Reset our recursion lock.  This needs to be done before the call to
+     * exit() to allow the exit handlers to make calls to error().
+     */
+    last_message = NULL;
+    va_end (args);
 
     /* Done, if we're exiting.  */
     if (status)
@@ -193,6 +209,37 @@ memerror:
 #if HAVE_SYSLOG_H
     syslog (LOG_DAEMON | LOG_EMERG, "Memory exhausted.  Aborting.");
 #endif /* HAVE_SYSLOG_H */
+
+    goto sidestep_done;
+
+recursion_error:
+#if HAVE_SYSLOG_H
+    /* Syslog the problem since recursion probably means that we encountered an
+     * error while attempting to send the last error message to the client.
+     */
+
+    syslog (LOG_DAEMON | LOG_EMERG,
+	    "error (%d, %d) called recursively.  Original message was:",
+	    last_status, last_errnum);
+    vsyslog (LOG_DAEMON | LOG_EMERG, last_message, last_args);
+
+
+    syslog (LOG_DAEMON | LOG_EMERG,
+            "error (%d, %d) called recursively.  Second message was:",
+	    status, errnum);
+    va_start (args, message);
+    vsyslog (LOG_DAEMON | LOG_EMERG, message, args);
+    va_end (args);
+
+    syslog (LOG_DAEMON | LOG_EMERG, "Aborting.");
+#endif /* HAVE_SYSLOG_H */
+
+sidestep_done:
+    /* Reset our recursion lock.  This needs to be done before the call to
+     * exit() to allow the exit handlers to make calls to error().
+     */
+    last_message = NULL;
+    va_end (last_args);
 
     exit (EXIT_FAILURE);
 }
