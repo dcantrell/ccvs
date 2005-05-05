@@ -1,3 +1,7 @@
+2005-05-04  Derek Price  <derek@ximbiot.com>
+
+	* error.c (error): Avoid recursion and syslog the problem.
+
 2005-05-03  Derek Price  <derek@ximbiot.com>
 
 	* tag.c (is_in_val_tags): Remove unnecessary existance checking for the
