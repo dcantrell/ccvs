@@ -3,6 +3,9 @@ Changes since 1.12.12:
 
 NEW FEATURES
 
+* CVS on Solaris 10 was refusing to parse command options.  This has been
+  fixed.
+
 * The Windows client now creates locks compatible with older versions of CVS by
   default.  This should only be relevant if your client is accessing a local
   repository concurrently with another, older client.  If you would like to
