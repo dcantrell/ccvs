@@ -1,3 +1,7 @@
+2005-05-06  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note Solaris 10 command option parsing fix.
+
 2005-05-04  Mark D. Baushke  <mdb@cvshome.org>
 
 	* maint-aux/gnulib-update: Depend on maint-aux/gnulib-modules
