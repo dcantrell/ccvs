@@ -1,3 +1,7 @@
+2005-05-06  Derek Price  <derek@ximbiot.com>
+
+	* getopt.m4: Update from GNULIB.  Closes cvshome.org issue #248.
+
 2005-05-03  Derek Price  <derek@ximbiot.com>
 
 	Update from GNULIB.
