@@ -1,3 +1,9 @@
+2005-05-07  Mark D. Baushke  <mdb@cvshome.org>
+
+	* libcvs.dsp: Update from GNULIB.
+	Add files dup-safer.c, fd-safer.c, and unistd-safer.h.
+	* libcvs.dep, libcvs.mak: Regenerate.
+
 2005-05-03  Derek Price  <derek@ximbiot.com>
 
 	Update from GNULIB.
