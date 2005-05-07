@@ -34,10 +34,25 @@
 	".\xalloc.h"\
 	
 
+".\dup-safer.c" : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\unistd.h"\
+	".\unistd-safer.h"\
+	
+
 .\exitfail.c : \
 	"..\windows-NT\config.h"\
 	".\exit.h"\
 	".\exitfail.h"\
+	
+
+".\fd-safer.c" : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\unistd.h"\
+	".\unistd-safer.h"\
+	".\error.h"\
 	
 
 .\fncase.c : \

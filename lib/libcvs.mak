@@ -45,7 +45,9 @@ CLEAN :
 	-@erase "$(INTDIR)\basename.obj"
 	-@erase "$(INTDIR)\closeout.obj"
 	-@erase "$(INTDIR)\dirname.obj"
+	-@erase "$(INTDIR)\dup-safer.obj"
 	-@erase "$(INTDIR)\exitfail.obj"
+	-@erase "$(INTDIR)\fd-safer.obj"
 	-@erase "$(INTDIR)\fncase.obj"
 	-@erase "$(INTDIR)\fnmatch.obj"
 	-@erase "$(INTDIR)\fseeko.obj"
@@ -101,8 +103,10 @@ LIB32_OBJS= \
 	"$(INTDIR)\asnprintf.obj" \
 	"$(INTDIR)\basename.obj" \
 	"$(INTDIR)\dirname.obj" \
+	"$(INTDIR)\dup-safer.obj" \
 	"$(INTDIR)\exitfail.obj" \
 	"$(INTDIR)\fncase.obj" \
+	"$(INTDIR)\fd-safer.obj" \
 	"$(INTDIR)\fnmatch.obj" \
 	"$(INTDIR)\fseeko.obj" \
 	"$(INTDIR)\ftello.obj" \
@@ -162,7 +166,9 @@ CLEAN :
 	-@erase "$(INTDIR)\basename.obj"
 	-@erase "$(INTDIR)\closeout.obj"
 	-@erase "$(INTDIR)\dirname.obj"
+	-@erase "$(INTDIR)\dup-safer.obj"
 	-@erase "$(INTDIR)\exitfail.obj"
+	-@erase "$(INTDIR)\fd-safer.obj"
 	-@erase "$(INTDIR)\fncase.obj"
 	-@erase "$(INTDIR)\fnmatch.obj"
 	-@erase "$(INTDIR)\fseeko.obj"
@@ -216,7 +222,9 @@ LIB32_OBJS= \
 	"$(INTDIR)\asnprintf.obj" \
 	"$(INTDIR)\basename.obj" \
 	"$(INTDIR)\dirname.obj" \
+	"$(INTDIR)\dup-safer.obj" \
 	"$(INTDIR)\exitfail.obj" \
+	"$(INTDIR)\fd-safer.obj" \
 	"$(INTDIR)\fncase.obj" \
 	"$(INTDIR)\fnmatch.obj" \
 	"$(INTDIR)\fseeko.obj" \
@@ -328,9 +336,19 @@ SOURCE=.\dirname.c
 "$(INTDIR)\dirname.obj" : $(SOURCE) "$(INTDIR)"
 
 
+SOURCE=".\dup-safer.c"
+
+"$(INTDIR)\dup-safer.obj" : $(SOURCE) "$(INTDIR)"
+
+
 SOURCE=.\exitfail.c
 
 "$(INTDIR)\exitfail.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=".\fd-safer.c"
+
+"$(INTDIR)\fd-safer.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\fncase.c

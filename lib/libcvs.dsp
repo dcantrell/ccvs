@@ -105,7 +105,15 @@ SOURCE=.\dirname.c
 # End Source File
 # Begin Source File
 
+SOURCE=".\dup-safer.c"
+# End Source File
+# Begin Source File
+
 SOURCE=.\exitfail.c
+# End Source File
+# Begin Source File
+
+SOURCE=".\fd-safer.c"
 # End Source File
 # Begin Source File
 
@@ -475,6 +483,10 @@ SOURCE=.\timespec.h
 # Begin Source File
 
 SOURCE="..\windows-NT\unistd.h"
+# End Source File
+# Begin Source File
+
+SOURCE="..\windows-NT\unistd-safer.h"
 # End Source File
 # Begin Source File
 
