@@ -1,3 +1,8 @@
+2005-05-08  Mark D. Baushke  <mdb@cvshome.org>
+
+	* libcvs.dsp: unistd-safer.h is in lib, not windows-NT.
+	* libcvs.dep: Regenerate.
+
 2005-05-07  Mark D. Baushke  <mdb@cvshome.org>
 
 	* libcvs.dep: Use a relative path for unistd-safer.h.

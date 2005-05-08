@@ -38,7 +38,7 @@
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\unistd.h"\
-	"..\windows-NT\unistd-safer.h"\
+	".\unistd-safer.h"\
 	
 
 .\exitfail.c : \
@@ -51,8 +51,8 @@
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\unistd.h"\
-	"..\windows-NT\unistd-safer.h"\
 	".\error.h"\
+	".\unistd-safer.h"\
 	
 
 .\fncase.c : \
