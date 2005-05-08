@@ -486,7 +486,7 @@ SOURCE="..\windows-NT\unistd.h"
 # End Source File
 # Begin Source File
 
-SOURCE="..\windows-NT\unistd-safer.h"
+SOURCE=".\unistd-safer.h"
 # End Source File
 # Begin Source File
 
