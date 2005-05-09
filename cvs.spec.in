@@ -84,7 +84,7 @@ make LDFLAGS=-s
 %makeinstall
 # The Kerberized binary
 %if %gssapi
-./install-sh src/cvs.krb5 $RPM_BUILD_ROOT%{_kerberosbindir}/cvs
+build-aux/install-sh src/cvs.krb5 $RPM_BUILD_ROOT%{_kerberosbindir}/cvs
 %endif
 # forcefully compress the info pages so that install-info will work properly
 # in the %%post
@@ -126,6 +126,9 @@ fi
 %endif
 
 %changelog
+* Mon May 09 2005 Derek Price <derek@ximbiot.com>
+- Find install-sh in its new location in the build-aux directory.
+
 * Wed Mar 31 2004 Mark D. Baushke <mdb@cvshome.org>
 - Do not fail if info DIR file is not present to be deleted.
 

@@ -1,3 +1,7 @@
+2005-05-09  Derek Price  <derek@ximbiot.com>
+
+	* cvs.spec.in: Find install-sh in its new location.
+
 2005-05-06  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note Solaris 10 command option parsing fix.
