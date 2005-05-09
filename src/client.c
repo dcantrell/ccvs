@@ -4903,7 +4903,7 @@ start_rsh_server (root, to_server, from_server)
 /* Send an argument STRING.  */
 void
 send_arg (string)
-    char *string;
+    const char *string;
 {
     char buf[1];
     char *p = string;
@@ -5953,8 +5953,8 @@ client_notify (repository, update_dir, filename, notif_type, val)
  */
 void
 option_with_arg (option, arg)
-    char *option;
-    char *arg;
+    const char *option;
+    const char *arg;
 {
     if (arg == NULL)
 	return;

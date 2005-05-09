@@ -22,10 +22,11 @@
  */
 
 #include "cvs.h"
+#include <assert.h>
 
 static int find_dirs PROTO((char *dir, List * list, int checkadm,
 			    List *entries));
-static int find_rcs PROTO((char *dir, List * list));
+static int find_rcs PROTO((const char *dir, List * list));
 static int add_subdir_proc PROTO((Node *, void *));
 static int register_subdir_proc PROTO((Node *, void *));
 
@@ -249,54 +250,133 @@ Find_Directories (repository, which, entries)
     return (dirlist);
 }
 
-/*
- * Finds all the ,v files in the argument directory, and adds them to the
- * files list.  Returns 0 for success and non-zero if the argument directory
- * cannot be opened, in which case errno is set to indicate the error.
- * In the error case LIST is left in some reasonable state (unchanged, or
- * containing the files which were found before the error occurred).
+
+
+/* Finds all the files matching PAT in the directory DIR, and adds them to a
+ * new List.  Returns the new List for success and NULL if the argument
+ * directory cannot be opened, in which case errno is set to indicate the
+ * error.
+ *
+ * NOTES
+ *   If GNULIB ever gets a glob module, this function could be replaced with
+ *   the glob function and a few tweaks to callers.
+ *
+ *   Currently, users may come to rely on the way history uses the unsorted
+ *   list this function returns since I believe that the default inode ordering
+ *   should be roughly the order of file creation.  It might be a good idea to
+ *   discourage this in favor of a specific sort order since we may otherwise
+ *   get complaints like, "I copied my repository to a new location and the
+ *   history command stopped working."
+ *
+ * INPUTS
+ *   dir	The directory to open for read.
+ *   pat	The pattern to match against, via fnmatch().
+ *
+ * GLOBALS
+ *   errno	Set on error.
+ *
+ * RETURNS
+ *   A pointer to a List of matching file names, on success.
+ *   NULL, on error.
  */
-static int
-find_rcs (dir, list)
-    char *dir;
-    List *list;
+List *
+find_files (dir, pat)
+    const char *dir;
+    const char *pat;
 {
     Node *p;
+    List *list;
     struct dirent *dp;
     DIR *dirp;
 
     /* set up to read the dir */
-    if ((dirp = CVS_OPENDIR (dir)) == NULL)
-	return (1);
+    if (!(dirp = CVS_OPENDIR (dir)))
+	return NULL;
 
-    /* read the dir, grabbing the ,v files */
+    list = getlist();
+
+    /* read the dir, grabbing the files matching PAT */
     errno = 0;
-    while ((dp = CVS_READDIR (dirp)) != NULL)
+    while ((dp = CVS_READDIR (dirp)))
     {
-	if (CVS_FNMATCH (RCSPAT, dp->d_name, 0) == 0) 
+	/* Skip CWD and parent.  */
+	if (!strcmp (dp->d_name, ".") || !strcmp (dp->d_name, ".."))
+	    continue;
+	/* Look for a match.  */
+	if (!CVS_FNMATCH (pat, dp->d_name, 0)) 
 	{
-	    char *comma;
-
-	    comma = strrchr (dp->d_name, ',');	/* strip the ,v */
-	    *comma = '\0';
 	    p = getnode ();
 	    p->type = FILES;
 	    p->key = xstrdup (dp->d_name);
-	    if (addnode (list, p) != 0)
+	    if (addnode (list, p))
 		freenode (p);
 	}
 	errno = 0;
     }
-    if (errno != 0)
+    if (errno)
     {
 	int save_errno = errno;
 	(void) CVS_CLOSEDIR (dirp);
+	dellist (&list);
 	errno = save_errno;
-	return 1;
+	return NULL;
     }
     (void) CVS_CLOSEDIR (dirp);
-    return (0);
+    return list;
 }
+
+
+
+/* walklist() proc which strips a trailing RCSEXT from node keys.
+ */
+static int strip_rcsext PROTO ((Node *p, void *closure));
+static int
+strip_rcsext (p, closure)
+    Node *p;
+    void *closure;
+{
+    char *s = p->key + strlen (p->key) - strlen (RCSEXT);
+    assert (!strcmp (s, RCSEXT));
+    *s = '\0'; /* strip the ,v */
+    return 0;
+}
+
+
+
+/*
+ * Finds all the ,v files in the directory DIR, and adds them to the LIST.
+ * Returns 0 for success and non-zero if DIR cannot be opened, in which case
+ * ERRNO is set to indicate the error.  In the error case, LIST is left in some
+ * reasonable state (unchanged, or containing the files which were found before
+ * the error occurred).
+ *
+ * INPUTS
+ *   dir	The directory to open for read.
+ *
+ * OUTPUTS
+ *   list	Where to store matching file entries.
+ *
+ * GLOBALS
+ *   errno	Set on error.
+ *
+ * RETURNS
+ *   0, for success.
+ *   <> 0, on error.
+ */
+static int
+find_rcs (dir, list)
+    const char *dir;
+    List *list;
+{
+    List *newlist;
+    if (!(newlist = find_files (dir, RCSPAT)))
+	return 1;
+    walklist (newlist, strip_rcsext, NULL);
+    mergelists (list, &newlist);
+    return 0;
+}
+
+
 
 /*
  * Finds all the subdirectories of the argument dir and adds them to

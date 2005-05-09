@@ -130,6 +130,51 @@ dellist (listp)
     *listp = (List *) NULL;
 }
 
+
+
+/*
+ * remove a node from it's list (maybe hash list too)
+ */
+static void removenode PROTO ((Node *p));
+static void
+removenode (p)
+    Node *p;
+{
+    if (!p) return;
+
+    /* take it out of the list */
+    p->next->prev = p->prev;
+    p->prev->next = p->next;
+
+    /* if it was hashed, remove it from there too */
+    if (p->hashnext)
+    {
+	p->hashnext->hashprev = p->hashprev;
+	p->hashprev->hashnext = p->hashnext;
+    }
+}
+
+
+
+void
+mergelists (dest, src)
+    List *dest;
+    List **src;
+{
+    Node *head, *p, *n;
+
+    head = (*src)->list;
+    for (p = head->next; p != head; p = n)
+    {
+	n = p->next;
+	removenode (p);
+	addnode (dest, p);
+    }
+    dellist (src);
+}
+
+
+
 /*
  * get a new list node
  */
@@ -157,6 +202,8 @@ getnode ()
     return (p);
 }
 
+
+
 /*
  * remove a node from it's list (maybe hash list too) and free it
  */
@@ -164,23 +211,14 @@ void
 delnode (p)
     Node *p;
 {
-    if (p == (Node *) NULL)
-	return;
-
-    /* take it out of the list */
-    p->next->prev = p->prev;
-    p->prev->next = p->next;
-
-    /* if it was hashed, remove it from there too */
-    if (p->hashnext != (Node *) NULL)
-    {
-	p->hashnext->hashprev = p->hashprev;
-	p->hashprev->hashnext = p->hashnext;
-    }
-
+    if (!p) return;
+    /* remove it */
+    removenode (p);
     /* free up the storage */
     freenode (p);
 }
+
+
 
 /*
  * free up the storage associated with a node

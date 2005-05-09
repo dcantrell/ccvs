@@ -239,6 +239,7 @@ parse_config (cvsroot)
     char *infopath;
     FILE *fp_info;
     char *line = NULL;
+    unsigned int ln;		/* Input file line counter.  */
     size_t line_allocated = 0;
     size_t len;
     char *p;
@@ -281,8 +282,11 @@ parse_config (cvsroot)
 	goto set_defaults_and_return;
     }
 
+    ln = 0;  /* Have not read any lines yet.  */
     while (getline (&line, &line_allocated, fp_info) >= 0)
     {
+        ln++; /* Keep track of input file line number for error messages.  */
+
 	/* Skip comments.  */
 	if (line[0] == '#')
 	    continue;
@@ -397,6 +401,34 @@ warning: this CVS does not support PreservePermissions");
 	    /* Could try some validity checking, like whether we can
 	       opendir it or something, but I don't see any particular
 	       reason to do that now rather than waiting until lock.c.  */
+	}
+	else if (strcmp (line, "HistoryLogPath") == 0)
+	{
+	    if (HistoryLogPath) free (HistoryLogPath);
+
+	    /* Expand ~ & $VARs.  */
+	    HistoryLogPath = expand_path (p, infopath, ln);
+
+	    if (HistoryLogPath && !isabsolute (HistoryLogPath))
+	    {
+		error (0, 0, "%s [%u]: HistoryLogPath must be absolute.",
+		       infopath, ln);
+		free (HistoryLogPath);
+		HistoryLogPath = NULL;
+	    }
+	}
+	else if (strcmp (line, "HistorySearchPath") == 0)
+	{
+	    if (HistorySearchPath) free (HistorySearchPath);
+	    HistorySearchPath = expand_path (p, infopath, ln);
+
+	    if (HistorySearchPath && !isabsolute (HistorySearchPath))
+	    {
+		error (0, 0, "%s [%u]: HistorySearchPath must be absolute.",
+		       infopath, ln);
+		free (HistorySearchPath);
+		HistorySearchPath = NULL;
+	    }
 	}
 	else if (strcmp (line, "LogHistory") == 0)
 	{
