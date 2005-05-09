@@ -3997,9 +3997,6 @@ ${PROG} update: Updating dir1/dir2"
 		# ditch that notion and require GNU expr (or dejagnu or....)
 		# since it seems to be so painful.
 
-		# why are there two lines at the end of the local output
-		# which don't exist in the remote output?  would seem to be
-		# a CVS bug.
 		dotest basic2-64 "${testcvs} his -x TOFWUPCGMAR -a" \
 "O [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir           =first-dir= ${TESTDIR}/\*
 A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir           == ${TESTDIR}
@@ -18015,15 +18012,58 @@ ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${PROG} commit: Rebuilding administrative file database"
-	  echo '# No config is a good config' > config
-	  dotest config-5 "${testcvs} -q ci -m change-to-comment" \
-"${PROG} [a-z]*: ${CVSROOT_DIRNAME}/CVSROOT/config: unrecognized keyword 'BogusOption'
+
+	  mkdir $TESTDIR/historylogs
+	  echo >config \
+	       'HistoryLogPath=$CVSROOT/../historylogs/%Y-%m-%d-%H-%M-%S'
+	  echo 'HistorySearchPath=$CVSROOT/../historylogs/*' >>config
+	  dotest config-5 "$testcvs -q ci -m set-HistoryLogPath" \
+"$PROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
 Checking in config;
-${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
-${PROG} commit: Rebuilding administrative file database"
-	  dotest config-6 "${testcvs} -q update" ''
+$PROG commit: Rebuilding administrative file database"
+
+	  echo '# noop' >> config
+	  dotest config-6 "$testcvs -q ci -mlog-commit" \
+"Checking in config;
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+$PROG commit: Rebuilding administrative file database"
+
+	  sleep 1
+	  echo '# noop' >> config
+	  dotest config-7 "$testcvs -q ci -mlog-commit" \
+"Checking in config;
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+$PROG commit: Rebuilding administrative file database"
+
+	  # The log entry was intentionally split across multiple files.
+	  dotest config-8 "ls -l $TESTDIR/historylogs/*" \
+"-rw-rw-r--.*$TESTDIR/historylogs/2[0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]-[0-2][0-9]-[0-5][0-9]-[0-5][0-9]
+-rw-rw-r--.*$TESTDIR/historylogs/2[0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]-[0-2][0-9]-[0-5][0-9]-[0-5][0-9]"
+
+	  # Should still see both commits.
+	  dotest config-9 "$testcvs history -ea" \
+"M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == \($TESTDIR/wnt/CVSROOT\|<remote>\)
+M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == \($TESTDIR/wnt/CVSROOT\|<remote>\)"
+
+	  # Remove this now to see what kind of error messages we get.
+	  rm -r $TESTDIR/historylogs
+
+	  echo '# No config is a good config' > config
+	  dotest config-cleanup-1 "$testcvs -q ci -m change-to-comment" \
+"Checking in config;
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+$PROG commit: warning: cannot write to history file $CVSROOT_DIRNAME/../historylogs/2[0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]-[0-2][0-9]-[0-5][0-9]-[0-5][0-9]: No such file or directory
+$PROG commit: Rebuilding administrative file database"
+	  dotest config-cleanup-2 "$testcvs -q update"
 
 	  cd ..
 	  rm -r CVSROOT
@@ -19513,13 +19553,7 @@ Annotations for $file
 		continue
 	    fi
 
-	    # For remote, just create the repository.  We don't yet do
-	    # the various other tests above for remote but that should be
-	    # changed.
-	    mkdir crerepos
-	    mkdir crerepos/CVSROOT
-
-            # Make sure server ignores real ${HOME}/.cvsrc:
+            # Make sure server ignores real $HOME/.cvsrc:
             cat >$TESTDIR/cvs-setHome <<EOF
 #!/bin/sh
 HOME=$HOME
@@ -19531,48 +19565,48 @@ EOF
 	    # Note that we set CVS_SERVER at the beginning.
 	    CVS_SERVER=$TESTDIR/cvs-setHome; export CVS_SERVER
 	    CREREPOS_ROOT=:ext:$host$TESTDIR/crerepos
-	  else
-
-	    # First, if the repository doesn't exist at all...
-	    dotest_fail crerepos-1 \
-"${testcvs} -d ${TESTDIR}/crerepos co cvs-sanity" \
-"${PROG} \[checkout aborted\]: ${TESTDIR}/crerepos/CVSROOT: .*"
-	    mkdir crerepos
-
-	    # The repository exists but CVSROOT doesn't.
-	    dotest_fail crerepos-2 \
-"${testcvs} -d ${TESTDIR}/crerepos co cvs-sanity" \
-"${PROG} \[checkout aborted\]: ${TESTDIR}/crerepos/CVSROOT: .*"
-	    mkdir crerepos/CVSROOT
-
-	    # Checkout of nonexistent module
-	    dotest_fail crerepos-3 \
-"${testcvs} -d ${TESTDIR}/crerepos co cvs-sanity" \
-"${PROG} checkout: cannot find module .cvs-sanity. - ignored"
-
-	    # Now test that CVS works correctly without a modules file
-	    # or any of that other stuff.  In particular, it *must*
-	    # function if administrative files added to CVS recently (since
-	    # CVS 1.3) do not exist, because the repository might have
-	    # been created with an old version of CVS.
-	    mkdir 1; cd 1
-	    dotest crerepos-4 \
-"${testcvs} -q -d ${TESTDIR}/crerepos co CVSROOT" \
-''
-	    if echo yes | \
-${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
-	      pass crerepos-5
-	    else
-	      fail crerepos-5
-	    fi
-	    rm -rf CVS
-	    cd ..
-	    # The directory 1 should be empty
-	    dotest crerepos-6 "rmdir 1"
-
-	    CREREPOS_ROOT=${TESTDIR}/crerepos
-
+	  else # local
+	    CREREPOS_ROOT=$TESTDIR/crerepos
 	  fi
+
+	  # First, if the repository doesn't exist at all...
+	  dotest_fail crerepos-1 \
+"$testcvs -d $CREREPOS_ROOT co cvs-sanity" \
+"$PROG \[checkout aborted\]: $TESTDIR/crerepos/CVSROOT: .*" \
+"Cannot access $TESTDIR/crerepos/CVSROOT$DOTSTAR"
+	  mkdir crerepos
+
+	  # The repository exists but CVSROOT doesn't.
+	  dotest_fail crerepos-2 \
+"$testcvs -d $CREREPOS_ROOT co cvs-sanity" \
+"$PROG \[checkout aborted\]: $TESTDIR/crerepos/CVSROOT: .*" \
+"Cannot access $TESTDIR/crerepos/CVSROOT$DOTSTAR"
+	  mkdir crerepos/CVSROOT
+
+	  # Checkout of nonexistent module
+	  dotest_fail crerepos-3 \
+"$testcvs -d $CREREPOS_ROOT co cvs-sanity" \
+"$PROG checkout: cannot find module .cvs-sanity. - ignored" \
+"$PROG server: cannot find module .cvs-sanity. - ignored
+cvs \[checkout aborted\]: cannot expand modules"
+
+	  # Now test that CVS works correctly without a modules file
+	  # or any of that other stuff.  In particular, it *must*
+	  # function if administrative files added to CVS recently (since
+	  # CVS 1.3) do not exist, because the repository might have
+	  # been created with an old version of CVS.
+	  mkdir 1; cd 1
+	  dotest crerepos-4 \
+"$testcvs -q -d $CREREPOS_ROOT co CVSROOT"
+
+	  dotest crerepos-5 \
+"echo yes |$testcvs -d $CREREPOS_ROOT release -d CVSROOT" \
+"You have \[0\] altered files in this repository\.
+Are you sure you want to release (and delete) directory \`CVSROOT': "
+	  rm -rf CVS
+	  cd ..
+	  # The directory 1 should be empty
+	  dotest crerepos-6 "rmdir 1"
 
 	  if $remote; then
 	    # Test that CVS rejects a relative path in CVSROOT.
@@ -19622,11 +19656,10 @@ ${PROG} \[init aborted\]: Bad CVSROOT: .crerepos.\."
 	    rm -r 1
 	  fi # end of tests to be skipped for remote
 
-	  # CVS better not create a history file--if the administrator 
+	  # CVS should have created a history file.  If the administrator 
 	  # doesn't need it and wants to save on disk space, they just
-	  # delete it.
-	  dotest_fail crerepos-7 \
-"test -f ${TESTDIR}/crerepos/CVSROOT/history" ''
+	  # delete it and set LogHistory = the empty string in config.
+	  dotest crerepos-7 "test -f $TESTDIR/crerepos/CVSROOT/history"
 
 	  # Now test mixing repositories.  This kind of thing tends to
 	  # happen accidentally when people work with several repositories.

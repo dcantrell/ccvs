@@ -57,6 +57,7 @@ int addnode PROTO((List * list, Node * p));
 int addnode_at_front PROTO((List * list, Node * p));
 int walklist PROTO((List * list, int (*)(Node *n, void *closure), void *closure));
 int list_isempty PROTO ((List *list));
+void mergelists PROTO ((List *dest, List **src));
 void dellist PROTO((List ** listp));
 void delnode PROTO((Node * p));
 void freenode PROTO((Node * p));

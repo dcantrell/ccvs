@@ -204,7 +204,7 @@ static int select_hrec PROTO((struct hrec * hr));
 static int sort_order PROTO((const PTR l, const PTR r));
 static int within PROTO((char *find, char *string));
 static void expand_modules PROTO((void));
-static void read_hrecs PROTO((char *fname));
+static void read_hrecs PROTO((const char *dir, List *flist));
 static void report_hrecs PROTO((void));
 static void save_file PROTO((char *dir, char *name, char *module));
 static void save_module PROTO((char *module));
@@ -236,7 +236,10 @@ static short tz_local;
 static time_t tz_seconds_east_of_GMT;
 static char *tz_name = "+0000";
 
+/* From CVSROOT/config.  */
 char *logHistory;
+char *HistoryLogPath;
+char *HistorySearchPath;
 
 /* -r, -t, or -b options, malloc'd.  These are "" if the option in
    question is not specified or is overridden by another option.  The
@@ -275,8 +278,6 @@ static int file_count;		/* Number of elements used */
 static char **mod_list;		/* Ptr to array of ptrs to module names */
 static int mod_max;		/* Number of elements allocated */
 static int mod_count;		/* Number of elements used */
-
-static char *histfile;		/* Ptr to the history file name */
 
 /* This is pretty unclear.  First of all, separating "flags" vs.
    "options" (I think the distinction is that "options" take arguments)
@@ -368,13 +369,57 @@ sort_order (l, r)
     return (left->idx - right->idx);
 }
 
+
+
+/* Get the name of the history log, either from CVSROOT/config, or via the
+ * hard-coded default.
+ */
+static const char *get_history_log_name PROTO((time_t now));
+static const char *
+get_history_log_name (now)
+    time_t now;
+{
+    char *log_name;
+
+    if (HistoryLogPath)
+    {
+	/* ~, $VARs, and were expanded via expand_path() when CVSROOT/config
+	 * was parsed.
+	 */
+	log_name = xmalloc (PATH_MAX);
+	if (!now) now = time (NULL);
+	if (!strftime (log_name, PATH_MAX, HistoryLogPath, localtime (&now)))
+	{
+	    error (0, 0, "Invalid date format in HistoryLogPath.");
+	    free (HistoryLogPath);
+	    HistoryLogPath = NULL;
+	}
+    }
+
+    if (!HistoryLogPath)
+    {
+	/* Use the default.  */
+	log_name = xmalloc (strlen (current_parsed_root->directory)
+			    + sizeof (CVSROOTADM)
+			    + sizeof (CVSROOTADM_HISTORY) + 3);
+	sprintf (log_name, "%s/%s/%s", current_parsed_root->directory,
+		 CVSROOTADM, CVSROOTADM_HISTORY);
+    }
+
+    return log_name;
+}
+
+
+
 int
 history (argc, argv)
     int argc;
     char **argv;
 {
     int i, c;
-    char *fname;
+    const char *fname = NULL;
+    List *flist;
+    char *dir;
 
     if (argc == -1)
 	usage (history_usg);
@@ -417,7 +462,7 @@ history (argc, argv)
 		break;
 	    case 'X':			/* Undocumented debugging flag */
 #ifdef DEBUG
-		histfile = optarg;
+		fname = optarg;
 #endif
 		break;
 
@@ -566,8 +611,8 @@ history (argc, argv)
 	    send_arg("-o");
 	if (working)
 	    send_arg("-w");
-	if (histfile)
-	    send_arg("-X");
+	if (fname)
+	    option_with_arg ("-X", fname);
 	if (since_date)
 	    client_senddate (since_date);
 	if (backto[0] != '\0')
@@ -673,34 +718,69 @@ history (argc, argv)
 	(void) strcat (rec_types, "T");
     }
 
-    if (histfile)
-	fname = xstrdup (histfile);
+    if (fname)
+    {
+	Node *p;
+
+	flist = getlist ();
+	p = getnode ();
+	p->type = FILES;
+	p->key = xstrdup (fname);
+	addnode (flist, p);
+
+	dir = xmalloc (strlen (current_parsed_root->directory)
+		       + strlen (CVSROOTADM) + 2);
+	sprintf (dir, "%s/%s",
+		 current_parsed_root->directory, CVSROOTADM);
+    }
     else
     {
-	fname = xmalloc (strlen (current_parsed_root->directory) + sizeof (CVSROOTADM)
-			 + sizeof (CVSROOTADM_HISTORY) + 10);
-	(void) sprintf (fname, "%s/%s/%s", current_parsed_root->directory,
-			CVSROOTADM, CVSROOTADM_HISTORY);
+	char *pat;
+
+	if (HistorySearchPath)
+	{
+	    dir = xstrdup (HistorySearchPath);
+	    pat = strrchr (dir, '/');
+	    /* No need to check that strrchr worked - parse_config verified
+	     * that HistorySearchPath is absolute, which means it must contain
+	     * at least one '/'.
+	     */
+	    *pat++ = '\0';
+	}
+	else
+	{
+	    dir = xmalloc (strlen (current_parsed_root->directory)
+			   + strlen (CVSROOTADM) + 2);
+	    sprintf (dir, "%s/%s",
+		     current_parsed_root->directory, CVSROOTADM);
+	    pat = CVSROOTADM_HISTORY;
+	}
+
+	flist = find_files (*dir ? dir : "/", pat);
     }
 
-    read_hrecs (fname);
+    read_hrecs (dir, flist);
     if(hrec_count>0)
     {
 	qsort ((PTR) hrec_head, hrec_count, 
 		sizeof (struct hrec), sort_order);
     }
     report_hrecs ();
-    free (fname);
     if (since_date != NULL)
 	free (since_date);
     free (since_rev);
     free (since_tag);
     free (backto);
     free (rec_types);
+    free (dir);
 
-    return (0);
+    return 0;
 }
 
+
+
+/* An empty LogHistory string in CVSROOT/config will turn logging off.
+ */
 void
 history_write (type, update_dir, revs, name, repository)
     int type;
@@ -709,7 +789,7 @@ history_write (type, update_dir, revs, name, repository)
     const char *name;
     const char *repository;
 {
-    char *fname;
+    const char *fname;
     char *workdir;
     char *username = getcaller ();
     int fd;
@@ -719,6 +799,7 @@ history_write (type, update_dir, revs, name, repository)
     int i;
     static char *tilde = "";
     static char *PrCurDir = NULL;
+    time_t now;
 
     if (logoff)			/* History is turned off by noexec or
 				 * readonlyfs.
@@ -726,48 +807,9 @@ history_write (type, update_dir, revs, name, repository)
 	return;
     if (strchr (logHistory, type) == NULL)
 	return;
-    fname = xmalloc (strlen (current_parsed_root->directory)
-		     + sizeof (CVSROOTADM)
-		     + sizeof (CVSROOTADM_HISTORY) + 3);
-    (void) sprintf (fname, "%s/%s/%s", current_parsed_root->directory,
-		    CVSROOTADM, CVSROOTADM_HISTORY);
 
-    /* turn off history logging if the history file does not exist */
-    /* FIXME:  This should check for write permissions instead.  This way,
-     * O_CREATE could be added back into the call to open() below and
-     * there would be no race condition involved in log rotation.
-     *
-     * Note that the new method of turning off logging would be either via
-     * the CVSROOT/config file (probably the quicker method, but would need
-     * to be added, or at least checked for, too) or by creating a dummy
-     * history file with 0444 permissions.
-     */
-    if (!isfile (fname))
-    {
-	logoff = 1;
-	goto out;
-    }
-
-    if (trace)
-	fprintf (stderr, "%s-> fopen(%s,a)\n",
-		 CLIENT_SERVER_STR, fname);
     if (noexec)
 	goto out;
-
-    if (!history_lock (current_parsed_root->directory))
-	/* history_lock() will already have printed an error on failure.  */
-	goto out;
-
-    fd = CVS_OPEN (fname, O_WRONLY | O_APPEND | OPEN_BINARY, 0666);
-    if (fd < 0)
-    {
-	if (! really_quiet)
-        {
-            error (0, errno, "warning: cannot write to history file %s",
-                   fname);
-        }
-        goto out;
-    }
 
     repos = Short_Repository (repository);
 
@@ -887,11 +929,38 @@ history_write (type, update_dir, revs, name, repository)
 	revs = "";
     line = xmalloc (strlen (username) + strlen (workdir) + strlen (repos)
 		    + strlen (revs) + strlen (name) + 100);
+    now = time (NULL);
     sprintf (line, "%c%08lx|%s|%s|%s|%s|%s\n",
-	     type, (long) time ((time_t *) NULL),
-	     username, workdir, repos, revs, name);
+	     type, now, username, workdir, repos, revs, name);
 
-    /* Lessen some race conditions on non-Posix-compliant hosts.  */
+    fname = get_history_log_name (now);
+
+    if (!history_lock (current_parsed_root->directory))
+	/* history_lock() will already have printed an error on failure.  */
+	goto out;
+
+    fd = CVS_OPEN (fname, O_WRONLY | O_APPEND | O_CREAT | OPEN_BINARY, 0666);
+    if (fd < 0)
+    {
+	if (! really_quiet)
+        {
+            error (0, errno, "warning: cannot write to history file %s",
+                   fname);
+        }
+        goto out;
+    }
+    if (trace)
+        fprintf (stderr, "%s-> fopen(%s,a)\n",
+                 CLIENT_SERVER_STR, fname);
+
+    /* Lessen some race conditions on non-Posix-compliant hosts.
+     *
+     * FIXME:  I'm guessing the following was necessary for NFS when multiple
+     * simultaneous writes to the same file are possible, since NFS does not
+     * natively support append mode and it must be emulated via lseek().  Now
+     * that the history file is locked for write, the following lseek() may be
+     * unnecessary.
+     */
     if (lseek (fd, (off_t) 0, SEEK_END) == -1)
 	error (1, errno, "cannot seek to end of history file: %s", fname);
 
@@ -903,8 +972,9 @@ history_write (type, update_dir, revs, name, repository)
     free (workdir);
  out:
     clear_history_lock ();
-    free (fname);
 }
+
+
 
 /*
  * save_user() adds a user name to the user list to select.  Zero-length
@@ -1079,7 +1149,7 @@ fill_hrec (line, hr)
 #endif
 
 
-/* read_hrecs's job is to read the history file and fill in all the "hrec"
+/* read_hrecs_file's job is to read a history file and fill in new "hrec"
  * (history record) array elements with the ones we need to print.
  *
  * Logic:
@@ -1090,32 +1160,40 @@ fill_hrec (line, hr)
  * of space for the next block, then read in the next block.  If we get less
  * than the whole block, we're done. 
  */
-static void
-read_hrecs (fname)
-    char *fname;
+static int read_hrecs_file PROTO ((Node *p, void *closure));
+static int
+read_hrecs_file (p, closure)
+    Node *p;
+    void *closure;
 {
     unsigned char *cpstart, *cpend, *cp, *nl;
     char *hrline;
     int i;
     int fd;
     struct stat st_buf;
+    const char *fname = p->key;
 
     if ((fd = CVS_OPEN (fname, O_RDONLY | OPEN_BINARY)) < 0)
-	error (1, errno, "cannot open history file: %s", fname);
+    {
+	error (0, errno, "cannot open history file `%s'", fname);
+	return 0;
+    }
 
     if (fstat (fd, &st_buf) < 0)
-	error (1, errno, "can't stat history file");
+    {
+	error (0, errno, "can't stat history file `%s'", fname);
+	return 0;
+    }
 
     if (!(st_buf.st_size))
-	error (1, 0, "history file is empty");
+    {
+	error (0, 0, "history file `%s' is empty", fname);
+	return 0;
+    }
 
     cpstart = xmalloc (2 * STAT_BLOCKSIZE(st_buf));
     cpstart[0] = '\0';
     cp = cpend = cpstart;
-
-    hrec_max = HREC_INCREMENT;
-    hrec_head = xmalloc (hrec_max * sizeof (struct hrec));
-    hrec_idx = 0;
 
     for (;;)
     {
@@ -1141,9 +1219,13 @@ read_hrecs (fname)
 		continue;
 	    }
 	    if (i < 0)
-		error (1, errno, "error reading history file");
+	    {
+		error (0, errno, "error reading history file `%s'", fname);
+		return 0;
+	    }
 	    if (nl == cp) break;
-	    error (0, 0, "warning: no newline at end of history file");
+	    error (0, 0, "warning: no newline at end of history file `%s'",
+		   fname);
 	}
 	*nl = '\0';
 
@@ -1177,6 +1259,36 @@ read_hrecs (fname)
     }
     free (cpstart);
     close (fd);
+    return 1;
+}
+
+
+
+/* Read the history records in from a list of history files.  */
+static void
+read_hrecs (dir, flist)
+    const char *dir;
+    List *flist;
+{
+    int files_read;
+    struct saved_cwd cwd;
+
+    /* The global history records are already initialized to 0 according to
+     * ANSI C.
+     */
+    hrec_max = HREC_INCREMENT;
+    hrec_head = xmalloc (hrec_max * sizeof (struct hrec));
+    hrec_idx = 0;
+
+    /* save our current directory and static vars */
+    if (save_cwd (&cwd)) error_exit ();
+    CVS_CHDIR (dir);
+
+    files_read = walklist (flist, read_hrecs_file, NULL);
+    if (!files_read)
+	error (1, 0, "No history files read.");
+
+    if (restore_cwd (&cwd, NULL)) error_exit ();
 
     /* Special selection problem: If "since_tag" is set, we have saved every
      * record from the 1st occurrence of "since_tag", when we want to save
@@ -1196,6 +1308,8 @@ read_hrecs (fname)
 	hrec_head = last_backto;
     }
 }
+
+
 
 /* Utility program for determining whether "find" is inside "string" */
 static int

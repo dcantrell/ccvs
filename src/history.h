@@ -13,3 +13,7 @@
  */
 
 #define ALL_HISTORY_REC_TYPES "TOEFWUPCGMAR"
+
+/* From CVSROOT/config.  */
+extern char *HistoryLogPath;
+extern char *HistorySearchPath;

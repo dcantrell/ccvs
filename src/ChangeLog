@@ -1,3 +1,28 @@
+2005-05-09  Derek Price  <derek@ximbiot.com>
+
+	* client.c (send_arg, option_with_arg): Make args const.
+	* client.h: Likewise, for protos.
+	* cvs.h (find_files): New proto.
+	* find_names.c (find_files, strip_rcsext): New functions.
+	(find_rcs): Make arg const.  Use new find_files.  Improve header
+	comment block.
+	* hash.c (removenode, mergelists): New function.
+	(delnode): Use removenode.
+	* hash.h (mergelists): New proto.
+	* history.c (HistoryLogPath, HistorySearchPath): New globals.
+	(histfile): Remove global.
+	(get_history_log_name): New function.
+	(history, history_write): Use new functions.
+	(read_hrecs_file): New function containing most content from...
+	(read_hrecs): ...this function, which now accepts a path and a file
+	list and calls read_hrecs_file once for each file.
+	* history.h (HistoryLogPath, HistorySearchPath): Declare globals.
+	* parseinfo.c (parse_config): Parse HistoryLogPath & HistorySearchPath.
+	* sanity.sh (basic2-64): Remove obsolete comment.
+	(config): Test new history options.
+	(crerepos): Test local and remote in parallel.  Update to accomodate
+	new history behavior.
+
 2005-05-02  Derek Price  <derek@ximbiot.com>
 
 	Remove unnecessary level of indirection.

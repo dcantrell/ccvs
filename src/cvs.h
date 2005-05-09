@@ -931,3 +931,6 @@ extern void cvs_outerr PROTO ((const char *, size_t));
 extern void cvs_flusherr PROTO ((void));
 extern void cvs_flushout PROTO ((void));
 extern void cvs_output_tagged PROTO ((const char *, const char *));
+
+/* From find_names.c.  */
+List *find_files PROTO ((const char *dir, const char *pat));

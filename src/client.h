@@ -83,7 +83,7 @@ void read_from_server PROTO((char *buf, size_t len));
 
 /* Internal functions that handle client communication to server, etc.  */
 int supported_request PROTO ((char *));
-void option_with_arg PROTO((char *option, char *arg));
+void option_with_arg PROTO((const char *option, const char *arg));
 
 /* Get the responses and then close the connection.  */
 extern int get_responses_and_close PROTO((void));
@@ -119,7 +119,7 @@ send_files PROTO((int argc, char **argv, int local, int aflag,
 
 /* Send an argument to the remote server.  */
 void
-send_arg PROTO((char *string));
+send_arg PROTO((const char *string));
 
 /* Send a string of single-char options to the remote server, one by one.  */
 void
