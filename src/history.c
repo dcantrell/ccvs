@@ -869,7 +869,14 @@ history_write (int type, const char *update_dir, const char *revs,
     line = Xasprintf ("%c%08lx|%s|%s|%s|%s|%s\n", type, (long) time (NULL),
 		      username, workdir, repos, revs, name);
 
-    /* Lessen some race conditions on non-Posix-compliant hosts.  */
+    /* Lessen some race conditions on non-Posix-compliant hosts.
+     *
+     * FIXME:  I'm guessing the following was necessary for NFS when multiple
+     * simultaneous writes to the same file are possible, since NFS does not
+     * natively support append mode and it must be emulated via lseek().  Now
+     * that the history file is locked for write, the following lseek() may be
+     * unnecessary.
+     */
     if (lseek (fd, (off_t) 0, SEEK_END) == -1)
 	error (1, errno, "cannot seek to end of history file: %s", fname);
 
