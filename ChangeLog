@@ -1,3 +1,7 @@
+﻿2005-05-09  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dep, cvsnt.mak: Regenerated after Windows full rebuild.
+
 2005-05-09  Derek Price  <derek@ximbiot.com>
 
 	* cvs.spec.in: Find install-sh in its new location.
