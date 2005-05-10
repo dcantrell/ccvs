@@ -1,3 +1,7 @@
+2005-05-09  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libdiff.mak: Regenerated after Windows full rebuild.
+
 2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.in: Regenerated.

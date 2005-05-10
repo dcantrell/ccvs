@@ -36,7 +36,6 @@
 
 ".\dup-safer.c" : \
 	"..\windows-NT\config.h"\
-	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\unistd.h"\
 	".\unistd-safer.h"\
 	
@@ -49,9 +48,7 @@
 
 ".\fd-safer.c" : \
 	"..\windows-NT\config.h"\
-	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\unistd.h"\
-	".\error.h"\
 	".\unistd-safer.h"\
 	
 
@@ -189,6 +186,7 @@
 	"..\windows-NT\unistd.h"\
 	".\chdir-long.h"\
 	".\save-cwd.h"\
+	".\unistd-safer.h"\
 	".\xgetcwd.h"\
 	
 
@@ -220,6 +218,7 @@
 
 .\strftime.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
 	".\time_r.h"\
 	
 

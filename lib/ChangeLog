@@ -1,3 +1,7 @@
+2005-05-09  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libcvs.dep, libcvs.mak: Regenerated after Windows full rebuild.
+
 2005-05-08  Mark D. Baushke  <mdb@cvshome.org>
 
 	* libcvs.dsp: unistd-safer.h is in lib, not windows-NT.
