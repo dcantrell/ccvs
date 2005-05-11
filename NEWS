@@ -3,6 +3,13 @@ Changes since 1.12.12:
 
 NEW FEATURES
 
+* Missing CVSROOT/history files will now cause CVS to attempt to create one.
+  To suppress history logging, set LogHistory equal to the empty string in
+  CVSROOT/config.
+
+* There are two new options available in CVSROOT/config.  These are
+  HistoryLogPath & HistoryLogName.
+
 * CVS on Solaris 10 was refusing to parse command options.  This has been
   fixed.
 

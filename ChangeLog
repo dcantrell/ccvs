@@ -1,4 +1,9 @@
-﻿2005-05-09  Conrad T. Pino  <Conrad@Pino.com>
+2005-05-11  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note new History* config options.
+	* maint-aux/gnulib-filelist.txt: Add strdup module.
+
+2005-05-09  Conrad T. Pino  <Conrad@Pino.com>
 
 	* cvsnt.dep, cvsnt.mak: Regenerated after Windows full rebuild.
 
