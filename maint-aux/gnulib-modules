@@ -58,3 +58,4 @@ pathmax
 xalloc-die
 pagealign_alloc
 closeout
+strdup
