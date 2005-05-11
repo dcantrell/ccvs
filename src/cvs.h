@@ -907,3 +907,6 @@ void cvs_flushout (void);
 void cvs_output_tagged (const char *, const char *);
 
 extern const char *global_session_id;
+
+/* From find_names.c.  */
+List *find_files (const char *dir, const char *pat);

@@ -1,3 +1,21 @@
+2005-05-11  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (find_files): New proto.
+	* find_names.c (find_files, strip_rcsext): New functions.
+	(find_rcs): Make arg const.  Use new find_files.  Improve header
+	comment block.
+	* history.c (histfile): Remove global.
+	(get_history_log_name): New function.
+	(history, history_write): Use new functions.
+	(read_hrecs_file): New function containing most content from...
+	(read_hrecs): ...this function, which now accepts a file list and calls
+	read_hrecs_file once for each file.
+	* parseinfo.c (parse_config): Parse HistoryLogPath & HistorySearchPath.
+	* parseinfo.h (struct config): Add HistoryLogPath & HistorySearchPath.
+	* sanity.sh (basic2-64): Remove obsolete comment.
+	(config): Test new history options.
+	(crerepos): Cleanup.
+
 2005-05-09  Derek Price  <derek@ximbiot.com>
 
 	* error.c (error): Avoid unportable calls to vsyslog.

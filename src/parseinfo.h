@@ -18,6 +18,8 @@ struct config
     bool top_level_admin;
     char *lock_dir;
     char *logHistory;
+    char *HistoryLogPath;
+    char *HistorySearchPath;
 
     /* Should the logmsg be re-read during the do_verify phase?
      * RereadLogAfterVerify=no|stat|yes
