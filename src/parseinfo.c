@@ -491,6 +491,35 @@ parse_config (const char *cvsroot)
 	       opendir it or something, but I don't see any particular
 	       reason to do that now rather than waiting until lock.c.  */
 	}
+	else if (strcmp (line, "HistoryLogPath") == 0)
+	{
+	    if (retval->HistoryLogPath) free (retval->HistoryLogPath);
+
+	    /* Expand ~ & $VARs.  */
+	    retval->HistoryLogPath = expand_path (p, infopath, ln, false);
+
+	    if (retval->HistoryLogPath && !isabsolute (retval->HistoryLogPath))
+	    {
+		error (0, 0, "%s [%u]: HistoryLogPath must be absolute.",
+		       infopath, ln);
+		free (retval->HistoryLogPath);
+		retval->HistoryLogPath = NULL;
+	    }
+	}
+	else if (strcmp (line, "HistorySearchPath") == 0)
+	{
+	    if (retval->HistorySearchPath) free (retval->HistorySearchPath);
+	    retval->HistorySearchPath = expand_path (p, infopath, ln, false);
+
+	    if (retval->HistorySearchPath
+		&& !isabsolute (retval->HistorySearchPath))
+	    {
+		error (0, 0, "%s [%u]: HistorySearchPath must be absolute.",
+		       infopath, ln);
+		free (retval->HistorySearchPath);
+		retval->HistorySearchPath = NULL;
+	    }
+	}
 	else if (strcmp (line, "LogHistory") == 0)
 	{
 	    if (strcmp (p, "all") != 0)
