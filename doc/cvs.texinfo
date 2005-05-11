@@ -10361,14 +10361,24 @@ Requires: the file @file{$CVSROOT/CVSROOT/history}
 Changes: nothing.
 @end itemize
 
-@sc{cvs} can keep a history file that tracks each use of the
-@code{checkout}, @code{commit}, @code{rtag},
-@code{update}, and @code{release} commands.  You can
-use @code{history} to display this information in
+@sc{cvs} can keep a history log that tracks each use of most @sc{cvs}
+commands.  You can use @code{history} to display this information in
 various formats.
 
-Logging must be enabled by creating the file
-@file{$CVSROOT/CVSROOT/history}.
+To enable logging, the @samp{LogHistory} config option must be set to
+some value other than the empty string and the history file specified by
+the @samp{HistoryLogPath} option must be writable by all users who may run
+the @sc{cvs} executable (@pxref{config}).
+
+To enable the @code{history} command, logging must be enabled as above and
+the @samp{HistorySearchPath} config option (@pxref{config}) must be set to
+specify some number of the history logs created thereby and these files must
+be readable by each user who might run the @code{history} command.
+
+Creating a repository via the @code{cvs init} command will enable logging of
+all possible events to a single history log file
+(@file{$CVSROOT/CVSROOT/history}) with read and write permissions for all
+users (@pxref{Creating a repository}).
 
 @strong{Note: @code{history} uses @samp{-f}, @samp{-l},
 @samp{-n}, and @samp{-p} in ways that conflict with the
@@ -14234,12 +14244,10 @@ copy}.
 @cindex History file
 @cindex Log information, saving
 
-The file @file{$CVSROOT/CVSROOT/history} is used
-to log information for the @code{history} command
-(@pxref{history}).  This file must be created to turn
-on logging.  This is done automatically if the
-@code{cvs init} command is used to set up the
-repository (@pxref{Creating a repository}).
+By default, the file @file{$CVSROOT/CVSROOT/history} is used
+to log information for the @code{history} command (@pxref{history}).
+This file name may be changed with the @samp{HistoryLogPath} and
+@samp{HistorySearchPath} config options (@pxref{config}).
 
 The file format of the @file{history} file is
 documented only in comments in the @sc{cvs} source
@@ -14499,7 +14507,40 @@ Control what is logged to the @file{CVSROOT/history} file (@pxref{history}).
 Default of @samp{TOEFWUPCGMAR} (or simply @samp{all}) will log
 all transactions.  Any subset of the default is
 legal.  (For example, to only log transactions that modify the
-@file{*,v} files, use @samp{LogHistory=TMAR}.)
+@file{*,v} files, use @samp{LogHistory=TMAR}.)  To disable history logging
+completely, use @samp{LogHistory=}.
+
+@cindex HistorySearchPath, in CVSROOT/config
+@item HistoryLogPath=@var{path}
+Control where @sc{cvs} logs its history.  If the file does not exist, @sc{cvs}
+will attempt to create it.  Format strings, as available to the GNU C
+@code{strftime} function and often the UNIX date command, and the string
+@var{$CVSROOT} will be substituted in this path.  For example, consider the
+line:
+
+@example
+HistoryLogPath=$CVSROOT/CVSROOT/history/%Y-%m-%d
+@end example
+
+This line would cause @sc{cvs} to attempt to create its history file in a
+subdirectory (@file{history}) of the configuration directory (@file{CVSROOT})
+with a name equal to the current date representation in the ISO8601 format (for
+example, on May 11, 2005, @sc{cvs} would attempt to log its history under the
+repository root directory in a file named @file{CVSROOT/history/2005-05-11}).
+See @xref{history} and @xref{history file}, for more.
+
+If no value is supplied for this option, it defaults to
+@file{$CVSROOT/CVSROOT/history}.
+
+@cindex HistoryLogPath, in CVSROOT/config
+@item HistorySearchPath=@var{pattern}
+Request that @sc{cvs} look for its history information in files matching
+@var{pattern}, which is a standard UNIX file glob.  If @var{pattern} matches
+multiple files, all will be searched in lexicographically sorted order.
+See @xref{history} and @xref{history file}, for more.
+
+If no value is supplied for this option, it defaults to
+@file{$CVSROOT/CVSROOT/history}.
 
 @cindex RereadLogAfterVerify, in CVSROOT/config
 @cindex @file{verifymsg}, changing the log message
