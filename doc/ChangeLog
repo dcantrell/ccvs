@@ -1,3 +1,8 @@
+2005-05-11  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (history, history file, config): Add info on the new
+	HistoryLogPath and HistorySearchPath config options.
+
 2005-05-03  Derek Price  <derek@ximbiot.com>
 
 	* cvsclient.texi (Goals): Remove typo.  Resolves cvshome issue #236.

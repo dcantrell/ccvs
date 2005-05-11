@@ -2561,14 +2561,24 @@ Requires: the file \fB$CVSROOT/CVSROOT/history\fR
 .IP "\(bu" 2
 Changes: nothing.
 .SP
-\fBcvs\fR can keep a history file that tracks each use of the
-\fBcheckout\fR, \fBcommit\fR, \fBrtag\fR,
-\fBupdate\fR, and \fBrelease\fR commands.  You can
-use \fBhistory\fR to display this information in
+\fBcvs\fR can keep a history log that tracks each use of most \fBcvs\fR
+commands.  You can use \fBhistory\fR to display this information in
 various formats.
 .SP
-Logging must be enabled by creating the file
-\fB$CVSROOT/CVSROOT/history\fR.
+To enable logging, the \fBLogHistory\fR config option must be set to
+some value other than the empty string and the history file specified by
+the \fBHistoryLogPath\fR option must be writable by all users who may run
+the \fBcvs\fR executable (see node `config\(aq in the CVS manual).
+.SP
+To enable the \fBhistory\fR command, logging must be enabled as above and
+the \fBHistorySearchPath\fR config option (see node `config\(aq in the CVS manual) must be set to
+specify some number of the history logs created thereby and these files must
+be readable by each user who might run the \fBhistory\fR command.
+.SP
+Creating a repository via the \fBcvs init\fR command will enable logging of
+all possible events to a single history log file
+(\fB$CVSROOT/CVSROOT/history\fR) with read and write permissions for all
+users (see node `Creating a repository\(aq in the CVS manual).
 .SP
 \fBNote: \fBhistory\fB uses \fB-f\fB, \fB-l\fB,
 \fB-n\fB, and \fB-p\fB in ways that conflict with the
