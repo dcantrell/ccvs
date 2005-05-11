@@ -9,6 +9,7 @@ WinDebug
 WinRel
 alloca.h
 fnmatch.h
+glob.h
 getopt.h
 stdbool.h
 stdint.h

@@ -1,3 +1,12 @@
+2005-05-11  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Ignore glob.h.
+	* Makefile.am (BUILT_SOURCES, EXTRA_DIST, MOSTLYCLEANFILES): Add glob
+	files.
+	(glob.h): New target.
+	* glob.c, glob_.h: New files.
+	* strdup.c, strdup.h: New files from GNULIB.
+
 2005-05-09  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.dep, libcvs.mak: Regenerated after Windows full rebuild.

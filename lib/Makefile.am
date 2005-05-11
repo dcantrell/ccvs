@@ -292,6 +292,21 @@ libcvs_a_SOURCES += xsize.h
 
 ## end   gnulib module xsize
 
+## glob.c from glibc 2.3.5
+
+BUILT_SOURCES += $(GLOB_H)
+EXTRA_DIST += glob_.h
+
+# We need the following in order to create an <getopt.h> when the system
+# doesn't have one that works with the given compiler.
+all-local $(libcvs_a_OBJECTS): $(GLOB_H)
+glob.h: glob_.h
+	cp $(srcdir)/glob_.h $@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += glob.h glob.h-t
+
+## end glob.c
+
 # Until Automake gets its act together
 distclean-local:
 	rm -f fnmatch.h
