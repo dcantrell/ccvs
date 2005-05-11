@@ -72,20 +72,20 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/getnline.m4 $(top_srcdir)/m4/getopt.m4 \
 	$(top_srcdir)/m4/getpagesize.m4 $(top_srcdir)/m4/getpass.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gettime.m4 \
-	$(top_srcdir)/m4/gettimeofday.m4 $(top_srcdir)/m4/gnulib.m4 \
-	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intmax_t.m4 \
-	$(top_srcdir)/m4/inttypes.m4 $(top_srcdir)/m4/inttypes_h.m4 \
-	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
-	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/longdouble.m4 \
-	$(top_srcdir)/m4/longlong.m4 $(top_srcdir)/m4/lstat.m4 \
-	$(top_srcdir)/m4/mbrtowc.m4 $(top_srcdir)/m4/mbstate_t.m4 \
-	$(top_srcdir)/m4/md5.m4 $(top_srcdir)/m4/memmove.m4 \
-	$(top_srcdir)/m4/mempcpy.m4 $(top_srcdir)/m4/memrchr.m4 \
-	$(top_srcdir)/m4/mkdir-slash.m4 $(top_srcdir)/m4/mkstemp.m4 \
-	$(top_srcdir)/m4/mktime.m4 $(top_srcdir)/m4/mmap-anon.m4 \
-	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/nls.m4 \
-	$(top_srcdir)/m4/onceonly_2_57.m4 $(top_srcdir)/m4/openat.m4 \
-	$(top_srcdir)/m4/pagealign_alloc.m4 \
+	$(top_srcdir)/m4/gettimeofday.m4 $(top_srcdir)/m4/glob.m4 \
+	$(top_srcdir)/m4/gnulib.m4 $(top_srcdir)/m4/iconv.m4 \
+	$(top_srcdir)/m4/intmax_t.m4 $(top_srcdir)/m4/inttypes.m4 \
+	$(top_srcdir)/m4/inttypes_h.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
+	$(top_srcdir)/m4/longdouble.m4 $(top_srcdir)/m4/longlong.m4 \
+	$(top_srcdir)/m4/lstat.m4 $(top_srcdir)/m4/mbrtowc.m4 \
+	$(top_srcdir)/m4/mbstate_t.m4 $(top_srcdir)/m4/md5.m4 \
+	$(top_srcdir)/m4/memmove.m4 $(top_srcdir)/m4/mempcpy.m4 \
+	$(top_srcdir)/m4/memrchr.m4 $(top_srcdir)/m4/mkdir-slash.m4 \
+	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
+	$(top_srcdir)/m4/mmap-anon.m4 $(top_srcdir)/m4/nanosleep.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/onceonly_2_57.m4 \
+	$(top_srcdir)/m4/openat.m4 $(top_srcdir)/m4/pagealign_alloc.m4 \
 	$(top_srcdir)/m4/pathmax.m4 $(top_srcdir)/m4/po.m4 \
 	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/quotearg.m4 \
 	$(top_srcdir)/m4/readlink.m4 $(top_srcdir)/m4/regex.m4 \
@@ -96,14 +96,14 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/st_mtim.m4 $(top_srcdir)/m4/stat-macros.m4 \
 	$(top_srcdir)/m4/stat.m4 $(top_srcdir)/m4/stdbool.m4 \
 	$(top_srcdir)/m4/stdint.m4 $(top_srcdir)/m4/stdint_h.m4 \
-	$(top_srcdir)/m4/strcase.m4 $(top_srcdir)/m4/strerror.m4 \
-	$(top_srcdir)/m4/strftime.m4 $(top_srcdir)/m4/strstr.m4 \
-	$(top_srcdir)/m4/strtol.m4 $(top_srcdir)/m4/strtoul.m4 \
-	$(top_srcdir)/m4/sunos57-select.m4 $(top_srcdir)/m4/time_r.m4 \
-	$(top_srcdir)/m4/timespec.m4 $(top_srcdir)/m4/tm_gmtoff.m4 \
-	$(top_srcdir)/m4/tzset.m4 $(top_srcdir)/m4/uint32_t.m4 \
-	$(top_srcdir)/m4/uintmax_t.m4 $(top_srcdir)/m4/ulonglong.m4 \
-	$(top_srcdir)/m4/unistd-safer.m4 \
+	$(top_srcdir)/m4/strcase.m4 $(top_srcdir)/m4/strdup.m4 \
+	$(top_srcdir)/m4/strerror.m4 $(top_srcdir)/m4/strftime.m4 \
+	$(top_srcdir)/m4/strstr.m4 $(top_srcdir)/m4/strtol.m4 \
+	$(top_srcdir)/m4/strtoul.m4 $(top_srcdir)/m4/sunos57-select.m4 \
+	$(top_srcdir)/m4/time_r.m4 $(top_srcdir)/m4/timespec.m4 \
+	$(top_srcdir)/m4/tm_gmtoff.m4 $(top_srcdir)/m4/tzset.m4 \
+	$(top_srcdir)/m4/uint32_t.m4 $(top_srcdir)/m4/uintmax_t.m4 \
+	$(top_srcdir)/m4/ulonglong.m4 $(top_srcdir)/m4/unistd-safer.m4 \
 	$(top_srcdir)/m4/unlocked-io.m4 $(top_srcdir)/m4/vasnprintf.m4 \
 	$(top_srcdir)/m4/vasprintf.m4 $(top_srcdir)/m4/wchar_t.m4 \
 	$(top_srcdir)/m4/wint_t.m4 $(top_srcdir)/m4/xalloc.m4 \
@@ -146,6 +146,7 @@ EOVERFLOW = @EOVERFLOW@
 EXEEXT = @EXEEXT@
 FNMATCH_H = @FNMATCH_H@
 GETOPT_H = @GETOPT_H@
+GLOB_H = @GLOB_H@
 GMSGFMT = @GMSGFMT@
 HAVE_LONG_64BIT = @HAVE_LONG_64BIT@
 HAVE_LONG_LONG_64BIT = @HAVE_LONG_LONG_64BIT@

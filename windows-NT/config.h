@@ -118,6 +118,10 @@
 /* Define if gettimeofday clobbers localtime's static buffer. */
 #undef GETTIMEOFDAY_CLOBBERS_LOCALTIME_BUFFER
 
+/* Define to rpl_ if the glob replacement functions and variables should be
+   used. */
+#undef GLOB_PREFIX
+
 /* Define to an alternative value if GSS_C_NT_HOSTBASED_SERVICE isn't defined
    in the gssapi.h header file. MIT Kerberos 1.2.1 requires this. Only
    relevant when using GSSAPI. */
@@ -247,6 +251,10 @@
    don't. */
 #undef HAVE_DECL_PUTC_UNLOCKED
 
+/* Define to 1 if you have the declaration of `strdup', and to 0 if you don't.
+   */
+#undef HAVE_DECL_STRDUP
+
 /* Define to 1 if you have the declaration of `strerror_r', and to 0 if you
    don't. */
 #undef HAVE_DECL_STRERROR_R
@@ -258,8 +266,10 @@
 /* Define to 1 if you have the <direct.h> header file. */
 #define HAVE_DIRECT_H 1
 
-/* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
-   */
+/* Define to 1 if you have the `dirent64' function. */
+#undef HAVE_DIRENT64
+
+/* Define to 1 if you have the <dirent.h> header file. */
 #undef HAVE_DIRENT_H
 
 /* Define to 1 if you have the `dup2' function. */
@@ -307,6 +317,9 @@
 /* Define to 1 if you have the `gethostname' function. */
 #undef HAVE_GETHOSTNAME
 
+/* Define to 1 if you have the `getlogin_r' function. */
+#undef HAVE_GETLOGIN_R
+
 /* Define to 1 if you have the <getopt.h> header file. */
 #undef HAVE_GETOPT_H
 
@@ -316,6 +329,9 @@
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
+/* Define to 1 if you have the `getpwnam_r' function. */
+#undef HAVE_GETPWNAM_R
+
 /* Define if you have the getspnam function. */
 #undef HAVE_GETSPNAM
 
@@ -324,6 +340,12 @@
 
 /* Define to 1 if you have the `gettimeofday' function. */
 #undef HAVE_GETTIMEOFDAY
+
+/* Define to 1 if you have the <glob.h> header file. */
+#undef HAVE_GLOB_H
+
+/* Define to 1 if you have the `glob_pattern_p' function. */
+#undef HAVE_GLOB_PATTERN_P
 
 /* Define if you have GSSAPI with Kerberos version 5 available. */
 #undef HAVE_GSSAPI
@@ -458,7 +480,7 @@
 /* Define to 1 if you have the <ndbm.h> header file. */
 #undef HAVE_NDBM_H
 
-/* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
+/* Define to 1 if you have the <ndir.h> header file. */
 #define HAVE_NDIR_H 1
 
 /* Define to 1 if you have the `openat' function. */
@@ -552,6 +574,9 @@
 /* Define to 1 if you have the `snprintf' function. */
 #undef HAVE_SNPRINTF
 
+/* Define to 1 if you have the `stat64' function. */
+#undef HAVE_STAT64
+
 /* Define to 1 if `stat' has the bug that it succeeds when given the
    zero-length file name argument. */
 #undef HAVE_STAT_EMPTY_STRING_BUG
@@ -577,6 +602,9 @@
 
 /* Define if you have strchr (always for CVS). */
 #undef HAVE_STRCHR
+
+/* Define to 1 if you have the `strdup' function. */
+#undef HAVE_STRDUP
 
 /* Define to 1 if you have the `strerror' function. */
 #undef HAVE_STRERROR
@@ -605,6 +633,9 @@
 /* Define to 1 if you have the `strtoul' function. */
 #undef HAVE_STRTOUL
 
+/* Define to 1 if `d_type' is member of `struct dirent'. */
+#undef HAVE_STRUCT_DIRENT_D_TYPE
+
 /* Define to 1 if `st_blksize' is member of `struct stat'. */
 #undef HAVE_STRUCT_STAT_ST_BLKSIZE
 
@@ -623,8 +654,7 @@
 /* Define to 1 if you have the <sys/bsdtypes.h> header file. */
 #undef HAVE_SYS_BSDTYPES_H
 
-/* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
-   */
+/* Define to 1 if you have the <sys/dir.h> header file. */
 #undef HAVE_SYS_DIR_H
 
 /* Define to 1 if you have the <sys/file.h> header file. */
@@ -633,8 +663,7 @@
 /* Define to 1 if you have the <sys/inttypes.h> header file. */
 #undef HAVE_SYS_INTTYPES_H
 
-/* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
-   */
+/* Define to 1 if you have the <sys/ndir.h> header file. */
 #undef HAVE_SYS_NDIR_H
 
 /* Define to 1 if you have the <sys/param.h> header file. */
