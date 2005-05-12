@@ -228,7 +228,7 @@ recursion_error:
     syslog (LOG_DAEMON | LOG_EMERG,
             "error (%d, %d) called recursively.  Second message was:",
 	    status, errnum);
-    vsyslog (LOG_DAEMON | LOG_EMERG, "%s", buf2);
+    syslog (LOG_DAEMON | LOG_EMERG, "%s", buf2);
 
     syslog (LOG_DAEMON | LOG_EMERG, "Aborting.");
 #endif /* HAVE_SYSLOG_H */
