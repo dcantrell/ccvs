@@ -1,3 +1,10 @@
+2005-05-12  Derek Price  <derek@ximbiot.com>
+
+	* glob.c, glob_.h: Misc improvements suggested by Paul Eggert, bringing
+	these files closer to their glibc sources.  Simplify & reorganize for
+	clarity.  Use protos.
+	(glob_in_dir): Fix GLOB_ONLYDIR bug/typo.
+
 2005-05-11  Derek Price  <derek@ximbiot.com>
 
 	* .cvsignore: Ignore glob.h.

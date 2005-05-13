@@ -46,7 +46,7 @@
    it is simpler to just do this in the source for each such file.  */
 
 #if !defined _LIBC || !defined GLOB_ONLY_P
-#if HAVE_HEADER_UNISTD_H || _LIBC
+#if HAVE_UNISTD_H || _LIBC
 # include <unistd.h>
 # ifndef POSIX
 #  ifdef _POSIX_VERSION
@@ -62,25 +62,25 @@
 # define __set_errno(val) errno = (val)
 #endif
 
-#if defined HAVE_HEADER_DIRENT_H || defined __GNU_LIBRARY__
+#if defined HAVE_DIRENT_H || defined __GNU_LIBRARY__
 # include <dirent.h>
 # define NAMLEN(dirent) strlen((dirent)->d_name)
 #else
 # define dirent direct
 # define NAMLEN(dirent) (dirent)->d_namlen
-# ifdef HAVE_HEADER_SYS_NDIR_H
+# ifdef HAVE_SYS_NDIR_H
 #  include <sys/ndir.h>
 # endif
-# ifdef HAVE_HEADER_SYS_DIR_H
+# ifdef HAVE_SYS_DIR_H
 #  include <sys/dir.h>
 # endif
-# ifdef HAVE_HEADER_NDIR_H
+# ifdef HAVE_NDIR_H
 #  include <ndir.h>
 # endif
-# ifdef HAVE_HEADER_VMSDIR_H
+# ifdef HAVE_VMSDIR_H
    /* Should this be imported from glibc?  */
 #  include "vmsdir.h"
-# endif /* HAVE_HEADER_VMSDIR_H */
+# endif /* HAVE_VMSDIR_H */
 #endif
 
 
@@ -91,14 +91,28 @@
 #endif
 
 /* When used in the GNU libc the symbol _DIRENT_HAVE_D_TYPE is available
-   if the `d_type' member for `struct dirent' is available.  */
-#if defined _DIRENT_HAVE_D_TYPE && !defined HAVE_DIRENT_D_TYPE
-# define HAVE_DIRENT_D_TYPE	1
+   if the `d_type' member for `struct dirent' is available.
+   HAVE_STRUCT_DIRENT_D_TYPE is defined by GNULIB's glob.m4 when the same
+   member is found.  */
+#if defined _DIRENT_HAVE_D_TYPE || defined HAVE_STRUCT_DIRENT_D_TYPE
+# define HAVE_D_TYPE	1
+# define MUST_BE(d, t)	((d)->d_type == (t))
+# define MAY_BE_LINK(d)	(MUST_BE((d), DT_UNKNOWN) || MUST_BE((d), DT_LNK))
+# define MAY_BE_DIR(d)	(MUST_BE((d), DT_DIR) || MAY_BE_LINK (d))
+#else /* !HAVE_D_TYPE */
+# define CONVERT_D_TYPE(d64, d32)
+# define MUST_BE(d, t)	false
+# define MAY_BE_LINK(d)	true
+# define MAY_BE_DIR(d)	true
+#endif /* HAVE_D_TYPE */
+
+#if _LIBC || HAVE_FUNCTION_DIRENT64
+# define HAVE_DIRENT64	1
 #endif
 
 /* If the system has the `struct dirent64' type we use it internally.  */
-#if defined HAVE_FUNCTION_DIRENT64 && !defined COMPILE_GLOB64
-# if defined HAVE_HEADER_DIRENT_H || defined __GNU_LIBRARY__
+#if defined HAVE_DIRENT64 && !defined COMPILE_GLOB64
+# if defined HAVE_DIRENT_H || defined __GNU_LIBRARY__
 #  define CONVERT_D_NAMLEN(d64, d32)
 # else
 #  define CONVERT_D_NAMLEN(d64, d32) \
@@ -112,7 +126,7 @@
   (d64)->d_ino = (d32)->d_ino;
 # endif
 
-# ifdef HAVE_DIRENT_D_TYPE
+# ifdef HAVE_D_TYPE
 #  define CONVERT_D_TYPE(d64, d32) \
   (d64)->d_type = (d32)->d_type;
 # else
@@ -144,26 +158,58 @@
 # define NAME_MAX (sizeof (((struct dirent *) 0)->d_name))
 #endif
 
+#ifdef _LIBC
+# include <alloca.h>
+# undef strdup 
+# define strdup(str) __strdup (str)
+# define sysconf(id) __sysconf (id)
+# define closedir(dir) __closedir (dir)
+# define opendir(name) __opendir (name)
+# define readdir(str) __readdir64 (str)
+# define getpwnam_r(name, bufp, buf, len, res) \
+   __getpwnam_r (name, bufp, buf, len, res)
+# ifndef __stat64
+#  define __stat64(fname, buf) __xstat64 (_STAT_VER, fname, buf)
+# endif
+# define HAVE_STAT64   1
+#else /* !_LIBC */
+/* GNULIB includes that shouldn't be used when copiling LIBC.  */
+# include "mempcpy.h"
+# include "stat-macros.h"
+# include "strdup.h"
+#endif /* _LIBC */
+
 /* Correct versions of these headers all come from GNULIB when missing or
  * broken.
  */
+#include <stdbool.h>
 #include <alloca.h>
 #include <fnmatch.h>
 #include <glob.h>
-#include "mempcpy.h"
-#include "stat-macros.h"
-#include <stdbool.h>
-#include "strdup.h"
+
 /* End GNULIB includes.  */
 
-#ifndef HAVE_FUNCTION_STAT64
-# define stat64 stat
-# define st64 st
+#ifdef HAVE_FUNCTION_STAT64
+/* Assume the struct stat64 type.  */
+# define HAVE_STAT64	1
 #endif
 
-#define __alloca alloca
-#define __readdir readdir
-#define __readdir64 readdir64
+#ifndef HAVE_STAT64
+  /* Use stat() instead.  */
+# define __stat64(fname, buf) __stat (fname, buf)
+# define stat64 stat
+#elif !_LIBC
+  /* GNULIB needs the usual versions.  */
+# define __stat64 stat64
+#endif
+
+#ifndef _LIBC
+  /* GNULIB needs the usual versions.  */
+# define __stat stat
+# define __alloca alloca
+# define __readdir readdir
+# define __readdir64 readdir64
+#endif
 
 #ifdef HAVE_FUNCTION_GETLOGIN_R
 extern int getlogin_r (char *, size_t);
@@ -188,9 +234,7 @@ static int collated_compare (const __ptr_t, const __ptr_t) __THROW;
 
 /* Find the end of the sub-pattern in a brace expression.  */
 static const char *
-next_brace_sub (cp, flags)
-     const char *cp;
-     int flags;
+next_brace_sub (const char *cp, int flags)
 {
   unsigned int depth = 0;
   while (*cp != '\0')
@@ -214,8 +258,6 @@ next_brace_sub (cp, flags)
 
 #endif /* !GLOB_ONLY_P */
 
-int glob_pattern_p (const char *pattern, int quote);
-
 /* Do glob searching for PATTERN, placing results in PGLOB.
    The bits defined above may be set in FLAGS.
    If a directory cannot be opened or read and ERRFUNC is not nil,
@@ -228,11 +270,9 @@ int
 #ifdef GLOB_ATTRIBUTE
 GLOB_ATTRIBUTE
 #endif
-glob (pattern, flags, errfunc, pglob)
-     const char *pattern;
-     int flags;
-     int (*errfunc) (const char *, int);
-     glob_t *pglob;
+glob (const char *pattern, int flags,
+      int (*errfunc) (const char *, int),
+      glob_t *pglob)
 {
   const char *filename;
   const char *dirname;
@@ -454,7 +494,7 @@ glob (pattern, flags, errfunc, pglob)
 	  *((char *) mempcpy (drive_spec, pattern, dirlen)) = '\0';
 	  /* For now, disallow wildcards in the drive spec, to
 	     prevent infinite recursion in glob.  */
-	  if (glob_pattern_p (drive_spec, !(flags & GLOB_NOESCAPE)))
+	  if (__glob_pattern_p (drive_spec, !(flags & GLOB_NOESCAPE)))
 	    return GLOB_NOMATCH;
 	  /* If this is "d:pattern", we need to copy `:' to DIRNAME
 	     as well.  If it's "d:/pattern", don't remove the slash
@@ -682,16 +722,14 @@ glob (pattern, flags, errfunc, pglob)
   if (filename == NULL)
     {
       struct stat st;
-#ifdef HAVE_FUNCTION_STAT64
       struct stat64 st64;
-#endif
 
       /* Return the directory if we don't check for error or if it exists.  */
       if ((flags & GLOB_NOCHECK)
 	  || (((flags & GLOB_ALTDIRFUNC)
 	       ? ((*pglob->gl_stat) (dirname, &st) == 0
 		  && S_ISDIR (st.st_mode))
-	       : (stat64 (dirname, &st64) == 0 && S_ISDIR (st64.st_mode)))))
+	       : (__stat64 (dirname, &st64) == 0 && S_ISDIR (st64.st_mode)))))
 	{
 	  int newcount = pglob->gl_pathc + pglob->gl_offs;
 	  char **new_gl_pathv;
@@ -723,7 +761,7 @@ glob (pattern, flags, errfunc, pglob)
       return GLOB_NOMATCH;
     }
 
-  if (glob_pattern_p (dirname, !(flags & GLOB_NOESCAPE)))
+  if (__glob_pattern_p (dirname, !(flags & GLOB_NOESCAPE)))
     {
       /* The directory name contains metacharacters, so we
 	 have to glob for the directory, and then glob for
@@ -887,8 +925,7 @@ libc_hidden_def (glob)
 
 /* Free storage allocated in PGLOB by a previous `glob' call.  */
 void
-globfree (pglob)
-     register glob_t *pglob;
+globfree (register glob_t *pglob)
 {
   if (pglob->gl_pathv != NULL)
     {
@@ -907,9 +944,7 @@ libc_hidden_def (globfree)
 
 /* Do a collated comparison of A and B.  */
 static int
-collated_compare (a, b)
-     const __ptr_t a;
-     const __ptr_t b;
+collated_compare (const __ptr_t a, const __ptr_t b)
 {
   const char *const s1 = *(const char *const * const) a;
   const char *const s2 = *(const char *const * const) b;
@@ -929,10 +964,7 @@ collated_compare (a, b)
    A slash is inserted between DIRNAME and each elt of ARRAY,
    unless DIRNAME is just "/".  Each old element of ARRAY is freed.  */
 static int
-prefix_array (dirname, array, n)
-     const char *dirname;
-     char **array;
-     size_t n;
+prefix_array (const char *dirname, char **array, size_t n)
 {
   register size_t i;
   size_t dirlen = strlen (dirname);
@@ -991,7 +1023,7 @@ prefix_array (dirname, array, n)
 /* Return nonzero if PATTERN contains any metacharacters.
    Metacharacters can be quoted with backslashes if QUOTE is nonzero.  */
 int
-glob_pattern_p (const char *pattern, int quote)
+__glob_pattern_p (const char *pattern, int quote)
 {
   register const char *p;
   int open = 0;
@@ -1020,7 +1052,10 @@ glob_pattern_p (const char *pattern, int quote)
 
   return 0;
 }
-#endif
+# ifdef _LIBC
+weak_alias (__glob_pattern_p, glob_pattern_p)
+# endif
+#endif /* !defined _LIBC || !defined NO_GLOB_PATTERN_P */
 
 #endif /* !GLOB_ONLY_P */
 
@@ -1030,21 +1065,19 @@ glob_pattern_p (const char *pattern, int quote)
 #if !defined _LIBC || !defined GLOB_ONLY_P
 static bool
 is_dir_p (const char *dir, size_t dirlen, const char *fname,
-	       glob_t *pglob, int flags)
+	  glob_t *pglob, int flags)
 {
   size_t fnamelen = strlen (fname);
   char *fullname = (char *) __alloca (dirlen + 1 + fnamelen + 1);
   struct stat st;
-# ifdef HAVE_FUNCTION_STAT64
   struct stat64 st64;
-# endif
 
   mempcpy (mempcpy (mempcpy (fullname, dir, dirlen), "/", 1),
 	   fname, fnamelen + 1);
 
-  return flags & GLOB_ALTDIRFUNC
-	 ? (*pglob->gl_stat) (fullname, &st) == 0 && S_ISDIR (st.st_mode)
-	 : stat64 (fullname, &st64) == 0 && S_ISDIR (st64.st_mode);
+  return (flags & GLOB_ALTDIRFUNC)
+	  ? (*pglob->gl_stat) (fullname, &st) == 0 && S_ISDIR (st.st_mode)
+	  : __stat64 (fullname, &st64) == 0 && S_ISDIR (st64.st_mode);
 }
 #endif
 
@@ -1055,12 +1088,9 @@ is_dir_p (const char *dir, size_t dirlen, const char *fname,
    The GLOB_NOSORT bit in FLAGS is ignored.  No sorting is ever done.
    The GLOB_APPEND flag is assumed to be set (always appends).  */
 static int
-glob_in_dir (pattern, directory, flags, errfunc, pglob)
-     const char *pattern;
-     const char *directory;
-     int flags;
-     int (*errfunc) (const char *, int);
-     glob_t *pglob;
+glob_in_dir (const char *pattern, const char *directory, int flags,
+	     int (*errfunc) (const char *, int),
+	     glob_t *pglob)
 {
   size_t dirlen = strlen (directory);
   __ptr_t stream = NULL;
@@ -1074,7 +1104,7 @@ glob_in_dir (pattern, directory, flags, errfunc, pglob)
   int meta;
   int save;
 
-  meta = glob_pattern_p (pattern, !(flags & GLOB_NOESCAPE));
+  meta = __glob_pattern_p (pattern, !(flags & GLOB_NOESCAPE));
   if (meta == 0 && (flags & (GLOB_NOCHECK|GLOB_NOMAGIC)))
     {
       /* We need not do any tests.  The PATTERN contains no meta
@@ -1089,9 +1119,7 @@ glob_in_dir (pattern, directory, flags, errfunc, pglob)
       /* Since we use the normal file functions we can also use stat()
 	 to verify the file is there.  */
       struct stat st;
-# ifdef HAVE_FUNCTION_STAT64
       struct stat64 st64;
-# endif
       size_t patlen = strlen (pattern);
       char *fullname = (char *) __alloca (dirlen + 1 + patlen + 1);
 
@@ -1100,7 +1128,7 @@ glob_in_dir (pattern, directory, flags, errfunc, pglob)
 	       pattern, patlen + 1);
       if (((flags & GLOB_ALTDIRFUNC)
 	   ? (*pglob->gl_stat) (fullname, &st)
-	   : stat64 (fullname, &st64)) == 0)
+	   : __stat64 (fullname, &st64)) == 0)
 	/* We found this file to be existing.  Now tell the rest
 	   of the function to copy this name into the result.  */
 	flags |= GLOB_NOCHECK;
@@ -1151,7 +1179,7 @@ glob_in_dir (pattern, directory, flags, errfunc, pglob)
 		{
 		  const char *name;
 		  size_t len;
-#if defined HAVE_FUNCTION_DIRENT64 && !defined COMPILE_GLOB64
+#if defined HAVE_DIRENT64 && !defined COMPILE_GLOB64
 		  struct dirent64 *d;
 		  union
 		    {
@@ -1185,49 +1213,31 @@ glob_in_dir (pattern, directory, flags, errfunc, pglob)
 		  if (! REAL_DIR_ENTRY (d))
 		    continue;
 
-#ifdef HAVE_DIRENT_D_TYPE
-# define MAY_BE_LINK(d) (d->d_type == DT_UNKNOWN || d->d_type == DT_LNK)
-# define MAY_BE_DIR(d)	(d->d_type == DT_DIR || MAY_BE_LINK (d))
-
 		  /* If we shall match only directories use the information
-		     provided by the dirent call if possible.
-		   *
-		   * This will still be caught via stat() later, but stat()
-		   * and fnmatch() are expensive and this saves the call to
-		   * fnmatch() when this information is already available from
-		   * the dirent structure.
-		   */
-		  if (flags & GLOB_ONLYDIR && !MAY_BE_DIR (d))
+		     provided by the dirent call if possible.  */
+		  if ((flags & GLOB_ONLYDIR) && !MAY_BE_DIR (d))
 		    continue;
-#endif /* HAVE_DIRENT_D_TYPE */
 
 		  name = d->d_name;
 
 		  if (fnmatch (pattern, name, fnm_flags) == 0)
 		    {
-		      /* Note that isdir will often be set to false when not in
-		       * GLOB_ONLYDIR || GLOB_MARK mode, but we don't care.  It
-		       * won't be used and we save the expensive call to
-		       * stat().
+		      /* Note that isdir will often be incorrectly set to false
+		       * when not in GLOB_ONLYDIR || GLOB_MARK mode, but we
+		       * don't care.  It won't be used and we save the
+		       * expensive call to stat().
 		       */
-		      bool isdir =
-#ifdef HAVE_DIRENT_D_TYPE
-				   d->d_type == DT_DIR
-#endif
-
-				   || (flags & GLOB_ONLYDIR
-#ifdef HAVE_DIRENT_D_TYPE
+		      bool isdir = MUST_BE (d, DT_DIR)
+				   || ((flags & GLOB_ONLYDIR)
 				       && MAY_BE_LINK (d)
-#endif
 				       && is_dir_p (directory, dirlen, name,
 						    pglob, flags))
-				   || (flags & GLOB_MARK
+				   || ((flags & GLOB_MARK)
 				       && is_dir_p (directory, dirlen, name,
 						    pglob, flags));
 
-		      /* In GLOB_ONLYDIR mode, if the directory is a symlink, 
-			 make sure the target directory exists.  */
-		      if (flags & GLOB_ONLYDIR && isdir)
+		      /* In GLOB_ONLYDIR mode, skip non-dirs.  */
+		      if ((flags & GLOB_ONLYDIR) && !isdir)
 			  continue;
 
 			{
@@ -1236,11 +1246,11 @@ glob_in_dir (pattern, directory, flags, errfunc, pglob)
 			  char *p;
 			  len = NAMLEN (d);
 			  new->name = malloc (len + 1
-					      + (flags & GLOB_MARK && isdir));
+					      + ((flags & GLOB_MARK) && isdir));
 			  if (new->name == NULL)
 			    goto memory_error;
 			  p = mempcpy ((__ptr_t) new->name, name, len);
-			  if (flags & GLOB_MARK && isdir)
+			  if ((flags & GLOB_MARK) && isdir)
 			      *p++ = '/';
 			  *p = '\0';
 			  new->next = names;

@@ -19,8 +19,37 @@
 #ifndef	_GLOB_H
 #define	_GLOB_H	1
 
+#ifdef _LIBC
+# include <sys/cdefs.h>
+#endif
+
+__BEGIN_DECLS
+
 /* We need `size_t' for the following definitions.  */
-#include <stddef.h>
+#ifdef _LIBC
+# ifndef __size_t
+#  if defined __GNUC__ && __GNUC__ >= 2
+typedef __SIZE_TYPE__ __size_t;
+#   ifdef __USE_XOPEN
+typedef __SIZE_TYPE__ size_t;
+#   endif
+#  else
+#   include <stddef.h>
+#   ifndef __size_t
+#    define __size_t size_t
+#   endif
+#  endif
+# else
+/* The GNU CC stddef.h version defines __size_t as empty.  We need a real
+   definition.  */
+#  undef __size_t
+#  define __size_t size_t
+# endif
+#else /* !_LIBC */
+# include <stddef.h>
+# undef __size_t
+# define __size_t size_t
+#endif /* _LIBC */
 
 /* Some system libraries erroneously define these.  */
 #undef	GLOB_ERR
@@ -78,9 +107,9 @@ struct stat;
 #endif
 typedef struct
   {
-    size_t gl_pathc;		/* Count of paths matched by the pattern.  */
+    __size_t gl_pathc;		/* Count of paths matched by the pattern.  */
     char **gl_pathv;		/* List of matched pathnames.  */
-    size_t gl_offs;		/* Slots to reserve in `gl_pathv'.  */
+    __size_t gl_offs;		/* Slots to reserve in `gl_pathv'.  */
     int gl_flags;		/* Set to FLAGS, maybe | GLOB_MAGCHAR.  */
 
     /* If the GLOB_ALTDIRFUNC flag is set, the following functions
@@ -107,9 +136,9 @@ struct stat64;
 # endif
 typedef struct
   {
-    size_t gl_pathc;
+    __size_t gl_pathc;
     char **gl_pathv;
-    size_t gl_offs;
+    __size_t gl_offs;
     int gl_flags;
 
     /* If the GLOB_ALTDIRFUNC flag is set, the following functions
@@ -131,10 +160,11 @@ typedef struct
   } glob64_t;
 #endif
 
-#if 0 && __USE_FILE_OFFSET64 && __GNUC__ < 2
+#if __USE_FILE_OFFSET64 && __GNUC__ < 2
 # define glob glob64
 # define globfree globfree64
 #endif
+
 #ifdef GLOB_PREFIX
 # define __GLOB_CONCAT(x, y) x ## y
 # define __GLOB_XCONCAT(x, y) __GLOB_CONCAT (x, y)
@@ -145,6 +175,10 @@ typedef struct
 # define glob_pattern_p __GLOB_ID (glob_pattern_p)
 #endif
 
+#ifndef _LIBC
+# define __glob_pattern_p glob_pattern_p
+#endif
+
 /* Do glob searching for PATTERN, placing results in PGLOB.
    The bits defined above may be set in FLAGS.
    If a directory cannot be opened or read and ERRFUNC is not nil,
@@ -153,14 +187,14 @@ typedef struct
    `glob' returns GLOB_ABEND; if it returns zero, the error is ignored.
    If memory cannot be allocated for PGLOB, GLOB_NOSPACE is returned.
    Otherwise, `glob' returns zero.  */
-/* #if !defined __USE_FILE_OFFSET64 || __GNUC__ < 2 */
+#if !_LIBC || !defined __USE_FILE_OFFSET64 || __GNUC__ < 2
 extern int glob (__const char *__restrict __pattern, int __flags,
 		 int (*__errfunc) (__const char *, int),
 		 glob_t *__restrict __pglob) __THROW;
 
 /* Free storage allocated in PGLOB by a previous `glob' call.  */
 extern void globfree (glob_t *__pglob) __THROW;
-/* #else
+#else
 extern int __REDIRECT_NTH (glob, (__const char *__restrict __pattern,
 				  int __flags,
 				  int (*__errfunc) (__const char *, int),
@@ -168,7 +202,6 @@ extern int __REDIRECT_NTH (glob, (__const char *__restrict __pattern,
 
 extern void __REDIRECT_NTH (globfree, (glob_t *__pglob), globfree64);
 #endif
-*/
 #ifdef __USE_LARGEFILE64
 extern int glob64 (__const char *__restrict __pattern, int __flags,
 		   int (*__errfunc) (__const char *, int),
@@ -186,5 +219,7 @@ extern void globfree64 (glob64_t *__pglob) __THROW;
    but several programs want to use it.  */
 extern int glob_pattern_p (__const char *__pattern, int __quote) __THROW;
 #endif
+
+__END_DECLS
 
 #endif /* glob.h  */
