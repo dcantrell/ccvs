@@ -1,5 +1,11 @@
 2005-05-13  Derek Price  <derek@ximbiot.com>
 
+	* glob_.h: Enable GNU features by default.  Remove copy/pasted getopt
+	#define.
+	* glob.c: s/__strdup/strdup/ (Fixes BSD compilation issue).
+
+2005-05-13  Derek Price  <derek@ximbiot.com>
+
 	* glob.c, glob_.h: Misc cleanup for compatibility with GNULIB & glibc,
 	mostly suggested by Paul Eggert <eggert@cs.ucla.edu>.
 

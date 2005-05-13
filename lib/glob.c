@@ -852,7 +852,7 @@ glob (const char *pattern, int flags,
 		}
 	      pglob->gl_pathv = new_gl_pathv;
 
-	      pglob->gl_pathv[newcount] = __strdup (pattern);
+	      pglob->gl_pathv[newcount] = strdup (pattern);
 	      if (pglob->gl_pathv[newcount] == NULL)
 		{
 		  globfree (&dirs);
