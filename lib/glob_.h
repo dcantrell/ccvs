@@ -26,6 +26,7 @@
 # include <stddef.h>
 # undef __size_t
 # define __size_t size_t
+# define __USE_GNU
 #endif
 
 __BEGIN_DECLS
@@ -170,7 +171,6 @@ typedef struct
 # define __GLOB_CONCAT(x, y) x ## y
 # define __GLOB_XCONCAT(x, y) __GLOB_CONCAT (x, y)
 # define __GLOB_ID(y) __GLOB_XCONCAT (GLOB_PREFIX, y)
-# define getopt __GLOB_ID (getopt)
 # define glob __GLOB_ID (glob)
 # define globfree __GLOB_ID (globfree)
 # define glob_pattern_p __GLOB_ID (glob_pattern_p)
