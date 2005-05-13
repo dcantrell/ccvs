@@ -251,7 +251,7 @@ aqui.
 
 @c <en>@sc{cvs} is a version control system.  Using it, you can
 @c <en>record the history of your source files.
-@sc{cvs} é um sistema de controle de versões. Ao
+@sc{cvs} é um sistema de controle de versões.  Ao
 usá-lo, você pode registrar a história dos seus códigos
 fonte.
 
@@ -269,9 +269,9 @@ fonte.
 @c <en>sometimes be a big help.
 Por exemplo, às vezes aparecem erros quando um programa
 é modificado e você não detecta o problema até muito
-tempo depois de você ter feito a modificação. Com
+tempo depois de você ter feito a modificação.  Com
 @sc{cvs}, você pode recuperar versões antigas para ver
-exatamente o que causou o erro. Isto às vezes é de
+exatamente o que causou o erro.  Isto às vezes é de
 grande ajuda.
 
 @c <en>You could of course save every version of every file
@@ -281,8 +281,8 @@ grande ajuda.
 @c <en>clever way that only stores the differences between
 @c <en>versions.
 Você pode, é claro, salvar toda versão de todo arquivo
-que um dia você criou. Mas isto vai consumir um enorme
-espaço no disco. @sc{cvs} guarda todas as versões de um
+que um dia você criou.  Mas isto vai consumir um enorme
+espaço no disco.  O @sc{cvs} guarda todas as versões de um
 arquivo em um único arquivo em uma forma inteligente
 que guarda apenas as diferenças entre versões.
 
@@ -297,15 +297,15 @@ que guarda apenas as diferenças entre versões.
 @c <en>developer works in his own directory, and @sc{cvs} merges
 @c <en>the work when each developer is done.
 @sc{cvs} também ajuda se você é parte de um grupo de
-pessoas trabalhando no mesmo projeto. É muito fácil uns
+pessoas trabalhando no mesmo projeto.  É muito fácil uns
 sobreescreverem as mudanças de outros se não forem
-extremamente cuidadosos. Alguns editores, como o
+extremamente cuidadosos.  Alguns editores, como o
 @sc{gnu} Emacs, tentam se certificar de que o mesmo
 arquivo nunca seja modificado por duas pessoas ao mesmo
-tempo. Infelizmente, se alguém estiver usando outro
-editor, está segurança não vai funcionar. @sc{cvs}
+tempo.  Infelizmente, se alguém estiver usando outro
+editor, está segurança não vai funcionar.  O @sc{cvs}
 resolve este problema isolando os desenvolvedores uns
-dos outros. Todo desenvolvedor trabalha em seu próprio
+dos outros.  Todo desenvolvedor trabalha em seu próprio
 diretório e o @sc{cvs} mescla o trabalho quando cada
 desenvolvedor tiver terminado.
 
@@ -327,7 +327,7 @@ desenvolvedor tiver terminado.
 @sc{cvs} começou como um monte de shell scripts
 escritos por Dick Grune, postados no newsgroup
 @code{comp.sources.unix} no volume 6, de Julho de
-1986. Na verdade, nenhum código daqueles scripts está
+1986.  Na verdade, nenhum código daqueles scripts está
 presente na versão atual do @sc{cvs}, mas muito dos
 algoritmos de resolução de conflitos do @sc{cvs} vem
 deles.
@@ -336,7 +336,7 @@ deles.
 @c <en>Jeff Polk later helped Brian with the design of the @sc{cvs}
 @c <en>module and vendor branch support.
 Em abril de 1989, Brian Berliner projetou e codificou
-@sc{cvs}. Depois, Jeff Polk ajudou Brian com o projeto
+@sc{cvs}.  Depois, Jeff Polk ajudou Brian com o projeto
 do módulo @sc{cvs} e o suporte ao ramo do fornecedor.
 
 @c <en>@cindex Source, getting CVS source
@@ -345,7 +345,7 @@ do módulo @sc{cvs} e o suporte ao ramo do fornecedor.
 @c <en>free download from the internet.  For more information
 @c <en>on downloading @sc{cvs} and other @sc{cvs} topics, see:
 Você pode conseguir o @sc{cvs} de várias formas,
-inclusive baixando gratuitamente da internet. Para
+inclusive baixando gratuitamente da internet.  Para
 maiores informações sobre baixar o @sc{cvs} e para
 outros tópicos sobre @sc{cvs}, veja:
 
@@ -375,16 +375,16 @@ outros tópicos sobre @sc{cvs}, veja:
 @c <en>if there is sufficient @sc{cvs} traffic on
 @c <en>@url{news:comp.software.config-mgmt}.
 Existe uma lista de discussão, conhecida como @email{info-cvs@@gnu.org},
-dedicada ao @sc{cvs}. Para se cadastrar ou descadastrar nela
-escreva para @email{info-cvs-request@@gnu.org}. Se você
+dedicada ao @sc{cvs}.  Para se cadastrar ou descadastrar nela
+escreva para @email{info-cvs-request@@gnu.org}.  Se você
 preferir um grupo de usenet, existe um espelho de mão
 única (postagens para a lista de email são usualmente
 mandadas para o news group, mas não vice-versa) da lista
-@email{info-cvs@@gnu.org} em @url{news:gnu.cvs.help}. O
+@email{info-cvs@@gnu.org} em @url{news:gnu.cvs.help}.  O
 grupo usenet correto para postagens é o
 @url{news:comp.software.config-mgmt} que é para
 discussões sobre @sc{cvs} (juntamente com outros
-sistemas de gerência de configuração). No futuro, poderá ser criada uma
+sistemas de gerência de configuração).  No futuro, poderá ser criada uma
 @code{comp.software.config-mgmt.cvs}, mas apenas se
 houver bastante tráfego sobre o @sc{cvs} na
 @url{news:comp.software.config-mgmt}.
@@ -402,8 +402,8 @@ houver bastante tráfego sobre o @sc{cvs} na
 @c <en>visa versa) of @email{bug-cvs@@gnu.org} named @url{news:gnu.cvs.bug}.
 Você também pode se cadastrar na lista de discussão
 @email{bug-cvs@@gnu.org}, descrita em maiores detalhes
-em @ref{Paus}. Para se cadastrar mande um e-mail para
-@email{bug-cvs-request@@gnu.org}. Existe um espelho
+em @ref{Paus}.  Para se cadastrar mande um e-mail para
+@email{bug-cvs-request@@gnu.org}.  Existe um espelho
 usenet de mão-dupla (postagens para o grupo usenet são
 usualmente mandadas para a lista e vice-versa) de
 @email{bug-cvs@@gnu.org} chamado
@@ -438,7 +438,7 @@ independentes.
 @c <en>@sc{cvs} does not dictate how you build anything.  It
 @c <en>merely stores files for retrieval in a tree structure
 @c <en>you devise.
-@sc{cvs} não dita como você constroi nada. Ele apenas
+@sc{cvs} não dita como você constroi nada.  Ele apenas
 guarda arquivos para recuperação numa estrutura de
 árvore que você concebeu.
 
@@ -449,7 +449,7 @@ guarda arquivos para recuperação numa estrutura de
 @c <en>you wind up requiring the entire repository to be
 @c <en>checked out.
 @sc{cvs} não dita como usar o espaço em disco em
-diretórios de trabalho locais. Se você
+diretórios de trabalho locais.  Se você
 escreve seus @file{Makefile}s ou scripts em cada
 diretório, eles têm que saber a posição relativa de
 todo o resto, logo você acaba tendo que pegar todo o
@@ -470,7 +470,7 @@ qualquer forma.
 @c <en>not address the issues involved.
 Mas você tem que lembrar que @emph{qualquer} sistema
 desse é muito trabalhoso para construir e
-manter. @sc{cvs} não se importa com tais questões.
+manter.  O @sc{cvs} não se importa com tais questões.
 
 @c <en>Of course, you should place the tools created to
 @c <en>support such a build system (scripts, @file{Makefile}s,
@@ -507,15 +507,15 @@ construção com @sc{cvs}.
 Espera-se que seus gerentes e líderes de projetos falem
 com você com a frequência suficiente para que você
 saiba de prazos, pontos de mescla, nomes de ramos e
-datas de lançamento (release). Se eles não o fizerem, o
+datas de lançamento (release).  Se eles não o fizerem, o
 @sc{cvs} não pode ajudar.
 
 @c <en>@sc{cvs} is an instrument for making sources dance to
 @c <en>your tune.  But you are the piper and the composer.  No
 @c <en>instrument plays itself or writes its own music.
 @sc{cvs} é um instrumento para fazer o fonte dançar
-conforme a sua música. Mas você é o maestro e o
-compositor. Nenhum instrumento toca sozinho ou escreve
+conforme a sua música.  Mas você é o maestro e o
+compositor.  Nenhum instrumento toca sozinho ou escreve
 sua própria música.
 
 @c <en>@item @sc{cvs} is not a substitute for developer communication.
@@ -528,7 +528,7 @@ sua própria música.
 @c <en>communication between developers.
 Quando se deparam com conflitos num único arquivo, a
 maioria dos desenvolvedores conseguem resolvê-los sem
-muito esforço. Mas uma definição mais geral de
+muito esforço.  Mas uma definição mais geral de
 ``conflito'' inclui problemas tão difíceis de resolver
 que é necessária a comunicação entre os desenvolvedores.
 
@@ -540,7 +540,7 @@ que é necessária a comunicação entre os desenvolvedores.
 @c <en>to spook the merge (i.e. @code{diff3}) command.
 @sc{cvs} não pode determinar quando é que alterações
 simultâneas em um arquivo, ou vários, vão conflitar
-logicamente umas com as outras. Seu conceito de
+logicamente umas com as outras.  Seu conceito de
 @dfn{conflito} é puramente textual, surgindo quando
 duas alterações num mesmo arquivo base são próximas o
 suficiente para intimidar o comando de mescla
@@ -558,10 +558,10 @@ lógica de programação.
 @c <en>function @code{X} using the old arguments.  You are
 @c <en>outside the realm of @sc{cvs}'s competence.
 Por exemplo: Digamos que você altere os argumentos da
-função @code{X} definida no arquivo @file{A}. Neste
+função @code{X} definida no arquivo @file{A}.  Neste
 instante, alguem altera o arquivo @file{B}, adicionando
 novas chamadas à função @code{X} usando os argumentos
-antigos. Vocês estão fora do escopo da competência do
+antigos.  Vocês estão fora do escopo da competência do
 @sc{cvs}.
 
 @c <en>Acquire the habit of reading specs and talking to your
@@ -581,12 +581,12 @@ seus parceiros.
 @c <en>@sc{cvs} to an external bug-tracking system, see the
 @c <en>@file{rcsinfo} and @file{verifymsg} files
 @c <en>(@pxref{Administrative files}).
-Controle de mudanças se refere a várias coisas. Em
+Controle de mudanças se refere a várias coisas.  Em
 primeiro lugar, pode significar @dfn{bug-tracking
 (busca de erros)}, que é manter uma base de dados de
 erros relatados e o status de cada um (foi consertado?
 em qual lançamento? o submissor do erro concordou que o
-erro foi corrigido?). Para fazer a interface do
+erro foi corrigido?).  Para fazer a interface do
 @sc{cvs} com um sistema de bug-tracking externo, veja
 os arquivos @file{rcsinfo} e @file{verifymsg}
 (@pxref{Arquivos administrativos}).
@@ -602,11 +602,11 @@ os arquivos @file{rcsinfo} e @file{verifymsg}
 @c <en>can help somewhat.
 Outra característica de controle de mudanças é manter
 um controle no fato de que mudanças em vários arquivos
-foram, de fato, uma única mudança lógica. Se você
+foram, de fato, uma única mudança lógica.  Se você
 devolve vários arquivos numa única operação com
 @code{cvs commit} (efetivar), @sc{cvs} esquece que os arquivos
 foram devolvidos juntos, e o fato de eles terem a mesma
-mensagem de log é a única coisa que os une. Manter um
+mensagem de log é a única coisa que os une.  Manter um
 @file{ChangeLog} no estilo @sc{gnu} pode de certa forma
 ajudar.
 @c FIXME: should have an xref to a section which talks
@@ -625,13 +625,13 @@ ajudar.
 @c <en>nothing falls through the cracks.
 Outro aspecto do controle de mudanças, em alguns
 sistemas, é a habilidade de se obter informação sobre o
-status de cada mudança. Algumas mudanças foram escritas
+status de cada mudança.  Algumas mudanças foram escritas
 por um certo desenvolvedor, outras foram revisadas por
-um segundo desenvolvedor, e por aí vai. Geralmente, a
+um segundo desenvolvedor, e por aí vai.  Geralmente, a
 forma de fazer isto com o @sc{cvs} é gerando um diff
 (usando @code{cvs diff} ou @code{diff}) e mandando por
 email para alguem que possa resolver as diferenças usando o
-utilitário @code{patch}. Isto é muito flexível, mas
+utilitário @code{patch}.  Isto é muito flexível, mas
 depende de mecanismos externos ao @sc{cvs} para
 garantir que nada dê problema.
 
@@ -643,7 +643,7 @@ garantir que nada dê problema.
 @c <en>heard a lot about projects trying to do that or whether
 @c <en>there are subtle gotchas, however.
 é possível reforçar o uso obrigatório de uma suíte de
-testes usando o arquivo @code{commitinfo}. Eu nunca
+testes usando o arquivo @code{commitinfo}.  Eu nunca
 ouvi falar muito sobre projetos que tentam fazer isto,
 ou se existem armadilhas sutís nestes casos.
 
@@ -664,13 +664,13 @@ ou se existem armadilhas sutís nestes casos.
 @c <en>only once they have been proven.
 alguns sistemas fornecem formas de garantir que
 mudanças ou lançamentos sigam vários passos, com várias
-aprovações obrigatórias. Geralmente, pode-se obter
+aprovações obrigatórias.  Geralmente, pode-se obter
 isto com o @sc{cvs}, mas acarreta em um pouco mais de
-trabalho. Em alguns casos você vai querer usar o
+trabalho.  Em alguns casos você vai querer usar o
 arquivo @file{commitinfo}, @file{loginfo},
 @file{rcsinfo}, ou @file{verifymsg} para exigir que
 certos passos sejam executados antes que o cvs permita
-uma devolução (checkin). Também considere se
+uma devolução (checkin).  Também considere se
 características tais como ramos e etiquetas (tags) podem ser usadas
 para realizar tarefas como desenvolver numa árvore de
 desenvolvimento e então mesclar certas mudanças numa
@@ -723,7 +723,7 @@ define one module per project.
 @c <en>centralized @dfn{repository} (@pxref{Repository}); this
 @c <en>section assumes that a repository is set up.
 Vamos apresentar o @sc{cvs} usando numa sessão de
-trabalho típica. A primeira coisa a saber é que
+trabalho típica.  A primeira coisa a saber é que
 @sc{cvs} guarda todos os arquivos em um
 @dfn{repository} centralizado (@pxref{Repositório});
 esta sessão assume que um repositório esteja ativo.
@@ -738,8 +738,8 @@ esta sessão assume que um repositório esteja ativo.
 @c <en>and the repository is set up so that there is a module
 @c <en>called @samp{tc}.
 Suponha que você esteja trabalhando num compilador
-simples. O fonte é um monte de arquivos C e um
-@file{Makefile}. O compilador é chamado @samp{tc}
+simples.  O fonte é um monte de arquivos C e um
+@file{Makefile}.  O compilador é chamado @samp{tc}
 (Trivial Compiler, ou Compilador trivial), e o repositório é feito de
 forma que exista um módulo chamado @samp{tc}.
 
@@ -773,7 +773,7 @@ forma que exista um módulo chamado @samp{tc}.
 @c <en>The first thing you must do is to get your own working copy of the
 @c <en>source for @samp{tc}.  For this, you use the @code{checkout} command:
 A primeira coisa a fazer é pegar sua própria cópia de
-trabalho dos fontes de @samp{tc}. Para isto, use o comando
+trabalho dos fontes de @samp{tc}.  Para isto, use o comando
 @code{checkout} (pegar emprestado):
 
 @example
@@ -796,7 +796,7 @@ CVS         Makefile    backend.c   driver.c    frontend.c  parser.c
 @c <en>@sc{cvs}.  Normally, you should not modify or remove
 @c <en>any of the files in it.
 O diretório @file{CVS} é usado internamente pelo
-@sc{cvs}. Normalmente, você não deve modificar ou
+@sc{cvs}.  Normalmente, você não deve modificar ou
 remover quaisquer arquivos dele.
 
 @c <en>You start your favorite editor, hack away at @file{backend.c}, and a couple
@@ -805,9 +805,9 @@ remover quaisquer arquivos dele.
 @c <en>you want to edit.  @xref{Multiple developers}, for an explanation.
 Você abre o seu editor favorito, trabalha no arquivo
 @file{backend.c}, e algumas horas depois você deixou o
-compilador mais otimizado. Uma observação para usuários
+compilador mais otimizado.  Uma observação para usuários
 de @sc{rcs} e @sc{sccs}: Não é necessário travar (lock)
-os arquivos que você quer editar. @xref{Múltiplos
+os arquivos que você quer editar.  @xref{Múltiplos
 desenvolvedores}, para uma explicação.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -827,7 +827,7 @@ desenvolvedores}, para uma explicação.
 @c <en>repository.
 Quando você se certificar que o compilador ainda é
 compilável você decide criar uma nova versão de
-@file{backend.c}. Tal ato vai botar o seu novo
+@file{backend.c}.  Tal ato vai botar o seu novo
 @file{backend.c} no repositório e torná-lo disponível
 para qualquer outra pessoa que esteja usando o mesmo
 repositório.
@@ -841,7 +841,7 @@ $ cvs commit backend.c
 @c <en>message.  You type in ``Added an optimization pass.'',
 @c <en>save the temporary file, and exit the editor.
 @sc{cvs} inicia um editor, para que você possa digitar
-uma messagem de log. Você digita ``Uma otimização adicionada.'',
+uma messagem de log.  Você digita ``Uma otimização adicionada.'',
 salva o arquivo temporário e sai do editor.
 
 @c <en>@cindex CVSEDITOR, environment variable
@@ -857,9 +857,9 @@ salva o arquivo temporário e sai do editor.
 @c <en>@code{vi} for unix or @code{notepad} for Windows
 @c <en>NT/95.
 A variável de ambiente @code{$CVSEDITOR} determina qual
-editor vai ser aberto. Se @code{$CVSEDITOR} não existe,
+editor vai ser aberto.  Se @code{$CVSEDITOR} não existe,
 e se a variável de ambiente @code{$EDITOR} existe, esta
-última é usada. Se nenhuma das duas @code{$CVSEDITOR} e
+última é usada.  Se nenhuma das duas @code{$CVSEDITOR} e
 @code{$EDITOR} existem então o padrão vai variar
 dependendo do sistema operacional, por exemplo,
 @code{vi} para unix ou @code{notepad} para Windows
@@ -874,10 +874,10 @@ NT/95.
 @c <en>@code{$VISUAL} is either unset or set to the same thing as
 @c <en>@code{$EDITOR}.
 Adicionalmente, @sc{cvs} busca pela variável de
-ambiente @code{$VISUAL}. Isto gera duas opiniões
+ambiente @code{$VISUAL}.  Isto gera duas opiniões
 divergentes, se este é um comportamento desejável ou se
 releases futuras do @sc{cvs} devem verificar
-@code{$VISUAL} ou ignorá-la. Você vai estar OK se não
+@code{$VISUAL} ou ignorá-la.  Você vai estar OK se não
 tiver a variável @code{$VISUAL} ou se ela for igual à
 @code{$EDITOR}.
 
@@ -900,16 +900,16 @@ tiver a variável @code{$VISUAL} ou se ela for igual à
 @c <en>and it will reset its stored timestamp so that the file
 @c <en>will not show up in future editor sessions.
 Quando o @sc{cvs} inicia o editor, ele inclui uma lista
-de arquivos que foram modificados. Para o @sc{cvs}
+de arquivos que foram modificados.  Para o @sc{cvs}
 cliente, esta lista é baseada na comparação da data de
 modificação do arquivo com a data de modificação que o
 arquivo tinha da última vez que foi pego ou
-atualizado. Entretanto, se a data de modificação de um
+atualizado.  Entretanto, se a data de modificação de um
 arquivo mudou mas seu conteúdo não, ele vai ser
-considerado modificado. A maneira mais fácil de lidar
+considerado modificado.  A maneira mais fácil de lidar
 com isto é desconsidarando---se você seguir efetivando,
 o @sc{cvs} vai notar que o conteúdo está intacto e vai
-tratar o arquivo como não-modificado. O próximo
+tratar o arquivo como não-modificado.  O próximo
 @code{update} vai dar a dica para o @sc{cvs} de que o
 arquivo está igual, e isto vai restaurar a data,
 fazendo com que o arquivo não apareça nas próximas
@@ -959,7 +959,7 @@ $ cvs commit -m "Uma otimização adicionada" backend.c
 @c <en>Before you turn to other tasks you decide to remove your working copy of
 @c <en>tc.  One acceptable way to do that is of course
 Antes de ir fazer outras tarefas, você decide remover
-sua cópia de trabalho de tc. Uma forma aceitável de
+sua cópia de trabalho de tc.  Uma forma aceitável de
 fazer isto é, obviamente:
 
 @example
@@ -984,9 +984,9 @@ Are you sure you want to release (and delete) directory `tc': n
 @c <en>committed.  If history logging is enabled it also makes a note in the
 @c <en>history file.  @xref{history file}.
 O comando @code{release} verifica se todas as suas
-modificações foram efetivadas. Se o registro
+modificações foram efetivadas.  Se o registro
 histórico (history log) está ativo ele também escreve uma
-observação no arquivo de histórico. @xref{arquivo
+observação no arquivo de histórico.  @xref{arquivo
 history (histórico)}.
 
 @c <en>When you use the @samp{-d} flag with @code{release}, it
@@ -1002,19 +1002,19 @@ ele também remove a sua cópia de trabalho local.
 @c <en>@xref{release output}, for a complete explanation of
 @c <en>all possible output from @code{release}.
 No exemplo acima, o comando @code{release} escreve
-poucas linhas de saída. @samp{? tc} significa que o
-arquivo @file{tc} é desconhecido pelo @sc{cvs}. Não há
+poucas linhas de saída.  @samp{? tc} significa que o
+arquivo @file{tc} é desconhecido pelo @sc{cvs}.  Não há
 nada com que se preocupar: @file{tc} é um compilador
 executável, e não deve ser guardado no
-repositório. @xref{cvsignore}, para ver como fazer para
-sumir com este aviso. @xref{release output}, para uma
+repositório.  @xref{cvsignore}, para ver como fazer para
+sumir com este aviso.  @xref{release output}, para uma
 explicação geral de todas as possíveis saídas do
 @code{release}.
 
 @c <en>@samp{M driver.c} is more serious.  It means that the
 @c <en>file @file{driver.c} has been modified since it was
 @c <en>checked out.
-@samp{M driver.c} é mais sério. Significa que o arquivo
+@samp{M driver.c} é mais sério.  Significa que o arquivo
 @file{driver.c} foi modificado desde quando foi pego.
 
 @c <en>The @code{release} command always finishes by telling
@@ -1045,7 +1045,7 @@ quando @code{release} pede uma confirmação.
 
 @c <en>You do not remember modifying @file{driver.c}, so you want to see what
 @c <en>has happened to that file.
-Você não lembra se modificou @file{driver.c}. Logo,
+Você não lembra se modificou @file{driver.c}.  Logo,
 você precisa ver o que aconteceu com este arquivo.
 
 @example
@@ -1059,9 +1059,9 @@ $ cvs diff driver.c
 @c <en>optimization pass.  You check it in, and release the module.
 Este comando roda o @code{diff} para comparar a versão
 de @file{driver.c} que você pegou com a da sua cópia de
-trabalho. Quando você vê a saída, você lembra de ter
+trabalho.  Quando você vê a saída, você lembra de ter
 adicionado uma opção de linha de comando que permite a
-otimização. Você devolve e lança (release) o módulo.
+otimização.  Você devolve e lança (release) o módulo.
 @c FIXME: we haven't yet defined the term "check in".
 
 @example
@@ -1116,15 +1116,15 @@ sob controle de versão.
 @c <en>subdirectory of the working directory, or vice versa;
 @c <en>they should be in separate locations.
 Normalmente, você nunca acessa qualquer dos arquivos do
-repositório diretamente. Ao invés disso, você usa os
+repositório diretamente.  Ao invés disso, você usa os
 comandos do @sc{cvs} para pegar emprestada a sua cópia
 dos arquivos num @dfn{diretório de trabalho}, e então
-trabalhar nesta cópia. Quando você termina um conjunto
-de mudanças, você as @dfn{efetiva} no repositório. O
+trabalhar nesta cópia.  Quando você termina um conjunto
+de mudanças, você as @dfn{efetiva} no repositório.  O
 repositório então passa a conter as mudanças que você
 fez, assim como gravar exatamente o que você fez,
 quando você fez e outras informações deste
-tipo. Observe que o repositório não é um subdiretório
+tipo.  Observe que o repositório não é um subdiretório
 do diretório de trabalho nem vice-versa; eles estão em
 locais diferentes.
 @c Need some example, e.g. repository
@@ -1146,16 +1146,16 @@ locais diferentes.
 @c <en>computer running @sc{cvs}.  For information on other
 @c <en>access methods, see @ref{Remote repositories}.
 @sc{cvs} pode acessar um repositório de várias
-formas. Ele pode estar no mesmo computador, ou num
+formas.  Ele pode estar no mesmo computador, ou num
 computador do outro lado da sala, ou do outro lado do
-mundo. Para distinguir as várias formas de acessar um
+mundo.  Para distinguir as várias formas de acessar um
 repositório o seu nome deve começar com um
-@dfn{método de acesso}. Por exemplo, o método de acesso
+@dfn{método de acesso}.  Por exemplo, o método de acesso
 @code{:local:} significa acessar um diretório que é um
-repositório. Logo, @code{:local:/usr/local/cvsroot}
+repositório.  Logo, @code{:local:/usr/local/cvsroot}
 significa que o repositório está em
 @file{/usr/local/cvsroot} no computador rodando
-@sc{cvs}. Para informações sobre outros métodos de
+@sc{cvs}.  Para informações sobre outros métodos de
 acesso, vá em @ref{Repositórios remotos}.
 
 @c Can se say this more concisely?  Like by passing
@@ -1172,12 +1172,12 @@ acesso, vá em @ref{Repositórios remotos}.
 @c <en>@file{c:\src\cvsroot}, then you must specify the access
 @c <en>method, as in @code{:local:c:/src/cvsroot}.
 Se o método de acesso é omitido e se o repositório
-começa com @samp{/}, então assume-se @code{:local:}. Se
+começa com @samp{/}, então assume-se @code{:local:}.  Se
 não começa com @samp{/} então ou @code{:ext:} ou
-@code{:server:} é assumido. Por exemplo, se você tem um
+@code{:server:} é assumido.  Por exemplo, se você tem um
 repositório local em @file{/usr/local/cvsroot}, você
 pode usar @code{/usr/local/cvsroot} ao invés de
-@code{:local:/usr/local/cvsroot}. Mas se (no Windows
+@code{:local:/usr/local/cvsroot}.  Mas se (no Windows
 NT, por exemplo) seu repositório local é
 @file{c:\src\cvsroot}, então você deve especificar o
 método de acesso, como em @code{:local:c:/src/cvsroot}.
@@ -1190,8 +1190,8 @@ método de acesso, como em @code{:local:c:/src/cvsroot}.
 @c <en>administrative files for @sc{cvs}.  The other directories contain the actual
 @c <en>user-defined modules.
 O repositório é separado em duas
-partes. @file{$CVSROOT/CVSROOT} contém arquivos
-administrativos do @sc{cvs}. Os outros diretórios
+partes.  @file{$CVSROOT/CVSROOT} contém arquivos
+administrativos do @sc{cvs}.  Os outros diretórios
 contém os módulos definidos pelo usuário.
 
 @menu
@@ -1229,7 +1229,7 @@ contém os módulos definidos pelo usuário.
 @c <en>repository on the command line explicitly, with the
 @c <en>@code{-d} (for "directory") option:
 Existem várias formas de dizer ao @sc{cvs} onde
-encontrar o repositório. Você pode dar o nome do
+encontrar o repositório.  Você pode dar o nome do
 repositório explicitamente na linha de comando, com a
 opção @code{-d} (de "diretório"):
 
@@ -1256,7 +1256,7 @@ cvs -d /usr/local/cvsroot checkout yoyodyne/tc
         Ou você pode ajustar a variável de ambiente
 @code{$CVSROOT} para um caminho absoluto para a raiz
 (root) do repositório, @file{/usr/local/cvsroot} neste
-exemplo. Para ajustar o @code{$CVSROOT}, usuário de
+exemplo.  Para ajustar o @code{$CVSROOT}, usuário de
 @code{csh} e @code{tcsh} devem ter esta linha no seu
 arquivo @file{.cshrc} ou @file{.tcshrc}:
 
@@ -1286,7 +1286,7 @@ export CVSROOT
 @c <en>(the information is recorded in the
 @c <en>@file{CVS/Root} file in the working copy).
         Um repositório especificado com @code{-d} se
-sobrepõe à variável de ambiente @code{$CVSROOT}. Uma
+sobrepõe à variável de ambiente @code{$CVSROOT}.  Uma
 vez que você tenha pego emprestada uma cópia de
 trabalho do repositório, ela vai se lembrar onde está o
 seu repositório (a informação é registrada no arquivo
@@ -1299,8 +1299,8 @@ seu repositório (a informação é registrada no arquivo
 @c <en>should be two ways of referring to the same repository.
 Tanto a opção @code{-d} quanto o arquivo
 @file{CVS/Root} sobreescrevem a variável de ambiente
-@code{$CVSROOT}. Se a opção @code{-d} é diferente do
-@file{CVS/Root}, a primeira é usada. Obviamente, para
+@code{$CVSROOT}.  Se a opção @code{-d} é diferente do
+@file{CVS/Root}, a primeira é usada.  Obviamente, para
 operações corretas, elas devem ser duas formas de
 referenciar o mesmo repositório.
 
@@ -1319,9 +1319,9 @@ referenciar o mesmo repositório.
 @c <en>accesses the repository via @sc{cvs} commands, such
 @c <en>changes need not be disruptive.
 Para a maioria das aplicações, não importa @emph{como}
-o @sc{cvs} guarda as informações no repositório. De
+o @sc{cvs} guarda as informações no repositório.  De
 fato, o formato mudou no passado, e provavelmente vai
-mudar no futuro. Já que em quase todo os casos o acesso
+mudar no futuro.  Já que em quase todo os casos o acesso
 ao repositório é feito via comandos do @sc{cvs}, tais
 mudanças não serão radicais.
 
@@ -1332,7 +1332,7 @@ mudanças não serão radicais.
 @c <en>the file permissions appropriate for the repository.
 Entretanto, em alguns casos pode ser necessário
 entender como o @sc{cvs} guarda os dados no
-repositório. Por exemplo, você pode precisar localizar
+repositório.  Por exemplo, você pode precisar localizar
 travas do @sc{cvs} (@pxref{Concorrência}) ou você pode
 precisar lidar com permissões de arquivos apropriadas
 para o repositório.
@@ -1381,7 +1381,7 @@ para o repositório.
 @c <en>directory.  For example, supposing the repository is in
 A estrutura geral do repositório é uma árvore de
 diretórios correspondendo aos diretórios no diretório
-de trabalho. Por exemplo, suponha que o repositório
+de trabalho.  Por exemplo, suponha que o repositório
 está em
 
 @example
@@ -1436,9 +1436,9 @@ apenas os diretórios):
 @c <en>appended to the end.  Here is what the repository for
 @c <en>the @file{yoyodyne/tc} directory might look like:
 Nos diretórios estão os @dfn{arquivos de histórico} para
-cada arquivo sob controle de versão. O nome do arquivo
+cada arquivo sob controle de versão.  O nome do arquivo
 de histórico é o nome do arquivo correspondente com um
-@samp{,v} no final. Aqui está como o repositório do
+@samp{,v} no final.  Aqui está como o repositório do
 diretório @file{yoyodyne/tc} deve se parecer:
 @c FIXME: Should also mention CVS (CVSREP)
 @c FIXME? Should we introduce Attic with an xref to
@@ -1494,14 +1494,14 @@ commit??? e o usuário que efetivou (commit) a
 @comment you might want to call it.  It is sometimes called a "commit message"
 @comment in this manual because it is entered into the log at commit time.
 @comment -DRP
-revisão. Os arquivos de histórico são conhecidos como
+revisão.  Os arquivos de histórico são conhecidos como
 @dfn{arquivos RCS} (RCS files), pois o primeiro
 programa a guardar arquivos neste formato foi o sistema
-de controle de versões conhecido como @sc{rcs}. Para
+de controle de versões conhecido como @sc{rcs}.  Para
 uma descrição completa do formato de arquivo, leia a
 página @code{man} @cite{rcsfile(5)}, distribuída com o
 @sc{rcs}, ou o arquivo @file{doc/RCSFILES} na
-distribuição dos fontes do @sc{cvs}. Este formato de
+distribuição dos fontes do @sc{cvs}.  Este formato de
 arquivo se tornou muito comum---muitos sistemas além do
 @sc{cvs} e do @sc{rcs} podem, pelo menos, importar
 arquivos de histórico neste formato.
@@ -1519,9 +1519,9 @@ arquivos de histórico neste formato.
 @c <en>are a subset of what @sc{rcs} accepts; for @sc{cvs}'s
 @c <en>rules see @ref{Tags}.
 Os arquivos @sc{rcs} usados no @sc{cvs} diferem em
-algumas poucas coisas do formato padrão. A maior
+algumas poucas coisas do formato padrão.  A maior
 diferença são os ramos mágicos; para mais informações
-veja em @ref{Números de ramos mágicos}. Além disso, no
+veja em @ref{Números de ramos mágicos}.  Além disso, no
 @sc{cvs} os nomes válidos de etiquetas (tags) é um subconjunto dos
 que são aceitos pelo @sc{rcs}; para regras do @sc{cvs},
 leia em @ref{Etiquetas}.
@@ -1560,14 +1560,14 @@ leia em @ref{Etiquetas}.
 @c <en>that of the current process.)
 Todos os arquivos @samp{,v} são criados
 somente-leitura, e você não deve mudar as permissões
-destes arquivos. Os diretórios dentro do repositório
+destes arquivos.  Os diretórios dentro do repositório
 devem dar permissão de escrita para as pessoas que tem
 permissão para modificar os arquivos em cada diretório.
 Isto normalmente significa que você deve criar um grupo
 do UNIX (veja em group(5)) consistindo nas pessoas que
 vão editar os arquivos num projeto, e ajustar o
 repositório tal que aquele grupo seja o dono do
-diretório. (Em alguns sistemas, você também vai
+diretório.  (Em alguns sistemas, você também vai
 precisar ajustar o bit set-group-ID-on-execution nos
 diretórios do repositório (veja em chmod(1)) de forma
 que arquivos e diretório criados recebam o ID de grupo
@@ -1589,7 +1589,7 @@ aos arquivos por diretório.
 @c <en>(@pxref{config}).
 Observe que os usuários devem ter direito de escrita
 para pegar arquivos emprestados, já que o @sc{cvs} tem
-que criar arquivos de trava (@pxref{Concorrência}). Você
+que criar arquivos de trava (@pxref{Concorrência}).  Você
 pode usar LockDir (diretório de trava) no CVSROOT/config
 para botar os arquivos de trava num lugar fora do
 repositório se você quer permitir acesso
@@ -1609,7 +1609,7 @@ somente-leitura a alguns diretórios (@pxref{config}).
 @c <en>updated when tags are used, as well as when they are
 @c <en>created).
 Observe também que os usuários devem ter permissão de
-escrita ao arquivo @file{CVSROOT/val-tags}. O @sc{cvs} usa
+escrita ao arquivo @file{CVSROOT/val-tags}.  O @sc{cvs} usa
 tal arquivo para ter controle sobre quais etiquetas
 (tags) são nomes de etiquetas válidos (é às vezes
 atualizado quando etiquetas são usadas ou criadas).
@@ -1618,7 +1618,7 @@ atualizado quando etiquetas são usadas ou criadas).
 @c <en>checked it in.  This has little significance; what
 @c <en>really matters is who owns the directories.
 Cada arquivo @sc{rcs} vai pertencer ao usuário que o
-devolveu por último. Isto tem pouco significado; o que
+devolveu por último.  Isto tem pouco significado; o que
 realmente importa é quem possui os diretórios.
 
 @c <en>@cindex CVSUMASK, environment variable
@@ -1643,10 +1643,10 @@ O @sc{cvs} tenta ajustar de forma razoável as permissões para novos
 diretórios que vão sendo adicionados na árvore, mas
 você vai ter que mudar as permissões manualmente quando
 um novo diretório deve ter permissões diferentes das do
-seu diretório pai. Se você ajusta a variável de
+seu diretório pai.  Se você ajusta a variável de
 ambiente @code{CVSUMASK} ela vai controlar as
 permissões que o @sc{cvs} usa na criação de diretórios
-e/ou arquivos no repositório. @code{CVSUMASK} não mexe
+e/ou arquivos no repositório.  @code{CVSUMASK} não mexe
 nas permissões do diretório de trabalho; tais arquivos
 têm as permissões que são típicas para novos arquivos,
 exceto que algumas vezes o @sc{cvs} cria os arquivos
@@ -1689,10 +1689,10 @@ somente-leitura (veja as seções em ???watches???,
 Observe que ao usar o @sc{cvs} cliente/servidor
 (@pxref{Repositórios remotos}), não há uma boa maneira
 de ajustar o @code{CVSUMASK}; o ajuste na máquina
-cliente não tem efeito. Se você está se conectando com
+cliente não tem efeito.  Se você está se conectando com
 @code{rsh}, você pode ajustar o @code{CVSUMASK} em
 @file{.bashrc} ou @file{.cshrc}, como descrito na
-documentação de seu sistema operacional. Este
+documentação de seu sistema operacional.  Este
 comportamento pode mudar em futuras versões do
 @sc{cvs}; Não se basear na configuração do @code{CVSUMASK}
 no cliente não afeta nada.
@@ -1758,20 +1758,20 @@ nos diretórios abaixo dele na árvore; veja em
 alguns sistemas operacionais têm a habilidade de
 permitir que um programa execute com a habilidade de
 executar certas operações que quem chamou o programa
-não não tem. Por exemplo, os set user ID (setuid) ou
+não não tem.  Por exemplo, os set user ID (setuid) ou
 set group ID (setgid) do unix ou a caracteristica de
-installed image do VMS. @sc{cvs} não foi escrito para
+installed image do VMS.  @sc{cvs} não foi escrito para
 usar tais habilidades, logo, tentar instalar o @sc{cvs}
 nesta forma vai gerar proteção apenas contra erros
 acidentais; qualquer um que esteja tentando driblar a
 segurança vai ser capaz de fazê-lo,
 e dependendo de como você configurou, o invasor pode ganhar
-acesso até a mais do que apenas o @sc{cvs}. Você pode
-estar considerando o uso do pserver. Ele compartilha
+acesso até a mais do que apenas o @sc{cvs}.  Você pode
+estar considerando o uso do pserver.  Ele compartilha
 alguns dos mesmos atributos, em termos de possivelmente
 fornecer uma falsa sensação de segurança ou de abrir
 buracos de segurança ainda maiores dos que os que você
-quer fechar. Portanto leia a documentação de segurança
+quer fechar.  Portanto leia a documentação de segurança
 com pserver cuidadosamente se você está pensando nesta
 opção (@ref{Segurança com autenticação por senha}).
 
@@ -1794,7 +1794,7 @@ opção (@ref{Segurança com autenticação por senha}).
 Algumas questões sobre permissões de arquivos são
 específicas ao sistema operacional Windows (Windows 95,
 Windows NT e presumivelmente futuros sistemas
-operacionais nesta família. Algumas coisas abaixo se
+operacionais nesta família.  Algumas coisas abaixo se
 aplicam ao OS/2 mas não estou bem certo).
 
 @c <en>If you are using local @sc{cvs} and the repository is on a
@@ -1811,8 +1811,8 @@ aplicam ao OS/2 mas não estou bem certo).
 Se você está usando um @sc{cvs} local e o repositório
 está num sistema de arquivos em rede de um servidor
 Samba SMB, algumas pessoas relataram problemas com
-permissões. Habilitando WRITE=YES na configuração do
-samba conserta/resolve. ???Disclaimer:??? Eu não
+permissões.  Habilitando WRITE=YES na configuração do
+samba conserta/resolve.  ???Disclaimer:??? Eu não
 @comment "Webster's Revised Unabridged Dictionary (1913)"
 @comment Disclaimer Dis*claim"er, n.
 @comment    1. One who disclaims, disowns, or renounces.
@@ -1828,7 +1828,7 @@ samba conserta/resolve. ???Disclaimer:??? Eu não
 @comment -DRP
 investiguei o suficiente as implicações de habilitar
 esta opção, nem sei se há algo que o @sc{cvs} poderia
-fazer de diferente para evitar este problema. Se você
+fazer de diferente para evitar este problema.  Se você
 souber de algo, por favor nos ponha a par como descrito
 em @ref{Paus}.
 
@@ -1846,7 +1846,7 @@ em @ref{Paus}.
 @c <en>directory @file{yoyodyne/tc}, then the file normally
 @c <en>would be in
 Você deve ter notado que às vezes o @sc{cvs} guarda um
-arquivo @sc{rcs} no @code{Attic}. Por exemplo, se o
+arquivo @sc{rcs} no @code{Attic}.  Por exemplo, se o
 @sc{cvsroot} é @file{/usr/local/cvsroot} e nós estamos
 falando sobre o arquivo @file{backend.c} no diretório
 @file{yoyodyne/tc}, então o arquivo normalmente deve
@@ -1878,9 +1878,9 @@ mas se ele vai para o attic, ele deve estar em
 @c <en>add a file on a branch, it will have a trunk revision
 @c <en>in @code{dead} state, and a branch revision in a
 @c <en>non-@code{dead} state.
-ao invés. Não importa ao usuário onde, dentro do Attic,
+ao invés.  Não importa ao usuário onde, dentro do Attic,
 fica o arquivo; @sc{cvs} mantém controle disto e busca
-no Attic quando é preciso. Mas caso você queira saber,
+no Attic quando é preciso.  Mas caso você queira saber,
 a regra é que o arquivo RCS é guardado no attic se e
 somente se a ???head revision??? no tronco está no
 @comment "Head", at the front, etc.  In this case, refers to the most recent
@@ -1888,9 +1888,9 @@ somente se a ???head revision??? no tronco está no
 @comment In English, the "head of a line" is the person in front and the "tail"
 @comment the person in back.
 @comment -DRP
-estado @code{morto} (dead). Um estado @code{morto} significa
+estado @code{morto} (dead).  Um estado @code{morto} significa
 que o arquivo foi removido, ou nunca foi adicionado,
-naquela revisão. Por exemplo, se você adiciona um
+naquela revisão.  Por exemplo, se você adiciona um
 arquivo num ramo, ele vai ter uma revisão de
 tronco num estado @code{morto} e uma revisão de
 ramo num estado não-@code{morto}.
@@ -1914,7 +1914,7 @@ ramo num estado não-@code{morto}.
 @c <en>files.
 O diretório @file{CVS} em cada diretório do repositório
 contém informações tais como atributos de arquivos (num
-arquivo chamado @file{CVS/fileattr}. No futuro novos
+arquivo chamado @file{CVS/fileattr}.  No futuro novos
 arquivos ficarão neste diretório, logo, implementações
 devem ignorar em silêncio arquivos adicionais.
 
@@ -1954,9 +1954,9 @@ padrão para serem usados em novos arquivos adicionados.
 @c <en>will delete them any time it writes file attributes.
 @c <en>@sc{cvs} 1.10 and later will preserve them.
 Outros @var{ent-type} são reservados para futuras
-expansões. @sc{cvs} 1.9 e anteriores vão deletá-los a
+expansões.  @sc{cvs} 1.9 e anteriores vão deletá-los a
 toda hora que ele escrever atributos de
-arquivos. @sc{cvs} 1.10 e posteriores vão preservá-los.
+arquivos.  @sc{cvs} 1.10 e posteriores vão preservá-los.
 
 @c <en>Note that the order of the lines is not significant;
 @c <en>a program writing the fileattr file may
@@ -1972,7 +1972,7 @@ rearranjá-las de acordo com sua própria conveniência.
 @c <en>implementations are encouraged to allow it.
 Não existe atualmente uma forma de tratar tabulações ou quebras de linha
 como caractere no nome do arquivo, @samp{=} em @var{attrname},
-@samp{;} em @var{attrval}, etc. Obs.: algumas
+@samp{;} em @var{attrval}, etc.  Obs.: algumas
 implementações também não manipulam o caractere NUL em
 nenhum dos campos, mas encorajamos implementações que
 permitam isto.
@@ -2006,7 +2006,7 @@ somente-leitura.
 @c <en>where @var{watcher} is a username, and @var{type}
 @c <en>is zero or more of edit,unedit,commit separated by
 @c <en>@samp{+} (that is, nothing if none; there is no "none" or "all" keyword).
-Usuários com ???watches??? para este arquivo. O valor é
+Usuários com ???watches??? para este arquivo.  O valor é
 @comment As "watches", before.
 @comment -DRP
 @var{watcher} > @var{type} @{ , @var{watcher} > @var{type} @}
@@ -2023,7 +2023,7 @@ palavras-chave para "nenhum" ou "todos").
 @c <en>@var{time} is when the @code{cvs edit} command (or
 @c <en>equivalent) happened,
 @c <en>and @var{hostname} and @var{pathname} are for the working directory.
-Usuários editando este arquivo. O valor é
+Usuários editando este arquivo.  O valor é
 @var{editor} > @var{val} @{ , @var{editor} > @var{val} @}
 onde @var{editor} é um username, e @var{val} é
 @var{time}+@var{hostname}+@var{pathname}, onde
@@ -2056,16 +2056,16 @@ D _watched=
 @c <en>@samp{D}, @samp{Ffile1}, and @samp{Ffile2}, but in fact
 @c <en>there must be a single tab character there and no spaces.
 significa que o arquivo @file{file1} deve ser pego como
-somente-leitura. Além disso, joe está ???watching???
-edições e mary está ???watching??? ???commits???. O
+somente-leitura.  Além disso, joe está ???watching???
+edições e mary está ???watching??? ???commits???.  O
 @comment "Watching", as "watches", before.
 @comment "Commits" are checkins, i.e. via the `cvs commit' command.
 @comment -DRP
 arquivo @file{file2} deve ser pego somente-leitura; sue
 comecou a edita-lo em 8 Jan 1975 no diretorio
 @file{/home/sue/cvs} na maquina
-@code{workstn1}. Futuros arquivos que forem adicionados
-devem ser pegos somente-leitura. Para representar este
+@code{workstn1}.  Futuros arquivos que forem adicionados
+devem ser pegos somente-leitura.  Para representar este
 exemplo aqui, nós mostramos um espaco depois de
 @samp{D}, @samp{Ffile1}, e @samp{Ffile2}, mas de fato
 existe um caractere de tab e nenhum espaco.
@@ -2096,10 +2096,10 @@ existe um caractere de tab e nenhum espaco.
 @c <en>operating systems or databases.
 Para uma introdução às travas (locks) no @sc{cvs}
 focando no comportamento visível ao usuário, veja em
-@ref{Concorrência}. A seção seguinte foi feita para
+@ref{Concorrência}.  A seção seguinte foi feita para
 para pessoas que escrevem ferramentas as quais precisam
 acessar um repositório @sc{cvs} sem interferir com
-outras ferramentas acessando o mesmo repositório. Se
+outras ferramentas acessando o mesmo repositório.  Se
 você se sentir confuso com os conceitos descritos aqui,
 como @dfn{read lock}, @dfn{write lock} e
 @dfn{deadlock}, você deve consultar a literatura de
@@ -2119,12 +2119,12 @@ sistemas operacionais e bancos de dados.
 @c <en>lock.  That is, one must obtain this lock first before
 @c <en>creating any of the other locks.
 Qualquer arquivo no repositório com um nome começando
-com @file{#cvs.rfl.} é uma trava de leitura. Qualquer
+com @file{#cvs.rfl.} é uma trava de leitura.  Qualquer
 arquivo no repositório com um nome comçando com
 @file{#cvs.pfl} é uma trava de leitura
 ???promotable???.  Qualquer arquivo no repositório com
 um nome começando com
-@file{#cvs.wfl} é uma trava de escrita.  versões antigas
+@file{#cvs.wfl} é uma trava de escrita.  Versões antigas
 do @sc{cvs} (antes do @sc{cvs} 1.5) também criavam
 arquivos com nomes começando com @file{#cvs.tfl}, mas
 estes não são discutidos aqui.
@@ -2159,7 +2159,7 @@ um arquivo cujo nome seja @file{#cvs.rfl.} seguido pela
 informação de sua escolha (por exemplo, nome de host e
 nmero de identificaçao de processo).  Então remova o
 diretório @file{#cvs.lock} para ativar a trava
-mestra. Então começe a ler o repositório.  Quando você
+mestra.  Então começe a ler o repositório.  Quando você
 terminar, remova o arquivo @file{#cvs.rfl} para
 liberar a trava de leitura.
 
@@ -2244,7 +2244,7 @@ number??).  Remove your @file{#cvs.pfl} file if present.  Hang on to the
 @file{#cvs.lock} lock.  Escreva no repositório.  Quando
 tiver terminado, primeiro remova o arquivo
 @file{#cvs.wfl} e então o diretório
-@file{#cvs.lock}. Observe que ao contrário do arquivo
+@file{#cvs.lock}.  Observe que ao contrário do arquivo
 @file{#cvs.rfl}, o  arquivo @file{#cvs.wfl} é apenas
 informativo; ele não tem efeito na operação de trava
 além do que é feito pelo ato de manter a trava
@@ -2289,9 +2289,9 @@ para esperar e tentar novamente, para evitar ???deadlocks???).
 @c <en>further discussion/rationale.
 Observe também que o @sc{cvs} espera travas de escrita
 para controlar o acesso a arquivos @file{foo,v}
-individuais. O @sc{rcs} tem um esquema onde o arquivo
+individuais.  O @sc{rcs} tem um esquema onde o arquivo
 @file{,foo,} funciona como uma trava, mas o @sc{cvs}
-não implementa isso. Portanto, fazer uma trava de escrita
+não implementa isso.  Portanto, fazer uma trava de escrita
 no @sc{cvs} é recomendado.  Veja os comentários no
 rcs_internal_lockfile no código fonte do @sc{cvs} para
 mais discussões/explicações.
@@ -2427,7 +2427,7 @@ informação e pode-se acessá-la normalmente via comandos
 @sc{cvs}.  Mas em alguns casos pode ser útil dar uma
 olhada, e outros programas, como a interface de usuário
 gráfica @code{jCVS} ou o pacote para emacs @code{VC},
-precisarem ver o que tem lá. Tais programas devem
+precisarem ver o que tem lá.  Tais programas devem
 seguir as recomendações nesta seção se eles querem
 interagir com outros programas que usam estes arquivos,
 inclusive versões futuras dos programas mencinados logo
@@ -2439,7 +2439,7 @@ acima e o  cliente em linha-de-comando do @sc{cvs}.
 @c <en>which are not documented here, to allow for future
 @c <en>expansion.
 O diretório @file{CVS} contém vários
-arquivos. Programas que estão lendo este diretório
+arquivos.  Programas que estão lendo este diretório
 devem ignorar em silêncio arquivos que encontrem no
 diretório mas que não estejam documentados aqui, para
 permitir expansões futuras.
@@ -2455,7 +2455,7 @@ Os arquivos são guardados de acordo com a convenção de
 arquivo de texto do sistema em questão.  Isto significa
 que diretórios de trabalho não são portáveis entre
 sistemas com diferentes convenções para armazenar
-arquivos de texto. Isto é de propósito, baseado na
+arquivos de texto.  Isto é de propósito, baseado na
 teoria de que os arquivos sendo gerenciados pelo
 @sc{cvs} provavelmente também não seriam portáveis
 entre tais sistemas.
@@ -2488,7 +2488,7 @@ ser um caminho absoluto ou relativo; @sc{cvs} adquiriu
 a habilidade de ler ambos os formatos desde a versão
 1.3.  O caminho é relativo à raiz (root), e é a
 abordagem mais racional, mas o caminho absoluto é
-mais comum e ambos devem ser aceitos. Por exemplo,
+mais comum e ambos devem ser aceitos.  Por exemplo,
 depois do comando
 
 @example
@@ -2543,7 +2543,7 @@ deve conter @file{CVSROOT/Emptydir}.
 @c <en>reading the file should silently skip that line, to
 @c <en>allow for future expansion.
 Este arquivo relaciona os arquivos e diretórios no
-diretório de trabalho. O primeiro caractere de cada
+diretório de trabalho.  O primeiro caractere de cada
 linha indica de que tipo é a linha.  Se  caractere não
 for reconhecido, os programas lendo o arquivo devem
 pular de linha em silêncio, para permitir futuras expansões.
@@ -2610,7 +2610,7 @@ para indicar que o arquivo deve ser sempre considerado
 como modificado.  Este não é um caso especial; para ver
 se um arquivo é modificado, um programa pode pegar o
 timestamp do arquivo e simplesmente criar uma string e
-comparar com @var{timestamp}. Se existe um conflito,
+comparar com @var{timestamp}.  Se existe um conflito,
 @var{conflict} pode ser ajustada para o tempo de
 modificação do arquivo depois do arquivo ter sido
 escrito com marcações de conflito (@pxref{Exemplo de conflitos}).
@@ -2640,11 +2640,11 @@ O fuso horário do timestamp no CVS/Entries (local ou
 universal) deve ser igual ao que o sistema
 operacional guarda para o timestamp do próprio arquivo.
 Por exemplo, no Unix o timestamp do arquivo está em
-tempo universal (universal time - UT). Logo, o
+tempo universal (universal time - UT).  Logo, o
 timestamp em CVS/Entries deve estar assim também.  No
 @sc{vms}, o timestamp do arquivo está em hora
 local, logo, o @sc{cvs} no @sc{vms} deve usar hora
-local. Esta regra é para que arquivos não pareçam estar
+local.  Esta regra é para que arquivos não pareçam estar
 modificados simplesmente por que o fuso horário mudou
 (por exemplo, saindo ou entrando no horário de verão).
 @c See comments and calls to gmtime() and friends in
@@ -2664,7 +2664,7 @@ sozinho em uma linha indica que o programa
 que escreveu o arquivo @file{Entries} registra
 subdiretórios (portanto, se existe tal linha e nenhuma
 outra linha começando com @samp{D}, conclui-se que não
-há subdiretórios). Caso contrário, a linha vai se
+há subdiretórios).  Caso contrário, a linha vai se
 parecer com:
 
 @example
@@ -2721,13 +2721,13 @@ atualizar a informação sem ter que reescrever todo o
 arquivo @file{Entries}, incluindo a habilidade de
 preservar a informação mesmo se o programa que estava
 escrevendo o @file{Entries} e o @file{Entries.Log}
-aborta abruptamente. Programas que estão lendo o
+aborta abruptamente.  Programas que estão lendo o
 arquivo @file{Entries} devem também verificar pelo
 @file{Entries.Log}.  Se este último existe, eles devem
 ler o @file{Entries} e então aplicar as mudanças
 mencionadas no @file{Entries.Log}.  Depois de aplicar
 as mudanças, a prática recomendada é reescrever o
-@file{Entries} e depois apagar o @file{Entries.Log}. O
+@file{Entries} e depois apagar o @file{Entries.Log}.  O
 formato de uma linha no @file{Entries.Log} é um comando
 de um caractere seguido de um espaço seguido por uma
 linha no formato especificado para uma linha no
@@ -2815,7 +2815,7 @@ remover @file{Entries.Static}.
 @c <en>individual files.  For general information on sticky
 @c <en>tags and dates, see @ref{Sticky tags}.
 Este arquivo contém as etiquetas (tags) ou datas
-adesivas por diretório. O primeiro caractere é @samp{T}
+adesivas por diretório.  O primeiro caractere é @samp{T}
 para uma etiqueta de ramo, @samp{N} para uma etiqueta
 que não é de ramo, ou @samp{D} para uma data, ou outro
 caractere que quer dizer que o arquivo deve ser
@@ -2880,7 +2880,7 @@ possível), renomeie-o para @file{Notify}.
 @c <en>server.
 Se os ???watches??? estão em uso, então um comando
 @code{edit} guarda a cópia original do arquivo no
-diretório @file{Base}. Isto permite que o comando
+diretório @file{Base}.  Isto permite que o comando
 @code{unedit} opere mesmo se estiver sem comunicação
 com o servidor.
 
@@ -2968,7 +2968,7 @@ usado apenas pelo cliente; o ???non-client/server???
 @c <en>@file{modules} file is properly set up.
 O diretório @file{$CVSROOT/CVSROOT} contém alguns
 @dfn{Arquivos administrativos}.  @xref{Arquivos
-administrativos}, para uma descrição completa. Você
+administrativos}, para uma descrição completa.  Você
 pode usar o @sc{cvs} sem nenhum destes arquivos, mas
 alguns comandos funcionam melhor quando pelo menos o
 arquivo @file{modules} está bem configurado.
@@ -3075,7 +3075,7 @@ impossível ???commit??? novas revisões.
 @c <en>to check out the working directory
 @c <en>(@pxref{Specifying a repository}).
 Em algumas situações é uma boa idéia ter mais de um
-repositório. Por exemplo, se você tem duas equipes de
+repositório.  Por exemplo, se você tem duas equipes de
 desenvolvimento que trabalham em projetos separados sem
 compartilhar nenhum código.  Tudo que você tem que
 fazer para ter vários repositórios é especificar o
@@ -3120,7 +3120,7 @@ cvs update
 @c <en>contact server2, to update the dir1/sdir subdirectory,
 @c <en>and server1, to update everything else.
 Os comandos @code{cvs co} acima preparam o diretório de
-trabalho. Depois de feitos, o comando @code{cvs update}
+trabalho.  Depois de feitos, o comando @code{cvs update}
 vai contactar o server2, para atualizar o subdiretório
 dir1/sdir e o server1, para atualizar o resto.
 
@@ -3148,7 +3148,7 @@ dir1/sdir e o server1, para atualizar o resto.
 Para preparar um repositório do @sc{cvs}, escolha
 primeiramente a máquina e o disco onde você deseja
 armazenar o histórico de revisões dos fontes.
-requisitos de CPU e memória são modestos. Portanto,
+requisitos de CPU e memória são modestos.  Portanto,
 muitas máquinas serão adequadas.  Para detalhes, veja
 em @ref{Requisitos do servidor}.
 @c Possible that we should be providing a quick rule of
@@ -3250,7 +3250,7 @@ history (histórico)}.
 Não há nada particularmente mágico sobre os arquivos no
 repositório; Para a maior parte deles é possível fazer
 backup da mesma forma que com qualquer
-arquivo. Entretanto, existem alguns fatos a considerar.
+arquivo.  Entretanto, existem alguns fatos a considerar.
 
 @c <en>@cindex Locks, cvs, and backups
 @cindex Travas, cvs e backups
@@ -3281,8 +3281,8 @@ algum mecanismo similar.  Os detalhes vão depender do
 seu sistema operacional e de como você configurou o seu
 @sc{cvs}.  Para travar o @sc{cvs}, você deve criar
 travas @file{#cvs.rfl} em cada diretório do
-repositório. Veja em @ref{Concorrência}, para saber
-mais sobre travas no @sc{cvs}. ???Having said all
+repositório.  Veja em @ref{Concorrência}, para saber
+mais sobre travas no @sc{cvs}.  ???Having said all
 this???,
 @c from-translator-to-reviewer can I substitute for
 @c "nevertheless"?
@@ -3528,10 +3528,10 @@ quantidade de atividade.
 @c <en>consumption should be small by comparison (if you find
 @c <en>that is not the case, let us know, as described in
 @c <en>@ref{BUGS}, so we can update this documentation).
-A resposta real, obviamente, é mais complicada. Estimar
+A resposta real, obviamente, é mais complicada.  Estimar
 as áreas conhecidas de grande consumo de memória deve
 ser suficiente para estimar os requisitos de
-memória. Existem duas destas tais áreas documentadas
+memória.  Existem duas destas tais áreas documentadas
 aqui; Outros consumos de memória devem ser pequenos
 relativamente (se você notar que este não é o caso, nos
 faça saber, como descrito em @ref{Paus}, assim
@@ -3659,7 +3659,7 @@ veja em @ref{Criando um repositório}.
 O @sc{cvs} usa o protocolo @samp{rsh} para realizar
 estas operações, logo, a máquina do usuário remoto tem
 que ter um arquivo @file{.rhosts} que dê acesso para o
-usuário local. Observe que o programa que o @sc{cvs}
+usuário local.  Observe que o programa que o @sc{cvs}
 usa para este objetivo deve ser especificado usando a
 opção @file{--with-rsh} para configurar.
 
@@ -3755,7 +3755,7 @@ iniciar um daemon (serviço) servidor de @sc{cvs}.
 Existem dois métodos de acesso que você pode usar no
 @code{CVSROOT} para rsh.  @code{:server:} especifica um
 cliente rsh interno, que é suportado apenas por
-???some @sc{cvs} ports???. @code{:ext:} especifica um
+???some @sc{cvs} ports???.  @code{:ext:} especifica um
 programa rsh externo.  Por padrão é o @code{rsh} (a
 menos que se especifique o contrário pela opção
 @file{--with-rsh}) mas você pode ajustar a variável de
@@ -3960,7 +3960,7 @@ e ponha @code{cvspserver} no lugar de @code{2401} no @file{inetd.conf}.
 @c <en>the procedure is slightly different.
 @c <en>Create a file called @file{/etc/xinetd.d/cvspserver} containing the following:
 Se seu sistema usa @code{xinetd} no lugar de @code{inetd},
-o procedimento é um pouco diferente. Crie um arquivo
+o procedimento é um pouco diferente.  Crie um arquivo
 chamado @file{/etc/xinetd.d/cvspserver} contendo o seguinte:
 
 @example
@@ -4180,7 +4180,7 @@ Entretanto, o dois pontos antes do nome de usuário do
 @c <en>disabled by setting @code{SystemAuth=no} in the
 @c <en>@sc{cvs} @file{config} file, @pxref{config}).
 O @sc{cvs} também pode recorrer à autenticação do
-sistema. Quando autenticando uma senha, o servidor
+sistema.  Quando autenticando uma senha, o servidor
 primeiro procura pelo usuário no arquivo
 @file{$CVSROOT/CVSROOT/passwd}.  Se ele encontra o
 usuário, ele vai usar aquela entrada para autenticar
@@ -4212,7 +4212,7 @@ Modules) e seu servidor do @sc{cvs} executável foi
 configurado para usar PAM em tempo de compilação
 (usando @code{./configure --enable-pam} - veja no
 arquivo INSTALL para saber mais).  Neste caso, PAM é
-que vai autenticar. Isto significa que o @sc{cvs} pode
+que vai autenticar.  Isto significa que o @sc{cvs} pode
 ser configurado para usar qualquer fonte de
 autenticação por senha que PAM possa ser configurada
 para usar (as possibilidades incluem senha simples de
@@ -4230,7 +4230,7 @@ Observe que PAM é uma funcionalidade experimental no
 @sc{cvs} e feedback é encorajado.  Por favor, mande
 e-mail para uma das listas do @sc{cvs}
 (@code{info-cvs@@gnu.org} ou @code{bug-cvs@@gnu.org})
-se você usa o suporte a PAM do @sc{cvs}. As listas são
+se você usa o suporte a PAM do @sc{cvs}.  As listas são
 em inglês.
 
 @c <en>@strong{WARNING: Using PAM gives the system administrator much more 
@@ -4239,7 +4239,7 @@ em inglês.
 @strong{ATENÇÃO: Usar PAM dá ao administrador do
 sistema muito mais flexibilidade sobre como os usuários
 do @sc{cvs} são autenticados mas não dá mais segurança
-que outros métodos. Veja abaixo mais detalhes.} 
+que outros métodos.  Veja abaixo mais detalhes.} 
 
 @c <en>CVS needs an "auth" and "account" module in the 
 @c <en>PAM configuration file. A typical PAM configuration 
@@ -4247,7 +4247,7 @@ que outros métodos. Veja abaixo mais detalhes.}
 @c <en>in @file{/etc/pam.conf} to emulate the standard @sc{cvs} 
 @c <en>system @file{/etc/passwd} authentication:
 CVS precisa de um módulo "auth" e "account" no arquivo
-de configuração PAM. Uma configuração PAM típica deve
+de configuração PAM.  Uma configuração PAM típica deve
 portanto ter as seguintes linhas no
 @file{/etc/pam.conf} para simular a autenticação
 @file{/etc/passwd} do sistema @sc{cvs} padrão:
@@ -4274,7 +4274,7 @@ Alguns sistemas necessitam de um caminho completo para
 o módulo de forma que @file{pam_unix.so} (Linux) vai se
 tornar algo do tipo
 @file{/usr/lib/security/$ISA/pam_unix.so.1} (Sun
-Solaris). Veja o subdiretório @file{contrib/pam} da
+Solaris).  Veja o subdiretório @file{contrib/pam} da
 distribuição em código fonte do @sc{cvs} para mais
 exemplos de configuração.
 
@@ -4291,7 +4291,7 @@ O nome de serviço PAM dado abaixo como "cvs" é apenas o
 nome do serviço na configuração padrão e pode ser
 mudado usando
 @code{./configure --with-hardcoded-pam-service-name=<pam-service-name>}
-antes de compilar. ??? @sc{cvs} can also be configured to use whatever
+antes de compilar.  ??? @sc{cvs} can also be configured to use whatever
 name it is invoked as as its PAM service name using
 @code{./configure
 --without-hardcoded-pam-service-name}???, mas esta
@@ -4313,7 +4313,7 @@ do sistema pode ser um risco de segurança: as operações
 do @sc{cvs} deveram ser autenticadas com a senha do
 usuário regular, e a senha vai passar pela rede em
 texto plano.  Veja em @ref{Segurança com autenticação por senha}
-para saber mais. Isto pode ser um problema a mais com
+para saber mais.  Isto pode ser um problema a mais com
 autenticação PAM por que é provável que a fonte do
 sistema de senhas é algum serviço de autenticação
 central como o LDAP, que é usado para autenticar outros
@@ -4350,7 +4350,7 @@ hand-crafted web page or set-uid program to update the file, or the
 update needs to be done by submitting a request to an administrator to
 perform the duty by hand???.  No primeiro caso, ter que
 lembrar de uma senha a parte periodicamente pode ser
-difícil. No segundo caso, a natureza manual da mudança
+difícil.  No segundo caso, a natureza manual da mudança
 vai significar que a senha não vai ser mudada até que
 seja absolutamente necessário.
 
@@ -4444,7 +4444,7 @@ cvs checkout someproj
 Entretanto, a menos que você esteja conectado a um
 repositório de acesso público (i.e., um daqueles que o
 usuário não precisa de senha), você vai precisar
-fornecer uma senha ou @dfn{se logar} antes. Ao se
+fornecer uma senha ou @dfn{se logar} antes.  Ao se
 logar, a sua senha é comparada com a do repositório e
 guardada num arquivo.  Isto é feito com o comando
 @code{login}, que vai pedir a sua senha interativamente
@@ -4472,7 +4472,7 @@ cvs -d :pserver:bach:p4ss30rd@@faun.example.org:/usr/local/cvsroot login
 @c <en>complaining that the password was incorrect, and
 @c <en>nothing will be recorded.)
 Depois de fornecer a senha, o @sc{cvs} a verifica no
-servidor.  Se a verificação procede, então esta
+servidor.   Se a verificação procede, então esta
 combinação de usuário, máquina, repositório e senha é
 gravada permanentemente de forma que futuras transações
 com este repositório não vão requerer a execução de
@@ -4507,7 +4507,7 @@ intenções).
 @c <en>password for transmission to the server.
 @cindex CVS_PASSFILE, variável de ambiente
 Você pode  mudar o local padrão deste arquivo ajustando
-a variável de ambiente @code{CVS_PASSFILE}. Se você
+a variável de ambiente @code{CVS_PASSFILE}.  Se você
 usar esta variável, certifique-se de fazer isto
 @emph{antes} de rodar @code{cvs login}.  Se você fizer
 isto depois de rodar o @code{cvs login}, então mais
@@ -4686,7 +4686,7 @@ usuários).  Se você quer segurança real, use Kerberos.
 @c <en>@sc{cvs} connect via a direct @sc{tcp} connection,
 @c <en>authenticating with GSSAPI.
 GSSAPI é uma interface genérica para sistemas de
-segurança em rede como o Kerberos 5. Se você tem uma
+segurança em rede como o Kerberos 5.  Se você tem uma
 biblioteca GSSAPI funcionando, você pode ter seu
 @sc{cvs} conectado via uma conexão @sc{tcp} direta, se
 autenticando com GSSAPI.
@@ -4707,7 +4707,7 @@ também pode configurar isto com opção @file{--with-gssapi}.
 @c <en>You must use the @code{-a} global option to request
 @c <en>stream authentication.
 A conexão é autenticada usando GSSAPI, mas o fluxo de
-mensagem @emph{não é} autenticado por padrão. Você deve
+mensagem @emph{não é} autenticado por padrão.  Você deve
 usar a opção global @code{-a} para pedir autenticação
 de fluxo.
 
@@ -4782,7 +4782,7 @@ cvs -d :gserver:faun.example.org:/usr/local/cvsroot checkout foo
 @c <en>authenticating with kerberos.
 A forma mais fácil de usar kerberos é usar o @code{rsh}
 kerberos, como descrito em @ref{Se conectando via
-rsh}. A principal desvantagem de usar rsh é que todos
+rsh}.  A principal desvantagem de usar rsh é que todos
 os dados precisam passar por outros programas, o que é
 mais lento.  Portanto, se você tem kerberos instalado,
 você pode se conectar via conexão @sc{tcp} direta,
@@ -4873,7 +4873,7 @@ conexão via rsh; esta versão não vai fazer isso.
 @c <en>@sc{cvs}.
 Este método de acesso permite a você conectar a um
 repositório no seu disco local via um protocolo
-remoto. Em outras palavras, ele faz praticamente a
+remoto.  Em outras palavras, ele faz praticamente a
 mesma coisa que @code{:local:}, mas várias peduliaridades, paus
 e coisas do gênero são os mesmos do @sc{cvs} remoto ao
 invés do @sc{cvs} local.
@@ -4891,7 +4891,7 @@ Para trabalhar no dia-a-dia você vai preferir ou o
 @code{:local:} ou o @code{:fork:}, dependendo de suas
 preferências.  É claro que @code{:fork:} é bastante
 útil em testes ou depuração do @code{cvs} e o protocolo
-remoto. Especificamente, nós evitamos todas as
+remoto.  Especificamente, nós evitamos todas as
 configurações/ajustes relacionados a redes, sessões
 expirando e autenticação inerentes de métodos de acesso
 remoto mas ainda assim criamos uma conexão que usa o
@@ -5196,7 +5196,7 @@ O que fazer depende da situação em que você está.
 @c <en>The first step is to create the files inside the repository.  This can
 @c <en>be done in a couple of different ways.
 O primeiro passo é criar os arquivos dentro do
-repositório. Isto pode ser feito de algumas maneiras diferentes.
+repositório.  Isto pode ser feito de algumas maneiras diferentes.
 
 @c -- The contributed scripts
 @menu
@@ -5664,7 +5664,7 @@ revisão numérica em cada um dos arquivos.
 Cada versão de um arquivo tem um @dfn{número de
 revisão} único.  Números de revisão são coisas do tipo
 @samp{1.1}, @samp{1.2}, @samp{1.3.2.2} ou até mesmo
-@samp{1.3.2.2.4.5}. Um número de revisão sempre tem uma
+@samp{1.3.2.2.4.5}.  Um número de revisão sempre tem uma
 quantidade par de números inteiros na base dez
 separados por ponto.  Por padrão, a revisão 1.1 é a
 primeira revisão de um arquivo.  Cada revisão sucessiva
@@ -5707,8 +5707,8 @@ estes números de revisão são explicados em detalhes em
 @c <en>A software product is often given a version number such
 @c <en>as @samp{4.1.1}.
 Um arquivo pode ter várias versões, como descrito
-acima. Da mesma forma, um produto de software também
-pode ter várias versões. Frequentemente um produto de
+acima.  Da mesma forma, um produto de software também
+pode ter várias versões.  Frequentemente um produto de
 software recebe um número de versão, tal como @samp{4.1.1}.
 
 @c <en>Versions in the first sense are called @dfn{revisions}
@@ -6031,7 +6031,7 @@ cópia de trabalho mais recente.
 @c <en>any of these commands, you will need beware of sticky
 @c <en>tags; see @ref{Sticky tags}.
 Você também pode pegar um módulo do jeito que ele
-estava em qualquer data. @xref{checkout options}.
+estava em qualquer data.  @xref{checkout options}.
 Quando usar @samp{-r} em qualquer destes comandos, você
 vai precisar estar atento às etiquetas adesivas; veja
 em @ref{Etiquetas adesivas}.
@@ -6067,7 +6067,7 @@ as seguintes revisões:
 @c <en>revisions that is "flat" along the tagged revisions,
 @c <en>like this:
 Em algum momento no passado, as versões com @code{*}
-foram etiquetadas. Você pode pensar na etiqueta como
+foram etiquetadas.  Você pode pensar na etiqueta como
 uma alça presa à curva que passa pelas revisões
 marcadas.  Quando você puxa a alça, vem as revisões
 etiquetadas.  outra maneira de perceber isto é ver
@@ -6110,13 +6110,13 @@ pelas revisões etiquetadas, como isto:
 @c <en>directory and then runs @code{cvs commit} to transfer
 @c <en>that modification to the repository.
 O exemplo na seção anterior  demonstra uma das formas
-mais comuns de escolher que revisões etiquetar. A
+mais comuns de escolher que revisões etiquetar.  A
 saber, rodando o comando @code{cvs tag} sem argumentos
 faz com que o @sc{cvs} selecione as revisões que estão
 presentes no diretório de trabalho atual.  Por exemplo,
 se a cópia do arquivo @file{backend.c} no diretório de
 trabalho foi pega da revisão 1.4, então o @sc{cvs} vai
-etiquetar a revisão 1.4. Observe que a etiqueta é
+etiquetar a revisão 1.4.  Observe que a etiqueta é
 aplicada na revisão 1.4 no repositório imediatamente;
 Etiquetar não funciona como modificar arquivos ou
 outras operações nas quais primeiros você modifica o
@@ -6135,7 +6135,7 @@ Um aspecto potencialmente confuso no fato de o comando
 @code{cvs tag} operar no repositório é que você está
 etiquetando revisões devolvidas, que podem diferir de
 arquivos localmente modificados no seu diretório de
-trabalho. Se você quer evitar fazer isto por engano,
+trabalho.  Se você quer evitar fazer isto por engano,
 use a opção @samp{-c} no @code{cvs tag}.  Se existe
 qualquer arquivo localmente modificado, o @sc{cvs} vai
 abortar com erro antes de etiquetar qualquer arquivo:
@@ -6210,7 +6210,7 @@ Entretanto, este característica não é provavelmente o
 que você quer.  A razão é que o @code{cvs tag} escolhe
 que arquivos etiquetar baseado nos arquivos que existem
 no diretório de trabalho, ao invés de arquivos que
-existem na dada etiqueta/data. Portanto, você é
+existem na dada etiqueta/data.  Portanto, você é
 geralmente ???better off??? usar @code{cvs rtag}.  As
 exceções devem ser casos como:
 
@@ -6290,7 +6290,7 @@ cvs rtag -d rel-0-4 tc
 @c <en>of branch tags.  In that case, any non-branch tags encountered will
 @c <en>trigger warnings and will not be deleted.
 apaga a etiqueta ???non-branch??? @code{rel-0-4} do
-módulo @code{tc}. No caso de etiquetas de ramos serem
+módulo @code{tc}.  No caso de etiquetas de ramos serem
 encontradas no repositório com o nome dado, uma
 mensagem de aviso vai ser mostrada e a etiqueta de ramo
 não vai ser apagada.  Se você está absolutamente certo
@@ -6352,7 +6352,7 @@ Se alguma etiqueta de ramo for encontrada no
 repositório com o nome dado, um aviso é mostrado e a
 etiqueta de ramo não é alterada.  Se você está
 absolutamente certo de que você quer mover a etiquta de
-ramo, a opção @code{-B} pode ser especificada. Neste
+ramo, a opção @code{-B} pode ser especificada.  Neste
 caso, etiquetas ???non-branch??? encontradas com o nome
 dado serão ignoradas com uma mensagem de aviso.
 
@@ -6390,7 +6390,7 @@ caiam no mesmo erro).  Para renomear uma etiqueta,
 primeiro crie uma nova etiqueta usando a opção
 @samp{-r} para o @code{cvs rtag}, e então apague o nome
 antigo.  (Cuidado: este método não vai funcionar com
-etiquetas de ramos). Isto deixa a nova etiqueta
+etiquetas de ramos).  Isto deixa a nova etiqueta
 exatamente nos mesmos arquivos que a etiqueta antiga.
 Por exemplo:
 
@@ -6436,11 +6436,11 @@ criação da etiqueta.
 @c <en>and thereby avoids this problem.  For example, one
 @c <en>might specify @code{-r HEAD} to tag the head.
 Entretanto, Isto pode perder uma pequena quantidade de
-informação. Por exemplo, suponha que um arquivo foi
-adicionado e então removido. Então, se a etiqueta está
+informação.  Por exemplo, suponha que um arquivo foi
+adicionado e então removido.  Então, se a etiqueta está
 faltando para aquele arquivo, não há como se descobrir
 se a data da etiqueta é posterior à adição ou anterior
-à remoção do arquivo. Se você usa a opção @samp{-r}
+à remoção do arquivo.  Se você usa a opção @samp{-r}
 para @code{cvs rtag}, então o @sc{cvs} etiqueta os
 arquivos que foram removidos, e portanto remove este
 problema.  Por exemplo, alguem pode especificar @code{-r
@@ -6580,7 +6580,7 @@ estão fazendo que possam que possam desestabilizar seu
 trabalho.  Você pode, claro, simplesmente não rodar o @code{cvs
 update}.  Mas se você quer evitar atualizar (fazer
 update) apenas uma parte de uma grande árvore, então
-etiquetas adesivas podem ajudar. Se você pega uma certa
+etiquetas adesivas podem ajudar.  Se você pega uma certa
 revsão (como a 1.4) ela vai se tornar adesiva.
 comandos @code{cvs update} subsequentes não vão trazer
 a revisão mais nova até que você limpe a etiqueta com os
@@ -6663,7 +6663,7 @@ Mais tarde você pode mover as mudanças de um ramo para
 outro (ou para o tronco principal) com uma
 @dfn{mesclagem}.  Mesclar é primeiro rodar um @code{cvs
 update -j}, para mesclar as mudanças no seu diretório
-de trabalho. Depois efetivar (commit) esta revisão, e
+de trabalho.  Depois efetivar (commit) esta revisão, e
 finalmente fazer a efetiva destas mudanças de um ramo
 para outro.
 
@@ -6917,7 +6917,7 @@ ocorrerem.
 @c <en>leaving the main trunk and other branches unaffected.
 Uma vez que você tenha uma cópia de trabalho referente
 a um dado, ela continua no ramo até que se diga o
-contrário. Isto significa que mudanças inseridas a
+contrário.  Isto significa que mudanças inseridas a
 partir da cópia de trabalho vão adicionar novas
 revisões naquele ramo, enquanto que não afeta o tronco
 principal nem os outros ramos.
@@ -7025,7 +7025,7 @@ Entretanto, o @sc{cvs} não está limitado a
 desenvolvimento linear.  A @dfn{árvore de revisões}
 pode ser separada em @dfn{ramos},
 onde cada ramo é uma linha de desenvolvimento que se
-mantém. Mudanças feitas em um ramo podem ser facilmente
+mantém.  Mudanças feitas em um ramo podem ser facilmente
 movidas para o tronco principal.
 
 @c <en>Each branch has a @dfn{branch number}, consisting of an
@@ -7048,7 +7048,7 @@ ter mais de uma ramificação partindo de uma certa revisão.
 @c <en>example.
 Todas as revisões num ramo têm números de revisão
 formados pela anexação de um número ordinal ao número
-do ramo. A figura seguinte ilustra a ramificação com um exemplo.
+do ramo.  A figura seguinte ilustra a ramificação com um exemplo.
 
 @example
 @c This example used to have a 1.2.2.4 revision, which
@@ -7140,7 +7140,7 @@ alguma idéia de como eles funcionam.
 @c <en>on).
 Externamente, números de ramos consistem de uma quantidade
 ímpar de inteiros decimais separados por
-ponto. @xref{Números de revisão}.  Isto não é toda a
+ponto.  @xref{Números de revisão}.  Isto não é toda a
 verdade, entretanto.  Por questões de eficiência, o
 @sc{cvs} insere, em alguns momentos, um 0 extra na
 segunda posição da direita para a esquerda (1.2.4 se torna
@@ -7451,7 +7451,7 @@ revisões 1.3 e 1.5.  Observe a ordem das revisões!
 Se você tentar usar esta opção quando estiver agindo em
 vários arquivos, lembre-se que as revisões numéricas
 provavelmente vão ser bastante diferentes nos vários
-arquivos. Você vai quase sempre usar etiquetas
+arquivos.  Você vai quase sempre usar etiquetas
 simbólicas ao invés de números de revisão quando
 estiver operando em vários arquivos.
 
@@ -7538,7 +7538,7 @@ dinâmica (@samp{-j @var{branchname}}) para mesclar
 mudanças a partir de um ramo normalmente não vai
 remover arquivos que foram removidos do ramo, já que o
 @sc{cvs} não adiona etiquetas estáticas a revisões
-mortas. A exceção a esta regra ocorre quando uma
+mortas.  A exceção a esta regra ocorre quando uma
 etiqueta estática foi colocada numa revisão morta
 manualmente.  Use a etiqueta do ramo para mesclar todas
 as mudanças a partir do ramo ou use duas etiquetas
@@ -7803,7 +7803,7 @@ O mesmo vale para a maioria dos subcomandos do
 @c <en>Conversely, the @samp{-R} option can be used to force recursion if
 @c <en>@samp{-l} is specified in @file{~/.cvsrc} (@pxref{~/.cvsrc}).
 O comportamento recursivo dos subcomandos do @sc{cvs}
-pode ser desligado com a opção @samp{-l}. De forma
+pode ser desligado com a opção @samp{-l}.  De forma
 oposta, a opção @samp{-R} pode ser usada para forçar a
 recursão se o @samp{-l} estiver especificado no
 @file{~/.cvsrc} (@pxref{~/.cvsrc}).
@@ -7827,7 +7827,7 @@ $ cvs update -l         # @r{Don't update files in subdirectories}
 @c <en>modifying an existing file.  The exact mechanisms to do
 @c <en>this in @sc{cvs} vary depending on the situation.
 No decorrer de um projeto, normalmente se adicionam
-arquivos.  Da mesma forma se remove e se renomeia. E
+arquivos.  Da mesma forma se remove e se renomeia.  E
 tudo isto também para diretórios.  O conceito geral que
 se deve ter em mente em todos estes casos é que ao
 invés de fazer uma mudança irreversível você vai querer
@@ -8263,11 +8263,11 @@ antigas nas quais o diretório existe.
 @c <en>removing it.
 A forma de remover um diretório é removendo todos os
 arquivos nele.  Você não remove o diretório mesmo; não
-há jeito de fazer isto. Ao invés disto você especifica
+há jeito de fazer isto.  Ao invés disto você especifica
 a opção @samp{-P} no @code{cvs update} ou no @code{cvs
 checkout}, que vai fazer com que o @sc{cvs} remova
 diretórios vazios de seus diretórios de
-trabalho. (Observe que o @code{cvs export} sempre
+trabalho.  (Observe que o @code{cvs export} sempre
 remove diretórios vazios.) Provavelmente, a melhor
 maneira de fazer isto é sempre usar o @samp{-P}; se
 você quiser manter um diretório vazio, ponha um arquivo
@@ -8387,7 +8387,7 @@ arquivo foi renomeado.
 @c <en>use the @samp{-r rev} option to commit.  For more
 @c <en>information see @ref{Assigning revisions}.
 Quando @var{novo} é ???committed??? seus números de
-revisão vão recomeçar, normalmente em 1.1. Portanto, se
+revisão vão recomeçar, normalmente em 1.1.  Portanto, se
 isto te incomoda, lembre de usar a opção @samp{-r rev}
 na hora do ???commit???.  Para mais informações veja em
 @ref{Atribuindo revisões}.
@@ -8945,18 +8945,18 @@ echo "$@@" >>/home/kingdon/cvsroot/CVSROOT/taglog
 @c <en>@node annotate
 @node annotate
 @c <en>@section Annotate command
-@section Annotate command
+@section O comando annotate
 @c <en>@cindex annotate (subcommand)
-@cindex annotate (subcommand)
+@cindex annotate (subcomando)
 
 @c <en>@deffn Command {cvs annotate} [@code{-FflR}] [@code{-r rev}|@code{-D date}] files @dots{}
-@deffn Command {cvs annotate} [@code{-FflR}] [@code{-r rev}|@code{-D date}] files @dots{}
+@deffn Comando {cvs annotate} [@code{-FflR}] [@code{-r revisão}|@code{-D data}] arquivos @dots{}
 
 @c <en>For each file in @var{files}, print the head revision
 @c <en>of the trunk, together with information on the last
 @c <en>modification for each line.  For example:
-Para cada arquivo em @var{files}, imprime a revisão
-???head??? do tronco, junto com informações a respeito
+Para cada arquivo em @var{arquivos}, imprime a revisão no topo
+ do tronco, junto com informações a respeito
 da última modificação em cada linha.  Por exemplo:
 
 @example
@@ -8976,11 +8976,11 @@ Annotations for ssfile
 @c <en>or replaced; you need to use @code{cvs diff} for that
 @c <en>(@pxref{diff}).
 O arquivo @file{ssfile} atualmente contém duas
-linhas. a linha @code{ssfile line 1} foi submetida por
+linhas.  A @code{linha 1 de ssfile} foi submetida por
 @code{mary} em March 27 (27 de março).  Então, em March
-28 (28 de março), @code{joe} adicionou uma linha
-@code{ssfile line 2}, sem modificar a linha
-@code{ssfile line 1}.  Este relatório não te diz nada a
+28 (28 de março), @code{joe} adicionou a
+@code{linha 2 de ssfile}, sem modificar a
+@code{linha 1 de ssfile}.  Este relatório não te diz nada a
 respeito de linhas que foram deletadas ou substituídas;
 Você precisa usar o @code{cvs diff} para isto
 (@pxref{diff}).
@@ -8993,7 +8993,7 @@ Você precisa usar o @code{cvs diff} para isto
 @c <en>in more detail there and in @ref{Common options}.
 As opções para o @code{cvs annotate} são listadas em
 @ref{Chamando o CVS} e podem ser usadas para selecionar
-os arquivos e revisões para ???annotate???.  As opções
+os arquivos e revisões para o annotate.  As opções
 são descritas com mais detalhes lá e em @ref{Opções comuns}.
 
 @c FIXME: maybe an example using the options?  Just
@@ -9005,7 +9005,7 @@ são descritas com mais detalhes lá e em @ref{Opções comuns}.
 @c <en>@node Binary files
 @node Arquivos binários
 @c <en>@chapter Handling binary files
-@chapter Handling binary files
+@chapter Manipulando arquivos binários
 @c <en>@cindex Binary files
 @cindex Arquivos binários
 
@@ -9017,20 +9017,21 @@ são descritas com mais detalhes lá e em @ref{Opções comuns}.
 @c <en>abilities, @sc{cvs} can store binary files.  For
 @c <en>example, one might store a web site in @sc{cvs}
 @c <en>including both text files and binary images.
-The most common use for @sc{cvs} is to store text
-files.  With text files, @sc{cvs} can merge revisions,
-display the differences between revisions in a
-human-visible fashion, and other such operations.
-However, if you are willing to give up a few of these
-abilities, @sc{cvs} can store binary files.  For
-example, one might store a web site in @sc{cvs}
-including both text files and binary images.
+O @sc{cvs} é usado normalmente para guardar arquivos
+texto.  Com arquivos texto o @sc{cvs} pode mesclar
+revisões, mostrar diferenças entre revisões de uma
+forma legível para humanos, e outras operações do
+tipo.  Entretanto, se você está disposto a abrir mão de
+algumas destas habilidades, o @sc{cvs} pode guardar
+arquivos binários.  Por exemplo, pode-se guardar um
+site no @sc{cvs} incluindo tanto os arquivos texto
+quanto as imagens em binário.
 
 @menu
 @c <en>* Binary why::     More details on issues with binary files
-* Binary why::     More details on issues with binary files
+* Binary why::     Mais detalhes no que concerne a arquivos binários
 @c <en>* Binary howto::   How to store them
-* Binary howto::   How to store them
+* Binary howto::   Como guardá-los
 @end menu
 
 @c <en>@node Binary why
@@ -9042,10 +9043,11 @@ including both text files and binary images.
 @c <en>if the files that you customarily work with are binary,
 @c <en>putting them into version control does present some
 @c <en>additional issues.
-While the need to manage binary files may seem obvious
-if the files that you customarily work with are binary,
-putting them into version control does present some
-additional issues.
+???While??? a necessidade de armazenar arquivos
+binários se mostra óbvia se os arquivos com os quais
+você normalmente trabalha são binários, botá-los
+dentro do controle de versões requer alguns cuidados
+adicionais.
 
 @c <en>One basic function of version control is to show the
 @c <en>differences between two revisions.  For example, if
@@ -9061,20 +9063,22 @@ additional issues.
 @c <en>such as urging people to write good log messages, and
 @c <en>hoping that the changes they actually made were the
 @c <en>changes that they intended to make.
-One basic function of version control is to show the
-differences between two revisions.  For example, if
-someone else checked in a new version of a file, you
-may wish to look at what they changed and determine
-whether their changes are good.  For text files,
-@sc{cvs} provides this functionality via the @code{cvs
-diff} command.  For binary files, it may be possible to
-extract the two revisions and then compare them with a
-tool external to @sc{cvs} (for example, word processing
-software often has such a feature).  If there is no
-such tool, one must track changes via other mechanisms,
-such as urging people to write good log messages, and
-hoping that the changes they actually made were the
-changes that they intended to make.
+Uma habilidade básica de um controle de versões é mostrar
+as diferenças entre duas revisões.  Por exemplo, se
+outra pessoa submete (check in) uma nova versão de um
+arquivo, você pode querer ver o que foi mudado e
+determinar quais destas mudanças foram boas.  Para
+arquivos texto, o @sc{cvs} oferece esta funcionalidade
+através do comando @code{cvs diff}.  Para arquivos
+binários, existe uma chance de  extrair as duas
+revisões e então compará-las com uma ferramenta externa
+ao @sc{cvs} (por exemplo, alguns processadores de texto
+têm esta habilidade).  Se não existe tal ferramenta, é
+possível rastrear mudanças por outros meios, como por
+exemplo convencendo as pessoas a escreverem boas
+mensagens de registro (log), e torcendo para que as
+mudanças que eles realmente fizeram foram as que eles
+tinham intenção de fazer.
 
 @c <en>Another ability of a version control system is the
 @c <en>ability to merge two revisions.  For @sc{cvs} this
@@ -9083,13 +9087,13 @@ changes that they intended to make.
 @c <en>(@pxref{Multiple developers}).  The second is when one
 @c <en>merges explicitly with the @samp{update -j} command
 @c <en>(@pxref{Branching and merging}).
-Another ability of a version control system is the
-ability to merge two revisions.  For @sc{cvs} this
-happens in two contexts.  The first is when users make
-changes in separate working directories
-(@pxref{Múltiplos desenvolvedores}).  The second is when one
-merges explicitly with the @samp{update -j} command
-(@pxref{Ramificando e mesclando}).
+Outra habilidade de um sistema de controle de versões é
+a capacidade de mesclar duas revisões.  No @sc{cvs}
+isto acontece em dois contextos.  O primeiro é quando
+os usuáriso fazem mudanças em diretórios de trabalho
+separados (@pxref{Múltiplos desenvolvedores}).  A
+segunda é quando alguém mescla explicitamente com o
+comando @samp{update -j} (@pxref{Ramificando e mesclando}).
 
 @c <en>In the case of text
 @c <en>files, @sc{cvs} can merge changes made independently,
@@ -9103,18 +9107,18 @@ merges explicitly with the @samp{update -j} command
 @c <en>Note that having the user merge relies primarily on the
 @c <en>user to not accidentally omit some changes, and thus is
 @c <en>potentially error prone.
-In the case of text
-files, @sc{cvs} can merge changes made independently,
-and signal a conflict if the changes conflict.  With
-binary files, the best that @sc{cvs} can do is present
-the two different copies of the file, and leave it to
-the user to resolve the conflict.  The user may choose
-one copy or the other, or may run an external merge
-tool which knows about that particular file format, if
-one exists.
-Note that having the user merge relies primarily on the
-user to not accidentally omit some changes, and thus is
-potentially error prone.
+No caso de arquivos texto, o @sc{cvs} pode mesclar
+mudanças feitas independentemente, e avisar sobre um
+conflito se as mudanças conflitarem.  Com arquivos
+binários, o melhor que o @sc{cvs} pode fazer é
+fornecer as duas cópias diferentes do arquivo, e deixar
+a cargo do usuário a resolução do conflito.  O usuário
+pode escolher uma cópia ou a outra, ou pode rodar uma
+ferramenta externa de mesclagem que entenda aquele
+formato de arquivo em particular, se é que tal
+ferramenta exista. Observe que mesclagem feita pelo
+usuário se baseia no fato de o usuário não omitir
+acidentalmente algumas mudanças, e portanto é sujeita a erros.
 
 @c <en>If this process is thought to be undesirable, the best
 @c <en>choice may be to avoid merging.  To avoid the merges
@@ -9122,17 +9126,18 @@ potentially error prone.
 @c <en>discussion of reserved checkouts (file locking) in
 @c <en>@ref{Multiple developers}.  To avoid the merges
 @c <en>resulting from branches, restrict use of branches.
-If this process is thought to be undesirable, the best
-choice may be to avoid merging.  To avoid the merges
-that result from separate working directories, see the
-discussion of reserved checkouts (file locking) in
-@ref{Múltiplos desenvolvedores}.  To avoid the merges
-resulting from branches, restrict use of branches.
+Se você acha que este processo é indesejável, a melhor
+escolha é evitar mesclagem.  Para evitar mesclagens
+resultantes de diretórios de trabalho separados, veja a
+discussão a respeito de ???reserved checkouts??? (travas
+de arquivo) em @ref{Múltiplos desenvolvedores}.  Para
+ecitar mesclagens resultantes de ramificações,
+restrinja o uso de ramos.
 
 @c <en>@node Binary howto
 @node Binary howto
 @c <en>@section How to store binary files
-@section How to store binary files
+@section Como guardar arquivos binários
 
 @c <en>There are two issues with using @sc{cvs} to store
 @c <en>binary files.  The first is that @sc{cvs} by default
@@ -9141,22 +9146,24 @@ resulting from branches, restrict use of branches.
 @c <en>only), and the form appropriate to the operating system
 @c <en>in use on the client (for example, carriage return
 @c <en>followed by line feed for Windows NT).
-There are two issues with using @sc{cvs} to store
-binary files.  The first is that @sc{cvs} by default
-converts line endings between the canonical form in
-which they are stored in the repository (linefeed
-only), and the form appropriate to the operating system
-in use on the client (for example, carriage return
-followed by line feed for Windows NT).
+Existem dois aspectos a considerar quando se usa o
+@sc{cvs} para guardar arquivos binários.  O primeiro é
+que o @sc{cvs}, por padrão, converte quebras de linhas
+entre a forma canônica na qual elas são guardadas no
+repositório (apenas ???linefeed???), e a forma
+apropriada para o sistema operacional no qual o cliente
+é usado (por exemplo, carriage return (retorno do
+carro) seguido por line feed (alimentação de linha)
+para o Windows NT).
 
 @c <en>The second is that a binary file might happen to
 @c <en>contain data which looks like a keyword (@pxref{Keyword
 @c <en>substitution}), so keyword expansion must be turned
 @c <en>off.
-The second is that a binary file might happen to
-contain data which looks like a keyword
-(@pxref{Substituição de palavra-chave}), so keyword expansion must be turned
-off.
+O segundo aspecto é que um arquivo binário pode conter
+dados que se pareçam com uma palavra-chave
+(@pxref{Substituição de palavra-chave}). Logo, a
+expansão de palavra-chave deve ser desativada.
 
 @c FIXME: the third is that one can't do merges with
 @c binary files.  xref to Multiple Developers and the
@@ -9165,14 +9172,14 @@ off.
 @c <en>The @samp{-kb} option available with some @sc{cvs}
 @c <en>commands insures that neither line ending conversion
 @c <en>nor keyword expansion will be done.
-The @samp{-kb} option available with some @sc{cvs}
-commands insures that neither line ending conversion
-nor keyword expansion will be done.
+A opção @samp{-kb} disponível com alguns comandos do
+@sc{cvs} garante que nem conversão de terminação de
+linha nem expansão de palavra-chave sejam usadas.
 
 @c <en>Here is an example of how you can create a new file
 @c <en>using the @samp{-kb} flag:
-Here is an example of how you can create a new file
-using the @samp{-kb} flag:
+Aqui está um exemplo de como você pode criar um novo
+arquivo usando a opção @samp{-kb}:
 
 @example
 $ echo '$@splitrcskeyword{}Id$' > kotest
@@ -9183,9 +9190,9 @@ $ cvs ci -m"First checkin; contains a keyword" kotest
 @c <en>If a file accidentally gets added without @samp{-kb},
 @c <en>one can use the @code{cvs admin} command to recover.
 @c <en>For example:
-If a file accidentally gets added without @samp{-kb},
-one can use the @code{cvs admin} command to recover.
-For example:
+Se um arquivo for acidentalmente adicionado sem o
+@samp{-kb}, é possível usar o comando @code{cvs admin}
+para reverter. Por exemplo:
 
 @example
 $ echo '$@splitrcskeyword{}Id$' > kotest
@@ -9216,17 +9223,17 @@ $ cvs commit -m "make it binary" kotest
 @c <en>check in a new copy of the file, as shown by the
 @c <en>@code{cvs commit} command above.
 @c <en>On unix, the @code{cvs update -A} command suffices.
-When you check in the file @file{kotest} the file is
-not preserved as a binary file, because you did not
-check it in as a binary file.  The @code{cvs
-admin -kb} command sets the default keyword
-substitution method for this file, but it does not
-alter the working copy of the file that you have.  If you need to
-cope with line endings (that is, you are using
-@sc{cvs} on a non-unix system), then you need to
-check in a new copy of the file, as shown by the
-@code{cvs commit} command above.
-On unix, the @code{cvs update -A} command suffices.
+Quando você submete o arquivo @file{kotest} o arquivo
+não é mantido como um arquivo binário, por que você não
+o submeteu como arquivo binário.  O comando @code{cvs
+admin -kb} ajusta o método de substituição da
+palavra-chave padrão para este arquivo, mas não altera
+a cópia de trabalho que você tem.  Se você tem que
+lidar com terminações de linha (ou seja, você está usando
+o @sc{cvs} em um sistema não-unix), então você precisa
+submeter uma nova cópia do arquivo, como mostrado no comando
+@code{cvs commit} acima. No unix, o comando @code{cvs
+update -A} basta.
 @c FIXME: should also describe what the *other users*
 @c need to do, if they have checked out copies which
 @c have been corrupted by lack of -kb.  I think maybe
@@ -9237,9 +9244,11 @@ On unix, the @code{cvs update -A} command suffices.
 @c <en>(Note that you can use @code{cvs log} to determine the default keyword
 @c <en>substitution method for a file and @code{cvs status} to determine
 @c <en>the keyword substitution method for a working copy.)
-(Note that you can use @code{cvs log} to determine the default keyword
-substitution method for a file and @code{cvs status} to determine
-the keyword substitution method for a working copy.)
+(Note que você pode usar o @code{cvs log} para
+determinar o métido de substituição de palavra-chave
+padrão para um arquivo e @code{cvs status} para
+determinar o método de substituição de palavra-chave
+para uma cópia de trabalho.)
 
 @c <en>However, in using @code{cvs admin -k} to change the
 @c <en>keyword expansion, be aware that the keyword expansion
@@ -9250,15 +9259,16 @@ the keyword substitution method for a working copy.)
 @c <en>or binary mode depending on what version you are
 @c <en>checking out.  There is no good workaround for this
 @c <en>problem.
-However, in using @code{cvs admin -k} to change the
-keyword expansion, be aware that the keyword expansion
-mode is not version controlled.  This means that, for
-example, that if you have a text file in old releases,
-and a binary file with the same name in new releases,
-@sc{cvs} provides no way to check out the file in text
-or binary mode depending on what version you are
-checking out.  There is no good workaround for this
-problem.
+Entretanto, ao usar @code{cvs admin -k} para mudar a
+expansão de palavra-chave, esteja atento para o fato de
+que o modo de expansão de palavra-chave não tem
+controle de versão.  Isto significa que, por exemplo,
+se você tem um arquivo texto em versões antigas, e um
+arquivo binário com o mesmo nome em novos releases,
+o @sc{cvs} não fornece uma forma de obter o arquivo em
+formato texto, ou binário, dependendo da versão que
+você estpa pegando.  Não existe uma boa solução
+alternativa para este problema.
 
 @c <en>You can also set a default for whether @code{cvs add}
 @c <en>and @code{cvs import} treat a file as binary based on
@@ -9270,16 +9280,18 @@ problem.
 @c <en>it is not clear how to distinguish between binary and
 @c <en>non-binary files, and the rules to apply would vary
 @c <en>considerably with the operating system.
-You can also set a default for whether @code{cvs add}
-and @code{cvs import} treat a file as binary based on
-its name; for example you could say that files who
-names end in @samp{.exe} are binary.  @xref{Wrappers}.
-There is currently no way to have @sc{cvs} detect
-whether a file is binary based on its contents.  The
-main difficulty with designing such a feature is that
-it is not clear how to distinguish between binary and
-non-binary files, and the rules to apply would vary
-considerably with the operating system.
+Você também pode ajustar um padrão para quando o
+@code{cvs add} e o @code{cvs import} tratarem um
+arquivo como binário de acordo como o seu nome; por
+exemplo, você pode dizer que arquivos cujos nomes
+terminem com @samp{.exe} são binário.  @xref{Wrappers}.
+Não existe atualmente uma forma de fazer o @sc{cvs}
+detectar quando um arquivo é binário baseado em seu
+conteúdo.  A dificuldade principal em fazer isto é que
+não é claro como se faz para distinguir entre arquivos
+binários e não-binários, e as regras para serem
+aplicadas variam consideravelmente com o sistema
+operacional.
 @c For example, it would be good on MS-DOS-family OSes
 @c for anything containing ^Z to be binary.  Having
 @c characters with the 8th bit set imply binary is almost
@@ -15216,10 +15228,10 @@ O arquivo foi ignorado (@pxref{cvsignore}).
 @c <en>to recreate symbolic links on checkout, update, etc.;
 @c <en>@pxref{modules}.)
 O arquivo é uma ligação simbólica; O @code{cvs import}
-ignora ligações simbólicas. De vez em quando alguem
+ignora ligações simbólicas.  De vez em quando alguem
 sugere que este comportamento seja mudado, mas se há um
 consenso quanto a que mudança fazer, não é
-claro. (Várias opções no arquivo @file{modules} podem
+claro.  (Várias opções no arquivo @file{modules} podem
 ser usadas para recriar ligações simbólicas no checkout, update, etc.;
 @pxref{modules}.)
 @end table
@@ -16953,7 +16965,7 @@ Only list revisions checked in by specified logins.  See @ref{log options}.
 @item login
 @c <en>Prompt for password for authenticating server.  See
 @c <en>@ref{Password authentication client}.
-Pede por uma senha para o servidor de autenticação. Veja em
+Pede por uma senha para o servidor de autenticação.  Veja em
 @ref{Cliente de autenticação por senha}.
 
 @c ------------------------------------------------------------
