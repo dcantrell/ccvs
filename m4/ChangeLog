@@ -1,3 +1,11 @@
+2005-05-12  Derek Price  <derek@ximbiot.com>
+
+	* d-type.m4: New file from GNULIB.
+	* glob.m4 (gl_GLOB): Remove indirection.  Check gnu-versions.h instead
+	of looking for glob_pattern_p().  Use new d-type macro.
+	(gl_PREREQ_GLOB): Reformat to remove blanks line in the generated
+	configure script.
+
 2005-05-11  Derek Price  <derek@ximbiot.com>
 
 	* glob.m4: New file.
