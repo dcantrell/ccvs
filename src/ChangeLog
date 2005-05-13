@@ -1,3 +1,7 @@
+2005-05-13  Derek Price  <derek@ximbiot.com>
+
+	* login.c (password_entry_parseline): Placate gcc -Wall.
+
 2005-05-11  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h (find_files): New proto.
