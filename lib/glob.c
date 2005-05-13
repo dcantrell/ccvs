@@ -21,9 +21,11 @@
 #endif
 
 /* Enable GNU extensions in glob.h.  */
-#ifndef _GNU_SOURCE
+#if defined _LIBC && !defined _GNU_SOURCE
 # define _GNU_SOURCE	1
 #endif
+
+#include <glob.h>
 
 #include <errno.h>
 #include <sys/types.h>
@@ -46,7 +48,7 @@
    it is simpler to just do this in the source for each such file.  */
 
 #if !defined _LIBC || !defined GLOB_ONLY_P
-#if HAVE_UNISTD_H || _LIBC
+#if defined HAVE_UNISTD_H || defined _LIBC
 # include <unistd.h>
 # ifndef POSIX
 #  ifdef _POSIX_VERSION
@@ -78,7 +80,6 @@
 #  include <ndir.h>
 # endif
 # ifdef HAVE_VMSDIR_H
-   /* Should this be imported from glibc?  */
 #  include "vmsdir.h"
 # endif /* HAVE_VMSDIR_H */
 #endif
@@ -96,17 +97,25 @@
    member is found.  */
 #if defined _DIRENT_HAVE_D_TYPE || defined HAVE_STRUCT_DIRENT_D_TYPE
 # define HAVE_D_TYPE	1
-# define MUST_BE(d, t)	((d)->d_type == (t))
-# define MAY_BE_LINK(d)	(MUST_BE((d), DT_UNKNOWN) || MUST_BE((d), DT_LNK))
-# define MAY_BE_DIR(d)	(MUST_BE((d), DT_DIR) || MAY_BE_LINK (d))
+
+/* True if the directory entry D must be of type T.  */
+# define DIRENT_MUST_BE(d, t)	((d)->d_type == (t))
+
+/* True if the directory entry D might be a symbolic link.  */
+# define DIRENT_MIGHT_BE_SYMLINK(d) \
+    ((d)->d_type == DT_UNKNOWN || (d)->d_type == DT_LNK)
+
+/* True if the directory entry D might be a directory.  */
+# define DIRENT_MIGHT_BE_DIR(d)	 \
+    ((d)->d_type == DT_DIR || DIRENT_MIGHT_BE_SYMLINK (d))
+
 #else /* !HAVE_D_TYPE */
-# define CONVERT_D_TYPE(d64, d32)
-# define MUST_BE(d, t)	false
-# define MAY_BE_LINK(d)	true
-# define MAY_BE_DIR(d)	true
+# define DIRENT_MUST_BE(d, t)		false
+# define DIRENT_MIGHT_BE_SYMLINK(d)	true
+# define DIRENT_MIGHT_BE_DIR(d)		true
 #endif /* HAVE_D_TYPE */
 
-#if _LIBC || HAVE_FUNCTION_DIRENT64
+#if _LIBC
 # define HAVE_DIRENT64	1
 #endif
 
@@ -160,7 +169,7 @@
 
 #ifdef _LIBC
 # include <alloca.h>
-# undef strdup 
+# undef strdup
 # define strdup(str) __strdup (str)
 # define sysconf(id) __sysconf (id)
 # define closedir(dir) __closedir (dir)
@@ -171,54 +180,37 @@
 # ifndef __stat64
 #  define __stat64(fname, buf) __xstat64 (_STAT_VER, fname, buf)
 # endif
-# define HAVE_STAT64   1
+# define HAVE_STAT64	1
 #else /* !_LIBC */
-/* GNULIB includes that shouldn't be used when copiling LIBC.  */
 # include "mempcpy.h"
 # include "stat-macros.h"
 # include "strdup.h"
 #endif /* _LIBC */
 
-/* Correct versions of these headers all come from GNULIB when missing or
- * broken.
- */
 #include <stdbool.h>
 #include <alloca.h>
 #include <fnmatch.h>
-#include <glob.h>
-
-/* End GNULIB includes.  */
-
-#ifdef HAVE_FUNCTION_STAT64
-/* Assume the struct stat64 type.  */
-# define HAVE_STAT64	1
-#endif
 
 #ifndef HAVE_STAT64
-  /* Use stat() instead.  */
 # define __stat64(fname, buf) __stat (fname, buf)
 # define stat64 stat
-#elif !_LIBC
-  /* GNULIB needs the usual versions.  */
+#elif !defined _LIBC
 # define __stat64 stat64
 #endif
 
 #ifndef _LIBC
-  /* GNULIB needs the usual versions.  */
 # define __stat stat
 # define __alloca alloca
 # define __readdir readdir
 # define __readdir64 readdir64
 #endif
 
-#ifdef HAVE_FUNCTION_GETLOGIN_R
+#ifdef HAVE_GETLOGIN_R
 extern int getlogin_r (char *, size_t);
 #else
 extern char *getlogin (void);
 #endif
-
-
-
+
 static const char *next_brace_sub (const char *begin, int flags) __THROW;
 
 #endif /* GLOB_ONLY_P */
@@ -229,7 +221,7 @@ static int glob_in_dir (const char *pattern, const char *directory,
 
 #if !defined _LIBC || !defined GLOB_ONLY_P
 static int prefix_array (const char *prefix, char **array, size_t n) __THROW;
-static int collated_compare (const __ptr_t, const __ptr_t) __THROW;
+static int collated_compare (const void *, const void *) __THROW;
 
 
 /* Find the end of the sub-pattern in a brace expression.  */
@@ -562,7 +554,7 @@ glob (const char *pattern, int flags,
 	    {
 	      int success;
 	      char *name;
-#   if defined HAVE_FUNCTION_GETLOGIN_R || defined _LIBC
+#   if defined HAVE_GETLOGIN_R || defined _LIBC
 	      size_t buflen = sysconf (_SC_LOGIN_NAME_MAX) + 1;
 
 	      if (buflen == 0)
@@ -578,7 +570,7 @@ glob (const char *pattern, int flags,
 	      if (success)
 		{
 		  struct passwd *p;
-#   if defined HAVE_FUNCTION_GETPWNAM_R || defined _LIBC
+#   if defined HAVE_GETPWNAM_R || defined _LIBC
 		  long int pwbuflen = sysconf (_SC_GETPW_R_SIZE_MAX);
 		  char *pwtmpbuf;
 		  struct passwd pwbuf;
@@ -659,7 +651,7 @@ glob (const char *pattern, int flags,
 	  /* Look up specific user's home directory.  */
 	  {
 	    struct passwd *p;
-#  if defined HAVE_FUNCTION_GETPWNAM_R || defined _LIBC
+#  if defined HAVE_GETPWNAM_R || defined _LIBC
 	    long int buflen = sysconf (_SC_GETPW_R_SIZE_MAX);
 	    char *pwtmpbuf;
 	    struct passwd pwbuf;
@@ -909,7 +901,7 @@ glob (const char *pattern, int flags,
   if (!(flags & GLOB_NOSORT))
     {
       /* Sort the vector.  */
-      qsort ((__ptr_t) &pglob->gl_pathv[oldcount],
+      qsort ((void *) &pglob->gl_pathv[oldcount],
 	     pglob->gl_pathc + pglob->gl_offs - oldcount,
 	     sizeof (char *), collated_compare);
     }
@@ -932,8 +924,8 @@ globfree (register glob_t *pglob)
       size_t i;
       for (i = 0; i < pglob->gl_pathc; ++i)
 	if (pglob->gl_pathv[pglob->gl_offs + i] != NULL)
-	  free ((__ptr_t) pglob->gl_pathv[pglob->gl_offs + i]);
-      free ((__ptr_t) pglob->gl_pathv);
+	  free ((void *) pglob->gl_pathv[pglob->gl_offs + i]);
+      free ((void *) pglob->gl_pathv);
       pglob->gl_pathv = NULL;
     }
 }
@@ -944,7 +936,7 @@ libc_hidden_def (globfree)
 
 /* Do a collated comparison of A and B.  */
 static int
-collated_compare (const __ptr_t a, const __ptr_t b)
+collated_compare (const void *a, const void *b)
 {
   const char *const s1 = *(const char *const * const) a;
   const char *const s2 = *(const char *const * const) b;
@@ -1001,7 +993,7 @@ prefix_array (const char *dirname, char **array, size_t n)
       if (new == NULL)
 	{
 	  while (i > 0)
-	    free ((__ptr_t) array[--i]);
+	    free ((void *) array[--i]);
 	  return 1;
 	}
 
@@ -1010,7 +1002,7 @@ prefix_array (const char *dirname, char **array, size_t n)
 	*endp++ = DIRSEP_CHAR;
 	mempcpy (endp, array[i], eltlen);
       }
-      free ((__ptr_t) array[i]);
+      free ((void *) array[i]);
       array[i] = new;
     }
 
@@ -1055,7 +1047,7 @@ __glob_pattern_p (const char *pattern, int quote)
 # ifdef _LIBC
 weak_alias (__glob_pattern_p, glob_pattern_p)
 # endif
-#endif /* !defined _LIBC || !defined NO_GLOB_PATTERN_P */
+#endif
 
 #endif /* !GLOB_ONLY_P */
 
@@ -1075,12 +1067,11 @@ is_dir_p (const char *dir, size_t dirlen, const char *fname,
   mempcpy (mempcpy (mempcpy (fullname, dir, dirlen), "/", 1),
 	   fname, fnamelen + 1);
 
-  return (flags & GLOB_ALTDIRFUNC)
+  return ((flags & GLOB_ALTDIRFUNC)
 	  ? (*pglob->gl_stat) (fullname, &st) == 0 && S_ISDIR (st.st_mode)
-	  : __stat64 (fullname, &st64) == 0 && S_ISDIR (st64.st_mode);
+	  : __stat64 (fullname, &st64) == 0 && S_ISDIR (st64.st_mode));
 }
 #endif
-
 
 
 /* Like `glob', but PATTERN is a final pathname component,
@@ -1093,7 +1084,7 @@ glob_in_dir (const char *pattern, const char *directory, int flags,
 	     glob_t *pglob)
 {
   size_t dirlen = strlen (directory);
-  __ptr_t stream = NULL;
+  void *stream = NULL;
   struct globlink
     {
       struct globlink *next;
@@ -1154,7 +1145,7 @@ glob_in_dir (const char *pattern, const char *directory, int flags,
 	{
 	  stream = ((flags & GLOB_ALTDIRFUNC)
 		    ? (*pglob->gl_opendir) (directory)
-		    : (__ptr_t) opendir (directory));
+		    : (void *) opendir (directory));
 	  if (stream == NULL)
 	    {
 	      if (errno != ENOTDIR
@@ -1215,26 +1206,24 @@ glob_in_dir (const char *pattern, const char *directory, int flags,
 
 		  /* If we shall match only directories use the information
 		     provided by the dirent call if possible.  */
-		  if ((flags & GLOB_ONLYDIR) && !MAY_BE_DIR (d))
+		  if ((flags & GLOB_ONLYDIR) && !DIRENT_MIGHT_BE_DIR (d))
 		    continue;
 
 		  name = d->d_name;
 
 		  if (fnmatch (pattern, name, fnm_flags) == 0)
 		    {
-		      /* Note that isdir will often be incorrectly set to false
-		       * when not in GLOB_ONLYDIR || GLOB_MARK mode, but we
-		       * don't care.  It won't be used and we save the
-		       * expensive call to stat().
-		       */
-		      bool isdir = MUST_BE (d, DT_DIR)
-				   || ((flags & GLOB_ONLYDIR)
-				       && MAY_BE_LINK (d)
-				       && is_dir_p (directory, dirlen, name,
-						    pglob, flags))
-				   || ((flags & GLOB_MARK)
-				       && is_dir_p (directory, dirlen, name,
-						    pglob, flags));
+		      /* ISDIR will often be incorrectly set to false
+		         when not in GLOB_ONLYDIR || GLOB_MARK mode, but we
+		         don't care.  It won't be used and we save the
+		         expensive call to stat.  */
+		      int need_dir_test =
+			(GLOB_MARK | (DIRENT_MIGHT_BE_SYMLINK (d)
+				      ? GLOB_ONLYDIR : 0));
+		      bool isdir = (DIRENT_MUST_BE (d, DT_DIR)
+				    || ((flags & need_dir_test)
+				        && is_dir_p (directory, dirlen, name,
+						     pglob, flags)));
 
 		      /* In GLOB_ONLYDIR mode, skip non-dirs.  */
 		      if ((flags & GLOB_ONLYDIR) && !isdir)
@@ -1249,7 +1238,7 @@ glob_in_dir (const char *pattern, const char *directory, int flags,
 					      + ((flags & GLOB_MARK) && isdir));
 			  if (new->name == NULL)
 			    goto memory_error;
-			  p = mempcpy ((__ptr_t) new->name, name, len);
+			  p = mempcpy ((void *) new->name, name, len);
 			  if ((flags & GLOB_MARK) && isdir)
 			      *p++ = '/';
 			  *p = '\0';
@@ -1318,7 +1307,7 @@ glob_in_dir (const char *pattern, const char *directory, int flags,
   while (names != NULL)
     {
       if (names->name != NULL)
-	free ((__ptr_t) names->name);
+	free ((void *) names->name);
       names = names->next;
     }
   return GLOB_NOSPACE;
