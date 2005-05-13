@@ -13,20 +13,29 @@ Words and expressions hard to translate:
   'devolver'. This is open question.
 
 - check in
-  submeter, devolver
+  'submeter', 'devolver'. 'submeter' is better, because 'devolver' can be
+  interpreted as 'recusar'
 
 - commit
   I think that 'efetivar' is good. But people don't like. And some
   people are using commitar (argh!)
 
 - head revision
-  'revisão cabeça'? 'revisão na cabeça'?
+  'revisão no topo'.
+  Other options, that I really not good, are 'revisão cabeça',
+  'revisão na cabeça'
 
 - history
   'histórico'. when talking about the history file, leave unchanged 
 
 - keyword
   'palavra-chave'
+
+- keyword expansion
+  'expansão de palavra-chave'
+
+- line ending
+  'terminação de linha'
 
 - log (verb)
   'registrar'
@@ -43,6 +52,9 @@ Words and expressions hard to translate:
 
 - repository
   'repositório'
+
+- store
+  'armazenar', 'guardar'.
 
 -tag (verb)
   'etiquetar'
