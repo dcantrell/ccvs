@@ -21,6 +21,11 @@
 
 #ifdef _LIBC
 # include <sys/cdefs.h>
+#else
+# include <sys/types.h>
+# include <stddef.h>
+# undef __size_t
+# define __size_t size_t
 #endif
 
 __BEGIN_DECLS
@@ -45,10 +50,6 @@ typedef __SIZE_TYPE__ size_t;
 #  undef __size_t
 #  define __size_t size_t
 # endif
-#else /* !_LIBC */
-# include <stddef.h>
-# undef __size_t
-# define __size_t size_t
 #endif /* _LIBC */
 
 /* Some system libraries erroneously define these.  */
@@ -179,6 +180,10 @@ typedef struct
 # define __glob_pattern_p glob_pattern_p
 #endif
 
+#ifndef __THROW
+# define __THROW
+#endif
+
 /* Do glob searching for PATTERN, placing results in PGLOB.
    The bits defined above may be set in FLAGS.
    If a directory cannot be opened or read and ERRFUNC is not nil,
@@ -187,7 +192,7 @@ typedef struct
    `glob' returns GLOB_ABEND; if it returns zero, the error is ignored.
    If memory cannot be allocated for PGLOB, GLOB_NOSPACE is returned.
    Otherwise, `glob' returns zero.  */
-#if !_LIBC || !defined __USE_FILE_OFFSET64 || __GNUC__ < 2
+#if !defined _LIBC || !defined __USE_FILE_OFFSET64 || __GNUC__ < 2
 extern int glob (__const char *__restrict __pattern, int __flags,
 		 int (*__errfunc) (__const char *, int),
 		 glob_t *__restrict __pglob) __THROW;
