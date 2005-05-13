@@ -24,23 +24,24 @@ AC_DEFUN([gl_GLOB],
 [
   gl_PREREQ_GLOB
 
-  if test -z "$GLOB_H"; then
-    GLOB_H=
-    AC_CHECK_HEADERS([glob.h], [], [GLOB_H=glob.h])
-    if test -z "$GLOB_H"; then
-      AC_CHECK_FUNCS([glob_pattern_p], [], [GLOB_H=glob.h])
-    fi
+  GLOB_H=
+  AC_CHECK_HEADERS([glob.h gnu-versions.h], [], [GLOB_H=glob.h])
 
-    if test -n "$GLOB_H"; then
-      gl_GLOB_SUBSTITUTE
-    fi
+  if test -z "$GLOB_H"; then
+    AC_EGREP_CPP([gl_gnu_glob_version = 1$],
+[#include <gnu-versions.h>
+gl_gnu_glob_version = _GNU_GLOB_INTERFACE_VERSION],
+      [], [GLOB_H=glob.h])
+  fi
+
+  if test -n "$GLOB_H"; then
+    gl_GLOB_SUBSTITUTE
   fi
 ])
 
 # Prerequisites of lib/glob.*.
-AC_DEFUN([gl_PREREQ_GLOB], [
-  AC_CHECK_HEADERS_ONCE([dirent.h sys/ndir.h sys/dir.h ndir.h])
-  AC_CHECK_FUNCS_ONCE([dirent64 getlogin_r getpwnam_r stat64])
-  AC_CHECK_MEMBERS([struct dirent.d_type],,, [#include <dirent.h>])
-  :
-])
+AC_DEFUN([gl_PREREQ_GLOB],
+[ AC_REQUIRE([gl_CHECK_TYPE_STRUCT_DIRENT_D_TYPE])dnl
+  AC_CHECK_HEADERS_ONCE([dirent.h sys/ndir.h sys/dir.h ndir.h])dnl
+  AC_CHECK_FUNCS_ONCE([dirent64 getlogin_r getpwnam_r stat64])dnl
+  :])
