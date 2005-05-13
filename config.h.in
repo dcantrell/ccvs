@@ -322,8 +322,8 @@
 /* Define to 1 if you have the <glob.h> header file. */
 #undef HAVE_GLOB_H
 
-/* Define to 1 if you have the `glob_pattern_p' function. */
-#undef HAVE_GLOB_PATTERN_P
+/* Define to 1 if you have the <gnu-versions.h> header file. */
+#undef HAVE_GNU_VERSIONS_H
 
 /* Define if you have GSSAPI with Kerberos version 5 available. */
 #undef HAVE_GSSAPI
@@ -611,7 +611,8 @@
 /* Define to 1 if you have the `strtoul' function. */
 #undef HAVE_STRTOUL
 
-/* Define to 1 if `d_type' is member of `struct dirent'. */
+/* Define if there is a member named d_type in the struct describing directory
+   headers. */
 #undef HAVE_STRUCT_DIRENT_D_TYPE
 
 /* Define to 1 if `st_blksize' is member of `struct stat'. */
