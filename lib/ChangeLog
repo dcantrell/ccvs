@@ -1,3 +1,9 @@
+2005-05-15  Derek Price  <derek@ximbiot.com>
+
+	* glob_.h, glob.c: More misc cleanup for compatibility with GNULIB &
+	glibc, mostly suggested by Paul Eggert <eggert@cs.ucla.edu>.  Remove
+	casts to and from void * - they are not needed in C89.
+
 2005-05-13  Derek Price  <derek@ximbiot.com>
 
 	* glob_.h: Enable GNU features by default.  Remove copy/pasted getopt

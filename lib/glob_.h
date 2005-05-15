@@ -26,7 +26,6 @@
 # include <stddef.h>
 # undef __size_t
 # define __size_t size_t
-# define __USE_GNU
 #endif
 
 __BEGIN_DECLS
@@ -34,16 +33,9 @@ __BEGIN_DECLS
 /* We need `size_t' for the following definitions.  */
 #ifdef _LIBC
 # ifndef __size_t
-#  if defined __GNUC__ && __GNUC__ >= 2
 typedef __SIZE_TYPE__ __size_t;
-#   ifdef __USE_XOPEN
+#  ifdef __USE_XOPEN
 typedef __SIZE_TYPE__ size_t;
-#   endif
-#  else
-#   include <stddef.h>
-#   ifndef __size_t
-#    define __size_t size_t
-#   endif
 #  endif
 # else
 /* The GNU CC stddef.h version defines __size_t as empty.  We need a real
@@ -162,11 +154,6 @@ typedef struct
   } glob64_t;
 #endif
 
-#if __USE_FILE_OFFSET64 && __GNUC__ < 2
-# define glob glob64
-# define globfree globfree64
-#endif
-
 #ifdef GLOB_PREFIX
 # define __GLOB_CONCAT(x, y) x ## y
 # define __GLOB_XCONCAT(x, y) __GLOB_CONCAT (x, y)
@@ -192,7 +179,7 @@ typedef struct
    `glob' returns GLOB_ABEND; if it returns zero, the error is ignored.
    If memory cannot be allocated for PGLOB, GLOB_NOSPACE is returned.
    Otherwise, `glob' returns zero.  */
-#if !defined _LIBC || !defined __USE_FILE_OFFSET64 || __GNUC__ < 2
+#if !defined _LIBC || !defined __USE_FILE_OFFSET64
 extern int glob (__const char *__restrict __pattern, int __flags,
 		 int (*__errfunc) (__const char *, int),
 		 glob_t *__restrict __pglob) __THROW;
@@ -207,6 +194,7 @@ extern int __REDIRECT_NTH (glob, (__const char *__restrict __pattern,
 
 extern void __REDIRECT_NTH (globfree, (glob_t *__pglob), globfree64);
 #endif
+
 #ifdef __USE_LARGEFILE64
 extern int glob64 (__const char *__restrict __pattern, int __flags,
 		   int (*__errfunc) (__const char *, int),
