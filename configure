@@ -1475,11 +1475,6 @@ gl_func_list="$gl_func_list mempcpy"
 gl_func_list="$gl_func_list mblen"
 gl_func_list="$gl_func_list mbrlen"
 gl_func_list="$gl_func_list tzset"
-gl_header_list="$gl_header_list dirent.h"
-gl_header_list="$gl_header_list sys/ndir.h"
-gl_header_list="$gl_header_list sys/dir.h"
-gl_header_list="$gl_header_list ndir.h"
-gl_func_list="$gl_func_list dirent64"
 gl_func_list="$gl_func_list getlogin_r"
 gl_func_list="$gl_func_list getpwnam_r"
 gl_func_list="$gl_func_list stat64"
@@ -28202,70 +28197,7 @@ _ACEOF
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  :
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  :
-
-
-
-
-
-
-
-
-
-
-
-
-
-  :
-
-  GLOB_H=
+ GLOB_H=
 
 
 for ac_header in glob.h gnu-versions.h
@@ -28454,24 +28386,70 @@ rm -f conftest*
 
 
 
+  echo "$as_me:$LINENO: checking for struct dirent64" >&5
+echo $ECHO_N "checking for struct dirent64... $ECHO_C" >&6
+if test "${ac_cv_type_struct_dirent64+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+int
+main ()
+{
+if ((struct dirent64 *) 0)
+  return 0;
+if (sizeof (struct dirent64))
+  return 0;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_type_struct_dirent64=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_type_struct_dirent64=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_type_struct_dirent64" >&5
+echo "${ECHO_T}$ac_cv_type_struct_dirent64" >&6
+if test $ac_cv_type_struct_dirent64 = yes; then
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_STRUCT_DIRENT64 1
+_ACEOF
 
 
-
-
-  :
-
-
-
-
-
-
-
-
-
-
-
-
-
+fi
   :
 
   GLOB_H=glob.h
