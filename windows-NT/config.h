@@ -266,10 +266,8 @@
 /* Define to 1 if you have the <direct.h> header file. */
 #define HAVE_DIRECT_H 1
 
-/* Define to 1 if you have the `dirent64' function. */
-#undef HAVE_DIRENT64
-
-/* Define to 1 if you have the <dirent.h> header file. */
+/* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
+   */
 #undef HAVE_DIRENT_H
 
 /* Define to 1 if you have the `dup2' function. */
@@ -480,7 +478,7 @@
 /* Define to 1 if you have the <ndbm.h> header file. */
 #undef HAVE_NDBM_H
 
-/* Define to 1 if you have the <ndir.h> header file. */
+/* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #define HAVE_NDIR_H 1
 
 /* Define to 1 if you have the `openat' function. */
@@ -633,6 +631,9 @@
 /* Define to 1 if you have the `strtoul' function. */
 #undef HAVE_STRTOUL
 
+/* Define to 1 if the system has the type `struct dirent64'. */
+#undef HAVE_STRUCT_DIRENT64
+
 /* Define if there is a member named d_type in the struct describing directory
    headers. */
 #undef HAVE_STRUCT_DIRENT_D_TYPE
@@ -655,7 +656,8 @@
 /* Define to 1 if you have the <sys/bsdtypes.h> header file. */
 #undef HAVE_SYS_BSDTYPES_H
 
-/* Define to 1 if you have the <sys/dir.h> header file. */
+/* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
+   */
 #undef HAVE_SYS_DIR_H
 
 /* Define to 1 if you have the <sys/file.h> header file. */
@@ -664,7 +666,8 @@
 /* Define to 1 if you have the <sys/inttypes.h> header file. */
 #undef HAVE_SYS_INTTYPES_H
 
-/* Define to 1 if you have the <sys/ndir.h> header file. */
+/* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
+   */
 #undef HAVE_SYS_NDIR_H
 
 /* Define to 1 if you have the <sys/param.h> header file. */
