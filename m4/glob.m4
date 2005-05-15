@@ -21,10 +21,7 @@ AC_DEFUN([gl_GLOB_SUBSTITUTE],
 ])
 
 AC_DEFUN([gl_GLOB],
-[
-  gl_PREREQ_GLOB
-
-  GLOB_H=
+[ GLOB_H=
   AC_CHECK_HEADERS([glob.h gnu-versions.h], [], [GLOB_H=glob.h])
 
   if test -z "$GLOB_H"; then
@@ -42,6 +39,7 @@ gl_gnu_glob_version = _GNU_GLOB_INTERFACE_VERSION],
 # Prerequisites of lib/glob.*.
 AC_DEFUN([gl_PREREQ_GLOB],
 [ AC_REQUIRE([gl_CHECK_TYPE_STRUCT_DIRENT_D_TYPE])dnl
-  AC_CHECK_HEADERS_ONCE([dirent.h sys/ndir.h sys/dir.h ndir.h])dnl
-  AC_CHECK_FUNCS_ONCE([dirent64 getlogin_r getpwnam_r stat64])dnl
+  AC_REQUIRE([AC_HEADER_DIRENT])dnl
+  AC_CHECK_FUNCS_ONCE([getlogin_r getpwnam_r stat64])dnl
+  AC_CHECK_TYPES([struct dirent64])dnl
   :])

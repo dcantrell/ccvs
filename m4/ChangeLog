@@ -1,3 +1,9 @@
+2005-05-15  Derek Price  <derek@ximbiot.com>
+
+	* glob.m4 (gl_GLOB): Don't call gl_PREREQ_GLOB.
+	(gl_PREREQ_GLOB): Replace search for lots of headers by requiring
+	AC_HEADER_DIRENT.  dirent64 is a type, not a function.
+
 2005-05-12  Derek Price  <derek@ximbiot.com>
 
 	* d-type.m4: New file from GNULIB.
