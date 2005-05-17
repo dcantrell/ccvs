@@ -19,19 +19,14 @@
 #ifndef	_GLOB_H
 #define	_GLOB_H	1
 
-#ifdef _LIBC
+#if defined _LIBC
 # include <sys/cdefs.h>
-#else
-# include <sys/types.h>
-# include <stddef.h>
-# undef __size_t
-# define __size_t size_t
 #endif
-
-__BEGIN_DECLS
 
 /* We need `size_t' for the following definitions.  */
 #ifdef _LIBC
+__BEGIN_DECLS
+
 # ifndef __size_t
 typedef __SIZE_TYPE__ __size_t;
 #  ifdef __USE_XOPEN
@@ -43,17 +38,21 @@ typedef __SIZE_TYPE__ size_t;
 #  undef __size_t
 #  define __size_t size_t
 # endif
+#else /* !_LIBC */
+# include <stddef.h>
+# undef __size_t
+# define __size_t	size_t
+/* The following are necessary with MSVC and who knows where else.  */
+# ifndef __const
+#  define __const	const
+# endif
+# ifndef __restrict
+#  define __restrict	restrict
+# endif
+# ifndef __USE_GNU
+#  define __USE_GNU	1
+# endif
 #endif /* _LIBC */
-
-/* Some system libraries erroneously define these.  */
-#undef	GLOB_ERR
-#undef	GLOB_MARK
-#undef	GLOB_NOSORT
-#undef	GLOB_DOOFFS
-#undef	GLOB_NOCHECK
-#undef	GLOB_APPEND
-#undef	GLOB_NOESCAPE
-#undef	GLOB_PERIOD
 
 /* Bits set in the FLAGS argument to `glob'.  */
 #define	GLOB_ERR	(1 << 0)/* Return on read errors.  */
@@ -213,6 +212,8 @@ extern void globfree64 (glob64_t *__pglob) __THROW;
 extern int glob_pattern_p (__const char *__pattern, int __quote) __THROW;
 #endif
 
+#ifdef _LIBC
 __END_DECLS
+#endif
 
 #endif /* glob.h  */

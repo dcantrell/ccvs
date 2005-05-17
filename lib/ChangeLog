@@ -1,3 +1,15 @@
+2005-05-17  Derek Price  <derek@ximbiot.com>
+
+	More misc cleanup for compatibility with GNULIB & glibc, mostly
+	suggested by Paul Eggert <eggert@cs.ucla.edu>.
+	* glob.c: Improve comments.  
+	(GETPW_R_SIZE_MAX): New macro to avoid undefined sysconf macros.
+	(glob): Use new macro.
+	* glob_.h: Define __const, __restrict, and __USE_GNU when necessary.
+	Protect use of __BEGIN_DECLS & __END_DECLS.  Remove include of
+	<sys/types.h>.  Reorganize definitions for GNULIB.  Remove #undefs
+	which work around what is now probably a non-existant problem.
+
 2005-05-15  Derek Price  <derek@ximbiot.com>
 
 	* glob_.h, glob.c: More misc cleanup for compatibility with GNULIB &
