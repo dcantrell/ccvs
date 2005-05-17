@@ -1,3 +1,7 @@
+2005-05-17  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Use a predictable umask.
+
 2005-05-13  Derek Price  <derek@ximbiot.com>
 
 	* login.c (password_entry_parseline): Placate gcc -Wall.
