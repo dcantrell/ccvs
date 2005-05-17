@@ -1,3 +1,7 @@
+2005-05-17  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dep: Regenerated for "lib/libcvs.dsp" change.
+
 2005-05-11  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note new History* config options.

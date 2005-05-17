@@ -42,9 +42,9 @@ struct group
 };
 
 extern struct passwd *getpwuid (int);
-extern struct passwd *getpwnam (char *);
+extern struct passwd *getpwnam (const char *);
 extern struct group *getgrgid (int);
-extern struct group *getgrnam (char *);
+extern struct group *getgrnam (const char *);
 extern char *getlogin (void);
 extern char *getgr_name (void);
 extern int getuid (void);

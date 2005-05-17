@@ -124,10 +124,28 @@
 	".\timespec.h"\
 	
 
+.\glob.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\ndir.h"\
+	"..\windows-NT\pwd.h"\
+	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\unistd.h"\
+	".\alloca.h"\
+	".\fnmatch.h"\
+	".\glob.h"\
+	".\mempcpy.h"\
+	".\stat-macros.h"\
+	".\strdup.h"\
+	
+
 .\md5.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdint.h"\
 	".\md5.h"\
+	
+
+.\mempcpy.c : \
+	".\mempcpy.h"\
 	
 
 .\pagealign_alloc.c : \
@@ -294,6 +312,12 @@
 	"..\windows-NT\stdbool.h"\
 	".\yesno.h"\
 	
+
+!IF  "$(CFG)" == "libcvs - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
+
+!ENDIF 
 
 !IF  "$(CFG)" == "libcvs - Win32 Release"
 
