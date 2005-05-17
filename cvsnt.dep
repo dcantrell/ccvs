@@ -518,9 +518,7 @@
 .\src\error.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
-	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\

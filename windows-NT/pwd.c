@@ -63,7 +63,7 @@ getpwuid (int uid)
 }
 
 struct passwd *
-getpwnam (char *name)
+getpwnam (const char *name)
 {
   return (struct passwd *) 0;
 }
@@ -79,7 +79,7 @@ getgrgid (int uid)
 }
 
 struct group *
-getgrnam (char *name)
+getgrnam (const char *name)
 {
   return (struct group *) 0;
 }

@@ -157,7 +157,15 @@ SOURCE=.\gettime.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\glob.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\md5.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\mempcpy.c
 # End Source File
 # Begin Source File
 
@@ -418,6 +426,33 @@ SOURCE=.\gettext.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\glob_.h
+
+!IF  "$(CFG)" == "libcvs - Win32 Release"
+
+# Begin Custom Build
+InputPath=.\glob_.h
+
+".\glob.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	copy .\glob_.h .\glob.h
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
+
+# Begin Custom Build
+InputPath=.\glob_.h
+
+".\glob.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	copy .\glob_.h .\glob.h
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\md5.h
 # End Source File
 # Begin Source File
@@ -482,11 +517,11 @@ SOURCE=.\timespec.h
 # End Source File
 # Begin Source File
 
-SOURCE="..\windows-NT\unistd.h"
+SOURCE=".\unistd-safer.h"
 # End Source File
 # Begin Source File
 
-SOURCE=".\unistd-safer.h"
+SOURCE="..\windows-NT\unistd.h"
 # End Source File
 # Begin Source File
 

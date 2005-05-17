@@ -33,7 +33,7 @@ INTDIR=.\WinRel
 OutDir=.\WinRel
 # End Custom Macros
 
-ALL : ".\getopt.h" ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
+ALL : ".\glob.h" ".\getopt.h" ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
 
 
 CLEAN :
@@ -55,7 +55,9 @@ CLEAN :
 	-@erase "$(INTDIR)\getopt.obj"
 	-@erase "$(INTDIR)\getopt1.obj"
 	-@erase "$(INTDIR)\gettime.obj"
+	-@erase "$(INTDIR)\glob.obj"
 	-@erase "$(INTDIR)\md5.obj"
+	-@erase "$(INTDIR)\mempcpy.obj"
 	-@erase "$(INTDIR)\pagealign_alloc.obj"
 	-@erase "$(INTDIR)\printf-args.obj"
 	-@erase "$(INTDIR)\printf-parse.obj"
@@ -85,6 +87,7 @@ CLEAN :
 	-@erase ".\alloca.h"
 	-@erase ".\fnmatch.h"
 	-@erase ".\getopt.h"
+	-@erase ".\glob.h"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -148,7 +151,9 @@ LIB32_OBJS= \
 	"$(INTDIR)\getopt.obj" \
 	"$(INTDIR)\getopt1.obj" \
 	"$(INTDIR)\gettime.obj" \
+	"$(INTDIR)\glob.obj" \
 	"$(INTDIR)\md5.obj" \
+	"$(INTDIR)\mempcpy.obj" \
 	"$(INTDIR)\pagealign_alloc.obj" \
 	"$(INTDIR)\printf-args.obj" \
 	"$(INTDIR)\printf-parse.obj" \
@@ -209,7 +214,9 @@ CLEAN :
 	-@erase "$(INTDIR)\getopt.obj"
 	-@erase "$(INTDIR)\getopt1.obj"
 	-@erase "$(INTDIR)\gettime.obj"
+	-@erase "$(INTDIR)\glob.obj"
 	-@erase "$(INTDIR)\md5.obj"
+	-@erase "$(INTDIR)\mempcpy.obj"
 	-@erase "$(INTDIR)\pagealign_alloc.obj"
 	-@erase "$(INTDIR)\printf-args.obj"
 	-@erase "$(INTDIR)\printf-parse.obj"
@@ -300,7 +307,9 @@ LIB32_OBJS= \
 	"$(INTDIR)\getopt.obj" \
 	"$(INTDIR)\getopt1.obj" \
 	"$(INTDIR)\gettime.obj" \
+	"$(INTDIR)\glob.obj" \
 	"$(INTDIR)\md5.obj" \
+	"$(INTDIR)\mempcpy.obj" \
 	"$(INTDIR)\pagealign_alloc.obj" \
 	"$(INTDIR)\printf-args.obj" \
 	"$(INTDIR)\printf-parse.obj" \
@@ -434,9 +443,19 @@ SOURCE=.\gettime.c
 "$(INTDIR)\gettime.obj" : $(SOURCE) "$(INTDIR)"
 
 
+SOURCE=.\glob.c
+
+"$(INTDIR)\glob.obj" : $(SOURCE) "$(INTDIR)"
+
+
 SOURCE=.\md5.c
 
 "$(INTDIR)\md5.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\mempcpy.c
+
+"$(INTDIR)\mempcpy.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\pagealign_alloc.c
@@ -632,6 +651,32 @@ InputPath=.\getopt_.h
 	<<tempfile.bat 
 	@echo off 
 	copy .\getopt_.h .\getopt.h
+<< 
+	
+
+!ENDIF 
+
+SOURCE=.\glob_.h
+
+!IF  "$(CFG)" == "libcvs - Win32 Release"
+
+InputPath=.\glob_.h
+
+".\glob.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	<<tempfile.bat 
+	@echo off 
+	copy .\glob_.h .\glob.h
+<< 
+	
+
+!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
+
+InputPath=.\glob_.h
+
+".\glob.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	<<tempfile.bat 
+	@echo off 
+	copy .\glob_.h .\glob.h
 << 
 	
 
