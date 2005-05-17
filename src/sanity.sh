@@ -106,6 +106,8 @@ export LANG
 LC_ALL=C
 export LC_ALL
 
+# And a few tests want a predictable umask.
+umask 0002
 
 #
 # Initialize the test counts.
@@ -22425,6 +22427,7 @@ $SPROG commit: Rebuilding administrative file database"
 	  else
 	    chmod u=rwx,g=r,o= ${TESTDIR}/locks
 	  fi
+	  save_umask=`umask`
 	  umask 0077
 	  CVSUMASK=0077; export CVSUMASK
 	  dotest lockfiles-6 "${testcvs} -q update" ""
@@ -22599,9 +22602,8 @@ $SPROG commit: Rebuilding administrative file database"
 
 	  dokeep
 	  cd ../..
-	  # Perhaps should restore the umask and CVSUMASK to what they
-	  # were before.  But the other tests "should" not care about them...
-	  umask 0077
+	  # Restore umask.
+	  umask $save_umask
 	  unset CVSUMASK
 	  rm -r $TESTDIR/locks
 	  rm -r 1 2 3
@@ -23234,6 +23236,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # is running the tests doesn't have CVSUMASK set.
 	  #export -n CVSUMASK # if unset, defaults to 002
 
+	  save_umask=`umask`
 	  umask 077
 	  mkdir 1; cd 1
 	  dotest modes-1 "${testcvs} -q co -l ." ''
@@ -23348,10 +23351,10 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 
 	  dokeep
 	  cd ../..
+	  # Restore umask.
+	  umask $save_umask
 	  rm -r 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
-	  # Perhaps should restore the umask and CVSUMASK.  But the other
-	  # tests "should" not care about them...
 	  ;;
 
 
