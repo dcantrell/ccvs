@@ -25,9 +25,9 @@ AC_DEFUN([gl_GLOB],
   AC_CHECK_HEADERS([glob.h gnu-versions.h], [], [GLOB_H=glob.h])
 
   if test -z "$GLOB_H"; then
-    AC_EGREP_CPP([gl_gnu_glob_version = 1$],
-[#include <gnu-versions.h>
-gl_gnu_glob_version = _GNU_GLOB_INTERFACE_VERSION],
+    AC_COMPILE_IFELSE(
+[[#include <gnu-versions.h>
+char a[_GNU_GLOB_INTERFACE_VERSION == 1 ? 1 : -1];]],
       [], [GLOB_H=glob.h])
   fi
 
