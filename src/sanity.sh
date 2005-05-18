@@ -19866,9 +19866,15 @@ $SPROG commit: Rebuilding administrative file database"
 -rw-rw-r--.*$TESTDIR/historylogs/2[0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]-[0-2][0-9]-[0-5][0-9]-[0-5][0-9]"
 
 	    # Should still see both commits.
-	    dotest config-9 "$testcvs history -ea" \
-"M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == \($TESTDIR/wnt/CVSROOT\|<remote>\)
-M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == \($TESTDIR/wnt/CVSROOT\|<remote>\)"
+	    if $remote; then
+	      dotest config-9r "$testcvs history -ea" \
+"M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == <remote>
+M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == <remote>"
+	    else
+	      dotest config-9 "$testcvs history -ea" \
+"M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == $TESTDIR/wnt/CVSROOT
+M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == $TESTDIR/wnt/CVSROOT"
+	    fi
 
 	    # Remove this now to see what kind of error messages we get.
 	    rm -r $TESTDIR/historylogs

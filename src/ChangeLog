@@ -1,3 +1,8 @@
+2005-05-18  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (config-9): Split to local/remote tests to avoid unportable
+	expr characters.
+
 2005-05-17  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: Use a predictable umask.
