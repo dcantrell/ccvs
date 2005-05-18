@@ -335,9 +335,6 @@
 /* Define to 1 if you have the <glob.h> header file. */
 #undef HAVE_GLOB_H
 
-/* Define to 1 if you have the <gnu-versions.h> header file. */
-#undef HAVE_GNU_VERSIONS_H
-
 /* Define if you have GSSAPI with Kerberos version 5 available. */
 #undef HAVE_GSSAPI
 
@@ -648,6 +645,9 @@
 
 /* Define to 1 if you have the <sys/bsdtypes.h> header file. */
 #undef HAVE_SYS_BSDTYPES_H
+
+/* Define to 1 if you have the <sys/cdefs.h> header file. */
+#undef HAVE_SYS_CDEFS_H
 
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
    */

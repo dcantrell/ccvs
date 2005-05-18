@@ -1475,6 +1475,7 @@ gl_func_list="$gl_func_list mempcpy"
 gl_func_list="$gl_func_list mblen"
 gl_func_list="$gl_func_list mbrlen"
 gl_func_list="$gl_func_list tzset"
+gl_header_list="$gl_header_list sys/cdefs.h"
 gl_func_list="$gl_func_list getlogin_r"
 gl_func_list="$gl_func_list getpwnam_r"
 gl_func_list="$gl_func_list stat64"
@@ -28197,10 +28198,15 @@ _ACEOF
 
 
 
+
+
+
+
+
+
  GLOB_H=
 
-
-for ac_header in glob.h gnu-versions.h
+for ac_header in glob.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if eval "test \"\${$as_ac_Header+set}\" = set"; then
@@ -28390,6 +28396,12 @@ rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
   fi
 
   if test -n "$GLOB_H"; then
+
+
+  :
+
+
+
 
 
   :
