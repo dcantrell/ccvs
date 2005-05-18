@@ -199,7 +199,7 @@ extern char *getlogin (void);
 #ifdef _SC_GETPW_R_SIZE_MAX
 # define GETPW_R_SIZE_MAX()	sysconf (_SC_GETPW_R_SIZE_MAX)
 #else
-# define GETPW_R_SIZE_MAX()	(-1);
+# define GETPW_R_SIZE_MAX()	(-1)
 #endif
 
 static const char *next_brace_sub (const char *begin, int flags) __THROW;

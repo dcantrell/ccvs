@@ -1,5 +1,9 @@
 2005-05-18  Derek Price  <derek@ximbiot.com>
 
+	* glob.c (GETPW_R_SIZE_MAX): Remove `;' from macro definition.
+
+2005-05-18  Derek Price  <derek@ximbiot.com>
+
 	More misc cleanup for compatibility with GNULIB & glibc, mostly
 	suggested by Paul Eggert <eggert@cs.ucla.edu>.
 	* glob.c: Improve comments.
