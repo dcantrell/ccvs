@@ -19,7 +19,7 @@
 #ifndef	_GLOB_H
 #define	_GLOB_H	1
 
-#if defined _LIBC
+#if defined _LIBC || HAVE_SYS_CDEFS_H
 # include <sys/cdefs.h>
 #endif
 

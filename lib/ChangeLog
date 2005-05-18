@@ -1,3 +1,12 @@
+2005-05-18  Derek Price  <derek@ximbiot.com>
+
+	More misc cleanup for compatibility with GNULIB & glibc, mostly
+	suggested by Paul Eggert <eggert@cs.ucla.edu>.
+	* glob.c: Improve comments.
+	(GETPW_R_SIZE_MAX): Add parens to definition.
+	(glob): Use GNU coding conventions (formatting change).
+	* glob_.h: Include <sys/cdefs.h> when possible.
+
 2005-05-17  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.dsp: Add "glob.c", "glob_.h" and "mempcpy.c" to project.

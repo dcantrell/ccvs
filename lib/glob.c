@@ -199,12 +199,12 @@ extern char *getlogin (void);
 #ifdef _SC_GETPW_R_SIZE_MAX
 # define GETPW_R_SIZE_MAX()	sysconf (_SC_GETPW_R_SIZE_MAX)
 #else
-# define GETPW_R_SIZE_MAX()	-1;
+# define GETPW_R_SIZE_MAX()	(-1);
 #endif
 
 static const char *next_brace_sub (const char *begin, int flags) __THROW;
 
-#endif /* !_LIBC || !GLOB_ONLY_P */
+#endif /* !defined _LIBC || !defined GLOB_ONLY_P */
 
 static int glob_in_dir (const char *pattern, const char *directory,
 			int flags, int (*errfunc) (const char *, int),
@@ -239,7 +239,7 @@ next_brace_sub (const char *cp, int flags)
   return *cp != '\0' ? cp : NULL;
 }
 
-#endif /* !_LIBC || !GLOB_ONLY_P */
+#endif /* !defined _LIBC || !defined GLOB_ONLY_P */
 
 /* Do glob searching for PATTERN, placing results in PGLOB.
    The bits defined above may be set in FLAGS.
@@ -561,7 +561,7 @@ glob (const char *pattern, int flags,
 		{
 		  struct passwd *p;
 #   if defined HAVE_GETPWNAM_R || defined _LIBC
-		  long int pwbuflen = GETPW_R_SIZE_MAX();
+		  long int pwbuflen = GETPW_R_SIZE_MAX ();
 		  char *pwtmpbuf;
 		  struct passwd pwbuf;
 		  int save = errno;
@@ -642,7 +642,7 @@ glob (const char *pattern, int flags,
 	  {
 	    struct passwd *p;
 #  if defined HAVE_GETPWNAM_R || defined _LIBC
-	    long int buflen = GETPW_R_SIZE_MAX();
+	    long int buflen = GETPW_R_SIZE_MAX ();
 	    char *pwtmpbuf;
 	    struct passwd pwbuf;
 	    int save = errno;
