@@ -796,6 +796,9 @@
 /* Define to 1 if you have the `__fpending' function. */
 #undef HAVE___FPENDING
 
+/* Define to 1 if you have the `__posix_getpwnam_r' function. */
+#undef HAVE___POSIX_GETPWNAM_R
+
 /* Define to 1 if you have the `__secure_getenv' function. */
 #undef HAVE___SECURE_GETENV
 
