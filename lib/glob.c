@@ -160,8 +160,9 @@ extern char *getlogin (void);
 # define NAME_MAX (sizeof (((struct dirent *) 0)->d_name))
 #endif
 
+#include <alloca.h>
+
 #ifdef _LIBC
-# include <alloca.h>
 # undef strdup
 # define strdup(str) __strdup (str)
 # define sysconf(id) __sysconf (id)
@@ -175,13 +176,17 @@ extern char *getlogin (void);
 # endif
 # define HAVE_STAT64	1
 #else /* !_LIBC */
+# ifdef HAVE___POSIX_GETPWNAM_R
+   /* Solaris.  */
+#  define getpwnam_r(name, bufp, buf, len, res) \
+    __posix_getpwnam_r (name, bufp, buf, len, res)
+# endif
 # include "mempcpy.h"
 # include "stat-macros.h"
 # include "strdup.h"
 #endif /* _LIBC */
 
 #include <stdbool.h>
-#include <alloca.h>
 #include <fnmatch.h>
 
 #ifndef HAVE_STAT64
