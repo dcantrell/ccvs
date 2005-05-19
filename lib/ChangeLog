@@ -1,5 +1,9 @@
 2005-05-19  Derek Price  <derek@ximbiot.com>
 
+	* glob.c: Use POSIX getpwnam_r on Solaris.
+
+2005-05-19  Derek Price  <derek@ximbiot.com>
+
 	* glob.c: Don't delcare protos for getlogin or getlogin_r if we got one
 	from <unistd.h>.
 
