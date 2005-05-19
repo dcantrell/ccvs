@@ -41,6 +41,14 @@
 #   define POSIX
 #  endif
 # endif
+#else
+/* Is there really a case where the getlogin or getlogin_r proto can come from
+   somewhere other than <unistd.h>?  */
+# ifdef HAVE_GETLOGIN_R
+extern int getlogin_r (char *, size_t);
+# else
+extern char *getlogin (void);
+# endif
 #endif
 
 #include <pwd.h>
@@ -188,12 +196,6 @@
 # define __alloca alloca
 # define __readdir readdir
 # define __readdir64 readdir64
-#endif
-
-#ifdef HAVE_GETLOGIN_R
-extern int getlogin_r (char *, size_t);
-#else
-extern char *getlogin (void);
 #endif
 
 #ifdef _SC_GETPW_R_SIZE_MAX
