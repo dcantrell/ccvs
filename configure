@@ -1477,6 +1477,7 @@ gl_func_list="$gl_func_list mbrlen"
 gl_func_list="$gl_func_list tzset"
 gl_header_list="$gl_header_list sys/cdefs.h"
 gl_func_list="$gl_func_list getlogin_r"
+gl_func_list="$gl_func_list __posix_getpwnam_r"
 gl_func_list="$gl_func_list getpwnam_r"
 gl_func_list="$gl_func_list stat64"
 
@@ -28204,6 +28205,12 @@ _ACEOF
 
 
 
+
+
+
+
+
+
  GLOB_H=
 
 for ac_header in glob.h
@@ -28404,7 +28411,13 @@ rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
 
 
 
+
+
+
   :
+
+
+
 
 
 
