@@ -1,3 +1,7 @@
+2005-05-20  Derek Price  <derek@ximbiot.com>
+
+	* glob.c (__stat64): Add args to macro definition for clarity.
+
 2005-05-19  Derek Price  <derek@ximbiot.com>
 
 	* glob.c: Use POSIX getpwnam_r on Solaris.
