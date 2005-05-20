@@ -193,7 +193,7 @@ extern char *getlogin (void);
 # define __stat64(fname, buf) __stat (fname, buf)
 # define stat64 stat
 #elif !defined _LIBC
-# define __stat64 stat64
+# define __stat64(fname, buf) stat64 (fname, buf)
 #endif
 
 #ifndef _LIBC
