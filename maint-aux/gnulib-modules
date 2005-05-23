@@ -59,3 +59,4 @@ xalloc-die
 pagealign_alloc
 closeout
 strdup
+canonicalize
