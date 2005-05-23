@@ -1,5 +1,9 @@
 2005-05-23  Derek Price  <derek@ximbiot.com>
 
+	* maint-aux/gnulib-modules: Add GNULIB canonicalize module.
+
+2005-05-23  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Update Copyright years.
 
 2005-05-17  Conrad T. Pino  <Conrad@Pino.com>
