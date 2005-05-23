@@ -8807,8 +8807,15 @@ new revision: delete; previous revision: 1\.2"
 	  # DRP: One of the error messages disappeared while I was making
 	  # proxy modifications.  Until I detect a deeper issue, I'm not
 	  # going to stress over it.
+	  #
+	  # DRP: Both messages disappear starting with glibc 2.3.3 due to a bug
+	  # in the glob function which causes it to fail to return broken
+	  # symlinks.  I'm submitting a bug fix to glibc which will hopefully
+	  # be released with glibc 2.3.6.  Once it is released and versions
+	  # 2.3.3-2.3.5 of glibc become uncommon, the first, empty case below
+	  # should be removed again.
 	  dotest rcslib-symlink-10 \
-"$testcvs -q rtag -b -r the_tag brtag first-dir" \
+"$testcvs -q rtag -b -r the_tag brtag first-dir" "" \
 "$SPROG rtag: could not read RCS file for first-dir/file2
 $SPROG rtag: could not read RCS file for first-dir/file2"
 

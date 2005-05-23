@@ -1,3 +1,8 @@
+2005-05-23  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (rcslib-symlink-10): Accept empty result due to broken glob
+	in glibc 2.3.5.
+
 2005-05-18  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (config-9): Split to local/remote tests to avoid unportable
