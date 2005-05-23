@@ -21,7 +21,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 #ifndef _STDINT_H
 #define _STDINT_H
@@ -45,7 +45,7 @@
   /* Solaris 7 <sys/inttypes.h> has the types except the *_fast*_t types, and
      the macros except for *_FAST*_*, INTPTR_MIN, PTRDIFF_MIN, PTRDIFF_MAX.
      But note that <sys/int_types.h> contains only the type definitions!  */
-# define HAVE_SYSTEM_INTTYPES
+# define _STDINT_H_HAVE_SYSTEM_INTTYPES
 #endif
 #if (defined(__hpux) || defined(_AIX)) && HAVE_INTTYPES_H
 # include <inttypes.h>
@@ -53,43 +53,49 @@
      UINT_FAST8_MAX, PTRDIFF_MIN, PTRDIFF_MAX.  */
   /* AIX 4 <inttypes.h> has nearly everything, except INTPTR_MIN, INTPTR_MAX,
      UINTPTR_MAX, PTRDIFF_MIN, PTRDIFF_MAX.  */
-# define HAVE_SYSTEM_INTTYPES
+# define _STDINT_H_HAVE_SYSTEM_INTTYPES
 #endif
 #if !(defined(UNIX_CYGWIN32) && defined(__BIT_TYPES_DEFINED__))
-# define NEED_SIGNED_INT_TYPES
+# define _STDINT_H_NEED_SIGNED_INT_TYPES
 #endif
 
-#if !defined(HAVE_SYSTEM_INTTYPES)
+#if !defined(_STDINT_H_HAVE_SYSTEM_INTTYPES)
 
 /* 7.18.1.1. Exact-width integer types */
 
 #if !defined(__FreeBSD__)
 
-#ifdef NEED_SIGNED_INT_TYPES
+#ifdef _STDINT_H_NEED_SIGNED_INT_TYPES
 typedef signed char    int8_t;
 #endif
 typedef unsigned char  uint8_t;
 
-#ifdef NEED_SIGNED_INT_TYPES
+#ifdef _STDINT_H_NEED_SIGNED_INT_TYPES
 typedef short          int16_t;
 #endif
 typedef unsigned short uint16_t;
 
-#ifdef NEED_SIGNED_INT_TYPES
+#ifdef _STDINT_H_NEED_SIGNED_INT_TYPES
 typedef int            int32_t;
 #endif
 typedef unsigned int   uint32_t;
 
 #if 0
-#ifdef NEED_SIGNED_INT_TYPES
+#ifdef _STDINT_H_NEED_SIGNED_INT_TYPES
 typedef long           int64_t;
 #endif
 typedef unsigned long  uint64_t;
+#define _STDINT_H_HAVE_INT64
 #elif 0
-#ifdef NEED_SIGNED_INT_TYPES
+#ifdef _STDINT_H_NEED_SIGNED_INT_TYPES
 typedef long long          int64_t;
 #endif
 typedef unsigned long long uint64_t;
+#define _STDINT_H_HAVE_INT64
+#elif defined(_MSC_VER)
+typedef __int64          int64_t;
+typedef unsigned __int64 uint64_t;
+#define _STDINT_H_HAVE_INT64
 #endif
 
 #endif /* !FreeBSD */
@@ -102,7 +108,7 @@ typedef int16_t  int_least16_t;
 typedef uint16_t uint_least16_t;
 typedef int32_t  int_least32_t;
 typedef uint32_t uint_least32_t;
-#if 0 || 0
+#ifdef _STDINT_H_HAVE_INT64
 typedef int64_t  int_least64_t;
 typedef uint64_t uint_least64_t;
 #endif
@@ -115,7 +121,7 @@ typedef int32_t  int_fast16_t;
 typedef uint32_t uint_fast16_t;
 typedef int32_t  int_fast32_t;
 typedef uint32_t uint_fast32_t;
-#if 0 || 0
+#ifdef _STDINT_H_HAVE_INT64
 typedef int64_t  int_fast64_t;
 typedef uint64_t uint_fast64_t;
 #endif
@@ -133,7 +139,7 @@ typedef unsigned long uintptr_t;
 
 /* 7.18.1.5. Greatest-width integer types */
 
-#if 0 || 0
+#ifdef _STDINT_H_HAVE_INT64
 typedef int64_t  intmax_t;
 typedef uint64_t uintmax_t;
 #else
@@ -156,14 +162,18 @@ typedef uint32_t uintmax_t;
 #define INT32_MIN   (~INT32_MAX)
 #define INT32_MAX   2147483647
 #define UINT32_MAX  4294967295U
+#ifdef _STDINT_H_HAVE_INT64
+#define INT64_MIN   (~INT64_MAX)
 #if 0
-#define INT64_MIN   (~INT64_MIN)
 #define INT64_MAX   9223372036854775807L
 #define UINT64_MAX 18446744073709551615UL
 #elif 0
-#define INT64_MIN   (~INT64_MIN)
 #define INT64_MAX   9223372036854775807LL
 #define UINT64_MAX 18446744073709551615ULL
+#elif defined(_MSC_VER)
+#define INT64_MAX   9223372036854775807i64
+#define UINT64_MAX 18446744073709551615ui64
+#endif
 #endif
 
 /* 7.18.2.2. Limits of minimum-width integer types */
@@ -177,7 +187,7 @@ typedef uint32_t uintmax_t;
 #define INT_LEAST32_MIN INT32_MIN
 #define INT_LEAST32_MAX INT32_MAX
 #define UINT_LEAST32_MAX UINT32_MAX
-#if 0 || 0
+#ifdef _STDINT_H_HAVE_INT64
 #define INT_LEAST64_MIN INT64_MIN
 #define INT_LEAST64_MAX INT64_MAX
 #define UINT_LEAST64_MAX UINT64_MAX
@@ -194,7 +204,7 @@ typedef uint32_t uintmax_t;
 #define INT_FAST32_MIN INT32_MIN
 #define INT_FAST32_MAX INT32_MAX
 #define UINT_FAST32_MAX UINT32_MAX
-#if 0 || 0
+#ifdef _STDINT_H_HAVE_INT64
 #define INT_FAST64_MIN INT64_MIN
 #define INT_FAST64_MAX INT64_MAX
 #define UINT_FAST64_MAX UINT64_MAX
@@ -208,7 +218,7 @@ typedef uint32_t uintmax_t;
 
 /* 7.18.2.5. Limits of greatest-width integer types */
 
-#if 0 || 0
+#ifdef _STDINT_H_HAVE_INT64
 #define INTMAX_MIN INT64_MIN
 #define INTMAX_MAX INT64_MAX
 #define UINTMAX_MAX UINT64_MAX
@@ -252,6 +262,9 @@ typedef uint32_t uintmax_t;
 #elif 0
 #define INT64_C(x) x##LL
 #define UINT64_C(x) x##ULL
+#elif defined(_MSC_VER)
+#define INT64_C(x) x##i64
+#define UINT64_C(x) x##ui64
 #endif
 
 /* 7.18.4.2. Macros for greatest-width integer constants */
@@ -262,6 +275,9 @@ typedef uint32_t uintmax_t;
 #elif 0
 #define INTMAX_C(x) x##LL
 #define UINTMAX_C(x) x##ULL
+#elif defined(_MSC_VER)
+#define INTMAX_C(x) x##i64
+#define UINTMAX_C(x) x##ui64
 #else
 #define INTMAX_C(x) x
 #define UINTMAX_C(x) x##U
@@ -269,6 +285,6 @@ typedef uint32_t uintmax_t;
 
 #endif
 
-#endif  /* !HAVE_SYSTEM_INTTYPES */
+#endif  /* !_STDINT_H_HAVE_SYSTEM_INTTYPES */
 
 #endif /* _STDINT_H */

@@ -93,9 +93,6 @@
    message to be appended to the temp file when the editor is started. */
 #undef FORCE_USE_EDITOR
 
-/* Define if gettimeofday clobbers localtime's static buffer. */
-#undef GETTIMEOFDAY_CLOBBERS_LOCALTIME_BUFFER
-
 /* Define to rpl_ if the glob replacement functions and variables should be
    used. */
 #undef GLOB_PREFIX
@@ -437,6 +434,12 @@
 
 /* Define to 1 if you have the `memrchr' function. */
 #undef HAVE_MEMRCHR
+
+/* Define to 1 if <limits.h> defines the MIN and MAX macros. */
+#undef HAVE_MINMAX_IN_LIMITS_H
+
+/* Define to 1 if <sys/param.h> defines the MIN and MAX macros. */
+#undef HAVE_MINMAX_IN_SYS_PARAM_H
 
 /* Define to 1 if you have the `mknod' function. */
 #undef HAVE_MKNOD
