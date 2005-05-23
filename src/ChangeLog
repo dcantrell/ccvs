@@ -1,5 +1,15 @@
 2005-05-23  Derek Price  <derek@ximbiot.com>
 
+	* filesubr.c (xresolvepath): Move to...
+	* subr.c (xcanonicalize_file_name): ...here and rename.  Use new
+	GNULIB canonicalize module.
+	* cvs.h (xresolvepath): Move proto...
+	* subr.h (xcanonicalize_file_name): ...here.
+	* checkout.c (safe_location), server.c (isSamePath): Use new function
+	name.
+
+2005-05-23  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (rcslib-symlink-10): Accept empty result due to broken glob
 	in glibc 2.3.5.
 

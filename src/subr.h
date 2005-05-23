@@ -89,4 +89,5 @@ bool readBool (const char *infopath, const char *option,
 	       const char *p, bool *val);
 
 FILE *xfopen (const char *, const char *);
+char *xcanonicalize_file_name (const char *path);
 #endif /* !SUBR_H */

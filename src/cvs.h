@@ -484,7 +484,6 @@ bool isdevice (const char *file);
 bool isreadable (const char *file);
 bool iswritable (const char *file);
 bool isaccessible (const char *file, const int mode);
-char *xresolvepath (const char *path);
 const char *last_component (const char *path);
 char *get_homedir (void);
 char *strcat_filename_onto_homedir (const char *, const char *);
