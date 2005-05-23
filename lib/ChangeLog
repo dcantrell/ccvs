@@ -1,5 +1,10 @@
 2005-05-23  Derek Price  <derek@ximbiot.com>
 
+	* canonicalize.c, canonicalize.h, cycle-check.c, cycle-check.h,
+	dev-ino.h, path-concat.c, path-concat.h: New files from GNULIB.
+
+2005-05-23  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am: Remove unnecessary comment.
 
 2005-05-23  Derek Price  <derek@ximbiot.com>

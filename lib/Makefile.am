@@ -81,6 +81,12 @@ EXTRA_DIST += allocsa.valgrind
 
 ## end   gnulib module allocsa
 
+## begin gnulib module cycle-check
+
+libcvs_a_SOURCES += cycle-check.c cycle-check.h dev-ino.h
+
+## end   gnulib module cycle-check
+
 ## begin gnulib module dirname
 
 libcvs_a_SOURCES += basename.c stripslash.c
