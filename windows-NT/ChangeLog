@@ -1,3 +1,7 @@
+2005-05-23  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c (xresolvepath): Remove this function.
+
 2005-05-17  Conrad T. Pino  <Conrad@Pino.com>
 
 	* pwd.c, pwd.h: Add "const" modifier to "getpwnam" & "getgrnam" function
