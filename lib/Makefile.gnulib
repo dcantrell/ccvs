@@ -84,6 +84,7 @@ MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
 
 BUILT_SOURCES += getdate.c
 MAINTAINERCLEANFILES += getdate.c
+EXTRA_DIST += getdate.c
 
 ## end   gnulib module getdate
 
