@@ -1,5 +1,9 @@
 2005-05-23  Derek Price  <derek@ximbiot.com>
 
+	* canonicalize.m4, path-concat.m4: Import from GNULIB.
+
+2005-05-23  Derek Price  <derek@ximbiot.com>
+
 	* minmax.m4: New file from GNULIB.
 
 2005-05-19  Derek Price  <derek@ximbiot.com>
