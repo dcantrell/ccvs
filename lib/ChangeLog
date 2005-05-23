@@ -1,3 +1,28 @@
+2005-05-23  Derek Price  <derek@ximbiot.com>
+
+	* __fpending.c, alloca_.h, allocsa.c, allocsa.h, asnprintf.c,
+	asprintf.c, basename.c, chdir-long.c, chdir-long.h, closeout.c,
+	closeout.h, dirname.c, dirname.h, dup-safer.c, dup2.c, error.c,
+	error.h, exit.h, exitfail.c, exitfail.h, fd-safer.c, fnmatch.c,
+	fnmatch_.h, fnmatch_loop.c, getcwd.c, getcwd.h, getdate.c, getdate.h,
+	getdate.y, gethostname.c, getline.c, getline.h, getndelim2.c,
+	getndelim2.h, getnline.c, getnline.h, getopt.c, getopt1.c, getopt_.h,
+	getopt_int.h, getpagesize.h, getpass.c, getpass.h, gettext.h,
+	gettime.c, gettimeofday.c, lstat.c, malloc.c, md5.c, md5.h, mempcpy.c,
+	mempcpy.h, memrchr.c, memrchr.h, minmax.h, mkdir.c, mkstemp.c,
+	mktime.c, nanosleep.c, openat.c, openat.h, pagealign_alloc.c,
+	pagealign_alloc.h, pathmax.h, printf-args.c, printf-args.h,
+	printf-parse.c, printf-parse.h, quotearg.c, quotearg.h, readlink.c,
+	realloc.c, regex.c, regex.h, rename.c, rpmatch.c, save-cwd.c,
+	save-cwd.h, setenv.c, setenv.h, stat-macros.h, stat.c, stdbool_.h,
+	stdint_.h, strcase.h, strcasecmp.c, strdup.c, strdup.h, strerror.c,
+	strftime.c, strftime.h, stripslash.c, strstr.c, strstr.h, strtol.c,
+	strtoul.c, tempname.c, time_r.c, time_r.h, timespec.h, unistd-safer.h,
+	unlocked-io.h, unsetenv.c, vasnprintf.c, vasnprintf.h, vasprintf.c,
+	vasprintf.h, xalloc-die.c, xalloc.h, xgetcwd.c, xgetcwd.h,
+	xgethostname.c, xmalloc.c, xreadlink.c, xreadlink.h, xsize.h, yesno.c,
+	yesno.h: Update from GNULIB.
+
 2005-05-20  Derek Price  <derek@ximbiot.com>
 
 	* glob.c (__stat64): Add args to macro definition for clarity.
