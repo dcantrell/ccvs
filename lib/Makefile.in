@@ -327,11 +327,6 @@ MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t \
 DISTCLEANFILES = getdate.log
 MAINTAINERCLEANFILES = 
 TESTS = test-getdate.sh
-
-# We ship the getdate.c file due to requirements on particular bison
-# versions.
-#BUILT_SOURCES += getdate.c
-#MAINTAINERCLEANFILES += getdate.c
 EXTRA_DIST = .cvsignore ChangeLog.fsf Makefile.gnulib build_lib.com \
 	libcvs.dep libcvs.dsp libcvs.mak test-getdate.sh alloca_.h \
 	allocsa.valgrind fnmatch_.h fnmatch_loop.c getndelim2.h \

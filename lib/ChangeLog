@@ -1,5 +1,9 @@
 2005-05-23  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am: Remove unnecessary comment.
+
+2005-05-23  Derek Price  <derek@ximbiot.com>
+
 	* __fpending.c, alloca_.h, allocsa.c, allocsa.h, asnprintf.c,
 	asprintf.c, basename.c, chdir-long.c, chdir-long.h, closeout.c,
 	closeout.h, dirname.c, dirname.h, dup-safer.c, dup2.c, error.c,
