@@ -1,3 +1,7 @@
+2005-05-23  Derek Price  <derek@ximbiot.com>
+
+	* minmax.m4: New file from GNULIB.
+
 2005-05-19  Derek Price  <derek@ximbiot.com>
 
 	* glob.m4 (gl_PREREQ_GLOB): Check for __posix_getpwnam_r for Solaris.
