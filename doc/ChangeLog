@@ -1,3 +1,7 @@
+2005-05-23  Derek Price  <derek@ximbiot.com>
+
+	* doc/getdate.texi: Update from GNULIB.
+
 2005-05-11  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (history, history file, config): Add info on the new
