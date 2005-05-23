@@ -137,11 +137,6 @@ getdate_LDADD = \
 	$(LIB_CLOCK_GETTIME) \
 	$(LIBINTL)
 
-# We ship the getdate.c file due to requirements on particular bison
-# versions.
-#BUILT_SOURCES += getdate.c
-#MAINTAINERCLEANFILES += getdate.c
-
 ## end   gnulib module getdate
 
 ## begin gnulib module getline
