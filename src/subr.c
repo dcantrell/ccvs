@@ -14,6 +14,8 @@
  */
 
 #include "cvs.h"
+
+#include "canonicalize.h"
 #include "getline.h"
 #include "vasprintf.h"
 #include "vasnprintf.h"
@@ -1960,4 +1962,30 @@ xfopen (const char *name, const char *mode)
     if (!(fp = fopen (name, mode)))
 	error (1, errno, "cannot open %s", name);
     return fp;
+}
+
+
+
+/* char *
+ * xcanonicalize_file_name (const char *path)
+ *
+ * Like canonicalize_file_name(), but exit on error.
+ *
+ * INPUTS
+ *  path	The original path.
+ *
+ * RETURNS
+ *  The path with any symbolic links, `.'s, or `..'s, expanded.
+ *
+ * ERRORS
+ *  This function exits with a fatal error if it fails to read the link for
+ *  any reason.
+ */
+char *
+xcanonicalize_file_name (const char *path)
+{
+    char *hardpath = canonicalize_file_name (path);
+    if (!hardpath)
+	error (1, errno, "Failed to resolve path: `%s'", path);
+    return hardpath;
 }

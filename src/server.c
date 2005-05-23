@@ -532,8 +532,8 @@ isSamePath (const char *path1_in, const char *path2_in)
 	/* To be resolvable, paths must exist on this server.  */
 	return false;
 
-    p1 = xresolvepath (path1_in);
-    p2 = xresolvepath (path2_in);
+    p1 = xcanonicalize_file_name (path1_in);
+    p2 = xcanonicalize_file_name (path2_in);
     if (strcmp (p1, p2))
 	same = false;
     else

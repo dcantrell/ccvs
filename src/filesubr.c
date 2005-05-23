@@ -762,46 +762,6 @@ cvs_temp_file (char **filename)
 
 
 
-/* char *
- * xresolvepath (const char *path)
- *
- * Like xreadlink(), but resolve all links in a path.
- *
- * INPUTS
- *  path	The original path.
- *
- * RETURNS
- *  The path with any symbolic links expanded.
- *
- * ERRORS
- *  This function exits with a fatal error if it fails to read the link for
- *  any reason.
- */
-char *
-xresolvepath (const char *path)
-{
-    char *hardpath;
-    struct saved_cwd owd;
-
-    assert (isdir (path));
-
-    /* FIXME - If HAVE_READLINK is defined, we should probably walk the path
-     * bit by bit calling xreadlink().
-     */
-
-    if (save_cwd (&owd))
-	error (1, 0, "failed to save current working directory");
-    if (CVS_CHDIR (path ) < 0)
-	error (1, errno, "cannot chdir to %s", path);
-    if ((hardpath = xgetcwd ()) == NULL)
-	error (1, errno, "cannot getwd in %s", path);
-    if (restore_cwd (&owd) < 0)
-	error (1, 0, "failed to restore working directory");
-    return hardpath;
-}
-
-
-
 /* Return a pointer into PATH's last component.  */
 const char *
 last_component (const char *path)

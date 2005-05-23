@@ -447,7 +447,7 @@ safe_location (char *where)
     if (current == NULL)
 	error (1, errno, "could not get working directory");
 
-    hardpath = xresolvepath (current_parsed_root->directory);
+    hardpath = xcanonicalize_file_name (current_parsed_root->directory);
 
     /* if where is set, set current to as much of where as exists,
      * or fail.
