@@ -123,7 +123,7 @@ typedef struct
 #endif
   } glob_t;
 
-#ifdef __USE_LARGEFILE64
+#if defined _LIBC && defined __USE_LARGEFILE64
 # ifdef __USE_GNU
 struct stat64;
 # endif
@@ -194,7 +194,7 @@ extern int __REDIRECT_NTH (glob, (__const char *__restrict __pattern,
 extern void __REDIRECT_NTH (globfree, (glob_t *__pglob), globfree64);
 #endif
 
-#ifdef __USE_LARGEFILE64
+#if defined _LIBC && defined __USE_LARGEFILE64
 extern int glob64 (__const char *__restrict __pattern, int __flags,
 		   int (*__errfunc) (__const char *, int),
 		   glob64_t *__restrict __pglob) __THROW;

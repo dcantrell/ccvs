@@ -1,3 +1,8 @@
+2005-05-24  Derek Price  <derek@ximbiot.com>
+
+	* glob_.h, glob.c: Don't attempt to handle 64 bit file information
+	explicitly when not compiling as part of glibc.
+
 2005-05-23  Derek Price  <derek@ximbiot.com>
 
 	* canonicalize.c, canonicalize.h, cycle-check.c, cycle-check.h,

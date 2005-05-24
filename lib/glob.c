@@ -108,12 +108,8 @@ extern char *getlogin (void);
 # define DIRENT_MIGHT_BE_DIR(d)		true
 #endif /* HAVE_D_TYPE */
 
-#if _LIBC
-# define HAVE_STRUCT_DIRENT64	1
-#endif
-
 /* If the system has the `struct dirent64' type we use it internally.  */
-#if defined HAVE_STRUCT_DIRENT64 && !defined COMPILE_GLOB64
+#if defined _LIBC && !defined COMPILE_GLOB64
 # if defined HAVE_DIRENT_H || defined __GNU_LIBRARY__
 #  define CONVERT_D_NAMLEN(d64, d32)
 # else
@@ -174,7 +170,6 @@ extern char *getlogin (void);
 # ifndef __stat64
 #  define __stat64(fname, buf) __xstat64 (_STAT_VER, fname, buf)
 # endif
-# define HAVE_STAT64	1
 #else /* !_LIBC */
 # ifdef HAVE___POSIX_GETPWNAM_R
    /* Solaris.  */
@@ -184,24 +179,16 @@ extern char *getlogin (void);
 # include "mempcpy.h"
 # include "stat-macros.h"
 # include "strdup.h"
+# define __stat64(fname, buf)	stat (fname, buf)
+# define stat64			stat
+# define __stat(fname, buf)	stat (fname, buf)
+# define __alloca		alloca
+# define __readdir		readdir
+# define __readdir64		readdir64
 #endif /* _LIBC */
 
 #include <stdbool.h>
 #include <fnmatch.h>
-
-#ifndef HAVE_STAT64
-# define __stat64(fname, buf) __stat (fname, buf)
-# define stat64 stat
-#elif !defined _LIBC
-# define __stat64(fname, buf) stat64 (fname, buf)
-#endif
-
-#ifndef _LIBC
-# define __stat stat
-# define __alloca alloca
-# define __readdir readdir
-# define __readdir64 readdir64
-#endif
 
 #ifdef _SC_GETPW_R_SIZE_MAX
 # define GETPW_R_SIZE_MAX()	sysconf (_SC_GETPW_R_SIZE_MAX)
@@ -1165,7 +1152,7 @@ glob_in_dir (const char *pattern, const char *directory, int flags,
 		{
 		  const char *name;
 		  size_t len;
-#if defined HAVE_STRUCT_DIRENT64 && !defined COMPILE_GLOB64
+#if defined _LIBC && !defined COMPILE_GLOB64
 		  struct dirent64 *d;
 		  union
 		    {
