@@ -353,7 +353,7 @@ fgetentent (FILE *fpin, char *cmd, int *sawdir)
 	 */
 	{
 	    struct stat sb;
-	    if (strlen (ts) > 30 && CVS_STAT (user, &sb) == 0)
+	    if (strlen (ts) > 30 && stat (user, &sb) == 0)
 	    {
 		char *c = ctime (&sb.st_mtime);
 		/* Fix non-standard format.  */

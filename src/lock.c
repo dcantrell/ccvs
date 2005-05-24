@@ -210,7 +210,7 @@ lock_name (const char *repository, const char *name)
 
 	/* In the common case, where the directory already exists, let's
 	   keep it to one system call.  */
-	if (CVS_STAT (retval, &sb) < 0)
+	if (stat (retval, &sb) < 0)
 	{
 	    /* If we need to be creating more than one directory, we'll
 	       get the existence_error here.  */
@@ -241,7 +241,7 @@ lock_name (const char *repository, const char *name)
 	   because the locks will generally be removed by the process
 	   which created them.  */
 
-	if (CVS_STAT (config->lock_dir, &sb) < 0)
+	if (stat (config->lock_dir, &sb) < 0)
 	    error (1, errno, "cannot stat %s", config->lock_dir);
 	new_mode = sb.st_mode;
 	save_umask = umask (0000);
@@ -264,7 +264,7 @@ lock_name (const char *repository, const char *name)
 			error (1, errno, "cannot make directory %s", retval);
 		    else
 		    {
-			if (CVS_STAT (retval, &sb) < 0)
+			if (stat (retval, &sb) < 0)
 			    error (1, errno, "cannot stat %s", retval);
 			new_mode = sb.st_mode;
 		    }
@@ -621,7 +621,7 @@ lock_exists (const char *repository, const char *filepat, const char *ignore)
 		    continue;
 
 		line = Xasprintf ("%s/%s", lockdir, dp->d_name);
-		if (CVS_STAT (line, &sb) != -1)
+		if (stat (line, &sb) != -1)
 		{
 #ifdef CVS_FUDGELOCKS
 		    /*
@@ -1063,7 +1063,7 @@ set_lock (struct lock *lock, int will_wait)
 	/* Find out who owns the lock.  If the lock directory is
 	   non-existent, re-try the loop since someone probably just
 	   removed it (thus releasing the lock).  */
-	if (CVS_STAT (masterlock, &sb) < 0)
+	if (stat (masterlock, &sb) < 0)
 	{
 	    if (existence_error (errno))
 		continue;

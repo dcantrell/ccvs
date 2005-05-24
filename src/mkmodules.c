@@ -1106,7 +1106,7 @@ rename_rcsfile (char *temp, char *real)
     /* Set "x" bits if set in original. */
     rcs = Xasprintf ("%s%s", real, RCSEXT);
     statbuf.st_mode = 0; /* in case rcs file doesn't exist, but it should... */
-    if (CVS_STAT (rcs, &statbuf) < 0
+    if (stat (rcs, &statbuf) < 0
 	&& !existence_error (errno))
 	error (0, errno, "cannot stat %s", rcs);
     free (rcs);

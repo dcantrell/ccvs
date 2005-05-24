@@ -4373,7 +4373,7 @@ checked_in_response (const char *file, const char *update_dir,
 	struct stat sb;
 	char *mode_string;
 
-	if ( CVS_STAT (file, &sb) < 0)
+	if (stat (file, &sb) < 0)
 	{
 	    /* Not clear to me why the file would fail to exist, but it
 	       was happening somewhere in the testsuite.  */
@@ -4923,7 +4923,7 @@ CVS server internal error: no mode in server_updated");
 	{
 	    struct stat sb;
 
-	    if ( CVS_STAT (finfo->file, &sb) < 0)
+	    if (stat (finfo->file, &sb) < 0)
 	    {
 		if (existence_error (errno))
 		{

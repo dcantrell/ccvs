@@ -288,7 +288,7 @@ time_stamp_server (const char *file, Vers_TS *vers_ts, Entnode *entdata)
     struct stat sb;
     char *cp;
 
-    if (CVS_LSTAT (file, &sb) < 0)
+    if (lstat (file, &sb) < 0)
     {
 	if (! existence_error (errno))
 	    error (1, errno, "cannot stat temp file");
@@ -386,7 +386,7 @@ unix_time_stamp (const char *file)
     struct stat sb;
     time_t mtime = 0L;
 
-    if (!CVS_LSTAT (file, &sb))
+    if (!lstat (file, &sb))
     {
 	mtime = sb.st_mtime;
     }
@@ -394,7 +394,7 @@ unix_time_stamp (const char *file)
     /* If it's a symlink, return whichever is the newest mtime of
        the link and its target, for safety.
     */
-    if (!CVS_STAT (file, &sb))
+    if (!stat (file, &sb))
     {
         if (mtime < sb.st_mtime)
 	    mtime = sb.st_mtime;

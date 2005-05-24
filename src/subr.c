@@ -692,7 +692,7 @@ get_file (const char *name, const char *fullname, const char *mode, char **buf,
 	   be of arbitrary size, so I think we better do all that
 	   extra allocation.  */
 
-	if (CVS_STAT (name, &s) < 0)
+	if (stat (name, &s) < 0)
 	    error (1, errno, "can't stat %s", fullname);
 
 	/* Convert from signed to unsigned.  */

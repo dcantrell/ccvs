@@ -284,7 +284,7 @@ do_editor (const char *dir, char **messagep, const char *repository,
     /* finish off the temp file */
     if (fclose (fp) == EOF)
         error (1, errno, "%s", fname);
-    if ( CVS_STAT (fname, &pre_stbuf) == -1)
+    if (stat (fname, &pre_stbuf) == -1)
 	pre_stbuf.st_mtime = 0;
 
     /* run the editor */
@@ -301,7 +301,7 @@ do_editor (const char *dir, char **messagep, const char *repository,
     if (*messagep)
 	free (*messagep);
 
-    if ( CVS_STAT (fname, &post_stbuf) != 0)
+    if (stat (fname, &post_stbuf) != 0)
 	    error (1, errno, "cannot find size of temp file %s", fname);
 
     if (post_stbuf.st_size == 0)
@@ -446,7 +446,7 @@ do_verify (char **messagep, const char *repository)
     if (config->RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
 	config->RereadLogAfterVerify == LOGMSG_REREAD_STAT)
     {
-	if(CVS_STAT (data.fname, &post_stbuf) != 0)
+	if(stat (data.fname, &post_stbuf) != 0)
 	    error (1, errno, "cannot find size of temp file %s", data.fname);
     }
 
@@ -898,7 +898,7 @@ verifymsg_proc (const char *repository, const char *script, void *closure)
 	if (config->RereadLogAfterVerify == LOGMSG_REREAD_STAT)
 	{
 	    /* Remember the status of the temp file for later */
-	    if (CVS_STAT (vpd->fname, &(vpd->pre_stbuf)) != 0)
+	    if (stat (vpd->fname, &(vpd->pre_stbuf)) != 0)
 		error (1, errno, "cannot stat temp file %s", vpd->fname);
 
 	    /*

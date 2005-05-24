@@ -552,9 +552,9 @@ diff_exec (const char *file1, const char *file2, const char *label1,
     {
 	struct stat sb1, sb2;
 
-	if (CVS_LSTAT (file1, &sb1) < 0)
+	if (lstat (file1, &sb1) < 0)
 	    error (1, errno, "cannot get file information for %s", file1);
-	if (CVS_LSTAT (file2, &sb2) < 0)
+	if (lstat (file2, &sb2) < 0)
 	    error (1, errno, "cannot get file information for %s", file2);
 
 	if (!S_ISREG (sb1.st_mode) && !S_ISDIR (sb1.st_mode))

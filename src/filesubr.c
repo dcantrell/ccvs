@@ -52,7 +52,7 @@ copy_file (const char *from, const char *to)
     if (isdevice (from))
     {
 #if defined(HAVE_MKNOD) && defined(HAVE_STRUCT_STAT_ST_RDEV)
-	if( CVS_STAT( from, &sb ) < 0 )
+	if (stat (from, &sb) < 0)
 	    error (1, errno, "cannot stat %s", from);
 	mknod (to, sb.st_mode, sb.st_rdev);
 #else
@@ -120,7 +120,7 @@ isdir (const char *file)
 {
     struct stat sb;
 
-    if (CVS_STAT (file, &sb) < 0)
+    if (stat (file, &sb) < 0)
 	return false;
     return S_ISDIR (sb.st_mode);
 }
@@ -138,7 +138,7 @@ islink (const char *file)
 #ifdef S_ISLNK
     struct stat sb;
 
-    if ((CVS_LSTAT (file, &sb) >= 0) && S_ISLNK (sb.st_mode))
+    if ((lstat (file, &sb) >= 0) && S_ISLNK (sb.st_mode))
 	retsize = sb.st_size;
 #endif
     return retsize;
@@ -155,7 +155,7 @@ isdevice (const char *file)
 {
     struct stat sb;
 
-    if (CVS_LSTAT (file, &sb) < 0)
+    if (lstat (file, &sb) < 0)
 	return false;
 #ifdef S_ISBLK
     if (S_ISBLK (sb.st_mode))
@@ -218,7 +218,7 @@ isaccessible (const char *file, const int mode)
     int omask = 0;
     int uid, mask;
     
-    if (CVS_STAT (file, &sb)== -1)
+    if (stat (file, &sb)== -1)
 	return false;
     if (mode == F_OK)
 	return true;
@@ -272,7 +272,7 @@ make_directory (const char *name)
 {
     struct stat sb;
 
-    if( CVS_STAT( name, &sb ) == 0 && ( !S_ISDIR( sb.st_mode ) ) )
+    if (stat (name, &sb) == 0 && (!S_ISDIR (sb.st_mode)))
 	    error (0, 0, "%s already exists but is not a directory", name);
     if (!noexec && mkdir (name, 0777) < 0)
 	error (1, errno, "cannot make directory %s", name);
@@ -341,7 +341,7 @@ xchmod (const char *fname, int writable)
 	return;
 #endif /* PRESERVE_PERMISSIONS_SUPPORT */
 
-    if( CVS_STAT( fname, &sb ) < 0 )
+    if (stat (fname, &sb) < 0)
     {
 	if (!noexec)
 	    error (0, errno, "cannot stat %s", fname);
@@ -430,7 +430,7 @@ unlink_file_dir (const char *f)
        call to stat() and the call to unlink(), we'll still corrupt
        the filesystem.  Where is the Unix Haters Handbook when you need
        it?  */
-    if( CVS_STAT( f, &sb ) < 0 )
+    if (stat (f, &sb) < 0)
     {
 	if (existence_error (errno))
 	{
@@ -572,9 +572,9 @@ xcmp (const char *file1, const char *file2)
     int fd1, fd2;
     int ret;
 
-    if (CVS_LSTAT (file1, &sb1) < 0)
+    if (lstat (file1, &sb1) < 0)
 	error (1, errno, "cannot lstat %s", file1);
-    if (CVS_LSTAT (file2, &sb2) < 0)
+    if (lstat (file2, &sb2) < 0)
 	error (1, errno, "cannot lstat %s", file2);
 
     /* If FILE1 and FILE2 are not the same file type, they are unequal. */

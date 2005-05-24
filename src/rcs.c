@@ -4264,7 +4264,7 @@ RCS_checkout (RCSNode *rcs, const char *workfile, const char *rev,
 	{
 	    /* If RCS_deltas didn't close the file, we could use fstat
 	       here too.  Probably should change it thusly....  */
-	    if (CVS_STAT (rcs->path, &sb) < 0)
+	    if (stat (rcs->path, &sb) < 0)
 		error (1, errno, "cannot stat %s", rcs->path);
 	    rcsbufp = NULL;
 	}
@@ -5070,7 +5070,7 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
     if (flags & RCS_FLAGS_MODTIME)
     {
 	struct stat ws;
-	if (CVS_STAT (workfile, &ws) < 0)
+	if (stat (workfile, &ws) < 0)
 	{
 	    error (1, errno, "cannot stat %s", workfile);
 	}
@@ -5113,7 +5113,7 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
 
 	delta->other_delta = getlist();
 
-	if (CVS_LSTAT (workfile, &sb) < 0)
+	if (lstat (workfile, &sb) < 0)
 	    error (1, errno, "cannot lstat %s", workfile);
 
 	if (S_ISLNK (sb.st_mode))
@@ -8416,7 +8416,7 @@ rcs_internal_lockfile (char *rcsfile)
        file.  (Really, this is a lie -- if this is a new file,
        RCS_checkin uses the permissions from the working copy.  For
        actually creating the file, we use 0444 as a safe default mode.) */
-    if( CVS_STAT( rcsfile, &rstat ) < 0 )
+    if (stat (rcsfile, &rstat) < 0)
     {
 	if (existence_error (errno))
 	    rstat.st_mode = S_IRUSR | S_IRGRP | S_IROTH;
@@ -8630,7 +8630,7 @@ make_file_label (const char *path, const char *rev, RCSNode *rcs)
 	if (strcmp(DEVNULL, path))
 	{
 	    const char *file = last_component (path);
-	    if (CVS_STAT (file, &sb) < 0)
+	    if (stat (file, &sb) < 0)
 		/* Assume that if the stat fails,then the later read for the
 		 * diff will too.
 		 */
