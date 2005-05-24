@@ -1,5 +1,9 @@
 2005-05-24  Derek Price  <derek@ximbiot.com>
 
+	* lstat.m4, stat.m4: Define rpl_stat & rpl_lstat when needed.
+
+2005-05-24  Derek Price  <derek@ximbiot.com>
+
 	* glob.m4 (gl_PREREQ_GLOB): Don't look for struct dirent64 or stat64.
 
 2005-05-23  Derek Price  <derek@ximbiot.com>
