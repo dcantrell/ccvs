@@ -442,33 +442,6 @@ extern int errno;
 # define CVS_RMDIR rmdir
 #endif
 
-#ifndef CVS_STAT
-/* Use the function from lib/stat.c when the system version is broken.
- */
-# ifdef HAVE_STAT_EMPTY_STRING_BUG
-#   define CVS_STAT rpl_stat
-# else /* !HAVE_STAT_EMPTY_STRING_BUG */
-#   define CVS_STAT stat
-# endif /* HAVE_STAT_EMPTY_STRING_BUG */
-#endif
-
-/* Open question: should CVS_STAT be lstat by default?  We need
-   to use lstat in order to handle symbolic links correctly with
-   the PreservePermissions option. -twp */
-#ifndef CVS_LSTAT
-/* Use the function from lib/lstat.c when the system version is broken.
- */
-# if defined( HAVE_STAT_EMPTY_STRING_BUG ) || !defined( LSTAT_FOLLOWS_SLASHED_SYMLINK )
-#   define CVS_LSTAT rpl_lstat
-# else /* !defined(HAVE_STAT_EMPTY_STRING_BUG )
-        *    && defined( LSTAT_FOLLOWS_SLASHED_SYMLINK )
-        */
-#   define CVS_LSTAT lstat
-# endif /* defined(HAVE_STAT_EMPTY_STRING_BUG )
-         * || !defined( LSTAT_FOLLOWS_SLASHED_SYMLINK )
-         */
-#endif
-
 #ifndef CVS_UNLINK
 # define CVS_UNLINK unlink
 #endif
