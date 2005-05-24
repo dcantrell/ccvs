@@ -1,3 +1,7 @@
+2005-05-24  Conrad T. Pino  <Conrad@Pino.com>
+
+	* glob_.h: "#include <sys/stat.h>" for Solaris "#define stat stat64" case.
+
 2005-05-24  Derek Price  <derek@ximbiot.com>
 
 	* stat.c: Use system stat & lstat functions in this file.

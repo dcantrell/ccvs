@@ -96,6 +96,8 @@ typedef __SIZE_TYPE__ size_t;
 
 /* Structure describing a globbing run.  */
 #ifdef __USE_GNU
+/* Solaris may "#define stat stat64" in some cases */
+# include <sys/stat.h>
 struct stat;
 #endif
 typedef struct
