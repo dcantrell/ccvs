@@ -16,17 +16,24 @@ dnl If it does, then define HAVE_STAT_EMPTY_STRING_BUG and arrange to
 dnl compile the wrapper function.
 dnl
 
+AC_DEFUN([gl_STAT_SUBSTITUTE],
+[
+  gl_PREREQ_STAT
+  AC_DEFINE(stat, rpl_stat, [Define to a substitute for the stat function.])
+])
+
 AC_DEFUN([gl_FUNC_STAT],
 [
-  AC_FUNC_STAT
+  AC_REQUIRE([AC_FUNC_STAT])dnl
   dnl Note: AC_FUNC_STAT does AC_LIBOBJ(stat).
   if test $ac_cv_func_stat_empty_string_bug = yes; then
-    gl_PREREQ_STAT
+    gl_STAT_SUBSTITUTE
   fi
 ])
 
 # Prerequisites of lib/stat.c.
 AC_DEFUN([gl_PREREQ_STAT],
 [
+  AC_REQUIRE([AC_FUNC_STAT])dnl
   :
 ])
