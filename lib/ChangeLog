@@ -1,5 +1,10 @@
 2005-05-24  Derek Price  <derek@ximbiot.com>
 
+	* stat.c: Use system stat & lstat functions in this file.
+	* system.h (CVS_STAT, CVS_LSTAT): Remove these macros.
+
+2005-05-24  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (BUILT_SOURCES, EXTRA_DIST, MAINTAINERCLEANFILES): Add
 	getdate.c due to automake bug.
 

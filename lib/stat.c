@@ -24,6 +24,10 @@
 
 #include <config.h>
 
+/* Get the system versions of stat and lstat.  */
+#undef lstat
+#undef stat
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
