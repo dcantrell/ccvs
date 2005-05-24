@@ -433,7 +433,7 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
 #ifdef DT_DIR
 	    dp->d_type != DT_UNKNOWN ||
 #endif
-	    CVS_LSTAT (file, &sb) != -1)
+	    lstat (file, &sb) != -1)
 	{
 
 	    if (

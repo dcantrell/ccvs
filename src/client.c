@@ -4217,7 +4217,7 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
     TRACE (TRACE_FUNCTION, "Sending file `%s' to server", file);
 
     /* Don't think we can assume fstat exists.  */
-    if (CVS_STAT (file, &sb) < 0)
+    if (stat (file, &sb) < 0)
 	error (1, errno, "reading %s", short_pathname);
 
     mode_string = mode_to_string (sb.st_mode);
@@ -4988,7 +4988,7 @@ client_process_import_file (char *message, char *vfile, char *vtag, int targc,
 	    char *rcsdate;
 	    char netdate[MAXDATELEN];
 
-	    if (CVS_STAT (vfile, &sb) < 0)
+	    if (stat (vfile, &sb) < 0)
 		error (1, errno, "cannot stat %s", fullname);
 	    rcsdate = date_from_time_t (sb.st_mtime);
 	    date_to_internet (netdate, rcsdate);

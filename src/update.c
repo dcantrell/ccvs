@@ -1318,7 +1318,7 @@ VERS: ", 0);
 		   That would also fix the kludge with noexec, above, which
 		   is here only because noexec doesn't write srcfile->path
 		   for us to stat.  */
-		if( CVS_STAT( vers_ts->srcfile->path, &sb ) < 0 )
+		if (stat (vers_ts->srcfile->path, &sb) < 0)
 		{
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 		    buf_free (revbuf);
@@ -1719,9 +1719,9 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
 	struct stat file2_info;
 
 	/* Check to make sure the patch is really shorter */
-	if (CVS_STAT (file2, &file2_info) < 0)
+	if (stat (file2, &file2_info) < 0)
 	    error (1, errno, "could not stat %s", file2);
-	if (CVS_STAT (finfo->file, file_info) < 0)
+	if (stat (finfo->file, file_info) < 0)
 	    error (1, errno, "could not stat %s", finfo->file);
 	if (file2_info.st_size <= file_info->st_size)
 	    fail = 1;
@@ -1756,7 +1756,7 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
 	/* Stat the original RCS file, and then adjust it the way
 	   that RCS_checkout would.  FIXME: This is an abstraction
 	   violation.  */
-	if (CVS_STAT (vers_ts->srcfile->path, file_info) < 0)
+	if (stat (vers_ts->srcfile->path, file_info) < 0)
 	    error (1, errno, "could not stat %s", vers_ts->srcfile->path);
 	if (chmod (finfo->file,
 		   file_info->st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH))
@@ -1777,7 +1777,7 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
 		  xvers_ts->ts_user, xvers_ts->options,
 		  xvers_ts->tag, xvers_ts->date, NULL);
 
-	if (CVS_STAT (finfo->file, file_info) < 0)
+	if (stat (finfo->file, file_info) < 0)
 	    error (1, errno, "could not stat %s", finfo->file);
 
 	/* If this is really Update and not Checkout, record history.  */
@@ -2683,7 +2683,7 @@ special_file_mismatch (struct file_info *finfo, char *rev1, char *rev2)
 	else
 	{
 # ifdef HAVE_STRUCT_STAT_ST_RDEV
-	    if (CVS_LSTAT (finfo->file, &sb) < 0)
+	    if (lstat (finfo->file, &sb) < 0)
 		error (1, errno, "could not get file information for %s",
 		       finfo->file);
 	    rev1_uid = sb.st_uid;
@@ -2763,7 +2763,7 @@ special_file_mismatch (struct file_info *finfo, char *rev1, char *rev2)
 	else
 	{
 # ifdef HAVE_STRUCT_STAT_ST_RDEV
-	    if (CVS_LSTAT (finfo->file, &sb) < 0)
+	    if (lstat (finfo->file, &sb) < 0)
 		error (1, errno, "could not get file information for %s",
 		       finfo->file);
 	    rev2_uid = sb.st_uid;

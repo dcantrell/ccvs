@@ -1145,7 +1145,7 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
        `cannot lstat'.  I don't see a way around this, since we must
        stat the file before opening it. -twp */
 
-    if (CVS_LSTAT (userfile, &sb) < 0)
+    if (lstat (userfile, &sb) < 0)
     {
 	/* not fatal, continue import */
 	if (add_logfp != NULL)
