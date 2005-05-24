@@ -1145,6 +1145,9 @@
 /* Define to rpl_localtime if the replacement function should be used. */
 #undef localtime
 
+/* Define to a substitute for the `lstat' function. */
+#undef lstat
+
 /* Define to rpl_malloc if the replacement function should be used. */
 #undef malloc
 
@@ -1193,6 +1196,9 @@
 
 /* Define as a signed type of the same size as size_t. */
 #define ssize_t int
+
+/* Define to a substitute for the stat function. */
+#undef stat
 
 /* Define to rpl_tzset if the wrapper function should be used. */
 #undef tzset
