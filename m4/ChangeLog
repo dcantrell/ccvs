@@ -1,3 +1,7 @@
+2005-05-24  Derek Price  <derek@ximbiot.com>
+
+	* glob.m4 (gl_PREREQ_GLOB): Don't look for struct dirent64 or stat64.
+
 2005-05-23  Derek Price  <derek@ximbiot.com>
 
 	* canonicalize.m4, path-concat.m4: Import from GNULIB.

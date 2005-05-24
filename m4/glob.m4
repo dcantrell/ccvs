@@ -41,6 +41,5 @@ AC_DEFUN([gl_PREREQ_GLOB],
 [ AC_REQUIRE([gl_CHECK_TYPE_STRUCT_DIRENT_D_TYPE])dnl
   AC_REQUIRE([AC_HEADER_DIRENT])dnl
   AC_CHECK_HEADERS_ONCE([sys/cdefs.h unistd.h])dnl
-  AC_CHECK_FUNCS_ONCE([getlogin_r __posix_getpwnam_r getpwnam_r stat64])dnl
-  AC_CHECK_TYPES([struct dirent64])dnl
+  AC_CHECK_FUNCS_ONCE([getlogin_r __posix_getpwnam_r getpwnam_r])dnl
   :])
