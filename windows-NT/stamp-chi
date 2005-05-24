@@ -571,9 +571,6 @@
 /* Define to 1 if you have the `snprintf' function. */
 #undef HAVE_SNPRINTF
 
-/* Define to 1 if you have the `stat64' function. */
-#undef HAVE_STAT64
-
 /* Define to 1 if `stat' has the bug that it succeeds when given the
    zero-length file name argument. */
 #undef HAVE_STAT_EMPTY_STRING_BUG
@@ -629,9 +626,6 @@
 
 /* Define to 1 if you have the `strtoul' function. */
 #undef HAVE_STRTOUL
-
-/* Define to 1 if the system has the type `struct dirent64'. */
-#undef HAVE_STRUCT_DIRENT64
 
 /* Define if there is a member named d_type in the struct describing directory
    headers. */
