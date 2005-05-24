@@ -143,6 +143,10 @@ getdate_LDADD = \
 	$(LIB_CLOCK_GETTIME) \
 	$(LIBINTL)
 
+BUILT_SOURCES += getdate.c
+MAINTAINERCLEANFILES += getdate.c
+EXTRA_DIST += getdate.c
+
 ## end   gnulib module getdate
 
 ## begin gnulib module getline
