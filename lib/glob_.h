@@ -19,18 +19,30 @@
 #ifndef	_GLOB_H
 #define	_GLOB_H	1
 
-#if defined _LIBC || HAVE_SYS_CDEFS_H
+#ifndef MISSING_SYS_CDEFS_H
 # include <sys/cdefs.h>
 #endif
+#ifndef __BEGIN_DECLS
+# define __BEGIN_DECLS
+# define __END_DECLS
+# define __THROW
+#endif
 
-/* We need `size_t' for the following definitions.  */
-#ifdef _LIBC
 __BEGIN_DECLS
 
+/* We need `size_t' for the following definitions.  */
+#ifndef GLOB_PREFIX
 # ifndef __size_t
+#  if defined __GNUC__ && __GNUC__ >= 2
 typedef __SIZE_TYPE__ __size_t;
-#  ifdef __USE_XOPEN
+#   ifdef __USE_XOPEN
 typedef __SIZE_TYPE__ size_t;
+#   endif
+#  else
+#   include <stddef.h>
+#   ifndef __size_t
+#    define __size_t size_t
+#   endif
 #  endif
 # else
 /* The GNU CC stddef.h version defines __size_t as empty.  We need a real
@@ -38,10 +50,16 @@ typedef __SIZE_TYPE__ size_t;
 #  undef __size_t
 #  define __size_t size_t
 # endif
-#else /* !_LIBC */
+#else /* GLOB_PREFIX */
 # include <stddef.h>
 # undef __size_t
 # define __size_t	size_t
+#endif /* !GLOB_PREFIX */
+
+#ifdef GLOB_PREFIX
+/* get struct stat */
+# include <sys/stat.h>
+
 /* The following are necessary with MSVC and who knows where else.  */
 # ifndef __const
 #  define __const	const
@@ -52,7 +70,7 @@ typedef __SIZE_TYPE__ size_t;
 # ifndef __USE_GNU
 #  define __USE_GNU	1
 # endif
-#endif /* _LIBC */
+#endif /* GLOB_PREFIX */
 
 /* Bits set in the FLAGS argument to `glob'.  */
 #define	GLOB_ERR	(1 << 0)/* Return on read errors.  */
@@ -96,8 +114,7 @@ typedef __SIZE_TYPE__ size_t;
 
 /* Structure describing a globbing run.  */
 #ifdef __USE_GNU
-/* get struct stat definition */
-# include <sys/stat.h>
+struct stat;
 #endif
 typedef struct
   {
@@ -124,7 +141,7 @@ typedef struct
 #endif
   } glob_t;
 
-#if defined _LIBC && defined __USE_LARGEFILE64
+#if !defined GLOB_PREFIX && defined __USE_LARGEFILE64
 # ifdef __USE_GNU
 struct stat64;
 # endif
@@ -161,14 +178,11 @@ typedef struct
 # define glob __GLOB_ID (glob)
 # define globfree __GLOB_ID (globfree)
 # define glob_pattern_p __GLOB_ID (glob_pattern_p)
-#endif
-
-#ifndef _LIBC
-# define __glob_pattern_p glob_pattern_p
-#endif
-
-#ifndef __THROW
-# define __THROW
+#else
+# if __USE_FILE_OFFSET64 && __GNUC__ < 2
+#  define glob glob64
+#  define globfree globfree64
+# endif
 #endif
 
 /* Do glob searching for PATTERN, placing results in PGLOB.
@@ -179,7 +193,7 @@ typedef struct
    `glob' returns GLOB_ABEND; if it returns zero, the error is ignored.
    If memory cannot be allocated for PGLOB, GLOB_NOSPACE is returned.
    Otherwise, `glob' returns zero.  */
-#if !defined _LIBC || !defined __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || __GNUC__ < 2 || defined GLOB_PREFIX
 extern int glob (__const char *__restrict __pattern, int __flags,
 		 int (*__errfunc) (__const char *, int),
 		 glob_t *__restrict __pglob) __THROW;
@@ -195,7 +209,7 @@ extern int __REDIRECT_NTH (glob, (__const char *__restrict __pattern,
 extern void __REDIRECT_NTH (globfree, (glob_t *__pglob), globfree64);
 #endif
 
-#if defined _LIBC && defined __USE_LARGEFILE64
+#if !defined GLOB_PREFIX && defined __USE_LARGEFILE64
 extern int glob64 (__const char *__restrict __pattern, int __flags,
 		   int (*__errfunc) (__const char *, int),
 		   glob64_t *__restrict __pglob) __THROW;
@@ -213,8 +227,6 @@ extern void globfree64 (glob64_t *__pglob) __THROW;
 extern int glob_pattern_p (__const char *__pattern, int __quote) __THROW;
 #endif
 
-#ifdef _LIBC
 __END_DECLS
-#endif
 
 #endif /* glob.h  */

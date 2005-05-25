@@ -1,5 +1,17 @@
 2005-05-25  Derek Price  <derek@ximbiot.com>
 
+	* glob_.h: Simplify <sys/cdefs.h> include and GLIBC macro use.  Replace
+	use of defined _LIBC with !defined GLOB_PREFIX.  Restore some GLIBC
+	stuff we don't care about anyhow.  Separate some #defines into their
+	own section for clarity.
+	(__glob_pattern_p): Move this definition...
+	* glob.c (__glob_pattern_p): ...here.
+	(HAVE_D_TYPE): Remove this macro for simplicity's sake.
+	(HAVE__POSIX_GETPWNAM_R): Ditto.
+	* getlogin_r.c, getlogin_r.h: Update from GNULIB.
+	
+2005-05-25  Derek Price  <derek@ximbiot.com>
+
 	* glob.c: Remove HAVE_GETLOGIN_R complexity in favor of the GNULIB
 	getlogin_r module.  Redefine "struct_stat64" rather than "stat64" to
 	avoid macro collisions on Solaris.
