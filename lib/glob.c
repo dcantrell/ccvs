@@ -41,14 +41,6 @@
 #   define POSIX
 #  endif
 # endif
-#else
-/* Is there really a case where the getlogin or getlogin_r proto can come from
-   somewhere other than <unistd.h>?  */
-# ifdef HAVE_GETLOGIN_R
-extern int getlogin_r (char *, size_t);
-# else
-extern char *getlogin (void);
-# endif
 #endif
 
 #include <pwd.h>
@@ -170,17 +162,19 @@ extern char *getlogin (void);
 # ifndef __stat64
 #  define __stat64(fname, buf) __xstat64 (_STAT_VER, fname, buf)
 # endif
+# define struct_stat64		struct stat64
 #else /* !_LIBC */
 # ifdef HAVE___POSIX_GETPWNAM_R
    /* Solaris.  */
 #  define getpwnam_r(name, bufp, buf, len, res) \
     __posix_getpwnam_r (name, bufp, buf, len, res)
 # endif
+# include "getlogin_r.h"
 # include "mempcpy.h"
 # include "stat-macros.h"
 # include "strdup.h"
 # define __stat64(fname, buf)	stat (fname, buf)
-# define stat64			stat
+# define struct_stat64		struct stat
 # define __stat(fname, buf)	stat (fname, buf)
 # define __alloca		alloca
 # define __readdir		readdir
@@ -538,7 +532,6 @@ glob (const char *pattern, int flags,
 	    {
 	      int success;
 	      char *name;
-#   if defined HAVE_GETLOGIN_R || defined _LIBC
 	      size_t buflen = sysconf (_SC_LOGIN_NAME_MAX) + 1;
 
 	      if (buflen == 0)
@@ -547,10 +540,7 @@ glob (const char *pattern, int flags,
 		buflen = 20;
 	      name = __alloca (buflen);
 
-	      success = getlogin_r (name, buflen) >= 0;
-#   else
-	      success = (name = getlogin ()) != NULL;
-#   endif
+	      success = getlogin_r (name, buflen) == 0;
 	      if (success)
 		{
 		  struct passwd *p;
@@ -698,7 +688,7 @@ glob (const char *pattern, int flags,
   if (filename == NULL)
     {
       struct stat st;
-      struct stat64 st64;
+      struct_stat64 st64;
 
       /* Return the directory if we don't check for error or if it exists.  */
       if ((flags & GLOB_NOCHECK)
@@ -1044,7 +1034,7 @@ is_dir_p (const char *dir, size_t dirlen, const char *fname,
   size_t fnamelen = strlen (fname);
   char *fullname = __alloca (dirlen + 1 + fnamelen + 1);
   struct stat st;
-  struct stat64 st64;
+  struct_stat64 st64;
 
   mempcpy (mempcpy (mempcpy (fullname, dir, dirlen), "/", 1),
 	   fname, fnamelen + 1);
@@ -1092,7 +1082,7 @@ glob_in_dir (const char *pattern, const char *directory, int flags,
       /* Since we use the normal file functions we can also use stat()
 	 to verify the file is there.  */
       struct stat st;
-      struct stat64 st64;
+      struct_stat64 st64;
       size_t patlen = strlen (pattern);
       char *fullname = __alloca (dirlen + 1 + patlen + 1);
 
