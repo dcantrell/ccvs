@@ -97,7 +97,15 @@ SOURCE=.\basename.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\canonicalize.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\closeout.c
+# End Source File
+# Begin Source File
+
+SOURCE=".\cycle-check.c"
 # End Source File
 # Begin Source File
 
@@ -308,6 +316,10 @@ SOURCE=.\allocsa.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\canonicalize.h
+# End Source File
+# Begin Source File
+
 SOURCE=".\chdir-long.h"
 # End Source File
 # Begin Source File
@@ -317,6 +329,14 @@ SOURCE=.\closeout.h
 # Begin Source File
 
 SOURCE="..\windows-NT\config.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\cycle-check.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\dev-ino.h"
 # End Source File
 # Begin Source File
 
@@ -426,6 +446,10 @@ SOURCE=.\gettext.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\glob.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\glob_.h
 
 !IF  "$(CFG)" == "libcvs - Win32 Release"
@@ -457,11 +481,19 @@ SOURCE=.\md5.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\mempcpy.h
+# End Source File
+# Begin Source File
+
 SOURCE="..\windows-NT\ndir.h"
 # End Source File
 # Begin Source File
 
 SOURCE=.\pagealign_alloc.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\path-concat.h"
 # End Source File
 # Begin Source File
 
@@ -497,11 +529,19 @@ SOURCE=.\setenv.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\stat-macros.h"
+# End Source File
+# Begin Source File
+
 SOURCE="..\windows-NT\stdbool.h"
 # End Source File
 # Begin Source File
 
 SOURCE="..\windows-NT\stdint.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\strdup.h
 # End Source File
 # Begin Source File
 

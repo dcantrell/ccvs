@@ -16,6 +16,22 @@
 	".\dirname.h"\
 	
 
+.\canonicalize.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\stdint.h"\
+	"..\windows-NT\unistd.h"\
+	".\canonicalize.h"\
+	".\cycle-check.h"\
+	".\dev-ino.h"\
+	".\path-concat.h"\
+	".\pathmax.h"\
+	".\stat-macros.h"\
+	".\xalloc.h"\
+	".\xgetcwd.h"\
+	".\xreadlink.h"\
+	
+
 .\closeout.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
@@ -25,6 +41,14 @@
 	".\exitfail.h"\
 	".\gettext.h"\
 	".\quotearg.h"\
+	
+
+".\cycle-check.c" : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\stdint.h"\
+	".\cycle-check.h"\
+	".\dev-ino.h"\
 	
 
 .\dirname.c : \
@@ -310,6 +334,7 @@
 .\yesno.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
+	".\getline.h"\
 	".\yesno.h"\
 	
 

@@ -1,3 +1,8 @@
+2005-05-24  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dsp: Add lib/canonicalize.h and lib/glob.h to project.
+	* cvsnt.dep: Regenerate for cvsnt.dsp changes.
+
 2005-05-23  Derek Price  <derek@ximbiot.com>
 
 	* maint-aux/gnulib-modules: Add GNULIB canonicalize module.

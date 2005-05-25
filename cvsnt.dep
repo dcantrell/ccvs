@@ -3,7 +3,9 @@
 .\src\add.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -40,7 +42,9 @@
 .\src\admin.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -75,7 +79,9 @@
 .\src\annotate.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -110,7 +116,9 @@
 .\src\buffer.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pagealign_alloc.h"\
@@ -147,7 +155,9 @@
 .\src\checkin.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -184,7 +194,9 @@
 .\src\checkout.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -219,7 +231,9 @@
 .\src\classify.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -254,8 +268,10 @@
 .\src\client.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\md5.h"\
@@ -297,8 +313,10 @@
 .\src\commit.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -336,7 +354,9 @@
 .\src\create_adm.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -371,8 +391,10 @@
 .\src\cvsrc.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -407,7 +429,9 @@
 .\src\diff.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -442,8 +466,10 @@
 .\src\edit.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -482,8 +508,10 @@
 .\src\entries.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -518,7 +546,9 @@
 .\src\error.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -554,7 +584,9 @@
 .\src\exithandle.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -589,7 +621,9 @@
 .\src\expand_path.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -624,8 +658,10 @@
 .\src\fileattr.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -661,7 +697,9 @@
 ".\windows-NT\filesubr.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -697,8 +735,11 @@
 .\src\find_names.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
+	".\lib\glob.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\strcase.h"\
@@ -732,7 +773,9 @@
 .\src\hash.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -767,7 +810,9 @@
 .\src\history.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -804,8 +849,10 @@
 .\src\ignore.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -840,7 +887,9 @@
 .\src\import.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -881,7 +930,9 @@
 .\src\lock.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -916,7 +967,9 @@
 ".\src\log-buffer.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -952,7 +1005,9 @@
 .\src\log.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -987,8 +1042,10 @@
 .\src\login.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\getpass.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1024,8 +1081,10 @@
 .\src\logmsg.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1060,7 +1119,9 @@
 .\src\ls.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1096,7 +1157,9 @@
 	".\lib\closeout.h"\
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1133,7 +1196,9 @@
 ".\windows-NT\mkdir.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1168,8 +1233,10 @@
 .\src\mkmodules.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1206,7 +1273,9 @@
 .\src\modules.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1242,8 +1311,10 @@
 .\src\myndbm.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1283,7 +1354,9 @@
 .\src\no_diff.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1318,8 +1391,10 @@
 .\src\parseinfo.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1355,8 +1430,10 @@
 .\src\patch.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1396,7 +1473,9 @@
 ".\windows-NT\rcmd.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1432,7 +1511,9 @@
 .\src\rcs.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1470,7 +1551,9 @@
 	".\diff\diffrun.h"\
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1505,7 +1588,9 @@
 .\src\recurse.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1543,8 +1628,10 @@
 .\src\release.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1581,7 +1668,9 @@
 .\src\remove.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1616,8 +1705,10 @@
 .\src\repos.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1652,8 +1743,10 @@
 .\src\root.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1688,7 +1781,9 @@
 ".\src\rsh-client.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1725,7 +1820,9 @@
 ".\windows-NT\run.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1760,7 +1857,9 @@
 .\src\scramble.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1795,9 +1894,11 @@
 .\src\server.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
 	".\lib\getnline.h"\
+	".\lib\getopt.h"\
 	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1841,7 +1942,9 @@
 ".\src\socket-client.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -1878,7 +1981,9 @@
 .\src\stack.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1913,7 +2018,9 @@
 ".\windows-NT\startserver.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1949,7 +2056,9 @@
 .\src\status.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1982,10 +2091,13 @@
 	
 
 .\src\subr.c : \
+	".\lib\canonicalize.h"\
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -2022,7 +2134,9 @@
 .\src\tag.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -2058,8 +2172,10 @@
 .\src\update.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
@@ -2100,7 +2216,9 @@
 .\src\vers_ts.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -2135,7 +2253,9 @@
 .\src\version.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -2174,7 +2294,9 @@
 .\src\watch.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -2212,7 +2334,9 @@
 ".\windows-NT\woe32.c" : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -2247,8 +2371,10 @@
 .\src\wrapper.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getline.h"\
+	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -2283,7 +2409,9 @@
 .\src\zlib.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getopt.h"\
 	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pagealign_alloc.h"\
