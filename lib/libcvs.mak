@@ -40,7 +40,9 @@ CLEAN :
 	-@erase "$(INTDIR)\__fpending.obj"
 	-@erase "$(INTDIR)\asnprintf.obj"
 	-@erase "$(INTDIR)\basename.obj"
+	-@erase "$(INTDIR)\canonicalize.obj"
 	-@erase "$(INTDIR)\closeout.obj"
+	-@erase "$(INTDIR)\cycle-check.obj"
 	-@erase "$(INTDIR)\dirname.obj"
 	-@erase "$(INTDIR)\dup-safer.obj"
 	-@erase "$(INTDIR)\exitfail.obj"
@@ -136,7 +138,9 @@ LIB32_OBJS= \
 	"$(INTDIR)\__fpending.obj" \
 	"$(INTDIR)\asnprintf.obj" \
 	"$(INTDIR)\basename.obj" \
+	"$(INTDIR)\canonicalize.obj" \
 	"$(INTDIR)\closeout.obj" \
+	"$(INTDIR)\cycle-check.obj" \
 	"$(INTDIR)\dirname.obj" \
 	"$(INTDIR)\dup-safer.obj" \
 	"$(INTDIR)\exitfail.obj" \
@@ -199,7 +203,9 @@ CLEAN :
 	-@erase "$(INTDIR)\__fpending.obj"
 	-@erase "$(INTDIR)\asnprintf.obj"
 	-@erase "$(INTDIR)\basename.obj"
+	-@erase "$(INTDIR)\canonicalize.obj"
 	-@erase "$(INTDIR)\closeout.obj"
+	-@erase "$(INTDIR)\cycle-check.obj"
 	-@erase "$(INTDIR)\dirname.obj"
 	-@erase "$(INTDIR)\dup-safer.obj"
 	-@erase "$(INTDIR)\exitfail.obj"
@@ -292,7 +298,9 @@ LIB32_OBJS= \
 	"$(INTDIR)\__fpending.obj" \
 	"$(INTDIR)\asnprintf.obj" \
 	"$(INTDIR)\basename.obj" \
+	"$(INTDIR)\canonicalize.obj" \
 	"$(INTDIR)\closeout.obj" \
+	"$(INTDIR)\cycle-check.obj" \
 	"$(INTDIR)\dirname.obj" \
 	"$(INTDIR)\dup-safer.obj" \
 	"$(INTDIR)\exitfail.obj" \
@@ -368,9 +376,19 @@ SOURCE=.\basename.c
 "$(INTDIR)\basename.obj" : $(SOURCE) "$(INTDIR)"
 
 
+SOURCE=.\canonicalize.c
+
+"$(INTDIR)\canonicalize.obj" : $(SOURCE) "$(INTDIR)"
+
+
 SOURCE=.\closeout.c
 
 "$(INTDIR)\closeout.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=".\cycle-check.c"
+
+"$(INTDIR)\cycle-check.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\dirname.c

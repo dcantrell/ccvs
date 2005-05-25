@@ -1,3 +1,10 @@
+2004-05-24  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libcvs.dsp: Add files "canonicalize.c", "cycle-check.c",
+	"canonicalize.h", "cycle-check.h", "dev-ino.h", "glob.h", "mempcpy.h",
+	"path-concat.h", "stat-macros.h" and "strdup.h" to project.
+	* libcvs.dep, libcvs.mak: Regenerated for "libcvs.dsp" change.
+
 2005-05-24  Conrad T. Pino  <Conrad@Pino.com>
 
 	* glob_.h: Remove "struct stat;" forward declaration and update comment.
