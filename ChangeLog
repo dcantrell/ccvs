@@ -1,3 +1,7 @@
+2005-05-25  Derek Price  <derek@ximbiot.com>
+
+	* maint-aux/gnulib-modules: Add getlogin_r module.
+
 2005-05-24  Conrad T. Pino  <Conrad@Pino.com>
 
 	* cvsnt.dsp: Add lib/canonicalize.h and lib/glob.h to project.

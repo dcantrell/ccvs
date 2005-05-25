@@ -60,3 +60,4 @@ pagealign_alloc
 closeout
 strdup
 canonicalize
+getlogin_r
