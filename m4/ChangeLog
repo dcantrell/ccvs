@@ -1,3 +1,7 @@
+2005-05-25  Derek Price  <derek@ximbiot.com>
+
+	* getlogin_r.m4: New module from GNULIB.
+
 2005-05-24  Derek Price  <derek@ximbiot.com>
 
 	* lstat.m4, stat.m4: Define rpl_stat & rpl_lstat when needed.
