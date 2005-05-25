@@ -183,6 +183,11 @@
 #else
 # define GETPW_R_SIZE_MAX()	(-1)
 #endif
+#ifdef _SC_LOGIN_NAME_MAX
+# define LOGIN_NAME_MAX()	sysconf (_SC_LOGIN_NAME_MAX)
+#else
+# define LOGIN_NAME_MAX()	(-1)
+#endif
 
 static const char *next_brace_sub (const char *begin, int flags) __THROW;
 
@@ -526,7 +531,7 @@ glob (const char *pattern, int flags,
 	    {
 	      int success;
 	      char *name;
-	      size_t buflen = sysconf (_SC_LOGIN_NAME_MAX) + 1;
+	      size_t buflen = LOGIN_NAME_MAX() + 1;
 
 	      if (buflen == 0)
 		/* `sysconf' does not support _SC_LOGIN_NAME_MAX.  Try
