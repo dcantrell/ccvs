@@ -1,5 +1,10 @@
 2005-05-25  Derek Price  <derek@ximbiot.com>
 
+	* glob.m4: Don't cater to Solaris here...
+	* extensions.m4: ...do it here instead.
+
+2005-05-25  Derek Price  <derek@ximbiot.com>
+
 	* getlogin_r.m4: New module from GNULIB.
 
 2005-05-24  Derek Price  <derek@ximbiot.com>
