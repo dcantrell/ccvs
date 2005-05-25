@@ -785,9 +785,6 @@
 /* Define to 1 if you have the `__fpending' function. */
 #undef HAVE___FPENDING
 
-/* Define to 1 if you have the `__posix_getpwnam_r' function. */
-#undef HAVE___POSIX_GETPWNAM_R
-
 /* Define to 1 if you have the `__secure_getenv' function. */
 #undef HAVE___SECURE_GETENV
 
@@ -820,6 +817,9 @@
 
 /* Define to a substitute value for mmap()'s MAP_ANONYMOUS flag. */
 #undef MAP_ANONYMOUS
+
+/* Define to `1' if <sys/cdefs.h> is *not* available on this system. */
+#undef MISSING_SYS_CDEFS_H
 
 /* By default, CVS stores its modules and other such items in flat text files
    (MY_NDBM enables this). Turning off MY_NDBM causes CVS to look for a
@@ -1093,6 +1093,9 @@
 /* Enable extensions on Solaris.  */
 #ifndef __EXTENSIONS__
 # undef __EXTENSIONS__
+#endif
+#ifndef _POSIX_PTHREAD_SEMANTICS
+# undef _POSIX_PTHREAD_SEMANTICS
 #endif
 
 /* Define to rpl_ if the getcwd replacement function should be used. */
