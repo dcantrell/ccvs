@@ -41,5 +41,10 @@ AC_DEFUN([gl_PREREQ_GLOB],
 [ AC_REQUIRE([gl_CHECK_TYPE_STRUCT_DIRENT_D_TYPE])dnl
   AC_REQUIRE([AC_HEADER_DIRENT])dnl
   AC_CHECK_HEADERS_ONCE([sys/cdefs.h unistd.h])dnl
-  AC_CHECK_FUNCS_ONCE([getlogin_r __posix_getpwnam_r getpwnam_r])dnl
+  AC_CHECK_FUNCS_ONCE([getlogin_r getpwnam_r])dnl
+  AC_CHECK_HEADERS([sys/cdefs.h], [SYS_CDEFS_H=yes], [SYS_CDEFS_H=no])
+  if test $SYS_CDEFS_H = no; then
+    AC_DEFINE(MISSING_SYS_CDEFS_H, 1,
+      [Define to `1' if <sys/cdefs.h> is *not* available on this system.])
+  fi
   :])
