@@ -209,6 +209,14 @@
    */
 #undef HAVE_DECL_GETENV
 
+/* Define to 1 if you have the declaration of `getlogin', and to 0 if you
+   don't. */
+#undef HAVE_DECL_GETLOGIN
+
+/* Define to 1 if you have the declaration of `getlogin_r', and to 0 if you
+   don't. */
+#undef HAVE_DECL_GETLOGIN_R
+
 /* Define to 1 if you have the declaration of `getpass', and to 0 if you
    don't. */
 #undef HAVE_DECL_GETPASS

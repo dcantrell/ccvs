@@ -28,6 +28,8 @@ lib/getdate.y
 lib/gethostname.c
 lib/getline.c
 lib/getline.h
+lib/getlogin_r.c
+lib/getlogin_r.h
 lib/getndelim2.c
 lib/getndelim2.h
 lib/getnline.c
@@ -121,6 +123,7 @@ m4/ftruncate.m4
 m4/getdate.m4
 m4/gethostname.m4
 m4/getline.m4
+m4/getlogin_r.m4
 m4/getndelim2.m4
 m4/getnline.m4
 m4/getopt.m4
