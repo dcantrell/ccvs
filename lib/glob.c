@@ -81,8 +81,6 @@
    if the `d_type' member for `struct dirent' is available.
    HAVE_STRUCT_DIRENT_D_TYPE plays the same role in GNULIB.  */
 #if defined _DIRENT_HAVE_D_TYPE || defined HAVE_STRUCT_DIRENT_D_TYPE
-# define HAVE_D_TYPE	1
-
 /* True if the directory entry D must be of type T.  */
 # define DIRENT_MUST_BE(d, t)	((d)->d_type == (t))
 
@@ -116,7 +114,7 @@
   (d64)->d_ino = (d32)->d_ino;
 # endif
 
-# ifdef HAVE_D_TYPE
+# ifdef _DIRENT_HAVE_D_TYPE
 #  define CONVERT_D_TYPE(d64, d32) \
   (d64)->d_type = (d32)->d_type;
 # else
@@ -164,11 +162,6 @@
 # endif
 # define struct_stat64		struct stat64
 #else /* !_LIBC */
-# ifdef HAVE___POSIX_GETPWNAM_R
-   /* Solaris.  */
-#  define getpwnam_r(name, bufp, buf, len, res) \
-    __posix_getpwnam_r (name, bufp, buf, len, res)
-# endif
 # include "getlogin_r.h"
 # include "mempcpy.h"
 # include "stat-macros.h"
@@ -179,6 +172,7 @@
 # define __alloca		alloca
 # define __readdir		readdir
 # define __readdir64		readdir64
+# define __glob_pattern_p	glob_pattern_p
 #endif /* _LIBC */
 
 #include <stdbool.h>
