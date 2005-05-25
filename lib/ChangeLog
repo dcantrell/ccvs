@@ -1,3 +1,10 @@
+2005-05-25  Derek Price  <derek@ximbiot.com>
+
+	* glob.c: Remove HAVE_GETLOGIN_R complexity in favor of the GNULIB
+	getlogin_r module.  Redefine "struct_stat64" rather than "stat64" to
+	avoid macro collisions on Solaris.
+	* getlogin_r.c, getlogin_r.h: New files from GNULIB.
+
 2004-05-24  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.dsp: Add files "canonicalize.c", "cycle-check.c",
@@ -11,7 +18,8 @@
 
 2005-05-24  Conrad T. Pino  <Conrad@Pino.com>
 
-	* glob_.h: "#include <sys/stat.h>" for Solaris "#define stat stat64" case.
+	* glob_.h: "#include <sys/stat.h>" for Solaris "#define stat stat64"
+	case.
 
 2005-05-24  Derek Price  <derek@ximbiot.com>
 

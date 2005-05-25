@@ -64,19 +64,20 @@ DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	dup-safer.c dup2.c exitfail.c exitfail.h fd-safer.c fncase.c \
 	fnmatch.c fseeko.c ftello.c ftruncate.c getcwd.c getcwd.h \
 	getdate.c getdate.h getdate.y gethostname.c getline.c \
-	getline.h getndelim2.c getopt.c getopt1.c getpagesize.h \
-	getpass.c getpass.h gettime.c gettimeofday.c glob.c lstat.c \
-	malloc.c md5.c md5.h memmove.c mempcpy.c mempcpy.h memrchr.c \
-	memrchr.h mkdir.c mkstemp.c mktime.c nanosleep.c openat.c \
-	openat.h pagealign_alloc.c pagealign_alloc.h path-concat.c \
-	path-concat.h pathmax.h printf-args.c printf-parse.c \
-	quotearg.c quotearg.h readlink.c realloc.c regex.c rename.c \
-	rpmatch.c save-cwd.c save-cwd.h setenv.c stat-macros.h stat.c \
-	strcasecmp.c strdup.c strdup.h strerror.c strftime.c \
-	strftime.h strncasecmp.c strstr.c strtol.c strtoul.c \
-	sunos57-select.c tempname.c time_r.c timespec.h unistd-safer.h \
-	unlocked-io.h unsetenv.c vasnprintf.c vasprintf.c waitpid.c \
-	xalloc.h xmalloc.c yesno.c yesno.h
+	getline.h getlogin_r.c getlogin_r.h getndelim2.c getopt.c \
+	getopt1.c getpagesize.h getpass.c getpass.h gettime.c \
+	gettimeofday.c glob.c lstat.c malloc.c md5.c md5.h memmove.c \
+	mempcpy.c mempcpy.h memrchr.c memrchr.h mkdir.c mkstemp.c \
+	mktime.c nanosleep.c openat.c openat.h pagealign_alloc.c \
+	pagealign_alloc.h path-concat.c path-concat.h pathmax.h \
+	printf-args.c printf-parse.c quotearg.c quotearg.h readlink.c \
+	realloc.c regex.c rename.c rpmatch.c save-cwd.c save-cwd.h \
+	setenv.c stat-macros.h stat.c strcasecmp.c strdup.c strdup.h \
+	strerror.c strftime.c strftime.h strncasecmp.c strstr.c \
+	strtol.c strtoul.c sunos57-select.c tempname.c time_r.c \
+	timespec.h unistd-safer.h unlocked-io.h unsetenv.c \
+	vasnprintf.c vasprintf.c waitpid.c xalloc.h xmalloc.c yesno.c \
+	yesno.h
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/acx_with_external_zlib.m4 \
@@ -97,25 +98,25 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/ftruncate.m4 \
 	$(top_srcdir)/m4/getcwd-path-max.m4 $(top_srcdir)/m4/getcwd.m4 \
 	$(top_srcdir)/m4/getdate.m4 $(top_srcdir)/m4/gethostname.m4 \
-	$(top_srcdir)/m4/getline.m4 $(top_srcdir)/m4/getndelim2.m4 \
-	$(top_srcdir)/m4/getnline.m4 $(top_srcdir)/m4/getopt.m4 \
-	$(top_srcdir)/m4/getpagesize.m4 $(top_srcdir)/m4/getpass.m4 \
-	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gettime.m4 \
-	$(top_srcdir)/m4/gettimeofday.m4 $(top_srcdir)/m4/glob.m4 \
-	$(top_srcdir)/m4/gnulib.m4 $(top_srcdir)/m4/iconv.m4 \
-	$(top_srcdir)/m4/intmax_t.m4 $(top_srcdir)/m4/inttypes.m4 \
-	$(top_srcdir)/m4/inttypes_h.m4 $(top_srcdir)/m4/lib-ld.m4 \
-	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
-	$(top_srcdir)/m4/longdouble.m4 $(top_srcdir)/m4/longlong.m4 \
-	$(top_srcdir)/m4/lstat.m4 $(top_srcdir)/m4/mbrtowc.m4 \
-	$(top_srcdir)/m4/mbstate_t.m4 $(top_srcdir)/m4/md5.m4 \
-	$(top_srcdir)/m4/memmove.m4 $(top_srcdir)/m4/mempcpy.m4 \
-	$(top_srcdir)/m4/memrchr.m4 $(top_srcdir)/m4/minmax.m4 \
-	$(top_srcdir)/m4/mkdir-slash.m4 $(top_srcdir)/m4/mkstemp.m4 \
-	$(top_srcdir)/m4/mktime.m4 $(top_srcdir)/m4/mmap-anon.m4 \
-	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/nls.m4 \
-	$(top_srcdir)/m4/onceonly_2_57.m4 $(top_srcdir)/m4/openat.m4 \
-	$(top_srcdir)/m4/pagealign_alloc.m4 \
+	$(top_srcdir)/m4/getline.m4 $(top_srcdir)/m4/getlogin_r.m4 \
+	$(top_srcdir)/m4/getndelim2.m4 $(top_srcdir)/m4/getnline.m4 \
+	$(top_srcdir)/m4/getopt.m4 $(top_srcdir)/m4/getpagesize.m4 \
+	$(top_srcdir)/m4/getpass.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/gettime.m4 $(top_srcdir)/m4/gettimeofday.m4 \
+	$(top_srcdir)/m4/glob.m4 $(top_srcdir)/m4/gnulib.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intmax_t.m4 \
+	$(top_srcdir)/m4/inttypes.m4 $(top_srcdir)/m4/inttypes_h.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/longdouble.m4 \
+	$(top_srcdir)/m4/longlong.m4 $(top_srcdir)/m4/lstat.m4 \
+	$(top_srcdir)/m4/mbrtowc.m4 $(top_srcdir)/m4/mbstate_t.m4 \
+	$(top_srcdir)/m4/md5.m4 $(top_srcdir)/m4/memmove.m4 \
+	$(top_srcdir)/m4/mempcpy.m4 $(top_srcdir)/m4/memrchr.m4 \
+	$(top_srcdir)/m4/minmax.m4 $(top_srcdir)/m4/mkdir-slash.m4 \
+	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
+	$(top_srcdir)/m4/mmap-anon.m4 $(top_srcdir)/m4/nanosleep.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/onceonly_2_57.m4 \
+	$(top_srcdir)/m4/openat.m4 $(top_srcdir)/m4/pagealign_alloc.m4 \
 	$(top_srcdir)/m4/path-concat.m4 $(top_srcdir)/m4/pathmax.m4 \
 	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
 	$(top_srcdir)/m4/quotearg.m4 $(top_srcdir)/m4/readlink.m4 \
@@ -420,6 +421,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getdate.y@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/gethostname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getline.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getlogin_r.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getndelim2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getopt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getopt1.Po@am__quote@
