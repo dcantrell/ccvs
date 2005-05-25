@@ -1,5 +1,9 @@
 2005-05-25  Derek Price  <derek@ximbiot.com>
 
+	* config.h.in.in (_POSIX_PTHREAD_SEMANTICS): Undef on Windows.
+
+2005-05-25  Derek Price  <derek@ximbiot.com>
+
 	* config.h.in.in (MISSING_SYS_CDEFS_H): Guess this should be defined.
 
 2005-05-23  Derek Price  <derek@ximbiot.com>
