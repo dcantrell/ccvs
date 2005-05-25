@@ -1,5 +1,9 @@
 2005-05-25  Derek Price  <derek@ximbiot.com>
 
+	* glob.c (LOGIN_NAME_MAX): Wrap sysconf for Windows.
+
+2005-05-25  Derek Price  <derek@ximbiot.com>
+
 	* glob_.h: Simplify <sys/cdefs.h> include and GLIBC macro use.  Replace
 	use of defined _LIBC with !defined GLOB_PREFIX.  Restore some GLIBC
 	stuff we don't care about anyhow.  Separate some #defines into their
