@@ -1,5 +1,9 @@
 2005-05-26  Derek Price  <derek@ximbiot.com>
 
+	* glob_.h: Protect __THROW separately from __BEGIN_DECLS.
+
+2005-05-26  Derek Price  <derek@ximbiot.com>
+
 	* system.h: Move non-system substitute GNULIB headers into cvs.h.
 	Remove stat macros in favor of GNULIB stat-macros module.  Assume
 	<sys/stat.h> and <stdlib.h> per HACKING.

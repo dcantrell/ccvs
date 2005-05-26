@@ -25,6 +25,8 @@
 #ifndef __BEGIN_DECLS
 # define __BEGIN_DECLS
 # define __END_DECLS
+#endif
+#ifndef __THROW
 # define __THROW
 #endif
 
