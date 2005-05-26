@@ -21,8 +21,14 @@
 #ifndef UNISTD_H
 #define UNISTD_H
 
-int chdir (const char *path);
-int close (int fd);
+/* include Microsoft's chdir, getcwd */
+#include <direct.h>
+
+/* include Microsoft's close, dup */
+#include <io.h>
+
+/* This function doesn't exist under Windows NT; we provide a stub */
+int readlink (const char *path, char *buf, size_t buf_size);
 
 /*
 FIXME:	gethostname prototype for lib/xgethostname.c, no #include <winsock.h>
@@ -33,6 +39,7 @@ int __stdcall gethostname (char * name, int namelen);
 
 #if 0 /* someday maybe these should be added here as well */
 
+int chdir (const char *pathname);
 int mkdir (const char *pathname, mode_t mode);
 int rmdir (const char *pathname);
 int link (const char *oldpath, const char *newpath);
@@ -49,6 +56,7 @@ void rewinddir (DIR *dir);
 int access (const char *pathname, int mode);
 int open (const char *pathname, int flags);
 int creat (const char *pathname, mode_t mode);
+int close (int fd);
 ssize_t read (int fd, void *buf, size_t count);
 ssize_t write (int fd, const void *buf, size_t count);
 int fcntl (int fd, int cmd);
