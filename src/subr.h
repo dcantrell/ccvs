@@ -72,8 +72,6 @@ char *format_cmdline (bool oldway, const char *srepos, const char *format, ...);
 char *format_cmdline (const char *format, ...);
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 
-bool isabsolute (const char *filename);
-
 /* Many, many CVS calls to xstrdup depend on it to return NULL when its
  * argument is NULL.
  */

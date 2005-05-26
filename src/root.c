@@ -776,7 +776,7 @@ parse_cvsroot (const char *root_in)
 	   pathname produced various errors (I couldn't get it to work),
 	   so there would seem to be little risk in making this a fatal
 	   error.  */
-	if (!isabsolute (newroot->directory))
+	if (!ISABSOLUTE (newroot->directory))
 	{
 	    error (0, 0, "CVSROOT must be an absolute pathname (not `%s')",
 		   newroot->directory);
@@ -804,7 +804,7 @@ parse_cvsroot (const char *root_in)
 	    goto error_exit;
 	}
 	newroot->hostname = xstrdup("server");  /* for error messages */
-	if (!isabsolute (newroot->directory))
+	if (!ISABSOLUTE (newroot->directory))
 	{
 	    error (0, 0, "CVSROOT must be an absolute pathname (not `%s')",
 		   newroot->directory);
@@ -1018,18 +1018,8 @@ local_cvsroot (const char *dir)
 char *program_name = "testing";
 char *cvs_cmd_name = "parse_cvsroot";		/* XXX is this used??? */
 
-/* Toy versions of various functions when debugging under unix.  Yes,
-   these make various bad assumptions, but they're pretty easy to
-   debug when something goes wrong.  */
-
-int
-isabsolute( const char *dir )
-{
-    return (dir && (*dir == '/'));
-}
-
 void
-main( int argc, char *argv[] )
+main (int argc, char *argv[])
 {
     program_name = argv[0];
 
@@ -1045,12 +1035,16 @@ main( int argc, char *argv[] )
 	exit (1);
     }
     printf ("CVSroot: %s\n", argv[1]);
-    printf ("current_parsed_root->method: %s\n", method_names[current_parsed_root->method]);
+    printf ("current_parsed_root->method: %s\n",
+	    method_names[current_parsed_root->method]);
     printf ("current_parsed_root->username: %s\n",
-	    current_parsed_root->username ? current_parsed_root->username : "NULL");
+	    current_parsed_root->username
+	      ? current_parsed_root->username : "NULL");
     printf ("current_parsed_root->hostname: %s\n",
-	    current_parsed_root->hostname ? current_parsed_root->hostname : "NULL");
-    printf ("current_parsed_root->directory: %s\n", current_parsed_root->directory);
+	    current_parsed_root->hostname
+	      ? current_parsed_root->hostname : "NULL");
+    printf ("current_parsed_root->directory: %s\n",
+	    current_parsed_root->directory);
 
    exit (0);
    /* NOTREACHED */

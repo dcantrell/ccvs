@@ -427,7 +427,7 @@ find_dirs (char *dir, List *list, int checkadm, List *entries)
     /* First figure out whether we need to skip directories named
        Emptydir.  Except in the CVSNULLREPOS case, Emptydir is just
        a normal directory name.  */
-    if (isabsolute (dir)
+    if (ISABSOLUTE (dir)
 	&& strncmp (dir, current_parsed_root->directory, strlen (current_parsed_root->directory)) == 0
 	&& ISSLASH (dir[strlen (current_parsed_root->directory)])
 	&& strcmp (dir + strlen (current_parsed_root->directory) + 1, CVSROOTADM) == 0)

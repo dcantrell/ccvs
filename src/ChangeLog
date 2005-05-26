@@ -1,5 +1,12 @@
 2005-05-26  Derek Price  <derek@ximbiot.com>
 
+	* subr.c (isabsolute), subr.h (isabsolute): Remove this function.
+	* root.c: Likewise, plus some reformatting.
+	* checkout.c, client.c, find_names.c, import.c, modules.c, parseinfo.c,
+	repos.c, root.c, server.c, subr.c: s/isabsolute/ISABSOLUTE/.
+
+2005-05-26  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h: Move "system.h" include before GNULIB includes.  Move some
 	GNULIB includes from "system.h".
 

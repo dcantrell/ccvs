@@ -703,7 +703,7 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
            directory, let the user override it with the command-line
            -d option. */
 
-	if ((mwhere != NULL) && (! isabsolute (mwhere)))
+	if (mwhere && !ISABSOLUTE (mwhere))
 	    (void) strcat (where, mwhere);
 	else
 	    (void) strcat (where, argv[0]);
@@ -929,7 +929,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	   build_one_dir whenever the -d command option was specified
 	   to checkout.  */
 
-	if (!isabsolute (where) && config->top_level_admin
+	if (!ISABSOLUTE (where) && config->top_level_admin
 	    && m_type == CHECKOUT)
 	{
 	    /* It may be argued that we shouldn't set any sticky

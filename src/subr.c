@@ -774,7 +774,7 @@ resolve_symlink (char **filename)
 	   expedient hack seems to be looking at HAVE_READLINK.  */
 	char *newname = Xreadlink (*filename, rsize);
 	
-	if (isabsolute (newname))
+	if (ISABSOLUTE (newname))
 	{
 	    free (*filename);
 	    *filename = newname;
@@ -1830,17 +1830,6 @@ format_cmdline (const char *format, ...)
 
     dellist (&pflist);
     return buf;
-}
-
-
-
-/* Return true iff FILENAME is absolute.
-   Trivial under Unix, but more complicated under other systems.  */
-bool
-isabsolute (filename)
-    const char *filename;
-{
-    return ISABSOLUTE (filename);
 }
 
 
