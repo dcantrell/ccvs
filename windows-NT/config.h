@@ -117,7 +117,7 @@
 
 /* Define to rpl_ if the glob replacement functions and variables should be
    used. */
-#undef GLOB_PREFIX
+#define GLOB_PREFIX rpl_
 
 /* Define to an alternative value if GSS_C_NT_HOSTBASED_SERVICE isn't defined
    in the gssapi.h header file. MIT Kerberos 1.2.1 requires this. Only
@@ -261,7 +261,7 @@
 
 /* Define to 1 if you have the declaration of `strdup', and to 0 if you don't.
    */
-#undef HAVE_DECL_STRDUP
+#define HAVE_DECL_STRDUP 1
 
 /* Define to 1 if you have the declaration of `strerror_r', and to 0 if you
    don't. */
@@ -348,7 +348,7 @@
 #undef HAVE_GETTIMEOFDAY
 
 /* Define to 1 if you have the <glob.h> header file. */
-#undef HAVE_GLOB_H
+#define HAVE_GLOB_H 1
 
 /* Define if you have GSSAPI with Kerberos version 5 available. */
 #undef HAVE_GSSAPI
@@ -469,7 +469,7 @@
 #undef HAVE_MEMRCHR
 
 /* Define to 1 if <limits.h> defines the MIN and MAX macros. */
-#undef HAVE_MINMAX_IN_LIMITS_H
+#define HAVE_MINMAX_IN_LIMITS_H 1
 
 /* Define to 1 if <sys/param.h> defines the MIN and MAX macros. */
 #undef HAVE_MINMAX_IN_SYS_PARAM_H
@@ -613,10 +613,10 @@
 #undef HAVE_STRCHR
 
 /* Define to 1 if you have the `strdup' function. */
-#undef HAVE_STRDUP
+#define HAVE_STRDUP 1
 
 /* Define to 1 if you have the `strerror' function. */
-#undef HAVE_STRERROR
+#define HAVE_STRERROR 1
 
 /* Define to 1 if you have the `strerror_r' function. */
 #undef HAVE_STRERROR_R
@@ -1164,7 +1164,7 @@
 #undef localtime
 
 /* Define to a substitute for the `lstat' function. */
-#undef lstat
+#define lstat stat
 
 /* Define to rpl_malloc if the replacement function should be used. */
 #undef malloc
@@ -1216,7 +1216,7 @@
 #define ssize_t int
 
 /* Define to a substitute for the stat function. */
-#undef stat
+#define stat wnt_stat
 
 /* Define to rpl_tzset if the wrapper function should be used. */
 #undef tzset
@@ -1243,58 +1243,26 @@
    and use ../cvsnt.mak for your project.  Thus, this is the right place to
    put configuration information for Windows NT.  */
 
+/* This file is getting chaotic and will be organized as follows:
+
+		Macros appears first alphabetized in case sensitive order.
+		Typedefs appear next alphabetized in case sensitive order.
+		Function prototypes alphabetized in case sensitive order.
+
+	Reorgnized by Conrad T. Pino <Conrad@Pino.com> May 25, 2005 */
+
+/* ======================= Macro Definnitions Follow ====================== */
+
 /* Under Windows NT, mkdir only takes one argument.  */
 #define CVS_MKDIR wnt_mkdir
-int wnt_mkdir (const char *PATH, int MODE);
-
-#define CVS_STAT wnt_stat
-int wnt_stat ();
-
-#define CVS_LSTAT wnt_lstat
-int wnt_lstat ();
 
 #define CVS_RENAME wnt_rename
-int wnt_rename (const char *, const char *);
-
-/* This function doesn't exist under Windows NT; we
-   provide a stub.  */
-int readlink (char *path, char *buf, int buf_size);
-
-/* This is just a call to GetCurrentProcessID.  */
-pid_t getpid (void);
-
-/* This is just a call to the Win32 Sleep function.  */
-unsigned int sleep (unsigned int);
-
-/* Don't worry, Microsoft, it's okay for these functions to
-   be in our namespace.  */
-#define popen _popen
-#define pclose _pclose
-
-/* Diff needs us to define this.  I think it could always be
-   -1 for CVS, because we pass temporary files to diff, but
-   config.h seems like the easiest place to put this, so for
-   now we put it here.  */
-#define same_file(s,t) (-1)
 
 /* This is where old bits go to die under Windows NT.  */
 #define DEVNULL "nul"
 
-#define START_SERVER wnt_start_server
-void wnt_start_server (int *tofd, int *fromfd,
-		       char *client_user,
-		       char *server_user,
-		       char *server_host,
-		       char *server_cvsroot);
-
-#define SHUTDOWN_SERVER wnt_shutdown_server
-void wnt_shutdown_server (int fd);
-
-#define SYSTEM_INITIALIZE(pargc,pargv) init_winsock()
-void init_winsock();
-
-#define SYSTEM_CLEANUP wnt_cleanup
-void wnt_cleanup (void);
+/* Windows has no ELOOP value in errno.h */
+#define ELOOP EMLINK
 
 #define HAVE_WINSOCK_H
 
@@ -1302,6 +1270,9 @@ void wnt_cleanup (void);
    server if it is connected to the server via a socket; Win95 needs
    it because _open_osfhandle doesn't work.  */
 #define NO_SOCKET_TO_FD 1
+
+/* Stop server macro */
+#define SHUTDOWN_SERVER wnt_shutdown_server
 
 /* This tells the client that, in addition to needing to use
    send()/recv() to do socket I/O, the error codes for send()/recv()
@@ -1314,7 +1285,9 @@ void wnt_cleanup (void);
    and other socket operations are not known to strerror.  Instead,
    this macro should be used to convert the error codes to strings. */
 #define SOCK_STRERROR sock_strerror
-char *sock_strerror (int errnum);
+
+/* Start server macro */
+#define START_SERVER wnt_start_server
 
 /* The internal rsh client uses sockets not file descriptors.  Note
    that as the code stands now, it often takes values from a SOCKET and
@@ -1322,12 +1295,70 @@ char *sock_strerror (int errnum);
    (SOCKET) <= sizeof (int) on win32, even the 64-bit variants.  */
 #define START_SERVER_RETURNS_SOCKET 1
 
+/* Macro name tells the story */
+#define SYSTEM_CLEANUP wnt_cleanup
+
+/* Macro name tells the story */
+#define SYSTEM_INITIALIZE(pargc,pargv) init_winsock()
+
 /* Is this true on NT?  Seems like I remember reports that NT 3.51 has
    problems with 200K writes (of course, the issue of large writes is
    moot since the use of buffer.c ensures that writes will only be as big
    as the buffers).  */
 #define SEND_NEVER_PARTIAL 1
 
-/* getpagesize is missing on Windows, but 4096 seems to do the right
-   thing. */
+/* Define POSIX name to Microsoft name */
+#define dup _dup
+
+/* getpagesize is missing on Windows, 4096 does the right thing. */
 #define getpagesize() 4096
+
+/* Define POSIX name to Microsoft name */
+#define popen _popen
+
+/* Define POSIX name to Microsoft name */
+#define pclose _pclose
+
+/* Diff needs us to define this.  I think it could always be
+   -1 for CVS, because we pass temporary files to diff, but
+   config.h seems like the easiest place to put this, so for
+   now we put it here.  */
+#define same_file(s,t) (-1)
+
+/* ====================== Typedef Declarations Follow ===================== */
+
+/* ====================== Function Prototypes Follow ====================== */
+
+/* This is just a call to GetCurrentProcessID.  */
+pid_t getpid (void);
+
+/* #define SYSTEM_INITIALIZE(pargc,pargv) init_winsock() */
+void init_winsock (void);
+
+/* #define SOCK_STRERROR sock_strerror */
+char *sock_strerror (int errnum);
+
+/* This is just a call to the Win32 Sleep function.  */
+unsigned int sleep (unsigned int);
+
+/* #define SYSTEM_CLEANUP wnt_cleanup */
+void wnt_cleanup (void);
+
+/* #define CVS_MKDIR wnt_mkdir */
+int wnt_mkdir (const char *PATH, int MODE);
+
+/* #define CVS_RENAME wnt_rename */
+int wnt_rename (const char *, const char *);
+
+/* #define SHUTDOWN_SERVER wnt_shutdown_server */
+void wnt_shutdown_server (int fd);
+
+/* #define START_SERVER wnt_start_server */
+void wnt_start_server (int *tofd, int *fromfd,
+		       char *client_user,
+		       char *server_user,
+		       char *server_host,
+		       char *server_cvsroot);
+
+/* #define stat wnt_stat and #define lstat wnt_stat */
+int wnt_stat (const char *file, struct wnt_stat *sb);
