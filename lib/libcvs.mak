@@ -53,6 +53,7 @@ CLEAN :
 	-@erase "$(INTDIR)\ftello.obj"
 	-@erase "$(INTDIR)\getdate.obj"
 	-@erase "$(INTDIR)\getline.obj"
+	-@erase "$(INTDIR)\getlogin_r.obj"
 	-@erase "$(INTDIR)\getndelim2.obj"
 	-@erase "$(INTDIR)\getopt.obj"
 	-@erase "$(INTDIR)\getopt1.obj"
@@ -151,6 +152,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\ftello.obj" \
 	"$(INTDIR)\getdate.obj" \
 	"$(INTDIR)\getline.obj" \
+	"$(INTDIR)\getlogin_r.obj" \
 	"$(INTDIR)\getndelim2.obj" \
 	"$(INTDIR)\getopt.obj" \
 	"$(INTDIR)\getopt1.obj" \
@@ -216,6 +218,7 @@ CLEAN :
 	-@erase "$(INTDIR)\ftello.obj"
 	-@erase "$(INTDIR)\getdate.obj"
 	-@erase "$(INTDIR)\getline.obj"
+	-@erase "$(INTDIR)\getlogin_r.obj"
 	-@erase "$(INTDIR)\getndelim2.obj"
 	-@erase "$(INTDIR)\getopt.obj"
 	-@erase "$(INTDIR)\getopt1.obj"
@@ -311,6 +314,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\ftello.obj" \
 	"$(INTDIR)\getdate.obj" \
 	"$(INTDIR)\getline.obj" \
+	"$(INTDIR)\getlogin_r.obj" \
 	"$(INTDIR)\getndelim2.obj" \
 	"$(INTDIR)\getopt.obj" \
 	"$(INTDIR)\getopt1.obj" \
@@ -439,6 +443,11 @@ SOURCE=.\getdate.c
 SOURCE=.\getline.c
 
 "$(INTDIR)\getline.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\getlogin_r.c
+
+"$(INTDIR)\getlogin_r.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\getndelim2.c

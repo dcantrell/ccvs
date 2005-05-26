@@ -122,6 +122,12 @@
 	".\getndelim2.h"\
 	
 
+.\getlogin_r.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\unistd.h"\
+	".\getlogin_r.h"\
+	
+
 .\getndelim2.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdint.h"\
@@ -156,6 +162,7 @@
 	"..\windows-NT\unistd.h"\
 	".\alloca.h"\
 	".\fnmatch.h"\
+	".\getlogin_r.h"\
 	".\glob.h"\
 	".\mempcpy.h"\
 	".\stat-macros.h"\
