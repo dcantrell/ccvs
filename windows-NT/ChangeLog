@@ -1,5 +1,10 @@
 2005-05-26  Conrad T. Pino  <Conrad@Pino.com>
 
+	* filesubr.c: Remove "wnt_lstat" function.  Collapse static function
+	"check_statbuf" logic into "wnt_stat" function body.
+
+2005-05-26  Conrad T. Pino  <Conrad@Pino.com>
+
 	* config.h, config.h.in, stamp-chi: Regenerated on Solaris for updates
 	to config.h.in.footer and config.h.in.in committed on Windows.
 

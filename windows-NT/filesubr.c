@@ -944,9 +944,21 @@ expand_wild (argc, argv, pargc, pargv)
     *pargv = new_argv;
 }
 
-static void check_statbuf (const char *file, struct stat *sb)
+/* undo config.h stat macro */
+#undef stat
+extern int stat (const char *file, struct wnt_stat *sb);
+
+/* see config.h stat macro */
+int
+wnt_stat (const char *file, struct wnt_stat *sb)
 {
-    /* Win32 processes file times in a 64 bit format
+    int retval;
+
+    retval = stat (file, sb);
+    if (retval < 0)
+		return retval;
+
+	/* Win32 processes file times in a 64 bit format
        (see Win32 functions SetFileTime and GetFileTime).
        If the file time on a file doesn't fit into the
        32 bit time_t format, then stat will set that time
@@ -958,40 +970,16 @@ static void check_statbuf (const char *file, struct stat *sb)
        on Win32 via GetFileTime, but that would be a lot of
        hair and I'm not sure there is much payoff.  */
     if (sb->st_mtime == (time_t) -1)
-	error (1, 0, "invalid modification time for %s", file);
+		error (1, 0, "invalid modification time for %s", file);
     if (sb->st_ctime == (time_t) -1)
 	/* I'm not sure what this means on windows.  It
 	   might be a creation time (unlike unix)....  */
-	error (1, 0, "invalid ctime for %s", file);
+		error (1, 0, "invalid ctime for %s", file);
     if (sb->st_atime == (time_t) -1)
-	error (1, 0, "invalid access time for %s", file);
+		error (1, 0, "invalid access time for %s", file);
 
     if (!GetUTCFileModTime (file, &sb->st_mtime))
-	error (1, 0, "Failed to retrieve modification time for %s", file);
-}
+		error (1, 0, "Failed to retrieve modification time for %s", file);
 
-/* see CVS_STAT */
-int
-wnt_stat (const char *file, struct stat *sb)
-{
-    int retval;
-
-    retval = stat (file, sb);
-    if (retval < 0)
-	return retval;
-    check_statbuf (file, sb);
-    return retval;
-}
-
-/* see CVS_LSTAT */
-int
-wnt_lstat (const char *file, struct stat *sb)
-{
-    int retval;
-
-    retval = lstat (file, sb);
-    if (retval < 0)
-	return retval;
-    check_statbuf (file, sb);
     return retval;
 }
