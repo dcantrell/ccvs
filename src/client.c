@@ -706,7 +706,7 @@ static
 int is_valid_client_path (const char *pathname)
 {
     /* 1. Absolute paths. */
-    if (isabsolute (pathname)) return 0;
+    if (ISABSOLUTE (pathname)) return 0;
     /* 2. No up-references in path.  */
     if (pathname_levels (pathname) == 0) return 1;
     /* 2. No Max-dotdot paths registered.  */

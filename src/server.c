@@ -800,7 +800,7 @@ serve_root (char *arg)
 # endif /* PROXY_SUPPORT */
        ) return;
 
-    if (!isabsolute (arg))
+    if (!ISABSOLUTE (arg))
     {
 	if (alloc_pending (80 + strlen (arg)))
 	    sprintf (pending_error_text,
@@ -913,7 +913,7 @@ server_pathname_check (char *path)
     /* An absolute pathname is almost surely a path on the *client* machine,
        and is unlikely to do us any good here.  It also is probably capable
        of being a security hole in the anonymous readonly case.  */
-    if (isabsolute (path))
+    if (ISABSOLUTE (path))
 	/* Giving an error is actually kind of a cop-out, in the sense
 	   that it would be nice for "cvs co -d /foo/bar/baz" to work.
 	   A quick fix in the server would be requiring Max-dotdot of
@@ -931,7 +931,7 @@ server_pathname_check (char *path)
 		path );
     if (pathname_levels (path) > max_dotdot_limit)
     {
-	/* Similar to the isabsolute case in security implications.  */
+	/* Similar to the ISABSOLUTE case in security implications.  */
 	error (0, 0, "protocol error: `%s' contains more leading ..", path);
 	error (1, 0, "than the %d which Max-dotdot specified",
 	       max_dotdot_limit);
@@ -949,10 +949,10 @@ outside_root (char *repos)
     size_t repos_len = strlen (repos);
     size_t root_len = strlen (current_parsed_root->directory);
 
-    /* isabsolute (repos) should always be true, but
+    /* ISABSOLUTE (repos) should always be true, but
        this is a good security precaution regardless. -DRP
      */
-    if (!isabsolute (repos))
+    if (!ISABSOLUTE (repos))
     {
 	if (alloc_pending (repos_len + 80))
 	    sprintf (pending_error_text, "\
@@ -1060,7 +1060,7 @@ dirswitch (char *dir, char *repos)
 
        FIXME: could/should unify these checks with server_pathname_check
        except they need to report errors differently.  */
-    if (isabsolute (dir))
+    if (ISABSOLUTE (dir))
     {
 	if (alloc_pending (80 + strlen (dir)))
 	    sprintf ( pending_error_text,
@@ -1275,7 +1275,7 @@ serve_directory (char *arg)
     status = buf_read_line (buf_from_net, &repos, NULL);
     if (status == 0)
     {
-	if (!isabsolute (repos))
+	if (!ISABSOLUTE (repos))
 	{
 	    /* Make absolute.
 	     *
@@ -4685,7 +4685,7 @@ serve_init (char *arg)
 {
     cvsroot_t *saved_parsed_root;
 
-    if (!isabsolute (arg))
+    if (!ISABSOLUTE (arg))
     {
 	if (alloc_pending (80 + strlen (arg)))
 	    sprintf (pending_error_text,
@@ -6225,7 +6225,7 @@ server (int argc, char **argv)
 	/* The code which wants to chdir into server_temp_dir is not set
 	   up to deal with it being a relative path.  So give an error
 	   for that case.  */
-	if (!isabsolute (Tmpdir))
+	if (!ISABSOLUTE (Tmpdir))
 	{
 	    if (alloc_pending (80 + strlen (Tmpdir)))
 		sprintf (pending_error_text,

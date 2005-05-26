@@ -206,7 +206,7 @@ import (int argc, char **argv)
 		error (1, 0, "tag `%s' was specified more than once", argv[i]);
     }
 
-    if (isabsolute (argv[0]) || pathname_levels (argv[0]) > 0)
+    if (ISABSOLUTE (argv[0]) || pathname_levels (argv[0]) > 0)
 	/* It is somewhere between a security hole and "unexpected" to
 	   let the client start mucking around outside the cvsroot
 	   (wouldn't get the right CVSROOT configuration, &c).  */

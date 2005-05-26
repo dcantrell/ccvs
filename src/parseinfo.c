@@ -498,7 +498,7 @@ parse_config (const char *cvsroot)
 	    /* Expand ~ & $VARs.  */
 	    retval->HistoryLogPath = expand_path (p, infopath, ln, false);
 
-	    if (retval->HistoryLogPath && !isabsolute (retval->HistoryLogPath))
+	    if (retval->HistoryLogPath && !ISABSOLUTE (retval->HistoryLogPath))
 	    {
 		error (0, 0, "%s [%u]: HistoryLogPath must be absolute.",
 		       infopath, ln);
@@ -512,7 +512,7 @@ parse_config (const char *cvsroot)
 	    retval->HistorySearchPath = expand_path (p, infopath, ln, false);
 
 	    if (retval->HistorySearchPath
-		&& !isabsolute (retval->HistorySearchPath))
+		&& !ISABSOLUTE (retval->HistorySearchPath))
 	    {
 		error (0, 0, "%s [%u]: HistorySearchPath must be absolute.",
 		       infopath, ln);

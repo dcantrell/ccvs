@@ -144,7 +144,7 @@ my_module (DBM *db, char *mname, enum mtype m_type, char *msg,
      *   cvs [server aborted]: cannot make directory /foo: Permission denied
      *   $
      */
-    if (isabsolute (mname))
+    if (ISABSOLUTE (mname))
 	error (1, 0, "Absolute module reference invalid: `%s'", mname);
 
     /* Similarly for directories that attempt to step above the root of the
