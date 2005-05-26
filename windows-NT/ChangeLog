@@ -1,3 +1,13 @@
+2005-05-26  Conrad T. Pino  <Conrad@Pino.com>
+
+	* config.h.in.footer: Reorganize into 3 sections (macros, typedefs and
+	function prototypes) and alphabetize each section.  Synchronize with
+	GNULib import so Windows build succeeds.
+	* config.h.in.in: Synchronize with GNULib import so Windows build
+	succeeds.
+	* unistd.h: Include standard function prototypes from Microsoft files
+	to decrease warnings in GNULib import.
+
 2005-05-25  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in (_POSIX_PTHREAD_SEMANTICS): Undef on Windows.
