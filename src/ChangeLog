@@ -1,3 +1,8 @@
+2005-05-26  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h: Move "system.h" include before GNULIB includes.  Move some
+	GNULIB includes from "system.h".
+
 2005-05-26  Conrad T. Pino <Conrad@Pino.com>
 
 	* buffer.c, buffer.h: Add & use typedefs for function pointer arguments
