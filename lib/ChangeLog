@@ -1,5 +1,10 @@
 2004-05-26  Conrad T. Pino  <Conrad@Pino.com>
 
+	* libcvs.dsp: Add files "getlogin_r.c" and "getlogin_r.h" to project.
+	* libcvs.dep, libcvs.mak: Regenerated for "libcvs.dsp" change.
+
+2004-05-26  Conrad T. Pino  <Conrad@Pino.com>
+
 	* glob_.h: Windows build fakes "ndir.h" which defines "struct direct"
 	which differs from "dirent.h" which defines "struct dirent".
 

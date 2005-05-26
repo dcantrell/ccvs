@@ -149,6 +149,10 @@ SOURCE=.\getline.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\getlogin_r.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\getndelim2.c
 # End Source File
 # Begin Source File
@@ -396,6 +400,10 @@ SOURCE=.\getdate.h
 # Begin Source File
 
 SOURCE=.\getline.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\getlogin_r.h
 # End Source File
 # Begin Source File
 
