@@ -44,6 +44,9 @@
 # endif
 #endif /* __attribute__ */
 
+/* Some GNULIB headers require that we include system headers first.  */
+#include "system.h"
+
 /* begin GNULIB headers */
 #include "dirname.h"
 #include "exit.h"
@@ -51,6 +54,9 @@
 #include "minmax.h"
 #include "regex.h"
 #include "strcase.h"
+#include "stat-macros.h"
+#include "timespec.h"
+#include "unlocked-io.h"
 #include "xalloc.h"
 #include "xgetcwd.h"
 #include "xreadlink.h"
@@ -71,8 +77,6 @@ char *getenv();
    string.h.  */
 char *strerror (int);
 #endif
-
-#include "system.h"
 
 #include "hash.h"
 #include "stack.h"
