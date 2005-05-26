@@ -30,12 +30,12 @@ static char *lookup_env (char **);
 
 static char *login_strings[] =
 {
-  "LOGIN", "USER", "MAILNAME", (char *) 0
+  "LOGIN", "USER", "MAILNAME", NULL
 };
 
 static char *group_strings[] =
 {
-  "GROUP", (char *) 0
+  "GROUP", NULL
 };
 
 
@@ -44,8 +44,8 @@ static char *anonymous = "anonymous";	/* if all else fails ... */
 static char *home_dir = ".";	/* we feel (no|every)where at home */
 static char *login_shell = "not command.com!";
 
-static char *login = (char *) 0;/* cache the names here	*/
-static char *group = (char *) 0;
+static char *login = NULL;/* cache the names here	*/
+static char *group = NULL;
 
 static struct passwd pw;	/* should we return a malloc()'d structure   */
 static struct group gr;		/* instead of pointers to static structures? */
@@ -65,7 +65,7 @@ getpwuid (int uid)
 struct passwd *
 getpwnam (const char *name)
 {
-  return (struct passwd *) 0;
+  return NULL;
 }
 
 /* return something like a groupname in a (butchered!) group structure. */
@@ -81,12 +81,12 @@ getgrgid (int uid)
 struct group *
 getgrnam (const char *name)
 {
-  return (struct group *) 0;
+  return NULL;
 }
 
 /* return something like a username. */
 char *
-getlogin ()
+getlogin (void)
 {
   /* This is how a windows user would override their login name. */
   if (!login)
@@ -105,7 +105,7 @@ getlogin ()
 
 /* return something like a group.  */
 char *
-getgr_name ()
+getgr_name (void)
 {
   if (!group)			/* have we been called before? */
     group = lookup_env (group_strings);
@@ -118,47 +118,47 @@ getgr_name ()
 
 /* return something like a uid.  */
 int
-getuid ()
+getuid (void)
 {
   return 0;			/* every user is a super user ... */
 }
 
 int
-getgid ()
+getgid (void)
 {
   return 0;
 }
 
 int
-geteuid ()
+geteuid (void)
 {
   return 0;
 }
 
 int
-getegid ()
+getegid (void)
 {
   return 0;
 }
 
 struct passwd *
-getpwent ()
+getpwent (void)
 {
-  return (struct passwd *) 0;
+  return NULL;
 }
 
 void
-setpwent ()
-{
-}
-
-void
-endpwent ()
+setpwent (void)
 {
 }
 
 void
-endgrent ()
+endpwent (void)
+{
+}
+
+void
+endgrent (void)
 {
 }
 
@@ -180,8 +180,7 @@ lookup_env (char *table[])
 
   while (*table && !(ptr = getenv (*table++))) ;	/* scan table */
 
-  if (!ptr)
-    return (char *) 0;
+  if (!ptr) return NULL;
 
   len = strcspn (ptr, " \n\t\n\r");	/* any WS? 	  */
   if (!(entry = xmalloc (len + 1)))

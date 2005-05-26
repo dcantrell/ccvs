@@ -1,5 +1,9 @@
 2005-05-26  Derek Price  <derek@ximbiot.com>
 
+	* pwd.h, pwd.c: Reformat to CVS conventions.
+
+2005-05-26  Derek Price  <derek@ximbiot.com>
+
 	* ndir.h, ndir.c: Reformatting to CVS conventions.
 
 2005-05-26  Conrad T. Pino  <Conrad@Pino.com>

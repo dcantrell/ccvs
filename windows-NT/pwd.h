@@ -41,25 +41,25 @@ struct group
   int  gr_gid;
 };
 
-extern struct passwd *getpwuid (int);
-extern struct passwd *getpwnam (const char *);
-extern struct group *getgrgid (int);
-extern struct group *getgrnam (const char *);
-extern char *getlogin (void);
-extern char *getgr_name (void);
-extern int getuid (void);
-extern int getgid (void);
-extern int geteuid (void);
-extern int getegid (void);
+struct passwd *getpwuid (int);
+struct passwd *getpwnam (const char *);
+struct group *getgrgid (int);
+struct group *getgrnam (const char *);
+char *getlogin (void);
+char *getgr_name (void);
+int getuid (void);
+int getgid (void);
+int geteuid (void);
+int getegid (void);
 
 extern int *groups;
 extern int ngroups;
-extern int getgroups (int, int *);
+int getgroups (int, int *);
 
-extern struct passwd *getpwent (void);
-extern void setpwent (void);
-extern void endpwent (void);
-extern void endgrent (void);
+struct passwd *getpwent (void);
+void setpwent (void);
+void endpwent (void);
+void endgrent (void);
 
 /*
  * Local Variables:
