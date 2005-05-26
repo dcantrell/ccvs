@@ -1,5 +1,10 @@
 2005-05-26  Conrad T. Pino  <Conrad@Pino.com>
 
+	* config.h, config.h.in, stamp-chi: Regenerated on Solaris for updates
+	to config.h.in.footer and config.h.in.in committed on Windows.
+
+2005-05-26  Conrad T. Pino  <Conrad@Pino.com>
+
 	* config.h.in.footer: Reorganize into 3 sections (macros, typedefs and
 	function prototypes) and alphabetize each section.  Synchronize with
 	GNULib import so Windows build succeeds.
