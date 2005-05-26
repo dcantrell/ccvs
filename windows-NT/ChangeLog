@@ -1,3 +1,7 @@
+2005-05-26  Derek Price  <derek@ximbiot.com>
+
+	* ndir.h, ndir.c: Reformatting to CVS conventions.
+
 2005-05-26  Conrad T. Pino  <Conrad@Pino.com>
 
 	* filesubr.c: Remove "wnt_lstat" function.  Collapse static function
