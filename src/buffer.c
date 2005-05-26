@@ -26,13 +26,13 @@ static struct buffer_data *get_buffer_data (void);
 
 /* Initialize a buffer structure.  */
 struct buffer *
-buf_initialize (int (*input) (void *, char *, size_t, size_t, size_t *),
-	        int (*output) (void *, const char *, size_t, size_t *),
-                int (*flush) (void *),
-                int (*block) (void *, bool),
-                int (*get_fd) (void *),
-                int (*shutdown) (struct buffer *),
-                void (*memory) (struct buffer *),
+buf_initialize (type_buf_input input,
+                type_buf_output output,
+                type_buf_flush flush,
+                type_buf_block block,
+                type_buf_get_fd get_fd,
+                type_buf_shutdown shutdown,
+                type_buf_memory_error memory_error,
                 void *closure)
 {
     struct buffer *buf;
@@ -47,7 +47,7 @@ buf_initialize (int (*input) (void *, char *, size_t, size_t, size_t *),
     buf->block = block;
     buf->get_fd = get_fd;
     buf->shutdown = shutdown;
-    buf->memory_error = memory ? memory : buf_default_memory_error;
+    buf->memory_error = memory_error ? memory_error : buf_default_memory_error;
     buf->closure = closure;
     return buf;
 }

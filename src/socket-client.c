@@ -73,8 +73,8 @@ struct socket_buffer
     int socket;
 };
 
-static int socket_buffer_input (void *, char *, int, int, int *);
-static int socket_buffer_output (void *, const char *, int, int *);
+static int socket_buffer_input (void *, char *, size_t, size_t, size_t *);
+static int socket_buffer_output (void *, const char *, size_t, size_t *);
 static int socket_buffer_flush (void *);
 static int socket_buffer_shutdown (struct buffer *);
 
@@ -102,7 +102,7 @@ socket_buffer_initialize( int socket, int input,
 /* The buffer input function for a buffer built on a socket.  */
 
 static int
-socket_buffer_input( void *closure, char *data, int need, int size, int *got )
+socket_buffer_input( void *closure, char *data, size_t need, size_t size, size_t *got )
 {
     struct socket_buffer *sb = (struct socket_buffer *) closure;
     int nbytes;
@@ -158,7 +158,7 @@ socket_buffer_input( void *closure, char *data, int need, int size, int *got )
 /* The buffer output function for a buffer built on a socket.  */
 
 static int
-socket_buffer_output( void *closure, const char *data, int have, int *wrote )
+socket_buffer_output( void *closure, const char *data, size_t have, size_t *wrote )
 {
     struct socket_buffer *sb = (struct socket_buffer *) closure;
 

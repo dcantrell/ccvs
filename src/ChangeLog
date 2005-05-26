@@ -1,3 +1,10 @@
+2005-05-26  Conrad T. Pino <Conrad@Pino.com>
+
+	* buffer.c, buffer.h: Add & use typedefs for function pointer arguments
+	and struct buffer function pointers.  New typedefs are useful in casts.
+	* socket-client.c: Function pointers passed to buf_initialize use size_t
+	not int arguments.  buf_initialize warnings are gone from Windows build.
+
 2005-05-24  Derek Price  <derek@ximbiot.com>
 
 	* client.c, entries.c, filesubr.c, hardlink.c, ignore.c, import.c,
