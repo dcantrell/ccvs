@@ -119,11 +119,10 @@ send_files PROTO((int argc, char **argv, int local, int aflag,
 
 /* Send an argument to the remote server.  */
 void
-send_arg PROTO((char *string));
+send_arg PROTO((const char *string));
 
 /* Send a string of single-char options to the remote server, one by one.  */
-void
-send_option_string PROTO((char *string));
+void send_options PROTO ((int argc, char * const *argv));
 
 extern void send_a_repository PROTO ((const char *, const char *,
                                       const char *));

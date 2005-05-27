@@ -431,14 +431,16 @@ int RCS_merge PROTO((RCSNode *, const char *, const char *, const char *,
 #define RCS_FLAGS_KEEPFILE 16
 #define RCS_FLAGS_USETIME 32
 
-extern int RCS_exec_rcsdiff PROTO ((RCSNode *rcsfile,
-				    const char *opts, const char *options,
+extern int RCS_exec_rcsdiff PROTO ((RCSNode *rcsfile, int diff_argc,
+				    char *const *diff_argv,
+				    const char *options,
 				    const char *rev1, const char *rev1_cache,
                                     const char *rev2, const char *label1,
                                     const char *label2, const char *workfile));
 extern int diff_exec PROTO ((const char *file1, const char *file2,
 			     const char *label1, const char *label2,
-			     const char *options, const char *out));
+			     int diff_argc, char *const *diff_argv,
+			     const char *out));
 
 
 #include "error.h"
@@ -696,6 +698,8 @@ void sleep_past PROTO ((time_t desttime));
 #define	RUN_SIGIGNORE         0x0010    /* ignore interrupts for command */
 #define	RUN_TTY               (char *)0 /* for the benefit of lint */
 
+void run_add_arg_p PROTO ((int *, size_t *, char ***, const char *s));
+void run_arg_free_p PROTO ((int, char **));
 void run_arg PROTO((const char *s));
 void run_print PROTO((FILE * fp));
 void run_setup PROTO ((const char *prog));
