@@ -61,6 +61,8 @@ lib/printf-args.c
 lib/printf-args.h
 lib/printf-parse.c
 lib/printf-parse.h
+lib/quotearg.c
+lib/quotearg.h
 lib/readlink.c
 lib/realloc.c
 lib/regex.c
@@ -150,6 +152,7 @@ m4/lib-prefix.m4
 m4/longdouble.m4
 m4/longlong.m4
 m4/lstat.m4
+m4/mbrtowc.m4
 m4/mbstate_t.m4
 m4/md5.m4
 m4/memmove.m4
@@ -166,6 +169,7 @@ m4/pathmax.m4
 m4/po.m4
 m4/printf-posix.m4
 m4/progtest.m4
+m4/quotearg.m4
 m4/readlink.m4
 m4/regex.m4
 m4/rename.m4

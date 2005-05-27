@@ -62,3 +62,4 @@ strdup
 canonicalize
 getlogin_r
 stat-macros
+quotearg
