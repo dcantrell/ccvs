@@ -1,5 +1,9 @@
 2005-05-27  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (diff-addrm): Use diff -N.
+
+2005-05-27  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (diff-addrm): Add test for bug fixed some time ago.
 
 2005-05-27  Derek Price  <derek@ximbiot.com>
