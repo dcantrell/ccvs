@@ -4867,7 +4867,7 @@ new revision: delete; previous revision: 1\.1
 done"
 	  dotest diff-addrm-init-9 "$testcvs -Q tag secondtag"
 
-	  dotest diff-addrm-1 "$testcvs -q diff -rfirsttag -rsecondtag"
+	  dotest diff-addrm-1 "$testcvs -q diff -N -rfirsttag -rsecondtag"
 
 	  if $keep; then
 	    echo Keeping $TESTDIR and exiting due to --keep
