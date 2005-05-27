@@ -425,15 +425,15 @@ int RCS_merge (RCSNode *, const char *, const char *, const char *,
 #define RCS_FLAGS_KEEPFILE 16
 #define RCS_FLAGS_USETIME 32
 
-int RCS_exec_rcsdiff (RCSNode *rcsfile,
-                      const char *opts, const char *options,
+int RCS_exec_rcsdiff (RCSNode *rcsfile, int diff_argc,
+                      char * const *diff_argv, const char *options,
                       const char *rev1, const char *rev1_cache,
                       const char *rev2,
                       const char *label1, const char *label2,
                       const char *workfile);
 int diff_exec (const char *file1, const char *file2,
                const char *label1, const char *label2,
-               const char *options, const char *out);
+               int iargc, char * const *iargv, const char *out);
 
 
 #include "error.h"
@@ -670,6 +670,8 @@ void read_cvsrc (int *argc, char ***argv, const char *cmdname);
 #define	RUN_SIGIGNORE         0x0010    /* ignore interrupts for command */
 #define	RUN_TTY               (char *)0 /* for the benefit of lint */
 
+void run_add_arg_p (int *, size_t *, char ***, const char *s);
+void run_arg_free_p (int, char **);
 void run_add_arg (const char *s);
 void run_print (FILE * fp);
 void run_setup (const char *prog);

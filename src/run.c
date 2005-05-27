@@ -25,8 +25,8 @@ extern int execvp (char *file, char **argv);
  * arguments.  The argument to run_setup will be parsed into whitespace 
  * separated words and added to the global run_argv list.
  * 
- * Then, optionally call run_arg() for each additional argument that you'd like
- * to pass to the executed program.
+ * Then, optionally call run_add_arg() for each additional argument that you'd
+ * like to pass to the executed program.
  * 
  * Finally, call run_exec() to execute the program with the specified arguments.
  * The execvp() syscall will be used, so that the PATH is searched correctly.
@@ -34,13 +34,24 @@ extern int execvp (char *file, char **argv);
  */
 static char **run_argv;
 static int run_argc;
-static int run_argc_allocated;
+static size_t run_arg_allocated;
+
+
+
+void
+run_arg_free_p (int argc, char **argv)
+{
+    int i;
+    for (i = 0; i < argc; i++)
+	free (argv[i]);
+}
+
+
 
 /* VARARGS */
 void 
 run_setup (const char *prog)
 {
-    int i;
     char *run_prog;
     char *buf, *d, *s;
     size_t length;
@@ -49,14 +60,7 @@ run_setup (const char *prog)
     int dolastarg;
 
     /* clean out any malloc'ed values from run_argv */
-    for (i = 0; i < run_argc; i++)
-    {
-	if (run_argv[i])
-	{
-	    free (run_argv[i]);
-	    run_argv[i] = NULL;
-	}
-    }
+    run_arg_free_p (run_argc, run_argv);
     run_argc = 0;
 
     run_prog = xstrdup (prog);
@@ -111,19 +115,28 @@ run_setup (const char *prog)
 
 
 void
-run_add_arg (const char *s)
+run_add_arg_p (int *iargc, size_t *iarg_allocated, char ***iargv,
+	       const char *s)
 {
     /* allocate more argv entries if we've run out */
-    if (run_argc >= run_argc_allocated)
+    if (*iargc >= *iarg_allocated)
     {
-	run_argc_allocated += 50;
-	run_argv = xnrealloc (run_argv, run_argc_allocated, sizeof (char **));
+	*iarg_allocated += 50;
+	*iargv = xnrealloc (*iargv, *iarg_allocated, sizeof (char **));
     }
 
     if (s)
-	run_argv[run_argc++] = xstrdup (s);
+	(*iargv)[(*iargc)++] = xstrdup (s);
     else
-	run_argv[run_argc] = NULL;	/* not post-incremented on purpose! */
+	(*iargv)[*iargc] = NULL;	/* not post-incremented on purpose! */
+}
+
+
+
+void
+run_add_arg (const char *s)
+{
+    run_add_arg_p (&run_argc, &run_arg_allocated, &run_argv, s);
 }
 
 

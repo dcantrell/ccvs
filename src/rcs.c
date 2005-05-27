@@ -5013,7 +5013,9 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
     Deltatext *dtext;
     Node *nodep;
     char *tmpfile, *changefile;
-    char *diffopts;
+    int dargc = 0;
+    size_t darg_allocated = 0;
+    char **dargv = NULL;
     size_t bufsize;
     int status, checkin_quiet;
     struct tm *ftm;
@@ -5452,9 +5454,10 @@ workfile);
 
     /* Diff options should include --binary if the RCS file has -kb set
        in its `expand' field. */
-    diffopts = (rcs->expand != NULL && STREQ (rcs->expand, "b")
-		? "-a -n --binary"
-		: "-a -n");
+    run_add_arg_p (&dargc, &darg_allocated, &dargv, "-a");
+    run_add_arg_p (&dargc, &darg_allocated, &dargv, "-n");
+    if (rcs->expand != NULL && STREQ (rcs->expand, "b"))
+	run_add_arg_p (&dargc, &darg_allocated, &dargv, "--binary");
 
     if (STREQ (commitpt->version, rcs->head) &&
 	numdots (delta->version) == 1)
@@ -5477,7 +5480,8 @@ workfile);
 	memset (commitpt->text, 0, sizeof (Deltatext));
 
 	bufsize = 0;
-	switch (diff_exec (workfile, tmpfile, NULL, NULL, diffopts, changefile))
+	switch (diff_exec (workfile, tmpfile, NULL, NULL,
+			   dargc, dargv, changefile))
 	{
 	    case 0:
 	    case 1:
@@ -5525,7 +5529,8 @@ workfile);
 	/* This file is not being inserted at the head, but on a side
 	   branch somewhere.  Make a diff from the previous revision
 	   to the working file. */
-	switch (diff_exec (tmpfile, workfile, NULL, NULL, diffopts, changefile))
+	switch (diff_exec (tmpfile, workfile, NULL, NULL,
+			   dargc, dargv, changefile))
 	{
 	    case 0:
 	    case 1:
@@ -5551,6 +5556,9 @@ workfile);
 	    dtext->len = 0;
 	}
     }
+
+    run_arg_free_p (dargc, dargv);
+    free (dargv);
 
     /* Update DELTA linkage.  It is important not to do this before
        the very end of RCS_checkin; if an error arises that forces
@@ -6604,6 +6612,10 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 	}
 	else
 	{
+	    int dargc = 0;
+	    size_t darg_allocated = 0;
+	    char **dargv = NULL;
+
 	    beforefile = cvs_temp_name();
 	    status = RCS_checkout (rcs, NULL, before, NULL, "-ko", beforefile,
 				   NULL, NULL);
@@ -6611,8 +6623,12 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 		goto delrev_done;
 
 	    outfile = cvs_temp_name();
-	    status = diff_exec (beforefile, afterfile, NULL, NULL, "-an",
-                                outfile);
+	    run_add_arg_p (&dargc, &darg_allocated, &dargv, "-a");
+	    run_add_arg_p (&dargc, &darg_allocated, &dargv, "-n");
+	    status = diff_exec (beforefile, afterfile, NULL, NULL,
+				dargc, dargv, outfile);
+	    run_arg_free_p (dargc, dargv);
+	    free (dargv);
 
 	    if (status == 2)
 	    {

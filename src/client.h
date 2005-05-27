@@ -114,7 +114,7 @@ send_arg (const char *string);
 
 /* Send a string of single-char options to the remote server, one by one.  */
 void
-send_option_string (const char *string);
+send_options (int argc, char * const *argv);
 
 void send_a_repository (const char *, const char *, const char *);
 

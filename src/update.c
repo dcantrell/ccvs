@@ -1674,7 +1674,9 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
     retcode = 0;
     if (! fail)
     {
-	char *diff_options;
+	int dargc = 0;
+	size_t darg_allocated = 0;
+	char **dargv = NULL;
 
 	/* If the client does not support the Rcs-diff command, we
            send a context diff, and the client must invoke patch.
@@ -1682,16 +1684,13 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
            new approach only requires running diff in the server; the
            client can handle everything without invoking an external
            program.  */
-	if (! rcs_diff_patches)
-	{
+	if (!rcs_diff_patches)
 	    /* We use -c, not -u, because that is what CVS has
 	       traditionally used.  Kind of a moot point, now that
 	       Rcs-diff is preferred, so there is no point in making
 	       the compatibility issues worse.  */
-	    diff_options = "-c";
-	}
+	    run_add_arg_p (&dargc, &darg_allocated, &dargv, "-c");
 	else
-	{
 	    /* Now that diff is librarified, we could be passing -a if
 	       we wanted to.  However, it is unclear to me whether we
 	       would want to.  Does diff -a, in any significant
@@ -1701,20 +1700,18 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
 	       'binary'.  Conversely, do they tend to be much larger
 	       in the bad cases?  This needs some more
 	       thought/investigation, I suspect.  */
-
-	    diff_options = "-n";
-	}
-	retcode = diff_exec (file1, file2, NULL, NULL, diff_options, finfo->file);
+	    run_add_arg_p (&dargc, &darg_allocated, &dargv, "-n");
+	retcode = diff_exec (file1, file2, NULL, NULL, dargc, dargv,
+			     finfo->file);
+	run_arg_free_p (dargc, dargv);
+	free (dargv);
 
 	/* A retcode of 0 means no differences.  1 means some differences.  */
-	if (retcode != 0
-	    && retcode != 1)
-	{
+	if (retcode != 0 && retcode != 1)
 	    fail = 1;
-	}
     }
 
-    if (! fail)
+    if (!fail)
     {
 	struct stat file2_info;
 
