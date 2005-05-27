@@ -12,7 +12,7 @@
 	(diff): Use new constructs and APIs.
 	* patch.c (patch_fileproc, RCS_checkin, RCS_delete_revs), rcscmds.c
 	(call_diff_add_arg, call_diff_setup, RCS_merge, RCS_exec_rcsdiff,
-	diff_exec, RCS_output_diff_optionsa, update.c (patch_file): Use new
+	diff_exec, RCS_output_diff_options), update.c (patch_file): Use new
 	APIs.
 	* run.c (run_add_arg_p, run_arg_free_p): New functions.
 	(run_argc_allocated): Make size_t.
