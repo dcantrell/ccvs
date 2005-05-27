@@ -1,13 +1,5 @@
 2005-05-27  Derek Price  <derek@ximbiot.com>
 
-	* sanity.sh (diff-addrm): Use diff -N.
-
-2005-05-27  Derek Price  <derek@ximbiot.com>
-
-	* sanity.sh (diff-addrm): Add test for bug fixed some time ago.
-
-2005-05-27  Derek Price  <derek@ximbiot.com>
-
 	* client.c (send_arg): Make arg const.
 	(send_option_string): Rename to...
 	(send_options): ...this and accept argc/argv in place of string.

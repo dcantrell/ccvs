@@ -1081,7 +1081,7 @@ if test x"$*" = x; then
 	tests="${tests} status"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff rdiff-short"
-	tests="$tests rdiff2 diff diff-addrm diffnl death death2"
+	tests="${tests} rdiff2 diff diffnl death death2"
 	tests="${tests} rm-update-message rmadd rmadd2 rmadd3 resurrection"
 	tests="${tests} dirs dirs2 branches branches2 tagc tagf tag-space"
 	tests="${tests} rcslib multibranch import importb importc import-CVS"
@@ -4651,7 +4651,7 @@ done"
 "${testcvs} add file2.txt" \
 "${PROG} add: scheduling file .file2\.txt' for addition
 ${PROG} add: use .${PROG} commit. to add this file permanently"
-	  dotest rdiff-short-init-11 \
+	  dotest rdiff-add-remove-nodiff-init-11 \
 "${testcvs} commit -madd-file2 file2.txt" \
 "RCS file: ${CVSROOT_DIRNAME}/abc/file2\.txt,v
 done
@@ -4829,57 +4829,6 @@ extern int gethostname ();
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r 1
 	  ;;
-
-
-
-	diff-addrm)
-	  # It used to be the case that when a file was added and removed
-	  # between two tags, it would still show up as added in a diff.
-	  mkdir $CVSROOT_DIRNAME/first-dir
-	  mkdir 1; cd 1
-
-	  dotest diff-addrm-init-1 "$testcvs -Q co first-dir"
-	  cd first-dir
-	  echo content >file1
-	  dotest diff-addrm-init-2 "$testcvs -Q add file1"
-	  dotest diff-addrm-init-3 "$testcvs -Q ci -m." \
-"RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
-done
-Checking in file1;
-$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-initial revision: 1\.1
-done"
-	  dotest diff-addrm-init-4 "$testcvs -Q tag firsttag"
-	  echo other content >file2
-	  dotest diff-addrm-init-5 "$testcvs -Q add file2"
-	  dotest diff-addrm-init-6 "$testcvs -Q ci -madd" \
-"RCS file: $CVSROOT_DIRNAME/first-dir/file2,v
-done
-Checking in file2;
-$CVSROOT_DIRNAME/first-dir/file2,v  <--  file2
-initial revision: 1\.1
-done"
-	  dotest diff-addrm-init-7 "$testcvs -Q rm -f file2"
-	  dotest diff-addrm-init-8 "$testcvs -Q ci -mrm" \
-"Removing file2;
-$CVSROOT_DIRNAME/first-dir/file2,v  <--  file2
-new revision: delete; previous revision: 1\.1
-done"
-	  dotest diff-addrm-init-9 "$testcvs -Q tag secondtag"
-
-	  dotest diff-addrm-1 "$testcvs -q diff -N -rfirsttag -rsecondtag"
-
-	  if $keep; then
-	    echo Keeping $TESTDIR and exiting due to --keep
-	    exit 0
-	  fi
-
-	  cd ../..
-	  rm -rf $CVSROOT_DIRNAME/first-dir
-	  rm -r 1
-	  ;;
-
-
 
 	diffnl)
 	  # Test handling of 'cvs diff' of files without newlines
