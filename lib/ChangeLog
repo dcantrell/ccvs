@@ -1,3 +1,7 @@
+2005-05-27  Derek Price  <derek@ximbiot.com>
+
+	* getlogin_r.h: Import new version from GNULIB.
+
 2005-05-26  Derek Price  <derek@ximbiot.com>
 
 	* glob_.h: Protect __THROW separately from __BEGIN_DECLS.
