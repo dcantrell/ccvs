@@ -1,3 +1,25 @@
+2005-05-27  Derek Price  <derek@ximbiot.com>
+
+	* client.c (send_arg): Make arg const.
+	(send_option_string): Rename to...
+	(send_options): ...this and accept argc/argv in place of string.
+	* client.h: Update protos to match the changes to client.c.
+	* cvs.h (RCS_exec_rcsdiff, diff_exec): Update protos.
+	(run_add_arg_p, run_arg_free_p): New protos.
+	* diff.c (opts, opts_allocated): Replace with...
+	(diff_argv, diff_argc, diff_arg_allocated): ...these.
+	(add_diff_args): New convenience function.
+	(diff): Use new constructs and APIs.
+	* patch.c (patch_fileproc, RCS_checkin, RCS_delete_revs), rcscmds.c
+	(call_diff_add_arg, call_diff_setup, RCS_merge, RCS_exec_rcsdiff,
+	diff_exec, RCS_output_diff_optionsa, update.c (patch_file): Use new
+	APIs.
+	* run.c (run_add_arg_p, run_arg_free_p): New functions.
+	(run_argc_allocated): Make size_t.
+	(run_setup, run_add_arg): Use new functions.
+	* sanity.sh: Accomodate above changes.
+	(rcslib-diffrgx-3): Slip in test for space splitting.
+
 2005-05-02  Derek Price  <derek@ximbiot.com>
 
 	Remove unnecessary level of indirection.

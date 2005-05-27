@@ -2204,7 +2204,7 @@ ${PLUS} ssfile line 2"
 ===================================================================
 RCS file: ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v
 retrieving revision 1\.1
-diff -c -C3isacrowd -r1\.1 ssfile
+diff -c -C 3isacrowd -r1\.1 ssfile
 ${PROG} diff: invalid context length argument"
 	  dotest basica-7 "${testcvs} -q ci -m modify-it" \
 "Checking in sdir/ssdir/ssfile;
@@ -4813,7 +4813,7 @@ done"
 ===================================================================
 RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
 retrieving revision 1\.2
-diff --ifdef=HAVE_WINSOCK_H -r1\.2 abc
+diff --ifdef HAVE_WINSOCK_H -r1\.2 abc
 #ifndef HAVE_WINSOCK_H
 extern int gethostname ();
 #else /\* HAVE_WINSOCK_H \*/
@@ -7623,12 +7623,12 @@ mumble;
 }
 EOF
 	  # Use dotest_fail because exit status from `cvs diff' must be 1.
-	  dotest_fail rcslib-diffrgx-3 "${testcvs} diff -c -F'.*(' rgx.c" \
+	  dotest_fail rcslib-diffrgx-3 "${testcvs} diff -c -F'.* (' rgx.c" \
 "Index: rgx\.c
 ===================================================================
 RCS file: ${CVSROOT_DIRNAME}/first-dir/rgx\.c,v
 retrieving revision 1\.1
-diff -c -F\.\*( -r1\.1 rgx\.c
+diff -c -F \.\* ( -r1\.1 rgx\.c
 \*\*\* rgx\.c	${RFCDATE}	1\.1
 --- rgx\.c	${RFCDATE}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\* test_regex (whiz, bang)

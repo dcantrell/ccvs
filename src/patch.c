@@ -406,6 +406,9 @@ patch_fileproc (callerdat, finfo)
     char *cp1, *cp2;
     FILE *fp;
     int line_length;
+    int dargc = 0;
+    size_t darg_allocated = 0;
+    char **dargv = NULL;
 
     line1 = NULL;
     line1_chars_allocated = 0;
@@ -585,8 +588,10 @@ patch_fileproc (callerdat, finfo)
 	    (void)utime (tmpfile2, &t);
     }
 
-    switch (diff_exec (tmpfile1, tmpfile2, NULL, NULL, unidiff ? "-u" : "-c",
-                       tmpfile3))
+    if (unidiff) run_add_arg_p (&dargc, &darg_allocated, &dargv, "-u");
+    else run_add_arg_p (&dargc, &darg_allocated, &dargv, "-c");
+    switch (diff_exec (tmpfile1, tmpfile2, NULL, NULL, dargc, dargv,
+		       tmpfile3))
     {
 	case -1:			/* fork/wait failure */
 	    error (1, errno, "fork for diff failed on %s", rcs);
@@ -758,6 +763,11 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
     free (tmpfile2);
     free (tmpfile3);
     tmpfile1 = tmpfile2 = tmpfile3 = NULL;
+    if (dargc)
+    {
+	run_arg_free_p (dargc, dargv);
+	free (dargv);
+    }
 
  out2:
     if (vers_tag != NULL)

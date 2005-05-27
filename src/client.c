@@ -4903,10 +4903,10 @@ start_rsh_server (root, to_server, from_server)
 /* Send an argument STRING.  */
 void
 send_arg (string)
-    char *string;
+    const char *string;
 {
     char buf[1];
-    char *p = string;
+    const char *p = string;
 
     send_to_server ("Argument ", 0);
 
@@ -5404,36 +5404,15 @@ send_dirleave_proc (callerdat, dir, err, update_dir, entries)
 }
 
 /*
- * Send each option in a string to the server, one by one.
- * This assumes that the options are separated by spaces, for example
- * STRING might be "--foo -C5 -y".
+ * Send each option in an array to the server, one by one.
+ * argv might be "--foo=bar",  "-C", "5", "-y".
  */
-
 void
-send_option_string (string)
-    char *string;
+send_options (int argc, char *const *argv)
 {
-    char *copy;
-    char *p;
-
-    copy = xstrdup (string);
-    p = copy;
-    while (1)
-    {
-        char *s;
-	char l;
-
-	for (s = p; *s != ' ' && *s != '\0'; s++)
-	    ;
-	l = *s;
-	*s = '\0';
-	if (s != p)
-	    send_arg (p);
-	if (l == '\0')
-	    break;
-	p = s + 1;
-    }
-    free (copy);
+    int i;
+    for (i = 0; i < argc; i++)
+	send_arg (argv[i]);
 }
 
 
