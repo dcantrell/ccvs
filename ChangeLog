@@ -1,3 +1,8 @@
+2005-05-27  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note diff space split fix.
+	* BUGS: Remove diff space split note.
+
 2005-05-03  Derek Price  <derek@ximbiot.com>
 
 	* INSTALL: Add footnote about compiling a CVS checkout of CVS on a
