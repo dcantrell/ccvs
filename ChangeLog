@@ -1,5 +1,10 @@
 2005-05-27  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note diff space split fix.
+	* BUGS: Remove diff space split note.
+
+2005-05-27  Derek Price  <derek@ximbiot.com>
+
 	* maint-aux/gnulib-modules: Add quotearg module.
 
 2005-05-26  Derek Price  <derek@ximbiot.com>

@@ -4177,7 +4177,6 @@ start_server (void)
 void
 send_arg (const char *string)
 {
-    char buf[1];
     const char *p = string;
 
     send_to_server ("Argument ", 0);
@@ -4185,14 +4184,9 @@ send_arg (const char *string)
     while (*p)
     {
 	if (*p == '\n')
-	{
 	    send_to_server ("\012Argumentx ", 0);
-	}
 	else
-        {
-	    buf[0] = *p;
-	    send_to_server (buf, 1);
-        }
+	    send_to_server (p, 1);
 	++p;
     }
     send_to_server ("\012", 1);
@@ -4645,35 +4639,16 @@ send_dirleave_proc (void *callerdat, const char *dir, int err,
 
 
 /*
- * Send each option in a string to the server, one by one.
- * This assumes that the options are separated by spaces, for example
- * STRING might be "--foo -C5 -y".
+ * Send each option in an array to the server, one by one.
+ * argv might be "--foo=bar",  "-C", "5", "-y".
  */
 
 void
-send_option_string (const char *string)
+send_options (int argc, char * const *argv)
 {
-    char *copy;
-    char *p;
-
-    copy = xstrdup (string);
-    p = copy;
-    while (1)
-    {
-        char *s;
-	char l;
-
-	for (s = p; *s != ' ' && *s != '\0'; s++)
-	    ;
-	l = *s;
-	*s = '\0';
-	if (s != p)
-	    send_arg (p);
-	if (l == '\0')
-	    break;
-	p = s + 1;
-    }
-    free (copy);
+    int i;
+    for (i = 0; i < argc; i++)
+	send_arg (argv[i]);
 }
 
 
