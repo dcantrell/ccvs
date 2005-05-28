@@ -9354,29 +9354,31 @@ operacional.
 @c <en>@sc{cvs} as the watch features, described below, but it
 @c <en>seems that most people with a need for reserved
 @c <en>checkouts find it adequate.
-When more than one person works on a software project
-things often get complicated.  Often, two people try to
-edit the same file simultaneously.  One solution, known
-as @dfn{file locking} or @dfn{reserved checkouts}, is
-to allow only one person to edit each file at a time.
-This is the only solution with some version control
-systems, including @sc{rcs} and @sc{sccs}.  Currently
-the usual way to get reserved checkouts with @sc{cvs}
-is the @code{cvs admin -l} command (@pxref{admin
-options}).  This is not as nicely integrated into
-@sc{cvs} as the watch features, described below, but it
-seems that most people with a need for reserved
-checkouts find it adequate.
+Quando mais de uma pessoa trabalham em um projeto de
+software freqüentemente surgem complicações.  Às vezes
+duas pessoas tentam editar o mesmo arquivo
+simultaneamente.  Uma solução, conhecida como
+@dfn{trava de arquivo} ou @dfn{???checkout???
+reservado}, é permitir, para cada arquivo, que apenas
+uma pessoa por vez edite o arquivo. Esta é a única
+solução em alguns sistemas de controle de versão,
+incluindo @sc{rcs} e @sc{sccs}.  Atualmente, a forma
+normal de se ter ???checkouts??? reservados com o @sc{cvs}
+é com o comando @code{cvs admin -l} (@pxref{admin
+options}).  Isto não é tão integrado com o @sc{cvs}
+quanto a habilidade de ???watch???, descrita abaixo,
+mas vemos que a maioria das pessoas que necessitam de
+???checkouts??? reservados acham isto adequado.
 @c Or "find it better than worrying about implementing
 @c nicely integrated reserved checkouts" or ...?
 @c <en>It also may be possible to use the watches
 @c <en>features described below, together with suitable
 @c <en>procedures (not enforced by software), to avoid having
 @c <en>two people edit at the same time.
-It also may be possible to use the watches
-features described below, together with suitable
-procedures (not enforced by software), to avoid having
-two people edit at the same time.
+Também é possível usar a habilidade de trabalhar com
+descrita a seguir, junto com alguns procedimentos
+adequados (que o sotware não obriga), para evitar que
+duas pessoas editem o mesmo arquivo ao mesmo tempo.
 
 @c Our unreserved checkout model might not
 @c be quite the same as others.  For example, I
@@ -9395,32 +9397,34 @@ two people edit at the same time.
 @c <en>then use @sc{cvs} commands to bring their working copy
 @c <en>up to date with the repository revision.  This process
 @c <en>is almost automatic.
-The default model with @sc{cvs} is known as
-@dfn{unreserved checkouts}.  In this model, developers
-can edit their own @dfn{working copy} of a file
-simultaneously.  The first person that commits his
-changes has no automatic way of knowing that another
-has started to edit it.  Others will get an error
-message when they try to commit the file.  They must
-then use @sc{cvs} commands to bring their working copy
-up to date with the repository revision.  This process
-is almost automatic.
+O modelo padrão no @sc{cvs} é conhecido como
+@dfn{unreserved checkouts}.  Neste modelo, os
+desenvolvedores podem editar sua própria @dfn{cópia de
+trabalho} de um arquivo simultaneamente.  A primeira
+pessoa que ???commits??? suas mudanças não tem uma
+forma automática de saber que outra pessoa começou a
+editar o mesmo arquivo.  Os outros vão reveber uma
+mensagem de erro quando eles tentarem ???commit??? o
+arquivo.  Eles então terão que usar comandos do
+@sc{cvs} para tornar sua cópia local atualizada em
+relação à revisão no repositório.  Este processo é
+quase automático.
 
 @c FIXME? should probably use the word "watch" here, to
 @c tie this into the text below and above.
 @c <en>@sc{cvs} also supports mechanisms which facilitate
 @c <en>various kinds of communication, without actually
 @c <en>enforcing rules like reserved checkouts do.
-@sc{cvs} also supports mechanisms which facilitate
-various kinds of communication, without actually
-enforcing rules like reserved checkouts do.
+O @sc{cvs} também dá suporte a mecanismos que facilitam
+várias formas de comunicação, sem regras realmente
+obrigatórias como os ???reserved checkouts??? fazem.
 
 @c <en>The rest of this chapter describes how these various
 @c <en>models work, and some of the issues involved in
 @c <en>choosing between them.
-The rest of this chapter describes how these various
-models work, and some of the issues involved in
-choosing between them.
+O restante deste capítulo descreve como estes vários
+modelos funcionam, e alguns dos aspectos envolvidos na
+hora de escolher entre eles.
 
 @ignore
 @c <en>Here is a draft reserved checkout design or discussion
@@ -9563,30 +9567,30 @@ someone does.
 
 @menu
 @c <en>* File status::                 A file can be in several states
-* File status::                 A file can be in several states
+* Estado de arquivo::           Um arquivo pode ter vários estados
 @c <en>* Updating a file::             Bringing a file up-to-date
-* Updating a file::             Bringing a file up-to-date
+* Atualizando um arquivo::      Deixando um arquivo atualizado
 @c <en>* Conflicts example::           An informative example
 * Exemplo de conflitos::        Um exemplo informativo
 @c <en>* Informing others::            To cooperate you must inform
-* Informing others::            To cooperate you must inform
+* Informando os outros::        Para cooperar você deve informar
 @c <en>* Concurrency::                 Simultaneous repository access
 * Concorrência::                Acesso simultâneo ao repositório
 @c <en>* Watches::                     Mechanisms to track who is editing files
-* Watches::                     Mechanisms to track who is editing files
+* Watches::                     Mecanismos para rastrear quem está editando arquivos
 @c <en>* Choosing a model::            Reserved or unreserved checkouts?
-* Choosing a model::            Reserved or unreserved checkouts?
+* Escolhendo um modelo::        ???checkout??? reservado ou ???unreserved??? ?
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node File status
-@node File status
+@node Estado de arquivo
 @c <en>@section File status
-@section File status
+@section Estado de arquivo
 @c <en>@cindex File status
-@cindex File status
+@cindex Estado de arquivo
 @c <en>@cindex Status of a file
-@cindex Status of a file
+@cindex Estado de um arquivo
 
 @c Shouldn't this start with an example or something,
 @c introducing the unreserved checkout model?  Before we
@@ -9596,24 +9600,24 @@ someone does.
 @c <en>performed to that file in the repository, one can
 @c <en>classify a file in a number of states.  The states, as
 @c <en>reported by the @code{status} command, are:
-Based on what operations you have performed on a
-checked out file, and what operations others have
-performed to that file in the repository, one can
-classify a file in a number of states.  The states, as
-reported by the @code{status} command, are:
+Baseado em quais operações você realizou num arquivo
+???checked out???, e quais operações outros realizaram
+neste arquivo no repositório, podemos classificar o
+arquivo em vários estados.  Os estados, como são
+mostrados pelo comando @code{status}, são:
 
 @c The order of items is chosen to group logically
 @c similar outputs together.
 @c People who want alphabetical can use the index...
 @table @asis
 @c <en>@cindex Up-to-date
-@cindex Up-to-date
+@cindex Up-to-date (atualizado)
 @c <en>@item Up-to-date
 @item Up-to-date
 @c <en>The file is identical with the latest revision in the
 @c <en>repository for the branch in use.
-The file is identical with the latest revision in the
-repository for the branch in use.
+O arquivo é identico à última revisão no repositório,
+para o ramo em questão.
 @c FIXME: should we clarify "in use"?  The answer is
 @c sticky tags, and trying to distinguish branch sticky
 @c tags from non-branch sticky tags seems rather awkward
@@ -9624,18 +9628,19 @@ repository for the branch in use.
 @c <en>@item Locally Modified
 @item Locally Modified
 @c <en>@cindex Locally Modified
-@cindex Locally Modified
+@cindex Locally Modified (modificado localmente)
 @c <en>You have edited the file, and not yet committed your changes.
-You have edited the file, and not yet committed your changes.
+Você alterou o arquivo, e ainda não ???committed???
+suas mudanças.
 
 @c <en>@item Locally Added
 @item Locally Added
 @c <en>@cindex Locally Added
-@cindex Locally Added
+@cindex Locally Added (adicionado localmente)
 @c <en>You have added the file with @code{add}, and not yet
 @c <en>committed your changes.
-You have added the file with @code{add}, and not yet
-committed your changes.
+Você adicionou o arquivo com @code{add}, e ainda não
+???committed??? suas mudanças.
 @c There are many cases involving the file being
 @c added/removed/modified in the working directory, and
 @c added/removed/modified in the repository, which we
@@ -9646,51 +9651,52 @@ committed your changes.
 @c <en>@item Locally Removed
 @item Locally Removed
 @c <en>@cindex Locally Removed
-@cindex Locally Removed
+@cindex Locally Removed (removido localmente)
 @c <en>You have removed the file with @code{remove}, and not yet
 @c <en>committed your changes.
-You have removed the file with @code{remove}, and not yet
-committed your changes.
+Você removeu o arquivo com @code{remove}, e ainda não
+???committed??? suas mudanças.
 
 @c <en>@item Needs Checkout
 @item Needs Checkout
 @c <en>@cindex Needs Checkout
-@cindex Needs Checkout
+@cindex Needs Checkout (precisa ???checkout???)
 @c <en>Someone else has committed a newer revision to the
 @c <en>repository.  The name is slightly misleading; you will
 @c <en>ordinarily use @code{update} rather than
 @c <en>@code{checkout} to get that newer revision.
-Someone else has committed a newer revision to the
-repository.  The name is slightly misleading; you will
-ordinarily use @code{update} rather than
-@code{checkout} to get that newer revision.
+Alguém ???committed??? uma revisão nova no repositório.
+O nome está um pouco confuso; você normalmente vai usar
+@code{update} ao invés de @code{checkout} para obter a
+nova revisão.
 
 @c <en>@item Needs Patch
 @item Needs Patch
 @c <en>@cindex Needs Patch
-@cindex Needs Patch
+@cindex Needs Patch (precisa de ???patch???)
 @c See also newb-123j0 in sanity.sh (although that case
 @c should probably be changed rather than documented).
 @c <en>Like Needs Checkout, but the @sc{cvs} server will send
 @c <en>a patch rather than the entire file.  Sending a patch or
 @c <en>sending an entire file accomplishes the same thing.
-Like Needs Checkout, but the @sc{cvs} server will send
-a patch rather than the entire file.  Sending a patch or
-sending an entire file accomplishes the same thing.
+Igual a 'Needs Checkout', mas o servidor do @sc{cvs}
+vai mandar um ???patch??? ao invés de um arquivo
+inteiro.  Mandar um ???patch??? ou um arquivo inteiro
+dá no mesmo.
 
 @c <en>@item Needs Merge
 @item Needs Merge
 @c <en>@cindex Needs Merge
-@cindex Needs Merge
+@cindex Needs Merge (precisa mesclar)
 @c <en>Someone else has committed a newer revision to the repository, and you
 @c <en>have also made modifications to the file.
-Someone else has committed a newer revision to the repository, and you
-have also made modifications to the file.
+Outra pessoa ???committed??? uma nova revisão no
+repositório, e você fez modificações no arquivo.
 
 @c <en>@item Unresolved Conflict
 @item Unresolved Conflict
 @c <en>@cindex Unresolved Conflict
-@cindex Unresolved Conflict
+@cindex Unresolved Conflict (conflito não-solucionado)
 @c FIXCVS - This file status needs to be changed to some more informative
 @c text that distinguishes it more clearly from each of the Locally Added,
 @c File had conflicts on merge, and Unknown status types, but an exact and
@@ -9698,14 +9704,15 @@ have also made modifications to the file.
 @c <en>A file with the same name as this new file has been added to the repository
 @c <en>from a second workspace.  This file will need to be moved out of the way
 @c <en>to allow an @code{update} to complete.
-A file with the same name as this new file has been added to the repository
-from a second workspace.  This file will need to be moved out of the way
-to allow an @code{update} to complete.
+Um arquivo com o mesmo nome deste arquivo novo foi
+adicionado ao repositório a partir de outra área de
+trabalho.  Este arquivo vai ter que ser movido para que
+não atrapalhe um @code{update} de completar.
 
 @c <en>@item File had conflicts on merge
 @item File had conflicts on merge
 @c <en>@cindex File had conflicts on merge
-@cindex File had conflicts on merge
+@cindex File had conflicts on merge (Arquivo teve conflitos na mescla)
 @c is it worth saying that this message was "Unresolved
 @c Conflict" in CVS 1.9 and earlier?  I'm inclined to
 @c think that is unnecessarily confusing to new users.
@@ -9713,20 +9720,20 @@ to allow an @code{update} to complete.
 @c <en>@code{update} command gave a conflict.  If you have not
 @c <en>already done so, you need to
 @c <en>resolve the conflict as described in @ref{Conflicts example}.
-This is like Locally Modified, except that a previous
-@code{update} command gave a conflict.  If you have not
-already done so, you need to
-resolve the conflict as described in @ref{Exemplo de conflitos}.
+Isto é parecido com 'Locally Modified', com a diferença que o comando
+@code{update} anterior produziu um conflito.  Se você
+ainda não o fez, precisa resolver o conflito, como é
+descrito em @ref{Exemplo de conflitos}.
 
 @c <en>@item Unknown
 @item Unknown
 @c <en>@cindex Unknown
-@cindex Unknown
+@cindex Unknown (desconhecido)
 @c <en>@sc{cvs} doesn't know anything about this file.  For
 @c <en>example, you have created a new file and have not run
 @c <en>@code{add}.
-@sc{cvs} doesn't know anything about this file.  For
-example, you have created a new file and have not run
+O @sc{cvs} não sabe nada a respeito deste arquivo.  Por
+exemplo, você criou um novo arquivo e não rodou um
 @code{add}.
 @c
 @c "Entry Invalid" and "Classify Error" are also in the
@@ -9744,12 +9751,11 @@ example, you have created a new file and have not run
 @c <en>from, and the @code{Repository revision} which is the
 @c <en>latest revision in the repository for the branch in
 @c <en>use.
-To help clarify the file status, @code{status} also
-reports the @code{Working revision} which is the
-revision that the file in the working directory derives
-from, and the @code{Repository revision} which is the
-latest revision in the repository for the branch in
-use.
+Para facilitar o entendimento do estado do arquivo, o
+@code{status} também relata a @code{revisão de
+trabalho} da qual o arquivo no diretório de trabalho
+deriva, e a @code{Revisão de repositório} que é a mais
+recente revisão no repositório, para o ramo em uso.
 @c FIXME: should we clarify "in use"?  The answer is
 @c sticky tags, and trying to distinguish branch sticky
 @c tags from non-branch sticky tags seems rather awkward
@@ -9782,11 +9788,12 @@ use.
 @c <en>and @code{Sticky date} output, see @ref{Sticky tags}.
 @c <en>For information on its @code{Sticky options} output,
 @c <en>see the @samp{-k} option in @ref{update options}.
-The options to @code{status} are listed in
-@ref{Chamando o CVS}.  For information on its @code{Etiquetas adesivas}
-and @code{Sticky date} output, see @ref{Etiquetas adesivas}.
-For information on its @code{Sticky options} output,
-see the @samp{-k} option in @ref{update options}.
+As opções para o @code{status} são listadas em
+@ref{Chamando o CVS}.  Para informações sobre suas
+@code{Etiquetas adesivas} e saída de @code{data
+adesiva} veja em @ref{Etiquetas adesivas}. Para
+informações na saída de suas @code{opções adesivas},
+veja a opção @samp{-k} em @ref{update options}.
 
 @c <en>You can think of the @code{status} and @code{update}
 @c <en>commands as somewhat complementary.  You use
@@ -9797,18 +9804,19 @@ see the @samp{-k} option in @ref{update options}.
 @c <en>@code{update}).  In fact, if you want a command to
 @c <en>display file status in a more brief format than is
 @c <en>displayed by the @code{status} command, you can invoke
-You can think of the @code{status} and @code{update}
-commands as somewhat complementary.  You use
-@code{update} to bring your files up to date, and you
-can use @code{status} to give you some idea of what an
-@code{update} would do (of course, the state of the
-repository might change before you actually run
-@code{update}).  In fact, if you want a command to
-display file status in a more brief format than is
-displayed by the @code{status} command, you can invoke
+Você pode pensar nos comandos @code{status} e
+@code{update} como complementares.  Você usa o
+@code{update} para atualizar seus arquivos, e você pode
+usar o @code{status} para ter idéia do que um
+@code{update} deve fazer (obviamente, o estado do
+repositório pode mudar depois que você rodar o
+@code{update}).  De fato, se você quiser um comando
+para mostrar o estado de arquivos num formato mais
+conciso do que o comando @code{status} mostra, você
+pode invocar
 
 @c <en>@cindex update, to display file status
-@cindex update, to display file status
+@cindex update, para mostrar o estado de arquivo
 @example
 $ cvs -n -q update
 @end example
@@ -9818,59 +9826,62 @@ $ cvs -n -q update
 @c <en>option avoids printing the name of each directory.  For
 @c <en>more information on the @code{update} command, and
 @c <en>these options, see @ref{Invoking CVS}.
-The @samp{-n} option means to not actually do the
-update, but merely to display statuses; the @samp{-q}
-option avoids printing the name of each directory.  For
-more information on the @code{update} command, and
-these options, see @ref{Chamando o CVS}.
+A opção @samp{-n} significa fingir que faz a
+atualização, mas simplesmente mostrar o estado; a opção
+@samp{-q} suprime a exibição do nome de cada
+diretório.  Para mais informações sobre o comando
+@code{update}, e opções, veja em @ref{Chamando o CVS}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Updating a file
-@node Updating a file
+@node Atualizando um arquivo
 @c <en>@section Bringing a file up to date
-@section Bringing a file up to date
+@section Deixando um arquivo atualizado
 @c <en>@cindex Bringing a file up to date
-@cindex Bringing a file up to date
+@cindex Deixando um arquivo atualizado
 @c <en>@cindex Updating a file
-@cindex Updating a file
+@cindex Atualizando um arquivo
 @c <en>@cindex Merging a file
-@cindex Merging a file
+@cindex Mesclando um arquivo
 @c <en>@cindex Update, introduction
-@cindex Update, introduction
+@cindex Update, introdução
 
 @c <en>When you want to update or merge a file, use the @code{update}
 @c <en>command.  For files that are not up to date this is roughly equivalent
 @c <en>to a @code{checkout} command: the newest revision of the file is
 @c <en>extracted from the repository and put in your working directory.
-When you want to update or merge a file, use the @code{update}
-command.  For files that are not up to date this is roughly equivalent
-to a @code{checkout} command: the newest revision of the file is
-extracted from the repository and put in your working directory.
+Quando você quer atualizar ou mesclar um arquivo, use o
+comando @code{update}.  Para arquivos que não estão
+atualizados isto é mais ou menos equivalente ao comando
+@code{checkout}: a revisão mais nova do arquivo é
+extraída do repositório e posta no diretório de trabalho.
 
 @c <en>Your modifications to a file are never lost when you
 @c <en>use @code{update}.  If no newer revision exists,
 @c <en>running @code{update} has no effect.  If you have
 @c <en>edited the file, and a newer revision is available,
 @c <en>@sc{cvs} will merge all changes into your working copy.
-Your modifications to a file are never lost when you
-use @code{update}.  If no newer revision exists,
-running @code{update} has no effect.  If you have
-edited the file, and a newer revision is available,
-@sc{cvs} will merge all changes into your working copy.
+Suas modificações num arquivo nunca são perdidas quando
+você usa @code{update}.  Se não existe uma revisão mais
+nova, o @code{update} não tem nenhum efeito.  Se você
+editou o arquivo, e uma nova revisão está disponível, o
+@sc{cvs} vai mesclar todas as alterações na sua cópia
+de trabalho.
 
 @c <en>For instance, imagine that you checked out revision 1.4 and started
 @c <en>editing it.  In the meantime someone else committed revision 1.5, and
 @c <en>shortly after that revision 1.6.  If you run @code{update} on the file
 @c <en>now, @sc{cvs} will incorporate all changes between revision 1.4 and 1.6 into
 @c <en>your file.
-For instance, imagine that you checked out revision 1.4 and started
-editing it.  In the meantime someone else committed revision 1.5, and
-shortly after that revision 1.6.  If you run @code{update} on the file
-now, @sc{cvs} will incorporate all changes between revision 1.4 and 1.6 into
-your file.
+Por exemplo, imagine que você ???checked out??? a
+revisão 1.4 e começou a editá-la.  Enquanto isto, outra
+pessoa ???committed??? a revisão 1.5, e logo depois a
+revisão 1.6.  Se você rodar @code{update} no arquivo
+agora, o @sc{cvs} vai incorporar todas as mudanças
+entre a revisão 1.4 e 1.6 no seu arquivo.
 
 @c <en>@cindex Overlap
-@cindex Overlap
+@cindex Sobreposição
 @c <en>If any of the changes between 1.4 and 1.6 were made too
 @c <en>close to any of the changes you have made, an
 @c <en>@dfn{overlap} occurs.  In such cases a warning is
@@ -9879,14 +9890,13 @@ your file.
 @c <en>special markers.
 @c <en>@xref{update}, for a complete description of the
 @c <en>@code{update} command.
-If any of the changes between 1.4 and 1.6 were made too
-close to any of the changes you have made, an
-@dfn{overlap} occurs.  In such cases a warning is
-printed, and the resulting file includes both
-versions of the lines that overlap, delimited by
-special markers.
-@xref{update}, for a complete description of the
-@code{update} command.
+Se quaisquer das mudanças entre 1.4 e 1.6 ocorreram
+suficientemente próximas de quaisquer das suas
+mudanças, uma @dfn{sobreposição} ocorre.  Nestes casos
+um aviso é mostrado, e o arquivo resultante contém
+ambas as versões das linhas que se sobrepuseram,
+delimitadas por marcadores especiais. @xref{update},
+para uma descrição completa do comando @code{update}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Conflicts example
@@ -9901,7 +9911,7 @@ special markers.
 @cindex driver.c (merge example)
 
 @c <en>Suppose revision 1.4 of @file{driver.c} contains this:
-Suppose revision 1.4 of @file{driver.c} contains this:
+Suponha que a revisão 1.4 de @file{driver.c} contém isto:
 
 @example
 #include <stdio.h>
@@ -9919,7 +9929,7 @@ void main()
 
 @noindent
 @c <en>Revision 1.6 of @file{driver.c} contains this:
-Revision 1.6 of @file{driver.c} contains this:
+A revisão 1.6 de @file{driver.c} contém isto:
 
 @example
 #include <stdio.h>
@@ -9945,8 +9955,8 @@ int main(int argc,
 @c <en>Your working copy of @file{driver.c}, based on revision
 @c <en>1.4, contains this before you run @samp{cvs update}:
 @c <en>@c -- Really include "cvs"?
-Your working copy of @file{driver.c}, based on revision
-1.4, contains this before you run @samp{cvs update}:
+Sua cópia de trabalho de @file{driver.c}, baseada na
+revisão 1.4, contém isto, antes de você rodar um @samp{cvs update}:
 @c -- Really include "cvs"?
 
 @example
@@ -9968,7 +9978,7 @@ void main()
 @noindent
 @c <en>You run @samp{cvs update}:
 @c <en>@c -- Really include "cvs"?
-You run @samp{cvs update}:
+Então você roda o @samp{cvs update}:
 @c -- Really include "cvs"?
 
 @example
@@ -9984,15 +9994,15 @@ C driver.c
 
 @noindent
 @c <en>@cindex Conflicts (merge example)
-@cindex Conflicts (merge example)
+@cindex Conflitos (exemplo de mesclagem)
 @c <en>@sc{cvs} tells you that there were some conflicts.
 @c <en>Your original working file is saved unmodified in
 @c <en>@file{.#driver.c.1.4}.  The new version of
 @c <en>@file{driver.c} contains this:
 @sc{cvs} tells you that there were some conflicts.
-Your original working file is saved unmodified in
-@file{.#driver.c.1.4}.  The new version of
-@file{driver.c} contains this:
+Seu arquivo de trabalho original é guardado sem
+modificações em @file{.#driver.c.1.4}.  A nova versão
+de @file{driver.c} contém isto:
 
 @example
 #include <stdlib.h>
@@ -10022,9 +10032,9 @@ int main(int argc,
 
 @noindent
 @c <en>@cindex Markers, conflict
-@cindex Markers, conflict
+@cindex Marcadores, conflito
 @c <en>@cindex Conflict markers
-@cindex Conflict markers
+@cindex Marcadores de conflito
 @c <en>@cindex <<<<<<<
 @cindex <<<<<<<
 @c <en>@cindex >>>>>>>
@@ -10035,20 +10045,22 @@ int main(int argc,
 @c <en>Note how all non-overlapping modifications are incorporated in your working
 @c <en>copy, and that the overlapping section is clearly marked with
 @c <en>@samp{<<<<<<<}, @samp{=======} and @samp{>>>>>>>}.
-Note how all non-overlapping modifications are incorporated in your working
-copy, and that the overlapping section is clearly marked with
-@samp{<<<<<<<}, @samp{=======} and @samp{>>>>>>>}.
+Observe como todas as modificações sem sobreposição
+foram incorporadas na sua cópia de trabalho, e que as
+seções com sobreposição são marcadas de forma clara com
+@samp{<<<<<<<}, @samp{=======} e @samp{>>>>>>>}.
 
 @c <en>@cindex Resolving a conflict
-@cindex Resolving a conflict
+@cindex Resolvendo um conflito
 @c <en>@cindex Conflict resolution
-@cindex Conflict resolution
+@cindex Resolução de conflitos
 @c <en>You resolve the conflict by editing the file, removing the markers and
 @c <en>the erroneous line.  Suppose you end up with this file:
 @c <en>@c -- Add xref to the pcl-cvs manual when it talks
 @c <en>@c -- about this.
-You resolve the conflict by editing the file, removing the markers and
-the erroneous line.  Suppose you end up with this file:
+Você resolve o conflito editando o arquivo, removendo os
+marcadores e as linhas erradas.  Suponha que você ficou
+com este arquivo:
 @c -- Add xref to the pcl-cvs manual when it talks
 @c -- about this.
 @example
@@ -10075,7 +10087,8 @@ int main(int argc,
 
 @noindent
 @c <en>You can now go ahead and commit this as revision 1.7.
-You can now go ahead and commit this as revision 1.7.
+Você agora pode seguir em frente e ???commit??? ele
+como a revisão 1.7.
 
 @example
 $ cvs commit -m "Initialize scanner. Use symbolic exit values." driver.c
@@ -10097,18 +10110,17 @@ done
 @c <en>line that don't mark a conflict), the current
 @c <en>version of @sc{cvs} will print a warning and proceed to
 @c <en>check in the file.
-For your protection, @sc{cvs} will refuse to check in a
-file if a conflict occurred and you have not resolved
-the conflict.  Currently to resolve a conflict, you
-must change the timestamp on the file.  In previous
-versions of @sc{cvs}, you also needed to
-insure that the file contains no conflict markers.
-Because
-your file may legitimately contain conflict markers (that
-is, occurrences of @samp{>>>>>>> } at the start of a
-line that don't mark a conflict), the current
-version of @sc{cvs} will print a warning and proceed to
-check in the file.
+Para sua segurança, o @sc{cvs} não vai aceitar o check
+in de um arquivo se um conflito ocorreu e você não
+resolveu o conflito.  Atualmente, para resolver um
+conflito, você deve mudar a data do arquivo.  Em
+versões anteriores do @sc{cvs}, você também precisava
+ter certeza de que o arquivo não continha marcadores de
+conflito.  Já que seu arquivo pode conter marcadores de
+conflito ???de forma legítima??? (isto é, a ocorrência
+de @samp{>>>>>>> } no começo de uma linha que não marca
+um conflito), a versão atual do @sc{cvs} vai mostrar um
+aviso e continuar a fazer o ???check in??? do arquivo.
 @c The old behavior was really icky; the only way out
 @c was to start hacking on
 @c the @code{CVS/Entries} file or other such workarounds.
@@ -10127,18 +10139,19 @@ check in the file.
 @c <en>Emacs front-end for @sc{cvs}) you can use an Emacs
 @c <en>package called emerge to help you resolve conflicts.
 @c <en>See the documentation for pcl-cvs.
-If you use release 1.04 or later of pcl-cvs (a @sc{gnu}
-Emacs front-end for @sc{cvs}) you can use an Emacs
-package called emerge to help you resolve conflicts.
-See the documentation for pcl-cvs.
+Se você usa a release 1.04 ou posterior do pcl-cvs (uma
+interface amigável para o  @sc{cvs} de dentro do
+@sc{gnu} Emacs) você pode usar um pacote do Emacs
+chamado emerge para te ajudar a resolver os
+conflitos. Veja na documentação do pcl-cvs.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Informing others
-@node Informing others
+@node Informando os outros
 @c <en>@section Informing others about commits
 @section Informing others about commits
 @c <en>@cindex Informing others
-@cindex Informing others
+@cindex Informando os outros
 @c <en>@cindex Spreading information
 @cindex Spreading information
 @c <en>@cindex Mail, automatic mail on commit
@@ -10878,7 +10891,7 @@ that will restore the repository to a state which
 @sc{cvs} 1.6 can cope with.
 
 @c <en>@node Choosing a model
-@node Choosing a model
+@node Escolhendo um modelo
 @c <en>@section Choosing between reserved or unreserved checkouts
 @section Choosing between reserved or unreserved checkouts
 @c <en>@cindex Choosing, reserved or unreserved checkouts
@@ -17278,7 +17291,7 @@ Rsh server.  See @ref{Se conectando via rsh}.
 @c <en>Display status information in a working directory.  See
 @c <en>@ref{File status}.
 Display status information in a working directory.  See
-@ref{File status}.
+@ref{Estado de arquivo}.
 
 @table @code
 @c <en>@item -l
