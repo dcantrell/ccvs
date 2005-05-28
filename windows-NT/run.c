@@ -39,8 +39,21 @@
  */
 static char **run_argv;
 static int run_argc;
-static int run_argc_allocated;
+static size_t run_arg_allocated;
 
+
+
+void
+run_arg_free_p (int argc, char **argv)
+{
+    int i;
+    for (i = 0; i < argc; i++)
+	free (argv[i]);
+}
+
+
+
+/* VARARGS */
 void
 run_setup (const char *prog)
 {
@@ -103,33 +116,34 @@ quote (const char *s)
 
 
 void
-run_add_arg (s)
-    const char *s;
+run_add_arg_p (int *iargc, size_t *iarg_allocated, char ***iargv,
+	       const char *s)
 {
     /* allocate more argv entries if we've run out */
-    if (run_argc >= run_argc_allocated)
+    if (*iargc >= *iarg_allocated)
     {
-	run_argc_allocated += 50;
-	run_argv = xrealloc (run_argv, run_argc_allocated * sizeof (char **));
+	*iarg_allocated += 50;
+	*iargv = xnrealloc (*iargv, *iarg_allocated, sizeof (char **));
     }
 
     if (s)
-    {
-	run_argv[run_argc] = (run_argc ? quote (s) : xstrdup (s));
-	run_argc++;
-    }
+	(*iargv)[(*iargc)++] = xstrdup (s);
     else
-	run_argv[run_argc] = NULL;	/* not post-incremented on purpose!  */
+	(*iargv)[*iargc] = NULL;	/* not post-incremented on purpose! */
+}
+
+
+
+void
+run_add_arg (const char *s)
+{
+    run_add_arg_p (&run_argc, &run_arg_allocated, &run_argv, s);
 }
 
 
 
 int
-run_exec (stin, stout, sterr, flags)
-    const char *stin;
-    const char *stout;
-    const char *sterr;
-    int flags;
+run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 {
     int shin, shout, sherr;
     int sain, saout, saerr;	/* saved handles */
@@ -278,8 +292,7 @@ run_exec (stin, stout, sterr, flags)
 }
 
 void
-run_print (fp)
-    FILE *fp;
+run_print (FILE *fp)
 {
     int i;
 
@@ -307,9 +320,7 @@ requote (const char *cmd)
 }
 
 FILE *
-run_popen (cmd, mode)
-    const char *cmd;
-    const char *mode;
+run_popen (const char *cmd, const char *mode)
 {
     if (trace)
 #ifdef SERVER_SUPPORT
@@ -636,10 +647,7 @@ piped_child (char *const *argv, int *to, int *from)
  */
 
 int
-filter_stream_through_program (oldfd, dir, prog, pidp)
-     int oldfd, dir;
-     char **prog;
-     pid_t *pidp;
+filter_stream_through_program (int oldfd, int dir, char **prog, pid_t *pidp)
 {
     HANDLE pipe[2];
     char *command;
