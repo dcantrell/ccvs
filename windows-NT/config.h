@@ -840,9 +840,6 @@
 /* Define to a substitute value for mmap()'s MAP_ANONYMOUS flag. */
 #undef MAP_ANONYMOUS
 
-/* Define to `1' if <sys/cdefs.h> is *not* available on this system. */
-#define MISSING_SYS_CDEFS_H 1
-
 /* By default, CVS stores its modules and other such items in flat text files
    (MY_NDBM enables this). Turning off MY_NDBM causes CVS to look for a
    system-supplied ndbm database library and use it instead. That may speed
@@ -1106,6 +1103,9 @@
 
 /* Define to force lib/regex.c to define re_comp et al. */
 #define _REGEX_RE_COMP 1
+
+/* Define to `1' if <sys/cdefs.h> is *not* available on this system. */
+#undef _SYS_CDEFS_H
 
 /* Define for Solaris 2.5.1 so uint32_t typedef from <sys/synch.h>,
    <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the
