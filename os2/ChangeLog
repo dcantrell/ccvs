@@ -1,3 +1,11 @@
+2005-05-27  Conrad T. Pino  <Conrad@Pino.com>
+
+	* run.c: Remove "run_arg" to synchronize with "../windows-NT/run.c".
+	Function "run_add_arg" scope was "static" and is now "extern" scope.
+	Synchronize "piped_child" function arguments with feature branch.
+	All "run_arg" calls are fixed with macro defined in "../src/cvs.h".
+	FIXME: Functions "run_add_arg_p" and "run_arg_free_p" are undefined.
+
 2004-04-04  Derek Price  <derek@ximbiot.com>
 
 	* filesubr.c (isabsolute): Remove this function.
