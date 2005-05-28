@@ -1,3 +1,7 @@
+2005-05-28  Derek Price  <derek@ximbiot.com>
+
+	* glob.m4: s/MISSING_SYS_CDEFS_H/_SYS_CDEFS_H/.  Add comment.
+
 2005-05-25  Derek Price  <derek@ximbiot.com>
 
 	* glob.m4: Don't cater to Solaris here...
