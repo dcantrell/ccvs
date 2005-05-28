@@ -1,3 +1,9 @@
+2005-05-28  Conrad T. Pino  <Conrad@Pino.com>
+
+	* run.c: Import feature branch revision 1.21 which defines the
+	"run_add_arg_p" and "run_arg_free_p" functions.
+	FIXME: Function "xnrealloc" call from "run_add_arg_p" undefined.
+
 2005-05-27  Conrad T. Pino  <Conrad@Pino.com>
 
 	* run.c: Import feature branch revision 1.20 as base for adding new
