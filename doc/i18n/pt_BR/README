@@ -14,7 +14,8 @@ Some policy:
 
 * don't erase original text. comment original text with '@c <en>'.
 
-* don't translate comments in english. leave them untouched
+* don't translate comments in english (starting with '@c '. leave them
+  untouched
 
 * don't translate examples. let's concentrate in finish the work
   first.
