@@ -123,7 +123,7 @@ run_add_arg_p (int *iargc, size_t *iarg_allocated, char ***iargv,
     if (*iargc >= *iarg_allocated)
     {
 	*iarg_allocated += 50;
-	*iargv = xnrealloc (*iargv, *iarg_allocated, sizeof (char **));
+	*iargv = xrealloc (*iargv, *iarg_allocated * sizeof (char **));
     }
 
     if (s)
