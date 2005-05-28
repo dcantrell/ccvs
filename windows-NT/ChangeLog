@@ -1,3 +1,9 @@
+2005-05-28  Conrad T. Pino  <Conrad@Pino.com>
+
+	* run.c: Implement functions "run_add_arg_p" and "run_arg_free_p" by
+	copying from "../src/run.c" and change all K&R style function argument
+	declarations to ANSI style.
+
 2005-05-26  Derek Price  <derek@ximbiot.com>
 
 	* pwd.h, pwd.c: Reformat to CVS conventions.
