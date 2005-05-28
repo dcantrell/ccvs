@@ -1098,7 +1098,7 @@
 #define _REGEX_RE_COMP 1
 
 /* Define to `1' if <sys/cdefs.h> is *not* available on this system. */
-#undef _SYS_CDEFS_H
+#define _SYS_CDEFS_H 1
 
 /* Define for Solaris 2.5.1 so uint32_t typedef from <sys/synch.h>,
    <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the

@@ -1,3 +1,8 @@
+2005-05-28  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.in (MISSING_SYS_CDEFS_H): Rename...
+	(_SYS_CDEFS_H): ...as this.
+
 2005-05-28  Conrad T. Pino  <Conrad@Pino.com>
 
 	* run.c: Implement functions "run_add_arg_p" and "run_arg_free_p" by

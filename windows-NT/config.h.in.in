@@ -413,7 +413,7 @@
 #undef HAVE_MAP_ANONYMOUS
 
 /* Define to `1' if <sys/cdefs.h> is *not* available on this system. */
-#define MISSING_SYS_CDEFS_H 1
+#define _SYS_CDEFS_H 1
 
 /* Define to 1 if you have the `mblen' function. */
 #undef HAVE_MBLEN
