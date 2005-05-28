@@ -29297,10 +29297,11 @@ fi
 
 done
 
-  if test $SYS_CDEFS_H = no; then
+
+              if test $SYS_CDEFS_H = no; then
 
 cat >>confdefs.h <<\_ACEOF
-#define MISSING_SYS_CDEFS_H 1
+#define _SYS_CDEFS_H 1
 _ACEOF
 
   fi
