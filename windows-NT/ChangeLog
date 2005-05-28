@@ -1,5 +1,10 @@
 2005-05-28  Conrad T. Pino  <Conrad@Pino.com>
 
+	* run.c: Substitute "xrealloc" function for "xnrealloc" call from
+	"run_add_arg_p" function.
+
+2005-05-28  Conrad T. Pino  <Conrad@Pino.com>
+
 	* run.c: Import feature branch revision 1.21 which defines the
 	"run_add_arg_p" and "run_arg_free_p" functions.
 	FIXME: Function "xnrealloc" call from "run_add_arg_p" undefined.
