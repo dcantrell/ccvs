@@ -1,3 +1,12 @@
+2005-05-27  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvs.h: Replace "run_arg" function with "#define run_arg run_add_arg",
+	add "run_add_arg" prototype, change "piped_child" prototype to be same
+	as feature branch to reflect "(os2,src,windows-NT)/run.c" changes.
+	* run.c: Remove "run_arg" to synchronize with "../windows-NT/run.c".
+	Function "run_add_arg" scope was "static" and is now "extern" scope.
+	Synchronize "piped_child" function arguments with feature branch.
+
 2005-05-27  Derek Price  <derek@ximbiot.com>
 
 	* client.c (send_arg): Make arg const.

@@ -1,3 +1,11 @@
+2005-05-27  Conrad T. Pino  <Conrad@Pino.com>
+
+	* run.c: Import feature branch revision 1.20 as base for adding new
+	"run_add_arg_p" and "run_arg_free_p" functions.  Imported revision
+	removes "run_arg" function and adds unused "run_piped" function.
+	All "run_arg" calls are fixed with macro defined in "../src/cvs.h".
+	FIXME: Functions "run_add_arg_p" and "run_arg_free_p" are undefined.
+
 2005-02-08  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in: Clarify comments.

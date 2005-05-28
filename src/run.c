@@ -18,8 +18,6 @@
 extern int execvp PROTO((char *file, char **argv));
 #endif
 
-static void run_add_arg PROTO((const char *s));
-
 extern char *strtok ();
 
 /*
@@ -27,8 +25,8 @@ extern char *strtok ();
  * arguments.  The argument to run_setup will be parsed into whitespace 
  * separated words and added to the global run_argv list.
  * 
- * Then, optionally call run_arg() for each additional argument that you'd like
- * to pass to the executed program.
+ * Then, optionally call run_add_arg() for each additional argument that
+ * you'd like to pass to the executed program.
  * 
  * Finally, call run_exec() to execute the program with the specified arguments.
  * The execvp() syscall will be used, so that the PATH is searched correctly.
@@ -70,13 +68,6 @@ run_setup (prog)
     free (run_prog);
 }
 
-void
-run_arg (s)
-    const char *s;
-{
-    run_add_arg (s);
-}
-
 
 
 void
@@ -101,7 +92,7 @@ run_add_arg_p (iargc, iarg_allocated, iargv, s)
 
 
 
-static void
+void
 run_add_arg (s)
     const char *s;
 {
@@ -419,7 +410,7 @@ run_popen (cmd, mode)
 
 int
 piped_child (command, tofdp, fromfdp)
-     const char **command;
+     const char *const *command;
      int *tofdp;
      int *fromfdp;
 {

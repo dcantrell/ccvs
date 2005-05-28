@@ -22,10 +22,7 @@
 #include <io.h>
 #include <fcntl.h>
 
-static void run_add_arg PROTO((const char *s));
-static void run_init_prog PROTO((void));
 
-extern char *strtok ();
 
 /*
  * To exec a program under CVS, first call run_setup() to setup any initial
@@ -72,12 +69,7 @@ run_setup (const char *prog)
     free (run_prog);
 }
 
-void
-run_arg (s)
-    const char *s;
-{
-    run_add_arg (s);
-}
+
 
 /* Return a malloc'd copy of s, with double quotes around it.  */
 static char *
@@ -108,7 +100,9 @@ quote (const char *s)
     return copy;
 }
 
-static void
+
+
+void
 run_add_arg (s)
     const char *s;
 {
@@ -116,8 +110,7 @@ run_add_arg (s)
     if (run_argc >= run_argc_allocated)
     {
 	run_argc_allocated += 50;
-	run_argv = (char **) xrealloc ((char *) run_argv,
-				     run_argc_allocated * sizeof (char **));
+	run_argv = xrealloc (run_argv, run_argc_allocated * sizeof (char **));
     }
 
     if (s)
@@ -126,8 +119,10 @@ run_add_arg (s)
 	run_argc++;
     }
     else
-	run_argv[run_argc] = (char *) 0;	/* not post-incremented on purpose! */
+	run_argv[run_argc] = NULL;	/* not post-incremented on purpose!  */
 }
+
+
 
 int
 run_exec (stin, stout, sterr, flags)
@@ -524,7 +519,7 @@ start_child (char *command, HANDLE in, HANDLE out)
    construct a command line that one might pass to CreateProcess.
    Try to quote things appropriately.  */
 static char *
-build_command (char **argv)
+build_command (char *const *argv)
 {
     int len;
 
@@ -597,7 +592,7 @@ build_command (char **argv)
    Return the handle of the child process (this is what
    _cwait and waitpid expect).  */
 int
-piped_child (const char **argv, int *to, int *from)
+piped_child (char *const *argv, int *to, int *from)
 {
   int child;
   HANDLE pipein[2], pipeout[2];
@@ -605,7 +600,7 @@ piped_child (const char **argv, int *to, int *from)
 
   /* Turn argv into a form acceptable to CreateProcess.  */
   command = build_command (argv);
-  if (! command)
+  if (!command)
       return -1;
 
   /* Create pipes for communicating with child.  Arrange for
@@ -695,6 +690,16 @@ filter_stream_through_program (oldfd, dir, prog, pidp)
 	*pidp = child;
     return newfd;    
 }
+
+
+
+int
+run_piped (int *tofdp, int *fromfdp)
+{
+    run_add_arg (NULL);
+    return piped_child (run_argv, tofdp, fromfdp);
+}
+
 
 
 /* Arrange for the file descriptor FD to not be inherited by child
