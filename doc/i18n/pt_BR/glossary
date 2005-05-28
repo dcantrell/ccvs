@@ -12,9 +12,12 @@ Words and expressions hard to translate:
   should translate as 'pegar emprestado', as the opposite of
   'devolver'. This is open question.
 
-- check in
-  'submeter', 'devolver'. 'submeter' is better, because 'devolver' can be
-  interpreted as 'recusar'
+- check in (verb)
+  'submeter', 'dar entrada', 'devolver'. 'submeter' is better, because
+  'devolver' can be interpreted as 'recusar'.
+
+- check in (substantivo)
+  'entrada', 'devolução'. ver 'check in (verbo)'
 
 - commit
   I think that 'efetivar' is good. But people don't like. And some
@@ -37,15 +40,24 @@ Words and expressions hard to translate:
 - line ending
   'terminação de linha'
 
+- lock
+  'travar', 'trava'.
+
 - log (verb)
   'registrar'
 
 - log (noun)
   'registro'
 
+- marker
+  'marcador'
+
 - non-branch
   translate to 'não-ramo' is not natural in portuguese. There is any
   problem in translate to 'tronco'
+
+- patch
+  'remendo'? 'conserto'?
 
 - release
   'release' until I find a better translation. A good option is 'lançamento'
@@ -53,20 +65,37 @@ Words and expressions hard to translate:
 - repository
   'repositório'
 
+- status
+  'estado'
+
+- stick
+  'adesiva'. should be 'colante', too.
+
 - store
   'armazenar', 'guardar'.
 
--tag (verb)
+- tag (verb)
   'etiquetar'
 
--tag (noun)
+- tag (noun)
   'etiqueta'
 
 - traceability
   'rastreabilidade'
 
+- unreserved
+  the term appears in the expression 'unreserved checkout'. one option
+  should be 'não-reservado'
+
+- unresolved
+  appears in the term 'unresolved conflict'. the term 'unresolved
+  conflict' may be changed in future. meanwhile, let's call it
+  'conflito não-solucionado'
+
 - update
   'atualizar'
+
+- watches
 
 - working copy
   'cópia de trabalho'
