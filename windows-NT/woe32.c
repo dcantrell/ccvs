@@ -15,6 +15,8 @@
 #include <winsock.h>  /* This does: #include <windows.h> */
 
 #include <stdlib.h>
+#include <unistd.h>
+#include <xalloc.h>
 
 
 
@@ -69,18 +71,33 @@ woe32_init_winsock (void)
 
 
 
-/*
- * Sleep at least some number of microseconds, specified with nanosecond
- * resolution and rounding up to the nearest microsecond.
- */
-static int
-my_usleep (const struct timespec *ts_delay)
+char *
+woe32_home_dir (void)
 {
-    struct timeval tv_delay;
-    tv_delay.tv_sec = ts_delay->tv_sec;
-    tv_delay.tv_usec = ts_delay->tv_nsec / 1000
-		       + (ts_delay->tv_nsec % 1000 ? 1 : 0);
-    return select (0, (void *) 0, (void *) 0, (void *) 0, &tv_delay);
+    static char *home_dir = NULL;
+    char *home_drive, *home_path;
+
+    if (home_dir)
+	return home_dir;
+    
+    if ((home_drive = getenv ("HOMEDRIVE")) && (home_path = getenv ("HOMEPATH")))
+    {
+	const char NUL = '\0';
+	size_t home_drive_len, home_path_len;
+
+	home_drive_len = strlen (home_drive);
+	home_path_len  = strlen (home_path);
+
+	home_dir = xmalloc (home_drive_len + home_path_len + sizeof NUL);
+
+	memcpy (home_dir,                  home_drive, home_drive_len );
+	memcpy (home_dir + home_drive_len, home_path,  home_path_len  );
+	home_dir[ home_drive_len + home_path_len ] = NUL;
+
+	return home_dir;
+    }
+
+    return NULL;
 }
 
 
@@ -90,5 +107,38 @@ int
 woe32_nanosleep (const struct timespec *requested_delay,
                        struct timespec *remaining_delay)
 {
-    return my_usleep (requested_delay);
+    const useconds_t one_second = 1000000;
+    const useconds_t nano_per_micro = 1000;
+    useconds_t micro_delay;
+
+    micro_delay = requested_delay->tv_sec * one_second
+		+ ( requested_delay->tv_nsec + nano_per_micro - 1 ) / nano_per_micro
+		;
+
+    return usleep (micro_delay);
+}
+
+
+
+char *
+woe32_shell (void)
+{
+    char *shell;
+
+    shell = getenv ("ComSpec");
+
+    if (shell == NULL)
+    {
+	/* Windows always sets ComSpec, the user is messing with us */
+	const char *os;
+
+	if ((os = getenv ("OS")) && strcmp (os, "Windows_NT"))
+	    /* Windows NT, Windows 2000, Windows XP, Windows 2003 */
+	    shell = "cmd.exe";
+	else
+	    /* Windows 95, Windows 98, Windows Me */
+	    shell = "command.com";
+    }
+
+    return shell;
 }
