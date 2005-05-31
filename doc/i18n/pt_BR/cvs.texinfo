@@ -5916,7 +5916,7 @@ conflitos com os nomes de etiqueta atuais.
 @c <en>then you won't constantly be guessing whether a tag is
 @c <en>@code{cvs-1-9} or @code{cvs1_9} or what.  You might
 @c <en>even want to consider enforcing your convention in the
-@c <en>taginfo file (@pxref{user-defined logging}).
+@c <en>@file{taginfo} file (@pxref{taginfo}).
 Você vai querer definir algumas convenções para nomear
 etiquetas, baseado em informações tais como nome do
 programa e número da versão da release.  Por exemplo,
@@ -5927,7 +5927,8 @@ de @code{cvs1-9}.  Se você escolhe uma convenção
 consistente, você não vai precisar ficar constantemente
 adivinhando se a etiqueta é @code{cvs-1-9} ou
 @code{cvs1_9} ou sei lá o que.  Você pode até mesmo
-considerar reforçar esta convenção no arquivo taginfo (@pxref{user-defined logging}).
+considerar reforçar esta convenção no arquivo
+@file{taginfo} (@pxref{taginfo}).
 @c Might be nice to say more about using taginfo this
 @c way, like giving an example, or pointing out any particular
 @c issues which arise.
@@ -6252,13 +6253,14 @@ uma etiqueta.
 @c <en>information and it can be difficult or impossible to
 @c <en>recover from errors.  If you are a @sc{cvs}
 @c <en>administrator, you may consider restricting these
-@c <en>commands with taginfo (@pxref{user-defined logging}).}
+@c <en>commands with the @file{taginfo} file (@pxref{taginfo}).}
 @strong{ATENÇÃO: os comandos nesta seção são perigosos;
 eles apagam permanentemente informações históricas e
 pode ser difícil ou impossível recuperar tais
 informações em caso de erro.  Se você é um
 administrador do @sc{cvs}, você deve considerar
-restringir estes comandos com o taginfo (@pxref{user-defined logging}).}
+restringir estes comandos com o arquivo @file{taginfo}
+(@pxref{taginfo}).}
 
 @c <en>@cindex Deleting tags
 @cindex Apagando etiquetas
@@ -8858,6 +8860,7 @@ registrado neste arquivo usando a palavra-chave
 @c <en>it, or send mail to a group of developers, or, perhaps,
 @c <en>post a message to a particular newsgroup.  To log
 @c <en>commits, use the @file{loginfo} file (@pxref{loginfo}).
+@c <en>To log tags, use the @file{taginfo} file (@pxref{taginfo}).
 Você pode personalizar o @sc{cvs} para registrar vários
 tipos de ação, da forma que você escolher.  Estes
 mecanismos operam executando um script várias vezes.  O
@@ -8866,7 +8869,9 @@ as informações e o programador que as criou, ou mandar
 um e-mail para um grupo de desenvolvedores, ou, talvez,
 mandar uma mensagem para um newsgroup em particular.
 Para registrar os commits, usar o arquivo
-@file{loginfo} (@pxref{loginfo}).
+@file{loginfo} (@pxref{loginfo}).  Para registrar
+etiquetamentos, use o comando @file{taginfo}
+(@pxref{taginfo}).
 @c FIXME: What is difference between doing it in the
 @c modules file and using loginfo/taginfo?  Why should
 @c user use one or the other?
@@ -8888,59 +8893,6 @@ the way of??? manter scripts centralizados atualizados,
 use o comando @code{cvs watch add} (@pxref{Recebendo
 Notificações}); este comando é útil mesmo se você não
 estiver usando @code{cvs watch on}.
-
-@c <en>@cindex taginfo
-@cindex taginfo
-@c <en>@cindex Exit status, of taginfo
-@cindex Status de saída, do taginfo
-@c <en>The @file{taginfo} file defines programs to execute
-@c <en>when someone executes a @code{tag} or @code{rtag}
-@c <en>command.  The @file{taginfo} file has the standard form
-@c <en>for administrative files (@pxref{Administrative
-@c <en>files}), where each line is a regular expression
-@c <en>followed by a command to execute.  The arguments passed
-@c <en>to the command are, in order, the @var{tagname},
-@c <en>@var{operation} (@code{add} for @code{tag},
-@c <en>@code{mov} for @code{tag -F}, and @code{del} for
-@c <en>@code{tag -d}), @var{repository}, and any remaining are
-@c <en>pairs of @var{filename} @var{revision}.  A non-zero
-@c <en>exit of the filter program will cause the tag to be
-@c <en>aborted.
-O arquivo @file{taginfo} define programas para
-executar quando alguém executa um @code{tag} ou
-@code{rtag}.  O arquivo @file{taginfo} está no formato
-padrão para arquivos administrativos
-(@pxref{Arquivos administrativos}), onde cada linha é
-uma expressão regular seguida de um comando para ser
-executado.  Os argumentos passados para a linha de
-comando são, em ordem, o @var{tagname},
-@var{operation} (@code{add} para @code{tag},
-@code{mov} para @code{tag -F} e @code{del} para
-@code{tag -d}), @var{repository}, e qualquer outro são
-pares de @var{filename} @var{revision}.  Uma saída
-não-nula do programa filtro vai fazer com que o tag
-seja interrompido.
-
-@c <en>Here is an example of using taginfo to log tag and rtag
-@c <en>commands.  In the taginfo file put:
-Aqui está um exmeplo de uso do taginfo para registrar
-os comandos
-tag e rtag.  No arquivo taginfo bote:
-
-@example
-ALL /usr/local/cvsroot/CVSROOT/loggit
-@end example
-
-@noindent
-@c <en>Where @file{/usr/local/cvsroot/CVSROOT/loggit} contains the
-@c <en>following script:
-Onde @file{/usr/local/cvsroot/CVSROOT/loggit} contém o
-seguinte script:
-
-@example
-#!/bin/sh
-echo "$@@" >>/home/kingdon/cvsroot/CVSROOT/taglog
-@end example
 
 @c <en>@node annotate
 @node annotate
@@ -17606,6 +17558,8 @@ file, which defines the modules inside the repository.
 @c <en>                                verifymsg, loginfo)
 * commit files::                The commit support files (commitinfo,
                                 verifymsg, loginfo)
+@c <en>* taginfo::                     Verifying/Logging tags
+* taginfo::                     Verifcando/Registrando etiquetas
 @c <en>* rcsinfo::                     Templates for the log messages
 * rcsinfo::                     Templates for the log messages
 @c <en>* cvsignore::                   Ignoring files via cvsignore
@@ -17908,7 +17862,7 @@ module are tagged with @code{rtag}.  @var{prog} runs
 with two arguments: the module name and the symbolic
 tag specified to @code{rtag}.  It is not run
 when @code{tag} is executed.  Generally you will find
-that taginfo is a better solution (@pxref{user-defined logging}).
+that the @file{taginfo} file is a better solution(@pxref{taginfo}).
 @c FIXME: Is it run on server? client?
 @c Problems with -t include:
 @c * It is run after the tag not before
@@ -18695,6 +18649,66 @@ In versions of @sc{cvs} prior to version 1.12, the
 @sc{cvs} server is at version 1.12 or higher an older
 client may be used and the @file{CVS/Template} will
 be updated from the server.
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@c <en>@node taginfo
+@node taginfo
+@c <en>@appendixsec Taginfo
+@appendixsec Taginfo
+@c <en>@cindex taginfo (admin file)
+@cindex taginfo (admin file)
+@c <en>@cindex Tags, logging
+@cindex Tags, logging
+@c <en>@cindex Tags, verifying
+@cindex Tags, verifying
+@c <en>The @file{taginfo} file defines programs to execute
+@c <en>when someone executes a @code{tag} or @code{rtag}
+@c <en>command.  The @file{taginfo} file has the standard form
+@c <en>for administrative files (@pxref{syntax}),
+@c <en>where each line is a regular expression
+@c <en>followed by a command to execute.  The arguments passed
+@c <en>to the command are, in order, the @var{tagname},
+@c <en>@var{operation} (@code{add} for @code{tag},
+@c <en>@code{mov} for @code{tag -F}, and @code{del} for
+@c <en>@code{tag -d}), @var{repository}, and any remaining are
+@c <en>pairs of @var{filename} @var{revision}.  A non-zero
+@c <en>exit of the filter program will cause the tag to be
+@c <en>aborted.
+The @file{taginfo} file defines programs to execute
+when someone executes a @code{tag} or @code{rtag}
+command.  The @file{taginfo} file has the standard form
+for administrative files (@pxref{syntax}),
+where each line is a regular expression
+followed by a command to execute.  The arguments passed
+to the command are, in order, the @var{tagname},
+@var{operation} (@code{add} for @code{tag},
+@code{mov} for @code{tag -F}, and @code{del} for
+@code{tag -d}), @var{repository}, and any remaining are
+pairs of @var{filename} @var{revision}.  A non-zero
+exit of the filter program will cause the tag to be
+aborted.
+
+@c <en>Here is an example of using the @file{taginfo} file
+@c <en>to log @code{tag} and @code{rtag}
+@c <en>commands.  In the @file{taginfo} file put:
+Here is an example of using the @file{taginfo} file
+to log @code{tag} and @code{rtag}
+commands.  In the @file{taginfo} file put:
+
+@example
+ALL /usr/local/cvsroot/CVSROOT/loggit
+@end example
+
+@noindent
+@c <en>Where @file{/usr/local/cvsroot/CVSROOT/loggit} contains the
+@c <en>following script:
+Where @file{/usr/local/cvsroot/CVSROOT/loggit} contains the
+following script:
+
+@example
+#!/bin/sh
+echo "$@@" >>/home/kingdon/cvsroot/CVSROOT/taglog
+@end example
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node cvsignore
