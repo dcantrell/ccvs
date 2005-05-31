@@ -1,25 +1,29 @@
 /*
- * win32.c
+ * woe32.c
  * - utility functions for cvs under win32
  *
  */
 
 #include "config.h"
 
-#include <ctype.h>
+#include "woe32.h"
+
 #include <stdio.h>
 #include <conio.h>
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+/* function prototypes: getpass, getpid, sleep */
+#include <unistd.h>
 
-#include <winsock.h>
+#define WIN32_LEAN_AND_MEAN
+#include <winsock.h>  /* This does: #include <windows.h> */
+
 #include <stdlib.h>
 
-#include "cvs.h"
 
+
+/* #define SYSTEM_INITIALIZE(pargc,pargv) woe32_init_winsock() */
 void
-init_winsock ()
+woe32_init_winsock (void)
 {
     WSADATA data;
 
@@ -30,8 +34,11 @@ init_winsock ()
     }
 }
 
+
+
+/* #define SYSTEM_CLEANUP woe32_cleanup */
 void
-wnt_cleanup (void)
+woe32_cleanup (void)
 {
     if (WSACleanup ())
     {
@@ -51,7 +58,7 @@ wnt_cleanup (void)
 
 
 
-unsigned sleep(unsigned seconds)
+unsigned int sleep (unsigned seconds)
 {
 	Sleep(1000*seconds);
 	return 0;
@@ -75,19 +82,21 @@ my_usleep (const struct timespec *ts_delay)
 
 
 
+/* #define nanosleep woe32_nanosleep */
 int
-nanosleep (const struct timespec *requested_delay,
-	   struct timespec *remaining_delay)
+woe32_nanosleep (const struct timespec *requested_delay,
+                       struct timespec *remaining_delay)
 {
     return my_usleep (requested_delay);
 }
 
 
 
-char *win32getlogin()
+char *
+woe32_getlogin (void)
 {
     static char name[256];
-    DWORD dw = 256;
+    DWORD dw = sizeof (name);
     GetUserName (name, &dw);
     if (name[0] == '\0')
 	return NULL;
@@ -96,11 +105,14 @@ char *win32getlogin()
 }
 
 
+/* This is just a call to GetCurrentProcessID */
 pid_t
-getpid ()
+getpid (void)
 {
     return (pid_t) GetCurrentProcessId();
 }
+
+
 
 char *
 getpass (const char *prompt)

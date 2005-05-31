@@ -1,3 +1,28 @@
+2005-05-30  Conrad T. Pino  <Conrad@Pino.com>
+
+	* woe32.h: Create header file with ANSI style function prototypes.
+	* woe32.c: Use "woe32.h" header and ANSI style function prototypes.
+	  Use minimal #include file set (#include "cvs.h" dropped).  Rename:
+		function "init_winsock" to "woe32_init_winsock"
+		function "wnt_cleanup" to "woe32_cleanup"
+		function "nanosleep" to "woe32_nanosleep"
+		function "win32getlogin" to "woe32_getlogin"
+	  Change function "sleep" return type to "unsigned int" was "unsigned".
+	* unistd.h: Move function (getpass,getpid,sleep) prototypes here.
+	* config.h.in.footer: Update 2 macros for the above changes:
+		#define SYSTEM_CLEANUP woe32_cleanup
+		#define SYSTEM_INITIALIZE(pargc,pargv) woe32_init_winsock()
+	  Use "woe32.h" header file and remove function prototypes:
+		pid_t getpid (void);
+		void init_winsock (void);
+		unsigned int sleep (unsigned int);
+		void wnt_cleanup (void);
+	* config.h.in.in: Modify 3 macros:
+		#define HAVE_DECL_GETPASS 1 /* was 0 */
+		#define HAVE_DECL_NANOSLEEP 1 /* was #undef */
+		#define nanosleep woe32_nanosleep /* was #undef */
+	* pwd.c: Update to use "woe32.h" and renamed "woe32.c" function.
+
 2005-05-28  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in (MISSING_SYS_CDEFS_H): Rename...
