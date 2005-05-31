@@ -1,5 +1,9 @@
 2005-05-30  Conrad T. Pino  <Conrad@Pino.com>
 
+	* woe32.c, woe32.h: Move functions into alpabetical order.
+
+2005-05-30  Conrad T. Pino  <Conrad@Pino.com>
+
 	* woe32.c: Remove function (getpass,getpid,sleep) implementations.
 	* unistd.c: Add function (getpass,getpid,sleep) implementations.
 

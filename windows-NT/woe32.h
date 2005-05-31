@@ -9,16 +9,16 @@
 
 #include <timespec.h>
 
-/* #define SYSTEM_INITIALIZE(pargc,pargv) woe32_init_winsock() */
-void woe32_init_winsock (void);
-
 /* #define SYSTEM_CLEANUP woe32_cleanup */
 void woe32_cleanup (void);
+
+char *woe32_getlogin (void);
+
+/* #define SYSTEM_INITIALIZE(pargc,pargv) woe32_init_winsock() */
+void woe32_init_winsock (void);
 
 /* #define nanosleep woe32_nanosleep */
 int woe32_nanosleep (const struct timespec *requested_delay,
                            struct timespec *remaining_delay);
-
-char *woe32_getlogin (void);
 
 #endif /* WOE32_H */
