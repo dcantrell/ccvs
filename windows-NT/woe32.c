@@ -18,21 +18,6 @@
 
 
 
-/* #define SYSTEM_INITIALIZE(pargc,pargv) woe32_init_winsock() */
-void
-woe32_init_winsock (void)
-{
-    WSADATA data;
-
-    if (WSAStartup (MAKEWORD (1, 1), &data))
-    {
-	fprintf (stderr, "cvs: unable to initialize winsock\n");
-	exit (1);
-    }
-}
-
-
-
 /* #define SYSTEM_CLEANUP woe32_cleanup */
 void
 woe32_cleanup (void)
@@ -50,6 +35,35 @@ woe32_cleanup (void)
 #endif
 	    fprintf (stderr, "cvs: cannot WSACleanup: %s\n",
 		     sock_strerror (WSAGetLastError ()));
+    }
+}
+
+
+
+char *
+woe32_getlogin (void)
+{
+    static char name[256];
+    DWORD dw = sizeof (name);
+    GetUserName (name, &dw);
+    if (name[0] == '\0')
+	return NULL;
+    else
+	return name;
+}
+
+
+
+/* #define SYSTEM_INITIALIZE(pargc,pargv) woe32_init_winsock() */
+void
+woe32_init_winsock (void)
+{
+    WSADATA data;
+
+    if (WSAStartup (MAKEWORD (1, 1), &data))
+    {
+	fprintf (stderr, "cvs: unable to initialize winsock\n");
+	exit (1);
     }
 }
 
@@ -77,18 +91,4 @@ woe32_nanosleep (const struct timespec *requested_delay,
                        struct timespec *remaining_delay)
 {
     return my_usleep (requested_delay);
-}
-
-
-
-char *
-woe32_getlogin (void)
-{
-    static char name[256];
-    DWORD dw = sizeof (name);
-    GetUserName (name, &dw);
-    if (name[0] == '\0')
-	return NULL;
-    else
-	return name;
 }
