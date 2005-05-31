@@ -1,5 +1,10 @@
 2005-05-31  Conrad T. Pino  <Conrad@Pino.com>
 
+	* config.h, config.h.in, stamp-chi: Regenerated on Solaris for updates
+	to config.h.in.footer and config.h.in.in committed on Windows.
+
+2005-05-31  Conrad T. Pino  <Conrad@Pino.com>
+
 	* config.h.in.in: Change macros (gid_t,pid_t,uid_t) to #undef.
 	* pwd.c, pwd.h: Prototypes now (gid_t,uid_t) instead of "int".
 	* pwd.c: Stop useing "root:root" for "uid:gid" values.

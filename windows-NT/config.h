@@ -1146,7 +1146,7 @@
 #undef gettimeofday
 
 /* Define to `int' if <sys/types.h> doesn't define. */
-#define gid_t int
+#undef gid_t
 
 /* Define to rpl_gmtime if the replacement function should be used. */
 #undef gmtime
@@ -1191,7 +1191,7 @@
 #define nanosleep woe32_nanosleep
 
 /* Define to `int' if <sys/types.h> does not define. */
-#define pid_t int
+#undef pid_t
 
 /* Define to rpl_realloc if the replacement function should be used. */
 #define realloc rpl_realloc
@@ -1222,7 +1222,7 @@
 #undef tzset
 
 /* Define to `int' if <sys/types.h> doesn't define. */
-#define uid_t int
+#undef uid_t
 
 /* Define to the type of a unsigned integer type of width exactly 32 bits if
    such a type exists and the standard includes do not define it. */
