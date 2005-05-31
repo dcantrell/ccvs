@@ -2,18 +2,24 @@
 
 .\__fpending.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
 	".\__fpending.h"\
+	".\timespec.h"\
 	
 
 .\asnprintf.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\timespec.h"\
 	".\vasnprintf.h"\
 	
 
 .\basename.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\woe32.h"\
 	".\dirname.h"\
+	".\timespec.h"\
 	
 
 .\canonicalize.c : \
@@ -21,12 +27,14 @@
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\stdint.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\canonicalize.h"\
 	".\cycle-check.h"\
 	".\dev-ino.h"\
 	".\path-concat.h"\
 	".\pathmax.h"\
 	".\stat-macros.h"\
+	".\timespec.h"\
 	".\xalloc.h"\
 	".\xgetcwd.h"\
 	".\xreadlink.h"\
@@ -35,44 +43,56 @@
 .\closeout.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\woe32.h"\
 	".\__fpending.h"\
 	".\closeout.h"\
 	".\error.h"\
 	".\exitfail.h"\
 	".\gettext.h"\
 	".\quotearg.h"\
+	".\timespec.h"\
 	
 
 ".\cycle-check.c" : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\stdint.h"\
+	"..\windows-NT\woe32.h"\
 	".\cycle-check.h"\
 	".\dev-ino.h"\
+	".\timespec.h"\
 	
 
 .\dirname.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\woe32.h"\
 	".\dirname.h"\
+	".\timespec.h"\
 	".\xalloc.h"\
 	
 
 ".\dup-safer.c" : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
+	".\timespec.h"\
 	".\unistd-safer.h"\
 	
 
 .\exitfail.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
 	".\exit.h"\
 	".\exitfail.h"\
+	".\timespec.h"\
 	
 
 ".\fd-safer.c" : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
+	".\timespec.h"\
 	".\unistd-safer.h"\
 	
 
@@ -83,33 +103,40 @@
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\stdint.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\fnmatch.h"\
 	".\getopt.h"\
 	".\gettext.h"\
 	".\system.h"\
 	".\timespec.h"\
-	".\unlocked-io.h"\
 	
 
 .\fnmatch.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\woe32.h"\
 	".\alloca.h"\
 	".\fnmatch.h"\
 	".\fnmatch_loop.c"\
+	".\timespec.h"\
 	
 
 .\fseeko.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\timespec.h"\
 	
 
 .\ftello.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\timespec.h"\
 	
 
 .\getdate.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\woe32.h"\
 	".\getdate.h"\
 	".\setenv.h"\
 	".\timespec.h"\
@@ -118,39 +145,50 @@
 
 .\getline.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
 	".\getline.h"\
 	".\getndelim2.h"\
+	".\timespec.h"\
 	
 
 .\getlogin_r.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\getlogin_r.h"\
+	".\timespec.h"\
 	
 
 .\getndelim2.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdint.h"\
+	"..\windows-NT\woe32.h"\
 	".\getndelim2.h"\
+	".\timespec.h"\
 	
 
 .\getopt.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\getopt.h"\
 	".\getopt_int.h"\
 	".\gettext.h"\
+	".\timespec.h"\
 	
 
 .\getopt1.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\getopt.h"\
 	".\getopt_int.h"\
+	".\timespec.h"\
 	
 
 .\gettime.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
 	".\timespec.h"\
 	
 
@@ -160,6 +198,7 @@
 	"..\windows-NT\pwd.h"\
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\alloca.h"\
 	".\fnmatch.h"\
 	".\getlogin_r.h"\
@@ -167,12 +206,15 @@
 	".\mempcpy.h"\
 	".\stat-macros.h"\
 	".\strdup.h"\
+	".\timespec.h"\
 	
 
 .\md5.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdint.h"\
+	"..\windows-NT\woe32.h"\
 	".\md5.h"\
+	".\timespec.h"\
 	
 
 .\mempcpy.c : \
@@ -182,59 +224,77 @@
 .\pagealign_alloc.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\error.h"\
 	".\exit.h"\
 	".\getpagesize.h"\
 	".\gettext.h"\
 	".\pagealign_alloc.h"\
+	".\timespec.h"\
 	".\xalloc.h"\
 	
 
 ".\printf-args.c" : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
 	".\printf-args.h"\
+	".\timespec.h"\
 	
 
 ".\printf-parse.c" : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdint.h"\
+	"..\windows-NT\woe32.h"\
 	".\printf-args.h"\
 	".\printf-parse.h"\
+	".\timespec.h"\
 	".\xsize.h"\
 	
 
 .\quotearg.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\woe32.h"\
 	".\gettext.h"\
 	".\quotearg.h"\
+	".\timespec.h"\
 	".\xalloc.h"\
 	
 
 .\readlink.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\timespec.h"\
 	
 
 .\realloc.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\timespec.h"\
 	
 
 .\regex.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
 	".\gettext.h"\
 	".\regex.h"\
+	".\timespec.h"\
 	
 
 .\rpmatch.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\timespec.h"\
 	
 
 ".\save-cwd.c" : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\chdir-long.h"\
 	".\save-cwd.h"\
+	".\timespec.h"\
 	".\unistd-safer.h"\
 	".\xgetcwd.h"\
 	
@@ -242,8 +302,10 @@
 .\setenv.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\alloca.h"\
 	".\allocsa.h"\
+	".\timespec.h"\
 	
 
 .\sighandle.c : \
@@ -253,68 +315,86 @@
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\stdint.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\fnmatch.h"\
 	".\getopt.h"\
 	".\gettext.h"\
 	".\system.h"\
 	".\timespec.h"\
-	".\unlocked-io.h"\
 	
 
 .\strcasecmp.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\timespec.h"\
 	
 
 .\strftime.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\woe32.h"\
 	".\time_r.h"\
+	".\timespec.h"\
 	
 
 .\stripslash.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\woe32.h"\
 	".\dirname.h"\
+	".\timespec.h"\
 	
 
 .\time_r.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
 	".\time_r.h"\
+	".\timespec.h"\
 	
 
 .\unsetenv.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
+	".\timespec.h"\
 	
 
 .\vasnprintf.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdint.h"\
+	"..\windows-NT\woe32.h"\
 	".\alloca.h"\
 	".\printf-args.h"\
 	".\printf-parse.h"\
+	".\timespec.h"\
 	".\vasnprintf.h"\
 	".\xsize.h"\
 	
 
 .\vasprintf.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\timespec.h"\
 	".\vasnprintf.h"\
 	".\vasprintf.h"\
 	
 
 ".\xalloc-die.c" : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
 	".\error.h"\
 	".\exitfail.h"\
 	".\gettext.h"\
+	".\timespec.h"\
 	".\xalloc.h"\
 	
 
 .\xgetcwd.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\getcwd.h"\
+	".\timespec.h"\
 	".\xalloc.h"\
 	".\xgetcwd.h"\
 	
@@ -322,18 +402,24 @@
 .\xgethostname.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
+	".\timespec.h"\
 	".\xalloc.h"\
 	".\xgethostname.h"\
 	
 
 .\xmalloc.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\timespec.h"\
 	".\xalloc.h"\
 	
 
 .\xreadlink.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
+	".\timespec.h"\
 	".\xalloc.h"\
 	".\xreadlink.h"\
 	
@@ -341,7 +427,9 @@
 .\yesno.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\woe32.h"\
 	".\getline.h"\
+	".\timespec.h"\
 	".\yesno.h"\
 	
 

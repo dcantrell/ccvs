@@ -328,6 +328,10 @@ SOURCE=.\src\tag.c
 # End Source File
 # Begin Source File
 
+SOURCE=".\windows-NT\unistd.c"
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\update.c
 # End Source File
 # Begin Source File
@@ -536,6 +540,10 @@ SOURCE=".\windows-NT\pwd.h"
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\quotearg.h
+# End Source File
+# Begin Source File
+
 SOURCE=".\windows-NT\rcmd.h"
 # End Source File
 # Begin Source File
@@ -573,6 +581,10 @@ SOURCE=".\src\socket-client.h"
 # Begin Source File
 
 SOURCE=.\src\stack.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\lib\stat-macros.h"
 # End Source File
 # Begin Source File
 
@@ -629,6 +641,10 @@ SOURCE=.\lib\wait.h
 # Begin Source File
 
 SOURCE=.\src\watch.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\windows-NT\woe32.h"
 # End Source File
 # Begin Source File
 
