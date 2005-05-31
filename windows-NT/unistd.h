@@ -27,8 +27,15 @@
 /* include Microsoft's close, dup */
 #include <io.h>
 
-/* This function doesn't exist under Windows NT; we provide a stub */
+#ifndef pid_t
+#define pid_t int
+#endif /* pid_t */
+
+/* These functions doesn't exist under Windows NT; we provide stubs */
+char * getpass (const char *prompt);
+pid_t getpid (void);
 int readlink (const char *path, char *buf, size_t buf_size);
+unsigned int sleep (unsigned int seconds);
 
 /*
 FIXME:	gethostname prototype for lib/xgethostname.c, no #include <winsock.h>
@@ -80,7 +87,6 @@ pid_t waitpid (pid_t pid, int *status, int options);
 pid_t waitpid (pid_t pid, int *status, int options);
 void _exit (int status);
 int kill (pid_t pid, int sig);
-unsigned int sleep (unsigned int seconds);
 int pause (void);
 unsigned int alarm (unsigned int seconds);
 int setuid (uid_t uid);

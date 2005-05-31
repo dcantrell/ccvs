@@ -23,7 +23,8 @@
 #include <pwd.h>
 #include "xalloc.h"
 
-char* win32getlogin();
+#include "woe32.h"
+
 static char *lookup_env (char **);
 
 /* where people might scribble their name into the environment ... */
@@ -94,7 +95,7 @@ getlogin (void)
 
   /* In the absence of user override, ask the operating system. */
   if (!login)
-     login = win32getlogin();
+     login = woe32_getlogin ();
 
   /* If all else fails, fall back on Old Faithful. */
   if (!login)
