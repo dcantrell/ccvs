@@ -48,6 +48,10 @@ static char *group = NULL;
 static struct passwd pw;	/* should we return a malloc()'d structure   */
 static struct group gr;		/* instead of pointers to static structures? */
 
+/* implement limited uid behavior */
+#define my_fake_uid ((const uid_t) 4545)
+#define my_fake_gid my_fake_uid
+
 /* return something like a username in a (butchered!) passwd structure. */
 struct passwd *
 getpwuid (int uid)
@@ -115,28 +119,28 @@ getgr_name (void)
 }
 
 /* return something like a uid.  */
-int
+uid_t
 getuid (void)
 {
-  return 0;			/* every user is a super user ... */
+  return my_fake_uid;
 }
 
-int
+gid_t
 getgid (void)
 {
-  return 0;
+  return my_fake_gid;
 }
 
-int
+uid_t
 geteuid (void)
 {
-  return 0;
+  return my_fake_uid;
 }
 
-int
+gid_t
 getegid (void)
 {
-  return 0;
+  return my_fake_gid;
 }
 
 struct passwd *
@@ -162,9 +166,10 @@ endgrent (void)
 
 /* return groups.  */
 int
-getgroups (int ngroups, int *groups)
+getgroups (int ngroups, gid_t *groups)
 {
-  *groups = 0;
+  if (ngroups > 0)
+      *groups = my_fake_gid;
   return 1;
 }
 
