@@ -31,11 +31,14 @@
 #define pid_t int
 #endif /* pid_t */
 
+typedef unsigned long useconds_t;
+
 /* These functions doesn't exist under Windows NT; we provide stubs */
 char * getpass (const char *prompt);
 pid_t getpid (void);
 int readlink (const char *path, char *buf, size_t buf_size);
 unsigned int sleep (unsigned int seconds);
+int usleep (useconds_t microseconds);
 
 /*
 FIXME:	gethostname prototype for lib/xgethostname.c, no #include <winsock.h>

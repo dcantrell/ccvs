@@ -1,3 +1,14 @@
+2005-05-31  Conrad T. Pino  <Conrad@Pino.com>
+
+	* unistd.c, unistd.c: Add new "usleep" function using "my_usleep"
+	  logic taken from "woe32.c" file.
+	* woe32.c, woe32.h: Add new (woe32_home_dir,woe32_shell) functions.
+	* woe32.c: Modify "woe32_nanosleep" to use "unistd.h" "usleep".
+	* filesubr.c: Modify "get_homedir" to use "woe32_home_dir".
+	* pwd.c: Modify "getpwuid" to use "woe32_home_dir" & "woe32_shell".
+	  Append "USERNAME" to "login_strings" array.
+
+
 2005-05-30  Conrad T. Pino  <Conrad@Pino.com>
 
 	* woe32.c, woe32.h: Move functions into alpabetical order.

@@ -10,7 +10,7 @@
 #include <conio.h>
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include <winsock.h>  /* This does: #include <windows.h> */
 
 /* Please order functions by name if possible */
 
@@ -48,6 +48,25 @@ getpid (void)
 
 unsigned int sleep (unsigned seconds)
 {
-	Sleep(1000*seconds);
-	return 0;
+    Sleep (1000*seconds);
+    return 0;
+}
+
+
+
+/*
+ * Sleep at least some number of microseconds
+ */
+int usleep (useconds_t microseconds)
+{
+    if ( microseconds )
+    {
+	const useconds_t one_second = 1000000;
+	struct timeval tv_delay;
+
+	tv_delay.tv_sec = microseconds / one_second;
+	tv_delay.tv_usec = microseconds % one_second;
+	return select (0, NULL, NULL, NULL, &tv_delay);
+    }
+    return 0;
 }

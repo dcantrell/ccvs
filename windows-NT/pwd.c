@@ -31,7 +31,7 @@ static char *lookup_env (char **);
 
 static char *login_strings[] =
 {
-  "LOGIN", "USER", "MAILNAME", NULL
+  "LOGIN", "USER", "MAILNAME", "USERNAME", NULL
 };
 
 static char *group_strings[] =
@@ -41,9 +41,6 @@ static char *group_strings[] =
 
 
 static char *anonymous = "anonymous";	/* if all else fails ... */
-
-static char *home_dir = ".";	/* we feel (no|every)where at home */
-static char *login_shell = "not command.com!";
 
 static char *login = NULL;/* cache the names here	*/
 static char *group = NULL;
@@ -56,8 +53,8 @@ struct passwd *
 getpwuid (int uid)
 {
   pw.pw_name = getlogin ();
-  pw.pw_dir = home_dir;
-  pw.pw_shell = login_shell;
+  pw.pw_dir = woe32_home_dir ();
+  pw.pw_shell = woe32_shell ();
   pw.pw_uid = 0;
 
   return &pw;

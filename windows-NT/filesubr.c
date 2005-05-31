@@ -764,25 +764,16 @@ last_component (const char *path)
    said to be set to c:\users\default by default.  */
 
 char *
-get_homedir ()
+get_homedir (void)
 {
-    static char *pathbuf;
-    char *hd, *hp;
+    char *homedir;
 
-    if (pathbuf != NULL)
-	return pathbuf;
-    else if ((hd = getenv ("HOME")))
-	return hd;
-    else if ((hd = getenv ("HOMEDRIVE")) && (hp = getenv ("HOMEPATH")))
-    {
-	pathbuf = xmalloc (strlen (hd) + strlen (hp) + 5);
-	strcpy (pathbuf, hd);
-	strcat (pathbuf, hp);
+    homedir = getenv ("HOME");
 
-	return pathbuf;
-    }
-    else
-	return NULL;
+    if (homedir == NULL)
+	homedir = woe32_home_dir ();
+
+    return homedir;
 }
 
 /* Compose a path to a file in the home directory.  This is necessary because
