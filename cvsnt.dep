@@ -2462,7 +2462,9 @@
 
 ".\windows-NT\woe32.c" : \
 	".\lib\timespec.h"\
+	".\lib\xalloc.h"\
 	".\windows-NT\config.h"\
+	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
 

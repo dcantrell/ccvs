@@ -1,3 +1,7 @@
+2005-05-31  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dep: Regenerate after build for #include changes.
+
 2005-05-30  Conrad T. Pino  <Conrad@Pino.com>
 
 	* cvsnt.dsp: Add files "lib/quotearg.h", "lib/stat-macros.h",
