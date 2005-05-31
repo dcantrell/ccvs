@@ -10,6 +10,7 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -37,6 +38,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\admin.c : \
@@ -48,6 +50,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -74,6 +77,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\annotate.c : \
@@ -85,6 +89,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -111,6 +116,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\buffer.c : \
@@ -124,6 +130,7 @@
 	".\lib\pagealign_alloc.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -150,6 +157,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\checkin.c : \
@@ -161,6 +169,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -189,6 +198,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\checkout.c : \
@@ -200,6 +210,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -226,6 +237,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\classify.c : \
@@ -237,6 +249,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -263,6 +276,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\client.c : \
@@ -278,6 +292,7 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -308,6 +323,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\commit.c : \
@@ -320,6 +336,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -349,6 +366,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\create_adm.c : \
@@ -360,6 +378,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -386,6 +405,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\cvsrc.c : \
@@ -398,6 +418,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -424,6 +445,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\diff.c : \
@@ -435,6 +457,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -461,6 +484,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\edit.c : \
@@ -473,6 +497,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -503,6 +528,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\entries.c : \
@@ -515,6 +541,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -541,6 +568,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\error.c : \
@@ -552,6 +580,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -579,6 +608,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\exithandle.c : \
@@ -590,6 +620,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -616,6 +647,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\expand_path.c : \
@@ -627,6 +659,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -653,6 +686,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\fileattr.c : \
@@ -665,6 +699,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -692,6 +727,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 ".\windows-NT\filesubr.c" : \
@@ -703,6 +739,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -730,6 +767,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\find_names.c : \
@@ -742,6 +780,7 @@
 	".\lib\glob.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -768,6 +807,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\hash.c : \
@@ -779,6 +819,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -805,6 +846,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\history.c : \
@@ -817,6 +859,7 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -844,6 +887,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\ignore.c : \
@@ -856,6 +900,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -882,6 +927,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\import.c : \
@@ -894,6 +940,7 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -920,6 +967,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 ".\windows-NT\JmgStat.c" : \
@@ -936,6 +984,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -962,6 +1011,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 ".\src\log-buffer.c" : \
@@ -974,6 +1024,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1000,6 +1051,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\log.c : \
@@ -1011,6 +1063,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1037,6 +1090,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\login.c : \
@@ -1050,6 +1104,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1076,6 +1131,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\logmsg.c : \
@@ -1088,6 +1144,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1114,6 +1171,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\ls.c : \
@@ -1125,6 +1183,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1151,6 +1210,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\main.c : \
@@ -1163,6 +1223,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\strftime.h"\
 	".\lib\system.h"\
@@ -1191,6 +1252,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 ".\windows-NT\mkdir.c" : \
@@ -1202,6 +1264,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1228,6 +1291,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\mkmodules.c : \
@@ -1241,6 +1305,7 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1268,6 +1333,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\modules.c : \
@@ -1280,6 +1346,7 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1306,6 +1373,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\myndbm.c : \
@@ -1318,6 +1386,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1344,6 +1413,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 ".\windows-NT\ndir.c" : \
@@ -1360,6 +1430,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1386,6 +1457,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\parseinfo.c : \
@@ -1398,6 +1470,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1425,6 +1498,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\patch.c : \
@@ -1437,6 +1511,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1463,11 +1538,14 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 ".\windows-NT\pwd.c" : \
+	".\lib\timespec.h"\
 	".\lib\xalloc.h"\
 	".\windows-NT\pwd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 ".\windows-NT\rcmd.c" : \
@@ -1479,6 +1557,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1506,6 +1585,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\rcs.c : \
@@ -1517,6 +1597,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1545,6 +1626,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\rcscmds.c : \
@@ -1556,7 +1638,9 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
+	".\lib\quotearg.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1583,6 +1667,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\recurse.c : \
@@ -1595,6 +1680,7 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1623,6 +1709,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\release.c : \
@@ -1636,6 +1723,7 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1663,6 +1751,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\remove.c : \
@@ -1674,6 +1763,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1700,6 +1790,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\repos.c : \
@@ -1712,6 +1803,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1738,6 +1830,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\root.c : \
@@ -1750,6 +1843,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1776,6 +1870,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 ".\src\rsh-client.c" : \
@@ -1788,6 +1883,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1815,6 +1911,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 ".\windows-NT\run.c" : \
@@ -1826,6 +1923,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1852,6 +1950,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\scramble.c : \
@@ -1863,6 +1962,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1889,6 +1989,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\server.c : \
@@ -1903,6 +2004,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1934,6 +2036,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 ".\windows-NT\sockerror.c" : \
@@ -1949,6 +2052,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -1976,6 +2080,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\stack.c : \
@@ -1987,6 +2092,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -2013,6 +2119,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 ".\windows-NT\startserver.c" : \
@@ -2024,6 +2131,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -2051,6 +2159,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\status.c : \
@@ -2062,6 +2171,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -2088,6 +2198,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\subr.c : \
@@ -2101,6 +2212,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -2129,6 +2241,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\tag.c : \
@@ -2141,6 +2254,7 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -2167,6 +2281,11 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
+	
+
+".\windows-NT\unistd.c" : \
+	".\windows-NT\unistd.h"\
 	
 
 .\src\update.c : \
@@ -2181,6 +2300,7 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -2211,6 +2331,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\vers_ts.c : \
@@ -2222,6 +2343,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -2248,6 +2370,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\version.c : \
@@ -2259,6 +2382,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -2285,10 +2409,13 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 ".\windows-NT\waitpid.c" : \
+	".\lib\timespec.h"\
 	".\windows-NT\config.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\watch.c : \
@@ -2300,6 +2427,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -2329,43 +2457,13 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 ".\windows-NT\woe32.c" : \
-	".\lib\dirname.h"\
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
-	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
-	".\lib\regex.h"\
-	".\lib\strcase.h"\
-	".\lib\system.h"\
 	".\lib\timespec.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
-	".\lib\xalloc.h"\
-	".\lib\xgetcwd.h"\
-	".\lib\xreadlink.h"\
-	".\lib\xsize.h"\
-	".\src\client.h"\
-	".\src\cvs.h"\
-	".\src\hash.h"\
-	".\src\myndbm.h"\
-	".\src\parseinfo.h"\
-	".\src\rcs.h"\
-	".\src\root.h"\
-	".\src\server.h"\
-	".\src\stack.h"\
-	".\src\subr.h"\
-	".\src\update.h"\
 	".\windows-NT\config.h"\
-	".\windows-NT\ndir.h"\
-	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
-	".\windows-NT\stdint.h"\
-	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\wrapper.c : \
@@ -2378,6 +2476,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -2404,6 +2503,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	
 
 .\src\zlib.c : \
@@ -2417,6 +2517,7 @@
 	".\lib\pagealign_alloc.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
@@ -2443,6 +2544,7 @@
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
 	".\zlib\zconf.h"\
 	".\zlib\zlib.h"\
 	

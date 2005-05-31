@@ -2,9 +2,11 @@
 
 .\analyze.c : \
 	"..\lib\regex.h"\
+	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\cmpbuf.h"\
 	".\diff.h"\
 	".\diffrun.h"\
@@ -12,18 +14,22 @@
 	
 
 .\cmpbuf.c : \
+	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\cmpbuf.h"\
 	".\system.h"\
 	
 
 .\context.c : \
 	"..\lib\regex.h"\
+	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\diff.h"\
 	".\diffrun.h"\
 	".\system.h"\
@@ -33,9 +39,11 @@
 	"..\lib\fnmatch.h"\
 	"..\lib\getopt.h"\
 	"..\lib\regex.h"\
+	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\diff.h"\
 	".\diffrun.h"\
 	".\system.h"\
@@ -43,18 +51,22 @@
 
 .\diff3.c : \
 	"..\lib\getopt.h"\
+	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\diffrun.h"\
 	".\system.h"\
 	
 
 .\dir.c : \
 	"..\lib\regex.h"\
+	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\diff.h"\
 	".\diffrun.h"\
 	".\system.h"\
@@ -62,9 +74,11 @@
 
 .\ed.c : \
 	"..\lib\regex.h"\
+	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\diff.h"\
 	".\diffrun.h"\
 	".\system.h"\
@@ -72,9 +86,11 @@
 
 .\ifdef.c : \
 	"..\lib\regex.h"\
+	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\diff.h"\
 	".\diffrun.h"\
 	".\system.h"\
@@ -82,9 +98,11 @@
 
 .\io.c : \
 	"..\lib\regex.h"\
+	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\diff.h"\
 	".\diffrun.h"\
 	".\system.h"\
@@ -92,9 +110,11 @@
 
 .\normal.c : \
 	"..\lib\regex.h"\
+	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\diff.h"\
 	".\diffrun.h"\
 	".\system.h"\
@@ -102,9 +122,11 @@
 
 .\side.c : \
 	"..\lib\regex.h"\
+	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\diff.h"\
 	".\diffrun.h"\
 	".\system.h"\
@@ -112,14 +134,18 @@
 
 .\util.c : \
 	"..\lib\regex.h"\
+	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
 	".\diff.h"\
 	".\diffrun.h"\
 	".\system.h"\
 	
 
 .\version.c : \
+	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
 	

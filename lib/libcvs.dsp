@@ -585,6 +585,10 @@ SOURCE=.\vasprintf.h
 # End Source File
 # Begin Source File
 
+SOURCE="..\windows-NT\woe32.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\xalloc.h
 # End Source File
 # Begin Source File

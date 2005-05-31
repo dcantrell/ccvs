@@ -1,5 +1,10 @@
 2005-05-30  Conrad T. Pino  <Conrad@Pino.com>
 
+	* woe32.c: Remove function (getpass,getpid,sleep) implementations.
+	* unistd.c: Add function (getpass,getpid,sleep) implementations.
+
+2005-05-30  Conrad T. Pino  <Conrad@Pino.com>
+
 	* config.h, config.h.in, stamp-chi: Regenerated on Solaris for updates
 	to config.h.in.footer and config.h.in.in committed on Windows.
 

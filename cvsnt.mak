@@ -111,6 +111,7 @@ CLEAN :
 	-@erase "$(INTDIR)\status.obj"
 	-@erase "$(INTDIR)\subr.obj"
 	-@erase "$(INTDIR)\tag.obj"
+	-@erase "$(INTDIR)\unistd.obj"
 	-@erase "$(INTDIR)\update.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vers_ts.obj"
@@ -226,6 +227,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\status.obj" \
 	"$(INTDIR)\subr.obj" \
 	"$(INTDIR)\tag.obj" \
+	"$(INTDIR)\unistd.obj" \
 	"$(INTDIR)\update.obj" \
 	"$(INTDIR)\vers_ts.obj" \
 	"$(INTDIR)\version.obj" \
@@ -326,6 +328,7 @@ CLEAN :
 	-@erase "$(INTDIR)\status.obj"
 	-@erase "$(INTDIR)\subr.obj"
 	-@erase "$(INTDIR)\tag.obj"
+	-@erase "$(INTDIR)\unistd.obj"
 	-@erase "$(INTDIR)\update.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vc60.pdb"
@@ -444,6 +447,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\status.obj" \
 	"$(INTDIR)\subr.obj" \
 	"$(INTDIR)\tag.obj" \
+	"$(INTDIR)\unistd.obj" \
 	"$(INTDIR)\update.obj" \
 	"$(INTDIR)\vers_ts.obj" \
 	"$(INTDIR)\version.obj" \
@@ -831,6 +835,12 @@ SOURCE=.\src\subr.c
 SOURCE=.\src\tag.c
 
 "$(INTDIR)\tag.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=".\windows-NT\unistd.c"
+
+"$(INTDIR)\unistd.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 

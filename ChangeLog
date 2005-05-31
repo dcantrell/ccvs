@@ -1,3 +1,9 @@
+2005-05-30  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dsp: Add files "lib/quotearg.h", "lib/stat-macros.h",
+	  "windows-NT/woe32.h" and "windows-NT/unistd.c" to project.
+	* cvsnt.dep, cvsnt.mak: Regenerate for "cvsnt.dsp" changes.
+
 2005-05-27  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note diff space split fix.
