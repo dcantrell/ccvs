@@ -177,7 +177,15 @@ SOURCE=.\system.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\lib\timespec.h
+# End Source File
+# Begin Source File
+
 SOURCE="..\windows-NT\unistd.h"
+# End Source File
+# Begin Source File
+
+SOURCE="..\windows-NT\woe32.h"
 # End Source File
 # End Group
 # End Target
