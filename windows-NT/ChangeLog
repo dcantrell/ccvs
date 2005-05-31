@@ -1,5 +1,12 @@
 2005-05-31  Conrad T. Pino  <Conrad@Pino.com>
 
+	* config.h.in.in: Change macros (gid_t,pid_t,uid_t) to #undef.
+	* pwd.c, pwd.h: Prototypes now (gid_t,uid_t) instead of "int".
+	* pwd.c: Stop useing "root:root" for "uid:gid" values.
+	* unistd.h: Use "windows-NT/sys/types.h" for definitions.
+
+2005-05-31  Conrad T. Pino  <Conrad@Pino.com>
+
 	* unistd.c, unistd.c: Add new "usleep" function using "my_usleep"
 	  logic taken from "woe32.c" file.
 	* woe32.c, woe32.h: Add new (woe32_home_dir,woe32_shell) functions.

@@ -16,10 +16,7 @@
    much useful things under MS-DOS, but using them avoids many "#ifdef
    MSDOS" in ported UN*X code ...  */
 
-#if 0
-/* This is taken care of in Windows-NT/config.h.  */
-typedef int uid_t;
-#endif
+#include <sys/types.h>
 
 struct passwd
 {
@@ -41,20 +38,20 @@ struct group
   int  gr_gid;
 };
 
-struct passwd *getpwuid (int);
+struct passwd *getpwuid (uid_t);
 struct passwd *getpwnam (const char *);
-struct group *getgrgid (int);
+struct group *getgrgid (gid_t);
 struct group *getgrnam (const char *);
 char *getlogin (void);
 char *getgr_name (void);
-int getuid (void);
-int getgid (void);
-int geteuid (void);
-int getegid (void);
+uid_t getuid (void);
+gid_t getgid (void);
+uid_t geteuid (void);
+gid_t getegid (void);
 
 extern int *groups;
 extern int ngroups;
-int getgroups (int, int *);
+int getgroups (int, gid_t *);
 
 struct passwd *getpwent (void);
 void setpwent (void);

@@ -27,11 +27,7 @@
 /* include Microsoft's close, dup */
 #include <io.h>
 
-#ifndef pid_t
-#define pid_t int
-#endif /* pid_t */
-
-typedef unsigned long useconds_t;
+#include <sys/types.h>
 
 /* These functions doesn't exist under Windows NT; we provide stubs */
 char * getpass (const char *prompt);
