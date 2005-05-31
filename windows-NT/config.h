@@ -241,7 +241,7 @@
 
 /* Define to 1 if you have the declaration of `getpass', and to 0 if you
    don't. */
-#define HAVE_DECL_GETPASS 0
+#define HAVE_DECL_GETPASS 1
 
 /* Define to 1 if you have the declaration of `memrchr', and to 0 if you
    don't. */
@@ -249,7 +249,7 @@
 
 /* Define to 1 if you have the declaration of `nanosleep', and to 0 if you
    don't. */
-#undef HAVE_DECL_NANOSLEEP
+#define HAVE_DECL_NANOSLEEP 1
 
 /* Define to 1 if you have the declaration of `putchar_unlocked', and to 0 if
    you don't. */
@@ -1188,7 +1188,7 @@
 #define my_strftime nstrftime
 
 /* Define to rpl_nanosleep if the replacement function should be used. */
-#undef nanosleep
+#define nanosleep woe32_nanosleep
 
 /* Define to `int' if <sys/types.h> does not define. */
 #define pid_t int
@@ -1296,10 +1296,10 @@
 #define START_SERVER_RETURNS_SOCKET 1
 
 /* Macro name tells the story */
-#define SYSTEM_CLEANUP wnt_cleanup
+#define SYSTEM_CLEANUP woe32_cleanup
 
 /* Macro name tells the story */
-#define SYSTEM_INITIALIZE(pargc,pargv) init_winsock()
+#define SYSTEM_INITIALIZE(pargc,pargv) woe32_init_winsock()
 
 /* Is this true on NT?  Seems like I remember reports that NT 3.51 has
    problems with 200K writes (of course, the issue of large writes is
@@ -1329,20 +1329,10 @@
 
 /* ====================== Function Prototypes Follow ====================== */
 
-/* This is just a call to GetCurrentProcessID.  */
-pid_t getpid (void);
-
-/* #define SYSTEM_INITIALIZE(pargc,pargv) init_winsock() */
-void init_winsock (void);
+#include <woe32.h>
 
 /* #define SOCK_STRERROR sock_strerror */
 char *sock_strerror (int errnum);
-
-/* This is just a call to the Win32 Sleep function.  */
-unsigned int sleep (unsigned int);
-
-/* #define SYSTEM_CLEANUP wnt_cleanup */
-void wnt_cleanup (void);
 
 /* #define CVS_MKDIR wnt_mkdir */
 int wnt_mkdir (const char *PATH, int MODE);
