@@ -76,7 +76,7 @@ static void RCS_output_diff_options (int, char * const *, const char *,
 
 static char **call_diff_argv;
 static int call_diff_argc;
-static size_t call_diff_argc_allocated;
+static size_t call_diff_arg_allocated;
 
 static int call_diff (const char *out);
 static int call_diff3 (char *out);
@@ -93,7 +93,7 @@ static void
 call_diff_add_arg (const char *s)
 {
     TRACE (TRACE_DATA, "call_diff_add_arg (%s)", s);
-    run_add_arg_p (&call_diff_argc, &call_diff_argc_allocated, &call_diff_argv,
+    run_add_arg_p (&call_diff_argc, &call_diff_arg_allocated, &call_diff_argv,
 		   s);
 }
 
