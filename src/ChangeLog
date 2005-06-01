@@ -1,4 +1,9 @@
 2005-05-31  Derek Price  <derek@ximbiot.com>
+
+	* rcscmds.c (call_diff_argc_allocated): Rename to...
+	(call_diff_arg_allocated): ...to match similar usage in other files.
+
+2005-05-31  Derek Price  <derek@ximbiot.com>
 	for Alexander Taler <alex@0--0.org>
 
 	* rcscmds.c: Change type of call_diff_argc_allocated from int to
