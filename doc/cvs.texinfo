@@ -2401,11 +2401,11 @@ section concerning @file{.rhosts} and so on are likely
 to be inapplicable; consult the documentation for your rsh
 replacement.
 
-You may choose to specify the @var{CVS_RSH} option in
-the @var{CVSROOT} to allow you to use different ones
-for different roots. For example, allowing some roots
-to use @var{CVS_RSH=remsh} and some to use
-@var{CVS_RSH=ssh} for the @code{ext} method. See also
+You may choose to specify the @var{CVS_RSH} option as a method option
+in the @var{CVSROOT} string to allow you to use different connection tools
+for different roots (@pxref{The connection method}).  For example, allowing
+some roots to use @code{CVS_RSH=remsh} and some to use
+@code{CVS_RSH=ssh} for the @code{ext} method.  See also
 the @ref{Remote repositories} for more details.
 @c See also the comment in src/client.c for rationale
 @c concerning "rsh" being the default and never
