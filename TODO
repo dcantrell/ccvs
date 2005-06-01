@@ -802,8 +802,6 @@ more recent versions that come with glibc and emacs.  It might be worth waiting
 for the emacs folks to get their act together and merge their changes into the
 glibc version.
 
-214.  Make options.h options configure script options instead.
-
 215.  Add reditors and rwatchers commands.
 
 	- Is an r* command abstraction layer possible here for the commands
