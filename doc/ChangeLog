@@ -1,6 +1,11 @@
+2005-06-01  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Connecting via rsh):  Cross-reference method options and
+	don't capitalize `remsh' and `ssh' executable names.
+
 2005-05-23  Derek Price  <derek@ximbiot.com>
 
-	* doc/getdate.texi: Update from GNULIB.
+	* getdate.texi: Update from GNULIB.
 
 2005-05-11  Derek Price  <derek@ximbiot.com>
 
