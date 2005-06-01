@@ -1,5 +1,9 @@
 2005-06-01  Conrad T. Pino  <Conrad@Pino.com>
 
+	* makewin32.cmd: Add options to support CLEAN build target.
+
+2005-06-01  Conrad T. Pino  <Conrad@Pino.com>
+
 	* makewin32.cmd: Add Windows NT command file to build CVS Project.
 
 2005-05-31  Conrad T. Pino  <Conrad@Pino.com>
