@@ -76,7 +76,7 @@ static void RCS_output_diff_options PROTO ((int, char *const *, const char *,
 
 static char **call_diff_argv;
 static int call_diff_argc;
-static int call_diff_argc_allocated;
+static size_t call_diff_argc_allocated;
 
 static void call_diff_add_arg PROTO ((const char *));
 static void call_diff_setup PROTO ((const char *prog,
