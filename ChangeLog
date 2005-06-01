@@ -1,3 +1,7 @@
+2005-06-01  Derek Price  <derek@ximbiot.com>
+
+	* TODO (214): Remove completed item.
+
 2005-06-01  Conrad T. Pino  <Conrad@Pino.com>
 
 	* makewin32.cmd: Add options to support CLEAN build target.
