@@ -1,5 +1,9 @@
 2005-05-31  Conrad T. Pino  <Conrad@Pino.com>
 
+	* types.h: Add Visual C++ .NET 2003 - cl.exe version 13.10 support.
+
+2005-05-31  Conrad T. Pino  <Conrad@Pino.com>
+
 	* types.h: Microsoft's implementation is way too lame.
 	  Define symbols used by Visual C++ 6.0 - cl.exe version 12.00
 	  Define symbols used by CVS Project.
