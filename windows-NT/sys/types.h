@@ -6,10 +6,20 @@
 
 #pragma once
 
-/* Compatable with Visual C++ 6.0 - cl.exe 12.00 */
-#if _MSC_VER != 1200
-#pragma message ( "Please email Microsoft's <sys/types.h>" )
-#pragma message ( "file to <conradpino@cvshome.org>" )
+/* cl.exe version number legend:                               */
+/*                                                             */
+/*      ! cl.exe version number confirmed                      */
+/*      ? cl.exe version number uncertain                      */
+/*                                                             */
+/* Verified with Visual C++ 6.0       - cl.exe version 12.00 ! */
+/* No tests with Visual C++ .NET      - cl.exe version 13.00 ? */
+/* Verified with Visual C++ .NET 2003 - cl.exe version 13.10 ! */
+/* No tests with Visual C++ 2005      - cl.exe version 14.00 ? */
+/*                                                             */
+#if _MSC_VER != 1200 && _MSC_VER != 1310
+#pragma message ( "Please email Microsoft's <sys/types.h> file" )
+#pragma message ( "and version number from \"cl /?\" command to" )
+#pragma message ( "<conradpino@cvshome.org>.  Thank you." )
 #endif /* _MSC_VER != 1200 */
 
 /***************************************************************************/
@@ -23,7 +33,15 @@
 #ifndef _TIME_T_DEFINED
 #define _TIME_T_DEFINED
 
+#if defined(_WIN64) && _MSC_VER >= 1300
+typedef __int64 time_t;
+#else
 typedef long time_t;
+#endif
+
+#if _INTEGRAL_MAX_BITS >= 64
+typedef __int64 __time64_t;
+#endif
 #endif /* _TIME_T_DEFINED */
 
 
