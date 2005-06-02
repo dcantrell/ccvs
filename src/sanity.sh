@@ -14440,7 +14440,11 @@ ${PROG} \[checkout aborted\]: than the 0 which Max-dotdot specified"
 	  # cvs checkout: warning: cannot make directory CVS in /: Permission denied
 	  # cvs [checkout aborted]: cannot make directory /foo: Permission denied
 	  # $
-	  dotest_fail abspath2-1 "${testcvs} co /foo" \
+	  #
+	  # The -z9 in this test also checks for an old server bug where the
+	  # server would block indefinitely attempting to read an EOF from the
+	  # client in the compression buffer shutdown routine.
+	  dotest_fail abspath2-1 "$testcvs -z9 co /foo" \
 "$PROG \[checkout aborted\]: Absolute module reference invalid: \`/foo'" \
 "$PROG \[server aborted\]: Absolute module reference invalid: \`/foo'
 $PROG \[checkout aborted\]: end of file from server (consult above messages if any)"
