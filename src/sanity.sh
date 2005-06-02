@@ -19894,24 +19894,9 @@ M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == $TESTDIR/wnt
 	    rm -r $TESTDIR/historylogs
 	  fi
 
-	  # $DOTSTAR in the next two tests is needed because of discrepancies
-	  # between normal and proxy modes.
-	  dotest config-cleanup-1 "$testcvs -Q update -jHEAD -jconfig-start" \
-"${DOTSTAR}RCS file: $CVSROOT_DIRNAME/CVSROOT/config,v
-retrieving revision 1.[0-9]*
-retrieving revision 1.[0-9]*
-Merging differences between 1.[0-9]* and 1.[0-9]* into config"
-	  dotest config-cleanup-2 "$testcvs -q ci -m change-to-comment" \
-"$DOTSTAR$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
-new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-$DOTSTAR$SPROG commit: Rebuilding administrative file database"
-
-	  dotest config-6 "$testcvs -q update"
-
 	  dokeep
-	  cd ..
-	  rm -r CVSROOT
-	  cd ..
+	  restore_adm
+	  cd ../..
 	  rm -r wnt
 	  ;;
 
