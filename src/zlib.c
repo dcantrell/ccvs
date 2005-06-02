@@ -227,8 +227,7 @@ compress_buffer_input (void *closure, char *data, size_t need, size_t size,
 	   would fetch all the available bytes, and at least one byte.  */
 
 	status = (*cb->buf->input) (cb->buf->closure, bd->text,
-				    need > 0 ? 1 : 0,
-				    BUFFER_DATA_SIZE, &nread);
+				    need, BUFFER_DATA_SIZE, &nread);
 
 	if (status == -2)
 	    /* Don't try to recover from memory allcoation errors.  */
@@ -399,19 +398,10 @@ compress_buffer_shutdown_input (struct buffer *buf)
     struct compress_buffer *cb = buf->closure;
     int zstatus;
 
-    /* Pick up any trailing data, such as the checksum.  */
-    while (1)
-    {
-	int status;
-	size_t nread;
-	char buf[100];
-
-	status = compress_buffer_input (cb, buf, 0, sizeof buf, &nread);
-	if (status == -1)
-	    break;
-	if (status != 0)
-	    return status;
-    }
+    /* Don't make any attempt to pick up trailing data since we are shutting
+     * down.  If the client doesn't know we are shutting down, we might not
+     * see the EOF we are expecting.
+     */
 
     zstatus = inflateEnd (&cb->zstr);
     if (zstatus != Z_OK)

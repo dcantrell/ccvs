@@ -1,3 +1,11 @@
+2005-06-02  Derek Price  <derek@ximbiot.com>
+
+	* zlib.c (compress_buffer_input): Don't request more bytes from the
+	underlying buffer than asked for.
+	(compress_buffer_shutdown_input): Don't attempt to read EOF from the
+	client during shutdown.  It might never be sent.
+	* sanity.sh (abspath2): Test for this.
+
 2005-05-31  Derek Price  <derek@ximbiot.com>
 
 	* rcscmds.c (call_diff_argc_allocated): Rename to...
