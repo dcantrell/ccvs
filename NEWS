@@ -23,6 +23,9 @@ NEW FEATURES
 
 BUG FIXES
 
+* A problem where the server could block indefinitely waiting for an EOF from
+  the client when compression was enabled has ben fixed.
+
 * `cvs diff' no longer splits its arguments on spaces.
 
 * Thanks to an old report and patch from Stewart Brodie <stewart@eh.org>, a
