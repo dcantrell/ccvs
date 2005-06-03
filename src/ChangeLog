@@ -1,3 +1,15 @@
+2005-06-03  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (expand_path): Rearrange args and use bool for formatsafe flag.
+	* expand_path.c: Globally: Remove init of globals to NULL by C89,
+	reformat to CVS conventions, remove unnecessary comparisons to NULL and
+	0, & remove unnecessary typecasts.
+	(expand_variable): Remove proto and move function above first use.
+	Make return value const.
+	(expand_path): Don't refer to var when contents are known.  Rearrange
+	args per cvs.h changes.  Improve header comment block.
+	* parseinfo.c (Parse_Info): Use new expand_path API.
+
 2005-06-02  Derek Price  <derek@ximbiot.com>
 
 	* client.c: Don't set NULL for globals by C89.  Globally remove
