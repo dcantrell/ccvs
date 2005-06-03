@@ -142,9 +142,8 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	    if (!(opt & PIOPT_ALL))
 		error (0, 0, "Keyword `ALL' is ignored at line %d in %s file",
 		       line_number, infofile);
-	    else if ((expanded_value = expand_path (value, infofile,
-	                                            line_number, 1))
-	             != NULL )
+	    else if ((expanded_value = expand_path (value, true, infofile,
+	                                            line_number)))
 	    {
 		err += callproc (repository, expanded_value, closure);
 		free (expanded_value);
@@ -169,8 +168,7 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	    continue;				/* no match */
 
 	/* it did, so do the callback and note that we did one */
-	if ((expanded_value = expand_path( value, infofile, line_number, 1)
-	    ) != NULL)
+	if ((expanded_value = expand_path (value, true, infofile, line_number)))
 	{
 	    err += callproc (repository, expanded_value, closure);
 	    free (expanded_value);
@@ -187,9 +185,8 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     /* if we fell through and didn't callback at all, do the default */
     if (callback_done == 0 && default_value != NULL)
     {
-	if ((expanded_value = expand_path (default_value, infofile,
-	                                   line_number, 1)
-	    ) != NULL)
+	if ((expanded_value = expand_path (default_value, true, infofile,
+	                                   line_number)))
 	{
 	    err += callproc (repository, expanded_value, closure);
 	    free (expanded_value);
@@ -496,7 +493,7 @@ parse_config (const char *cvsroot)
 	    if (retval->HistoryLogPath) free (retval->HistoryLogPath);
 
 	    /* Expand ~ & $VARs.  */
-	    retval->HistoryLogPath = expand_path (p, infopath, ln, false);
+	    retval->HistoryLogPath = expand_path (p, false, infopath, ln);
 
 	    if (retval->HistoryLogPath && !ISABSOLUTE (retval->HistoryLogPath))
 	    {
@@ -509,7 +506,7 @@ parse_config (const char *cvsroot)
 	else if (strcmp (line, "HistorySearchPath") == 0)
 	{
 	    if (retval->HistorySearchPath) free (retval->HistorySearchPath);
-	    retval->HistorySearchPath = expand_path (p, infopath, ln, false);
+	    retval->HistorySearchPath = expand_path (p, false, infopath, ln);
 
 	    if (retval->HistorySearchPath
 		&& !ISABSOLUTE (retval->HistorySearchPath))
