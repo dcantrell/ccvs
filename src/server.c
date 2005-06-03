@@ -440,12 +440,34 @@ static int pending_error;
  * last line should not end with a newline.
  */
 static char *pending_error_text;
+static char *pending_warning_text;
 
 /* If an error is pending, print it and return 1.  If not, return 0.
+   Also prints pending warnings, but this does not affect the return value.
    Must be called only in contexts where it is OK to send output.  */
 static int
 print_pending_error (void)
 {
+    /* Check this case first since it usually means we are out of memory and
+     * the buffer output routines might try and allocate memory.
+     */
+    if (!pending_error_text && pending_error)
+    {
+	print_error (pending_error);
+	pending_error = 0;
+	return 1;
+    }
+
+    if (pending_warning_text)
+    {
+	buf_output0 (buf_to_net, pending_warning_text);
+	buf_append_char (buf_to_net, '\n');
+	buf_flush (buf_to_net, 0);
+
+	free (pending_warning_text);
+	pending_warning_text = NULL;
+    }
+
     if (pending_error_text)
     {
 	buf_output0 (buf_to_net, pending_error_text);
@@ -462,18 +484,29 @@ print_pending_error (void)
 	pending_error_text = NULL;
 	return 1;
     }
-    else if (pending_error)
-    {
-	print_error (pending_error);
-	pending_error = 0;
-	return 1;
-    }
-    else
-	return 0;
+
+    return 0;
 }
+
+
 
 /* Is an error pending?  */
 # define error_pending() (pending_error || pending_error_text)
+# define warning_pending() (pending_warning_text)
+
+/* Allocate SIZE bytes for pending_error_text and return nonzero
+   if we could do it.  */
+static inline int
+alloc_pending_internal (char **dest, size_t size)
+{
+    *dest = malloc (size);
+    if (!*dest)
+    {
+	pending_error = ENOMEM;
+	return 0;
+    }
+    return 1;
+}
 
 
 
@@ -487,13 +520,20 @@ alloc_pending (size_t size)
 	   this case.  But we might as well handle it if they don't, I
 	   guess.  */
 	return 0;
-    pending_error_text = xmalloc (size);
-    if (pending_error_text == NULL)
-    {
-	pending_error = ENOMEM;
+    return alloc_pending_internal (&pending_error_text, size);
+}
+
+
+
+/* Allocate SIZE bytes for pending_error_text and return nonzero
+   if we could do it.  */
+static int
+alloc_pending_warning (size_t size)
+{
+    if (warning_pending ())
+	/* Warnings can be lost here.  */
 	return 0;
-    }
-    return 1;
+    return alloc_pending_internal (&pending_warning_text, size);
 }
 
 
@@ -872,6 +912,35 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
     }
 # endif /* PROXY_SUPPORT */
 
+
+    /* Now that we have a config, verify our compression level.  Since 
+     * most clients do not send Gzip-stream requests until after the root
+     * request, wait until the first request following Root to verify that
+     * compression is being used when level 0 is not allowed.
+     */
+    if (gzip_level)
+    {
+	bool forced = false;
+
+	if (gzip_level < config->MinCompressionLevel)
+	{
+	    gzip_level = config->MinCompressionLevel;
+	    forced = true;
+	}
+
+	if (gzip_level > config->MaxCompressionLevel)
+	{
+	    gzip_level = config->MaxCompressionLevel;
+	    forced = true;
+	}
+
+	if (forced && !quiet
+	    && alloc_pending_warning (120 + strlen (program_name)))
+	    sprintf (pending_warning_text,
+"E %s server: Forcing compression level %d (allowed: %d <= z <= %d).",
+		     program_name, gzip_level, config->MinCompressionLevel,
+		     config->MaxCompressionLevel);
+    }
 
     path = xmalloc (strlen (current_parsed_root->directory)
 		   + sizeof (CVSROOTADM)
@@ -5379,6 +5448,7 @@ static void
 serve_gzip_contents (char *arg)
 {
     int level;
+    bool forced = false;
 
 # ifdef PROXY_SUPPORT
     assert (!proxy_log);
@@ -5387,7 +5457,26 @@ serve_gzip_contents (char *arg)
     level = atoi (arg);
     if (level == 0)
 	level = 6;
-    file_gzip_level = level;
+
+    if (config && level < config->MinCompressionLevel)
+    {
+	level = config->MinCompressionLevel;
+	forced = true;
+    }
+    if (config && level > config->MaxCompressionLevel)
+    {
+	level = config->MaxCompressionLevel;
+	forced = true;
+    }
+
+    if (forced && !quiet
+	&& alloc_pending_warning (120 + strlen (program_name)))
+	sprintf (pending_warning_text,
+"E %s server: Forcing compression level %d (allowed: %d <= z <= %d).",
+		 program_name, level, config->MinCompressionLevel,
+		 config->MaxCompressionLevel);
+
+    gzip_level = file_gzip_level = level;
 }
 
 
@@ -5396,23 +5485,43 @@ static void
 serve_gzip_stream (char *arg)
 {
     int level;
-
-    /* If we received this request before the `Root' request, the buffer index
-     * maintained to allow the write proxy to replace the `Root' request would
-     * be relative to the decompressed stream rather than the secondary log.
-     */
-    assert (current_parsed_root);
+    bool forced = false;
 
     level = atoi (arg);
-    if (level == 0)
-	level = 6;
 
-    /* All further communication with the client will be compressed.  */
+    if (config && level < config->MinCompressionLevel)
+    {
+	level = config->MinCompressionLevel;
+	forced = true;
+    }
+    if (config && level > config->MaxCompressionLevel)
+    {
+	level = config->MaxCompressionLevel;
+	forced = true;
+    }
+
+    if (forced && !quiet
+	&& alloc_pending_warning (120 + strlen (program_name)))
+	sprintf (pending_warning_text,
+"E %s server: Forcing compression level %d (allowed: %d <= z <= %d).",
+		 program_name, level, config->MinCompressionLevel,
+		 config->MaxCompressionLevel);
+	
+    gzip_level = level;
+
+    /* All further communication with the client will be compressed.
+     *
+     * The deflate buffers need to be initialized even for compression level
+     * 0, or the client will no longer be able to understand us.  At
+     * compression level 0, the correct compression headers will be created and
+     * sent, but data will thereafter simply be copied to the network buffers.
+     */
 
     /* This needs to be processed in both passes so that we may continue to
      * understand client requests on both the socket and from the log.
      */
-    buf_from_net = compress_buffer_initialize (buf_from_net, 1, level,
+    buf_from_net = compress_buffer_initialize (buf_from_net, 1,
+					       0 /* Not used. */,
 					       buf_from_net->memory_error);
 
     /* This needs to be skipped in subsequent passes to avoid compressing data
@@ -5618,7 +5727,7 @@ serve_command_prep (char *arg)
     bool ditch_log;
 # endif /* PROXY_SUPPORT */
 
-    if (error_pending ()) return;
+    if (print_pending_error ()) return;
 
     redirect_supported = supported_response ("Redirect");
     if (redirect_supported
@@ -5779,21 +5888,28 @@ struct request requests[] =
   REQ_LINE("Argument", serve_argument, RQ_ESSENTIAL),
   REQ_LINE("Argumentx", serve_argumentx, RQ_ESSENTIAL),
   REQ_LINE("Global_option", serve_global_option, RQ_ROOTLESS),
-  REQ_LINE("Gzip-stream", serve_gzip_stream, 0),
+  /* This is rootless, even though the client/server spec does not specify
+   * such, to allow error messages to be understood by the client when they are
+   * sent.
+   */
+  REQ_LINE("Gzip-stream", serve_gzip_stream, RQ_ROOTLESS),
   REQ_LINE("wrapper-sendme-rcsOptions",
 	   serve_wrapper_sendme_rcs_options,
 	   0),
   REQ_LINE("Set", serve_set, RQ_ROOTLESS),
 #ifdef ENCRYPTION
+  /* These are rootless despite what the client/server spec says for the same
+   * reasons as Gzip-stream.
+   */
 #  ifdef HAVE_KERBEROS
-  REQ_LINE("Kerberos-encrypt", serve_kerberos_encrypt, 0),
+  REQ_LINE("Kerberos-encrypt", serve_kerberos_encrypt, RQ_ROOTLESS),
 #  endif
 #  ifdef HAVE_GSSAPI
-  REQ_LINE("Gssapi-encrypt", serve_gssapi_encrypt, 0),
+  REQ_LINE("Gssapi-encrypt", serve_gssapi_encrypt, RQ_ROOTLESS),
 #  endif
 #endif
 #ifdef HAVE_GSSAPI
-  REQ_LINE("Gssapi-authenticate", serve_gssapi_authenticate, 0),
+  REQ_LINE("Gssapi-authenticate", serve_gssapi_authenticate, RQ_ROOTLESS),
 #endif
   REQ_LINE("expand-modules", serve_expand_modules, 0),
   REQ_LINE("ci", serve_ci, RQ_ESSENTIAL),
@@ -5813,7 +5929,7 @@ struct request requests[] =
   REQ_LINE("add", serve_add, 0),
   REQ_LINE("remove", serve_remove, 0),
   REQ_LINE("update-patches", serve_ignore, 0),
-  REQ_LINE("gzip-file-contents", serve_gzip_contents, 0),
+  REQ_LINE("gzip-file-contents", serve_gzip_contents, RQ_ROOTLESS),
   REQ_LINE("status", serve_status, 0),
   REQ_LINE("rdiff", serve_rdiff, 0),
   REQ_LINE("tag", serve_tag, 0),
@@ -5874,6 +5990,14 @@ serve_valid_requests (char *arg)
 	    buf_output0 (buf_to_net, rq->name);
 	}
     }
+
+    if (config && config->MinCompressionLevel
+	&& supported_response ("Force-gzip"))
+    {
+	    buf_output0 (buf_to_net, "\n");
+	    buf_output0 (buf_to_net, "Force-gzip");
+    }
+
     buf_output0 (buf_to_net, "\nok\n");
 
     /* The client is waiting for the list of valid requests, so we
@@ -6368,27 +6492,26 @@ error ENOMEM Virtual memory exhausted.\n");
 		if (!(rq->flags & RQ_ROOTLESS)
 		    && current_parsed_root == NULL)
 		{
-		    /* For commands which change the way in which data
-		       is sent and received, for example Gzip-stream,
-		       this does the wrong thing.  Since the client
-		       assumes that everything is being compressed,
-		       unconditionally, there is no way to give this
-		       error to the client without turning on
-		       compression.  The obvious fix would be to make
-		       Gzip-stream RQ_ROOTLESS (with the corresponding
-		       change to the spec), and that might be a good
-		       idea but then again I can see some settings in
-		       CVSROOT about what compression level to allow.
-		       I suppose a more baroque answer would be to
-		       turn on compression (say, at level 1), just
-		       enough to give the "Root request missing"
-		       error.  For now we just lose.  */
 		    if (alloc_pending (80))
 			sprintf (pending_error_text,
 				 "E Protocol error: Root request missing");
 		}
 		else
+		{
+		    if (config && config->MinCompressionLevel && !gzip_level
+			&& !(rq->flags & RQ_ROOTLESS))
+		    {
+			/* This is a rootless request, a minimum compression
+			 * level has been configured, and no compression has
+			 * been requested by the client.
+			 */
+			if (alloc_pending (80 + strlen (program_name)))
+			    sprintf (pending_error_text,
+"E %s [server aborted]: Compression must be used with this server.",
+				     program_name);
+		    }
 		    (*rq->func) (cmd);
+		}
 		break;
 	    }
 	if (rq->name == NULL)

@@ -258,7 +258,7 @@ static const char *const opt_usage[] =
     "    -d CVS_root  Overrides $CVSROOT as the root of the CVS tree.\n",
     "    -f           Do not use the ~/.cvsrc file.\n",
 #ifdef CLIENT_SUPPORT
-    "    -z #         Use compression level '#' for net traffic.\n",
+    "    -z #         Request compression level '#' for net traffic.\n",
 #ifdef ENCRYPTION
     "    -x           Encrypt all net traffic.\n",
 #endif

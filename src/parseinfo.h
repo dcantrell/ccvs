@@ -51,6 +51,10 @@ struct config
 #ifdef PROXY_SUPPORT
     size_t MaxProxyBufferSize;
 #endif /* PROXY_SUPPORT */
+#ifdef SERVER_SUPPORT
+    size_t MinCompressionLevel;
+    size_t MaxCompressionLevel;
+#endif /* SERVER_SUPPORT */
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
     bool preserve_perms;
 #endif /* PRESERVE_PERMISSIONS_SUPPORT */

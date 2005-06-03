@@ -18685,6 +18685,7 @@ C aa"
 	  # postadmin: admin
 	  # postwatch: devcom3
 	  # config: config
+	  # config2: MinCompressionLevel and MaxCompressionLevel in config
 
 	  # On Windows, we can't check out CVSROOT, because the case
 	  # insensitivity means that this conflicts with cvsroot.
@@ -19893,6 +19894,87 @@ M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == $TESTDIR/wnt
 	    # Remove this now to see what kind of error messages we get.
 	    rm -r $TESTDIR/historylogs
 	  fi
+
+	  dokeep
+	  restore_adm
+	  cd ../..
+	  rm -r wnt
+	  ;;
+
+
+
+	config2)
+	  # Tests of the CVSROOT/config file.  See the comment at the
+	  # "info" tests for a full list of administrative file tests.
+
+	  # No point in testing compression effects in local mode.
+          if $remote; then :; else
+            remoteonly config2
+	    continue
+	  fi
+
+	  # On Windows, we can't check out CVSROOT, because the case
+	  # insensitivity means that this conflicts with cvsroot.
+	  mkdir wnt
+	  cd wnt
+
+	  # Set MinCompressionLevel and MaxCompressionLevel in config.
+	  dotest config2-init-1 "$testcvs -q co CVSROOT" "U CVSROOT/$DOTSTAR"
+	  cd CVSROOT
+	  cat << EOF > config
+MinCompressionLevel=5
+MaxCompressionLevel=6
+EOF
+	  dotest config2-init-2 \
+"$testcvs -q ci -m set-compression-constraints" \
+"$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
+
+	  # Verify that the server reports forcing compression to an allowed
+	  # level.
+
+	  # Too high.
+	  dotest config2-1 "$testcvs -z9 update" \
+"$SPROG server: Forcing compression level 6 (allowed: 5 <= z <= 6)\.
+$SPROG update: Updating \."
+	  # Too low.
+	  dotest config2-2 "$testcvs -z1 update" \
+"$SPROG server: Forcing compression level 5 (allowed: 5 <= z <= 6)\.
+$SPROG update: Updating \."
+	  # From zero.
+	  dotest config2-3 "$testcvs update" \
+"$SPROG server: Forcing compression level 5 (allowed: 5 <= z <= 6)\.
+$SPROG update: Updating \."
+	  # Just right.
+	  dotest config2-3 "$testcvs -z5 update" \
+"$SPROG update: Updating \."
+
+	  # Check that compression may be forced to 0.
+	  cat << EOF > config
+MaxCompressionLevel=0
+EOF
+	  dotest config2-init-3 "$testcvs -q ci -m no-compression" \
+"$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
+
+	  # Too high.
+	  dotest config2-5 "$testcvs -z9 update" \
+"$SPROG server: Forcing compression level 0 (allowed: 0 <= z <= 0)\.
+$SPROG update: Updating \."
+	  # Just right.
+	  dotest config2-6 "$testcvs update" \
+"$SPROG update: Updating \."
+
+	  # And verify effect without restrictions.
+	  echo '# No config is a good config' > config
+	  dotest config2-init-4 "$testcvs -q ci -m change-to-comment" \
+"$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
+	  dotest config2-7 "$testcvs update" \
+"$SPROG update: Updating \."
 
 	  dokeep
 	  restore_adm
