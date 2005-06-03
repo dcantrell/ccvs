@@ -1,5 +1,14 @@
 2005-06-02  Derek Price  <derek@ximbiot.com>
 
+	* client.c: Don't set NULL for globals by C89.  Globally remove
+	comparisons to NULL or replace with !.  Similarly remove or replace
+	comparisons of strcmp and strncmp return value to 0.  Remove some
+	unneeded braces around single-element blocks.
+	(handle_*): Remove unecessary protos.
+	(handle_notified, notified_a_file): Move up before first use.
+
+2005-06-02  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (config): Simplify cleanup.
 
 2005-06-02  Derek Price  <derek@ximbiot.com>
