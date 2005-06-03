@@ -8428,15 +8428,19 @@ available by default; it must be enabled using a
 special configure option, @file{--enable-encryption},
 when you build @sc{cvs}.
 
-@item -z @var{gzip-level}
+@item -z @var{level}
 @cindex Compression
 @cindex Gzip
-Set the compression level.
+Request compression @var{level} for network traffic.
+@sc{cvs} interprets @var{level} identically to the @code{gzip} program.
 Valid levels are 1 (high speed, low compression) to
 9 (low speed, high compression), or 0 to disable
-compression (the default).
-Only has an effect on the @sc{cvs} client.
-
+compression (the default).  Data sent to the server will
+be compressed at the requested level and the client will request
+the server use the same compression level for data returned.  The
+server will use the closest level allowed by the server administrator to
+compress returned data.  This option only has an effect when passed to
+the @sc{cvs} client.
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -14660,6 +14664,26 @@ used instead.  If there is no comment leader set in the archive file or
 be used exclusively (and @code{$@splitrcskeyword{Log}$} expansion skipped in
 files where the comment leader has not been set in the archive file), set
 @var{value} and set @code{MaxCommentLeaderLength} to @code{0}.
+
+@cindex MinCompressionLevel, in CVSROOT/config
+@cindex MaxCompressionLevel, in CVSROOT/config
+@cindex Compression levels, restricting on server
+@item MinCompressionLevel=@var{value}
+@itemx MaxCompressionLevel=@var{value}
+Restricts the level of compression used by the @sc{cvs} server to a @var{value}
+between 0 and 9.  @var{value}s 1 through 9 are the same @sc{zlib} compression
+levels accepted by the @samp{-z} option (@pxref{Global options}), and 0 means
+no compression.  When one or both of these keys are set and a client requests a
+level outside the specified range, the server will simply use the closest
+permissable level.  Clients will continue compressing at the level requested by
+the user.
+
+The exception is when level 0 (no compression) is not available and the client
+fails to request any compression.  The @sc{cvs} server will then exit with an
+error message when it becomes apparent that the client is not going to request
+compression.  This will not happen with clients version 1.12.13 and later since
+these client versions allow the server to notify them that they must request
+some level of compression.
 @end table
 
 
