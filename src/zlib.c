@@ -209,9 +209,8 @@ compress_buffer_input (void *closure, char *data, size_t need, size_t size,
 
 	/* If we have obtained NEED bytes, then return, unless NEED is
            zero and we haven't obtained anything at all.  If NEED is
-           zero, we will keep reading from the underlying buffer until
-           we either can't read anything, or we have managed to
-           inflate at least one byte.  */
+           zero, we will attempt at least one nonblocking read and see if
+	   we can inflate anything then.  */
 	if (sofar > 0 && sofar >= need)
 	    break;
 
