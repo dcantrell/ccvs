@@ -1,5 +1,9 @@
 2005-06-03  Derek Price  <derek@ximbiot.com>
 
+	* HACKING: Remove `!= NULL' in example conditional.
+
+2005-06-03  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note new server compression limit config options.  Correct
 	HistorySearchPath name.
 
