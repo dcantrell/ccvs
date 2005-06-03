@@ -414,16 +414,20 @@ special configure option, \fB--enable-encryption\fR,
 when you build \fBcvs\fR.
 .SP
 .IP "" 0
-\fB-z \fIgzip-level\fB\fR
+\fB-z \fIlevel\fB\fR
 .IP "" 2
 .IX "Compression"
 .IX "Gzip"
-Set the compression level.
+Request compression \fIlevel\fR for network traffic.
+\fBcvs\fR interprets \fIlevel\fR identically to the \fBgzip\fR program.
 Valid levels are 1 (high speed, low compression) to
 9 (low speed, high compression), or 0 to disable
-compression (the default).
-Only has an effect on the \fBcvs\fR client.
-.SP
+compression (the default).  Data sent to the server will
+be compressed at the requested level and the client will request
+the server use the same compression level for data returned.  The
+server will use the closest level allowed by the server administrator to
+compress returned data.  This option only has an effect when passed to
+the \fBcvs\fR client.
 .SP
 .SH "Common options"
 .SS "Common command options"

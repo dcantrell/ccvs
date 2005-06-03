@@ -1,3 +1,10 @@
+2005-06-03  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Global options): Note -z *requests* a compression level.
+	(config): Describe MinCompressionLevel and MaxCompressionLevel.
+	* cvsclient.texi (Responses): Add `Force-gzip' request.
+	(Requests): Clarify `Gzip-stream' description.
+
 2005-06-01  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Connecting via rsh):  Cross-reference method options and
