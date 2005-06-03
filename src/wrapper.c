@@ -402,7 +402,7 @@ wrap_add (char *line, int isTemp)
 		free(e.fromcvsFilter);
 	    /* FIXME: error message should say where the bad value
 	       came from.  */
-	    e.fromcvsFilter=expand_path (temp, "<wrapper>", 0, 0);
+	    e.fromcvsFilter = expand_path (temp, false, "<wrapper>", 0);
             if (!e.fromcvsFilter)
 		error (1, 0, "Correct above errors first");
 	    break;
@@ -416,7 +416,7 @@ wrap_add (char *line, int isTemp)
 		free(e.tocvsFilter);
 	    /* FIXME: error message should say where the bad value
 	       came from.  */
-	    e.tocvsFilter=expand_path (temp, "<wrapper>", 0, 0);
+	    e.tocvsFilter = expand_path (temp, false, "<wrapper>", 0);
             if (!e.tocvsFilter)
 		error (1, 0, "Correct above errors first");
 	    break;
