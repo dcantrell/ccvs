@@ -39,7 +39,7 @@ foo (char *arg, int c)
 {
     long aflag;
 
-    if (arg != NULL)
+    if (arg)
     {
 	bar (arg);
 	baz (arg);
