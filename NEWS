@@ -7,8 +7,9 @@ NEW FEATURES
   To suppress history logging, set LogHistory equal to the empty string in
   CVSROOT/config.
 
-* There are two new options available in CVSROOT/config.  These are
-  HistoryLogPath & HistoryLogName.
+* There are several new options available in CVSROOT/config.  These are
+  HistoryLogPath, HistorySearchPath, MinCompressionLevel, &
+  MaxCompressionLevel.  Please see the manual for more.
 
 * CVS on Solaris 10 was refusing to parse command options.  This has been
   fixed.
