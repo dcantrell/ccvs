@@ -46,8 +46,10 @@ struct compress_buffer
 {
     /* The underlying buffer.  */
     struct buffer *buf;
+
     /* The compression information.  */
     z_stream zstr;
+    int level;
 };
 
 static void compress_error (int, int, z_stream *, const char *);
@@ -96,6 +98,7 @@ compress_buffer_initialize (struct buffer *buf, int input, int level,
     memset (n, 0, sizeof *n);
 
     n->buf = buf;
+    n->level = level;
 
     if (input)
 	zstatus = inflateInit (&n->zstr);
@@ -264,7 +267,15 @@ compress_buffer_input (void *closure, char *data, size_t need, size_t size,
 
 
 
-/* Output data to a compression buffer.  */
+extern int gzip_level;
+
+/* Output data to a compression buffer.
+ *
+ * GLOBALS
+ *   gzip_level		If GZIP_LEVEL has changed to a value different from
+ *			CLOSURE->level, then set the compression level on the
+ *			stream to the new value.
+ */
 static int
 compress_buffer_output (void *closure, const char *data, size_t have,
 			size_t *wrote)
@@ -277,6 +288,12 @@ compress_buffer_output (void *closure, const char *data, size_t have,
     static char *buffer = NULL;
     if (!buffer)
 	buffer = pagealign_xalloc (BUFFER_DATA_SIZE);
+
+    if (cb->level != gzip_level)
+    {
+	cb->level = gzip_level;
+	deflateParams (&cb->zstr, gzip_level, Z_DEFAULT_STRATEGY);
+    }
 
     cb->zstr.avail_in = have;
     cb->zstr.next_in = (unsigned char *) data;

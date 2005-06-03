@@ -290,6 +290,9 @@ new_config (void)
     new->RereadLogAfterVerify = LOGMSG_REREAD_ALWAYS;
     new->UserAdminOptions = xstrdup ("k");
     new->MaxCommentLeaderLength = 20;
+#ifdef SERVER_SUPPORT
+    new->MaxCompressionLevel = 9;
+#endif /* SERVER_SUPPORT */
 #ifdef PROXY_SUPPORT
     new->MaxProxyBufferSize = (size_t)(8 * 1024 * 1024); /* 8 megabytes,
                                                           * by default.
@@ -584,6 +587,14 @@ parse_config (const char *cvsroot)
 	else if (!strcmp (line, "UseArchiveCommentLeader"))
 	    readBool (infopath, "UseArchiveCommentLeader", p,
 		      &retval->UseArchiveCommentLeader);
+#ifdef SERVER_SUPPORT
+	else if (!strcmp (line, "MinCompressionLevel"))
+	    readSizeT (infopath, "MinCompressionLevel", p,
+		       &retval->MinCompressionLevel);
+	else if (!strcmp (line, "MaxCompressionLevel"))
+	    readSizeT (infopath, "MaxCompressionLevel", p,
+		       &retval->MaxCompressionLevel);
+#endif /* SERVER_SUPPORT */
 	else
 	    /* We may be dealing with a keyword which was added in a
 	       subsequent version of CVS.  In that case it is a good idea

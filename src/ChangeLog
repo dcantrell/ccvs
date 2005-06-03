@@ -1,5 +1,40 @@
 2005-06-03  Derek Price  <derek@ximbiot.com>
 
+	* client.c (force_gzip): New static global.
+	(handle_force_gzip): New function.
+	(responses): Add `Force-gzip'.
+	(start_server): Turn on encryption and compression before potentially
+	sending other rooted requests.  Turn on compression when requested by
+	the user or the server.
+	* main.c (opt_usage):  Note that -z<level> *requests* compression
+	<level> from the server.
+	* parseinfo.c (new_config):  Initialize MaxCompressionLevel.
+	(parse_config): Parse MinCompressionLevel & MaxCompressionLevel.
+	* parseinfo.h (struct config): Add MinCompressionLevel &
+	MaxCompressionLevel.
+	* server.c (pending_warning_text):  New static global.
+	(print_pending_error): Print pending warnings too.
+	(warning_pending): New macro.
+	(alloc_pending_internal): New function with much content...
+	(alloc_pending): ...previously from here.
+	(alloc_pending_warning): New function.
+	(server_root, serve_gzip_contents, gzip_stream): Force gzip_level into
+	configured restrictions.
+	(serve_command_prep): Print pending errors.
+	(requests): Make `Gzip-stream', `gzip-file-contents',
+	`Kerberos-encrypt', `Gssapi-encrypt', & `Gssapi-authenticate' requests
+	rootless to allow them before compression starts.
+	(serve_valid_requests): Send `Force-gzip' response when needed.
+	(server): Abort if a rootless compression request forced compression
+	outside restricted levels.
+	* zlib.c (struct compress_buffer, compress_buffer_initialize): Store
+	compression level.
+	(compress_buffer_output): Reset compression level when global
+	gzip_level has changed.
+	* sanity.sh (config2): New tests for compression restrictions.
+
+2005-06-03  Derek Price  <derek@ximbiot.com>
+
 	* zlib.c (compress_buffer_input): Update comment.
 
 2005-06-03  Derek Price  <derek@ximbiot.com>

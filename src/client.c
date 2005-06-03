@@ -444,6 +444,9 @@ int file_gzip_level;
 
 #ifdef CLIENT_SUPPORT
 
+/* Whether the server asked us to force compression.  */
+static bool force_gzip;
+
 /*
  * The Repository for the top level of this command (not necessarily
  * the CVSROOT, just the current directory at the time we do it).
@@ -547,6 +550,12 @@ handle_valid_requests (char *args, size_t len)
 	if (rq->flags & RQ_ESSENTIAL)
 	    error (1, 0, "request `%s' not supported by server", rq->name);
     }
+}
+
+static void
+handle_force_gzip (char *args, size_t len)
+{
+    force_gzip = true;
 }
 
 
@@ -3046,6 +3055,8 @@ struct response responses[] =
     RSP_LINE("error", handle_error, response_type_error, rs_essential),
     RSP_LINE("Valid-requests", handle_valid_requests, response_type_normal,
        rs_essential),
+    RSP_LINE("Force-gzip", handle_force_gzip, response_type_normal,
+       rs_optional),
     RSP_LINE("Referrer", handle_referrer, response_type_normal, rs_optional),
     RSP_LINE("Redirect", handle_redirect, response_type_redirect, rs_optional),
     RSP_LINE("Checked-in", handle_checked_in, response_type_normal,
@@ -3967,6 +3978,7 @@ start_server (void)
 {
     bool rootless;
     int status;
+    bool have_global;
 
     do
     {
@@ -4032,6 +4044,119 @@ start_server (void)
 	if (get_server_responses ())
 	    exit (EXIT_FAILURE);
 
+	have_global = supported_request ("Global_option");
+
+	/* Encryption needs to come before compression.  Good encryption can
+	 * render compression useless in the other direction.
+	 */
+	if (cvsencrypt && !rootless)
+	{
+#ifdef ENCRYPTION
+	    /* Turn on encryption before turning on compression.  We do
+	     * not want to try to compress the encrypted stream.  Instead,
+	     * we want to encrypt the compressed stream.  If we can't turn
+	     * on encryption, bomb out; don't let the user think the data
+	     * is being encrypted when it is not.
+	     */
+#  ifdef HAVE_KERBEROS
+	    if (current_parsed_root->method == kserver_method)
+	    {
+		if (!supported_request ("Kerberos-encrypt"))
+		    error (1, 0, "This server does not support encryption");
+		send_to_server ("Kerberos-encrypt\012", 0);
+	       initialize_kerberos4_encryption_buffers (&global_to_server,
+							&global_from_server);
+	    }
+	    else
+#  endif /* HAVE_KERBEROS */
+#  ifdef HAVE_GSSAPI
+	    if (current_parsed_root->method == gserver_method)
+	    {
+		if (!supported_request ("Gssapi-encrypt"))
+		    error (1, 0, "This server does not support encryption");
+		send_to_server ("Gssapi-encrypt\012", 0);
+		initialize_gssapi_buffers (&global_to_server,
+					   &global_from_server);
+		cvs_gssapi_encrypt = 1;
+	    }
+	    else
+#  endif /* HAVE_GSSAPI */
+		error (1, 0,
+"Encryption is only supported when using GSSAPI or Kerberos");
+#else /* ! ENCRYPTION */
+	    error (1, 0, "This client does not support encryption");
+#endif /* ! ENCRYPTION */
+	}
+
+	/* Send this before compression to enable supression of the
+	 * "Forcing compression level Z" messages.
+	 */
+	if (quiet)
+	{
+	    if (have_global)
+	    {
+		send_to_server ("Global_option -q\012", 0);
+	    }
+	    else
+		error (1, 0,
+		       "This server does not support the global -q option.");
+	}
+	if (really_quiet)
+	{
+	    if (have_global)
+	    {
+		send_to_server ("Global_option -Q\012", 0);
+	    }
+	    else
+		error (1, 0,
+		       "This server does not support the global -Q option.");
+	}
+
+	/* Compression needs to come before any of the rooted requests to
+	 * work with compression limits.
+	 */
+	if (!rootless && (gzip_level || force_gzip))
+	{
+	    if (supported_request ("Gzip-stream"))
+	    {
+		char *gzip_level_buf = Xasprintf ("%d", gzip_level);
+		send_to_server ("Gzip-stream ", 0);
+		send_to_server (gzip_level_buf, 0);
+		free (gzip_level_buf);
+		send_to_server ("\012", 1);
+
+		/* All further communication with the server will be
+		   compressed.  */
+
+		global_to_server =
+		    compress_buffer_initialize (global_to_server, 0,
+					        gzip_level, NULL);
+		global_from_server =
+		    compress_buffer_initialize (global_from_server, 1,
+						gzip_level, NULL);
+	    }
+#ifndef NO_CLIENT_GZIP_PROCESS
+	    else if (supported_request ("gzip-file-contents"))
+	    {
+		char *gzip_level_buf = Xasprintf ("%d", gzip_level);
+		send_to_server ("gzip-file-contents ", 0);
+		send_to_server (gzip_level_buf, 0);
+		free (gzip_level_buf);
+		send_to_server ("\012", 1);
+
+		file_gzip_level = gzip_level;
+	    }
+#endif
+	    else
+	    {
+		fprintf (stderr, "server doesn't support gzip-file-contents\n");
+		/* Setting gzip_level to 0 prevents us from giving the
+		   error twice if update has to contact the server again
+		   to fetch unpatchable files.  */
+		gzip_level = 0;
+	    }
+	}
+
 	if (client_referrer && supported_request ("Referrer"))
 	{
 	    send_to_server ("Referrer ", 0);
@@ -4067,61 +4192,36 @@ start_server (void)
      *
      * -l -t -r -w -q -n and -Q need to go to the server.
      */
-
+    if (noexec)
     {
-	bool have_global = supported_request ("Global_option");
-
-	if (noexec)
+	if (have_global)
 	{
-	    if (have_global)
-	    {
-		send_to_server ("Global_option -n\012", 0);
-	    }
-	    else
-		error (1, 0,
-		       "This server does not support the global -n option.");
+	    send_to_server ("Global_option -n\012", 0);
 	}
-	if (quiet)
+	else
+	    error (1, 0,
+		   "This server does not support the global -n option.");
+    }
+    if (!cvswrite)
+    {
+	if (have_global)
 	{
-	    if (have_global)
-	    {
-		send_to_server ("Global_option -q\012", 0);
-	    }
-	    else
-		error (1, 0,
-		       "This server does not support the global -q option.");
+	    send_to_server ("Global_option -r\012", 0);
 	}
-	if (really_quiet)
+	else
+	    error (1, 0,
+		   "This server does not support the global -r option.");
+    }
+    if (trace)
+    {
+	if (have_global)
 	{
-	    if (have_global)
-	    {
-		send_to_server ("Global_option -Q\012", 0);
-	    }
-	    else
-		error (1, 0,
-		       "This server does not support the global -Q option.");
+	    int count = trace;
+	    while (count--) send_to_server ("Global_option -t\012", 0);
 	}
-	if (!cvswrite)
-	{
-	    if (have_global)
-	    {
-		send_to_server ("Global_option -r\012", 0);
-	    }
-	    else
-		error (1, 0,
-		       "This server does not support the global -r option.");
-	}
-	if (trace)
-	{
-	    if (have_global)
-	    {
-	        int count = trace;
-		while (count--) send_to_server ("Global_option -t\012", 0);
-	    }
-	    else
-		error (1, 0,
-		       "This server does not support the global -t option.");
-	}
+	else
+	    error (1, 0,
+		   "This server does not support the global -t option.");
     }
 
     /* Find out about server-side cvswrappers.  An extra network
@@ -4141,84 +4241,6 @@ start_server (void)
 	    err = get_server_responses ();
 	    if (err != 0)
 		error (err, 0, "error reading from server");
-	}
-    }
-
-    if (cvsencrypt && !rootless)
-    {
-#ifdef ENCRYPTION
-	/* Turn on encryption before turning on compression.  We do
-           not want to try to compress the encrypted stream.  Instead,
-           we want to encrypt the compressed stream.  If we can't turn
-           on encryption, bomb out; don't let the user think the data
-           is being encrypted when it is not.  */
-#ifdef HAVE_KERBEROS
-	if (current_parsed_root->method == kserver_method)
-	{
-	    if (! supported_request ("Kerberos-encrypt"))
-		error (1, 0, "This server does not support encryption");
-	    send_to_server ("Kerberos-encrypt\012", 0);
-           initialize_kerberos4_encryption_buffers (&global_to_server,
-                                                    &global_from_server);
-	}
-	else
-#endif /* HAVE_KERBEROS */
-#ifdef HAVE_GSSAPI
-	if (current_parsed_root->method == gserver_method)
-	{
-	    if (! supported_request ("Gssapi-encrypt"))
-		error (1, 0, "This server does not support encryption");
-	    send_to_server ("Gssapi-encrypt\012", 0);
-	    initialize_gssapi_buffers(&global_to_server, &global_from_server);
-	    cvs_gssapi_encrypt = 1;
-	}
-	else
-#endif /* HAVE_GSSAPI */
-	    error (1, 0,
-"Encryption is only supported when using GSSAPI or Kerberos");
-#else /* ! ENCRYPTION */
-	error (1, 0, "This client does not support encryption");
-#endif /* ! ENCRYPTION */
-    }
-
-    if (gzip_level && !rootless)
-    {
-	if (supported_request ("Gzip-stream"))
-	{
-	    char *gzip_level_buf = Xasprintf ("%d", gzip_level);
-	    send_to_server ("Gzip-stream ", 0);
-	    send_to_server (gzip_level_buf, 0);
-	    free (gzip_level_buf);
-	    send_to_server ("\012", 1);
-
-	    /* All further communication with the server will be
-               compressed.  */
-
-	    global_to_server = compress_buffer_initialize (global_to_server, 0,
-                                                           gzip_level, NULL);
-	    global_from_server = compress_buffer_initialize (global_from_server,
-                                                             1, gzip_level,
-							     NULL);
-	}
-#ifndef NO_CLIENT_GZIP_PROCESS
-	else if (supported_request ("gzip-file-contents"))
-	{
-            char *gzip_level_buf = Xasprintf ("%d", gzip_level);
-	    send_to_server ("gzip-file-contents ", 0);
-	    send_to_server (gzip_level_buf, 0);
-	    free (gzip_level_buf);
-	    send_to_server ("\012", 1);
-
-	    file_gzip_level = gzip_level;
-	}
-#endif
-	else
-	{
-	    fprintf (stderr, "server doesn't support gzip-file-contents\n");
-	    /* Setting gzip_level to 0 prevents us from giving the
-               error twice if update has to contact the server again
-               to fetch unpatchable files.  */
-	    gzip_level = 0;
 	}
     }
 
