@@ -1,5 +1,10 @@
 2005-06-03  Derek Price  <derek@ximbiot.com>
 
+	* modules.c (my_module), wrappers.c (wrap_add): Use new expand_path
+	API.
+
+2005-06-03  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h (expand_path): Rearrange args and use bool for formatsafe flag.
 	* expand_path.c: Globally: Remove init of globals to NULL by C89,
 	reformat to CVS conventions, remove unnecessary comparisons to NULL and
