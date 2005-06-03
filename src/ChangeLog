@@ -1,5 +1,9 @@
 2005-06-03  Derek Price  <derek@ximbiot.com>
 
+	* error.c (error): Correct spelling and grammar in comment.
+
+2005-06-03  Derek Price  <derek@ximbiot.com>
+
 	* modules.c (my_module), wrappers.c (wrap_add): Use new expand_path
 	API.
 

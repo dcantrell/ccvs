@@ -164,8 +164,8 @@ error (int status, int errnum, const char *message, ...)
 
     /* Send the final message to the client or log it.
      *
-     * Set this recursion blocks first since this is the only function called
-     * here which can cause error() to be caled a second time.
+     * Set this recursion block first since this is the only function called
+     * here which can cause error() to be called a second time.
      */
     if (last_message) goto recursion_error;
     last_message = buf2;
