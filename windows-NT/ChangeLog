@@ -5,6 +5,7 @@
 2005-06-06  Conrad T. Pino  <Conrad@Pino.com>
 
 	* run.c: Reverse patch committed 2005-05-27 by Conrad T. Pino.
+	  Reverse both patches committed 2005-05-28 by Conrad T. Pino.
 
 2005-05-28  Conrad T. Pino  <Conrad@Pino.com>
 
