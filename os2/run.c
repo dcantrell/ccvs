@@ -31,6 +31,7 @@
 #define STDOUT      1
 #define STDERR      2
 
+static void run_add_arg PROTO((const char *s));
 static void run_init_prog PROTO((void));
 
 extern char *strtok ();
@@ -41,8 +42,8 @@ extern char *strtok ();
  * arguments will be parsed into whitespace separated words and added to the
  * global run_argv list.
  * 
- * Then, optionally call run_add_arg() for each additional argument that
- * you'd like to pass to the executed program.
+ * Then, optionally call run_arg() for each additional argument that you'd like
+ * to pass to the executed program.
  * 
  * Finally, call run_exec() to execute the program with the specified
  * arguments. 
@@ -81,6 +82,13 @@ run_setup (const char *prog)
     free (run_prog)
 }
 
+void
+run_arg (s)
+    const char *s;
+{
+    run_add_arg (s);
+}
+
 /* Return a malloc'd copy of s, with double quotes around it.  */
 static char *
 quote (const char *s)
@@ -98,7 +106,7 @@ quote (const char *s)
     return copy;
 }
 
-void
+static void
 run_add_arg (s)
     const char *s;
 {
@@ -415,7 +423,7 @@ build_command (char **argv)
    Return the handle of the child process (this is what
    _cwait and waitpid expect).  */
 int
-piped_child (char *const *argv, int *to, int *from)
+piped_child (char **argv, int *to, int *from)
 {
     fprintf (stderr,
              "Error: piped_child() is unimplemented.\n");
