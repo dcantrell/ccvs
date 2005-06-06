@@ -1,3 +1,8 @@
+2005-06-06  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvs.h: Reverse patch committed 2005-05-27 by Conrad T. Pino.
+	* run.c: Reverse patch committed 2005-05-27 by Conrad T. Pino.
+
 2005-06-02  Derek Price  <derek@ximbiot.com>
 
 	* zlib.c (compress_buffer_shutdown_input): Don't attempt to read EOF

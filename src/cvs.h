@@ -698,19 +698,17 @@ void sleep_past PROTO ((time_t desttime));
 #define	RUN_SIGIGNORE         0x0010    /* ignore interrupts for command */
 #define	RUN_TTY               (char *)0 /* for the benefit of lint */
 
-void run_add_arg PROTO ((const char *s));
 void run_add_arg_p PROTO ((int *, size_t *, char ***, const char *s));
-#define run_arg run_add_arg
 void run_arg_free_p PROTO ((int, char **));
+void run_arg PROTO((const char *s));
 void run_print PROTO((FILE * fp));
 void run_setup PROTO ((const char *prog));
 int run_exec PROTO((const char *stin, const char *stout, const char *sterr,
 		    int flags));
-int run_piped PROTO ((int *, int *));
 
 /* other similar-minded stuff from run.c.  */
 FILE *run_popen PROTO((const char *, const char *));
-int piped_child PROTO((const char *const *, int *, int *));
+int piped_child PROTO((const char **, int *, int *));
 void close_on_exec PROTO((int));
 
 pid_t waitpid PROTO((pid_t, int *, int));
