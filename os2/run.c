@@ -12,6 +12,9 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.  */
 
+/* FIXME: Add "run_add_arg_p" and "run_arg_free_p" functions.
+   File "../src/run.c" contains the reference implementations. */
+
 #include "cvs.h"
 
 #include "os2inc.h"
