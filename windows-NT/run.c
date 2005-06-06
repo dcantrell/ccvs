@@ -44,23 +44,24 @@ static char **run_argv;
 static int run_argc;
 static int run_argc_allocated;
 
+
+
+void
+run_arg_free_p (int argc, char **argv)
+{
+    int i;
+    for (i = 0; i < argc; i++)
+	free (argv[i]);
+}
+
 void
 run_setup (const char *prog)
 {
     char *cp;
-    int i;
-
     char *run_prog;
 
     /* clean out any malloc'ed values from run_argv */
-    for (i = 0; i < run_argc; i++)
-    {
-	if (run_argv[i])
-	{
-	    free (run_argv[i]);
-	    run_argv[i] = (char *) 0;
-	}
-    }
+    run_arg_free_p (run_argc, run_argv);
     run_argc = 0;
 
     run_prog = xstrdup (prog);
@@ -77,6 +78,28 @@ run_arg (s)
     const char *s;
 {
     run_add_arg (s);
+}
+
+
+
+void
+run_add_arg_p (iargc, iarg_allocated, iargv, s)
+    int *iargc;
+    size_t *iarg_allocated;
+    char ***iargv;
+    const char *s;
+{
+    /* allocate more argv entries if we've run out */
+    if (*iargc >= *iarg_allocated)
+    {
+	*iarg_allocated += 50;
+	*iargv = xrealloc (*iargv, *iarg_allocated * sizeof (char **));
+    }
+
+    if (s)
+	(*iargv)[(*iargc)++] = xstrdup (s);
+    else
+	(*iargv)[*iargc] = NULL;	/* not post-incremented on purpose! */
 }
 
 /* Return a malloc'd copy of s, with double quotes around it.  */
