@@ -1,5 +1,9 @@
 2005-06-06  Conrad T. Pino  <Conrad@Pino.com>
 
+	* run.c: Add "FIXME" for "run_add_arg_p" and "run_arg_free_p" functions.
+
+2005-06-06  Conrad T. Pino  <Conrad@Pino.com>
+
 	* run.c: Reverse patch committed 2005-05-27 by Conrad T. Pino.
 
 2005-05-27  Conrad T. Pino  <Conrad@Pino.com>
