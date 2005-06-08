@@ -37,14 +37,15 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     char *default_value = NULL;
     int default_line = 0;
     char *expanded_value;
-    int callback_done, line_number;
+    bool callback_done;
+    int line_number;
     char *cp, *exp, *value;
     const char *srepos;
     const char *regex_err;
 
     assert (repository);
 
-    if (current_parsed_root == NULL)
+    if (!current_parsed_root)
     {
 	/* XXX - should be error maybe? */
 	error (0, 0, "CVSROOT variable not set");
@@ -55,7 +56,7 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     infopath = Xasprintf ("%s/%s/%s", current_parsed_root->directory,
 			  CVSROOTADM, infofile);
     fp_info = CVS_FOPEN (infopath, "r");
-    if (fp_info == NULL)
+    if (!fp_info)
     {
 	/* If no file, don't do anything special.  */
 	if (!existence_error (errno))
@@ -71,7 +72,8 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	   infopath, srepos,  (opt & PIOPT_ALL) ? "ALL" : "not ALL");
 
     /* search the info file for lines that match */
-    callback_done = line_number = 0;
+    callback_done = false;
+    line_number = 0;
     while (getline (&line, &line_allocated, fp_info) >= 0)
     {
 	line_number++;
@@ -108,8 +110,8 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	value = cp;
 
 	/* strip the newline off the end of the value */
-	if ((cp = strrchr (value, '\n')) != NULL)
-	    *cp = '\0';
+	cp = strrchr (value, '\n');
+	if (cp) *cp = '\0';
 
 	/*
 	 * At this point, exp points to the regular expression, and value
@@ -121,7 +123,7 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	/* save the default value so we have it later if we need it */
 	if (strcmp (exp, "DEFAULT") == 0)
 	{
-	    if (default_value != NULL)
+	    if (default_value)
 	    {
 		error (0, 0, "Multiple `DEFAULT' lines (%d and %d) in %s file",
 		       default_line, line_number, infofile);
@@ -143,7 +145,7 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 		error (0, 0, "Keyword `ALL' is ignored at line %d in %s file",
 		       line_number, infofile);
 	    else if ((expanded_value = expand_path (value, true, infofile,
-	                                            line_number)))
+	                                            line_number)) != NULL)
 	    {
 		err += callproc (repository, expanded_value, closure);
 		free (expanded_value);
@@ -158,7 +160,8 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	    continue;
 
 	/* see if the repository matched this regular expression */
-	if ((regex_err = re_comp (exp)) != NULL)
+	regex_err = re_comp (exp);
+	if (regex_err)
 	{
 	    error (0, 0, "bad regular expression at line %d file %s: %s",
 		   line_number, infofile, regex_err);
@@ -168,14 +171,15 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	    continue;				/* no match */
 
 	/* it did, so do the callback and note that we did one */
-	if ((expanded_value = expand_path (value, true, infofile, line_number)))
+	expanded_value = expand_path (value, true, infofile, line_number);
+	if (expanded_value)
 	{
 	    err += callproc (repository, expanded_value, closure);
 	    free (expanded_value);
 	}
 	else
 	    err++;
-	callback_done = 1;
+	callback_done = true;
     }
     if (ferror (fp_info))
 	error (0, errno, "cannot read %s", infopath);
@@ -183,10 +187,11 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	error (0, errno, "cannot close %s", infopath);
 
     /* if we fell through and didn't callback at all, do the default */
-    if (callback_done == 0 && default_value != NULL)
+    if (!callback_done && default_value)
     {
-	if ((expanded_value = expand_path (default_value, true, infofile,
-	                                   line_number)))
+	expanded_value = expand_path (default_value, true, infofile,
+	                              line_number);
+	if (expanded_value)
 	{
 	    err += callproc (repository, expanded_value, closure);
 	    free (expanded_value);
@@ -196,11 +201,9 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     }
 
     /* free up space if necessary */
-    if (default_value != NULL)
-	free (default_value);
+    if (default_value) free (default_value);
     free (infopath);
-    if (line != NULL)
-	free (line);
+    if (line) free (line);
 
     return err;
 }
@@ -380,7 +383,7 @@ parse_config (const char *cvsroot)
     infopath = Xasprintf ("%s/%s/%s", cvsroot, CVSROOTADM, CVSROOTADM_CONFIG);
 
     fp_info = CVS_FOPEN (infopath, "r");
-    if (fp_info == NULL)
+    if (!fp_info)
     {
 	/* If no file, don't do anything special.  */
 	if (!existence_error (errno))
@@ -433,7 +436,7 @@ parse_config (const char *cvsroot)
 
 	/* The first '=' separates keyword from value.  */
 	p = strchr (line, '=');
-	if (p == NULL)
+	if (!p)
 	{
 	    if (!parse_error (infopath, ln))
 		error (0, 0,
@@ -484,7 +487,7 @@ parse_config (const char *cvsroot)
 	    readBool (infopath, "TopLevelAdmin", p, &retval->top_level_admin);
 	else if (strcmp (line, "LockDir") == 0)
 	{
-	    if (retval->lock_dir != NULL)
+	    if (retval->lock_dir)
 		free (retval->lock_dir);
 	    retval->lock_dir = xstrdup (p);
 	    /* Could try some validity checking, like whether we can
@@ -616,7 +619,6 @@ parse_config (const char *cvsroot)
     if (fclose (fp_info) < 0)
 	error (0, errno, "cannot close %s", infopath);
     free (infopath);
-    if (line != NULL)
-	free (line);
+    if (line) free (line);
     return retval;
 }
