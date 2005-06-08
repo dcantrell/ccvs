@@ -1,3 +1,11 @@
+2005-06-08  Derek Price  <derek@ximbiot.com>
+
+	* parseinfo.c: Restore comparison to NULL in assignment within
+	conditional to placate non-GNU compilers.  Eliminate assignments in
+	conditionals where possible by GNU coding standards.  Eliminate other
+	comparisons to NULL where possible.
+	(Parse_Info): Make int a true bool.
+
 2005-06-03  Derek Price  <derek@ximbiot.com>
 
 	* client.c (force_gzip): New static global.
