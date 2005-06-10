@@ -423,10 +423,6 @@
 /* Define if you have the 'long long' type. */
 #undef HAVE_LONG_LONG
 
-/* Define to 1 if `lstat' has the bug that it succeeds when given the
-   zero-length file name argument. */
-#undef HAVE_LSTAT_EMPTY_STRING_BUG
-
 /* Define to 1 if your system has a GNU libc compatible `malloc' function, and
    to 0 otherwise. */
 #define HAVE_MALLOC 1
@@ -585,10 +581,6 @@
 
 /* Define to 1 if you have the `snprintf' function. */
 #undef HAVE_SNPRINTF
-
-/* Define to 1 if `stat' has the bug that it succeeds when given the
-   zero-length file name argument. */
-#undef HAVE_STAT_EMPTY_STRING_BUG
 
 /* Define to 1 if stdbool.h conforms to C99. */
 #undef HAVE_STDBOOL_H
@@ -884,8 +876,8 @@
 /* Define to force lib/regex.c to use malloc instead of alloca. */
 #define REGEX_MALLOC 1
 
-/* Define if rename does not work for source paths with a trailing slash, like
-   the one from SunOS 4.1.1_U1. */
+/* Define if rename does not work for source file names with a trailing slash,
+   like the one from SunOS 4.1.1_U1. */
 #undef RENAME_TRAILING_SLASH_BUG
 
 /* Define as the return type of signal handlers (`int' or `void'). */
@@ -1163,9 +1155,6 @@
 /* Define to rpl_localtime if the replacement function should be used. */
 #undef localtime
 
-/* Define to a substitute for the `lstat' function. */
-#define lstat stat
-
 /* Define to rpl_malloc if the replacement function should be used. */
 #undef malloc
 
@@ -1214,9 +1203,6 @@
 
 /* Define as a signed type of the same size as size_t. */
 #define ssize_t int
-
-/* Define to a substitute for the stat function. */
-#define stat wnt_stat
 
 /* Define to rpl_tzset if the wrapper function should be used. */
 #undef tzset
@@ -1352,3 +1338,9 @@ void wnt_start_server (int *tofd, int *fromfd,
 
 /* #define stat wnt_stat and #define lstat wnt_stat */
 int wnt_stat (const char *file, struct wnt_stat *sb);
+
+/* Define to a substitute for the `lstat' function. */
+#define lstat stat
+
+/* Define to a substitute for the stat function. */
+#define stat wnt_stat
