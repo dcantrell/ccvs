@@ -1,3 +1,14 @@
+2005-06-10  Derek Price  <derek@ximbiot.com>
+
+	Sync with GNULIB.
+	* getcwd-path-max.m4, rename.m4: Update from GNULIB.
+	* path-concat.m4: Rename to...
+	* filenamecat: ...this.
+
+	Test new stat module.
+	* stat.m4: Remove this file.
+	* lstat.m4: Don't check for empty string bug.
+
 2005-05-28  Derek Price  <derek@ximbiot.com>
 
 	* glob.m4: s/MISSING_SYS_CDEFS_H/_SYS_CDEFS_H/.  Add comment.
