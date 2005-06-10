@@ -1,3 +1,8 @@
+2005-06-10  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (loginfo, taginfo): Note new `T' format character in 
+	{sTVv} list.
+
 2005-06-03  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Global options): Note -z *requests* a compression level.

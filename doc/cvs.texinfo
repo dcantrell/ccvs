@@ -13684,11 +13684,14 @@ In addition to the common format strings (@pxref{syntax}),
 @file{loginfo} supports:
 
 @table @t
-@item @{sVv@}
+@item @{stVv@}
 File attributes, where:
 @table @t
 @item s
 file name
+@item T
+tag name of destination, or the empty string when there is no associated
+tag name (this usually means the trunk)
 @item V
 old version number (pre-checkin)
 @item v
@@ -13697,7 +13700,7 @@ new version number (post-checkin)
 @end table
 
 For example, some valid format strings are @samp{%%},
-@samp{%s}, @samp{%@{s@}}, and @samp{%@{sVv@}}.
+@samp{%s}, @samp{%@{s@}}, and @samp{%@{stVv@}}.
 
 @cindex loginfo (admin file), updating legacy repositories
 @cindex compatibility notes, loginfo admin file
@@ -13861,12 +13864,15 @@ unknown, as during delete operations)
 operation (@code{add} for @code{tag}, @code{mov} for @code{tag -F}, or
 @code{del} for @code{tag -d})
 @item t
-tag name
-@item @{sVv@}
+new tag name
+@item @{sTVv@}
 file attributes, where:
 @table @t
 @item s
 file name
+@item T
+tag name of destination, or the empty string when there is no associated
+tag name (this usually means the trunk)
 @item V
 old version number (for a move or delete operation)
 @item v
