@@ -1,3 +1,14 @@
+2005-06-10  Derek Price  <derek@ximbiot.com>
+
+	* logmsg.c (logmsg_list_to_args_proc): Add format character for
+	destination tag.
+	(Original patch from Todd Vierling <tv@duh.org>).
+
+	* tag.c (pretag_list_to_args_proc): Likewise.
+	(check_fileproc): Set destination tag name.
+	(tag_delproc): Delete destination tag name.
+	* sanity.sh (info, taginfo): Test new format strings.
+
 2005-06-08  Derek Price  <derek@ximbiot.com>
 
 	* parseinfo.c: Restore comparison to NULL in assignment within

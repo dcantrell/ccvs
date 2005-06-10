@@ -18961,7 +18961,7 @@ third-dir file1ux'
 	  dotest info-setup-newfmt-1 "$testcvs -q up -prinfo-start loginfo >loginfo"
 	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\" %{sVv}" >> loginfo
           # The following cases test the format string substitution
-          echo "ALL echo %p %{sVv} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %p \"%{sTVv}\" >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %{v} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %s >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %{V}AX >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
@@ -19002,15 +19002,15 @@ new revision: 1\.3; previous revision: 1\.2"
 	  dotest info-newfmt-6 "cat $TESTDIR/testlog" \
 "xenv-valueyz=${username}=${TESTDIR}/cvsroot="
           dotest info-newfmt-7 "cat $TESTDIR/testlog2" \
-'fourth-dir file1 NONE 1\.1
+'fourth-dir file1  NONE 1\.1
 1\.1
 file1
 NONEAX
-fourth-dir file1 1\.1 1\.2
+fourth-dir file1  1\.1 1\.2
 1\.2
 file1
 1\.1AX
-fourth-dir file1 1\.2 1\.3
+fourth-dir file1  1\.2 1\.3
 1\.3
 file1
 1\.2AX'
@@ -19454,7 +19454,7 @@ tag1 del first-dir"
 	  cd CVSROOT
 	  dotest taginfo-newfmt-init-1 \
 "$testcvs -q up -prtaginfo-start taginfo >taginfo"
-	  echo "ALL $TESTDIR/1/loggit %r %t %o %b %p %{sVv}" >>taginfo
+	  echo "ALL $TESTDIR/1/loggit %r %t %o %b %p %{sTVv}" >>taginfo
 	  dotest taginfo-newfmt-init-2 "$testcvs -q ci -m check-in-taginfo" \
 "$TESTDIR/cvsroot/CVSROOT/taginfo,v  <--  taginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
@@ -19474,7 +19474,7 @@ leisure\."
 if test "\$1" = rejectme; then
   exit 1
 else
-  while [ -n "\$1" ]; do
+  while test "\$#" -gt 0; do
     echo "\$1" >>${TESTDIR}/1/taglog
     shift
   done
@@ -19507,28 +19507,48 @@ T file1"
 	  dotest taginfo-newfmt-4 "${testcvs} -q tag tag3" \
 "T file 2
 T file1"
+	  dotest taginfo-newfmt-5 "$testcvs -q tag -rtag1 tag4" \
+"T file 2
+T file1"
 
 	  dotest taginfo-newfmt-examine-1 "cat ${TESTDIR}/1/taglog" \
-"${TESTDIR}/cvsroot
+"$TESTDIR/cvsroot
 tag1
 add
 N
 first-dir
 file 2
+
 NONE
 1\.1
 file1
+
 NONE
 1\.1
-${TESTDIR}/cvsroot
+$TESTDIR/cvsroot
 tag3
 add
 N
 first-dir
 file 2
+
 NONE
 1\.1
 file1
+
+NONE
+1\.1
+$TESTDIR/cvsroot
+tag4
+add
+N
+first-dir
+file 2
+tag1
+NONE
+1\.1
+file1
+tag1
 NONE
 1\.1"
 
@@ -19548,7 +19568,7 @@ fi
 EOF
 	  dotest taginfo-newfmt-init-7 \
 "$testcvs -q up -prtaginfo-start taginfo >taginfo"
-	  echo "ALL ${TESTDIR}/1/loggit %{t} %b %{o} %p %{sVv}" >>taginfo
+	  echo "ALL ${TESTDIR}/1/loggit %{t} %b %{o} %p %{sTVv}" >>taginfo
 	  echo "UseNewInfoFmtStrings=yes" >>config
 	  dotest taginfo-newfmt-7 "$testcvs -q ci -m check-in-taginfo" \
 "$TESTDIR/cvsroot/CVSROOT/config,v  <--  config
@@ -19647,18 +19667,18 @@ D file1"
 	  # would be an improvement.
 	  dotest taginfo-newfmt-examine-2 "cat ${TESTDIR}/1/taglog" \
 "tag1 N add first-dir
-br T add first-dir file 2 NONE 1\.1
-br T add first-dir/sdir file3 NONE 1\.1
-brtag N mov first-dir file 2 NONE 1\.1 file1 1\.1\.2\.1 1\.1\.2\.2
-brtag N mov first-dir/sdir file3 NONE 1\.1
-tag1 ? del first-dir file 2 1\.1 1\.1 file1 1\.1 1\.1
+br T add first-dir file 2  NONE 1\.1
+br T add first-dir/sdir file3  NONE 1\.1
+brtag N mov first-dir file 2 br NONE 1\.1 file1 br 1\.1\.2\.1 1\.1\.2\.2
+brtag N mov first-dir/sdir file3 br NONE 1\.1
+tag1 ? del first-dir file 2 br 1\.1 1\.1 file1 br 1\.1 1\.1
 tag1 ? del first-dir/sdir
 tag1 ? del first-dir
 tag1 ? del first-dir/sdir
-tag1 N add first-dir file 2 NONE 1\.1 file1 NONE 1\.1
-tag1 N add first-dir/sdir file3 NONE 1\.1
-tag1 ? del first-dir file 2 1\.1 1\.1 file1 1\.1 1\.1
-tag1 ? del first-dir/sdir file3 1\.1 1\.1
+tag1 N add first-dir file 2  NONE 1\.1 file1  NONE 1\.1
+tag1 N add first-dir/sdir file3  NONE 1\.1
+tag1 ? del first-dir file 2  1\.1 1\.1 file1  1\.1 1\.1
+tag1 ? del first-dir/sdir file3  1\.1 1\.1
 tag1 ? del first-dir
 tag1 ? del first-dir/sdir"
 
