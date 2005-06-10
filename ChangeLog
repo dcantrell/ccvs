@@ -1,3 +1,7 @@
+2005-06-10  Derek Price  <derek@ximbiot.com>
+
+	* maint-aux/gnulib-modules: Remove stat module.
+
 2005-06-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* HACKING: Add a few more guidelines.  Adjust examples for switch

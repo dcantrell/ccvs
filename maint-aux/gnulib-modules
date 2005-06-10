@@ -30,7 +30,6 @@ mktime
 minmax
 memmove
 nanosleep
-stat
 lstat
 strerror
 vasprintf

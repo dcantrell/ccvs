@@ -45,6 +45,7 @@ lib/gettext.h
 lib/gettime.c
 lib/gettimeofday.c
 lib/lstat.c
+lib/lstat.h
 lib/malloc.c
 lib/md5.c
 lib/md5.h
@@ -72,7 +73,6 @@ lib/save-cwd.c
 lib/save-cwd.h
 lib/setenv.c
 lib/setenv.h
-lib/stat.c
 lib/stat-macros.h
 lib/stdbool_.h
 lib/stdint_.h
@@ -179,7 +179,6 @@ m4/setenv.m4
 m4/signed.m4
 m4/size_max.m4
 m4/ssize_t.m4
-m4/stat.m4
 m4/stat-macros.m4
 m4/stdbool.m4
 m4/stdint_h.m4
