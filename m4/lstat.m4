@@ -16,26 +16,9 @@ dnl If it does, then define HAVE_LSTAT_EMPTY_STRING_BUG and arrange to
 dnl compile the wrapper function.
 dnl
 
-AC_DEFUN([gl_LSTAT_SUBSTITUTE],
-[
-  gl_PREREQ_LSTAT
-  AC_DEFINE(lstat, rpl_lstat,
-    [Define to a substitute for the `lstat' function.])
-])
-
 AC_DEFUN([gl_FUNC_LSTAT],
 [
-  AC_REQUIRE([AC_FUNC_LSTAT])dnl
-  dnl Note: AC_FUNC_LSTAT does AC_LIBOBJ(lstat).
-  if test $ac_cv_func_lstat_empty_string_bug = yes \
-     || test $ac_cv_func_lstat_dereferences_slashed_symlink = no; then
-    gl_LSTAT_SUBSTITUTE
-  fi
-  :
-])
-
-AC_DEFUN([gl_PREREQ_LSTAT],
-[
-  AC_REQUIRE([AC_FUNC_LSTAT])dnl
+  AC_REQUIRE([AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK])
+  dnl Note: AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK does AC_LIBOBJ(lstat).
   :
 ])
