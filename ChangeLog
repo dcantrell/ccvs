@@ -1,3 +1,10 @@
+2005-06-10  Mark D. Baushke  <mdb@cvshome.org>
+
+	* HACKING: Add a few more guidelines.  Adjust examples for switch
+	labels.  Fix some spelling mistakes.
+	* cvs-format.el (c-label-offset, case-label): Adjust indentation
+	to agree with changes in the HACKING document.
+	
 2005-06-03  Derek Price  <derek@ximbiot.com>
 
 	* HACKING: Remove `!= NULL' in example conditional.

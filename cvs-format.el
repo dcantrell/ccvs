@@ -103,7 +103,7 @@
 ;;  style.  But if one manually aligns the first case, then the rest
 ;;  should work OK.
 (if (boundp 'c-label-offset)
-    (setq c-label-offset -4))
+    (setq c-label-offset -2))
 
 ;;
 ;;
@@ -126,7 +126,7 @@
 		       (knr-argdecl-intro . 4)
 		       (substatement-open . 0)
 		       (label . 2)
-		       (case-label . +)
+		       (case-label . 2)
 		       (statement-case-open . +)
 		       (statement-cont . +)
 		       (arglist-intro . c-lineup-arglist-intro-after-paren)
