@@ -1,3 +1,18 @@
+2005-06-10  Derek Price  <derek@ximbiot.com>
+
+	Sync with GNULIB.
+	* basename.c, canonicalize.c, canonicalize.h, dirname.c, dirname.h,
+	fnmatch_.h, fnmatch_loop.c, getcwd.c, getlogin_r.c, mkstemp.c,
+	openat.c, openat.h, pathmax.h, rename.c, stripslash.c, tempname.c,
+	xreadlink.c: Update from GNULIB.
+	* path-concat.c, path-concat.h: Rename to...
+	* filenamecat.c, filenamecat.h: ...this.
+
+	Test new stat module.
+	* lstat.h: New file.
+	* stat.c: Remove this file and...
+	* lstat.c: ...move most functionality here.
+
 2005-05-30  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.dsp: Add files "windows-NT/woe32.h" to project.

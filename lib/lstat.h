@@ -1,6 +1,5 @@
-/* Concatenate two arbitrary pathnames.
-
-   Copyright (C) 1996, 1997, 2003 Free Software Foundation, Inc.
+/* Retrieving information about files.
+   Copyright (C) 2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,11 +15,10 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-/* Written by Jim Meyering.  */
+#include <sys/stat.h>
 
-#if ! defined PATH_CONCAT_H_
-# define PATH_CONCAT_H_
-
-char *path_concat (const char *dir, const char *base, char **base_in_result);
-
+#if !LSTAT_FOLLOWS_SLASHED_SYMLINK
+extern int rpl_lstat (const char *name, struct stat *buf);
+# undef lstat
+# define lstat rpl_lstat
 #endif
