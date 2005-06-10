@@ -633,6 +633,10 @@ logmsg_list_to_args_proc (Node *p, void *closure)
 	    case 's':
 		arg = p->key;
 		break;
+	    case 'T':
+		li = p->data;
+		arg = li->tag ? li->tag : "";
+		break;
 	    case 'V':
 		li = p->data;
 		arg = li->rev_old ? li->rev_old : "NONE";

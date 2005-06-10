@@ -629,6 +629,7 @@ check_fileproc (void *callerdat, struct file_info *finfo)
        (e.g. numtag is "foo" which gets moved between here and
        tag_fileproc).  */
     p->data = ti = xmalloc (sizeof (struct tag_info));
+    ti->tag = xstrdup (numtag ? numtag : vers->tag);
     if (!is_rtag && numtag == NULL && date == NULL)
 	ti->rev = xstrdup (vers->vn_user);
     else
@@ -828,28 +829,32 @@ static void
 tag_delproc (Node *p)
 {
     struct tag_info *ti;
-    if (p->data != NULL)
+    if (p->data)
     {
 	ti = (struct tag_info *) p->data;
 	if (ti->oldrev) free (ti->oldrev);
 	if (ti->rev) free (ti->rev);
-        free(p->data);
+	free (ti->tag);
+        free (p->data);
         p->data = NULL;
     }
     return;
 }
+
+
 
 /* to be passed into walklist with a list of tags
  * p->key = tagname
  * p->data = struct tag_info *
  * p->data->oldrev = rev tag will be deleted from
  * p->data->rev = rev tag will be added to
+ * p->data->tag = tag oldrev is attached to, if any
  *
  * closure will be a struct format_cmdline_walklist_closure
  * where closure is undefined
  */
 static int
-pretag_list_to_args_proc(Node *p, void *closure)
+pretag_list_to_args_proc (Node *p, void *closure)
 {
     struct tag_info *taginfo = (struct tag_info *)p->data;
     struct format_cmdline_walklist_closure *c =
@@ -859,7 +864,7 @@ pretag_list_to_args_proc(Node *p, void *closure)
     char *d;
     size_t doff;
 
-    if (p->data == NULL) return 1;
+    if (!p->data) return 1;
 
     f = c->format;
     d = *c->d;
@@ -870,6 +875,9 @@ pretag_list_to_args_proc(Node *p, void *closure)
 	{
 	    case 's':
 		arg = p->key;
+		break;
+	    case 'T':
+		arg = taginfo->tag ? taginfo->tag : "";
 		break;
 	    case 'v':
 		arg = taginfo->rev ? taginfo->rev : "NONE";
