@@ -22,6 +22,7 @@
  */
 
 #include "cvs.h"
+#include "lstat.h"
 #include "save-cwd.h"
 
 static char *get_comment (const char *user);

@@ -12,6 +12,7 @@
  */
 
 #include "cvs.h"
+#include "lstat.h"
 
 #ifdef SERVER_SUPPORT
 static void time_stamp_server (const char *, Vers_TS *, Entnode *);
