@@ -1458,6 +1458,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 gl_func_list="$gl_func_list fchdir"
 gl_header_list="$gl_header_list fcntl.h"
 gl_header_list="$gl_header_list unistd.h"
+gl_func_list="$gl_func_list mempcpy"
 gl_header_list="$gl_header_list sys/time.h"
 gl_func_list="$gl_func_list isascii"
 gl_header_list="$gl_header_list sys/param.h"
@@ -1467,7 +1468,6 @@ gl_func_list="$gl_func_list nanotime"
 gl_header_list="$gl_header_list stdint.h"
 gl_func_list="$gl_func_list siginterrupt"
 gl_func_list="$gl_func_list posix_memalign"
-gl_func_list="$gl_func_list mempcpy"
 gl_header_list="$gl_header_list wchar.h"
 gl_header_list="$gl_header_list wctype.h"
 gl_func_list="$gl_func_list iswprint"
@@ -9512,6 +9512,12 @@ _ACEOF
 
 fi
 
+
+
+
+
+
+
 echo "$as_me:$LINENO: checking for mbstate_t" >&5
 echo $ECHO_N "checking for mbstate_t... $ECHO_C" >&6
 if test "${ac_cv_type_mbstate_t+set}" = set; then
@@ -11315,71 +11321,6 @@ esac
 
 fi
 
-echo "$as_me:$LINENO: checking whether lstat accepts an empty string" >&5
-echo $ECHO_N "checking whether lstat accepts an empty string... $ECHO_C" >&6
-if test "${ac_cv_func_lstat_empty_string_bug+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  if test "$cross_compiling" = yes; then
-  ac_cv_func_lstat_empty_string_bug=yes
-else
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-$ac_includes_default
-int
-main ()
-{
-struct stat sbuf;
-  exit (lstat ("", &sbuf) ? 1 : 0);
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_func_lstat_empty_string_bug=yes
-else
-  echo "$as_me: program exited with status $ac_status" >&5
-echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-( exit $ac_status )
-ac_cv_func_lstat_empty_string_bug=no
-fi
-rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
-fi
-fi
-echo "$as_me:$LINENO: result: $ac_cv_func_lstat_empty_string_bug" >&5
-echo "${ECHO_T}$ac_cv_func_lstat_empty_string_bug" >&6
-if test $ac_cv_func_lstat_empty_string_bug = yes; then
-  case $LIBOBJS in
-    "lstat.$ac_objext"   | \
-  *" lstat.$ac_objext"   | \
-    "lstat.$ac_objext "* | \
-  *" lstat.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS lstat.$ac_objext" ;;
-esac
-
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_LSTAT_EMPTY_STRING_BUG 1
-_ACEOF
-
-fi
-
 
   echo "$as_me:$LINENO: checking for uint32_t" >&5
 echo $ECHO_N "checking for uint32_t... $ECHO_C" >&6
@@ -13178,12 +13119,6 @@ _ACEOF
 
 
 
-
-
-
-
-
-
 echo "$as_me:$LINENO: checking for C/C++ restrict keyword" >&5
 echo $ECHO_N "checking for C/C++ restrict keyword... $ECHO_C" >&6
 if test "${gl_cv_c_restrict+set}" = set; then
@@ -13247,71 +13182,6 @@ _ACEOF
 _ACEOF
  ;;
  esac
-
-echo "$as_me:$LINENO: checking whether stat accepts an empty string" >&5
-echo $ECHO_N "checking whether stat accepts an empty string... $ECHO_C" >&6
-if test "${ac_cv_func_stat_empty_string_bug+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  if test "$cross_compiling" = yes; then
-  ac_cv_func_stat_empty_string_bug=yes
-else
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-$ac_includes_default
-int
-main ()
-{
-struct stat sbuf;
-  exit (stat ("", &sbuf) ? 1 : 0);
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_func_stat_empty_string_bug=yes
-else
-  echo "$as_me: program exited with status $ac_status" >&5
-echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-( exit $ac_status )
-ac_cv_func_stat_empty_string_bug=no
-fi
-rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
-fi
-fi
-echo "$as_me:$LINENO: result: $ac_cv_func_stat_empty_string_bug" >&5
-echo "${ECHO_T}$ac_cv_func_stat_empty_string_bug" >&6
-if test $ac_cv_func_stat_empty_string_bug = yes; then
-  case $LIBOBJS in
-    "stat.$ac_objext"   | \
-  *" stat.$ac_objext"   | \
-    "stat.$ac_objext "* | \
-  *" stat.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS stat.$ac_objext" ;;
-esac
-
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_STAT_EMPTY_STRING_BUG 1
-_ACEOF
-
-fi
 
 
   echo "$as_me:$LINENO: checking for inttypes.h" >&5
@@ -17682,7 +17552,26 @@ esac
 
     :
 
-    # No macro. You should also use one of fnmatch-posix or fnmatch-gnu.
+
+
+  case $LIBOBJS in
+    "filenamecat.$ac_objext"   | \
+  *" filenamecat.$ac_objext"   | \
+    "filenamecat.$ac_objext "* | \
+  *" filenamecat.$ac_objext "* ) ;;
+  *) LIBOBJS="$LIBOBJS filenamecat.$ac_objext" ;;
+esac
+
+
+
+  :
+
+
+
+
+
+
+  # No macro. You should also use one of fnmatch-posix or fnmatch-gnu.
 
   FNMATCH_H=
   echo "$as_me:$LINENO: checking for working POSIX fnmatch" >&5
@@ -20863,20 +20752,8 @@ _ACEOF
   fi
 
 
-      if test $ac_cv_func_lstat_empty_string_bug = yes \
-     || test $ac_cv_func_lstat_dereferences_slashed_symlink = no; then
-
 
     :
-
-
-cat >>confdefs.h <<\_ACEOF
-#define lstat rpl_lstat
-_ACEOF
-
-
-  fi
-  :
 
 
 for ac_header in stdlib.h
@@ -22316,25 +22193,6 @@ esac
 
 
 
-
-
-
-
-
-
-
-
-  case $LIBOBJS in
-    "path-concat.$ac_objext"   | \
-  *" path-concat.$ac_objext"   | \
-    "path-concat.$ac_objext "* | \
-  *" path-concat.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS path-concat.$ac_objext" ;;
-esac
-
-
-
-  :
 
 
 
@@ -24136,20 +23994,6 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
     fi
-  fi
-
-
-      if test $ac_cv_func_stat_empty_string_bug = yes; then
-
-
-    :
-
-
-cat >>confdefs.h <<\_ACEOF
-#define stat rpl_stat
-_ACEOF
-
-
   fi
 
 
