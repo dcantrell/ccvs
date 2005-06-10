@@ -116,3 +116,9 @@ void wnt_start_server (int *tofd, int *fromfd,
 
 /* #define stat wnt_stat and #define lstat wnt_stat */
 int wnt_stat (const char *file, struct wnt_stat *sb);
+
+/* Define to a substitute for the `lstat' function. */
+#define lstat stat
+
+/* Define to a substitute for the stat function. */
+#define stat wnt_stat
