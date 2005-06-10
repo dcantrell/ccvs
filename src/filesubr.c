@@ -18,6 +18,7 @@
    file system semantics.  */
 
 #include "cvs.h"
+#include "lstat.h"
 #include "save-cwd.h"
 #include "xsize.h"
 

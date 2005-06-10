@@ -14,6 +14,7 @@
 
 #include "cvs.h"
 #include "getline.h"
+#include "lstat.h"
 
 /*
  * Ignore file section.

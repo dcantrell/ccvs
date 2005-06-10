@@ -1,5 +1,9 @@
 2005-06-10  Derek Price  <derek@ximbiot.com>
 
+	* filesubr.c, ignore.c, import.c, vers_ts.c: Include "lstat.h".
+
+2005-06-10  Derek Price  <derek@ximbiot.com>
+
 	* logmsg.c (logmsg_list_to_args_proc): Add format character for
 	destination tag.
 	(Original patch from Todd Vierling <tv@duh.org>).
