@@ -31,7 +31,7 @@
 	".\canonicalize.h"\
 	".\cycle-check.h"\
 	".\dev-ino.h"\
-	".\path-concat.h"\
+	".\filenamecat.h"\
 	".\pathmax.h"\
 	".\stat-macros.h"\
 	".\timespec.h"\
@@ -207,6 +207,14 @@
 	".\stat-macros.h"\
 	".\strdup.h"\
 	".\timespec.h"\
+	
+
+.\lstat.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\stat-macros.h"\
+	".\timespec.h"\
+	".\xalloc.h"\
 	
 
 .\md5.c : \
