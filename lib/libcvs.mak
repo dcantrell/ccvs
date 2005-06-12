@@ -59,6 +59,7 @@ CLEAN :
 	-@erase "$(INTDIR)\getopt1.obj"
 	-@erase "$(INTDIR)\gettime.obj"
 	-@erase "$(INTDIR)\glob.obj"
+	-@erase "$(INTDIR)\lstat.obj"
 	-@erase "$(INTDIR)\md5.obj"
 	-@erase "$(INTDIR)\mempcpy.obj"
 	-@erase "$(INTDIR)\pagealign_alloc.obj"
@@ -158,6 +159,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\getopt1.obj" \
 	"$(INTDIR)\gettime.obj" \
 	"$(INTDIR)\glob.obj" \
+	"$(INTDIR)\lstat.obj" \
 	"$(INTDIR)\md5.obj" \
 	"$(INTDIR)\mempcpy.obj" \
 	"$(INTDIR)\pagealign_alloc.obj" \
@@ -224,6 +226,7 @@ CLEAN :
 	-@erase "$(INTDIR)\getopt1.obj"
 	-@erase "$(INTDIR)\gettime.obj"
 	-@erase "$(INTDIR)\glob.obj"
+	-@erase "$(INTDIR)\lstat.obj"
 	-@erase "$(INTDIR)\md5.obj"
 	-@erase "$(INTDIR)\mempcpy.obj"
 	-@erase "$(INTDIR)\pagealign_alloc.obj"
@@ -320,6 +323,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\getopt1.obj" \
 	"$(INTDIR)\gettime.obj" \
 	"$(INTDIR)\glob.obj" \
+	"$(INTDIR)\lstat.obj" \
 	"$(INTDIR)\md5.obj" \
 	"$(INTDIR)\mempcpy.obj" \
 	"$(INTDIR)\pagealign_alloc.obj" \
@@ -473,6 +477,11 @@ SOURCE=.\gettime.c
 SOURCE=.\glob.c
 
 "$(INTDIR)\glob.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\lstat.c
+
+"$(INTDIR)\lstat.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\md5.c

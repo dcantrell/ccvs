@@ -173,6 +173,10 @@ SOURCE=.\glob.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\lstat.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\md5.c
 # End Source File
 # Begin Source File
@@ -357,6 +361,10 @@ SOURCE=.\exit.h
 # Begin Source File
 
 SOURCE=.\exitfail.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\filenamecat.h
 # End Source File
 # Begin Source File
 
