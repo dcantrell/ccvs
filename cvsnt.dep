@@ -898,6 +898,7 @@
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
+	".\lib\lstat.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\stat-macros.h"\
@@ -937,6 +938,7 @@
 	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
+	".\lib\lstat.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\save-cwd.h"\
@@ -2341,6 +2343,7 @@
 	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
+	".\lib\lstat.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\stat-macros.h"\
