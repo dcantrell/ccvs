@@ -500,6 +500,10 @@ SOURCE=".\src\log-buffer.h"
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\lstat.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\md5.h
 # End Source File
 # Begin Source File

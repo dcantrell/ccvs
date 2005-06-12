@@ -1,3 +1,8 @@
+2005-06-12  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dsp: Add file "lstat.h" to project.
+	* cvsnt.dep: Regenerate for "cvsnt.dsp" change.
+
 2005-06-10  Derek Price  <derek@ximbiot.com>
 
 	* maint-aux/gnulib-modules: Remove stat module.
