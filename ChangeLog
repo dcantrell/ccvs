@@ -1,5 +1,9 @@
 2005-06-15  Derek Price  <derek@ximbiot.com>
 
+	* build-aux/missing: Add hack to fail gracefully when Bison is too old.
+
+2005-06-15  Derek Price  <derek@ximbiot.com>
+
 	* HACKING: Note GNU Bison 1.875 requirement.
 
 2005-06-12  Conrad T. Pino  <Conrad@Pino.com>
