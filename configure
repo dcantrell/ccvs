@@ -10128,13 +10128,11 @@ fi
 
 
 
+  # expand $ac_aux_dir to an absolute path
+  am_aux_dir=`cd $ac_aux_dir && pwd`
 
   # getdate.y works with bison only.
-
-YACC=${YACC-"${am_missing_run}bison -y"}
-
-
-
+  test "${YACC+set}" = set || YACC="\${SHELL} $am_aux_dir/bison-missing --run bison -y"
 
 
 
