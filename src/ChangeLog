@@ -1,3 +1,10 @@
+2005-06-22  Larry Jones  <lawrence.jones@ugs.com>
+
+        * vers_ts (Version_TS): Don't allow command line keyword expansion
+        modes to override binary mode.
+        * sanity.sh (): Tests for the above.
+        (Merged from trunk.)
+
 2005-06-06  Conrad T. Pino  <Conrad@Pino.com>
 
 	* cvs.h: Reverse patch committed 2005-05-27 by Conrad T. Pino.

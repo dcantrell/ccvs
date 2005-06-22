@@ -40,6 +40,7 @@ Version_TS (finfo, options, tag, date, force_tag_match, set_time)
     Vers_TS *vers_ts;
     struct stickydirtag *sdtp;
     Entnode *entdata;
+    char *rcsexpand = NULL;
 
 #ifdef UTIME_EXPECTS_WRITABLE
     int change_it_back = 0;
@@ -111,30 +112,39 @@ Version_TS (finfo, options, tag, date, force_tag_match, set_time)
 	}
     }
 
+    /* Always look up the RCS keyword mode when we have an RCS archive.  It
+     * will either be needed as a default or to avoid allowing the -k options
+     * specified on the command line from overriding binary mode (-kb).
+     */
+    if (finfo->rcs != NULL)
+	rcsexpand = RCS_getexpand (finfo->rcs);
+
     /*
      * -k options specified on the command line override (and overwrite)
-     * options stored in the entries file
+     * options stored in the entries file and default options from the RCS
+     * archive, except for binary mode (-kb).
      */
     if (options && *options != '\0')
-	vers_ts->options = xstrdup (options);
-    else if (!vers_ts->options || *vers_ts->options == '\0')
     {
-	if (finfo->rcs != NULL)
-	{
-	    /* If no keyword expansion was specified on command line,
-	       use whatever was in the rcs file (if there is one).  This
-	       is how we, if we are the server, tell the client whether
-	       a file is binary.  */
-	    char *rcsexpand = RCS_getexpand (finfo->rcs);
-	    if (rcsexpand != NULL)
-	    {
-		if (vers_ts->options != NULL)
-		    free (vers_ts->options);
-		vers_ts->options = xmalloc (strlen (rcsexpand) + 3);
-		strcpy (vers_ts->options, "-k");
-		strcat (vers_ts->options, rcsexpand);
-	    }
-	}
+	if (vers_ts->options != NULL)
+	    free (vers_ts->options);
+	if (rcsexpand != NULL && strcmp (rcsexpand, "b") == 0)
+	    vers_ts->options = xstrdup ("-kb");
+	else
+	    vers_ts->options = xstrdup (options);
+    }
+    else if ((!vers_ts->options || *vers_ts->options == '\0')
+             && rcsexpand != NULL)
+    {
+	/* If no keyword expansion was specified on command line,
+	   use whatever was in the rcs file (if there is one).  This
+	   is how we, if we are the server, tell the client whether
+	   a file is binary.  */
+	if (vers_ts->options != NULL)
+	    free (vers_ts->options);
+	vers_ts->options = xmalloc (strlen (rcsexpand) + 3);
+	strcpy (vers_ts->options, "-k");
+	strcat (vers_ts->options, rcsexpand);
     }
     if (!vers_ts->options)
 	vers_ts->options = xstrdup ("");
