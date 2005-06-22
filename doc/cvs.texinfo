@@ -7943,7 +7943,7 @@ for other files to access source files from a central
 location.  Many people have come up with some such a
 @c two such people are paul@sander.cupertino.ca.us (for
 @c a previous employer)
-@c and gtornblo@senet.abb.se (spicm and related tools),
+@c and gunnar.tornblom@se.abb.com (spicm and related tools),
 @c but as far as I know
 @c no one has nicely packaged or released such a system (or
 @c instructions for constructing one).

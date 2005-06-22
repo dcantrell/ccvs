@@ -1,3 +1,7 @@
+2005-06-22  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Builds): Update Gunnar Tornblom's email at his request.
+
 2005-06-10  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (loginfo, taginfo): Note new `T' format character in 
