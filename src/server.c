@@ -4808,9 +4808,6 @@ serve_rannotate (char *arg)
 static void
 serve_co (char *arg)
 {
-    char *tempdir;
-    int status;
-
     if (print_pending_error ())
 	return;
 
@@ -4837,51 +4834,13 @@ serve_co (char *arg)
     }
 # endif /* PROXY_SUPPORT */
 
-    if (!isdir (CVSADM))
-    {
-	/*
-	 * The client has not sent a "Repository" line.  Check out
-	 * into a pristine directory.
-	 */
-	tempdir = xmalloc (strlen (server_temp_dir) + 80);
-	if (tempdir == NULL)
-	{
-	    buf_output0 (buf_to_net, "E Out of memory\n");
-	    return;
-	}
-	strcpy (tempdir, server_temp_dir);
-	strcat (tempdir, "/checkout-dir");
-	status = mkdir_p (tempdir);
-	if (status != 0 && status != EEXIST)
-	{
-	    buf_output0 (buf_to_net, "E Cannot create ");
-	    buf_output0 (buf_to_net, tempdir);
-	    buf_append_char (buf_to_net, '\n');
-	    print_error (errno);
-	    free (tempdir);
-	    return;
-	}
-
-	if (CVS_CHDIR (tempdir) < 0)
-	{
-	    buf_output0 (buf_to_net, "E Cannot change to directory ");
-	    buf_output0 (buf_to_net, tempdir);
-	    buf_append_char (buf_to_net, '\n');
-	    print_error (errno);
-	    free (tempdir);
-	    return;
-	}
-	free (tempdir);
-    }
-
     /* Compensate for server_export()'s setting of cvs_cmd_name.
      *
      * [It probably doesn't matter if do_cvs_command() gets "export"
      *  or "checkout", but we ought to be accurate where possible.]
      */
-    do_cvs_command ((strcmp (cvs_cmd_name, "export") == 0) ?
-		    "export" : "checkout",
-		    checkout);
+    do_cvs_command (!strcmp (cvs_cmd_name, "export") ? "export" : "checkout",
+                   checkout);
 }
 
 
