@@ -1,3 +1,7 @@
+2005-07-07  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.footer (WOE32): New macro.
+
 2005-06-10  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in: Remove HAVE_LSTAT_EMPTY_STRING_BUG,
