@@ -270,23 +270,6 @@ off_t ftello (FILE *);
 int fseeko (FILE *, off_t, int);
 #endif /* HAVE_FSEEKO */
 
-#ifdef WIN32
-/*
- * According to GNU conventions, we should avoid referencing any macro
- * containing "WIN" as a reference to Microsoft Windows, as we would like to
- * avoid any implication that we consider Microsoft Windows any sort of "win".
- *
- * FIXME: As of 2003-06-09, folks on the GNULIB project were discussing
- * defining a configure macro to define WOE32 appropriately.  If they ever do
- * write such a beast, we should use it, though in most cases it would be
- * preferable to avoid referencing any OS or compiler anyhow, per Autoconf
- * convention, and reference only tested features of the system.
- */
-# define WOE32 1
-#endif /* WIN32 */
-
-
-
 #ifdef FILENAMES_CASE_INSENSITIVE
 
 # if defined (__CYGWIN32__) || defined (WOE32)
