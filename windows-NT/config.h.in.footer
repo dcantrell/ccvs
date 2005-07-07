@@ -122,3 +122,16 @@ int wnt_stat (const char *file, struct wnt_stat *sb);
 
 /* Define to a substitute for the stat function. */
 #define stat wnt_stat
+
+/*
+ * According to GNU conventions, we should avoid referencing any macro
+ * containing "WIN" as a reference to Microsoft Windows, as we would like to
+ * avoid any implication that we consider Microsoft Windows any sort of "win".
+ *
+ * FIXME: As of 2003-06-09, folks on the GNULIB project were discussing
+ * defining a configure macro to define WOE32 appropriately.  If they ever do
+ * write such a beast, we should use it, though in most cases it would be
+ * preferable to avoid referencing any OS or compiler anyhow, per Autoconf
+ * convention, and reference only tested features of the system.
+ */
+#define WOE32 1
