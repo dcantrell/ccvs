@@ -1,3 +1,8 @@
+2005-07-11  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c, buffer.h, client.h, expand_path.c, history.c, myndbm.h,
+	release.c: Update license notices.
+
 2005-06-28  Derek Price  <derek@ximbiot.com>
 
 	* server.c (serve_co): Remove obsolete support for Repository request.
