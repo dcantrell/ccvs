@@ -1,3 +1,8 @@
+2005-07-11  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c, buffer.h, client.h, expand_path.c, history.c, myndbm.h,
+	release.c: Update license notices.
+
 2005-06-22  Larry Jones  <lawrence.jones@ugs.com>
 
         * vers_ts (Version_TS): Don't allow command line keyword expansion
