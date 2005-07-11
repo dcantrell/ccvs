@@ -1,3 +1,7 @@
+2005-07-11  Derek Price  <derek@ximbiot.com>
+
+	* mkdir.c, startserver.c, woe32.c: Update license notices.
+
 2005-06-06  Conrad T. Pino  <Conrad@Pino.com>
 
 	* run.c: Add "run_add_arg_p" and "run_arg_free_p" functions.
