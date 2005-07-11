@@ -1,3 +1,7 @@
+2005-07-11  Derek Price  <derek@ximbiot.com>
+
+	* FAQ, HACKING, INSTALL-CVS: Update license notices.
+
 2005-06-15  Derek Price  <derek@ximbiot.com>
 
 	* build-aux/missing: Add hack to fail gracefully when Bison is too old.
