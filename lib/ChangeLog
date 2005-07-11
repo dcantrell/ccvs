@@ -1,3 +1,7 @@
+2005-07-11  Mark D. Baushke  <mdb@cvshome.org>
+
+	* getpass.c (getpass): Add a K&R style function definition.
+
 2005-04-15  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (EXTRA_DIST): Add test-getdate.sh.
