@@ -11003,45 +11003,46 @@ melhor dos dois mundos de ???checkouts??? reservados e
 @c <en>good grasp on what @sc{cvs} can do for you.  This
 @c <en>chapter talks a little about things that you still have
 @c <en>to decide.
-If you have read this far, you probably have a pretty
-good grasp on what @sc{cvs} can do for you.  This
-chapter talks a little about things that you still have
-to decide.
+Se você leu até este ponto, você provavelmente tem uma
+boa noção do que o @sc{cvs} pode fazer por você.  Este
+capítulo fala um pouco sobre coisas que ainda cabe a
+você decidir.
 
 @c <en>If you are doing development on your own using @sc{cvs}
 @c <en>you could probably skip this chapter.  The questions
 @c <en>this chapter takes up become more important when more
 @c <en>than one person is working in a repository.
-If you are doing development on your own using @sc{cvs}
-you could probably skip this chapter.  The questions
-this chapter takes up become more important when more
-than one person is working in a repository.
+Se você está desenvolvendo sozinho com o @sc{cvs}, você
+provavelmente pode pular este capítulo.  As questões
+que este capítulo levanta são mais importante quando
+mais de uma pessoa está trabalhando num mesmo repositório.
 
 @menu
 @c <en>* When to commit::              Some discussion on the subject
-* When to commit::              Some discussion on the subject
+* Quando ???commit???::        Alguma discussão sobre o assunto
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node When to commit
-@node When to commit
+@node Quando ???commit???
 @c <en>@section When to commit?
-@section When to commit?
+@section Quando ???commit??? ?
 @c <en>@cindex When to commit
-@cindex When to commit
+@cindex Quando ???commit???
 @c <en>@cindex Committing, when to
-@cindex Committing, when to
+@cindex ???Committing???, quando
 @c <en>@cindex Policy
-@cindex Policy
+@cindex Política
 
 @c <en>Your group should decide which policy to use regarding
 @c <en>commits.  Several policies are possible, and as your
 @c <en>experience with @sc{cvs} grows you will probably find
 @c <en>out what works for you.
-Your group should decide which policy to use regarding
-commits.  Several policies are possible, and as your
-experience with @sc{cvs} grows you will probably find
-out what works for you.
+Seu grupo deve decidir qual vai ser a política a
+respeito de ???commits???.  Várias políticas são
+possíveis, e à medida que sua experiência com o
+@sc{cvs} crescer, você provavelmente vai encontrar a
+que funciona com você.
 
 @c <en>If you commit files too quickly you might commit files
 @c <en>that do not even compile.  If your partner updates his
@@ -11050,13 +11051,14 @@ out what works for you.
 @c <en>persons will not be able to benefit from the
 @c <en>improvements you make to the code if you commit very
 @c <en>seldom, and conflicts will probably be more common.
-If you commit files too quickly you might commit files
-that do not even compile.  If your partner updates his
-working sources to include your buggy file, he will be
-unable to compile the code.  On the other hand, other
-persons will not be able to benefit from the
-improvements you make to the code if you commit very
-seldom, and conflicts will probably be more common.
+Se você ???commit??? arquivos muito rapidamente
+provavelmente você vai ???commit??? arquivos que nem
+mesmo compilam.  Se seu parceiro atualiza as cópias de
+trabalho dele e inclui seu arquivo bichado, ele não vai
+conseguir compilar o código.  Por outro lado, as outras
+pessoas não vão poder se beneficiar das melhorias que
+você fizer no código se você ???commit??? muito
+raramente, e os conflitos provavelmente vão aumentar.
 
 @c <en>It is common to only commit files after making sure
 @c <en>that they can be compiled.  Some sites require that the
@@ -11067,15 +11069,15 @@ seldom, and conflicts will probably be more common.
 @c <en>development environment too controlled it might become
 @c <en>too regimented and thus counter-productive to the real
 @c <en>goal, which is to get software written.
-It is common to only commit files after making sure
-that they can be compiled.  Some sites require that the
-files pass a test suite.  Policies like this can be
-enforced using the commitinfo file
-(@pxref{commitinfo}), but you should think twice before
-you enforce such a convention.  By making the
-development environment too controlled it might become
-too regimented and thus counter-productive to the real
-goal, which is to get software written.
+É comum apenas ???commit??? arquivos depois de se
+certificar que eles podem ser compilados.  Alguns
+lugares exigem que os arquivos passem num conjunto de
+testes.  Políticas deste tipo podem ser impostas usando
+o arquivo commitinfo (@pxref{commitinfo}), mas você
+deve pensar duas vezes antes de impor tal convenção.
+Tornando o ambiente de desenvolvimento muito controlado
+ele se torna muito rígido e contraprodutivo para o
+objetivo real, que é ter o software escrito.
 
 @c ---------------------------------------------------------------------
 @c <en>@node Keyword substitution
@@ -11085,9 +11087,9 @@ goal, which is to get software written.
 @c <en>@cindex Keyword substitution
 @cindex Substituição de palavra-chave
 @c <en>@cindex Keyword expansion
-@cindex Keyword expansion
+@cindex Expansão de palavra-chave
 @c <en>@cindex Identifying files
-@cindex Identifying files
+@cindex Identificando arquivos
 
 @comment   Be careful when editing this chapter.
 @comment   Remember that this file is kept under
@@ -11100,12 +11102,12 @@ goal, which is to get software written.
 @c <en>But as soon as you export the files from your
 @c <en>development environment it becomes harder to identify
 @c <en>which revisions they are.
-As long as you edit source files inside a working
-directory you can always find out the state of
-your files via @samp{cvs status} and @samp{cvs log}.
-But as soon as you export the files from your
-development environment it becomes harder to identify
-which revisions they are.
+À medida em que você edita arquivos fonte dentro de um
+diretório de trabalho você pode sempre obter o estado
+de seus arquivos via @samp{cvs status} e @samp{cvs
+log}.  Mas assim que você exporta os arquivos de seu
+ambiente de desenvolvimento se torna mais difícil dizer
+de quais revisões eles são.
 
 @c <en>@sc{cvs} can use a mechanism known as @dfn{keyword
 @c <en>substitution} (or @dfn{keyword expansion}) to help
@@ -11115,37 +11117,37 @@ which revisions they are.
 @c <en>with strings of the form
 @c <en>@code{$@var{keyword}:@var{value}$} whenever you obtain
 @c <en>a new revision of the file.
-@sc{cvs} can use a mechanism known as @dfn{keyword
-substitution} (or @dfn{keyword expansion}) to help
-identifying the files.  Embedded strings of the form
-@code{$@var{keyword}$} and
-@code{$@var{keyword}:@dots{}$} in a file are replaced
-with strings of the form
-@code{$@var{keyword}:@var{value}$} whenever you obtain
-a new revision of the file.
+O @sc{cvs} pode usar um mecanismo chamado de
+@dfn{substituição de palavra-chave} (ou @dfn{expansão
+de palavra-chave}) para ajudar na identificação de
+arquivos.  Strings embutidas na forma @code{$@var{keyword}$} e
+@code{$@var{keyword}:@dots{}$} em um arquivo são
+substituídas por strings da forma
+@code{$@var{keyword}:@var{value}$} sempre que você obtém
+uma nova revisão do arquivo.
 
 @menu
 @c <en>* Keyword list::                   Keywords
-* Keyword list::                   Keywords
+* Lista de palavras-chave::            Palavras-chave
 @c <en>* Using keywords::                 Using keywords
-* Using keywords::                 Using keywords
+* Usando palavras-chave::              Usando Palavras-chave
 @c <en>* Avoiding substitution::          Avoiding substitution
-* Avoiding substitution::          Avoiding substitution
+* Evitando substituições::             Evitando substituições
 @c <en>* Substitution modes::             Substitution modes
-* Modos de substituição::             Modos de substituição
+* Modos de substituição::              Modos de substituição
 @c <en>* Configuring keyword expansion::  Configuring keyword expansion
-* Configuring keyword expansion::  Configuring keyword expansion
+* Configurando a expansão do teclado:: Configurando a expansão do teclado
 @c <en>* Log keyword::                    Problems with the $@splitrcskeyword{}Log$ keyword.
-* Log keyword::                    Problems with the $@splitrcskeyword{}Log$ keyword.
+* Log keyword::                    Problemas com a palavra-chave $@splitrcskeyword{}Log$.
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Keyword list
-@node Keyword list
+@node Lista de palavras-chave
 @c <en>@section Keyword List
-@section Keyword List
+@section Lista de Palavras-chave
 @c <en>@cindex Keyword List
-@cindex Keyword List
+@cindex Lista de Palavras-chave
 
 @c FIXME: need some kind of example here I think,
 @c perhaps in a
@@ -11154,18 +11156,18 @@ a new revision of the file.
 @c into a list of the keywords somehow seems too abrupt.
 
 @c <en>This is a list of the keywords:
-This is a list of the keywords:
+Esta é uma lista de palavras-chave:
 
 @table @code
 @c <en>@cindex Author keyword
-@cindex Author keyword
+@cindex Palavra-chave Author (autor)
 @c <en>@item $@splitrcskeyword{Author}$
 @item $@splitrcskeyword{Author}$
 @c <en>The login name of the user who checked in the revision.
-The login name of the user who checked in the revision.
+O login do usuário que ???checked in??? a revisão.
 
 @c <en>@cindex CVSHeader keyword
-@cindex CVSHeader keyword
+@cindex Palavra-chave CVSHeader (cabeçalho CVS)
 @c <en>@item $@splitrcskeyword{CVSHeader}
 @item $@splitrcskeyword{CVSHeader}
 @c <en>A standard header (similar to $@splitrcskeyword{Header}$, but with
@@ -11174,63 +11176,112 @@ The login name of the user who checked in the revision.
 @c <en>revision number, the date (UTC), the author, the state,
 @c <en>and the locker (if locked). Files will normally never
 @c <en>be locked when you use @sc{cvs}.
-A standard header (similar to $@splitrcskeyword{Header}$, but with
-the CVS root stripped off). It contains the relative
-pathname of the @sc{rcs} file to the CVS root, the
-revision number, the date (UTC), the author, the state,
-and the locker (if locked). Files will normally never
-be locked when you use @sc{cvs}.
+Um cabeçalho padrão (similar ao
+$@splitrcskeyword{Header}$, mas com a raíz do CVS
+retirada). Ele contém o caminho do arquivo
+@sc{rcs} relativo à raíz do CVS, o número da revisão, a
+data (UTC), o autor, o estado, e o ???locker??? (se
+estiver travado). Arquivos normalmente nunca são
+travados quando você usa @sc{cvs}.
 
-Note that this keyword has only been recently
-introduced to @sc{cvs} and may cause problems with
-existing installations if $@splitrcskeyword{CVSHeader}$ is already
-in the files for a different purpose. This keyword may
-be excluded using the @code{KeywordExpansion=eCVSHeader}
-in the @file{CVSROOT/config} file. 
-See @ref{Configuring keyword expansion} for more details.
+@c <en>Note that this keyword has only been recently
+@c <en>introduced to @sc{cvs} and may cause problems with
+@c <en>existing installations if $@splitrcskeyword{CVSHeader}$ is already
+@c <en>in the files for a different purpose. This keyword may
+@c <en>be excluded using the @code{KeywordExpansion=eCVSHeader}
+@c <en>in the @file{CVSROOT/config} file. 
+@c <en>See @ref{Configuring keyword expansion} for more details.
+Observe que esta palavra-chave foi adicionada apenas
+recentemente no @sc{cvs} e pode causar problemas com
+instalações existentes se $@splitrcskeyword{CVSHeader}$
+já está nos arquivos por um motivo diferente. Esta
+palavra-chave deve ser excluída usando o
+@code{KeywordExpansion=eCVSHeader} no arquivo
+@file{CVSROOT/config}. Veja em @ref{Configurando a
+expansão do teclado} para maiores detalhes.
 
-@cindex Date keyword
+@c <en>@cindex Date keyword
+@cindex Palavra-chave Date (data)
+@c <en>@item $@splitrcskeyword{Date}$
 @item $@splitrcskeyword{Date}$
-The date and time (UTC) the revision was checked in.
+@c <en>The date and time (UTC) the revision was checked in.
+A data e hora (UTC) na qual a revisão foi ???checked in???.
 
-@cindex Header keyword
+@c <en>@cindex Header keyword
+@cindex Palavra-chave Header (cabeçalho)
+@c <en>@item $@splitrcskeyword{Header}$
 @item $@splitrcskeyword{Header}$
-A standard header containing the full pathname of the
-@sc{rcs} file, the revision number, the date (UTC), the
-author, the state, and the locker (if locked).  Files
-will normally never be locked when you use @sc{cvs}.
+@c <en>A standard header containing the full pathname of the
+@c <en>@sc{rcs} file, the revision number, the date (UTC), the
+@c <en>author, the state, and the locker (if locked).  Files
+@c <en>will normally never be locked when you use @sc{cvs}.
+Um cabeçalho padrão contendo o caminho completo do arquivo
+@sc{rcs}, o número da revisão, a data (UTC), o autor, o
+estado, e o ???locker??? (se estiver travado).
+Arquivos normalmente nunca são travados quando você usa
+@sc{cvs}.
 
-@cindex Id keyword
+@c <en>@cindex Id keyword
+@cindex Palavra-chave Id
+@c <en>@item $@splitrcskeyword{Id}$
 @item $@splitrcskeyword{Id}$
-Same as @code{$@splitrcskeyword{Header}$}, except that the @sc{rcs}
-filename is without a path.
+@c <en>Same as @code{$@splitrcskeyword{Header}$}, except that the @sc{rcs}
+@c <en>filename is without a path.
+Similar ao @code{$@splitrcskeyword{Header}$}, exceto
+que o nome do arquivo @sc{rcs} não tem o caminho.
 
-@cindex Name keyword
+@c <en>@cindex Name keyword
+@cindex Palavra-chave Name (nome)
+@c <en>@item $@splitrcskeyword{Name}$
 @item $@splitrcskeyword{Name}$
-Tag name used to check out this file.  The keyword is
-expanded only if one checks out with an explicit tag
-name.  For example, when running the command @code{cvs
-co -r first}, the keyword expands to @samp{Name: first}.
+@c <en>Tag name used to check out this file.  The keyword is
+@c <en>expanded only if one checks out with an explicit tag
+@c <en>name.  For example, when running the command @code{cvs
+@c <en>co -r first}, the keyword expands to @samp{Name: first}.
+Nome da etiqueta (tag) usada para ???check out??? este
+arquivo.  A palavra-chave é expandida apenas se foi
+???check out??? com um nome de etiqueta explícito.  Por
+exemplo, quando rodou o comando @code{cvs co -r
+inicio}, a palavra-chave expande para @samp{Name: inicio}.
 
-@cindex Locker keyword
+@c <en>@cindex Locker keyword
+@cindex Palavra-chave Locker (???locker???)
+@c <en>@item $@splitrcskeyword{Locker}$
 @item $@splitrcskeyword{Locker}$
-The login name of the user who locked the revision
-(empty if not locked, which is the normal case unless
-@code{cvs admin -l} is in use).
+@c <en>The login name of the user who locked the revision
+@c <en>(empty if not locked, which is the normal case unless
+@c <en>@code{cvs admin -l} is in use).
+O login do usuário que travou a revisão (vazio se não
+estiver travado, que é o normal a menos que @code{cvs
+admin -l} esteja em uso).
 
-@cindex Log keyword
+@c <en>@cindex Log keyword
+@cindex Palvra-chave Log (registro)
+@c <en>@cindex MaxCommentLeaderLength
 @cindex MaxCommentLeaderLength
+@c <en>@cindex UseArchiveCommentLeader
 @cindex UseArchiveCommentLeader
-@cindex Log keyword, configuring substitution behavior
+@c <en>@cindex Log keyword, configuring substitution behavior
+@cindex Palavra-chave Log, configurando o comportamento na substituição
+@c <en>@item $@splitrcskeyword{Log}$
 @item $@splitrcskeyword{Log}$
-The log message supplied during commit, preceded by a
-header containing the @sc{rcs} filename, the revision
-number, the author, and the date (UTC).  Existing log
-messages are @emph{not} replaced.  Instead, the new log
-message is inserted after @code{$@splitrcskeyword{Log:@dots{}}$}.
-Each new line is prefixed with the same string which
-precedes the @code{$Log} keyword.  For example, if the
-file contains:
+@c <en>The log message supplied during commit, preceded by a
+@c <en>header containing the @sc{rcs} filename, the revision
+@c <en>number, the author, and the date (UTC).  Existing log
+@c <en>messages are @emph{not} replaced.  Instead, the new log
+@c <en>message is inserted after @code{$@splitrcskeyword{Log:@dots{}}$}.
+@c <en>Each new line is prefixed with the same string which
+@c <en>precedes the @code{$Log} keyword.  For example, if the
+@c <en>file contains:
+A mensagem de log (registro) fornecida durante o
+???commit???, precedida por um cabeçalho contendo o
+nome do arquivo @sc{rcs}, o número de revisão, o autor,
+e a data (UTC).  Mensagens de log (registro) @emph{não}
+são substituídas.  Ao invés disto, A nova mensagem de
+log (registro) é inserida depois do
+@code{$@splitrcskeyword{Log:@dots{}}$}. Cada nova linha
+é prefixada com a mesma string que precede a
+palavra-chave @code{$Log}.  Por exemplo, se o arquivo contém:
 
 @example
   /* Here is what people have been up to:
@@ -11243,44 +11294,79 @@ file contains:
 @end example
 
 @noindent
-then additional lines which are added when expanding
-the @code{$Log} keyword will be preceded by @samp{   * }.
-Unlike previous versions of @sc{cvs} and @sc{rcs}, the
-@dfn{comment leader} from the @sc{rcs} file is not used.
-The @code{$Log} keyword is useful for
-accumulating a complete change log in a source file,
-but for several reasons it can be problematic.
-@xref{Log keyword}.
+@c <en>then additional lines which are added when expanding
+@c <en>the @code{$Log} keyword will be preceded by @samp{   * }.
+@c <en>Unlike previous versions of @sc{cvs} and @sc{rcs}, the
+@c <en>@dfn{comment leader} from the @sc{rcs} file is not used.
+@c <en>The @code{$Log} keyword is useful for
+@c <en>accumulating a complete change log in a source file,
+@c <en>but for several reasons it can be problematic.
+@c <en>@xref{Log keyword}.
+Então, linhas adicionais que são adicionadas quando a
+palavra-chave @code{$Log} é expandida vão ser
+precedidas por @samp{   * }. Ao contrário de versões
+prévias do @sc{cvs} e do @sc{rcs}, o @dfn{comment
+leader} do arquivo @sc{rcs} não é usado. A
+palavra-chave @code{$Log} é útil para acumular um
+???change log??? completo num fonte, mas pode ser
+problemática por várias razões. Veja em @ref{Log keyword}.
 
-@cindex RCSfile keyword
+@c <en>@cindex RCSfile keyword
+@cindex Palavra-chave RCSfile (arquivo RCS)
+@c <en>@item $@splitrcskeyword{RCSfile}$
 @item $@splitrcskeyword{RCSfile}$
-The name of the RCS file without a path.
+@c <en>The name of the RCS file without a path.
+O nome do arquivo RCS sem o caminho.
 
-@cindex Revision keyword
+@c <en>@cindex Revision keyword
+@cindex Palavra-chave Revision (revisão)
+@c <en>@item $@splitrcskeyword{Revision}$
 @item $@splitrcskeyword{Revision}$
-The revision number assigned to the revision.
+@c <en>The revision number assigned to the revision.
+O número de revisão atribuído à revisão.
 
-@cindex Source keyword
+@c <en>@cindex Source keyword
+@cindex Palavra-chave Source (fonte)
+@c <en>@item $@splitrcskeyword{Source}$
 @item $@splitrcskeyword{Source}$
-The full pathname of the RCS file.
+@c <en>The full pathname of the RCS file.
+O caminho completo do arquivo RCS.
 
-@cindex State keyword
+@c <en>@cindex State keyword
+@cindex Palavra-chave State (estado)
+@c <en>@item $@splitrcskeyword{State}$
 @item $@splitrcskeyword{State}$
-The state assigned to the revision.  States can be
-assigned with @code{cvs admin -s}---see @ref{admin options}.
+@c <en>The state assigned to the revision.  States can be
+@c <en>assigned with @code{cvs admin -s}---see @ref{admin options}.
+O estado atribuído à revisão.  Estados podem ser
+atribuídos com @code{cvs admin -s}---veja em @ref{admin options}.
 
-@cindex Local keyword
-@item Local keyword
-The @code{LocalKeyword} option in the @file{CVSROOT/config} file
-may be used to specify a local keyword which is to be
-used as an alias for one of the keywords: $@splitrcskeyword{}Id$,
-$@splitrcskeyword{}Header$, or $@splitrcskeyword{}CVSHeader$. For
-example, if the @file{CVSROOT/config} file contains
-a line with @code{LocalKeyword=MYBSD=CVSHeader}, then a
-file with the local keyword $@splitrcskeyword{}MYBSD$ will be
-expanded as if it were a $@splitrcskeyword{}CVSHeader$ keyword. If
-the src/frob.c file contained this keyword, it might
-look something like this:
+@c <en>@cindex Local keyword
+@cindex Palavra-chave Local
+@c <en>@item Local keyword
+@item Palavra-chave Local
+@c <en>The @code{LocalKeyword} option in the @file{CVSROOT/config} file
+@c <en>may be used to specify a local keyword which is to be
+@c <en>used as an alias for one of the keywords: $@splitrcskeyword{}Id$,
+@c <en>$@splitrcskeyword{}Header$, or $@splitrcskeyword{}CVSHeader$. For
+@c <en>example, if the @file{CVSROOT/config} file contains
+@c <en>a line with @code{LocalKeyword=MYBSD=CVSHeader}, then a
+@c <en>file with the local keyword $@splitrcskeyword{}MYBSD$ will be
+@c <en>expanded as if it were a $@splitrcskeyword{}CVSHeader$ keyword. If
+@c <en>the src/frob.c file contained this keyword, it might
+@c <en>look something like this:
+A opção @code{LocalKeyword} no arquivo
+@file{CVSROOT/config} pode ser usada para especificar
+uma palavra-chave que não é usada como um alias para
+uma das seguintes palavras-chave: $@splitrcskeyword{}Id$,
+$@splitrcskeyword{}Header$, ou $@splitrcskeyword{}CVSHeader$. Por
+exemplo, se o arquivo @file{CVSROOT/config} contém uma
+linha com @code{LocalKeyword=MYBSD=CVSHeader}, então um
+arquivo com a palavra-chave local
+$@splitrcskeyword{}MYBSD$ vai ser expandido como se ele
+fosse uma palavra-chave
+$@splitrcskeyword{}CVSHeader$. Se o arquivo src/frob.c
+contiver esta palavra-chave, ele pode parecer com algo assim:
 
 @example
   /*
@@ -11288,58 +11374,105 @@ look something like this:
    */
 @end example
 
-Many repositories make use of a such a ``local
-keyword'' feature. An old patch to @sc{cvs} provided
-the @code{LocalKeyword} feature using a @code{tag=}
-option and called this the ``custom tag'' or ``local
-tag'' feature. It was used in conjunction with the
-what they called the @code{tagexpand=} option. In
-@sc{cvs} this other option is known as the
-@code{KeywordExpand} option. 
-See @ref{Configuring keyword expansion} for more
-details.
+@c <en>Many repositories make use of a such a ``local
+@c <en>keyword'' feature. An old patch to @sc{cvs} provided
+@c <en>the @code{LocalKeyword} feature using a @code{tag=}
+@c <en>option and called this the ``custom tag'' or ``local
+@c <en>tag'' feature. It was used in conjunction with the
+@c <en>what they called the @code{tagexpand=} option. In
+@c <en>@sc{cvs} this other option is known as the
+@c <en>@code{KeywordExpand} option. 
+@c <en>See @ref{Configuring keyword expansion} for more
+@c <en>details.
+Muitos repositórios fazem uso de tal ``palavra-chave
+local''. Uma ???patch??? antiga ao @sc{cvs} fornecia a
+funcionalidade @code{LocalKeyword} usando uma opção
+@code{tag=} e chamava esta funcionalidade de ``custom tag'' ou ``local
+tag''. ela foi usada em conjunto com o que chamavam de
+opção @code{tagexpand=}. No @sc{cvs} esta outra opção é
+conhecida como a opção @code{KeywordExpand}. Veja em
+@ref{Configurando a expansão do teclado} para maiores
+detalhes.
 
-Examples from popular projects include:
+@c <en>Examples from popular projects include:
+@c <en>$@splitrcskeyword{FreeBSD}$, $@splitrcskeyword{NetBSD}$,
+@c <en>$@splitrcskeyword{OpenBSD}$, $@splitrcskeyword{XFree86}$,
+@c <en>$@splitrcskeyword{Xorg}$.
+Exemplos de projetos populares incluem:
 $@splitrcskeyword{FreeBSD}$, $@splitrcskeyword{NetBSD}$,
 $@splitrcskeyword{OpenBSD}$, $@splitrcskeyword{XFree86}$,
 $@splitrcskeyword{Xorg}$.
 
-The advantage of this is that you can include your
-local version information in a file using this local
-keyword without disrupting the upstream version
-information (which may be a different local keyword or
-a standard keyword). Allowing bug reports and the like
-to more properly identify the source of the original
-bug to the third-party and reducing the number of
-conflicts that arise during an import of a new version.
+@c <en>The advantage of this is that you can include your
+@c <en>local version information in a file using this local
+@c <en>keyword without disrupting the upstream version
+@c <en>information (which may be a different local keyword or
+@c <en>a standard keyword). Allowing bug reports and the like
+@c <en>to more properly identify the source of the original
+@c <en>bug to the third-party and reducing the number of
+@c <en>conflicts that arise during an import of a new version.
+A vantagem disto é que você pode incluir sua informação
+de versão local num arquivo usando esta palavra-chave
+local sem romper com a informação da versão principal
+(que pode ser uma palavra-chave local diferente ou uma
+palavra-chave padrão). Permitir relatório de bug (bug
+report) e coisas do gênero para identificar mais
+adequadamente a origem do bug original para o terceiro
+e reduzir o número de conflitos que surgem durante uma
+importação de uma nova versão.
 
-All keyword expansion except the local keyword may be
-disabled using the @code{KeywordExpand} option in
-the @file{CVSROOT/config} file---see 
-@ref{Configuring keyword expansion} for more details.
+@c <en>All keyword expansion except the local keyword may be
+@c <en>disabled using the @code{KeywordExpand} option in
+@c <en>the @file{CVSROOT/config} file---see 
+@c <en>@ref{Configuring keyword expansion} for more details.
+Toda expansão de palavra-chave com exceção da
+palavra-chave local deve ser disabilitada usando a
+opção @code{KeywordExpand} no arquivo
+@file{CVSROOT/config}---veja em @ref{Configurando a
+expansão do teclado} para mais detalhes.
 
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Using keywords
-@section Using keywords
+@c <en>@node Using keywords
+@node Usando palavras-chave
+@c <en>@section Using keywords
+@section Usando palavras-chave
 
-To include a keyword string you simply include the
-relevant text string, such as @code{$@splitrcskeyword{Id}$}, inside the
-file, and commit the file.  @sc{cvs} will automatically (Or,
-more accurately, as part of the update run that
-automatically happens after a commit.)
-expand the string as part of the commit operation.
+@c <en>To include a keyword string you simply include the
+@c <en>relevant text string, such as @code{$@splitrcskeyword{Id}$}, inside the
+@c <en>file, and commit the file.  @sc{cvs} will automatically (Or,
+@c <en>more accurately, as part of the update run that
+@c <en>automatically happens after a commit.)
+@c <en>expand the string as part of the commit operation.
+Para incluir uma string de palavra-chave você deve
+simplesmente incluir o a string de texto relevante,
+como @code{$@splitrcskeyword{Id}$}, dentro do arquivo,
+e ???commit??? o arquivo.  O @sc{cvs} vai automaticamente (Ou,
+mais precisamente, como parte da execução do
+???update??? que acontece automaticamente depois do
+???commit???.) expandir a string como parte da operação
+de commit.
 
-It is common to embed the @code{$@splitrcskeyword{}Id$} string in
-the source files so that it gets passed through to
-generated files.  For example, if you are managing
-computer program source code, you might include a
-variable which is initialized to contain that string.
-Or some C compilers may provide a @code{#pragma ident}
-directive.  Or a document management system might
-provide a way to pass a string through to generated
-files.
+@c <en>It is common to embed the @code{$@splitrcskeyword{}Id$} string in
+@c <en>the source files so that it gets passed through to
+@c <en>generated files.  For example, if you are managing
+@c <en>computer program source code, you might include a
+@c <en>variable which is initialized to contain that string.
+@c <en>Or some C compilers may provide a @code{#pragma ident}
+@c <en>directive.  Or a document management system might
+@c <en>provide a way to pass a string through to generated
+@c <en>files.
+É normal imergir a string @code{$@splitrcskeyword{}Id$}
+nos arquivos fonte de forma que ela seja ignorada nos
+arquivos gerados.  Por exemplo, se você está
+gerenciando código fonte de programas de computador,
+você deve incluir uma variável que é inicializada para
+conter aquela string. Ou alguns compiladores C podem
+fornecer uma diretiva @code{#pragma ident}.  Ou um
+sistema de gerência de documentos pode fornecer um
+jeito de entregar a string diretamente ao arquivos
+gerados.
 
 @c Would be nice to give an example, but doing this in
 @c portable C is not possible and the problem with
@@ -11347,12 +11480,18 @@ files.
 @c troff, whatever) is that people use CVS for all
 @c kinds of files.
 
+@c <en>@cindex Ident (shell command)
 @cindex Ident (shell command)
-The @code{ident} command (which is part of the @sc{rcs}
-package) can be used to extract keywords and their
-values from a file.  This can be handy for text files,
-but it is even more useful for extracting keywords from
-binary files.
+@c <en>The @code{ident} command (which is part of the @sc{rcs}
+@c <en>package) can be used to extract keywords and their
+@c <en>values from a file.  This can be handy for text files,
+@c <en>but it is even more useful for extracting keywords from
+@c <en>binary files.
+O comando @code{ident} (que é parte do pacote @sc{rcs})
+pode ser usado para extrair palavras-chave e seus
+valores de um arquivo.  Isto pode ser útil para
+arquivos texto, mas é mais útil para extração de
+palavras-chave de arquivos binários.
 
 @example
 $ ident samp.c
@@ -11364,54 +11503,88 @@ a.out:
      $@splitrcskeyword{}Id: samp.c,v 1.5 1993/10/19 14:57:32 ceder Exp $
 @end example
 
+@c <en>@cindex What (shell command)
 @cindex What (shell command)
-S@sc{ccs} is another popular revision control system.
-It has a command, @code{what}, which is very similar to
-@code{ident} and used for the same purpose.  Many sites
-without @sc{rcs} have @sc{sccs}.  Since @code{what}
-looks for the character sequence @code{@@(#)} it is
-easy to include keywords that are detected by either
-command.  Simply prefix the keyword with the
-magic @sc{sccs} phrase, like this:
+@c <en>S@sc{ccs} is another popular revision control system.
+@c <en>It has a command, @code{what}, which is very similar to
+@c <en>@code{ident} and used for the same purpose.  Many sites
+@c <en>without @sc{rcs} have @sc{sccs}.  Since @code{what}
+@c <en>looks for the character sequence @code{@@(#)} it is
+@c <en>easy to include keywords that are detected by either
+@c <en>command.  Simply prefix the keyword with the
+@c <en>magic @sc{sccs} phrase, like this:
+S@sc{ccs} é outro sistema de controle de revisões
+popular. Ele tem um comando, @code{what} (o que, em
+português), que é bastante similar ao @code{ident} e
+usado para o mesmo propósito.  Muitos ???sites??? sem
+@sc{rcs} tem @sc{sccs}.  Uma vez que o @code{what}
+procura pela seqüência de caracteres @code{@@(#)} é
+fácil incluir palavras-chave que são detectadas por
+qualquer comando.  Simplesmente bote um prefixo na
+palavra-chave com a frase mágica @sc{sccs}, como esta:
 
 @example
 static char *id="@@(#) $@splitrcskeyword{}Id: ab.c,v 1.5 1993/10/19 14:57:32 ceder Exp $";
 @end example
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Avoiding substitution
-@section Avoiding substitution
+@c <en>@node Avoiding substitution
+@node Evitando substituições
+@c <en>@section Avoiding substitution
+@section Evitando substituições
 
-Keyword substitution has its disadvantages.  Sometimes
-you might want the literal text string
-@samp{$@splitrcskeyword{}Author$} to appear inside a file without
-@sc{cvs} interpreting it as a keyword and expanding it
-into something like @samp{$@splitrcskeyword{}Author: ceder $}.
+@c <en>Keyword substitution has its disadvantages.  Sometimes
+@c <en>you might want the literal text string
+@c <en>@samp{$@splitrcskeyword{}Author$} to appear inside a file without
+@c <en>@sc{cvs} interpreting it as a keyword and expanding it
+@c <en>into something like @samp{$@splitrcskeyword{}Author: ceder $}.
+Substituição de palavra-chave tem suas desvantagens.
+Algumas vezes você pode querer que a string de texto
+literal @samp{$@splitrcskeyword{}Author$} apareça
+dentro de um arquivo sem que o @sc{cvs} a interprete
+como uma palavra-chave e a expanda em algo como
+@samp{$@splitrcskeyword{}Author: ceder $}.
 
 @c <en>There is unfortunately no way to selectively turn off
 @c <en>keyword substitution.  You can use @samp{-ko}
 @c <en>(@pxref{Substitution modes}) to turn off keyword
 @c <en>substitution entirely.
-There is unfortunately no way to selectively turn off
-keyword substitution.  You can use @samp{-ko}
-(@pxref{Modos de substituição}) to turn off keyword
-substitution entirely.
+Infelizmente não há como desligar a substituição de
+palavra-chave de forma seletiva.  Você pode usar @samp{-ko}
+(@pxref{Modos de substituição}) para desligar a
+substituição de palavra-chave completamente.
 
-In many cases you can avoid using keywords in
-the source, even though they appear in the final
-product.  For example, the source for this manual
-contains @samp{$@@asis@{@}Author$} whenever the text
-@samp{$@splitrcskeyword{}Author$} should appear.  In @code{nroff}
-and @code{troff} you can embed the null-character
-@code{\&} inside the keyword for a similar effect.
+@c <en>In many cases you can avoid using keywords in
+@c <en>the source, even though they appear in the final
+@c <en>product.  For example, the source for this manual
+@c <en>contains @samp{$@@asis@{@}Author$} whenever the text
+@c <en>@samp{$@splitrcskeyword{}Author$} should appear.  In @code{nroff}
+@c <en>and @code{troff} you can embed the null-character
+@c <en>@code{\&} inside the keyword for a similar effect.
+Em muitos casos você pode evitar o uso de palavra-chave
+nos fontes, mesmo que elas apareçam no produto final.
+Por exemplo, o código-fonte deste manual contém
+@samp{$@@asis@{@}Author$} sempre que o texto
+@samp{$@splitrcskeyword{}Author$} deva aparecer.  Em
+@code{nroff} e @code{troff} você pode imergir o
+caractere nulo @code{\&} dentro de uma palavra-chave
+para obter um efeito similar.
 
-It is also possible to specify an explicit list of
-keywords to include or exclude using the
-@code{KeywordExpand} option in the
-@file{CVSROOT/config} file--see @ref{Configuring keyword expansion}
-for more details. This feature is intended primarily
-for use with the @code{LocalKeyword} option--see
-@ref{Keyword list}.
+@c <en>It is also possible to specify an explicit list of
+@c <en>keywords to include or exclude using the
+@c <en>@code{KeywordExpand} option in the
+@c <en>@file{CVSROOT/config} file--see @ref{Configuring keyword expansion}
+@c <en>for more details. This feature is intended primarily
+@c <en>for use with the @code{LocalKeyword} option--see
+@c <en>@ref{Keyword list}.
+Também é possível especificar explicitamente uma lista
+de palavras-chave para incluir ou excluir usando a
+opção @code{KeywordExpand} no arquivo
+@file{CVSROOT/config}--veja em @ref{Configurando a
+expansão do teclado} para maiores detalhes. Esta
+funcionalidade foi pensada para ser usada a princípio
+com a opção @code{LocalKeyword}--veja @ref{Lista de
+palavras-chave}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Substitution modes
@@ -11570,11 +11743,11 @@ handle an export containing binary files correctly.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Configuring keyword expansion
-@node Configuring keyword expansion
-@c <en>@section Configuring Keyord Expansion
-@section Configuring Keyord Expansion
+@node Configurando a expansão do teclado
+@c <en>@section Configuring Keyword Expansion
+@section Configurando a Expansão do Teclado
 @c <en>@cindex Configuring keyword expansion
-@cindex Configuring keyword expansion
+@cindex Configurando a Expansão do Teclado
 
 @c <en>In a repository that includes third-party software on
 @c <en>vendor branches, it is sometimes helpful to configure
@@ -11652,11 +11825,19 @@ A list may be used. The this example:
         KeywordExpand=iMyBSD,Name,Date
 @end example
 
+@c <en>would allow $@splitrcskeyword{MyBSD}$, $@splitrcskeyword{Name}$, and
+@c <en>$@splitrcskeyword{Date}$ to be expanded.
+@c <en>would allow $@splitrcskeyword{MyBSD}$, $@splitrcskeyword{Name}$, and
+@c <en>$@splitrcskeyword{Date}$ to be expanded.
 would allow $@splitrcskeyword{MyBSD}$, $@splitrcskeyword{Name}$, and
 $@splitrcskeyword{Date}$ to be expanded.
 would allow $@splitrcskeyword{MyBSD}$, $@splitrcskeyword{Name}$, and
 $@splitrcskeyword{Date}$ to be expanded.
 
+@c <en>It is also possible to configure an exclusion list
+@c <en>using the following:
+@c <en>It is also possible to configure an exclusion list
+@c <en>using the following:
 It is also possible to configure an exclusion list
 using the following:
 It is also possible to configure an exclusion list
@@ -11861,8 +12042,11 @@ revision.
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@c <en>@node First import
 @node First import
+@c <en>@section Importing for the first time
 @section Importing for the first time
+@c <en>@cindex Importing modules
 @cindex Importing modules
 
 @c Should mention naming conventions for vendor tags,
@@ -16239,7 +16423,8 @@ Keyword expansion modes (@pxref{Modos de substituição}):
 -kb   @i{no expansion, file is binary}
 @end example
 
-Keywords (@pxref{Keyword list}):
+@c <en>Keywords (@pxref{Keyword list}):
+Keywords (@pxref{Lista de palavras-chave}):
 
 @example
 $@splitrcskeyword{}Author: joe $
