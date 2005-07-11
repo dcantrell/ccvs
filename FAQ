@@ -1,3 +1,22 @@
+-------------------------------------------------------------------------------
+
+   CVS is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 1, or (at your option)
+   any later version.
+
+   More details are available in the COPYING file but, in simplified
+   terms, this means that any distributed modifications you make to
+   this software must also be released under the GNU General Public
+   License.
+
+   CVS is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+-------------------------------------------------------------------------------
+
 This file contains a CVS FAQ.  Until 1995 it was maintained by David
 Grubbs.  It was out of date and not being maintained, but it had a
 certain following and in 1997 Pascal Molli decided to start

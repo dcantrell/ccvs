@@ -1,4 +1,22 @@
-First, read the README file.  If you're still happy...
+-------------------------------------------------------------------------------
+
+CVS is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+-------------------------------------------------------------------------------
+
+Now back to our regularly scheduled program:
+
+Please read the README file before reading this INSTALL file.  Then, to
+install CVS:
+
 
 First you need to obtain and install the CVS executables.  If you got
 a distribution which contains executables, consult the installation
