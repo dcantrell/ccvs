@@ -1,3 +1,7 @@
+2005-07-12  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.footer: Restore missing FIXME response.
+
 2005-07-11  Derek Price  <derek@ximbiot.com>
 
 	* mkdir.c, startserver.c, woe32.c: Update license notices.
