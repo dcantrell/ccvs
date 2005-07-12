@@ -1189,7 +1189,7 @@ protocol error: compressed files not supported for that operation");
 
 	if (nwrite > 0)
 	{
-	    n = fwrite (pwrite, 1, nwrite, fp);
+	    n = fwrite (pwrite, sizeof *pwrite, nwrite, fp);
 	    if (ferror (fp))
 		error (1, errno, "cannot write %s", fullname);
 	    nwrite -= n;
@@ -1719,7 +1719,8 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 
 		    e = xfopen (temp_filename,
 				bin ? FOPEN_BINARY_WRITE : "w");
-		    if (fwrite (patchedbuf, 1, patchedlen, e) != patchedlen)
+		    if (fwrite (patchedbuf, sizeof *patchedbuf, patchedlen, e)
+			!= patchedlen)
 			error (1, errno, "cannot write %s", temp_filename);
 		    if (fclose (e) == EOF)
 			error (1, errno, "cannot close %s", temp_filename);
@@ -2616,7 +2617,7 @@ notified_a_file (void *data, List *ent_list, const char *short_pathname,
     while ((nread = fread (line, 1, line_len, fp)) > 0)
     {
 	p = line;
-	while ((nwritten = fwrite (p, 1, nread, newf)) > 0)
+	while ((nwritten = fwrite (p, sizeof *p, nread, newf)) > 0)
 	{
 	    nread -= nwritten;
 	    p += nwritten;
@@ -2822,7 +2823,7 @@ handle_m (char *args, size_t len)
     s = select (STDOUT_FILENO+1, NULL, &wfds, NULL, NULL);
     if (s < 1 && errno != 0)
         perror ("cannot write to stdout");
-    fwrite (args, len, sizeof (*args), stdout);
+    fwrite (args, sizeof *args, len, stdout);
     putc ('\n', stdout);
 }
 
@@ -2885,7 +2886,7 @@ handle_e (char *args, size_t len)
      */
     if (s < 1 && errno != 0)
         fperrmsg (stdout, 1, errno, "cannot write to stderr");
-    fwrite (args, len, sizeof (*args), stderr);
+    fwrite (args, sizeof *args, len, stderr);
     putc ('\n', stderr);
 }
 
