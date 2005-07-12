@@ -2,6 +2,8 @@ How to write code for CVS
 
 * License of CVS
 
+    CVS is Copyright (C) 1989-2005 The Free Software Foundation, Inc.
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 1, or (at your option)
