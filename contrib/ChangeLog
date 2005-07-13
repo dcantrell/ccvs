@@ -1,3 +1,10 @@
+2005-07-12  Derek Price  <derek@ximbiot.com>
+
+	* clmerge.in, cln_hist.in, commit_prep.in, cvs2vendor.sh, cvs_acls.in,
+	debug_check_log.sh, descend.sh, log.in, log_accum.in, mfpipe.in,
+	rcs-to-cvs.sh, rcs2log.sh, rcs2sccs.sh, rcslock.in,sandbox_status.sh,
+	sccs2rcs.in: Add copyright notices.
+
 2005-07-11  Derek Price  <derek@ximbiot.com>
 
 	* clmerge.in, cln_hist.in, commit_prep.in, cvs2vendor.sh, cvs_acls.in,

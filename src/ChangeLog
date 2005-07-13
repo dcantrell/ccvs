@@ -1,5 +1,10 @@
 2005-07-12  Derek Price  <derek@ximbiot.com>
 
+	* buffer.c, buffer.h, client.h, expand_path.c, history.c, myndbm.h,
+	release.c: Add copyright notices.
+
+2005-07-12  Derek Price  <derek@ximbiot.com>
+
 	* client.c: Update fwrite usage to use size & count in the standard
 	order.
 
