@@ -1,6 +1,7 @@
 #! /bin/sh
 #
-#   Copyright (c) 1989, Brian Berliner
+#   Copyright (c) 1989-2005 The Free Software Foundation, Inc.
+#   Portions Copyright (c) 1989, Brian Berliner
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
