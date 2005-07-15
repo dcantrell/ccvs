@@ -11592,9 +11592,9 @@ palavras-chave}.
 @c <en>@section Substitution modes
 @section Modos de substituição
 @c <en>@cindex Keyword substitution, changing modes
-@cindex Keyword substitution, changing modes
+@cindex Substituição de palavra-chave, mudando os modos
 @c <en>@cindex -k (keyword substitution)
-@cindex -k (keyword substitution)
+@cindex -k (substituição de palavra-chave)
 @c <en>@cindex Kflag
 @cindex Kflag
 
@@ -11608,14 +11608,16 @@ palavras-chave}.
 @c <en>checkout} or @code{cvs update}.  @code{cvs diff} also
 @c <en>has a @samp{-k} option.  For some examples,
 @c <en>see @ref{Binary files}, and @ref{Merging and keywords}.
-Each file has a stored default substitution mode, and
-each working directory copy of a file also has a
-substitution mode.  The former is set by the @samp{-k}
-option to @code{cvs add} and @code{cvs admin}; the
-latter is set by the @samp{-k} or @samp{-A} options to @code{cvs
-checkout} or @code{cvs update}.  @code{cvs diff} also
-has a @samp{-k} option.  For some examples,
-see @ref{Arquivos binários}, and @ref{Mesclagem e palavras-chave}.
+Cada arquivo tem um modo de substituição padrão
+armazenado, e cada cópia de um arquivo num diretório de
+trabalho também tem um modo de substituição.  O
+primeiro é ajustado pela opção @samp{-k} no @code{cvs
+add} e no @code{cvs admin}; o último é ajustado pelas
+opções @samp{-k} ou @samp{-A} do @code{cvs checkout} ou
+do @code{cvs update}.  O @code{cvs diff} também tem uma
+opção @samp{-k}.  Para alguns exemplos, veja em
+@ref{Arquivos binários}, e @ref{Mesclagem e
+palavras-chave}.
 @c The fact that -A is overloaded to mean both reset
 @c sticky options and reset sticky tags/dates is
 @c somewhat questionable.  Perhaps there should be
@@ -11631,7 +11633,7 @@ see @ref{Arquivos binários}, and @ref{Mesclagem e palavras-chave}.
 @c creeping featurism in this area.
 
 @c <en>The modes available are:
-The modes available are:
+Os modos disponíveis são:
 
 @table @samp
 @c <en>@item -kkv
@@ -11639,9 +11641,9 @@ The modes available are:
 @c <en>Generate keyword strings using the default form, e.g.
 @c <en>@code{$@splitrcskeyword{}Revision: 5.7 $} for the @code{Revision}
 @c <en>keyword.
-Generate keyword strings using the default form, e.g.
-@code{$@splitrcskeyword{}Revision: 5.7 $} for the @code{Revision}
-keyword.
+Gera strings de palavras-chave usando a forma padrão, e.g.
+@code{$@splitrcskeyword{}Revision: 5.7 $} para a
+palavra-chave @code{Revision}.
 
 @c <en>@item -kkvl
 @item -kkvl
@@ -11649,10 +11651,10 @@ keyword.
 @c <en>inserted if the given revision is currently locked.
 @c <en>The locker's name is only relevant if @code{cvs admin
 @c <en>-l} is in use.
-Like @samp{-kkv}, except that a locker's name is always
-inserted if the given revision is currently locked.
-The locker's name is only relevant if @code{cvs admin
--l} is in use.
+Parecido com o @samp{-kkv}, exceto que um nome de
+???locker??? é sempre inserido se a revisão dada
+estiver atualmente ???locked???. O nome do ???locker???
+é relevante apenas se @code{cvs admin -l} estiver em uso.
 
 @c <en>@item -kk
 @item -kk
@@ -11663,13 +11665,14 @@ The locker's name is only relevant if @code{cvs admin
 @c <en>is useful to ignore differences due to keyword
 @c <en>substitution when comparing different revisions of a
 @c <en>file (@pxref{Merging and keywords}).
-Generate only keyword names in keyword strings; omit
-their values.  For example, for the @code{Revision}
-keyword, generate the string @code{$@splitrcskeyword{}Revision$}
-instead of @code{$@splitrcskeyword{}Revision: 5.7 $}.  This option
-is useful to ignore differences due to keyword
-substitution when comparing different revisions of a
-file (@pxref{Mesclagem e palavras-chave}).
+Gera nomes de palavras-chave apenas nas strings da palavras-chave; omite
+seus valores.  Por exemplo, para a palavra-chave @code{Revision}
+, gera a string @code{$@splitrcskeyword{}Revision$}
+ao invés de @code{$@splitrcskeyword{}Revision: 5.7 $}.
+Esta opção é útil para ignorar diferenças devido a
+substituição de palavras-chave quando comparando
+revisões diferentes de um mesmo arquivo
+(@pxref{Mesclagem e palavras-chave}).
 
 @c <en>@item -ko
 @item -ko
@@ -11679,12 +11682,14 @@ file (@pxref{Mesclagem e palavras-chave}).
 @c <en>@code{$@splitrcskeyword{}Revision: 1.1 $} instead of
 @c <en>@code{$@splitrcskeyword{}Revision: 5.7 $} if that is how the
 @c <en>string appeared when the file was checked in.
-Generate the old keyword string, present in the working
-file just before it was checked in.  For example, for
-the @code{Revision} keyword, generate the string
-@code{$@splitrcskeyword{}Revision: 1.1 $} instead of
-@code{$@splitrcskeyword{}Revision: 5.7 $} if that is how the
-string appeared when the file was checked in.
+Gera a antiga string da palavra-chave, presente no
+arquivo de trabalho antes dele ter sido ???checked
+in???.  Por exemplo, para a palavra-chave
+@code{Revision}, gera a string
+@code{$@splitrcskeyword{}Revision: 1.1 $} ao invés de
+@code{$@splitrcskeyword{}Revision: 5.7 $} se era assim
+que a string aparecia quando o arquivo foi ???checked
+in???.
 
 @c <en>@item -kb
 @item -kb
@@ -11699,17 +11704,18 @@ string appeared when the file was checked in.
 @c <en>@samp{-kb}, as set by @code{cvs add}, @code{cvs admin}, or
 @c <en>@code{cvs import} may not be overridden by a @samp{-k} option
 @c <en>specified on the command line.
-Like @samp{-ko}, but also inhibit conversion of line
-endings between the canonical form in which they are
-stored in the repository (linefeed only), and the form
-appropriate to the operating system in use on the
-client.  For systems, like unix, which use linefeed
-only to terminate lines, this is very similar to
-@samp{-ko}.  For more information on binary files, see
-@ref{Arquivos binários}.  In @sc{cvs} version 1.12.2 and later
-@samp{-kb}, as set by @code{cvs add}, @code{cvs admin}, or
-@code{cvs import} may not be overridden by a @samp{-k} option
-specified on the command line.
+Como o @samp{-ko}, mas também inibindo conversão de
+fim-de-linhas entre a forma canônica nas qual os
+arquivo são arquivados no repositório (apenas
+linefeed), e a forma apropriada para o sistema
+operacional em uso no cliente.  Para sistemas, como o
+unix, que usam apenas o linefeed para terminar linhas,
+isto é bastante similar ao @samp{-ko}.  Para mais
+informações sobre arquivos binários, veja em
+@ref{Arquivos binários}.  No @sc{cvs} versão 1.12.2 ou
+mais novas @samp{-kb}, ajustado por @code{cvs add}, @code{cvs admin}, ou
+@code{cvs import} não vai ser sobreescrito pela opção
+@samp{-k} especificada na linha de comando.
 
 @c <en>@item -kv
 @item -kv
@@ -11722,22 +11728,25 @@ specified on the command line.
 @c <en>further keyword substitution cannot be performed once
 @c <en>the keyword names are removed, so this option should be
 @c <en>used with care.
-Generate only keyword values for keyword strings.  For
-example, for the @code{Revision} keyword, generate the string
-@code{5.7} instead of @code{$@splitrcskeyword{}Revision: 5.7 $}.
-This can help generate files in programming languages
-where it is hard to strip keyword delimiters like
-@code{$@splitrcskeyword{}Revision: $} from a string.  However,
-further keyword substitution cannot be performed once
-the keyword names are removed, so this option should be
-used with care.
+Gera apenas os valores das palavras-chaves para strings
+de palavras-chave.  Por exemplo, para a palavra-chave
+@code{Revision}, gera a string @code{5.7} ao invés de
+@code{$@splitrcskeyword{}Revision: 5.7 $}. Isto pode
+ajudar a gerar arquivos em linguagens de programação
+onde é difícil ???strip??? delimitadores de
+palavras-chave, como o
+@code{$@splitrcskeyword{}Revision: $} para uma string.
+Entretanto, outras substituições de palavras-chave não
+poderam ser feitas, uma vez que os nomes de
+palavras-chave foram removidos. Logo, esta opção deve
+ser usada com cuidado.
 
 @c <en>One often would like to use @samp{-kv} with @code{cvs
 @c <en>export}---@pxref{export}.  But be aware that doesn't
 @c <en>handle an export containing binary files correctly.
-One often would like to use @samp{-kv} with @code{cvs
-export}---@pxref{export}.  But be aware that doesn't
-handle an export containing binary files correctly.
+É comum querer usar o @samp{-kv} com @code{cvs
+export}---@pxref{export}.  Mas lembre-se que isto não
+trata um export contendo binários direito.
 
 @end table
 
@@ -11765,22 +11774,22 @@ handle an export containing binary files correctly.
 @c <en>these cases, it is typically desirable to disable the
 @c <en>expansion of all keywords except the configured local
 @c <en>keyword.
-In a repository that includes third-party software on
-vendor branches, it is sometimes helpful to configure
-CVS to use a local keyword instead of the standard
-$@splitrcskeyword{Id}$ or $@splitrcskeyword{Header}$ keywords. Examples from
-real projects includ, $@splitrcskeyword{Xorg}$, $@splitrcskeyword{XFree86}$,
+Num repositório que inclua software de terceiros em
+ramos de fornecedor, às vezes é útil configurar o CVS
+para usar uma palavra-chave local ao invés das
+palavras-chave padrão $@splitrcskeyword{Id}$ ou
+$@splitrcskeyword{Header}$. Exemplos de projetos reais incluem, $@splitrcskeyword{Xorg}$, $@splitrcskeyword{XFree86}$,
 $@splitrcskeyword{FreeBSD}$, $@splitrcskeyword{NetBSD}$,
-$@splitrcskeyword{OpenBSD}$, and even $@splitrcskeyword{dotat}$.
-The advantage of this is that
-you can include your local version information in a
-file using this local keyword (sometimes called a
-``custom tag'' or a ``local tag'') without disrupting
-the upstream version information (which may be a
-different local keyword or a standard keyword). In
-these cases, it is typically desirable to disable the
-expansion of all keywords except the configured local
-keyword.
+$@splitrcskeyword{OpenBSD}$, e ainda
+$@splitrcskeyword{dotat}$. A vantagem disto é que você
+pode incluir sua ???local version information??? num
+arquivo usando esta palavra-chave local (algumas vezes
+chamada de ``custom tag'' ou ``local tag'') sem romper
+com a ???upstream version information??? (que pode ser
+uma palavra-chave local diferente ou uma palavra-chave
+padrão). Nestes casos, é normalmente desejável
+desabilitar a expansão de todas as palavras-chave
+exceto a palavra-chave local configurada.
 
 @c <en>The @code{KeywordExpansion} option in the
 @c <en>@file{CVSROOT/config} file is intended to allow for the
@@ -12049,6 +12058,17 @@ revision.
 @c <en>@cindex Importing modules
 @cindex Importing modules
 
+@c <en>@c Should mention naming conventions for vendor tags,
+@c <en>@c release tags, and perhaps directory names.
+@c <en>Use the @code{import} command to check in the sources
+@c <en>for the first time.  When you use the @code{import}
+@c <en>command to track third-party sources, the @dfn{vendor
+@c <en>tag} and @dfn{release tags} are useful.  The
+@c <en>@dfn{vendor tag} is a symbolic name for the branch
+@c <en>(which is always 1.1.1, unless you use the @samp{-b
+@c <en>@var{branch}} flag---see @ref{Multiple vendor branches}.).  The
+@c <en>@dfn{release tags} are symbolic names for a particular
+@c <en>release, such as @samp{FSF_0_04}.
 @c Should mention naming conventions for vendor tags,
 @c release tags, and perhaps directory names.
 Use the @code{import} command to check in the sources
@@ -12077,7 +12097,14 @@ directory; if you want to work with the sources import
 them first and then check them out into a different
 directory (@pxref{Obtendo os fontes}).
 
+@c <en>@cindex wdiff (import example)
 @cindex wdiff (import example)
+@c <en>Suppose you have the sources to a program called
+@c <en>@code{wdiff} in a directory @file{wdiff-0.04},
+@c <en>and are going to make private modifications that you
+@c <en>want to be able to use even when new releases are made
+@c <en>in the future.  You start by importing the source to
+@c <en>your repository:
 Suppose you have the sources to a program called
 @code{wdiff} in a directory @file{wdiff-0.04},
 and are going to make private modifications that you
@@ -12090,15 +12117,24 @@ $ cd wdiff-0.04
 $ cvs import -m "Import of FSF v. 0.04" fsf/wdiff FSF_DIST WDIFF_0_04
 @end example
 
+@c <en>The vendor tag is named @samp{FSF_DIST} in the above
+@c <en>example, and the only release tag assigned is
+@c <en>@samp{WDIFF_0_04}.
 The vendor tag is named @samp{FSF_DIST} in the above
 example, and the only release tag assigned is
 @samp{WDIFF_0_04}.
 @c FIXME: Need to say where fsf/wdiff comes from.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@c <en>@node Update imports
 @node Update imports
+@c <en>@section Updating with the import command
 @section Updating with the import command
 
+@c <en>When a new release of the source arrives, you import it into the
+@c <en>repository with the same @code{import} command that you used to set up
+@c <en>the repository in the first place.  The only difference is that you
+@c <en>specify a different release tag this time:
 When a new release of the source arrives, you import it into the
 repository with the same @code{import} command that you used to set up
 the repository in the first place.  The only difference is that you
