@@ -1,3 +1,7 @@
+2005-07-15  Derek Price  <derek@ximbiot.com>
+
+	* glob.m4: Import new version from GNULIB.
+
 2005-06-15  Derek Price  <derek@ximbiot.com>
 
 	* bison.m4 (gl_BISON): Use new build-aux/bison-missing script.
