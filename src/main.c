@@ -186,7 +186,7 @@ static const char *const usg[] =
        version control means.  */
 
     "For CVS updates and additional information, see\n",
-    "    the CVS home page at http://www.cvshome.org/ or\n",
+    "    the CVS home page at http://www.nongnu.org/cvs/ or\n",
     "    the CVSNT home page at http://www.cvsnt.org/\n",
     NULL,
 };
