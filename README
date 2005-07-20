@@ -101,7 +101,7 @@ cvs.texinfo and re-generate cvs.ps using TeX.
 versions of CVS?
 
 See also 
-	http://www.cvshome.org
+	http://www.nongnu.org/cvs/
 	http://www.cvsnt.org
 
 The mailing list for CVS is info-cvs@gnu.org.  Send
