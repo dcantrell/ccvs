@@ -282,7 +282,7 @@ To use this program, do the following four things:
       CVSROOT=:ext:<userId>..., users can switch over to SSH access without
       any other administrative changes.  When all users have switched over to
       SSH, the inherently insecure xinetd cvspserver process can be disabled.
-      [https://www.cvshome.org/docs/manual/cvs-1.11.17/cvs_2.html#SEC32]
+      [http://ximbiot.com/cvs/manual/cvs-1.11.17/cvs_2.html#SEC32]
 
       :TODO: The only potential glitch with the SSH approach is the possibility 
       that each user can have differing umasks that might interfere with one 
