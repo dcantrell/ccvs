@@ -5,7 +5,7 @@ Release: 1
 Copyright: GPL
 Group: Development/Tools
 Source: ftp://ftp.cvshome.com/pub/%{name}-%{version}/%{name}-%{version}.tar.bz2
-URL: http://cvshome.org
+URL: http://www.nongnu.org/cvs/
 Prereq: /sbin/install-info
 Prefix: %{_prefix}
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -126,6 +126,9 @@ fi
 %endif
 
 %changelog
+* Mon July 20 2005 Derek Price <derek@ximbiot.com>
+- Update to homepage on Savannah.
+
 * Mon May 09 2005 Derek Price <derek@ximbiot.com>
 - Find install-sh in its new location in the build-aux directory.
 
