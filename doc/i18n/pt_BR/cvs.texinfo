@@ -350,7 +350,7 @@ maiores informações sobre baixar o @sc{cvs} e para
 outros tópicos sobre @sc{cvs}, veja:
 
 @example
-@url{http://www.cvshome.org/}
+@url{http://www.nongnu.org/cvs/}
 @end example
 
 @c <en>@cindex Mailing list
@@ -20891,7 +20891,7 @@ There may be resources on the net which can help.  Two
 good places to start are:
 
 @example
-@url{http://www.cvshome.org}
+@url{http://www.nongnu.org/cvs/}
 @end example
 
 If you are so inspired, increasing the information
