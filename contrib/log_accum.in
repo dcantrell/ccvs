@@ -301,11 +301,9 @@ sub change_summary {
             open(RCS, "-|") || exec "$cvsbin/cvs", '-Qn', 'log', "-r$rev",
 				    '--', $file;
             while (<RCS>) {
-                if (/^date:/) {
-                    chomp;
-                    $delta = $_;
-                    $delta =~ s/^.*;//;
-                    $delta =~ s/^[\s]+lines://;
+                if (/^date:.*lines:([^;]+);.*/) {
+                    $delta = $1;
+                    last;
                 }
             }
             close(RCS);
