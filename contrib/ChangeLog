@@ -1,3 +1,8 @@
+2005-07-22  Mark D. Baushke  <mdb@gnu.org>
+
+	* log_accum.in (change_summary): Handle cvs log date lines with
+	commitid information on them.
+
 2005-07-20  Derek Price  <derek@ximbiot.com>
 
 	* cvs_acls.html, cvs_acls.in, log_accum.in:
