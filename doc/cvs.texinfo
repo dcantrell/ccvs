@@ -15702,8 +15702,8 @@ distribution.  It contains much more information on the
 process of submitting fixes.
 
 @item
-There may be resources on the net which can help.  Two
-good places to start are:
+There may be resources on the net which can help.  A
+good place to start is:
 
 @example
 @url{http://www.nongnu.org/cvs/}
