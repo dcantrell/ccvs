@@ -262,8 +262,7 @@ free download from the Internet.  For more information
 on downloading @sc{cvs} and other @sc{cvs} topics, see:
 
 @example
-@url{http://www.cvshome.org/}
-@url{http://www.loria.fr/~molli/cvs-index.html}
+@url{http://www.nongnu.org/cvs/}
 @end example
 
 @cindex Mailing list
@@ -14508,12 +14507,11 @@ distribution.  It contains much more information on the
 process of submitting fixes.
 
 @item
-There may be resources on the net which can help.  Two
-good places to start are:
+There may be resources on the net which can help.  A
+good place to start is:
 
 @example
-@url{http://www.cvshome.org}
-@url{http://www.loria.fr/~molli/cvs-index.html}
+@url{http://www.nongnu.org/cvs/}
 @end example
 
 If you are so inspired, increasing the information

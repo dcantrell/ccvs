@@ -1,3 +1,8 @@
+2005-08-02  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (What is CVS?, BUGS): s/cvshome/nongnu/.  Remove
+	obsolete Pascal Molli link.
+
 2005-06-22  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Builds): Update Gunnar Tornblom's email at his request.
