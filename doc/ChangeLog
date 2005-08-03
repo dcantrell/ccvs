@@ -1,3 +1,7 @@
+2005-08-02  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (What is CVS?, BUGS): Correct grammar.
+
 2005-07-20  Derek Price  <derek@ximbiot.com>
 
 	* cvs.man.footer, cvs.texinfo, cvsclient.texi:
