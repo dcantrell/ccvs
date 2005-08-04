@@ -1,3 +1,8 @@
+2005-08-03  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	* edit.c, watch.c, watch.h, sanity.sh: fixed problems with watch not
+	setting default attributes, when directory specified.
+
 2005-07-20  Derek Price  <derek@ximbiot.com>
 
 	* main.c: s/cvshome.org/nongnu.org.etc.../.

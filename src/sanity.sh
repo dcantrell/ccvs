@@ -1627,7 +1627,7 @@ if test x"$*" = x; then
 	tests="${tests} close-stdout"
 	tests="$tests debug-log-nonfatal"
 	# Watches, binary files, history browsing, &c.
-	tests="${tests} devcom devcom2 devcom3 watch4 watch5"
+	tests="${tests} devcom devcom2 devcom3 watch4 watch5 watch6-0 watch6"
         tests="${tests} edit-check"
 	tests="${tests} unedit-without-baserev"
 	tests="${tests} ignore ignore-on-branch binfiles binfiles2 binfiles3"
@@ -2570,7 +2570,7 @@ if $linkroot; then
 fi
 CVSROOT_DIRNAME=${TESTDIR}/cvsroot
 CVSROOT=`newroot $CVSROOT_DIRNAME`; export CVSROOT
-
+echo CVSROOT: ${CVSROOT}
 
 
 ###
@@ -16959,6 +16959,136 @@ initial revision: 1\.1"
 	  cd ../..
 	  rm -r watch5
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  ;;
+
+	watch6-0)
+
+	  # Make sure that default attributes are being set properly.
+	  # Specifying a directory has, it seems, never worked,
+	  # and 1.12.10 broke it completely.
+	  mkdir watch6-0; cd watch6-0
+
+	  dotest watch6-0-setup-1 "$testcvs -Q co -ldtop ."
+	  cd top
+	  mkdir watch6-0
+	  dotest watch6-0-setup-2 "$testcvs -Q add watch6-0"
+	  cd watch6-0
+	  dotest watch6-0-1 "$testcvs watch add"
+	  dotest watch6-0-2 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr"
+	  dotest watch6-0-3 "$testcvs watch remove"
+	  dotest_fail watch6-0-4 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr 2>/dev/null"
+
+	  dotest watch6-0-5 "$testcvs watch add ."
+	  dotest watch6-0-6 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr"
+	  dotest watch6-0-7 "$testcvs watch remove ."
+	  dotest_fail watch6-0-8 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr 2>/dev/null"
+
+	  # OK, basic add/remove work. Now, make sure it works with named directories
+	  mkdir dir1
+	  mkdir dir2
+	  mkdir dir3
+	  echo afile>afile
+	  $testcvs -Q add afile dir1 dir2 dir3
+	  $testcvs -Q ci -m "Adding test files"
+
+	  # Current directory should not be watched, but there should be a watch on the file,
+	  # and on dir1 & dir2, but not on dir3.
+	  dotest watch6-0-9 "$testcvs -Q watch add afile dir1 dir2"
+	  dotest_fail watch6-0-10 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr 2>/dev/null"
+	  dotest watch6-0-11 "grep -qE '^Fafile' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr"
+	  dotest watch6-0-12 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/dir1/CVS/fileattr"
+	  dotest watch6-0-13 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/dir2/CVS/fileattr"
+	  dotest_fail watch6-0-12 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/dir3/CVS/fileattr 2>/dev/null"
+
+	  if $keep; then
+	    echo Keeping $TESTDIR and exiting due to --keep
+	    exit 0
+	  fi
+	  cd ../../..
+	  rm -rf watch6
+	  rm -rf $CVSROOT_DIRNAME/watch6
+
+	  ;;
+
+	watch6)
+	  # Check that `cvs watch on' does not reset the fileattr file.
+	  mkdir watch6; cd watch6
+
+	  dotest watch6-setup-1 "$testcvs -Q co -ldtop ."
+	  cd top
+	  mkdir watch6
+	  dotest watch6-setup-2 "$testcvs -Q add watch6"
+
+	  # I don't recall why I had these next 3 lines.
+	  cd ..
+	  dotest watch6-setup-3 "$testcvs -Q co watch6"
+	  cd watch6
+
+	  mkdir subdir
+	  dotest watch6-setup-4 "$testcvs -Q add subdir"
+	  cd subdir
+
+	  # START watch add/remove sequence
+	  dotest watch6-1 "$testcvs -Q watch add"
+	  dotest watch6-2 \
+"grep '_watchers' $CVSROOT_DIRNAME/watch6/subdir/CVS/fileattr >/dev/null"
+
+	  dotest watch6-3 "$testcvs watch on"
+	  dotest watch6-4 \
+"grep '_watchers' $CVSROOT_DIRNAME/watch6/subdir/CVS/fileattr >/dev/null"
+	  dotest watch6-5 \
+"grep '_watched' $CVSROOT_DIRNAME/watch6/subdir/CVS/fileattr >/dev/null"
+
+	  dotest watch6-6 "$testcvs watch off"
+	  dotest watch6-7 \
+"grep '_watchers' $CVSROOT_DIRNAME/watch6/subdir/CVS/fileattr >/dev/null"
+	  dotest_fail watch6-8 \
+"grep '_watched' $CVSROOT_DIRNAME/watch6/subdir/CVS/fileattr >/dev/null"
+
+	  dotest watch6-9 "$testcvs watch remove"
+	  dotest_fail watch6-10 \
+"test -d $CVSROOT_DIRNAME/test-directory/subdir/CVS"
+	  dotest_fail watch6-11 \
+"test -f $CVSROOT_DIRNAME/test-directory/subdir/CVS/fileattr"
+	  # END watch add/remove sequence
+
+	  echo Hi there >afile
+	  dotest watch6-12 "$testcvs -Q add afile"
+	  dotest watch6-13 "$testcvs ci -m 'A file' afile" \
+"$CVSROOT_DIRNAME/watch6/subdir/afile,v  <--  afile
+initial revision: 1.1"
+
+	  # START watch add/remove sequence
+	  dotest watch6-14 "$testcvs -Q watch add"
+	  dotest watch6-15 \
+"grep '_watchers' $CVSROOT_DIRNAME/watch6/subdir/CVS/fileattr >/dev/null"
+
+	  dotest watch6-16 "$testcvs watch on"
+	  dotest watch6-17 \
+"grep '_watchers' $CVSROOT_DIRNAME/watch6/subdir/CVS/fileattr >/dev/null"
+	  dotest watch6-18 \
+"grep '_watched' $CVSROOT_DIRNAME/watch6/subdir/CVS/fileattr >/dev/null"
+
+	  dotest watch6-19 "$testcvs watch off"
+	  dotest watch6-20 \
+"grep '_watchers' $CVSROOT_DIRNAME/watch6/subdir/CVS/fileattr >/dev/null"
+	  dotest_fail watch6-21 \
+"grep '_watched' $CVSROOT_DIRNAME/watch6/subdir/CVS/fileattr >/dev/null"
+
+	  dotest watch6-22 "$testcvs watch remove"
+	  dotest_fail watch6-23 \
+"test -d $CVSROOT_DIRNAME/test-directory/subdir/CVS"
+	  dotest_fail watch6-24 \
+"test -f $CVSROOT_DIRNAME/test-directory/subdir/CVS/fileattr"
+	  # END watch add/remove sequence
+
+	  if $keep; then
+	    echo Keeping $TESTDIR and exiting due to --keep
+	    exit 0
+	  fi
+	  cd ../../..
+	  rm -r watch6
+	  rm -rf $CVSROOT_DIRNAME/watch6
 	  ;;
 
 
