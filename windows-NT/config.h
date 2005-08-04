@@ -223,6 +223,8 @@
    */
 #define HAVE_DECL_GETCWD 1
 
+#define HAVE_GETCWD 1
+
 /* Define to 1 if you have the declaration of `getc_unlocked', and to 0 if you
    don't. */
 #undef HAVE_DECL_GETC_UNLOCKED
@@ -513,7 +515,7 @@
 
 /* Define to 1 if the `printf' function supports the %p format for printing
    pointers. */
-#undef HAVE_PRINTF_PTR
+#define HAVE_PRINTF_PTR 1
 
 /* Define to 1 if the system has the type `ptrdiff_t'. */
 #undef HAVE_PTRDIFF_T

@@ -1,3 +1,8 @@
+2005-08-03  Jim Hyslop  <jhyslop@dreampossible.ca>
+
+	* filesubr.c: don't expand "." to the name of the current directory.
+	* config.h, config.h.in, config.h.in.in
+
 2005-07-12  Derek Price  <derek@ximbiot.com>
 
 	* mkdir.c, startserver.c, woe32.c: Add copyright notices.
