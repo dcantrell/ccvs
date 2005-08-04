@@ -3,6 +3,9 @@ Changes since 1.12.12:
 
 NEW FEATURES
 
+* Problems with setting default attributes with the 'cvs watch add' command
+  have been fixed.
+
 * Missing CVSROOT/history files will now cause CVS to attempt to create one.
   To suppress history logging, set LogHistory equal to the empty string in
   CVSROOT/config.
@@ -24,10 +27,8 @@ NEW FEATURES
 
 BUG FIXES
 
-* Problems with setting default attributes with the 'cvs watch add' command
-
 * A problem where the server could block indefinitely waiting for an EOF from
-  the client when compression was enabled has ben fixed.
+  the client when compression was enabled has been fixed.
 
 * `cvs diff' no longer splits its arguments on spaces.
 
