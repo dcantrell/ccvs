@@ -1,3 +1,8 @@
+2005-08-04  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Move 1.12 change from BUG FIXES to NEW FEATURES and rephrase.
+	Correct spelling error in different entry.
+
 2005-07-20  Derek Price  <derek@ximbiot.com>
 
 	* AUTHORS, HACKING, README, cvs.spec.in:
