@@ -24,6 +24,8 @@ NEW FEATURES
 
 BUG FIXES
 
+* Problems with setting default attributes with the 'cvs watch add' command
+
 * A problem where the server could block indefinitely waiting for an EOF from
   the client when compression was enabled has ben fixed.
 
