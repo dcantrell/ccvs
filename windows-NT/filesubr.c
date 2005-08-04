@@ -827,13 +827,12 @@ expand_wild (argc, argv, pargc, pargv)
 	char *last_forw_slash, *last_back_slash, *end_of_dirname;
 	int dirname_length = 0;
 
-	/* FIXME: If argv[i] is ".", this code will expand it to the
-	   name of the current directory in its parent directory which
-	   will cause start_recursion to do all manner of strange things
-	   with it (culminating in an error).  This breaks "cvs co .".
-	   As nearly as I can guess, this bug has existed since
-	   expand_wild was first created.  At least, it is in CVS 1.9 (I
-	   just tried it).  */
+	if ( strcmp( argv[i], "." ) == 0 )
+	{
+	    new_argv[new_argc] = (char *) xmalloc ( 2 );
+	    strcpy( new_argv[ new_argc++ ], "." );
+	    continue;
+	}
 
 	/* FindFirstFile doesn't return pathnames, so we have to do
 	   this ourselves.  Luckily, it's no big deal, since globbing
