@@ -2570,7 +2570,7 @@ if $linkroot; then
 fi
 CVSROOT_DIRNAME=${TESTDIR}/cvsroot
 CVSROOT=`newroot $CVSROOT_DIRNAME`; export CVSROOT
-echo CVSROOT: ${CVSROOT}
+
 
 
 ###
@@ -16961,6 +16961,8 @@ initial revision: 1\.1"
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
+
+
 	watch6-0)
 
 	  # Make sure that default attributes are being set properly.
@@ -17000,15 +17002,13 @@ initial revision: 1\.1"
 	  dotest watch6-0-13 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/dir2/CVS/fileattr"
 	  dotest_fail watch6-0-12 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/dir3/CVS/fileattr 2>/dev/null"
 
-	  if $keep; then
-	    echo Keeping $TESTDIR and exiting due to --keep
-	    exit 0
-	  fi
+	  dokeep
 	  cd ../../..
-	  rm -rf watch6
-	  rm -rf $CVSROOT_DIRNAME/watch6
-
+	  rm -rf watch6-0
+	  modify_repo rm -rf $CVSROOT_DIRNAME/watch6-0
 	  ;;
+
+
 
 	watch6)
 	  # Check that `cvs watch on' does not reset the fileattr file.
@@ -17088,7 +17088,7 @@ initial revision: 1.1"
 	  fi
 	  cd ../../..
 	  rm -r watch6
-	  rm -rf $CVSROOT_DIRNAME/watch6
+	  modify_repo rm -rf $CVSROOT_DIRNAME/watch6
 	  ;;
 
 

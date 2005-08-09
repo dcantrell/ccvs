@@ -1,3 +1,8 @@
+2005-08-09  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Remove debugging echo.
+	(watch6, watch6-0): Clean up properly.
+
 2005-08-03  Jim Hyslop <jhyslop@dreampossible.ca>
 
 	* edit.c, watch.c, watch.h, sanity.sh: fixed problems with watch not
