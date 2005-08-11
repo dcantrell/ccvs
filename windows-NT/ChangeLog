@@ -1,7 +1,8 @@
 2005-08-03  Jim Hyslop  <jhyslop@dreampossible.ca>
 
 	* filesubr.c: don't expand "." to the name of the current directory.
-	* config.h, config.h.in, config.h.in.in: enabled HAVE_PRINTF_PTR and HAVE_GETCWD
+	* config.h, config.h.in, config.h.in.in: enabled HAVE_PRINTF_PTR and
+	HAVE_GETCWD.
 
 2005-07-12  Derek Price  <derek@ximbiot.com>
 
