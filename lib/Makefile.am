@@ -64,9 +64,8 @@ libcvs_a_LIBADD += @ALLOCA@
 BUILT_SOURCES += $(ALLOCA_H)
 EXTRA_DIST += alloca_.h
 
-# We need the following in order to create an <alloca.h> when the system
+# We need the following in order to create <alloca.h> when the system
 # doesn't have one that works with the given compiler.
-all-local $(libcvs_a_OBJECTS): $(ALLOCA_H)
 alloca.h: alloca_.h
 	cp $(srcdir)/alloca_.h $@-t
 	mv $@-t $@
@@ -112,9 +111,8 @@ libcvs_a_SOURCES += exit.h
 BUILT_SOURCES += $(FNMATCH_H)
 EXTRA_DIST += fnmatch_.h fnmatch_loop.c
 
-# We need the following in order to create an <fnmatch.h> when the system
+# We need the following in order to create <fnmatch.h> when the system
 # doesn't have one that supports the required API.
-all-local $(libcvs_a_OBJECTS): $(FNMATCH_H)
 fnmatch.h: fnmatch_.h
 	cp $(srcdir)/fnmatch_.h $@-t
 	mv $@-t $@
@@ -149,12 +147,6 @@ EXTRA_DIST += getdate.c
 
 ## end   gnulib module getdate
 
-## begin gnulib module getline
-
-EXTRA_DIST += getndelim2.h getndelim2.c
-
-## end   gnulib module getline
-
 ## begin gnulib module getndelim2
 
 EXTRA_DIST += getndelim2.h getndelim2.c
@@ -172,9 +164,8 @@ libcvs_a_SOURCES += getnline.h getnline.c
 BUILT_SOURCES += $(GETOPT_H)
 EXTRA_DIST += getopt_.h getopt_int.h
 
-# We need the following in order to create an <getopt.h> when the system
+# We need the following in order to create <getopt.h> when the system
 # doesn't have one that works with the given compiler.
-all-local $(libcvs_a_OBJECTS): $(GETOPT_H)
 getopt.h: getopt_.h
 	cp $(srcdir)/getopt_.h $@-t
 	mv $@-t $@
@@ -182,23 +173,17 @@ MOSTLYCLEANFILES += getopt.h getopt.h-t
 
 ## end   gnulib module getopt
 
-## begin gnulib module gettext
+## begin gnulib module gettext-h
 
 libcvs_a_SOURCES += gettext.h
 
-## end   gnulib module gettext
+## end   gnulib module gettext-h
 
 ## begin gnulib module minmax
 
 libcvs_a_SOURCES += minmax.h
 
 ## end   gnulib module minmax
-
-## begin gnulib module regex
-
-libcvs_a_SOURCES += regex.h
-
-## end   gnulib module regex
 
 ## begin gnulib module setenv
 
@@ -211,9 +196,8 @@ libcvs_a_SOURCES += setenv.h
 BUILT_SOURCES += $(STDBOOL_H)
 EXTRA_DIST += stdbool_.h
 
-# We need the following in order to create an <stdbool.h> when the system
+# We need the following in order to create <stdbool.h> when the system
 # doesn't have one that works.
-all-local $(libcvs_a_OBJECTS): $(STDBOOL_H)
 stdbool.h: stdbool_.h
 	sed -e 's/@''HAVE__BOOL''@/$(HAVE__BOOL)/g' \
 		< $(srcdir)/stdbool_.h > $@-t
@@ -227,9 +211,8 @@ MOSTLYCLEANFILES += stdbool.h stdbool.h-t
 BUILT_SOURCES += $(STDINT_H)
 EXTRA_DIST += stdint_.h
 
-# We need the following in order to create an <stdint.h> when the system
+# We need the following in order to create <stdint.h> when the system
 # doesn't have one that works with the given compiler.
-all-local $(libcvs_a_OBJECTS): $(STDINT_H)
 stdint.h: stdint_.h
 	sed -e 's/@''HAVE_LONG_64BIT''@/$(HAVE_LONG_64BIT)/g;s/@''HAVE_LONG_LONG_64BIT@/$(HAVE_LONG_LONG_64BIT)/g' < $(srcdir)/stdint_.h > $@-t
 	mv $@-t $@

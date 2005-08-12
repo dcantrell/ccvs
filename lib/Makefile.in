@@ -64,20 +64,21 @@ DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	dup-safer.c dup2.c exitfail.c exitfail.h fd-safer.c \
 	filenamecat.c filenamecat.h fncase.c fnmatch.c fseeko.c \
 	ftello.c ftruncate.c getcwd.c getcwd.h getdate.c getdate.h \
-	getdate.y gethostname.c getline.c getline.h getlogin_r.c \
-	getlogin_r.h getndelim2.c getopt.c getopt1.c getpagesize.h \
-	getpass.c getpass.h gettime.c gettimeofday.c glob.c lstat.c \
-	malloc.c md5.c md5.h memmove.c mempcpy.c mempcpy.h memrchr.c \
-	memrchr.h mkdir.c mkstemp.c mktime.c nanosleep.c openat.c \
-	openat.h pagealign_alloc.c pagealign_alloc.h pathmax.h \
-	printf-args.c printf-parse.c quotearg.c quotearg.h readlink.c \
-	realloc.c regex.c rename.c rpmatch.c save-cwd.c save-cwd.h \
-	setenv.c stat-macros.h strcasecmp.c strdup.c strdup.h \
-	strerror.c strftime.c strftime.h strncasecmp.c strstr.c \
-	strtol.c strtoul.c sunos57-select.c tempname.c time_r.c \
-	timespec.h unistd-safer.h unlocked-io.h unsetenv.c \
-	vasnprintf.c vasprintf.c waitpid.c xalloc.h xmalloc.c yesno.c \
-	yesno.h
+	getdate.y getdelim.c getdelim.h gethostname.c getline.c \
+	getline.h getlogin_r.c getlogin_r.h getndelim2.c getopt.c \
+	getopt1.c getpagesize.h getpass.c getpass.h gettime.c \
+	gettimeofday.c glob.c lstat.c malloc.c md5.c md5.h memmove.c \
+	mempcpy.c mempcpy.h memrchr.c memrchr.h mkdir.c mkstemp.c \
+	mktime.c nanosleep.c openat.c openat.h pagealign_alloc.c \
+	pagealign_alloc.h pathmax.h printf-args.c printf-parse.c \
+	quotearg.c quotearg.h readlink.c realloc.c regcomp.c regex.c \
+	regex.h regex_internal.c regex_internal.h regexec.c rename.c \
+	rpmatch.c save-cwd.c save-cwd.h setenv.c stat-macros.h \
+	strcasecmp.c strdup.c strdup.h strerror.c strftime.c \
+	strftime.h strncasecmp.c strstr.c strtol.c strtoul.c \
+	sunos57-select.c tempname.c time_r.c timespec.h unistd-safer.h \
+	unlocked-io.h unsetenv.c vasnprintf.c vasprintf.c waitpid.c \
+	xalloc.h xmalloc.c yesno.c yesno.h
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/acx_with_external_zlib.m4 \
@@ -87,7 +88,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/atexit.m4 $(top_srcdir)/m4/bison.m4 \
 	$(top_srcdir)/m4/canonicalize.m4 \
 	$(top_srcdir)/m4/chdir-long.m4 $(top_srcdir)/m4/clock_time.m4 \
-	$(top_srcdir)/m4/closeout.m4 \
+	$(top_srcdir)/m4/closeout.m4 $(top_srcdir)/m4/codeset.m4 \
 	$(top_srcdir)/m4/cvs_func_printf_ptr.m4 \
 	$(top_srcdir)/m4/d-ino.m4 $(top_srcdir)/m4/d-type.m4 \
 	$(top_srcdir)/m4/dirname.m4 $(top_srcdir)/m4/dos.m4 \
@@ -97,26 +98,27 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/filenamecat.m4 $(top_srcdir)/m4/fnmatch.m4 \
 	$(top_srcdir)/m4/fpending.m4 $(top_srcdir)/m4/ftruncate.m4 \
 	$(top_srcdir)/m4/getcwd-path-max.m4 $(top_srcdir)/m4/getcwd.m4 \
-	$(top_srcdir)/m4/getdate.m4 $(top_srcdir)/m4/gethostname.m4 \
-	$(top_srcdir)/m4/getline.m4 $(top_srcdir)/m4/getlogin_r.m4 \
-	$(top_srcdir)/m4/getndelim2.m4 $(top_srcdir)/m4/getnline.m4 \
-	$(top_srcdir)/m4/getopt.m4 $(top_srcdir)/m4/getpagesize.m4 \
-	$(top_srcdir)/m4/getpass.m4 $(top_srcdir)/m4/gettext.m4 \
-	$(top_srcdir)/m4/gettime.m4 $(top_srcdir)/m4/gettimeofday.m4 \
-	$(top_srcdir)/m4/glob.m4 $(top_srcdir)/m4/gnulib.m4 \
-	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intmax_t.m4 \
-	$(top_srcdir)/m4/inttypes.m4 $(top_srcdir)/m4/inttypes_h.m4 \
-	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
-	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/longdouble.m4 \
-	$(top_srcdir)/m4/longlong.m4 $(top_srcdir)/m4/lstat.m4 \
-	$(top_srcdir)/m4/mbrtowc.m4 $(top_srcdir)/m4/mbstate_t.m4 \
-	$(top_srcdir)/m4/md5.m4 $(top_srcdir)/m4/memmove.m4 \
-	$(top_srcdir)/m4/mempcpy.m4 $(top_srcdir)/m4/memrchr.m4 \
-	$(top_srcdir)/m4/minmax.m4 $(top_srcdir)/m4/mkdir-slash.m4 \
-	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
-	$(top_srcdir)/m4/mmap-anon.m4 $(top_srcdir)/m4/nanosleep.m4 \
-	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/onceonly_2_57.m4 \
-	$(top_srcdir)/m4/openat.m4 $(top_srcdir)/m4/pagealign_alloc.m4 \
+	$(top_srcdir)/m4/getdate.m4 $(top_srcdir)/m4/getdelim.m4 \
+	$(top_srcdir)/m4/gethostname.m4 $(top_srcdir)/m4/getline.m4 \
+	$(top_srcdir)/m4/getlogin_r.m4 $(top_srcdir)/m4/getndelim2.m4 \
+	$(top_srcdir)/m4/getnline.m4 $(top_srcdir)/m4/getopt.m4 \
+	$(top_srcdir)/m4/getpagesize.m4 $(top_srcdir)/m4/getpass.m4 \
+	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gettime.m4 \
+	$(top_srcdir)/m4/gettimeofday.m4 $(top_srcdir)/m4/glob.m4 \
+	$(top_srcdir)/m4/gnulib.m4 $(top_srcdir)/m4/iconv.m4 \
+	$(top_srcdir)/m4/intmax_t.m4 $(top_srcdir)/m4/inttypes.m4 \
+	$(top_srcdir)/m4/inttypes_h.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
+	$(top_srcdir)/m4/longdouble.m4 $(top_srcdir)/m4/longlong.m4 \
+	$(top_srcdir)/m4/lstat.m4 $(top_srcdir)/m4/mbrtowc.m4 \
+	$(top_srcdir)/m4/mbstate_t.m4 $(top_srcdir)/m4/md5.m4 \
+	$(top_srcdir)/m4/memmove.m4 $(top_srcdir)/m4/mempcpy.m4 \
+	$(top_srcdir)/m4/memrchr.m4 $(top_srcdir)/m4/minmax.m4 \
+	$(top_srcdir)/m4/mkdir-slash.m4 $(top_srcdir)/m4/mkstemp.m4 \
+	$(top_srcdir)/m4/mktime.m4 $(top_srcdir)/m4/mmap-anon.m4 \
+	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/nls.m4 \
+	$(top_srcdir)/m4/onceonly_2_57.m4 $(top_srcdir)/m4/openat.m4 \
+	$(top_srcdir)/m4/pagealign_alloc.m4 \
 	$(top_srcdir)/m4/pathmax.m4 $(top_srcdir)/m4/po.m4 \
 	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/quotearg.m4 \
 	$(top_srcdir)/m4/readlink.m4 $(top_srcdir)/m4/regex.m4 \
@@ -318,8 +320,8 @@ noinst_LIBRARIES = libcvs.a
 libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	allocsa.h allocsa.c cycle-check.c cycle-check.h dev-ino.h \
 	basename.c stripslash.c error.h exit.h getnline.h getnline.c \
-	gettext.h minmax.h regex.h setenv.h strcase.h strstr.h \
-	time_r.h printf-args.h printf-parse.h vasnprintf.h vasprintf.h \
+	gettext.h minmax.h setenv.h strcase.h strstr.h time_r.h \
+	printf-args.h printf-parse.h vasnprintf.h vasprintf.h \
 	xalloc-die.c xgetcwd.h xgetcwd.c xgethostname.h xgethostname.c \
 	xreadlink.h xreadlink.c xsize.h
 libcvs_a_LIBADD = @LIBOBJS@ @ALLOCA@
@@ -334,8 +336,8 @@ TESTS = test-getdate.sh
 EXTRA_DIST = .cvsignore ChangeLog.fsf Makefile.gnulib build_lib.com \
 	libcvs.dep libcvs.dsp libcvs.mak test-getdate.sh alloca_.h \
 	allocsa.valgrind fnmatch_.h fnmatch_loop.c getdate.c \
-	getndelim2.h getndelim2.c getndelim2.h getndelim2.c getopt_.h \
-	getopt_int.h stdbool_.h stdint_.h glob_.h
+	getndelim2.h getndelim2.c getopt_.h getopt_int.h stdbool_.h \
+	stdint_.h glob_.h
 getdate_SOURCES = error.c getdate.y progname.c
 getdate_CPPFLAGS = -DTEST
 getdate_LDADD = \
@@ -419,6 +421,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getcwd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getdate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getdate.y@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getdelim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/gethostname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getlogin_r.Po@am__quote@
@@ -446,7 +449,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/quotearg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/readlink.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/realloc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/regcomp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/regex.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/regex_internal.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/regexec.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/rename.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/rpmatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/save-cwd.Po@am__quote@
@@ -789,38 +795,33 @@ uninstall-am: uninstall-info-am
 	tags uninstall uninstall-am uninstall-info-am
 
 
-# We need the following in order to create an <alloca.h> when the system
+# We need the following in order to create <alloca.h> when the system
 # doesn't have one that works with the given compiler.
-all-local $(libcvs_a_OBJECTS): $(ALLOCA_H)
 alloca.h: alloca_.h
 	cp $(srcdir)/alloca_.h $@-t
 	mv $@-t $@
 
-# We need the following in order to create an <fnmatch.h> when the system
+# We need the following in order to create <fnmatch.h> when the system
 # doesn't have one that supports the required API.
-all-local $(libcvs_a_OBJECTS): $(FNMATCH_H)
 fnmatch.h: fnmatch_.h
 	cp $(srcdir)/fnmatch_.h $@-t
 	mv $@-t $@
 
-# We need the following in order to create an <getopt.h> when the system
+# We need the following in order to create <getopt.h> when the system
 # doesn't have one that works with the given compiler.
-all-local $(libcvs_a_OBJECTS): $(GETOPT_H)
 getopt.h: getopt_.h
 	cp $(srcdir)/getopt_.h $@-t
 	mv $@-t $@
 
-# We need the following in order to create an <stdbool.h> when the system
+# We need the following in order to create <stdbool.h> when the system
 # doesn't have one that works.
-all-local $(libcvs_a_OBJECTS): $(STDBOOL_H)
 stdbool.h: stdbool_.h
 	sed -e 's/@''HAVE__BOOL''@/$(HAVE__BOOL)/g' \
 		< $(srcdir)/stdbool_.h > $@-t
 	mv $@-t $@
 
-# We need the following in order to create an <stdint.h> when the system
+# We need the following in order to create <stdint.h> when the system
 # doesn't have one that works with the given compiler.
-all-local $(libcvs_a_OBJECTS): $(STDINT_H)
 stdint.h: stdint_.h
 	sed -e 's/@''HAVE_LONG_64BIT''@/$(HAVE_LONG_64BIT)/g;s/@''HAVE_LONG_LONG_64BIT@/$(HAVE_LONG_LONG_64BIT)/g' < $(srcdir)/stdint_.h > $@-t
 	mv $@-t $@
