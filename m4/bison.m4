@@ -15,7 +15,12 @@ dnl mode.  This is currently a fork from the GNULIB version of this file.
   am_aux_dir=`cd $ac_aux_dir && pwd`
 
   # getdate.y works with bison only.
-  test "${YACC+set}" = set || YACC="\${SHELL} $am_aux_dir/bison-missing --run bison -y"
+  : ${YACC="\${SHELL} $am_aux_dir/bison-missing --run bison -y"}
+dnl
+dnl Declaring YACC & YFLAGS precious will not be necessary after GNULIB
+dnl requires an Autoconf greater than 2.59c, but it will probably still be
+dnl useful to override the description of YACC in the --help output, re
+dnl getdate.y assuming `bison -y'.
   AC_ARG_VAR(YACC,
 [The `Yet Another C Compiler' implementation to use.  Defaults to `bison -y'.
 Values other than `bison -y' will most likely break on most systems.])dnl

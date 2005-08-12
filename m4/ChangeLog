@@ -1,3 +1,12 @@
+2005-08-12  Derek Price  <derek@ximbiot.com>
+
+	Update from GNULIB.
+	* bison.m4, dup2.m4, getcwd-path-max.m4, getcwd.m4, getline.m4,
+	getopt.m4, gnulib.m4, mbrtowc.m4, mkstemp.m4, onceonly_2_57.m4,
+	pagealign_alloc.m4, regex.m4, save-cwd.m4, size_max.m4, strftime.m4,
+	unistd-safer.m4: Updated from GNULIB.
+	* getdelim.m4: New file.
+
 2005-07-15  Derek Price  <derek@ximbiot.com>
 
 	* glob.m4: Import new version from GNULIB.
