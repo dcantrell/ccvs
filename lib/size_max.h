@@ -1,5 +1,6 @@
-/* Invoke dup, but avoid some glitches.
-   Copyright (C) 2001, 2004, 2005 Free Software Foundation, Inc.
+/* size_max.h -- declare SIZE_MAX through system headers
+   Copyright (C) 2005 Free Software Foundation, Inc.
+   Written by Simon Josefsson.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,34 +16,12 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-/* Written by Paul Eggert.  */
+#ifndef GNULIB_SIZE_MAX_H
+#define GNULIB_SIZE_MAX_H
 
-#if HAVE_CONFIG_H
-# include <config.h>
-#endif
+# include <limits.h>
+# if HAVE_STDINT_H
+#  include <stdint.h>
+# endif
 
-#include "unistd-safer.h"
-
-#include <fcntl.h>
-
-#if HAVE_UNISTD_H
-# include <unistd.h>
-#endif
-#ifndef STDERR_FILENO
-# define STDERR_FILENO 2
-#endif
-
-/* Like dup, but do not return STDIN_FILENO, STDOUT_FILENO, or
-   STDERR_FILENO.  */
-
-int
-dup_safer (int fd)
-{
-#ifdef F_DUPFD
-  return fcntl (fd, F_DUPFD, STDERR_FILENO + 1);
-#else
-  /* fd_safer calls us back, but eventually the recursion unwinds and
-     does the right thing.  */
-  return fd_safer (dup (fd));
-#endif
-}
+#endif /* GNULIB_SIZE_MAX_H */

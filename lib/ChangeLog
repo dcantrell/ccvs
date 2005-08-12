@@ -1,3 +1,14 @@
+2005-08-12  Derek Price  <derek@ximbiot.com>
+
+	Update from GNULIB.
+	* Makefile.am: Update using Makefile.gnulib changes.
+	* Makefile.gnulib, dup-safer.c, dup2.c, fnmatch.c, getcwd.c, getcwd.h,
+	getline.c, getline.h, getlogin_r.h, mktime.c, openat.h,
+	pagealign_alloc.c, quotearg.c, regex.c, regex.h, save-cwd.c,
+	strftime.c, tempname.c, time_r.h, xmalloc.c: Updated.
+	* getdelim.c, getdelim.h, regcomp.c, regex_internal.c,
+	regex_internal.h, regexec.c, size_max.h: New files.
+
 2005-06-12  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.dsp: Add files "filenamecat.h" and "lstat.c" to project.
