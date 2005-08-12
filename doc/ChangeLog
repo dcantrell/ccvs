@@ -1,3 +1,8 @@
+2005-08-12  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (What is CVS?): Rephrase for clarity, imported from
+	Wiki.
+
 2005-08-02  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (What is CVS?, BUGS): s/cvshome/nongnu/.  Remove

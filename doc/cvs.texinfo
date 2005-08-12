@@ -233,7 +233,7 @@ versions.
 on the same project.  It is all too easy to overwrite
 each others' changes unless you are extremely careful.
 Some editors, like @sc{gnu} Emacs, try to make sure that
-the same file is never modified by two people at the
+two people never modify the same file at the
 same time.  Unfortunately, if someone is using another
 editor, that safeguard will not work.  @sc{cvs} solves this problem
 by insulating the different developers from each other.  Every
