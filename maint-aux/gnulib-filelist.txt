@@ -41,7 +41,6 @@ lib/getopt_int.h
 lib/getpagesize.h
 lib/getpass.c
 lib/getpass.h
-lib/gettext.h
 lib/gettime.c
 lib/gettimeofday.c
 lib/lstat.c
@@ -66,8 +65,12 @@ lib/quotearg.c
 lib/quotearg.h
 lib/readlink.c
 lib/realloc.c
+lib/regcomp.c
 lib/regex.c
+lib/regexec.c
 lib/regex.h
+lib/regex_internal.c
+lib/regex_internal.h
 lib/rename.c
 lib/save-cwd.c
 lib/save-cwd.h
