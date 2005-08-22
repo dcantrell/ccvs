@@ -1,5 +1,11 @@
 2005-08-22  Derek Price  <derek@ximbiot.com>
 
+	Address bug #13882, submitted by Fred Maranhao.
+	* cvs.texinfo (log options, admin options, Invoking CVS): Add cross
+	references for clarity about possible states.
+
+2005-08-22  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (Updating a file): Add note about update -d, inspired by
 	wiki.
 

@@ -9022,10 +9022,10 @@ it is created.  The state is visible in the output from
 @var{cvs log} (@pxref{log}), and in the
 @samp{$@splitrcskeyword{Log}$} and @samp{$@splitrcskeyword{State}$} keywords
 (@pxref{Keyword substitution}).  Note that @sc{cvs}
-uses the @code{dead} state for its own purposes; to
+uses the @code{dead} state for its own purposes (@pxref{Attic}); to
 take a file to or from the @code{dead} state use
-commands like @code{cvs remove} and @code{cvs add}, not
-@code{cvs admin -s}.
+commands like @code{cvs remove} and @code{cvs add}
+(@pxref{Adding and removing}), not @code{cvs admin -s}.
 
 @item -t[@var{file}]
 Useful with @sc{cvs}.  Write descriptive text from the
@@ -10915,7 +10915,10 @@ Suppress the header if no revisions are selected.
 @item -s @var{states}
 Print information about revisions whose state
 attributes match one of the states given in the
-comma-separated list @var{states}.
+comma-separated list @var{states}.  Individual states may
+be any text string, though @sc{cvs} commonly only uses two
+states, @samp{Exp} and @samp{dead}.  See @ref{admin options}
+for more information.
 
 @item -t
 Print the same as @samp{-h}, plus the descriptive text.
@@ -11717,7 +11720,8 @@ Delete revisions from the repository.  See
 Run quietly; do not print diagnostics.
 
 @item -s@var{state}[:@var{rev}]
-Set the state.
+Set the state.  See @ref{admin options} for more information on possible
+states.
 
 @c Does not work for client/server CVS
 @item -t
