@@ -233,7 +233,7 @@ versions.
 on the same project.  It is all too easy to overwrite
 each others' changes unless you are extremely careful.
 Some editors, like @sc{gnu} Emacs, try to make sure that
-the same file is never modified by two people at the
+two people never modify the same file at the
 same time.  Unfortunately, if someone is using another
 editor, that safeguard will not work.  @sc{cvs} solves this problem
 by insulating the different developers from each other.  Every
@@ -6255,10 +6255,12 @@ these options, see @ref{Invoking CVS}.
 @cindex Merging a file
 @cindex Update, introduction
 
-When you want to update or merge a file, use the @code{update}
+When you want to update or merge a file, use the @code{cvs update -d}
 command.  For files that are not up to date this is roughly equivalent
 to a @code{checkout} command: the newest revision of the file is
-extracted from the repository and put in your working directory.
+extracted from the repository and put in your working directory.  The
+@code{-d} option, not necessary with @code{checkout}, tells @sc{cvs}
+that you wish it to create directories added by other developers.
 
 Your modifications to a file are never lost when you
 use @code{update}.  If no newer revision exists,
