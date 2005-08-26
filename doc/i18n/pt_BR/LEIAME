@@ -2,12 +2,12 @@ Olá,
 
 Este diretório contém os arquivos necessários para geram o manual do
 cvs em português do Brasil. Embora o projeto vise a língua portuguesa,
-a estamos usando a língua inglesa para toda comunicação.
+estamos usando a língua inglesa para toda comunicação.
 
 Comece pelo arquivo README. Ele vai indicar os próximos passos.
 
 Se você chegou até aqui e deseja apenas gerar o manual, baixe o
-arquivo cvs.texinfo desta pasta e compile (gerando um html) usando o
-comando:
+arquivo "cvs.texinfo" desta pasta e compile (gerando os html's) usando
+o comando:
 
 makeinfo --html cvs.texinfo
