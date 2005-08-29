@@ -1,3 +1,8 @@
+2005-08-29  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (From scratch): Clarify note on `cvs add', inspired from
+	wiki.
+
 2005-08-22  Derek Price  <derek@ximbiot.com>
 
 	Address bug #13882, submitted by Fred Maranhao.
