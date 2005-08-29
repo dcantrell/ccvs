@@ -1,5 +1,9 @@
 2005-08-29  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (Removing directories): Correct grammar, from wiki.
+
+2005-08-29  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (From scratch): Clarify note on `cvs add', inspired from
 	wiki.
 
