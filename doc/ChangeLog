@@ -1,5 +1,10 @@
 2005-08-29  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (From scratch): Add checkout to import example, from
+	wiki.
+
+2005-08-29  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (Removing directories): Correct grammar, from wiki.
 
 2005-08-29  Derek Price  <derek@ximbiot.com>
