@@ -5278,7 +5278,7 @@ later merge the removals to another branch if you want
 @cindex Removing directories
 @cindex Directories, removing
 
-In concept removing directories is somewhat similar to
+In concept, removing directories is somewhat similar to
 removing files---you want the directory to not exist in
 your current working directories, but you also want to
 be able to retrieve old releases in which the directory
@@ -5305,7 +5305,7 @@ removing it.
 @c need for -P and so that a file can be a directory in
 @c one revision and a regular file in another.
 Note that @samp{-P} is implied by the @samp{-r} or @samp{-D}
-options of @code{checkout}.  This way
+options of @code{checkout}.  This way,
 @sc{cvs} will be able to correctly create the directory
 or not depending on whether the particular version you
 are checking out contains any files in that directory.
