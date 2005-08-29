@@ -3188,6 +3188,11 @@ This will add yoyodyne/@var{dir} as a directory under
 Use @code{checkout} to get the new project.  Then, use @code{add}
 to add files (and new directories) as needed.
 
+@example
+$ cd ..
+$ cvs co yoyodyne/@var{dir}
+@end example
+
 Check that the permissions @sc{cvs} sets on the
 directories inside @code{$CVSROOT} are reasonable.
 
