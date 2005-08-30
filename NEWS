@@ -3,6 +3,9 @@ Changes since 1.12.12:
 
 NEW FEATURES
 
+* %{sV} format strings are now available to the verifymsg trigger, similar to
+  the %{stVv} available to loginfo.
+
 * `cvs watch add' on an empty directory no longer clears watchers, and
   specifying a directory for `cvs watch add' now (correctly) sets default
   attributes.
