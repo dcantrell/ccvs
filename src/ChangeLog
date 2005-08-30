@@ -1,3 +1,13 @@
+2005-08-29  Derek Price  <derek@ximbiot.com>
+
+	Add %{sV} format string to verifymsg script.
+	* logmsg.c (do_verify): Accept change list arg, pass through to...
+	(verifymsg_proc): ...here, to pass through to format_cmdline.
+	* commit.c (commit_fileproc, commit_direntproc), import.c (update):
+	Update all callers of do_verify.
+	* cvs.h (do_verify): Update proto.
+	* sanity.sh (info): Test new verifymsg format strings.
+
 2005-08-09  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: Remove debugging echo.

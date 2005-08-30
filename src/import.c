@@ -271,7 +271,6 @@ import (int argc, char **argv)
 			repository,
 		   NULL);
     }
-    do_verify (&message, repository);
     msglen = message == NULL ? 0 : strlen (message);
     if (msglen == 0 || message[msglen - 1] != '\n')
     {
@@ -333,6 +332,19 @@ import (int argc, char **argv)
     {
 	error (1, 0, "attempt to import the repository");
     }
+
+    ulist = getlist ();
+    p = getnode ();
+    p->type = UPDATE;
+    p->delproc = update_delproc;
+    p->key = xstrdup ("- Imported sources");
+    li = xmalloc (sizeof (struct logfile_info));
+    li->type = T_TITLE;
+    li->tag = xstrdup (vbranch);
+    li->rev_old = li->rev_new = NULL;
+    p->data = li;
+    (void) addnode (ulist, p);
+    do_verify (&message, repository, ulist);
 
     /*
      * Make all newly created directories writable.  Should really use a more
@@ -420,17 +432,6 @@ import (int argc, char **argv)
     /*
      * Write out the logfile and clean up.
      */
-    ulist = getlist ();
-    p = getnode ();
-    p->type = UPDATE;
-    p->delproc = update_delproc;
-    p->key = xstrdup ("- Imported sources");
-    li = xmalloc (sizeof (struct logfile_info));
-    li->type = T_TITLE;
-    li->tag = xstrdup (vbranch);
-    li->rev_old = li->rev_new = NULL;
-    p->data = li;
-    (void) addnode (ulist, p);
     Update_Logfile (repository, message, logfp, ulist);
     dellist (&ulist);
     if (fclose (logfp) < 0)
