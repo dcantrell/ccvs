@@ -13519,6 +13519,14 @@ In addition to the common format strings (@pxref{syntax}),
 @table @t
 @item l
 the full path to the file containing the log message to be verified
+@item @{sV@}
+File attributes, where:
+@table @t
+@item s
+file name
+@item V
+old version number (pre-checkin)
+@end table
 @end table
 
 @cindex verifymsg (admin/commit file), updating legacy repositories
