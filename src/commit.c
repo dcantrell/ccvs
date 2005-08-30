@@ -1390,7 +1390,7 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
 	    use_editor)
 	    do_editor (finfo->update_dir, &saved_message,
 		       finfo->repository, ulist);
-	do_verify (&saved_message, finfo->repository);
+	do_verify (&saved_message, finfo->repository, ulist);
     }
 
     p = findnode (cilist, finfo->file);
@@ -1677,7 +1677,7 @@ commit_direntproc (void *callerdat, const char *dir, const char *repos,
 #endif
         use_editor)
 	do_editor (update_dir, &saved_message, real_repos, ulist);
-    do_verify (&saved_message, real_repos);
+    do_verify (&saved_message, real_repos, ulist);
     free (real_repos);
     return R_PROCESS;
 }

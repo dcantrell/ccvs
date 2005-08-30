@@ -620,11 +620,11 @@ void Register (List * list, const char *fname, const char *vn, const char *ts,
                const char *options, const char *tag, const char *date,
                const char *ts_conflict);
 void Update_Logfile (const char *repository, const char *xmessage,
-                     FILE * xlogfp, List * xchanges);
+                     FILE *xlogfp, List *xchanges);
 void do_editor (const char *dir, char **messagep,
-                const char *repository, List * changes);
+                const char *repository, List *changes);
 
-void do_verify (char **messagep, const char *repository);
+void do_verify (char **messagep, const char *repository, List *changes);
 
 typedef	int (*CALLBACKPROC)	(int argc, char *argv[], char *where,
 	char *mwhere, char *mfile, int shorten, int local_specified,

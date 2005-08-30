@@ -47,6 +47,9 @@ struct verifymsg_proc_data
      * been changed when RereadLogAfterVerify is STAT.
      */
     struct stat pre_stbuf;
+   /* The list of files being changed, with new and old version numbers.
+    */
+   List *changes;
 };
 
 /*
@@ -399,14 +402,14 @@ do_editor (const char *dir, char **messagep, const char *repository,
    independant of the running of an editor for getting a message.
  */
 void
-do_verify (char **messagep, const char *repository)
+do_verify (char **messagep, const char *repository, List *changes)
 {
     int err;
     struct verifymsg_proc_data data;
     struct stat post_stbuf;
 
 #ifdef CLIENT_SUPPORT
-    if( current_parsed_root->isremote )
+    if (current_parsed_root->isremote)
 	/* The verification will happen on the server.  */
 	return;
 #endif
@@ -421,6 +424,7 @@ do_verify (char **messagep, const char *repository)
 
     data.message = *messagep;
     data.fname = NULL;
+    data.changes = changes;
     if ((err = Parse_Info (CVSROOTADM_VERIFYMSG, repository,
 	                  verifymsg_proc, 0, &data)) != 0)
     {
@@ -932,6 +936,8 @@ verifymsg_proc (const char *repository, const char *script, void *closure)
                                        "r", "s",
                                        current_parsed_root->directory,
                                        "l", "s", vpd->fname,
+				       "sV", ",", vpd->changes,
+				       logmsg_list_to_args_proc, (void *) NULL,
 				       (char *) NULL);
 
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
