@@ -3,6 +3,9 @@ Changes since 1.12.12:
 
 NEW FEATURES
 
+* The path to the config file may be set as an argument to the CVS server
+  commands.
+
 * %{sV} format strings are now available to the verifymsg trigger, similar to
   the %{stVv} available to loginfo.
 

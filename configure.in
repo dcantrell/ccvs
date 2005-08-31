@@ -1443,9 +1443,59 @@ dnl end --enable-old-info-support
 dnl
 
 
+dnl
+dnl begin --enable-config-override
+dnl
+
+AC_ARG_ENABLE(
+  [config-override],
+  AC_HELP_STRING(
+    [--enable-config-override],
+    [Set to a comma-seperated list of paths to directories (designated by
+     trailing `/') and files, specifies the path prefixes (for directories) and
+     paths to files the CVS server commands will allow configuration to be read
+     from.  Specify `--enable-config-override=no' to disable config file
+     overrides completely and `--enable-config-override=/' or simply
+     `--enable-config-override' to allow all paths.  (Defaults to
+     `SYSCONFDIR/cvs.conf,SYSCONFDIR/cvs/')]),,
+  [# $sysconfdir may still contain variable references.
+   eval enable_config_override=`echo $sysconfdir/cvs.conf,$sysconfdir/cvs/`])
+
+if test x"$enable_config_override" = xyes; then
+  enable_config_override=/
+fi
+
+if test x"$enable_config_override" = xno; then :; else
+  save_IFS=$IFS
+  IFS=,
+  arrayinit=""
+  for path in $enable_config_override; do
+    IFS=$save_IFS
+    case "$path" in
+      [[\\/$]]* | ?:[[\\/]]* )
+	arrayinit="$arrayinit\"$path\", "
+	;;
+      *)  AC_MSG_ERROR([expected comma separated list of absolute directory
+                        names for --enable-config-override, or \`no', not:
+                        \`$enable_config_override' (\`$path' invalid.)]);;
+    esac
+  done
+  arrayinit="${arrayinit}NULL"
+
+  AC_DEFINE_UNQUOTED(ALLOW_CONFIG_OVERRIDE, [$arrayinit],
+    [Define this to a NULL terminated list of allowed path prefixes (for
+     directories) and paths to files the CVS server will allow configuration to
+     be read from when specified from the command line.])
+fi
 
 dnl
-dnl end --enable-*
+dnl end --enable-config-override
+dnl
+
+
+
+dnl
+dnl end --enables
 dnl
 
 
