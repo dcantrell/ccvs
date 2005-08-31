@@ -414,6 +414,15 @@ main_cleanup (int sig)
 
 
 
+/* From server.c.
+ *
+ * When !defined ALLOW_CONFIG_OVERRIDE, this will never have any value but
+ * NULL.
+ */
+extern char *gConfigPath;
+
+
+
 int
 main (int argc, char **argv)
 {
@@ -517,6 +526,25 @@ main (int argc, char **argv)
 	    use_cvsrc = 0;
     }
 
+#ifdef SERVER_SUPPORT
+    /* Don't try and read a .cvsrc file if we are a server.  */
+    if (optind < argc
+	&& (false
+# if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
+	    || !strcmp (argv[optind], "pserver")
+# endif
+# ifdef HAVE_KERBEROS
+	    || !strcmp (argv[optind], "kserver")
+# endif /* HAVE_KERBEROS */
+	    || !strcmp (argv[optind], "server")))
+	{
+	    /* Avoid any .cvsrc file.  */
+	    use_cvsrc = 0;
+	    /* Pre-parse the server options to get the config path.  */
+	    parseServerOptions (argc - optind, argv + optind);
+	}
+#endif /* SERVER_SUPPORT */
+
     /*
      * Scan cvsrc file for global options.
      */
@@ -547,7 +575,7 @@ main (int argc, char **argv)
 #ifdef SERVER_SUPPORT
 	    case 3:
 		/* --allow-root */
-		root_allow_add (optarg);
+		root_allow_add (optarg, gConfigPath);
 		break;
 #endif /* SERVER_SUPPORT */
 	    case 'Q':
@@ -753,10 +781,7 @@ cause intermittent sandbox corruption.");
 	if (strcmp (cvs_cmd_name, "pserver") == 0)
 	{
 	    /* The reason that --allow-root is not a command option
-	       is mainly the comment in server() about how argc,argv
-	       might be from .cvsrc.  I'm not sure about that, and
-	       I'm not sure it is only true of command options, but
-	       it seems easier to make it a global option.  */
+	       is mainly that it seems easier to make it a global option.  */
 
 	    /* Gets username and password from client, authenticates, then
 	       switches to run as that user and sends an ACK back to the
@@ -1025,7 +1050,7 @@ cause intermittent sandbox corruption.");
 		   if we didn't, then there would be no way to check in a new
 		   CVSROOT/config file to fix the broken one!  */
 		if (config) free_config (config);
-		config = parse_config (current_parsed_root->directory);
+		config = parse_config (current_parsed_root->directory, NULL);
 	    }
 
 #ifdef CLIENT_SUPPORT

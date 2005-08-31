@@ -89,11 +89,24 @@ variable_set (char *nameval)
 
 
 
+/* Expand variable NAME into its contents, per the rules above.
+ *
+ * CVSROOT is used to expanding $CVSROOT.
+ *
+ * RETURNS
+ *   A pointer to the requested variable contents or NULL when the requested
+ *   variable is not found.
+ *
+ * ERRORS
+ *   None, though this function may generate warning messages when NAME is not
+ *   found.
+ */
 static const char *
-expand_variable (const char *name, const char *file, int line)
+expand_variable (const char *name, const char *cvsroot,
+		 const char *file, int line)
 {
     if (!strcmp (name, CVSROOT_ENV))
-	return current_parsed_root->directory;
+	return cvsroot;
     else if (!strcmp (name, "RCSBIN"))
     {
 	error (0, 0, "RCSBIN internal variable is no longer supported");
@@ -170,9 +183,12 @@ expand_variable (const char *name, const char *file, int line)
  *
  * When FORMATSAFE is set, percent signs (`%') in variable contents are doubled
  * to prevent later expansion by format_cmdline.
+ *
+ * CVSROOT is used to expanding $CVSROOT.
  */
 char *
-expand_path (const char *name, bool formatsafe, const char *file, int line)
+expand_path (const char *name, const char *cvsroot, bool formatsafe,
+	     const char *file, int line)
 {
     size_t s, d, p;
     const char *e;
@@ -248,7 +264,7 @@ expand_path (const char *name, bool formatsafe, const char *file, int line)
 		expand_string (&mybuf, &mybuf_size, d + 1);
 	    }
 	    mybuf[--d] = '\0';
-	    e = expand_variable (&mybuf[p+flag], file, line);
+	    e = expand_variable (&mybuf[p+flag], cvsroot, file, line);
 
 	    if (e)
 	    {

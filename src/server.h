@@ -39,6 +39,9 @@ extern int server_active;
 
 /* Server functions exported to the rest of CVS.  */
 
+/* pre-parse the server options.  */
+void parseServerOptions (int argc, char **argv);
+
 /* Run the server.  */
 int server (int argc, char **argv);
 

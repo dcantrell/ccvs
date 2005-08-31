@@ -30823,9 +30823,47 @@ Entry /CC/CC/CC
 noop
 EOF
 
+	    # Check that the config file may be set from the command line.
+	    # But first verify the default config produces no error messages.
+	    dotest server-19 "$testcvs server" \
+"ok" <<EOF
+Root $TESTDIR/crerepos
+Directory .
+$TESTDIR/crerepos
+noop
+EOF
+	    echo THIS-CONFIG-OPTION-IS-BAD=XXX >$TESTDIR/newconfig
+	    dotest_fail server-20 "$testcvs server -c $TESTDIR/newconfig" \
+"E $SPROG \[server aborted\]: Invalid path to config file specified: \`$TESTDIR/newconfig'" <<EOF
+Root $TESTDIR/crerepos
+Directory .
+$TESTDIR/crerepos
+noop
+EOF
+	    dotest_fail server-21 \
+"$testcvs server -c /etc/cvs/this-shouldnt-exist" \
+"E $SPROG \[server aborted\]: Failed to resolve path: \`/etc/cvs/this-shouldnt-exist': No such file or directory" <<EOF
+Root $TESTDIR/crerepos
+Directory .
+$TESTDIR/crerepos
+noop
+EOF
+
+	    # Now make sure that the config file can't be set via the user's
+	    # .cvsrc.
+	    echo server -c $TESTDIR/newconfig >$HOME/.cvsrc
+	    dotest server-22 "$testcvs server" \
+"ok" <<EOF
+Root $TESTDIR/crerepos
+Directory .
+$TESTDIR/crerepos
+noop
+EOF
+
 	    dokeep
-	    rm -rf ${TESTDIR}/crerepos
+	    rm -rf $TESTDIR/crerepos
 	    rm gzipped.dat session.dat
+	    rm $TESTDIR/newconfig $HOME/.cvsrc
 	    servercvs=$save_servercvs
 	  fi # skip the whole thing for local
 	  ;;
