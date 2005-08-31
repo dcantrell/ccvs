@@ -53,6 +53,12 @@ BUG FIXES
   regenerate it may eliminate a few odd behaviors and possibly cause a slight
   speed up of read transactions in large repositories over time.
 
+BUILD ISSUES
+
+* The RPM spec file works again with the most modern versions of `rpm'.  It
+  also finds the correct version of install-sh when building the CVS with
+  GSSAPI.
+
 Changes from 1.12.11 to 1.12.12:
 ********************************
 

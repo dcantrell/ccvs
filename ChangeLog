@@ -1,5 +1,14 @@
 2005-08-31  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note spec file repair.
+
+2005-08-31  Derek Price  <derek@ximbiot.com>
+
+	* cvs.spec.in: Update links to point to Savannah.  s/Copyright/License/
+	for RPM 4.mumble.
+
+2005-08-31  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note configurable config file path.
 	* configure.in (--enable-config-override): New option.
 
