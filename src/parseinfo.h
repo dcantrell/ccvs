@@ -61,6 +61,6 @@ struct config
 };
 
 bool parse_error (const char *, unsigned int);
-struct config *parse_config (const char *);
+struct config *parse_config (const char *, const char *);
 void free_config (struct config *data);
 #endif /* !PARSEINFO_H */

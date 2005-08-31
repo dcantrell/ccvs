@@ -1,5 +1,30 @@
 2005-08-31  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h (expand_path): Update proto.
+	* expand_path.c (expand_variable): Accept and use cvsroot arg inplace
+	of global.
+	(expand_path): Accept and pass through cvsroot arg.
+	* main.c (main): Prescan args for config path before config options are
+	used.  Pass config path on as needed.  Update comment. 
+	* modules.c (do_module): Update expand_path call.
+	* parseinfo.ci (Parse_Info): Ditto.
+	(allowed_config_prefixes): New global.
+	(parse_config): Accept configPath arg, update expand_path calls, and
+	expand LockDir path.
+	* parseinfo.h (parse_config): Update proto.
+	* root.c (root_allow_add, get_root_allow_config): Accept new configPath
+	arg and pass through to parse_config.
+	* root.h (root_allow_add, get_root_allow_config): Update protos.
+	* server.c (gConfigPath, server_usage): New globals.
+	(parseServerOptions): New function.
+	(server): Use new usage var.
+	(pserver_authenticate_connection): Update get_root_allow_config call.
+	* server.h (parseServerOptions): New proto.
+	* wrapper.c (wrap_add): Update expand_path calls.
+	* sanity.sh (server): New tests for setting config file path.
+
+2005-08-31  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (close-stdout): Remove archive dir when done.
 
 2005-08-31  Larry Jones  <lawrence.jones@ugs.com>

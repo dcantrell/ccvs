@@ -15,8 +15,6 @@
 #include "getline.h"
 #include "history.h"
 
-
-
 /*
  * Parse the INFOFILE file for the specified REPOSITORY.  Invoke CALLPROC for
  * the first line in the file that matches the REPOSITORY, or if ALL != 0, any
@@ -144,8 +142,9 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	    if (!(opt & PIOPT_ALL))
 		error (0, 0, "Keyword `ALL' is ignored at line %d in %s file",
 		       line_number, infofile);
-	    else if ((expanded_value = expand_path (value, true, infofile,
-	                                            line_number)) != NULL)
+	    else if ((expanded_value =
+			expand_path (value, current_parsed_root->directory,
+				     true, infofile, line_number)))
 	    {
 		err += callproc (repository, expanded_value, closure);
 		free (expanded_value);
@@ -171,7 +170,8 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	    continue;				/* no match */
 
 	/* it did, so do the callback and note that we did one */
-	expanded_value = expand_path (value, true, infofile, line_number);
+	expanded_value = expand_path (value, current_parsed_root->directory,
+				      true, infofile, line_number);
 	if (expanded_value)
 	{
 	    err += callproc (repository, expanded_value, closure);
@@ -189,8 +189,9 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     /* if we fell through and didn't callback at all, do the default */
     if (!callback_done && default_value)
     {
-	expanded_value = expand_path (default_value, true, infofile,
-	                              line_number);
+	expanded_value = expand_path (default_value,
+				      current_parsed_root->directory,
+				      true, infofile, line_number);
 	if (expanded_value)
 	{
 	    err += callproc (repository, expanded_value, closure);
@@ -344,6 +345,12 @@ parse_error (const char *infopath, unsigned int ln)
 
 
 
+#ifdef ALLOW_CONFIG_OVERRIDE
+const char * const allowed_config_prefixes[] = { ALLOW_CONFIG_OVERRIDE };
+#endif /* ALLOW_CONFIG_OVERRIDE */
+
+
+
 /* Parse the CVS config file.  The syntax right now is a bit ad hoc
  * but tries to draw on the best or more common features of the other
  * *info files and various unix (or non-unix) config file syntaxes.
@@ -365,9 +372,10 @@ parse_error (const char *infopath, unsigned int ln)
  *   xmalloc() failures are fatal, per usual.
  */
 struct config *
-parse_config (const char *cvsroot)
+parse_config (const char *cvsroot, const char *path)
 {
-    char *infopath;
+    const char *infopath;
+    char *freeinfopath = NULL;
     FILE *fp_info;
     char *line = NULL;
     unsigned int ln;		/* Input file line counter.  */
@@ -378,9 +386,37 @@ parse_config (const char *cvsroot)
 
     TRACE (TRACE_FUNCTION, "parse_config (%s)", cvsroot);
 
-    retval = new_config ();
+#ifdef ALLOW_CONFIG_OVERRIDE
+    if (path)
+    {
+	const char * const *prefix;
+	char *npath = xcanonicalize_file_name (path);
+	bool approved = false;
+	for (prefix = allowed_config_prefixes; *prefix != NULL; prefix++)
+	{
+	    if (!isreadable (*prefix)) continue;
+	    char *nprefix = xcanonicalize_file_name (*prefix);
+	    if (!strncmp (nprefix, npath, strlen (nprefix))
+		&& (((*prefix)[strlen (*prefix)] != '/'
+		     && strlen (npath) == strlen (nprefix))
+		    || ((*prefix)[strlen (*prefix)] == '/'
+			&& npath[strlen (nprefix)] == '/')))
+		approved = true;
+	    free (nprefix);
+	    if (approved) break;
+	}
+	if (!approved)
+	    error (1, 0, "Invalid path to config file specified: `%s'",
+		   path);
+	infopath = path;
+	free (npath);
+    }
+    else
+#endif
+	infopath = freeinfopath =
+	    Xasprintf ("%s/%s/%s", cvsroot, CVSROOTADM, CVSROOTADM_CONFIG);
 
-    infopath = Xasprintf ("%s/%s/%s", cvsroot, CVSROOTADM, CVSROOTADM_CONFIG);
+    retval = new_config ();
 
     fp_info = CVS_FOPEN (infopath, "r");
     if (!fp_info)
@@ -392,7 +428,7 @@ parse_config (const char *cvsroot)
 	       value, currently at least.  */
 	    error (0, errno, "cannot open %s", infopath);
 	}
-	free (infopath);
+	if (freeinfopath) free (freeinfopath);
 	return retval;
     }
 
@@ -489,7 +525,7 @@ parse_config (const char *cvsroot)
 	{
 	    if (retval->lock_dir)
 		free (retval->lock_dir);
-	    retval->lock_dir = xstrdup (p);
+	    retval->lock_dir = expand_path (p, cvsroot, false, infopath, line);
 	    /* Could try some validity checking, like whether we can
 	       opendir it or something, but I don't see any particular
 	       reason to do that now rather than waiting until lock.c.  */
@@ -499,7 +535,8 @@ parse_config (const char *cvsroot)
 	    if (retval->HistoryLogPath) free (retval->HistoryLogPath);
 
 	    /* Expand ~ & $VARs.  */
-	    retval->HistoryLogPath = expand_path (p, false, infopath, ln);
+	    retval->HistoryLogPath = expand_path (p, cvsroot, false,
+						  infopath, ln);
 
 	    if (retval->HistoryLogPath && !ISABSOLUTE (retval->HistoryLogPath))
 	    {
@@ -512,7 +549,8 @@ parse_config (const char *cvsroot)
 	else if (strcmp (line, "HistorySearchPath") == 0)
 	{
 	    if (retval->HistorySearchPath) free (retval->HistorySearchPath);
-	    retval->HistorySearchPath = expand_path (p, false, infopath, ln);
+	    retval->HistorySearchPath = expand_path (p, cvsroot, false,
+						     infopath, ln);
 
 	    if (retval->HistorySearchPath
 		&& !ISABSOLUTE (retval->HistorySearchPath))
@@ -618,7 +656,8 @@ parse_config (const char *cvsroot)
 	error (0, errno, "cannot read %s", infopath);
     if (fclose (fp_info) < 0)
 	error (0, errno, "cannot close %s", infopath);
-    free (infopath);
+    if (freeinfopath) free (freeinfopath);
     if (line) free (line);
+
     return retval;
 }

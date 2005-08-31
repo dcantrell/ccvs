@@ -839,7 +839,7 @@ void wrap_unparse_rcs_options (char **, int);
 #endif /* SERVER_SUPPORT || CLIENT_SUPPORT */
 
 /* Pathname expansion */
-char *expand_path (const char *name, bool formatsafe,
+char *expand_path (const char *name, const char *cvsroot, bool formatsafe,
 		   const char *file, int line);
 
 /* User variables.  */

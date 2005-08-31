@@ -820,6 +820,10 @@ rewind_buf_from_net (void)
 
 
 
+char *gConfigPath;
+
+
+
 /*
  * This request cannot be ignored by a potential secondary since it is used to
  * determine if we _are_ a secondary.
@@ -888,7 +892,8 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 
     /* For pserver, this will already have happened, and the call will do
        nothing.  But for rsh, we need to do it now.  */
-    config = get_root_allow_config (current_parsed_root->directory);
+    config = get_root_allow_config (current_parsed_root->directory,
+				    gConfigPath);
 
 # ifdef PROXY_SUPPORT
     /* At this point we have enough information to determine if we are a
@@ -6219,22 +6224,50 @@ size_t MaxProxyBufferSize = (size_t)(8 * 1024 * 1024); /* 8 megabytes,
 
 int server_active = 0;
 
+static const char *const server_usage[] =
+{
+    "Usage: %s %s [-c config-file]\n",
+    "\t-c config-file\tPath to an alternative CVS config file.\n",
+    "Normally invoked by a cvs client on a remote machine.\n",
+    NULL
+};
+
+
+
+void
+parseServerOptions (int argc, char **argv)
+{
+    char c;
+    optind = 0;
+    while ((c = getopt (argc, argv, "+c:")) != -1)
+    {
+	switch (c)
+	{
+#ifdef ALLOW_CONFIG_OVERRIDE
+	    case 'c':
+		if (gConfigPath) free (gConfigPath);
+		gConfigPath = xstrdup (optarg);
+		break;
+#endif
+	    case '?':
+	    default:
+		usage (server_usage);
+		break;
+	}
+    }
+}
+
+
+
 int
 server (int argc, char **argv)
 {
     char *error_prog_name;		/* Used in error messages */
 
     if (argc == -1)
-    {
-	static const char *const msg[] =
-	{
-	    "Usage: %s %s\n",
-	    "  Normally invoked by a cvs client on a remote machine.\n",
-	    NULL
-	};
-	usage (msg);
-    }
-    /* Ignore argc and argv.  They might be from .cvsrc.  */
+	usage (server_usage);
+
+    /* Options were pre-parsed in main.c.  */
 
     /*
      * Set this in .bashrc if you want to give yourself time to attach
@@ -7267,7 +7300,7 @@ pserver_authenticate_connection (void)
        file, parse_config already printed an error.  We keep going.
        Why?  Because if we didn't, then there would be no way to check
        in a new CVSROOT/config file to fix the broken one!  */
-    config = get_root_allow_config (repository);
+    config = get_root_allow_config (repository, gConfigPath);
 
     /* We need the real cleartext before we hash it. */
     descrambled_password = descramble (password);

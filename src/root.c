@@ -279,14 +279,14 @@ delconfig (Node *n)
 
 
 void
-root_allow_add (const char *arg)
+root_allow_add (const char *arg, const char *configPath)
 {
     Node *n;
 
     if (!root_allow) root_allow = getlist();
     n = getnode();
     n->key = xstrdup (arg);
-    n->data = parse_config (arg);
+    n->data = parse_config (arg, configPath);
     n->delproc = delconfig;
     addnode (root_allow, n);
 }
@@ -329,7 +329,7 @@ error 0 Server configuration missing --allow-root in inetd.conf\n");
  *   The config associated with ARG.
  */
 struct config *
-get_root_allow_config (const char *arg)
+get_root_allow_config (const char *arg, const char *configPath)
 {
     Node *n;
 
@@ -341,7 +341,7 @@ get_root_allow_config (const char *arg)
 	n = NULL;
 
     if (n) return n->data;
-    return parse_config (arg);
+    return parse_config (arg, configPath);
 }
 
 
