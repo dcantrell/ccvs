@@ -121,6 +121,10 @@ fi
 %endif
 
 %changelog
+* Wed Aug 31 2005 Derek Price <derek@ximbiot.com>
+
+- Update links to Savannah.  s/Copyright/License/ for RPM 4.mumble.
+
 * Wed Mar 31 2004 Mark D. Baushke <mdb@cvshome.org>
 - Do not fail if info DIR file is not present to be deleted.
 
