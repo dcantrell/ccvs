@@ -22,6 +22,10 @@ BUG FIXES
   regenerate it may eliminate a few odd behaviors and possibly cause a slight
   speed up of read transactions in large repositories over time.
 
+BUILD ISSUES
+
+* The RPM spec file works again with the most modern versions of `rpm'.
+
 Changes from 1.11.19 to 1.11.20:
 ********************************
 
