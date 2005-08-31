@@ -1,3 +1,7 @@
+2005-08-31  Derek Price  <derek@ximbiot.com>
+
+	* getdelim.c (getdelim): Return EOF on EOF.
+
 2005-08-12  Derek Price  <derek@ximbiot.com>
 
 	Update from GNULIB.
