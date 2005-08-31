@@ -3,6 +3,8 @@ Changes since 1.11.20:
 
 BUG FIXES
 
+* CVS now does correct locking during import.
+
 * A problem where the server could block indefinitely waiting for an EOF from
   the client when compression was enabled has ben fixed.
 

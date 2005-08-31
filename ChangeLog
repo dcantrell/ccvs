@@ -1,3 +1,7 @@
+2005-08-30  Larry Jones  <lawrence.jones@ugs.com>
+
+	* NEWS: Note import locking fix.
+
 2005-07-12  Derek Price  <derek@ximbiot.com>
 
 	* FAQ, HACKING, INSTALL: Add copyright notices.
