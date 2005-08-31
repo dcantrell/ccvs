@@ -16289,6 +16289,7 @@ ${CPROG} \[update aborted\]: \*PANIC\* administration files missing!"
 	    dokeep
 	    cd ..
 	    rm -r close-stdout
+	    modify_repo rm -rf $CVSROOT_DIRNAME/closeout
 	  else
 	    skip close-stdout '/dev/full is not available'
 	  fi
