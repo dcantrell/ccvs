@@ -467,6 +467,9 @@ import_descend (char *message, char *vtag, int targc, char **targv)
     ign_add_file (CVSDOTIGNORE, 1);
     wrap_add_file (CVSDOTWRAPPER, 1);
 
+    if (!current_parsed_root->isremote)
+	lock_dir_for_write (repository);
+
     if ((dirp = CVS_OPENDIR (".")) == NULL)
     {
 	error (0, errno, "cannot open directory");
@@ -548,6 +551,9 @@ import_descend (char *message, char *vtag, int targc, char **targv)
 	}
 	(void) CVS_CLOSEDIR (dirp);
     }
+
+    if (!current_parsed_root->isremote)
+	Simple_Lock_Cleanup ();
 
     if (dirlist != NULL)
     {

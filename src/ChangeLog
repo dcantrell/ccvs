@@ -1,3 +1,7 @@
+2005-08-31  Larry Jones  <lawrence.jones@ugs.com>
+
+	* import.c (import_descend): Lock repository directory during import.
+
 2005-08-31  Derek Price  <derek@ximbiot.com>
 
 	* server.c (isSamePath): Compare args rather than assuming values.
