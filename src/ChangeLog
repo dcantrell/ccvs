@@ -1,3 +1,7 @@
+2005-08-31  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (close-stdout): Remove archive dir when done.
+
 2005-08-31  Larry Jones  <lawrence.jones@ugs.com>
 
 	* import.c (import_descend): Lock repository directory during import.
