@@ -984,10 +984,10 @@ it is created.  The state is visible in the output from
 \fIcvs log\fR (see node `log\(aq in the CVS manual), and in the
 \fB$\fP\fPLog$\fR and \fB$\fP\fPState$\fR keywords
 (see node `Keyword substitution\(aq in the CVS manual).  Note that \fBcvs\fR
-uses the \fBdead\fR state for its own purposes; to
+uses the \fBdead\fR state for its own purposes (see node `Attic\(aq in the CVS manual); to
 take a file to or from the \fBdead\fR state use
-commands like \fBcvs remove\fR and \fBcvs add\fR, not
-\fBcvs admin -s\fR.
+commands like \fBcvs remove\fR and \fBcvs add\fR
+(see node `Adding and removing\(aq in the CVS manual), not \fBcvs admin -s\fR.
 .SP
 .IP "" 0
 \fB-t[\fIfile\fB]\fR
@@ -3110,7 +3110,10 @@ Suppress the header if no revisions are selected.
 .IP "" 2
 Print information about revisions whose state
 attributes match one of the states given in the
-comma-separated list \fIstates\fR.
+comma-separated list \fIstates\fR.  Individual states may
+be any text string, though \fBcvs\fR commonly only uses two
+states, \fBExp\fR and \fBdead\fR.  See see node `admin options\(aq in the CVS manual
+for more information.
 .SP
 .IP "" 0
 \fB-t\fR
