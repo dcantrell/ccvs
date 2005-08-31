@@ -1,3 +1,7 @@
+2005-08-30  Larry Jones  <lawrence.jones@ugs.com>
+
+	* import.c (import_descend): Lock repository directory during import.
+
 2005-07-12  Derek Price  <derek@ximbiot.com>
 
 	* buffer.c, buffer.h, client.h, expand_path.c, history.c, myndbm.h,
