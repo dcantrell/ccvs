@@ -1,5 +1,10 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
+/* Define this to a NULL terminated list of allowed path prefixes (for
+   directories) and paths to files the CVS server will allow configuration to
+   be read from when specified from the command line. */
+#undef ALLOW_CONFIG_OVERRIDE
+
 /* Enable AUTH_CLIENT_SUPPORT to enable pserver as a remote access method in
    the CVS client (default) */
 #undef AUTH_CLIENT_SUPPORT

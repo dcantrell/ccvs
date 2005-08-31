@@ -961,6 +961,17 @@ Optional Features:
                           smaller executable once your scripting hooks have
                           been updated to use the new *info format strings
                           (default).
+  --enable-config-override
+                          Set to a comma-seperated list of paths to
+                          directories (designated by trailing `/') and files,
+                          specifies the path prefixes (for directories) and
+                          paths to files the CVS server commands will allow
+                          configuration to be read from. Specify
+                          `--enable-config-override=no' to disable config file
+                          overrides completely and
+                          `--enable-config-override=/' or simply
+                          `--enable-config-override' to allow all paths.
+                          (Defaults to `SYSCONFDIR/cvs.conf,SYSCONFDIR/cvs/')
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -40849,6 +40860,50 @@ if test "$enable_old_info_format_support" = yes; then
 
 cat >>confdefs.h <<\_ACEOF
 #define SUPPORT_OLD_INFO_FMT_STRINGS 1
+_ACEOF
+
+fi
+
+
+
+
+# Check whether --enable-config-override or --disable-config-override was given.
+if test "${enable_config_override+set}" = set; then
+  enableval="$enable_config_override"
+
+else
+  # $sysconfdir may still contain variable references.
+   eval enable_config_override=`echo $sysconfdir/cvs.conf,$sysconfdir/cvs/`
+fi;
+
+if test x"$enable_config_override" = xyes; then
+  enable_config_override=/
+fi
+
+if test x"$enable_config_override" = xno; then :; else
+  save_IFS=$IFS
+  IFS=,
+  arrayinit=""
+  for path in $enable_config_override; do
+    IFS=$save_IFS
+    case "$path" in
+      [\\/$]* | ?:[\\/]* )
+	arrayinit="$arrayinit\"$path\", "
+	;;
+      *)  { { echo "$as_me:$LINENO: error: expected comma separated list of absolute directory
+                        names for --enable-config-override, or \`no', not:
+                        \`$enable_config_override' (\`$path' invalid.)" >&5
+echo "$as_me: error: expected comma separated list of absolute directory
+                        names for --enable-config-override, or \`no', not:
+                        \`$enable_config_override' (\`$path' invalid.)" >&2;}
+   { (exit 1); exit 1; }; };;
+    esac
+  done
+  arrayinit="${arrayinit}NULL"
+
+
+cat >>confdefs.h <<_ACEOF
+#define ALLOW_CONFIG_OVERRIDE $arrayinit
 _ACEOF
 
 fi
