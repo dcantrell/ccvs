@@ -561,8 +561,7 @@ isSamePath (const char *path1_in, const char *path2_in)
     char *p1, *p2;
     bool same;
 
-    if (!strcmp (config->PrimaryServer->directory,
-		 current_parsed_root->directory))
+    if (!strcmp (path1_in, path2_in))
 	return true;
 
     /* Path didn't match, but try to resolve any links that may be

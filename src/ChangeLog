@@ -1,3 +1,7 @@
+2005-08-31  Derek Price  <derek@ximbiot.com>
+
+	* server.c (isSamePath): Compare args rather than assuming values.
+
 2005-08-29  Derek Price  <derek@ximbiot.com>
 
 	Add %{sV} format string to verifymsg script.
