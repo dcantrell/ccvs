@@ -1,3 +1,7 @@
+2005-08-30  Larry Jones  <lawrence.jones@ugs.com>
+
+	* NEWS: Note import locking fix.
+
 2005-08-29  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note new verifymsg %{sV} format strings.
