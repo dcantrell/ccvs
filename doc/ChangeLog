@@ -1,3 +1,9 @@
+2005-08-31  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (CVS commands): Link to new node.
+	(server & pserver): New node.
+	(config): Note configurability of config file path.
+
 2005-08-29  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (verifymsg): Describe new %{sV} format strings.

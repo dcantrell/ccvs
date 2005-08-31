@@ -3588,6 +3588,41 @@ $
 .PD
 .IP "" 0
 .SP
+.SH "server & pserver"
+.SS "Act as a server for a client on stdin/stdout"
+.IX "pserver (subcommand)"
+.IX "server (subcommand)"
+.SP
+.IP "\(bu" 2
+pserver [-c path]
+.SP
+server [-c path]
+.IP "\(bu" 2
+Requires: repository, client conversation on stdin/stdout
+.IP "\(bu" 2
+Changes: Repository or, indirectly, client working directory.
+.SP
+The \fBcvs\fR \fBserver\fR and \fBpserver\fR commands are used to provide
+repository access to remote clients and expect a client conversation on
+stdin & stdout.  Typically these commands are launched from \fBinetd\fR or
+via \fBssh\fR (see node `Remote repositories\(aq in the CVS manual).
+.SP
+\fBserver\fR expects that the client has already been authenticated somehow,
+typically via \fBssh\fR, and \fBpserver\fR attempts to authenticate the client
+itself.
+.SP
+Only one option is available with the \fBserver\fR and \fBpserver\fR
+commands:
+.SP
+.IX "configuration file"
+.IP "" 0
+\fB-c path\fR
+.IP "" 2
+Load configuration from \fIpath\fR rather than the default location 
+\fB$CVSROOT/CVSROOT/config\fR (see node `config\(aq in the CVS manual).  \fIpath\fR must be
+\fB/etc/cvs.conf\fR or prefixed by \fB/etc/cvs/\fR.  This option is
+supported beginning with \fBcvs\fR release 1.12.13.
+.SP
 .SH "update"
 .SS "Bring work tree in sync with repository"
 .IX "update (subcommand)"

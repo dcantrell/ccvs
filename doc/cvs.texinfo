@@ -8123,6 +8123,7 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * ls & rls::                    List files in the repository
 * rdiff::                       'patch' format diffs between releases
 * release::                     Indicate that a directory is no longer in use
+* server & pserver::            Act as a server for a client on stdin/stdout
 * update::                      Bring work tree in sync with repository
 @end menu
 
@@ -11310,6 +11311,44 @@ $
 @end example
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node server & pserver
+@appendixsec server & pserver---Act as a server for a client on stdin/stdout
+@cindex pserver (subcommand)
+@cindex server (subcommand)
+
+@itemize @bullet
+@item
+pserver [-c path]
+
+server [-c path]
+@item
+Requires: repository, client conversation on stdin/stdout
+@item
+Changes: Repository or, indirectly, client working directory.
+@end itemize
+
+The @sc{cvs} @code{server} and @code{pserver} commands are used to provide
+repository access to remote clients and expect a client conversation on
+stdin & stdout.  Typically these commands are launched from @code{inetd} or
+via @code{ssh} (@pxref{Remote repositories}).
+
+@code{server} expects that the client has already been authenticated somehow,
+typically via @sc{ssh}, and @code{pserver} attempts to authenticate the client
+itself.
+
+Only one option is available with the @code{server} and @code{pserver}
+commands:
+
+@cindex configuration file
+@table @code
+@item -c path
+Load configuration from @var{path} rather than the default location 
+@file{$CVSROOT/CVSROOT/config} (@pxref{config}).  @var{path} must be
+@file{/etc/cvs.conf} or prefixed by @file{/etc/cvs/}.  This option is
+supported beginning with @sc{cvs} release 1.12.13.
+@end table
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node update
 @appendixsec update---Bring work tree in sync with repository
 @cindex update (subcommand)
@@ -14425,8 +14464,13 @@ Do not confuse this with the internal variable of the same name.
 @node config
 @appendixsec The CVSROOT/config configuration file
 
+@cindex configuration file
 @cindex config, in CVSROOT
 @cindex CVSROOT/config
+
+Usually, the @file{config} file is found at @file{$CVSROOT/CVSROOT/config},
+but this may be overridden on the @code{pserver} and @code{server} command
+lines (@pxref{server & pserver}).
 
 The administrative file @file{config} contains various
 miscellaneous settings which affect the behavior of
