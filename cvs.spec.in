@@ -126,6 +126,9 @@ fi
 %endif
 
 %changelog
+* Wed Aug 31 2005 Derek Price <derek@ximbiot.com>
+- Update links to Savannah.  s/Copyright/License/ for RPM 4.mumble.
+
 * Mon July 20 2005 Derek Price <derek@ximbiot.com>
 - Update to homepage on Savannah.
 
