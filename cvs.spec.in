@@ -2,10 +2,10 @@ Summary: A version control system.
 Name: @PACKAGE_TARNAME@
 Version: @PACKAGE_VERSION@
 Release: 1
-Copyright: GPL
+License: GPL
 Group: Development/Tools
-Source: ftp://ftp.cvshome.com/pub/%{name}-%{version}/%{name}-%{version}.tar.bz2
-URL: http://cvshome.org
+Source: http://savannah.nongnu.org/download/cvs/%{name}-%{version}.tar.bz2
+URL: http://cvs.nongnu.org/
 Prereq: /sbin/install-info
 Prefix: %{_prefix}
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
