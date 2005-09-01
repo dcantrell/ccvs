@@ -1,3 +1,7 @@
+2005-09-01  Derek Price  <derek@ximbiot.com>
+
+	* README: Update bug-cvs email.
+
 2005-06-06  Conrad T. Pino  <Conrad@Pino.com>
 
 	* run.c: Add "FIXME" for "run_add_arg_p" and "run_arg_free_p" functions.
