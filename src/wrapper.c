@@ -394,7 +394,8 @@ wrap_add (char *line, int isTemp)
 	switch(opt){
 	case 'f':
 	    /* Before this is reenabled, need to address the problem in
-	       commit.c (see http://www.cvshome.org/docs/infowrapper.html).  */
+	       commit.c (see
+	       <http://ximbiot.com/cvs/cvshome/docs/infowrapper.html>).  */
 	    error (1, 0,
 		   "-t/-f wrappers not supported by this version of CVS");
 
@@ -410,7 +411,8 @@ wrap_add (char *line, int isTemp)
 	    break;
 	case 't':
 	    /* Before this is reenabled, need to address the problem in
-	       commit.c (see http://www.cvshome.org/docs/infowrapper.html).  */
+	       commit.c (see
+	       <http://ximbiot.com/cvs/cvshome/docs/infowrapper.html>).  */
 	    error (1, 0,
 		   "-t/-f wrappers not supported by this version of CVS");
 

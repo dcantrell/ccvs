@@ -29,7 +29,7 @@ us, please be careful.  MSVC appears to be trying to write absolute paths into
 the diff/libdiff.mak file and a relative path to a file in the local MSVC
 install in cvsnt.dep (this last only with MSVC 6.x).
 
-Send bug reports to bug-cvs@gnu.org.
+Send bug reports to bug-cvs@nongnu.org.
 
 As of May 1996, this port passed all of the tests in src/sanity.sh,
 save the one that deals with reserved all-upper-case tags (BASE and

@@ -339,7 +339,7 @@ Autoconf 2.59, respectively.
 There is a known bug in Autoconf 2.57 that will prevent the configure
 scripts it generates from working on some platforms.  Other combinations of
 autotool versions may or may not work.  If you get other versions to work,
-please send a report to <bug-cvs@gnu.org>.
+please send a report to <bug-cvs@nongnu.org>.
 
 * Regenerating Build Files (Windows)
 
@@ -404,7 +404,7 @@ for each issue.  Use context diffs or unidiffs for patches.
 
 Include words like "I grant permission to distribute this patch under
 the terms of the GNU Public License" with your patch.  By sending a
-patch to bug-cvs@gnu.org, you implicitly grant this permission.
+patch to bug-cvs@nongnu.org, you implicitly grant this permission.
 
 Submitting a patch to bug-cvs is the way to reach the people who have
 signed up to receive such submissions (including CVS developers), but
@@ -433,13 +433,14 @@ intentional, to avoid a last minute rush to get new features in.
 
 * Mailing lists
 
-Anyone can add themselves to the following mailing lists:
+In addition to the mailing lists listed in the README file, developers should
+take particular note of the following mailling lists:
 
-    cvs-announce:  CVS release announcements and other major
-      announcements about the project are sent to this list.
-    cvs-announce-binaries:  Announcements are made to this list
-      when binaries for various platforms are built and initially
-      posted for download.
+    bug-cvs:  This is the list which users are requested to send bug reports
+      to.  General CVS development and design discussions also take place on
+      this list.
+    info-cvs:  This list is intended for user questions, but general CVS
+      development and design discussions sometimes take place on this list.
     cvs-cvs:  The only messages sent to this list are sent
       automatically, via the CVS `loginfo' mechanism, when someone
       checks something in to the master CVS repository.
@@ -447,14 +448,6 @@ Anyone can add themselves to the following mailing lists:
       automatically, daily, by a script which runs "make check"
       and "make remotecheck" on the master CVS sources.
 
-To subscribe to cvs-announce, cvs-announce-binaries, cvs-cvs,
-or test-results, visit https://savannah.nongnu.org/mail/?group=cvs
-and follow the instructions for the list you wish to subscribe to.
-
-One other list related to CVS development is bug-cvs.  This is the
-list which users are requested to send bug reports to.  Anyone can
-subscribe; to do so send mail to bug-cvs-request@gnu.org.
-
-Other CVS discussions take place on the info-cvs mailing list
-(send mail to info-cvs-request@gnu.org to subscribe) or on
-the newsgroup comp.software.config-mgmt.
+To subscribe to any of these lists, send mail to <list>-request@nongnu.org
+or visit http://savannah.nongnu.org/mail/?group=cvs and follow the instructions
+for the list you wish to subscribe to.

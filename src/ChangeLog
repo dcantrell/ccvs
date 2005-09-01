@@ -1,3 +1,7 @@
+2005-09-01  Derek Price  <derek@ximbiot.com>
+
+	* recurse.c: Update bug report email address.
+
 2005-08-31  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h (expand_path): Update proto.

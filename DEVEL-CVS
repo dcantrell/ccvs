@@ -16,7 +16,7 @@ People who want checkin access are first requested to send
 patches and have them reviewed by a developer.  If they submit some
 good ones (preferably over a period of time, to demonstrate sustained
 interest), then one of the developers can ask the other CVS
-developers, usually via the bug-cvs@gnu.org mailing list, whether it
+developers, usually via the bug-cvs@nongnu.org mailing list, whether it
 is OK to make this person a developer (after first sending the
 prospective developer a copy of this file and then having the
 prospective developer say they want to be a developer).  If there are

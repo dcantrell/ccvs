@@ -76,7 +76,7 @@ Options:
 Supported PROGRAM values:
   bison        create \`y.tab.[ch]', if possible, from existing .[ch]
 
-Send bug reports to <bug-cvs@gnu.org>."
+Send bug reports to <bug-cvs@nongnu.org>."
     exit $?
     ;;
 

@@ -1,3 +1,7 @@
+2005-09-01  Derek Price  <derek@ximbiot.com>
+
+	* README, cvs.texinfo: Update email addresses and links.
+
 2005-07-20  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo: s/cvshome.org/nongnu.org.etc.../.
