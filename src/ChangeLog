@@ -1,3 +1,7 @@
+2005-09-01  Derek Price  <derek@ximbiot.com>
+
+	* recurse.c: Update bug report email address.
+
 2005-08-30  Larry Jones  <lawrence.jones@ugs.com>
 
 	* import.c (import_descend): Lock repository directory during import.

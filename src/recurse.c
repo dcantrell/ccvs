@@ -713,7 +713,8 @@ do_recursion (frame)
 	    if (repository == NULL)
 	    {
 		Name_Repository ((char *) NULL, update_dir);
-		assert (!"Not reached.  Please report this problem to <bug-cvs@gnu.org>");
+		assert (!"Not reached.  Please report this problem to <"
+			PACKAGE_BUGREPORT ">");
 	    }
 
 	    /* find the files and fill in entries if appropriate */
