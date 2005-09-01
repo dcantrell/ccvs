@@ -104,9 +104,9 @@ On the web, http://www.loria.fr/~molli/cvs-index.html.
 See also 
 	http://www.cvshome.org
 
-The mailing list for CVS is info-cvs@gnu.org.  Send
+The mailing list for CVS is info-cvs@nongnu.org.  Send
 subscription and removal requests for that list to
-info-cvs-request@gnu.org.
+info-cvs-request@nongnu.org.
 
 The newsgroup for CVS (and other configuration management systems) is
 comp.software.config-mgmt.  There is not yet a CVS-specific newsgroup,
