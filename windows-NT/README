@@ -37,7 +37,7 @@ happening, is fine but it isn't an "easy fix", unfortunately, as it is
 rarely clear to me whether a particular submission will improve things
 or not.
 
-Send bug reports to bug-cvs@gnu.org.
+Send bug reports to bug-cvs@nongnu.org.
 
 As of May 1996, this port passed all of the tests in src/sanity.sh,
 save the one that deals with reserved all-upper-case tags (BASE and

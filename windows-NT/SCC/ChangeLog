@@ -1,3 +1,7 @@
+2005-09-01  Derek Price  <derek@ximbiot.com>
+
+	* README: Update links and email addresses.
+
 2003-05-21  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerate with Automake version 1.7.5.
