@@ -6,7 +6,7 @@ cvs.texinfo from the actual directory and compile the manual with:
 makeinfo --html cvs.texinfo
 
 If you what to help with the translation, send a message to
-bug-cvs@gnu.org and told us what peace you want to translate.
+bug-cvs@nongnu.org and told us what peace you want to translate.
 
 Some policy:
 

@@ -1,3 +1,7 @@
+2005-09-01  Derek Price  <derek@ximbiot.com>
+
+	* README: Update bug-cvs email.
+
 2005-03-16  Derek Price  <derek@ximbiot.com>
 
 	* filesubr.c (open_file): Remove this function.

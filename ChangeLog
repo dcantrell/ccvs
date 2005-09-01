@@ -1,3 +1,9 @@
+2005-09-01  Derek Price  <derek@ximbiot.com>
+
+	* DEVEL-CVS, FAQ, HACKING, INSTALL-CVS, README, README.VMS,
+	configure.in, build-aux/bison-missing: Update links and email
+	addresses.
+
 2005-08-31  Derek Price  <derek@ximbiot.com>
 
 	* www/.htaccess: Remove this file.

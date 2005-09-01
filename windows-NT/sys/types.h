@@ -19,7 +19,7 @@
 #if _MSC_VER != 1200 && _MSC_VER != 1310
 #pragma message ( "Please email Microsoft's <sys/types.h> file" )
 #pragma message ( "and version number from \"cl /?\" command to" )
-#pragma message ( "<conradpino@cvshome.org>.  Thank you." )
+#pragma message ( "<conradpino@gnu.org>.  Thank you." )
 #endif /* _MSC_VER != 1200 */
 
 /***************************************************************************/

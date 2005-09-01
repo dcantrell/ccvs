@@ -15,7 +15,8 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.])
 
-AC_INIT([Concurrent Versions System (CVS)],[1.12.12.1],[bug-cvs@gnu.org],[cvs])
+AC_INIT([Concurrent Versions System (CVS)],[1.12.12.1],
+	[bug-cvs@nongnu.org],[cvs])
 AC_CONFIG_SRCDIR(src/cvs.h)
 AC_CONFIG_AUX_DIR(build-aux)
 AM_INIT_AUTOMAKE([gnu 1.9.2 dist-bzip2 no-define])

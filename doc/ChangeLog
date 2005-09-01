@@ -1,3 +1,7 @@
+2005-09-01  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo: Update links and email addresses.
+
 2005-08-31  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (CVS commands): Link to new node.

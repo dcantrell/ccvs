@@ -350,7 +350,7 @@ maiores informações sobre baixar o @sc{cvs} e para
 outros tópicos sobre @sc{cvs}, veja:
 
 @example
-@url{http://www.nongnu.org/cvs/}
+@url{http://cvs.nongnu.org/}
 @end example
 
 @c <en>@cindex Mailing list
@@ -359,14 +359,14 @@ outros tópicos sobre @sc{cvs}, veja:
 @cindex Lista, lista de discussão
 @c <en>@cindex Newsgroups
 @cindex Newsgroups
-@c <en>There is a mailing list, known as @email{info-cvs@@gnu.org},
+@c <en>There is a mailing list, known as @email{info-cvs@@nongnu.org},
 @c <en>devoted to @sc{cvs}.  To subscribe or
 @c <en>unsubscribe
 @c <en>write to
-@c <en>@email{info-cvs-request@@gnu.org}.
+@c <en>@email{info-cvs-request@@nongnu.org}.
 @c <en>If you prefer a usenet group, there is a one-way mirror (posts to the email
 @c <en>list are usually sent to the news group, but not visa versa) of
-@c <en>@email{info-cvs@@gnu.org} at @url{news:gnu.cvs.help}.  The right
+@c <en>@email{info-cvs@@nongnu.org} at @url{news:gnu.cvs.help}.  The right
 @c <en>usenet group for posts is @url{news:comp.software.config-mgmt} which is for
 @c <en>@sc{cvs} discussions (along with other configuration
 @c <en>management systems).  In the future, it might be
@@ -374,13 +374,13 @@ outros tópicos sobre @sc{cvs}, veja:
 @c <en>@code{comp.software.config-mgmt.cvs}, but probably only
 @c <en>if there is sufficient @sc{cvs} traffic on
 @c <en>@url{news:comp.software.config-mgmt}.
-Existe uma lista de discussão, conhecida como @email{info-cvs@@gnu.org},
+Existe uma lista de discussão, conhecida como @email{info-cvs@@nongnu.org},
 dedicada ao @sc{cvs}.  Para se cadastrar ou descadastrar nela
-escreva para @email{info-cvs-request@@gnu.org}.  Se você
+escreva para @email{info-cvs-request@@nongnu.org}.  Se você
 preferir um grupo de usenet, existe um espelho de mão
 única (postagens para a lista de email são usualmente
 mandadas para o news group, mas não vice-versa) da lista
-@email{info-cvs@@gnu.org} em @url{news:gnu.cvs.help}.  O
+@email{info-cvs@@nongnu.org} em @url{news:gnu.cvs.help}.  O
 grupo usenet correto para postagens é o
 @url{news:comp.software.config-mgmt} que é para
 discussões sobre @sc{cvs} (juntamente com outros
@@ -395,18 +395,18 @@ houver bastante tráfego sobre o @sc{cvs} na
 @c would need to take a more comprehensive look at the
 @c whole comp.software.config-mgmt.* hierarchy).
 
-@c <en>You can also subscribe to the @email{bug-cvs@@gnu.org} mailing list,
+@c <en>You can also subscribe to the @email{bug-cvs@@nongnu.org} mailing list,
 @c <en>described in more detail in @ref{BUGS}.  To subscribe
-@c <en>send mail to @email{bug-cvs-request@@gnu.org}.  There is a two-way
+@c <en>send mail to @email{bug-cvs-request@@nongnu.org}.  There is a two-way
 @c <en>usenet mirror (posts to the usenet group are usually sent to the email list and
-@c <en>visa versa) of @email{bug-cvs@@gnu.org} named @url{news:gnu.cvs.bug}.
+@c <en>visa versa) of @email{bug-cvs@@nongnu.org} named @url{news:gnu.cvs.bug}.
 Você também pode se cadastrar na lista de discussão
-@email{bug-cvs@@gnu.org}, descrita em maiores detalhes
+@email{bug-cvs@@nongnu.org}, descrita em maiores detalhes
 em @ref{Paus}.  Para se cadastrar mande um e-mail para
-@email{bug-cvs-request@@gnu.org}.  Existe um espelho
+@email{bug-cvs-request@@nongnu.org}.  Existe um espelho
 usenet de mão-dupla (postagens para o grupo usenet são
 usualmente mandadas para a lista e vice-versa) de
-@email{bug-cvs@@gnu.org} chamado
+@email{bug-cvs@@nongnu.org} chamado
 @url{news:gnu.cvs.bug}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -4224,12 +4224,12 @@ configuração do PAM.
 
 @c <en>Note that PAM is an experimental feature in @sc{cvs} and feedback is
 @c <en>encouraged.  Please send a mail to one of the @sc{cvs} mailing lists
-@c <en>(@code{info-cvs@@gnu.org} or @code{bug-cvs@@gnu.org}) if you use the 
+@c <en>(@code{info-cvs@@nongnu.org} or @code{bug-cvs@@nongnu.org}) if you use the 
 @c <en>@sc{cvs} PAM support.
 Observe que PAM é uma funcionalidade experimental no
 @sc{cvs} e feedback é encorajado.  Por favor, mande
 e-mail para uma das listas do @sc{cvs}
-(@code{info-cvs@@gnu.org} ou @code{bug-cvs@@gnu.org})
+(@code{info-cvs@@nongnu.org} ou @code{bug-cvs@@nongnu.org})
 se você usa o suporte a PAM do @sc{cvs}.  As listas são
 em inglês.
 
@@ -20891,7 +20891,7 @@ There may be resources on the net which can help.  Two
 good places to start are:
 
 @example
-@url{http://www.nongnu.org/cvs/}
+@url{http://cvs.nongnu.org/}
 @end example
 
 If you are so inspired, increasing the information
@@ -20904,7 +20904,7 @@ page on mailing lists or newsgroups when the subject
 came up.
 
 @item
-It is also possible to report bugs to @email{bug-cvs@@gnu.org}.
+It is also possible to report bugs to @email{bug-cvs@@nongnu.org}.
 Note that someone may or may not want to do anything
 with your bug report---if you need a solution consider
 one of the options mentioned above.  People probably do
@@ -20913,20 +20913,20 @@ in consequences and/or easy to fix, however.  You can
 also increase your odds by being as clear as possible
 about the exact nature of the bug and any other
 relevant information.  The way to report bugs is to
-send email to @email{bug-cvs@@gnu.org}.  Note
-that submissions to @email{bug-cvs@@gnu.org} may be distributed
+send email to @email{bug-cvs@@nongnu.org}.  Note
+that submissions to @email{bug-cvs@@nongnu.org} may be distributed
 under the terms of the @sc{gnu} Public License, so if
 you don't like this, don't submit them.  There is
 usually no justification for sending mail directly to
 one of the @sc{cvs} maintainers rather than to
-@email{bug-cvs@@gnu.org}; those maintainers who want to hear
-about such bug reports read @email{bug-cvs@@gnu.org}.  Also note
+@email{bug-cvs@@nongnu.org}; those maintainers who want to hear
+about such bug reports read @email{bug-cvs@@nongnu.org}.  Also note
 that sending a bug report to other mailing lists or
 newsgroups is @emph{not} a substitute for sending it to
-@email{bug-cvs@@gnu.org}.  It is fine to discuss @sc{cvs} bugs on
+@email{bug-cvs@@nongnu.org}.  It is fine to discuss @sc{cvs} bugs on
 whatever forum you prefer, but there are not
 necessarily any maintainers reading bug reports sent
-anywhere except @email{bug-cvs@@gnu.org}.
+anywhere except @email{bug-cvs@@nongnu.org}.
 @end itemize
 
 @cindex Known bugs in this manual or CVS
