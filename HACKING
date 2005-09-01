@@ -151,7 +151,7 @@ Autoconf 2.59, respectively.
 There is a known bug in Autoconf 2.57 that will prevent the configure
 scripts it generates from working on some platforms.  Other combinations of
 autotool versions may or may not work.  If you get other versions to work,
-please send a report to <bug-cvs@gnu.org>.
+please send a report to <bug-cvs@nongnu.org>.
 
 * Writing patches (strategy)
 
@@ -204,7 +204,7 @@ for each issue.  Use context diffs or unidiffs for patches.
 
 Include words like "I grant permission to distribute this patch under
 the terms of the GNU Public License" with your patch.  By sending a
-patch to bug-cvs@gnu.org, you implicitly grant this permission.
+patch to bug-cvs@nongnu.org, you implicitly grant this permission.
 
 Submitting a patch to bug-cvs is the way to reach the people who have
 signed up to receive such submissions (including CVS developers), but
@@ -252,8 +252,8 @@ instructions there.
 
 One other list related to CVS development is bug-cvs.  This is the
 list which users are requested to send bug reports to.  Anyone can
-subscribe; to do so send mail to bug-cvs-request@gnu.org.
+subscribe; to do so send mail to bug-cvs-request@nongnu.org.
 
 Other CVS discussions take place on the info-cvs mailing list
-(send mail to info-cvs-request@gnu.org to subscribe) or on
+(send mail to info-cvs-request@nongnu.org to subscribe) or on
 the newsgroup comp.software.config-mgmt.
