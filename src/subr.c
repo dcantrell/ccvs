@@ -324,7 +324,6 @@ increment_revnum (rev)
     const char *rev;
 {
     char *newrev, *p;
-    int lastfield;
     size_t len = strlen (rev);
 
     newrev = xmalloc (len + 2);
@@ -687,11 +686,9 @@ file_has_conflict (finfo, ts_conflict)
      * conflict any more.
      */
 
-#ifdef SERVER_SUPPORT
     if (server_active)
 	retcode = ts_conflict[0] == '=';
     else 
-#endif /* SERVER_SUPPORT */
     {
 	filestamp = time_stamp (finfo->file);
 	retcode = !strcmp (ts_conflict, filestamp);

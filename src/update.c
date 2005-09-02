@@ -182,11 +182,9 @@ update (argc, argv)
 		break;
 	    case 'Q':
 	    case 'q':
-#ifdef SERVER_SUPPORT
 		/* The CVS 1.5 client sends these options (in addition to
 		   Global_option requests), so we must ignore them.  */
 		if (!server_active)
-#endif
 		    error (1, 0,
 			   "-q or -Q must be specified before \"%s\"",
 			   cvs_cmd_name);
@@ -521,13 +519,8 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
 			   argc, argv, local, which, aflag, CVS_LOCK_READ,
 			   preload_update_dir, 1, repository);
 
-#ifdef SERVER_SUPPORT
-    if (server_active)
-	return err;
-#endif
-
     /* see if we need to sleep before returning to avoid time-stamp races */
-    if (last_register_time)
+    if (!server_active && last_register_time)
     {
 	sleep_past (last_register_time);
     }
@@ -683,11 +676,7 @@ update_fileproc (callerdat, finfo)
                     bakname = backup_file (finfo->file, vers->vn_user);
                     /* This behavior is sufficiently unexpected to
                        justify overinformativeness, I think. */
-#ifdef SERVER_SUPPORT
-                    if ((! really_quiet) && (! server_active))
-#else /* ! SERVER_SUPPORT */
-                    if (! really_quiet)
-#endif /* SERVER_SUPPORT */
+                    if (!really_quiet && !server_active)
                         (void) printf ("(Locally modified %s moved to %s)\n",
                                        finfo->file, bakname);
                     free (bakname);
@@ -854,11 +843,7 @@ update_filesdone_proc (callerdat, err, repository, update_dir, entries)
 	if (unlink_file_dir (CVSADM) < 0 && !existence_error (errno))
 	    error (0, errno, "cannot remove %s directory", CVSADM);
     }
-#ifdef SERVER_SUPPORT
     else if (!server_active && !pipeout)
-#else
-    else if (!pipeout)
-#endif /* SERVER_SUPPORT */
     {
         /* If there is no CVS/Root file, add one */
         if (!isfile (CVSADM_ROOT))
@@ -911,15 +896,11 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
 	   is when update -d is specified, and the working directory
 	   is gone but the subdirectory is still mentioned in
 	   CVS/Entries).  */
-	if (1
-#ifdef SERVER_SUPPORT
-	    /* In the remote case, the client should refrain from
-	       sending us the directory in the first place.  So we
-	       want to continue to give an error, so clients make
-	       sure to do this.  */
-	    && !server_active
-#endif
-	    && !isdir (repository))
+	/* In the remote case, the client should refrain from
+	   sending us the directory in the first place.  So we
+	   want to continue to give an error, so clients make
+	   sure to do this.  */
+	if (!server_active && !isdir (repository))
 	    return R_SKIP_ALL;
 
 	if (noexec)
@@ -1207,13 +1188,10 @@ scratch_file (finfo, vers)
 #endif
     if (unlink_file (finfo->file) < 0 && ! existence_error (errno))
 	error (0, errno, "unable to remove %s", finfo->fullname);
-    else
-#ifdef SERVER_SUPPORT
+    else if (!server_active)
+    {
 	/* skip this step when the server is running since
 	 * server_updated should have handled it */
-	if (!server_active)
-#endif
-    {
 	/* keep the vers structure up to date in case we do a join
 	 * - if there isn't a file, it can't very well have a version number, can it?
 	 */
@@ -1255,11 +1233,7 @@ checkout_file (finfo, vers_ts, adding, merging, update_server)
 
     /* Don't screw with backup files if we're going to stdout, or if
        we are the server.  */
-    if (!pipeout
-#ifdef SERVER_SUPPORT
-	&& ! server_active
-#endif
-	)
+    if (!pipeout && !server_active)
     {
 	backup = xmalloc (strlen (finfo->file)
 			  + sizeof (CVSADM)

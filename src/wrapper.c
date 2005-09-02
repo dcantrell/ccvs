@@ -93,9 +93,7 @@ void wrap_setup()
     else
         wrap_setup_already_done = 1;
 
-#ifdef CLIENT_SUPPORT
     if (!current_parsed_root->isremote)
-#endif
     {
 	char *file;
 

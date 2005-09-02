@@ -388,12 +388,8 @@ commit (argc, argv)
     /* FIXME: Shouldn't this check be much more closely related to the
        readonly user stuff (CVSROOT/readers, &c).  That is, why should
        root be able to "cvs init", "cvs import", &c, but not "cvs ci"?  */
-    if (geteuid () == (uid_t) 0
-#  ifdef CLIENT_SUPPORT
-	/* Who we are on the client side doesn't affect logging.  */
-	&& !current_parsed_root->isremote
-#  endif
-	)
+    /* Who we are on the client side doesn't affect logging.  */
+    if (geteuid () == (uid_t) 0 && !current_parsed_root->isremote)
     {
 	struct passwd *pw;
 
@@ -717,10 +713,8 @@ commit (argc, argv)
     Lock_Cleanup ();
     dellist (&mulist);
 
-#ifdef SERVER_SUPPORT
     if (server_active)
 	return err;
-#endif
 
     /* see if we need to sleep before returning to avoid time-stamp races */
     if (last_register_time)
@@ -1289,11 +1283,7 @@ commit_fileproc (callerdat, finfo)
     if (!got_message)
     {
 	got_message = 1;
-	if (
-#ifdef SERVER_SUPPORT
-	    !server_active &&
-#endif
-	    use_editor)
+	if (!server_active && use_editor)
 	    do_editor (finfo->update_dir, &saved_message,
 		       finfo->repository, ulist);
 	do_verify (&saved_message, finfo->repository);
@@ -1571,11 +1561,7 @@ commit_direntproc (callerdat, dir, repos, update_dir, entries)
     /* get commit message */
     real_repos = Name_Repository (dir, update_dir);
     got_message = 1;
-    if (
-#ifdef SERVER_SUPPORT
-        !server_active &&
-#endif
-        use_editor)
+    if (!server_active && use_editor)
 	do_editor (update_dir, &saved_message, real_repos, ulist);
     do_verify (&saved_message, real_repos);
     free (real_repos);

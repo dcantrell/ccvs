@@ -175,11 +175,9 @@ checkout (argc, argv)
 		break;
 	    case 'Q':
 	    case 'q':
-#ifdef SERVER_SUPPORT
 		/* The CVS 1.5 client sends these options (in addition to
 		   Global_option requests), so we must ignore them.  */
 		if (!server_active)
-#endif
 		    error (1, 0,
 			   "-q or -Q must be specified before \"%s\"",
 			   cvs_cmd_name);
@@ -433,10 +431,8 @@ safe_location (where)
 			CLIENT_SERVER_STR,
 			where ? where : "(null)");
 
-#ifdef CLIENT_SUPPORT
     /* Don't compare remote CVSROOTs to our destination directory. */
-    if ( current_parsed_root->isremote ) return 1;
-#endif /* CLIENT_SUPPORT */
+    if (current_parsed_root->isremote) return 1;
 
     /* set current - even if where is set we'll need to cd back... */
     current = xgetwd ();

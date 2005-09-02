@@ -89,17 +89,14 @@ import (argc, argv)
 	{
 	    case 'Q':
 	    case 'q':
-#ifdef SERVER_SUPPORT
 		/* The CVS 1.5 client sends these options (in addition to
 		   Global_option requests), so we must ignore them.  */
 		if (!server_active)
-#endif
 		    error (1, 0,
 			   "-q or -Q must be specified before \"%s\"",
 			   cvs_cmd_name);
 		break;
 	    case 'd':
-#ifdef SERVER_SUPPORT
 		if (server_active)
 		{
 		    /* CVS 1.10 and older clients will send this, but it
@@ -109,7 +106,6 @@ import (argc, argv)
 			   "warning: not setting the time of import from the file");
 		    error (0, 0, "due to client limitations");
 		}
-#endif
 		use_file_modtime = 1;
 		break;
 	    case 'b':
@@ -149,7 +145,6 @@ import (argc, argv)
     if (argc < 3)
 	usage (import_usage);
 
-#ifdef SERVER_SUPPORT
     /* This is for handling the Checkin-time request.  It might seem a
        bit odd to enable the use_file_modtime code even in the case
        where Checkin-time was not sent for a particular file.  The
@@ -161,7 +156,6 @@ import (argc, argv)
 
     if (server_active)
 	use_file_modtime = 1;
-#endif
 
     /* Don't allow "CVS" as any directory in module path.
      *
@@ -247,17 +241,10 @@ import (argc, argv)
     }
 #endif
 
-    if (
-#ifdef SERVER_SUPPORT
-        !server_active &&
-#endif
-        use_editor)
+    if (!server_active && use_editor)
     {
 	do_editor ((char *) NULL, &message,
-#ifdef CLIENT_SUPPORT
-		   current_parsed_root->isremote ? (char *) NULL :
-#endif
-			repository,
+		   current_parsed_root->isremote ? (char *) NULL : repository,
 		   (List *) NULL);
     }
     do_verify (&message, repository);
@@ -466,13 +453,13 @@ import_descend (message, vtag, targc, targv)
 	{
 	    if (strcmp (dp->d_name, ".") == 0 || strcmp (dp->d_name, "..") == 0)
 		goto one_more_time_boys;
-#ifdef SERVER_SUPPORT
+
 	    /* CVS directories are created in the temp directory by
 	       server.c because it doesn't special-case import.  So
 	       don't print a message about them, regardless of -I!.  */
 	    if (server_active && strcmp (dp->d_name, CVSADM) == 0)
 		goto one_more_time_boys;
-#endif
+
 	    if (ign_name (dp->d_name))
 	    {
 		add_log ('I', dp->d_name);
@@ -1607,11 +1594,7 @@ import_descend_dir (message, dir, vtag, targc, targv)
 	repository = new;
     }
 
-#ifdef CLIENT_SUPPORT
     if (!quiet && !current_parsed_root->isremote)
-#else
-    if (!quiet)
-#endif
 	error (0, 0, "Importing %s", repository);
 
     if ( CVS_CHDIR (dir) < 0)
@@ -1622,11 +1605,7 @@ import_descend_dir (message, dir, vtag, targc, targv)
 	err = 1;
 	goto out;
     }
-#ifdef CLIENT_SUPPORT
     if (!current_parsed_root->isremote && !isdir (repository))
-#else
-    if (!isdir (repository))
-#endif
     {
 	rcs = xmalloc (strlen (repository) + sizeof (RCSEXT) + 5);
 	(void) sprintf (rcs, "%s%s", repository, RCSEXT);

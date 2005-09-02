@@ -16,6 +16,8 @@
 #include "getline.h"
 #include "buffer.h"
 
+int server_active = 0;
+
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
 # ifdef HAVE_GSSAPI
 /* This stuff isn't included solely with SERVER_SUPPORT since some of these
@@ -5047,8 +5049,6 @@ server_cleanup (sig)
 	error_use_protocol = 0;
     }
 }
-
-int server_active = 0;
 
 int
 server (argc, argv)

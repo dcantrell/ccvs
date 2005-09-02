@@ -211,20 +211,15 @@ status_fileproc (callerdat, finfo)
     }
     else if (vers->vn_user[0] == '0' && vers->vn_user[1] == '\0')
 	cvs_output ("   Working revision:\tNew file!\n", 0);
-#ifdef SERVER_SUPPORT
-    else if (server_active)
-    {
-	cvs_output ("   Working revision:\t", 0);
-	cvs_output (vers->vn_user, 0);
-	cvs_output ("\n", 0);
-    }
-#endif
     else
     {
 	cvs_output ("   Working revision:\t", 0);
 	cvs_output (vers->vn_user, 0);
-	cvs_output ("\t", 0);
-	cvs_output (vers->ts_rcs, 0);
+	if (!server_active)
+	{
+	    cvs_output ("\t", 0);
+	    cvs_output (vers->ts_rcs, 0);
+	}
 	cvs_output ("\n", 0);
     }
 

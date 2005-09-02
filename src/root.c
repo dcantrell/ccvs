@@ -112,11 +112,7 @@ Name_Root (dir, update_dir)
 	goto out;
     }
 
-    if (
-#ifdef CLIENT_SUPPORT
-        !ret->isremote &&
-#endif
-        !isdir (ret->directory))
+    if (!ret->isremote && !isdir (ret->directory))
     {
 	error (0, 0, "in directory %s:", xupdate_dir);
 	error (0, 0,
@@ -294,6 +290,7 @@ new_cvsroot_t ()
 
     newroot->original = NULL;
     newroot->method = null_method;
+    newroot->isremote = 0;
 #ifdef CLIENT_SUPPORT
     newroot->username = NULL;
     newroot->password = NULL;
@@ -302,7 +299,6 @@ new_cvsroot_t ()
     newroot->directory = NULL;
     newroot->proxy_hostname = NULL;
     newroot->proxy_port = 0;
-    newroot->isremote = 0;
 #endif /* CLIENT_SUPPORT */
 
     return newroot;
@@ -414,7 +410,7 @@ parse_cvsroot (root_in)
 	 * We don't handle these, but we like to try and warn the user that
 	 * they are being ignored.
 	 */
-	if (p = strchr (method, ';'))	
+	if ((p = strchr (method, ';')) != NULL)
 	{
 	    *p++ = '\0';
 	    if (!really_quiet)
@@ -460,10 +456,7 @@ parse_cvsroot (root_in)
 			  : local_method);
     }
 
-#ifdef CLIENT_SUPPORT
     newroot->isremote = (newroot->method != local_method);
-#endif /* CLIENT_SUPPORT */
-
 
     if ((newroot->method != local_method)
 	&& (newroot->method != fork_method))
