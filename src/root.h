@@ -31,6 +31,7 @@ typedef struct cvsroot_s {
     char *original;		/* The complete source CVSroot string. */
     CVSmethod method;		/* One of the enum values above. */
     char *directory;		/* The directory name. */
+    unsigned char isremote;	/* Nonzero if we are doing remote access. */
 #ifdef CLIENT_SUPPORT
     char *username;		/* The username or NULL if method == local. */
     char *password;		/* The password or NULL if method == local. */
@@ -41,7 +42,6 @@ typedef struct cvsroot_s {
 				 * used.
 				 */
     int proxy_port;		/* The port of the proxy or zero, as above. */
-    unsigned char isremote;	/* Nonzero if we are doing remote access. */
 #endif /* CLIENT_SUPPORT */
 } cvsroot_t;
 

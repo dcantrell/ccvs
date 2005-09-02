@@ -1491,11 +1491,7 @@ stdio_buffer_shutdown (buf)
 
     if (closefp && fclose (bc->fp) == EOF)
     {
-	if (0
-# ifdef SERVER_SUPPORT
-	    || server_active
-# endif /* SERVER_SUPPORT */
-           )
+	if (server_active)
 	{
             /* Syslog this? */
 	}
