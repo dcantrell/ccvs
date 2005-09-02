@@ -1,3 +1,9 @@
+2005-09-02  Larry Jones  <lawrence.jones@ugs.com>
+
+	* parseinfo.c (parse_config): Variable declarations must precede
+	executable code for pre-C99 compilers.  Pass correct line number
+	variable to expand_path.
+
 2005-09-01  Derek Price  <derek@ximbiot.com>
 
 	* recurse.c: Update bug report email address.

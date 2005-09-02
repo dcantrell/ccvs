@@ -394,8 +394,10 @@ parse_config (const char *cvsroot, const char *path)
 	bool approved = false;
 	for (prefix = allowed_config_prefixes; *prefix != NULL; prefix++)
 	{
+	    char *nprefix;
+
 	    if (!isreadable (*prefix)) continue;
-	    char *nprefix = xcanonicalize_file_name (*prefix);
+	    nprefix = xcanonicalize_file_name (*prefix);
 	    if (!strncmp (nprefix, npath, strlen (nprefix))
 		&& (((*prefix)[strlen (*prefix)] != '/'
 		     && strlen (npath) == strlen (nprefix))
@@ -525,7 +527,7 @@ parse_config (const char *cvsroot, const char *path)
 	{
 	    if (retval->lock_dir)
 		free (retval->lock_dir);
-	    retval->lock_dir = expand_path (p, cvsroot, false, infopath, line);
+	    retval->lock_dir = expand_path (p, cvsroot, false, infopath, ln);
 	    /* Could try some validity checking, like whether we can
 	       opendir it or something, but I don't see any particular
 	       reason to do that now rather than waiting until lock.c.  */
