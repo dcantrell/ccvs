@@ -192,7 +192,7 @@ release (argc, argv)
 
 	if (!really_quiet)
 	{
-	    int line_length;
+	    int line_length, status;
 
 	    /* The "release" command piggybacks on "update", which
 	       does the real work of finding out if anything is not
@@ -219,9 +219,10 @@ release (argc, argv)
 	       complain and go on to the next arg.  Especially, we do
 	       not want to delete the local copy, since it's obviously
 	       not what the user thinks it is.  */
-	    if ((pclose (fp)) != 0)
+	    status = pclose (fp);
+	    if (status != 0)
 	    {
-		error (0, 0, "unable to release `%s'", thisarg);
+		error (0, 0, "unable to release `%s' (%d)", thisarg, status);
 		if (restore_cwd (&cwd, NULL))
 		    error_exit ();
 		continue;
