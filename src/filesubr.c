@@ -412,12 +412,10 @@ unlink_file_dir (const char *f)
 {
     struct stat sb;
 
-#ifdef SERVER_SUPPORT
-	/* This is called by the server parent process in contexts where
-	   it is not OK to send output (e.g. after we sent "ok" to the
-	   client).  */
-	if (!server_active)
-#endif
+    /* This is called by the server parent process in contexts where
+       it is not OK to send output (e.g. after we sent "ok" to the
+       client).  */
+    if (!server_active)
 	TRACE (TRACE_FUNCTION, "unlink_file_dir(%s)", f);
 
     if (noexec)
@@ -810,11 +808,7 @@ get_homedir (void)
     if (home != NULL)
 	return home;
 
-    if (
-#ifdef SERVER_SUPPORT
-	!server_active &&
-#endif
-	(env = getenv ("HOME")) != NULL)
+    if (!server_active && (env = getenv ("HOME")) != NULL)
 	home = env;
     else if ((pw = (struct passwd *) getpwuid (getuid ()))
 	     && pw->pw_dir)

@@ -4178,11 +4178,7 @@ RCS_checkout (RCSNode *rcs, const char *workfile, const char *rev,
 
     assert (rev == NULL || isdigit ((unsigned char) *rev));
 
-    if (noexec
-#ifdef SERVER_SUPPORT
-	&& !server_active
-#endif
-	&& workfile != NULL)
+    if (noexec && !server_active && workfile != NULL)
 	return 0;
 
     assert (sout == RUN_TTY || workfile == NULL);

@@ -208,21 +208,13 @@ status_fileproc (void *callerdat, struct file_info *finfo)
     }
     else if (vers->vn_user[0] == '0' && vers->vn_user[1] == '\0')
 	cvs_output ("   Working revision:\tNew file!\n", 0);
-#ifdef SERVER_SUPPORT
-    else if (server_active)
-    {
-	cvs_output ("   Working revision:\t", 0);
-	cvs_output (vers->vn_user, 0);
-	cvs_output ("\n", 0);
-    }
-#endif
     else
     {
 	cvs_output ("   Working revision:\t", 0);
 	cvs_output (vers->vn_user, 0);
 
 	/* Only add the UTC timezone if there is a time to use. */
-	if (strlen (vers->ts_rcs) > 0)
+	if (!server_active && strlen (vers->ts_rcs) > 0)
 	{
 	    /* Convert from the asctime() format to ISO 8601 */
 	    char *buf;

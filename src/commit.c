@@ -355,12 +355,8 @@ commit (int argc, char **argv)
     /* FIXME: Shouldn't this check be much more closely related to the
        readonly user stuff (CVSROOT/readers, &c).  That is, why should
        root be able to "cvs init", "cvs import", &c, but not "cvs ci"?  */
-    if (geteuid () == (uid_t) 0
-#  ifdef CLIENT_SUPPORT
-	/* Who we are on the client side doesn't affect logging.  */
-	&& !current_parsed_root->isremote
-#  endif
-	)
+    /* Who we are on the client side doesn't affect logging.  */
+    if (geteuid () == (uid_t) 0 && !current_parsed_root->isremote)
     {
 	struct passwd *pw;
 
@@ -701,14 +697,10 @@ commit (int argc, char **argv)
     dellist (&mulist);
 
     /* see if we need to sleep before returning to avoid time-stamp races */
-    if (
-#ifdef SERVER_SUPPORT
-	/* But only sleep on the client.  */
-        !server_active &&
-#endif
-	last_register_time
-       )
-	    sleep_past (last_register_time);
+    if (!server_active && last_register_time)
+    {
+	sleep_past (last_register_time);
+    }
 
     return err;
 }
@@ -1383,11 +1375,7 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
     if (!got_message)
     {
 	got_message = 1;
-	if (
-#ifdef SERVER_SUPPORT
-	    !server_active &&
-#endif
-	    use_editor)
+	if (!server_active && use_editor)
 	    do_editor (finfo->update_dir, &saved_message,
 		       finfo->repository, ulist);
 	do_verify (&saved_message, finfo->repository, ulist);
@@ -1671,11 +1659,7 @@ commit_direntproc (void *callerdat, const char *dir, const char *repos,
     /* get commit message */
     got_message = 1;
     real_repos = Name_Repository (dir, update_dir);
-    if (
-#ifdef SERVER_SUPPORT
-        !server_active &&
-#endif
-        use_editor)
+    if (!server_active && use_editor)
 	do_editor (update_dir, &saved_message, real_repos, ulist);
     do_verify (&saved_message, real_repos, ulist);
     free (real_repos);
@@ -2151,7 +2135,8 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	/* and lock it */
 	if (lock_RCS (file, rcs, rev, repository))
 	{
-	    error (0, 0, "cannot lock `%s'.", rcs->path);
+	    error (0, 0, "cannot lock revision %s in `%s'.",
+		   rev ? rev : tag ? tag : "HEAD", rcs->path);
 	    if (rev != NULL)
 		free (rev);
 	    goto out;
@@ -2214,7 +2199,8 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	    /* and lock it once again. */
 	    if (lock_RCS (file, rcs, NULL, repository))
 	    {
-		error (0, 0, "cannot lock `%s'.", rcs->path);
+		error (0, 0, "cannot lock initial revision in `%s'.",
+		       rcs->path);
 		goto out;
 	    }
 	}
@@ -2322,7 +2308,7 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	    /* lock the branch. (stubbed branches need not be locked.)  */
 	    if (lock_RCS (file, rcs, NULL, repository))
 	    {
-		error (0, 0, "cannot lock `%s'.", rcs->path);
+		error (0, 0, "cannot lock head revision in `%s'.", rcs->path);
 		goto out;
 	    }
 	}

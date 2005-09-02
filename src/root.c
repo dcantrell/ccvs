@@ -112,11 +112,7 @@ Name_Root (const char *dir, const char *update_dir)
 	goto out;
     }
 
-    if (
-#ifdef CLIENT_SUPPORT
-        !ret->isremote &&
-#endif
-        !isdir (ret->directory))
+    if (!ret->isremote && !isdir (ret->directory))
     {
 	error (0, 0, "in directory %s:", xupdate_dir);
 	error (0, 0,
@@ -385,6 +381,7 @@ new_cvsroot_t (void)
 
     newroot->original = NULL;
     newroot->method = null_method;
+    newroot->isremote = 0;
 #ifdef CLIENT_SUPPORT
     newroot->username = NULL;
     newroot->password = NULL;
@@ -395,7 +392,6 @@ new_cvsroot_t (void)
     newroot->directory = NULL;
     newroot->proxy_hostname = NULL;
     newroot->proxy_port = 0;
-    newroot->isremote = 0;
     newroot->redirect = true;	/* Advertise Redirect support */
 #endif /* CLIENT_SUPPORT */
 
@@ -630,9 +626,9 @@ parse_cvsroot (const char *root_in)
      * method of this root.
      */
 
-#if defined(CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
     newroot->isremote = (newroot->method != local_method);
 
+#if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
     if (readonlyfs && newroot->isremote)
 	error (1, 0,
 "Read-only repository feature unavailable with remote roots (cvsroot = %s)",

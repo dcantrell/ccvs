@@ -234,7 +234,7 @@ release (int argc, char **argv)
 
 	if (!really_quiet)
 	{
-	    int line_length;
+	    int line_length, status;
 	    pid_t child_pid;
 
 	    /* The "release" command piggybacks on "update", which
@@ -266,9 +266,10 @@ release (int argc, char **argv)
 	       complain and go on to the next arg.  Especially, we do
 	       not want to delete the local copy, since it's obviously
 	       not what the user thinks it is.  */
-	    if (close_update_command (fp, child_pid) != 0)
+	    status = close_update_command (fp, child_pid);
+	    if (status != 0)
 	    {
-		error (0, 0, "unable to release `%s'", thisarg);
+		error (0, 0, "unable to release `%s' (%d)", thisarg, status);
 		if (restore_cwd (&cwd))
 		    error (1, errno,
 		           "Failed to restore current directory, `%s'.",
