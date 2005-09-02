@@ -16,6 +16,8 @@
 #include "getnline.h"
 #include "buffer.h"
 
+int server_active = 0;
+
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 
 # include "log-buffer.h"
@@ -6221,8 +6223,6 @@ size_t MaxProxyBufferSize = (size_t)(8 * 1024 * 1024); /* 8 megabytes,
                                                         * by default.
                                                         */
 #endif /* PROXY_SUPPORT */
-
-int server_active = 0;
 
 static const char *const server_usage[] =
 {

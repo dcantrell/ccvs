@@ -2157,11 +2157,7 @@ fd_buffer_shutdown (struct buffer *buf)
 
     if (statted && closefd && close (fb->fd) == -1)
     {
-	if (0
-# ifdef SERVER_SUPPORT
-	    || server_active
-# endif /* SERVER_SUPPORT */
-           )
+	if (server_active)
 	{
             /* Syslog this? */
 	}

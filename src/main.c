@@ -792,11 +792,9 @@ cause intermittent sandbox corruption.");
 	    cvs_cmd_name = "server";
 	}
 # endif /* AUTH_SERVER_SUPPORT || HAVE_GSSAPI */
-
-	server_active = strcmp (cvs_cmd_name, "server") == 0;
-
 #endif /* SERVER_SUPPORT */
 
+	server_active = strcmp (cvs_cmd_name, "server") == 0;
 
 #ifdef SERVER_SUPPORT
 	if (server_active)
@@ -870,13 +868,11 @@ cause intermittent sandbox corruption.");
 	if (use_cvsrc)
 	    read_cvsrc (&argc, &argv, cvs_cmd_name);
 
-#ifdef SERVER_SUPPORT
 	/* Fiddling with CVSROOT doesn't make sense if we're running
 	 * in server mode, since the client will send the repository
 	 * directory after the connection is made.
 	 */
 	if (!server_active)
-#endif
 	{
 	    /* First check if a root was set via the command line.  */
 	    if (CVSroot_cmdline)
@@ -963,20 +959,14 @@ cause intermittent sandbox corruption.");
 	   once).  To get out of the loop, we perform a "break" at the
 	   end of things.  */
 
-	while (
-#ifdef SERVER_SUPPORT
-	       server_active ||
-#endif
-	       walklist (root_directories, set_root_directory, NULL)
-	       )
+	while (server_active ||
+	       walklist (root_directories, set_root_directory, NULL))
 	{
-#ifdef SERVER_SUPPORT
 	    /* Fiddling with CVSROOT doesn't make sense if we're running
 	       in server mode, since the client will send the repository
 	       directory after the connection is made. */
 
 	    if (!server_active)
-#endif
 	    {
 		/* Now we're 100% sure that we have a valid CVSROOT
 		   variable.  Parse it to see if we're supposed to do
@@ -990,9 +980,7 @@ cause intermittent sandbox corruption.");
 		/*
 		 * Check to see if the repository exists.
 		 */
-#ifdef CLIENT_SUPPORT
 		if (!current_parsed_root->isremote)
-#endif	/* CLIENT_SUPPORT */
 		{
 		    char *path;
 		    int save_errno;
@@ -1036,14 +1024,7 @@ cause intermittent sandbox corruption.");
 	       predetermine whether CVSROOT/config overrides things from
 	       read_cvsrc and other such places or vice versa.  That sort
 	       of thing probably needs more thought.  */
-	    if (1
-#ifdef SERVER_SUPPORT
-		&& !server_active
-#endif
-#ifdef CLIENT_SUPPORT
-		&& !current_parsed_root->isremote
-#endif
-		)
+	    if (!server_active && !current_parsed_root->isremote)
 	    {
 		/* If there was an error parsing the config file, parse_config
 		   already printed an error.  We keep going.  Why?  Because
@@ -1094,9 +1075,7 @@ cause intermittent sandbox corruption.");
                active, our list will be empty -- don't try and
                remove it from the list. */
 
-#ifdef SERVER_SUPPORT
 	    if (!server_active)
-#endif /* SERVER_SUPPORT */
 	    {
 		Node *n = findnode (root_directories,
 				    original_parsed_root->original);
@@ -1106,10 +1085,8 @@ cause intermittent sandbox corruption.");
 		current_parsed_root = NULL;
 	    }
 
-#ifdef SERVER_SUPPORT
 	    if (server_active)
 		break;
-#endif
 	} /* end of loop for cvsroot values */
 
 	dellist (&root_directories);

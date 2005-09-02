@@ -607,11 +607,9 @@ file_has_conflict (const struct file_info *finfo, const char *ts_conflict)
      * conflict any more.
      */
 
-#ifdef SERVER_SUPPORT
     if (server_active)
 	retcode = ts_conflict[0] == '=' && ts_conflict[1] == '\0';
     else 
-#endif /* SERVER_SUPPORT */
     {
 	filestamp = time_stamp (finfo->file);
 	retcode = !strcmp (ts_conflict, filestamp);

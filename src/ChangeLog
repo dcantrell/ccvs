@@ -1,5 +1,17 @@
 2005-09-02  Larry Jones  <lawrence.jones@ugs.com>
 
+	* commit.c (checkaddfile): Improve error messages for lock_RCS failure.
+	* release.c (release): Improve error message for pclose failure.
+
+	* root.h (struct cvsroot_s): Always declare isremote to simplify
+	other code.  Simplify referencing code.
+	* root.c (new_cvsroot_t): Always initialize isremote.
+	* server.h: Always declare server_active to simplify other code.
+	Simplify referencing code.
+	* server.c: Always define server_active.
+
+2005-09-02  Larry Jones  <lawrence.jones@ugs.com>
+
 	* parseinfo.c (parse_config): Variable declarations must precede
 	executable code for pre-C99 compilers.  Pass correct line number
 	variable to expand_path.

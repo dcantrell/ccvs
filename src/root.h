@@ -31,6 +31,7 @@ typedef struct cvsroot_s {
     char *original;		/* The complete source CVSroot string. */
     CVSmethod method;		/* One of the enum values above. */
     char *directory;		/* The directory name. */
+    unsigned char isremote;	/* Nonzero if we are doing remote access. */
 /* The following is required for servers now to allow Redirects to be sent
  * for remote roots when client support is disabled.
  */
@@ -47,7 +48,6 @@ typedef struct cvsroot_s {
 				 * used.
 				 */
     int proxy_port;		/* The port of the proxy or zero, as above. */
-    unsigned char isremote;	/* Nonzero if we are doing remote access. */
     bool redirect;		/* False if we are to disable redirects. */
 #endif /* defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
 } cvsroot_t;

@@ -202,11 +202,7 @@ do_editor (const char *dir, char **messagep, const char *repository,
     struct stat pre_stbuf, post_stbuf;
     int retcode = 0;
 
-#ifdef CLIENT_SUPPORT
     assert (!current_parsed_root->isremote != !repository);
-#else
-    assert (repository);
-#endif
 
     if (noexec || reuse_log_message)
 	return;
@@ -408,11 +404,9 @@ do_verify (char **messagep, const char *repository, List *changes)
     struct verifymsg_proc_data data;
     struct stat post_stbuf;
 
-#ifdef CLIENT_SUPPORT
     if (current_parsed_root->isremote)
 	/* The verification will happen on the server.  */
 	return;
-#endif
 
     /* FIXME? Do we really want to skip this on noexec?  What do we do
        for the other administrative files?  */
