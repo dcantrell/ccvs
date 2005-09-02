@@ -2078,7 +2078,8 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	/* and lock it */
 	if (lock_RCS (file, rcs, rev, repository))
 	{
-	    error (0, 0, "cannot lock `%s'.", rcs->path);
+	    error (0, 0, "cannot lock revision %s in `%s'.",
+		   rev ? rev : tag ? tag : "HEAD", rcs->path);
 	    if (rev != NULL)
 		free (rev);
 	    goto out;
@@ -2144,7 +2145,8 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	    /* and lock it once again. */
 	    if (lock_RCS (file, rcs, NULL, repository))
 	    {
-		error (0, 0, "cannot lock `%s'.", rcs->path);
+		error (0, 0, "cannot lock initial revision in `%s'.",
+		       rcs->path);
 		goto out;
 	    }
 	}
@@ -2257,7 +2259,7 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	    /* lock the branch. (stubbed branches need not be locked.)  */
 	    if (lock_RCS (file, rcs, NULL, repository))
 	    {
-		error (0, 0, "cannot lock `%s'.", rcs->path);
+		error (0, 0, "cannot lock head revision in `%s'.", rcs->path);
 		goto out;
 	    }
 	}
