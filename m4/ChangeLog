@@ -1,3 +1,7 @@
+2005-09-03  Larry Jones  <lawrence.jones.ugs.com>
+
+	* getlogin_r.m4: Fix cut & paste error.
+
 2005-08-12  Derek Price  <derek@ximbiot.com>
 
 	Update from GNULIB.
