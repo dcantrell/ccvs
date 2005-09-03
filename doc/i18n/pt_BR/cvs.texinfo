@@ -11971,7 +11971,7 @@ interfere with everyday source file browsing.
 @c <en>@chapter Tracking third-party sources
 @chapter Tracking third-party sources
 @c <en>@cindex Third-party sources
-@cindex Third-party sources
+@cindex Fontes de terceiros
 @c <en>@cindex Tracking sources
 @cindex Tracking sources
 
@@ -11989,15 +11989,17 @@ interfere with everyday source file browsing.
 @c <en>probably want to include your modifications when the next
 @c <en>release of the program arrives.  @sc{cvs} can help you with
 @c <en>this task.
-If you modify a program to better fit your site, you
-probably want to include your modifications when the next
-release of the program arrives.  @sc{cvs} can help you with
-this task.
+Se você modificar um programa para se adequar melhor ao
+seu ambiente, você provavelmente vai querer incluir
+suas modificações quando a nova release do do programa
+chegar.  O @sc{cvs} pode te ajudar nesta tarefa.
 
 @c <en>@cindex Vendor
 @cindex Vendor
+@cindex Vendor (fornecedor)
 @c <en>@cindex Vendor branch
-@cindex Vendor branch
+@cindex Vendor branch (ramo do forncedor)
+@cindex Ramo do fornecedor
 @c <en>@cindex Branch, vendor-
 @cindex Branch, vendor-
 @c <en>In the terminology used in @sc{cvs}, the supplier of the
@@ -12005,20 +12007,22 @@ this task.
 @c <en>distribution from the vendor is checked in on its own
 @c <en>branch, the @dfn{vendor branch}.  @sc{cvs} reserves branch
 @c <en>1.1.1 for this use.
-In the terminology used in @sc{cvs}, the supplier of the
-program is called a @dfn{vendor}.  The unmodified
-distribution from the vendor is checked in on its own
-branch, the @dfn{vendor branch}.  @sc{cvs} reserves branch
-1.1.1 for this use.
+Na terminologia usada no @sc{cvs}, quem fornece um
+programa é chamado de @dfn{vendor} (fornecedor, em
+português).  A distribuição não modificada do
+fornecedor é ???checked in??? no seu próprio ramo, o
+@dfn{vendor branch} (ramo do fornecedor).  O @sc{cvs}
+reserva o ramo 1.1.1 para isto.
 
 @c <en>When you modify the source and commit it, your revision
 @c <en>will end up on the main trunk.  When a new release is
 @c <en>made by the vendor, you commit it on the vendor branch
 @c <en>and copy the modifications onto the main trunk.
-When you modify the source and commit it, your revision
-will end up on the main trunk.  When a new release is
-made by the vendor, you commit it on the vendor branch
-and copy the modifications onto the main trunk.
+Quando você modifica a fonte e a ???commit???, sua
+revisão vai terminar na ???main trunk???.  Quando uma
+nova release é feita pelo fornecedor, você ???commit???
+ela no ramo do fornecedor e copia as modificações no
+???main trunk???.
 
 @c <en>Use the @code{import} command to create and update
 @c <en>the vendor branch.  When you import a new file,
@@ -12027,39 +12031,39 @@ and copy the modifications onto the main trunk.
 @c <en>revision.  When a local modification is committed it is
 @c <en>placed on the main trunk, and made the `head'
 @c <en>revision.
-Use the @code{import} command to create and update
-the vendor branch.  When you import a new file,
-the vendor branch is made the `head' revision, so
-anyone that checks out a copy of the file gets that
-revision.  When a local modification is committed it is
-placed on the main trunk, and made the `head'
-revision.
+Use o comando @code{import} para criar e atualizar o
+ramo do fornecedor.  Quando você importa um novo
+arquivo, o ramo do fornecedor se torna a revisão
+`head', logo qualquer um que ???checks out??? uma cópia
+do arquivo pega esta revisão.  Quando uma modificação
+local é ???committed???, ela é posta no ???main
+trunk???, e se torna a revisão `head'.
 
 @menu
 @c <en>* First import::                Importing for the first time
-* First import::                Importing for the first time
+* Primeira importação::                 Importando pela primeira vez
 @c <en>* Update imports::              Updating with the import command
-* Update imports::              Updating with the import command
+* Importações de atualização::          Atualizando com o comando import
 @c <en>* Reverting local changes::     Reverting to the latest vendor release
-* Reverting local changes::     Reverting to the latest vendor release
+* Reverting local changes::             Reverting to the latest vendor release
 @c <en>* Binary files in imports::     Binary files require special handling
-* Binary files in imports::     Binary files require special handling
+* Arquivos binários em importações::    Arquivos binários requerem tratamento especial
 @c <en>* Keywords in imports::         Keyword substitution might be undesirable
-* Keywords in imports::         Keyword substitution might be undesirable
+* Palavras-chave em importações::       Substituição de palavras-chave pode ser indesejável
 @c <en>* Multiple vendor branches::    What if you get sources from several places?
-* Multiple vendor branches::    What if you get sources from several places?
+* Ramos de fornecedor múltiplos::       E se você obtém fontes de vários lugares?
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node First import
-@node First import
+@node Primeira importação
 @c <en>@section Importing for the first time
 @section Importing for the first time
 @c <en>@cindex Importing modules
 @cindex Importing modules
 
-@c <en>@c Should mention naming conventions for vendor tags,
-@c <en>@c release tags, and perhaps directory names.
+@c Should mention naming conventions for vendor tags,
+@c release tags, and perhaps directory names.
 @c <en>Use the @code{import} command to check in the sources
 @c <en>for the first time.  When you use the @code{import}
 @c <en>command to track third-party sources, the @dfn{vendor
@@ -12069,15 +12073,13 @@ revision.
 @c <en>@var{branch}} flag---see @ref{Multiple vendor branches}.).  The
 @c <en>@dfn{release tags} are symbolic names for a particular
 @c <en>release, such as @samp{FSF_0_04}.
-@c Should mention naming conventions for vendor tags,
-@c release tags, and perhaps directory names.
 Use the @code{import} command to check in the sources
 for the first time.  When you use the @code{import}
 command to track third-party sources, the @dfn{vendor
 tag} and @dfn{release tags} are useful.  The
 @dfn{vendor tag} is a symbolic name for the branch
 (which is always 1.1.1, unless you use the @samp{-b
-@var{branch}} flag---see @ref{Multiple vendor branches}.).  The
+@var{branch}} flag---see @ref{Ramos de fornecedor múltiplos}.).  The
 @dfn{release tags} are symbolic names for a particular
 release, such as @samp{FSF_0_04}.
 
@@ -12127,7 +12129,7 @@ example, and the only release tag assigned is
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Update imports
-@node Update imports
+@node Importações de atualização
 @c <en>@section Updating with the import command
 @section Updating with the import command
 
@@ -12146,6 +12148,10 @@ $ cd wdiff-0.05
 $ cvs import -m "Import of FSF v. 0.05" fsf/wdiff FSF_DIST WDIFF_0_05
 @end example
 
+@c <en>For files that have not been modified locally, the newly created
+@c <en>revision becomes the head revision.  If you have made local
+@c <en>changes, @code{import} will warn you that you must merge the changes
+@c <en>into the main trunk, and tell you to use @samp{checkout -j} to do so:
 For files that have not been modified locally, the newly created
 revision becomes the head revision.  If you have made local
 changes, @code{import} will warn you that you must merge the changes
@@ -12171,6 +12177,8 @@ since yesterday into the working copy.  If any conflicts arise during
 the merge they should be resolved in the normal way
 (@pxref{Exemplo de conflitos}).  Then, the modified files may be committed.
 
+@c <en>However, it is much better to use the two release tags rather than using
+@c <en>a date on the branch as suggested above:
 However, it is much better to use the two release tags rather than using
 a date on the branch as suggested above:
 
@@ -12179,6 +12187,13 @@ $ cvs checkout -jWDIFF_0_04 -jWDIFF_0_05 wdiff
 @end example
 
 @noindent
+@c <en>The reason this is better is that
+@c <en>using a date, as suggested above, assumes that you do
+@c <en>not import more than one release of a product per day.
+@c <en>More importantly, using the release tags allows @sc{cvs} to detect files
+@c <en>that were removed between the two vendor releases and mark them for
+@c <en>removal.  Since @code{import} has no way to detect removed files, you
+@c <en>should do a merge like this even if @code{import} doesn't tell you to.
 The reason this is better is that
 using a date, as suggested above, assumes that you do
 not import more than one release of a product per day.
@@ -12187,9 +12202,18 @@ that were removed between the two vendor releases and mark them for
 removal.  Since @code{import} has no way to detect removed files, you
 should do a merge like this even if @code{import} doesn't tell you to.
 
+@c <en>@node Reverting local changes
 @node Reverting local changes
+@c <en>@section Reverting to the latest vendor release
 @section Reverting to the latest vendor release
 
+@c <en>You can also revert local changes completely and return
+@c <en>to the latest vendor release by changing the `head'
+@c <en>revision back to the vendor branch on all files.  For
+@c <en>example, if you have a checked-out copy of the sources
+@c <en>in @file{~/work.d/wdiff}, and you want to revert to the
+@c <en>vendor's version for all the files in that directory,
+@c <en>you would type:
 You can also revert local changes completely and return
 to the latest vendor release by changing the `head'
 revision back to the vendor branch on all files.  For
@@ -12204,17 +12228,25 @@ $ cvs admin -bFSF_DIST .
 @end example
 
 @noindent
+@c <en>You must specify the @samp{-bFSF_DIST} without any space
+@c <en>after the @samp{-b}.  @xref{admin options}.
 You must specify the @samp{-bFSF_DIST} without any space
 after the @samp{-b}.  @xref{admin options}.
 
-@node Binary files in imports
+@c <en>@node Binary files in imports
+@node Arquivos binários em importações
+@c <en>@section How to handle binary files with cvs import
 @section How to handle binary files with cvs import
 
+@c <en>Use the @samp{-k} wrapper option to tell import which
+@c <en>files are binary.  @xref{Wrappers}.
 Use the @samp{-k} wrapper option to tell import which
 files are binary.  @xref{Wrappers}.
 
-@node Keywords in imports
-@section How to handle keyword substitution with cvs import
+@c <en>@node Keywords in imports
+@node Palavras-chave em importações
+@c <en>@section How to handle keyword substitution with cvs import
+@section Como lidar com substituição de palavras-chave com o cvs import
 
 @c <en>The sources which you are importing may contain
 @c <en>keywords (@pxref{Keyword substitution}).  For example,
@@ -12239,6 +12271,14 @@ maintain the expansions supplied by the vendor, so
 that this information can supply information about
 the sources that you imported from the vendor.
 
+@c <en>To maintain the keyword expansions supplied by the
+@c <en>vendor, supply the @samp{-ko} option to @code{cvs
+@c <en>import} the first time you import the file.
+@c <en>This will turn off keyword expansion
+@c <en>for that file entirely, so if you want to be more
+@c <en>selective you'll have to think about what you want
+@c <en>and use the @samp{-k} option to @code{cvs update} or
+@c <en>@code{cvs admin} as appropriate.
 To maintain the keyword expansions supplied by the
 vendor, supply the @samp{-ko} option to @code{cvs
 import} the first time you import the file.
@@ -12251,9 +12291,21 @@ and use the @samp{-k} option to @code{cvs update} or
 @c has no effect.  Not clear to me whether it should
 @c or not.
 
-@node Multiple vendor branches
-@section Multiple vendor branches
+@c <en>@node Multiple vendor branches
+@node Ramos de fornecedor múltiplos
+@c <en>@section Multiple vendor branches
+@section Ramos de fornecedor múltiplos
 
+@c <en>All the examples so far assume that there is only one
+@c <en>vendor from which you are getting sources.  In some
+@c <en>situations you might get sources from a variety of
+@c <en>places.  For example, suppose that you are dealing with
+@c <en>a project where many different people and teams are
+@c <en>modifying the software.  There are a variety of ways to
+@c <en>handle this, but in some cases you have a bunch of
+@c <en>source trees lying around and what you want to do more
+@c <en>than anything else is just to all put them in @sc{cvs} so
+@c <en>that you at least have them in one place.
 All the examples so far assume that there is only one
 vendor from which you are getting sources.  In some
 situations you might get sources from a variety of
@@ -12265,11 +12317,21 @@ source trees lying around and what you want to do more
 than anything else is just to all put them in @sc{cvs} so
 that you at least have them in one place.
 
+@c <en>For handling situations in which there may be more than
+@c <en>one vendor, you may specify the @samp{-b} option to
+@c <en>@code{cvs import}.  It takes as an argument the vendor
+@c <en>branch to import to.  The default is @samp{-b 1.1.1}.
 For handling situations in which there may be more than
 one vendor, you may specify the @samp{-b} option to
 @code{cvs import}.  It takes as an argument the vendor
 branch to import to.  The default is @samp{-b 1.1.1}.
 
+@c <en>For example, suppose that there are two teams, the red
+@c <en>team and the blue team, that are sending you sources.
+@c <en>You want to import the red team's efforts to branch
+@c <en>1.1.1 and use the vendor tag RED.  You want to import
+@c <en>the blue team's efforts to branch 1.1.3 and use the
+@c <en>vendor tag BLUE.  So the commands you might use are:
 For example, suppose that there are two teams, the red
 team and the blue team, that are sending you sources.
 You want to import the red team's efforts to branch
@@ -12291,6 +12353,11 @@ $ cvs import -b 1.1.3 dir RED RED_1-0
 @end example
 
 @noindent
+@c <en>Be careful; this kind of mismatch is sure to sow
+@c <en>confusion or worse.  I can't think of a useful purpose
+@c <en>for the ability to specify a mismatch here, but if you
+@c <en>discover such a use, don't.  @sc{cvs} is likely to make this
+@c <en>an error in some future release.
 Be careful; this kind of mismatch is sure to sow
 confusion or worse.  I can't think of a useful purpose
 for the ability to specify a mismatch here, but if you
@@ -12309,11 +12376,19 @@ an error in some future release.
 @c to figure out builds right away.  The current location
 @c is based on the theory that it kind of akin to the
 @c "Revision management" section.
+@c <en>@node Builds
 @node Builds
+@c <en>@chapter How your build system interacts with CVS
 @chapter How your build system interacts with CVS
+@c <en>@cindex Builds
 @cindex Builds
+@c <en>@cindex make
 @cindex make
 
+@c <en>As mentioned in the introduction, @sc{cvs} does not
+@c <en>contain software for building your software from source
+@c <en>code.  This section describes how various aspects of
+@c <en>your build system might interact with @sc{cvs}.
 As mentioned in the introduction, @sc{cvs} does not
 contain software for building your software from source
 code.  This section describes how various aspects of
@@ -12323,6 +12398,26 @@ your build system might interact with @sc{cvs}.
 @c tools other than CVS?  I'm not sure there is; I
 @c wouldn't think that people who learn CVS first would
 @c even have this concern.
+@c <en>One common question, especially from people who are
+@c <en>accustomed to @sc{rcs}, is how to make their build get
+@c <en>an up to date copy of the sources.  The answer to this
+@c <en>with @sc{cvs} is two-fold.  First of all, since
+@c <en>@sc{cvs} itself can recurse through directories, there
+@c <en>is no need to modify your @file{Makefile} (or whatever
+@c <en>configuration file your build tool uses) to make sure
+@c <en>each file is up to date.  Instead, just use two
+@c <en>commands, first @code{cvs -q update} and then
+@c <en>@code{make} or whatever the command is to invoke your
+@c <en>build tool.  Secondly, you do not necessarily
+@c <en>@emph{want} to get a copy of a change someone else made
+@c <en>until you have finished your own work.  One suggested
+@c <en>approach is to first update your sources, then
+@c <en>implement, build and
+@c <en>test the change you were thinking of, and then commit
+@c <en>your sources (updating first if necessary).  By
+@c <en>periodically (in between changes, using the approach
+@c <en>xjust described) updating your entire tree, you ensure
+@c <en>that your sources are sufficiently up to date.
 One common question, especially from people who are
 accustomed to @sc{rcs}, is how to make their build get
 an up to date copy of the sources.  The answer to this
@@ -12344,6 +12439,7 @@ periodically (in between changes, using the approach
 just described) updating your entire tree, you ensure
 that your sources are sufficiently up to date.
 
+@c <en>@cindex Bill of materials
 @cindex Bill of materials
 @c <en>One common need is to record which versions of which
 @c <en>source files went into a particular build.  This kind
@@ -12360,6 +12456,13 @@ this with @sc{cvs} is to use the @code{tag} command to
 record which versions went into a given build
 (@pxref{Etiquetas}).
 
+@c <en>Using @sc{cvs} in the most straightforward manner
+@c <en>possible, each developer will have a copy of the entire
+@c <en>source tree which is used in a particular build.  If
+@c <en>the source tree is small, or if developers are
+@c <en>geographically dispersed, this is the preferred
+@c <en>solution.  In fact one approach for larger projects is
+@c <en>to break a project down into smaller
 Using @sc{cvs} in the most straightforward manner
 possible, each developer will have a copy of the entire
 source tree which is used in a particular build.  If
@@ -12369,11 +12472,19 @@ solution.  In fact one approach for larger projects is
 to break a project down into smaller
 @c I say subsystem instead of module because they may or
 @c may not use the modules file.
+@c <en>separately-compiled subsystems, and arrange a way of
+@c <en>releasing them internally so that each developer need
+@c <en>check out only those subsystems which they are
+@c <en>actively working on.
 separately-compiled subsystems, and arrange a way of
 releasing them internally so that each developer need
 check out only those subsystems which they are
 actively working on.
 
+@c <en>Another approach is to set up a structure which allows
+@c <en>developers to have their own copies of some files, and
+@c <en>for other files to access source files from a central
+@c <en>location.  Many people have come up with some such a
 Another approach is to set up a structure which allows
 developers to have their own copies of some files, and
 for other files to access source files from a central
@@ -12384,6 +12495,12 @@ location.  Many people have come up with some such a
 @c but as far as I know
 @c no one has nicely packaged or released such a system (or
 @c instructions for constructing one).
+@c <en>system using features such as the symbolic link feature
+@c <en>found in many operating systems, or the @code{VPATH}
+@c <en>feature found in many versions of @code{make}.  One build
+@c <en>tool which is designed to help with this kind of thing
+@c <en>is Odin (see
+@c <en>@code{ftp://ftp.cs.colorado.edu/pub/distribs/odin}).
 system using features such as the symbolic link feature
 found in many operating systems, or the @code{VPATH}
 feature found in many versions of @code{make}.  One build
@@ -12426,6 +12543,16 @@ is Odin (see
 @c <en>@cindex Symbolic links
 @cindex Symbolic links
 
+@c <en>In normal circumstances, @sc{cvs} works only with regular
+@c <en>files.  Every file in a project is assumed to be
+@c <en>persistent; it must be possible to open, read and close
+@c <en>them; and so on.  @sc{cvs} also ignores file permissions and
+@c <en>ownerships, leaving such issues to be resolved by the
+@c <en>developer at installation time.  In other words, it is
+@c <en>not possible to "check in" a device into a repository;
+@c <en>if the device file cannot be opened, @sc{cvs} will refuse to
+@c <en>handle it.  Files also lose their ownerships and
+@c <en>permissions during repository transactions.
 In normal circumstances, @sc{cvs} works only with regular
 files.  Every file in a project is assumed to be
 persistent; it must be possible to open, read and close
@@ -12519,17 +12646,20 @@ supported.
 @end ignore
 
 @c ---------------------------------------------------------------------
+@c <en>@node Comandos do CVS
 @node Comandos do CVS
+@c <en>@appendix Guia dos comandos do CVS
 @appendix Guia dos comandos do CVS
 
 @c <en>This appendix describes the overall structure of
 @c <en>@sc{cvs} commands, and describes some commands in
 @c <en>detail (others are described elsewhere; for a quick
 @c <en>reference to @sc{cvs} commands, @pxref{Invoking CVS}).
-This appendix describes the overall structure of
-@sc{cvs} commands, and describes some commands in
-detail (others are described elsewhere; for a quick
-reference to @sc{cvs} commands, @pxref{Chamando o CVS}).
+Este apêndice descreve a estrutura geral dos comandos
+do @sc{cvs}, e descreve alguns comandos em detalhe
+(outros são descritos em outra parte; para
+uma referência rápida dos comandos do @sc{cvs},
+@pxref{Chamando o CVS}).
 @c The idea is that we want to move the commands which
 @c are described here into the main body of the manual,
 @c in the process reorganizing the manual to be
@@ -12547,107 +12677,160 @@ reference to @sc{cvs} commands, @pxref{Chamando o CVS}).
 
 @menu
 @c <en>* Structure::                   Overall structure of CVS commands
-* Structure::                   Overall structure of CVS commands
+* Estrutura::                   Estrutura geral dos comandos do CVS
 @c <en>* Exit status::                 Indicating CVS's success or failure
-* Exit status::                 Indicating CVS's success or failure
+* Estados de saída::            Indicando o sucesso ou falha do CVS
 @c <en>* ~/.cvsrc::                    Default options with the ~/.cvsrc file
-* ~/.cvsrc::                    Default options with the ~/.cvsrc file
+* ~/.cvsrc::                    Opções padrão com o arquivo ~/.cvsrc
 @c <en>* Global options::              Options you give to the left of cvs_command
-* Opções globais::              Options you give to the left of cvs_command
+* Opções globais::              Opções que você bota a esquerda do comando_do_cvs
 @c <en>* Common options::              Options you give to the right of cvs_command
-* Opções comuns::              Options you give to the right of cvs_command
+* Opções comuns::              Opções que você bota a direita do comando_do_cvs
 @c <en>* admin::                       Administration
-* admin::                       Administration
+* admin::                       Administração
 @c <en>* checkout::                    Checkout sources for editing
-* checkout::                    Checkout sources for editing
+* checkout::                    ???Checkout??? fontes para edição
 @c <en>* commit::                      Check files into the repository
-* commit::                      Check files into the repository
+* commit::                      Colocar arquivos no repositório
 @c <en>* diff::                        Show differences between revisions
-* diff::                        Show differences between revisions
+* diff::                        Mostrar diferenças entre revisões
 @c <en>* export::                      Export sources from CVS, similar to checkout
-* export::                      Export sources from CVS, similar to checkout
+* export::                      Exportar fontes para fora do CVS, similar ao ???checkout???
 @c <en>* history::                     Show status of files and users
-* history::                     Show status of files and users
+* history::                     Mostrar estado de arquivos e usuários
 @c <en>* import::                      Import sources into CVS, using vendor branches
-* import::                      Import sources into CVS, using vendor branches
+* import::                      Importar fontes para dentro do CVS, usando ramos de fornecedor
 @c <en>* log::                         Show log messages for files
-* log::                         Show log messages for files
+* log::                         Mostrar mensagens de log para arquivos
 @c <en>* rdiff::                       'patch' format diffs between releases
 * rdiff::                       'patch' format diffs between releases
 @c <en>* release::                     Indicate that a directory is no longer in use
-* release::                     Indicate that a directory is no longer in use
+* release::                     Avisar que um diretorio não está mais em uso
 @c <en>* update::                      Bring work tree in sync with repository
-* update::                      Bring work tree in sync with repository
+* update::                      Deixar árvore de trabalho em sincronia com o repositório
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Structure
-@appendixsec Overall structure of CVS commands
-@cindex Structure
-@cindex CVS command structure
-@cindex Command structure
-@cindex Format of CVS commands
+@c <en>@node Structure
+@node Estrutura
+@c <en>@appendixsec Overall structure of CVS commands
+@appendixsec Estrutura geral dos comandos do CVS
+@c <en>@cindex Structure
+@cindex Estrutura
+@c <en>@cindex CVS command structure
+@cindex Estrutura do comando CVS
+@c <en>@cindex Command structure
+@cindex Estrutura do comando
+@c <en>@cindex Format of CVS commands
+@cindex Formato dos comandos do CVS
 
-The overall format of all @sc{cvs} commands is:
+@c <en>The overall format of all @sc{cvs} commands is:
+O formato geral de todos os comandos do @sc{cvs} é:
 
 @example
 cvs [ cvs_options ] cvs_command [ command_options ] [ command_args ]
 @end example
 
 @table @code
+@c <en>@item cvs
 @item cvs
-The name of the @sc{cvs} program.
+@c <en>The name of the @sc{cvs} program.
+O nome do programa @sc{cvs}.
 
+@c <en>@item cvs_options
 @item cvs_options
-Some options that affect all sub-commands of @sc{cvs}.  These are
-described below.
+@c <en>Some options that affect all sub-commands of @sc{cvs}.  These are
+@c <en>described below.
+Algumas opções que afetam todos os sub-comandos do
+@sc{cvs}.  Estes estão descritos abaixo.
 
+@c <en>@item cvs_command
 @item cvs_command
-One of several different sub-commands.  Some of the commands have
-aliases that can be used instead; those aliases are noted in the
-reference manual for that command.  There are only two situations
-where you may omit @samp{cvs_command}: @samp{cvs -H} elicits a
-list of available commands, and @samp{cvs -v} displays version
-information on @sc{cvs} itself.
+@c <en>One of several different sub-commands.  Some of the commands have
+@c <en>aliases that can be used instead; those aliases are noted in the
+@c <en>reference manual for that command.  There are only two situations
+@c <en>where you may omit @samp{cvs_command}: @samp{cvs -H} elicits a
+@c <en>list of available commands, and @samp{cvs -v} displays version
+@c <en>information on @sc{cvs} itself.
+Um dos vários sub-comandos.  Alguns dos comandos têm
+???aliases??? substituí-los; estes ???aliases??? são
+listados no manual de referência do comando.  Existem
+apenas duas situações onde você pode omitir o
+@samp{cvs_command}: @samp{cvs -H} retorna uma lista de
+comandos disponíveis, e @samp{cvs -v} mostra
+informações sobre a versão do próprio @sc{cvs}.
 
+@c <en>@item command_options
 @item command_options
-Options that are specific for the command.
+@c <en>Options that are specific for the command.
+Opções que são específicas para o comando.
 
+@c <en>@item command_args
 @item command_args
-Arguments to the commands.
+@c <en>Arguments to the commands.
+Argumentos para os comandos.
 @end table
 
-There is unfortunately some confusion between
-@code{cvs_options} and @code{command_options}.
-@samp{-l}, when given as a @code{cvs_option}, only
-affects some of the commands.  When it is given as a
-@code{command_option} is has a different meaning, and
-is accepted by more commands.  In other words, do not
-take the above categorization too seriously.  Look at
-the documentation instead.
+@c <en>There is unfortunately some confusion between
+@c <en>@code{cvs_options} and @code{command_options}.
+@c <en>@samp{-l}, when given as a @code{cvs_option}, only
+@c <en>affects some of the commands.  When it is given as a
+@c <en>@code{command_option} is has a different meaning, and
+@c <en>is accepted by more commands.  In other words, do not
+@c <en>take the above categorization too seriously.  Look at
+@c <en>the documentation instead.
+Infelizmente, existe alguma confusão entre
+@code{cvs_options} e @code{command_options}. @samp{-l},
+quando passado como @code{cvs_option}, afeta apenas
+alguns dos comandos.  Quando é passado como um
+@code{command_option} tem um significado diferente, e é
+aceito por mais comandos.  Em outras palavras, não leve
+a categorização acima tão a sério.  Olhe a
+documentação, ao invés disto.
 
-@node Exit status
-@appendixsec CVS's exit status
-@cindex Exit status, of CVS
+@c <en>@node Exit status
+@node Estados de saída
+@c <en>@appendixsec CVS's exit status
+@appendixsec estado de saída do CVS
+@c <en>@cindex Exit status, of CVS
+@cindex Estados de saída do CVS
 
-@sc{cvs} can indicate to the calling environment whether it
-succeeded or failed by setting its @dfn{exit status}.
-The exact way of testing the exit status will vary from
-one operating system to another.  For example in a unix
-shell script the @samp{$?} variable will be 0 if the
-last command returned a successful exit status, or
-greater than 0 if the exit status indicated failure.
+@c <en>@sc{cvs} can indicate to the calling environment whether it
+@c <en>succeeded or failed by setting its @dfn{exit status}.
+@c <en>The exact way of testing the exit status will vary from
+@c <en>one operating system to another.  For example in a unix
+@c <en>shell script the @samp{$?} variable will be 0 if the
+@c <en>last command returned a successful exit status, or
+@c <en>greater than 0 if the exit status indicated failure.
+O @sc{cvs} pode indicar para o ambiente que o chamou se
+ele foi bem-sucedido ou falhou ao ajustar seu
+@dfn{estado de saída}.  A forma exata de testar o
+estado de saída varia de um sistema operacional para
+outro.  Por exemplo, num shell script do unix a
+variável @samp{$?} será 0 se o último comando retornar
+um estado de saída bem-sucedido, ou maior que 0 se o
+estado de saída indicar uma falha.
 
-If @sc{cvs} is successful, it returns a successful status;
-if there is an error, it prints an error message and
-returns a failure status.  The one exception to this is
-the @code{cvs diff} command.  It will return a
-successful status if it found no differences, or a
-failure status if there were differences or if there
-was an error.  Because this behavior provides no good
-way to detect errors, in the future it is possible that
-@code{cvs diff} will be changed to behave like the
-other @sc{cvs} commands.
+@c <en>If @sc{cvs} is successful, it returns a successful status;
+@c <en>if there is an error, it prints an error message and
+@c <en>returns a failure status.  The one exception to this is
+@c <en>the @code{cvs diff} command.  It will return a
+@c <en>successful status if it found no differences, or a
+@c <en>failure status if there were differences or if there
+@c <en>was an error.  Because this behavior provides no good
+@c <en>way to detect errors, in the future it is possible that
+@c <en>@code{cvs diff} will be changed to behave like the
+@c <en>other @sc{cvs} commands.
+Se o @sc{cvs} é bem-sucedido, retorna um estado de sucesso;
+se existe um erro, mostra uma mensagem de erro e
+retorna um estado de falha.  A única exceção para isto
+é o comando @code{cvs diff}.  Ele retornará um estado
+de sucesso se não encontrar diferenças, ou um estado de
+sucesso se existirem diferenças ou acontecer um erro.
+Já que este comportamento não fornece uma boa maneira
+de detectar erros, é possível que no futuro o @code{cvs
+diff} seja mudado para se comportar como os outros
+comandos do @sc{cvs}.
 @c It might seem like checking whether cvs -q diff
 @c produces empty or non-empty output can tell whether
 @c there were differences or not.  But it seems like
@@ -12661,37 +12844,65 @@ other @sc{cvs} commands.
 @c bring back (but what does it mean for VMS?)?
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@c <en>@node ~/.cvsrc
 @node ~/.cvsrc
-@appendixsec Default options and the ~/.cvsrc file
-@cindex .cvsrc file
-@cindex Option defaults
+@c <en>@appendixsec Default options and the ~/.cvsrc file
+@appendixsec Opções padrão e o arquivo ~/.cvsrc
+@c <en>@cindex .cvsrc file
+@cindex Arquivo .cvsrc
+@c <en>@cindex Option defaults
+@cindex Padrão, opções
 
-There are some @code{command_options} that are used so
-often that you might have set up an alias or some other
-means to make sure you always specify that option.  One
-example (the one that drove the implementation of the
-@file{.cvsrc} support, actually) is that many people find the
-default output of the @samp{diff} command to be very
-hard to read, and that either context diffs or unidiffs
-are much easier to understand.
+@c <en>There are some @code{command_options} that are used so
+@c <en>often that you might have set up an alias or some other
+@c <en>means to make sure you always specify that option.  One
+@c <en>example (the one that drove the implementation of the
+@c <en>@file{.cvsrc} support, actually) is that many people find the
+@c <en>default output of the @samp{diff} command to be very
+@c <en>hard to read, and that either context diffs or unidiffs
+@c <en>are much easier to understand.
+Existem algumas @code{opções_de_comando} que são tão
+usadas que você vai querer  preparar um atalho ou
+alguma outra forma de ter certeza que tais opções
+sempre vão ser especificadas.  Um exemplo (o que
+motivou a implementação do suporte ao arquivo
+@file{.cvsrc}, na verdade) é que muitas pessoas acham a
+saída do comando @samp{diff} muito difícil de ler, e
+que tanto diffs de contexto quanto unidiffs são muito
+mais fáceis de entender.
 
-The @file{~/.cvsrc} file is a way that you can add
-default options to @code{cvs_commands} within cvs,
-instead of relying on aliases or other shell scripts.
+@c <en>The @file{~/.cvsrc} file is a way that you can add
+@c <en>default options to @code{cvs_commands} within cvs,
+@c <en>instead of relying on aliases or other shell scripts.
+O arquivo @file{~/.cvsrc} é uma forma de você adicionar
+opções padrão aos @code{comandos_cvs} dentro do cvs, ao
+invés de usar alias (apelidos) ou outros scripts de shell.
 
-The format of the @file{~/.cvsrc} file is simple.  The
-file is searched for a line that begins with the same
-name as the @code{cvs_command} being executed.  If a
-match is found, then the remainder of the line is split
-up (at whitespace characters) into separate options and
-added to the command arguments @emph{before} any
-options from the command line.
+@c <en>The format of the @file{~/.cvsrc} file is simple.  The
+@c <en>file is searched for a line that begins with the same
+@c <en>name as the @code{cvs_command} being executed.  If a
+@c <en>match is found, then the remainder of the line is split
+@c <en>up (at whitespace characters) into separate options and
+@c <en>added to the command arguments @emph{before} any
+@c <en>options from the command line.
+O formato do arquivo @file{~/.cvsrc} é simples.  O
+arquivo é varrido por uma linha que comece com o mesmo
+nome do @code{comando_cvs} sendo executado.  Se
+encontra, então o restante da linha é dividido (pelos
+espaços) em opções distintas e adicionadas aos
+argumentos do comando @emph{antes} de quaisquer opções
+da linha de comando.
 
-If a command has two names (e.g., @code{checkout} and
-@code{co}), the official name, not necessarily the one
-used on the command line, will be used to match against
-the file.  So if this is the contents of the user's
-@file{~/.cvsrc} file:
+@c <en>If a command has two names (e.g., @code{checkout} and
+@c <en>@code{co}), the official name, not necessarily the one
+@c <en>used on the command line, will be used to match against
+@c <en>the file.  So if this is the contents of the user's
+@c <en>@file{~/.cvsrc} file:
+Se um comando tem dois nomes (e.g., @code{checkout} e
+@code{co}), o nome oficial, que não é necessariamente o
+usado na linha de comando,  vai ser usado para fazer a
+busca no arquivo.  Logo, se este é o conteúdo do
+arquivo @file{~/.cvsrc} do usuário:
 
 @example
 log -N
@@ -12703,31 +12914,42 @@ release -d
 @end example
 
 @noindent
-the command @samp{cvs checkout foo} would have the
-@samp{-P} option added to the arguments, as well as
+@c <en>the command @samp{cvs checkout foo} would have the
+@c <en>@samp{-P} option added to the arguments, as well as
+@c <en>@samp{cvs co foo}.
+o comando @samp{cvs checkout foo} vai ter a opção
+@samp{-P} adicionada a seus argumentos, assim como
 @samp{cvs co foo}.
 
-With the example file above, the output from @samp{cvs
-diff foobar} will be in unidiff format.  @samp{cvs diff
--c foobar} will provide context diffs, as usual.
-Getting "old" format diffs would be slightly more
-complicated, because @code{diff} doesn't have an option
-to specify use of the "old" format, so you would need
-@samp{cvs -f diff foobar}.
+@c <en>With the example file above, the output from @samp{cvs
+@c <en>diff foobar} will be in unidiff format.  @samp{cvs diff
+@c <en>-c foobar} will provide context diffs, as usual.
+@c <en>Getting "old" format diffs would be slightly more
+@c <en>complicated, because @code{diff} doesn't have an option
+@c <en>to specify use of the "old" format, so you would need
+@c <en>@samp{cvs -f diff foobar}.
+Com o arquivo de exemplo acima, a saída de @samp{cvs
+diff foobar} vai ser no formato unidiff.  @samp{cvs
+diff -c foobar} vai dar diffs de contexto, que é o normal.
+Obter o diff no formato "velho" vai ser um pouco mais
+complicado, já que o @code{diff} não tem uma opção para
+especificar o uso do formato "velho", logo você vai ter
+que usar @samp{cvs -f diff foobar}.
 
 @c <en>In place of the command name you can use @code{cvs} to
 @c <en>specify global options (@pxref{Global options}).  For
 @c <en>example the following line in @file{.cvsrc}
-In place of the command name you can use @code{cvs} to
-specify global options (@pxref{Opções globais}).  For
-example the following line in @file{.cvsrc}
+Ao invés de no nome do comando você pode usar o
+@code{cvs} especificando opções globais (@pxref{Opções globais}).  Por
+exemplo a seguinte linha em @file{.cvsrc}
 
 @example
 cvs -z6
 @end example
 
 @noindent
-causes @sc{cvs} to use compression level 6.
+@c <en>causes @sc{cvs} to use compression level 6.
+faz com que o @sc{cvs} use compressão de nível 6.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Global options
@@ -14355,8 +14577,10 @@ If any file names are given, only those files are
 compared.  If any directories are given, all files
 under them will be compared.
 
+@c <en>The exit status for diff is different than for other
+@c <en>@sc{cvs} commands; for details @ref{Exit status}.
 The exit status for diff is different than for other
-@sc{cvs} commands; for details @ref{Exit status}.
+@sc{cvs} commands; for details @ref{Estados de saída}.
 
 @menu
 * diff options::                diff options
@@ -15358,8 +15582,10 @@ invoking an editor.
 There are the following additional special options.
 
 @table @code
+@c <en>@item -b @var{branch}
 @item -b @var{branch}
-See @ref{Multiple vendor branches}.
+@c <en>See @ref{Multiple vendor branches}.
+See @ref{Ramos de fornecedor múltiplos}.
 
 @c <en>@item -k @var{subst}
 @item -k @var{subst}
@@ -17068,7 +17294,7 @@ Import files into @sc{cvs}, using vendor branches.  See
 @c <en>Import to vendor branch @var{bra}.  See
 @c <en>@ref{Multiple vendor branches}.
 Import to vendor branch @var{bra}.  See
-@ref{Multiple vendor branches}.
+@ref{Ramos de fornecedor múltiplos}.
 
 @c <en>@item -d
 @item -d
