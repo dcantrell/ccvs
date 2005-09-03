@@ -19439,7 +19439,7 @@ fi
 done
 
 
-  if test $ac_cv_func_strcasecmp = no; then
+  if test $ac_cv_func_getlogin_r = no; then
 
 
 
