@@ -1,3 +1,7 @@
+2005-09-03  Derek Price  <derek@ximbiot.com>
+
+	* add.c (add_usage): Standardize usage message somewhat.
+
 2005-09-02  Larry Jones  <lawrence.jones@ugs.com>
 
 	* commit.c (checkaddfile): Improve error messages for lock_RCS failure.
