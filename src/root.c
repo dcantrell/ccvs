@@ -400,8 +400,11 @@ new_cvsroot_t (void)
 
 
 
-/* Dispose of a cvsroot_t and its component parts.  Most code should not need
- * to call this function, as parse_cvsroot is now caching parsed roots.
+/* Dispose of a cvsroot_t and its component parts.
+ *
+ * NOTE
+ *  It is dangerous for most code to call this function since parse_cvsroot
+ *  maintains a cache of parsed roots.
  */
 static void
 free_cvsroot_t (cvsroot_t *root)
