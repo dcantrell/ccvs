@@ -9,6 +9,8 @@
 
 2005-09-03  Derek Price  <derek@ximbiot.com>
 
+	* root.h (cvsroot_t->isremote): Update comment.
+
 	* history.c (read_hrecs_file): Suppress signed/unsigned char warning.
 
 	* root.h (cvsroot_t->isremote): Declare bool.
