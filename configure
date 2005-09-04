@@ -14690,7 +14690,7 @@ fi
     cat <<EOF
 
 You are about to use an unreleased version of CVS.  Be sure to
-read the relevant mailing lists, most importantly <info-cvs@gnu.org>.
+read the relevant mailing lists, most importantly <info-cvs@nongnu.org>.
 
 Below you will find information on the status of this version of CVS.
 
