@@ -1,5 +1,12 @@
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
+	* server.c (isSamePath, isThisHost): Move to...
+	* subr.c (isSamePath, isThisHost): ...here.
+	* subr.h (isSamePath, isThisHost): Add protos.
+	* parseinfo.c (parse_config): Handle [rootspec] syntax.
+	* main.c (main): Always set server_hostname.
+	* sanity.sh (config3): New tests for same.
+
 	* server.c (gserver_authenticate_connection): Output hostname in
 	error message.
 

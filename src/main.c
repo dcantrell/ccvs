@@ -29,9 +29,8 @@ const char *cvs_cmd_name;
 const char *global_session_id; /* Random session ID */
 
 char *hostname;
-#ifdef SERVER_SUPPORT
+/* FIXME: Perhaps this should be renamed original_hostname or the like?  */
 char *server_hostname;
-#endif /* SERVER_SUPPORT */
 
 int use_editor = 1;
 int use_cvsrc = 1;
@@ -849,13 +848,12 @@ cause intermittent sandbox corruption.");
             hostname = xstrdup ("localhost");
             
 	}
-#ifdef SERVER_SUPPORT
-	/* Keep track of this separately since the client can change the
-	 * hostname.
+
+	/* Keep track of this separately since the client can change
+	 * HOSTNAME on the server.
 	 */
-	if (server_active)
-	    server_hostname = xstrdup (hostname);
-#endif /* SERVER_SUPPORT */
+	server_hostname = xstrdup (hostname);
+
 
 #ifdef KLUDGE_FOR_WNT_TESTSUITE
 	/* Probably the need for this will go away at some point once

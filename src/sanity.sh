@@ -20145,6 +20145,129 @@ $SPROG commit: Rebuilding administrative file database"
 	  rm -r wnt
 	  ;;
 
+	config3)
+	  # Verify comments, white space, & [rootspecs] in CVSROOT/config
+	  #
+	  # `cvs server' `-c' option tested in `server' test
+	  modify_repo mkdir $CVSROOT_DIRNAME/config3
+	  mkdir config3
+	  cd config3
+
+	  dotest config3-init-1 "$testcvs -q co CVSROOT" "U CVSROOT/$DOTSTAR"
+	  cd CVSROOT
+
+	  # I break the usual sanity.sh indentation standard for here-docs
+	  # mostly to test that leading white-space is now ignored.
+	  cat <<EOF >config
+	      # Ignore a comment with leading spaces.
+	      GLOBAL-BAD-OPTION=WWW
+ 
+	      [/ignore/this/root]
+	      [/and/this/one]
+		  IGNORED-BAD-OPTION=YYY
+EOF
+	  dotest config3-init-2 \
+"$testcvs -q ci -m test-root-specs" \
+"$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
+
+	  cd ..
+	  dotest config3-1 "$testcvs co config3" \
+"$SPROG checkout: $CVSROOT_DIRNAME/CVSROOT/config \[2\]: unrecognized keyword \`GLOBAL-BAD-OPTION'
+$SPROG checkout: Updating config3"
+
+	  cd CVSROOT
+	  cat <<EOF >config
+	      # Ignore a comment with leading spaces.
+
+	      [/ignore/this/root]
+	      [/and/this/one]
+		  IGNORED-BAD-OPTION=YYY
+		  # Ignore a comment with leading spaces.
+
+	      [/some/other/root]
+
+	      # Comments and blank lines do not affect fall-through behavior.
+
+	      [$CVSROOT_DIRNAME]
+
+	      # Comments and blank lines do not affect fall-through behavior.
+
+	      [/yet/another/root]
+		  # Ignore a comment with leading spaces.
+		  PROCESS-BAD-OPTION=XXX
+EOF
+	  dotest config3-init-3 \
+"$testcvs -q ci -m test-root-specs" \
+"$SPROG commit: $CVSROOT_DIRNAME/CVSROOT/config \[2\]: unrecognized keyword \`GLOBAL-BAD-OPTION'
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
+
+	  cd ..
+	  dotest config3-2 "$testcvs co config3" \
+"$SPROG checkout: $CVSROOT_DIRNAME/CVSROOT/config \[18\]: unrecognized keyword \`PROCESS-BAD-OPTION'
+$SPROG checkout: Updating config3"
+
+	  # The next few tests make sure both global options and root
+	  # specific options are processed by setting the history log and
+	  # search paths in different locations and then verifying that
+	  # both registered.  It also verifies that a key for a different
+	  # root is ignored.
+	  cd CVSROOT
+	  cat <<EOF >config
+	      HistoryLogPath=$TESTDIR/historylog
+
+	      [/ignore/this/root]
+	      [/and/this/one]
+		  IGNORED-BAD-OPTION=YYY
+
+	      [/some/other/root]
+	      [$CVSROOT_DIRNAME]
+	      [/yet/another/root]
+		  HistorySearchPath=$TESTDIR/historylog
+
+	      [/ignore/another/root]
+	      [/and/this/one/too]
+		  ANOTHER-IGNORED-BAD-OPTION=ZZZ
+
+	      [$CVSROOT_DIRNAME]
+		  LogHistory=TMAR
+EOF
+	  dotest config3-init-4 \
+"$testcvs -q ci -m test-root-specs" \
+"$SPROG commit: $CVSROOT_DIRNAME/CVSROOT/config \[18\]: unrecognized keyword \`PROCESS-BAD-OPTION'
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
+
+	  cd ..
+	  dotest config3-3 "$testcvs co -d config3-2 config3" \
+"$SPROG checkout: Updating config3-2"
+
+	  cd config3-2
+	  touch newfile
+	  dotest config3-4 "$testcvs -Q add newfile"
+	  dotest config3-5 "$testcvs -q ci -madd-file" \
+"$CVSROOT_DIRNAME/config3/newfile,v  <--  newfile
+initial revision: 1\.1"
+
+	  dotest config3-6 "$testcvs rtag testtag config3" \
+"$SPROG rtag: Tagging config3"
+
+	  cd ..
+	  dotest config3-7 "$testcvs history -ea" \
+"A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 newfile config3 == $TESTDIR/config3/config3-2
+T [0-9-]* [0-9:]* ${PLUS}0000 $username config3 \[testtag:A\]"
+
+	  dokeep
+	  restore_adm
+	  cd ..
+	  rm -r config3
+	  modify_repo rm -rf $CVSROOT_DIRNAME/config3
+	  ;;
+
 
 
 	serverpatch)

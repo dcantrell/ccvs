@@ -1976,3 +1976,80 @@ xcanonicalize_file_name (const char *path)
 	error (1, errno, "Failed to resolve path: `%s'", path);
     return hardpath;
 }
+
+
+
+/* From GNULIB's canon-host module.  */
+extern char *canon_host (const char *host);
+
+/* Declared in main.c.  */
+extern char *server_hostname;
+
+/* Return true if OTHERHOST resolves to this host in the DNS.
+ *
+ * GLOBALS
+ *   server_hostname	The name of this host, as determined by the call to
+ *			xgethostname() in main().
+ *
+ * RETURNS
+ *   true	If OTHERHOST equals or resolves to HOSTNAME.
+ *   false	Otherwise.
+ */
+bool
+isThisHost (const char *otherhost)
+{
+    char *fqdno;
+    char *fqdns;
+    bool retval;
+
+    /* As an optimization, check the literal strings before looking up
+     * OTHERHOST in the DNS.
+     */
+    if (!strcasecmp (server_hostname, otherhost))
+	return true;
+
+    fqdno = canon_host (otherhost);
+    if (!fqdno)
+	error (1, 0, "Name lookup failed for `%s'", otherhost);
+    fqdns = canon_host (server_hostname);
+    if (!fqdns)
+	error (1, 0, "Name lookup failed for `%s'", server_hostname);
+
+    retval = !strcasecmp (fqdns, fqdno);
+
+    free (fqdno);
+    free (fqdns);
+    return retval;
+}
+
+
+
+/* Return true if two paths match, resolving symlinks.
+ */
+bool
+isSamePath (const char *path1_in, const char *path2_in)
+{
+    char *p1, *p2;
+    bool same;
+
+    if (!strcmp (path1_in, path2_in))
+	return true;
+
+    /* Path didn't match, but try to resolve any links that may be
+     * present.
+     */
+    if (!isdir (path1_in) || !isdir (path2_in))
+	/* To be resolvable, paths must exist on this server.  */
+	return false;
+
+    p1 = xcanonicalize_file_name (path1_in);
+    p2 = xcanonicalize_file_name (path2_in);
+    if (strcmp (p1, p2))
+	same = false;
+    else
+	same = true;
+
+    free (p1);
+    free (p2);
+    return same;
+}
