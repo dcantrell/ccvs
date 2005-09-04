@@ -615,7 +615,7 @@ isThisHost (const char *otherhost)
     if (!fqdno)
 	error (1, 0, "Name lookup failed for `%s'", otherhost);
     fqdns = canon_host (server_hostname);
-    if (!fqdno)
+    if (!fqdns)
 	error (1, 0, "Name lookup failed for `%s'", server_hostname);
 
     retval = !strcasecmp (fqdns, fqdno);
