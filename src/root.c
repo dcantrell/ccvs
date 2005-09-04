@@ -381,7 +381,7 @@ new_cvsroot_t (void)
 
     newroot->original = NULL;
     newroot->method = null_method;
-    newroot->isremote = 0;
+    newroot->isremote = false;
 #ifdef CLIENT_SUPPORT
     newroot->username = NULL;
     newroot->password = NULL;
