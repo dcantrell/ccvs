@@ -1106,7 +1106,7 @@ fill_hrec (char *line, struct hrec *hr)
 static int
 read_hrecs_file (Node *p, void *closure)
 {
-    unsigned char *cpstart, *cpend, *cp, *nl;
+    char *cpstart, *cpend, *cp, *nl;
     char *hrline;
     int i;
     int fd;
