@@ -88,8 +88,8 @@ SERVER SECURITY FIXES
   the contributed Perl scripts intended to be run as trigger scripts, but no
   attempt has been made to ensure that they still run in taint mode.  You will
   most likely have to tweak the scripts in some way to make them run.  Please
-  send any patches you find necessary back to <bug-cvs@gnu.org> so that we may
-  again ship fully enabled scripts in the future.
+  send any patches you find necessary back to <bug-cvs@nongnu.org> so that we
+  may again ship fully enabled scripts in the future.
 
   You should also make sure that any home-grown Perl scripts that you might
   have installed as CVS triggers also have taint-checking enabled.  This can be
