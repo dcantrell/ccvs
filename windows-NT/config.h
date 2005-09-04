@@ -465,7 +465,7 @@
 /* Define to 1 if you have the `mbrlen' function. */
 #undef HAVE_MBRLEN
 
-/* Define to 1 if you have the `mbrtowc' function. */
+/* Define to 1 if mbrtowc and mbstate_t are properly declared. */
 #define HAVE_MBRTOWC 1
 
 /* Define to 1 if you have the `mbsinit' function. */
@@ -626,9 +626,6 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H 1
 
-/* Define to 1 if you have the `strcasecmp' function. */
-#undef HAVE_STRCASECMP
-
 /* Define if you have strchr (always for CVS). */
 #undef HAVE_STRCHR
 
@@ -652,9 +649,6 @@
 
 /* Define to 1 if you have the `strncasecmp' function. */
 #undef HAVE_STRNCASECMP
-
-/* Define to 1 if you have the `strstr' function. */
-#undef HAVE_STRSTR
 
 /* Define to 1 if you have the `strtol' function. */
 #define HAVE_STRTOL 1
@@ -721,6 +715,15 @@
 
 /* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
 #undef HAVE_SYS_WAIT_H
+
+/* Define to 1 if you have the `tcgetattr' function. */
+#undef HAVE_TCGETATTR
+
+/* Define to 1 if you have the `tcsetattr' function. */
+#undef HAVE_TCSETATTR
+
+/* Define to 1 if you have the <termios.h> header file. */
+#undef HAVE_TERMIOS_H
 
 /* Define to 1 if you have the `timezone' function. */
 #undef HAVE_TIMEZONE
@@ -832,6 +835,9 @@
 
 /* Define to 1 if you have the `__fpending' function. */
 #undef HAVE___FPENDING
+
+/* Define to 1 if you have the `__fsetlocking' function. */
+#undef HAVE___FSETLOCKING
 
 /* Define to 1 if you have the `__secure_getenv' function. */
 #undef HAVE___SECURE_GETENV
@@ -1127,6 +1133,9 @@
 /* Define to 1 if you need to in order for `stat' and other things to work. */
 #undef _POSIX_SOURCE
 
+/* Define if you want regoff_t to be at least as wide POSIX requires. */
+#undef _REGEX_LARGE_OFFSETS
+
 /* Define to force lib/regex.c to define re_comp et al. */
 #define _REGEX_RE_COMP 1
 
@@ -1237,6 +1246,12 @@
 
 /* Define as a signed type of the same size as size_t. */
 #define ssize_t int
+
+/* Define to rpl_strcasecmp always. */
+#undef strcasecmp
+
+/* Define to rpl_strstr always. */
+#undef strstr
 
 /* Define to rpl_tzset if the wrapper function should be used. */
 #undef tzset
