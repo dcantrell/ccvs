@@ -1,3 +1,7 @@
+2005-09-04  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (config): Describe new [cvsroot] syntax.
+
 2005-09-01  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo: Update links and email addresses.

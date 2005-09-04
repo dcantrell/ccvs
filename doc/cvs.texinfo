@@ -14475,16 +14475,58 @@ lines (@pxref{server & pserver}).
 The administrative file @file{config} contains various
 miscellaneous settings which affect the behavior of
 @sc{cvs}.  The syntax is slightly different from the
-other administrative files.  Variables are not
-expanded.  Lines which start with @samp{#} are
-considered comments.
+other administrative files.
+
+Leading white space on any line is ignored, though the syntax is very strict
+and will reject spaces and tabs almost anywhere else.
+
+Empty lines, lines containing nothing but white space, and lines which start
+with @samp{#} (discounting any leading white space) are ignored.
+
 @c FIXME: where do we define comments for the other
 @c administrative files.
-Other lines consist of a keyword, @samp{=}, and a
-value.  Note that this syntax is very strict.
-Extraneous spaces or tabs are not permitted.
+Other lines consist of the optional leading white space, a keyword, @samp{=},
+and a value.  Please note again that this syntax is very strict.
+Extraneous spaces or tabs, other than the leading white space, are not
+permitted on these lines.
 @c See comments in parseinfo.c:parse_config for more
 @c discussion of this strictness.
+
+As of CVS 1.12.13, lines of the form @samp{[@var{CVSROOT}]} mark the subsequent
+section of the config file as applying only to certain repositories.  Multiple
+@samp{[@var{CVSROOT}]} lines without intervening
+@samp{@var{KEYWORD}=@var{VALUE}} pairs cause processing to fall through,
+processing subsequent keywords for any root in the list.  Finally, keywords
+and values which appear before any @samp{[@var{CVSROOT}]} lines are defaults,
+and may to apply to any repository.  For example, consider the following file:
+
+@example
+# Defaults
+LogHistory=TMAR
+
+[/cvsroots/team1]
+  LockDir=/locks/team1
+
+[/cvsroots/team2]
+  LockDir=/locks/team2
+
+[/cvsroots/team3]
+  LockDir=/locks/team3
+
+[/cvsroots/team4]
+  LockDir=/locks/team4
+
+[/cvsroots/team3]
+[/cvsroots/team4]
+  # Override logged commands for teams 3 & 4.
+  LogHistory=all
+@end example
+
+This example file sets up separate lock directories for each project, as well
+as a default set of logged commands overridden for the example's team 3 &
+team 4. This syntax could be useful, for instance, if you wished to share a
+single config file, for instance @file{/etc/cvs.conf}, among several
+repositories.
 
 Currently defined keywords are:
 
