@@ -70,15 +70,16 @@ DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	gettimeofday.c glob.c lstat.c malloc.c md5.c md5.h memmove.c \
 	mempcpy.c mempcpy.h memrchr.c memrchr.h mkdir.c mkstemp.c \
 	mktime.c nanosleep.c openat.c openat.h pagealign_alloc.c \
-	pagealign_alloc.h pathmax.h printf-args.c printf-parse.c \
-	quotearg.c quotearg.h readlink.c realloc.c regcomp.c regex.c \
-	regex.h regex_internal.c regex_internal.h regexec.c rename.c \
-	rpmatch.c save-cwd.c save-cwd.h setenv.c stat-macros.h \
-	strcasecmp.c strdup.c strdup.h strerror.c strftime.c \
-	strftime.h strncasecmp.c strstr.c strtol.c strtoul.c \
-	sunos57-select.c tempname.c time_r.c timespec.h unistd-safer.h \
-	unlocked-io.h unsetenv.c vasnprintf.c vasprintf.c waitpid.c \
-	xalloc.h xmalloc.c yesno.c yesno.h
+	pagealign_alloc.h pathmax.h pipe-safer.c printf-args.c \
+	printf-parse.c quotearg.c quotearg.h readlink.c realloc.c \
+	regcomp.c regex.c regex.h regex_internal.c regex_internal.h \
+	regexec.c rename.c rpmatch.c save-cwd.c save-cwd.h setenv.c \
+	stat-macros.h strcasecmp.c strdup.c strdup.h strerror.c \
+	strftime.c strftime.h strncasecmp.c strstr.c strtol.c \
+	strtoul.c sunos57-select.c tempname.c time_r.c timespec.h \
+	unistd--.h unistd-safer.h unlocked-io.h unsetenv.c \
+	vasnprintf.c vasprintf.c waitpid.c xalloc.h xgetcwd.c \
+	xgetcwd.h xmalloc.c yesno.c yesno.h
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/acx_with_external_zlib.m4 \
@@ -155,8 +156,9 @@ libcvs_a_AR = $(AR) $(ARFLAGS)
 libcvs_a_DEPENDENCIES = @LIBOBJS@ @ALLOCA@
 am_libcvs_a_OBJECTS = sighandle.$(OBJEXT) allocsa.$(OBJEXT) \
 	cycle-check.$(OBJEXT) basename.$(OBJEXT) stripslash.$(OBJEXT) \
-	getnline.$(OBJEXT) xalloc-die.$(OBJEXT) xgetcwd.$(OBJEXT) \
-	xgethostname.$(OBJEXT) xreadlink.$(OBJEXT)
+	getnline.$(OBJEXT) mbchar.$(OBJEXT) strnlen1.$(OBJEXT) \
+	xalloc-die.$(OBJEXT) xgethostname.$(OBJEXT) \
+	xreadlink.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 am_getdate_OBJECTS = getdate-error.$(OBJEXT) getdate-getdate.$(OBJEXT) \
 	getdate-progname.$(OBJEXT)
@@ -320,10 +322,11 @@ noinst_LIBRARIES = libcvs.a
 libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	allocsa.h allocsa.c cycle-check.c cycle-check.h dev-ino.h \
 	basename.c stripslash.c error.h exit.h getnline.h getnline.c \
-	gettext.h minmax.h setenv.h strcase.h strstr.h time_r.h \
+	gettext.h mbchar.h mbchar.c mbuiter.h minmax.h setenv.h \
+	strcase.h strnlen1.h strnlen1.c strstr.h time_r.h \
 	printf-args.h printf-parse.h vasnprintf.h vasprintf.h \
-	xalloc-die.c xgetcwd.h xgetcwd.c xgethostname.h xgethostname.c \
-	xreadlink.h xreadlink.c xsize.h
+	xalloc-die.c xgethostname.h xgethostname.c xreadlink.h \
+	xreadlink.c xsize.h
 libcvs_a_LIBADD = @LIBOBJS@ @ALLOCA@
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) getdate.c $(GETOPT_H) \
 	$(STDBOOL_H) $(STDINT_H) $(GLOB_H)
@@ -444,6 +447,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/nanosleep.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/openat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/pagealign_alloc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/pipe-safer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/printf-args.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/printf-parse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/quotearg.Po@am__quote@
@@ -472,6 +476,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/vasnprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/vasprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/waitpid.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/xgetcwd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/xmalloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/yesno.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/allocsa.Po@am__quote@
@@ -481,10 +486,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-getdate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-progname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getnline.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mbchar.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sighandle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stripslash.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strnlen1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xalloc-die.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgetcwd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgethostname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xreadlink.Po@am__quote@
 
