@@ -29,6 +29,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_ALLOCA
   gl_ALLOCSA
   gl_FUNC_ATEXIT
+  gl_CANON_HOST
   AC_FUNC_CANONICALIZE_FILE_NAME
   gl_FUNC_CHDIR_LONG
   gl_CLOSEOUT
@@ -122,6 +123,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/asprintf.c
   lib/atexit.c
   lib/basename.c
+  lib/canon-host.c
   lib/canonicalize.c
   lib/canonicalize.h
   lib/chdir-long.c
@@ -266,6 +268,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/allocsa.m4
   m4/atexit.m4
   m4/bison.m4
+  m4/canon-host.m4
   m4/canonicalize.m4
   m4/chdir-long.m4
   m4/clock_time.m4

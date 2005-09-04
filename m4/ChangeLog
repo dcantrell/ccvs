@@ -1,5 +1,10 @@
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
+	Add canon-host module from GNULIB.
+	* canon-host.m4: New file.
+	* gnulib-cache.m4, gnulib-comp.m4: Updated.
+	* gnulib.m4: Removed.
+
 	Update from GNULIB.
 	* getopt.m4, getpass.m4, lib-link.m4, lib-prefix.m4, minmax.m4,
 	regex.m4, strcase.m4, strstr.m4, unistd-safer.m4, xgetcwd.m4:
