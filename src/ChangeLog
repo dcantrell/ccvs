@@ -1,5 +1,8 @@
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
+	* server.c (gserver_authenticate_connection): Output hostname in
+	error message.
+
 	* server.c (isThisHost): Fix typo.
 
 	* server.c (isThisHost, gserver_authenticate_connection): Simplify
