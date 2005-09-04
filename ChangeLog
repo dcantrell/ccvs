@@ -1,3 +1,9 @@
+2005-09-04  Larry Jones  <lawrence.jones@ugs.com>
+
+	* NEWS: s/bug-cvs@gnu.org/bug-cvs@nongnu.org/.
+	* configure.in: s/info-cvs@gnu.org/info-cvs@nongnu.org/.
+	* configure: Regenerated.
+
 2005-09-01  Derek Price  <derek@ximbiot.com>
 
 	* AUTHORS, DEVEL-CVS, HACKING, README: Update links, email addresses,
