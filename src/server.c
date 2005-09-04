@@ -48,8 +48,6 @@ static int cvs_gssapi_wrapping;
 
 extern char *server_hostname;
 
-# include <netdb.h>
-
 # ifdef HAVE_WINSOCK_H
 #   include <winsock.h>
 # endif
@@ -587,6 +585,9 @@ isSamePath (const char *path1_in, const char *path2_in)
 
 
 
+/* From GNULIB lib/canon-host.c.  */
+extern char *canon_host (char const *host);
+
 /* Return true if OTHERHOST resolves to this host in the DNS.
  *
  * GLOBALS
@@ -600,7 +601,9 @@ isSamePath (const char *path1_in, const char *path2_in)
 static inline bool
 isThisHost (const char *otherhost)
 {
-    struct hostent *hinfo;
+    char *fqdno;
+    char *fqdns;
+    bool retval;
 
     /* As an optimization, check the literal strings before looking up
      * OTHERHOST in the DNS.
@@ -608,16 +611,18 @@ isThisHost (const char *otherhost)
     if (!strcasecmp (server_hostname, otherhost))
 	return true;
 
-    if (!(hinfo = gethostbyname (otherhost)))
-#ifdef HAVE_HSTRERROR
-	error (1, 0, "Name lookup failed for `%s': %s",
-	       otherhost, hstrerror (h_errno));
-#else
-	error (1, 0, "Name lookup failed for `%s': h_error=%d",
-	       otherhost, h_errno);
-#endif
+    fqdno = canon_host (otherhost);
+    if (!fqdno)
+	error (1, 0, "Name lookup failed for `%s'", otherhost);
+    fqdns = canon_host (server_hostname);
+    if (!fqdno)
+	error (1, 0, "Name lookup failed for `%s'", server_hostname);
 
-    return !strcasecmp (server_hostname, hinfo->h_name);
+    retval = !strcasecmp (fqdns, fqdno);
+
+    free (fqdno);
+    free (fqdns);
+    return retval;
 }
 
 
@@ -7437,7 +7442,7 @@ error 0 kerberos: %s\n", krb_get_err_text(status));
 static void
 gserver_authenticate_connection (void)
 {
-    struct hostent *hp;
+    char *hn;
     gss_buffer_desc tok_in, tok_out;
     char buf[1024];
     char *credbuf;
@@ -7448,11 +7453,12 @@ gserver_authenticate_connection (void)
     int nbytes;
     gss_OID mechid;
 
-    hp = gethostbyname (server_hostname);
-    if (hp == NULL)
+    hn = canon_host (server_hostname);
+    if (hn == NULL)
 	error (1, 0, "can't get canonical hostname");
 
-    sprintf (buf, "cvs@%s", hp->h_name);
+    sprintf (buf, "cvs@%s", hn);
+    free (hn);
     tok_in.value = buf;
     tok_in.length = strlen (buf);
 
