@@ -1,5 +1,8 @@
 2005-09-03  Derek Price  <derek@ximbiot.com>
 
+	* root.h (cvsroot_t->isremote): Declare bool.
+	* root.c (new_cvsroot_t): Initialize isremote to false instead of 0.
+
 	* add.c (add_usage): Standardize usage message somewhat.
 
 2005-09-02  Larry Jones  <lawrence.jones@ugs.com>
