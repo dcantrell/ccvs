@@ -4789,7 +4789,8 @@ E Protocol error: init says \"%s\" but pserver says \"%s\"",
     current_parsed_root = local_cvsroot (arg);
 
     do_cvs_command ("init", init);
-    free_cvsroot_t (current_parsed_root);
+
+    /* Do not free CURRENT_PARSED_ROOT since it is still in the cache.  */
     current_parsed_root = saved_parsed_root;
 }
 

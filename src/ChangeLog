@@ -1,3 +1,10 @@
+2005-09-04  Derek Price  <derek@ximbiot.com>
+
+	* root.c (new_cvsroot_t): directory is not client-specific.
+	(free_cvsroot_t): Declare static.
+	* root.h (free_cvsroot_t): Remove proto.
+	* server.c (server_init): Don't free cvsroot_t when finished with it.
+
 2005-09-03  Derek Price  <derek@ximbiot.com>
 
 	* history.c (read_hrecs_file): Suppress signed/unsigned char warning.

@@ -380,6 +380,7 @@ new_cvsroot_t (void)
     newroot = xmalloc(sizeof(cvsroot_t));
 
     newroot->original = NULL;
+    newroot->directory = NULL;
     newroot->method = null_method;
     newroot->isremote = false;
 #ifdef CLIENT_SUPPORT
@@ -389,7 +390,6 @@ new_cvsroot_t (void)
     newroot->cvs_rsh = NULL;
     newroot->cvs_server = NULL;
     newroot->port = 0;
-    newroot->directory = NULL;
     newroot->proxy_hostname = NULL;
     newroot->proxy_port = 0;
     newroot->redirect = true;	/* Advertise Redirect support */
@@ -400,10 +400,13 @@ new_cvsroot_t (void)
 
 
 
-/* Dispose of a cvsroot_t and its component parts */
-void
+/* Dispose of a cvsroot_t and its component parts.  Most code should not need
+ * to call this function, as parse_cvsroot is now caching parsed roots.
+ */
+static void
 free_cvsroot_t (cvsroot_t *root)
 {
+    assert (root);
     if (root->original != NULL)
 	free (root->original);
     if (root->directory != NULL)
