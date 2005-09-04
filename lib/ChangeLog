@@ -1,3 +1,15 @@
+2005-09-04  Derek Price  <derek@ximbiot.com>
+
+	Update from GNULIB.
+	* Makefile.am: Import modifications from...
+	* Makefile.gnulib: ...here.
+	* dup-safer.c, fd-safer.c, getpass.c, regcomp.c, regex.c, regex.h,
+	regex_internal.c, regex_internal.h, regexec.c, strcase.h,
+	strcasecmp.c, strftime.c, strncasecmp.c, strstr.c, strstr.h,
+	unistd-safer.h: Updated.
+	* mbchar.c, mbchar.h, mbuiter.h, memchr.c, pipe-safer.c, strnlen1.c,
+	strnlen1.h, unistd--.h: New files.
+
 2005-08-31  Derek Price  <derek@ximbiot.com>
 
 	* getdelim.c (getdelim): Return EOF on EOF, revisited.

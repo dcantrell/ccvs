@@ -179,6 +179,18 @@ libcvs_a_SOURCES += gettext.h
 
 ## end   gnulib module gettext-h
 
+## begin gnulib module mbchar
+
+libcvs_a_SOURCES += mbchar.h mbchar.c
+
+## end   gnulib module mbchar
+
+## begin gnulib module mbuiter
+
+libcvs_a_SOURCES += mbuiter.h
+
+## end   gnulib module mbuiter
+
 ## begin gnulib module minmax
 
 libcvs_a_SOURCES += minmax.h
@@ -226,6 +238,12 @@ libcvs_a_SOURCES += strcase.h
 
 ## end   gnulib module strcase
 
+## begin gnulib module strnlen1
+
+libcvs_a_SOURCES += strnlen1.h strnlen1.c
+
+## end   gnulib module strnlen1
+
 ## begin gnulib module strstr
 
 libcvs_a_SOURCES += strstr.h
@@ -255,12 +273,6 @@ libcvs_a_SOURCES += vasprintf.h
 libcvs_a_SOURCES += xalloc-die.c
 
 ## end   gnulib module xalloc-die
-
-## begin gnulib module xgetcwd
-
-libcvs_a_SOURCES += xgetcwd.h xgetcwd.c
-
-## end   gnulib module xgetcwd
 
 ## begin gnulib module xgethostname
 
