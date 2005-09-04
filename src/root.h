@@ -56,7 +56,6 @@ extern cvsroot_t *current_parsed_root;
 extern const cvsroot_t *original_parsed_root;
 
 cvsroot_t *Name_Root (const char *dir, const char *update_dir);
-void free_cvsroot_t (cvsroot_t *root_in);
 cvsroot_t *parse_cvsroot (const char *root)
 	__attribute__ ((__malloc__));
 cvsroot_t *local_cvsroot (const char *dir)
