@@ -1,3 +1,12 @@
+2005-09-04  Derek Price  <derek@ximbiot.com>
+
+	Update from GNULIB.
+	* getopt.m4, getpass.m4, lib-link.m4, lib-prefix.m4, minmax.m4,
+	regex.m4, strcase.m4, strstr.m4, unistd-safer.m4, xgetcwd.m4:
+	Updated.
+	* gnulib-cache.m4, gnulib-comp.m4, gnulib-tool.m4, mbchar.m4,
+	mbiter.m4, memchr.m4: New files.
+
 2005-09-03  Larry Jones  <lawrence.jones.ugs.com>
 
 	* getlogin_r.m4: Fix cut & paste error.
