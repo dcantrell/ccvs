@@ -379,10 +379,19 @@ parse_config (const char *cvsroot, const char *path)
     FILE *fp_info;
     char *line = NULL;
     unsigned int ln;		/* Input file line counter.  */
-    size_t line_allocated = 0;
+    char *buf = NULL;
+    size_t buf_allocated = 0;
     size_t len;
     char *p;
     struct config *retval;
+    /* PROCESSING	Whether config keys are currently being processed for
+     *			this root.
+     * PROCESSED	Whether any keys have been processed for this root.
+     *			This is initialized to true so that any initial keys
+     *			may be processed as global defaults.
+     */
+    bool processing = true;
+    bool processed = true;
 
     TRACE (TRACE_FUNCTION, "parse_config (%s)", cvsroot);
 
@@ -435,20 +444,20 @@ parse_config (const char *cvsroot, const char *path)
     }
 
     ln = 0;  /* Have not read any lines yet.  */
-    while (getline (&line, &line_allocated, fp_info) >= 0)
+    while (getline (&buf, &buf_allocated, fp_info) >= 0)
     {
 	ln++; /* Keep track of input file line number for error messages.  */
+
+	line = buf;
+
+	/* Skip leading white space.  */
+	while (isspace (*line)) line++;
 
 	/* Skip comments.  */
 	if (line[0] == '#')
 	    continue;
 
-	/* At least for the moment we don't skip whitespace at the start
-	   of the line.  Too picky?  Maybe.  But being insufficiently
-	   picky leads to all sorts of confusion, and it is a lot easier
-	   to start out picky and relax it than the other way around.
-
-	   Is there any kind of written standard for the syntax of this
+	/* Is there any kind of written standard for the syntax of this
 	   sort of config file?  Anywhere in POSIX for example (I guess
 	   makefiles are sort of close)?  Red Hat Linux has a bunch of
 	   these too (with some GUI tools which edit them)...
@@ -464,13 +473,51 @@ parse_config (const char *cvsroot, const char *path)
 
 	len = strlen (line) - 1;
 	if (line[len] == '\n')
-	    line[len] = '\0';
+	    line[len--] = '\0';
 
 	/* Skip blank lines.  */
 	if (line[0] == '\0')
 	    continue;
 
 	TRACE (TRACE_DATA, "parse_info() examining line: `%s'", line);
+
+	/* Check for a root specification.  */
+	if (line[0] == '[' && line[len] == ']')
+	{
+	    cvsroot_t *tmproot;
+
+	    line++[len] = '\0';
+	    tmproot = parse_cvsroot (line);
+
+	    /* Ignoring method.  */
+	    if (!tmproot
+		/* FIXME: Check isThisHost (tmproot->hostname).  */
+		|| (tmproot->method != local_method
+		    && (!tmproot->hostname || !isThisHost (tmproot->hostname)))
+		|| !isSamePath (tmproot->directory, cvsroot))
+	    {
+		if (processed) processing = false;
+	    }
+	    else
+	    {
+		TRACE (TRACE_FLOW, "Matched root section`%s'", line);
+		processing = true;
+		processed = false;
+	    }
+
+	    continue;
+	}
+
+	/* There is data on this line.  */
+
+	/* Even if the data is bad or ignored, consider data processed for
+	 * this root.
+	 */
+	processed = true;
+
+	if (!processing)
+	    /* ...but it is for a different root.  */
+	     continue;
 
 	/* The first '=' separates keyword from value.  */
 	p = strchr (line, '=');
@@ -659,7 +706,7 @@ parse_config (const char *cvsroot, const char *path)
     if (fclose (fp_info) < 0)
 	error (0, errno, "cannot close %s", infopath);
     if (freeinfopath) free (freeinfopath);
-    if (line) free (line);
+    if (buf) free (buf);
 
     return retval;
 }
