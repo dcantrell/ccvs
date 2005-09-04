@@ -1,5 +1,8 @@
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
+	* server.c (isThisHost, gserver_authenticate_connection): Simplifyi
+	using canon_host().
+
 	* root.c (free_cvsroot_t): Update header comment.
 
 	* root.c (new_cvsroot_t): directory is not client-specific.
