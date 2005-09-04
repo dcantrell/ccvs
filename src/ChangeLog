@@ -1,5 +1,7 @@
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
+	* root.c (free_cvsroot_t): Update header comment.
+
 	* root.c (new_cvsroot_t): directory is not client-specific.
 	(free_cvsroot_t): Declare static.
 	* root.h (free_cvsroot_t): Remove proto.
