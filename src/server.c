@@ -7454,8 +7454,9 @@ gserver_authenticate_connection (void)
     gss_OID mechid;
 
     hn = canon_host (server_hostname);
-    if (hn == NULL)
-	error (1, 0, "can't get canonical hostname");
+    if (!hn)
+	error (1, 0, "can't get canonical hostname for `%s'",
+	       server_hostname);
 
     sprintf (buf, "cvs@%s", hn);
     free (hn);
