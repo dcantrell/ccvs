@@ -42,8 +42,9 @@ static int build_entry (const char *repository, const char *user,
 static const char *const add_usage[] =
 {
     "Usage: %s %s [-k rcs-kflag] [-m message] files...\n",
-    "\t-k\tUse \"rcs-kflag\" to add the file with the specified kflag.\n",
-    "\t-m\tUse \"message\" for the creation log.\n",
+    "\t-k rcs-kflag\tUse \"rcs-kflag\" to add the file with the specified\n",
+    "\t\t\tkflag.\n",
+    "\t-m message\tUse \"message\" for the creation log.\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
