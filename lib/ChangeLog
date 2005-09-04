@@ -1,5 +1,8 @@
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
+	Add canon-host module from GNULIB.
+	* canon-host.c: New file.
+
 	Update from GNULIB.
 	* Makefile.am: Import modifications from...
 	* Makefile.gnulib: ...here.
