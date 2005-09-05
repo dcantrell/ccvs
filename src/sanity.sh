@@ -20155,7 +20155,9 @@ $SPROG commit: Rebuilding administrative file database"
 
 	  # I break the usual sanity.sh indentation standard for here-docs
 	  # mostly to test that leading white-space is now ignored.
-	  cat <<EOF >config
+	  dotest config3-init-1b "$testcvs -Q tag initial-config"
+
+	  cat <<EOF >>config
 	      # Ignore a comment with leading spaces.
 	      GLOBAL-BAD-OPTION=WWW
  
@@ -20171,11 +20173,15 @@ $SPROG commit: Rebuilding administrative file database"
 
 	  cd ..
 	  dotest config3-1 "$testcvs co config3" \
-"$SPROG checkout: $CVSROOT_DIRNAME/CVSROOT/config \[2\]: unrecognized keyword \`GLOBAL-BAD-OPTION'
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[0-9]*\]: unrecognized keyword \`GLOBAL-BAD-OPTION'
 $SPROG checkout: Updating config3"
 
 	  cd CVSROOT
-	  cat <<EOF >config
+	  dotest config3-init-2a "$testcvs -Q up -jHEAD -jinitial-config" \
+"$DOTSTAR
+Merging differences between 1\.[0-9]* and 1\.[0-9]* into config"
+
+	  cat <<EOF >>config
 	      # Ignore a comment with leading spaces.
 
 	      [/ignore/this/root]
@@ -20188,6 +20194,7 @@ $SPROG checkout: Updating config3"
 	      # Comments and blank lines do not affect fall-through behavior.
 
 	      [$CVSROOT_DIRNAME]
+	      [$SECONDARY_CVSROOT_DIRNAME]
 
 	      # Comments and blank lines do not affect fall-through behavior.
 
@@ -20197,14 +20204,19 @@ $SPROG checkout: Updating config3"
 EOF
 	  dotest config3-init-3 \
 "$testcvs -q ci -m test-root-specs" \
-"$SPROG commit: $CVSROOT_DIRNAME/CVSROOT/config \[2\]: unrecognized keyword \`GLOBAL-BAD-OPTION'
+"$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[0-9]*\]: unrecognized keyword \`GLOBAL-BAD-OPTION'
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database" \
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[0-9]*\]: unrecognized keyword \`GLOBAL-BAD-OPTION'
+$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[0-9]*\]: unrecognized keyword \`GLOBAL-BAD-OPTION'
 $CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 
 	  cd ..
 	  dotest config3-2 "$testcvs co config3" \
-"$SPROG checkout: $CVSROOT_DIRNAME/CVSROOT/config \[18\]: unrecognized keyword \`PROCESS-BAD-OPTION'
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[0-9]*\]: unrecognized keyword \`PROCESS-BAD-OPTION'
 $SPROG checkout: Updating config3"
 
 	  # The next few tests make sure both global options and root
@@ -20213,7 +20225,11 @@ $SPROG checkout: Updating config3"
 	  # both registered.  It also verifies that a key for a different
 	  # root is ignored.
 	  cd CVSROOT
-	  cat <<EOF >config
+	  dotest config3-init-3a "$testcvs -Q up -jHEAD -jinitial-config" \
+"$DOTSTAR
+Merging differences between 1\.[0-9]* and 1\.[0-9]* into config"
+
+	  cat <<EOF >>config
 	      HistoryLogPath=$TESTDIR/historylog
 
 	      [/ignore/this/root]
@@ -20222,6 +20238,7 @@ $SPROG checkout: Updating config3"
 
 	      [/some/other/root]
 	      [$CVSROOT_DIRNAME]
+	      [$SECONDARY_CVSROOT_DIRNAME]
 	      [/yet/another/root]
 		  HistorySearchPath=$TESTDIR/historylog
 
@@ -20230,11 +20247,17 @@ $SPROG checkout: Updating config3"
 		  ANOTHER-IGNORED-BAD-OPTION=ZZZ
 
 	      [$CVSROOT_DIRNAME]
+	      [$SECONDARY_CVSROOT_DIRNAME]
 		  LogHistory=TMAR
 EOF
 	  dotest config3-init-4 \
 "$testcvs -q ci -m test-root-specs" \
-"$SPROG commit: $CVSROOT_DIRNAME/CVSROOT/config \[18\]: unrecognized keyword \`PROCESS-BAD-OPTION'
+"$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[0-9]*\]: unrecognized keyword \`PROCESS-BAD-OPTION'
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database" \
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[0-9]*\]: unrecognized keyword \`PROCESS-BAD-OPTION'
+$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[0-9]*\]: unrecognized keyword \`PROCESS-BAD-OPTION'
 $CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
@@ -20255,7 +20278,7 @@ initial revision: 1\.1"
 
 	  cd ..
 	  dotest config3-7 "$testcvs history -ea" \
-"A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 newfile config3 == $TESTDIR/config3/config3-2
+"A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 newfile config3 == [-_/a-zA-Z0-9<>]*
 T [0-9-]* [0-9:]* ${PLUS}0000 $username config3 \[testtag:A\]"
 
 	  dokeep
