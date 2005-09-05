@@ -63,3 +63,4 @@ getlogin_r
 stat-macros
 quotearg
 canon-host
+glob
