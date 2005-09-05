@@ -1,5 +1,7 @@
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (tests): Add config2 & config3.
+
 	* server.c (isSamePath, isThisHost): Move to...
 	* subr.c (isSamePath, isThisHost): ...here.
 	* subr.h (isSamePath, isThisHost): Add protos.
