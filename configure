@@ -41983,8 +41983,15 @@ if test "${enable_config_override+set}" = set; then
   enableval="$enable_config_override"
 
 else
-  # $sysconfdir may still contain variable references.
+  # $sysconfdir may still contain variable references.  By default, this will
+   # be to $prefix, and $prefix won't be set to its default value until later.
+   # Compromise without setting $prefix for the rest of the file.
+   cvs_save_prefix=$prefix
+   if test "X$prefix" = XNONE; then
+     prefix=$ac_prefix_default
+   fi
    eval enable_config_override=`echo $sysconfdir/cvs.conf,$sysconfdir/cvs/`
+   prefix=$cvs_save_prefix
 fi;
 
 if test x"$enable_config_override" = xyes; then
@@ -42002,11 +42009,13 @@ if test x"$enable_config_override" = xno; then :; else
 	arrayinit="$arrayinit\"$path\", "
 	;;
       *)  { { echo "$as_me:$LINENO: error: expected comma separated list of absolute directory
-                        names for --enable-config-override, or \`no', not:
-                        \`$enable_config_override' (\`$path' invalid.)" >&5
+           names for --enable-config-override, or \`no', not:
+           \`$enable_config_override'
+           (\`$path' invalid.)" >&5
 echo "$as_me: error: expected comma separated list of absolute directory
-                        names for --enable-config-override, or \`no', not:
-                        \`$enable_config_override' (\`$path' invalid.)" >&2;}
+           names for --enable-config-override, or \`no', not:
+           \`$enable_config_override'
+           (\`$path' invalid.)" >&2;}
    { (exit 1); exit 1; }; };;
     esac
   done
