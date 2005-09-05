@@ -44,6 +44,8 @@ lib/getpass.c
 lib/getpass.h
 lib/gettime.c
 lib/gettimeofday.c
+lib/glob.c
+lib/glob_.h
 lib/lstat.c
 lib/lstat.h
 lib/malloc.c
@@ -120,6 +122,7 @@ m4/closeout.m4
 m4/codeset.m4
 m4/dirname.m4
 m4/dos.m4
+m4/d-type.m4
 m4/dup2.m4
 m4/eealloc.m4
 m4/eoverflow.m4
@@ -142,6 +145,7 @@ m4/gettime.m4
 m4/gettimeofday.m4
 m4/glibc21.m4
 m4/glibc2.m4
+m4/glob.m4
 m4/iconv.m4
 m4/intdiv0.m4
 m4/intmax.m4
