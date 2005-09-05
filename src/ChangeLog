@@ -1,5 +1,7 @@
 2005-09-05  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (info): Use $tempfile instead of reproducing the regex.
+
 	* sanity.sh (info): Accept `.' in temp file names.
 
 	* main (main): Set the actual PID, not a pointer to a string.
