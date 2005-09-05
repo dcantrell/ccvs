@@ -1483,11 +1483,11 @@ gl_func_list="$gl_func_list nanotime"
 gl_header_list="$gl_header_list sys/cdefs.h"
 gl_func_list="$gl_func_list getlogin_r"
 gl_func_list="$gl_func_list getpwnam_r"
+gl_header_list="$gl_header_list wchar.h"
+gl_header_list="$gl_header_list wctype.h"
 gl_header_list="$gl_header_list stdint.h"
 gl_func_list="$gl_func_list siginterrupt"
 gl_func_list="$gl_func_list posix_memalign"
-gl_header_list="$gl_header_list wchar.h"
-gl_header_list="$gl_header_list wctype.h"
 gl_func_list="$gl_func_list iswprint"
 gl_func_list="$gl_func_list mbsinit"
 gl_header_list="$gl_header_list locale.h"
@@ -11979,6 +11979,18 @@ esac
 fi
 
 
+
+
+
+
+
+
+
+
+
+
+
+
   echo "$as_me:$LINENO: checking for uint32_t" >&5
 echo $ECHO_N "checking for uint32_t... $ECHO_C" >&6
 if test "${gl_cv_c_uint32_t+set}" = set; then
@@ -13745,18 +13757,6 @@ _ACEOF
 
     fi
   fi
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -21239,6 +21239,29 @@ fi
 
 
 
+
+
+
+  :
+
+
+
+
+
+
+
+
+
+  if test x$ac_cv_header_wchar_h = xyes && test x$ac_cv_header_wctype_h = xyes; then
+  	case $LIBOBJS in
+    "mbchar.$ac_objext"   | \
+  *" mbchar.$ac_objext"   | \
+    "mbchar.$ac_objext "* | \
+  *" mbchar.$ac_objext "* ) ;;
+  *) LIBOBJS="$LIBOBJS mbchar.$ac_objext" ;;
+esac
+
+  fi
 
 
   :
