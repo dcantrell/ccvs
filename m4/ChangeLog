@@ -1,5 +1,8 @@
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
+	Update from GNULIB.
+	* m4/glob.m4, m4/gnulib-cache.m4, m4/gnulib-comp.m4: Updated.
+
 	Add canon-host module from GNULIB.
 	* canon-host.m4: New file.
 	* gnulib-cache.m4, gnulib-comp.m4: Updated.
