@@ -19203,7 +19203,7 @@ $SPROG commit: Rebuilding administrative file database"
 	  cd ../first-dir
 	  echo line2 >>file1
 	  dotest_fail info-v2 "${testcvs} -q ci -m bogus" \
-"vscript $TMPDIR/[a-zA-Z0-9]* file1 1\.3
+"vscript $TMPDIR/[a-zA-Z0-9.]* file1 1\.3
 No BugId found\.
 ${SPROG} \[commit aborted\]: Message verification failed"
 
@@ -19212,7 +19212,7 @@ BugId: 42
 and many more lines after it
 EOF
 	  dotest info-v3 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
-"vscript $TMPDIR/[a-zA-Z0-9]* file1 1\.3
+"vscript $TMPDIR/[a-zA-Z0-9.]* file1 1\.3
 $CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.4; previous revision: 1\.3"
 	  rm ${TESTDIR}/comment.tmp
@@ -19223,19 +19223,19 @@ new revision: 1\.4; previous revision: 1\.3"
 	  touch file2
 	  dotest_fail info-v4 \
 	    "${testcvs} import -m bogus first-dir/another x y" \
-"vscript $TMPDIR/[a-zA-Z0-9]* - Imported sources NONE
+"vscript $TMPDIR/[a-zA-Z0-9.]* - Imported sources NONE
 No BugId found\.
 ${SPROG} \[import aborted\]: Message verification failed"
 
 	  # now verify that directory dependent verifymsgs work
 	  dotest info-v5 \
 	    "${testcvs} import -m bogus first-dir/yet-another x y" \
-"vscript2 $TMPDIR/[a-zA-Z0-9]* - Imported sources NONE
+"vscript2 $TMPDIR/[a-zA-Z0-9.]* - Imported sources NONE
 $TESTDIR/wnt/another-dir
 N first-dir/yet-another/file2
 
 No conflicts created by this import" \
-"vscript2 $TMPDIR/[a-zA-Z0-9]* - Imported sources NONE
+"vscript2 $TMPDIR/[a-zA-Z0-9.]* - Imported sources NONE
 $CVSROOT_DIRNAME/first-dir/yet-another
 N first-dir/yet-another/file2
 
@@ -19254,13 +19254,13 @@ No conflicts created by this import"
 	  if $remote; then
 	    dotest_fail info-v6r \
 	      "${testcvs} import -m bogus first-dir/yet-another/and-another x y" \
-"vscript2 $TMPDIR/[a-zA-Z0-9]* - Imported sources NONE
+"vscript2 $TMPDIR/[a-zA-Z0-9.]* - Imported sources NONE
 $CVSROOT_DIRNAME/first-dir/yet-another/and-another
 $SPROG \[import aborted\]: Message verification failed"
 	  else
 	    dotest info-v6 \
 	      "${testcvs} import -m bogus first-dir/yet-another/and-another x y" \
-"vscript2 $TMPDIR/[a-zA-Z0-9]* - Imported sources NONE
+"vscript2 $TMPDIR/[a-zA-Z0-9.]* - Imported sources NONE
 $TESTDIR/wnt/another-dir
 N first-dir/yet-another/and-another/file2
 
@@ -19298,7 +19298,7 @@ BugId: new
 See what happens next.
 EOF
 	  dotest info-reread-2 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
-"vscript $TMPDIR/[a-zA-Z0-9]* file1 1\.4
+"vscript $TMPDIR/[a-zA-Z0-9.]* file1 1\.4
 $CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.5; previous revision: 1\.4"
 	  dotest info-reread-3 "${testcvs} -q log -N -r1.5 file1" "
@@ -19324,7 +19324,7 @@ BugId: new
 See what happens next with stat.
 EOF
 	  dotest info-reread-5 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
-"vscript $TMPDIR/[a-zA-Z0-9]* file1 1\.5
+"vscript $TMPDIR/[a-zA-Z0-9.]* file1 1\.5
 $CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.6; previous revision: 1\.5"
 	  dotest info-reread-6 "${testcvs} -q log -N -r1.6 file1" "
@@ -19350,7 +19350,7 @@ BugId: new
 See what happens next.
 EOF
 	  dotest info-reread-8 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
-"vscript $TMPDIR/[a-zA-Z0-9]* file1 1\.6
+"vscript $TMPDIR/[a-zA-Z0-9.]* file1 1\.6
 $CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.7; previous revision: 1\.6"
 	  dotest info-reread-6 "${testcvs} -q log -N -r1.7 file1" "
