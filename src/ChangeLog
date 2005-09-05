@@ -1,3 +1,7 @@
+2005-09-05  Derek Price  <derek@ximbiot.com>
+
+	* main (main): Set the actual PID, not a pointer to a string.
+
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (config3): Generalize.

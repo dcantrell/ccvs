@@ -825,7 +825,7 @@ cause intermittent sandbox corruption.");
 	{
 	    char *val;
 	    /* XXX pid < 10^32 */
-	    val = Xasprintf ("%ld", CVS_PID_ENV, (long) getpid ());
+	    val = Xasprintf ("%ld", (long) getpid ());
 	    setenv (CVS_PID_ENV, val, 1);
 	    free (val);
 	}
