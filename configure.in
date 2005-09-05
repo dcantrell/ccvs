@@ -1451,8 +1451,15 @@ AC_ARG_ENABLE(
      overrides completely and `--enable-config-override=/' or simply
      `--enable-config-override' to allow all paths.  (Defaults to
      `SYSCONFDIR/cvs.conf,SYSCONFDIR/cvs/')]),,
-  [# $sysconfdir may still contain variable references.
-   eval enable_config_override=`echo $sysconfdir/cvs.conf,$sysconfdir/cvs/`])
+  [# $sysconfdir may still contain variable references.  By default, this will
+   # be to $prefix, and $prefix won't be set to its default value until later.
+   # Compromise without setting $prefix for the rest of the file.
+   cvs_save_prefix=$prefix
+   if test "X$prefix" = XNONE; then
+     prefix=$ac_prefix_default
+   fi
+   eval enable_config_override=`echo $sysconfdir/cvs.conf,$sysconfdir/cvs/`
+   prefix=$cvs_save_prefix])
 
 if test x"$enable_config_override" = xyes; then
   enable_config_override=/
@@ -1468,9 +1475,11 @@ if test x"$enable_config_override" = xno; then :; else
       [[\\/$]]* | ?:[[\\/]]* )
 	arrayinit="$arrayinit\"$path\", "
 	;;
-      *)  AC_MSG_ERROR([expected comma separated list of absolute directory
-                        names for --enable-config-override, or \`no', not:
-                        \`$enable_config_override' (\`$path' invalid.)]);;
+      *)  AC_MSG_ERROR(
+          [expected comma separated list of absolute directory
+           names for --enable-config-override, or \`no', not:
+           \`$enable_config_override'
+           (\`$path' invalid.)]);;
     esac
   done
   arrayinit="${arrayinit}NULL"

@@ -1,3 +1,8 @@
+2005-09-05  Derek Price  <derek@ximbiot.com>
+
+	* configure.in (--enable-config-override): Verify $prefix is set before
+	expanding $sysconfdir.
+
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Remove putenv cruft.
