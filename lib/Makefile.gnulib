@@ -137,12 +137,6 @@ MOSTLYCLEANFILES += glob.h glob.h-t
 
 ## end   gnulib module glob
 
-## begin gnulib module mbchar
-
-libgnu_a_SOURCES += mbchar.h mbchar.c
-
-## end   gnulib module mbchar
-
 ## begin gnulib module mbuiter
 
 libgnu_a_SOURCES += mbuiter.h
