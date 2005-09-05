@@ -22,6 +22,7 @@
 # GNU General Public License for more details.
 
 EXTRA_DIST = \
+    .cvsignore \
     ChangeLog \
     Makefile.in \
     build_vms.com \

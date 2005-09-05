@@ -160,6 +160,7 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 EXTRA_DIST = \
+    .cvsignore \
     ChangeLog \
     Makefile.in \
     build_vms.com \
