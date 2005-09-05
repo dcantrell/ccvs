@@ -1,5 +1,10 @@
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
+	Update from GNULIB.
+	* glob.c, glob_.h: Updated.
+	* Makefile.am: Move glob targets into alpha order.  Add size_max
+	module.
+
 	Add canon-host module from GNULIB.
 	* canon-host.c: New file.
 

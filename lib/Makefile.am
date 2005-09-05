@@ -179,6 +179,21 @@ libcvs_a_SOURCES += gettext.h
 
 ## end   gnulib module gettext-h
 
+## begin gnulib module glob
+
+BUILT_SOURCES += $(GLOB_H)
+EXTRA_DIST += glob_.h
+
+# We need the following in order to create an <getopt.h> when the system
+# doesn't have one that works with the given compiler.
+all-local $(libcvs_a_OBJECTS): $(GLOB_H)
+glob.h: glob_.h
+	cp $(srcdir)/glob_.h $@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += glob.h glob.h-t
+
+## end   gnulib module glob.c
+
 ## begin gnulib module mbchar
 
 libcvs_a_SOURCES += mbchar.h mbchar.c
@@ -202,6 +217,12 @@ libcvs_a_SOURCES += minmax.h
 libcvs_a_SOURCES += setenv.h
 
 ## end   gnulib module setenv
+
+## begin gnulib module size_max
+
+libcvs_a_SOURCES += size_max.h
+
+## end   gnulib module size_max
 
 ## begin gnulib module stdbool
 
@@ -291,21 +312,6 @@ libcvs_a_SOURCES += xreadlink.h xreadlink.c
 libcvs_a_SOURCES += xsize.h
 
 ## end   gnulib module xsize
-
-## glob.c from glibc 2.3.5
-
-BUILT_SOURCES += $(GLOB_H)
-EXTRA_DIST += glob_.h
-
-# We need the following in order to create an <getopt.h> when the system
-# doesn't have one that works with the given compiler.
-all-local $(libcvs_a_OBJECTS): $(GLOB_H)
-glob.h: glob_.h
-	cp $(srcdir)/glob_.h $@-t
-	mv $@-t $@
-MOSTLYCLEANFILES += glob.h glob.h-t
-
-## end glob.c
 
 # Until Automake gets its act together
 distclean-local:

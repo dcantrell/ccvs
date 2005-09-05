@@ -325,24 +325,24 @@ libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	allocsa.h allocsa.c cycle-check.c cycle-check.h dev-ino.h \
 	basename.c stripslash.c error.h exit.h getnline.h getnline.c \
 	gettext.h mbchar.h mbchar.c mbuiter.h minmax.h setenv.h \
-	strcase.h strnlen1.h strnlen1.c strstr.h time_r.h \
+	size_max.h strcase.h strnlen1.h strnlen1.c strstr.h time_r.h \
 	printf-args.h printf-parse.h vasnprintf.h vasprintf.h \
 	xalloc-die.c xgethostname.h xgethostname.c xreadlink.h \
 	xreadlink.c xsize.h
 libcvs_a_LIBADD = @LIBOBJS@ @ALLOCA@
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) getdate.c $(GETOPT_H) \
-	$(STDBOOL_H) $(STDINT_H) $(GLOB_H)
+	$(GLOB_H) $(STDBOOL_H) $(STDINT_H)
 MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t \
 	getdate-expected getdate-got getdate.diff getopt.h getopt.h-t \
-	stdbool.h stdbool.h-t stdint.h stdint.h-t glob.h glob.h-t
+	glob.h glob.h-t stdbool.h stdbool.h-t stdint.h stdint.h-t
 DISTCLEANFILES = getdate.log
 MAINTAINERCLEANFILES = getdate.c
 TESTS = test-getdate.sh
 EXTRA_DIST = .cvsignore ChangeLog.fsf Makefile.gnulib build_lib.com \
 	libcvs.dep libcvs.dsp libcvs.mak test-getdate.sh alloca_.h \
 	allocsa.valgrind fnmatch_.h fnmatch_loop.c getdate.c \
-	getndelim2.h getndelim2.c getopt_.h getopt_int.h stdbool_.h \
-	stdint_.h glob_.h
+	getndelim2.h getndelim2.c getopt_.h getopt_int.h glob_.h \
+	stdbool_.h stdint_.h
 getdate_SOURCES = error.c getdate.y progname.c
 getdate_CPPFLAGS = -DTEST
 getdate_LDADD = \
@@ -823,6 +823,13 @@ getopt.h: getopt_.h
 	cp $(srcdir)/getopt_.h $@-t
 	mv $@-t $@
 
+# We need the following in order to create an <getopt.h> when the system
+# doesn't have one that works with the given compiler.
+all-local $(libcvs_a_OBJECTS): $(GLOB_H)
+glob.h: glob_.h
+	cp $(srcdir)/glob_.h $@-t
+	mv $@-t $@
+
 # We need the following in order to create <stdbool.h> when the system
 # doesn't have one that works.
 stdbool.h: stdbool_.h
@@ -834,13 +841,6 @@ stdbool.h: stdbool_.h
 # doesn't have one that works with the given compiler.
 stdint.h: stdint_.h
 	sed -e 's/@''HAVE_LONG_64BIT''@/$(HAVE_LONG_64BIT)/g;s/@''HAVE_LONG_LONG_64BIT@/$(HAVE_LONG_LONG_64BIT)/g' < $(srcdir)/stdint_.h > $@-t
-	mv $@-t $@
-
-# We need the following in order to create an <getopt.h> when the system
-# doesn't have one that works with the given compiler.
-all-local $(libcvs_a_OBJECTS): $(GLOB_H)
-glob.h: glob_.h
-	cp $(srcdir)/glob_.h $@-t
 	mv $@-t $@
 
 # Until Automake gets its act together
