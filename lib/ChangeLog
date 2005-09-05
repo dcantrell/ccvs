@@ -1,3 +1,7 @@
+2005-09-05  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (mbchar): Remove obsolete module cruft.
+
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
 	Update from GNULIB.

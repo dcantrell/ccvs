@@ -194,12 +194,6 @@ MOSTLYCLEANFILES += glob.h glob.h-t
 
 ## end   gnulib module glob.c
 
-## begin gnulib module mbchar
-
-libcvs_a_SOURCES += mbchar.h mbchar.c
-
-## end   gnulib module mbchar
-
 ## begin gnulib module mbuiter
 
 libcvs_a_SOURCES += mbuiter.h
