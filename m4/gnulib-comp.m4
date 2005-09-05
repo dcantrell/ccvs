@@ -57,6 +57,7 @@ AC_DEFUN([gl_INIT],
   dnl you must add AM_GNU_GETTEXT([external]) or similar to configure.ac.
   gl_GETTIME
   AC_FUNC_GETTIMEOFDAY_CLOBBER
+  gl_GLOB
   gl_FUNC_LSTAT
   AC_FUNC_MALLOC
   gl_MBCHAR
@@ -176,6 +177,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/gettext.h
   lib/gettime.c
   lib/gettimeofday.c
+  lib/glob.c
+  lib/glob_.h
   lib/lstat.c
   lib/lstat.h
   lib/malloc.c
@@ -277,6 +280,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/d-ino.m4
   m4/dirname.m4
   m4/dos.m4
+  m4/d-type.m4
   m4/dup2.m4
   m4/eealloc.m4
   m4/eoverflow.m4
@@ -304,6 +308,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/gettimeofday.m4
   m4/glibc21.m4
   m4/glibc2.m4
+  m4/glob.m4
   m4/iconv.m4
   m4/intdiv0.m4
   m4/intmax.m4
