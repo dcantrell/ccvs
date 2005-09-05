@@ -245,7 +245,6 @@ AC_CHECK_FUNCS(\
 	login \
 	logout \
 	mknod \
-	putenv \
 	regcomp \
 	regerror \
 	regexec \
@@ -260,8 +259,6 @@ AC_CHECK_FUNCS(\
 	vprintf \
 	wait3 \
 )
-HAVE_PUTENV=$ac_cv_func_putenv
-AC_SUBST(HAVE_PUTENV)
 
 dnl
 dnl Find the sizes of various types and set a variable for some if they

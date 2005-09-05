@@ -1,5 +1,7 @@
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Remove putenv cruft.
+
 	* maint-aux/gnulib-modules: Add glob.
 
 	* NEWS: Note new [root] specification in config files.
