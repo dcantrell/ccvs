@@ -1632,7 +1632,8 @@ if test x"$*" = x; then
 	tests="${tests} unedit-without-baserev"
 	tests="${tests} ignore ignore-on-branch binfiles binfiles2 binfiles3"
 	tests="${tests} mcopy binwrap binwrap2"
-	tests="${tests} binwrap3 mwrap info taginfo posttag config"
+	tests="${tests} binwrap3 mwrap info taginfo posttag"
+	tests="$tests config config2 config3"
 	tests="${tests} serverpatch log log2 logopt ann ann-id"
 	# Repository Storage (RCS file format, CVS lock files, creating
 	# a repository without "cvs init", &c).
