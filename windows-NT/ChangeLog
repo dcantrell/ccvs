@@ -1,3 +1,7 @@
+2005-09-04  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.in (HAVE_PUTENV): Remove.
+
 2005-09-01  Derek Price  <derek@ximbiot.com>
 
 	* README, sys/types.h: Update links and email addresses.

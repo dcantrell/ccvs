@@ -567,9 +567,6 @@
 /* Define to 1 if the system has the type `ptrdiff_t'. */
 #undef HAVE_PTRDIFF_T
 
-/* Define to 1 if you have the `putenv' function. */
-#define HAVE_PUTENV 1
-
 /* Define to 1 if you have the `readlink' function. */
 #undef HAVE_READLINK
 
