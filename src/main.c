@@ -820,22 +820,15 @@ cause intermittent sandbox corruption.");
 	    Tmpdir = "/tmp";
 	}
 
-#ifdef HAVE_PUTENV
 	if (tmpdir_update_env)
+	    setenv (TMPDIR_ENV, Tmpdir, 1);
 	{
-	    char *env;
-	    env = Xasprintf ("%s=%s", TMPDIR_ENV, Tmpdir);
-	    (void) putenv (env);
-	    /* do not free env, as putenv has control of it */
-	}
-	{
-	    char *env;
+	    char *val;
 	    /* XXX pid < 10^32 */
-	    env = Xasprintf ("%s=%ld", CVS_PID_ENV, (long) getpid ());
-	    (void) putenv (env);
-	    /* do not free env, as putenv has control of it */
+	    val = Xasprintf ("%ld", CVS_PID_ENV, (long) getpid ());
+	    setenv (CVS_PID_ENV, val, 1);
+	    free (val);
 	}
-#endif
 
 	/* make sure we clean up on error */
 	signals_register (main_cleanup);
@@ -996,23 +989,9 @@ cause intermittent sandbox corruption.");
 		    free (path);
 		}
 
-#ifdef HAVE_PUTENV
 		/* Update the CVSROOT environment variable.  */
 		if (cvsroot_update_env)
-		{
-		    static char *prev;
-		    char *env;
-
-		    env = Xasprintf ("%s=%s", CVSROOT_ENV,
-				     current_parsed_root->original);
-		    (void) putenv (env);
-		    /* do not free env yet, as putenv has control of it */
-		    /* but do free the previous value, if any */
-		    if (prev != NULL)
-			free (prev);
-		    prev = env;
-		}
-#endif
+		    setenv (CVSROOT_ENV, current_parsed_root->original, 1);
 	    }
 	
 	    /* Parse the CVSROOT/config file, but only for local.  For the

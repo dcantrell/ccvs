@@ -897,11 +897,7 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
     }
     free (path);
 
-# ifdef HAVE_PUTENV
-    env = Xasprintf ("%s=%s", CVSROOT_ENV, current_parsed_root->directory);
-    (void) putenv (env);
-    /* do not free env, as putenv has control of it */
-# endif
+    setenv (CVSROOT_ENV, current_parsed_root->directory, 1);
 }
 
 
@@ -6640,27 +6636,13 @@ error 0 %s: no such system user\n", username);
 	CVS_Username = xstrdup (username);
 #endif
 
-#if HAVE_PUTENV
     /* Set LOGNAME, USER and CVS_USER in the environment, in case they
        are already set to something else.  */
-    {
-	char *env;
-
-	env = xmalloc (sizeof "LOGNAME=" + strlen (username));
-	(void) sprintf (env, "LOGNAME=%s", username);
-	(void) putenv (env);
-
-	env = xmalloc (sizeof "USER=" + strlen (username));
-	(void) sprintf (env, "USER=%s", username);
-	(void) putenv (env);
-
-#ifdef AUTH_SERVER_SUPPORT
-	env = xmalloc (sizeof "CVS_USER=" + strlen (CVS_Username));
-	(void) sprintf (env, "CVS_USER=%s", CVS_Username);
-	(void) putenv (env);
-#endif
-    }
-#endif /* HAVE_PUTENV */
+    setenv ("LOGNAME", username, 1);
+    setenv ("USER", username, 1);
+# ifdef AUTH_SERVER_SUPPORT
+    setenv ("CVS_USER", CVS_Username, 1);
+# endif
 }
 #endif
 
