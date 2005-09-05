@@ -1,5 +1,10 @@
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
+	* main.c (main), server.c (serve_root, switch_to_user): Replace putenv
+	with GNULIB setenv.
+	* sanity.config.sh.in (HAVE_PUTENV): Remove.
+	* sanity.sh (env): Remove reference to $HAVE_PUTENV.
+
 	* sanity.sh (tests): Add config2 & config3.
 
 	* server.c (isSamePath, isThisHost): Move to...

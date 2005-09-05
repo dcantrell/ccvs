@@ -15968,14 +15968,11 @@ date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +0 -0;  commiti
 
 	env)
 	  # Test to see if the CVS_PID environment variable is being set
-	  # This will only work on systems with HAVE_PUTENV, so skip
-	  # it if we do not have the putenv() call available.
-	  if test yes = "${HAVE_PUTENV}" ; then
-	    mkdir ${TESTDIR}/env
-	    cd ${TESTDIR}/env
-	    dotest env-1 "${testcvs} -Q co . >>${LOGFILE}" ''
+	  mkdir ${TESTDIR}/env
+	  cd ${TESTDIR}/env
+	  dotest env-1 "${testcvs} -Q co . >>${LOGFILE}" ''
 
-	    cat > ${TESTDIR}/env/test-cvs-pid <<EOF
+	  cat > ${TESTDIR}/env/test-cvs-pid <<EOF
 #!${TESTSHELL}
 if test "x\$CVS_PID" != "x"; then
   # In local mode, there is no directory with the pid in it for use.
@@ -16027,37 +16024,36 @@ else
   exit 1
 fi
 EOF
-	    if test -n "$remotehost"; then
-	      $CVS_RSH $remotehost "chmod +x ${TESTDIR}/env/test-cvs-pid"
-	    else
-	      chmod +x ${TESTDIR}/env/test-cvs-pid
-	    fi
-	    cd CVSROOT
-	    echo "^env ${TESTDIR}/env/test-cvs-pid %r/%p %s" >>commitinfo
-	    dotest env-2 "${testcvs} -q ci -m test-pid commitinfo" \
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod +x ${TESTDIR}/env/test-cvs-pid"
+	  else
+	    chmod +x ${TESTDIR}/env/test-cvs-pid
+	  fi
+	  cd CVSROOT
+	  echo "^env ${TESTDIR}/env/test-cvs-pid %r/%p %s" >>commitinfo
+	  dotest env-2 "${testcvs} -q ci -m test-pid commitinfo" \
 "${CVSROOT_DIRNAME}/CVSROOT/commitinfo,v  <--  commitinfo
 new revision: 1\.2; previous revision: 1\.1
 ${SPROG} commit: Rebuilding administrative file database"
-	    cd ..
-	    mkdir env
-	    dotest env-3 "${testcvs} -q add env" \
+	  cd ..
+	  mkdir env
+	  dotest env-3 "${testcvs} -q add env" \
 "Directory ${CVSROOT_DIRNAME}/env added to the repository"
-	    cd env
-	    echo testing >file1
-	    dotest env-4 "${testcvs} add file1" \
+	  cd env
+	  echo testing >file1
+	  dotest env-4 "${testcvs} add file1" \
 "${SPROG} add: scheduling file .file1. for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	    dotest env-5 "${testcvs} -q commit -m test-pid" \
+	  dotest env-5 "${testcvs} -q commit -m test-pid" \
 "${CVSROOT_DIRNAME}/env/file1,v  <--  file1
 initial revision: 1\.1"
 
-	    dokeep
-	    # undo commitinfo changes
-	    restore_adm
-	    cd ../..
-	    rm -fr $TESTDIR/env
-	    modify_repo rm -rf $CVSROOT_DIRNAME/env
-	  fi
+	  dokeep
+	  # undo commitinfo changes
+	  restore_adm
+	  cd ../..
+	  rm -fr $TESTDIR/env
+	  modify_repo rm -rf $CVSROOT_DIRNAME/env
 	  ;;
 
 
