@@ -43,6 +43,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_FNMATCH_POSIX
   gl_FUNC_FPENDING
   gl_FUNC_FTRUNCATE
+  gl_GETADDRINFO
   gl_FUNC_GETCWD
   gl_GETDATE
   gl_FUNC_GETDELIM
@@ -125,6 +126,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/atexit.c
   lib/basename.c
   lib/canon-host.c
+  lib/canon-host.h
   lib/canonicalize.c
   lib/canonicalize.h
   lib/chdir-long.c
@@ -152,6 +154,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/__fpending.c
   lib/__fpending.h
   lib/ftruncate.c
+  lib/gai_strerror.c
+  lib/getaddrinfo.c
+  lib/getaddrinfo.h
   lib/getcwd.c
   lib/getcwd.h
   lib/getdate.h
@@ -291,6 +296,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fnmatch.m4
   m4/fpending.m4
   m4/ftruncate.m4
+  m4/getaddrinfo.m4
   m4/getcwd.m4
   m4/getcwd-path-max.m4
   m4/getdate.m4
@@ -357,6 +363,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/setenv.m4
   m4/signed.m4
   m4/size_max.m4
+  m4/sockpfaf.m4
   m4/ssize_t.m4
   m4/stat-macros.m4
   m4/stdbool.m4
