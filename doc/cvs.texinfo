@@ -14554,28 +14554,47 @@ repositories.
 Currently defined keywords are:
 
 @table @code
-@cindex RCSBIN, in CVSROOT/config
-@item RCSBIN=@var{bindir}
-For @sc{cvs} 1.9.12 through 1.9.18, this setting told
-@sc{cvs} to look for @sc{rcs} programs in the
-@var{bindir} directory.  Current versions of @sc{cvs}
-do not run @sc{rcs} programs; for compatibility this
-setting is accepted, but it does nothing.
+@cindex HistoryLogPath, in CVSROOT/config
+@item HistorySearchPath=@var{pattern}
+Request that @sc{cvs} look for its history information in files matching
+@var{pattern}, which is a standard UNIX file glob.  If @var{pattern} matches
+multiple files, all will be searched in lexicographically sorted order.
+See @xref{history} and @xref{history file}, for more.
 
-@cindex SystemAuth, in CVSROOT/config
-@item SystemAuth=@var{value}
-If @var{value} is @samp{yes}, then pserver should check
-for users in the system's user database if not found in
-@file{CVSROOT/passwd}.  If it is @samp{no}, then all
-pserver users must exist in @file{CVSROOT/passwd}.
-The default is @samp{yes}.  For more on pserver, see
-@ref{Password authenticated}.
+If no value is supplied for this option, it defaults to
+@file{$CVSROOT/CVSROOT/history}.
 
-@cindex LocalKeyword, in CVSROOT/config
-@item LocalKeyword=@var{value}
-Specify a local alias for a standard keyword.
-For example, @samp{LocalKeyword=MYCVS=CVSHeader}.
-For more on local keywords, see @ref{Keyword substitution}.
+@cindex HistorySearchPath, in CVSROOT/config
+@item HistoryLogPath=@var{path}
+Control where @sc{cvs} logs its history.  If the file does not exist, @sc{cvs}
+will attempt to create it.  Format strings, as available to the GNU C
+@code{strftime} function and often the UNIX date command, and the string
+@var{$CVSROOT} will be substituted in this path.  For example, consider the
+line:
+
+@example
+HistoryLogPath=$CVSROOT/CVSROOT/history/%Y-%m-%d
+@end example
+
+This line would cause @sc{cvs} to attempt to create its history file in a
+subdirectory (@file{history}) of the configuration directory (@file{CVSROOT})
+with a name equal to the current date representation in the ISO8601 format (for
+example, on May 11, 2005, @sc{cvs} would attempt to log its history under the
+repository root directory in a file named @file{CVSROOT/history/2005-05-11}).
+See @xref{history} and @xref{history file}, for more.
+
+If no value is supplied for this option, it defaults to
+@file{$CVSROOT/CVSROOT/history}.
+
+@cindex ImportNewFilesToVendorBranchOnly, in CVSROOT/config
+@cindex import, config admin file
+@cindex config (admin file), import
+@item ImportNewFilesToVendorBranchOnly=@var{value}
+Specify whether @code{cvs import} should always behave as if the
+@samp{-X} flag was specified on the command line.  
+@var{value} may be either @samp{yes} or @samp{no}.  If set to @samp{yes},
+all uses of @code{cvs import} on the repository will behave as if the
+@samp{-X} flag was set.  The default value is @samp{no}.
 
 @cindex KeywordExpand, in CVSROOT/config
 @item KeywordExpand=@var{value}
@@ -14585,32 +14604,11 @@ or @samp{e} followed by a list of keywords not to be expanded
 (for example, @samp{KeywordExpand=eCVSHeader}).
 For more on keyword expansion, see @ref{Configuring keyword expansion}.
 
-@ignore
-@cindex PreservePermissions, in CVSROOT/config
-@item PreservePermissions=@var{value}
-Enable support for saving special device files,
-symbolic links, file permissions and ownerships in the
-repository.  The default value is @samp{no}.
-@xref{Special Files}, for the full implications of using
-this keyword.
-@end ignore
-
-@cindex TopLevelAdmin, in CVSROOT/config
-@item TopLevelAdmin=@var{value}
-Modify the @samp{checkout} command to create a
-@samp{CVS} directory at the top level of the new
-working directory, in addition to @samp{CVS}
-directories created within checked-out directories.
-The default value is @samp{no}.
-
-This option is useful if you find yourself performing
-many commands at the top level of your working
-directory, rather than in one of the checked out
-subdirectories.  The @file{CVS} directory created there
-will mean you don't have to specify @code{CVSROOT} for
-each command.  It also provides a place for the
-@file{CVS/Template} file (@pxref{Working directory
-storage}).
+@cindex LocalKeyword, in CVSROOT/config
+@item LocalKeyword=@var{value}
+Specify a local alias for a standard keyword.
+For example, @samp{LocalKeyword=MYCVS=CVSHeader}.
+For more on local keywords, see @ref{Keyword substitution}.
 
 @cindex LockDir, in CVSROOT/config
 @item LockDir=@var{directory}
@@ -14648,37 +14646,79 @@ legal.  (For example, to only log transactions that modify the
 @file{*,v} files, use @samp{LogHistory=TMAR}.)  To disable history logging
 completely, use @samp{LogHistory=}.
 
-@cindex HistorySearchPath, in CVSROOT/config
-@item HistoryLogPath=@var{path}
-Control where @sc{cvs} logs its history.  If the file does not exist, @sc{cvs}
-will attempt to create it.  Format strings, as available to the GNU C
-@code{strftime} function and often the UNIX date command, and the string
-@var{$CVSROOT} will be substituted in this path.  For example, consider the
-line:
+@cindex MaxCommentLeaderLength, in CVSROOT/config
+@cindex Log keyword, configuring substitution behavior
+@item MaxCommentLeaderLength=@var{length}
+Set to some length, in bytes, where a trailing @samp{k}, @samp{M}, @samp{G},
+or @samp{T} causes the preceding nubmer to be interpreted as kilobytes,
+megabytes, gigabytes, or terrabytes, respectively, will cause
+@code{$@splitrcskeyword{Log}$} keywords (@pxref{Keyword substitution}), with
+more than @var{length} bytes preceding it on a line to be ignored (or to fall
+back on the comment leader set in the RCS archive file - see
+@code{UseArchiveCommentLeader} below).  Defaults to 20 bytes to allow checkouts
+to proceed normally when they include binary files containing
+@code{$@splitrcskeyword{Log}$} keywords and which users have neglected to mark
+as binary.
 
-@example
-HistoryLogPath=$CVSROOT/CVSROOT/history/%Y-%m-%d
-@end example
+@cindex MinCompressionLevel, in CVSROOT/config
+@cindex MaxCompressionLevel, in CVSROOT/config
+@cindex Compression levels, restricting on server
+@item MinCompressionLevel=@var{value}
+@itemx MaxCompressionLevel=@var{value}
+Restricts the level of compression used by the @sc{cvs} server to a @var{value}
+between 0 and 9.  @var{value}s 1 through 9 are the same @sc{zlib} compression
+levels accepted by the @samp{-z} option (@pxref{Global options}), and 0 means
+no compression.  When one or both of these keys are set and a client requests a
+level outside the specified range, the server will simply use the closest
+permissable level.  Clients will continue compressing at the level requested by
+the user.
 
-This line would cause @sc{cvs} to attempt to create its history file in a
-subdirectory (@file{history}) of the configuration directory (@file{CVSROOT})
-with a name equal to the current date representation in the ISO8601 format (for
-example, on May 11, 2005, @sc{cvs} would attempt to log its history under the
-repository root directory in a file named @file{CVSROOT/history/2005-05-11}).
-See @xref{history} and @xref{history file}, for more.
+The exception is when level 0 (no compression) is not available and the client
+fails to request any compression.  The @sc{cvs} server will then exit with an
+error message when it becomes apparent that the client is not going to request
+compression.  This will not happen with clients version 1.12.13 and later since
+these client versions allow the server to notify them that they must request
+some level of compression.
 
-If no value is supplied for this option, it defaults to
-@file{$CVSROOT/CVSROOT/history}.
+@ignore
+@cindex PreservePermissions, in CVSROOT/config
+@item PreservePermissions=@var{value}
+Enable support for saving special device files,
+symbolic links, file permissions and ownerships in the
+repository.  The default value is @samp{no}.
+@xref{Special Files}, for the full implications of using
+this keyword.
+@end ignore
 
-@cindex HistoryLogPath, in CVSROOT/config
-@item HistorySearchPath=@var{pattern}
-Request that @sc{cvs} look for its history information in files matching
-@var{pattern}, which is a standard UNIX file glob.  If @var{pattern} matches
-multiple files, all will be searched in lexicographically sorted order.
-See @xref{history} and @xref{history file}, for more.
+@cindex PrimaryServer, in CVSROOT/config
+@cindex Primary server
+@cindex Secondary server
+@cindex proxy, write
+@cindex write proxy
+@item PrimaryServer=@var{CVSROOT}
+When specified, and the repository specified by @var{CVSROOT} is not the one
+currently being accessed, then the server will turn itself into a transparent
+proxy to @var{CVSROOT} for write requests.  The @var{hostname} configured as
+part of @var{CVSROOT} must resolve to the same string returned by the
+@command{uname} command on the primary server for this to work.  Host name
+resolution is performed via some combination of @command{named}, a broken out
+line from @file{/etc/hosts}, and the Network Information Service (NIS or YP),
+depending on the configuration of the particular system.
 
-If no value is supplied for this option, it defaults to
-@file{$CVSROOT/CVSROOT/history}.
+Only the @samp{:ext:} method is
+currently supported for primaries (actually, @samp{:fork:} is supported as
+well, but only for testing - if you find another use for accessing a primary
+via the @samp{:fork:} method, please send a note to @email{bug-cvs@@nongnu.org}
+about it).  See @ref{Write proxies} for more on configuring and using write
+proxies.
+
+@cindex RCSBIN, in CVSROOT/config
+@item RCSBIN=@var{bindir}
+For @sc{cvs} 1.9.12 through 1.9.18, this setting told
+@sc{cvs} to look for @sc{rcs} programs in the
+@var{bindir} directory.  Current versions of @sc{cvs}
+do not run @sc{rcs} programs; for compatibility this
+setting is accepted, but it does nothing.
 
 @cindex RereadLogAfterVerify, in CVSROOT/config
 @cindex @file{verifymsg}, changing the log message
@@ -14699,6 +14739,69 @@ CPU intensive but is not recommended for use with large repositories}
 
 @xref{verifymsg}, for more information on how verifymsg
 may be used.
+
+@cindex SystemAuth, in CVSROOT/config
+@item SystemAuth=@var{value}
+If @var{value} is @samp{yes}, then pserver should check
+for users in the system's user database if not found in
+@file{CVSROOT/passwd}.  If it is @samp{no}, then all
+pserver users must exist in @file{CVSROOT/passwd}.
+The default is @samp{yes}.  For more on pserver, see
+@ref{Password authenticated}.
+
+@cindex TmpDir, in config
+@cindex temporary files, location of
+@cindex temporary directory, set in config
+@item TmpDir=@var{path}
+Specify @var{path} as the directory to create temporary files in.
+@xref{Global options} for more on setting the path to the temporary
+directory.  This option first appeared with @sc{cvs} release 1.12.13.
+
+@cindex TopLevelAdmin, in CVSROOT/config
+@item TopLevelAdmin=@var{value}
+Modify the @samp{checkout} command to create a
+@samp{CVS} directory at the top level of the new
+working directory, in addition to @samp{CVS}
+directories created within checked-out directories.
+The default value is @samp{no}.
+
+This option is useful if you find yourself performing
+many commands at the top level of your working
+directory, rather than in one of the checked out
+subdirectories.  The @file{CVS} directory created there
+will mean you don't have to specify @code{CVSROOT} for
+each command.  It also provides a place for the
+@file{CVS/Template} file (@pxref{Working directory
+storage}).
+
+@cindex UseArchiveCommentLeader, in CVSROOT/config
+@cindex Log keyword, configuring substitution behavior
+@item UseArchiveCommentLeader=@var{value}
+Set to @code{true}, if the text preceding a @code{$@splitrcskeyword{Log}$}
+keyword is found to exceed @code{MaxCommentLeaderLength} (above) bytes, then
+the comment leader set in the RCS archive file (@pxref{admin}), if any, will
+be used instead.  If there is no comment leader set in the archive file or
+@var{value} is set to @samp{false}, then the keyword will not be expanded
+(@pxref{Keyword list}).  To force the comment leader in the RCS archive file to
+be used exclusively (and @code{$@splitrcskeyword{Log}$} expansion skipped in
+files where the comment leader has not been set in the archive file), set
+@var{value} and set @code{MaxCommentLeaderLength} to @code{0}.
+
+@cindex UseNewInfoFmtStrings, in CVSROOT/config
+@cindex format strings, config admin file
+@cindex config (admin file), updating legacy repositories
+@cindex compatibility notes, config admin file
+@item UseNewInfoFmtStrings=@var{value}
+Specify whether @sc{cvs} should support the new or old command line
+template model for the commit support files (@pxref{commit files}).
+This configuration variable began life in deprecation and is only here
+in order to give people time to update legacy repositories to use the new
+format string syntax before support for the old syntax is removed.  For
+information on updating your repository to support the new model,
+please see @ref{Updating Commit Files}.
+
+@emph{Note that new repositories (created with the @code{cvs init} command)
+will have this value set to @samp{yes}, but the default value is @samp{no}.}
 
 @cindex UserAdminOptions, in CVSROOT/config
 @item UserAdminOptions=@var{value}
@@ -14723,109 +14826,6 @@ As an example, to restrict users not in the @code{cvsadmin}
 group to using @code{cvs admin} to change the default keyword
 substitution mode, lock revisions, unlock revisions, and
 replace the log message, use @samp{UserAdminOptions=klum}.
-
-@cindex temporary files, location of
-@cindex temporary directory, set in config
-@cindex TmpDir, in config
-@item TmpDir=@var{path}
-Specify @var{path} as the directory to create temporary files in.
-@xref{Global options} for more on setting the path to the temporary
-directory.  This option first appeared with @sc{cvs} release 1.12.13.
-
-@cindex format strings, config admin file
-@cindex config (admin file), updating legacy repositories
-@cindex compatibility notes, config admin file
-@cindex UseNewInfoFmtStrings, in CVSROOT/config
-@item UseNewInfoFmtStrings=@var{value}
-Specify whether @sc{cvs} should support the new or old command line
-template model for the commit support files (@pxref{commit files}).
-This configuration variable began life in deprecation and is only here
-in order to give people time to update legacy repositories to use the new
-format string syntax before support for the old syntax is removed.  For
-information on updating your repository to support the new model,
-please see @ref{Updating Commit Files}.
-
-@emph{Note that new repositories (created with the @code{cvs init} command)
-will have this value set to @samp{yes}, but the default value is @samp{no}.}
-
-@cindex import, config admin file
-@cindex config (admin file), import
-@cindex ImportNewFilesToVendorBranchOnly, in CVSROOT/config
-@item ImportNewFilesToVendorBranchOnly=@var{value}
-Specify whether @code{cvs import} should always behave as if the
-@samp{-X} flag was specified on the command line.  
-@var{value} may be either @samp{yes} or @samp{no}.  If set to @samp{yes},
-all uses of @code{cvs import} on the repository will behave as if the
-@samp{-X} flag was set.  The default value is @samp{no}.
-
-@cindex PrimaryServer, in CVSROOT/config
-@cindex Primary server
-@cindex Secondary server
-@cindex proxy, write
-@cindex write proxy
-@item PrimaryServer=@var{CVSROOT}
-When specified, and the repository specified by @var{CVSROOT} is not the one
-currently being accessed, then the server will turn itself into a transparent
-proxy to @var{CVSROOT} for write requests.  The @var{hostname} configured as
-part of @var{CVSROOT} must resolve to the same string returned by the
-@command{uname} command on the primary server for this to work.  Host name
-resolution is performed via some combination of @command{named}, a broken out
-line from @file{/etc/hosts}, and the Network Information Service (NIS or YP),
-depending on the configuration of the particular system.
-
-Only the @samp{:ext:} method is
-currently supported for primaries (actually, @samp{:fork:} is supported as
-well, but only for testing - if you find another use for accessing a primary
-via the @samp{:fork:} method, please send a note to @email{bug-cvs@@nongnu.org}
-about it).  See @ref{Write proxies} for more on configuring and using write
-proxies.
-
-@cindex MaxCommentLeaderLength, in CVSROOT/config
-@cindex Log keyword, configuring substitution behavior
-@item MaxCommentLeaderLength=@var{length}
-Set to some length, in bytes, where a trailing @samp{k}, @samp{M}, @samp{G},
-or @samp{T} causes the preceding nubmer to be interpreted as kilobytes,
-megabytes, gigabytes, or terrabytes, respectively, will cause
-@code{$@splitrcskeyword{Log}$} keywords (@pxref{Keyword substitution}), with
-more than @var{length} bytes preceding it on a line to be ignored (or to fall
-back on the comment leader set in the RCS archive file - see
-@code{UseArchiveCommentLeader} below).  Defaults to 20 bytes to allow checkouts
-to proceed normally when they include binary files containing
-@code{$@splitrcskeyword{Log}$} keywords and which users have neglected to mark
-as binary.
-
-@cindex UseArchiveCommentLeader, in CVSROOT/config
-@cindex Log keyword, configuring substitution behavior
-@item UseArchiveCommentLeader=@var{value}
-Set to @code{true}, if the text preceding a @code{$@splitrcskeyword{Log}$}
-keyword is found to exceed @code{MaxCommentLeaderLength} bytes, then the
-comment leader set in the RCS archive file (@pxref{admin}), if any, will be
-used instead.  If there is no comment leader set in the archive file or
-@var{value} is set to @samp{false}, then the keyword will not be expanded
-(@pxref{Keyword list}).  To force the comment leader in the RCS archive file to
-be used exclusively (and @code{$@splitrcskeyword{Log}$} expansion skipped in
-files where the comment leader has not been set in the archive file), set
-@var{value} and set @code{MaxCommentLeaderLength} to @code{0}.
-
-@cindex MinCompressionLevel, in CVSROOT/config
-@cindex MaxCompressionLevel, in CVSROOT/config
-@cindex Compression levels, restricting on server
-@item MinCompressionLevel=@var{value}
-@itemx MaxCompressionLevel=@var{value}
-Restricts the level of compression used by the @sc{cvs} server to a @var{value}
-between 0 and 9.  @var{value}s 1 through 9 are the same @sc{zlib} compression
-levels accepted by the @samp{-z} option (@pxref{Global options}), and 0 means
-no compression.  When one or both of these keys are set and a client requests a
-level outside the specified range, the server will simply use the closest
-permissable level.  Clients will continue compressing at the level requested by
-the user.
-
-The exception is when level 0 (no compression) is not available and the client
-fails to request any compression.  The @sc{cvs} server will then exit with an
-error message when it becomes apparent that the client is not going to request
-compression.  This will not happen with clients version 1.12.13 and later since
-these client versions allow the server to notify them that they must request
-some level of compression.
 @end table
 
 
