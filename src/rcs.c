@@ -8074,31 +8074,65 @@ RCS_putdtree (RCSNode *rcs, char *rev, FILE *fp)
     RCSVers *versp;
     Node *p, *branch;
 
+    /* Previously, this function used a recursive implementation, but
+       if the trunk has a huge number of revisions and the program
+       stack is not big, a stack overflow could occur, so this
+       nonrecursive version was developed to be more safe. */
+    Node *k, *branchlist, *onebranch;
+    List *branches;
+    List *onebranchlist;
+
     if (rev == NULL)
 	return;
 
-    /* Find the delta node for this revision. */
-    p = findnode (rcs->versions, rev);
-    if (p == NULL)
-    {
-        error (1, 0,
-               "error parsing repository file %s, file may be corrupt.", 
-               rcs->print_path);
-    }
- 
-    versp = p->data;
+    branches = getlist();
 
-    /* Print the delta node and recurse on its `next' node.  This prints
-       the trunk.  If there are any branches printed on this revision,
-       print those trunks as well. */
-    putdelta (versp, fp);
-    RCS_putdtree (rcs, versp->next, fp);
-    if (versp->branches != NULL)
+    for (; rev != NULL;)
     {
-	branch = versp->branches->list;
-	for (p = branch->next; p != branch; p = p->next)
-	    RCS_putdtree (rcs, p->key, fp);
+	/* Find the delta node for this revision. */
+	p = findnode (rcs->versions, rev);
+	if (p == NULL)
+	{
+	    error (1, 0,
+		   "error parsing repository file %s, file may be corrupt.", 
+		   rcs->path);
+	}
+ 
+	versp = p->data;
+
+	/* Print the delta node and go for its `next' node.  This
+	   prints the trunk. If there are any branches printed on this
+	   revision, mark we have some. */
+	putdelta (versp, fp);
+	/* Store branch information into branch list so to write its
+	   trunk afterwards */
+	if (versp->branches != NULL)
+	{
+	    branch = getnode();
+	    branch->data = versp->branches;
+
+	    addnode(branches, branch);
+	}
+
+	rev = versp->next;
     }
+
+    /* If there are any branches printed on this revision,
+       print those trunks as well. */
+    branchlist = branches->list;
+    for (branch = branchlist->next;
+	 branch != branchlist;
+	 branch = branch->next)
+    {
+	onebranchlist = (List *)(branch->data);
+	onebranch = onebranchlist->list;
+	for (p = onebranch->next; p != onebranch; p = p->next)
+	    RCS_putdtree (rcs, p->key, fp);
+
+	branch->data = NULL; /* so to prevent its freeing on dellist */
+    }
+
+    dellist(&branches);
 }
 
 
