@@ -20080,8 +20080,9 @@ M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == $TESTDIR/wnt
 
 	  # Set MinCompressionLevel and MaxCompressionLevel in config.
 	  dotest config2-init-1 "$testcvs -q co CVSROOT" "U CVSROOT/$DOTSTAR"
+	  dotest config2-init-1b "$testcvs -Q tag initial"
 	  cd CVSROOT
-	  cat << EOF > config
+	  cat << EOF >> config
 MinCompressionLevel=5
 MaxCompressionLevel=6
 EOF
@@ -20111,10 +20112,11 @@ $SPROG update: Updating \."
 "$SPROG update: Updating \."
 
 	  # Check that compression may be forced to 0.
-	  cat << EOF > config
+	  dotest config2-init-2b "$testcvs -z5 up -jHEAD -jinitial" "$DOTSTAR"
+	  cat << EOF >> config
 MaxCompressionLevel=0
 EOF
-	  dotest config2-init-3 "$testcvs -q ci -m no-compression" \
+	  dotest config2-init-3 "$testcvs -qz5 ci -m no-compression" \
 "$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
@@ -20128,7 +20130,7 @@ $SPROG update: Updating \."
 "$SPROG update: Updating \."
 
 	  # And verify effect without restrictions.
-	  echo '# No config is a good config' > config
+	  dotest config2-init-3b "$testcvs up -jHEAD -jinitial" "$DOTSTAR"
 	  dotest config2-init-4 "$testcvs -q ci -m change-to-comment" \
 "$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
