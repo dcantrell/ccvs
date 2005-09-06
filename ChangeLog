@@ -1,5 +1,8 @@
 2005-09-06  Derek Price  <derek@ximbiot.com>
 
+	* TESTS: Reword slightly.  s/\$PROG/\$CPROG/.  Document $tempfile &
+	$tempname.
+
 	* NEWS: Note Kerberos4 build fix.
 
 2005-09-05  Derek Price  <derek@ximbiot.com>
