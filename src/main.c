@@ -580,6 +580,7 @@ main (int argc, char **argv)
 	    /* Avoid any .cvsrc file.  */
 	    use_cvsrc = 0;
 	    /* Pre-parse the server options to get the config path.  */
+	    cvs_cmd_name = argv[optind];
 	    parseServerOptions (argc - optind, argv + optind);
 	}
 #endif /* SERVER_SUPPORT */

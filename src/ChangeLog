@@ -1,3 +1,7 @@
+2005-09-06  Derek Price  <derek@ximbiot.com>
+
+	* main.c (main): Set cvs_cmd_name before calling parseServerOptions.
+
 2005-09-05  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h (Tmpdir): Remove global decl.
