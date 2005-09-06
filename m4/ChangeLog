@@ -1,3 +1,9 @@
+2005-09-06  Derek Price  <derek@ximbiot.com>
+
+	Update from GNULIB with alpha-quality patch.
+	* canon-host.m4, gnulib-comp.m4: Updated.
+	* getaddrinfo.m4, sockpfaf.m4: New files.
+
 2005-09-05  Derek Price  <derek@ximbiot.com>
 
 	* mbchar.m4 (gl_MBCHAR): Only enable when wchar.h is found.
