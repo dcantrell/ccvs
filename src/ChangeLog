@@ -1,5 +1,9 @@
 2005-09-06  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (tempfile): New var.
+	(tempname): Set to $TMPDIR/$tempfile after $TMPDIR is set.
+	(info): s#$TMPDIR/##.
+
 	* rcs.c (RCS_putdtree): Remove unused variable.
 
 2005-09-06  Mark D. Baushke  <mdb@gnu.org>
