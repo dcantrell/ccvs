@@ -263,18 +263,39 @@ Current versions of \fBcvs\fR do not run \fBrcs\fR
 programs; for compatibility this option is accepted,
 but it does nothing.
 .SP
-.IX "TMPDIR, overriding"
-.IX "Overriding TMPDIR"
+.IX "TMPDIR, environment variable"
+.IX "temporary file directory, set via command line"
+.IX "temporary file directory, set via environment variable"
+.IX "temporary file directory, set via config"
+.IX "temporary files, location of"
 .IP "" 0
 \fB-T \fItempdir\fB\fR
 .IP "" 2
 Use \fItempdir\fR as the directory where temporary files are
-located.  Overrides the setting of the \fB$TMPDIR\fR environment
-variable and any precompiled directory.  This parameter should be
-specified as an absolute pathname.
-(When running client/server, \fB-T\fR affects only the local process;
+located.
+.SP
+The \fBcvs\fR client and server store temporary files in a temporary directory.
+The path to this temporary directory is set via, in order of precedence:
+.SP
+.IP "\(bu" 4
+The argument to the global \fB-T\fR option.
+.SP
+.IP "\(bu" 4
+The value set for \fBTmpDir\fR in the config file (server only -
+see node `config\(aq in the CVS manual).
+.SP
+.IP "\(bu" 4
+The contents of the \fB$TMPDIR\fR environment variable (\fB%TMPDIR%\fR on
+Windows - see node `Environment variables\(aq in the CVS manual).
+.SP
+.IP "\(bu" 4
+/tmp
+.SP
+.SP
+Temporary directories should always be specified as an absolute pathname.
+When running a CVS client, \fB-T\fR affects only the local process;
 specifying \fB-T\fR for the client has no effect on the server and
-vice versa.)
+vice versa.
 .SP
 .IX "CVSROOT, overriding"
 .IX "Overriding CVSROOT"
