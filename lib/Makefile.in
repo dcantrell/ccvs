@@ -59,27 +59,28 @@ check_PROGRAMS = getdate$(EXEEXT)
 subdir = lib
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	ChangeLog __fpending.c __fpending.h alloca.c asnprintf.c \
-	asprintf.c atexit.c canon-host.c canonicalize.c canonicalize.h \
-	chdir-long.c chdir-long.h closeout.c closeout.h dirname.c \
-	dirname.h dup-safer.c dup2.c exitfail.c exitfail.h fd-safer.c \
-	filenamecat.c filenamecat.h fncase.c fnmatch.c fseeko.c \
-	ftello.c ftruncate.c getcwd.c getcwd.h getdate.c getdate.h \
-	getdate.y getdelim.c getdelim.h gethostname.c getline.c \
-	getline.h getlogin_r.c getlogin_r.h getndelim2.c getopt.c \
-	getopt1.c getpagesize.h getpass.c getpass.h gettime.c \
-	gettimeofday.c glob.c lstat.c malloc.c mbchar.c mbchar.h md5.c \
-	md5.h memchr.c memmove.c mempcpy.c mempcpy.h memrchr.c \
-	memrchr.h mkdir.c mkstemp.c mktime.c nanosleep.c openat.c \
-	openat.h pagealign_alloc.c pagealign_alloc.h pathmax.h \
-	pipe-safer.c printf-args.c printf-parse.c quotearg.c \
-	quotearg.h readlink.c realloc.c regcomp.c regex.c regex.h \
-	regex_internal.c regex_internal.h regexec.c rename.c rpmatch.c \
-	save-cwd.c save-cwd.h setenv.c stat-macros.h strcasecmp.c \
-	strdup.c strdup.h strerror.c strftime.c strftime.h \
-	strncasecmp.c strstr.c strtol.c strtoul.c sunos57-select.c \
-	tempname.c time_r.c timespec.h unistd--.h unistd-safer.h \
-	unlocked-io.h unsetenv.c vasnprintf.c vasprintf.c waitpid.c \
-	xalloc.h xgetcwd.c xgetcwd.h xmalloc.c yesno.c yesno.h
+	asprintf.c atexit.c canon-host.c canon-host.h canonicalize.c \
+	canonicalize.h chdir-long.c chdir-long.h closeout.c closeout.h \
+	dirname.c dirname.h dup-safer.c dup2.c exitfail.c exitfail.h \
+	fd-safer.c filenamecat.c filenamecat.h fncase.c fnmatch.c \
+	fseeko.c ftello.c ftruncate.c gai_strerror.c getaddrinfo.c \
+	getcwd.c getcwd.h getdate.c getdate.h getdate.y getdelim.c \
+	getdelim.h gethostname.c getline.c getline.h getlogin_r.c \
+	getlogin_r.h getndelim2.c getopt.c getopt1.c getpagesize.h \
+	getpass.c getpass.h gettime.c gettimeofday.c glob.c lstat.c \
+	malloc.c mbchar.c mbchar.h md5.c md5.h memchr.c memmove.c \
+	mempcpy.c mempcpy.h memrchr.c memrchr.h mkdir.c mkstemp.c \
+	mktime.c nanosleep.c openat.c openat.h pagealign_alloc.c \
+	pagealign_alloc.h pathmax.h pipe-safer.c printf-args.c \
+	printf-parse.c quotearg.c quotearg.h readlink.c realloc.c \
+	regcomp.c regex.c regex.h regex_internal.c regex_internal.h \
+	regexec.c rename.c rpmatch.c save-cwd.c save-cwd.h setenv.c \
+	stat-macros.h strcasecmp.c strdup.c strdup.h strerror.c \
+	strftime.c strftime.h strncasecmp.c strstr.c strtol.c \
+	strtoul.c sunos57-select.c tempname.c time_r.c timespec.h \
+	unistd--.h unistd-safer.h unlocked-io.h unsetenv.c \
+	vasnprintf.c vasprintf.c waitpid.c xalloc.h xgetcwd.c \
+	xgetcwd.h xmalloc.c yesno.c yesno.h
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/acx_with_external_zlib.m4 \
@@ -99,6 +100,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/exitfail.m4 $(top_srcdir)/m4/extensions.m4 \
 	$(top_srcdir)/m4/filenamecat.m4 $(top_srcdir)/m4/fnmatch.m4 \
 	$(top_srcdir)/m4/fpending.m4 $(top_srcdir)/m4/ftruncate.m4 \
+	$(top_srcdir)/m4/getaddrinfo.m4 \
 	$(top_srcdir)/m4/getcwd-path-max.m4 $(top_srcdir)/m4/getcwd.m4 \
 	$(top_srcdir)/m4/getdate.m4 $(top_srcdir)/m4/getdelim.m4 \
 	$(top_srcdir)/m4/gethostname.m4 $(top_srcdir)/m4/getline.m4 \
@@ -128,18 +130,18 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/rename.m4 $(top_srcdir)/m4/restrict.m4 \
 	$(top_srcdir)/m4/rpmatch.m4 $(top_srcdir)/m4/save-cwd.m4 \
 	$(top_srcdir)/m4/setenv.m4 $(top_srcdir)/m4/signed.m4 \
-	$(top_srcdir)/m4/size_max.m4 $(top_srcdir)/m4/ssize_t.m4 \
-	$(top_srcdir)/m4/st_mtim.m4 $(top_srcdir)/m4/stat-macros.m4 \
-	$(top_srcdir)/m4/stdbool.m4 $(top_srcdir)/m4/stdint.m4 \
-	$(top_srcdir)/m4/stdint_h.m4 $(top_srcdir)/m4/strcase.m4 \
-	$(top_srcdir)/m4/strdup.m4 $(top_srcdir)/m4/strerror.m4 \
-	$(top_srcdir)/m4/strftime.m4 $(top_srcdir)/m4/strstr.m4 \
-	$(top_srcdir)/m4/strtol.m4 $(top_srcdir)/m4/strtoul.m4 \
-	$(top_srcdir)/m4/sunos57-select.m4 $(top_srcdir)/m4/time_r.m4 \
-	$(top_srcdir)/m4/timespec.m4 $(top_srcdir)/m4/tm_gmtoff.m4 \
-	$(top_srcdir)/m4/tzset.m4 $(top_srcdir)/m4/uint32_t.m4 \
-	$(top_srcdir)/m4/uintmax_t.m4 $(top_srcdir)/m4/ulonglong.m4 \
-	$(top_srcdir)/m4/unistd-safer.m4 \
+	$(top_srcdir)/m4/size_max.m4 $(top_srcdir)/m4/sockpfaf.m4 \
+	$(top_srcdir)/m4/ssize_t.m4 $(top_srcdir)/m4/st_mtim.m4 \
+	$(top_srcdir)/m4/stat-macros.m4 $(top_srcdir)/m4/stdbool.m4 \
+	$(top_srcdir)/m4/stdint.m4 $(top_srcdir)/m4/stdint_h.m4 \
+	$(top_srcdir)/m4/strcase.m4 $(top_srcdir)/m4/strdup.m4 \
+	$(top_srcdir)/m4/strerror.m4 $(top_srcdir)/m4/strftime.m4 \
+	$(top_srcdir)/m4/strstr.m4 $(top_srcdir)/m4/strtol.m4 \
+	$(top_srcdir)/m4/strtoul.m4 $(top_srcdir)/m4/sunos57-select.m4 \
+	$(top_srcdir)/m4/time_r.m4 $(top_srcdir)/m4/timespec.m4 \
+	$(top_srcdir)/m4/tm_gmtoff.m4 $(top_srcdir)/m4/tzset.m4 \
+	$(top_srcdir)/m4/uint32_t.m4 $(top_srcdir)/m4/uintmax_t.m4 \
+	$(top_srcdir)/m4/ulonglong.m4 $(top_srcdir)/m4/unistd-safer.m4 \
 	$(top_srcdir)/m4/unlocked-io.m4 $(top_srcdir)/m4/vasnprintf.m4 \
 	$(top_srcdir)/m4/vasprintf.m4 $(top_srcdir)/m4/wchar_t.m4 \
 	$(top_srcdir)/m4/wint_t.m4 $(top_srcdir)/m4/xalloc.m4 \
@@ -321,11 +323,12 @@ noinst_LIBRARIES = libcvs.a
 # matching?)
 libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	allocsa.h allocsa.c cycle-check.c cycle-check.h dev-ino.h \
-	basename.c stripslash.c error.h exit.h getnline.h getnline.c \
-	gettext.h mbuiter.h minmax.h setenv.h size_max.h strcase.h \
-	strnlen1.h strnlen1.c strstr.h time_r.h printf-args.h \
-	printf-parse.h vasnprintf.h vasprintf.h xalloc-die.c \
-	xgethostname.h xgethostname.c xreadlink.h xreadlink.c xsize.h
+	basename.c stripslash.c error.h exit.h getaddrinfo.h \
+	getnline.h getnline.c gettext.h mbuiter.h minmax.h setenv.h \
+	size_max.h strcase.h strnlen1.h strnlen1.c strstr.h time_r.h \
+	printf-args.h printf-parse.h vasnprintf.h vasprintf.h \
+	xalloc-die.c xgethostname.h xgethostname.c xreadlink.h \
+	xreadlink.c xsize.h
 libcvs_a_LIBADD = @LIBOBJS@ @ALLOCA@
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) getdate.c $(GETOPT_H) \
 	$(GLOB_H) $(STDBOOL_H) $(STDINT_H)
@@ -421,6 +424,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fseeko.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/ftello.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/ftruncate.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/gai_strerror.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getaddrinfo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getcwd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getdate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getdate.y@am__quote@

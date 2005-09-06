@@ -120,6 +120,12 @@ MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
 
 ## end   gnulib module fnmatch
 
+## begin gnulib module getaddrinfo
+
+libcvs_a_SOURCES += getaddrinfo.h
+
+## end   gnulib module getaddrinfo
+
 ## begin gnulib module getdate
 
 ## CVS test scripts for getdate.
