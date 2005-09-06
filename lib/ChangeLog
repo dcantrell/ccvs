@@ -1,5 +1,7 @@
 2005-09-06  Derek Price  <derek@ximbiot.com>
 
+	* regex_internal.h: Update from GNULIB.
+
 	* getpass.c, regcomp.c, regex_internal.c, regex_internal.h, regexec.c:
 	Update from GNULIB.
 
