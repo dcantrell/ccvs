@@ -464,7 +464,7 @@ commitid="[a-zA-Z0-9]*"
 
 # Regexp to match the name of a temporary file (from cvs_temp_name).
 # This appears in certain diff output.
-tempfile="[-a-zA-Z0-9.%_]*"
+tempfile="cvs[-a-zA-Z0-9.%_]*"
 # $tempname set after $TMPDIR, below.
 
 # Regexp to match a date in RFC822 format (as amended by RFC1123).
