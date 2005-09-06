@@ -1,5 +1,7 @@
 2005-09-06  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (tempfile): All CVS temp files start with "cvs".
+
 	* sanity.sh (tempfile): New var.
 	(tempname): Set to $TMPDIR/$tempfile after $TMPDIR is set.
 	(info): s#$TMPDIR/##.
