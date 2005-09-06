@@ -1,5 +1,20 @@
 2005-09-05  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h (Tmpdir): Remove global decl.
+	(get_cvs_tmp_dir, push_env_tmp_dir): New protos.
+	* filesubr.c (cvs_temp_file): Use get_cvs_tmp_dir.
+	* main.c (Tmpdir): Remove global.
+	(tmpdir_cmdline, tmpdir_env): New globals.
+	(get_cvs_tmp_dir, push_env_tmp_dir): New functions.
+	(main): Discard most tmpdir overhead in favor of new globals and
+	functions.
+	* parseinfo.c (parse_config): Parse TmpDir.
+	* sanity.sh (config4): New tests.
+	* server.c (serve_root): Set env TMPDIR after parsing config.  Create
+	tmpdir here instead of...
+	(serve_co, server): ...either of thse locations.
+	(server_cleanup): Use new function in favor of obsolete Tmpdir.
+
 	* sanity.sh (config2): Don't overwrite potentially significant config.
 
 	* sanity.sh (info): Use $tempfile instead of reproducing the regex.

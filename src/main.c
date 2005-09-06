@@ -60,8 +60,54 @@ char *CurDir;
 /*
  * Defaults, for the environment variables that are not set
  */
-char *Tmpdir = TMPDIR_DFLT;
 char *Editor = EDITOR_DFLT;
+
+
+
+/* Temp dir stuff.  */
+
+/* Temp dir, if set by the user.  */
+static char *tmpdir_cmdline;
+/* Temp dir, if set in the environment.  */
+static const char *tmpdir_env;
+
+
+
+/* Returns in order of precedence:
+ *
+ *	1.  Temp dir as set via the command line.
+ *	2.  Temp dir as set in CVSROOT/config.
+ *	3.  Temp dir as set in $TMPDIR env var.
+ *	4.  Contents of TMPDIR_DFLT preprocessor macro.
+ *
+ * ERRORS
+ *  It is a fatal error if this function would otherwise return NULL or an
+ *  empty string.
+ */
+const char *
+get_cvs_tmp_dir (void)
+{
+    const char *retval;
+    if (tmpdir_cmdline) retval = tmpdir_cmdline;
+    else if (config && config->TmpDir) retval = config->TmpDir;
+    else if (tmpdir_env) retval = tmpdir_env;
+    else retval = TMPDIR_DFLT;
+
+    if (!retval || !*retval) error (1, 0, "No temp dir specified.");
+
+    return retval;
+}
+
+
+
+void
+push_env_tmp_dir (void)
+{
+    const char *tmpdir = get_cvs_tmp_dir ();
+    if (tmpdir_env && strcmp (tmpdir_env, tmpdir))
+	setenv (TMPDIR_ENV, tmpdir, 1);
+}
+
 
 
 /* When our working directory contains subdirectories with different
@@ -430,9 +476,7 @@ main (int argc, char **argv)
     char *cp, *end;
     const struct cmd *cm;
     int c, err = 0;
-    int tmpdir_update_env;
     int free_Editor = 0;
-    int free_Tmpdir = 0;
 
     int help = 0;		/* Has the user asked for help?  This
 				   lets us support the `cvs -H cmd'
@@ -488,12 +532,8 @@ main (int argc, char **argv)
      * Query the environment variables up-front, so that
      * they can be overridden by command line arguments
      */
-    tmpdir_update_env = *Tmpdir;	/* TMPDIR_DFLT must be set */
     if ((cp = getenv (TMPDIR_ENV)) != NULL)
-    {
-	Tmpdir = cp;
-	tmpdir_update_env = 0;		/* it's already there */
-    }
+	tmpdir_env = cp;
     if ((cp = getenv (EDITOR1_ENV)) != NULL)
  	Editor = cp;
     else if ((cp = getenv (EDITOR2_ENV)) != NULL)
@@ -628,10 +668,8 @@ distribution kit for a complete list of contributors and copyrights.\n",
 		   either new or old CVS.  */
 		break;
 	    case 'T':
-		if (free_Tmpdir) free (Tmpdir);
-		Tmpdir = xstrdup (optarg);
-		free_Tmpdir = 1;
-		tmpdir_update_env = 1;	/* need to update environment */
+		if (tmpdir_cmdline) free (tmpdir_cmdline);
+		tmpdir_cmdline = xstrdup (optarg);
 		break;
 	    case 'e':
 		if (free_Editor) free (Editor);
@@ -814,14 +852,6 @@ cause intermittent sandbox corruption.");
 		error (1, errno, "cannot get working directory");
 	}
 
-	if (Tmpdir == NULL || Tmpdir[0] == '\0')
-	{
-	    if (free_Tmpdir) free (Tmpdir);
-	    Tmpdir = "/tmp";
-	}
-
-	if (tmpdir_update_env)
-	    setenv (TMPDIR_ENV, Tmpdir, 1);
 	{
 	    char *val;
 	    /* XXX pid < 10^32 */
@@ -1009,6 +1039,11 @@ cause intermittent sandbox corruption.");
 		   CVSROOT/config file to fix the broken one!  */
 		if (config) free_config (config);
 		config = parse_config (current_parsed_root->directory, NULL);
+
+		/* Can set TMPDIR in the environment if necessary now, since
+		 * if it was set in config, we now know it.
+		 */
+		push_env_tmp_dir ();
 	    }
 
 #ifdef CLIENT_SUPPORT

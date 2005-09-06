@@ -764,7 +764,6 @@ char *gConfigPath;
 static void
 serve_root (char *arg)
 {
-    char *env;
     char *path;
 
     TRACE (TRACE_FUNCTION, "serve_root (%s)", arg ? arg : "(null)");
@@ -849,6 +848,109 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
     }
 # endif /* PROXY_SUPPORT */
 
+    /* Now set the TMPDIR environment variable.  If it was set in the config
+     * file, we now know it.
+     */
+    push_env_tmp_dir ();
+
+    /* OK, now figure out where we stash our temporary files.  */
+    {
+	char *p;
+
+	/* The code which wants to chdir into server_temp_dir is not set
+	 * up to deal with it being a relative path.  So give an error
+	 * for that case.
+	 */
+	if (!ISABSOLUTE (get_cvs_tmp_dir ()))
+	{
+	    if (alloc_pending (80 + strlen (get_cvs_tmp_dir ())))
+		sprintf (pending_error_text,
+			 "E Value of %s for TMPDIR is not absolute",
+			 get_cvs_tmp_dir ());
+
+	    /* FIXME: we would like this error to be persistent, that
+	     * is, not cleared by print_pending_error.  The current client
+	     * will exit as soon as it gets an error, but the protocol spec
+	     * does not require a client to do so.
+	     */
+	}
+	else
+	{
+	    int status;
+	    int i = 0;
+
+	    server_temp_dir = xmalloc (strlen (get_cvs_tmp_dir ()) + 80);
+	    if (!server_temp_dir)
+	    {
+		/* Strictly speaking, we're not supposed to output anything
+		 * now.  But we're about to exit(), give it a try.
+		 */
+		printf ("E Fatal server error, aborting.\n\
+error ENOMEM Virtual memory exhausted.\n");
+
+		exit (EXIT_FAILURE);
+	    }
+	    strcpy (server_temp_dir, get_cvs_tmp_dir ());
+
+	    /* Remove a trailing slash from TMPDIR if present.  */
+	    p = server_temp_dir + strlen (server_temp_dir) - 1;
+	    if (*p == '/')
+		*p = '\0';
+
+	    /* I wanted to use cvs-serv/PID, but then you have to worry about
+	     * the permissions on the cvs-serv directory being right.  So
+	     * use cvs-servPID.
+	     */
+	    strcat (server_temp_dir, "/cvs-serv");
+
+	    p = server_temp_dir + strlen (server_temp_dir);
+	    sprintf (p, "%ld", (long) getpid ());
+
+	    orig_server_temp_dir = server_temp_dir;
+
+	    /* Create the temporary directory, and set the mode to
+	     * 700, to discourage random people from tampering with
+	     * it.
+	     */
+	    while ((status = mkdir_p (server_temp_dir)) == EEXIST)
+	    {
+		static const char suffix[] = "abcdefghijklmnopqrstuvwxyz";
+
+		if (i >= sizeof suffix - 1) break;
+		if (i == 0) p = server_temp_dir + strlen (server_temp_dir);
+		p[0] = suffix[i++];
+		p[1] = '\0';
+	    }
+	    if (status)
+	    {
+		if (alloc_pending (80 + strlen (server_temp_dir)))
+		    sprintf (pending_error_text,
+			    "E can't create temporary directory %s",
+			    server_temp_dir);
+		pending_error = status;
+	    }
+#ifndef CHMOD_BROKEN
+	    else if (chmod (server_temp_dir, S_IRWXU) < 0)
+	    {
+		int save_errno = errno;
+		if (alloc_pending (80 + strlen (server_temp_dir)))
+		    sprintf (pending_error_text,
+"E cannot change permissions on temporary directory %s",
+			     server_temp_dir);
+		pending_error = save_errno;
+	    }
+#endif
+	    else if (CVS_CHDIR (server_temp_dir) < 0)
+	    {
+		int save_errno = errno;
+		if (alloc_pending (80 + strlen (server_temp_dir)))
+		    sprintf (pending_error_text,
+"E cannot change to temporary directory %s",
+			     server_temp_dir);
+		pending_error = save_errno;
+	    }
+	}
+    }
 
     /* Now that we have a config, verify our compression level.  Since 
      * most clients do not send Gzip-stream requests until after the root
@@ -5948,7 +6050,6 @@ static void wait_sig (int sig)
  *   dont_delete_temp		Set when a core dump of a child process is
  *   				detected so that the core and related data may
  *   				be preserved.
- *   Tmpdir			The system TMP directory for all temp files.
  *   noexec			Whether we are supposed to change the disk.
  *   orig_server_temp_dir	The temporary directory we created within
  *   				Tmpdir for our duplicate of the client
@@ -6108,7 +6209,7 @@ server_cleanup (void)
 
 	    /* Make sure our working directory isn't inside the tree we're
 	       going to delete.  */
-	    CVS_CHDIR (Tmpdir);
+	    CVS_CHDIR (get_cvs_tmp_dir ());
 
 	    /* Temporarily clear noexec, so that we clean up our temp directory
 	       regardless of it (this could more cleanly be handled by moving
@@ -6260,103 +6361,6 @@ server (int argc, char **argv)
     /* Since we're in the server parent process, error should use the
        protocol to report error messages.  */
     error_use_protocol = 1;
-
-    /* OK, now figure out where we stash our temporary files.  */
-    {
-	char *p;
-
-	/* The code which wants to chdir into server_temp_dir is not set
-	   up to deal with it being a relative path.  So give an error
-	   for that case.  */
-	if (!ISABSOLUTE (Tmpdir))
-	{
-	    if (alloc_pending (80 + strlen (Tmpdir)))
-		sprintf (pending_error_text,
-			 "E Value of %s for TMPDIR is not absolute", Tmpdir);
-
-	    /* FIXME: we would like this error to be persistent, that
-	       is, not cleared by print_pending_error.  The current client
-	       will exit as soon as it gets an error, but the protocol spec
-	       does not require a client to do so.  */
-	}
-	else
-	{
-	    int status;
-	    int i = 0;
-
-	    server_temp_dir = xmalloc (strlen (Tmpdir) + 80);
-	    if (server_temp_dir == NULL)
-	    {
-		/*
-		 * Strictly speaking, we're not supposed to output anything
-		 * now.  But we're about to exit(), give it a try.
-		 */
-		printf ("E Fatal server error, aborting.\n\
-error ENOMEM Virtual memory exhausted.\n");
-
-		exit (EXIT_FAILURE);
-	    }
-	    strcpy (server_temp_dir, Tmpdir);
-
-	    /* Remove a trailing slash from TMPDIR if present.  */
-	    p = server_temp_dir + strlen (server_temp_dir) - 1;
-	    if (*p == '/')
-		*p = '\0';
-
-	    /*
-	     * I wanted to use cvs-serv/PID, but then you have to worry about
-	     * the permissions on the cvs-serv directory being right.  So
-	     * use cvs-servPID.
-	     */
-	    strcat (server_temp_dir, "/cvs-serv");
-
-	    p = server_temp_dir + strlen (server_temp_dir);
-	    sprintf (p, "%ld", (long) getpid ());
-
-	    orig_server_temp_dir = server_temp_dir;
-
-	    /* Create the temporary directory, and set the mode to
-	       700, to discourage random people from tampering with
-	       it.  */
-	    while ((status = mkdir_p (server_temp_dir)) == EEXIST)
-	    {
-		static const char suffix[] = "abcdefghijklmnopqrstuvwxyz";
-
-		if (i >= sizeof suffix - 1) break;
-		if (i == 0) p = server_temp_dir + strlen (server_temp_dir);
-		p[0] = suffix[i++];
-		p[1] = '\0';
-	    }
-	    if (status != 0)
-	    {
-		if (alloc_pending (80 + strlen (server_temp_dir)))
-		    sprintf (pending_error_text,
-			    "E can't create temporary directory %s",
-			    server_temp_dir);
-		pending_error = status;
-	    }
-#ifndef CHMOD_BROKEN
-	    else if (chmod (server_temp_dir, S_IRWXU) < 0)
-	    {
-		int save_errno = errno;
-		if (alloc_pending (80 + strlen (server_temp_dir)))
-		    sprintf (pending_error_text,
-"E cannot change permissions on temporary directory %s",
-			     server_temp_dir);
-		pending_error = save_errno;
-	    }
-#endif
-	    else if (CVS_CHDIR (server_temp_dir) < 0)
-	    {
-		int save_errno = errno;
-		if (alloc_pending (80 + strlen (server_temp_dir)))
-		    sprintf (pending_error_text,
-"E cannot change to temporary directory %s",
-			     server_temp_dir);
-		pending_error = save_errno;
-	    }
-	}
-    }
 
     /* Now initialize our argument vector (for arguments from the client).  */
 
@@ -7339,6 +7343,8 @@ error 0 kerberos: %s\n", krb_get_err_text(status));
 
 
 #ifdef HAVE_GSSAPI
+char *canon_host (const char *host);
+
 /* Authenticate a GSSAPI connection.  This is called from
  * pserver_authenticate_connection, and it handles success and failure
  * the same way.
