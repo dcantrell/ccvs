@@ -1,5 +1,10 @@
 2005-09-06  Derek Price  <derek@ximbiot.com>
 
+	* server.c: #include canon-host.h.
+	(gserver_authenticate_connection): Print out canon-host errors.
+	* subr.c: #include canon-host.h.
+	(isThisHost): Print out canon-host errors.
+
 	* parseinfo.c (parse_config): Don't check hostname without client
 	or server support.
 
