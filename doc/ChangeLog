@@ -1,5 +1,7 @@
 2005-09-06  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (config): Alphabetize list of keys.
+
 	* cvs.texinfo (Global options): Clarify -T description with temporary
 	file path precedence.
 	(config): Shorten TmpDir stuff and reference Global options node.
