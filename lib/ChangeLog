@@ -1,3 +1,11 @@
+2005-09-06  Derek Price  <derek@ximbiot.com>
+
+	Update from GNULIB with alpha-quality patch.
+	* Makefile.am: Add getaddrinfo cruft.
+	* canon-host.c: Updated to use getaddrinfo module.
+	* canon-host.h, gai_strerror.c, getaddrinfo.c, getaddrinfo.h: New
+	files.
+
 2005-09-05  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (mbchar): Remove obsolete module cruft.

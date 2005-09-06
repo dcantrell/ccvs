@@ -83,6 +83,12 @@ MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
 
 ## end   gnulib module fnmatch
 
+## begin gnulib module getaddrinfo
+
+libgnu_a_SOURCES += getaddrinfo.h
+
+## end   gnulib module getaddrinfo
+
 ## begin gnulib module getdate
 
 BUILT_SOURCES += getdate.c
