@@ -1,5 +1,8 @@
 2005-09-05  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note TmpDir config key.  Reorder config news items.  Reword
+	the [root] specification item.
+
 	* configure.in (--enable-config-override): Verify $prefix is set before
 	expanding $sysconfdir.
 
