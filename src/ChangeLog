@@ -1,5 +1,8 @@
 2005-09-06  Derek Price  <derek@ximbiot.com>
 
+	* parseinfo.c (parse_config): Don't check hostname without client
+	or server support.
+
 	* main.c (main): Set cvs_cmd_name before calling parseServerOptions.
 
 2005-09-05  Derek Price  <derek@ximbiot.com>

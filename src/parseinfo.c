@@ -491,9 +491,10 @@ parse_config (const char *cvsroot, const char *path)
 
 	    /* Ignoring method.  */
 	    if (!tmproot
-		/* FIXME: Check isThisHost (tmproot->hostname).  */
+#if defined CLIENT_SUPPORT || defined SERVER_SUPPORT
 		|| (tmproot->method != local_method
 		    && (!tmproot->hostname || !isThisHost (tmproot->hostname)))
+#endif /* CLIENT_SUPPORT || SERVER_SUPPORT */
 		|| !isSamePath (tmproot->directory, cvsroot))
 	    {
 		if (processed) processing = false;
