@@ -14701,6 +14701,14 @@ group to using @code{cvs admin} to change the default keyword
 substitution mode, lock revisions, unlock revisions, and
 replace the log message, use @samp{UserAdminOptions=klum}.
 
+@cindex temporary directory, in CVSROOT/config
+@cindex TmpDir, in CVSROOT/config
+@item TmpDir=@var{path}
+Specify @var{path} as the directory to create temporary files in.  This
+takes precedence over the @code{$TMPDIR} environment variable
+(@pxref{Environment variables}), but not the @samp{-T} global command line
+option (@pxref{Global options}).
+
 @cindex format strings, config admin file
 @cindex config (admin file), updating legacy repositories
 @cindex compatibility notes, config admin file
