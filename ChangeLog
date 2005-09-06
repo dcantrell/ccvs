@@ -1,3 +1,7 @@
+2005-09-06  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note Kerberos4 build fix.
+
 2005-09-05  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note TmpDir config key.  Reorder config news items.  Reword

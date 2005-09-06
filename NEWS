@@ -3,6 +3,8 @@ Changes since 1.12.12:
 
 NEW FEATURES
 
+* A minor problem preventing build of the Kerberos4 client has been fixed.
+
 * The path to the config file may be set as an argument to the CVS server
   commands.
 
