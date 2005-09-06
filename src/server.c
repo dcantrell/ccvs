@@ -9,12 +9,16 @@
    GNU General Public License for more details.  */
 
 #include "cvs.h"
-#include "watch.h"
+
+/* CVS */
 #include "edit.h"
 #include "fileattr.h"
+#include "watch.h"
+
+/* GNULIB */
+#include "buffer.h"
 #include "getline.h"
 #include "getnline.h"
-#include "buffer.h"
 
 int server_active = 0;
 

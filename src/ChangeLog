@@ -1,5 +1,7 @@
 2005-09-06  Derek Price  <derek@ximbiot.com>
 
+	* server.c: Reorganize includes slightly and alphabetize sections.
+
 	* server.c: #include canon-host.h.
 	(gserver_authenticate_connection): Print out canon-host errors.
 	* subr.c: #include canon-host.h.
