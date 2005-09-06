@@ -464,7 +464,8 @@ commitid="[a-zA-Z0-9]*"
 
 # Regexp to match the name of a temporary file (from cvs_temp_name).
 # This appears in certain diff output.
-tempname="[-a-zA-Z0-9/.%_]*"
+tempfile="[-a-zA-Z0-9.%_]*"
+# $tempname set after $TMPDIR, below.
 
 # Regexp to match a date in RFC822 format (as amended by RFC1123).
 RFCDATE="[a-zA-Z0-9 ][a-zA-Z0-9 ]* [0-9:][0-9:]* -0000"
@@ -717,6 +718,11 @@ export TMPDIR
 if test -d $TMPDIR; then :; else
     mkdir $TMPDIR
 fi
+
+
+# Regexp to match the the full path to a temporary file (from cvs_temp_name).
+# This appears in certain diff output.
+tempname=$TMPDIR/$tempfile
 
 # Make sure various tools work the way we expect, or try to find
 # versions that do.
@@ -19203,7 +19209,7 @@ $SPROG commit: Rebuilding administrative file database"
 	  cd ../first-dir
 	  echo line2 >>file1
 	  dotest_fail info-v2 "${testcvs} -q ci -m bogus" \
-"vscript $TMPDIR/$tempname file1 1\.3
+"vscript $tempname file1 1\.3
 No BugId found\.
 ${SPROG} \[commit aborted\]: Message verification failed"
 
@@ -19212,7 +19218,7 @@ BugId: 42
 and many more lines after it
 EOF
 	  dotest info-v3 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
-"vscript $TMPDIR/$tempname file1 1\.3
+"vscript $tempname file1 1\.3
 $CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.4; previous revision: 1\.3"
 	  rm ${TESTDIR}/comment.tmp
@@ -19223,19 +19229,19 @@ new revision: 1\.4; previous revision: 1\.3"
 	  touch file2
 	  dotest_fail info-v4 \
 	    "${testcvs} import -m bogus first-dir/another x y" \
-"vscript $TMPDIR/$tempname - Imported sources NONE
+"vscript $tempname - Imported sources NONE
 No BugId found\.
 ${SPROG} \[import aborted\]: Message verification failed"
 
 	  # now verify that directory dependent verifymsgs work
 	  dotest info-v5 \
 	    "${testcvs} import -m bogus first-dir/yet-another x y" \
-"vscript2 $TMPDIR/$tempname - Imported sources NONE
+"vscript2 $tempname - Imported sources NONE
 $TESTDIR/wnt/another-dir
 N first-dir/yet-another/file2
 
 No conflicts created by this import" \
-"vscript2 $TMPDIR/$tempname - Imported sources NONE
+"vscript2 $tempname - Imported sources NONE
 $CVSROOT_DIRNAME/first-dir/yet-another
 N first-dir/yet-another/file2
 
@@ -19254,13 +19260,13 @@ No conflicts created by this import"
 	  if $remote; then
 	    dotest_fail info-v6r \
 	      "${testcvs} import -m bogus first-dir/yet-another/and-another x y" \
-"vscript2 $TMPDIR/$tempname - Imported sources NONE
+"vscript2 $tempname - Imported sources NONE
 $CVSROOT_DIRNAME/first-dir/yet-another/and-another
 $SPROG \[import aborted\]: Message verification failed"
 	  else
 	    dotest info-v6 \
 	      "${testcvs} import -m bogus first-dir/yet-another/and-another x y" \
-"vscript2 $TMPDIR/$tempname - Imported sources NONE
+"vscript2 $tempname - Imported sources NONE
 $TESTDIR/wnt/another-dir
 N first-dir/yet-another/and-another/file2
 
@@ -19298,7 +19304,7 @@ BugId: new
 See what happens next.
 EOF
 	  dotest info-reread-2 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
-"vscript $TMPDIR/$tempname file1 1\.4
+"vscript $tempname file1 1\.4
 $CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.5; previous revision: 1\.4"
 	  dotest info-reread-3 "${testcvs} -q log -N -r1.5 file1" "
@@ -19324,7 +19330,7 @@ BugId: new
 See what happens next with stat.
 EOF
 	  dotest info-reread-5 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
-"vscript $TMPDIR/$tempname file1 1\.5
+"vscript $tempname file1 1\.5
 $CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.6; previous revision: 1\.5"
 	  dotest info-reread-6 "${testcvs} -q log -N -r1.6 file1" "
@@ -19350,7 +19356,7 @@ BugId: new
 See what happens next.
 EOF
 	  dotest info-reread-8 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
-"vscript $TMPDIR/$tempname file1 1\.6
+"vscript $tempname file1 1\.6
 $CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.7; previous revision: 1\.6"
 	  dotest info-reread-6 "${testcvs} -q log -N -r1.7 file1" "
@@ -20317,7 +20323,7 @@ EOF
 	  chmod a+x $TESTDIR/config4/verify
 	  dotest config4-1 \
 "$testcvs -q ci -fmtest-tmpdir config" \
-"$TESTDIR/config4/tmp/$tempname
+"$TESTDIR/config4/tmp/$tempfile
 $CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
