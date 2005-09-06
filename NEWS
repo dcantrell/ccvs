@@ -3,11 +3,14 @@ Changes since 1.12.12:
 
 NEW FEATURES
 
-* config files may specify sections of directives specific to one or more
-  repositories and not others.
-
 * The path to the config file may be set as an argument to the CVS server
   commands.
+
+* The temporary directory may now be specified in the config file, via
+  the new TmpDir key.
+
+* Sections of directives specific to one or more repositories and not others
+  may now be specified in the config file.
 
 * %{sV} format strings are now available to the verifymsg trigger, similar to
   the %{stVv} available to loginfo.
