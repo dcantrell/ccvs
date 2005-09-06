@@ -1,5 +1,10 @@
 2005-09-06  Derek Price  <derek@ximbiot.com>
 
+	Close <http://savannah.nongnu.org/bugs/?func=detailitem&item_id=14448>.
+	* kerberos-client.c (start_kerberos4_server): Pass new root arg to
+	make_bufs_from_fds.
+	(Patch from <Manuel.Guijarro.AT.cern.ch>.)
+
 	* server.c: Reorganize includes slightly and alphabetize sections.
 
 	* server.c: #include canon-host.h.

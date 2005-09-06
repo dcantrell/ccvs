@@ -95,7 +95,7 @@ start_kerberos4_server (cvsroot_t *root, struct buffer **to_server_p,
     free (hname);
 
     /* Give caller the values it wants. */
-    make_bufs_from_fds (s, s, 0, to_server_p, from_server_p, 1);
+    make_bufs_from_fds (s, s, 0, root, to_server_p, from_server_p, 1);
 }
 
 void
