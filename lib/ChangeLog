@@ -1,5 +1,8 @@
 2005-09-06  Derek Price  <derek@ximbiot.com>
 
+	* getpass.c, regcomp.c, regex_internal.c, regex_internal.h, regexec.c:
+	Update from GNULIB.
+
 	Update from GNULIB with alpha-quality patch.
 	* Makefile.am: Add getaddrinfo cruft.
 	* canon-host.c: Updated to use getaddrinfo module.
