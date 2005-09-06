@@ -1,5 +1,7 @@
 2005-09-05  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (config2): Don't overwrite potentially significant config.
+
 	* sanity.sh (info): Use $tempfile instead of reproducing the regex.
 
 	* sanity.sh (info): Accept `.' in temp file names.
