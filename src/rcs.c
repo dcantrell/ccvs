@@ -8078,7 +8078,7 @@ RCS_putdtree (RCSNode *rcs, char *rev, FILE *fp)
        if the trunk has a huge number of revisions and the program
        stack is not big, a stack overflow could occur, so this
        nonrecursive version was developed to be more safe. */
-    Node *k, *branchlist, *onebranch;
+    Node *branchlist, *onebranch;
     List *branches;
     List *onebranchlist;
 
