@@ -717,7 +717,7 @@ cvs_temp_file (char **filename)
 
     assert (filename != NULL);
 
-    fn = Xasprintf ("%s/%s", Tmpdir, "cvsXXXXXX");
+    fn = Xasprintf ("%s/%s", get_cvs_tmp_dir (), "cvsXXXXXX");
     fd = mkstemp (fn);
 
     /* a NULL return will be interpreted by callers as an error and

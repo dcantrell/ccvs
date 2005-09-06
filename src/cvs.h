@@ -364,7 +364,7 @@ typedef enum direnter_type Dtype;
 #define PIOPT_ALL 1	/* accept "all" keyword */
 
 extern const char *program_name, *program_path, *cvs_cmd_name;
-extern char *Tmpdir, *Editor;
+extern char *Editor;
 extern int cvsadmin_root;
 extern char *CurDir;
 extern int really_quiet, quiet;
@@ -372,6 +372,8 @@ extern int use_editor;
 extern int cvswrite;
 extern mode_t cvsumask;
 
+const char *get_cvs_tmp_dir (void);
+void push_env_tmp_dir (void);
 
 
 /* This global variable holds the global -d option.  It is NULL if -d

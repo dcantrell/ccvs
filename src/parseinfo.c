@@ -645,6 +645,16 @@ parse_config (const char *cvsroot, const char *path)
 		}
 	    }
 	}
+	else if (strcmp (line, "TmpDir") == 0)
+	{
+	    if (retval->TmpDir) free (retval->TmpDir);
+	    retval->TmpDir = expand_path (p, cvsroot, false, infopath, ln);
+	    /* Could try some validity checking, like whether we can
+	     * opendir it or something, but I don't see any particular
+	     * reason to do that now rather than when the first function
+	     * tries to create a temp file.
+	     */
+	}
 	else if (strcmp (line, "UserAdminOptions") == 0)
 	    retval->UserAdminOptions = xstrdup (p);
 	else if (strcmp (line, "UseNewInfoFmtStrings") == 0)

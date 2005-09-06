@@ -1633,7 +1633,7 @@ if test x"$*" = x; then
 	tests="${tests} ignore ignore-on-branch binfiles binfiles2 binfiles3"
 	tests="${tests} mcopy binwrap binwrap2"
 	tests="${tests} binwrap3 mwrap info taginfo posttag"
-	tests="$tests config config2 config3"
+	tests="$tests config config2 config3 config4"
 	tests="${tests} serverpatch log log2 logopt ann ann-id"
 	# Repository Storage (RCS file format, CVS lock files, creating
 	# a repository without "cvs init", &c).
@@ -20288,6 +20288,45 @@ T [0-9-]* [0-9:]* ${PLUS}0000 $username config3 \[testtag:A\]"
 	  cd ..
 	  rm -r config3
 	  modify_repo rm -rf $CVSROOT_DIRNAME/config3
+	  ;;
+
+
+
+	config4)
+	  # TmpDir
+	  mkdir config4
+	  cd config4
+
+	  dotest config4-init-1 "$testcvs -q co CVSROOT" "U CVSROOT/$DOTSTAR"
+	  cd CVSROOT
+	  mkdir $TESTDIR/config4/tmp
+	  echo "TmpDir=$TESTDIR/config4/tmp" >>config
+	  echo "DEFAULT $TESTDIR/config4/verify %l" >>verifymsg
+	  dotest config4-init-2 "$testcvs -q ci -m change-tmpdir" \
+"$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$CVSROOT_DIRNAME/CVSROOT/verifymsg,v  <--  verifymsg
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
+
+	  cat >$TESTDIR/config4/verify <<EOF
+#! /bin/sh
+echo \$1
+exit 0
+EOF
+	  chmod a+x $TESTDIR/config4/verify
+	  dotest config4-1 \
+"$testcvs -q ci -fmtest-tmpdir config" \
+"$TESTDIR/config4/tmp/$tempname
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
+
+	  dokeep
+	  restore_adm
+	  cd ../..
+	  rm -r config4
+	  modify_repo rm -rf $CVSROOT_DIRNAME/config4
 	  ;;
 
 

@@ -20,6 +20,7 @@ struct config
     char *logHistory;
     char *HistoryLogPath;
     char *HistorySearchPath;
+    char *TmpDir;
 
     /* Should the logmsg be re-read during the do_verify phase?
      * RereadLogAfterVerify=no|stat|yes
