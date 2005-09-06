@@ -8,6 +8,7 @@ lib/asprintf.c
 lib/atexit.c
 lib/basename.c
 lib/canon-host.c
+lib/canon-host.h
 lib/canonicalize.c
 lib/canonicalize.h
 lib/closeout.c
