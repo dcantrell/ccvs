@@ -25,6 +25,7 @@ int server_active = 0;
 #endif	/* defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT) */
 
 #if defined (HAVE_GSSAPI) && defined (SERVER_SUPPORT)
+# include "canon-host.h"
 # include "gssapi-client.h"
 
 /* This stuff isn't included solely with SERVER_SUPPORT since some of these
@@ -7342,9 +7343,7 @@ error 0 kerberos: %s\n", krb_get_err_text(status));
 
 
 
-#ifdef HAVE_GSSAPI
-char *canon_host (const char *host);
-
+# ifdef HAVE_GSSAPI /* && SERVER_SUPPORT */
 /* Authenticate a GSSAPI connection.  This is called from
  * pserver_authenticate_connection, and it handles success and failure
  * the same way.
@@ -7369,8 +7368,8 @@ gserver_authenticate_connection (void)
 
     hn = canon_host (server_hostname);
     if (!hn)
-	error (1, 0, "can't get canonical hostname for `%s'",
-	       server_hostname);
+	error (1, 0, "can't get canonical hostname for `%s': %s",
+	       server_hostname, ch_strerror ());
 
     sprintf (buf, "cvs@%s", hn);
     free (hn);
@@ -7471,7 +7470,7 @@ gserver_authenticate_connection (void)
     fflush (stdout);
 }
 
-#endif /* HAVE_GSSAPI */
+# endif /* HAVE_GSSAPI */
 
 #endif /* SERVER_SUPPORT */
 

@@ -16,6 +16,7 @@
 #include "cvs.h"
 
 #include "canonicalize.h"
+#include "canon-host.h"
 #include "getline.h"
 #include "vasprintf.h"
 #include "vasnprintf.h"
@@ -1979,9 +1980,6 @@ xcanonicalize_file_name (const char *path)
 
 
 
-/* From GNULIB's canon-host module.  */
-extern char *canon_host (const char *host);
-
 /* Declared in main.c.  */
 extern char *server_hostname;
 
@@ -2010,10 +2008,12 @@ isThisHost (const char *otherhost)
 
     fqdno = canon_host (otherhost);
     if (!fqdno)
-	error (1, 0, "Name lookup failed for `%s'", otherhost);
+	error (1, 0, "Name lookup failed for `%s': %s",
+	       otherhost, ch_strerror ());
     fqdns = canon_host (server_hostname);
     if (!fqdns)
-	error (1, 0, "Name lookup failed for `%s'", server_hostname);
+	error (1, 0, "Name lookup failed for `%s': %s",
+	       server_hostname, ch_strerror ());
 
     retval = !strcasecmp (fqdns, fqdno);
 
