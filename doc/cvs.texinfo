@@ -14707,7 +14707,8 @@ replace the log message, use @samp{UserAdminOptions=klum}.
 Specify @var{path} as the directory to create temporary files in.  This
 takes precedence over the @code{$TMPDIR} environment variable
 (@pxref{Environment variables}), but not the @samp{-T} global command line
-option (@pxref{Global options}).
+option (@pxref{Global options}).  This option first appeared with @sc{cvs}
+release 1.12.13.
 
 @cindex format strings, config admin file
 @cindex config (admin file), updating legacy repositories

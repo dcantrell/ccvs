@@ -1,5 +1,7 @@
 2005-09-05  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (config): Mention TmpDir first appeared in 1.12.13.
+
 	* cvs.texinfo (config): Describe new TmpDir option.
 
 2005-09-04  Derek Price  <derek@ximbiot.com>
