@@ -8310,16 +8310,39 @@ Current versions of @sc{cvs} do not run @sc{rcs}
 programs; for compatibility this option is accepted,
 but it does nothing.
 
-@cindex TMPDIR, overriding
-@cindex Overriding TMPDIR
+@cindex TMPDIR, environment variable
+@cindex temporary file directory, set via command line
+@cindex temporary file directory, set via environment variable
+@cindex temporary file directory, set via config
+@cindex temporary files, location of
 @item -T @var{tempdir}
 Use @var{tempdir} as the directory where temporary files are
-located.  Overrides the setting of the @code{$TMPDIR} environment
-variable and any precompiled directory.  This parameter should be
-specified as an absolute pathname.
-(When running client/server, @samp{-T} affects only the local process;
+located.
+
+The @sc{cvs} client and server store temporary files in a temporary directory.
+The path to this temporary directory is set via, in order of precedence:
+
+@itemize @bullet
+@item
+The argument to the global @samp{-T} option.
+
+@item
+The value set for @code{TmpDir} in the config file (server only -
+@pxref{config}).
+
+@item
+The contents of the @code{$TMPDIR} environment variable (@code{%TMPDIR%} on
+Windows - @pxref{Environment variables}).
+
+@item
+/tmp
+
+@end itemize
+
+Temporary directories should always be specified as an absolute pathname.
+When running a CVS client, @samp{-T} affects only the local process;
 specifying @samp{-T} for the client has no effect on the server and
-vice versa.)
+vice versa.
 
 @cindex CVSROOT, overriding
 @cindex Overriding CVSROOT
@@ -14701,14 +14724,13 @@ group to using @code{cvs admin} to change the default keyword
 substitution mode, lock revisions, unlock revisions, and
 replace the log message, use @samp{UserAdminOptions=klum}.
 
-@cindex temporary directory, in CVSROOT/config
-@cindex TmpDir, in CVSROOT/config
+@cindex temporary files, location of
+@cindex temporary directory, set in config
+@cindex TmpDir, in config
 @item TmpDir=@var{path}
-Specify @var{path} as the directory to create temporary files in.  This
-takes precedence over the @code{$TMPDIR} environment variable
-(@pxref{Environment variables}), but not the @samp{-T} global command line
-option (@pxref{Global options}).  This option first appeared with @sc{cvs}
-release 1.12.13.
+Specify @var{path} as the directory to create temporary files in.
+@xref{Global options} for more on setting the path to the temporary
+directory.  This option first appeared with @sc{cvs} release 1.12.13.
 
 @cindex format strings, config admin file
 @cindex config (admin file), updating legacy repositories
@@ -14815,7 +14837,8 @@ some level of compression.
 @cindex Reference manual for variables
 
 This is a complete list of all environment variables
-that affect @sc{cvs}.
+that affect @sc{cvs} (Windows users, please bear with this list;
+$VAR is equivalent to %VAR% at the Windows command prompt).
 
 @table @code
 @cindex CVSIGNORE, environment variable
@@ -14978,34 +15001,11 @@ Used under OS/2 only.  It specifies the name of the
 command interpreter and defaults to @sc{cmd.exe}.
 
 @cindex TMPDIR, environment variable
+@cindex temporary file directory, set via environment variable
+@cindex temporary files, location of
 @item $TMPDIR
-@cindex TMP, environment variable
-@itemx $TMP
-@cindex TEMP, environment variable
-@itemx $TEMP
-@cindex Temporary files, location of
-@c This is quite nuts.  We don't talk about tempnam
-@c or mkstemp which we sometimes use.  The discussion
-@c of "Global options" is semi-incoherent.
-@c I'm not even sure those are the only inaccuracies.
-@c Furthermore, the conventions are
-@c pretty crazy and they should be simplified.
-Directory in which temporary files are located.
-The @sc{cvs} server uses
-@code{TMPDIR}.  @xref{Global options}, for a
-description of how to specify this.
-Some parts of @sc{cvs} will always use @file{/tmp} (via
-the @code{tmpnam} function provided by the system).
-
-On Windows NT, @code{TMP} is used (via the @code{_tempnam}
-function provided by the system).
-
-The @code{patch} program which is used by the @sc{cvs}
-client uses @code{TMPDIR}, and if it is not set, uses
-@file{/tmp} (at least with GNU patch 2.1).  Note that
-if your server and client are both running @sc{cvs}
-1.9.10 or later, @sc{cvs} will not invoke an external
-@code{patch} program.
+Directory in which temporary files are located.  @xref{Global options} for
+more on setting the temporary directory.
 
 @cindex CVS_PID, environment variable
 @item $CVS_PID
