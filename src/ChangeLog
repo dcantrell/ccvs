@@ -1,3 +1,10 @@
+2005-09-06  Mark D. Baushke  <mdb@gnu.org>
+
+	Close <https://savannah.nongnu.org/bugs/?func=detailitem&item_id=14435>.
+	* rcs.c (RCS_putdtree): Avoid stack overflow which may be
+	possible with excessive recursive calls to RCS_putdtree().
+	(Patch from Serg Masyutin.)
+
 2005-09-06  Derek Price  <derek@ximbiot.com>
 
 	Close <http://savannah.nongnu.org/bugs/?func=detailitem&item_id=14448>.
