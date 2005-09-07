@@ -304,8 +304,8 @@ RCS_parse (file, repos)
     }
     else if (! existence_error (errno))
     {
-	free ( rcsfile );
 	error (0, errno, "cannot open %s", rcsfile);
+	free (rcsfile);
     }
 
     return retval;
