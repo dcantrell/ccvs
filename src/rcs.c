@@ -277,26 +277,26 @@ RCS_parse (const char *file, const char *repos)
        in the cache.  */
     rcsbuf_cache_close ();
 
-    if ((rcsfile = locate_rcs (repos, file, &inattic)) == NULL)
+    if (!(rcsfile = locate_rcs (repos, file, &inattic)))
     {
 	/* Handle the error cases */
     }
-    else if ((fp = CVS_FOPEN (rcsfile, FOPEN_BINARY_READ)) != NULL) 
+    else if ((fp = CVS_FOPEN (rcsfile, FOPEN_BINARY_READ))) 
     {
-        rcs = RCS_parsercsfile_i(fp, rcsfile);
-	if (rcs != NULL)
+	rcs = RCS_parsercsfile_i (fp, rcsfile);
+	if (rcs)
 	{	
 	    rcs->flags |= VALID;
-	    if ( inattic )
+	    if (inattic)
 		rcs->flags |= INATTIC;
 	}
 
-	free ( rcsfile );
+	free (rcsfile);
 	retval = rcs;
     }
-    else if (! existence_error (errno))
+    else if (!existence_error (errno))
     {
-	error (0, errno, "cannot open %s", rcsfile);
+	error (0, errno, "cannot open `%s'", rcsfile);
 	free (rcsfile);
     }
 
