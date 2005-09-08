@@ -1,3 +1,7 @@
+2005-09-08  Larry Jones  <lawrence.jones@ugs.com>
+
+	* server.c (parseServerOptions): getopt() returns int, not char.
+
 2005-09-07  Derek Price  <derek@ximbiot.com>
 
 	* rcs.c (RCS_parse): Minor reformatting.
