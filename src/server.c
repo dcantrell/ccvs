@@ -6271,7 +6271,8 @@ static const char *const server_usage[] =
 void
 parseServerOptions (int argc, char **argv)
 {
-    char c;
+    int c;
+
     optind = 0;
     while ((c = getopt (argc, argv, "+c:")) != -1)
     {
