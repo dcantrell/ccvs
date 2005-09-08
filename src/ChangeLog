@@ -1,5 +1,7 @@
 2005-09-07  Derek Price  <derek@ximbiot.com>
 
+	* rcs.c (RCS_parse): Minor reformatting.
+
 	Close <http://savannah.nongnu.org/bugs/?func=detailitem&item_id=14462>.
 	* rcs.c (RCS_parse): Free variable *after* using it for the last time.
 
