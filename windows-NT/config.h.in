@@ -113,10 +113,6 @@
    message to be appended to the temp file when the editor is started. */
 #undef FORCE_USE_EDITOR
 
-/* Define to rpl_ if the glob replacement functions and variables should be
-   used. */
-#define GLOB_PREFIX rpl_
-
 /* Define to an alternative value if GSS_C_NT_HOSTBASED_SERVICE isn't defined
    in the gssapi.h header file. MIT Kerberos 1.2.1 requires this. Only
    relevant when using GSSAPI. */
@@ -1140,9 +1136,6 @@
 
 /* Define to force lib/regex.c to define re_comp et al. */
 #define _REGEX_RE_COMP 1
-
-/* Define to `1' if <sys/cdefs.h> is *not* available on this system. */
-#define _SYS_CDEFS_H 1
 
 /* Define for Solaris 2.5.1 so uint32_t typedef from <sys/synch.h>,
    <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the
