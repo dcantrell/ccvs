@@ -1,3 +1,9 @@
+2005-09-09  Derek Price  <derek@ximbiot.com>
+
+	Install glibc porting changes.
+	* glob.c, glob_.h: Update with alpha-GNULIB.
+	* glob-libc.h: New file from same.
+
 2005-09-08  Derek Price  <derek@ximbiot.com>
 
 	* getaddrinfo.h: Don't assume HAVE_GETADDRINFO will be defined when the
