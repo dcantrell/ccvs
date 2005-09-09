@@ -188,7 +188,6 @@ libcvs_a_SOURCES += gettext.h
 ## begin gnulib module glob
 
 BUILT_SOURCES += $(GLOB_H)
-EXTRA_DIST += glob_.h
 
 # We need the following in order to create an <getopt.h> when the system
 # doesn't have one that works with the given compiler.
