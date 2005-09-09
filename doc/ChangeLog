@@ -1,5 +1,9 @@
 2005-09-09  Larry Jones  <lawrence.jones@ugs.com>
 
+	* cvs.texinfo (Error messages): Move out of sync message to correct
+	location and reword.
+	Clean up bad cross reference syntax.
+
 	* cvs.texinfo (Error messages): Add signal 11 message.
 
 2005-09-06  Derek Price  <derek@ximbiot.com>

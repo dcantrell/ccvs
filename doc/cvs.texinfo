@@ -14559,7 +14559,7 @@ Currently defined keywords are:
 Request that @sc{cvs} look for its history information in files matching
 @var{pattern}, which is a standard UNIX file glob.  If @var{pattern} matches
 multiple files, all will be searched in lexicographically sorted order.
-See @xref{history} and @xref{history file}, for more.
+@xref{history}, and @ref{history file}, for more.
 
 If no value is supplied for this option, it defaults to
 @file{$CVSROOT/CVSROOT/history}.
@@ -14581,7 +14581,7 @@ subdirectory (@file{history}) of the configuration directory (@file{CVSROOT})
 with a name equal to the current date representation in the ISO8601 format (for
 example, on May 11, 2005, @sc{cvs} would attempt to log its history under the
 repository root directory in a file named @file{CVSROOT/history/2005-05-11}).
-See @xref{history} and @xref{history file}, for more.
+@xref{history}, and @ref{history file}, for more.
 
 If no value is supplied for this option, it defaults to
 @file{$CVSROOT/CVSROOT/history}.
@@ -14754,7 +14754,7 @@ The default is @samp{yes}.  For more on pserver, see
 @cindex temporary directory, set in config
 @item TmpDir=@var{path}
 Specify @var{path} as the directory to create temporary files in.
-@xref{Global options} for more on setting the path to the temporary
+@xref{Global options}, for more on setting the path to the temporary
 directory.  This option first appeared with @sc{cvs} release 1.12.13.
 
 @cindex TopLevelAdmin, in CVSROOT/config
@@ -15004,8 +15004,8 @@ command interpreter and defaults to @sc{cmd.exe}.
 @cindex temporary file directory, set via environment variable
 @cindex temporary files, location of
 @item $TMPDIR
-Directory in which temporary files are located.  @xref{Global options} for
-more on setting the temporary directory.
+Directory in which temporary files are located.
+@xref{Global options}, for more on setting the temporary directory.
 
 @cindex CVS_PID, environment variable
 @item $CVS_PID
@@ -15445,6 +15445,24 @@ logged in as "root".  (You can disable this option by passing the
 On some systems this means editing the appropriate @file{config.h} file
 before building @sc{cvs}.)
 
+@item cvs [server aborted]: Secondary out of sync with primary!
+
+This usually means that the version of @sc{cvs} running on a secondary
+server is incompatible with the version running on the primary server
+(@pxref{Write proxies}).
+This will not occur if the client supports redirection.
+
+It is not the version number that is significant here, but the list of
+supported requests that the servers provide to the client.
+For example, even if both servers were the same version,
+if the secondary was compiled with GSSAPI support and the primary was not,
+the list of supported requests provided by the two servers
+would be different and the secondary would not work as a transparent
+proxy to the primary.
+Conversely, even if the two servers were radically different versions
+but both provided the same list of valid requests to the client,
+the transparent proxy would succeed.
+
 @item Terminated with fatal signal 11
 This message usually indicates that @sc{cvs} (the server, if you're
 using client/server mode) has run out of (virtual) memory.
@@ -15547,20 +15565,6 @@ such as:
 vi $*
 exit 0
 @end example
-
-@item cvs [server aborted]: Secondary out of sync with primary!
-
-This usually means that the version of @sc{cvs} running on a secondary server
-and a primary server (@pxref{Write proxies}) are not the same.  This will not
-occur if the client support redirection.
-
-It is not the version number that is significant here, but the list of
-supported requests that the servers provide to the client.  Thus, if the
-secondary was compiled with GSSAPI support and the primary was not, then the
-list of supported requests provided by the two servers will be different and
-the secondary will not work as a transparent proxy to the primary.  Conversely,
-one server could be version 1.12.10 and the other version 1.12.11 if they both
-provided the same list of valid requests to the client.
 
 @c "warning: foo was lost" and "no longer pertinent" (both normal).
 @c Would be nice to write these up--they are
