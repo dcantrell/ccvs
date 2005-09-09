@@ -1,3 +1,7 @@
+2005-09-09  Larry Jones  <lawrence.jones@ugs.com>
+
+	* cvs.texinfo (Error messages): Add signal 11 message.
+
 2005-09-01  Derek Price  <derek@ximbiot.com>
 
 	* cvs.man.footer: Update links.
