@@ -14161,6 +14161,19 @@ logged in as "root".  (You can disable this option by passing the
 On some systems this means editing the appropriate @file{config.h} file
 before building @sc{cvs}.)
 
+@item Terminated with fatal signal 11
+This message usually indicates that @sc{cvs} (the server, if you're
+using client/server mode) has run out of (virtual) memory.
+Although @sc{cvs} tries to catch the error and issue a more meaningful
+message, there are many circumstances where that is not possible.
+If you appear to have lots of memory available to the system,
+the problem is most likely that you're running into a system-wide
+limit on the amount of memory a single process can use or a
+similar process-specific limit.
+The mechanisms for displaying and setting such limits vary from
+system to system, so you'll have to consult an expert for your
+particular system if you don't know how to do that.
+
 @item Too many arguments!
 This message is typically printed by the @file{log.pl}
 script which is in the @file{contrib} directory in the
