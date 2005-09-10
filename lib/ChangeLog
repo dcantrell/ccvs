@@ -1,3 +1,9 @@
+2005-09-10  Larry Jones  <lawrence.jones@ugs.com>
+
+	* canon-host.c (canon_host_r): Designated initializers are C99 only.
+	* getaddrinfo.c (getaddrinfo): Can't do arithmetic on void *.  Fix
+	incorrect hints member name.  Fix const mismatch.
+
 2005-09-09  Derek Price  <derek@ximbiot.com>
 
 	Install glibc porting changes.

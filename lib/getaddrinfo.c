@@ -129,7 +129,7 @@ getaddrinfo (const char *restrict nodename,
 #if HAVE_IPV6
     case PF_INET6:
       {
-	struct sockaddr_in6 *sinp = (void *) tmp + sizeof (*tmp);
+	struct sockaddr_in6 *sinp = (char *) tmp + sizeof (*tmp);
 
 	if (se)
 	  sinp->sin6_port = se->s_port;
@@ -148,7 +148,7 @@ getaddrinfo (const char *restrict nodename,
 #if HAVE_IPV4
     case PF_INET:
       {
-	struct sockaddr_in *sinp = (void *) tmp + sizeof (*tmp);
+	struct sockaddr_in *sinp = (char *) tmp + sizeof (*tmp);
 
 	if (se)
 	  sinp->sin_port = se->s_port;
@@ -169,9 +169,9 @@ getaddrinfo (const char *restrict nodename,
       return EAI_NODATA;
     }
 
-  if (hints && hints->flags & AI_CANONNAME)
+  if (hints && hints->ai_flags & AI_CANONNAME)
     {
-      char *cn;
+      const char *cn;
       if (he->h_name)
 	cn = he->h_name;
       else
