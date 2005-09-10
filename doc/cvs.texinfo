@@ -15566,9 +15566,21 @@ vi $*
 exit 0
 @end example
 
-@c "warning: foo was lost" and "no longer pertinent" (both normal).
-@c Would be nice to write these up--they are
-@c potentially confusing for the new user.
+@item cvs update: warning: @var{file} was lost
+This means that the working copy of @var{file} has been deleted
+but it has not been removed from @sc{cvs}.
+This is nothing to be concerned about,
+the update will just recreate the local file from the repository.
+(This is a convenient way to discard local changes to a file:
+just delete it and then run @code{cvs update}.)
+
+@item cvs update: warning: @var{file} is not (any longer) pertinent
+This means that the working copy of @var{file} has been deleted,
+it has not been removed from @sc{cvs} in the current working directory,
+but it has been removed from @sc{cvs} in some other working directory.
+This is nothing to be concerned about,
+the update would have removed the local file anyway.
+
 @end table
 
 @node Connection
