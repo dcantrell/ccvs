@@ -1,3 +1,7 @@
+2005-09-10  Larry Jones  <lawrence.jones@ugs.com>
+
+	* cvs.texinfo (Error messages): Add suggested messages.
+
 2005-09-09  Larry Jones  <lawrence.jones@ugs.com>
 
 	* cvs.texinfo (Error messages): Move out of sync message to correct
