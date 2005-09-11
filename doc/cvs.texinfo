@@ -8241,6 +8241,9 @@ on sticky tags/dates, @pxref{Sticky tags}).
 The tag can be either a symbolic or numeric tag, as
 described in @ref{Tags}, or the name of a branch, as
 described in @ref{Branching and merging}.
+When a command expects a specific revision,
+the name of a branch is interpreted as the most recent
+revision on that branch.
 
 Specifying the @samp{-q} global option along with the
 @samp{-r} command option is often useful, to suppress
