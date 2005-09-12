@@ -798,6 +798,23 @@ cause intermittent sandbox corruption.");
 		       CVSUMASK_ENV, cp);
 	}
 
+	/* HOSTNAME & SERVER_HOSTNAME need to be set before they are
+	 * potentially used in gserver_authenticate_connection() (called from
+	 * pserver_authenticate_connection, below).
+	 */
+	hostname = xgethostname ();
+	if (!hostname)
+	{
+            error (0, errno,
+                   "xgethostname () returned NULL, using \"localhost\"");
+            hostname = xstrdup ("localhost");
+	}
+
+	/* Keep track of this separately since the client can change
+	 * HOSTNAME on the server.
+	 */
+	server_hostname = xstrdup (hostname);
+
 #ifdef SERVER_SUPPORT
 
 # ifdef HAVE_KERBEROS
@@ -813,7 +830,6 @@ cause intermittent sandbox corruption.");
 	    cvs_cmd_name = "server";
 	}
 # endif /* HAVE_KERBEROS */
-
 
 # if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
 	if (strcmp (cvs_cmd_name, "pserver") == 0)
@@ -863,21 +879,6 @@ cause intermittent sandbox corruption.");
 
 	/* make sure we clean up on error */
 	signals_register (main_cleanup);
-
-	hostname = xgethostname ();
-	if (hostname == NULL)
-	{
-            error (0, errno,
-                   "xgethostname () returned NULL, using \"localhost\"");
-            hostname = xstrdup ("localhost");
-            
-	}
-
-	/* Keep track of this separately since the client can change
-	 * HOSTNAME on the server.
-	 */
-	server_hostname = xstrdup (hostname);
-
 
 #ifdef KLUDGE_FOR_WNT_TESTSUITE
 	/* Probably the need for this will go away at some point once
