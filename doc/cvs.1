@@ -640,9 +640,13 @@ on sticky tags/dates, see node `Sticky tags\(aq in the CVS manual).
 .SP
 The tag can be either a symbolic or numeric tag, as
 described in see node `Tags\(aq in the CVS manual, or the name of a branch, as
-described in see node `Branching and merging\(aq in the CVS manual.  When \fItag\fR is the name of a
+described in see node `Branching and merging\(aq in the CVS manual.
+When \fItag\fR is the name of a
 branch, some commands accept the optional \fIdate\fR argument to specify
-the revisions as of the given date on the branch.
+the revision as of the given date on the branch.
+When a command expects a specific revision,
+the name of a branch is interpreted as the most recent
+revision on that branch.
 .SP
 Specifying the \fB-q\fR global option along with the
 \fB-r\fR command option is often useful, to suppress
