@@ -1,3 +1,10 @@
+2005-09-11  Derek Price  <derek@ximbiot.com>
+
+	[bug #14504]
+	* main.c (main): Set server_hostname before it is used by
+	gserver_authenticate_connection.
+	(Report from Serguei E. Leontiev <leo@sai.msu.ru>.)
+
 2005-09-08  Larry Jones  <lawrence.jones@ugs.com>
 
 	* server.c (parseServerOptions): getopt() returns int, not char.
