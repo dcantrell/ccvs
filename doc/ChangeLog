@@ -1,3 +1,8 @@
+2005-09-12  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (stamp-gdt): Use texinfo, as opposed to C, comments in
+	the automatically generated getdate-cvs.texi file.
+
 2005-09-11  Larry Jones  <lawrence.jones@ugs.com>
 
 	* cvs.texinfo (Common options): Note that -r branch for a revision
