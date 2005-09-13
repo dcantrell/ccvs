@@ -1026,8 +1026,9 @@ fi
 # test.  It used to be compared to the username of the user running this test,
 # but this hasn't been true for a long time.  Regardless, I tried to get the
 # allowed character set right, based on a list in a private email from Mark
-# Baushke.
-anyusername="[a-zA-Z0-9][-_@.,$a-zA-Z0-9]*"
+# Baushke, basically the allowed names from Linux systems (plus `.', which is
+# only allowed on Gentoo Linux as of 2005-09-13).
+anyusername="[_a-zA-Z0-9][-_.$a-zA-Z0-9]*"
 
 # now make sure that tr works on NULs
 tr_tooltest1 ()
