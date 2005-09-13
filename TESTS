@@ -214,18 +214,22 @@ false when executed and are intended to be used like,
 
 
    * $testdir   = the directory this test is taking place in
-     (CVSROOT=$testdir/cvsroot or CVSROOT=:fork:$testdir/cvsroot)
+                  (CVSROOT=$testdir/cvsroot or CVSROOT=:fork:$testdir/cvsroot)
    * $testcvs   = full path to the cvs executable we are testing
    * $PLUS      = expr dependant uninterpreted '+' since this can vary
    * $DOTSTAR   = expr dependant _interpreted_ .* since some exprs don't match
                   EOL
-   * $username  = regexp to match a username
+   * $username  = the username of the user running the tests
+   * $username8 = the first 8 characters of $username, output by some system
+                  and CVS commands
+   * $anyusername
+                = regexp to match any valid system or CVS username
    * $hostname  = regexp to match a hostname
    * $SPROG     = regexp to match server progname in CVS error messages.  For
                   tests run in local and remote mode, this is usually the
                   string to test for, since some messages can be printed either
                   by the CVS client or CVS server, dependant on the mode.  In
-                  local mode it will = $PROG.
+                  local mode it will = $CPROG.
    * $CPROG     = regexp to match client progname in CVS error messages.  Use
                   this to match error messages known to be printed only from
                   the CVS client.
