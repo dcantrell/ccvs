@@ -666,6 +666,11 @@ else
   exit 1
 fi
 
+# Only 8 characters of $username appear in output.
+if test `echo $username |wc -c` -gt 8; then
+  username=`echo $username |sed 's/^\(........\).*/\1/'`
+fi
+
 # now make sure that tr works on NULs
 tr_tooltest1 ()
 {
@@ -16484,6 +16489,10 @@ ${PROG} update: nonmergeable file needs merge
 ${PROG} update: revision 1\.3 from repository is now in binfile
 ${PROG} update: file from working directory is now in \.#binfile\.1\.2
 C binfile"
+	  dotest binfiles-con1b "$testcvs -q up" "C binfile"
+
+exit
+
 	  dotest binfiles-con2 "cmp binfile ../../1/binfile.dat" ''
 	  dotest binfiles-con3 "cat .#binfile.1.2" 'edits in dir 2'
 
