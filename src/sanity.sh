@@ -1015,6 +1015,11 @@ else
   exit 1
 fi
 
+# Only 8 characters of $username appear in output.
+if test `echo $username |wc -c` -gt 8; then
+  username=`echo $username |sed 's/^\(........\).*/\1/'`
+fi
+
 # now make sure that tr works on NULs
 tr_tooltest1 ()
 {
