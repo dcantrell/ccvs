@@ -211,11 +211,7 @@ echo "running status, try the command: \`tail -f check.log' from another window.
 # special characters we are probably in big trouble.
 PROG=`basename ${testcvs}`
 
-# Regexp to match an author name.  I'm not really sure what characters
-# should be here.  a-zA-Z obviously.  People complained when 0-9 were
-# not allowed in usernames.  Other than that I'm not sure.
-username="[-a-zA-Z0-9][-a-zA-Z0-9]*"
-author="[-a-zA-Z0-9][-a-zA-Z0-9]*"
+# Match the hostname
 hostname="[-_.a-zA-Z0-9]*"
 
 # Regexp to match the name of a temporary file (from cvs_temp_name).
@@ -666,10 +662,20 @@ else
   exit 1
 fi
 
-# Only 8 characters of $username appear in output.
+# Only 8 characters of $username appear in some output.
 if test `echo $username |wc -c` -gt 8; then
-  username=`echo $username |sed 's/^\(........\).*/\1/'`
+  username8=`echo $username |sed 's/^\(........\).*/\1/'`
+else
+  username8=$username
 fi
+
+# Rarely, we need to match any username, not just the name of the user
+# running this test.
+#
+# I'm not really sure what characters should be here.  a-zA-Z obviously.
+# People complained when 0-9 were not allowed in usernames.  Other than that
+# I'm not sure.
+anyusername="[-a-zA-Z0-9][-a-zA-Z0-9]*"
 
 # now make sure that tr works on NULs
 tr_tooltest1 ()
@@ -2306,8 +2312,8 @@ done"
 '
 Annotations for sdir/ssdir/ssfile
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.1          .'"${username}"' *[0-9a-zA-Z-]*.: ssfile
-1\.2          .'"${username}"' *[0-9a-zA-Z-]*.: ssfile line 2'
+1\.1          .'"$username8"' *[0-9a-zA-Z-]*.: ssfile
+1\.2          .'"$username8"' *[0-9a-zA-Z-]*.: ssfile line 2'
 
 	  # Test resurrecting with strange revision numbers
 	  cd sdir/ssdir
@@ -19392,47 +19398,47 @@ done"
 "
 Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.1          (${username} *[0-9a-zA-Z-]*): this
-1\.1          (${username} *[0-9a-zA-Z-]*): is
-1\.2          (${username} *[0-9a-zA-Z-]*): a
-1\.3          (${username} *[0-9a-zA-Z-]*): trunk file
-1\.2          (${username} *[0-9a-zA-Z-]*): 
-1\.2          (${username} *[0-9a-zA-Z-]*): with
-1\.2          (${username} *[0-9a-zA-Z-]*): a
-1\.2          (${username} *[0-9a-zA-Z-]*): blank
-1\.2          (${username} *[0-9a-zA-Z-]*): line"
+1\.1          ($username8 *[0-9a-zA-Z-]*): this
+1\.1          ($username8 *[0-9a-zA-Z-]*): is
+1\.2          ($username8 *[0-9a-zA-Z-]*): a
+1\.3          ($username8 *[0-9a-zA-Z-]*): trunk file
+1\.2          ($username8 *[0-9a-zA-Z-]*): 
+1\.2          ($username8 *[0-9a-zA-Z-]*): with
+1\.2          ($username8 *[0-9a-zA-Z-]*): a
+1\.2          ($username8 *[0-9a-zA-Z-]*): blank
+1\.2          ($username8 *[0-9a-zA-Z-]*): line"
 	  dotest ann-11 "${testcvs} ann -r br" \
 "
 Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.1          (${username} *[0-9a-zA-Z-]*): this
-1\.1          (${username} *[0-9a-zA-Z-]*): is
-1\.2          (${username} *[0-9a-zA-Z-]*): a
-1\.1          (${username} *[0-9a-zA-Z-]*): file
-1\.2          (${username} *[0-9a-zA-Z-]*): 
-1\.2          (${username} *[0-9a-zA-Z-]*): with
-1\.2          (${username} *[0-9a-zA-Z-]*): a
-1\.2          (${username} *[0-9a-zA-Z-]*): blank
-1\.2          (${username} *[0-9a-zA-Z-]*): line
-1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): and some
-1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): branched content"
+1\.1          ($username8 *[0-9a-zA-Z-]*): this
+1\.1          ($username8 *[0-9a-zA-Z-]*): is
+1\.2          ($username8 *[0-9a-zA-Z-]*): a
+1\.1          ($username8 *[0-9a-zA-Z-]*): file
+1\.2          ($username8 *[0-9a-zA-Z-]*): 
+1\.2          ($username8 *[0-9a-zA-Z-]*): with
+1\.2          ($username8 *[0-9a-zA-Z-]*): a
+1\.2          ($username8 *[0-9a-zA-Z-]*): blank
+1\.2          ($username8 *[0-9a-zA-Z-]*): line
+1\.2\.2\.1      ($username8 *[0-9a-zA-Z-]*): and some
+1\.2\.2\.1      ($username8 *[0-9a-zA-Z-]*): branched content"
 	  # FIXCVS: shouldn't "-r 1.2.0.2" be the same as "-r br"?
 	  dotest ann-12 "${testcvs} ann -r 1.2.0.2 file1" ""
 	  dotest ann-13 "${testcvs} ann -r 1.2.2 file1" \
 "
 Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.1          (${username} *[0-9a-zA-Z-]*): this
-1\.1          (${username} *[0-9a-zA-Z-]*): is
-1\.2          (${username} *[0-9a-zA-Z-]*): a
-1\.1          (${username} *[0-9a-zA-Z-]*): file
-1\.2          (${username} *[0-9a-zA-Z-]*): 
-1\.2          (${username} *[0-9a-zA-Z-]*): with
-1\.2          (${username} *[0-9a-zA-Z-]*): a
-1\.2          (${username} *[0-9a-zA-Z-]*): blank
-1\.2          (${username} *[0-9a-zA-Z-]*): line
-1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): and some
-1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): branched content"
+1\.1          ($username8 *[0-9a-zA-Z-]*): this
+1\.1          ($username8 *[0-9a-zA-Z-]*): is
+1\.2          ($username8 *[0-9a-zA-Z-]*): a
+1\.1          ($username8 *[0-9a-zA-Z-]*): file
+1\.2          ($username8 *[0-9a-zA-Z-]*): 
+1\.2          ($username8 *[0-9a-zA-Z-]*): with
+1\.2          ($username8 *[0-9a-zA-Z-]*): a
+1\.2          ($username8 *[0-9a-zA-Z-]*): blank
+1\.2          ($username8 *[0-9a-zA-Z-]*): line
+1\.2\.2\.1      ($username8 *[0-9a-zA-Z-]*): and some
+1\.2\.2\.1      ($username8 *[0-9a-zA-Z-]*): branched content"
 	  dotest_fail ann-14 "${testcvs} ann -r bill-clintons-chastity file1" \
 "${PROG} \[annotate aborted\]: no such tag bill-clintons-chastity"
 
@@ -19444,46 +19450,46 @@ Annotations for file1
 "
 Annotations for first-dir/file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.1          (${username} *[0-9a-zA-Z-]*): this
-1\.1          (${username} *[0-9a-zA-Z-]*): is
-1\.2          (${username} *[0-9a-zA-Z-]*): a
-1\.3          (${username} *[0-9a-zA-Z-]*): trunk file
-1\.2          (${username} *[0-9a-zA-Z-]*): 
-1\.2          (${username} *[0-9a-zA-Z-]*): with
-1\.2          (${username} *[0-9a-zA-Z-]*): a
-1\.2          (${username} *[0-9a-zA-Z-]*): blank
-1\.2          (${username} *[0-9a-zA-Z-]*): line"
+1\.1          ($username8 *[0-9a-zA-Z-]*): this
+1\.1          ($username8 *[0-9a-zA-Z-]*): is
+1\.2          ($username8 *[0-9a-zA-Z-]*): a
+1\.3          ($username8 *[0-9a-zA-Z-]*): trunk file
+1\.2          ($username8 *[0-9a-zA-Z-]*): 
+1\.2          ($username8 *[0-9a-zA-Z-]*): with
+1\.2          ($username8 *[0-9a-zA-Z-]*): a
+1\.2          ($username8 *[0-9a-zA-Z-]*): blank
+1\.2          ($username8 *[0-9a-zA-Z-]*): line"
 	  dotest ann-r11 "${testcvs} rann -r br first-dir" \
 "
 Annotations for first-dir/file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.1          (${username} *[0-9a-zA-Z-]*): this
-1\.1          (${username} *[0-9a-zA-Z-]*): is
-1\.2          (${username} *[0-9a-zA-Z-]*): a
-1\.1          (${username} *[0-9a-zA-Z-]*): file
-1\.2          (${username} *[0-9a-zA-Z-]*): 
-1\.2          (${username} *[0-9a-zA-Z-]*): with
-1\.2          (${username} *[0-9a-zA-Z-]*): a
-1\.2          (${username} *[0-9a-zA-Z-]*): blank
-1\.2          (${username} *[0-9a-zA-Z-]*): line
-1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): and some
-1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): branched content"
+1\.1          ($username8 *[0-9a-zA-Z-]*): this
+1\.1          ($username8 *[0-9a-zA-Z-]*): is
+1\.2          ($username8 *[0-9a-zA-Z-]*): a
+1\.1          ($username8 *[0-9a-zA-Z-]*): file
+1\.2          ($username8 *[0-9a-zA-Z-]*): 
+1\.2          ($username8 *[0-9a-zA-Z-]*): with
+1\.2          ($username8 *[0-9a-zA-Z-]*): a
+1\.2          ($username8 *[0-9a-zA-Z-]*): blank
+1\.2          ($username8 *[0-9a-zA-Z-]*): line
+1\.2\.2\.1      ($username8 *[0-9a-zA-Z-]*): and some
+1\.2\.2\.1      ($username8 *[0-9a-zA-Z-]*): branched content"
 	  dotest ann-r12 "${testcvs} rann -r 1.2.0.2 first-dir/file1" ""
 	  dotest ann-r13 "${testcvs} rann -r 1.2.2 first-dir/file1" \
 "
 Annotations for first-dir/file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.1          (${username} *[0-9a-zA-Z-]*): this
-1\.1          (${username} *[0-9a-zA-Z-]*): is
-1\.2          (${username} *[0-9a-zA-Z-]*): a
-1\.1          (${username} *[0-9a-zA-Z-]*): file
-1\.2          (${username} *[0-9a-zA-Z-]*): 
-1\.2          (${username} *[0-9a-zA-Z-]*): with
-1\.2          (${username} *[0-9a-zA-Z-]*): a
-1\.2          (${username} *[0-9a-zA-Z-]*): blank
-1\.2          (${username} *[0-9a-zA-Z-]*): line
-1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): and some
-1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): branched content"
+1\.1          ($username8 *[0-9a-zA-Z-]*): this
+1\.1          ($username8 *[0-9a-zA-Z-]*): is
+1\.2          ($username8 *[0-9a-zA-Z-]*): a
+1\.1          ($username8 *[0-9a-zA-Z-]*): file
+1\.2          ($username8 *[0-9a-zA-Z-]*): 
+1\.2          ($username8 *[0-9a-zA-Z-]*): with
+1\.2          ($username8 *[0-9a-zA-Z-]*): a
+1\.2          ($username8 *[0-9a-zA-Z-]*): blank
+1\.2          ($username8 *[0-9a-zA-Z-]*): line
+1\.2\.2\.1      ($username8 *[0-9a-zA-Z-]*): and some
+1\.2\.2\.1      ($username8 *[0-9a-zA-Z-]*): branched content"
 	  dotest_fail ann-r14 "${testcvs} rann -r bill-clintons-chastity first-dir/file1" \
 "${PROG} \[rannotate aborted\]: no such tag bill-clintons-chastity"
 
@@ -19530,8 +19536,8 @@ done"
 "
 Annotations for $file
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1.2          ($username *[0-9a-zA-Z-]*): "'\$'"Id: $file,v 1.1 [0-9/]* [0-9:]* $username Exp "'\$'"
-1.2          ($username *[0-9a-zA-Z-]*): line2"
+1.2          ($username8 *[0-9a-zA-Z-]*): "'\$'"Id: $file,v 1.1 [0-9/]* [0-9:]* $username Exp "'\$'"
+1.2          ($username8 *[0-9a-zA-Z-]*): line2"
 
 	  cd ../..
 	  rm -rf 1
@@ -22445,24 +22451,24 @@ xx"
 "
 Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.3          (${username} *[0-9a-zA-Z-]*): initial
-1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx "'\$'"Log: file1,v "'\$'"
-1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
-1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx First log line
-1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx Second log line
-1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx
-1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): br-change"
+1\.3          ($username8 *[0-9a-zA-Z-]*): initial
+1\.4\.2\.1      ($username8 *[0-9a-zA-Z-]*): xx "'\$'"Log: file1,v "'\$'"
+1\.4\.2\.1      ($username8 *[0-9a-zA-Z-]*): xx Revision 1\.4  [0-9/]* [0-9:]*  $username
+1\.4\.2\.1      ($username8 *[0-9a-zA-Z-]*): xx First log line
+1\.4\.2\.1      ($username8 *[0-9a-zA-Z-]*): xx Second log line
+1\.4\.2\.1      ($username8 *[0-9a-zA-Z-]*): xx
+1\.4\.2\.1      ($username8 *[0-9a-zA-Z-]*): br-change"
 	  dotest keywordlog-23 "${testcvs} ann -r HEAD file1" \
 "
 Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.3          (${username} *[0-9a-zA-Z-]*): initial
-1\.5          (${username} *[0-9a-zA-Z-]*): xx "'\$'"Log: file1,v "'\$'"
-1\.5          (${username} *[0-9a-zA-Z-]*): xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
-1\.5          (${username} *[0-9a-zA-Z-]*): xx First log line
-1\.5          (${username} *[0-9a-zA-Z-]*): xx Second log line
-1\.5          (${username} *[0-9a-zA-Z-]*): xx
-1\.5          (${username} *[0-9a-zA-Z-]*): change"
+1\.3          ($username8 *[0-9a-zA-Z-]*): initial
+1\.5          ($username8 *[0-9a-zA-Z-]*): xx "'\$'"Log: file1,v "'\$'"
+1\.5          ($username8 *[0-9a-zA-Z-]*): xx Revision 1\.4  [0-9/]* [0-9:]*  $username
+1\.5          ($username8 *[0-9a-zA-Z-]*): xx First log line
+1\.5          ($username8 *[0-9a-zA-Z-]*): xx Second log line
+1\.5          ($username8 *[0-9a-zA-Z-]*): xx
+1\.5          ($username8 *[0-9a-zA-Z-]*): change"
 	  cd ../..
 
 	  #
@@ -23033,13 +23039,13 @@ done"
 "
 Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.1\.4\.1      (${username} *[0-9a-zA-Z-]*): br2-1"
+1\.1\.4\.1      ($username8 *[0-9a-zA-Z-]*): br2-1"
 
 	  dotest tagdate-17 "${testcvs} annotate -rbr2 -Dnow" \
 "
 Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.1\.4\.2      (${username} *[0-9a-zA-Z-]*): br2-2"
+1\.1\.4\.2      ($username8 *[0-9a-zA-Z-]*): br2-2"
 
 	  # Now check to see what happens when we add files to br2 and trunk
 	  echo br2-1 > file3
@@ -24712,13 +24718,13 @@ add
 
 	  cat >${TESTDIR}/lockme <<EOF
 #!${TESTSHELL}
-line=\`grep <\$1/\$2,v 'locks ${author}:1\.[0-9];'\`
+line=\`grep <\$1/\$2,v 'locks $anyusername:1\.[0-9];'\`
 if test -z "\$line"; then
   # It isn't locked
   exit 0
 else
-  user=\`echo \$line | sed -e 's/locks \\(${author}\\):[0-9.]*;.*/\\1/'\`
-  version=\`echo \$line | sed -e 's/locks ${author}:\\([0-9.]*\\);.*/\\1/'\`
+  user=\`echo \$line | sed -e 's/locks \\($anyusername\\):[0-9.]*;.*/\\1/'\`
+  version=\`echo \$line | sed -e 's/locks $anyusername:\\([0-9.]*\\);.*/\\1/'\`
   echo "\$user has file a-lock locked for version  \$version" >&2
   exit 1
 fi
