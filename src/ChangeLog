@@ -1,3 +1,8 @@
+2005-09-12  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (username): Cut $username down to 8 characters when longer,
+	since that is all that appears in output.
+
 2005-09-11  Derek Price  <derek@ximbiot.com>
 
 	[bug #14504]
