@@ -1019,12 +1019,15 @@ else
 fi
 
 # Rarely, we need to match any username, not just the name of the user
-# running this test.
+# running this test.  This variable usually shouldn't be used.  $username
+# contains the name of the user actually running this test.
 #
-# I'm not really sure what characters should be here.  a-zA-Z obviously.
-# People complained when 0-9 were not allowed in usernames.  Other than that
-# I'm not sure.
-anyusername="[-a-zA-Z0-9][-a-zA-Z0-9]*"
+# I believe this only ever actually gets compared to usernames created by this
+# test.  It used to be compared to the username of the user running this test,
+# but this hasn't been true for a long time.  Regardless, I tried to get the
+# allowed character set right, based on a list in a private email from Mark
+# Baushke.
+anyusername="[a-zA-Z0-9][-_@.,$a-zA-Z0-9]*"
 
 # now make sure that tr works on NULs
 tr_tooltest1 ()
