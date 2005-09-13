@@ -1,5 +1,8 @@
 2005-09-13  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh ($anyusername): Make more robust and expand comments.
+	Reported by Mark D. Baushke <mdb@gnu.org>.
+
 	* sanity.sh: Split $username into $username & $username8.  Rename
 	$author as $anyusername.
 
