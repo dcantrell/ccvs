@@ -1,5 +1,7 @@
 2005-09-12  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (binfiles-con1b): Back out accidental addition.
+
 	* sanity.sh (username): Cut $username down to 8 characters when longer,
 	since that is all that appears in output.
 
