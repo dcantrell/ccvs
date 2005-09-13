@@ -1,3 +1,7 @@
+2005-09-13  Derek Price  <derek@ximbiot.com>
+
+	* TESTS: Mention new $username8 & $anyusername variables.
+
 2005-09-04  Larry Jones  <lawrence.jones@ugs.com>
 
 	* NEWS: s/bug-cvs@gnu.org/bug-cvs@nongnu.org/.
