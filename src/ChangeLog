@@ -1,5 +1,7 @@
 2005-09-13  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh ($anyusername): Reduce charset to that allowed on Linux.
+
 	* sanity.sh ($anyusername): Make more robust and expand comments.
 	Reported by Mark D. Baushke <mdb@gnu.org>.
 
