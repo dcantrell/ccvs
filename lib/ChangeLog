@@ -1,3 +1,7 @@
+2005-09-13  Derek Price  <derek@ximbiot.com>
+
+	* canon-host.c: Update from GNULIB.
+
 2005-09-12  Derek Price  <derek@ximbiot.com>
 
 	* gai_strerror.c: Include config.h when available.  Include
