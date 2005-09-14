@@ -1,3 +1,7 @@
+2005-09-14  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: s#cvs.1#$(srcdir)/cvs.1#.
+
 2005-09-12  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (stamp-gdt): Use texinfo, as opposed to C, comments in
