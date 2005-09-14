@@ -289,7 +289,7 @@ target_alias = @target_alias@
 with_default_rsh = @with_default_rsh@
 SUBDIRS = i18n
 info_TEXINFOS = cvs.texinfo cvsclient.texi
-man_MANS = cvs.1
+man_MANS = $(srcdir)/cvs.1
 PSS = \
 	cvs.ps \
 	cvs-paper.ps \
@@ -305,14 +305,14 @@ TXTS = \
 	cvsclient.txt
 
 EXTRA_DIST = $(PSS) .cvsignore ChangeLog.fsf HACKING.DOCS RCSFILES \
-	cvs.1 cvs-paper.ms cvs.man.header cvs.man.footer getdate.texi \
-	mdate-sh writeproxy.rtf getdate-cvs.texi
+	$(srcdir)/cvs.1 cvs-paper.ms cvs.man.header cvs.man.footer \
+	getdate.texi mdate-sh writeproxy.rtf getdate-cvs.texi
 MOSTLYCLEANFILES = $(TXTS) getdate-cvs.tmp
 DISTCLEANFILES = stamp-gdt
 
 # These Automake generates MOSTLYCLEAN targets for PostScripts genersted from
 # TEXINFOS, but it shouldn't when those files are in EXTRA_DIST
-MAINTAINERCLEANFILES = $(PSS) $(srcdir)/cvs.1
+MAINTAINERCLEANFILES = $(PSS) $(srcdir)/cvs.1 $(srcdir)/cvs.1
 
 # texinfo based targets automake neglects to include
 SUFFIXES = .txt
@@ -720,6 +720,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
+	$(mkdir_p) $(distdir)/$(srcdir)
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
@@ -925,10 +926,10 @@ cvs-paper.pdf: cvs-paper.ps
 	ps2pdf $< $@
 
 # Targets to build a man page from cvs.texinfo.
-cvs.1: @MAINTAINER_MODE_TRUE@ mkman cvs.man.header cvs.texinfo cvs.man.footer
+$(srcdir)/cvs.1: @MAINTAINER_MODE_TRUE@ mkman cvs.man.header cvs.texinfo cvs.man.footer
 	$(PERL) ./mkman $(srcdir)/cvs.man.header $(srcdir)/cvs.texinfo \
 		$(srcdir)/cvs.man.footer >cvs.tmp
-	cp cvs.tmp $(srcdir)/$@
+	cp cvs.tmp $(srcdir)/cvs.1
 	-@rm -f cvs.tmp
 
 cvs.dvi cvs.html $(srcdir)/cvs.info cvs.pdf cvs.ps cvs.txt: $(srcdir)/getdate-cvs.texi

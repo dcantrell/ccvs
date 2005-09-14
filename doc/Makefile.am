@@ -19,7 +19,7 @@
 SUBDIRS = i18n
 
 info_TEXINFOS = cvs.texinfo cvsclient.texi
-man_MANS = cvs.1
+man_MANS = $(srcdir)/cvs.1
 
 PSS = \
 	cvs.ps \
@@ -41,7 +41,7 @@ EXTRA_DIST = \
 	ChangeLog.fsf \
 	HACKING.DOCS \
 	RCSFILES \
-	cvs.1 \
+	$(srcdir)/cvs.1 \
 	cvs-paper.ms \
 	cvs.man.header \
 	cvs.man.footer \
@@ -57,7 +57,8 @@ DISTCLEANFILES =
 # These Automake generates MOSTLYCLEAN targets for PostScripts genersted from
 # TEXINFOS, but it shouldn't when those files are in EXTRA_DIST
 MAINTAINERCLEANFILES = \
-	$(PSS)
+	$(PSS) \
+	$(srcdir)/cvs.1
 
 doc: info ps
 .PHONY: doc
@@ -86,10 +87,10 @@ cvs-paper.pdf: cvs-paper.ps
 	ps2pdf $< $@
 
 # Targets to build a man page from cvs.texinfo.
-cvs.1: @MAINTAINER_MODE_TRUE@ mkman cvs.man.header cvs.texinfo cvs.man.footer
+$(srcdir)/cvs.1: @MAINTAINER_MODE_TRUE@ mkman cvs.man.header cvs.texinfo cvs.man.footer
 	$(PERL) ./mkman $(srcdir)/cvs.man.header $(srcdir)/cvs.texinfo \
 		$(srcdir)/cvs.man.footer >cvs.tmp
-	cp cvs.tmp $(srcdir)/$@
+	cp cvs.tmp $(srcdir)/cvs.1
 	-@rm -f cvs.tmp
 MAINTAINERCLEANFILES += $(srcdir)/cvs.1
 
