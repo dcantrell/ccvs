@@ -1,5 +1,9 @@
 2005-09-14  Derek Price  <derek@ximbiot.com>
 
+	* edit.c (edit_usage, unedit_usage, editors_usage), watch.c
+	(watch_usage, watchers_usage): Add quotes and reword for clarity and
+	consistency.
+
 	* edit.c (edit_usage): Add missing syntax.  Reword description for
 	clarity.  Mention default behavior.
 
