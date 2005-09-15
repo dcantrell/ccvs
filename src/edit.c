@@ -362,11 +362,11 @@ edit_fileproc (callerdat, finfo)
 static const char *const edit_usage[] =
 {
     "Usage: %s %s [-lR] [-a <action>]... [<file>]...\n",
-    "-l: Local directory only, not recursive\n",
-    "-R: Process directories recursively\n",
-    "-a: Specify action to register for temporary watch, one of\n",
-    "    edit,unedit,commit,all,none (defaults to `all')\n",
-    "(Specify the --help global option for a list of other help options)\n",
+    "-l\tLocal directory only, not recursive.\n",
+    "-R\tProcess directories recursively (default).\n",
+    "-a\tSpecify action to register for temporary watch, one of:\n",
+    "  \t`edit', `unedit', `commit', `all', or `none' (defaults to `all').\n",
+    "(Specify the --help global option for a list of other help options.)\n",
     NULL
 };
 
@@ -576,10 +576,10 @@ unedit_fileproc (callerdat, finfo)
 
 static const char *const unedit_usage[] =
 {
-    "Usage: %s %s [-lR] [files...]\n",
-    "-l: Local directory only, not recursive\n",
-    "-R: Process directories recursively\n",
-    "(Specify the --help global option for a list of other help options)\n",
+    "Usage: %s %s [-lR] [<file>]...\n",
+    "-l\tLocal directory only, not recursive.\n",
+    "-R\tProcess directories recursively (default).\n",
+    "(Specify the --help global option for a list of other help options.)\n",
     NULL
 };
 
@@ -1045,10 +1045,10 @@ notify_check (repository, update_dir)
 
 static const char *const editors_usage[] =
 {
-    "Usage: %s %s [-lR] [files...]\n",
-    "\t-l\tProcess this directory only (not recursive).\n",
-    "\t-R\tProcess directories recursively.\n",
-    "(Specify the --help global option for a list of other help options)\n",
+    "Usage: %s %s [-lR] [<file>]...\n",
+    "-l\tProcess this directory only (not recursive).\n",
+    "-R\tProcess directories recursively (default).\n",
+    "(Specify the --help global option for a list of other help options.)\n",
     NULL
 };
 
