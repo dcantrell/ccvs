@@ -35523,8 +35523,12 @@ You have \[0\] altered files in this repository\."
     #
     # Test our exit directory so that tests that exit in an incorrect directory
     # are noticed during single test runs.
-    if test "x$TESTDIR" != "x`pwd`"; then
-	    fail "cleanup: PWD != TESTDIR (\``pwd`' != \`$TESTDIR')"
+    #
+    # Not sure why `pwd' sometimes resolves symlinks and sometimes doesn't on
+    # Solaris 9, but it does.  Use /bin/pwd to get the canonical directory
+    # name.
+    if test "x`cd $TESTDIR && /bin/pwd`" != "x`/bin/pwd`"; then
+	    fail "cleanup: PWD != TESTDIR (\``/bin/pwd`' != \``cd $TESTDIR && /bin/pwd`')"
     fi
 
     # Test that the last test didn't overwrite any write proxy configuration
