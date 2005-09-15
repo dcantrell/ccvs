@@ -438,13 +438,13 @@ edit_fileproc (void *callerdat, struct file_info *finfo)
 static const char *const edit_usage[] =
 {
     "Usage: %s %s [-lRcf] [-a <action>]... [<file>]...\n",
-    "-l: Local directory only, not recursive\n",
-    "-R: Process directories recursively\n",
-    "-a: Specify action to register for temporary watch, one of\n",
-    "    `edit', `unedit', `commit', `all', `none' (defaults to `all')\n",
-    "-c: Check for <file>s edited by others and abort if found\n",
-    "-f: Allow edit if <file>s are edited by others (default)\n",
-    "(Specify the --help global option for a list of other help options)\n",
+    "-l\tLocal directory only, not recursive.\n",
+    "-R\tProcess directories recursively (default).\n",
+    "-a\tSpecify action to register for temporary watch, one of:\n",
+    "  \t`edit', `unedit', `commit', `all', `none' (defaults to `all').\n",
+    "-c\tCheck for <file>s edited by others and abort if found.\n",
+    "-f\tAllow edit if <file>s are edited by others (default).\n",
+    "(Specify the --help global option for a list of other help options.)\n",
     NULL
 };
 
@@ -712,10 +712,10 @@ unedit_fileproc (void *callerdat, struct file_info *finfo)
 
 static const char *const unedit_usage[] =
 {
-    "Usage: %s %s [-lR] [files...]\n",
-    "-l: Local directory only, not recursive\n",
-    "-R: Process directories recursively\n",
-    "(Specify the --help global option for a list of other help options)\n",
+    "Usage: %s %s [-lR] [<file>]...\n",
+    "-l\tLocal directory only, not recursive.\n",
+    "-R\tProcess directories recursively (default).\n",
+    "(Specify the --help global option for a list of other help options.)\n",
     NULL
 };
 
@@ -1165,10 +1165,10 @@ notify_check (const char *repository, const char *update_dir)
 
 static const char *const editors_usage[] =
 {
-    "Usage: %s %s [-lR] [files...]\n",
-    "\t-l\tProcess this directory only (not recursive).\n",
-    "\t-R\tProcess directories recursively.\n",
-    "(Specify the --help global option for a list of other help options)\n",
+    "Usage: %s %s [-lR] [<file>]...\n",
+    "-l\tProcess this directory only (not recursive).\n",
+    "-R\tProcess directories recursively (default).\n",
+    "(Specify the --help global option for a list of other help options.)\n",
     NULL
 };
 
