@@ -361,11 +361,11 @@ edit_fileproc (callerdat, finfo)
 
 static const char *const edit_usage[] =
 {
-    "Usage: %s %s [-lR] [files...]\n",
+    "Usage: %s %s [-lR] [-a <action>]... [<file>]...\n",
     "-l: Local directory only, not recursive\n",
     "-R: Process directories recursively\n",
-    "-a: Specify what actions for temporary watch, one of\n",
-    "    edit,unedit,commit,all,none\n",
+    "-a: Specify action to register for temporary watch, one of\n",
+    "    edit,unedit,commit,all,none (defaults to `all')\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
