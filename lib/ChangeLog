@@ -1,5 +1,8 @@
 2005-09-15  Derek Price  <derek@ximbiot.com>
 
+	* regcomp.c, regex_internal.c, regex_internal.h, regexec.c: Update from
+	GNULIB.
+
 	* strstr.h: Update from GNULIB.
 
 2005-09-13  Derek Price  <derek@ximbiot.com>
