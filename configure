@@ -26670,11 +26670,6 @@ done
 esac
 
 
-cat >>confdefs.h <<\_ACEOF
-#define strstr rpl_strstr
-_ACEOF
-
-
 
     echo "$as_me:$LINENO: checking whether mbrtowc and mbstate_t are properly declared" >&5
 echo $ECHO_N "checking whether mbrtowc and mbstate_t are properly declared... $ECHO_C" >&6

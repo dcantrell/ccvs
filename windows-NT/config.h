@@ -1252,9 +1252,6 @@
 /* Define to rpl_strcasecmp always. */
 #undef strcasecmp
 
-/* Define to rpl_strstr always. */
-#undef strstr
-
 /* Define to rpl_tzset if the wrapper function should be used. */
 #undef tzset
 
