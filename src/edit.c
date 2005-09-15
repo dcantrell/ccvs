@@ -437,13 +437,13 @@ edit_fileproc (void *callerdat, struct file_info *finfo)
 
 static const char *const edit_usage[] =
 {
-    "Usage: %s %s [-cflR] [files...]\n",
-    "-c: Check that working files are unedited\n",
-    "-f: Force edit if working files are edited (default)\n",
+    "Usage: %s %s [-lRcf] [-a <action>]... [<file>]...\n",
     "-l: Local directory only, not recursive\n",
     "-R: Process directories recursively\n",
-    "-a: Specify what actions for temporary watch, one of\n",
-    "    edit,unedit,commit,all,none\n",
+    "-a: Specify action to register for temporary watch, one of\n",
+    "    `edit', `unedit', `commit', `all', `none' (defaults to `all')\n",
+    "-c: Check for <file>s edited by others and abort if found\n",
+    "-f: Allow edit if <file>s are edited by others (default)\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
