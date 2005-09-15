@@ -1,3 +1,8 @@
+2005-09-15  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Use /bin/pwd to verify current dir since Solaris 9 is
+	sometimes resolving symlinked paths.
+
 2005-09-14  Derek Price  <derek@ximbiot.com>
 
 	* edit.c (edit_usage, unedit_usage, editors_usage), watch.c
