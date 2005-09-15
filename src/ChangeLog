@@ -1,3 +1,8 @@
+2005-09-14  Derek Price  <derek@ximbiot.com>
+
+	* edit.c (edit_usage): Add missing syntax.  Reword description for
+	clarity.  Mention default behavior.
+
 2005-09-13  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh ($anyusername): Reduce charset to that allowed on Linux.
