@@ -13318,7 +13318,14 @@ EOF
 
 	  # Test that real modules check out to realmodule/a, not subdir/a.
 	  if $remote; then
-	    dotest modules5-8 "${testcvs} co realmodule" \
+	    # FIXCVS?
+	    # Mac OSX 10.3 (Darwin ppc-osx1 5.5) fails here when $TMPDIR
+	    # contains a symlink (it does not fail the local modules5-8).
+	    # Since no other platforms are exhibiting the same problem, I
+	    # suspect an issue with OSX and fork() or the like dereferencing
+	    # the symlink, but it is possible it is something that could be
+	    # fixed or worked around in CVS.
+	    dotest modules5-8r "$testcvs co realmodule" \
 "U realmodule/a
 ${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .realmodule..
 checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
@@ -35524,11 +35531,13 @@ You have \[0\] altered files in this repository\."
     # Test our exit directory so that tests that exit in an incorrect directory
     # are noticed during single test runs.
     #
-    # Not sure why `pwd' sometimes resolves symlinks and sometimes doesn't on
-    # Solaris 9, but it does.  Use /bin/pwd to get the canonical directory
-    # name.
-    if test "x`cd $TESTDIR && /bin/pwd`" != "x`/bin/pwd`"; then
-	    fail "cleanup: PWD != TESTDIR (\``/bin/pwd`' != \``cd $TESTDIR && /bin/pwd`')"
+    # FIXME?
+    # Sparc Solaris 9 is dereferencing paths here as if /bin/pwd were
+    # called when /tmp is a symlink.  This might be a new problem with this
+    # test, but since this was recently tested I think it more likely to be
+    # A Solaris issue.
+    if test "x$TESTDIR" != "x`pwd`"; then
+	    fail "cleanup: PWD != TESTDIR (\``pwd`' != \`$TESTDIR')"
     fi
 
     # Test that the last test didn't overwrite any write proxy configuration
