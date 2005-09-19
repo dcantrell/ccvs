@@ -1,5 +1,9 @@
 2005-09-19  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (modules5-8): Rename...
+	(modules5-8r): ...to this and comment Mac OS X failure.
+	Comment Solaris 9 failure below with a `FIXME?' tag.
+
 	* sanity.sh: Remove previous hack in favor of setting TESTDIR on
 	Solaris (and Mac OS X) until problem is solved correctly.
 
