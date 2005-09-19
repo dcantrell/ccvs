@@ -1,5 +1,16 @@
 2005-09-19  Derek Price  <derek@ximbiot.com>
 
+	* __fpending.c, __fpending.h, atexit.c, basename.c, chdir-long.c,
+	closeout.c, cycle-check.c, dirname.c, dup-safer.c, dup2.c, exitfail.c,
+	fd-safer.c, filenamecat.c, fnmatch.c, ftruncate.c, getaddrinfo.c,
+	getcwd.c, getdate.h, getdelim.c, getline.c, getlogin_r.c, getndelim2.c,
+	getnline.c, getopt1.c, getpass.c, gettimeofday.c, lstat.c, malloc.c,
+	memmove.c, mkdir.c, mkstemp.c, nanosleep.c, openat.c, pipe-safer.c,
+	quotearg.c, readlink.c, realloc.c, regex.c, rename.c, rpmatch.c,
+	save-cwd.c, strerror.c, stripslash.c, strncasecmp.c, strnlen1.c,
+	strstr.c, strtol.c, tempname.c, time_r.c, timespec.h, xalloc-die.c,
+	xgetcwd.c, xmalloc.c, xreadlink.c, yesno.c: Update from GNULIB.
+
 	* canon-host.h, md5.c, md5.h, mktime.c, timespec.h: Update from GNULIB.
 
 2005-09-15  Derek Price  <derek@ximbiot.com>
