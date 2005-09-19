@@ -29171,12 +29171,8 @@ done"
     #
     # Test our exit directory so that tests that exit in an incorrect directory
     # are noticed during single test runs.
-    #
-    # Not sure why `pwd' sometimes resolves symlinks and sometimes doesn't on
-    # Solaris 9, but it does.  Use /bin/pwd to get the canonical directory
-    # name.
-    if test "x`cd $TESTDIR && /bin/pwd`" != "x`/bin/pwd`"; then
-	    fail "cleanup: PWD != TESTDIR (\``/bin/pwd`' != \``cd $TESTDIR && /bin/pwd`')"
+    if test "x$TESTDIR" != "x`pwd`"; then
+	    fail "cleanup: PWD != TESTDIR (\``pwd`' != \`$TESTDIR')"
     fi
 
     # Reset val-tags to a pristine state.
