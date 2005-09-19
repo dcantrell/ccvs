@@ -1,3 +1,8 @@
+2005-09-19  Derek Price  <derek@ximbiot.com>
+
+	* maint-aux/gnulib-update: Default $GNULIB path rather than setting.
+	Check for error return from gnulib-tool before expecting results.
+
 2005-09-13  Derek Price  <derek@ximbiot.com>
 
 	* TESTS: Mention new $username8 & $anyusername variables.

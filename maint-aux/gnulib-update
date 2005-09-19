@@ -29,7 +29,7 @@ if test -f maint-aux/gnulib-modules; then :; else
 fi
 
 # Where to find the GNULIB sources.
-GNULIB=../gnulib
+: ${GNULIB="../gnulib"}
 GNULIB_TOOL=$GNULIB/gnulib-tool
 
 # Which modules to update.
@@ -60,7 +60,9 @@ mv lib/Makefile.am lib/Makefile.am.save
 mv m4/error.m4 m4/error.m4.save
 
 # Run the update.
-$GNULIB_TOOL --import $MODULES >/dev/null
+if $GNULIB_TOOL --import $MODULES >/dev/null; then :; else
+  exit $?
+fi
 
 # Correct this file for our purposes, but try to avoid munging timestamps
 # unless necessary.
