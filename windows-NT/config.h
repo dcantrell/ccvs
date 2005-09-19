@@ -1012,10 +1012,6 @@
 /* Define to 1 if strerror_r returns char *. */
 #undef STRERROR_R_CHAR_P
 
-/* Define to be the nanoseconds member of struct stat's st_mtim, if it exists.
-   */
-#undef ST_MTIM_NSEC
-
 /* Enable support for the pre 1.12.1 *info scripting hook format strings.
    Disable this option for a smaller executable once your scripting hooks have
    been updated to use the new *info format strings by passing
