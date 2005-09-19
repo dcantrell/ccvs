@@ -1,3 +1,9 @@
+2005-09-19  Derek Price  <derek@ximbiot.com>
+
+	Update from GNULIB.
+	* st_mtim.m4: Remove this file.
+	* timespec.m4, gnulib-cache.m4, gnulib-comp.m4: Updated.
+
 2005-09-15  Derek Price  <derek@ximbiot.com>
 
 	* strstr.m4: Update from GNULIB.

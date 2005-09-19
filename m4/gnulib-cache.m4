@@ -21,7 +21,6 @@ gl_MODULES([allocsa atexit canon-host canonicalize closeout dirname dup2 error e
 gl_AVOID([])
 gl_SOURCE_BASE([lib])
 gl_M4_BASE([m4])
+gl_TESTS_BASE([tests])
 gl_LIB([libgnu])
 gl_MACRO_PREFIX([gl])
-
-# gnulib-cache.m4 ends here
