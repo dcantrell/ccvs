@@ -184,6 +184,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/gettimeofday.c
   lib/glob.c
   lib/glob_.h
+  lib/glob-libc.h
   lib/lstat.c
   lib/lstat.h
   lib/malloc.c
@@ -369,7 +370,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/stdbool.m4
   m4/stdint_h.m4
   m4/stdint.m4
-  m4/st_mtim.m4
   m4/strcase.m4
   m4/strdup.m4
   m4/strerror.m4
@@ -397,5 +397,3 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/xsize.m4
   m4/yesno.m4
 ])
-
-# gnulib-comp.m4 ends here
