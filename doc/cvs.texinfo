@@ -128,6 +128,10 @@ approved by the Free Software Foundation.
 @copyleftnotice
 @end titlepage
 
+@summarycontents
+
+@contents
+
 @comment ================================================================
 @comment                   The real text starts here
 @comment ================================================================
@@ -15905,10 +15909,6 @@ comprehensive, detailed list of known bugs.
 @cindex Index
 
 @printindex cp
-
-@summarycontents
-
-@contents
 
 @bye
 
