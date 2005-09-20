@@ -1,5 +1,7 @@
 2005-09-20  Derek Price  <derek@ximbiot.com>
 
+	* myndbm.c: #include getdelim.h for Windows.
+
 	* main.c: #include setenv.h for Windows.
 
 2005-09-19  Derek Price  <derek@ximbiot.com>
