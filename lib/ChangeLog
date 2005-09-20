@@ -1,5 +1,8 @@
 2005-09-19  Derek Price  <derek@ximbiot.com>
 
+	* regcomp.c, regex_internal.c, regex_internal.h, regexec.c: Fix some
+	__attribute definition problems (submitted to GNULIB).
+
 	* __fpending.c, __fpending.h, atexit.c, basename.c, chdir-long.c,
 	closeout.c, cycle-check.c, dirname.c, dup-safer.c, dup2.c, exitfail.c,
 	fd-safer.c, filenamecat.c, fnmatch.c, ftruncate.c, getaddrinfo.c,
