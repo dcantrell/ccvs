@@ -692,8 +692,7 @@ cvs_temp_name ()
 /* FIXME: This should use the mkstemp() function from the lib/mkstemp.c file
  * from the GNULIB project.
  */
-FILE *cvs_temp_file (filename)
-    char **filename;
+FILE *cvs_temp_file (char ** filename)
 {
     char *fn;
     FILE *fp;
@@ -705,9 +704,14 @@ FILE *cvs_temp_file (filename)
 
     /* assert (filename != NULL); */
 
-    fn = _tempnam (Tmpdir, "cvs");
+    fn = _tempnam (getenv("TEMP"), "cvs");
     if (fn == NULL) fp = NULL;
-    else if ((fp = CVS_FOPEN (fn, "w+")) == NULL) free (fn);
+    else
+    if ((fp = CVS_FOPEN (fn, "w+")) == NULL)
+    {
+        free (fn);
+        fn = NULL;
+    }
 
     /* tempnam returns a pointer to a newly malloc'd string, so there's
      * no need for a xstrdup
