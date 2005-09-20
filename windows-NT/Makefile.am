@@ -59,8 +59,9 @@ stamp-ch: config.h.in $(top_srcdir)/configure
 	@echo " *" >>config.tmp
 	@echo " * Edit config.h.in instead." >>config.tmp
 	@echo " */" >>config.tmp
-	sed "s/%PACKAGE_VERSION%/$(VERSION)/" <$(srcdir)/config.h.in \
-	  >>config.tmp
+	sed -e "s/%PACKAGE_STRING%/$(PACKAGE_STRING)/" \
+	    -e "s/%PACKAGE_BUGREPORT%/$(PACKAGE_BUGREPORT)/" \
+	    <$(srcdir)/config.h.in >>config.tmp
 	@cmp -s config.tmp $(srcdir)/config.h \
 	  || (echo "Updating config.h"; \
 	      cp config.tmp $(srcdir)/config.h)
