@@ -18,9 +18,11 @@
  */
 
 #include "cvs.h"
-#include "xgethostname.h"
-#include "strftime.h"
+
 #include "closeout.h"
+#include "setenv.h"
+#include "strftime.h"
+#include "xgethostname.h"
 
 const char *program_name;
 const char *program_path;
