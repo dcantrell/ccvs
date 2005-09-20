@@ -1,3 +1,10 @@
+2005-09-19  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (stamp-ch): Sub PACKAGE_STRING rather than reconstructing
+	it.  Sub PACKAGE_BUGREPORT.
+	* config.h.in (PACKAGE_BUGREPORT): New macro.
+	(PACKAGE_STRING): Use $PACKAGE_STRING directly.
+
 2005-09-01  Derek Price  <derek@ximbiot.com>
 
 	* README: Update links and email addresses.

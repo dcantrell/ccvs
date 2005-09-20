@@ -444,10 +444,11 @@ typedef int ssize_t;
 
 /* End of CVS options.h section */
 
-/* The following macro is defined by running ./configure and then make
+/* The following two macros are defined by running ./configure and then make
  * under UNIX OSs.
  */
-#define PACKAGE_STRING "Concurrent Versions System (CVS) %PACKAGE_VERSION%"
+#define PACKAGE_BUGREPORT "%PACKAGE_BUGREPORT%"
+#define PACKAGE_STRING "%PACKAGE_STRING%"
 
 /* The following were added to make #include "xsize.h" work. */
 
