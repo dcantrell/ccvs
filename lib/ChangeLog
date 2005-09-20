@@ -1,4 +1,8 @@
 2005-09-20  Derek Price  <derek@ximbiot.com>
+
+	* getaddrinfo.c: Update from GNULIB.
+
+2005-09-20  Derek Price  <derek@ximbiot.com>
 	    Paul Eggert  <eggert@cs.ucla.edu>
 
 	* regcomp.c, regex_internal.c, regex_internal.h, regexec.c: New,

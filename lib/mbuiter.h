@@ -101,6 +101,10 @@
 #include "mbchar.h"
 #include "strnlen1.h"
 
+#if !defined mbsinit && !HAVE_MBSINIT
+# define mbsinit(ps) 1
+#endif
+
 struct mbuiter_multi
 {
   bool in_shift;	/* true if next byte may not be interpreted as ASCII */
