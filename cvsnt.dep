@@ -777,6 +777,7 @@
 	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
+	".\lib\glob-libc.h"\
 	".\lib\glob.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1546,6 +1547,7 @@
 ".\windows-NT\pwd.c" : \
 	".\lib\timespec.h"\
 	".\lib\xalloc.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -2204,6 +2206,7 @@
 	
 
 .\src\subr.c : \
+	".\lib\canon-host.h"\
 	".\lib\canonicalize.h"\
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
