@@ -20,10 +20,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pwd.h>
+#include "config.h"
+#include "pwd.h"
 #include "xalloc.h"
-
-#include "woe32.h"
 
 static char *lookup_env (char **);
 
