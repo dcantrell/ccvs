@@ -116,6 +116,8 @@ AC_DEFUN([gl_INIT],
 AC_DEFUN([gl_FILE_LIST], [
   build-aux/config.rpath
   doc/getdate.texi
+  lib/__fpending.c
+  lib/__fpending.h
   lib/alloca.c
   lib/alloca_.h
   lib/allocsa.c
@@ -138,21 +140,19 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/dev-ino.h
   lib/dirname.c
   lib/dirname.h
-  lib/dup2.c
   lib/dup-safer.c
+  lib/dup2.c
   lib/error.c
   lib/error.h
+  lib/exit.h
   lib/exitfail.c
   lib/exitfail.h
-  lib/exit.h
   lib/fd-safer.c
   lib/filenamecat.c
   lib/filenamecat.h
   lib/fnmatch.c
   lib/fnmatch_.h
   lib/fnmatch_loop.c
-  lib/__fpending.c
-  lib/__fpending.h
   lib/ftruncate.c
   lib/gai_strerror.c
   lib/getaddrinfo.c
@@ -172,8 +172,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getndelim2.h
   lib/getnline.c
   lib/getnline.h
-  lib/getopt1.c
   lib/getopt.c
+  lib/getopt1.c
   lib/getopt_.h
   lib/getopt_int.h
   lib/getpagesize.h
@@ -182,9 +182,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/gettext.h
   lib/gettime.c
   lib/gettimeofday.c
+  lib/glob-libc.h
   lib/glob.c
   lib/glob_.h
-  lib/glob-libc.h
   lib/lstat.c
   lib/lstat.h
   lib/malloc.c
@@ -220,10 +220,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/realloc.c
   lib/regcomp.c
   lib/regex.c
-  lib/regexec.c
   lib/regex.h
   lib/regex_internal.c
   lib/regex_internal.h
+  lib/regexec.c
   lib/rename.c
   lib/rpmatch.c
   lib/save-cwd.c
@@ -234,8 +234,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stat-macros.h
   lib/stdbool_.h
   lib/stdint_.h
-  lib/strcasecmp.c
   lib/strcase.h
+  lib/strcasecmp.c
   lib/strdup.c
   lib/strdup.h
   lib/strerror.c
@@ -284,9 +284,9 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/closeout.m4
   m4/codeset.m4
   m4/d-ino.m4
+  m4/d-type.m4
   m4/dirname.m4
   m4/dos.m4
-  m4/d-type.m4
   m4/dup2.m4
   m4/eealloc.m4
   m4/eoverflow.m4
@@ -298,8 +298,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fpending.m4
   m4/ftruncate.m4
   m4/getaddrinfo.m4
-  m4/getcwd.m4
   m4/getcwd-path-max.m4
+  m4/getcwd.m4
   m4/getdate.m4
   m4/getdelim.m4
   m4/gethostname.m4
@@ -313,16 +313,16 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/gettext.m4
   m4/gettime.m4
   m4/gettimeofday.m4
-  m4/glibc21.m4
   m4/glibc2.m4
+  m4/glibc21.m4
   m4/glob.m4
   m4/iconv.m4
   m4/intdiv0.m4
   m4/intmax.m4
   m4/intmax_t.m4
-  m4/inttypes_h.m4
-  m4/inttypes.m4
   m4/inttypes-pri.m4
+  m4/inttypes.m4
+  m4/inttypes_h.m4
   m4/isc-posix.m4
   m4/lcmessage.m4
   m4/lib-ld.m4
@@ -368,8 +368,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/ssize_t.m4
   m4/stat-macros.m4
   m4/stdbool.m4
-  m4/stdint_h.m4
   m4/stdint.m4
+  m4/stdint_h.m4
   m4/strcase.m4
   m4/strdup.m4
   m4/strerror.m4
