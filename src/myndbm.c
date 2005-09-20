@@ -20,6 +20,8 @@
  */
 
 #include "cvs.h"
+
+#include "getdelim.h"
 #include "getline.h"
 
 #ifdef MY_NDBM
