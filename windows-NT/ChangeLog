@@ -1,4 +1,9 @@
 2005-09-19  Conrad T. Pino  <Conrad@Pino.com>
+	* pwd.c: Replace include of "woe32.h" with "config.h" which 
+	includes "woe32.h" to fix compile error in "lib/timespec.h"
+	that depends on "config.h".
+
+2005-09-19  Conrad T. Pino  <Conrad@Pino.com>
 	* filesubr.c: Remove "extern char *Tmpdir" reference.
 
 2005-09-19  Derek Price  <derek@ximbiot.com>
