@@ -887,7 +887,7 @@
 #undef NO_MINUS_C_MINUS_O
 
 /* Define to the address where bug reports for this package should be sent. */
-#undef PACKAGE_BUGREPORT
+#define PACKAGE_BUGREPORT "bug-cvs@nongnu.org"
 
 /* Define to the full name of this package. */
 #undef PACKAGE_NAME
