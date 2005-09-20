@@ -39,11 +39,14 @@ EXTRA_DIST = \
 	filesubr.c \
 	mkdir.c \
 	ndir.c \
+	netdb.c \
 	pwd.c \
 	rcmd.c \
 	run.c \
 	sockerror.c \
 	startserver.c \
+	sys/socket.h \
+	sys/types.h \
 	unistd.h \
 	waitpid.c \
 	woe32.c \
