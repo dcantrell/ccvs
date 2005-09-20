@@ -1,3 +1,7 @@
+2005-09-20  Conrad T. Pino  <Conrad@Pino.com>
+
+	* socket.h: Add this file since Windows doesn't provide one.
+
 2005-05-31  Conrad T. Pino  <Conrad@Pino.com>
 
 	* types.h: Add Visual C++ .NET 2003 - cl.exe version 13.10 support.
