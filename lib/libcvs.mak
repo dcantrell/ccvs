@@ -40,6 +40,7 @@ CLEAN :
 	-@erase "$(INTDIR)\__fpending.obj"
 	-@erase "$(INTDIR)\asnprintf.obj"
 	-@erase "$(INTDIR)\basename.obj"
+	-@erase "$(INTDIR)\canon-host.obj"
 	-@erase "$(INTDIR)\canonicalize.obj"
 	-@erase "$(INTDIR)\closeout.obj"
 	-@erase "$(INTDIR)\cycle-check.obj"
@@ -51,7 +52,10 @@ CLEAN :
 	-@erase "$(INTDIR)\fnmatch.obj"
 	-@erase "$(INTDIR)\fseeko.obj"
 	-@erase "$(INTDIR)\ftello.obj"
+	-@erase "$(INTDIR)\gai_strerror.obj"
+	-@erase "$(INTDIR)\getaddrinfo.obj"
 	-@erase "$(INTDIR)\getdate.obj"
+	-@erase "$(INTDIR)\getdelim.obj"
 	-@erase "$(INTDIR)\getline.obj"
 	-@erase "$(INTDIR)\getlogin_r.obj"
 	-@erase "$(INTDIR)\getndelim2.obj"
@@ -60,6 +64,7 @@ CLEAN :
 	-@erase "$(INTDIR)\gettime.obj"
 	-@erase "$(INTDIR)\glob.obj"
 	-@erase "$(INTDIR)\lstat.obj"
+	-@erase "$(INTDIR)\mbchar.obj"
 	-@erase "$(INTDIR)\md5.obj"
 	-@erase "$(INTDIR)\mempcpy.obj"
 	-@erase "$(INTDIR)\pagealign_alloc.obj"
@@ -76,6 +81,7 @@ CLEAN :
 	-@erase "$(INTDIR)\strcasecmp.obj"
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
+	-@erase "$(INTDIR)\strnlen1.obj"
 	-@erase "$(INTDIR)\time_r.obj"
 	-@erase "$(INTDIR)\unsetenv.obj"
 	-@erase "$(INTDIR)\vasnprintf.obj"
@@ -140,6 +146,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\__fpending.obj" \
 	"$(INTDIR)\asnprintf.obj" \
 	"$(INTDIR)\basename.obj" \
+	"$(INTDIR)\canon-host.obj" \
 	"$(INTDIR)\canonicalize.obj" \
 	"$(INTDIR)\closeout.obj" \
 	"$(INTDIR)\cycle-check.obj" \
@@ -151,7 +158,10 @@ LIB32_OBJS= \
 	"$(INTDIR)\fnmatch.obj" \
 	"$(INTDIR)\fseeko.obj" \
 	"$(INTDIR)\ftello.obj" \
+	"$(INTDIR)\gai_strerror.obj" \
+	"$(INTDIR)\getaddrinfo.obj" \
 	"$(INTDIR)\getdate.obj" \
+	"$(INTDIR)\getdelim.obj" \
 	"$(INTDIR)\getline.obj" \
 	"$(INTDIR)\getlogin_r.obj" \
 	"$(INTDIR)\getndelim2.obj" \
@@ -160,6 +170,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\gettime.obj" \
 	"$(INTDIR)\glob.obj" \
 	"$(INTDIR)\lstat.obj" \
+	"$(INTDIR)\mbchar.obj" \
 	"$(INTDIR)\md5.obj" \
 	"$(INTDIR)\mempcpy.obj" \
 	"$(INTDIR)\pagealign_alloc.obj" \
@@ -176,6 +187,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\strcasecmp.obj" \
 	"$(INTDIR)\strftime.obj" \
 	"$(INTDIR)\stripslash.obj" \
+	"$(INTDIR)\strnlen1.obj" \
 	"$(INTDIR)\time_r.obj" \
 	"$(INTDIR)\unsetenv.obj" \
 	"$(INTDIR)\vasnprintf.obj" \
@@ -207,6 +219,7 @@ CLEAN :
 	-@erase "$(INTDIR)\__fpending.obj"
 	-@erase "$(INTDIR)\asnprintf.obj"
 	-@erase "$(INTDIR)\basename.obj"
+	-@erase "$(INTDIR)\canon-host.obj"
 	-@erase "$(INTDIR)\canonicalize.obj"
 	-@erase "$(INTDIR)\closeout.obj"
 	-@erase "$(INTDIR)\cycle-check.obj"
@@ -218,7 +231,10 @@ CLEAN :
 	-@erase "$(INTDIR)\fnmatch.obj"
 	-@erase "$(INTDIR)\fseeko.obj"
 	-@erase "$(INTDIR)\ftello.obj"
+	-@erase "$(INTDIR)\gai_strerror.obj"
+	-@erase "$(INTDIR)\getaddrinfo.obj"
 	-@erase "$(INTDIR)\getdate.obj"
+	-@erase "$(INTDIR)\getdelim.obj"
 	-@erase "$(INTDIR)\getline.obj"
 	-@erase "$(INTDIR)\getlogin_r.obj"
 	-@erase "$(INTDIR)\getndelim2.obj"
@@ -227,6 +243,7 @@ CLEAN :
 	-@erase "$(INTDIR)\gettime.obj"
 	-@erase "$(INTDIR)\glob.obj"
 	-@erase "$(INTDIR)\lstat.obj"
+	-@erase "$(INTDIR)\mbchar.obj"
 	-@erase "$(INTDIR)\md5.obj"
 	-@erase "$(INTDIR)\mempcpy.obj"
 	-@erase "$(INTDIR)\pagealign_alloc.obj"
@@ -243,6 +260,7 @@ CLEAN :
 	-@erase "$(INTDIR)\strcasecmp.obj"
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
+	-@erase "$(INTDIR)\strnlen1.obj"
 	-@erase "$(INTDIR)\time_r.obj"
 	-@erase "$(INTDIR)\unsetenv.obj"
 	-@erase "$(INTDIR)\vasnprintf.obj"
@@ -304,6 +322,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\__fpending.obj" \
 	"$(INTDIR)\asnprintf.obj" \
 	"$(INTDIR)\basename.obj" \
+	"$(INTDIR)\canon-host.obj" \
 	"$(INTDIR)\canonicalize.obj" \
 	"$(INTDIR)\closeout.obj" \
 	"$(INTDIR)\cycle-check.obj" \
@@ -315,7 +334,10 @@ LIB32_OBJS= \
 	"$(INTDIR)\fnmatch.obj" \
 	"$(INTDIR)\fseeko.obj" \
 	"$(INTDIR)\ftello.obj" \
+	"$(INTDIR)\gai_strerror.obj" \
+	"$(INTDIR)\getaddrinfo.obj" \
 	"$(INTDIR)\getdate.obj" \
+	"$(INTDIR)\getdelim.obj" \
 	"$(INTDIR)\getline.obj" \
 	"$(INTDIR)\getlogin_r.obj" \
 	"$(INTDIR)\getndelim2.obj" \
@@ -324,6 +346,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\gettime.obj" \
 	"$(INTDIR)\glob.obj" \
 	"$(INTDIR)\lstat.obj" \
+	"$(INTDIR)\mbchar.obj" \
 	"$(INTDIR)\md5.obj" \
 	"$(INTDIR)\mempcpy.obj" \
 	"$(INTDIR)\pagealign_alloc.obj" \
@@ -340,6 +363,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\strcasecmp.obj" \
 	"$(INTDIR)\strftime.obj" \
 	"$(INTDIR)\stripslash.obj" \
+	"$(INTDIR)\strnlen1.obj" \
 	"$(INTDIR)\time_r.obj" \
 	"$(INTDIR)\unsetenv.obj" \
 	"$(INTDIR)\vasnprintf.obj" \
@@ -382,6 +406,11 @@ SOURCE=.\asnprintf.c
 SOURCE=.\basename.c
 
 "$(INTDIR)\basename.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=".\canon-host.c"
+
+"$(INTDIR)\canon-host.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\canonicalize.c
@@ -439,9 +468,24 @@ SOURCE=.\ftello.c
 "$(INTDIR)\ftello.obj" : $(SOURCE) "$(INTDIR)"
 
 
+SOURCE=.\gai_strerror.c
+
+"$(INTDIR)\gai_strerror.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\getaddrinfo.c
+
+"$(INTDIR)\getaddrinfo.obj" : $(SOURCE) "$(INTDIR)"
+
+
 SOURCE=.\getdate.c
 
 "$(INTDIR)\getdate.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\getdelim.c
+
+"$(INTDIR)\getdelim.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\getline.c
@@ -482,6 +526,11 @@ SOURCE=.\glob.c
 SOURCE=.\lstat.c
 
 "$(INTDIR)\lstat.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\mbchar.c
+
+"$(INTDIR)\mbchar.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\md5.c
@@ -562,6 +611,11 @@ SOURCE=.\strftime.c
 SOURCE=.\stripslash.c
 
 "$(INTDIR)\stripslash.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\strnlen1.c
+
+"$(INTDIR)\strnlen1.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\time_r.c

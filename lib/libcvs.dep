@@ -22,6 +22,18 @@
 	".\timespec.h"\
 	
 
+".\canon-host.c" : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\netdb.h"\
+	"..\windows-NT\sys\socket.h"\
+	"..\windows-NT\woe32.h"\
+	".\canon-host.h"\
+	".\getaddrinfo.h"\
+	".\strdup.h"\
+	".\timespec.h"\
+	"c:\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	
+
 .\canonicalize.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
@@ -133,6 +145,30 @@
 	".\timespec.h"\
 	
 
+.\gai_strerror.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\netdb.h"\
+	"..\windows-NT\sys\socket.h"\
+	"..\windows-NT\woe32.h"\
+	".\getaddrinfo.h"\
+	".\gettext.h"\
+	".\timespec.h"\
+	"c:\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	
+
+.\getaddrinfo.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\netdb.h"\
+	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\sys\socket.h"\
+	"..\windows-NT\woe32.h"\
+	".\getaddrinfo.h"\
+	".\gettext.h"\
+	".\strdup.h"\
+	".\timespec.h"\
+	"c:\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	
+
 .\getdate.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
@@ -143,11 +179,18 @@
 	".\xalloc.h"\
 	
 
+.\getdelim.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\getdelim.h"\
+	".\timespec.h"\
+	
+
 .\getline.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\woe32.h"\
+	".\getdelim.h"\
 	".\getline.h"\
-	".\getndelim2.h"\
 	".\timespec.h"\
 	
 
@@ -202,6 +245,7 @@
 	".\alloca.h"\
 	".\fnmatch.h"\
 	".\getlogin_r.h"\
+	".\glob-libc.h"\
 	".\glob.h"\
 	".\mempcpy.h"\
 	".\stat-macros.h"\
@@ -215,6 +259,14 @@
 	".\stat-macros.h"\
 	".\timespec.h"\
 	".\xalloc.h"\
+	
+
+.\mbchar.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\woe32.h"\
+	".\mbchar.h"\
+	".\timespec.h"\
 	
 
 .\md5.c : \
@@ -283,9 +335,14 @@
 
 .\regex.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\woe32.h"\
-	".\gettext.h"\
+	".\alloca.h"\
+	".\regcomp.c"\
 	".\regex.h"\
+	".\regex_internal.c"\
+	".\regex_internal.h"\
+	".\regexec.c"\
 	".\timespec.h"\
 	
 
@@ -333,7 +390,12 @@
 
 .\strcasecmp.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\woe32.h"\
+	".\mbchar.h"\
+	".\mbuiter.h"\
+	".\strcase.h"\
+	".\strnlen1.h"\
 	".\timespec.h"\
 	
 
@@ -350,6 +412,13 @@
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\woe32.h"\
 	".\dirname.h"\
+	".\timespec.h"\
+	
+
+.\strnlen1.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\strnlen1.h"\
 	".\timespec.h"\
 	
 

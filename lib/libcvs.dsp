@@ -97,6 +97,10 @@ SOURCE=.\basename.c
 # End Source File
 # Begin Source File
 
+SOURCE=".\canon-host.c"
+# End Source File
+# Begin Source File
+
 SOURCE=.\canonicalize.c
 # End Source File
 # Begin Source File
@@ -141,7 +145,19 @@ SOURCE=.\ftello.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\gai_strerror.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\getaddrinfo.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\getdate.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\getdelim.c
 # End Source File
 # Begin Source File
 
@@ -174,6 +190,10 @@ SOURCE=.\glob.c
 # Begin Source File
 
 SOURCE=.\lstat.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\mbchar.c
 # End Source File
 # Begin Source File
 
@@ -238,6 +258,10 @@ SOURCE=.\strftime.c
 # Begin Source File
 
 SOURCE=.\stripslash.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\strnlen1.c
 # End Source File
 # Begin Source File
 
@@ -324,6 +348,10 @@ SOURCE=.\allocsa.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\canon-host.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\canonicalize.h
 # End Source File
 # Begin Source File
@@ -399,11 +427,19 @@ InputPath=.\fnmatch_.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\getaddrinfo.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\getcwd.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\getdate.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\getdelim.h
 # End Source File
 # Begin Source File
 
@@ -462,6 +498,10 @@ SOURCE=.\gettext.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\glob-libc.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\glob.h
 # End Source File
 # Begin Source File
@@ -493,6 +533,14 @@ InputPath=.\glob_.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\mbchar.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\mbuiter.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\md5.h
 # End Source File
 # Begin Source File
@@ -502,6 +550,10 @@ SOURCE=.\mempcpy.h
 # Begin Source File
 
 SOURCE="..\windows-NT\ndir.h"
+# End Source File
+# Begin Source File
+
+SOURCE="..\windows-NT\netdb.h"
 # End Source File
 # Begin Source File
 
@@ -537,11 +589,19 @@ SOURCE=.\regex.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\regex_internal.h
+# End Source File
+# Begin Source File
+
 SOURCE=".\save-cwd.h"
 # End Source File
 # Begin Source File
 
 SOURCE=.\setenv.h
+# End Source File
+# Begin Source File
+
+SOURCE="..\windows-NT\sys\socket.h"
 # End Source File
 # Begin Source File
 
@@ -557,7 +617,15 @@ SOURCE="..\windows-NT\stdint.h"
 # End Source File
 # Begin Source File
 
+SOURCE=.\strcase.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\strdup.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\strnlen1.h
 # End Source File
 # Begin Source File
 
