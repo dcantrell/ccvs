@@ -1,3 +1,11 @@
+2005-09-19  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (stamp-ch): Sub PACKAGE_STRING rather than reconstructing
+	it.  Sub PACKAGE_BUGREPORT.
+	(stamp-chi): Fix grammar in comment.
+	* config.h.in.in (PACKAGE_BUGREPORT): Define macro.
+	(PACKAGE_STRING): Use $PACKAGE_STRING directly.
+
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in (HAVE_PUTENV): Remove.
