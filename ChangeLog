@@ -1,3 +1,9 @@
+﻿2005-09-20  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dsp: Add files (lib\canon-host.h lib\glob-libc.h) to project.
+
+	* cvsnt.dep: Regenerated for "cvsnt.dsp" changes.
+
 2005-09-19  Derek Price  <derek@ximbiot.com>
 
 	* maint-aux/gnulib-update: Default $GNULIB path rather than setting.

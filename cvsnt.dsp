@@ -376,6 +376,10 @@ SOURCE=.\src\buffer.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\lib\canon-host.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\canonicalize.h
 # End Source File
 # Begin Source File
@@ -453,6 +457,10 @@ SOURCE=.\lib\getpass.h
 # Begin Source File
 
 SOURCE=.\lib\gettext.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\lib\glob-libc.h"
 # End Source File
 # Begin Source File
 
