@@ -1,3 +1,12 @@
+2005-09-20  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libcvs.dsp: Add files (canon-host.c gai_strerror.c getaddrinfo.c
+	getdelim.c mbchar.c strnlen1.c canon-host.h getaddrinfo.h getdelim.h
+	glob-libc.h mbchar.h mbuiter.h regex_internal.h strcase.h strnlen1.h
+	..\windows-NT\netdb.h ..\windows-NT\sys\socket.h) to project.
+
+	* libcvs.dep libcvs.mak: Regenerated for "libcvs.dsp" changes.
+
 2005-09-20  Derek Price  <derek@ximbiot.com>
 
 	* getaddrinfo.c: Update from GNULIB.
