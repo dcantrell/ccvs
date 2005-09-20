@@ -93,16 +93,19 @@
 # endif
 #endif
 
-#if !__GNUC_PREREQ (3, 1)
-# define always_inline
+#if __GNUC_PREREQ (3, 1)
+# define attribute_always_inline __attribute((always_inline))
+#else
+# define attribute_always_inline
 #endif
 
 #if __GNUC__ >= 3
 # define BE(expr, val) __builtin_expect (expr, val)
+# define attribute_pure __attribute((pure))
 #else
 # define BE(expr, val) (expr)
 # define inline
-# define pure
+# define attribute_pure
 #endif
 
 /* Number of single byte character.  */
@@ -447,7 +450,7 @@ static void build_upper_buffer (re_string_t *pstr) internal_function;
 static void re_string_translate_buffer (re_string_t *pstr) internal_function;
 static unsigned int re_string_context_at (const re_string_t *input,
 					  Idx idx, int eflags)
-     internal_function __attribute ((pure));
+     internal_function attribute_pure;
 
 #define re_string_peek_byte(pstr, offset) \
   ((pstr)->mbs[(pstr)->cur_idx + offset])
@@ -870,7 +873,7 @@ bitset_mask (bitset dest, const bitset src)
 #if defined RE_ENABLE_I18N
 /* Inline functions for re_string.  */
 static inline int
-internal_function __attribute ((pure))
+internal_function attribute_pure
 re_string_char_size_at (const re_string_t *pstr, Idx idx)
 {
   int byte_idx;
@@ -883,7 +886,7 @@ re_string_char_size_at (const re_string_t *pstr, Idx idx)
 }
 
 static inline wint_t
-internal_function __attribute ((pure))
+internal_function attribute_pure
 re_string_wchar_at (const re_string_t *pstr, Idx idx)
 {
   if (pstr->mb_cur_max == 1)
@@ -892,7 +895,7 @@ re_string_wchar_at (const re_string_t *pstr, Idx idx)
 }
 
 static int
-internal_function __attribute ((pure))
+internal_function attribute_pure
 re_string_elem_size_at (const re_string_t *pstr, Idx idx)
 {
 #ifdef _LIBC
