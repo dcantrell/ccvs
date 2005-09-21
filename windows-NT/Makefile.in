@@ -293,7 +293,7 @@ EXTRA_DIST = \
 	filesubr.c \
 	mkdir.c \
 	ndir.c \
-	netdb.c \
+	netdb.h \
 	pwd.c \
 	rcmd.c \
 	run.c \

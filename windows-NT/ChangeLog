@@ -1,5 +1,7 @@
 2005-09-20  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (EXTRA_DIST): s/netdb.c/netdb.h/.
+
 	* Makefile.am (EXTRA_DIST): Add netdb.h, sys/socket.h, & sys/types.h.
 
 2005-09-20  Conrad T. Pino  <Conrad@Pino.com>
