@@ -1,3 +1,7 @@
+2005-09-21  Conrad T. Pino  <Conrad@Pino.com>
+
+	* fix-msvc-mak.pl: Remove "basetsd" from "../lib/libcvs.dep".
+
 2005-09-20  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (EXTRA_DIST): s/netdb.c/netdb.h/.
