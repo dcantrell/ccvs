@@ -1,3 +1,8 @@
+2005-09-21  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libcvs.dep: Regenerated for "../windows-NT/fix-msvc-mak.pl" change
+	to remove "basetsd" references.
+
 2005-09-20  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.dsp: Add files (canon-host.c gai_strerror.c getaddrinfo.c
