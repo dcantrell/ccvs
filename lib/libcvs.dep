@@ -31,7 +31,6 @@
 	".\getaddrinfo.h"\
 	".\strdup.h"\
 	".\timespec.h"\
-	"c:\program files\microsoft visual studio\vc98\include\basetsd.h"\
 	
 
 .\canonicalize.c : \
@@ -153,7 +152,6 @@
 	".\getaddrinfo.h"\
 	".\gettext.h"\
 	".\timespec.h"\
-	"c:\program files\microsoft visual studio\vc98\include\basetsd.h"\
 	
 
 .\getaddrinfo.c : \
@@ -166,7 +164,6 @@
 	".\gettext.h"\
 	".\strdup.h"\
 	".\timespec.h"\
-	"c:\program files\microsoft visual studio\vc98\include\basetsd.h"\
 	
 
 .\getdate.c : \
