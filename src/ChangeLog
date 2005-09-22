@@ -1,3 +1,7 @@
+2005-09-22  Larry Jones  <lawrence.jones@ugs.com>
+
+	* patch.c (patch_usage): Document -k option.
+
 2005-09-22  Derek Price  <derek@ximbiot.com>
 
 	* classify.c (Classify_File): If a file had a conflict and the
