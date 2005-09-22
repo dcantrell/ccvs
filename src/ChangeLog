@@ -1,3 +1,7 @@
+2005-09-22  Derek Price  <derek@ximbiot.com>
+
+	* classify.c (Classify_File): Consolidate redundant conditionals.
+
 2005-09-21  Derek Price  <derek@ximbiot.com>
 
 	* entries.c: Remove obsolete comment.
