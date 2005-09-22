@@ -548,8 +548,8 @@ it operates on, and continues to use that \fIkflag\fR with future
 commands on the same files until you specify otherwise.
 .SP
 The \fB-k\fR option is available with the \fBadd\fR,
-\fBcheckout\fR, \fBdiff\fR, \fBexport\fR, \fBimport\fR and
-\fBupdate\fR commands.
+\fBcheckout\fR, \fBdiff\fR, \fBexport\fR, \fBimport\fR,
+\fBrdiff\fR, and \fBupdate\fR commands.
 .SP
 \fBWARNING: Prior to CVS version 1.12.2, the \fB-k\fB flag
 overrode the \fB-kb\fB indication for a binary file.  This could
@@ -3392,6 +3392,12 @@ Use the most recent revision no later than \fIdate\fR.
 .IP "" 2
 If no matching revision is found, retrieve the most
 recent revision (instead of ignoring the file).
+.SP
+.IP "" 0
+\fB-k \fIkflag\fB\fR
+.IP "" 2
+Process keywords according to \fIkflag\fR.  See
+see node `Keyword substitution\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-l\fR

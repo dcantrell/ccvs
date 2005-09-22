@@ -7424,8 +7424,10 @@ each working directory copy of a file also has a
 substitution mode.  The former is set by the @samp{-k}
 option to @code{cvs add} and @code{cvs admin}; the
 latter is set by the @samp{-k} or @samp{-A} options to @code{cvs
-checkout} or @code{cvs update}.  @code{cvs diff} also
-has a @samp{-k} option.  For some examples,
+checkout} or @code{cvs update}.
+@code{cvs diff} and @code{cvs rdiff} also
+have @samp{-k} options.
+For some examples,
 see @ref{Binary files}, and @ref{Merging and keywords}.
 @c The fact that -A is overloaded to mean both reset
 @c sticky options and reset sticky tags/dates is
@@ -8626,8 +8628,8 @@ it operates on, and continues to use that @var{kflag} with future
 commands on the same files until you specify otherwise.
 
 The @samp{-k} option is available with the @code{add},
-@code{checkout}, @code{diff}, @code{export}, @code{import} and
-@code{update} commands.
+@code{checkout}, @code{diff}, @code{export}, @code{import},
+@code{rdiff}, and @code{update} commands.
 
 @strong{WARNING: Prior to CVS version 1.12.2, the @samp{-k} flag
 overrode the @samp{-kb} indication for a binary file.  This could
@@ -11148,6 +11150,10 @@ Use the most recent revision no later than @var{date}.
 @item -f
 If no matching revision is found, retrieve the most
 recent revision (instead of ignoring the file).
+
+@item -k @var{kflag}
+Process keywords according to @var{kflag}.  See
+@ref{Keyword substitution}.
 
 @item -l
 Local; don't descend subdirectories.
