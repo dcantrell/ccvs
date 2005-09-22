@@ -236,19 +236,8 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 			   finfo->fullname);
 		ret = T_REMOVE_ENTRY;
 	    }
-	    else if (strcmp (vers->ts_user, vers->ts_rcs) == 0)
-	    {
-
-		/*
-		 * The user file is still unmodified, so just remove it from
-		 * the entry list
-		 */
-		if (!really_quiet)
-		    error (0, 0, "`%s' is no longer in the repository",
-			   finfo->fullname);
-		ret = T_REMOVE_ENTRY;
-	    }
-	    else if (No_Difference (finfo, vers))
+	    else if (strcmp (vers->ts_user, vers->ts_rcs)
+		     && No_Difference (finfo, vers))
 	    {
 		/* they are different -> conflict */
 		if (!really_quiet)
@@ -260,10 +249,13 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 	    }
 	    else
 	    {
-		/* they weren't really different */
+
+		/*
+		 * The user file is still unmodified, so just remove it from
+		 * the entry list
+		 */
 		if (!really_quiet)
-		    error (0, 0,
-			   "warning: `%s' is not (any longer) pertinent",
+		    error (0, 0, "`%s' is no longer in the repository",
 			   finfo->fullname);
 		ret = T_REMOVE_ENTRY;
 	    }
