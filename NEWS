@@ -3,10 +3,18 @@ Changes since 1.11.20:
 
 BUG FIXES
 
+* CVS server now handles conflict markers in Entry requests as documented.
+
+* CVS now remembers that binary file merge conflicts occurred until the
+  timestamp of the updated binary file changes.
+
+* CVS client now saves some bandwidth by not sending the contents of files
+  with conflicts to the server when it isn't needed.
+
 * CVS now does correct locking during import.
 
 * A problem where the server could block indefinitely waiting for an EOF from
-  the client when compression was enabled has ben fixed.
+  the client when compression was enabled has been fixed.
 
 * `cvs diff' no longer splits its arguments on spaces.
 
