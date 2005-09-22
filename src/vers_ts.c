@@ -302,6 +302,13 @@ time_stamp_server (file, vers_ts, entdata)
 	else if (entdata->timestamp
 		 && entdata->timestamp[0] == '=')
 	    mark_unchanged (vers_ts);
+	else if (entdata->conflict
+		 && entdata->conflict[0] == '=')
+	{
+	    /* These just need matching content.  Might as well minimize it.  */
+	    vers_ts->ts_user = xstrdup ("");
+	    vers_ts->ts_conflict = xstrdup ("");
+	}
 	else if (entdata->timestamp
 		 && (entdata->timestamp[0] == 'M'
 		     || entdata->timestamp[0] == 'D')

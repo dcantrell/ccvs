@@ -691,8 +691,7 @@ update_fileproc (callerdat, finfo)
                 {
                     if (vers->ts_conflict)
                     {
-			if (file_has_conflict (finfo, vers->ts_conflict)
-			    || file_has_markers (finfo))
+			if (file_has_markers (finfo))
                         {
                             write_letter (finfo, 'C');
                             retval = 1;
@@ -1919,6 +1918,47 @@ write_letter (finfo, letter)
 
 
 
+/* Reregister a file after a merge.  */
+static void
+RegisterMerge PROTO((struct file_info *finfo, Vers_TS *vers,
+		     const char *backup, int has_conflicts));
+void
+RegisterMerge (finfo, vers, backup, has_conflicts)
+    struct file_info *finfo;
+    Vers_TS *vers;
+    const char *backup;
+    int has_conflicts;
+{
+    /* This file is the result of a merge, which means that it has
+       been modified.  We use a special timestamp string which will
+       not compare equal to any actual timestamp.  */
+    char *cp = NULL;
+
+    if (has_conflicts)
+    {
+	time (&last_register_time);
+	cp = time_stamp (finfo->file);
+    }
+    Register (finfo->entries, finfo->file, vers->vn_rcs ? vers->vn_rcs : "0",
+	      "Result of merge", vers->options, vers->tag, vers->date, cp);
+    if (cp)
+	free (cp);
+
+#ifdef SERVER_SUPPORT
+    /* Send the new contents of the file before the message.  If we
+       wanted to be totally correct, we would have the client write
+       the message only after the file has safely been written.  */
+    if (server_active)
+    {
+        server_copy_file (finfo->file, finfo->update_dir, finfo->repository,
+			  backup);
+	server_updated (finfo, vers, SERVER_MERGED, (mode_t) -1, NULL, NULL);
+    }
+#endif
+}
+
+
+
 /*
  * Do all the magic associated with a file which needs to be merged
  */
@@ -1971,13 +2011,12 @@ merge_file (finfo, vers)
 	   thought needs to go into this, and in the meantime it is safe
 	   to treat any such mismatch as an automatic conflict. -twp */
 
-#ifdef SERVER_SUPPORT
-	if (server_active)
-	    server_copy_file (finfo->file, finfo->update_dir,
-			      finfo->repository, backup);
-#endif
+	retcode = RCS_checkout (finfo->rcs, finfo->file,
+				vers->vn_rcs, vers->tag,
+				vers->options, NULL, NULL, NULL);
+	xchmod (finfo->file, 1);
 
-	status = checkout_file (finfo, vers, 0, 1, 1);
+	RegisterMerge (finfo, vers, backup, 1);
 
 	/* Is there a better term than "nonmergeable file"?  What we
 	   really mean is, not something that CVS cannot or does not
@@ -2011,24 +2050,6 @@ merge_file (finfo, vers)
     if (strcmp (vers->options, "-V4") == 0)
 	vers->options[0] = '\0';
 
-    /* This file is the result of a merge, which means that it has
-       been modified.  We use a special timestamp string which will
-       not compare equal to any actual timestamp.  */
-    {
-	char *cp = 0;
-
-	if (status)
-	{
-	    (void) time (&last_register_time);
-	    cp = time_stamp (finfo->file);
-	}
-	Register (finfo->entries, finfo->file, vers->vn_rcs,
-		  "Result of merge", vers->options, vers->tag,
-		  vers->date, cp);
-	if (cp)
-	    free (cp);
-    }
-
     /* fix up the vers structure, in case it is used by join */
     if (join_rev1)
     {
@@ -2039,19 +2060,7 @@ merge_file (finfo, vers)
 	vers->vn_user = xstrdup (vers->vn_rcs);
     }
 
-#ifdef SERVER_SUPPORT
-    /* Send the new contents of the file before the message.  If we
-       wanted to be totally correct, we would have the client write
-       the message only after the file has safely been written.  */
-    if (server_active)
-    {
-        server_copy_file (finfo->file, finfo->update_dir, finfo->repository,
-			  backup);
-	server_updated (finfo, vers, SERVER_MERGED,
-			(mode_t) -1, (unsigned char *) NULL,
-			(struct buffer *) NULL);
-    }
-#endif
+    RegisterMerge (finfo, vers, backup, status);
 
     /* FIXME: the noexec case is broken.  RCS_merge could be doing the
        xcmp on the temporary files without much hassle, I think.  */
@@ -2645,31 +2654,7 @@ join_file (finfo, vers)
        RCS_checkout above, and we aren't running as the server.
        However, that is not the normal case, and calling Register
        again won't cost much in that case.  */
-    {
-	char *cp = 0;
-
-	if (status)
-	{
-	    (void) time (&last_register_time);
-	    cp = time_stamp (finfo->file);
-	}
-	Register (finfo->entries, finfo->file,
-		  vers->vn_rcs ? vers->vn_rcs : "0", "Result of merge",
-		  vers->options, vers->tag, vers->date, cp);
-	if (cp)
-	    free(cp);
-    }
-
-#ifdef SERVER_SUPPORT
-    if (server_active)
-    {
-	server_copy_file (finfo->file, finfo->update_dir, finfo->repository,
-			  backup);
-	server_updated (finfo, vers, SERVER_MERGED,
-			(mode_t) -1, (unsigned char *) NULL,
-			(struct buffer *) NULL);
-    }
-#endif
+    RegisterMerge (finfo, vers, backup, status);
 
 out:
     free (rev1);
