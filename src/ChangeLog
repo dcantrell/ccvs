@@ -1,3 +1,7 @@
+2005-09-21  Derek Price  <derek@ximbiot.com>
+
+	* entries.c: Remove obsolete comment.
+
 2005-09-20  Derek Price  <derek@ximbiot.com>
 
 	* myndbm.c: #include getdelim.h for Windows.
