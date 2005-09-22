@@ -1,3 +1,8 @@
+2005-09-22  Larry Jones  <lawrence.jones@ugs.com>
+
+	* cvs.texinfo (rdiff options): Document -k.
+	* cvs.1, stamp-vti, version.texi: Regenerated.
+
 2005-09-20  Larry Jones  <lawrence.jones@ugs.com>
 
 	* cvs.texinfo: Move summary and detail contents to the front
