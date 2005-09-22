@@ -47,7 +47,7 @@ static int unidiff = 0;
 
 static const char *const patch_usage[] =
 {
-    "Usage: %s %s [-flR] [-c|-u] [-s|-t] [-V %%d]\n",
+    "Usage: %s %s [-flR] [-c|-u] [-s|-t] [-V %%d] [-k kopt]\n",
     "    -r rev|-D date [-r rev2 | -D date2] modules...\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, not recursive\n",
@@ -56,9 +56,10 @@ static const char *const patch_usage[] =
     "\t-u\tUnidiff format.\n",
     "\t-s\tShort patch - one liner per file.\n",
     "\t-t\tTop two diffs - last change made to the file.\n",
+    "\t-V vers\tUse RCS Version \"vers\" for keyword expansion.\n",
+    "\t-k kopt\tSpecify keyword expansion mode.\n",
     "\t-D date\tDate.\n",
     "\t-r rev\tRevision - symbolic or numeric.\n",
-    "\t-V vers\tUse RCS Version \"vers\" for keyword expansion.\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
