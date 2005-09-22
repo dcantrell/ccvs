@@ -1684,7 +1684,9 @@ serve_unchanged (arg)
 	     * is allowed, but broken versions of WinCVS & TortoiseCVS rely on
 	     * this behavior.
 	     */
-	    *timefield = '=';
+	    if (*timefield != '+')
+		/* Skip this for entries with conflict markers.  */
+		*timefield = '=';
 	    break;
 	}
     }
@@ -1755,7 +1757,10 @@ serve_is_modified (arg)
 	     * is allowed, but broken versions of WinCVS & TortoiseCVS rely on
 	     * this behavior.
 	     */
-	    *timefield = 'M';
+	    if (*timefield != '+')
+		/* Skip this for entries with conflict markers.  */
+		*timefield = 'M';
+
 	    if (kopt != NULL)
 	    {
 		if (alloc_pending (strlen (name) + 80))

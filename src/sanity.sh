@@ -4179,26 +4179,25 @@ ${CVSROOT_DIRNAME}/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \.file
 new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done"
 	  if $remote; then
+	    # FIXCVS:
 	    # This is a bug, looks like that toplevel_repos cruft in
 	    # client.c is coming back to haunt us.
 	    # May want to think about the whole issue, toplevel_repos
 	    # has always been crufty and trying to patch it up again
 	    # might be a mistake.
-	    dotest_fail files-12 \
+	    dotest files-12 \
 "${testcvs} commit -f -m test ./sdir/ssdir/.file ./.file" \
-"${PROG} commit: Up-to-date check failed for .\.file'
-${PROG} \[commit aborted\]: correct above errors first!"
+"Checking in \./sdir/ssdir/\.file;
+${CVSROOT_DIRNAME}/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \.file
+new revision: 1\.1\.2\.3; previous revision: 1\.1\.2\.2
+done"
 
 	    # Sync up the version numbers so that the rest of the
 	    # tests don't need to expect different numbers based
 	    # local or remote.
 	    dotest files-12-workaround \
-"${testcvs} commit -f -m test sdir/ssdir/.file .file" \
-"Checking in sdir/ssdir/\.file;
-${CVSROOT_DIRNAME}/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \.file
-new revision: 1\.1\.2\.3; previous revision: 1\.1\.2\.2
-done
-Checking in \.file;
+"${testcvs} commit -f -m test .file" \
+"Checking in \.file;
 ${CVSROOT_DIRNAME}/first-dir/dir/Attic/\.file,v  <--  \.file
 new revision: 1\.1\.2\.3; previous revision: 1\.1\.2\.2
 done"
@@ -4385,7 +4384,7 @@ C tfile"
 		# Now note our status
 		dotest status-1 "${testcvs} status tfile" \
 "===================================================================
-File: tfile            	Status: File had conflicts on merge
+File: tfile            	Status: Unresolved Conflict
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/tfile,v
@@ -10090,7 +10089,7 @@ C $file"
 	  # (and read-only) .# file for writing.
 	  echo conflict > $file
 
-	  # verify that the backup file is writable
+	  # verify that the backup file is not writable
 	  if test -w ".#$file.1.1"; then
 	    fail "join-readonly-conflict-10 : .#$file.1.1 is writable"
 	  else
@@ -10678,7 +10677,7 @@ C a"
 
 		dotest conflicts-status-1 "${testcvs} status a" \
 "===================================================================
-File: a                	Status: File had conflicts on merge
+File: a                	Status: Unresolved Conflict
 
    Working revision:	1\.2.*
    Repository revision:	1\.2	${CVSROOT_DIRNAME}/first-dir/a,v
@@ -16497,11 +16496,13 @@ done"
 	  cd ../../2/first-dir
 	  echo 'edits in dir 2' >binfile
 	  dotest binfiles-con1 "${testcvs} -q update" \
-"U binfile
-${PROG} update: nonmergeable file needs merge
+"$PROG update: nonmergeable file needs merge
 ${PROG} update: revision 1\.3 from repository is now in binfile
 ${PROG} update: file from working directory is now in \.#binfile\.1\.2
 C binfile"
+
+	  dotest_fail binfiles-con1b "$testcvs -q up" "C binfile"
+
 	  dotest binfiles-con2 "cmp binfile ../../1/binfile.dat" ''
 	  dotest binfiles-con3 "cat .#binfile.1.2" 'edits in dir 2'
 
@@ -17525,27 +17526,13 @@ done"
 	  cd ../..
 	  cd m1/first-dir
 	  echo "changed in m1" >aa
-	  if $remote; then
-	    # The tagged text code swallows up "U aa" but isn't yet up to
-	    # trying to figure out how it interacts with the "C aa" and
-	    # other stuff.  The whole deal of having both is pretty iffy.
-	    dotest mwrap-7 "${testcvs} -nq update" \
+	  dotest mwrap-7 "$testcvs -nq update" \
 "${PROG} update: nonmergeable file needs merge
 ${PROG} update: revision 1\.2 from repository is now in aa
 ${PROG} update: file from working directory is now in \.#aa\.1\.1
-C aa
-U aa"
-	  else
-	    dotest mwrap-7 "${testcvs} -nq update" \
-"U aa
-${PROG} update: nonmergeable file needs merge
-${PROG} update: revision 1\.2 from repository is now in aa
-${PROG} update: file from working directory is now in \.#aa\.1\.1
 C aa"
-	  fi
 	  dotest mwrap-8 "${testcvs} -q update" \
-"U aa
-${PROG} update: nonmergeable file needs merge
+"$PROG update: nonmergeable file needs merge
 ${PROG} update: revision 1\.2 from repository is now in aa
 ${PROG} update: file from working directory is now in \.#aa\.1\.1
 C aa"

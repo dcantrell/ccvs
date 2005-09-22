@@ -146,9 +146,6 @@ status_fileproc (callerdat, finfo)
 	    sstat = "Needs Patch";
 	    break;
 	case T_CONFLICT:
-	    /* I _think_ that "unresolved" is correct; that if it has
-	       been resolved then the status will change.  But I'm not
-	       sure about that.  */
 	    sstat = "Unresolved Conflict";
 	    break;
 	case T_ADDED:
@@ -158,9 +155,7 @@ status_fileproc (callerdat, finfo)
 	    sstat = "Locally Removed";
 	    break;
 	case T_MODIFIED:
-	    if ( vers->ts_conflict
-		 && ( file_has_conflict ( finfo, vers->ts_conflict )
-		       || file_has_markers ( finfo ) ) )
+	    if (file_has_markers (finfo))
 		sstat = "File had conflicts on merge";
 	    else
 		/* Note that we do not re Register() the file when we spot
