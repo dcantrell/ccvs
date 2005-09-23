@@ -4115,7 +4115,8 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
    Otherwise, if WORKFILE is NULL, check out the revision to SOUT.  If
    SOUT is RUN_TTY, then write the contents of the revision to
    standard output.  When using SOUT, the output is generally a
-   temporary file; don't bother to get the file modes correct.
+   temporary file; don't bother to get the file modes correct.  When
+   NOEXEC is set, WORKFILEs are not written but SOUTs are.
 
    REV is the numeric revision to check out.  It may be NULL, which
    means to check out the head of the default branch.

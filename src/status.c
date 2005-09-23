@@ -140,12 +140,14 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 	    sstat = "Needs Patch";
 	    break;
 	case T_CONFLICT:
-	    /* FIXME - This message needs to be clearer.  It comes up now
-	     * only when a file exists or has been added in the local sandbox
+	    /* FIXME - This message could be clearer.  It comes up
+	     * when a file exists or has been added in the local sandbox
 	     * and a file of the same name has been committed indepenently to
-	     * the repository from a different sandbox.  It also comes up
-	     * whether an update has been attempted or not, so technically, I
-	     * think it is not actually a conflict yet.
+	     * the repository from a different sandbox, as well as when a
+	     * timestamp hasn't changed since a merge resulted in conflicts.
+	     * It also comes up whether an update has been attempted or not, so
+	     * technically, I think the double-add case is not actually a
+	     * conflict yet.
 	     */
 	    sstat = "Unresolved Conflict";
 	    break;
@@ -156,9 +158,7 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 	    sstat = "Locally Removed";
 	    break;
 	case T_MODIFIED:
-	    if ( vers->ts_conflict
-		 && ( file_has_conflict ( finfo, vers->ts_conflict )
-		       || file_has_markers ( finfo ) ) )
+	    if (file_has_markers (finfo))
 		sstat = "File had conflicts on merge";
 	    else
 		/* Note that we do not re Register() the file when we spot

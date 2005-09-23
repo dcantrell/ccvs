@@ -100,7 +100,7 @@ copy_file (const char *from, const char *to)
 	    error (1, errno, "cannot close %s", to);
     }
 
-    /* now, set the times for the copied file to match those of the original */
+    /* preserve last access & modification times */
     memset ((char *) &t, 0, sizeof (t));
     t.actime = sb.st_atime;
     t.modtime = sb.st_mtime;
