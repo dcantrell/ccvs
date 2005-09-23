@@ -324,7 +324,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 #else
 		/* Files with conflict markers and new timestamps fall through
 		 * here, but they need to.  T_CONFLICT is an error in
-		 * commit_fileproc, whereas T_CONFLICT with conflict markers
+		 * commit_fileproc, whereas T_MODIFIED with conflict markers
 		 * is caught but only warned about.  Similarly, update_fileproc
 		 * currently reregisters a file that was conflicted but lost
 		 * its markers.
