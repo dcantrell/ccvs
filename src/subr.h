@@ -33,7 +33,6 @@ char *previous_rev (RCSNode *rcs, const char *rev);
 char *gca (const char *rev1, const char *rev2);
 void check_numeric (const char *, int, char **);
 char *make_message_rcsvalid (const char *message);
-int file_has_conflict (const struct file_info *, const char *ts_conflict);
 int file_has_markers (const struct file_info *);
 void get_file (const char *, const char *, const char *,
                char **, size_t *, size_t *);

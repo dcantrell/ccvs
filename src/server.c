@@ -1790,19 +1790,24 @@ serve_is_modified (char *arg)
 		    *cp = cp[-1];
 		    --cp;
 		}
+
+		/* *timefield == '/';  */
 	    }
-	    /* If *TIMEFIELD wasn't '/', we assume that it was because of
-	     * multiple calls to Is-modified & Unchanged by the client and
-	     * just overwrite the value from the last call.  Technically, we
-	     * should probably either ignore calls after the first or send the
-	     * client an error, since the client/server protocol specification
-	     * specifies that only one call to either Is-Modified or Unchanged
-	     * is allowed, but broken versions of CVSNT (at least 2.0.34 -
-	     * 2.0.41, reported fixed in 2.0.41a) and the WinCVS & TortoiseCVS
-	     * clients which depend on those broken versions of CVSNT (WinCVS
-	     * 1.3 & at least one TortoiseCVS release) rely on this behavior.
+	    /* If *TIMEFIELD wasn't '/' and wasn't '+', we assume that it was
+	     * because of multiple calls to Is-modified & Unchanged by the
+	     * client and just overwrite the value from the last call.
+	     * Technically, we should probably either ignore calls after the
+	     * first or send the client an error, since the client/server
+	     * protocol specification specifies that only one call to either
+	     * Is-Modified or Unchanged is allowed, but broken versions of
+	     * CVSNT (at least 2.0.34 - 2.0.41, reported fixed in 2.0.41a) and
+	     * the WinCVS & TortoiseCVS clients which depend on those broken
+	     * versions of CVSNT (WinCVS 1.3 & at least one TortoiseCVS
+	     * release) rely on this behavior.
 	     */
-	    *timefield++ = 'M';
+	    if (*timefield != '+')
+		*timefield = 'M';
+
 	    if (kopt != NULL)
 	    {
 		if (alloc_pending (strlen (name) + 80))
@@ -2099,39 +2104,49 @@ serve_unchanged (char *arg)
 		    *cp = cp[-1];
 		    --cp;
 		}
+
+		/* *timefield == '/';  */
 	    }
-	    else if (timefield[1] != '/')
+	    if (*timefield != '+')
 	    {
-		/* Obliterate anything else in TIMEFIELD.  This is again to
-		 * support the broken CVSNT clients mentioned below, in
-		 * conjunction with strict timestamp string boundry checking in
-		 * time_stamp_server() from vers_ts.c & file_has_conflict()
-		 * from subr.c, since the broken clients used to send malformed
-		 * timestamp fields in the Entry request that they then
-		 * depended on the subsequent Unchanged request to overwrite.
+		/* '+' is a conflict marker and we don't want to mess with it
+		 * until Version_TS catches it.
 		 */
-		char *d = timefield + 1;
-		if ((cp = strchr (d, '/')))
+		if (timefield[1] != '/')
 		{
-		    while (*cp)
+		    /* Obliterate anything else in TIMEFIELD.  This is again to
+		     * support the broken CVSNT clients mentioned below, in
+		     * conjunction with strict timestamp string boundry
+		     * checking in time_stamp_server() from vers_ts.c &
+		     * file_has_conflict() from subr.c, since the broken
+		     * clients used to send malformed timestamp fields in the
+		     * Entry request that they then depended on the subsequent
+		     * Unchanged request to overwrite.
+		     */
+		    char *d = timefield + 1;
+		    if ((cp = strchr (d, '/')))
 		    {
-			*d++ = *cp++;
+			while (*cp)
+			{
+			    *d++ = *cp++;
+			}
+			*d = '\0';
 		    }
-		    *d = '\0';
 		}
+		/* If *TIMEFIELD wasn't '/', we assume that it was because of
+		 * multiple calls to Is-modified & Unchanged by the client and
+		 * just overwrite the value from the last call.  Technically,
+		 * we should probably either ignore calls after the first or
+		 * send the client an error, since the client/server protocol
+		 * specification specifies that only one call to either
+		 * Is-Modified or Unchanged is allowed, but broken versions of
+		 * CVSNT (at least 2.0.34 - 2.0.41, reported fixed in 2.0.41a)
+		 * and the WinCVS & TortoiseCVS clients which depend on those
+		 * broken versions of CVSNT (WinCVS 1.3 & at least one
+		 * TortoiseCVS release) rely on this behavior.
+		 */
+		*timefield = '=';
 	    }
-	    /* If *TIMEFIELD wasn't '/', we assume that it was because of
-	     * multiple calls to Is-modified & Unchanged by the client and
-	     * just overwrite the value from the last call.  Technically, we
-	     * should probably either ignore calls after the first or send the
-	     * client an error, since the client/server protocol specification
-	     * specifies that only one call to either Is-Modified or Unchanged
-	     * is allowed, but broken versions of CVSNT (at least 2.0.34 -
-	     * 2.0.41, reported fixed in 2.0.41a) and the WinCVS & TortoiseCVS
-	     * clients which depend on those broken versions of CVSNT (WinCVS
-	     * 1.3 & at least one TortoiseCVS release) rely on this behavior.
-	     */
-	    *timefield = '=';
 	    break;
 	}
     }

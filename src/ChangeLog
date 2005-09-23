@@ -4,6 +4,30 @@
 
 2005-09-22  Derek Price  <derek@ximbiot.com>
 
+	* classify.c (Classify_File): If a file had a conflict and the
+	timestamp hasn't changed, it still has a conflict.  Add comment about
+	how T_MODIFIED could later turn out to have conflict markers and why
+	it should not be checked in this function.
+	* client.c (send_fileproc): Don't send contents for files known to have
+	conflicts unless this is for `cvs diff'.
+	* commit.c (check_fileproc): T_CONFLICT should be handled like
+	T_MODIFIED, since force could be requested.  Simplify logic since
+	T_CONFLICT can now be trusted.
+	* rcs.c (RCS_Checkout): Comment noexec behavior in header block.
+	* server.c (serve_unchanged, serve_is_modified): Handle conflicts.
+	* status.c (status_fileproc): Trust T_CONFLICT to simplify.
+	* subr.c (file_has_conflict): Removed.
+	* subr.h (file_has_conflict): Remove proto.
+	* update.c (update_fileproc): Trust T_CONFLICT.
+	(RegisterMerge): New function factored from...
+	(merge_file, join_file): ...these two functions.
+	* vers_ts.c (time_stamp_server): Handle = conflict timestamps in server
+	entdata.
+	* sanity.sh (files-12): Account for slight behavior improvement.
+	(status, conflicts, mwrap): Account for corrected behavior.
+	(join-readonly-conflict-10): Correct comment.
+	(binfiles-con1b): New test for correct behavior.
+
 	* classify.c (Classify_File): Consolidate redundant conditionals.
 
 2005-09-21  Derek Price  <derek@ximbiot.com>

@@ -845,10 +845,10 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 	case T_CHECKOUT:
 	case T_PATCH:
 	case T_NEEDS_MERGE:
-	case T_CONFLICT:
 	case T_REMOVE_ENTRY:
 	    error (0, 0, "Up-to-date check failed for `%s'", finfo->fullname);
 	    goto out;
+	case T_CONFLICT:
 	case T_MODIFIED:
 	case T_ADDED:
 	case T_REMOVED:
@@ -887,39 +887,29 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 		    goto out;
 		}
 	    }
-	    if (status == T_MODIFIED && !force_ci && vers->ts_conflict)
+	    if (status == T_CONFLICT && !force_ci)
 	    {
-		/*
-		 * We found a "conflict" marker.
-		 *
-		 * If the timestamp on the file is the same as the
-		 * timestamp stored in the Entries file, we block the commit.
-		 */
-		if (file_has_conflict (finfo, vers->ts_conflict))
-		{
-		    error (0, 0,
-			  "file `%s' had a conflict and has not been modified",
-			   finfo->fullname);
-		    goto out;
-		}
-
-		if (file_has_markers (finfo))
-		{
-		    /* Make this a warning, not an error, because we have
-		       no way of knowing whether the "conflict indicators"
-		       are really from a conflict or whether they are part
-		       of the document itself (cvs.texinfo and sanity.sh in
-		       CVS itself, for example, tend to want to have strings
-		       like ">>>>>>>" at the start of a line).  Making people
-		       kludge this the way they need to kludge keyword
-		       expansion seems undesirable.  And it is worse than
-		       keyword expansion, because there is no -ko
-		       analogue.  */
-		    error (0, 0,
-			   "\
+		error (0, 0,
+		      "file `%s' had a conflict and has not been modified",
+		       finfo->fullname);
+		goto out;
+	    }
+	    if (status == T_MODIFIED && !force_ci && file_has_markers (finfo))
+	    {
+		/* Make this a warning, not an error, because we have
+		   no way of knowing whether the "conflict indicators"
+		   are really from a conflict or whether they are part
+		   of the document itself (cvs.texinfo and sanity.sh in
+		   CVS itself, for example, tend to want to have strings
+		   like ">>>>>>>" at the start of a line).  Making people
+		   kludge this the way they need to kludge keyword
+		   expansion seems undesirable.  And it is worse than
+		   keyword expansion, because there is no -ko
+		   analogue.  */
+		error (0, 0,
+		       "\
 warning: file `%s' seems to still contain conflict indicators",
-			   finfo->fullname);
-		}
+		       finfo->fullname);
 	    }
 
 	    if (status == T_REMOVED)

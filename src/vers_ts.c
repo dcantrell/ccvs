@@ -49,6 +49,7 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
     char *rcsexpand = NULL;
 
     /* get a new Vers_TS struct */
+
     vers_ts = xmalloc (sizeof (Vers_TS));
     memset (vers_ts, 0, sizeof (*vers_ts));
 
@@ -289,6 +290,12 @@ time_stamp_server (const char *file, Vers_TS *vers_ts, Entnode *entdata)
     struct stat sb;
     char *cp;
 
+    TRACE (TRACE_FUNCTION, "time_stamp_server (%s, %s, %s, %s)",
+	   file,
+	   entdata && entdata->version ? entdata->version : "(null)",
+	   entdata && entdata->timestamp ? entdata->timestamp : "(null)",
+	   entdata && entdata->conflict ? entdata->conflict : "(null)");
+
     if (lstat (file, &sb) < 0)
     {
 	if (! existence_error (errno))
@@ -308,6 +315,13 @@ time_stamp_server (const char *file, Vers_TS *vers_ts, Entnode *entdata)
 		 && entdata->timestamp[0] == '='
 		 && entdata->timestamp[1] == '\0')
 	    mark_unchanged (vers_ts);
+	else if (entdata->conflict
+		 && entdata->conflict[0] == '=')
+	{
+	    /* These just need matching content.  Might as well minimize it.  */
+	    vers_ts->ts_user = xstrdup ("");
+	    vers_ts->ts_conflict = xstrdup ("");
+	}
 	else if (entdata->timestamp
 		 && (entdata->timestamp[0] == 'M'
 		     || entdata->timestamp[0] == 'D')

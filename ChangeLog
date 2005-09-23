@@ -1,4 +1,8 @@
-﻿2005-09-20  Conrad T. Pino  <Conrad@Pino.com>
+2005-09-22  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Mention conflict fixes.
+
+2005-09-20  Conrad T. Pino  <Conrad@Pino.com>
 
 	* cvsnt.dsp: Add files (lib\canon-host.h lib\glob-libc.h) to project.
 

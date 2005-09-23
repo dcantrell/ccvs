@@ -4558,7 +4558,9 @@ warning: ignoring -k options due to server limitations");
 	   just happen.  */
     }
     else if (!vers->ts_rcs || args->force
-	     || strcmp (vers->ts_user, vers->ts_rcs))
+	     || strcmp (vers->ts_conflict
+		        ? vers->ts_conflict : vers->ts_rcs, vers->ts_user)
+	     || (vers->ts_conflict && !strcmp (cvs_cmd_name, "diff")))
     {
 	if (args->no_contents
 	    && supported_request ("Is-modified"))
