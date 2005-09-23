@@ -1,3 +1,7 @@
+2005-09-23  Larry Jones  <lawrence.jones@ugs.com>
+
+	* checkout.c (export_usage): Note that -r requires a tag.
+
 2005-09-22  Derek Price  <derek@ximbiot.com>
 
 	* classify.c (Classify_File): Correct comment.
