@@ -1,3 +1,7 @@
+2005-09-22  Conrad T. Pino  <Conrad@Pino.com>
+
+	* config.h.in.footer: Move macros to correct section in sorted order.
+
 2005-09-21  Conrad T. Pino  <Conrad@Pino.com>
 
 	* fix-msvc-mak.pl: Remove "basetsd" from "../lib/libcvs.dep".

@@ -71,11 +71,30 @@
    as the buffers).  */
 #define SEND_NEVER_PARTIAL 1
 
+/*
+ * According to GNU conventions, we should avoid referencing any macro
+ * containing "WIN" as a reference to Microsoft Windows, as we would like to
+ * avoid any implication that we consider Microsoft Windows any sort of "win".
+ *
+ * FIXME: As of 2003-06-09, folks on the GNULIB project were discussing
+ * defining a configure macro to define WOE32 appropriately.  If they ever do
+ * write such a beast, we should use it, though in most cases it would be
+ * preferable to avoid referencing any OS or compiler anyhow, per Autoconf
+ * convention, and reference only tested features of the system.
+ *
+ * re FIXME: This definition would still be necessary since systems which run
+ * configure do not use this config.h and vice-versa.
+ */
+#define WOE32 1
+
 /* Define POSIX name to Microsoft name */
 #define dup _dup
 
 /* getpagesize is missing on Windows, 4096 does the right thing. */
 #define getpagesize() 4096
+
+/* Define to a substitute for the `lstat' function. */
+#define lstat stat
 
 /* Define POSIX name to Microsoft name */
 #define popen _popen
@@ -88,6 +107,9 @@
    config.h seems like the easiest place to put this, so for
    now we put it here.  */
 #define same_file(s,t) (-1)
+
+/* Define to a substitute for the stat function. */
+#define stat wnt_stat
 
 /* ====================== Typedef Declarations Follow ===================== */
 
@@ -116,25 +138,3 @@ void wnt_start_server (int *tofd, int *fromfd,
 
 /* #define stat wnt_stat and #define lstat wnt_stat */
 int wnt_stat (const char *file, struct wnt_stat *sb);
-
-/* Define to a substitute for the `lstat' function. */
-#define lstat stat
-
-/* Define to a substitute for the stat function. */
-#define stat wnt_stat
-
-/*
- * According to GNU conventions, we should avoid referencing any macro
- * containing "WIN" as a reference to Microsoft Windows, as we would like to
- * avoid any implication that we consider Microsoft Windows any sort of "win".
- *
- * FIXME: As of 2003-06-09, folks on the GNULIB project were discussing
- * defining a configure macro to define WOE32 appropriately.  If they ever do
- * write such a beast, we should use it, though in most cases it would be
- * preferable to avoid referencing any OS or compiler anyhow, per Autoconf
- * convention, and reference only tested features of the system.
- *
- * re FIXME: This definition would still be necessary since systems which run
- * configure do not use this config.h and vice-versa.
- */
-#define WOE32 1
