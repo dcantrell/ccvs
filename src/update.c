@@ -2014,6 +2014,15 @@ merge_file (finfo, vers)
 	retcode = RCS_checkout (finfo->rcs, finfo->file,
 				vers->vn_rcs, vers->tag,
 				vers->options, NULL, NULL, NULL);
+	if (retcode)
+	{
+	    error (0, 0, "failed to check out `%s' file", finfo->fullname);
+	    error (0, 0, "restoring `%s' from backup file `%s'",
+		   finfo->fullname, backup);
+	    rename_file (backup, finfo->file);
+	    retval = 1;
+	    goto out;
+	}
 	xchmod (finfo->file, 1);
 
 	RegisterMerge (finfo, vers, backup, 1);
