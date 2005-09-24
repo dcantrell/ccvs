@@ -34,6 +34,12 @@ BUILD ISSUES
 
 * The RPM spec file works again with the most modern versions of `rpm'.
 
+DEVELOPER ISSUES
+
+* We've standardized on Automake 1.9.6 to get some at new features that make
+  our jobs easier.  See the HACKING file for more on using the autotools with
+  CVS.
+
 Changes from 1.11.19 to 1.11.20:
 ********************************
 
