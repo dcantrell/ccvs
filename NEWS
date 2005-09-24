@@ -75,6 +75,12 @@ BUILD ISSUES
   also finds the correct version of install-sh when building the CVS with
   GSSAPI.
 
+DEVELOPER ISSUES
+
+* We've standardized on Automake 1.9.6 to get some at new features that make
+  our jobs easier.  See the HACKING file for more on using the autotools with
+  CVS.
+
 Changes from 1.12.11 to 1.12.12:
 ********************************
 
