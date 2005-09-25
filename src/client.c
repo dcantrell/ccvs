@@ -5174,4 +5174,31 @@ send_init_command (void)
     send_to_server ("\012", 0);
 }
 
+
+
+#if defined AUTH_CLIENT_SUPPORT || defined HAVE_KERBEROS || defined HAVE_GSSAPI
+
+struct hostent *
+init_sockaddr (struct sockaddr_in *name, char *hostname, unsigned int port)
+{
+    struct hostent *hostinfo;
+    unsigned short shortport = port;
+
+    memset (name, 0, sizeof (*name));
+    name->sin_family = AF_INET;
+    name->sin_port = htons (shortport);
+    hostinfo = gethostbyname (hostname);
+    if (!hostinfo)
+    {
+	fprintf (stderr, "Unknown host %s.\n", hostname);
+	exit (EXIT_FAILURE);
+    }
+    name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
+    return hostinfo;
+}
+
+#endif /* defined AUTH_CLIENT_SUPPORT || defined HAVE_KERBEROS
+	* || defined HAVE_GSSAPI
+	*/
+
 #endif /* CLIENT_SUPPORT */

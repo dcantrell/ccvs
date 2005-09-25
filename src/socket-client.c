@@ -10,40 +10,21 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.  */
 
-#include <config.h>
+/***
+ *** THIS FILE SHOULD NEVER BE COMPILED UNLESS NO_SOCKET_TO_FD IS DEFINED.
+ ***/
+
+#ifdef HAVE_CONFIG
+# include <config.h>
+#endif
+
+#ifdef CLIENT_SUPPORT
 
 #include "cvs.h"
 #include "buffer.h"
 
-#ifdef CLIENT_SUPPORT
-
 #include "socket-client.h"
 
-
-#if defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_KERBEROS) || defined (HAVE_GSSAPI)
-
-struct hostent *
-init_sockaddr (struct sockaddr_in *name, char *hostname, unsigned int port)
-{
-    struct hostent *hostinfo;
-    unsigned short shortport = port;
-
-    memset (name, 0, sizeof (*name));
-    name->sin_family = AF_INET;
-    name->sin_port = htons (shortport);
-    hostinfo = gethostbyname (hostname);
-    if (!hostinfo)
-    {
-	fprintf (stderr, "Unknown host %s.\n", hostname);
-	exit (EXIT_FAILURE);
-    }
-    name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
-    return hostinfo;
-}
-
-#endif
-
-#ifdef NO_SOCKET_TO_FD
 
 /* Under certain circumstances, we must communicate with the server
    via a socket using send() and recv().  This is because under some
@@ -256,7 +237,5 @@ socket_buffer_initialize (int socket, int input,
 			   memory,
 			   sbuf);
 }
-
-#endif /* NO_SOCKET_TO_FD */
 
 #endif /* CLIENT_SUPPORT */
