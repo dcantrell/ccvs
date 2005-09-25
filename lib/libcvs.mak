@@ -67,6 +67,7 @@ CLEAN :
 	-@erase "$(INTDIR)\mbchar.obj"
 	-@erase "$(INTDIR)\md5.obj"
 	-@erase "$(INTDIR)\mempcpy.obj"
+	-@erase "$(INTDIR)\mkstemp.obj"
 	-@erase "$(INTDIR)\pagealign_alloc.obj"
 	-@erase "$(INTDIR)\printf-args.obj"
 	-@erase "$(INTDIR)\printf-parse.obj"
@@ -82,6 +83,7 @@ CLEAN :
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
 	-@erase "$(INTDIR)\strnlen1.obj"
+	-@erase "$(INTDIR)\tempname.obj"
 	-@erase "$(INTDIR)\time_r.obj"
 	-@erase "$(INTDIR)\unsetenv.obj"
 	-@erase "$(INTDIR)\vasnprintf.obj"
@@ -173,6 +175,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\mbchar.obj" \
 	"$(INTDIR)\md5.obj" \
 	"$(INTDIR)\mempcpy.obj" \
+	"$(INTDIR)\mkstemp.obj" \
 	"$(INTDIR)\pagealign_alloc.obj" \
 	"$(INTDIR)\printf-args.obj" \
 	"$(INTDIR)\printf-parse.obj" \
@@ -188,6 +191,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\strftime.obj" \
 	"$(INTDIR)\stripslash.obj" \
 	"$(INTDIR)\strnlen1.obj" \
+	"$(INTDIR)\tempname.obj" \
 	"$(INTDIR)\time_r.obj" \
 	"$(INTDIR)\unsetenv.obj" \
 	"$(INTDIR)\vasnprintf.obj" \
@@ -246,6 +250,7 @@ CLEAN :
 	-@erase "$(INTDIR)\mbchar.obj"
 	-@erase "$(INTDIR)\md5.obj"
 	-@erase "$(INTDIR)\mempcpy.obj"
+	-@erase "$(INTDIR)\mkstemp.obj"
 	-@erase "$(INTDIR)\pagealign_alloc.obj"
 	-@erase "$(INTDIR)\printf-args.obj"
 	-@erase "$(INTDIR)\printf-parse.obj"
@@ -261,6 +266,7 @@ CLEAN :
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
 	-@erase "$(INTDIR)\strnlen1.obj"
+	-@erase "$(INTDIR)\tempname.obj"
 	-@erase "$(INTDIR)\time_r.obj"
 	-@erase "$(INTDIR)\unsetenv.obj"
 	-@erase "$(INTDIR)\vasnprintf.obj"
@@ -349,6 +355,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\mbchar.obj" \
 	"$(INTDIR)\md5.obj" \
 	"$(INTDIR)\mempcpy.obj" \
+	"$(INTDIR)\mkstemp.obj" \
 	"$(INTDIR)\pagealign_alloc.obj" \
 	"$(INTDIR)\printf-args.obj" \
 	"$(INTDIR)\printf-parse.obj" \
@@ -364,6 +371,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\strftime.obj" \
 	"$(INTDIR)\stripslash.obj" \
 	"$(INTDIR)\strnlen1.obj" \
+	"$(INTDIR)\tempname.obj" \
 	"$(INTDIR)\time_r.obj" \
 	"$(INTDIR)\unsetenv.obj" \
 	"$(INTDIR)\vasnprintf.obj" \
@@ -543,6 +551,11 @@ SOURCE=.\mempcpy.c
 "$(INTDIR)\mempcpy.obj" : $(SOURCE) "$(INTDIR)"
 
 
+SOURCE=.\mkstemp.c
+
+"$(INTDIR)\mkstemp.obj" : $(SOURCE) "$(INTDIR)"
+
+
 SOURCE=.\pagealign_alloc.c
 
 "$(INTDIR)\pagealign_alloc.obj" : $(SOURCE) "$(INTDIR)"
@@ -616,6 +629,11 @@ SOURCE=.\stripslash.c
 SOURCE=.\strnlen1.c
 
 "$(INTDIR)\strnlen1.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\tempname.c
+
+"$(INTDIR)\tempname.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\time_r.c

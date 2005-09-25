@@ -205,6 +205,10 @@ SOURCE=.\mempcpy.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\mkstemp.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\pagealign_alloc.c
 # End Source File
 # Begin Source File
@@ -262,6 +266,10 @@ SOURCE=.\stripslash.c
 # Begin Source File
 
 SOURCE=.\strnlen1.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\tempname.c
 # End Source File
 # Begin Source File
 

@@ -278,6 +278,12 @@
 	".\mempcpy.h"\
 	
 
+.\mkstemp.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\timespec.h"\
+	
+
 .\pagealign_alloc.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\unistd.h"\
@@ -416,6 +422,15 @@
 	"..\windows-NT\config.h"\
 	"..\windows-NT\woe32.h"\
 	".\strnlen1.h"\
+	".\timespec.h"\
+	
+
+.\tempname.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\stdint.h"\
+	"..\windows-NT\unistd.h"\
+	"..\windows-NT\woe32.h"\
+	".\stat-macros.h"\
 	".\timespec.h"\
 	
 
