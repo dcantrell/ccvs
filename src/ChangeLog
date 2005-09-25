@@ -1,5 +1,7 @@
 2005-09-24  Derek Price  <derek@ximbiot.com>
 
+	* socket-client.c: Check HAVE_CONFIG_H, not HAVE_CONFIG.
+
 	* socket-client.c, socket-client.h: Minor cleanup.
 
 	* Makefile.am (cvs_SOURCES): Move socket-client.[ch] to...

@@ -14,7 +14,7 @@
  *** THIS FILE SHOULD NEVER BE COMPILED UNLESS NO_SOCKET_TO_FD IS DEFINED.
  ***/
 
-#ifdef HAVE_CONFIG
+#ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
