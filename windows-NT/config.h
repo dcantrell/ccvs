@@ -137,7 +137,7 @@
 #define HAVE_ALLOCA_H 1
 
 /* Define to 1 if you have the `atexit' function. */
-#undef HAVE_ATEXIT
+#define HAVE_ATEXIT 1
 
 /* Define to 1 if you have the <bp-sym.h> header file. */
 #undef HAVE_BP_SYM_H
@@ -237,7 +237,7 @@
 
 /* Define to 1 if you have the declaration of `getenv', and to 0 if you don't.
    */
-#undef HAVE_DECL_GETENV
+#define HAVE_DECL_GETENV 1
 
 /* Define to 1 if you have the declaration of `getline', and to 0 if you
    don't. */
@@ -284,20 +284,20 @@
 #define HAVE_DECL___FPENDING 0
 
 /* Define to 1 if you have the <direct.h> header file. */
-#define HAVE_DIRECT_H 1
+#undef HAVE_DIRECT_H
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 #undef HAVE_DIRENT_H
 
 /* Define to 1 if you have the `dup2' function. */
-#undef HAVE_DUP2
+#define HAVE_DUP2 1
 
 /* Define if you have the declaration of environ. */
-#undef HAVE_ENVIRON_DECL
+#define HAVE_ENVIRON_DECL 1
 
 /* Define if you have the declaration of errno. */
-#undef HAVE_ERRNO_DECL
+#define HAVE_ERRNO_DECL 1
 
 /* Define to 1 if you have the `fchdir' function. */
 #undef HAVE_FCHDIR
@@ -345,7 +345,7 @@
 #undef HAVE_GETGROUPS
 
 /* Define to 1 if you have the `gethostname' function. */
-#undef HAVE_GETHOSTNAME
+#define HAVE_GETHOSTNAME 1
 
 /* Define to 1 if you have the `getlogin_r' function. */
 #undef HAVE_GETLOGIN_R
@@ -406,13 +406,13 @@
 #define HAVE_IO_H 1
 
 /* Define to 1 if <sys/socket.h> defines AF_INET. */
-#undef HAVE_IPV4
+#define HAVE_IPV4 1
 
 /* Define to 1 if <sys/socket.h> defines AF_INET6. */
 #undef HAVE_IPV6
 
 /* Define to 1 if you have the `isascii' function. */
-#undef HAVE_ISASCII
+#define HAVE_ISASCII 1
 
 /* Define to 1 if you have the `isblank' function. */
 #undef HAVE_ISBLANK
@@ -442,7 +442,7 @@
 #undef HAVE_LIBNSL
 
 /* Define to 1 if you have the <locale.h> header file. */
-#undef HAVE_LOCALE_H
+#define HAVE_LOCALE_H 1
 
 /* Define to 1 if you have the `login' function. */
 #undef HAVE_LOGIN
@@ -468,10 +468,10 @@
 #undef HAVE_MAP_ANONYMOUS
 
 /* Define to 1 if you have the `mblen' function. */
-#undef HAVE_MBLEN
+#define HAVE_MBLEN 1
 
 /* Define to 1 if you have the `mbrlen' function. */
-#undef HAVE_MBRLEN
+#define HAVE_MBRLEN 1
 
 /* Define to 1 if mbrtowc and mbstate_t are properly declared. */
 #define HAVE_MBRTOWC 1
@@ -480,16 +480,16 @@
 #undef HAVE_MBSINIT
 
 /* Define to 1 if you have the `mbsrtowcs' function. */
-#undef HAVE_MBSRTOWCS
+#define HAVE_MBSRTOWCS 1
 
 /* Define to 1 if <wchar.h> declares mbstate_t. */
-#undef HAVE_MBSTATE_T
+#define HAVE_MBSTATE_T 1
 
 /* Define if you have memchr (always for CVS). */
-#undef HAVE_MEMCHR
+#define HAVE_MEMCHR 1
 
 /* Define to 1 if you have the `memmove' function. */
-#undef HAVE_MEMMOVE
+#define HAVE_MEMMOVE 1
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
@@ -552,7 +552,7 @@
 #define HAVE_PRINTF_PTR 1
 
 /* Define to 1 if the system has the type `ptrdiff_t'. */
-#undef HAVE_PTRDIFF_T
+#define HAVE_PTRDIFF_T 1
 
 /* Define to 1 if you have the `readlink' function. */
 #undef HAVE_READLINK
@@ -583,7 +583,7 @@
 #define HAVE_RUN_TZSET_TEST 1
 
 /* Define to 1 if you have the <search.h> header file. */
-#undef HAVE_SEARCH_H
+#define HAVE_SEARCH_H 1
 
 /* Define to 1 if security/pam_appl.h is available */
 #undef HAVE_SECURITY_PAM_APPL_H
@@ -632,7 +632,7 @@
 #define HAVE_STDLIB_H 1
 
 /* Define if you have strchr (always for CVS). */
-#undef HAVE_STRCHR
+#define HAVE_STRCHR 1
 
 /* Define to 1 if you have the `strdup' function. */
 #define HAVE_STRDUP 1
@@ -659,7 +659,7 @@
 #define HAVE_STRTOL 1
 
 /* Define to 1 if you have the `strtoul' function. */
-#undef HAVE_STRTOUL
+#define HAVE_STRTOUL 1
 
 /* Define if there is a member named d_type in the struct describing directory
    headers. */
@@ -669,7 +669,7 @@
 #undef HAVE_STRUCT_STAT_ST_BLKSIZE
 
 /* Define to 1 if `st_rdev' is member of `struct stat'. */
-#undef HAVE_STRUCT_STAT_ST_RDEV
+#define HAVE_STRUCT_STAT_ST_RDEV 1
 
 /* Define if struct timespec is declared in <time.h>. */
 #undef HAVE_STRUCT_TIMESPEC
@@ -749,10 +749,10 @@
 
 /* Define to 1 if you don't have `tm_zone' but do have the external array
    `tzname'. */
-#undef HAVE_TZNAME
+#define HAVE_TZNAME 1
 
 /* Define to 1 if you have the `tzset' function. */
-#undef HAVE_TZSET
+#define HAVE_TZSET 1
 
 /* Define if you have the 'uintmax_t' type in <stdint.h> or <inttypes.h>. */
 #undef HAVE_UINTMAX_T
@@ -803,25 +803,25 @@
 #define HAVE_WCHAR_T 1
 
 /* Define to 1 if you have the `wcrtomb' function. */
-#undef HAVE_WCRTOMB
+#define HAVE_WCRTOMB 1
 
 /* Define to 1 if you have the `wcscoll' function. */
-#undef HAVE_WCSCOLL
+#define HAVE_WCSCOLL 1
 
 /* Define to 1 if you have the `wcslen' function. */
-#undef HAVE_WCSLEN
+#define HAVE_WCSLEN 1
 
 /* Define to 1 if you have the <wctype.h> header file. */
-#undef HAVE_WCTYPE_H
+#define HAVE_WCTYPE_H 1
 
 /* Define if you have the 'wint_t' type. */
-#undef HAVE_WINT_T
+#define HAVE_WINT_T 1
 
 /* Define to 1 if you have the `wmemchr' function. */
-#undef HAVE_WMEMCHR
+#define HAVE_WMEMCHR 1
 
 /* Define to 1 if you have the `wmemcpy' function. */
-#undef HAVE_WMEMCPY
+#define HAVE_WMEMCPY 1
 
 /* Define to 1 if you have the `wmempcpy' function. */
 #undef HAVE_WMEMPCPY
@@ -956,40 +956,40 @@
 #undef SERVER_SUPPORT
 
 /* The size of a `char', as computed by sizeof. */
-#undef SIZEOF_CHAR
+#define SIZEOF_CHAR 1
 
 /* The size of a `double', as computed by sizeof. */
-#undef SIZEOF_DOUBLE
+#define SIZEOF_DOUBLE 8
 
 /* The size of a `float', as computed by sizeof. */
-#undef SIZEOF_FLOAT
+#define SIZEOF_FLOAT 4
 
 /* The size of a `int', as computed by sizeof. */
-#undef SIZEOF_INT
+#define SIZEOF_INT 4
 
 /* The size of a `intmax_t', as computed by sizeof. */
 #undef SIZEOF_INTMAX_T
 
 /* The size of a `long', as computed by sizeof. */
-#undef SIZEOF_LONG
+#define SIZEOF_LONG 4
 
 /* The size of a `long double', as computed by sizeof. */
-#undef SIZEOF_LONG_DOUBLE
+#define SIZEOF_LONG_DOUBLE 8
 
 /* The size of a `long long', as computed by sizeof. */
 #undef SIZEOF_LONG_LONG
 
 /* The size of a `ptrdiff_t', as computed by sizeof. */
-#undef SIZEOF_PTRDIFF_T
+#define SIZEOF_PTRDIFF_T 4
 
 /* The size of a `short', as computed by sizeof. */
-#undef SIZEOF_SHORT
+#define SIZEOF_SHORT 2
 
 /* The size of a `size_t', as computed by sizeof. */
-#undef SIZEOF_SIZE_T
+#define SIZEOF_SIZE_T 4
 
 /* The size of a `wint_t', as computed by sizeof. */
-#undef SIZEOF_WINT_T
+#define SIZEOF_WINT_T 2
 
 /* Define as the maximum value of type 'size_t', if the system doesn't define
    it. */
@@ -1246,7 +1246,7 @@
 #define ssize_t int
 
 /* Define to rpl_strcasecmp always. */
-#undef strcasecmp
+#define strcasecmp rpl_strcasecmp
 
 /* Define to rpl_tzset if the wrapper function should be used. */
 #undef tzset
@@ -1281,6 +1281,11 @@
 
 	Reorgnized by Conrad T. Pino <Conrad@Pino.com> May 25, 2005 */
 
+/* just one time please */
+#ifdef _MSC_VER
+#pragma once
+#endif
+
 /* ======================= Macro Definnitions Follow ====================== */
 
 /* Under Windows NT, mkdir only takes one argument.  */
@@ -1293,6 +1298,10 @@
 
 /* Windows has no ELOOP value in errno.h */
 #define ELOOP EMLINK
+
+/* Windows has _snprintf function.
+   HAVE_DECL__SNPRINTF used in ../lib/vasnprintf.c */
+#define HAVE_DECL__SNPRINTF 1
 
 #define HAVE_WINSOCK_H
 
@@ -1404,3 +1413,17 @@ void wnt_start_server (int *tofd, int *fromfd,
 
 /* #define stat wnt_stat and #define lstat wnt_stat */
 int wnt_stat (const char *file, struct wnt_stat *sb);
+
+/* =============== Special mkdir Prototype Handling Follows =============== */
+
+#include <direct.h>
+#define mkdir wnt_mkdir
+
+/* ===================== Special Function Definitions ===================== */
+
+/* If Visual C++ 6.0 */
+#if _MSC_VER == 1200
+static inline int mbsinit( const void * arg ) { return 1; }
+#endif
+
+/* =========================== End Of This File =========================== */

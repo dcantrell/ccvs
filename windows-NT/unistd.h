@@ -21,8 +21,8 @@
 #ifndef UNISTD_H
 #define UNISTD_H
 
-/* include Microsoft's chdir, getcwd */
-#include <direct.h>
+/* Don't include Microsoft's chdir, getcwd here, done in config.h now */
+#include <stddef.h>
 
 /* include Microsoft's close, dup */
 #include <io.h>

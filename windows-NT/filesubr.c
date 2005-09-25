@@ -25,6 +25,8 @@
 
 #include "JmgStat.h"
 
+#undef mkdir
+
 static int deep_remove_dir( const char *path );
 
 /* Copies "from" to "to".  Note that the functionality here is similar
