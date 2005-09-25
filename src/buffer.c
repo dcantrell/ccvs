@@ -1775,7 +1775,7 @@ fd_buffer_initialize (int fd, pid_t child_pid, cvsroot_t *root, bool input,
 
 /* The buffer input function for a buffer built on a file descriptor.
  *
- * In non-blocing mode, this function will read as many bytes as it can in a
+ * In non-blocking mode, this function will read as many bytes as it can in a
  * single try, up to SIZE bytes, and return.
  *
  * In blocking mode with NEED > 0, this function will read as many bytes as it

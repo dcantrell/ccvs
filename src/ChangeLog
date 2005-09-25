@@ -1,3 +1,7 @@
+2005-09-25  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (fd_buffer_input): Fix spelling in header comment block.
+
 2005-09-24  Derek Price  <derek@ximbiot.com>
 
 	* socket-client.c: Check HAVE_CONFIG_H, not HAVE_CONFIG.
