@@ -1,6 +1,8 @@
 2005-09-24  Derek Price  <derek@ximbiot.com>
 
-	Makefile.am (cvs_SOURCES): Move socket-client.[ch] to...
+	* socket-client.c, socket-client.h: Minor cleanup.
+
+	* Makefile.am (cvs_SOURCES): Move socket-client.[ch] to...
 	(EXTRA_cvs_SOURCES): ...here to avoid compiling them.
 	* socket-client.c (init_sockaddr), socket-client.h (init_sockaddr):
 	Move to...

@@ -126,14 +126,14 @@ socket_buffer_output (void *closure, const char *data, size_t have,
     /* See comment in socket_buffer_input regarding buffer size we pass
        to send and recv.  */
 
-#ifdef SEND_NEVER_PARTIAL
+# ifdef SEND_NEVER_PARTIAL
     /* If send() never will produce a partial write, then just do it.  This
        is needed for systems where its return value is something other than
        the number of bytes written.  */
     if (send (sb->socket, data, have, 0) < 0)
 	error (1, 0, "writing to server socket: %s",
 	       SOCK_STRERROR (SOCK_ERRNO));
-#else
+# else
     while (have > 0)
     {
 	int nbytes;
@@ -146,7 +146,7 @@ socket_buffer_output (void *closure, const char *data, size_t have,
 	have -= nbytes;
 	data += nbytes;
     }
-#endif
+# endif
 
     return 0;
 }
