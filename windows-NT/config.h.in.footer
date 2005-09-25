@@ -15,6 +15,11 @@
 
 	Reorgnized by Conrad T. Pino <Conrad@Pino.com> May 25, 2005 */
 
+/* just one time please */
+#ifdef _MSC_VER
+#pragma once
+#endif
+
 /* ======================= Macro Definnitions Follow ====================== */
 
 /* Under Windows NT, mkdir only takes one argument.  */
@@ -27,6 +32,10 @@
 
 /* Windows has no ELOOP value in errno.h */
 #define ELOOP EMLINK
+
+/* Windows has _snprintf function.
+   HAVE_DECL__SNPRINTF used in ../lib/vasnprintf.c */
+#define HAVE_DECL__SNPRINTF 1
 
 #define HAVE_WINSOCK_H
 
@@ -138,3 +147,17 @@ void wnt_start_server (int *tofd, int *fromfd,
 
 /* #define stat wnt_stat and #define lstat wnt_stat */
 int wnt_stat (const char *file, struct wnt_stat *sb);
+
+/* =============== Special mkdir Prototype Handling Follows =============== */
+
+#include <direct.h>
+#define mkdir wnt_mkdir
+
+/* ===================== Special Function Definitions ===================== */
+
+/* If Visual C++ 6.0 */
+#if _MSC_VER == 1200
+static inline int mbsinit( const void * arg ) { return 1; }
+#endif
+
+/* =========================== End Of This File =========================== */

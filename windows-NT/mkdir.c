@@ -19,6 +19,8 @@
 
 #include "cvs.h"
 
+#undef mkdir
+
 int
 wnt_mkdir (const char *path, int mode)
 {

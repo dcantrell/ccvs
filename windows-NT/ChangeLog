@@ -1,3 +1,41 @@
+2005-09-25  Conrad T. Pino  <Conrad@Pino.com>
+
+	* config.h.in.footer: Add "#pragma once" in "#ifdef _MSC_VER" block.
+	Add "#define HAVE_DECL__SNPRINTF 1" macro.  Add "#include <direct.h>"
+	and "#define mkdir wnt_mkdir" macro.  Add "mbsinit" implementation as
+	an inline function for Microsoft Visual C++ 6.0 only.
+
+	* config.h.in.in: Remove (GLOB_PREFIX HAVE_HSTRERROR HAVE_STRCASECMP
+	HAVE_STRSTR ST_MTIM_NSEC _SYS_CDEFS_H) macros which now obsolete.
+	Change (HAVE_ATEXIT HAVE_DECL_GETENV HAVE_DUP2 HAVE_ENVIRON_DECL
+	HAVE_ERRNO_DECL HAVE_GETHOSTNAME HAVE_ISASCII HAVE_MBLEN HAVE_MBRLEN
+	HAVE_MBSRTOWCS HAVE_MBSTATE_T HAVE_MEMCHR HAVE_MEMMOVE HAVE_PTRDIFF_T
+	HAVE_SEARCH_H HAVE_STRCHR HAVE_STRTOUL HAVE_STRUCT_STAT_ST_RDEV
+	HAVE_TZNAME HAVE_TZSET HAVE_WCSLEN HAVE_WCTYPE_H HAVE_WINT_T
+	HAVE_WMEMCHR HAVE_WMEMCPY) from "#undef ..." to "#define ... 1".
+	Change from "#define HAVE_DIRECT_H 1" to "#undef HAVE_DIRECT_H" since
+	some functions aren't POSIX compliant.
+	Change (SIZEOF_CHAR SIZEOF_DOUBLE SIZEOF_FLOAT SIZEOF_INT SIZEOF_LONG
+	SIZEOF_LONG_DOUBLE SIZEOF_PTRDIFF_T SIZEOF_SHORT SIZEOF_SIZE_T
+	SIZEOF_WINT_T) from "#undef ..." to "#define ... constant" where
+	"constant" is the size in Microsoft Visual C++ 6.0 for 32-bit API.
+	Add (ALLOW_CONFIG_OVERRIDE HAVE_BP_SYM_H HAVE_DECL_GETDELIM
+	HAVE_DECL_GETLINE HAVE_FLOCKFILE HAVE_FUNLOCKFILE HAVE_GAI_STRERROR
+	HAVE_GETADDRINFO HAVE_IPV6 HAVE_ISBLANK HAVE_LANGINFO_CODESET
+	HAVE_TCGETATTR HAVE_TCSETATTR HAVE_TERMIOS_H HAVE___FSETLOCKING
+	_REGEX_LARGE_OFFSETS) as "#undef ..." macro.
+	Add (HAVE_IPV4 HAVE_LOCALE_H HAVE_WCRTOMB HAVE_WCSCOLL) as
+	"#define ... 1" macro.
+	Add "#define strcasecmp rpl_strcasecmp" macro.
+
+	* config.h config.h.in: Regenerated on UNIX for "config.h.in.footer"
+	and "config.h.in.in" changes.
+
+	* filesubr.c mkdir.c: Add "#undef mkdir" to use Microsoft function.
+
+	* unistd.h: Don't include Microsoft "mkdir" function from here, done
+	in "config.h.in.footer" file per Derek Price.
+
 2005-09-22  Conrad T. Pino  <Conrad@Pino.com>
 
 	* config.h.in.footer: Move macros to correct section in sorted order.
