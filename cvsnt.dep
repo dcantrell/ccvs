@@ -1226,6 +1226,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\setenv.h"\
 	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\strftime.h"\
@@ -1384,6 +1385,7 @@
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
+	".\lib\getdelim.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\

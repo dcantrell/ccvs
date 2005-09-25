@@ -436,6 +436,10 @@ SOURCE=.\lib\getdate.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\getdelim.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\getline.h
 # End Source File
 # Begin Source File
@@ -585,6 +589,10 @@ SOURCE=.\lib\savecwd.h
 # Begin Source File
 
 SOURCE=.\src\server.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib\setenv.h
 # End Source File
 # Begin Source File
 

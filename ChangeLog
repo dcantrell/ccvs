@@ -1,3 +1,9 @@
+﻿2005-09-25  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dsp: Add files (lib\getdelim.h lib\setenv.h) to project.
+
+	* cvsnt.dep: Regenerated for "cvsnt.dsp" changes.
+
 2005-09-24  Derek Price  <derek@ximbiot.com>
 
 	* NEWS, HACKING: Standardize on Automake 1.9.6.
