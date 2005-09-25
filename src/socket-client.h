@@ -13,16 +13,16 @@
 #ifndef SOCKET_CLIENT_H__
 #define SOCKET_CLIENT_H__ 1
 
-# if defined SOCK_ERRNO || defined SOCK_STRERROR
-#   ifdef HAVE_WINSOCK_H
-#     include <winsock.h>
-#   else /* No winsock.h */
-#     include <sys/socket.h>
-#     include <netinet/in.h>
-#     include <arpa/inet.h>
-#     include <netdb.h>
-#   endif /* No winsock.h */
-# endif
+#if defined SOCK_ERRNO || defined SOCK_STRERROR
+# ifdef HAVE_WINSOCK_H
+#  include <winsock.h>
+# else /* No winsock.h */
+#  include <sys/socket.h>
+#  include <netinet/in.h>
+#  include <arpa/inet.h>
+#  include <netdb.h>
+# endif /* No winsock.h */
+#endif
 
 struct buffer *socket_buffer_initialize
   (int, int, void (*) (struct buffer *));
@@ -31,20 +31,20 @@ struct buffer *socket_buffer_initialize
    do not set errno, but that this macro should be used to obtain an
    error code.  This probably doesn't make sense unless
    NO_SOCKET_TO_FD is also defined. */
-# ifndef SOCK_ERRNO
-#   define SOCK_ERRNO errno
-# endif
+#ifndef SOCK_ERRNO
+# define SOCK_ERRNO errno
+#endif
 
 /* If SOCK_STRERROR is defined, then the error codes returned by
    socket operations are not known to strerror, and this macro must be
    used instead to convert those error codes to strings. */
-# ifndef SOCK_STRERROR
-#   define SOCK_STRERROR strerror
+#ifndef SOCK_STRERROR
+# define SOCK_STRERROR strerror
 
-#   include <string.h>
-#   ifndef strerror
+# include <string.h>
+# ifndef strerror
 extern char *strerror (int);
-#   endif
-# endif /* ! SOCK_STRERROR */
+# endif
+#endif /* ! SOCK_STRERROR */
 
 #endif /* SOCKET_CLIENT_H__ */
