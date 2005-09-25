@@ -91,6 +91,8 @@ socket_buffer_input (void *closure, char *data, size_t need, size_t size,
        blocking mode normally waits until all the requested data is
        available.  */
 
+    assert (size >= need);
+
     *got = 0;
 
     do
@@ -106,7 +108,7 @@ socket_buffer_input (void *closure, char *data, size_t need, size_t size,
 	   makes sure that we only recv() BUFFER_DATA_SIZE bytes at
 	   a time.  */
 
-	nbytes = recv (sb->socket, data, size, 0);
+	nbytes = recv (sb->socket, data + *got, size - *got, 0);
 	if (nbytes < 0)
 	    error (1, 0, "reading from server: %s",
 		   SOCK_STRERROR (SOCK_ERRNO));
@@ -121,12 +123,9 @@ socket_buffer_input (void *closure, char *data, size_t need, size_t size,
 	    else
 		return 0;
 	}
-	need -= nbytes;
-	size -= nbytes;
-	data += nbytes;
 	*got += nbytes;
     }
-    while (need > 0);
+    while (*got < need);
 
     return 0;
 }
