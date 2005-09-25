@@ -13,12 +13,7 @@
 #ifndef SOCKET_CLIENT_H__
 #define SOCKET_CLIENT_H__ 1
 
-#include <config.h>
-
-struct buffer *socket_buffer_initialize
-  (int, int, void (*) (struct buffer *));
-
-# if defined(AUTH_CLIENT_SUPPORT) || defined(HAVE_KERBEROS) || defined(HAVE_GSSAPI) || defined(SOCK_ERRNO) || defined(SOCK_STRERROR)
+# if defined SOCK_ERRNO || defined SOCK_STRERROR
 #   ifdef HAVE_WINSOCK_H
 #     include <winsock.h>
 #   else /* No winsock.h */
@@ -28,6 +23,9 @@ struct buffer *socket_buffer_initialize
 #     include <netdb.h>
 #   endif /* No winsock.h */
 # endif
+
+struct buffer *socket_buffer_initialize
+  (int, int, void (*) (struct buffer *));
 
 /* If SOCK_ERRNO is defined, then send()/recv() and other socket calls
    do not set errno, but that this macro should be used to obtain an
@@ -43,15 +41,10 @@ struct buffer *socket_buffer_initialize
 # ifndef SOCK_STRERROR
 #   define SOCK_STRERROR strerror
 
-#   if STDC_HEADERS
-#     include <string.h>
-#   endif
-
+#   include <string.h>
 #   ifndef strerror
 extern char *strerror (int);
 #   endif
 # endif /* ! SOCK_STRERROR */
-
-struct hostent *init_sockaddr (struct sockaddr_in *, char *, unsigned int);
 
 #endif /* SOCKET_CLIENT_H__ */
