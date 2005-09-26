@@ -19,7 +19,7 @@
 
 #include <assert.h>
 #include <io.h>
-#include <windows.h>
+#include <sys/socket.h>  /* This does: #include <windows.h> */
 
 #include "cvs.h"
 #include "setenv.h"

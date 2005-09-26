@@ -9,8 +9,7 @@
 #include <stdio.h>
 #include <conio.h>
 
-#define WIN32_LEAN_AND_MEAN
-#include <winsock.h>  /* This does: #include <windows.h> */
+#include <sys/socket.h>  /* This does: #include <windows.h> */
 
 /* Please order functions by name if possible */
 

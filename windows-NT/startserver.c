@@ -19,7 +19,7 @@
 #include "rcmd.h"
 
 #include <stdlib.h>
-#include <winsock.h>
+#include <sys/socket.h>
 #include <malloc.h>
 #include <io.h>
 #include <errno.h>
