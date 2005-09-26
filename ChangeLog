@@ -1,3 +1,7 @@
+2005-09-26  Derek Price  <derek@ximbiot.com>
+
+	* Note fsync'd commits.
+
 2005-09-24  Derek Price  <derek@ximbiot.com>
 
 	* NEWS, HACKING: Standardize on Automake 1.9.6.
