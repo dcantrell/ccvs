@@ -1,5 +1,8 @@
 2005-09-26  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note FreeBSD 5.x GSSAPI fix.
+	* acinclude.m4: Find the crypto library on FreeBSD 5.x.
+
 	* NEWS: Note fsync'd commits.
 
 2005-09-24  Derek Price  <derek@ximbiot.com>
