@@ -1414,9 +1414,32 @@ int wnt_stat (const char *file, struct wnt_stat *sb);
 
 /* ===================== Special Function Definitions ===================== */
 
-/* If Visual C++ 6.0 */
-#if _MSC_VER == 1200
-static inline int mbsinit( const void * arg ) { return 1; }
+/*
+	Microsoft defines "mbinit" in <wchar.h> for C++ code only.
+
+	Expect link errors for versions:
+
+		earlier than Visual C++ 5.0
+
+		later than Visual C++ .NET 2003
+
+	and Visual C++ .NET is just a guess which might be wrong.
+*/
+
+#if _MSC_VER >= 1100 && _MSC_VER <= 1200
+
+/* If within Visual C++ 5.0 to Visual C++ 6.0 */
+
+inline int mbsinit (const void * arg)
+	{ return 1; }
+
+#elif _MSC_VER >= 1300 && _MSC_VER <= 1310
+
+/* If within Visual C++ .NET to Visual C++ .NET 2003 */
+
+inline int mbsinit (const int * arg)
+        { return arg == NULL || ! *arg; }
+
 #endif
 
 /* =========================== End Of This File =========================== */
