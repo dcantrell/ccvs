@@ -1,3 +1,7 @@
+2005-09-26  Conrad T. Pino  <Conrad@Pino.com>
+
+	* rcs.c: Use "#ifdef HAVE_FSYNC" just like every where else.
+
 2005-09-25  Derek Price  <derek@ximbiot.com>
 
 	* rcs.c (rcs_internal_unlockfile): Fsync files before renaming them.
