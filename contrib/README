@@ -93,6 +93,10 @@ An attempt at a table of Contents for this directory:
 
 	pvcs2rcs	A perl script to convert a PVCS tree to an RCS tree.
 
+	rcs-5.7-commitid.patch
+			Patch to RCS 5.7 sources of 1995-06-16 to support
+			the newphrase 'commitid' used by CVS and CVSNT.
+
 	rcs-to-cvs	Script to import sources that may have been under
 			RCS control already.
 			Contributed by Per Cederqvist <ceder@lysator.liu.se>.
