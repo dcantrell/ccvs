@@ -1,3 +1,8 @@
+2005-09-26  Derek Price  <derek@ximbiot.com>
+
+	* README: Rename check_cvs & cvscheck to verify_repo and
+	sandbox_status, respectively.
+
 2005-09-01  Derek Price  <derek@ximbiot.com>
 
 	* commit_prep.in, cvs_acls.in, log.in, log_accum.in, mfpipe.in,
