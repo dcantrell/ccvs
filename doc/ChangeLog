@@ -1,3 +1,8 @@
+2005-09-26  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (EXTRA_DIST): Restore PDFs.
+	* cvs-paper.ps: Removed.
+
 2005-09-25  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (doc): Finish removing PSs.

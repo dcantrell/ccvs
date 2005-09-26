@@ -306,13 +306,14 @@ TXTS = \
 
 EXTRA_DIST = .cvsignore ChangeLog.fsf HACKING.DOCS RCSFILES \
 	$(srcdir)/cvs.1 cvs-paper.ms cvs.man.header cvs.man.footer \
-	getdate.texi mdate-sh writeproxy.rtf getdate-cvs.texi
-MOSTLYCLEANFILES = $(TXTS) getdate-cvs.tmp
-DISTCLEANFILES = stamp-gdt
+	getdate.texi mdate-sh writeproxy.rtf $(PDFS) getdate-cvs.texi
+MOSTLYCLEANFILES = getdate-cvs.tmp
+CLEANFILES = \
+	$(PSS) \
+	$(TXTS)
 
-# These Automake generates MOSTLYCLEAN targets for PostScripts genersted from
-# TEXINFOS, but it shouldn't when those files are in EXTRA_DIST
-MAINTAINERCLEANFILES = $(PSS) $(srcdir)/cvs.1 $(srcdir)/cvs.1
+DISTCLEANFILES = stamp-gdt
+MAINTAINERCLEANFILES = $(PDFS) $(srcdir)/cvs.1
 
 # texinfo based targets automake neglects to include
 SUFFIXES = .txt
@@ -796,6 +797,7 @@ mostlyclean-generic:
 	-test -z "$(MOSTLYCLEANFILES)" || rm -f $(MOSTLYCLEANFILES)
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -904,7 +906,7 @@ uninstall-man: uninstall-man1
 	uninstall-man uninstall-man1
 
 
-doc: info
+doc: info pdf
 .PHONY: doc
 
 txt: $(TXTS)
