@@ -45,6 +45,8 @@ EXTRA_DIST = \
 	run.c \
 	sockerror.c \
 	startserver.c \
+	arpa/inet.h \
+	netinet/in.h \
 	sys/socket.h \
 	sys/types.h \
 	unistd.h \
