@@ -917,3 +917,6 @@ extern const char *global_session_id;
 
 /* From find_names.c.  */
 List *find_files (const char *dir, const char *pat);
+
+const char *get_system_temp_dir (void);
+void push_env_temp_dir (void);
