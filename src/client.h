@@ -211,14 +211,10 @@ void client_notify (const char *, const char *, const char *, int,
                     const char *);
 
 #if defined AUTH_CLIENT_SUPPORT || defined HAVE_KERBEROS || defined HAVE_GSSAPI
-# ifdef HAVE_WINSOCK_H
-#  include <winsock.h>
-# else /* No winsock.h */
-#  include <sys/socket.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#  include <netdb.h>
-# endif /* No winsock.h */
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <netdb.h>
 struct hostent *init_sockaddr (struct sockaddr_in *, char *, unsigned int);
 #endif
 
