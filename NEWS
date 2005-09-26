@@ -3,6 +3,9 @@ Changes since 1.11.20:
 
 BUG FIXES
 
+* Thanks to Serguei E. Leontiev <lse@CryptoPro.ru>, CVS with Kerberos 5 GSSAPI
+  should automatically link on FreeBSD 5.x.
+
 * Thanks to Rahul Bhargava <rahul@wandisco.com>, heavily loaded systems
   suffering from a disk crash or power failure will not lose data they claimed
   to have committed.
