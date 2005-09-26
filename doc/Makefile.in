@@ -188,7 +188,7 @@ TXTS = \
 	cvsclient.txt
 
 EXTRA_DIST = \
-	$(PSS) \
+	$(PDFS) \
 	.cvsignore \
 	ChangeLog.fsf \
 	RCSFILES \
