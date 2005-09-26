@@ -1,5 +1,9 @@
 2005-09-25  Conrad T. Pino  <Conrad@Pino.com>
 
+	* filesubr.c: New (get_system_temp_dir push_env_temp_dir) functions.
+
+2005-09-25  Conrad T. Pino  <Conrad@Pino.com>
+
 	* config.h.in.footer: Add "#pragma once" in "#ifdef _MSC_VER" block.
 	Add "#define HAVE_DECL__SNPRINTF 1" macro.  Add "#include <direct.h>"
 	and "#define mkdir wnt_mkdir" macro.  Add "mbsinit" implementation as
