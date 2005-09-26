@@ -70,8 +70,6 @@ char *Editor = EDITOR_DFLT;
 
 /* Temp dir, if set by the user.  */
 static char *tmpdir_cmdline;
-/* Temp dir, if set in the environment.  */
-static const char *tmpdir_env;
 
 
 
@@ -92,22 +90,12 @@ get_cvs_tmp_dir (void)
     const char *retval;
     if (tmpdir_cmdline) retval = tmpdir_cmdline;
     else if (config && config->TmpDir) retval = config->TmpDir;
-    else if (tmpdir_env) retval = tmpdir_env;
-    else retval = TMPDIR_DFLT;
+    else retval = get_system_temp_dir ();
+    if (!retval) retval = TMPDIR_DFLT;
 
     if (!retval || !*retval) error (1, 0, "No temp dir specified.");
 
     return retval;
-}
-
-
-
-void
-push_env_tmp_dir (void)
-{
-    const char *tmpdir = get_cvs_tmp_dir ();
-    if (tmpdir_env && strcmp (tmpdir_env, tmpdir))
-	setenv (TMPDIR_ENV, tmpdir, 1);
 }
 
 
@@ -534,8 +522,6 @@ main (int argc, char **argv)
      * Query the environment variables up-front, so that
      * they can be overridden by command line arguments
      */
-    if ((cp = getenv (TMPDIR_ENV)) != NULL)
-	tmpdir_env = cp;
     if ((cp = getenv (EDITOR1_ENV)) != NULL)
  	Editor = cp;
     else if ((cp = getenv (EDITOR2_ENV)) != NULL)

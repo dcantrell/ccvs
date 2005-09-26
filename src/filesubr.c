@@ -853,3 +853,26 @@ expand_wild (int argc, char **argv, int *pargc, char ***pargv)
     for (i = 0; i < argc; ++i)
 	(*pargv)[i] = xstrdup (argv[i]);
 }
+
+
+
+static char *tmpdir_env;
+
+/* Return path to temp directory.
+ */
+const char *
+get_system_temp_dir (void)
+{
+    if (!tmpdir_env) tmpdir_env = getenv (TMPDIR_ENV);
+    return tmpdir_env;
+}
+
+
+
+void
+push_env_tmp_dir (void)
+{
+    const char *tmpdir = get_cvs_tmp_dir ();
+    if (tmpdir_env && strcmp (tmpdir_env, tmpdir))
+	setenv (TMPDIR_ENV, tmpdir, 1);
+}

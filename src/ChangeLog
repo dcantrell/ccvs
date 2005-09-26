@@ -1,5 +1,11 @@
 2005-09-25  Derek Price  <derek@ximbiot.com>
 
+	* main.c (get_cvs_temp_dir): Use new get_system_temp_dir function.
+	(push_env_temp_dir): Move to...
+	* filesubr.c (push_env_temp_dir): ...here to split from Windows.
+	(get_system_temp_dir): New function.
+	* cvs.h (get_cvs_temp_dir, push_env_temp_dir): Add protos.
+
 	* buffer.c (fd_buffer_input): Fix spelling in header comment block.
 
 2005-09-24  Derek Price  <derek@ximbiot.com>
