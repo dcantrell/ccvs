@@ -1,3 +1,7 @@
+2005-09-26  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (EXTRA_DIST): Add unistd.c, woe32.h.
+
 2005-09-25  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (EXTRA_DIST): Add new files.

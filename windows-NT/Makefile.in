@@ -303,9 +303,11 @@ EXTRA_DIST = \
 	netinet/in.h \
 	sys/socket.h \
 	sys/types.h \
+	unistd.c \
 	unistd.h \
 	waitpid.c \
 	woe32.c \
+	woe32.h \
 	.cvsignore
 
 SUBDIRS = SCC
