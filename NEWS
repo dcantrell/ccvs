@@ -42,6 +42,10 @@ NEW FEATURES
 
 BUG FIXES
 
+* Thanks to Rahul Bhargava <rahul@wandisco.com>, heavily loaded systems
+  suffering from a disk crash or power failure will not lose data they claimed
+  to have committed.
+
 * CVS server now handles conflict markers in Entry requests as documented.
 
 * CVS now remembers that binary file merge conflicts occurred until the

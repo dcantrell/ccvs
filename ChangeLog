@@ -1,4 +1,8 @@
-﻿2005-09-25  Conrad T. Pino  <Conrad@Pino.com>
+2005-09-26  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note fsync'd commits.
+
+2005-09-25  Conrad T. Pino  <Conrad@Pino.com>
 
 	* cvsnt.dsp: Add files (lib\getdelim.h lib\setenv.h) to project.
 
