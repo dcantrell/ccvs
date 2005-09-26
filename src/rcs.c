@@ -8619,6 +8619,26 @@ rcs_internal_unlockfile (fp, rcsfile)
 	   real solution is to check each call to fprintf rather than waiting
 	   until the end like this.  */
 	error (1, errno, "error writing to lock file %s", rcs_lockfile);
+
+    /* Flush and sync the file, or the user may be told the commit completed,
+     * while a server crash/power failure could still cause the data to be
+     * lost.
+     *
+     * Invoking rename(",<file>," , "<file>,v") on Linux and almost all UNIXs
+     * only flushes the inode for the target file to disk, it does not
+     * guarantee flush of the kernel buffers allocated for the ,<file>,.
+     * Depending upon the load on the machine, the Linux kernel's flush daemon
+     * process may not flush for a while.  In the meantime the CVS transaction
+     * could have been declared committed to the end CVS user (CVS process has
+     * returned the final "OK").  If the machine crashes prior to syncing the
+     * changes to disk, the committed transaction can be lost.
+     */
+    if (fflush (fp) != 0)
+	error (1, errno, "error flushing file `%s' to kernel buffers",
+	       rcs_lockfile);
+    if (fsync (rcs_lockfd) < 0)
+	error (1, errno, "error fsyncing file `%s'", rcs_lockfile);
+
     if (fclose (fp) == EOF)
 	error (1, errno, "error closing lock file %s", rcs_lockfile);
     rcs_lockfd = -1;
