@@ -1,5 +1,8 @@
 2005-09-25  Derek Price  <derek@ximbiot.com>
 
+	* rcs.c (rcs_internal_unlockfile): Fsync files before renaming them.
+	Patch from Rahul Bhargava <rahul@wandisco.com>.
+
 	* cvs.h, filesubr.c, main.c, server.c:
 	s/push_cvs_tmp_dir/push_cvs_temp_dir/.
 

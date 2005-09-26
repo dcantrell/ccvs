@@ -304,7 +304,7 @@ TXTS = \
 	cvs.txt \
 	cvsclient.txt
 
-EXTRA_DIST = $(PSS) .cvsignore ChangeLog.fsf HACKING.DOCS RCSFILES \
+EXTRA_DIST = .cvsignore ChangeLog.fsf HACKING.DOCS RCSFILES \
 	$(srcdir)/cvs.1 cvs-paper.ms cvs.man.header cvs.man.footer \
 	getdate.texi mdate-sh writeproxy.rtf getdate-cvs.texi
 MOSTLYCLEANFILES = $(TXTS) getdate-cvs.tmp
@@ -904,7 +904,7 @@ uninstall-man: uninstall-man1
 	uninstall-man uninstall-man1
 
 
-doc: info ps
+doc: info
 .PHONY: doc
 
 txt: $(TXTS)
