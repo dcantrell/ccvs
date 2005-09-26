@@ -34,7 +34,6 @@ TXTS = \
 	cvsclient.txt
 
 EXTRA_DIST = \
-	$(PDFS) \
 	.cvsignore \
 	ChangeLog.fsf \
 	RCSFILES \
