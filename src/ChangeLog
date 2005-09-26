@@ -1,3 +1,8 @@
+2005-09-25  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (rcs_internal_unlockfile): Fsync files before renaming them.
+	Patch from Rahul Bhargava <rahul@wandisco.com>.
+
 2005-09-24  Derek Price  <derek@ximbiot.com>
 
 	* update.c (merge_file): Check for RCS_checkout errors.
