@@ -1,3 +1,7 @@
+2005-09-26  Conrad T. Pino  <Conrad@Pino.com>
+
+	* types.h: Visual C++ 5.0 (11.00) is different to support distinctly.
+
 2005-09-25  Conrad T. Pino  <Conrad@Pino.com>
 
 	* socket.h: Guard against multiple includes with SYS_SOCKET_H macro.

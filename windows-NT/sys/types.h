@@ -11,15 +11,16 @@
 /*      ! cl.exe version number confirmed                      */
 /*      ? cl.exe version number uncertain                      */
 /*                                                             */
+/* Verified with Visual C++ 5.0       - cl.exe version 11.00 ! */
 /* Verified with Visual C++ 6.0       - cl.exe version 12.00 ! */
 /* No tests with Visual C++ .NET      - cl.exe version 13.00 ? */
 /* Verified with Visual C++ .NET 2003 - cl.exe version 13.10 ! */
 /* No tests with Visual C++ 2005      - cl.exe version 14.00 ? */
 /*                                                             */
-#if _MSC_VER != 1200 && _MSC_VER != 1310
+#if _MSC_VER != 1100 && _MSC_VER != 1200 && _MSC_VER != 1310
 #pragma message ( "Please email Microsoft's <sys/types.h> file" )
 #pragma message ( "and version number from \"cl /?\" command to" )
-#pragma message ( "<conradpino@gnu.org>.  Thank you." )
+#pragma message ( "<conradpino@cvsproject.org>.  Thank you." )
 #endif /* _MSC_VER != 1200 */
 
 /***************************************************************************/
@@ -50,11 +51,29 @@ typedef __int64 __time64_t;
 #ifndef _INO_T_DEFINED
 #define _INO_T_DEFINED
 
+#if _MSC_VER == 1100
+
+typedef unsigned short _ino_t;		/* i-node number (not used on DOS) */
+
+#if	!__STDC__
+/* Non-ANSI name for compatibility */
+#ifdef	_NTSDK
+#define ino_t _ino_t
+#else	/* ndef _NTSDK */
+typedef unsigned short ino_t;
+#endif	/* _NTSDK */
+#endif	/* !__STDC__ */
+
+#else	/*  _MSC_VER != 1100 */
+
 typedef unsigned short ino_t;
 
 /* Microsoft uses _ino_t */
 typedef ino_t _ino_t;
-#endif /* _INO_T_DEFINED */
+
+#endif	/*  _MSC_VER != 1100 */
+
+#endif	/* _INO_T_DEFINED */
 
 
 
@@ -62,11 +81,33 @@ typedef ino_t _ino_t;
 #ifndef _DEV_T_DEFINED
 #define _DEV_T_DEFINED
 
+#if _MSC_VER == 1100
+
+#ifdef	_NTSDK
+typedef short _dev_t;			/* device code */
+#else	/* ndef _NTSDK */
+typedef unsigned int _dev_t;		/* device code */
+#endif	/* _NTSDK */
+
+#if	!__STDC__
+/* Non-ANSI name for compatibility */
+#ifdef	_NTSDK
+#define dev_t _dev_t
+#else	/* ndef _NTSDK */
+typedef unsigned int dev_t;
+#endif	/* _NTSDK */
+#endif	/* !__STDC__ */
+
+#else	/*  _MSC_VER != 1100 */
+
 typedef unsigned int dev_t;
 
 /* Microsoft uses _dev_t */
 typedef dev_t _dev_t;
-#endif /* _DEV_T_DEFINED */
+
+#endif	/*  _MSC_VER != 1100 */
+
+#endif	/* _DEV_T_DEFINED */
 
 
 
@@ -74,12 +115,31 @@ typedef dev_t _dev_t;
 #ifndef _OFF_T_DEFINED
 #define _OFF_T_DEFINED
 
+#if _MSC_VER == 1100
+
+typedef long _off_t;			/* file offset value */
+
+#if	!__STDC__
+/* Non-ANSI name for compatibility */
+#ifdef	_NTSDK
+#define off_t _off_t
+#else	/* ndef _NTSDK */
+typedef long off_t;
+#endif	/* _NTSDK */
+#endif	/* !__STDC__ */
+
+#else	/*  _MSC_VER != 1100 */
+
 typedef long off_t;
 
 /* Microsoft uses _off_t */
 typedef off_t _off_t;
-#endif /* _OFF_T_DEFINED */
-#endif  /* _INC_TYPES */
+
+#endif	/*  _MSC_VER != 1100 */
+
+#endif	/* _OFF_T_DEFINED */
+
+#endif	/* _INC_TYPES */
 
 /***************************************************************************/
 /* define what Micrsoft doesn't */
