@@ -8636,8 +8636,10 @@ rcs_internal_unlockfile (fp, rcsfile)
     if (fflush (fp) != 0)
 	error (1, errno, "error flushing file `%s' to kernel buffers",
 	       rcs_lockfile);
+#ifdef HAVE_FSYNC
     if (fsync (rcs_lockfd) < 0)
 	error (1, errno, "error fsyncing file `%s'", rcs_lockfile);
+#endif
 
     if (fclose (fp) == EOF)
 	error (1, errno, "error closing lock file %s", rcs_lockfile);
