@@ -36,7 +36,6 @@ TXTS = \
 	cvsclient.txt
 
 EXTRA_DIST = \
-	$(PSS) \
 	.cvsignore \
 	ChangeLog.fsf \
 	HACKING.DOCS \
@@ -60,7 +59,7 @@ MAINTAINERCLEANFILES = \
 	$(PSS) \
 	$(srcdir)/cvs.1
 
-doc: info ps
+doc: info
 .PHONY: doc
 
 txt: $(TXTS)

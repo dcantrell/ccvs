@@ -1,3 +1,11 @@
+2005-09-25  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (doc): Finish removing PSs.
+
+	* Makefile.am (EXTRA_DIST): Remove PDFs too until errors go away.
+
+	* Makefile.am (EXTRA_DIST): Dist PDFs rather than PSs.
+
 2005-09-22  Larry Jones  <lawrence.jones@ugs.com>
 
 	* cvs.texinfo (rdiff options): Document -k.
