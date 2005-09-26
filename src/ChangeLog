@@ -1,5 +1,9 @@
 2005-09-25  Conrad T. Pino  <Conrad@Pino.com>
 
+	* rcs.c: Use "#ifdef HAVE_FSYNC" just like every where else.
+
+2005-09-25  Conrad T. Pino  <Conrad@Pino.com>
+
 	* buffer.c client.h socket-client.h:  Remove HAVE_WINSOCK_H macro &
 	change <winsock.h> to <sys/socket.h> include.
 
