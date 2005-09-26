@@ -856,7 +856,7 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
     /* Now set the TMPDIR environment variable.  If it was set in the config
      * file, we now know it.
      */
-    push_env_tmp_dir ();
+    push_env_temp_dir ();
 
     /* OK, now figure out where we stash our temporary files.  */
     {

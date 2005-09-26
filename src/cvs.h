@@ -372,8 +372,12 @@ extern int use_editor;
 extern int cvswrite;
 extern mode_t cvsumask;
 
+/* Temp dir abstraction.  */
+/* From main.c.  */
 const char *get_cvs_tmp_dir (void);
-void push_env_tmp_dir (void);
+/* From filesubr.c.  */
+const char *get_system_temp_dir (void);
+void push_env_temp_dir (void);
 
 
 /* This global variable holds the global -d option.  It is NULL if -d
@@ -917,6 +921,3 @@ extern const char *global_session_id;
 
 /* From find_names.c.  */
 List *find_files (const char *dir, const char *pat);
-
-const char *get_system_temp_dir (void);
-void push_env_temp_dir (void);

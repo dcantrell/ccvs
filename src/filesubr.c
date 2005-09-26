@@ -870,7 +870,7 @@ get_system_temp_dir (void)
 
 
 void
-push_env_tmp_dir (void)
+push_env_temp_dir (void)
 {
     const char *tmpdir = get_cvs_tmp_dir ();
     if (tmpdir_env && strcmp (tmpdir_env, tmpdir))
