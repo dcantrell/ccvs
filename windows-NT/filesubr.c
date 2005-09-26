@@ -22,6 +22,7 @@
 #include <windows.h>
 
 #include "cvs.h"
+#include "setenv.h"
 
 #include "JmgStat.h"
 
@@ -103,6 +104,53 @@ copy_file (from, to)
     t.modtime = sb.st_mtime;
     (void) utime (to, &t);
 }
+
+
+static char *tmpdir_env;
+/*
+ * Return seperator (\) terminated path to system temporary directory.
+ */
+const char *
+get_system_temp_dir (void)
+{
+	if (! tmpdir_env)
+	{
+		DWORD dwBufferSize, dwReturn;
+
+		dwReturn = 0;
+		dwBufferSize = 64;
+		do {
+			if (dwReturn >= dwBufferSize)
+			{
+				dwBufferSize = dwReturn + 4;
+			}
+
+			tmpdir_env = xrealloc (tmpdir_env, dwBufferSize);
+			if (tmpdir_env)
+			{
+				dwReturn = GetTempPath (dwBufferSize, tmpdir_env);
+				if (dwReturn <= 0)
+				{
+					free (tmpdir_env);
+					tmpdir_env = NULL;
+				}
+			}
+		} while (tmpdir_env && dwReturn >= dwBufferSize);
+	}
+
+	return tmpdir_env;
+}
+
+
+void
+push_env_temp_dir (void)
+{
+	const char *tmpdir = get_cvs_tmp_dir ();
+
+	if (tmpdir_env && strcmp (tmpdir_env, tmpdir))
+		setenv ("TMP", tmpdir, 1);
+}
+
 
 /* FIXME-krp: these functions would benefit from caching the char * &
    stat buf.  */
