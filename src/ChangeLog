@@ -1,5 +1,8 @@
 2005-09-25  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h, filesubr.c, main.c, server.c:
+	s/push_cvs_tmp_dir/push_cvs_temp_dir/.
+
 	* main.c (get_cvs_temp_dir): Use new get_system_temp_dir function.
 	(push_env_temp_dir): Move to...
 	* filesubr.c (push_env_temp_dir): ...here to split from Windows.

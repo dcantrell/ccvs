@@ -1033,7 +1033,7 @@ cause intermittent sandbox corruption.");
 		/* Can set TMPDIR in the environment if necessary now, since
 		 * if it was set in config, we now know it.
 		 */
-		push_env_tmp_dir ();
+		push_env_temp_dir ();
 	    }
 
 #ifdef CLIENT_SUPPORT
