@@ -195,16 +195,15 @@ EXTRA_DIST = \
 	$(srcdir)/cvs.1 \
 	cvs-paper.ms \
 	cvs.man.header \
-	cvs.man.footer
+	cvs.man.footer \
+	$(PDFS)
 
-MOSTLYCLEANFILES = \
+CLEANFILES = \
+	$(PSS) \
 	$(TXTS)
 
-
-# These Automake generates MOSTLYCLEAN targets for PostScripts genersted from
-# TEXINFOS, but it shouldn't when those files are in EXTRA_DIST
 MAINTAINERCLEANFILES = \
-	$(PSS) \
+	$(PDFS) \
 	$(srcdir)/cvs.1
 
 
@@ -545,9 +544,9 @@ install-strip:
 	  `test -z '$(STRIP)' || \
 	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
 mostlyclean-generic:
-	-test -z "$(MOSTLYCLEANFILES)" || rm -f $(MOSTLYCLEANFILES)
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -650,7 +649,7 @@ uninstall-man: uninstall-man1
 	uninstall-info-am uninstall-man uninstall-man1
 
 
-doc: info
+doc: info pdf
 .PHONY: doc
 
 txt: $(TXTS)

@@ -41,18 +41,18 @@ EXTRA_DIST = \
 	$(srcdir)/cvs.1 \
 	cvs-paper.ms \
 	cvs.man.header \
-	cvs.man.footer
+	cvs.man.footer \
+	$(PDFS)
 
-MOSTLYCLEANFILES = \
+CLEANFILES = \
+	$(PSS) \
 	$(TXTS)
 
-# These Automake generates MOSTLYCLEAN targets for PostScripts genersted from
-# TEXINFOS, but it shouldn't when those files are in EXTRA_DIST
 MAINTAINERCLEANFILES = \
-	$(PSS) \
+	$(PDFS) \
 	$(srcdir)/cvs.1
 
-doc: info
+doc: info pdf
 .PHONY: doc
 
 txt: $(TXTS)
