@@ -650,7 +650,7 @@ uninstall-man: uninstall-man1
 	uninstall-info-am uninstall-man uninstall-man1
 
 
-doc: info ps
+doc: info
 .PHONY: doc
 
 txt: $(TXTS)

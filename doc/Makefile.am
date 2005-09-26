@@ -52,7 +52,7 @@ MAINTAINERCLEANFILES = \
 	$(PSS) \
 	$(srcdir)/cvs.1
 
-doc: info ps
+doc: info
 .PHONY: doc
 
 txt: $(TXTS)
