@@ -1,5 +1,7 @@
 2005-09-25  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.in (DISTFILES): Remove contrib/gzappend/*.  Add new files.
+
 	* ChangeLog, Makefile.in, infback.c, inflate.c, zconf.h: Merge after
 	1.2.3 import.
 	* contrib/gzappend/gzappend.c, contrib/testzlib/testzlib.sln,

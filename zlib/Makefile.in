@@ -60,7 +60,7 @@ OBJA =
 TEST_OBJS = example.o minigzip.o
 
 DISTFILES = README FAQ INDEX ChangeLog configure Makefile.* *.[ch] \
-  algorithm.txt zlib.3 \
+  make_vms.com algorithm.txt zlib.3 \
   amiga/[a-z0-9ABD-Z]* \
   as400/[a-z0-9ABD-Z]* \
   msdos/[a-z0-9ABD-Z]* \
@@ -72,13 +72,13 @@ DISTFILES = README FAQ INDEX ChangeLog configure Makefile.* *.[ch] \
   contrib/asm686/match.S contrib/asm686/README.686 \
   contrib/blast/[a-z0-9ABD-Z]* \
   contrib/delphi/[a-z0-9ABD-Z]* \
-  contrib/gzappend/[a-z0-9ABD-Z]* \
   contrib/infback9/[a-z0-9ABD-Z]* \
   contrib/inflate86/[a-z0-9ABD-Z]* \
   contrib/iostream/[a-z0-9ABD-Z]* \
   contrib/iostream2/[a-z0-9ABD-Z]* \
   contrib/iostream3/[a-z0-9ABD-Z]* \
   contrib/masm686/[a-z0-9ABD-Z]* \
+  contrib/masmx64/[a-z0-9ABD-Z]* \
   contrib/masmx86/[a-z0-9ABD-Z]* \
   contrib/minizip/[a-z0-9ABD-Z]* contrib/minizip/Ch* \
   contrib/pascal/[a-z0-9ABD-Z]* \
@@ -87,7 +87,9 @@ DISTFILES = README FAQ INDEX ChangeLog configure Makefile.* *.[ch] \
   contrib/untgz/[a-z0-9ABD-Z]* \
   contrib/vstudio/readme.txt \
   contrib/vstudio/vc7/[a-z0-9ABD-Z]* \
+  contrib/vstudio/vc8/[a-z0-9ABD-Z]* \
   old/[a-np-z0-9ABD-Z]* old/os2/[a-z0-9ABD-Z]* \
+  examples/[a-z0-9ABD-Z]* \
   libz.dep libz.dsp libz.mak .cvsignore
 
 # for CVS's distdir & Makefile targets
