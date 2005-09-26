@@ -66,19 +66,19 @@ DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	getdelim.h gethostname.c getline.c getline.h getlogin_r.c \
 	getlogin_r.h getndelim2.c getopt.c getopt1.c getpagesize.h \
 	getpass.c getpass.h gettime.c gettimeofday.c glob-libc.h \
-	glob.c glob_.h lstat.c malloc.c mbchar.c mbchar.h md5.c md5.h \
-	memchr.c memmove.c mempcpy.c mempcpy.h memrchr.c memrchr.h \
-	mkdir.c mkstemp.c mktime.c nanosleep.c openat.c openat.h \
-	pagealign_alloc.c pagealign_alloc.h pathmax.h pipe-safer.c \
-	printf-args.c printf-parse.c quotearg.c quotearg.h readlink.c \
-	realloc.c regcomp.c regex.c regex.h regex_internal.c \
-	regex_internal.h regexec.c rename.c rpmatch.c save-cwd.c \
-	save-cwd.h setenv.c stat-macros.h strcasecmp.c strdup.c \
-	strdup.h strerror.c strftime.c strftime.h strncasecmp.c \
-	strstr.c strtol.c strtoul.c sunos57-select.c tempname.c \
-	time_r.c timespec.h unistd--.h unistd-safer.h unlocked-io.h \
-	unsetenv.c vasnprintf.c vasprintf.c waitpid.c xalloc.h \
-	xgetcwd.c xgetcwd.h xmalloc.c yesno.c yesno.h
+	glob.c glob_.h lstat.c lstat.h malloc.c mbchar.c mbchar.h \
+	md5.c md5.h memchr.c memmove.c mempcpy.c mempcpy.h memrchr.c \
+	memrchr.h mkdir.c mkstemp.c mktime.c nanosleep.c openat.c \
+	openat.h pagealign_alloc.c pagealign_alloc.h pathmax.h \
+	pipe-safer.c printf-args.c printf-parse.c quotearg.c \
+	quotearg.h readlink.c realloc.c regcomp.c regex.c regex.h \
+	regex_internal.c regex_internal.h regexec.c rename.c rpmatch.c \
+	save-cwd.c save-cwd.h setenv.c stat-macros.h strcasecmp.c \
+	strdup.c strdup.h strerror.c strftime.c strftime.h \
+	strncasecmp.c strstr.c strtol.c strtoul.c sunos57-select.c \
+	tempname.c time_r.c timespec.h unistd--.h unistd-safer.h \
+	unlocked-io.h unsetenv.c vasnprintf.c vasprintf.c waitpid.c \
+	xalloc.h xgetcwd.c xgetcwd.h xmalloc.c yesno.c yesno.h
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/acx_with_external_zlib.m4 \
