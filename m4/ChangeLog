@@ -1,6 +1,8 @@
 2005-09-26  Derek Price  <derek@ximbiot.com>
 
+	[bug #14639]
 	* acx_with_gssapi.m4: Find the crypto library on FreeBSD 5.x.
+	Patch from Serguei E. Leontiev <lse@CryptoPro.ru>.
 
 2005-09-25  Derek Price  <derek@ximbiot.com>
 
