@@ -53,10 +53,6 @@ static int cvs_gssapi_wrapping;
 
 extern char *server_hostname;
 
-# ifdef HAVE_WINSOCK_H
-#   include <winsock.h>
-# endif
-
 # if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_KERBEROS) || defined (HAVE_GSSAPI)
 #   include <sys/socket.h>
 # endif

@@ -14,14 +14,10 @@
 #define SOCKET_CLIENT_H__ 1
 
 #if defined SOCK_ERRNO || defined SOCK_STRERROR
-# ifdef HAVE_WINSOCK_H
-#  include <winsock.h>
-# else /* No winsock.h */
-#  include <sys/socket.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#  include <netdb.h>
-# endif /* No winsock.h */
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <netdb.h>
 #endif
 
 struct buffer *socket_buffer_initialize
