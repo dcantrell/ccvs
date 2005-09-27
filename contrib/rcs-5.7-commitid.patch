@@ -1,5 +1,10 @@
 ChangeLog entry:
 
+2005-09-27  Mark D. Baushke  <mdb@gnu.org>
+
+	* man/rcsfile.5in: Document new commitid delta phrase.
+	* man/rcsfile.5: Regenerated.
+
 2005-09-26  Mark D. Baushke  <mdb@gnu.org>
 
 	* ci.c (mainProg): Add commitid to delta records using the
@@ -121,3 +126,189 @@ Index:src/rlog.c
          newbranch = node->branches;
          if ( newbranch ) {
  	   bufautobegin(&branchnum);
+Index:man/rcsfile.5in
+--- man/rcsfile.5in~	1995-06-05 08:28:35.000000000 +0000
++++ man/rcsfile.5in	2005-09-27 20:52:46.424504000 +0000
+@@ -68,6 +68,7 @@ nonterminal symbols are in
+ 		\f3state\fP	{\f2id\fP}\f3;\fP
+ 		\f3branches\fP	{\f2num\fP}*\f3;\fP
+ 		\f3next\fP	{\f2num\fP}\f3;\fP
++		{ \f3commitid\fP \f2id\fP\f3;\fP }
+ 		{ \f2newphrase\fP }*
+ .LP
+ \f2desc\fP	::=	\f3desc\fP	\f2string\fP
+@@ -127,6 +128,18 @@ and all the digits of years thereafter.
+ Dates use the Gregorian calendar; times use UTC.
+ .PP
+ The
++.I commitid
++is followed by an
++.I id
++token. This token is intended to be unique across
++multiple files and is used to help group files as
++being a part of the same logical commit.
++This token must uniquely identify the commit
++operation that was applied to a set of RCS files.
++In particular, it must be unique among all the
++commitids in this file.
++.PP
++The
+ .I newphrase
+ productions in the grammar are reserved for future extensions
+ to the format of \*r files.
+Index:man/rcsfile.5
+--- man/rcsfile.5~	1995-06-16 06:58:26.000000000 +0000
++++ man/rcsfile.5	2005-09-27 20:53:01.023504000 +0000
+@@ -1,4 +1,4 @@
+-.lf 1 ./rcsfile.5in
++.lf 1 rcsfile.5in
+ .\" Set p to 1 if your formatter can handle pic output.
+ .if t .nr p 1
+ .de Id
+@@ -69,6 +69,7 @@ nonterminal symbols are in
+ 		\f3state\fP	{\f2id\fP}\f3;\fP
+ 		\f3branches\fP	{\f2num\fP}*\f3;\fP
+ 		\f3next\fP	{\f2num\fP}\f3;\fP
++		{ \f3commitid\fP \f2id\fP\f3;\fP }
+ 		{ \f2newphrase\fP }*
+ .LP
+ \f2desc\fP	::=	\f3desc\fP	\f2string\fP
+@@ -128,6 +129,18 @@ and all the digits of years thereafter.
+ Dates use the Gregorian calendar; times use UTC.
+ .PP
+ The
++.I commitid
++is followed by an
++.I id
++token. This token is intended to be unique across
++multiple files and is used to help group files as
++being a part of the same logical commit.
++This token must uniquely identify the commit
++operation that was applied to a set of RCS files.
++In particular, it must be unique among all the
++commitids in this file.
++.PP
++The
+ .I newphrase
+ productions in the grammar are reserved for future extensions
+ to the format of \*r files.
+@@ -230,7 +243,7 @@ The following diagram shows an example o
+ .fi
+ .\}
+ .if \np \{\
+-.lf 232
++.lf 245
+ .PS 4.250i 3.812i
+ .\" -2.0625 -4.25 1.75 0
+ .\" 0.000i 4.250i 3.812i 0.000i
+@@ -239,7 +252,7 @@ The following diagram shows an example o
+ .nr 0x 1
+ \h'3.812i'
+ .sp -1
+-.lf 242
++.lf 255
+ \h'2.062i-(\w'Head'u/2u)'\v'0.125i-(0v/2u)+0v+0.22m'Head
+ .sp -1
+ \h'2.062i'\v'0.250i'\D'l0.000i 0.500i'
+@@ -256,7 +269,7 @@ The following diagram shows an example o
+ .sp -1
+ \h'1.688i'\v'0.750i'\D'l0.000i 0.500i'
+ .sp -1
+-.lf 244
++.lf 257
+ \h'2.062i-(\w'2.1'u/2u)'\v'1.000i-(0v/2u)+0v+0.22m'2.1
+ .sp -1
+ \h'2.062i'\v'1.250i'\D'l0.000i 0.500i'
+@@ -265,7 +278,7 @@ The following diagram shows an example o
+ .sp -1
+ \h'2.062i'\v'1.750i'\D'l-0.025i -0.100i'
+ .sp -1
+-.lf 246
++.lf 259
+ \h'2.062i-(\w'1.3'u/2u)'\v'2.000i-(1v/2u)+0v+0.22m'1.3
+ .sp -1
+ \h'2.062i'\v'2.250i'\D'l-0.375i -0.500i'
+@@ -280,7 +293,7 @@ The following diagram shows an example o
+ .sp -1
+ \h'1.375i'\v'1.500i'\D'l0.025i 0.100i'
+ .sp -1
+-.lf 249
++.lf 262
+ \h'1.375i-(\w'1.3.1.1'u/2u)'\v'1.250i-(1v/2u)+1v+0.22m'1.3.1.1
+ .sp -1
+ \h'1.375i'\v'1.000i'\D'l-0.375i 0.500i'
+@@ -295,7 +308,7 @@ The following diagram shows an example o
+ .sp -1
+ \h'2.062i'\v'2.750i'\D'l-0.025i -0.100i'
+ .sp -1
+-.lf 252
++.lf 265
+ \h'2.062i-(\w'1.2'u/2u)'\v'3.000i-(1v/2u)+0v+0.22m'1.2
+ .sp -1
+ \h'2.062i'\v'3.250i'\D'l-0.375i -0.500i'
+@@ -310,7 +323,7 @@ The following diagram shows an example o
+ .sp -1
+ \h'0.375i'\v'2.500i'\D'l0.025i 0.100i'
+ .sp -1
+-.lf 255
++.lf 268
+ \h'0.375i-(\w'1.2.1.1'u/2u)'\v'2.250i-(1v/2u)+1v+0.22m'1.2.1.1
+ .sp -1
+ \h'0.375i'\v'2.000i'\D'l-0.375i 0.500i'
+@@ -325,7 +338,7 @@ The following diagram shows an example o
+ .sp -1
+ \h'0.375i'\v'1.500i'\D'l0.025i 0.100i'
+ .sp -1
+-.lf 257
++.lf 270
+ \h'0.375i-(\w'1.2.1.3'u/2u)'\v'1.250i-(1v/2u)+1v+0.22m'1.2.1.3
+ .sp -1
+ \h'0.375i'\v'1.000i'\D'l-0.375i 0.500i'
+@@ -340,7 +353,7 @@ The following diagram shows an example o
+ .sp -1
+ \h'2.750i'\v'2.500i'\D'l0.025i 0.100i'
+ .sp -1
+-.lf 261
++.lf 274
+ \h'2.750i-(\w'1.2.2.1'u/2u)'\v'2.250i-(1v/2u)+1v+0.22m'1.2.2.1
+ .sp -1
+ \h'2.750i'\v'2.000i'\D'l-0.375i 0.500i'
+@@ -355,7 +368,7 @@ The following diagram shows an example o
+ .sp -1
+ \h'3.438i'\v'1.250i'\D'l0.025i 0.100i'
+ .sp -1
+-.lf 264
++.lf 277
+ \h'3.438i-(\w'\s-21.2.2.1.1.1\s0'u/2u)'\v'1.000i-(1v/2u)+1v+0.22m'\s-21.2.2.1.1.1\s0
+ .sp -1
+ \h'3.438i'\v'0.750i'\D'l-0.375i 0.500i'
+@@ -370,7 +383,7 @@ The following diagram shows an example o
+ .sp -1
+ \h'2.750i'\v'1.500i'\D'l0.025i 0.100i'
+ .sp -1
+-.lf 267
++.lf 280
+ \h'2.750i-(\w'1.2.2.2'u/2u)'\v'1.250i-(1v/2u)+1v+0.22m'1.2.2.2
+ .sp -1
+ \h'2.750i'\v'1.000i'\D'l-0.375i 0.500i'
+@@ -385,7 +398,7 @@ The following diagram shows an example o
+ .sp -1
+ \h'2.062i'\v'3.750i'\D'l-0.025i -0.100i'
+ .sp -1
+-.lf 270
++.lf 283
+ \h'2.062i-(\w'1.1'u/2u)'\v'4.000i-(1v/2u)+0v+0.22m'1.1
+ .sp -1
+ \h'2.062i'\v'4.250i'\D'l-0.375i -0.500i'
+@@ -398,9 +411,9 @@ The following diagram shows an example o
+ .if \n(00 .fi
+ .br
+ .nr 0x 0
+-.lf 271
++.lf 284
+ .PE
+-.lf 272
++.lf 285
+ .\}
+ .PP
+ .SH IDENTIFICATION
