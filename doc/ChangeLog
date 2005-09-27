@@ -1,5 +1,11 @@
 2005-09-26  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (cvs-paper.ps, cvs-paper.pdf): Remove implicit sources.
+	Add comments about why implicit rules won't work for these targets.
+	Make sure the distributed cvs-paper.pdf is created in $(srcdir).  Make
+	cvs-paper.pdf directly from cvs-paper.ms to avoid building it just
+	because cvs-paper.ps is missing.
+
 	* Makefile.am (EXTRA_DIST): Restore PDFs.
 	* cvs-paper.ps: Removed.
 	* texinfo.tex: Update from GNULIB.
