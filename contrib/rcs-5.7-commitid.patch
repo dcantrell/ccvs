@@ -1,164 +1,28 @@
 ChangeLog entry:
 
-2005-09-27  Mark D. Baushke  <mdb@gnu.org>
+2005-09-28  Mark D. Baushke  <mdb@gnu.org>
 
 	* man/rcsfile.5in: Document new commitid delta phrase.
 	* man/rcsfile.5: Regenerated.
 
-2005-09-26  Mark D. Baushke  <mdb@gnu.org>
-
-	* ci.c (mainProg): Add commitid to delta records using the
+	* src/ci.c (RANDOM_BYTES, N): New constants.
+	(mainProg): Add commitid to delta records. Use
+	random data and represent in base62 or fall back to using the
 	same basic format construction as is used by CVS and CVSNT.
-	* rcsbase.h (commitidsize): Room for 64bit pid, 32bit time,
-	16bit random rendered as hex plus one NUL byte round up to 32.
+	(divide_by): New function used by convert.
+	(convert): New fucntion to convert to base62.
+	* rcsbase.h (commitidsize): Room for base62 encoded block or
+	32bit pid, 32bit time, 16bit random rendered as hex plus one
+	NUL byte round up to 64.
 	(struct hshentry): Add new commitid field.
-	* rcsgen.c (putdelta): Preserve old commitid entries.
-	* rcssyn.c (Kcommitid): New global constant keyword.
+	* src/rcsgen.c (putdelta): Preserve old commitid entries.
+	* src/rcssyn.c (Kcommitid): New global constant keyword.
 	(getdelta): Add optional parsing for it.
-	* rlog.c (putadelta): Print it out.
+	* src/rlog.c (putadelta): Print it out.
 
-Index:src/ci.c
---- src/ci.c~	1995-06-16 06:19:24.000000000 +0000
-+++ src/ci.c	2005-09-26 16:47:38.435505000 +0000
-@@ -285,6 +285,7 @@ mainProg(ciId, "ci", "$Id: ci.c,v 5.30 1
- 	char olddate[datesize];
- 	char newdatebuf[datesize + zonelenmax];
- 	char targetdatebuf[datesize + zonelenmax];
-+	char commitid[commitidsize];
- 	char *a, **newargv, *textfile;
- 	char const *author, *krev, *rev, *state;
- 	char const *diffname, *expname;
-@@ -309,6 +310,9 @@ mainProg(ciId, "ci", "$Id: ci.c,v 5.30 1
- 	suffixes = X_DEFAULT;
- 	nextassoc = &assoclst;
- 
-+	snprintf(commitid, sizeof(commitid), "%x%08lx%04x",
-+		 (int)getpid(), (long)time (NULL), rand()&0xFFFF);
-+
- 	argc = getRCSINIT(argc, argv, &newargv);
- 	argv = newargv;
- 	while (a = *++argv,  0<--argc && *a++=='-') {
-@@ -532,6 +536,8 @@ mainProg(ciId, "ci", "$Id: ci.c,v 5.30 1
- 	newdelta.name = 0;
- 	clear_buf(&newdelta.ig);
- 	clear_buf(&newdelta.igtext);
-+	/* set commitid */
-+	newdelta.commitid=commitid;
- 	/* set author */
- 	if (author)
- 		newdelta.author=author;     /* set author given by -w         */
-Index:src/rcsbase.h
---- src/rcsbase.h~	1995-06-16 06:19:24.000000000 +0000
-+++ src/rcsbase.h	2005-09-26 16:48:34.726505000 +0000
-@@ -222,6 +222,7 @@ Report problems and direct all questions
-                               /* 1 sets the default locking to strict;      */
-                               /* used in production environments.           */
- 
-+#define commitidsize	   32 /* pid + time + random bits                   */
- #define yearlength	   16 /* (good through AD 9,999,999,999,999,999)    */
- #define datesize (yearlength+16)	/* size of output of time2date */
- #define RCSTMPPREFIX '_' /* prefix for temp files in working dir  */
-@@ -358,6 +359,7 @@ struct hshentry {
- 	char const	  * lockedby; /* who locks the revision		    */
- 	char const	  * state;    /* state of revision (Exp by default) */
- 	char const	  * name;     /* name (if any) by which retrieved   */
-+	char const        * commitid; /* text string to associate commits   */
- 	struct cbuf	    log;      /* log message requested at checkin   */
-         struct branchhead * branches; /* list of first revisions on branches*/
- 	struct cbuf	    ig;	      /* ignored phrases in admin part	    */
-@@ -662,6 +664,7 @@ extern int               TotalDeltas;
- extern char const *const expand_names[];
- extern char const
- 	Kaccess[], Kauthor[], Kbranch[], Kcomment[],
-+	Kcommitid[],
- 	Kdate[], Kdesc[], Kexpand[], Khead[], Klocks[], Klog[],
- 	Knext[], Kstate[], Kstrict[], Ksymbols[], Ktext[];
- void unexpected_EOF P((void)) exiting;
-Index:src/rcsgen.c
---- src/rcsgen.c~	1995-06-16 06:19:24.000000000 +0000
-+++ src/rcsgen.c	2005-09-23 18:09:11.408920000 +0000
-@@ -547,6 +547,9 @@ putdelta(node, fout)
- 
- 	aprintf(fout, ";\n%s\t%s;\n", Knext, node->next?node->next->num:"");
- 	awrite(node->ig.string, node->ig.size, fout);
-+
-+	if (node->commitid)
-+		aprintf(fout, "%s\t%s;\n", Kcommitid, node->commitid);
- }
- 
- 
-Index:src/rcssyn.c
---- src/rcssyn.c~	1995-06-16 06:19:24.000000000 +0000
-+++ src/rcssyn.c	2005-09-23 18:01:47.652920000 +0000
-@@ -171,6 +171,7 @@ char const
- 	Kauthor[]   = "author",
- 	Kbranch[]   = "branch",
- 	Kcomment[]  = "comment",
-+	Kcommitid[] = "commitid",
- 	Kdate[]     = "date",
- 	Kdesc[]     = "desc",
- 	Kexpand[]   = "expand",
-@@ -433,6 +434,13 @@ getdelta()
- 	Delta->lockedby = 0;
- 	Delta->log.string = 0;
- 	Delta->selector = true;
-+
-+	if (getkeyopt(Kcommitid)) {
-+		Delta->commitid = NextString;
-+		nextlex();
-+		getsemi(Kcommitid);
-+        }
-+
- 	Delta->ig = getphrases(Kdesc);
-         TotalDeltas++;
-         return (true);
-Index:src/rlog.c
---- src/rlog.c~	1995-06-16 06:19:24.000000000 +0000
-+++ src/rlog.c	2005-09-26 17:23:55.257504000 +0000
-@@ -591,6 +591,10 @@ putadelta(node,editscript,trunk)
- 	      aprintf(out, insDelFormat,
-                              editscript->insertlns, editscript->deletelns);
- 
-+	if ( node->commitid )
-+	   aprintf(out, "%s commitid: %s", (editscript) ? ";" : "",
-+		   node->commitid);
-+
-         newbranch = node->branches;
-         if ( newbranch ) {
- 	   bufautobegin(&branchnum);
-Index:man/rcsfile.5in
---- man/rcsfile.5in~	1995-06-05 08:28:35.000000000 +0000
-+++ man/rcsfile.5in	2005-09-27 20:52:46.424504000 +0000
-@@ -68,6 +68,7 @@ nonterminal symbols are in
- 		\f3state\fP	{\f2id\fP}\f3;\fP
- 		\f3branches\fP	{\f2num\fP}*\f3;\fP
- 		\f3next\fP	{\f2num\fP}\f3;\fP
-+		{ \f3commitid\fP \f2id\fP\f3;\fP }
- 		{ \f2newphrase\fP }*
- .LP
- \f2desc\fP	::=	\f3desc\fP	\f2string\fP
-@@ -127,6 +128,18 @@ and all the digits of years thereafter.
- Dates use the Gregorian calendar; times use UTC.
- .PP
- The
-+.I commitid
-+is followed by an
-+.I id
-+token. This token is intended to be unique across
-+multiple files and is used to help group files as
-+being a part of the same logical commit.
-+This token must uniquely identify the commit
-+operation that was applied to a set of RCS files.
-+In particular, it must be unique among all the
-+commitids in this file.
-+.PP
-+The
- .I newphrase
- productions in the grammar are reserved for future extensions
- to the format of \*r files.
 Index:man/rcsfile.5
---- man/rcsfile.5~	1995-06-16 06:58:26.000000000 +0000
-+++ man/rcsfile.5	2005-09-27 20:53:01.023504000 +0000
+--- man/rcsfile.5~	1995-06-15 23:58:26.000000000 -0700
++++ man/rcsfile.5	2005-09-27 13:53:01.023504000 -0700
 @@ -1,4 +1,4 @@
 -.lf 1 ./rcsfile.5in
 +.lf 1 rcsfile.5in
@@ -312,3 +176,215 @@ Index:man/rcsfile.5
  .\}
  .PP
  .SH IDENTIFICATION
+Index:man/rcsfile.5in
+--- man/rcsfile.5in~	1995-06-05 01:28:35.000000000 -0700
++++ man/rcsfile.5in	2005-09-27 13:52:46.424504000 -0700
+@@ -68,6 +68,7 @@ nonterminal symbols are in
+ 		\f3state\fP	{\f2id\fP}\f3;\fP
+ 		\f3branches\fP	{\f2num\fP}*\f3;\fP
+ 		\f3next\fP	{\f2num\fP}\f3;\fP
++		{ \f3commitid\fP \f2id\fP\f3;\fP }
+ 		{ \f2newphrase\fP }*
+ .LP
+ \f2desc\fP	::=	\f3desc\fP	\f2string\fP
+@@ -127,6 +128,18 @@ and all the digits of years thereafter.
+ Dates use the Gregorian calendar; times use UTC.
+ .PP
+ The
++.I commitid
++is followed by an
++.I id
++token. This token is intended to be unique across
++multiple files and is used to help group files as
++being a part of the same logical commit.
++This token must uniquely identify the commit
++operation that was applied to a set of RCS files.
++In particular, it must be unique among all the
++commitids in this file.
++.PP
++The
+ .I newphrase
+ productions in the grammar are reserved for future extensions
+ to the format of \*r files.
+Index:src/rcsbase.h
+--- src/rcsbase.h~	1995-06-15 23:19:24.000000000 -0700
++++ src/rcsbase.h	2005-09-28 14:47:51.490505000 -0700
+@@ -222,6 +222,11 @@ Report problems and direct all questions
+                               /* 1 sets the default locking to strict;      */
+                               /* used in production environments.           */
+ 
++/* base64_encode(128 random bits) needs 24 bytes + 1 for NUL */
++/* time_t may be 64bits on some machines needs 16 bytes + 1 as hex */
++#define commitidsize	   64 /* time+1+base64(128bits)+1 | pid+time+rand+1 */
++#define urandom_dev "/dev/urandom"
++
+ #define yearlength	   16 /* (good through AD 9,999,999,999,999,999)    */
+ #define datesize (yearlength+16)	/* size of output of time2date */
+ #define RCSTMPPREFIX '_' /* prefix for temp files in working dir  */
+@@ -358,6 +363,7 @@ struct hshentry {
+ 	char const	  * lockedby; /* who locks the revision		    */
+ 	char const	  * state;    /* state of revision (Exp by default) */
+ 	char const	  * name;     /* name (if any) by which retrieved   */
++	char const        * commitid; /* text string to associate commits   */
+ 	struct cbuf	    log;      /* log message requested at checkin   */
+         struct branchhead * branches; /* list of first revisions on branches*/
+ 	struct cbuf	    ig;	      /* ignored phrases in admin part	    */
+@@ -662,6 +668,7 @@ extern int               TotalDeltas;
+ extern char const *const expand_names[];
+ extern char const
+ 	Kaccess[], Kauthor[], Kbranch[], Kcomment[],
++	Kcommitid[],
+ 	Kdate[], Kdesc[], Kexpand[], Khead[], Klocks[], Klog[],
+ 	Knext[], Kstate[], Kstrict[], Ksymbols[], Ktext[];
+ void unexpected_EOF P((void)) exiting;
+Index:src/ci.c
+--- src/ci.c~	1995-06-15 23:19:24.000000000 -0700
++++ src/ci.c	2005-09-28 15:01:57.823507000 -0700
+@@ -262,6 +262,10 @@ static void cleanup P((void));
+ static void incnum P((char const*,struct buf*));
+ static void addassoclst P((int,char const*));
+ 
++enum {RANDOM_BYTES = 8};
++enum {N = (sizeof(time_t) + RANDOM_BYTES)};
++static void convert P((char const input[N], char *output));
++
+ static FILE *exfile;
+ static RILE *workptr;			/* working file pointer		*/
+ static struct buf newdelnum;		/* new revision number		*/
+@@ -285,6 +289,7 @@ mainProg(ciId, "ci", "$Id: ci.c,v 5.30 1
+ 	char olddate[datesize];
+ 	char newdatebuf[datesize + zonelenmax];
+ 	char targetdatebuf[datesize + zonelenmax];
++	char commitid[commitidsize];
+ 	char *a, **newargv, *textfile;
+ 	char const *author, *krev, *rev, *state;
+ 	char const *diffname, *expname;
+@@ -309,6 +314,28 @@ mainProg(ciId, "ci", "$Id: ci.c,v 5.30 1
+ 	suffixes = X_DEFAULT;
+ 	nextassoc = &assoclst;
+ 
++	{
++		char buf[N] = { 0, };
++		ssize_t len = 0;
++		time_t rightnow = time (NULL);
++		unsigned char *p = (unsigned char *) (buf + sizeof(time_t));
++		int fd = open (urandom_dev, O_RDONLY, O_NOCTTY);
++		if (fd >= 0) {
++			len = read (fd, buf + sizeof(time_t), RANDOM_BYTES);
++			close (fd);
++		}
++		if (len > 0 && rightnow >= 0) {
++			while (rightnow != 0) {
++				*--p = rightnow % (UCHAR_MAX + 1);
++				rightnow /= UCHAR_MAX + 1;
++			}
++			convert(buf, commitid);
++		} else
++			snprintf(commitid, sizeof(commitid), "%x%08lx%04x",
++				 (int)getpid(), (long int)rightnow,
++				 rand()&0xFFFF);
++	}
++
+ 	argc = getRCSINIT(argc, argv, &newargv);
+ 	argv = newargv;
+ 	while (a = *++argv,  0<--argc && *a++=='-') {
+@@ -532,6 +559,8 @@ mainProg(ciId, "ci", "$Id: ci.c,v 5.30 1
+ 	newdelta.name = 0;
+ 	clear_buf(&newdelta.ig);
+ 	clear_buf(&newdelta.igtext);
++	/* set commitid */
++	newdelta.commitid=commitid;
+ 	/* set author */
+ 	if (author)
+ 		newdelta.author=author;     /* set author given by -w         */
+@@ -1317,3 +1346,38 @@ addassoclst(flag, sp)
+ 	*nextassoc = pt;
+ 	nextassoc = &pt->nextsym;
+ }
++
++static char const alphabet[62] =
++  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
++
++/* Divide BUF by D, returning the remainder.  Replace BUF by the
++   quotient.  BUF[0] is the most significant part of BUF.
++   D must not exceed UINT_MAX >> CHAR_BIT.  */
++static unsigned int
++divide_by (unsigned char buf[N], unsigned int d)
++{
++  unsigned int carry = 0;
++  int i;
++  for (i = 0; i < N; i++)
++    {
++      unsigned int byte = buf[i];
++      unsigned int dividend = (carry << CHAR_BIT) + byte;
++      buf[i] = dividend / d;
++      carry = dividend % d;
++    }
++  return carry;
++}
++
++static void
++convert (char const input[N], char *output)
++{
++  static char const zero[N] = { 0, };
++  unsigned char buf[N];
++  size_t o = 0;
++  memcpy (buf, input, N);
++  while (memcmp (buf, zero, N) != 0)
++    output[o++] = alphabet[divide_by (buf, sizeof alphabet)];
++  if (! o)
++    output[o++] = '0';
++  output[o] = '\0';
++}
+Index:src/rcsgen.c
+--- src/rcsgen.c~	1995-06-15 23:19:24.000000000 -0700
++++ src/rcsgen.c	2005-09-27 15:08:47.421504000 -0700
+@@ -547,6 +547,9 @@ putdelta(node, fout)
+ 
+ 	aprintf(fout, ";\n%s\t%s;\n", Knext, node->next?node->next->num:"");
+ 	awrite(node->ig.string, node->ig.size, fout);
++
++	if (node->commitid)
++		aprintf(fout, "%s\t%s;\n", Kcommitid, node->commitid);
+ }
+ 
+ 
+Index:src/rcssyn.c
+--- src/rcssyn.c~	1995-06-15 23:19:24.000000000 -0700
++++ src/rcssyn.c	2005-09-27 15:08:47.429504000 -0700
+@@ -171,6 +171,7 @@ char const
+ 	Kauthor[]   = "author",
+ 	Kbranch[]   = "branch",
+ 	Kcomment[]  = "comment",
++	Kcommitid[] = "commitid",
+ 	Kdate[]     = "date",
+ 	Kdesc[]     = "desc",
+ 	Kexpand[]   = "expand",
+@@ -433,6 +434,13 @@ getdelta()
+ 	Delta->lockedby = 0;
+ 	Delta->log.string = 0;
+ 	Delta->selector = true;
++
++	if (getkeyopt(Kcommitid)) {
++		Delta->commitid = NextString;
++		nextlex();
++		getsemi(Kcommitid);
++        }
++
+ 	Delta->ig = getphrases(Kdesc);
+         TotalDeltas++;
+         return (true);
+Index:src/rlog.c
+--- src/rlog.c~	1995-06-15 23:19:24.000000000 -0700
++++ src/rlog.c	2005-09-26 10:23:55.257504000 -0700
+@@ -591,6 +591,10 @@ putadelta(node,editscript,trunk)
+ 	      aprintf(out, insDelFormat,
+                              editscript->insertlns, editscript->deletelns);
+ 
++	if ( node->commitid )
++	   aprintf(out, "%s commitid: %s", (editscript) ? ";" : "",
++		   node->commitid);
++
+         newbranch = node->branches;
+         if ( newbranch ) {
+ 	   bufautobegin(&branchnum);

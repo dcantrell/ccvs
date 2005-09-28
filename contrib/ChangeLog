@@ -1,4 +1,9 @@
-2005-09-27  Mark D. Baushke  <mdb@juniper.net>
+2005-09-28  Mark D. Baushke  <mdb@gnu.org>
+
+	* rcs-5.7-commitid.patch: Use base62 for the commitid with
+	more random content.
+
+2005-09-27  Mark D. Baushke  <mdb@gnu.org>
 
 	* rcs-5.7-commitid.patch: Add documentation for the new commitid
 	phrase.
