@@ -1,3 +1,12 @@
+2005-09-28  Mark D. Baushke  <mdb@gnu.org>
+
+	* main.c (N, RANDOM_BYTES): New constants for base62 conversion.
+	(divide_by): Used in base62 conversion.
+	(convert): Ditto.
+	(main): Set global_session_id using more random data and the
+	current time in base62 if possible, otherwise fallback to the old
+	method.
+
 2005-09-25  Conrad T. Pino  <Conrad@Pino.com>
 
 	* rcs.c: Use "#ifdef HAVE_FSYNC" just like every where else.
