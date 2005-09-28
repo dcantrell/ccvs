@@ -458,6 +458,46 @@ extern char *gConfigPath;
 
 
 
+
+enum {RANDOM_BYTES = 8};
+enum {N = (sizeof(time_t) + RANDOM_BYTES)};
+
+static char const alphabet[62] =
+  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+/* Divide BUF by D, returning the remainder.  Replace BUF by the
+   quotient.  BUF[0] is the most significant part of BUF.
+   D must not exceed UINT_MAX >> CHAR_BIT.  */
+static unsigned int
+divide_by (unsigned char buf[N], unsigned int d)
+{
+    unsigned int carry = 0;
+    int i;
+    for (i = 0; i < N; i++)
+    {
+	unsigned int byte = buf[i];
+	unsigned int dividend = (carry << CHAR_BIT) + byte;
+	buf[i] = dividend / d;
+	carry = dividend % d;
+    }
+    return carry;
+}
+
+static void
+convert (char const input[N], char *output)
+{
+    static char const zero[N] = { 0, };
+    unsigned char buf[N];
+    size_t o = 0;
+    memcpy (buf, input, N);
+    while (memcmp (buf, zero, N) != 0)
+	output[o++] = alphabet[divide_by (buf, sizeof alphabet)];
+    if (! o)
+	output[o++] = '0';
+    output[o] = '\0';
+}
+
+
 int
 main (int argc, char **argv)
 {
@@ -733,8 +773,29 @@ cause intermittent sandbox corruption.");
 
     /* Calculate the cvs global session ID */
 
-    global_session_id = Xasprintf ("%x%08lx%04x", (int)getpid(),
-                                  (long)time (NULL), rand()&0xFFFF);
+    {
+	char buf[N] = { 0, };
+	char out[N*2];
+	ssize_t len = 0;
+	time_t rightnow = time (NULL);
+	unsigned char *p = (unsigned char *) (buf + sizeof (time_t));
+	int fd = open ("/dev/urandom", O_RDONLY, O_NOCTTY);
+	if (fd >= 0) {
+	    len = read (fd, buf + sizeof (time_t), RANDOM_BYTES);
+	    close (fd);
+	}
+	if (len > 0 && rightnow >= 0) {
+	    while (rightnow != 0) {
+		*--p = rightnow % (UCHAR_MAX + 1);
+		rightnow /= UCHAR_MAX + 1;
+	    }
+	    convert(buf, out);
+	    global_session_id = strdup (out);
+	} else
+	    global_session_id = Xasprintf ("%x%08lx%04x", (int)getpid(),
+					   (long)time (NULL), rand()&0xFFFF);
+    }
+
 
     TRACE (TRACE_FUNCTION, "main: Session ID is %s", global_session_id);
 
