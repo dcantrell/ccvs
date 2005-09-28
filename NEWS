@@ -8,9 +8,6 @@ NEW FEATURES
 * The path to the config file may be set as an argument to the CVS server
   commands.
 
-* The temporary directory may now be specified in the config file, via
-  the new TmpDir key.
-
 * Sections of directives specific to one or more repositories and not others
   may now be specified in the config file.
 
@@ -26,7 +23,7 @@ NEW FEATURES
   CVSROOT/config.
 
 * There are several new options available in CVSROOT/config.  These are
-  HistoryLogPath, HistorySearchPath, MinCompressionLevel, &
+  TmpDir, HistoryLogPath, HistorySearchPath, MinCompressionLevel, &
   MaxCompressionLevel.  Please see the manual for more.
 
 * CVS on Solaris 10 was refusing to parse command options.  This has been
