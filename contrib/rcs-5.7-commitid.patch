@@ -239,7 +239,7 @@ Index:src/rcsbase.h
  void unexpected_EOF P((void)) exiting;
 Index:src/ci.c
 --- src/ci.c~	1995-06-15 23:19:24.000000000 -0700
-+++ src/ci.c	2005-09-29 14:18:16.783506000 -0700
++++ src/ci.c	2005-09-29 14:57:57.814504000 -0700
 @@ -262,6 +262,10 @@ static void cleanup P((void));
  static void incnum P((char const*,struct buf*));
  static void addassoclst P((int,char const*));
@@ -259,7 +259,7 @@ Index:src/ci.c
  	char *a, **newargv, *textfile;
  	char const *author, *krev, *rev, *state;
  	char const *diffname, *expname;
-@@ -309,6 +314,51 @@ mainProg(ciId, "ci", "$Id: ci.c,v 5.30 1
+@@ -309,6 +314,45 @@ mainProg(ciId, "ci", "$Id: ci.c,v 5.30 1
  	suffixes = X_DEFAULT;
  	nextassoc = &assoclst;
  
@@ -275,31 +275,25 @@ Index:src/ci.c
 +#ifdef O_NOCTTY
 +		flags |= O_NOCTTY;
 +#endif
-+		if (rightnow != (time_t)-1) {
++		if (rightnow != (time_t)-1)
++			while (rightnow > 0) {
++				*--p = rightnow % (UCHAR_MAX + 1);
++				rightnow /= UCHAR_MAX + 1;
++			}
++		else {
 +			/* try to use more random data */
 +			randbytes = COMMITID_RAW_SIZE;
 +			startrand = buf;
 +		}
 +		fd = open (urandom_dev, flags);
 +		if (fd >= 0) {
-+			len = read (fd, buf + sizeof(time_t), RANDOM_BYTES);
++			len = read (fd, startrand, randbytes);
 +			close (fd);
 +		}
-+		if (len > 0) {
-+			if (rightnow != (time_t)-1)
-+				while (rightnow > 0) {
-+					*--p = rightnow % (UCHAR_MAX + 1);
-+					rightnow /= UCHAR_MAX + 1;
-+				}
-+		} else {
++		if (len <= 0) {
++			/* no random data was available so use pid */
 +			long int pid = (long int)getpid ();
-+			p = (unsigned char *) (buf + sizeof (buf));
-+			while (rightnow > 0) {
-+			    *--p = rightnow % (UCHAR_MAX + 1);
-+			    rightnow /= UCHAR_MAX + 1;
-+			}
-+			p = (unsigned char *) (buf + sizeof (buf)
-+					       - sizeof (time_t));
++			p = (unsigned char *) (startrand + sizeof (pid));
 +			while (pid > 0) {
 +			    *--p = pid % (UCHAR_MAX + 1);
 +			    pid /= UCHAR_MAX + 1;
@@ -311,7 +305,7 @@ Index:src/ci.c
  	argc = getRCSINIT(argc, argv, &newargv);
  	argv = newargv;
  	while (a = *++argv,  0<--argc && *a++=='-') {
-@@ -532,6 +582,8 @@ mainProg(ciId, "ci", "$Id: ci.c,v 5.30 1
+@@ -532,6 +576,8 @@ mainProg(ciId, "ci", "$Id: ci.c,v 5.30 1
  	newdelta.name = 0;
  	clear_buf(&newdelta.ig);
  	clear_buf(&newdelta.igtext);
@@ -320,7 +314,7 @@ Index:src/ci.c
  	/* set author */
  	if (author)
  		newdelta.author=author;     /* set author given by -w         */
-@@ -1317,3 +1369,38 @@ addassoclst(flag, sp)
+@@ -1317,3 +1363,38 @@ addassoclst(flag, sp)
  	*nextassoc = pt;
  	nextassoc = &pt->nextsym;
  }
