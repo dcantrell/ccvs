@@ -1,18 +1,18 @@
 ChangeLog entry:
 
-2005-09-28  Mark D. Baushke  <mdb@gnu.org>
+2005-09-29  Mark D. Baushke  <mdb@gnu.org>
 
 	* man/rcsfile.5in: Document new commitid delta phrase.
 	* man/rcsfile.5: Regenerated.
 
-	* src/ci.c (RANDOM_BYTES, N): New constants.
+	* src/ci.c (RANDOM_BYTES, COMMITID_RAW_SIZE): New constants.
 	(mainProg): Add commitid to delta records. Use
 	random data and represent in base62 or fall back to using the
 	same basic format construction as is used by CVS and CVSNT.
 	(divide_by): New function used by convert.
 	(convert): New fucntion to convert to base62.
 	* rcsbase.h (commitidsize): Room for base62 encoded block or
-	32bit pid, 32bit time, 16bit random rendered as hex plus one
+	32bit pid plus a 32bit time rendered as hex plus one
 	NUL byte round up to 64.
 	(struct hshentry): Add new commitid field.
 	* src/rcsgen.c (putdelta): Preserve old commitid entries.
@@ -239,14 +239,14 @@ Index:src/rcsbase.h
  void unexpected_EOF P((void)) exiting;
 Index:src/ci.c
 --- src/ci.c~	1995-06-15 23:19:24.000000000 -0700
-+++ src/ci.c	2005-09-28 15:01:57.823507000 -0700
++++ src/ci.c	2005-09-29 01:14:00.856504000 -0700
 @@ -262,6 +262,10 @@ static void cleanup P((void));
  static void incnum P((char const*,struct buf*));
  static void addassoclst P((int,char const*));
  
 +enum {RANDOM_BYTES = 8};
-+enum {N = (sizeof(time_t) + RANDOM_BYTES)};
-+static void convert P((char const input[N], char *output));
++enum {COMMITID_RAW_SIZE = (sizeof(time_t) + RANDOM_BYTES)};
++static void convert P((char const input[COMMITID_RAW_SIZE], char *output));
 +
  static FILE *exfile;
  static RILE *workptr;			/* working file pointer		*/
@@ -259,12 +259,12 @@ Index:src/ci.c
  	char *a, **newargv, *textfile;
  	char const *author, *krev, *rev, *state;
  	char const *diffname, *expname;
-@@ -309,6 +314,28 @@ mainProg(ciId, "ci", "$Id: ci.c,v 5.30 1
+@@ -309,6 +314,38 @@ mainProg(ciId, "ci", "$Id: ci.c,v 5.30 1
  	suffixes = X_DEFAULT;
  	nextassoc = &assoclst;
  
 +	{
-+		char buf[N] = { 0, };
++		char buf[COMMITID_RAW_SIZE] = { 0, };
 +		ssize_t len = 0;
 +		time_t rightnow = time (NULL);
 +		unsigned char *p = (unsigned char *) (buf + sizeof(time_t));
@@ -273,22 +273,32 @@ Index:src/ci.c
 +			len = read (fd, buf + sizeof(time_t), RANDOM_BYTES);
 +			close (fd);
 +		}
-+		if (len > 0 && rightnow >= 0) {
-+			while (rightnow != 0) {
++		if (len > 0) {
++			while (rightnow > 0) {
 +				*--p = rightnow % (UCHAR_MAX + 1);
 +				rightnow /= UCHAR_MAX + 1;
 +			}
-+			convert(buf, commitid);
-+		} else
-+			snprintf(commitid, sizeof(commitid), "%x%08lx%04x",
-+				 (int)getpid(), (long int)rightnow,
-+				 rand()&0xFFFF);
++		} else {
++			long int pid = (long int)getpid ();
++			p = (unsigned char *) (buf + sizeof (buf));
++			while (rightnow > 0) {
++			    *--p = rightnow % (UCHAR_MAX + 1);
++			    rightnow /= UCHAR_MAX + 1;
++			}
++			p = (unsigned char *) (buf + sizeof (buf)
++					       - sizeof (time_t));
++			while (pid > 0) {
++			    *--p = pid % (UCHAR_MAX + 1);
++			    pid /= UCHAR_MAX + 1;
++			}
++		}
++		convert(buf, commitid);
 +	}
 +
  	argc = getRCSINIT(argc, argv, &newargv);
  	argv = newargv;
  	while (a = *++argv,  0<--argc && *a++=='-') {
-@@ -532,6 +559,8 @@ mainProg(ciId, "ci", "$Id: ci.c,v 5.30 1
+@@ -532,6 +569,8 @@ mainProg(ciId, "ci", "$Id: ci.c,v 5.30 1
  	newdelta.name = 0;
  	clear_buf(&newdelta.ig);
  	clear_buf(&newdelta.igtext);
@@ -297,7 +307,7 @@ Index:src/ci.c
  	/* set author */
  	if (author)
  		newdelta.author=author;     /* set author given by -w         */
-@@ -1317,3 +1346,38 @@ addassoclst(flag, sp)
+@@ -1317,3 +1356,38 @@ addassoclst(flag, sp)
  	*nextassoc = pt;
  	nextassoc = &pt->nextsym;
  }
@@ -309,11 +319,11 @@ Index:src/ci.c
 +   quotient.  BUF[0] is the most significant part of BUF.
 +   D must not exceed UINT_MAX >> CHAR_BIT.  */
 +static unsigned int
-+divide_by (unsigned char buf[N], unsigned int d)
++divide_by (unsigned char buf[COMMITID_RAW_SIZE], unsigned int d)
 +{
 +  unsigned int carry = 0;
 +  int i;
-+  for (i = 0; i < N; i++)
++  for (i = 0; i < COMMITID_RAW_SIZE; i++)
 +    {
 +      unsigned int byte = buf[i];
 +      unsigned int dividend = (carry << CHAR_BIT) + byte;
@@ -324,13 +334,13 @@ Index:src/ci.c
 +}
 +
 +static void
-+convert (char const input[N], char *output)
++convert (char const input[COMMITID_RAW_SIZE], char *output)
 +{
-+  static char const zero[N] = { 0, };
-+  unsigned char buf[N];
++  static char const zero[COMMITID_RAW_SIZE] = { 0, };
++  unsigned char buf[COMMITID_RAW_SIZE];
 +  size_t o = 0;
-+  memcpy (buf, input, N);
-+  while (memcmp (buf, zero, N) != 0)
++  memcpy (buf, input, COMMITID_RAW_SIZE);
++  while (memcmp (buf, zero, COMMITID_RAW_SIZE) != 0)
 +    output[o++] = alphabet[divide_by (buf, sizeof alphabet)];
 +  if (! o)
 +    output[o++] = '0';
