@@ -1835,7 +1835,7 @@ fd_buffer_input (void *closure, char *data, size_t need, size_t size,
 		/* This used to select on exceptions too, but as far
 		   as I know there was never any reason to do that and
 		   SCO doesn't let you select on exceptions on pipes.  */
-		numfds = select (fb->fd + 1, &readfds, NULL, NULL, NULL);
+		numfds = fd_select (fb->fd + 1, &readfds, NULL, NULL, NULL);
 		if (numfds < 0 && errno != EINTR)
 		{
 		    status = errno;
