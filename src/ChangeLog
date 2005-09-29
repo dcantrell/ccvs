@@ -1,5 +1,8 @@
 2005-09-29  Derek Price  <derek@ximbiot.com>
 
+	* buffer.c (fd_buffer_input), client.c (handle_m, handle_e): Use new
+	fd_select in place of select.
+
 	* subr.c: Remove select includes - the sleep functions are now in
 	lib.
 

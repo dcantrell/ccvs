@@ -2820,7 +2820,7 @@ handle_m (char *args, size_t len)
     FD_ZERO (&wfds);
     FD_SET (STDOUT_FILENO, &wfds);
     errno = 0;
-    s = select (STDOUT_FILENO+1, NULL, &wfds, NULL, NULL);
+    s = fd_select (STDOUT_FILENO+1, NULL, &wfds, NULL, NULL);
     if (s < 1 && errno != 0)
         perror ("cannot write to stdout");
     fwrite (args, sizeof *args, len, stdout);
@@ -2877,7 +2877,7 @@ handle_e (char *args, size_t len)
     FD_ZERO (&wfds);
     FD_SET (STDERR_FILENO, &wfds);
     errno = 0;
-    s = select (STDERR_FILENO+1, NULL, &wfds, NULL, NULL);
+    s = fd_select (STDERR_FILENO+1, NULL, &wfds, NULL, NULL);
     /*
      * If stderr has problems, then adding a call to
      *   perror ("cannot write to stderr")
