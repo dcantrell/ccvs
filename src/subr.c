@@ -26,10 +26,7 @@
 # include <wchar.h>
 #endif
 
-#if !defined HAVE_NANOSLEEP && !defined HAVE_USLEEP && defined HAVE_SELECT
-  /* use select as a workaround */
-# include "xselect.h"
-#endif /* !defined HAVE_NANOSLEEP && !defined HAVE_USLEEP && defined HAVE_SELECT */
+
 
 extern char *getlogin (void);
 
