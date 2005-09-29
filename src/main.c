@@ -784,7 +784,8 @@ cause intermittent sandbox corruption.");
 	    len = read (fd, buf + sizeof (time_t), RANDOM_BYTES);
 	    close (fd);
 	}
-	if (len > 0) {
+	/* time_t can be unsigned */
+	if (len > 0 && rightnow != (time_t)-1) {
 	    while (rightnow > 0) {
 		*--p = rightnow % (UCHAR_MAX + 1);
 		rightnow /= UCHAR_MAX + 1;
