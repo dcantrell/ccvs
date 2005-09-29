@@ -1,3 +1,7 @@
+2005-09-29  Derek Price  <derek@ximbiot.com>
+
+	* system.h: #define fd_select select when not already defined.
+
 2005-09-25  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.dsp: Add files (mkstemp.c tempname.c) to project.
