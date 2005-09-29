@@ -1,3 +1,8 @@
+2005-09-29  Derek Price  <derek@ximbiot.com>
+
+	* subr.c: Remove select includes - the sleep functions are now in
+	lib.
+
 2005-09-28  Mark D. Baushke  <mdb@gnu.org>
 
 	* main.c (N, RANDOM_BYTES): New constants for base62 conversion.
