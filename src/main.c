@@ -778,18 +778,31 @@ cause intermittent sandbox corruption.");
 	char out[COMMITID_RAW_SIZE * 2];
 	ssize_t len = 0;
 	time_t rightnow = time (NULL);
-	unsigned char *p = (unsigned char *) (buf + sizeof (time_t));
-	int fd = open ("/dev/urandom", O_RDONLY, O_NOCTTY);
+	char *startrand = buf + sizeof (time_t);
+	unsigned char *p = (unsigned char *) startrand;
+	size_t randbytes = RANDOM_BYTES;
+	int flags = O_RDONLY;
+	int fd;
+#ifdef O_NOCTTY
+	flags |= O_NOCTTY;
+#endif
+	if (rightnow != (time_t)-1) {
+	    /* try to use more random data */
+	    randbytes = COMMITID_RAW_SIZE;
+	    startrand = buf;
+	}
+	fd = open ("/dev/urandom", flags);
 	if (fd >= 0) {
-	    len = read (fd, buf + sizeof (time_t), RANDOM_BYTES);
+	    len = read (fd, startrand, randbytes);
 	    close (fd);
 	}
-	/* time_t can be unsigned */
-	if (len > 0 && rightnow != (time_t)-1) {
-	    while (rightnow > 0) {
-		*--p = rightnow % (UCHAR_MAX + 1);
-		rightnow /= UCHAR_MAX + 1;
-	    }
+	if (len > 0) {
+	    /* time_t can be unsigned */
+	    if (rightnow != (time_t)-1)
+		while (rightnow > 0) {
+		    *--p = rightnow % (UCHAR_MAX + 1);
+		    rightnow /= UCHAR_MAX + 1;
+		}
 	} else {
 	    long int pid = (long int)getpid ();
 	    p = (unsigned char *) (buf + sizeof (buf));
