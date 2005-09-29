@@ -687,7 +687,7 @@ int run_piped (int *, int *);
 
 /* other similar-minded stuff from run.c.  */
 FILE *run_popen (const char *, const char *);
-int piped_child (char *const *, int *, int *);
+int piped_child (char *const *, int *, int *, bool);
 void close_on_exec (int);
 
 pid_t waitpid (pid_t, int *, int);

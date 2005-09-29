@@ -1,3 +1,16 @@
+2005-09-29  Paul Eggert  <eggert@CS.UCLA.EDU>
+	    Derek Price  <derek@ximbiot.com>
+
+	* client.c (handle_m, handle_e): Remove incomplete workaround for
+	O_NONBLOCK problem; no longer needed because of the fix below.
+	* cvs.h (piped_child): New bool argument saying whether O_NONBLOCK
+	fix is needed.  All uses changed.
+	* rsh-client.c (start_rsh_server): We need the O_NONBLOCK fix,
+	so pass 'true' to piped_child to enable the workaround.
+	* run.c (work_around_openssh_glitch): New function.
+	(piped_child): Use it if the fix is requested.  Avoid call call to
+	vfork with undefined behavior.
+
 2005-09-29  Mark D. Baushke  <mdb@gnu.org>
 
 	* main.c (main): Rename N as COMMITID_RAW_SIZE.
