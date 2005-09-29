@@ -3084,9 +3084,6 @@ handle_m (args, len)
     char *args;
     int len;
 {
-    fd_set wfds;
-    int s;
-
     /* In the case where stdout and stderr point to the same place,
        fflushing stderr will make output happen in the correct order.
        Often stderr will be line-buffered and this won't be needed,
@@ -3094,12 +3091,6 @@ handle_m (args, len)
        based on being confused between default buffering between
        stdout and stderr.  But I'm not sure).  */
     fflush (stderr);
-    FD_ZERO (&wfds);
-    FD_SET (STDOUT_FILENO, &wfds);
-    errno = 0;
-    s = select (STDOUT_FILENO+1, NULL, &wfds, NULL, NULL);
-    if (s < 1 && errno != 0)
-        perror ("cannot write to stdout");
     fwrite (args, len, sizeof (*args), stdout);
     putc ('\n', stdout);
 }
@@ -3147,24 +3138,9 @@ handle_e (args, len)
     char *args;
     int len;
 {
-    fd_set wfds;
-    int s;
-
     /* In the case where stdout and stderr point to the same place,
        fflushing stdout will make output happen in the correct order.  */
     fflush (stdout);
-    FD_ZERO (&wfds);
-    FD_SET (STDERR_FILENO, &wfds);
-    errno = 0;
-    s = select (STDERR_FILENO+1, NULL, &wfds, NULL, NULL);
-    /*
-     * If stderr has problems, then adding a call to
-     *   perror ("cannot write to stderr")
-     * will not work. So, try to write a message on stdout and
-     * terminate cvs.
-     */
-    if (s < 1 && errno != 0)
-        fperrmsg (stdout, 1, errno, "cannot write to stderr");
     fwrite (args, len, sizeof (*args), stderr);
     putc ('\n', stderr);
 }
@@ -4068,7 +4044,7 @@ connect_to_forked_server (to_server, from_server)
 	fprintf (stderr, " -> Forking server: %s %s\n", command[0], command[1]);
     }
 
-    child_pid = piped_child (command, &tofd, &fromfd);
+    child_pid = piped_child (command, &tofd, &fromfd, 0);
     if (child_pid < 0)
 	error (1, 0, "could not fork server process");
 
@@ -4884,7 +4860,7 @@ start_rsh_server (root, to_server, from_server)
 	        fprintf (stderr, "%s ", argv[i]);
 	    putc ('\n', stderr);
 	}
-	child_pid = piped_child (argv, &tofd, &fromfd);
+	child_pid = piped_child (argv, &tofd, &fromfd, 1);
 
 	if (child_pid < 0)
 	    error (1, errno, "cannot start server via rsh");
