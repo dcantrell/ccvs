@@ -1,5 +1,7 @@
 2005-09-29  Mark D. Baushke  <mdb@gnu.org>
 
+	* main.c (main): Simplify commitid creation.
+
 	* main.c (main): Not all hosts support O_NOCTTY for open.
 	Try to use more random data when time() returns -1.
 	

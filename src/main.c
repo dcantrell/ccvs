@@ -786,7 +786,12 @@ cause intermittent sandbox corruption.");
 #ifdef O_NOCTTY
 	flags |= O_NOCTTY;
 #endif
-	if (rightnow != (time_t)-1) {
+	if (rightnow != (time_t)-1)
+		while (rightnow > 0) {
+		    *--p = rightnow % (UCHAR_MAX + 1);
+		    rightnow /= UCHAR_MAX + 1;
+		}
+	else {
 	    /* try to use more random data */
 	    randbytes = COMMITID_RAW_SIZE;
 	    startrand = buf;
@@ -796,21 +801,10 @@ cause intermittent sandbox corruption.");
 	    len = read (fd, startrand, randbytes);
 	    close (fd);
 	}
-	if (len > 0) {
-	    /* time_t can be unsigned */
-	    if (rightnow != (time_t)-1)
-		while (rightnow > 0) {
-		    *--p = rightnow % (UCHAR_MAX + 1);
-		    rightnow /= UCHAR_MAX + 1;
-		}
-	} else {
+	if (len <= 0) {
+	    /* no random data was available so use pid */
 	    long int pid = (long int)getpid ();
-	    p = (unsigned char *) (buf + sizeof (buf));
-	    while (rightnow > 0) {
-		*--p = rightnow % (UCHAR_MAX + 1);
-		rightnow /= UCHAR_MAX + 1;
-	    }
-	    p = (unsigned char *) (buf + sizeof (buf) - sizeof (time_t));
+	    p = (unsigned char *) (startrand + sizeof (pid));
 	    while (pid > 0) {
 		*--p = pid % (UCHAR_MAX + 1);
 		pid /= UCHAR_MAX + 1;
