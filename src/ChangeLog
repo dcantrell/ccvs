@@ -1,3 +1,8 @@
+2005-09-29  Mark D. Baushke  <mdb@gnu.org>
+
+	* main.c (main): Rename N as COMMITID_RAW_SIZE.
+	Use base62 encoding for non-urandom case.
+
 2005-09-29  Derek Price  <derek@ximbiot.com>
 
 	* buffer.c (fd_buffer_input), client.c (handle_m, handle_e): Use new

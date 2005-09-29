@@ -460,7 +460,7 @@ extern char *gConfigPath;
 
 
 enum {RANDOM_BYTES = 8};
-enum {N = (sizeof(time_t) + RANDOM_BYTES)};
+enum {COMMITID_RAW_SIZE = (sizeof(time_t) + RANDOM_BYTES)};
 
 static char const alphabet[62] =
   "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -469,11 +469,11 @@ static char const alphabet[62] =
    quotient.  BUF[0] is the most significant part of BUF.
    D must not exceed UINT_MAX >> CHAR_BIT.  */
 static unsigned int
-divide_by (unsigned char buf[N], unsigned int d)
+divide_by (unsigned char buf[COMMITID_RAW_SIZE], unsigned int d)
 {
     unsigned int carry = 0;
     int i;
-    for (i = 0; i < N; i++)
+    for (i = 0; i < COMMITID_RAW_SIZE; i++)
     {
 	unsigned int byte = buf[i];
 	unsigned int dividend = (carry << CHAR_BIT) + byte;
@@ -484,13 +484,13 @@ divide_by (unsigned char buf[N], unsigned int d)
 }
 
 static void
-convert (char const input[N], char *output)
+convert (char const input[COMMITID_RAW_SIZE], char *output)
 {
-    static char const zero[N] = { 0, };
-    unsigned char buf[N];
+    static char const zero[COMMITID_RAW_SIZE] = { 0, };
+    unsigned char buf[COMMITID_RAW_SIZE];
     size_t o = 0;
-    memcpy (buf, input, N);
-    while (memcmp (buf, zero, N) != 0)
+    memcpy (buf, input, COMMITID_RAW_SIZE);
+    while (memcmp (buf, zero, COMMITID_RAW_SIZE) != 0)
 	output[o++] = alphabet[divide_by (buf, sizeof alphabet)];
     if (! o)
 	output[o++] = '0';
@@ -774,8 +774,8 @@ cause intermittent sandbox corruption.");
     /* Calculate the cvs global session ID */
 
     {
-	char buf[N] = { 0, };
-	char out[N*2];
+	char buf[COMMITID_RAW_SIZE] = { 0, };
+	char out[COMMITID_RAW_SIZE * 2];
 	ssize_t len = 0;
 	time_t rightnow = time (NULL);
 	unsigned char *p = (unsigned char *) (buf + sizeof (time_t));
@@ -784,16 +784,26 @@ cause intermittent sandbox corruption.");
 	    len = read (fd, buf + sizeof (time_t), RANDOM_BYTES);
 	    close (fd);
 	}
-	if (len > 0 && rightnow >= 0) {
-	    while (rightnow != 0) {
+	if (len > 0) {
+	    while (rightnow > 0) {
 		*--p = rightnow % (UCHAR_MAX + 1);
 		rightnow /= UCHAR_MAX + 1;
 	    }
-	    convert(buf, out);
-	    global_session_id = strdup (out);
-	} else
-	    global_session_id = Xasprintf ("%x%08lx%04x", (int)getpid(),
-					   (long)time (NULL), rand()&0xFFFF);
+	} else {
+	    long int pid = (long int)getpid ();
+	    p = (unsigned char *) (buf + sizeof (buf));
+	    while (rightnow > 0) {
+		*--p = rightnow % (UCHAR_MAX + 1);
+		rightnow /= UCHAR_MAX + 1;
+	    }
+	    p = (unsigned char *) (buf + sizeof (buf) - sizeof (time_t));
+	    while (pid > 0) {
+		*--p = pid % (UCHAR_MAX + 1);
+		pid /= UCHAR_MAX + 1;
+	    }
+	}
+	convert(buf, out);
+	global_session_id = strdup (out);
     }
 
 
