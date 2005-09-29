@@ -1,3 +1,7 @@
+2005-09-29  Derek Price  <derek@ximbiot.com>
+
+	* main.c (main): Check for error return from time().
+
 2005-09-29  Paul Eggert  <eggert@CS.UCLA.EDU>
 	    Derek Price  <derek@ximbiot.com>
 
