@@ -2,7 +2,8 @@
 
 	* rcs-5.7-commitid.patch: Not all hosts support O_NOCTTY for open.
 	Try to use more random data when time() returns -1.  
-
+	Simplify commitid creation.
+	
 2005-09-29  Derek Price  <derek@ximbiot.com>
 
 	* rcs-5.7-commitid.patch: Check for error return from time().
