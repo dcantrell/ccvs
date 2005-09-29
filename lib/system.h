@@ -343,3 +343,7 @@ extern void fnfold (char *FILENAME);
 #else
 #define OPEN_BINARY (0)
 #endif
+
+#ifndef fd_select
+# define fd_select select
+#endif
