@@ -1,3 +1,7 @@
+2005-09-30  Larry Jones  <lawrence.jones@ugs.com>
+
+	* expand_path.c (expand_path): Fix memory leaks.
+
 2005-09-29  Paul Eggert  <eggert@CS.UCLA.EDU>
 	    Derek Price  <derek@ximbiot.com>
 
