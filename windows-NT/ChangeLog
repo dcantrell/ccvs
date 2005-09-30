@@ -1,5 +1,9 @@
 2005-09-29  Conrad T. Pino  <Conrad@Pino.com>
 
+	* woe32.c woe32.h: Add "woe32_fd_select" function.
+
+2005-09-29  Conrad T. Pino  <Conrad@Pino.com>
+
 	* run.c:  Add "bool fix_stderr" argument to "piped_child" function.
 	Add "false" to "piped_child" call in "run_piped" function.
 

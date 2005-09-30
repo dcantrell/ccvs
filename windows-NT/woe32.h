@@ -12,6 +12,13 @@
 /* #define SYSTEM_CLEANUP woe32_cleanup */
 void woe32_cleanup (void);
 
+/* #define fd_select woe32_fd_select */
+int woe32_fd_select (	int nfds,
+						struct fd_set * readfds,
+						struct fd_set * writefds,
+						struct fd_set * errorfds,
+						struct timeval * timeout);
+
 char *woe32_getlogin (void);
 
 char *woe32_home_dir (void);
