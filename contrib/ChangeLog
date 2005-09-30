@@ -1,3 +1,14 @@
+2005-09-30  Mark D. Baushke  <mdb@gnu.org>
+
+	* rcs-5.7-commitid.patch: Convert diff timestamps to UTC.
+	Acknowledge Paul Eggert's help.
+	* rcs-5.7-sameuserlocks.patch: Patch from James Olin Oden allows
+	new co -S switch to disallow the user to check out the same file
+	twice.
+	* rcs-5.7-security.patch: tmpfile security patch from Olaf Kirch.
+	* README: Document rcs-5.7-sameuserlocks.patch and
+	rcs-5.7-security.patch.
+	
 2005-09-29  Mark D. Baushke  <mdb@gnu.org>
 
 	* rcs-5.7-commitid.patch: Not all hosts support O_NOCTTY for open.

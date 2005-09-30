@@ -1,5 +1,9 @@
 ChangeLog entry:
 
+Thanks to Paul Eggert who suggested using better random numbers as
+well as using the base62 format for compactness and provided the
+sample divide_by and convert functions used here.
+
 2005-09-29  Mark D. Baushke  <mdb@gnu.org>
 
 	* man/rcsfile.5in: Document new commitid delta phrase.
@@ -21,8 +25,8 @@ ChangeLog entry:
 	* src/rlog.c (putadelta): Print it out.
 
 Index:man/rcsfile.5
---- man/rcsfile.5~	1995-06-15 23:58:26.000000000 -0700
-+++ man/rcsfile.5	2005-09-27 13:53:01.023504000 -0700
+--- man/rcsfile.5~	1995-06-16 06:58:26.000000000 +0000
++++ man/rcsfile.5	2005-09-27 20:53:01.023504000 +0000
 @@ -1,4 +1,4 @@
 -.lf 1 ./rcsfile.5in
 +.lf 1 rcsfile.5in
@@ -177,8 +181,8 @@ Index:man/rcsfile.5
  .PP
  .SH IDENTIFICATION
 Index:man/rcsfile.5in
---- man/rcsfile.5in~	1995-06-05 01:28:35.000000000 -0700
-+++ man/rcsfile.5in	2005-09-27 13:52:46.424504000 -0700
+--- man/rcsfile.5in~	1995-06-05 08:28:35.000000000 +0000
++++ man/rcsfile.5in	2005-09-27 20:52:46.424504000 +0000
 @@ -68,6 +68,7 @@ nonterminal symbols are in
  		\f3state\fP	{\f2id\fP}\f3;\fP
  		\f3branches\fP	{\f2num\fP}*\f3;\fP
@@ -207,8 +211,8 @@ Index:man/rcsfile.5in
  productions in the grammar are reserved for future extensions
  to the format of \*r files.
 Index:src/rcsbase.h
---- src/rcsbase.h~	1995-06-15 23:19:24.000000000 -0700
-+++ src/rcsbase.h	2005-09-28 14:47:51.490505000 -0700
+--- src/rcsbase.h~	1995-06-16 06:19:24.000000000 +0000
++++ src/rcsbase.h	2005-09-28 21:47:51.490505000 +0000
 @@ -222,6 +222,11 @@ Report problems and direct all questions
                                /* 1 sets the default locking to strict;      */
                                /* used in production environments.           */
@@ -238,8 +242,8 @@ Index:src/rcsbase.h
  	Knext[], Kstate[], Kstrict[], Ksymbols[], Ktext[];
  void unexpected_EOF P((void)) exiting;
 Index:src/ci.c
---- src/ci.c~	1995-06-15 23:19:24.000000000 -0700
-+++ src/ci.c	2005-09-29 14:57:57.814504000 -0700
+--- src/ci.c~	1995-06-16 06:19:24.000000000 +0000
++++ src/ci.c	2005-09-29 21:57:57.814504000 +0000
 @@ -262,6 +262,10 @@ static void cleanup P((void));
  static void incnum P((char const*,struct buf*));
  static void addassoclst P((int,char const*));
@@ -354,8 +358,8 @@ Index:src/ci.c
 +  output[o] = '\0';
 +}
 Index:src/rcsgen.c
---- src/rcsgen.c~	1995-06-15 23:19:24.000000000 -0700
-+++ src/rcsgen.c	2005-09-27 15:08:47.421504000 -0700
+--- src/rcsgen.c~	1995-06-16 06:19:24.000000000 +0000
++++ src/rcsgen.c	2005-09-27 22:08:47.421504000 +0000
 @@ -547,6 +547,9 @@ putdelta(node, fout)
  
  	aprintf(fout, ";\n%s\t%s;\n", Knext, node->next?node->next->num:"");
@@ -367,8 +371,8 @@ Index:src/rcsgen.c
  
  
 Index:src/rcssyn.c
---- src/rcssyn.c~	1995-06-15 23:19:24.000000000 -0700
-+++ src/rcssyn.c	2005-09-27 15:08:47.429504000 -0700
+--- src/rcssyn.c~	1995-06-16 06:19:24.000000000 +0000
++++ src/rcssyn.c	2005-09-27 22:08:47.429504000 +0000
 @@ -171,6 +171,7 @@ char const
  	Kauthor[]   = "author",
  	Kbranch[]   = "branch",
@@ -392,8 +396,8 @@ Index:src/rcssyn.c
          TotalDeltas++;
          return (true);
 Index:src/rlog.c
---- src/rlog.c~	1995-06-15 23:19:24.000000000 -0700
-+++ src/rlog.c	2005-09-26 10:23:55.257504000 -0700
+--- src/rlog.c~	1995-06-16 06:19:24.000000000 +0000
++++ src/rlog.c	2005-09-26 17:23:55.257504000 +0000
 @@ -591,6 +591,10 @@ putadelta(node,editscript,trunk)
  	      aprintf(out, insDelFormat,
                               editscript->insertlns, editscript->deletelns);

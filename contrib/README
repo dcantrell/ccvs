@@ -97,6 +97,20 @@ An attempt at a table of Contents for this directory:
 			Patch to RCS 5.7 sources of 1995-06-16 to support
 			the newphrase 'commitid' used by CVS and CVSNT.
 
+	rcs-5.7-sameuserlocks.patch
+			Patch to RCS 5.7 sources from 2003-10-24
+			submitted to both help-rcs@gnu.org and Redhat.
+			Included in many Redhat GNU/Linux distribution
+			RPM files. A new -S switch to the co command
+			will disallow the user to check out the same
+			file twice.
+
+	rcs-5.7-security.patch
+			Patch to RCS 5.7 sources from 2001-01-05
+			included in many GNU/Linux distributions as applied
+			by Preston Brown <pbrown@redhat.com>
+			tmpfile security patch from Olaf Kirch <okir@lst.de>.
+
 	rcs-to-cvs	Script to import sources that may have been under
 			RCS control already.
 			Contributed by Per Cederqvist <ceder@lysator.liu.se>.
