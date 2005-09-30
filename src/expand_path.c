@@ -337,18 +337,18 @@ expand_path (const char *name, const char *cvsroot, bool formatsafe,
 	    else
 		error (0, 0, "%s:tilde expansion not supported on this system",
 		       file);
-	    return NULL;
+	    goto error_exit;
 #else
 	    struct passwd *ps;
 	    ps = getpwnam (buf + d);
-	    if (ps == 0)
+	    if (ps == NULL)
 	    {
 		if (line)
 		    error (0, 0, "%s:%d: no such user %s",
 			   file, line, buf + d);
 		else
 		    error (0, 0, "%s: no such user %s", file, buf + d);
-		return NULL;
+		goto error_exit;
 	    }
 	    e = ps->pw_dir;
 #endif
