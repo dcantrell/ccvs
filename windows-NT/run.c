@@ -603,7 +603,7 @@ build_command (char *const *argv)
    Return the handle of the child process (this is what
    _cwait and waitpid expect).  */
 int
-piped_child (char *const *argv, int *to, int *from)
+piped_child (char *const *argv, int *to, int *from, bool fix_stderr)
 {
   int child;
   HANDLE pipein[2], pipeout[2];
@@ -705,7 +705,7 @@ int
 run_piped (int *tofdp, int *fromfdp)
 {
     run_add_arg (NULL);
-    return piped_child (run_argv, tofdp, fromfdp);
+    return piped_child (run_argv, tofdp, fromfdp, false);
 }
 
 
