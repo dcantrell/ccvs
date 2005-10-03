@@ -1,6 +1,15 @@
 Changes since 1.12.12:
 **********************
 
+SECURITY FIXES
+
+* CVS now uses version 1.2.3 of the ZLib compression libraries in order to
+  avoid two recently announced security vulnerabilities in them.  Both may be
+  used for denial of service attacks and one may reportedly allow execution of
+  arbitrary code, though this is not confirmed.  Please see the CERT
+  vulnerabilities advisories #238678 <http://www.kb.cert.org/vuls/id/238678> &
+  #680620 <http://www.kb.cert.org/vuls/id/680620> for more.
+
 NEW FEATURES
 
 * Thanks to Conrad Pino <conrad@pino.com>, a hang in the Windows client, which
