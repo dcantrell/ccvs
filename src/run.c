@@ -561,14 +561,27 @@ piped_child (char *const *command, int *tofdp, int *fromfdp, bool fix_stderr)
 	error (1, errno, "cannot fork");
     if (pid == 0)
     {
-	if (dup2 (to_child_pipe[0], STDIN_FILENO) < 0)
-	    error (1, errno, "cannot dup2 pipe");
+	/* The child.  */
+
+	/* The parent uses these ends of the pipes.  */
 	if (close (to_child_pipe[1]) < 0)
 	    error (1, errno, "cannot close pipe");
 	if (close (from_child_pipe[0]) < 0)
 	    error (1, errno, "cannot close pipe");
+
+	/* Fool an unwitting child into reading from and writing to
+	 * the pipes.
+	 */
+	if (dup2 (to_child_pipe[0], STDIN_FILENO) < 0)
+	    error (1, errno, "cannot dup2 pipe");
 	if (dup2 (from_child_pipe[1], STDOUT_FILENO) < 0)
 	    error (1, errno, "cannot dup2 pipe");
+
+	/* Don't need these fds after the dup2.  */
+	if (close (to_child_pipe[0]) < 0)
+	    error (1, errno, "cannot close pipe");
+	if (close (from_child_pipe[1]) < 0)
+	    error (1, errno, "cannot close pipe");
 
         if (fix_stderr)
 	    work_around_openssh_glitch ();
@@ -577,6 +590,8 @@ piped_child (char *const *command, int *tofdp, int *fromfdp, bool fix_stderr)
 	execvp ((char *)command[0], (char **)command);
 	error (1, errno, "cannot exec %s", command[0]);
     }
+
+    /* The parent.  */
     if (close (to_child_pipe[0]) < 0)
 	error (1, errno, "cannot close pipe");
     if (close (from_child_pipe[1]) < 0)

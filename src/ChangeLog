@@ -1,5 +1,7 @@
 2005-10-03  Derek Price  <derek@ximbiot.com>
 
+	* run.c (piped_child): Close original dup'd descriptors.  Add comments.
+
 	* server.c: #include "setenv.h" to eliminate a Solaris warning.
 
 2005-09-30  Larry Jones  <lawrence.jones@ugs.com>
