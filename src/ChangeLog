@@ -1,5 +1,8 @@
 2005-10-03  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (sshstdio-6): Use diff -u instead of cmp so that errors
+	show up in the automated nightly testing emails.
+
 	* run.c (piped_child): Close original dup'd descriptors.  Add comments.
 
 	* server.c: #include "setenv.h" to eliminate a Solaris warning.

@@ -23384,7 +23384,7 @@ EOF
           $testcvs -z5 -Q diff --side-by-side -W 500 -r 1.1 -r 1.2 \
              aaa > good.dif
   
-          dotest sshstdio-6 "cmp wrapper.dif good.dif"
+          dotest sshstdio-6 "diff -u wrapper.dif good.dif"
 
 	  dokeep
           cd ../..
