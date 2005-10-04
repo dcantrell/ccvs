@@ -761,9 +761,10 @@ version_test ()
 # Example: find_tool awk:gawk:nawk awk_tooltest1 awk_tooltest2
 find_tool ()
 {
-  default_TOOL=$1
+  dTn=$1
+  default_TOOL=$2
   echo find_tool: ${1+"$@"} >>$LOGFILE
-  cmds="`IFS=:; echo $1`"; shift; tooltests="${1+$@}"
+  cmds="`IFS=:; echo $2`"; shift; shift; tooltests="${1+$@}"
   if test -z "$tooltests"; then tooltests=version_test; fi
   clist=; for cmd in $cmds; do clist="$clist `Which -a $cmd`"; done
   # Make sure the default tool is just the first real command name
@@ -796,15 +797,15 @@ find_tool ()
     fi
   done
   if test -n "$TOOL"; then
-    echo "Notice: The default version of \`$default_TOOL' is defective." >>$LOGFILE
-    echo "using \`$TOOL' and hoping for the best." >>$LOGFILE
-    echo "Notice: The default version of \`$default_TOOL' is defective." >&2
-    echo "using \`$TOOL' and hoping for the best." >&2
+    echo "Notice: The default version of $dTn (\`$default_TOOL')" >>$LOGFILE
+    echo "is defective.  Using \`$TOOL' and hoping for the best." >>$LOGFILE
+    echo "Notice: The default version of $dTn (\`$default_TOOL')" >&2
+    echo "is defective.  Using \`$TOOL' and hoping for the best." >&2
     echo $TOOL
   else
     echo $default_TOOL
   fi
-}  
+}
 
 id_tool_test ()
 {
@@ -819,7 +820,7 @@ id_tool_test ()
   fi
 }
 
-ID=`find_tool id version_test id_tool_test`
+ID=`find_tool id id version_test id_tool_test`
 echo "Using ID=$ID" >>$LOGFILE
 
 # You can't run CVS as root; print a nice error message here instead
@@ -964,7 +965,7 @@ else
 fi
 }
 
-EXPR=`find_tool ${EXPR}:gexpr \
+EXPR=`find_tool expr ${EXPR}:gexpr \
   version_test expr_tooltest1 expr_tooltest2 expr_tooltest3 \
 expr_set_ENDANCHOR expr_set_DOTSTAR expr_tooltest_DOTSTAR`
 
@@ -1044,7 +1045,7 @@ fi
 return 0
 }
 
-TR=`find_tool ${TR}:gtr version_test tr_tooltest1`
+TR=`find_tool tr ${TR}:gtr version_test tr_tooltest1`
 echo "Using TR=$TR" >>$LOGFILE
 
 # MacOS X (10.2.8) has a /bin/ls that does not work correctly in that
@@ -1069,7 +1070,7 @@ else
   return 0
 fi
 }
-LS=`find_tool ls:gls version_test ls_tooltest`
+LS=`find_tool ls ls:gls version_test ls_tooltest`
 echo "Using LS=$LS" >>$LOGFILE
 
 # Awk testing
@@ -1111,7 +1112,7 @@ rm abc
 return 0
 }
 
-AWK=`find_tool gawk:nawk:awk version_test awk_tooltest1 awk_tooltest2`
+AWK=`find_tool awk gawk:nawk:awk version_test awk_tooltest1 awk_tooltest2`
 echo "Using AWK=$AWK" >>$LOGFILE
 
 
