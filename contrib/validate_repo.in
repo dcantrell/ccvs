@@ -495,7 +495,7 @@ sub get_history
         }
 		if( $ignore == 2 )
 		{
-		    if( my ( $date, $author, $state ) =
+		    if( my ( $date, $tz, $author, $state ) =
 		             $line =~ /^date: (\S+ \S+( \S+)?);  author: ([^;]+);  state: (\S+);/ )
 			{
 				$rinfo{$revision} =
