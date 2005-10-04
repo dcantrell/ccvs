@@ -1,5 +1,5 @@
-/* Duplicate an open file descriptor to a specified file descriptor.
-   Copyright (C) 1999, 2004, 2005 Free Software Foundation, Inc.
+/* Invoke open, but avoid some glitches.
+   Copyright (C) 2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,43 +15,37 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-/* written by Paul Eggert */
+/* Written by Paul Eggert.  */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
+#include "fcntl-safer.h"
 
-#ifndef F_DUPFD
-static int
-dupfd (int fd, int desired_fd)
-{
-  int duplicated_fd = dup (fd);
-  if (duplicated_fd < 0 || duplicated_fd == desired_fd)
-    return duplicated_fd;
-  else
-    {
-      int r = dupfd (fd, desired_fd);
-      int e = errno;
-      close (duplicated_fd);
-      errno = e;
-      return r;
-    }
-}
-#endif
+#include <fcntl.h>
+#include <stdarg.h>
+#include "unistd-safer.h"
 
 int
-dup2 (int fd, int desired_fd)
+open_safer (char const *file, int flags, ...)
 {
-  if (fd == desired_fd)
-    return fd;
-  close (desired_fd);
-#ifdef F_DUPFD
-  return fcntl (fd, F_DUPFD, desired_fd);
-#else
-  return dupfd (fd, desired_fd);
-#endif
+  mode_t mode = 0;
+
+  if (flags & O_CREAT)
+    {
+      va_list ap;
+      va_start (ap, flags);
+
+      /* Assume mode_t promotes to int if and only if it is smaller.
+	 This assumption isn't guaranteed by the C standard, but we
+	 don't know of any real-world counterexamples.  */
+      mode = (sizeof (mode_t) < sizeof (int)
+	      ? va_arg (ap, int)
+	      : va_arg (ap, mode_t));
+
+      va_end (ap);
+    }
+
+  return fd_safer (open (file, flags, mode));
 }
