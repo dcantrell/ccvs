@@ -1,3 +1,7 @@
+2005-10-04  Mark D. Baushke  <mdb@gnu.org>
+
+	* rcs-5.7-commitid.patch: Initialize Delta->commitid.
+
 2005-10-03  Larry Jones  <lawrence.jones@ugs.com>
 
 	* validate_repo.in (get_history): Fix bug in previous change.
