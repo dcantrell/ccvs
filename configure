@@ -6410,7 +6410,6 @@ fi
 
 
 
-
 for ac_header in \
 	direct.h \
 	fcntl.h \
@@ -6424,7 +6423,6 @@ for ac_header in \
 	sys/param.h \
 	sys/resource.h \
 	sys/select.h \
-	unistd.h \
 	utime.h\
 
 do
