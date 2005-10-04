@@ -1,5 +1,7 @@
 2005-10-04  Derek Price  <derek@ximbiot.com>
 
+	* getaddrinfo.h, getdelim.c: Update from GNULIB.
+
 	* sunos57-select.c, system.h: Assume <unistd.h>.
 
 2005-10-03  Derek Price  <derek@ximbiot.com>
