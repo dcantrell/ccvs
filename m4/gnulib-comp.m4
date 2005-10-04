@@ -38,6 +38,7 @@ AC_DEFUN([gl_INIT],
   gl_ERROR
   gl_EXITFAIL
   dnl gl_USE_SYSTEM_EXTENSIONS must be added quite early to configure.ac.
+  gl_FCNTL_SAFER
   gl_FILE_NAME_CONCAT
   # No macro. You should also use one of fnmatch-posix or fnmatch-gnu.
   gl_FUNC_FNMATCH_POSIX
@@ -86,6 +87,7 @@ AC_DEFUN([gl_INIT],
   gl_SAVE_CWD
   gt_FUNC_SETENV
   gl_SIZE_MAX
+  gl_SOCKLEN_T
   gt_TYPE_SSIZE_T
   gl_STAT_MACROS
   AM_STDBOOL_H
@@ -135,6 +137,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/chdir-long.h
   lib/closeout.c
   lib/closeout.h
+  lib/creat-safer.c
   lib/cycle-check.c
   lib/cycle-check.h
   lib/dev-ino.h
@@ -147,6 +150,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/exit.h
   lib/exitfail.c
   lib/exitfail.h
+  lib/fcntl--.h
+  lib/fcntl-safer.h
   lib/fd-safer.c
   lib/filenamecat.c
   lib/filenamecat.h
@@ -204,6 +209,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/mkstemp.c
   lib/mktime.c
   lib/nanosleep.c
+  lib/open-safer.c
+  lib/openat-die.c
   lib/openat.c
   lib/openat.h
   lib/pagealign_alloc.c
@@ -293,6 +300,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/error.m4
   m4/exitfail.m4
   m4/extensions.m4
+  m4/fcntl-safer.m4
   m4/filenamecat.m4
   m4/fnmatch.m4
   m4/fpending.m4
@@ -364,6 +372,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/setenv.m4
   m4/signed.m4
   m4/size_max.m4
+  m4/socklen.m4
   m4/sockpfaf.m4
   m4/ssize_t.m4
   m4/stat-macros.m4
