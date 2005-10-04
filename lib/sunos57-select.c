@@ -34,15 +34,12 @@
 /* The rpl_select function calls the real select. */
 #undef select
 
+#include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <errno.h>
-
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif /* HAVE_UNISTD_H */
+#include <unistd.h>
 
 #include "minmax.h"
 #include "xtime.h"

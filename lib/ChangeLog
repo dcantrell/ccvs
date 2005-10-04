@@ -1,3 +1,7 @@
+2005-10-04  Derek Price  <derek@ximbiot.com>
+
+	* sunos57-select.c, system.h: Assume <unistd.h>.
+
 2005-10-03  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (libcvs_a_SOURCES): Remove xreadlink.  Add mbchar.
