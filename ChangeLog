@@ -1,5 +1,9 @@
 2005-10-03  Derek Price  <derek@ximbiot.com>
 
+	* maint-aux/gnulib-update: Maintenance of modules list is now
+	automated.
+	* maint-aux/gnulib-modules: Remove this file.
+
 	* NEWS: Note ZLib security issues.
 
 2005-09-30  Derek Price  <derek@ximbiot.com>
