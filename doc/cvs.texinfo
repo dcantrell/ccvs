@@ -278,7 +278,7 @@ unsubscribe
 write to
 @email{info-cvs-request@@nongnu.org}.
 If you prefer a Usenet group, there is a one-way mirror (posts to the email
-list are usually sent to the news group, but not visa versa) of
+list are usually sent to the news group, but not vice versa) of
 @email{info-cvs@@nongnu.org} at @url{news:gnu.cvs.help}.  The right
 Usenet group for posts is @url{news:comp.software.config-mgmt} which is for
 @sc{cvs} discussions (along with other configuration
@@ -298,7 +298,7 @@ You can also subscribe to the @email{bug-cvs@@nongnu.org} mailing list,
 described in more detail in @ref{BUGS}.  To subscribe
 send mail to @email{bug-cvs-request@@nongnu.org}.  There is a two-way
 Usenet mirror (posts to the Usenet group are usually sent to the email list and
-visa versa) of @email{bug-cvs@@nongnu.org} named @url{news:gnu.cvs.bug}.
+vice versa) of @email{bug-cvs@@nongnu.org} named @url{news:gnu.cvs.bug}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node What is CVS not?
