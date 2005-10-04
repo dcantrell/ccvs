@@ -1,3 +1,7 @@
+2005-10-04  Derek Price  <derek@ximbiot.com>
+
+	* run.c: Assume unistd.h.
+
 2005-10-03  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (sshstdio-6): Use diff -u instead of cmp so that errors
