@@ -165,7 +165,6 @@ AC_CHECK_HEADERS(\
 	sys/param.h \
 	sys/resource.h \
 	sys/select.h \
-	unistd.h \
 	utime.h\
 )
 AC_HEADER_STAT
