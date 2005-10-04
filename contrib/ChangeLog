@@ -1,5 +1,6 @@
 2005-10-03  Larry Jones  <lawrence.jones@ugs.com>
 
+	* validate_repo.in (get_history): Fix bug in previous change.
 	* validate_repo.in (get_history): Compensate for timezone info in
 	cvs log output.
 
