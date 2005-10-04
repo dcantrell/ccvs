@@ -1,5 +1,8 @@
 2005-10-04  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (find_tool): Accept tool name for error messages.  Change
+	all callers.
+
 	* run.c: Assume unistd.h.
 
 2005-10-03  Derek Price  <derek@ximbiot.com>
