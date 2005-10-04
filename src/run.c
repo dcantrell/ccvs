@@ -14,10 +14,6 @@
 
 #include "cvs.h"
 
-#ifndef HAVE_UNISTD_H
-extern int execvp (char *file, char **argv);
-#endif
-
 
 
 /*
