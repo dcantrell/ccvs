@@ -1,5 +1,5 @@
-/* Duplicate an open file descriptor to a specified file descriptor.
-   Copyright (C) 1999, 2004, 2005 Free Software Foundation, Inc.
+/* Invoke creat, but avoid some glitches.
+   Copyright (C) 2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,43 +15,19 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-/* written by Paul Eggert */
+/* Written by Jim Meyering.  */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
+#include "fcntl-safer.h"
 
-#ifndef F_DUPFD
-static int
-dupfd (int fd, int desired_fd)
-{
-  int duplicated_fd = dup (fd);
-  if (duplicated_fd < 0 || duplicated_fd == desired_fd)
-    return duplicated_fd;
-  else
-    {
-      int r = dupfd (fd, desired_fd);
-      int e = errno;
-      close (duplicated_fd);
-      errno = e;
-      return r;
-    }
-}
-#endif
+#include <fcntl.h>
+#include "unistd-safer.h"
 
 int
-dup2 (int fd, int desired_fd)
+creat_safer (char const *file, mode_t mode)
 {
-  if (fd == desired_fd)
-    return fd;
-  close (desired_fd);
-#ifdef F_DUPFD
-  return fcntl (fd, F_DUPFD, desired_fd);
-#else
-  return dupfd (fd, desired_fd);
-#endif
+  return fd_safer (creat (file, mode));
 }

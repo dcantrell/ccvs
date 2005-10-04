@@ -199,6 +199,12 @@ MOSTLYCLEANFILES += glob.h glob.h-t
 
 ## end   gnulib module glob.c
 
+## begin gnulib module mbchar
+
+libcvs_a_SOURCES += mbchar.h
+
+## end   gnulib module mbchar
+
 ## begin gnulib module mbuiter
 
 libcvs_a_SOURCES += mbuiter.h
@@ -299,12 +305,6 @@ libcvs_a_SOURCES += xalloc-die.c
 libcvs_a_SOURCES += xgethostname.h xgethostname.c
 
 ## end   gnulib module xgethostname
-
-## begin gnulib module xreadlink
-
-libcvs_a_SOURCES += xreadlink.h xreadlink.c
-
-## end   gnulib module xreadlink
 
 ## begin gnulib module xsize
 
