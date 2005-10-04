@@ -57,8 +57,9 @@
 #include <fnmatch.h>
 #include <getopt.h>	/* Has GNU extensions,  */
 
-/* We assume <sys/stat.h> because GNULIB does.  */
+/* We assume <sys/stat.h> & <unistd.h> because GNULIB does.  */
 #include <sys/stat.h>
+#include <unistd.h>
 
 #if !STDC_HEADERS && HAVE_MEMORY_H
 # include <memory.h>
@@ -70,9 +71,6 @@
 #  include <stdint.h>
 # endif /* HAVE_STDINT_H */
 #endif /* HAVE_INTTYPES_H */
-#if HAVE_UNISTD_H
-# include <unistd.h>
-#endif /* HAVE_UNISTD_H */
 /* End the default set of autoconf includes */
 
 /* Assume these headers. */
