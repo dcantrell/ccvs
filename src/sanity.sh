@@ -17002,16 +17002,21 @@ initial revision: 1\.1"
 	  dotest watch6-0-setup-2 "$testcvs -Q add watch6-0"
 	  cd watch6-0
 	  dotest watch6-0-1 "$testcvs watch add"
-	  dotest watch6-0-2 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr"
+	  dotest watch6-0-2 \
+"grep '^D' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr >/dev/null"
 	  dotest watch6-0-3 "$testcvs watch remove"
-	  dotest_fail watch6-0-4 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr 2>/dev/null"
+	  dotest_fail watch6-0-4 \
+"grep '^D' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr 2>/dev/null >/dev/null"
 
 	  dotest watch6-0-5 "$testcvs watch add ."
-	  dotest watch6-0-6 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr"
+	  dotest watch6-0-6 \
+"grep '^D' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr >/dev/null"
 	  dotest watch6-0-7 "$testcvs watch remove ."
-	  dotest_fail watch6-0-8 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr 2>/dev/null"
+	  dotest_fail watch6-0-8 \
+"grep '^D' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr 2>/dev/null >/dev/null"
 
-	  # OK, basic add/remove work. Now, make sure it works with named directories
+	  # OK, basic add/remove work. Now, make sure it works with
+	  # named directories.
 	  mkdir dir1
 	  mkdir dir2
 	  mkdir dir3
@@ -17019,14 +17024,20 @@ initial revision: 1\.1"
 	  $testcvs -Q add afile dir1 dir2 dir3
 	  $testcvs -Q ci -m "Adding test files"
 
-	  # Current directory should not be watched, but there should be a watch on the file,
-	  # and on dir1 & dir2, but not on dir3.
+	  # Current directory should not be watched, but there should
+	  # be a watch on the file, and on dir1 & dir2, but not on
+	  # dir3.
 	  dotest watch6-0-9 "$testcvs -Q watch add afile dir1 dir2"
-	  dotest_fail watch6-0-10 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr 2>/dev/null"
-	  dotest watch6-0-11 "grep -qE '^Fafile' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr"
-	  dotest watch6-0-12 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/dir1/CVS/fileattr"
-	  dotest watch6-0-13 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/dir2/CVS/fileattr"
-	  dotest_fail watch6-0-12 "grep -qE '^D' $CVSROOT_DIRNAME/watch6-0/dir3/CVS/fileattr 2>/dev/null"
+	  dotest_fail watch6-0-10 \
+"grep '^D' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr 2>/dev/null >/dev/null"
+	  dotest watch6-0-11 \
+"grep '^Fafile' $CVSROOT_DIRNAME/watch6-0/CVS/fileattr >/dev/null"
+	  dotest watch6-0-12 \
+"grep '^D' $CVSROOT_DIRNAME/watch6-0/dir1/CVS/fileattr >/dev/null"
+	  dotest watch6-0-13 \
+"grep '^D' $CVSROOT_DIRNAME/watch6-0/dir2/CVS/fileattr >/dev/null"
+	  dotest_fail watch6-0-12 \
+"grep '^D' $CVSROOT_DIRNAME/watch6-0/dir3/CVS/fileattr 2>/dev/null >/dev/null"
 
 	  dokeep
 	  cd ../../..
