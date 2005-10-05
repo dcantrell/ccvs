@@ -1,3 +1,11 @@
+2005-10-04  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (diff_u_test, diff_recursive_test): New functions.
+	(directory_cmp): Use GNU diff -ur when possible.
+	(find_tool): Catch stderr output from tests.  Count MARGINAL test
+	results and prefer tools with more PASSes.
+	(*): Replace use of cmp to $diff_u where possbile.
+
 2005-10-04  Mark D. Baushke  <mdb@gnu.org>
 
 	* sanity.sh (watch6-0): Avoid use of GNU grep -qE extensions for
