@@ -723,6 +723,7 @@ tempname=$TMPDIR/$tempfile
 # Make sure various tools work the way we expect, or try to find
 # versions that do.
 : ${AWK=awk}
+: ${DIFF=diff}
 : ${EXPR=expr}
 : ${ID=id}
 : ${TR=tr}
@@ -770,10 +771,12 @@ find_tool ()
   # Make sure the default tool is just the first real command name
   for default_TOOL in $clist `IFS=:; echo $default_TOOL`; do break; done
   TOOL=""
+  TEST_MARGINALS=0
   for trytool in $clist ; do
     pass=:
+    MARGINALS=0
     for tooltest in $tooltests; do
-      result=`eval $tooltest $trytool`
+      result=`eval $tooltest $trytool 2>&1`
       rc=$?
       echo "Running $tooltest $trytool" >>$LOGFILE
       if test -n "$result"; then
@@ -783,7 +786,7 @@ find_tool ()
         echo "PASS: $tooltest $trytool" >>$LOGFILE
       elif test "$rc" = "77"; then
         echo "MARGINAL: $tooltest $trytool; rc=$rc" >>$LOGFILE
-        TOOL=$trytool
+	MARGINALS=`expr $MARGINALS + 1`
 	pass=false
       else
         set_bad_tool $trytool
@@ -794,6 +797,16 @@ find_tool ()
     if $pass; then
       echo $trytool
       return 0
+    fi
+    if test $MARGINALS -gt 0 \
+       && (test -z "$TOOL" || test $MARGINALS -lt $TEST_MARGINALS); then
+      if is_bad_tool $trytool; then
+	# Ignore tools with some MARGINAL results and some FAIL
+	:
+      else
+	TOOL=$trytool
+	TEST_MARGINALS=$MARGINALS
+      fi
     fi
   done
   if test -n "$TOOL"; then
@@ -837,6 +850,73 @@ for pass in false :; do
       ;;
   esac
 done
+
+
+
+# Test if diff supports the -u option, falling back on -c, then no arguments.
+#
+# Set $diff_u to `$1 -u' if $1 -u works, `$1 -c' if not and $1 -c
+# works, and `$1' otherwise.
+#
+# $diff_u is intended to be used for tests expecting no differences, since the
+# non-matching output is going to vary depending on what version of diff is
+# found.  Used in tests which expect no differences, output will always mean
+# errors and will make the error log more verbose, and correspondingly more
+# readable by a human, regardless of the source.
+diff_u_test()
+{
+  diff=$1
+  touch sanity.1 sanity.2
+  if output=`$diff -u sanity.1 sanity.2 2>&1` && test -z "$output"; then
+    diff_u="$diff -u"
+    retval=0
+  elif output=`$diff -c sanity.1 sanity.2 2>&1` && test -z "$output"; then
+    diff_u="$diff -c"
+    retval=77
+  elif output=`$diff sanity.1 sanity.2 2>&1` && test -z "$output"; then
+    echo "A diff that supports the -u or -c options and which does not output"
+    echo "text when files are identical can make the output of some of this"
+    echo "script's tests more readable on failure."
+    diff_u=$diff
+    retval=77
+  else
+    echo "This test suite requires either \`diff' or \`cmp' to run."
+    retval=1
+  fi
+  rm sanity.1 sanity.2
+  return $retval
+}
+
+
+
+# Test if diff supports the -u, --recursive, && --exclude options.
+diff_recursive_test()
+{
+  diff=$1
+  mkdir sanitydir.1
+  mkdir sanitydir.2
+  mkdir sanitydir.1/CVS
+  mkdir sanitydir.2/CVS
+  touch sanitydir.1/sanity.1 sanitydir.1/sanity.2 sanitydir.1/CVS/fileX \
+        sanitydir.2/sanity.1 sanitydir.2/sanity.2 sanitydir.2/CVS/fileY
+
+  if $diff -u --recursive --exclude=CVS sanitydir.1 sanitydir.2 \
+	   >/dev/null 2>&1; then
+    retval=0
+  else
+    echo "GNU diff can make the output of some tests more readable."
+    retval=77
+  fi
+  rm -r sanitydir.1 sanitydir.2
+  return $retval
+}
+
+DIFF=`find_tool diff $DIFF:gdiff:cmp \
+		version_test diff_u_test diff_recursive_test`
+# Make sure $diff_u is set based on the tool find_tool returned.
+diff_u_test $DIFF
+
+
 
 # Cause NextStep 3.3 users to lose in a more graceful fashion.
 expr_tooltest1 ()
@@ -1482,7 +1562,7 @@ run_filter ()
     sed '${/^$/d}' <$1 >$1.filter1
     # Run the filter
     eval "$TEST_FILTER" <$1.filter1 >$1.filter2
-    diff -u $1 $1.filter2 \
+    $diff_u $1 $1.filter2 \
 	    >$1.diff
     mv $1.filter2 $1
     rm $1.filter1
@@ -1711,43 +1791,51 @@ fi
 
 
 
-# a simple function to compare directory contents
-#
-# Returns: 0 for same, 1 for different
-#
-directory_cmp ()
-{
-	OLDPWD=`pwd`
-	DIR_1=$1
-	DIR_2=$2
+if diff_recursive_test $DIFF >/dev/null 2>&1; then
+  directory_cmp ()
+  {
+    $DIFF -u --recursive --exclude=CVS $1 $2
+  }
+else
+  # a simple function to compare directory contents
+  #
+  # Returns: 0 for same, 1 for different
+  #
+  directory_cmp ()
+  {
+    OLDPWD=`pwd`
+    DIR_1=$1
+    DIR_2=$2
 
-	cd $DIR_1
-	find . -print | fgrep -v /CVS | sort > $TESTDIR/dc$$d1
+    cd $DIR_1
+    find . -print | fgrep -v /CVS | sort > $TESTDIR/dc$$d1
 
-	# go back where we were to avoid symlink hell...
-	cd $OLDPWD
-	cd $DIR_2
-	find . -print | fgrep -v /CVS | sort > $TESTDIR/dc$$d2
+    # go back where we were to avoid symlink hell...
+    cd $OLDPWD
+    cd $DIR_2
+    find . -print | fgrep -v /CVS | sort > $TESTDIR/dc$$d2
 
-	if diff $TESTDIR/dc$$d1 $TESTDIR/dc$$d2 >/dev/null 2>&1
-	then
-		:
-	else
-		return 1
+    if $diff_u $TESTDIR/dc$$d1 $TESTDIR/dc$$d2
+    then
+      :
+    else
+      echo "directory_cmp: file lists of \`$DIR_1' & \`$DIR_2' differ" >&2
+      return 1
+    fi
+    cd $OLDPWD
+    while read a
+    do
+      if test -f $DIR_1/"$a" ; then
+	cmp $DIR_1/"$a" $DIR_2/"$a"
+	if test $? -ne 0 ; then
+	  return 1
 	fi
-	cd $OLDPWD
-	while read a
-	do
-		if test -f $DIR_1/"$a" ; then
-			cmp -s $DIR_1/"$a" $DIR_2/"$a"
-			if test $? -ne 0 ; then
-				return 1
-			fi
-		fi
-	done < $TESTDIR/dc$$d1
-	rm -f $TESTDIR/dc$$*
-	return 0
-}
+      fi
+    done < $TESTDIR/dc$$d1
+    rm -f $TESTDIR/dc$$*
+    return 0
+  }
+fi
 
 
 
@@ -6103,11 +6191,7 @@ U file3"
 		fi
 
 		# Make sure that we joined the correct change to file1
-		if echo line2 from branch1 | cmp - file1 >/dev/null; then
-		    pass 87a
-		else
-		    fail 87a
-		fi
+		dotest death-87a "echo line2 from branch1 |$diff_u - file1"
 
 		# update
 		if ${CVS} update  ; then
@@ -9028,7 +9112,7 @@ N first-dir/imported-f3
 N first-dir/imported-f4
 No conflicts created by this import"
 
-		dotest import-96.5 "cmp ../imported-f2-orig.tmp imported-f2" ''
+		dotest import-96.5 "$diff_u ../imported-f2-orig.tmp imported-f2"
 
 		cd ..
 
@@ -9137,8 +9221,7 @@ U first-dir/imported-f3
 U first-dir/imported-f4
 Use the following command to help the merge:"
 
-		dotest import-106.5 "cmp ../imported-f2-orig.tmp imported-f2" \
-''
+		dotest import-106.5 "$diff_u ../imported-f2-orig.tmp imported-f2"
 
 		cd ..
 
@@ -16495,13 +16578,13 @@ new revision: 1\.2; previous revision: 1\.1"
 	  dotest devcom-20 "echo no | $testcvs unedit abc" \
 "abc has been modified; revert changes? "
 
-	  dotest devcom-21 "echo changedabc | cmp - abc"
+	  dotest devcom-21 "echo changedabc |$diff_u - abc"
 
 	  # OK, now confirm the unedit
 	  dotest devcom-22 "echo yes |$testcvs unedit abc" \
 "abc has been modified; revert changes? "
 
-	  dotest devcom-23 "echo abc |cmp - abc"
+	  dotest devcom-23 "echo abc |$diff_u - abc"
 
 	  dotest devcom-24 "$testcvs watchers" ''
 
@@ -23396,7 +23479,7 @@ EOF
           $testcvs -z5 -Q diff --side-by-side -W 500 -r 1.1 -r 1.2 \
              aaa > good.dif
   
-          dotest sshstdio-6 "diff -u wrapper.dif good.dif"
+          dotest sshstdio-6 "$diff_u wrapper.dif good.dif"
 
 	  dokeep
           cd ../..
@@ -23978,9 +24061,9 @@ ${SPROG} add: use .${SPROG} commit. to add these files permanently"
 	  ls -l kw >${TESTDIR}/1/stamp.kw.add
 	  # "cvs add" should not muck with the timestamp.
 	  dotest stamps-4aa \
-"cmp ${TESTDIR}/1/stamp.aa.touch ${TESTDIR}/1/stamp.aa.add" ''
+"$diff_u $TESTDIR/1/stamp.aa.touch $TESTDIR/1/stamp.aa.add"
 	  dotest stamps-4kw \
-"cmp ${TESTDIR}/1/stamp.kw.touch ${TESTDIR}/1/stamp.kw.add" ''
+"$diff_u $TESTDIR/1/stamp.kw.touch $TESTDIR/1/stamp.kw.add"
 	  sleep 60
 	  dotest stamps-5 "${testcvs} -q ci -m add" \
 "$CVSROOT_DIRNAME/first-dir/aa,v  <--  aa
@@ -24000,13 +24083,9 @@ initial revision: 1\.1"
 	  # reported in "cvs log kw" matched stamp.kw.ci.  But that would
 	  # be a lot of work.
 	  dotest stamps-6aa \
-	    "cmp ${TESTDIR}/1/stamp.aa.add ${TESTDIR}/1/stamp.aa.ci" ''
-	  if cmp ${TESTDIR}/1/stamp.kw.add ${TESTDIR}/1/stamp.kw.ci >/dev/null
-	  then
-	    fail stamps-6kw
-	  else
-	    pass stamps-6kw
-	  fi
+"$diff_u $TESTDIR/1/stamp.aa.add $TESTDIR/1/stamp.aa.ci"
+	  dotest_fail stamps-6kw \
+"cmp $TESTDIR/1/stamp.kw.add $TESTDIR/1/stamp.kw.ci >/dev/null"
 	  cd ../..
 	  sleep 60
 	  mkdir 2
@@ -24023,7 +24102,7 @@ U first-dir/kw"
 	  dotest_fail stamps-8aa \
 "cmp $TESTDIR/1/stamp.aa.ci $TESTDIR/1/stamp.aa.get >/dev/null"
 	  dotest stamps-8kw \
-"cmp $TESTDIR/1/stamp.kw.ci $TESTDIR/1/stamp.kw.get"
+"$diff_u $TESTDIR/1/stamp.kw.ci $TESTDIR/1/stamp.kw.get"
 
 	  # Now we want to see what "cvs update" does.
 	  sleep 60
@@ -27352,11 +27431,6 @@ Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase10"
 	  cd ..
 	  rm mine/.#*
 
-	  # If you have GNU's version of diff, you may try
-	  # uncommenting the following line which will give more
-	  # fine-grained information about how cvs differed from the
-	  # correct result:
-	  #dotest diffmerge1_cmp "diff -u --recursive --exclude=CVS comp_me mine" ''
 	  dotest diffmerge1_cmp "directory_cmp comp_me mine"
 
 	  # Clean up after ourselves:
@@ -31671,7 +31745,7 @@ new revision: 1.2; previous revision: 1.1"
 	  # Did the CVSROOT/CVS/Template file get the updated version?
 	  if $remote; then
 	    dotest template-rcsinfo-4r \
-"cmp CVS/Template ${TESTDIR}/template/temp.def" ''
+"$diff_u CVS/Template $TESTDIR/template/temp.def"
 	  else
 	    dotest template-rcsinfo-4 \
 "test ! -f CVS/Template" ''
@@ -31682,7 +31756,7 @@ new revision: 1.2; previous revision: 1.1"
 	  # Did the CVSROOT/CVS/Template file get the updated version?
 	  if $remote; then
 	    dotest template-rcsinfo-5r \
-"cmp CVS/Template ${TESTDIR}/template/temp.def" ''
+"$diff_u CVS/Template $TESTDIR/template/temp.def"
 	  else
 	    dotest template-rcsinfo-5 \
 "test ! -f CVS/Template" ''
@@ -31704,11 +31778,11 @@ ${SPROG} checkout: Updating second"
 	    # The value of the CVS/Template should be equal to the
 	    # file called out in the rcsinfo file.
 	    dotest template-first-r-4 \
-"cmp first/CVS/Template ${TESTDIR}/template/temp.first" ''
+"$diff_u first/CVS/Template $TESTDIR/template/temp.first"
 	    dotest template-first-r-5 \
-"cmp first/subdir/CVS/Template ${TESTDIR}/template/temp.subdir" ''
+"$diff_u first/subdir/CVS/Template $TESTDIR/template/temp.subdir"
 	    dotest template-first-r-6 \
-"cmp second/CVS/Template ${TESTDIR}/template/temp.def" ''
+"$diff_u second/CVS/Template $TESTDIR/template/temp.def"
           else
 	    # When in local mode CVS/Template must NOT exist
 	    dotest_fail template-first-1 "test -f first/CVS/Template" ''
@@ -31724,7 +31798,7 @@ ${SPROG} checkout: Updating second"
 "Directory ${CVSROOT_DIRNAME}/second/otherdir added to the repository"
 	  if $remote; then
 	    dotest template-add-2r \
-"cmp otherdir/CVS/Template ${TESTDIR}/template/temp.def" ''
+"$diff_u otherdir/CVS/Template $TESTDIR/template/temp.def"
 	  else
 	    dotest_fail template-add-2 "test -f otherdir/CVS/Template" ''
 	  fi
@@ -31744,13 +31818,13 @@ ${SPROG} update: Updating second/otherdir"
 
 	  if $remote; then
 	    dotest template-second-r-1 \
-"cmp first/CVS/Template ${TESTDIR}/template/temp.first" ''
+"$diff_u first/CVS/Template $TESTDIR/template/temp.first"
 	    dotest template-second-r-2 \
-"cmp first/subdir/CVS/Template ${TESTDIR}/template/temp.subdir" ''
+"$diff_u first/subdir/CVS/Template $TESTDIR/template/temp.subdir"
 	    dotest template-second-r-3 \
-"cmp second/CVS/Template ${TESTDIR}/template/temp.def" ''
+"$diff_u second/CVS/Template $TESTDIR/template/temp.def"
 	    dotest template-second-r-4 \
-"cmp second/otherdir/CVS/Template ${TESTDIR}/template/temp.def" ''
+"$diff_u second/otherdir/CVS/Template $TESTDIR/template/temp.def"
           else
 	    # When in local mode CVS/Template must NOT exist
 	    dotest_fail template-second-1 "test -f CVS/Template" ''
@@ -31793,7 +31867,7 @@ ${SPROG} update: Updating second/otherdir"
 	  # Did the CVSROOT/CVS/Template file get the updated version?
 	  if $remote; then
 	    dotest template-norcsinfo-r-2 \
-"cmp CVS/Template ${TESTDIR}/template/temp.def" ''
+"$diff_u CVS/Template $TESTDIR/template/temp.def"
           else
 	    dotest_fail template-norcsinfo-2 "test -f CVS/Template" ''
 	  fi
@@ -35554,7 +35628,7 @@ You have \[0\] altered files in this repository\."
 	            $CVSROOT_DIRNAME/CVSROOT/posttag \
 	            $SECONDARY_CVSROOT_DIRNAME/CVSROOT/postwatch \
 	            $CVSROOT_DIRNAME/CVSROOT/postwatch; do
-	    if cmp $file $TESTDIR/`basename $file`-clean >/dev/null 2>&1; then
+	    if $diff_u $file $TESTDIR/`basename $file`-clean >>$LOGFILE 2>&1; then
 		:;
 	    else
 		echo "\`$file' and \`$TESTDIR/`basename $file`-clean' differ." \
