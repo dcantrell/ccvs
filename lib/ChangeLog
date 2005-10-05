@@ -1,3 +1,7 @@
+2005-10-05  Derek Price  <derek@ximbiot.com>
+
+	* getaddrinfo.h, getdelim.c, md5.h: Update from GNULIB.
+
 2005-10-04  Derek Price  <derek@ximbiot.com>
 
 	* getaddrinfo.h, getdelim.c: Update from GNULIB.
