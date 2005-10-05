@@ -1,3 +1,8 @@
+2005-10-04  Mark D. Baushke  <mdb@gnu.org>
+
+	* sanity.sh (watch6-0): Avoid use of GNU grep -qE extensions for
+	anchored search.
+
 2005-10-04  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (find_tool): Accept tool name for error messages.  Change
