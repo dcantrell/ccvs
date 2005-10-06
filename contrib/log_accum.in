@@ -123,7 +123,6 @@ $ADDED_FILE    = "$TMPDIR/${FILE_PREFIX}files.added";
 $REMOVED_FILE  = "$TMPDIR/${FILE_PREFIX}files.removed";
 $LOG_FILE      = "$TMPDIR/${FILE_PREFIX}files.log";
 $BRANCH_FILE   = "$TMPDIR/${FILE_PREFIX}files.branch";
-$MLIST_FILE    = "$TMPDIR/${FILE_PREFIX}files.mlist";
 $SUMMARY_FILE  = "$TMPDIR/${FILE_PREFIX}files.summary";
 
 $CVSROOT       = $ENV{'CVSROOT'};
@@ -401,19 +400,6 @@ sub build_header {
 #                       $hour, $min, $sec);
 }
 
-# !!! Destination Mailing-list and history file mappings here !!!
-
-#sub mlist_map
-#{
-#    local($path) = @_;
-#    my $domain = "nongnu.org";
-#    
-#    if ($path =~ /^([^\/]+)/) {
-#        return "cvs\@$1.$domain";
-#    } else {
-#        return "cvs\@$domain";
-#    }
-#}    
 
 sub derive_subject_from_changes_file ()
 {
@@ -551,6 +537,8 @@ sub process_argv
 	$arg = shift @argv;
 	if ($arg eq '-u' && !defined($cvs_user)) {
 	    $cvs_user = shift @argv;
+	} elsif ($arg eq '-m') {
+	    push @mailto, split (/[ ,]+/, shift @argv);
 	} elsif ($arg eq '-r') {
 	    $have_r_opt = 1;
 	    $onlytag = shift @argv;
@@ -568,6 +556,9 @@ sub process_argv
 	    }
 	}
     }
+
+    # Sanity checks.
+    die "No email destination specified.\n" unless @mailto;
 
     return @files;
 }
@@ -598,6 +589,7 @@ $have_r_opt = 0;		# Whether -r was seen on the command line.
 $onlytag = "";			# With $have_r_opt, only send mail for changes
 				# on this branch.
 $branch = "";			# The branch being processed.
+@mailto = ();			# Email addresses to send mail to.
 @files = process_argv(@ARGV);
 @path = split('/', $files[0]);
 if ($#path == 0) {
@@ -612,11 +604,6 @@ if ($#path == 0) {
 #print("dir   - ", $dir, "\n");
 #print("id    - ", $id, "\n");
 
-#
-# Map the repository directory to an email address for commitlogs to be sent
-# to.
-#
-#$mlist = &mlist_map($files[0]);
 
 ##########################
 #
@@ -629,7 +616,7 @@ if ($new_directory) {
     push(@text, $header);
     push(@text, "");
     push(@text, "  ".$files[0]." - New directory");
-    &mail_notification([ $mlist ], @text);
+    &mail_notification ([@mailto], @text);
     exit 0;
 }
 
@@ -712,7 +699,6 @@ for ($i = 0; ; $i++) {
 &append_to_file("$ADDED_FILE.$i.$id.$cvs_user",   $dir, @added_files);
 &append_to_file("$CHANGED_FILE.$i.$id.$cvs_user", $dir, @changed_files);
 &append_to_file("$REMOVED_FILE.$i.$id.$cvs_user", $dir, @removed_files);
-&append_line("$MLIST_FILE.$i.$id.$cvs_user", $mlist);
 if ($rcsidinfo) {
     &change_summary("$SUMMARY_FILE.$i.$id.$cvs_user", (@changed_files, @added_files));
 }
@@ -741,7 +727,6 @@ $header = &build_header;
 # Produce the final compilation of the log messages
 #
 @text = ();
-@mlist_list = ();
 push(@text, $header);
 push(@text, "");
 for ($i = 0; ; $i++) {
@@ -752,7 +737,6 @@ for ($i = 0; ; $i++) {
     push(@text, &read_file("$REMOVED_FILE.$i.$id.$cvs_user", "Removed:"));
     push(@text, "  Log:");
     push(@text, &read_logfile("$LOG_FILE.$i.$id.$cvs_user", "  "));
-    push(@mlist_list, &read_file_lines("$MLIST_FILE.$i.$id.$cvs_user"));
     if ($rcsidinfo == 2) {
         if (-e "$SUMMARY_FILE.$i.$id.$cvs_user") {
             push(@text, "  ");
@@ -782,15 +766,13 @@ if ($rcsidinfo == 1) {
     }
 }
 
-%mlist_hash = ();
 
-foreach (@mlist_list) { $mlist_hash{ $_ } = 1; }
 
 #
 # Mail out the notification.
 #
-if (! $have_r_opt || $onlytag eq $branch) {
-    &mail_notification([ keys(%mlist_hash) ], @text);
+if (!$have_r_opt || $onlytag eq $branch) {
+    &mail_notification ([@mailto], @text);
 }
 &cleanup_tmpfiles;
 exit 0;
