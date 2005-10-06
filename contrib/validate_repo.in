@@ -235,6 +235,9 @@ sub main
 		exit 2;
 	}
 
+	# Fix trailing /'s
+    $cvsroot =~ s#[/\\]*$##o;
+
 	for (@scripts)
 	{
 		$_ = File::Spec->rel2abs( $_ ) unless /\n/ || !-x $_;
