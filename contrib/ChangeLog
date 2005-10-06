@@ -1,5 +1,8 @@
 2005-10-06  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.in (change_summary): Output `dead' for deleted revision
+	number, rather than `0'.
+
 	* log_accum.in ($UseNewInfoFmtStrings): Default to true.
 
 	* log_accum.in ($CVSROOT): Remove global.
