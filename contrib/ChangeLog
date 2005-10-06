@@ -1,5 +1,13 @@
 2005-10-06  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.in: Initialize new branch tracking vars.  Keep track of
+	branch when found.  When -r specified, only send mail when branch
+	matches.
+	(derive_subject_from_changes_file): Add branch to subject line.
+	(process_argv): Consolidate arg processing for new and old format
+	string styles.  Parse new -r option.
+	(Original patch from Richard M. Stallman <rms@gnu.org>.)
+
 	* validate_repo.in (main): Remove trailing slashes from CVSROOT.
 	(Original patch from Erik Cumps <erik.cumps@icos.be>.)
 
