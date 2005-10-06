@@ -43143,29 +43143,29 @@ _ACEOF
 
 fi
 
-          ac_config_files="$ac_config_files contrib/validate_repo"
+          ac_config_files="$ac_config_files contrib/clmerge:contrib/clmerge.pl"
 
-          ac_config_files="$ac_config_files contrib/clmerge"
+          ac_config_files="$ac_config_files contrib/cln_hist:contrib/cln_hist.pl"
 
-          ac_config_files="$ac_config_files contrib/cln_hist"
+          ac_config_files="$ac_config_files contrib/commit_prep:contrib/commit_prep.pl"
 
-          ac_config_files="$ac_config_files contrib/commit_prep"
+          ac_config_files="$ac_config_files contrib/cvs_acls:contrib/cvs_acls.pl"
 
-          ac_config_files="$ac_config_files contrib/cvs_acls"
+          ac_config_files="$ac_config_files contrib/log_accum:contrib/log_accum.pl"
 
-          ac_config_files="$ac_config_files contrib/log"
+          ac_config_files="$ac_config_files contrib/log:contrib/log.pl"
 
-          ac_config_files="$ac_config_files contrib/log_accum"
+          ac_config_files="$ac_config_files contrib/mfpipe:contrib/mfpipe.pl"
 
-          ac_config_files="$ac_config_files contrib/mfpipe"
-
-          ac_config_files="$ac_config_files contrib/pvcs2rcs"
+          ac_config_files="$ac_config_files contrib/pvcs2rcs:contrib/pvcs2rcs.pl"
 
           ac_config_files="$ac_config_files contrib/rcs2log:contrib/rcs2log.sh"
 
-          ac_config_files="$ac_config_files contrib/rcslock"
+          ac_config_files="$ac_config_files contrib/rcslock:contrib/rcslock.pl"
 
           ac_config_files="$ac_config_files contrib/sccs2rcs"
+
+          ac_config_files="$ac_config_files contrib/validate_repo:contrib/validate_repo.pl"
 
           ac_config_files="$ac_config_files doc/mkman:doc/mkman.pl"
 
@@ -43752,18 +43752,18 @@ for ac_config_target in $ac_config_targets
 do
   case "$ac_config_target" in
   # Handling of arguments.
-  "contrib/validate_repo" ) CONFIG_FILES="$CONFIG_FILES contrib/validate_repo" ;;
-  "contrib/clmerge" ) CONFIG_FILES="$CONFIG_FILES contrib/clmerge" ;;
-  "contrib/cln_hist" ) CONFIG_FILES="$CONFIG_FILES contrib/cln_hist" ;;
-  "contrib/commit_prep" ) CONFIG_FILES="$CONFIG_FILES contrib/commit_prep" ;;
-  "contrib/cvs_acls" ) CONFIG_FILES="$CONFIG_FILES contrib/cvs_acls" ;;
-  "contrib/log" ) CONFIG_FILES="$CONFIG_FILES contrib/log" ;;
-  "contrib/log_accum" ) CONFIG_FILES="$CONFIG_FILES contrib/log_accum" ;;
-  "contrib/mfpipe" ) CONFIG_FILES="$CONFIG_FILES contrib/mfpipe" ;;
-  "contrib/pvcs2rcs" ) CONFIG_FILES="$CONFIG_FILES contrib/pvcs2rcs" ;;
+  "contrib/clmerge" ) CONFIG_FILES="$CONFIG_FILES contrib/clmerge:contrib/clmerge.pl" ;;
+  "contrib/cln_hist" ) CONFIG_FILES="$CONFIG_FILES contrib/cln_hist:contrib/cln_hist.pl" ;;
+  "contrib/commit_prep" ) CONFIG_FILES="$CONFIG_FILES contrib/commit_prep:contrib/commit_prep.pl" ;;
+  "contrib/cvs_acls" ) CONFIG_FILES="$CONFIG_FILES contrib/cvs_acls:contrib/cvs_acls.pl" ;;
+  "contrib/log_accum" ) CONFIG_FILES="$CONFIG_FILES contrib/log_accum:contrib/log_accum.pl" ;;
+  "contrib/log" ) CONFIG_FILES="$CONFIG_FILES contrib/log:contrib/log.pl" ;;
+  "contrib/mfpipe" ) CONFIG_FILES="$CONFIG_FILES contrib/mfpipe:contrib/mfpipe.pl" ;;
+  "contrib/pvcs2rcs" ) CONFIG_FILES="$CONFIG_FILES contrib/pvcs2rcs:contrib/pvcs2rcs.pl" ;;
   "contrib/rcs2log" ) CONFIG_FILES="$CONFIG_FILES contrib/rcs2log:contrib/rcs2log.sh" ;;
-  "contrib/rcslock" ) CONFIG_FILES="$CONFIG_FILES contrib/rcslock" ;;
+  "contrib/rcslock" ) CONFIG_FILES="$CONFIG_FILES contrib/rcslock:contrib/rcslock.pl" ;;
   "contrib/sccs2rcs" ) CONFIG_FILES="$CONFIG_FILES contrib/sccs2rcs" ;;
+  "contrib/validate_repo" ) CONFIG_FILES="$CONFIG_FILES contrib/validate_repo:contrib/validate_repo.pl" ;;
   "doc/mkman" ) CONFIG_FILES="$CONFIG_FILES doc/mkman:doc/mkman.pl" ;;
   "src/cvsbug" ) CONFIG_FILES="$CONFIG_FILES src/cvsbug" ;;
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
@@ -44217,18 +44217,18 @@ s,@INSTALL@,$ac_INSTALL,;t t
 
   # Run the commands associated with the file.
   case $ac_file in
-    contrib/validate_repo ) chmod +x contrib/validate_repo ;;
     contrib/clmerge ) chmod +x contrib/clmerge ;;
     contrib/cln_hist ) chmod +x contrib/cln_hist ;;
     contrib/commit_prep ) chmod +x contrib/commit_prep ;;
     contrib/cvs_acls ) chmod +x contrib/cvs_acls ;;
-    contrib/log ) chmod +x contrib/log ;;
     contrib/log_accum ) chmod +x contrib/log_accum ;;
+    contrib/log ) chmod +x contrib/log ;;
     contrib/mfpipe ) chmod +x contrib/mfpipe ;;
     contrib/pvcs2rcs ) chmod +x contrib/pvcs2rcs ;;
     contrib/rcs2log ) chmod +x contrib/rcs2log ;;
     contrib/rcslock ) chmod +x contrib/rcslock ;;
     contrib/sccs2rcs ) chmod +x contrib/sccs2rcs ;;
+    contrib/validate_repo ) chmod +x contrib/validate_repo ;;
     doc/mkman ) chmod +x doc/mkman ;;
     src/cvsbug ) chmod +x src/cvsbug ;;
   esac
