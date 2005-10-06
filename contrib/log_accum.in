@@ -484,6 +484,12 @@ sub derive_subject_from_changes_file ()
       }    
   }
 
+  if ($branch)
+  {
+    $subj = "[$branch] $subj"
+  }
+
+
   return $subj;
 }
 
@@ -529,6 +535,11 @@ sub mail_notification
 ## process the command line arguments sent to this script
 ## it returns an array of files, %s, sent from the loginfo
 ## command
+#
+#   -r TAG	- operate only on changes with tag TAG
+#   -r BRANCH	- operate only on changes in branch TAG
+#		  Use -r "" for "only changes with no tag or branch".
+#   -u USER	- Set CVS username to USER.
 sub process_argv
 {
     local(@argv) = @_;
@@ -536,40 +547,28 @@ sub process_argv
     local($arg);
     print "Processing log script arguments...\n";
 
-    if ($UseNewInfoFmtStrings) {
-        while (@argv) {
-            $arg = shift @argv;
+    while (@argv) {
+	$arg = shift @argv;
+	if ($arg eq '-u' && !defined($cvs_user)) {
+	    $cvs_user = shift @argv;
+	} elsif ($arg eq '-r') {
+	    $have_r_opt = 1;
+	    $onlytag = shift @argv;
+	} else {
+	    ($donefiles) && die "Too many arguments!\n";
+	    $donefiles = !$UseNewInfoFmtStrings;
 
-            if ($arg eq '-u' && !defined($cvs_user)) {
-                $cvs_user = shift @argv;
-            }
-            if ($arg eq '- New directory') {
-                $new_directory = 1;
-            } elsif ($arg eq '- Imported sources') {
-                $imported_sources = 1;
-            } else {
-                push(@files, $arg);
-            }
-        }
-    } else {
-        while (@argv) {
-            $arg = shift @argv;
-
-            if ($arg eq '-u') {
-                $cvs_user = shift @argv;
-            } else {
-                ($donefiles) && die "Too many arguments!\n";
-                $donefiles = 1;
-                $ARGV[0] = $arg;
-                if ($arg =~ s/ - New directory//) {
-                    $new_directory = 1;
-                } elsif ($arg =~ s/ - Imported sources//) {
-                    $imported_sources = 1;
-                }
-                @files = split(' ', $arg);
-            }
-        }
+	    if ($arg eq '- New directory') {
+		$new_directory = 1;
+	    } elsif ($arg eq '- Imported sources') {
+		$imported_sources = 1;
+	    } else {
+		push @files, ($UseNewInfoFmtStrings
+			      ? $arg : split (' ', $arg));
+	    }
+	}
     }
+
     return @files;
 }
 
@@ -595,6 +594,10 @@ $state = $STATE_NONE;
 $cvs_user = $ENV{'USER'} || getlogin || (getpwuid($<))[0] || sprintf("uid#%d",$<);
 $new_directory = 0;             # Is this a 'cvs add directory' command?
 $imported_sources = 0;          # Is this a 'cvs import' command?
+$have_r_opt = 0;		# Whether -r was seen on the command line.
+$onlytag = "";			# With $have_r_opt, only send mail for changes
+				# on this branch.
+$branch = "";			# The branch being processed.
 @files = process_argv(@ARGV);
 @path = split('/', $files[0]);
 if ($#path == 0) {
@@ -602,6 +605,7 @@ if ($#path == 0) {
 } else {
     $dir = join('/', @path[1..$#path]);
 }
+
 #print("ARGV  - ", join(":", @ARGV), "\n");
 #print("files - ", join(":", @files), "\n");
 #print("path  - ", join(":", @path), "\n");
@@ -634,9 +638,10 @@ if ($new_directory) {
 #
 while (<STDIN>) {
     chomp;                      # Drop the newline
-    if (/^Revision\/Branch:/) {
-        s,^Revision/Branch:,,;
-        push (@branch_lines, split);
+    if (/^\s*(Tag|Revision\/Branch):\s*(\w+)/) {
+	$branch = $2;
+	# Is there really a good reason to keep track of this?
+        push (@branch_lines, $2);
         next;
     }
 #    next if (/^[ \t]+Tag:/ && $state != $STATE_LOG);
@@ -784,6 +789,8 @@ foreach (@mlist_list) { $mlist_hash{ $_ } = 1; }
 #
 # Mail out the notification.
 #
-&mail_notification([ keys(%mlist_hash) ], @text);
+if (! $have_r_opt || $onlytag eq $branch) {
+    &mail_notification([ keys(%mlist_hash) ], @text);
+}
 &cleanup_tmpfiles;
 exit 0;
