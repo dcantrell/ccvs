@@ -275,7 +275,7 @@ sub change_summary {
         $delta = "";
         $rcsfile = "$update_dir/$file";
 
-        if ($oldrev{$file} ne 'NONE') {
+        if ($oldrev{$file}) {
             open(RCS, "-|") || exec "$cvsbin/cvs", '-Qn', 'log',
 				    "-r$newrev{$file}",
 				    '--', $file;
@@ -346,8 +346,9 @@ sub change_summary {
            }
         }
 
-        &append_line($out, sprintf("%-9s%-12s%s%s", $newrev{$file}, $delta,
-                                   $rcsfile, $diff));
+        &append_line($out, sprintf("%-9s%-12s%s%s",
+				   $newrev{$file} ? $newrev{$file} : "dead",
+				   $delta, $rcsfile, $diff));
     }
 }
 
