@@ -1,3 +1,8 @@
+2005-10-06  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Generate contrib Perl scripts from *.pl rather than
+	*.in.
+
 2005-10-04  Derek Price  <derek@ximbiot.com>
 
 	* HACKING: Document GNULIB's assumption of <unistd.h>.
