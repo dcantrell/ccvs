@@ -75,7 +75,7 @@
 # value to 0.
 # 0 = old-style %1s format. use split(' ') to separate ARGV into filesnames.
 # 1 = new-style %s format. Note: allows spaces in filenames.
-my $UseNewInfoFmtStrings = 0;
+my $UseNewInfoFmtStrings = 1;
 
 #
 # Where do you want the RCS ID and delta info?
