@@ -1,5 +1,11 @@
 2005-10-06  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.in ($CVSROOT): Remove global.
+	(change_summary): Use %V & %v rather than `cvs status' and math to
+	determine oldrev and newrev.  Send diffs for added and removed files.
+	(process_argv): Attempt to read $update_dir from the command line.
+	Handle new %V & %v args.
+
 	* log_accum.in: Remove cruft for calculating dest email address, which
 	was specific to cvshome.org, in favor of accepting a list of
 	destination email addresses on the command line.
