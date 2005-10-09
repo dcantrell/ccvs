@@ -165,9 +165,6 @@
 /* Define to 1 if you have the `clock_settime' function. */
 #undef HAVE_CLOCK_SETTIME
 
-/* Define if you have compound literals. */
-#undef HAVE_COMPOUND_LITERALS
-
 /* Define if you have the connect function. */
 #define HAVE_CONNECT
 
@@ -214,10 +211,6 @@
    you don't. */
 #undef HAVE_DECL_FREAD_UNLOCKED
 
-/* Define to 1 if you have the declaration of `freeaddrinfo', and to 0 if you
-   don't. */
-#undef HAVE_DECL_FREEADDRINFO
-
 /* Define to 1 if you have the declaration of `funlockfile', and to 0 if you
    don't. */
 #undef HAVE_DECL_FUNLOCKFILE
@@ -225,14 +218,6 @@
 /* Define to 1 if you have the declaration of `fwrite_unlocked', and to 0 if
    you don't. */
 #undef HAVE_DECL_FWRITE_UNLOCKED
-
-/* Define to 1 if you have the declaration of `gai_strerror', and to 0 if you
-   don't. */
-#undef HAVE_DECL_GAI_STRERROR
-
-/* Define to 1 if you have the declaration of `getaddrinfo', and to 0 if you
-   don't. */
-#undef HAVE_DECL_GETADDRINFO
 
 /* Define to 1 if you have the declaration of `getchar_unlocked', and to 0 if
    you don't. */
@@ -322,9 +307,6 @@
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #define HAVE_FCNTL_H 1
-
-/* Define to 1 if you have the `fdopendir' function. */
-#undef HAVE_FDOPENDIR
 
 /* Define to 1 if you have the `flockfile' function. */
 #undef HAVE_FLOCKFILE
@@ -491,7 +473,7 @@
 /* Define to 1 if you have the `mbrlen' function. */
 #define HAVE_MBRLEN 1
 
-/* Define to 1 if you have the `mbrtowc' function. */
+/* Define to 1 if mbrtowc and mbstate_t are properly declared. */
 #define HAVE_MBRTOWC 1
 
 /* Define to 1 if you have the `mbsinit' function. */
@@ -541,12 +523,6 @@
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #define HAVE_NDIR_H 1
-
-/* Define to 1 if you have the <netdb.h> header file. */
-#undef HAVE_NETDB_H
-
-/* Define to 1 if you have the <netinet/in.h> header file. */
-#undef HAVE_NETINET_IN_H
 
 /* Define to 1 if you have the `openat' function. */
 #undef HAVE_OPENAT
@@ -685,9 +661,6 @@
 /* Define to 1 if you have the `strtoul' function. */
 #define HAVE_STRTOUL 1
 
-/* Define to 1 if the system has the type `struct addrinfo'. */
-#undef HAVE_STRUCT_ADDRINFO
-
 /* Define if there is a member named d_type in the struct describing directory
    headers. */
 #undef HAVE_STRUCT_DIRENT_D_TYPE
@@ -735,9 +708,6 @@
 
 /* Define to 1 if you have the <sys/select.h> header file. */
 #undef HAVE_SYS_SELECT_H
-
-/* Define to 1 if you have the <sys/socket.h> header file. */
-#undef HAVE_SYS_SOCKET_H
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
@@ -923,7 +893,7 @@
 #undef PACKAGE_NAME
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Concurrent Versions System (CVS) 1.12.13.1"
+#define PACKAGE_STRING "Concurrent Versions System (CVS) 1.12.13"
 
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
@@ -1253,53 +1223,8 @@
 /* Define to `int' if <sys/types.h> does not define. */
 #undef pid_t
 
-/* Define to rpl_re_comp if the replacement should be used. */
-#undef re_comp
-
-/* Define to rpl_re_compile_fastmap if the replacement should be used. */
-#undef re_compile_fastmap
-
-/* Define to rpl_re_compile_pattern if the replacement should be used. */
-#undef re_compile_pattern
-
-/* Define to rpl_re_exec if the replacement should be used. */
-#undef re_exec
-
-/* Define to rpl_re_match if the replacement should be used. */
-#undef re_match
-
-/* Define to rpl_re_match_2 if the replacement should be used. */
-#undef re_match_2
-
-/* Define to rpl_re_search if the replacement should be used. */
-#undef re_search
-
-/* Define to rpl_re_search_2 if the replacement should be used. */
-#undef re_search_2
-
-/* Define to rpl_re_set_registers if the replacement should be used. */
-#undef re_set_registers
-
-/* Define to rpl_re_set_syntax if the replacement should be used. */
-#undef re_set_syntax
-
-/* Define to rpl_re_syntax_options if the replacement should be used. */
-#undef re_syntax_options
-
 /* Define to rpl_realloc if the replacement function should be used. */
 #define realloc rpl_realloc
-
-/* Define to rpl_regcomp if the replacement should be used. */
-#undef regcomp
-
-/* Define to rpl_regerror if the replacement should be used. */
-#undef regerror
-
-/* Define to rpl_regexec if the replacement should be used. */
-#undef regexec
-
-/* Define to rpl_regfree if the replacement should be used. */
-#undef regfree
 
 /* Define to rpl_rename if the replacement function should be used. */
 #undef rename
@@ -1316,9 +1241,6 @@
 
 /* Define to `unsigned' if <sys/types.h> does not define. */
 #undef size_t
-
-/* Map `socklen_t' to `int' if it is missing. */
-#undef socklen_t
 
 /* Define as a signed type of the same size as size_t. */
 #define ssize_t int

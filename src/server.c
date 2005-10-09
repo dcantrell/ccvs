@@ -19,7 +19,6 @@
 #include "buffer.h"
 #include "getline.h"
 #include "getnline.h"
-#include "setenv.h"
 
 int server_active = 0;
 

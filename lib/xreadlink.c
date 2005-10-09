@@ -30,7 +30,9 @@
 #include <limits.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <unistd.h>
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #ifndef SIZE_MAX
 # define SIZE_MAX ((size_t) -1)

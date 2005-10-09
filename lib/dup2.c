@@ -1,5 +1,5 @@
 /* Duplicate an open file descriptor to a specified file descriptor.
-   Copyright (C) 1999, 2004, 2005 Free Software Foundation, Inc.
+   Copyright (C) 1999, 2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,8 +22,12 @@
 #endif
 
 #include <errno.h>
+
 #include <fcntl.h>
-#include <unistd.h>
+
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #ifndef F_DUPFD
 static int

@@ -23,7 +23,9 @@ ftruncate (int fd, off_t length)
 
 #  include <sys/stat.h>
 #  include <errno.h>
-#  include <unistd.h>
+#  if HAVE_UNISTD_H
+#   include <unistd.h>
+#  endif
 
 int
 ftruncate (int fd, off_t length)

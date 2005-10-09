@@ -1,11 +1,3 @@
-2005-10-06  Derek Price  <derek@ximbiot.com>
-
-	* cvs.texinfo (loginfo): Correct typo.  (From Wiki.)
-
-2005-10-04  Derek Price  <derek@ximbiot.com>
-
-	* cvs.texinfo: s/visa versa/vice versa/.  (From Wiki.)
-
 2005-09-26  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (cvs-paper.ps, cvs-paper.pdf): Remove implicit sources.

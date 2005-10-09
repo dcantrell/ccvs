@@ -11,12 +11,15 @@ AC_DEFUN([gl_FUNC_GETCWD_NULL],
   [
    AC_LIBSOURCES([getcwd.c, getcwd.h])
 
+   AC_CHECK_HEADERS_ONCE(unistd.h)
    AC_CACHE_CHECK([whether getcwd (NULL, 0) allocates memory for result],
      [gl_cv_func_getcwd_null],
      [AC_TRY_RUN(
         [
 #	 include <stdlib.h>
-#	 include <unistd.h>
+#	 ifdef HAVE_UNISTD_H
+#	  include <unistd.h>
+#	 endif
 #	 ifndef getcwd
 	 char *getcwd ();
 #	 endif

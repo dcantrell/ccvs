@@ -155,24 +155,7 @@ extern char *tzname[];
 #endif
 
 
-#ifndef FPRINTFTIME
-# define FPRINTFTIME 0
-#endif
-
-#if FPRINTFTIME
-# define STREAM_OR_CHAR_T FILE
-# define STRFTIME_ARG(x) /* empty */
-#else
-# define STREAM_OR_CHAR_T CHAR_T
-# define STRFTIME_ARG(x) x,
-#endif
-
-#if FPRINTFTIME
-# define memset_byte(P, Len, Byte) \
-  do { size_t _i; for (_i = 0; _i < Len; _i++) fputc (Byte, P); } while (0)
-# define memset_space(P, Len) memset_byte (P, Len, ' ')
-# define memset_zero(P, Len) memset_byte (P, Len, '0')
-#elif defined COMPILE_WIDE
+#ifdef COMPILE_WIDE
 # define memset_space(P, Len) (wmemset (P, L' ', Len), (P) += (Len))
 # define memset_zero(P, Len) (wmemset (P, L'0', Len), (P) += (Len))
 #else
@@ -190,7 +173,7 @@ extern char *tzname[];
 	return 0;							      \
       if (p)								      \
 	{								      \
-	  if (digits == 0 && _delta > 0)				      \
+	  if (_delta > 0)						      \
 	    {								      \
 	      if (pad == L_('0'))					      \
 		memset_zero (p, _delta);				      \
@@ -198,28 +181,12 @@ extern char *tzname[];
 		memset_space (p, _delta);				      \
 	    }								      \
 	  f;								      \
-	  p += FPRINTFTIME ? 0 : _n;					      \
+	  p += _n;							      \
 	}								      \
       i += _incr;							      \
     } while (0)
 
-#if FPRINTFTIME
-# define add1(C) add (1, fputc (C, p))
-#else
-# define add1(C) add (1, *p = C)
-#endif
-
-#if FPRINTFTIME
-# define cpy(n, s) \
-    add ((n),								      \
-	 if (to_lowcase)						      \
-	   fwrite_lowcase (p, (s), _n);					      \
-	 else if (to_uppcase)						      \
-	   fwrite_uppcase (p, (s), _n);					      \
-	 else								      \
-	   fwrite ((s), _n, 1, p))
-#else
-# define cpy(n, s)							      \
+#define cpy(n, s) \
     add ((n),								      \
 	 if (to_lowcase)						      \
 	   memcpy_lowcase (p, (s), _n LOCALE_ARG);			      \
@@ -227,7 +194,6 @@ extern char *tzname[];
 	   memcpy_uppcase (p, (s), _n LOCALE_ARG);			      \
 	 else								      \
 	   MEMCPY ((void *) p, (void const *) (s), _n))
-#endif
 
 #ifdef COMPILE_WIDE
 # ifndef USE_IN_EXTENDED_LOCALE_MODEL
@@ -297,27 +263,6 @@ extern char *tzname[];
    more reliable way to accept other sets of digits.  */
 #define ISDIGIT(Ch) ((unsigned int) (Ch) - L_('0') <= 9)
 
-#if FPRINTFTIME
-static void
-fwrite_lowcase (FILE *fp, const CHAR_T *src, size_t len)
-{
-  while (len-- > 0)
-    {
-      fputc (TOLOWER ((UCHAR_T) *src, loc), fp);
-      ++src;
-    }
-}
-
-static void
-fwrite_uppcase (FILE *fp, const CHAR_T *src, size_t len)
-{
-  while (len-- > 0)
-    {
-      fputc (TOUPPER ((UCHAR_T) *src, loc), fp);
-      ++src;
-    }
-}
-#else
 static CHAR_T *
 memcpy_lowcase (CHAR_T *dest, const CHAR_T *src,
 		size_t len LOCALE_PARAM_PROTO)
@@ -335,7 +280,6 @@ memcpy_uppcase (CHAR_T *dest, const CHAR_T *src,
     dest[len] = TOUPPER ((UCHAR_T) src[len], loc);
   return dest;
 }
-#endif
 
 
 #if ! HAVE_TM_GMTOFF
@@ -411,16 +355,11 @@ static CHAR_T const month_name[][10] =
 # define my_strftime nstrftime
 #endif
 
-#if FPRINTFTIME
-# undef my_strftime
-# define my_strftime fprintftime
-#endif
-
 #ifdef my_strftime
 # define extra_args , ut, ns
 # define extra_args_spec , int ut, int ns
 #else
-# if defined COMPILE_WIDE
+# ifdef COMPILE_WIDE
 #  define my_strftime wcsftime
 #  define nl_get_alt_digit _nl_get_walt_digit
 # else
@@ -435,19 +374,18 @@ static CHAR_T const month_name[][10] =
 #endif
 
 
-/* Just like my_strftime, below, but with one more parameter, UPCASE,
-   to indicate that the result should be converted to upper case.  */
-static size_t
-strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
-		STRFTIME_ARG (size_t maxsize)
-		const CHAR_T *format,
-		const struct tm *tp extra_args_spec LOCALE_PARAM_PROTO)
+/* Write information from TP into S according to the format
+   string FORMAT, writing no more that MAXSIZE characters
+   (including the terminating '\0') and returning number of
+   characters written.  If S is NULL, nothing will be written
+   anywhere, so to determine how many characters would be
+   written, use NULL for S and (size_t) -1 for MAXSIZE.  */
+size_t
+my_strftime (CHAR_T *s, size_t maxsize, const CHAR_T *format,
+	     const struct tm *tp extra_args_spec LOCALE_PARAM_PROTO)
 {
 #if defined _LIBC && defined USE_IN_EXTENDED_LOCALE_MODEL
   struct locale_data *const current = loc->__locales[LC_TIME];
-#endif
-#if FPRINTFTIME
-  size_t maxsize = (size_t) -1;
 #endif
 
   int hour12 = tp->tm_hour;
@@ -488,7 +426,7 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 #endif
   const char *zone;
   size_t i = 0;
-  STREAM_OR_CHAR_T *p = s;
+  CHAR_T *p = s;
   const CHAR_T *f;
 #if DO_MULTIBYTE && !defined COMPILE_WIDE
   const char *format_end = NULL;
@@ -539,24 +477,18 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
     {
       int pad = 0;		/* Padding for number ('-', '_', or 0).  */
       int modifier;		/* Field modifier ('E', 'O', or 0).  */
-      int digits = 0;		/* Max digits for numeric format.  */
+      int digits;		/* Max digits for numeric format.  */
       int number_value;		/* Numeric value to be printed.  */
       unsigned int u_number_value; /* (unsigned int) number_value.  */
-      bool negative_number;	/* The number is negative.  */
-      bool always_output_a_sign; /* +/- should always be output.  */
-      int tz_colon_mask;	/* Bitmask of where ':' should appear.  */
+      bool negative_number;	/* 1 if the number is negative.  */
       const CHAR_T *subfmt;
-      CHAR_T sign_char;
       CHAR_T *bufp;
-      CHAR_T buf[1
-		 + 2 /* for the two colons in a %::z or %:::z time zone */
-		 + (sizeof (int) < sizeof (time_t)
-		    ? INT_STRLEN_BOUND (time_t)
-		    : INT_STRLEN_BOUND (int))];
+      CHAR_T buf[1 + (sizeof (int) < sizeof (time_t)
+		      ? INT_STRLEN_BOUND (time_t)
+		      : INT_STRLEN_BOUND (int))];
       int width = -1;
       bool to_lowcase = false;
-      bool to_uppcase = upcase;
-      size_t colons;
+      bool to_uppcase = false;
       bool change_case = false;
       int format_char;
 
@@ -591,7 +523,7 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 	     be in the basic execution character set.  None of these
 	     characters can start a multibyte sequence, so they need
 	     not be analyzed further.  */
-	  add1 (*f);
+	  add (1, *p = *f);
 	  continue;
 
 	default:
@@ -642,7 +574,7 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 	 or this is the wide character version.  */
       if (*f != L_('%'))
 	{
-	  add1 (*f);
+	  add (1, *p = *f);
 	  continue;
 	}
 
@@ -718,15 +650,6 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 	  digits = d;							      \
 	  negative_number = negative;					      \
 	  u_number_value = v; goto do_signed_number
-
-	  /* The mask is not what you might think.
-	     When the ordinal i'th bit is set, insert a colon
-	     before the i'th digit of the time zone representation.  */
-#define DO_TZ_OFFSET(d, negative, mask, v) \
-	  digits = d;							      \
-	  negative_number = negative;					      \
-	  tz_colon_mask = mask;						      \
-	  u_number_value = v; goto do_tz_offset
 #define DO_NUMBER_SPACEPAD(d, v) \
 	  digits = d;							      \
 	  number_value = v; goto do_number_spacepad
@@ -734,7 +657,7 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 	case L_('%'):
 	  if (modifier != 0)
 	    goto bad_format;
-	  add1 (*f);
+	  add (1, *p = *f);
 	  break;
 
 	case L_('a'):
@@ -818,14 +741,18 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 
 	subformat:
 	  {
-	    size_t len = strftime_case_ (to_uppcase,
-					 NULL, STRFTIME_ARG ((size_t) -1)
-					 subfmt,
-					 tp extra_args LOCALE_ARG);
-	    add (len, strftime_case_ (to_uppcase, p,
-				      STRFTIME_ARG (maxsize - i)
-				      subfmt,
-				      tp extra_args LOCALE_ARG));
+	    CHAR_T *old_start = p;
+	    size_t len = my_strftime (NULL, (size_t) -1, subfmt,
+				      tp extra_args LOCALE_ARG);
+	    add (len, my_strftime (p, maxsize - i, subfmt,
+				   tp extra_args LOCALE_ARG));
+
+	    if (to_uppcase)
+	      while (old_start < p)
+		{
+		  *old_start = TOUPPER ((UCHAR_T) *old_start, loc);
+		  ++old_start;
+		}
 	  }
 	  break;
 
@@ -928,11 +855,7 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 	  DO_NUMBER_SPACEPAD (2, tp->tm_mday);
 
 	  /* All numeric formats set DIGITS and NUMBER_VALUE (or U_NUMBER_VALUE)
-	     and then jump to one of these labels.  */
-
-	do_tz_offset:
-	  always_output_a_sign = true;
-	  goto do_number_body;
+	     and then jump to one of these three labels.  */
 
 	do_number_spacepad:
 	  /* Force `_' flag unless overridden by `0' or `-' flag.  */
@@ -945,10 +868,6 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 	  u_number_value = number_value;
 
 	do_signed_number:
-	  always_output_a_sign = false;
-	  tz_colon_mask = 0;
-
-	do_number_body:
 	  /* Format U_NUMBER_VALUE according to the MODIFIER flag.
 	     NEGATIVE_NUMBER is nonzero if the original number was
 	     negative; in this case it was converted directly to
@@ -985,31 +904,22 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 
 	  do
 	    {
-	      if (tz_colon_mask & 1)
-		*--bufp = ':';
-	      tz_colon_mask >>= 1;
 	      *--bufp = u_number_value % 10 + L_('0');
 	      u_number_value /= 10;
 	    }
-	  while (u_number_value != 0 || tz_colon_mask != 0);
+	  while (u_number_value != 0);
 
 	do_number_sign_and_padding:
 	  if (digits < width)
 	    digits = width;
 
-	  sign_char = (negative_number ? L_('-')
-		       : always_output_a_sign ? L_('+')
-		       : 0);
+	  if (negative_number)
+	    *--bufp = L_('-');
 
-	  if (pad == L_('-'))
-	    {
-	      if (sign_char)
-		add1 (sign_char);
-	    }
-	  else
+	  if (pad != L_('-'))
 	    {
 	      int padding = digits - (buf + (sizeof (buf) / sizeof (buf[0]))
-				      - bufp) - !!sign_char;
+				      - bufp);
 
 	      if (padding > 0)
 		{
@@ -1022,27 +932,26 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 			memset_space (p, padding);
 		      i += padding;
 		      width = width > padding ? width - padding : 0;
-		      if (sign_char)
-			add1 (sign_char);
 		    }
 		  else
 		    {
 		      if ((size_t) digits >= maxsize - i)
 			return 0;
 
-		      if (sign_char)
-			add1 (sign_char);
+		      if (negative_number)
+			{
+			  ++bufp;
+
+			  if (p)
+			    *p++ = L_('-');
+			  ++i;
+			}
 
 		      if (p)
 			memset_zero (p, padding);
 		      i += padding;
 		      width = 0;
 		    }
-		}
-	      else
-		{
-		  if (sign_char)
-		    add1 (sign_char);
 		}
 	    }
 
@@ -1103,9 +1012,7 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 	    goto bad_format;
 
 	  number_value = ns;
-	  if (width == -1)
-	    width = 9;
-	  else
+	  if (width != -1)
 	    {
 	      /* Take an explicit width less than 9 as a precision.  */
 	      int j;
@@ -1113,11 +1020,11 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 		number_value /= 10;
 	    }
 
-	  DO_NUMBER (width, number_value);
+	  DO_NUMBER (9, number_value);
 #endif
 
 	case L_('n'):
-	  add1 (L_('\n'));
+	  add (1, *p = L_('\n'));
 	  break;
 
 	case L_('P'):
@@ -1186,7 +1093,6 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 	    while (t != 0);
 
 	    digits = 1;
-	    always_output_a_sign = false;
 	    goto do_number_sign_and_padding;
 	  }
 
@@ -1212,7 +1118,7 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 	  goto subformat;
 
 	case L_('t'):
-	  add1 (L_('\t'));
+	  add (1, *p = L_('\t'));
 	  break;
 
 	case L_('u'):
@@ -1374,28 +1280,12 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 #endif
 	  break;
 
-	case L_(':'):
-	  /* :, ::, and ::: are valid only just before 'z'.
-	     :::: etc. are rejected later.  */
-	  for (colons = 1; f[colons] == L_(':'); colons++)
-	    continue;
-	  if (f[colons] != L_('z'))
-	    goto bad_format;
-	  f += colons;
-	  goto do_z_conversion;
-
 	case L_('z'):
-	  colons = 0;
-
-	do_z_conversion:
 	  if (tp->tm_isdst < 0)
 	    break;
 
 	  {
 	    int diff;
-	    int hour_diff;
-	    int min_diff;
-	    int sec_diff;
 #if HAVE_TM_GMTOFF
 	    diff = tp->tm_gmtoff;
 #else
@@ -1434,32 +1324,16 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 	      }
 #endif
 
-	    hour_diff = diff / 60 / 60;
-	    min_diff = diff / 60 % 60;
-	    sec_diff = diff % 60;
-
-	    switch (colons)
+	    if (diff < 0)
 	      {
-	      case 0: /* +hhmm */
-		DO_TZ_OFFSET (5, diff < 0, 0, hour_diff * 100 + min_diff);
-
-	      case 1: tz_hh_mm: /* +hh:mm */
-		DO_TZ_OFFSET (6, diff < 0, 04, hour_diff * 100 + min_diff);
-
-	      case 2: tz_hh_mm_ss: /* +hh:mm:ss */
-		DO_TZ_OFFSET (9, diff < 0, 024,
-			      hour_diff * 10000 + min_diff * 100 + sec_diff);
-
-	      case 3: /* +hh if possible, else +hh:mm, else +hh:mm:ss */
-		if (sec_diff != 0)
-		  goto tz_hh_mm_ss;
-		if (min_diff != 0)
-		  goto tz_hh_mm;
-		DO_TZ_OFFSET (3, diff < 0, 0, hour_diff);
-
-	      default:
-		goto bad_format;
+		add (1, *p = L_('-'));
+		diff = -diff;
 	      }
+	    else
+	      add (1, *p = L_('+'));
+
+	    diff /= 60;
+	    DO_NUMBER (4, (diff / 60) * 100 + diff % 60);
 	  }
 
 	case L_('\0'):		/* GNU extension: % at end of format.  */
@@ -1480,35 +1354,16 @@ strftime_case_ (bool upcase, STREAM_OR_CHAR_T *s,
 	}
     }
 
-#if ! FPRINTFTIME
   if (p && maxsize != 0)
     *p = L_('\0');
-#endif
-
   return i;
 }
-
-/* Write information from TP into S according to the format
-   string FORMAT, writing no more that MAXSIZE characters
-   (including the terminating '\0') and returning number of
-   characters written.  If S is NULL, nothing will be written
-   anywhere, so to determine how many characters would be
-   written, use NULL for S and (size_t) -1 for MAXSIZE.  */
-size_t
-my_strftime (STREAM_OR_CHAR_T *s, STRFTIME_ARG (size_t maxsize)
-	     const CHAR_T *format,
-	     const struct tm *tp extra_args_spec LOCALE_PARAM_PROTO)
-{
-  return strftime_case_ (false, s, STRFTIME_ARG (maxsize)
-			 format, tp extra_args LOCALE_ARG);
-}
-
-#if defined _LIBC && ! FPRINTFTIME
+#ifdef _LIBC
 libc_hidden_def (my_strftime)
 #endif
 
 
-#if defined emacs && ! FPRINTFTIME
+#ifdef emacs
 /* For Emacs we have a separate interface which corresponds to the normal
    strftime function plus the ut argument, but without the ns argument.  */
 size_t

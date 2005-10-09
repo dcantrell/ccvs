@@ -22,8 +22,17 @@
 
 #include "canonicalize.h"
 
-#include <stdlib.h>
-#include <string.h>
+#ifdef STDC_HEADERS
+# include <stdlib.h>
+#else
+void free ();
+#endif
+
+#if defined STDC_HEADERS || defined HAVE_STRING_H
+# include <string.h>
+#else
+# include <strings.h>
+#endif
 
 #if HAVE_SYS_PARAM_H
 # include <sys/param.h>
@@ -31,7 +40,9 @@
 
 #include <sys/stat.h>
 
-#include <unistd.h>
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #include <errno.h>
 #include <stddef.h>

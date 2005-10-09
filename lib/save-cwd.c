@@ -25,14 +25,20 @@
 
 #include "save-cwd.h"
 
-#include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+
+#include <fcntl.h>
+
+#include <errno.h>
 
 #include "chdir-long.h"
-#include "fcntl--.h"
+#include "unistd-safer.h"
 #include "xgetcwd.h"
 
 /* On systems without the fchdir function (WOE), pretend that open
@@ -72,10 +78,10 @@ save_cwd (struct saved_cwd *cwd)
 {
   cwd->name = NULL;
 
-  cwd->desc = open (".", O_RDONLY);
+  cwd->desc = fd_safer (open (".", O_RDONLY));
   if (cwd->desc < 0)
     {
-      cwd->desc = open (".", O_WRONLY);
+      cwd->desc = fd_safer (open (".", O_WRONLY));
       if (cwd->desc < 0)
 	{
 	  cwd->name = xgetcwd ();

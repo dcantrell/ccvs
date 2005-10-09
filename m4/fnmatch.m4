@@ -3,8 +3,7 @@
 # This is a modified version of autoconf's AC_FUNC_FNMATCH.
 # This file should be simplified after Autoconf 2.57 is required.
 
-# Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005 Free Software
-# Foundation, Inc.
+# Copyright (C) 2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -28,15 +27,9 @@ AC_DEFUN([_AC_FUNC_FNMATCH_IF],
 #	   include <fnmatch.h>
 #	   define y(a, b, c) (fnmatch (a, b, c) == 0)
 #	   define n(a, b, c) (fnmatch (a, b, c) == FNM_NOMATCH)
-	   static int
-	   fnm (char const *pattern, char const *string, int flags)
-	   {
-	     return fnmatch (pattern, string, flags);
-	   }
          ],
 	 [exit
-	   (!((fnm ? fnm : fnmatch) ("a*", "", 0) == FNM_NOMATCH
-	      && y ("a*", "abc", 0)
+	   (!(y ("a*", "abc", 0)
 	      && n ("d*/*1", "d/s/1", FNM_PATHNAME)
 	      && y ("a\\\\bc", "abc", 0)
 	      && n ("a\\\\bc", "abc", FNM_NOESCAPE)
