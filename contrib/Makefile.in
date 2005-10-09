@@ -57,12 +57,12 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = contrib
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	$(srcdir)/clmerge.pl $(srcdir)/cln_hist.pl \
-	$(srcdir)/commit_prep.pl $(srcdir)/cvs_acls.pl \
-	$(srcdir)/log.pl $(srcdir)/log_accum.pl $(srcdir)/mfpipe.pl \
-	$(srcdir)/pvcs2rcs.pl $(srcdir)/rcs2log.sh \
-	$(srcdir)/rcslock.pl $(srcdir)/sccs2rcs.in \
-	$(srcdir)/validate_repo.pl ChangeLog
+	$(srcdir)/clmerge.in $(srcdir)/cln_hist.in \
+	$(srcdir)/commit_prep.in $(srcdir)/cvs_acls.in \
+	$(srcdir)/log.in $(srcdir)/log_accum.in $(srcdir)/mfpipe.in \
+	$(srcdir)/pvcs2rcs.in $(srcdir)/rcs2log.sh \
+	$(srcdir)/rcslock.in $(srcdir)/sccs2rcs.in \
+	$(srcdir)/validate_repo.in ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/acx_with_external_zlib.m4 \
@@ -80,7 +80,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/dup2.m4 $(top_srcdir)/m4/eealloc.m4 \
 	$(top_srcdir)/m4/eoverflow.m4 $(top_srcdir)/m4/error.m4 \
 	$(top_srcdir)/m4/exitfail.m4 $(top_srcdir)/m4/extensions.m4 \
-	$(top_srcdir)/m4/fcntl-safer.m4 \
 	$(top_srcdir)/m4/filenamecat.m4 $(top_srcdir)/m4/fnmatch.m4 \
 	$(top_srcdir)/m4/fpending.m4 $(top_srcdir)/m4/ftruncate.m4 \
 	$(top_srcdir)/m4/getaddrinfo.m4 \
@@ -113,18 +112,18 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/rename.m4 $(top_srcdir)/m4/restrict.m4 \
 	$(top_srcdir)/m4/rpmatch.m4 $(top_srcdir)/m4/save-cwd.m4 \
 	$(top_srcdir)/m4/setenv.m4 $(top_srcdir)/m4/signed.m4 \
-	$(top_srcdir)/m4/size_max.m4 $(top_srcdir)/m4/socklen.m4 \
-	$(top_srcdir)/m4/sockpfaf.m4 $(top_srcdir)/m4/ssize_t.m4 \
-	$(top_srcdir)/m4/stat-macros.m4 $(top_srcdir)/m4/stdbool.m4 \
-	$(top_srcdir)/m4/stdint.m4 $(top_srcdir)/m4/stdint_h.m4 \
-	$(top_srcdir)/m4/strcase.m4 $(top_srcdir)/m4/strdup.m4 \
-	$(top_srcdir)/m4/strerror.m4 $(top_srcdir)/m4/strftime.m4 \
-	$(top_srcdir)/m4/strstr.m4 $(top_srcdir)/m4/strtol.m4 \
-	$(top_srcdir)/m4/strtoul.m4 $(top_srcdir)/m4/sunos57-select.m4 \
-	$(top_srcdir)/m4/time_r.m4 $(top_srcdir)/m4/timespec.m4 \
-	$(top_srcdir)/m4/tm_gmtoff.m4 $(top_srcdir)/m4/tzset.m4 \
-	$(top_srcdir)/m4/uint32_t.m4 $(top_srcdir)/m4/uintmax_t.m4 \
-	$(top_srcdir)/m4/ulonglong.m4 $(top_srcdir)/m4/unistd-safer.m4 \
+	$(top_srcdir)/m4/size_max.m4 $(top_srcdir)/m4/sockpfaf.m4 \
+	$(top_srcdir)/m4/ssize_t.m4 $(top_srcdir)/m4/stat-macros.m4 \
+	$(top_srcdir)/m4/stdbool.m4 $(top_srcdir)/m4/stdint.m4 \
+	$(top_srcdir)/m4/stdint_h.m4 $(top_srcdir)/m4/strcase.m4 \
+	$(top_srcdir)/m4/strdup.m4 $(top_srcdir)/m4/strerror.m4 \
+	$(top_srcdir)/m4/strftime.m4 $(top_srcdir)/m4/strstr.m4 \
+	$(top_srcdir)/m4/strtol.m4 $(top_srcdir)/m4/strtoul.m4 \
+	$(top_srcdir)/m4/sunos57-select.m4 $(top_srcdir)/m4/time_r.m4 \
+	$(top_srcdir)/m4/timespec.m4 $(top_srcdir)/m4/tm_gmtoff.m4 \
+	$(top_srcdir)/m4/tzset.m4 $(top_srcdir)/m4/uint32_t.m4 \
+	$(top_srcdir)/m4/uintmax_t.m4 $(top_srcdir)/m4/ulonglong.m4 \
+	$(top_srcdir)/m4/unistd-safer.m4 \
 	$(top_srcdir)/m4/unlocked-io.m4 $(top_srcdir)/m4/vasnprintf.m4 \
 	$(top_srcdir)/m4/vasprintf.m4 $(top_srcdir)/m4/wchar_t.m4 \
 	$(top_srcdir)/m4/wint_t.m4 $(top_srcdir)/m4/xalloc.m4 \
@@ -135,8 +134,9 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = clmerge cln_hist commit_prep cvs_acls log_accum \
-	log mfpipe pvcs2rcs rcs2log rcslock sccs2rcs validate_repo
+CONFIG_CLEAN_FILES = validate_repo clmerge cln_hist commit_prep \
+	cvs_acls log log_accum mfpipe pvcs2rcs rcs2log rcslock \
+	sccs2rcs
 am__installdirs = "$(DESTDIR)$(contribdir)" "$(DESTDIR)$(contribdir)"
 contribSCRIPT_INSTALL = $(INSTALL_SCRIPT)
 SCRIPTS = $(contrib_SCRIPTS)
@@ -378,29 +378,29 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-clmerge: $(top_builddir)/config.status $(srcdir)/clmerge.pl
+validate_repo: $(top_builddir)/config.status $(srcdir)/validate_repo.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-cln_hist: $(top_builddir)/config.status $(srcdir)/cln_hist.pl
+clmerge: $(top_builddir)/config.status $(srcdir)/clmerge.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-commit_prep: $(top_builddir)/config.status $(srcdir)/commit_prep.pl
+cln_hist: $(top_builddir)/config.status $(srcdir)/cln_hist.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-cvs_acls: $(top_builddir)/config.status $(srcdir)/cvs_acls.pl
+commit_prep: $(top_builddir)/config.status $(srcdir)/commit_prep.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-log_accum: $(top_builddir)/config.status $(srcdir)/log_accum.pl
+cvs_acls: $(top_builddir)/config.status $(srcdir)/cvs_acls.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-log: $(top_builddir)/config.status $(srcdir)/log.pl
+log: $(top_builddir)/config.status $(srcdir)/log.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-mfpipe: $(top_builddir)/config.status $(srcdir)/mfpipe.pl
+log_accum: $(top_builddir)/config.status $(srcdir)/log_accum.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-pvcs2rcs: $(top_builddir)/config.status $(srcdir)/pvcs2rcs.pl
+mfpipe: $(top_builddir)/config.status $(srcdir)/mfpipe.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+pvcs2rcs: $(top_builddir)/config.status $(srcdir)/pvcs2rcs.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 rcs2log: $(top_builddir)/config.status $(srcdir)/rcs2log.sh
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-rcslock: $(top_builddir)/config.status $(srcdir)/rcslock.pl
+rcslock: $(top_builddir)/config.status $(srcdir)/rcslock.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 sccs2rcs: $(top_builddir)/config.status $(srcdir)/sccs2rcs.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-validate_repo: $(top_builddir)/config.status $(srcdir)/validate_repo.pl
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 install-contribSCRIPTS: $(contrib_SCRIPTS)
 	@$(NORMAL_INSTALL)

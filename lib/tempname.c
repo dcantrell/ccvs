@@ -60,7 +60,9 @@
 # include <inttypes.h>
 #endif
 
-#include <unistd.h>
+#if HAVE_UNISTD_H || _LIBC
+# include <unistd.h>
+#endif
 
 #include <sys/stat.h>
 

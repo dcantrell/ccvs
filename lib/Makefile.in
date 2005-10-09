@@ -59,19 +59,18 @@ DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	ChangeLog __fpending.c __fpending.h alloca.c asnprintf.c \
 	asprintf.c atexit.c canon-host.c canon-host.h canonicalize.c \
 	canonicalize.h chdir-long.c chdir-long.h closeout.c closeout.h \
-	creat-safer.c dirname.c dirname.h dup-safer.c dup2.c \
-	exitfail.c exitfail.h fcntl--.h fcntl-safer.h fd-safer.c \
-	filenamecat.c filenamecat.h fncase.c fnmatch.c fseeko.c \
-	ftello.c ftruncate.c gai_strerror.c getaddrinfo.c getcwd.c \
-	getcwd.h getdate.c getdate.h getdate.y getdelim.c getdelim.h \
-	gethostname.c getline.c getline.h getlogin_r.c getlogin_r.h \
-	getndelim2.c getopt.c getopt1.c getpagesize.h getpass.c \
-	getpass.h gettime.c gettimeofday.c glob-libc.h glob.c glob_.h \
-	lstat.c lstat.h malloc.c mbchar.c md5.c md5.h memchr.c \
-	memmove.c mempcpy.c mempcpy.h memrchr.c memrchr.h mkdir.c \
-	mkstemp.c mktime.c nanosleep.c open-safer.c openat-die.c \
-	openat.c openat.h pagealign_alloc.c pagealign_alloc.h \
-	pathmax.h pipe-safer.c printf-args.c printf-parse.c quotearg.c \
+	dirname.c dirname.h dup-safer.c dup2.c exitfail.c exitfail.h \
+	fd-safer.c filenamecat.c filenamecat.h fncase.c fnmatch.c \
+	fseeko.c ftello.c ftruncate.c gai_strerror.c getaddrinfo.c \
+	getcwd.c getcwd.h getdate.c getdate.h getdate.y getdelim.c \
+	getdelim.h gethostname.c getline.c getline.h getlogin_r.c \
+	getlogin_r.h getndelim2.c getopt.c getopt1.c getpagesize.h \
+	getpass.c getpass.h gettime.c gettimeofday.c glob-libc.h \
+	glob.c glob_.h lstat.c lstat.h malloc.c mbchar.c mbchar.h \
+	md5.c md5.h memchr.c memmove.c mempcpy.c mempcpy.h memrchr.c \
+	memrchr.h mkdir.c mkstemp.c mktime.c nanosleep.c openat.c \
+	openat.h pagealign_alloc.c pagealign_alloc.h pathmax.h \
+	pipe-safer.c printf-args.c printf-parse.c quotearg.c \
 	quotearg.h readlink.c realloc.c regcomp.c regex.c regex.h \
 	regex_internal.c regex_internal.h regexec.c rename.c rpmatch.c \
 	save-cwd.c save-cwd.h setenv.c stat-macros.h strcasecmp.c \
@@ -79,8 +78,7 @@ DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	strncasecmp.c strstr.c strtol.c strtoul.c sunos57-select.c \
 	tempname.c time_r.c timespec.h unistd--.h unistd-safer.h \
 	unlocked-io.h unsetenv.c vasnprintf.c vasprintf.c waitpid.c \
-	xalloc.h xgetcwd.c xgetcwd.h xmalloc.c xreadlink.c xreadlink.h \
-	yesno.c yesno.h
+	xalloc.h xgetcwd.c xgetcwd.h xmalloc.c yesno.c yesno.h
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/acx_with_external_zlib.m4 \
@@ -98,7 +96,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/dup2.m4 $(top_srcdir)/m4/eealloc.m4 \
 	$(top_srcdir)/m4/eoverflow.m4 $(top_srcdir)/m4/error.m4 \
 	$(top_srcdir)/m4/exitfail.m4 $(top_srcdir)/m4/extensions.m4 \
-	$(top_srcdir)/m4/fcntl-safer.m4 \
 	$(top_srcdir)/m4/filenamecat.m4 $(top_srcdir)/m4/fnmatch.m4 \
 	$(top_srcdir)/m4/fpending.m4 $(top_srcdir)/m4/ftruncate.m4 \
 	$(top_srcdir)/m4/getaddrinfo.m4 \
@@ -131,18 +128,18 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/rename.m4 $(top_srcdir)/m4/restrict.m4 \
 	$(top_srcdir)/m4/rpmatch.m4 $(top_srcdir)/m4/save-cwd.m4 \
 	$(top_srcdir)/m4/setenv.m4 $(top_srcdir)/m4/signed.m4 \
-	$(top_srcdir)/m4/size_max.m4 $(top_srcdir)/m4/socklen.m4 \
-	$(top_srcdir)/m4/sockpfaf.m4 $(top_srcdir)/m4/ssize_t.m4 \
-	$(top_srcdir)/m4/stat-macros.m4 $(top_srcdir)/m4/stdbool.m4 \
-	$(top_srcdir)/m4/stdint.m4 $(top_srcdir)/m4/stdint_h.m4 \
-	$(top_srcdir)/m4/strcase.m4 $(top_srcdir)/m4/strdup.m4 \
-	$(top_srcdir)/m4/strerror.m4 $(top_srcdir)/m4/strftime.m4 \
-	$(top_srcdir)/m4/strstr.m4 $(top_srcdir)/m4/strtol.m4 \
-	$(top_srcdir)/m4/strtoul.m4 $(top_srcdir)/m4/sunos57-select.m4 \
-	$(top_srcdir)/m4/time_r.m4 $(top_srcdir)/m4/timespec.m4 \
-	$(top_srcdir)/m4/tm_gmtoff.m4 $(top_srcdir)/m4/tzset.m4 \
-	$(top_srcdir)/m4/uint32_t.m4 $(top_srcdir)/m4/uintmax_t.m4 \
-	$(top_srcdir)/m4/ulonglong.m4 $(top_srcdir)/m4/unistd-safer.m4 \
+	$(top_srcdir)/m4/size_max.m4 $(top_srcdir)/m4/sockpfaf.m4 \
+	$(top_srcdir)/m4/ssize_t.m4 $(top_srcdir)/m4/stat-macros.m4 \
+	$(top_srcdir)/m4/stdbool.m4 $(top_srcdir)/m4/stdint.m4 \
+	$(top_srcdir)/m4/stdint_h.m4 $(top_srcdir)/m4/strcase.m4 \
+	$(top_srcdir)/m4/strdup.m4 $(top_srcdir)/m4/strerror.m4 \
+	$(top_srcdir)/m4/strftime.m4 $(top_srcdir)/m4/strstr.m4 \
+	$(top_srcdir)/m4/strtol.m4 $(top_srcdir)/m4/strtoul.m4 \
+	$(top_srcdir)/m4/sunos57-select.m4 $(top_srcdir)/m4/time_r.m4 \
+	$(top_srcdir)/m4/timespec.m4 $(top_srcdir)/m4/tm_gmtoff.m4 \
+	$(top_srcdir)/m4/tzset.m4 $(top_srcdir)/m4/uint32_t.m4 \
+	$(top_srcdir)/m4/uintmax_t.m4 $(top_srcdir)/m4/ulonglong.m4 \
+	$(top_srcdir)/m4/unistd-safer.m4 \
 	$(top_srcdir)/m4/unlocked-io.m4 $(top_srcdir)/m4/vasnprintf.m4 \
 	$(top_srcdir)/m4/vasprintf.m4 $(top_srcdir)/m4/wchar_t.m4 \
 	$(top_srcdir)/m4/wint_t.m4 $(top_srcdir)/m4/xalloc.m4 \
@@ -162,7 +159,7 @@ libcvs_a_DEPENDENCIES = @LIBOBJS@ @ALLOCA@
 am_libcvs_a_OBJECTS = sighandle.$(OBJEXT) allocsa.$(OBJEXT) \
 	cycle-check.$(OBJEXT) basename.$(OBJEXT) stripslash.$(OBJEXT) \
 	getnline.$(OBJEXT) strnlen1.$(OBJEXT) xalloc-die.$(OBJEXT) \
-	xgethostname.$(OBJEXT)
+	xgethostname.$(OBJEXT) xreadlink.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 am_getdate_OBJECTS = getdate-error.$(OBJEXT) getdate-getdate.$(OBJEXT) \
 	getdate-progname.$(OBJEXT)
@@ -325,10 +322,11 @@ noinst_LIBRARIES = libcvs.a
 libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	allocsa.h allocsa.c cycle-check.c cycle-check.h dev-ino.h \
 	basename.c stripslash.c error.h exit.h getaddrinfo.h \
-	getnline.h getnline.c gettext.h mbchar.h mbuiter.h minmax.h \
-	setenv.h size_max.h strcase.h strnlen1.h strnlen1.c strstr.h \
-	time_r.h printf-args.h printf-parse.h vasnprintf.h vasprintf.h \
-	xalloc-die.c xgethostname.h xgethostname.c xsize.h
+	getnline.h getnline.c gettext.h mbuiter.h minmax.h setenv.h \
+	size_max.h strcase.h strnlen1.h strnlen1.c strstr.h time_r.h \
+	printf-args.h printf-parse.h vasnprintf.h vasprintf.h \
+	xalloc-die.c xgethostname.h xgethostname.c xreadlink.h \
+	xreadlink.c xsize.h
 libcvs_a_LIBADD = @LIBOBJS@ @ALLOCA@
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) getdate.c $(GETOPT_H) \
 	$(GLOB_H) $(STDBOOL_H) $(STDINT_H)
@@ -413,7 +411,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/canonicalize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/chdir-long.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/closeout.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/creat-safer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/dirname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/dup-safer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/dup2.Po@am__quote@
@@ -453,8 +450,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/mkstemp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/mktime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/nanosleep.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/open-safer.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/openat-die.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/openat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/pagealign_alloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/pipe-safer.Po@am__quote@
@@ -488,7 +483,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/waitpid.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/xgetcwd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/xmalloc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/xreadlink.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/yesno.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/allocsa.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/basename.Po@am__quote@
@@ -502,6 +496,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strnlen1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xalloc-die.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgethostname.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xreadlink.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

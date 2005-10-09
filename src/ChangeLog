@@ -1,32 +1,3 @@
-2005-10-04  Derek Price  <derek@ximbiot.com>
-
-	* sanity.sh (diff_u_test, diff_recursive_test): New functions.
-	(directory_cmp): Use GNU diff -ur when possible.
-	(find_tool): Catch stderr output from tests.  Count MARGINAL test
-	results and prefer tools with more PASSes.
-	(*): Replace use of cmp to $diff_u where possbile.
-
-2005-10-04  Mark D. Baushke  <mdb@gnu.org>
-
-	* sanity.sh (watch6-0): Avoid use of GNU grep -qE extensions for
-	anchored search.
-
-2005-10-04  Derek Price  <derek@ximbiot.com>
-
-	* sanity.sh (find_tool): Accept tool name for error messages.  Change
-	all callers.
-
-	* run.c: Assume unistd.h.
-
-2005-10-03  Derek Price  <derek@ximbiot.com>
-
-	* sanity.sh (sshstdio-6): Use diff -u instead of cmp so that errors
-	show up in the automated nightly testing emails.
-
-	* run.c (piped_child): Close original dup'd descriptors.  Add comments.
-
-	* server.c: #include "setenv.h" to eliminate a Solaris warning.
-
 2005-09-30  Larry Jones  <lawrence.jones@ugs.com>
 
 	* expand_path.c (expand_path): Fix memory leaks.

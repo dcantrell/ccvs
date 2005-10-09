@@ -18,7 +18,9 @@
 #ifndef _PATHMAX_H
 # define _PATHMAX_H
 
-# include <unistd.h>
+# if HAVE_UNISTD_H
+#  include <unistd.h>
+# endif
 
 # include <limits.h>
 

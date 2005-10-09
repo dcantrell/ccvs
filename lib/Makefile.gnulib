@@ -142,12 +142,6 @@ MOSTLYCLEANFILES += glob.h glob.h-t
 
 ## end   gnulib module glob
 
-## begin gnulib module mbchar
-
-libgnu_a_SOURCES += mbchar.h
-
-## end   gnulib module mbchar
-
 ## begin gnulib module mbuiter
 
 libgnu_a_SOURCES += mbuiter.h
@@ -247,6 +241,12 @@ libgnu_a_SOURCES += xalloc-die.c
 libgnu_a_SOURCES += xgethostname.h xgethostname.c
 
 ## end   gnulib module xgethostname
+
+## begin gnulib module xreadlink
+
+libgnu_a_SOURCES += xreadlink.h xreadlink.c
+
+## end   gnulib module xreadlink
 
 ## begin gnulib module xsize
 

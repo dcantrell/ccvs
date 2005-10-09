@@ -235,9 +235,6 @@ sub main
 		exit 2;
 	}
 
-	# Fix trailing /'s
-    $cvsroot =~ s#[/\\]*$##o;
-
 	for (@scripts)
 	{
 		$_ = File::Spec->rel2abs( $_ ) unless /\n/ || !-x $_;
@@ -498,8 +495,8 @@ sub get_history
         }
 		if( $ignore == 2 )
 		{
-		    if( my ( $date, $tz, $author, $state ) =
-		             $line =~ /^date: (\S+ \S+( \S+)?);  author: ([^;]+);  state: (\S+);/ )
+		    if( my ( $date, $author, $state ) =
+		             $line =~ /^date: (\S+ \S+);  author: ([^;]+);  state: (\S+);/ )
 			{
 				$rinfo{$revision} =
 				{

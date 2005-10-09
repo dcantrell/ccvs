@@ -1,18 +1,4 @@
-2005-10-06  Derek Price  <derek@ximbiot.com>
-
-	* configure.in: Generate contrib Perl scripts from *.pl rather than
-	*.in.
-
-2005-10-04  Derek Price  <derek@ximbiot.com>
-
-	* HACKING: Document GNULIB's assumption of <unistd.h>.
-	* configure.in: Don't check for unistd.h.
-
 2005-10-03  Derek Price  <derek@ximbiot.com>
-
-	* maint-aux/gnulib-update: Maintenance of modules list is now
-	automated.
-	* maint-aux/gnulib-modules: Remove this file.
 
 	* NEWS: Note ZLib security issues.
 
