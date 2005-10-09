@@ -71,7 +71,8 @@ approved by the Free Software Foundation.
 @finalout
 
 @c ???@include version.texi???
-@settitle CVS---Concurrent Versions System v@c ???@value{VERSION}???
+@settitle CVS---Concurrent Versions System
+@c v@c ???@value{VERSION}???
 @setchapternewpage odd
 
 @c -- TODO list:
@@ -11969,11 +11970,11 @@ interfere with everyday source file browsing.
 @c <en>@node Tracking sources
 @node Acompanhando fontes
 @c <en>@chapter Tracking third-party sources
-@chapter Tracking third-party sources
+@chapter Acompanhado fontes de terceiros
 @c <en>@cindex Third-party sources
 @cindex Fontes de terceiros
 @c <en>@cindex Tracking sources
-@cindex Tracking sources
+@cindex Acompanhando fontes
 
 @c FIXME: Need discussion of added and removed files.
 @c FIXME: This doesn't really adequately introduce the
@@ -11991,7 +11992,7 @@ interfere with everyday source file browsing.
 @c <en>this task.
 Se você modificar um programa para se adequar melhor ao
 seu ambiente, você provavelmente vai querer incluir
-suas modificações quando a nova release do do programa
+suas modificações quando a nova release do programa
 chegar.  O @sc{cvs} pode te ajudar nesta tarefa.
 
 @c <en>@cindex Vendor
@@ -12045,7 +12046,7 @@ trunk???, e se torna a revisão `head'.
 @c <en>* Update imports::              Updating with the import command
 * Importações de atualização::          Atualizando com o comando import
 @c <en>* Reverting local changes::     Reverting to the latest vendor release
-* Reverting local changes::             Reverting to the latest vendor release
+* Desfazendo mudanças locais::          Reverting to the latest vendor release
 @c <en>* Binary files in imports::     Binary files require special handling
 * Arquivos binários em importações::    Arquivos binários requerem tratamento especial
 @c <en>* Keywords in imports::         Keyword substitution might be undesirable
@@ -12073,15 +12074,15 @@ trunk???, e se torna a revisão `head'.
 @c <en>@var{branch}} flag---see @ref{Multiple vendor branches}.).  The
 @c <en>@dfn{release tags} are symbolic names for a particular
 @c <en>release, such as @samp{FSF_0_04}.
-Use the @code{import} command to check in the sources
-for the first time.  When you use the @code{import}
-command to track third-party sources, the @dfn{vendor
-tag} and @dfn{release tags} are useful.  The
-@dfn{vendor tag} is a symbolic name for the branch
-(which is always 1.1.1, unless you use the @samp{-b
-@var{branch}} flag---see @ref{Ramos de fornecedor múltiplos}.).  The
-@dfn{release tags} are symbolic names for a particular
-release, such as @samp{FSF_0_04}.
+Use o comando @code{import} para ???check in??? os
+fontes na primeira vez.  Quando você usa o comando @code{import}
+para acompanhar fontes de terceiros, o @dfn{vendor tag}
+e os @dfn{release tags} são úteis.  O @dfn{vendor tag}
+é um nome simbólico para o ramo (que é sempre 1.1.1, a
+menos que você use a flag @samp{-b @var{branch}}
+---veja em @ref{Ramos de fornecedor múltiplos}.).  As
+@dfn{release tags} são nomes simbólicos para uma
+release particular, tal como @samp{FSF_0_04}.
 
 @c I'm not completely sure this belongs here.  But
 @c we need to say it _somewhere_ reasonably obvious; it
@@ -12092,27 +12093,27 @@ release, such as @samp{FSF_0_04}.
 @c <en>directory; if you want to work with the sources import
 @c <en>them first and then check them out into a different
 @c <en>directory (@pxref{Getting the source}).
-Note that @code{import} does @emph{not} change the
-directory in which you invoke it.  In particular, it
-does not set up that directory as a @sc{cvs} working
-directory; if you want to work with the sources import
-them first and then check them out into a different
-directory (@pxref{Obtendo os fontes}).
+Observe que o @code{import} @emph{não} muda o diretório
+no qual ele foi executado.  Em particular, ele não
+transforma tal diretório num diretório de trabalho do
+@sc{cvs}; se você quiser trabalhar com os fontes
+importe eles primeiro e depois faça ???check out??? num
+outro diretório (@pxref{Obtendo os fontes}).
 
 @c <en>@cindex wdiff (import example)
-@cindex wdiff (import example)
+@cindex wdiff (exemplo de importação)
 @c <en>Suppose you have the sources to a program called
 @c <en>@code{wdiff} in a directory @file{wdiff-0.04},
 @c <en>and are going to make private modifications that you
 @c <en>want to be able to use even when new releases are made
 @c <en>in the future.  You start by importing the source to
 @c <en>your repository:
-Suppose you have the sources to a program called
-@code{wdiff} in a directory @file{wdiff-0.04},
-and are going to make private modifications that you
-want to be able to use even when new releases are made
-in the future.  You start by importing the source to
-your repository:
+Suponha que você tem os fontes de um programa chamado
+@code{wdiff} num diretório @file{wdiff-0.04}, e vai
+começar a fazer modificações pessoais que quer que
+estejam disponíveis mesmo quando novas ???releases???
+forem feitas no futuro.  Você começa importando os
+fontes para o repositório:
 
 @example
 $ cd wdiff-0.04
@@ -12122,25 +12123,27 @@ $ cvs import -m "Import of FSF v. 0.04" fsf/wdiff FSF_DIST WDIFF_0_04
 @c <en>The vendor tag is named @samp{FSF_DIST} in the above
 @c <en>example, and the only release tag assigned is
 @c <en>@samp{WDIFF_0_04}.
-The vendor tag is named @samp{FSF_DIST} in the above
-example, and the only release tag assigned is
-@samp{WDIFF_0_04}.
+A etiqueta do fornecedor foi chamada de @samp{FSF_DIST}
+no exemplo acima, e a única etiqueta de ???release???
+atribuída é @samp{WDIFF_0_04}.
 @c FIXME: Need to say where fsf/wdiff comes from.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Update imports
 @node Importações de atualização
 @c <en>@section Updating with the import command
-@section Updating with the import command
+@section Atualizando com o comando import
 
 @c <en>When a new release of the source arrives, you import it into the
 @c <en>repository with the same @code{import} command that you used to set up
 @c <en>the repository in the first place.  The only difference is that you
 @c <en>specify a different release tag this time:
-When a new release of the source arrives, you import it into the
-repository with the same @code{import} command that you used to set up
-the repository in the first place.  The only difference is that you
-specify a different release tag this time:
+Quando uma nova release dos fontes chegar, você importa
+ela para dentro do repositório com o mesmo comando
+@code{import} que você usou para configurar o
+repositório na primeira vez.  A única diferença é que
+você deve especificar uma etiqueta de release diferente
+desta vez:
 
 @example
 $ tar xfz wdiff-0.05.tar.gz
@@ -12152,10 +12155,12 @@ $ cvs import -m "Import of FSF v. 0.05" fsf/wdiff FSF_DIST WDIFF_0_05
 @c <en>revision becomes the head revision.  If you have made local
 @c <en>changes, @code{import} will warn you that you must merge the changes
 @c <en>into the main trunk, and tell you to use @samp{checkout -j} to do so:
-For files that have not been modified locally, the newly created
-revision becomes the head revision.  If you have made local
-changes, @code{import} will warn you that you must merge the changes
-into the main trunk, and tell you to use @samp{checkout -j} to do so:
+Para arquivos que não foram modificados localmente, a
+revisão recém-criada se torna a revisão no topo.  Se
+você fez modificações locais, o @code{import} vai te
+alertar de que você precisa mesclar as mudanças no
+???main trunk???, e dizer a você para usar
+@samp{checkout -j} para isto:
 
 @c FIXME: why "wdiff" here and "fsf/wdiff" in the
 @c "import"?  I think the assumption is that one has
@@ -12171,16 +12176,17 @@ $ cvs checkout -jFSF_DIST:yesterday -jFSF_DIST wdiff
 @c <en>since yesterday into the working copy.  If any conflicts arise during
 @c <en>the merge they should be resolved in the normal way (@pxref{Conflicts
 @c <en>example}).  Then, the modified files may be committed.
-The above command will check out the latest revision of
-@samp{wdiff}, merging the changes made on the vendor branch @samp{FSF_DIST}
-since yesterday into the working copy.  If any conflicts arise during
-the merge they should be resolved in the normal way
-(@pxref{Exemplo de conflitos}).  Then, the modified files may be committed.
+O comando acima vai ???check out??? a última revisão de
+@samp{wdiff}, mesclando as mudanças feitas no ramo do fornecedor @samp{FSF_DIST}
+???since yesterday??? na cópia de trabalho.  Se algum
+conflito aparecer durante a mescla ele deve ser
+resolvido como sempre (@pxref{Exemplo de conflitos}).
+Após isto, os arquivos modificados deve ser ???committed???.
 
 @c <en>However, it is much better to use the two release tags rather than using
 @c <en>a date on the branch as suggested above:
-However, it is much better to use the two release tags rather than using
-a date on the branch as suggested above:
+Entretanto, é muito melhor usar as duas etiquetas de
+release que usar uma data no ramo, como sugerido acima:
 
 @example
 $ cvs checkout -jWDIFF_0_04 -jWDIFF_0_05 wdiff
@@ -12194,18 +12200,21 @@ $ cvs checkout -jWDIFF_0_04 -jWDIFF_0_05 wdiff
 @c <en>that were removed between the two vendor releases and mark them for
 @c <en>removal.  Since @code{import} has no way to detect removed files, you
 @c <en>should do a merge like this even if @code{import} doesn't tell you to.
-The reason this is better is that
-using a date, as suggested above, assumes that you do
-not import more than one release of a product per day.
-More importantly, using the release tags allows @sc{cvs} to detect files
-that were removed between the two vendor releases and mark them for
-removal.  Since @code{import} has no way to detect removed files, you
-should do a merge like this even if @code{import} doesn't tell you to.
+A razão para isto ser melhor é que, ao usar data, como
+sugerido acima, se está ssumindo que você não faz
+importação de uma produto mais de uma vez por dia. E
+mais importante, usando etiquetas de release o
+@sc{cvs} pode detectar arquivos que foram removidos
+entre as duas releases do fornecedor e marcar para
+remoção.  Já que o @code{import} não tem meios de
+detectar arquivos removidos, você deve fazer a mescla
+desta forma mesmo se o @code{import} não falar para ser
+feito.
 
 @c <en>@node Reverting local changes
-@node Reverting local changes
+@node Desfazendo mudanças locais
 @c <en>@section Reverting to the latest vendor release
-@section Reverting to the latest vendor release
+@section Desfazendo para a última release do fornecedor
 
 @c <en>You can also revert local changes completely and return
 @c <en>to the latest vendor release by changing the `head'
@@ -12214,13 +12223,13 @@ should do a merge like this even if @code{import} doesn't tell you to.
 @c <en>in @file{~/work.d/wdiff}, and you want to revert to the
 @c <en>vendor's version for all the files in that directory,
 @c <en>you would type:
-You can also revert local changes completely and return
-to the latest vendor release by changing the `head'
-revision back to the vendor branch on all files.  For
-example, if you have a checked-out copy of the sources
-in @file{~/work.d/wdiff}, and you want to revert to the
-vendor's version for all the files in that directory,
-you would type:
+Você pode também reverter completamente mudanças locais
+e voltar para a última release do fornecedor mudando a
+revisão `head' de volta para o ramo do fornecedor em
+todos os arquivos.  Por exemplo, se você tem uma cópia
+???checked-out??? dos fontes em @file{~/work.d/wdiff},
+e você quer voltar para a versão do fornecedor para
+todos os arquivos neste diretório, você deve digitar:
 
 @example
 $ cd ~/work.d/wdiff
@@ -12230,18 +12239,18 @@ $ cvs admin -bFSF_DIST .
 @noindent
 @c <en>You must specify the @samp{-bFSF_DIST} without any space
 @c <en>after the @samp{-b}.  @xref{admin options}.
-You must specify the @samp{-bFSF_DIST} without any space
-after the @samp{-b}.  @xref{admin options}.
+Você deve especificar o @samp{-bFSF_DIST} sem botar
+espaços depois do @samp{-b}.  @xref{admin options}.
 
 @c <en>@node Binary files in imports
 @node Arquivos binários em importações
 @c <en>@section How to handle binary files with cvs import
-@section How to handle binary files with cvs import
+@section Como tratar arquivos binários com o cvs import
 
 @c <en>Use the @samp{-k} wrapper option to tell import which
 @c <en>files are binary.  @xref{Wrappers}.
-Use the @samp{-k} wrapper option to tell import which
-files are binary.  @xref{Wrappers}.
+Use a opção ???wrapper??? @samp{-k} para dizer ao
+import quais arquivos são binários.  @xref{Wrappers}.
 
 @c <en>@node Keywords in imports
 @node Palavras-chave em importações
@@ -12259,17 +12268,18 @@ files are binary.  @xref{Wrappers}.
 @c <en>maintain the expansions supplied by the vendor, so
 @c <en>that this information can supply information about
 @c <en>the sources that you imported from the vendor.
-The sources which you are importing may contain
-keywords (@pxref{Substituição de palavra-chave}).  For example,
-the vendor may use @sc{cvs} or some other system
-which uses similar keyword expansion syntax.  If you
-just import the files in the default fashion, then
-the keyword expansions supplied by the vendor will
-be replaced by keyword expansions supplied by your
-own copy of @sc{cvs}.  It may be more convenient to
-maintain the expansions supplied by the vendor, so
-that this information can supply information about
-the sources that you imported from the vendor.
+Os fontes que você está importando podem conter
+palavras-chave (@pxref{Substituição de palavra-chave}).
+Por exemplo, o fornecedor pode ter usado @sc{cvs} ou
+outro sistema similar que usou uma sintaxe de expansão
+de palavras-chave similar.  Se você simplesmente
+importou os arquivos da forma padrão, a expansão de
+palavra-chave feita pelo fornecedor vai ser substituída
+pela expansão de palavra-chave da sua própria cópia do
+@sc{cvs}.  Pode ser que seja mais conveniente manter a
+expansão feita pelo fornecedor, de forma que esta
+informação seja a respeito dos fontes que você importou
+do fornecedor.
 
 @c <en>To maintain the keyword expansions supplied by the
 @c <en>vendor, supply the @samp{-ko} option to @code{cvs
@@ -12279,14 +12289,14 @@ the sources that you imported from the vendor.
 @c <en>selective you'll have to think about what you want
 @c <en>and use the @samp{-k} option to @code{cvs update} or
 @c <en>@code{cvs admin} as appropriate.
-To maintain the keyword expansions supplied by the
-vendor, supply the @samp{-ko} option to @code{cvs
-import} the first time you import the file.
-This will turn off keyword expansion
-for that file entirely, so if you want to be more
-selective you'll have to think about what you want
-and use the @samp{-k} option to @code{cvs update} or
-@code{cvs admin} as appropriate.
+Para preservar as expansões de palavras-chave fetias
+pelo fornecedor, entre com a opção @samp{-ko} no @code{cvs
+import} na primeira vez que você importar o arquivo.
+Isto vai desligar a expansão de palavra-chave para tal
+arquivo completamente. Portanto, se você quer ser mais
+seletivo você vai ter que ver o que você quer e usar a
+opção @samp{-k} para o @code{cvs update} ou
+@code{cvs admin} quando for apropriado.
 @c Supplying -ko to import if the file already existed
 @c has no effect.  Not clear to me whether it should
 @c or not.
@@ -12306,25 +12316,26 @@ and use the @samp{-k} option to @code{cvs update} or
 @c <en>source trees lying around and what you want to do more
 @c <en>than anything else is just to all put them in @sc{cvs} so
 @c <en>that you at least have them in one place.
-All the examples so far assume that there is only one
-vendor from which you are getting sources.  In some
-situations you might get sources from a variety of
-places.  For example, suppose that you are dealing with
-a project where many different people and teams are
-modifying the software.  There are a variety of ways to
-handle this, but in some cases you have a bunch of
-source trees lying around and what you want to do more
-than anything else is just to all put them in @sc{cvs} so
-that you at least have them in one place.
+Todos os exemplos até agora assumiram que existe apenas
+um fornecedor do qual você está obtendo os fontes.  Em
+algumas situações você pode obter fontes de vários
+lugares.  Por exemplo, suponha que você está envolvido
+num projeto onde muitas pessoas e times diferentes
+estão modificando o software.  Existem várias formas de
+lidar com isto, mas em alguns casos vocês vai ter um
+monte de árvores (de diretórios) de fontes por aí e a
+coisa que você mais vai querer na vida é botar tudo
+isto no @sc{cvs} de forma que você pelo menos tenha
+tudo num lugar só.
 
 @c <en>For handling situations in which there may be more than
 @c <en>one vendor, you may specify the @samp{-b} option to
 @c <en>@code{cvs import}.  It takes as an argument the vendor
 @c <en>branch to import to.  The default is @samp{-b 1.1.1}.
-For handling situations in which there may be more than
-one vendor, you may specify the @samp{-b} option to
-@code{cvs import}.  It takes as an argument the vendor
-branch to import to.  The default is @samp{-b 1.1.1}.
+Para lidar com situações nas quais você tem mais de um
+fornecedor, você pode usar a opção @samp{-b} no
+@code{cvs import}.  Ela recebe como argumento o ramo de
+fornecedor para o qual importar.  O padrão é @samp{-b 1.1.1}.
 
 @c <en>For example, suppose that there are two teams, the red
 @c <en>team and the blue team, that are sending you sources.
@@ -12332,21 +12343,22 @@ branch to import to.  The default is @samp{-b 1.1.1}.
 @c <en>1.1.1 and use the vendor tag RED.  You want to import
 @c <en>the blue team's efforts to branch 1.1.3 and use the
 @c <en>vendor tag BLUE.  So the commands you might use are:
-For example, suppose that there are two teams, the red
-team and the blue team, that are sending you sources.
-You want to import the red team's efforts to branch
-1.1.1 and use the vendor tag RED.  You want to import
-the blue team's efforts to branch 1.1.3 and use the
-vendor tag BLUE.  So the commands you might use are:
+Por exemplo, suponha que existem dois times, o time
+vermelho e o time azul, enviando fontes. Você quer
+importar os resultados do time vermelho no ramo
+1.1.1 e usar a etiqueta do fornecedor RED.  Você quer
+importar os resultados do time azul no ramo 1.1.3 e
+usar a etiqueta do fornecedor BLUE.  Logo os comandos
+devem ser:
 
 @example
 $ cvs import dir RED RED_1-0
 $ cvs import -b 1.1.3 dir BLUE BLUE_1-5
 @end example
 
-Note that if your vendor tag does not match your
-@samp{-b} option, @sc{cvs} will not detect this case!  For
-example,
+Observe que se sua etiqueta de fornecedor não casa com
+sua opção @samp{-b} o @sc{cvs} não vai detectar isto!
+Por exemplo,
 
 @example
 $ cvs import -b 1.1.3 dir RED RED_1-0
@@ -12358,11 +12370,12 @@ $ cvs import -b 1.1.3 dir RED RED_1-0
 @c <en>for the ability to specify a mismatch here, but if you
 @c <en>discover such a use, don't.  @sc{cvs} is likely to make this
 @c <en>an error in some future release.
-Be careful; this kind of mismatch is sure to sow
-confusion or worse.  I can't think of a useful purpose
-for the ability to specify a mismatch here, but if you
-discover such a use, don't.  @sc{cvs} is likely to make this
-an error in some future release.
+Tome cuidado; este tipo de ???mismatch??? certamente
+provoca confusão ou algo pior.  ???I can't think of a
+useful purpose for the ability to specify a mismatch
+here, but if you discover such a use, don't???.  O
+@sc{cvs} provavelmente fará disto um erro em alguma
+release futura.
 
 @c Probably should say more about the semantics of
 @c multiple branches.  What about the default branch?
@@ -12963,15 +12976,15 @@ faz com que o @sc{cvs} use compressão de nível 6.
 @c <en>@cindex Left-hand options
 @cindex Left-hand options
 
-The available @samp{cvs_options} (that are given to the
-left of @samp{cvs_command}) are:
+As @samp{cvs_options} disponíveis (as que são dadas à
+esquerda do @samp{cvs_command}) são:
 
 @table @code
 @c <en>@item --allow-root=@var{rootdir}
 @item --allow-root=@var{rootdir}
 @c <en>Specify legal @sc{cvsroot} directory.  See
 @c <en>@ref{Password authentication server}.
-Specify legal @sc{cvsroot} directory.  See
+Especifica o diretório @sc{cvsroot} legal.  Veja em
 @ref{Servidor de autenticação por senha}.
 
 @c <en>@cindex Authentication, stream
@@ -12987,40 +13000,66 @@ Specify legal @sc{cvsroot} directory.  See
 @c <en>Authentication prevents certain sorts of attacks
 @c <en>involving hijacking the active @sc{tcp} connection.
 @c <en>Enabling authentication does not enable encryption.
-Authenticate all communication between the client and
-the server.  Only has an effect on the @sc{cvs} client.
-As of this writing, this is only implemented when using
-a GSSAPI connection (@pxref{Autenticação GSSAPI}).
-Authentication prevents certain sorts of attacks
-involving hijacking the active @sc{tcp} connection.
-Enabling authentication does not enable encryption.
+Autentica todas as comunicações entre o cliente e o
+servidor.  Tem efeito apenas no cliente
+@sc{cvs}. Quando este texto estava sendo escrito, era
+implementado apenas numa conexão GSSAPI
+(@pxref{Autenticação GSSAPI}). Autenticação evita
+certos tipos de ataque envolvendo sequestro de conexão
+@sc{tcp} ativa. Habilitar autenticação não habilita criptografia.
 
+@c <en>@cindex RCSBIN, overriding
 @cindex RCSBIN, overriding
+@c <en>@cindex Overriding RCSBIN
 @cindex Overriding RCSBIN
+@c <en>@item -b @var{bindir}
 @item -b @var{bindir}
-In @sc{cvs} 1.9.18 and older, this specified that
-@sc{rcs} programs are in the @var{bindir} directory.
-Current versions of @sc{cvs} do not run @sc{rcs}
-programs; for compatibility this option is accepted,
-but it does nothing.
+@c <en>In @sc{cvs} 1.9.18 and older, this specified that
+@c <en>@sc{rcs} programs are in the @var{bindir} directory.
+@c <en>Current versions of @sc{cvs} do not run @sc{rcs}
+@c <en>programs; for compatibility this option is accepted,
+@c <en>but it does nothing.
+No @sc{cvs} 1.9.18 e anteriores, isto especificava que
+os programas @sc{rcs} estavam no diretório
+@var{bindir}.  Versões atuais do @sc{cvs} não rodam
+programas @sc{rcs}; por compatibilidade esta opção é
+aceita, mas não faz nada.
 
+@c <en>@cindex TMPDIR, overriding
 @cindex TMPDIR, overriding
+@c <en>@cindex Overriding TMPDIR
 @cindex Overriding TMPDIR
+@c <en>@item -T @var{tempdir}
 @item -T @var{tempdir}
-Use @var{tempdir} as the directory where temporary files are
-located.  Overrides the setting of the @code{$TMPDIR} environment
-variable and any precompiled directory.  This parameter should be
-specified as an absolute pathname.
-(When running client/server, @samp{-T} affects only the local process;
-specifying @samp{-T} for the client has no effect on the server and
-vice versa.)
+@c <en>Use @var{tempdir} as the directory where temporary files are
+@c <en>located.  Overrides the setting of the @code{$TMPDIR} environment
+@c <en>variable and any precompiled directory.  This parameter should be
+@c <en>specified as an absolute pathname.
+@c <en>(When running client/server, @samp{-T} affects only the local process;
+@c <en>specifying @samp{-T} for the client has no effect on the server and
+@c <en>vice versa.)
+Usa o @var{tempdir} como o diretório onde os arquivos
+temporários estão.  Sobreescreve a configuração da
+variável de ambiente @code{$TMPDIR} e qualquer
+diretório pré-compilado.  Este parâmetro deve ser
+especificado com um caminho absoluto. (Quando rodando
+cliente/servidor, @samp{-T} afeta apenas o processo
+local especificado; especificando @samp{-T} para o
+cliente não tem efeito no servidor e vice-versa.)
 
+@c <en>@cindex CVSROOT, overriding
 @cindex CVSROOT, overriding
+@c <en>@cindex Overriding CVSROOT
 @cindex Overriding CVSROOT
+@c <en>@item -d @var{cvs_root_directory}
 @item -d @var{cvs_root_directory}
-Use @var{cvs_root_directory} as the root directory
-pathname of the repository.  Overrides the setting of
-the @code{$CVSROOT} environment variable.  @xref{Repositório}.
+@c <en>Use @var{cvs_root_directory} as the root directory
+@c <en>pathname of the repository.  Overrides the setting of
+@c <en>the @code{$CVSROOT} environment variable.  @xref{Repositório}.
+Usa o @var{cvs_root_directory} como o caminho do
+diretório root no repositório.  Sobreescreve as
+configurações da variável de ambiente @code{$CVSROOT}.
+@xref{Repositório}.
 
 @c <en>@cindex EDITOR, overriding
 @cindex EDITOR, overriding
@@ -13032,66 +13071,108 @@ the @code{$CVSROOT} environment variable.  @xref{Repositório}.
 @c <en>setting of the @code{$CVSEDITOR} and @code{$EDITOR}
 @c <en>environment variables.  For more information, see
 @c <en>@ref{Committing your changes}.
-Use @var{editor} to enter revision log information.  Overrides the
-setting of the @code{$CVSEDITOR} and @code{$EDITOR}
-environment variables.  For more information, see
-@ref{Efetivando suas alterações}.
+Usa @var{editor} para entrar informações de log
+(registro) de revisões.  Sobreescreve os ajustes das
+variáveis de ambiente @code{$CVSEDITOR} e @code{$EDITOR}
+.  Para mais informações, veja em @ref{Efetivando suas
+alterações}.
 
 @item -f
-Do not read the @file{~/.cvsrc} file.  This
-option is most often used because of the
-non-orthogonality of the @sc{cvs} option set.  For
-example, the @samp{cvs log} option @samp{-N} (turn off
-display of tag names) does not have a corresponding
-option to turn the display on.  So if you have
-@samp{-N} in the @file{~/.cvsrc} entry for @samp{log},
-you may need to use @samp{-f} to show the tag names.
+@c <en>Do not read the @file{~/.cvsrc} file.  This
+@c <en>option is most often used because of the
+@c <en>non-orthogonality of the @sc{cvs} option set.  For
+@c <en>example, the @samp{cvs log} option @samp{-N} (turn off
+@c <en>display of tag names) does not have a corresponding
+@c <en>option to turn the display on.  So if you have
+@c <en>@samp{-N} in the @file{~/.cvsrc} entry for @samp{log},
+@c <en>you may need to use @samp{-f} to show the tag names.
+Não lê o arquivo @file{~/.cvsrc}.  Esta opção é usada
+com mais freqüência por causa da não ortogonalidade do
+conjunto de opções do @sc{cvs}.  Por exemplo, a opção
+@samp{-N} do @samp{cvs log} (não mostrar os nomes de
+etiquetas) não tem uma opção correspondente para
+mostrar.  Então se você tem @samp{-N} numa ???entry???
+do arquivo @file{~/.cvsrc} para @samp{log},
+você vai ter que usar @samp{-f} para mostrar os nomes
+de etiquetas.
 
 @item -H
 @itemx --help
-Display usage information about the specified @samp{cvs_command}
-(but do not actually execute the command).  If you don't specify
-a command name, @samp{cvs -H} displays overall help for
-@sc{cvs}, including a list of other help options.
+@c <en>Display usage information about the specified @samp{cvs_command}
+@c <en>(but do not actually execute the command).  If you don't specify
+@c <en>a command name, @samp{cvs -H} displays overall help for
+@c <en>@sc{cvs}, including a list of other help options.
+Mostra informações sobre o uso de determinado @samp{cvs_command}
+(mas não executa o comando na verdade).  Se você não
+especificar o nome do comando, o @samp{cvs -H} vai
+mostrar uma ajuda geral para o @sc{cvs}, inclusive uma
+lista de outras opções de ajuda.
 @c It seems to me it is better to document it this way
 @c rather than trying to update this documentation
 @c every time that we add a --help-foo option.  But
 @c perhaps that is confusing...
 
 @item -l
-Do not log the @samp{cvs_command} in the command history (but execute it
-anyway).  @xref{history}, for information on command history.
+@c <en>Do not log the @samp{cvs_command} in the command history (but execute it
+@c <en>anyway).  @xref{history}, for information on command history.
+Não registra o @samp{cvs_command} no histórico de
+comandos (mas executa o comando).  @xref{history}, para
+informações sobre o histórico de comandos.
 
+@c <en>@cindex Read-only repository mode
 @cindex Read-only repository mode
 @item -R
-Turns on read-only repository mode.  This allows one to check out from a
-read-only repository, such as within an anoncvs server, or from a CDROM
-repository.
+@c <en>Turns on read-only repository mode.  This allows one to check out from a
+@c <en>read-only repository, such as within an anoncvs server, or from a CDROM
+@c <en>repository.
+Liga o modo de repositório somente-leitura.  Isto te
+permite ???check out??? de um repositório
+somente-leitura, tal como um ???anoncvs server???, ou
+de um repositório num CDROM.
 
-Same effect as if the @code{CVSREADONLYFS} environment
-variable is set. Using @samp{-R} can also considerably
-speed up checkout's over NFS.
+@c <en>Same effect as if the @code{CVSREADONLYFS} environment
+@c <en>variable is set. Using @samp{-R} can also considerably
+@c <en>speed up checkout's over NFS.
+O mesmo efeito é obtido se a variável de ambiente
+@code{CVSREADONLYFS} estiver configurada. usar a opção
+@samp{-R} pode também acelerar consideravelmente um
+???checkout??? por NFS.
 
+@c <en>@cindex Read-only mode
 @cindex Read-only mode
 @item -n
-Do not change any files.  Attempt to execute the
-@samp{cvs_command}, but only to issue reports; do not remove,
-update, or merge any existing files, or create any new files.
+@c <en>Do not change any files.  Attempt to execute the
+@c <en>@samp{cvs_command}, but only to issue reports; do not remove,
+@c <en>update, or merge any existing files, or create any new files.
+Não mude nenhum arquivo.  tente executar o
+@samp{cvs_command}, mas apenas para mostrar a saída;
+não remove, atualiza, ou mescla qualquer arquivo
+existente, ou cria novos arquivos.
 
-Note that @sc{cvs} will not necessarily produce exactly
-the same output as without @samp{-n}.  In some cases
-the output will be the same, but in other cases
-@sc{cvs} will skip some of the processing that would
-have been required to produce the exact same output.
+@c <en>Note that @sc{cvs} will not necessarily produce exactly
+@c <en>the same output as without @samp{-n}.  In some cases
+@c <en>the output will be the same, but in other cases
+@c <en>@sc{cvs} will skip some of the processing that would
+@c <en>have been required to produce the exact same output.
+Observe que o @sc{cvs} não vai necessariamente produzir
+exatamente a mesma saída que sem o @samp{-n}.  Em
+alguns casos, a saída vai ser a mesma, mas em outros
+casos o @sc{cvs} vai pular algum processamento que
+seria necessário para produzir exatamente a mesma saída.
 
 @item -Q
-Cause the command to be really quiet; the command will only
-generate output for serious problems.
+@c <en>Cause the command to be really quiet; the command will only
+@c <en>generate output for serious problems.
+Faz com que o comando seja realmente silencioso; o
+comando só vai gerar alguma saída para problemas sérios.
 
 @item -q
-Cause the command to be somewhat quiet; informational messages,
-such as reports of recursion through subdirectories, are
-suppressed.
+@c <en>Cause the command to be somewhat quiet; informational messages,
+@c <en>such as reports of recursion through subdirectories, are
+@c <en>suppressed.
+Faz com que o comando seja bastante silencioso;
+mensagens informativas, tais como relatórios de
+recursão em subdiretórios, são suprimidas.
 
 @c <en>@cindex Read-only files, and -r
 @cindex Read-only files, and -r
@@ -13102,32 +13183,44 @@ suppressed.
 @c <en>(@pxref{Environment variables}).  The default is to
 @c <en>make working files writable, unless watches are on
 @c <en>(@pxref{Watches}).
-Make new working files read-only.  Same effect
-as if the @code{$CVSREAD} environment variable is set
-(@pxref{Variáveis de ambiente}).  The default is to
-make working files writable, unless watches are on
+Torna novos arquivos de trabalho somente-leitura.
+Mesmo efeito se a variável de ambiente @code{$CVSREAD}
+estiver configurada (@pxref{Variáveis de ambiente}).  O
+padrão é fazer arquivos de trabalho editáveis, a menos
+que ???watches??? estejam ligados
 (@pxref{???Watches???}).
 
 @item -s @var{variable}=@var{value}
-Set a user variable (@pxref{Variables}).
+@c <en>Set a user variable (@pxref{Variables}).
+Configura uma variável de usuário (@pxref{Variables}).
 
 @cindex Trace
 @item -t
-Trace program execution; display messages showing the steps of
-@sc{cvs} activity.  Particularly useful with @samp{-n} to explore the
-potential impact of an unfamiliar command.
+@c <en>Trace program execution; display messages showing the steps of
+@c <en>@sc{cvs} activity.  Particularly useful with @samp{-n} to explore the
+@c <en>potential impact of an unfamiliar command.
+Rastreia a execução do programa; mostra mensagens com
+os passos da atividade do @sc{cvs}.  Particularmente
+útil com @samp{-n} para explorar o impacto potencial de
+comandos estranhos.
 
 @item -v
 @item --version
-Display version and copyright information for @sc{cvs}.
+@c <en>Display version and copyright information for @sc{cvs}.
+Mostra informações de versão e copyright para o @sc{cvs}.
 
 @cindex CVSREAD, overriding
 @cindex Overriding CVSREAD
 @item -w
-Make new working files read-write.  Overrides the
-setting of the @code{$CVSREAD} environment variable.
-Files are created read-write by default, unless @code{$CVSREAD} is
-set or @samp{-r} is given.
+@c <en>Make new working files read-write.  Overrides the
+@c <en>setting of the @code{$CVSREAD} environment variable.
+@c <en>Files are created read-write by default, unless @code{$CVSREAD} is
+@c <en>set or @samp{-r} is given.
+Torna novos arquivos de trabalho editáveis.  Sobrepõe a
+configuração da variável de ambiente
+@code{$CVSREAD}. Arquivos são criados editáveis por
+padrão, a menos que o @code{$CVSREAD} esteja
+configurado ou seja dada a opção @samp{-r}.
 @c Note that -w only overrides -r and CVSREAD; it has
 @c no effect on files which are readonly because of
 @c "cvs watch on".  My guess is that is the way it
@@ -13148,25 +13241,30 @@ set or @samp{-r} is given.
 @c <en>available by default; it must be enabled using a
 @c <en>special configure option, @file{--enable-encryption},
 @c <en>when you build @sc{cvs}.
-Encrypt all communication between the client and the
-server.  Only has an effect on the @sc{cvs} client.  As
-of this writing, this is only implemented when using a
-GSSAPI connection (@pxref{Autenticação GSSAPI}) or a
-Kerberos connection (@pxref{Autenticação kerberos}).
-Enabling encryption implies that message traffic is
-also authenticated.  Encryption support is not
-available by default; it must be enabled using a
-special configure option, @file{--enable-encryption},
-when you build @sc{cvs}.
+Criptografa toda comunicação entre o cliente e o
+servidor.  Tem efeito apenas no cliente @sc{cvs}.
+Quando este texto estava sendo escrito, isto estava
+implementado apenas para uso com conexões GSSAPI
+(@pxref{Autenticação GSSAPI}) ou Kerberos
+(@pxref{Autenticação kerberos}).  Habilitar
+criptografia implica que o tráfego de mensagens é
+também autenticado.  Suporte a criptografia não está
+disponível por padrão; deve ser habilitado usando uma
+opção de configuração especial, @file{--enable-encryption},
+quando for construir o @sc{cvs}.
 
 @item -z @var{gzip-level}
 @cindex Compression
 @cindex Gzip
-Set the compression level.
-Valid levels are 1 (high speed, low compression) to
-9 (low speed, high compression), or 0 to disable
-compression (the default).
-Only has an effect on the @sc{cvs} client.
+@c <en>Set the compression level.
+@c <en>Valid levels are 1 (high speed, low compression) to
+@c <en>9 (low speed, high compression), or 0 to disable
+@c <en>compression (the default).
+@c <en>Only has an effect on the @sc{cvs} client.
+Ajusta o nível de compressão. Níveis válidos são 1
+(alta velocidade, baixa compressão) a 9 (baixa
+velocidade, alta compressão), ou 0 para desabilitar
+compressão (o padrão). Tem efeito apenas no cliente @sc{cvs}.
 
 @end table
 
@@ -13671,8 +13769,7 @@ normally do not manipulate default branches; sticky
 tags (@pxref{Etiquetas adesivas}) are a better way to decide
 which branch you want to work on.  There is one reason
 to run @code{cvs admin -b}: to revert to the vendor's
-version when using vendor branches (@pxref{Reverting
-local changes}).
+version when using vendor branches (@pxref{Desfazendo mudanças locais}).
 There can be no space between @samp{-b} and its argument.
 @c Hmm, we don't document the usage where rev is
 @c omitted.  Maybe that usage can/should be deprecated
@@ -16749,7 +16846,7 @@ Administration of history files in the repository.  See
 @c <en>@item -b[@var{rev}]
 @item -b[@var{rev}]
 @c <en>Set default branch.  See @ref{Reverting local changes}.
-Set default branch.  See @ref{Reverting local changes}.
+Set default branch.  See @ref{Desfazendo mudanças locais}.
 
 @c <en>@item -c@var{string}
 @item -c@var{string}
@@ -18074,8 +18171,8 @@ O mais importante destes arquivos é o arquivo
 @c <en>use these definitions if you use @sc{cvs} to update the
 @c <en>modules file (use normal commands like @code{add},
 @c <en>@code{commit}, etc).
-O arquivo @file{modules} registra suas definições de
-nomes para coleções de código fonte.  @sc{cvs} vai usar
+O arquivo @file{modules} (módulos) registra suas definições de
+nomes para coleções de código fonte.  O @sc{cvs} vai usar
 estas definições se você usar o @sc{cvs} para atualizar
 o arquivo modules (use comandos normais, como @code{add},
 @code{commit}, etc).
@@ -18085,11 +18182,11 @@ o arquivo modules (use comandos normais, como @code{add},
 @c <en>module definitions.  Long lines can be continued on the
 @c <en>next line by specifying a backslash (@samp{\}) as the
 @c <en>last character on the line.
-The @file{modules} file may contain blank lines and
-comments (lines beginning with @samp{#}) as well as
-module definitions.  Long lines can be continued on the
-next line by specifying a backslash (@samp{\}) as the
-last character on the line.
+O arquivo @file{modules} pode conter linhas em branco e
+comentários (linhas iniciando com @samp{#}) assim como
+definições de módulos.  Linhas longas podem ser
+continuadas na linha seguinte colocando uma
+contra-barra (@samp{\}) como último caractere da linha.
 
 @c <en>There are three basic types of modules: alias modules,
 @c <en>regular modules, and ampersand modules.  The difference
@@ -18100,15 +18197,15 @@ last character on the line.
 @c <en>contains two files, @file{file1} and @file{file2}, and a
 @c <en>directory @file{sdir}.  @file{first-dir/sdir} contains
 @c <en>a file @file{sfile}.
-There are three basic types of modules: alias modules,
-regular modules, and ampersand modules.  The difference
-between them is the way that they map files in the
-repository to files in the working directory.  In all
-of the following examples, the top-level repository
-contains a directory called @file{first-dir}, which
-contains two files, @file{file1} and @file{file2}, and a
-directory @file{sdir}.  @file{first-dir/sdir} contains
-a file @file{sfile}.
+Existem três tipos básicos de módulos: módulos de alias,
+módulos regulares, e módulos ???ampersand???.  A
+diferença entre eles é a forma como eles relacionam
+arquivos no repositório com arquivos no diretório de
+trabalho.  Em todos os exemplos seguintes, o mais alto
+nível de diretório do repositório contém um diretório
+chamado @file{first-dir}, que contém dois arquivos,
+@file{file1} e @file{file2}, e um diretório
+@file{sdir}.  @file{first-dir/sdir} contém um arquivo @file{sfile}.
 
 @c FIXME: should test all the examples in this section.
 
@@ -18553,10 +18650,15 @@ completed.
 
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@c <en>@node Wrappers
 @node Wrappers
+@c <en>@appendixsec The cvswrappers file
 @appendixsec The cvswrappers file
+@c <en>@cindex cvswrappers (admin file)
 @cindex cvswrappers (admin file)
+@c <en>@cindex CVSWRAPPERS, environment variable
 @cindex CVSWRAPPERS, environment variable
+@c <en>@cindex Wrappers
 @cindex Wrappers
 
 @c FIXME: need some better way of separating this out
@@ -18565,12 +18667,29 @@ completed.
 @c should be better motivated (e.g. start with the
 @c problems, then explain how the feature solves it).
 
+@c <en>Wrappers refers to a @sc{cvs} feature which lets you
+@c <en>control certain settings based on the name of the file
+@c <en>which is being operated on.  The settings are @samp{-k}
+@c <en>for binary files, and @samp{-m} for nonmergeable text
+@c <en>files.
 Wrappers refers to a @sc{cvs} feature which lets you
 control certain settings based on the name of the file
 which is being operated on.  The settings are @samp{-k}
 for binary files, and @samp{-m} for nonmergeable text
 files.
 
+@c <en>The @samp{-m} option
+@c <en>specifies the merge methodology that should be used when
+@c <en>a non-binary file is updated.  @code{MERGE} means the usual
+@c <en>@sc{cvs} behavior: try to merge the files.  @code{COPY}
+@c <en>means that @code{cvs update} will refuse to merge
+@c <en>files, as it also does for files specified as binary
+@c <en>with @samp{-kb} (but if the file is specified as
+@c <en>binary, there is no need to specify @samp{-m 'COPY'}).
+@c <en>@sc{cvs} will provide the user with the
+@c <en>two versions of the files, and require the user using
+@c <en>mechanisms outside @sc{cvs}, to insert any necessary
+@c <en>changes.
 The @samp{-m} option
 specifies the merge methodology that should be used when
 a non-binary file is updated.  @code{MERGE} means the usual
@@ -18605,6 +18724,7 @@ merging is done on update; it does not affect how files
 are stored.  See @ref{Arquivos binários}, for more on
 binary files.
 
+@c <en>The basic format of the file @file{cvswrappers} is:
 The basic format of the file @file{cvswrappers} is:
 
 @c FIXME: @example is all wrong for this.  Use @deffn or
@@ -18683,6 +18803,9 @@ options}).
 
 @c FIXME: We don't document -W or point to where it is
 @c documented.  Or .cvswrappers.
+@c <en>For example, the following command imports a
+@c <en>directory, treating files whose name ends in
+@c <en>@samp{.exe} as binary:
 For example, the following command imports a
 directory, treating files whose name ends in
 @samp{.exe} as binary:
@@ -18727,12 +18850,22 @@ cvs import -I ! -W "*.exe -k 'b'" first-dir vendortag reltag
 @c <en>@cindex Committing, administrative support files
 @cindex Committing, administrative support files
 
+@c <en>The @samp{-i} flag in the @file{modules} file can be
+@c <en>used to run a certain program whenever files are
+@c <en>committed (@pxref{modules}).  The files described in
+@c <en>this section provide other, more flexible, ways to run
+@c <en>programs whenever something is committed.
 The @samp{-i} flag in the @file{modules} file can be
 used to run a certain program whenever files are
 committed (@pxref{modules}).  The files described in
 this section provide other, more flexible, ways to run
 programs whenever something is committed.
 
+@c <en>There are three kind of programs that can be run on
+@c <en>commit.  They are specified in files in the repository,
+@c <en>as described below.  The following table summarizes the
+@c <en>file names and the purpose of the corresponding
+@c <en>programs.
 There are three kind of programs that can be run on
 commit.  They are specified in files in the repository,
 as described below.  The following table summarizes the
@@ -18741,11 +18874,19 @@ programs.
 
 @table @file
 @item commitinfo
+@c <en>The program is responsible for checking that the commit
+@c <en>is allowed.  If it exits with a non-zero exit status
+@c <en>the commit will be aborted.
 The program is responsible for checking that the commit
 is allowed.  If it exits with a non-zero exit status
 the commit will be aborted.
 
 @item verifymsg
+@c <en>The specified program is used to evaluate the log message,
+@c <en>and possibly verify that it contains all required
+@c <en>fields.  This is most useful in combination with the
+@c <en>@file{rcsinfo} file, which can hold a log message
+@c <en>template (@pxref{rcsinfo}).
 The specified program is used to evaluate the log message,
 and possibly verify that it contains all required
 fields.  This is most useful in combination with the
@@ -18753,6 +18894,12 @@ fields.  This is most useful in combination with the
 template (@pxref{rcsinfo}).
 
 @item loginfo
+@c <en>The specified program is called when the commit is
+@c <en>complete.  It receives the log message and some
+@c <en>additional information and can store the log message in
+@c <en>a file, or mail it to appropriate persons, or maybe
+@c <en>post it to a local newsgroup, or@dots{}  Your
+@c <en>imagination is the limit!
 The specified program is called when the commit is
 complete.  It receives the log message and some
 additional information and can store the log message in
@@ -18762,9 +18909,13 @@ imagination is the limit!
 @end table
 
 @menu
+@c <en>* syntax::                      The common syntax
 * syntax::                      The common syntax
+@c <en>* commitinfo::                  Pre-commit checking
 * commitinfo::                  Pre-commit checking
+@c <en>* verifymsg::                   How are log messages evaluated?
 * verifymsg::                   How are log messages evaluated?
+@c <en>* loginfo::                     Where should log messages be sent?
 * loginfo::                     Where should log messages be sent?
 @end menu
 
