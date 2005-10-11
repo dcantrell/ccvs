@@ -1,3 +1,8 @@
+2005-10-11  Derek Price  <derek@ximbiot.com>
+
+	* client.h (SEND_BUILD_DIRS, SEND_FORCE, SEND_NO_CONTENTS,
+	BACKUP_MODIFIED_FILES): Tidy.
+
 2005-10-04  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (diff_u_test, diff_recursive_test): New functions.

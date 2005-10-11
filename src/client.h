@@ -117,10 +117,10 @@ send_files (int argc, char **argv, int local, int aflag,
 		  unsigned int flags);
 
 /* Flags for send_files.  */
-# define SEND_BUILD_DIRS 1
-# define SEND_FORCE 2
-# define SEND_NO_CONTENTS 4
-# define BACKUP_MODIFIED_FILES 8
+# define SEND_BUILD_DIRS	(1 << 0)
+# define SEND_FORCE		(1 << 1)
+# define SEND_NO_CONTENTS	(1 << 2)
+# define BACKUP_MODIFIED_FILES	(1 << 3)
 
 /* Send an argument to the remote server.  */
 void
