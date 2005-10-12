@@ -24,6 +24,10 @@
 #include "strftime.h"
 #include "xgethostname.h"
 
+#include "sign.h"
+
+
+
 const char *program_name;
 const char *program_path;
 const char *cvs_cmd_name;
@@ -519,6 +523,7 @@ main (int argc, char **argv)
 	{"help-commands", 0, NULL, 1},
 	{"help-synonyms", 0, NULL, 2},
 	{"help-options", 0, NULL, 4},
+	{"sign-textmode", required_argument, NULL, 5},
 #ifdef SERVER_SUPPORT
 	{"allow-root", required_argument, NULL, 3},
 #endif /* SERVER_SUPPORT */
@@ -547,8 +552,9 @@ main (int argc, char **argv)
 #endif
 
     /*
-     * Just save the last component of the path for error messages
+     * Initialize globals.
      */
+    /* Just save the last component of the path for error messages.  */
     program_path = xstrdup (argv[0]);
 #ifdef ARGV0_NOT_PROGRAM_NAME
     /* On some systems, e.g. VMS, argv[0] is not the name of the command
@@ -557,6 +563,7 @@ main (int argc, char **argv)
 #else
     program_name = last_component (argv[0]);
 #endif
+
 
     /*
      * Query the environment variables up-front, so that
@@ -639,6 +646,11 @@ main (int argc, char **argv)
 	    case 4:
 		/* --help-options */
 		usage (opt_usage);
+		break;
+	    case 5:
+		/* --sign-textmode */
+		if (sign_textmode) free (&sign_textmode);
+		sign_textmode = xstrdup (optarg);
 		break;
 #ifdef SERVER_SUPPORT
 	    case 3:

@@ -14,6 +14,8 @@
 
 /* Interface between the client and the rest of CVS.  */
 
+#include "sign.h"
+
 /* Stuff shared with the server.  */
 char *mode_to_string (mode_t);
 int change_mode (const char *, const char *, int);
@@ -114,7 +116,8 @@ send_file_names (int argc, char **argv, unsigned int flags);
  */
 void
 send_files (int argc, char **argv, int local, int aflag,
-		  unsigned int flags);
+	    unsigned int flags, sign_state sign, const char *sign_template,
+	    List *send_args);
 
 /* Flags for send_files.  */
 # define SEND_BUILD_DIRS 1

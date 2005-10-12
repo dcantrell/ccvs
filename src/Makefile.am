@@ -76,6 +76,7 @@ cvs_SOURCES = \
 	run.c \
 	scramble.c \
 	server.c \
+	sign.c sign.h \
 	stack.c stack.h \
 	status.c \
 	subr.c subr.h \

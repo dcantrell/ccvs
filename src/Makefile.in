@@ -150,10 +150,10 @@ am_cvs_OBJECTS = add.$(OBJEXT) admin.$(OBJEXT) annotate.$(OBJEXT) \
 	rcs.$(OBJEXT) rcscmds.$(OBJEXT) recurse.$(OBJEXT) \
 	release.$(OBJEXT) remove.$(OBJEXT) repos.$(OBJEXT) \
 	root.$(OBJEXT) rsh-client.$(OBJEXT) run.$(OBJEXT) \
-	scramble.$(OBJEXT) server.$(OBJEXT) stack.$(OBJEXT) \
-	status.$(OBJEXT) subr.$(OBJEXT) tag.$(OBJEXT) update.$(OBJEXT) \
-	version.$(OBJEXT) vers_ts.$(OBJEXT) watch.$(OBJEXT) \
-	wrapper.$(OBJEXT) zlib.$(OBJEXT)
+	scramble.$(OBJEXT) server.$(OBJEXT) sign.$(OBJEXT) \
+	stack.$(OBJEXT) status.$(OBJEXT) subr.$(OBJEXT) tag.$(OBJEXT) \
+	update.$(OBJEXT) version.$(OBJEXT) vers_ts.$(OBJEXT) \
+	watch.$(OBJEXT) wrapper.$(OBJEXT) zlib.$(OBJEXT)
 cvs_OBJECTS = $(am_cvs_OBJECTS)
 am__DEPENDENCIES_1 =
 binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
@@ -200,6 +200,7 @@ FNMATCH_H = @FNMATCH_H@
 GETOPT_H = @GETOPT_H@
 GLOB_H = @GLOB_H@
 GMSGFMT = @GMSGFMT@
+GPG = @GPG@
 HAVE_LONG_64BIT = @HAVE_LONG_64BIT@
 HAVE_LONG_LONG_64BIT = @HAVE_LONG_LONG_64BIT@
 HAVE__BOOL = @HAVE__BOOL@
@@ -359,6 +360,7 @@ cvs_SOURCES = \
 	run.c \
 	scramble.c \
 	server.c \
+	sign.c sign.h \
 	stack.c stack.h \
 	status.c \
 	subr.c subr.h \
@@ -553,6 +555,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/run.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scramble.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/server.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sign.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/socket-client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stack.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/status.Po@am__quote@

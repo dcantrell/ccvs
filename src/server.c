@@ -2032,6 +2032,30 @@ serve_modified (char *arg)
 
 
 static void
+serve_signature (char *arg)
+{
+    size_t size = 65;  /* FIXME - Need to parse this properly.  */
+
+    /* FIXME - Reading and discarding the signature data until we know
+     * what to do with it.
+     */
+    while (size > 0)
+    {
+	int status;
+	size_t nread;
+	char *data;
+
+	status = buf_read_data (buf_from_net, size, &data, &nread);
+	if (status != 0)
+	    return;
+	size -= nread;
+    }
+    return;
+}
+
+
+
+static void
 serve_enable_unchanged (char *arg)
 {
 # ifdef PROXY_SUPPORT
@@ -5885,6 +5909,7 @@ struct request requests[] =
   REQ_LINE("Kopt", serve_kopt, 0),
   REQ_LINE("Checkin-time", serve_checkin_time, 0),
   REQ_LINE("Modified", serve_modified, RQ_ESSENTIAL),
+  REQ_LINE("Signature", serve_signature, 0),
   REQ_LINE("Is-modified", serve_is_modified, 0),
 
   /* The client must send this request to interoperate with CVS 1.5

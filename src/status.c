@@ -95,7 +95,7 @@ cvsstatus (int argc, char **argv)
 	   seem to have the potential to get munged for any number of
 	   reasons, it seems better to not rely too much on them.  */
 
-	send_files (argc, argv, local, 0, 0);
+	send_files (argc, argv, local, 0, 0, SIGN_NEVER, NULL, NULL);
 
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 

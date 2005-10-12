@@ -1,3 +1,27 @@
+2005-10-11  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (cvs_SOURCES): Add sign.c & sign.h.
+	* client.c (sign_args_list_to_args_proc, send_signature): New
+	functions.
+	(struct send_data): Add sign mode and template.
+	(send_fileproc): Send signature.
+	(send_files): Accept sign mode and sign template.
+	* client.h (send_files): Update proto.
+	* add.c, admin.c, annotate.c, client.c, diff.c, edit.c, log.c, ls.c,
+	remove.c, status.c, tag.c, update.c, watch.c: Change all callers.
+	* commit.c (commit): Accept and handle new sign options.
+	* hash.h: Avoid double-inclusion.
+	* main.c (main): Handle new sign options.
+	* root.c (new_cvsroot_t, free_cvsroot_t, parse_cvsroot_t), sign.h
+	(cvsroot_t): Handle new sign method options.
+	* server.c (serve_signature): New stub function.
+	(requests): Add `Signature' request.
+	* sign.c, sign.h: New files.
+	* subr.c (format_cmdline): Handle NULL data.
+	* sanity.config.sh: Set $GPG.
+	* sanity.sh: Set up gpg keys for tests when $GPG is set.
+	(writeproxy*): Compensate for new server requests.
+
 2005-10-04  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (diff_u_test, diff_recursive_test): New functions.

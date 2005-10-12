@@ -13,6 +13,8 @@
 
 /* CVSroot data structures */
 
+#include "sign.h"
+
 /* Access method specified in CVSroot. */
 typedef enum {
     null_method = 0,
@@ -32,6 +34,15 @@ typedef struct cvsroot_s {
     CVSmethod method;		/* One of the enum values above. */
     char *directory;		/* The directory name. */
     bool isremote;		/* True if we are doing remote access. */
+    sign_state sign;		/* Whether to sign commits.  */
+    char *sign_template;	/* The template to use to launch the external
+				 * program to produce GPG signatures.
+				 */
+    char *sign_textmode;	/* The arg GPG needs for text files.  */
+    List *sign_args;		/* Keep track of any additional arguments for
+				 * the sign tool.
+				 */
+
 /* The following is required for servers now to allow Redirects to be sent
  * for remote roots when client support is disabled.
  */

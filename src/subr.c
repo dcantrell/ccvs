@@ -1689,15 +1689,23 @@ format_cmdline (const char *format, ...)
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 			    /* the *only* case possible without
 			     * SUPPORT_OLD_INFO_FORMAT_STRINGS
-			     * - !onearg */
-			    if (!inquotes)
+			     * - !onearg
+			     */
+			    /* Avoid adding an empty argument for NULL data.
+			     */
+			    if (!inquotes && b->data)
 			    {
 				doff = d - buf;
 				expand_string (&buf, &length, doff + 1);
 				d = buf + doff;
 				*d++ = '"';
 			    }
-			    outstr = cmdlineescape (inquotes ? inquotes : '"', b->data);
+			    if (b->data)
+				outstr = cmdlineescape (inquotes ? inquotes
+								 : '"',
+							b->data);
+			    else
+				outstr = xstrdup ("");
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 			} /* onearg */
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
@@ -1711,7 +1719,7 @@ format_cmdline (const char *format, ...)
 			{
 			    free(outstr);
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-			    if (!inquotes)
+			    if (!inquotes && b->data)
 			    {
 				doff = d - buf;
 				expand_string (&buf, &length, doff + 1);
