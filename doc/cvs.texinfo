@@ -2315,6 +2315,35 @@ server.  For more on write proxies and secondary servers, please see
 
 This method option first appeared in @sc{cvs} version 1.12.11 and is valid only
 as a modifcation to the @code{ext} connection method.
+
+@item sign
+@itemx nosign
+Force OpenPGP signatures on or off.  @samp{sign} will cause the commit to abort
+if the server does not support OpenPGP signatures.  Without one of these
+options, CVS will autonegotiate signing, attempting to sign commits when the
+server supports it.  May be overridden by the @samp{--sign} and @samp{--nosign}
+commit options (@pxref{commit options}).
+
+@item sign-template=@var{template}
+Use @var{template} as the command line template to generate OpenPGP signatures.
+Format strings in this template are substituted before the commit is run:
+
+@table @code
+@item %t
+Substitute in the textmode flag (defaults to @samp{--textmode}) when a
+signature is being generated for a text file.
+
+@item %a
+Substitute in any @var{arg}s set via the @samp{--sign-arg} option or the
+CVSROOT sign-arg method option.
+
+@item %s
+Substitute the name of the file to generate a signature for.
+@end table
+
+This template should send the generated signature to its standard output.
+Overrides the @samp{sign-template} method optoin and defaults to something like
+@samp{/usr/bin/gpg --detach-sign --output - %t %a %s}.
 @end table
 
 As a further example, to combine both the @code{CVS_RSH} and @code{CVS_SERVER}
@@ -9455,8 +9484,9 @@ $ cvs checkout -D yesterday tc
 
 @itemize @bullet
 @item
-Synopsis: commit [-lnRf] [-m 'log_message' |
--F file] [-r revision] [files@dots{}]
+Synopsis: commit [-glnRf] [-m 'log_message' |
+-F file] [-r revision] [--sign] [--sign-template @var{template}]
+[--sign-arg @var{arg}]@dots{} [files@dots{}]
 @item
 Requires: working directory, repository.
 @item
@@ -9575,6 +9605,36 @@ use @samp{-f -R}.
 @item -m @var{message}
 Use @var{message} as the log message, instead of
 invoking an editor.
+
+@item -g
+@itemx --sign
+@itemx --nosign
+Force OpenPGP signatures on or off.  @samp{-g} & @samp{--sign} will cause the
+commit to abort if the server does not support OpenPGP signatures.  Without one
+of these options, CVS will autonegotiate signing, attempting to sign commits
+when the server supports it.  Overrides the @samp{sign} and @samp{nosign}
+method options.
+
+@item --sign-template @var{template}
+Use @var{template} as the command line template to generate OpenPGP signatures.
+Format strings in this template are substituted before the commit is run:
+
+@table @code
+@item %t
+Substitute in the textmode flag (defaults to @samp{--textmode}) when a
+signature is being generated for a text file.
+
+@item %a
+Substitute in any @var{arg}s set via the @samp{--sign-arg} option or the
+CVSROOT sign-arg method option.
+
+@item %s
+Substitute the name of the file to generate a signature for.
+@end table
+
+This template should send the generated signature to its standard output.
+Overrides the @samp{sign-template} method optoin and defaults to something like
+@samp{/usr/bin/gpg --detach-sign --output - %t %a %s}.
 @end table
 
 @need 2000

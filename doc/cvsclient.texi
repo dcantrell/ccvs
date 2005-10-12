@@ -839,6 +839,12 @@ servers which can maintain timestamp and time of checkin separately).
 This request should affect the @code{import} request, and may optionally
 affect the @code{ci} request or other relevant requests if any.
 
+@item Signature \n
+Response expect: no.  Additional data: signature transmission.
+Send the server the OpenPGP signature for the next Modified request.
+The OpenPGP signature should be
+@url{http://www.ietf.org/rfc/rfc2440.txt, RFC 2440} compliant.
+
 @item Modified @var{filename} \n
 Response expected: no.  Additional data: mode, \n, file transmission.
 Send the server a copy of one locally modified file.  @var{filename} is

@@ -1,3 +1,9 @@
+2005-10-11  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (The connection method, commit options): Describe new
+	OpenPGP signature related options.
+	* cvsclient.texi (Requests): Describe Signature request.
+
 2005-10-06  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (loginfo): Correct typo.  (From Wiki.)
