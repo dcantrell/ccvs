@@ -7932,7 +7932,7 @@ option as in other commands.  (Other command options,
 which are listed with the individual commands, may have
 different behavior from one @sc{cvs} command to the other).
 
-@strong{Note: the @samp{history} command is an exception; it supports
+@strong{The @samp{history} command is an exception; it supports
 many options that conflict even with these standard options.}
 
 @table @code
@@ -8181,7 +8181,7 @@ Do not run any tag program.  (A program can be
 specified to run in the modules
 database (@pxref{modules}); this option bypasses it).
 
-@strong{Note: this is not the same as the @samp{cvs -n}
+@strong{This is not the same as the @samp{cvs -n}
 program option, which you can specify to the left of a cvs command!}
 
 Available with the @code{checkout}, @code{commit}, @code{export},
@@ -8256,7 +8256,7 @@ Specifying the @samp{-q} global option along with the
 the warning messages when the @sc{rcs} file
 does not contain the specified tag.
 
-@strong{Note: this is not the same as the overall @samp{cvs -r} option,
+@strong{This is not the same as the overall @samp{cvs -r} option,
 which you can specify to the left of a @sc{cvs} command!}
 
 @samp{-r} is available with the @code{annotate}, @code{checkout},
@@ -9898,7 +9898,7 @@ various formats.
 Logging must be enabled by creating the file
 @file{$CVSROOT/CVSROOT/history}.
 
-@strong{Note: @code{history} uses @samp{-f}, @samp{-l},
+@strong{@code{history} uses @samp{-f}, @samp{-l},
 @samp{-n}, and @samp{-p} in ways that conflict with the
 normal use inside @sc{cvs} (@pxref{Common options}).}
 
@@ -10275,7 +10275,7 @@ Coordinated Universal Time (UTC).  (Other parts of
 @c client then communicates to the server, is the
 @c right solution.
 
-@strong{Note: @code{log} uses @samp{-R} in a way that conflicts
+@strong{@code{log} uses @samp{-R} in a way that conflicts
 with the normal use inside @sc{cvs} (@pxref{Common options}).}
 
 @menu
@@ -12776,7 +12776,7 @@ RereadLogAfterVerify=always
 @cindex Per-module editor
 @cindex Log messages, editing
 
-@strong{Note: The @file{editinfo} feature has been
+@strong{The @file{editinfo} feature has been
 rendered obsolete.  To set a default editor for log
 messages use the @code{CVSEDITOR}, @code{EDITOR} environment variables
 (@pxref{Environment variables}) or the @samp{-e} global
@@ -13572,7 +13572,7 @@ that the file should be checked with the file system
 @samp{stat()} function to see if it has changed (see warning below)
 before rereading.  The default value is @samp{always}.
 
-@strong{Note: the `stat' mode can cause CVS to pause for up to
+@strong{The `stat' mode can cause CVS to pause for up to
 one extra second per directory committed.  This can be less IO and
 CPU intensive but is not recommended for use with large repositories}
 
