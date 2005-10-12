@@ -88,7 +88,10 @@ static time_t last_register_time;
 
 static const char *const commit_usage[] =
 {
-    "Usage: %s %s [-cRlf] [-m msg | -F logfile] [-r rev] files...\n",
+    "Usage: %s %s [-cRlf] [-m msg | -F logfile] [-r rev]\n",
+    "                  [-g | --sign | --nosign] [--sign-template template]\n",
+    "                  [--sign-arg arg]... files...\n",
+    "\n",
     "    -c          Check for valid edits before committing.\n",
     "    -R          Process directories recursively.\n",
     "    -l          Local directory only (not recursive).\n",
@@ -96,6 +99,13 @@ static const char *const commit_usage[] =
     "    -F logfile  Read the log message from file.\n",
     "    -m msg      Log message.\n",
     "    -r rev      Commit to this branch or trunk revision.\n",
+    "\n",
+    "    -g | --sign | --nosign\n",
+    "                Force (or forbid) OpenPGP signatures (default autonegotiates).\n",
+    "    --sign-template template\n",
+    "                Use template to generate OpenPGP signatures.\n",
+    "    --sign-arg arg\n",
+    "                Pass argument to template.\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
