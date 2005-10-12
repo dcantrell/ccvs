@@ -24,6 +24,8 @@
 #include "edit.h"
 #include "fileattr.h"
 #include "hardlink.h"
+#include "sign.h"
+#include "stack.h"
 
 static Dtype check_direntproc (void *callerdat, const char *dir,
                                const char *repos, const char *update_dir,
@@ -332,17 +334,45 @@ copy_ulist (Node *node, void *data)
 
 
 
-#ifdef SERVER_SUPPORT
-# define COMMIT_OPTIONS "+cnlRm:fF:r:"
-#else /* !SERVER_SUPPORT */
-# define COMMIT_OPTIONS "+clRm:fF:r:"
-#endif /* SERVER_SUPPORT */
+/* Commit options both the client and server accept.  */
+#define COMMIT_OPTIONS "+cgG:lRm:fF:r:"
+
+    
+    
 int
 commit (int argc, char **argv)
 {
     int c;
     int err = 0;
     int local = 0;
+    int option_index = 0;	/* `getopt_long' stores the option index here,
+				 * but right now we don't use it.
+				 */
+    /* If a GPG-like program couldn't be found at compile time, default the sign
+     * state to off, otherwise, depend on the server support.
+     */
+#ifdef GPG_PROGRAM
+    sign_state sign = SIGN_DEFAULT;
+#else
+    sign_state sign = SIGN_NEVER;
+#endif
+    char *sign_template = NULL;
+    List *sign_args;
+
+#ifdef SERVER_SUPPORT
+    /* See below for documentation of the `-n' option.  */
+    const char short_options[] = COMMIT_OPTIONS"n";
+#else /* !SERVER_SUPPORT */
+    const char short_options[] = COMMIT_OPTIONS;
+#endif /* SERVER_SUPPORT */
+    struct option long_options[] =
+    {
+	{"sign", 0, NULL, 'g'},
+	{"nosign", 0, NULL, 1},
+	{"sign-template", required_argument, NULL, 'G'},
+	{"sign-arg", required_argument, NULL, '2'},
+	{0, 0, 0, 0}
+    };
 
     if (argc == -1)
 	usage (commit_usage);
@@ -369,14 +399,35 @@ commit (int argc, char **argv)
     }
 #endif /* CVS_BADROOT */
 
+    sign_args = getlist ();
     optind = 0;
-    while ((c = getopt (argc, argv, COMMIT_OPTIONS)) != -1)
+    while ((c = getopt_long
+            (argc, argv, short_options, long_options, &option_index))
+           != EOF)
     {
 	switch (c)
 	{
             case 'c':
                 check_valid_edit = 1;
                 break;
+
+	    case 'g':
+		sign = SIGN_ALWAYS;
+		break;
+
+	    case 1:
+		sign = SIGN_NEVER;
+		break;
+
+	    case 'G':
+		if (sign_template) free (sign_template);
+		sign_template = xstrdup (optarg);
+		break;
+
+	    case 2:
+		push_string (sign_args, optarg);
+		break;
+
 #ifdef SERVER_SUPPORT
 	    case 'n':
 		/* Silently ignore -n for compatibility with old
@@ -600,7 +651,11 @@ commit (int argc, char **argv)
 	   program, which we used to call, wanted the file to exist,
 	   then it would be relatively simple to fix in the server.  */
 	send_files (find_args.argc, find_args.argv, local, 0,
-		    find_args.force ? SEND_FORCE : 0);
+		    find_args.force ? SEND_FORCE : 0,
+		    sign == SIGN_DEFAULT ? current_parsed_root->sign : sign,
+		    sign_template ? sign_template
+		    		  : current_parsed_root->sign_template,
+		    sign_args);
 
 	/* Sending only the names of the files which were modified, added,
 	   or removed means that the server will only do an up-to-date

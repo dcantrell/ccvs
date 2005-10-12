@@ -184,7 +184,8 @@ ls (int argc, char **argv)
 	     * the user pull status information with this command, but why
 	     * don't they just use update or status?
 	     */
-	    send_files (argc, argv, !recurse, 0, SEND_NO_CONTENTS);
+	    send_files (argc, argv, !recurse, 0, SEND_NO_CONTENTS,
+		    	SIGN_NEVER, NULL, NULL);
 	    send_file_names (argc, argv, SEND_EXPAND_WILD);
 	    send_to_server ("list\012", 0);
 	}

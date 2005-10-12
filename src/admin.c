@@ -565,7 +565,8 @@ admin (int argc, char **argv)
 	    send_arg (admin_data.av[i]);
 
 	send_arg ("--");
-	send_files (argc, argv, 0, 0, SEND_NO_CONTENTS);
+	send_files (argc, argv, 0, 0, SEND_NO_CONTENTS, SIGN_NEVER, NULL,
+		    NULL);
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_to_server ("admin\012", 0);
         err = get_responses_and_close ();

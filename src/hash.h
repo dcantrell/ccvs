@@ -10,6 +10,9 @@
  * specified in the README file that comes with the CVS source distribution.
  */
 
+#ifndef HASH_H
+#define HASH_H
+
 /*
  * The number of buckets for the hash table contained in each list.  This
  * should probably be prime.
@@ -64,3 +67,5 @@ void delnode (Node *p);
 void freenode (Node *p);
 void sortlist (List *list, int (*)(const Node *, const Node *));
 int fsortcmp (const Node *p, const Node *q);
+
+#endif /* HASH_H */

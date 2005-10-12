@@ -18,6 +18,8 @@
 #include <assert.h>
 #include "getline.h"
 
+#include "stack.h"
+
 /* Printable names for things in the current_parsed_root->method enum variable.
    Watch out if the enum is changed in cvs.h! */
 
@@ -383,6 +385,10 @@ new_cvsroot_t (void)
     newroot->directory = NULL;
     newroot->method = null_method;
     newroot->isremote = false;
+    newroot->sign = SIGN_DEFAULT;
+    newroot->sign_template = xstrdup (DEFAULT_SIGN_TEMPLATE);
+    newroot->sign_textmode = xstrdup (DEFAULT_SIGN_TEXTMODE);
+    newroot->sign_args = getlist ();
 #ifdef CLIENT_SUPPORT
     newroot->username = NULL;
     newroot->password = NULL;
@@ -414,6 +420,11 @@ free_cvsroot_t (cvsroot_t *root)
 	free (root->original);
     if (root->directory != NULL)
 	free (root->directory);
+    if (root->sign_template)
+	free (root->sign_template);
+    if (root->sign_textmode)
+	free (root->sign_textmode);
+    dellist (&root->sign_args);
 #ifdef CLIENT_SUPPORT
     if (root->username != NULL)
 	free (root->username);
@@ -562,7 +573,7 @@ parse_cvsroot (const char *root_in)
 	while ((p = strtok (NULL, ";")))
 	{
 	    char *q = strchr (p, '=');
-	    if (q == NULL)
+	    if (!q && (strcasecmp (p, "sign") || strcasecmp (p, "nosign")))
 	    {
 	        error (0, 0, "Option (`%s') has no argument in CVSROOT.",
                        p);
@@ -594,6 +605,34 @@ parse_cvsroot (const char *root_in)
 "CVSROOT may only specify a positive, non-zero, integer proxy port (not `%s').",
 			   q);
 	    }
+	    else if (!strcasecmp (p, "sign"))
+	    {
+		if (!q)
+		    newroot->sign = SIGN_ALWAYS;
+		else if (!strcasecmp (q, "default"))
+		    newroot->sign = SIGN_DEFAULT;
+		else
+		{
+		    bool on;
+		    if (readBool ("CVSROOT", "sign", q, &on))
+		    {
+			if (on)
+			    newroot->sign = SIGN_ALWAYS;
+			else
+			    newroot->sign = SIGN_NEVER;
+		    }
+		    else
+			goto error_exit;
+		}
+	    }
+	    else if (!strcasecmp (p, "nosign"))
+		newroot->sign = SIGN_NEVER;
+	    else if (!strcasecmp (p, "sign-template"))
+		newroot->sign_template = xstrdup (q);
+	    else if (!strcasecmp (p, "sign-textmode"))
+		newroot->sign_textmode = xstrdup (q);
+	    else if (!strcasecmp (p, "sign-arg"))
+		push_string (newroot->sign_args, q);
 	    else if (!strcasecmp (p, "CVS_RSH"))
 	    {
 		/* override CVS_RSH environment variable */
