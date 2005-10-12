@@ -304,6 +304,9 @@ static const char *const opt_usage[] =
     "    -a           Authenticate all net traffic.\n",
 #endif
     "    -s VAR=VAL   Set CVS user variable.\n",
+    "    --textmode ARG\n",
+    "                 Pass ARG to OpenPGP template when verifying or\n",
+    "                 generating signatures.\n",
     "(Specify the --help option for a list of other help options)\n",
     NULL
 };

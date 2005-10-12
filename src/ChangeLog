@@ -1,5 +1,8 @@
 2005-10-11  Derek Price  <derek@ximbiot.com>
 
+	* commit.c (commit_usage), main.c (opt_usage): Describe OpenPGP related
+	options.
+
 	* Makefile.am (cvs_SOURCES): Add sign.c & sign.h.
 	* client.c (sign_args_list_to_args_proc, send_signature): New
 	functions.
