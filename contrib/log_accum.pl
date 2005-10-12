@@ -489,8 +489,8 @@ sub mail_notification
 ## it returns an array of files, %s, sent from the loginfo
 ## command
 #
-#   -D		- Send diffs in emails.
-#   -d DIFF_ARG - Pass DIFF_ARG to `cvs diff' when generating diffs.  Defaults
+#   -d		- Send diffs in emails.
+#   -D DIFF_ARG - Pass DIFF_ARG to `cvs diff' when generating diffs.  Defaults
 #		  to `-ub'.  Multiple invocations will pass all DIFF_ARGS
 #		  (though first invocation always removes the default `-ub').
 #		  Implies `-D'.
@@ -509,9 +509,9 @@ sub process_argv
 
     while (@argv) {
 	$arg = shift @argv;
-	if ($arg eq '-D') {
+	if ($arg eq '-d') {
 	    $SEND_DIFF = "true";
-	} elsif ($arg eq '-d') {
+	} elsif ($arg eq '-D') {
 	    push @diffargs, shift @argv;
 	    $SEND_DIFF = "true";
 	} elsif ($arg eq '-m') {

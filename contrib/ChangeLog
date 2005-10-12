@@ -3,6 +3,7 @@
 	* log_accum.pl: Allow arbitrary arguments to be specified for
 	`cvs diff' when generating diffs.  Allow diff creation to be switched
 	on the command line.
+	(process_argv): Improve header comment block.
 
 2005-10-06  Derek Price  <derek@ximbiot.com>
 
