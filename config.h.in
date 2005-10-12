@@ -98,6 +98,9 @@
    message to be appended to the temp file when the editor is started. */
 #undef FORCE_USE_EDITOR
 
+/* Path to the gpg utility */
+#undef GPG_PROGRAM
+
 /* Define to an alternative value if GSS_C_NT_HOSTBASED_SERVICE isn't defined
    in the gssapi.h header file. MIT Kerberos 1.2.1 requires this. Only
    relevant when using GSSAPI. */
