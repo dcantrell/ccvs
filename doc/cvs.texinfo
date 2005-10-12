@@ -2236,7 +2236,7 @@ proxy.  @var{hostname} should be the name of the HTTP proxy server to connect
 through and @var{port} is the port number on the HTTP proxy server to connect
 via.  @var{port} defaults to 8080.
 
-@strong{NOTE: An HTTP proxy server is not the same as a @sc{cvs} write proxy
+@strong{An HTTP proxy server is not the same as a @sc{cvs} write proxy
 server - please see @ref{Write proxies} for more on @sc{cvs} write proxies.}
 
 For example, to connect pserver via a web proxy listening on port 8000 of
@@ -2246,7 +2246,7 @@ www.myproxy.net, you would use a method of:
 :pserver;proxy=www.myproxy.net;proxyport=8000:@var{pserver_connection_string}
 @end example
 
-@strong{NOTE: In the above example, @var{pserver_connection_string} is still
+@strong{In the above example, @var{pserver_connection_string} is still
 required to connect and authenticate to the CVS server, as noted in the
 upcoming sections on password authentication, @code{gserver}, and
 @code{kserver}.  The example above only demonstrates a modification to the
@@ -8498,7 +8498,7 @@ option as in other commands.  (Other command options,
 which are listed with the individual commands, may have
 different behavior from one @sc{cvs} command to the other).
 
-@strong{Note: the @samp{history} command is an exception; it supports
+@strong{The @samp{history} command is an exception; it supports
 many options that conflict even with these standard options.}
 
 @table @code
@@ -8660,7 +8660,7 @@ Do not run any tag program.  (A program can be
 specified to run in the modules
 database (@pxref{modules}); this option bypasses it).
 
-@strong{Note: this is not the same as the @samp{cvs -n}
+@strong{This is not the same as the @samp{cvs -n}
 program option, which you can specify to the left of a cvs command!}
 
 Available with the @code{checkout}, @code{commit}, @code{export},
@@ -8740,7 +8740,7 @@ Specifying the @samp{-q} global option along with the
 the warning messages when the @sc{rcs} file
 does not contain the specified tag.
 
-@strong{Note: this is not the same as the overall @samp{cvs -r} option,
+@strong{This is not the same as the overall @samp{cvs -r} option,
 which you can specify to the left of a @sc{cvs} command!}
 
 @samp{-r @var{tag}} is available with the @code{commit} and @code{history}
@@ -10425,7 +10425,7 @@ all possible events to a single history log file
 (@file{$CVSROOT/CVSROOT/history}) with read and write permissions for all
 users (@pxref{Creating a repository}).
 
-@strong{Note: @code{history} uses @samp{-f}, @samp{-l},
+@strong{@code{history} uses @samp{-f}, @samp{-l},
 @samp{-n}, and @samp{-p} in ways that conflict with the
 normal use inside @sc{cvs} (@pxref{Common options}).}
 
@@ -10805,7 +10805,7 @@ in local time at the client. This is typically specified in
 the @code{$TZ} environment variable, which can be set to
 govern how @code{log} displays dates.
 
-@strong{Note: @code{log} uses @samp{-R} in a way that conflicts
+@strong{@code{log} uses @samp{-R} in a way that conflicts
 with the normal use inside @sc{cvs} (@pxref{Common options}).}
 
 @menu
@@ -14747,7 +14747,7 @@ that the file should be checked with the file system
 @samp{stat()} function to see if it has changed (see warning below)
 before rereading.  The default value is @samp{always}.
 
-@strong{Note: the `stat' mode can cause CVS to pause for up to
+@strong{The `stat' mode can cause CVS to pause for up to
 one extra second per directory committed.  This can be less IO and
 CPU intensive but is not recommended for use with large repositories}
 
