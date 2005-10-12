@@ -94,15 +94,13 @@ $rcsidinfo = 2;
 #$CVSWEB_PORT = "80";
 #$CVSWEB_URI = "source/browse/";
 #$SEND_URL = "true";
-$SEND_DIFF = "true";
+$SEND_DIFF = "false";
 
 
 # Set this to a domain to have CVS pretend that all users who make
 # commits have mail accounts within that domain.
 #$EMULATE_LOCAL_MAIL_USER="nongnu.org"; 
 
-# Set this to '-c' for context diffs; defaults to '-u' for unidiff format.
-$difftype = '-uN';
 
 ############################################################
 #
@@ -334,8 +332,8 @@ sub change_summary {
               $diff .= "(In the diff below, changes in quantity "
                     . "of whitespace are not shown.)\n\n";
               open(DIFF, "-|")
-                || exec "$cvsbin/cvs", '-Qn', 'diff', "$difftype",
-                '-b', "-r$oldrev{$file}", "-r$newrev{$file}", '--', $file;
+                || exec "$cvsbin/cvs", '-Qn', 'diff', '-N', @diffargs,
+                "-r$oldrev{$file}", "-r$newrev{$file}", '--', $file;
 
               while (<DIFF>) {
                 $diff .= $_;
@@ -491,9 +489,16 @@ sub mail_notification
 ## it returns an array of files, %s, sent from the loginfo
 ## command
 #
+#   -D		- Send diffs in emails.
+#   -d DIFF_ARG - Pass DIFF_ARG to `cvs diff' when generating diffs.  Defaults
+#		  to `-ub'.  Multiple invocations will pass all DIFF_ARGS
+#		  (though first invocation always removes the default `-ub').
+#		  Implies `-D'.
+#   -m EMAIL	- Set mailto address.
+#   -p PROJECT	- Set full repository path.
 #   -r TAG	- operate only on changes with tag TAG
 #   -r BRANCH	- operate only on changes in branch TAG
-#		  Use -r "" for "only changes with no tag or branch".
+#		  Use -r "" for only changes to HEAD.
 #   -u USER	- Set CVS username to USER.
 sub process_argv
 {
@@ -504,8 +509,11 @@ sub process_argv
 
     while (@argv) {
 	$arg = shift @argv;
-	if ($arg eq '-u' && !defined($cvs_user)) {
-	    $cvs_user = shift @argv;
+	if ($arg eq '-D') {
+	    $SEND_DIFF = "true";
+	} elsif ($arg eq '-d') {
+	    push @diffargs, shift @argv;
+	    $SEND_DIFF = "true";
 	} elsif ($arg eq '-m') {
 	    push @mailto, split (/[ ,]+/, shift @argv);
 	} elsif ($arg eq '-p') {
@@ -513,6 +521,8 @@ sub process_argv
 	} elsif ($arg eq '-r') {
 	    $have_r_opt = 1;
 	    $onlytag = shift @argv;
+	} elsif ($arg eq '-u' && !defined($cvs_user)) {
+	    $cvs_user = shift @argv;
 	} else {
 	    ($donefiles) && die "Too many arguments!\n";
 	    $donefiles = !$UseNewInfoFmtStrings;
@@ -579,17 +589,25 @@ $branch = "";			# The branch being processed.
 @mailto = ();			# Email addresses to send mail to.
 $update_dir = "";		# The relative directory in the repo the
 				# sandbox is rooted in.
-@files = process_argv(@ARGV);
-@path = split('/', $files[0]);
-if ($#path == 0) {
-    $dir = ".";
-} else {
-    $dir = join('/', @path[1..$#path]);
-}
+@diffargs = ();			# Diff options.
 
+@files = process_argv @ARGV;
+
+# Set defaults that could have been overridden on the command line.
 $update_dir = `cat CVS/Repository` unless $update_dir;
 chomp $update_dir;
 die "Could not determine update dir" unless $update_dir;
+
+push @diffargs, "-ub" unless @diffargs;
+
+
+@path = split '/', $files[0];
+if ($#path == 0) {
+    $dir = ".";
+} else {
+    $dir = join '/', @path[1..$#path];
+}
+
 
 #print("ARGV  - ", join(":", @ARGV), "\n");
 #print("files - ", join(":", @files), "\n");
