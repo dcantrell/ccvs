@@ -14,6 +14,13 @@
  * Determine the path to the CVSROOT and set "Root" accordingly.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "root.h"
+
 #include "cvs.h"
 #include <assert.h>
 #include "getline.h"
