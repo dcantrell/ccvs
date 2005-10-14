@@ -1,3 +1,14 @@
+2005-10-14  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (cvs_SOURCES): Add gpg.c & gpg.h.
+	* gpg.c, gpg.h: New files.
+	* server.c (sig_buf): New global.
+	(serve_signature): Extract signature correctly & store it.
+	* buffer.c, root.c: #include buffer.h first, to test interface.
+	* buffer.c (buf_read_data): Handle input from nonio (memory) buffers.
+	* buffer.h, root.h: Protect against double inclusion.  #include enough
+	headers to make interface standalone.
+
 2005-10-11  Derek Price  <derek@ximbiot.com>
 
 	* commit.c (commit_usage), main.c (opt_usage): Describe OpenPGP related

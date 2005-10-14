@@ -13,6 +13,11 @@
 
 /* CVSroot data structures */
 
+#ifndef ROOT_H
+#define ROOT_H
+
+#include <stdbool.h>
+
 #include "sign.h"
 
 /* Access method specified in CVSroot. */
@@ -78,3 +83,5 @@ bool root_allow_ok (const char *);
 struct config *get_root_allow_config (const char *arg, const char *configPath);
 const char *primary_root_translate (const char *root_in);
 const char *primary_root_inverse_translate (const char *root_in);
+
+#endif /* ROOT_H */

@@ -140,9 +140,9 @@ am_cvs_OBJECTS = add.$(OBJEXT) admin.$(OBJEXT) annotate.$(OBJEXT) \
 	create_adm.$(OBJEXT) cvsrc.$(OBJEXT) diff.$(OBJEXT) \
 	edit.$(OBJEXT) entries.$(OBJEXT) error.$(OBJEXT) \
 	exithandle.$(OBJEXT) expand_path.$(OBJEXT) fileattr.$(OBJEXT) \
-	filesubr.$(OBJEXT) find_names.$(OBJEXT) hardlink.$(OBJEXT) \
-	hash.$(OBJEXT) history.$(OBJEXT) ignore.$(OBJEXT) \
-	import.$(OBJEXT) lock.$(OBJEXT) log.$(OBJEXT) \
+	filesubr.$(OBJEXT) find_names.$(OBJEXT) gpg.$(OBJEXT) \
+	hardlink.$(OBJEXT) hash.$(OBJEXT) history.$(OBJEXT) \
+	ignore.$(OBJEXT) import.$(OBJEXT) lock.$(OBJEXT) log.$(OBJEXT) \
 	log-buffer.$(OBJEXT) login.$(OBJEXT) logmsg.$(OBJEXT) \
 	ls.$(OBJEXT) main.$(OBJEXT) mkmodules.$(OBJEXT) \
 	modules.$(OBJEXT) ms-buffer.$(OBJEXT) myndbm.$(OBJEXT) \
@@ -330,6 +330,7 @@ cvs_SOURCES = \
 	fileattr.c \
 	filesubr.c \
 	find_names.c \
+	gpg.c gpg.h \
 	hardlink.c \
 	hash.c \
 	history.c \
@@ -523,6 +524,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fileattr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filesubr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/find_names.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gpg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gssapi-client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hardlink.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hash.Po@am__quote@

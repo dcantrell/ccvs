@@ -13,6 +13,7 @@
 /* CVS */
 #include "edit.h"
 #include "fileattr.h"
+#include "gpg.h"
 #include "watch.h"
 
 /* GNULIB */
@@ -130,6 +131,7 @@ static struct buffer *buf_to_net;
 
 /* This buffer is used to read input from the client.  */
 static struct buffer *buf_from_net;
+static struct buffer *sig_buf;
 
 
 
@@ -2034,21 +2036,16 @@ serve_modified (char *arg)
 static void
 serve_signature (char *arg)
 {
-    size_t size = 65;  /* FIXME - Need to parse this properly.  */
+    int status;
 
-    /* FIXME - Reading and discarding the signature data until we know
-     * what to do with it.
-     */
-    while (size > 0)
+    if (!sig_buf)
+	sig_buf = buf_nonio_initialize (NULL);
+    status = read_signature (buf_from_net, sig_buf);
+    if (status)
     {
-	int status;
-	size_t nread;
-	char *data;
-
-	status = buf_read_data (buf_from_net, size, &data, &nread);
-	if (status != 0)
-	    return;
-	size -= nread;
+	if (alloc_pending (80))
+	    sprintf (pending_error_text,
+		     "E Malformed Signature encountered.");
     }
     return;
 }

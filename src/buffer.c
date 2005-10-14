@@ -14,8 +14,13 @@
 
 /* Code for the buffer data structure.  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "buffer.h"
+
+#include "cvs.h"
 #include "pagealign_alloc.h"
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
@@ -951,8 +956,6 @@ buf_read_short_line (struct buffer *buf, char **line, size_t *lenp,
 int
 buf_read_data (struct buffer *buf, size_t want, char **retdata, size_t *got)
 {
-    assert (buf->input != NULL);
-
     while (buf->data != NULL && buf->data->size == 0)
     {
 	struct buffer_data *next;
@@ -969,6 +972,12 @@ buf_read_data (struct buffer *buf, size_t want, char **retdata, size_t *got)
 	struct buffer_data *data;
 	int status;
 	size_t get, nbytes;
+
+	if (!buf->input)
+	    /* nonio (memory) buffers have no underlying input methods.  If
+	     * there are no buffer datas, just return EOF.
+	     */
+	    return -1;
 
 	data = get_buffer_data ();
 	if (data == NULL)
