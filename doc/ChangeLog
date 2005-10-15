@@ -1,3 +1,9 @@
+2005-10-15  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (commit options): Move OpenPGP stuff...
+	(Global options): ...here.  Add index entries.
+	(The connection method): Add index entries.
+
 2005-10-11  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (The connection method, commit options): Describe new
