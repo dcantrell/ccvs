@@ -2753,8 +2753,7 @@ client_send_expansions (int local, char *where, int build_dirs)
     {
 	argv[0] = where ? where : modules_vector[i];
 	if (isfile (argv[0]))
-	    send_files (1, argv, local, 0, build_dirs ? SEND_BUILD_DIRS : 0,
-		        SIGN_NEVER, NULL, NULL);
+	    send_files (1, argv, local, 0, build_dirs ? SEND_BUILD_DIRS : 0);
     }
     send_a_repository ("", current_parsed_root->directory, "");
 }
@@ -4425,153 +4424,16 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
 
 
 
-/* This function is intended to be passed into walklist() with a list of args
- * to be substituted into the sign template.
- *
- * closure will be a struct format_cmdline_walklist_closure
- * where closure is undefined.
- */
-static int
-sign_args_list_to_args_proc (Node *p, void *closure)
+static void
+send_signature (const char *srepos, const char *filename, bool bin)
 {
-    struct format_cmdline_walklist_closure *c = closure;
-    char *arg = NULL;
-    const char *f;
-    char *d;
-    size_t doff;
+    char *sigbuf;
+    size_t len;
 
-    if (p->data == NULL) return 1;
-
-    f = c->format;
-    d = *c->d;
-    /* foreach requested attribute */
-    while (*f)
-    {
-	switch (*f++)
-	{
-	    case 'a':
-		arg = p->key;
-		break;
-	    default:
-		error (1, 0,
-		       "Unknown format character or not a list attribute: %c",
-		       f[-1]);
-		/* NOTREACHED */
-		break;
-	}
-	/* copy the attribute into an argument */
-	if (c->quotes)
-	{
-	    arg = cmdlineescape (c->quotes, arg);
-	}
-	else
-	{
-	    arg = cmdlinequote ('"', arg);
-	}
-
-	doff = d - *c->buf;
-	expand_string (c->buf, c->length, doff + strlen (arg));
-	d = *c->buf + doff;
-	strncpy (d, arg, strlen (arg));
-	d += strlen (arg);
-	free (arg);
-
-	/* Always put the extra space on.  we'll have to back up a char
-	 * when we're done, but that seems most efficient.
-	 */
-	doff = d - *c->buf;
-	expand_string (c->buf, c->length, doff + 1);
-	d = *c->buf + doff;
-	*d++ = ' ';
-    }
-    /* correct our original pointer into the buff */
-    *c->d = d;
-    return 0;
-}
-
-
-
-void
-send_signature (struct file_info *finfo, Vers_TS *vers,
-		const char *sign_template, const char *sign_textmode,
-		List *sign_args)
-{
-    const char *srepos = Short_Repository (finfo->repository);
-    char *cmdline;
-    FILE *pipefp;
-    bool save_noexec = noexec;
-    bool bin = vers && !strcmp (vers->options, "-kb");
-    char *sigbuf = NULL;
-    size_t sigoff = 0, sigsize = 64;
-    int pipestatus;
-
-    /*
-     * %p = shortrepos
-     * %r = repository
-     * %{a} = user defined sign args
-     * %t = textmode flag
-     * %s = file name
-     */
-    /*
-     * Cast any NULL arguments as appropriate pointers as this is an
-     * stdarg function and we need to be certain the caller gets what
-     * is expected.
-     */
-    cmdline = format_cmdline (
-#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-	                      false, srepos,
-#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-	                      sign_template,
-	                      "a", ",", sign_args,
-			      sign_args_list_to_args_proc, (void *) NULL,
-	                      "p", "s", srepos,
-	                      "r", "s", current_parsed_root->directory,
-	                      "t", "s", bin ? NULL : sign_textmode,
-	                      "s", "s", finfo->file,
-	                      (char *) NULL);
-
-    if (!cmdline || !strlen (cmdline))
-	error (1, 0, "sign template resolved to the empty string!");
-
-    noexec = false;
-    if (!(pipefp = run_popen (cmdline, "r")))
-	error (1, errno, "failed to execute signature generator");
-    noexec = save_noexec;
-
-    do
-    {
-	size_t len;
-
-	sigsize *= 2;
-	sigbuf = xrealloc (sigbuf, sigsize);
-	len = fread (sigbuf + sigoff, sizeof *sigbuf, sigsize - sigoff,
-		     pipefp);
-	sigoff += len;
-	/* Fewer bytes than requested means EOF or error.  */
-    } while (sigsize == sigoff);
-
-    if (ferror (pipefp))
-	error (1, ferror (pipefp), "Error reading from sign program.");
-
-    if (feof (pipefp))
-	TRACE (TRACE_DATA, "Read EOF from GPG.");
-
-    pipestatus = pclose (pipefp);
-    if (pipestatus == -1)
-	error (1, errno,
-	       "failed to obtain exit status from signature program");
-    else if (pipestatus)
-    {
-	if (WIFEXITED (pipestatus))
-	    error (1, 0, "sign program exited with error code %d",
-		   WEXITSTATUS (pipestatus));
-	else
-	    error (1, 0, "sign program exited via signal %d",
-		   WTERMSIG (pipestatus));
-    }
+    sigbuf = get_signature (srepos, filename, bin, &len);
 
     send_to_server ("Signature\012", 0);
-    send_to_server (sigbuf, sigoff);
+    send_to_server (sigbuf, len);
     free (sigbuf);
 }
 
@@ -4587,9 +4449,7 @@ struct send_data
     bool force;
     bool no_contents;
     bool backup_modified;
-    sign_state sign;
-    const char *sign_template;
-    List *sign_args;
+    bool sign;
 };
 
 /* Deal with one file.  */
@@ -4704,20 +4564,15 @@ warning: ignoring -k options due to server limitations");
 	}
 	else
 	{
-	    if (args->sign == SIGN_ALWAYS
-		|| (args->sign == SIGN_DEFAULT
-		    && supported_request ("Signature")))
+	    if (args->sign
+	        && get_sign_commits (supported_request ("Signature")))
 	    {
 		if (!supported_request ("Signature"))
 		    error (1, 0, "Server doesn't support commit signatures.");
 
-		TRACE (TRACE_DATA, "finfo: %s %s", finfo->file,
-		       finfo->repository ? finfo->repository : "(null)");
-		send_signature (finfo, vers, args->sign_template,
-				sign_textmode
-				? sign_textmode
-			        : current_parsed_root->sign_textmode,
-				args->sign_args);
+		send_signature (Short_Repository (finfo->repository),
+				finfo->file,
+				vers && !strcmp (vers->options, "-kb"));
 	    }
 	    send_modified (filename, finfo->fullname, vers);
 	}
@@ -5125,8 +4980,7 @@ send_max_dotdot (argc, argv)
  *   Nothing.
  */
 void
-send_files (int argc, char **argv, int local, int aflag, unsigned int flags,
-	    sign_state sign, const char *sign_template, List *sign_args)
+send_files (int argc, char **argv, int local, int aflag, unsigned int flags)
 {
     struct send_data args;
     int err;
@@ -5142,9 +4996,7 @@ send_files (int argc, char **argv, int local, int aflag, unsigned int flags,
     args.force = flags & SEND_FORCE;
     args.no_contents = flags & SEND_NO_CONTENTS;
     args.backup_modified = flags & BACKUP_MODIFIED_FILES;
-    args.sign = sign;
-    args.sign_template = sign_template;
-    args.sign_args = sign_args;
+    args.sign = flags & SEND_SIGNATURES;
     err = start_recursion
 	(send_fileproc, send_filesdoneproc, send_dirent_proc,
          send_dirleave_proc, &args, argc, argv, local, W_LOCAL, aflag,
@@ -5246,6 +5098,17 @@ client_process_import_file (char *message, char *vfile, char *vtag, int targc,
 	    error (0, 0,
 		   "warning: ignoring -d option due to server limitations");
     }
+
+    /* Send signature.  */
+    if (get_sign_commits (supported_request ("Signature")))
+    {
+	if (!supported_request ("Signature"))
+	    error (1, 0, "Server doesn't support commit signatures.");
+
+	send_signature (Short_Repository (repository), vfile,
+			vers.options && !strcmp (vers.options, "-kb"));
+    }
+
     send_modified (vfile, fullname, &vers);
     if (vers.options)
 	free (vers.options);

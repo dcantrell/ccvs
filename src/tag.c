@@ -244,8 +244,7 @@ cvstag (int argc, char **argv)
 			 * which we really better be correct rather than
 			 * being fast; it is just too confusing otherwise.
 			 */
-			check_uptodate ? 0 : SEND_NO_CONTENTS,
-			SIGN_NEVER, NULL, NULL);
+			check_uptodate ? 0 : SEND_NO_CONTENTS);
 	    send_file_names (argc, argv, SEND_EXPAND_WILD);
 	    send_to_server ("tag\012", 0);
 	}

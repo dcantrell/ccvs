@@ -14,8 +14,6 @@
 
 /* Interface between the client and the rest of CVS.  */
 
-#include "sign.h"
-
 /* Stuff shared with the server.  */
 char *mode_to_string (mode_t);
 int change_mode (const char *, const char *, int);
@@ -114,16 +112,15 @@ send_file_names (int argc, char **argv, unsigned int flags);
  * the files to operate on (or empty for everything), not options.
  * local is nonzero if we should not recurse (-l option).
  */
-void
-send_files (int argc, char **argv, int local, int aflag,
-	    unsigned int flags, sign_state sign, const char *sign_template,
-	    List *send_args);
+void send_files (int argc, char **argv, int local, int aflag,
+		 unsigned int flags);
 
 /* Flags for send_files.  */
 # define SEND_BUILD_DIRS 1
 # define SEND_FORCE 2
 # define SEND_NO_CONTENTS 4
 # define BACKUP_MODIFIED_FILES 8
+# define SEND_SIGNATURES	(1 << 4)
 
 /* Send an argument to the remote server.  */
 void

@@ -304,8 +304,18 @@ static const char *const opt_usage[] =
     "    -a           Authenticate all net traffic.\n",
 #endif
     "    -s VAR=VAL   Set CVS user variable.\n",
+    "\n",
+    "    -g           Force OpenPGP commit signatures (default autonegotiates).\n",
+    "    --sign[=(on | off | auto)] | --no-sign\n",
+    "                 Force (or forbid) OpenPGP commit signatures\n",
+    "                 (default autonegotiates).\n",
+    "    -G TEMPLATE\n",
+    "    --sign-template TEMPLATE\n",
+    "                 Use TEMPLATE to generate OpenPGP signatures.\n",
+    "    --sign-arg ARG\n",
+    "                 Pass ARG to OpenPGP TEMPLATE when sigining.\n",
     "    --textmode ARG\n",
-    "                 Pass ARG to OpenPGP template when verifying or\n",
+    "                 Pass ARG to OpenPGP TEMPLATE when verifying or\n",
     "                 generating signatures.\n",
     "(Specify the --help option for a list of other help options)\n",
     NULL
@@ -518,7 +528,7 @@ main (int argc, char **argv)
     int help = 0;		/* Has the user asked for help?  This
 				   lets us support the `cvs -H cmd'
 				   convention to give help for cmd. */
-    static const char short_options[] = "+QqrwtnRvb:T:e:d:Hfz:s:xa";
+    static const char short_options[] = "+QqrwtnRvb:T:e:d:Hfz:s:xag::G:";
     static struct option long_options[] =
     {
         {"help", 0, NULL, 'H'},
@@ -526,7 +536,11 @@ main (int argc, char **argv)
 	{"help-commands", 0, NULL, 1},
 	{"help-synonyms", 0, NULL, 2},
 	{"help-options", 0, NULL, 4},
-	{"sign-textmode", required_argument, NULL, 5},
+	{"sign", optional_argument, NULL, 'g'},
+	{"no-sign", 0, NULL, 5},
+	{"sign-template", required_argument, NULL, 'G'},
+	{"sign-arg", required_argument, NULL, '6'},
+	{"sign-textmode", required_argument, NULL, 7},
 #ifdef SERVER_SUPPORT
 	{"allow-root", required_argument, NULL, 3},
 #endif /* SERVER_SUPPORT */
@@ -650,10 +664,39 @@ main (int argc, char **argv)
 		/* --help-options */
 		usage (opt_usage);
 		break;
+	    case 'g':
+		/* --sign */
+		if (optarg)
+		{
+		    if (!strcasecmp (optarg, "auto")
+			|| !strcasecmp (optarg, "server"))
+			set_sign_commits (SIGN_DEFAULT);
+		    else if (!strcasecmp (optarg, "on"))
+			set_sign_commits (SIGN_ALWAYS);
+		    else if (!strcasecmp (optarg, "off"))
+			set_sign_commits (SIGN_NEVER);
+		    else
+			error (1, 0, "Unrecognized argument to sign (`%s')",
+			       optarg);
+		}
+		else
+		    set_sign_commits (SIGN_ALWAYS);
+		break;
 	    case 5:
+		/* --no-sign */
+		set_sign_commits (SIGN_NEVER);
+		break;
+	    case 'G':
+		/* --sign-template */
+		set_sign_template (optarg);
+		break;
+	    case 6:
+		/* --sign-arg */
+		add_sign_arg (optarg);
+		break;
+	    case 7:
 		/* --sign-textmode */
-		if (sign_textmode) free (&sign_textmode);
-		sign_textmode = xstrdup (optarg);
+		set_sign_textmode (optarg);
 		break;
 #ifdef SERVER_SUPPORT
 	    case 3:

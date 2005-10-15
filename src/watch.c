@@ -352,8 +352,7 @@ watch_addremove (int argc, char **argv)
 	if (!the_args.edit && !the_args.unedit && !the_args.commit)
 	    option_with_arg ("-a", "none");
 	send_arg ("--");
-	send_files (argc, argv, the_args.local, 0, SEND_NO_CONTENTS,
-		    SIGN_NEVER, NULL, NULL);
+	send_files (argc, argv, the_args.local, 0, SEND_NO_CONTENTS);
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_to_server (the_args.adding ?
                         "watch-add\012" : "watch-remove\012",
@@ -528,8 +527,7 @@ watchers (int argc, char **argv)
 	if (local)
 	    send_arg ("-l");
 	send_arg ("--");
-	send_files (argc, argv, local, 0, SEND_NO_CONTENTS, SIGN_NEVER, NULL,
-		    NULL);
+	send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_to_server ("watchers\012", 0);
 	return get_responses_and_close ();

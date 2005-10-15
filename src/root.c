@@ -580,7 +580,7 @@ parse_cvsroot (const char *root_in)
 	while ((p = strtok (NULL, ";")))
 	{
 	    char *q = strchr (p, '=');
-	    if (!q && (strcasecmp (p, "sign") || strcasecmp (p, "nosign")))
+	    if (!q && (strcasecmp (p, "sign") || strcasecmp (p, "no-sign")))
 	    {
 	        error (0, 0, "Option (`%s') has no argument in CVSROOT.",
                        p);
@@ -616,7 +616,7 @@ parse_cvsroot (const char *root_in)
 	    {
 		if (!q)
 		    newroot->sign = SIGN_ALWAYS;
-		else if (!strcasecmp (q, "default"))
+		else if (!strcasecmp (q, "auto") || !strcasecmp (q, "server"))
 		    newroot->sign = SIGN_DEFAULT;
 		else
 		{
@@ -632,7 +632,7 @@ parse_cvsroot (const char *root_in)
 			goto error_exit;
 		}
 	    }
-	    else if (!strcasecmp (p, "nosign"))
+	    else if (!strcasecmp (p, "no-sign"))
 		newroot->sign = SIGN_NEVER;
 	    else if (!strcasecmp (p, "sign-template"))
 		newroot->sign_template = xstrdup (q);

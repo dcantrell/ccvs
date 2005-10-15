@@ -1,5 +1,24 @@
 2005-10-14  Derek Price  <derek@ximbiot.com>
 
+	* sign.h: Protos for new signature API.
+	* sign.c (init_signatures, set_sign_commits, set_sign_template,
+	set_sign_textmode, add_sign_arg, get_sign_commits, get_signature): New
+	signing API.
+	(sign_args_list_to_args_proc, get_signature): Move from...
+	* client.c (sign_args_list_to_args_proc): ...here...
+	(send_signature): ...and here.
+	(send_files): Only accept SEND_SIGNATURES flag to differentiate commit
+	from other callers.
+	(send_signature): Use new signing interface.
+	(client_send_import_file): Send signatures.
+	* client.h (send_files): Update proto.
+	* add.c, admin.c, annotate.c, client.c, diff.c, edit.c, log.c, ls.c,
+	remove.c, status.c, tag.c, update.c, watch.c: Change all callers.
+	* commit.c (commit): Move sign arg handling to...
+	* main.c (main): ...here.
+	* server.c (serve_modified): Save signatures to a temp file.
+	(serve_signature): Send error message on receipt of multiple sigs.
+
 	* rcs.c: Test interface.
 	* rcs.h: Protect against double-inclusion.
 	(struct file_info): Move from...

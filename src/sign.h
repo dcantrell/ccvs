@@ -19,14 +19,32 @@
 #ifndef SIGN_H
 #define SIGN_H
 
+#include <stdbool.h>
+#include <stddef.h>
+
 /* Get List.  */
 #include "hash.h"
+
+
 
 #define DEFAULT_SIGN_TEMPLATE GPG_PROGRAM" --detach-sign --output - %t %a -- %s"
 #define DEFAULT_SIGN_TEXTMODE "--textmode"
 
+
+
 typedef enum { SIGN_DEFAULT, SIGN_ALWAYS, SIGN_NEVER } sign_state;
 
-extern char *sign_textmode;
+
+
+/* Set values to override current_parsed_root.  */
+void set_sign_commits (sign_state sign);
+void set_sign_template (const char *template);
+void set_sign_textmode (const char *textmode);
+void add_sign_arg (const char *arg);
+
+/* Get values.  */
+bool get_sign_commits (bool server_support);
+char *get_signature (const char *srepos, const char *filename, bool bin,
+		     size_t *len);
 
 #endif /* SIGN_H */
