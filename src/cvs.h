@@ -504,38 +504,6 @@ int ls (int argc, char *argv[]);
 int unlink_file (const char *f);
 int unlink_file_dir (const char *f);
 
-/* This is the structure that the recursion processor passes to the
-   fileproc to tell it about a particular file.  */
-struct file_info
-{
-    /* Name of the file, without any directory component.  */
-    const char *file;
-
-    /* Name of the directory we are in, relative to the directory in
-       which this command was issued.  We have cd'd to this directory
-       (either in the working directory or in the repository, depending
-       on which sort of recursion we are doing).  If we are in the directory
-       in which the command was issued, this is "".  */
-    const char *update_dir;
-
-    /* update_dir and file put together, with a slash between them as
-       necessary.  This is the proper way to refer to the file in user
-       messages.  */
-    const char *fullname;
-
-    /* Name of the directory corresponding to the repository which contains
-       this file.  */
-    const char *repository;
-
-    /* The pre-parsed entries for this directory.  */
-    List *entries;
-
-    RCSNode *rcs;
-};
-
-/* This needs to be included after the struct file_info definition since some
- * of the functions subr.h defines refer to struct file_info.
- */
 #include "subr.h"
 
 int update (int argc, char *argv[]);
@@ -685,10 +653,7 @@ int run_exec (const char *stin, const char *stout, const char *sterr,
               int flags);
 int run_piped (int *, int *);
 
-/* other similar-minded stuff from run.c.  */
-FILE *run_popen (const char *, const char *);
-int piped_child (char *const *, int *, int *, bool);
-void close_on_exec (int);
+#include "run.h"
 
 pid_t waitpid (pid_t, int *, int);
 

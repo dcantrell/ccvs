@@ -13,6 +13,15 @@
  * RCS source control definitions needed by rcs.c and friends
  */
 
+#ifndef RCS_H
+#define RCS_H
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <sys/types.h>
+
+#include "hash.h"
+
 /* Strings which indicate a conflict if they occur at the start of a line.  */
 #define	RCS_MERGE_PAT_1 "<<<<<<< "
 #define	RCS_MERGE_PAT_2 "=======\n"
@@ -125,6 +134,42 @@ struct rcsnode
 };
 
 typedef struct rcsnode RCSNode;
+
+
+
+/* This is the structure that the recursion processor passes to the
+ * fileproc to tell it about a particular file.
+ *
+ * FIXME: This should be in recurse.h.
+ */
+struct file_info
+{
+    /* Name of the file, without any directory component.  */
+    const char *file;
+
+    /* Name of the directory we are in, relative to the directory in
+       which this command was issued.  We have cd'd to this directory
+       (either in the working directory or in the repository, depending
+       on which sort of recursion we are doing).  If we are in the directory
+       in which the command was issued, this is "".  */
+    const char *update_dir;
+
+    /* update_dir and file put together, with a slash between them as
+       necessary.  This is the proper way to refer to the file in user
+       messages.  */
+    const char *fullname;
+
+    /* Name of the directory corresponding to the repository which contains
+       this file.  */
+    const char *repository;
+
+    /* The pre-parsed entries for this directory.  */
+    List *entries;
+
+    RCSNode *rcs;
+};
+
+
 
 struct deltatext {
     char *version;
@@ -262,3 +307,5 @@ extern int add_rcs_file (const char *, const char *, const char *,
                          const char *, int, char **, const char *, size_t,
                          FILE *, bool);
 void free_keywords (void *keywords);
+
+#endif /* RCS_H */
