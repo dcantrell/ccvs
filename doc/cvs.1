@@ -450,6 +450,50 @@ server will use the closest level allowed by the server administrator to
 compress returned data.  This option only has an effect when passed to
 the \fBcvs\fR client.
 .SP
+.IX "OpenPGP Signatures"
+.IX "Commit Signatures"
+.IP "" 0
+\fB-g\fR
+.IP "" 2
+.IP "" 0
+\fB--sign\fR
+.IP "" 2
+.IP "" 0
+\fB--no-sign\fR
+.IP "" 2
+Force OpenPGP signatures on or off.  \fB-g\fR & \fB--sign\fR will cause the
+commit to abort if the server does not support OpenPGP signatures.  Without one
+of these options, CVS will autonegotiate signing, attempting to sign commits
+when the server supports it.  Overrides the \fBsign\fR and \fBno-sign\fR
+method options.
+.SP
+.IP "" 0
+\fB--sign-template \fItemplate\fB\fR
+.IP "" 2
+Use \fItemplate\fR as the command line template to generate OpenPGP signatures.
+Format strings in this template are substituted before the commit is run:
+.SP
+.IP "" 2
+\fB%t\fR
+.IP "" 4
+Substitute in the textmode flag (defaults to \fB--textmode\fR) when a
+signature is being generated for a text file.
+.SP
+.IP "" 2
+\fB%a\fR
+.IP "" 4
+Substitute in any \fIarg\fRs set via the \fB--sign-arg\fR option or the
+CVSROOT sign-arg method option.
+.SP
+.IP "" 2
+\fB%s\fR
+.IP "" 4
+Substitute the name of the file to generate a signature for.
+.SP
+This template should send the generated signature to its standard output.
+Overrides the \fBsign-template\fR method optoin and defaults to something like
+\fB/usr/bin/gpg --detach-sign --output - %t %a %s\fR.
+.SP
 .SH "Common options"
 .SS "Common command options"
 .IX "Common options"
@@ -1408,9 +1452,8 @@ $ cvs checkout -D yesterday tc
 .IX "commit (subcommand)"
 .SP
 .IP "\(bu" 2
-Synopsis: commit [-glnRf] [-m \(aqlog_message\(aq |
--F file] [-r revision] [--sign] [--sign-template \fItemplate\fR]
-[--sign-arg \fIarg\fR]\&... [files\&...]
+Synopsis: commit [-glnRf] [-m \(aqlog_message\(aq | -F file] [-r revision]
+		 [files\&...]
 .IP "\(bu" 2
 Requires: working directory, repository.
 .IP "\(bu" 2
@@ -1534,48 +1577,6 @@ use \fB-f -R\fR.
 .IP "" 2
 Use \fImessage\fR as the log message, instead of
 invoking an editor.
-.SP
-.IP "" 0
-\fB-g\fR
-.IP "" 2
-.IP "" 0
-\fB--sign\fR
-.IP "" 2
-.IP "" 0
-\fB--nosign\fR
-.IP "" 2
-Force OpenPGP signatures on or off.  \fB-g\fR & \fB--sign\fR will cause the
-commit to abort if the server does not support OpenPGP signatures.  Without one
-of these options, CVS will autonegotiate signing, attempting to sign commits
-when the server supports it.  Overrides the \fBsign\fR and \fBnosign\fR
-method options.
-.SP
-.IP "" 0
-\fB--sign-template \fItemplate\fB\fR
-.IP "" 2
-Use \fItemplate\fR as the command line template to generate OpenPGP signatures.
-Format strings in this template are substituted before the commit is run:
-.SP
-.IP "" 2
-\fB%t\fR
-.IP "" 4
-Substitute in the textmode flag (defaults to \fB--textmode\fR) when a
-signature is being generated for a text file.
-.SP
-.IP "" 2
-\fB%a\fR
-.IP "" 4
-Substitute in any \fIarg\fRs set via the \fB--sign-arg\fR option or the
-CVSROOT sign-arg method option.
-.SP
-.IP "" 2
-\fB%s\fR
-.IP "" 4
-Substitute the name of the file to generate a signature for.
-.SP
-This template should send the generated signature to its standard output.
-Overrides the \fBsign-template\fR method optoin and defaults to something like
-\fB/usr/bin/gpg --detach-sign --output - %t %a %s\fR.
 .SP
 .SH "commit examples"
 .SP
