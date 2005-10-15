@@ -32,23 +32,6 @@
 
 #include "error.h"
 
-//#ifdef HAVE_DOSISH_SYSTEM
-//# include <fcntl.h> /* for setmode() */
-//#endif
-
-//#define INCLUDED_BY_MAIN_MODULE 1
-//#include "../g10/packet.h"
-//#include "util.h"
-
-//static int opt_verbose;
-//static const char *opt_prefix = "";
-//static int opt_uncompress;
-//static int opt_secret_to_public;
-//static int opt_no_split;
-
-//static void g10_exit( int rc );
-//static void split_packets (const char *fname);
-
 
 
 typedef enum {

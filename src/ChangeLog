@@ -1,5 +1,7 @@
 2005-10-14  Derek Price  <derek@ximbiot.com>
 
+	* gpg.c: Remove unsightly comments.
+
 	* Makefile.am (cvs_SOURCES): Add gpg.c & gpg.h.
 	* gpg.c, gpg.h: New files.
 	* server.c (sig_buf): New global.
