@@ -24,8 +24,6 @@
 #include "edit.h"
 #include "fileattr.h"
 #include "hardlink.h"
-#include "sign.h"
-#include "stack.h"
 
 static Dtype check_direntproc (void *callerdat, const char *dir,
                                const char *repos, const char *update_dir,
@@ -88,9 +86,7 @@ static time_t last_register_time;
 
 static const char *const commit_usage[] =
 {
-    "Usage: %s %s [-cRlf] [-m msg | -F logfile] [-r rev]\n",
-    "                  [-g | --sign | --nosign] [--sign-template template]\n",
-    "                  [--sign-arg arg]... files...\n",
+    "Usage: %s %s [-cRlf] [-m msg | -F logfile] [-r rev] [files...]\n",
     "\n",
     "    -c          Check for valid edits before committing.\n",
     "    -R          Process directories recursively.\n",
@@ -99,13 +95,6 @@ static const char *const commit_usage[] =
     "    -F logfile  Read the log message from file.\n",
     "    -m msg      Log message.\n",
     "    -r rev      Commit to this branch or trunk revision.\n",
-    "\n",
-    "    -g | --sign | --nosign\n",
-    "                Force (or forbid) OpenPGP signatures (default autonegotiates).\n",
-    "    --sign-template template\n",
-    "                Use template to generate OpenPGP signatures.\n",
-    "    --sign-arg arg\n",
-    "                Pass argument to template.\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
@@ -355,19 +344,7 @@ commit (int argc, char **argv)
     int c;
     int err = 0;
     int local = 0;
-    int option_index = 0;	/* `getopt_long' stores the option index here,
-				 * but right now we don't use it.
-				 */
-    /* If a GPG-like program couldn't be found at compile time, default the sign
-     * state to off, otherwise, depend on the server support.
-     */
-#ifdef GPG_PROGRAM
-    sign_state sign = SIGN_DEFAULT;
-#else
-    sign_state sign = SIGN_NEVER;
-#endif
-    char *sign_template = NULL;
-    List *sign_args;
+    int flags;
 
 #ifdef SERVER_SUPPORT
     /* See below for documentation of the `-n' option.  */
@@ -375,14 +352,6 @@ commit (int argc, char **argv)
 #else /* !SERVER_SUPPORT */
     const char short_options[] = COMMIT_OPTIONS;
 #endif /* SERVER_SUPPORT */
-    struct option long_options[] =
-    {
-	{"sign", 0, NULL, 'g'},
-	{"nosign", 0, NULL, 1},
-	{"sign-template", required_argument, NULL, 'G'},
-	{"sign-arg", required_argument, NULL, '2'},
-	{0, 0, 0, 0}
-    };
 
     if (argc == -1)
 	usage (commit_usage);
@@ -409,34 +378,14 @@ commit (int argc, char **argv)
     }
 #endif /* CVS_BADROOT */
 
-    sign_args = getlist ();
     optind = 0;
-    while ((c = getopt_long
-            (argc, argv, short_options, long_options, &option_index))
-           != EOF)
+    while ((c = getopt (argc, argv, short_options)) != EOF)
     {
 	switch (c)
 	{
             case 'c':
                 check_valid_edit = 1;
                 break;
-
-	    case 'g':
-		sign = SIGN_ALWAYS;
-		break;
-
-	    case 1:
-		sign = SIGN_NEVER;
-		break;
-
-	    case 'G':
-		if (sign_template) free (sign_template);
-		sign_template = xstrdup (optarg);
-		break;
-
-	    case 2:
-		push_string (sign_args, optarg);
-		break;
 
 #ifdef SERVER_SUPPORT
 	    case 'n':
@@ -660,12 +609,9 @@ commit (int argc, char **argv)
 	   _sure_ why this is needed, but if it is because the "ci"
 	   program, which we used to call, wanted the file to exist,
 	   then it would be relatively simple to fix in the server.  */
-	send_files (find_args.argc, find_args.argv, local, 0,
-		    find_args.force ? SEND_FORCE : 0,
-		    sign == SIGN_DEFAULT ? current_parsed_root->sign : sign,
-		    sign_template ? sign_template
-		    		  : current_parsed_root->sign_template,
-		    sign_args);
+	flags = find_args.force ? SEND_FORCE : 0;
+	flags |= SEND_SIGNATURES;
+	send_files (find_args.argc, find_args.argv, local, 0, flags);
 
 	/* Sending only the names of the files which were modified, added,
 	   or removed means that the server will only do an up-to-date

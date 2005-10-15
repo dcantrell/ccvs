@@ -104,7 +104,7 @@ cvsremove (int argc, char **argv)
 	    send_arg("-l");
 	send_arg ("--");
 	/* FIXME: Can't we set SEND_NO_CONTENTS here?  Needs investigation.  */
-	send_files (argc, argv, local, 0, 0, SIGN_NEVER, NULL, NULL);
+	send_files (argc, argv, local, 0, 0);
 	send_file_names (argc, argv, 0);
 	free_names (&argc, argv);
 	send_to_server ("remove\012", 0);

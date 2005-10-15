@@ -476,6 +476,12 @@ import_descend (char *message, char *vtag, int targc, char **targv)
 	    if (server_active && strcmp (dp->d_name, CVSADM) == 0)
 		goto one_more_time_boys;
 
+	    /* FIXME: .#filename.sig is where the server currently saves the
+	     * signature data when available.  For now just ignore it.
+	     */
+	    if (server_active && !fnmatch (".#*.sig", dp->d_name, 0))
+		goto one_more_time_boys;
+
 	    if (ign_name (dp->d_name))
 	    {
 		add_log ('I', dp->d_name);

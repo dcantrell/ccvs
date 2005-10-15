@@ -124,8 +124,7 @@ annotate (int argc, char **argv)
 	}
 	else
 	{
-	    send_files (argc, argv, local, 0, SEND_NO_CONTENTS, SIGN_NEVER,
-		        NULL, NULL);
+	    send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
 	    send_file_names (argc, argv, SEND_EXPAND_WILD);
 	    send_to_server ("annotate\012", 0);
 	}
