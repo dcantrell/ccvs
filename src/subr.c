@@ -13,6 +13,13 @@
  * Various useful functions for the CVS support code.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "subr.h"
+
 #include "cvs.h"
 
 #include "canonicalize.h"

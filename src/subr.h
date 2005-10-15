@@ -18,6 +18,13 @@
 #ifndef SUBR_H
 # define SUBR_H
 
+/* FIXME - This shouldn't be needed here.  Any routine that needs to understand
+ * the underlying structure of an RCSNode should be in rcs*.c.
+ */
+#include "rcs.h"
+
+
+
 void expand_string (char **, size_t *, size_t);
 char *Xreadlink (const char *link, size_t size);
 void xrealloc_and_strcat (char **, size_t *, const char *);

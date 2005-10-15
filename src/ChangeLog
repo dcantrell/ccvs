@@ -1,5 +1,13 @@
 2005-10-14  Derek Price  <derek@ximbiot.com>
 
+	* rcs.c: Test interface.
+	* rcs.h: Protect against double-inclusion.
+	(struct file_info): Move from...
+	* cvs.h: ...here.  #include "run.h".
+	* subr.c, subr.h: Include "rcs.h" to imporve interface.
+	* run.c: #include "run.h".
+	* run.h: New file.
+
 	* gpg.c: Remove unsightly comments.
 
 	* Makefile.am (cvs_SOURCES): Add gpg.c & gpg.h.
