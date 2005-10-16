@@ -523,6 +523,7 @@ nodetypestring (Ntype type)
     case VARIABLE:	return "VARIABLE";
     case RCSFIELD:	return "RCSFIELD";
     case RCSCMPFLD:	return "RCSCMPFLD";
+    case RCSSTRING:	return "RCSSTRING";
     }
 
     return "<trash>";

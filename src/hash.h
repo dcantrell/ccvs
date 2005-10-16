@@ -26,7 +26,7 @@ enum ntype
 {
     NT_UNKNOWN, HEADER, ENTRIES, FILES, LIST, RCSNODE,
     RCSVERS, DIRS, UPDATE, LOCK, NDBMNODE, FILEATTR,
-    VARIABLE, RCSFIELD, RCSCMPFLD
+    VARIABLE, RCSFIELD, RCSCMPFLD, RCSSTRING
 };
 typedef enum ntype Ntype;
 
@@ -39,6 +39,7 @@ struct node
     struct node *hashprev;
     char *key;
     void *data;
+    size_t len;			/* Length of DATA.  */
     void (*delproc) (struct node *);
 };
 typedef struct node Node;

@@ -2040,7 +2040,7 @@ serve_modified (char *arg)
 	size_t got;
 
 	/* Write the file.  */
-	sigfile_name = Xasprintf ("%s%s%s", BAKPREFIX, arg, ".sig");
+	sigfile_name = get_sigfile_name (arg);
 	fd = CVS_OPEN (sigfile_name, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (fd < 0)
 	{
