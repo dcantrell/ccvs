@@ -27,11 +27,6 @@
 
 
 
-#define DEFAULT_SIGN_TEMPLATE GPG_PROGRAM" --detach-sign --output - %t %a -- %s"
-#define DEFAULT_SIGN_TEXTMODE "--textmode"
-
-
-
 typedef enum { SIGN_DEFAULT, SIGN_ALWAYS, SIGN_NEVER } sign_state;
 
 
@@ -47,4 +42,6 @@ bool get_sign_commits (bool server_support);
 char *get_signature (const char *srepos, const char *filename, bool bin,
 		     size_t *len);
 
+/* Other utilities.  */
+char *get_sigfile_name (const char *fn);
 #endif /* SIGN_H */
