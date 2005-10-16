@@ -62,6 +62,18 @@
 /* Define to 1 if using `alloca.c'. */
 #undef C_ALLOCA
 
+/* Define to a command line template that will write an OpenPGP signature for
+   the file `%s' to its standard out. `%t' is substituted at run time with an
+   option which flags files as text files, when necessary, and the empty
+   string, otherwise. `%a' is substituted with a list of arguments provided by
+   the user. */
+#undef DEFAULT_SIGN_TEMPLATE
+
+/* Define to the option string that the OpenPGP program used in the
+   DEFAULT_SIGN_TEMPLATE would like to see for text files (substituted at run
+   time in place of `%t' in the DEFAULT_SIGN_TEMPLATE). */
+#undef DEFAULT_SIGN_TEXTMODE
+
 /* Define if there is a member named d_ino in the struct describing directory
    headers. */
 #undef D_INO_IN_DIRENT
@@ -112,9 +124,6 @@
    message with -m or -F. Enabling FORCE_USE_EDITOR will cause the -m or -F
    message to be appended to the temp file when the editor is started. */
 #undef FORCE_USE_EDITOR
-
-/* Path to the gpg utility */
-#undef GPG_PROGRAM
 
 /* Define to an alternative value if GSS_C_NT_HOSTBASED_SERVICE isn't defined
    in the gssapi.h header file. MIT Kerberos 1.2.1 requires this. Only
@@ -546,6 +555,11 @@
 
 /* Define to 1 if you have the `openat' function. */
 #undef HAVE_OPENAT
+
+/* Define if an OpenPGP capable program is available (and, assumedly, usable
+   command line templates are in the DEFAULT_SIGN_TEMPLATE and
+   DEFAULT_VERIFY_TEMPLATE macros). */
+#undef HAVE_OPENPGP
 
 /* Define to 1 if you have the <OS.h> header file. */
 #undef HAVE_OS_H
