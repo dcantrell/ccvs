@@ -1,3 +1,7 @@
+2005-10-16  Brian Murphy  <brian@murphy.dk>
+
+	* server.c (check_pam_password): set PAM_RHOST to remote host ip.
+
 2005-10-11  Derek Price  <derek@ximbiot.com>
 
 	* client.h (SEND_BUILD_DIRS, SEND_FORCE, SEND_NO_CONTENTS,
