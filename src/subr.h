@@ -25,6 +25,14 @@
 
 
 
+#ifdef USE_VMS_FILENAMES
+# define BAKPREFIX	"_$"
+#else /* USE_VMS_FILENAMES */
+# define BAKPREFIX	".#"		/* when rcsmerge'ing */
+#endif /* USE_VMS_FILENAMES */
+
+
+
 void expand_string (char **, size_t *, size_t);
 char *Xreadlink (const char *link, size_t size);
 void xrealloc_and_strcat (char **, size_t *, const char *);

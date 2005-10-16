@@ -235,12 +235,6 @@ char *strerror (int);
 #define	CVSLCKSLEEP	30		/* wait 30 seconds before retrying */
 #define	CVSBRANCH	"1.1.1"		/* RCS branch used for vendor srcs */
 
-#ifdef USE_VMS_FILENAMES
-# define BAKPREFIX	"_$"
-#else /* USE_VMS_FILENAMES */
-# define BAKPREFIX	".#"		/* when rcsmerge'ing */
-#endif /* USE_VMS_FILENAMES */
-
 /*
  * Special tags. -rHEAD	refers to the head of an RCS file, regardless of any
  * sticky tags. -rBASE	refers to the current revision the user has checked
