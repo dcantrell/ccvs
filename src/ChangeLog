@@ -1,5 +1,8 @@
 2005-10-16  Derek Price  <derek@ximbiot.com>
 
+	* sign.h (DEFAULT_SIGN_PROGRAM, DEFAULT_SIGN_TEXTMODE): Move to
+	configure.in.
+
 	* cvs.h (BAKPREFIX): Move to...
 	* subr.h (BAKPREFIX): ...this more appropriate location.
 
