@@ -1,3 +1,8 @@
+2005-10-16  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Define DEFAULT_SIGN_TEMPLATE & DEFAULT_SIGN_TEXTMODE
+	here.  Don't define GPG_PROGRAM.
+
 2005-10-11  Derek Price  <derek@ximbiot.com>
 
 	* GPG-TODO: New file.
