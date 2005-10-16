@@ -102,10 +102,28 @@ if test x"$PR" != xno; then
 	AC_DEFINE_UNQUOTED([PR_PROGRAM], ["$PR"], [Path to the pr utility])
 fi
 # For src/gpg.c
-AC_PATH_PROG(GPG, gpg, no)
-if test x"$GPG" != xno; then
-	AC_DEFINE_UNQUOTED([GPG_PROGRAM], ["$GPG"], [Path to the gpg utility])
+AC_PATH_PROG(GPG, gpg, gpg)
+if test x"$GPG" != xgpg; then
+  AC_DEFINE([HAVE_OPENPGP], [1],
+	    [Define if an OpenPGP capable program is available (and, assumedly,
+	     usable command line templates are in the DEFAULT_SIGN_TEMPLATE and
+	     DEFAULT_VERIFY_TEMPLATE macros).])
 fi
+dnl These are defined by configure so that if the above is ever expanded to
+dnl look for OpenPGP capable programs other than `gpg', the default templates
+dnl can also be detected and substituted here.
+AC_DEFINE_UNQUOTED([DEFAULT_SIGN_TEMPLATE],
+		   ["$GPG --detach-sign --output - %t %a -- %s"],
+		   [Define to a command line template that will write an
+		    OpenPGP signature for the file `%s' to its standard out.
+		    `%t' is substituted at run time with an option which flags
+		    files as text files, when necessary, and the empty string,
+		    otherwise.  `%a' is substituted with a list of arguments
+		    provided by the user.])
+AC_DEFINE([DEFAULT_SIGN_TEXTMODE], ["--textmode"],
+	  [Define to the option string that the OpenPGP program used in the
+	   DEFAULT_SIGN_TEMPLATE would like to see for text files (substituted
+	   at run time in place of `%t' in the DEFAULT_SIGN_TEMPLATE).])
 
 dnl FIXME This is truly gross.
 missing_dir=`cd $ac_aux_dir && pwd`
