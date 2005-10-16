@@ -1,5 +1,8 @@
 2005-10-16  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h (BAKPREFIX): Move to...
+	* subr.h (BAKPREFIX): ...this more appropriate location.
+
 	* sanity.sh (crerepos): Remove CVS_CLIENT_LOG set while debugging.
 
 2005-10-14  Derek Price  <derek@ximbiot.com>
