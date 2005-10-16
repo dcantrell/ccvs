@@ -1,3 +1,7 @@
+2005-10-16  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (crerepos): Remove CVS_CLIENT_LOG set while debugging.
+
 2005-10-14  Derek Price  <derek@ximbiot.com>
 
 	* sign.h: Protos for new signature API.
