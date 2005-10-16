@@ -35,6 +35,7 @@
 #include "xalloc.h"
 
 /* CVS headers.  */
+#include "filesubr.h"
 #include "root.h"
 #include "run.h"
 #include "stack.h"
@@ -110,9 +111,12 @@ add_sign_arg (const char *arg)
  *   server_support	Whether the server supports signed files.
  */
 bool
-get_sign_commits (bool server_support)
+get_sign_commits (bool server_active, bool server_support)
 {
     sign_state tmp;
+
+    /* Only sign commits from the client (and in local mode).  */
+    if (server_active) return false;
 
     if (sign_commits == SIGN_DEFAULT)
 	tmp = current_parsed_root->sign;
@@ -226,9 +230,36 @@ sign_args_list_to_args_proc (Node *p, void *closure)
 
 
 
+char *
+get_sigfile_name (const char *fn)
+{
+    return Xasprintf ("%s%s%s", BAKPREFIX, fn, ".sig");
+}
+
+
+
+bool
+have_sigfile (bool server_active, const char *fn)
+{
+    char *sfn;
+    bool retval;
+
+    /* Sig files are only created on the server.  Optimize.  */
+    if (!server_active) return false;
+
+    sfn = get_sigfile_name (fn);
+    if (isreadable (sfn)) retval = true;
+    else retval = false;
+
+    free (sfn);
+    return retval;
+}
+
+
+
 /* Generate a signature and return it in allocated memory.  */
 char *
-get_signature (const char *srepos, const char *filename, bool bin, size_t *len)
+gen_signature (const char *srepos, const char *filename, bool bin, size_t *len)
 {
     char *cmdline;
     FILE *pipefp;
@@ -256,8 +287,8 @@ get_signature (const char *srepos, const char *filename, bool bin, size_t *len)
 	                      get_sign_template (),
 	                      "a", ",", get_sign_args (),
 			      sign_args_list_to_args_proc, (void *) NULL,
-	                      "p", "s", srepos,
 	                      "r", "s", current_parsed_root->directory,
+	                      "p", "s", srepos,
 	                      "t", "s", bin ? NULL : get_sign_textmode (),
 	                      "s", "s", filename,
 	                      (char *) NULL);
@@ -301,4 +332,33 @@ get_signature (const char *srepos, const char *filename, bool bin, size_t *len)
 
     *len = sigoff;
     return sigbuf;
+}
+
+
+
+/* Read a signature from a file and return it in allocated memory.  */
+static char *
+read_signature (const char *fn, bool bin, size_t *len)
+{
+    char *sfn = get_sigfile_name (fn);
+    char *data = NULL;
+    size_t datasize;
+
+    get_file (sfn, sfn, bin ? "rb" : "r", &data, &datasize, len);
+
+    free (sfn);
+    return data;
+}
+
+
+
+/* Generate a signature or read one from the sigfile and return it in
+ * allocated memory.
+ */
+char *
+get_signature (bool server_active, const char *srepos, const char *filename,
+	       bool bin, size_t *len)
+{
+    if (server_active) return read_signature (filename, bin, len);
+    /* else */ return gen_signature (srepos, filename, bin, len);
 }

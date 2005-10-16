@@ -1,5 +1,28 @@
 2005-10-16  Derek Price  <derek@ximbiot.com>
 
+	* client.c (send_signature, send_fileproc, client_process_import_file):
+	Use new APIs.
+	* cvs.h: Move function prototypes into...
+	* filesubr.h: ...this new header.
+	* hash.c (nodetypestring): Add RCSSTRING.
+	* hash.h (Ntype): Add RCSSTRING.
+	(Node): Add data len field.
+	* rcs.c: Verify interface.
+	(rcsbuf_get_node_type): New function.
+	(RCS_reparsercsfile, RCS_fully_parse, getdelta, RCS_getdeltatext):
+	Handle new RCSSTRING newphrase node type.
+	(RCS_checkin): Generate and save OpenPGP signature when needed.
+	(putrcsfield_proc): Remove FIXME.  Handle new Node type.  Use Node len
+	when available.
+	* server.c (serve_modified): Get sig file name via new API.
+	* sign.c (get_sign_commits): Return false in serve_mode.
+	(get_sigfile_name, have_sigfile, read_signature): New functions.
+	(gen_signature): New function with content originally from...
+	(get_signature): ...this function, which now also handles loading from
+	a sigfile when required.
+	* sign.h (get_sign_commits, get_signature): Add server_active arg.
+	(gen_signature, have_sigfile): New function protos.
+
 	* sign.h (DEFAULT_SIGN_PROGRAM, DEFAULT_SIGN_TEXTMODE): Move to
 	configure.in.
 

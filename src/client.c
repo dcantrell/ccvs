@@ -4430,7 +4430,7 @@ send_signature (const char *srepos, const char *filename, bool bin)
     char *sigbuf;
     size_t len;
 
-    sigbuf = get_signature (srepos, filename, bin, &len);
+    sigbuf = gen_signature (srepos, filename, bin, &len);
 
     send_to_server ("Signature\012", 0);
     send_to_server (sigbuf, len);
@@ -4565,7 +4565,7 @@ warning: ignoring -k options due to server limitations");
 	else
 	{
 	    if (args->sign
-	        && get_sign_commits (supported_request ("Signature")))
+	        && get_sign_commits (false, supported_request ("Signature")))
 	    {
 		if (!supported_request ("Signature"))
 		    error (1, 0, "Server doesn't support commit signatures.");
@@ -5100,7 +5100,7 @@ client_process_import_file (char *message, char *vfile, char *vtag, int targc,
     }
 
     /* Send signature.  */
-    if (get_sign_commits (supported_request ("Signature")))
+    if (get_sign_commits (false, supported_request ("Signature")))
     {
 	if (!supported_request ("Signature"))
 	    error (1, 0, "Server doesn't support commit signatures.");

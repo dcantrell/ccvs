@@ -481,24 +481,11 @@ int Parse_Info (const char *infofile, const char *repository,
 
 typedef	RETSIGTYPE (*SIGCLEANUPPROC)	(int);
 int SIG_register (int sig, SIGCLEANUPPROC sigcleanup);
-bool isdir (const char *file);
-bool isfile (const char *file);
-ssize_t islink (const char *file);
-bool isdevice (const char *file);
-bool isreadable (const char *file);
-bool iswritable (const char *file);
-bool isaccessible (const char *file, const int mode);
-const char *last_component (const char *path);
-char *get_homedir (void);
-char *strcat_filename_onto_homedir (const char *, const char *);
-char *cvs_temp_name (void);
-FILE *cvs_temp_file (char **filename);
+
+#include "filesubr.h"
+#include "subr.h"
 
 int ls (int argc, char *argv[]);
-int unlink_file (const char *f);
-int unlink_file_dir (const char *f);
-
-#include "subr.h"
 
 int update (int argc, char *argv[]);
 /* The only place this is currently used outside of update.c is add.c.
