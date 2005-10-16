@@ -52,10 +52,11 @@ extern int noexec;
  * Globals set via the command line parser in main.c.
  */
 
-/* If a GPG-like program couldn't be found at compile time, default the sign
- * state to off, otherwise, depend on the server support.
+/* If a program capable of generating OpenPGP signatures couldn't be found at
+ * configure time, default the sign state to off, otherwise, depend on the
+ * server support.
  */
-#ifdef GPG_PROGRAM
+#ifdef HAVE_OPENPGP
 static sign_state sign_commits = SIGN_DEFAULT;
 #else
 static sign_state sign_commits = SIGN_NEVER;

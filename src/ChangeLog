@@ -1,5 +1,8 @@
 2005-10-16  Derek Price  <derek@ximbiot.com>
 
+	* sign.c (sign_commits): Base defaults on new HAVE_OPENPGP macro rather
+	than obsolete GPG_PROGRAM.
+
 	* client.c (send_signature, send_fileproc, client_process_import_file):
 	Use new APIs.
 	* cvs.h: Move function prototypes into...
