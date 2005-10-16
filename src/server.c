@@ -109,6 +109,7 @@ static char *Pserver_Repos = NULL;
 # endif /* AUTH_SERVER_SUPPORT */
 
 # ifdef HAVE_PAM
+#   include <netdb.h> /* getnameinfo */
 #   if defined(HAVE_SECURITY_PAM_APPL_H)
 #     include <security/pam_appl.h>
 #   elif defined(HAVE_PAM_PAM_APPL_H)
@@ -6891,6 +6892,27 @@ check_pam_password (char **username, char *password)
     int retval, err;
     struct pam_conv conv = { cvs_pam_conv, 0 };
     char *pam_stage = "start";
+    struct sockaddr peer;
+    int len;
+    char host[NI_MAXHOST];
+
+    /* get the client's ip address */
+    len = sizeof (peer);
+    if (getpeername (STDIN_FILENO, &peer, &len) < 0)
+    {
+	printf ("E Fatal error, aborting.\n\
+error %s getpeername failed\n", strerror (errno));
+	exit (EXIT_FAILURE);
+    }
+
+    /* convert the ip address to text */
+    if (getnameinfo(&peer, len, host, NI_MAXHOST,
+			    NULL, 0, NI_NUMERICHOST) < 0)
+    {
+	printf ("E Fatal error, aborting.\n\
+error %s getnameinfo failed\n", strerror (errno));
+	exit (EXIT_FAILURE);
+    }
 
     pam_username = *username;
     pam_password = password;
@@ -6902,6 +6924,12 @@ check_pam_password (char **username, char *password)
     {
         pam_stage = "set dummy tty";
         retval = pam_set_item (pamh, PAM_TTY, PAM_SERVICE_NAME);
+    }
+
+    if (retval == PAM_SUCCESS)
+    {
+        pam_stage = "set remote host ip";
+        retval = pam_set_item (pamh, PAM_RHOST, host);
     }
 
     if (retval == PAM_SUCCESS)
