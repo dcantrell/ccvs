@@ -3059,7 +3059,6 @@ ${CPROG}"' \[commit aborted\]: correct above errors first!' \
 ${SPROG} "'\[tag aborted\]: correct the above errors first!'
 	  cd ../..
 
-CVS_CLIENT_LOG=/tmp/cvsclientlog; export CVS_CLIENT_LOG
 	  dotest basica-5 "${testcvs} -q ci -m add-it" \
 "$CVSROOT_DIRNAME/first-dir/sdir/ssdir/ssfile,v  <--  sdir/ssdir/ssfile
 initial revision: 1\.1"
