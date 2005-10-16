@@ -1,3 +1,7 @@
+2005-10-16  Derek Price  <derek@ximbiot.com>
+
+	* RCSFILES: Note new openpgp-signatures newphrase.
+
 2005-10-15  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (commit options): Move OpenPGP stuff...
