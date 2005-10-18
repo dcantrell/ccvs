@@ -1,3 +1,9 @@
+2005-10-18  Derek Price  <derek@ximbiot.com>
+
+	Include "wait.h" only as needed.
+	* cvs.h: Remove #include of "wait.h".
+	* run.c, server.c: Add #include "wait.h".
+
 2005-10-16  Brian Murphy  <brian@murphy.dk>
 
 	* server.c (check_pam_password): set PAM_RHOST to remote host ip.
