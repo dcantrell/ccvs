@@ -20,6 +20,7 @@
 #include "getline.h"
 #include "getnline.h"
 #include "setenv.h"
+#include "wait.h"
 
 int server_active = 0;
 
