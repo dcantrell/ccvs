@@ -1,7 +1,7 @@
 2005-10-18  Derek Price  <derek@ximbiot.com>
 
 	* KEYS: New file, suggested by Antoine Lexy-Lambert <antoine@gmx.de>.
-	* INSTALL: Mention KEYS file.
+	* README: Mention KEYS file.
 
 2005-09-26  Derek Price  <derek@ximbiot.com>
 
