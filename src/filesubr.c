@@ -131,6 +131,11 @@ isdir (const char *file)
 /*
  * Returns 0 if the argument file is not a symbolic link.
  * Returns size of the link if it is a symbolic link.
+ *
+ * FIXME: Is there a good reason that the off_t specified by POSIX for st_size
+ *        (http://www.opengroup.org/susv3xbd/sys/stat.h.html) is converted to
+ *        ssize_t here?  rcs.h uses off_t, so it's not because off_t isn't
+ *        portable.
  */
 ssize_t
 islink (const char *file)

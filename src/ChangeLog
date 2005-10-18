@@ -1,3 +1,8 @@
+2005-10-18  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.h: #include <sys/types.h> for ssize_t.
+	* filesubr.c (islink): Add FIXME.
+
 2005-10-16  Derek Price  <derek@ximbiot.com>
 
 	* sign.c (sign_commits): Base defaults on new HAVE_OPENPGP macro rather

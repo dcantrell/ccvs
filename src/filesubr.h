@@ -20,6 +20,7 @@
 #define FILESUBR_H
 
 #include <stdbool.h>
+#include <sys/types.h>  /* Get ssize_t.  */
 
 
 
