@@ -32,6 +32,7 @@
 
 /* GNULIB headers.  */
 #include "error.h"
+#include "wait.h"
 #include "xalloc.h"
 
 /* CVS headers.  */
