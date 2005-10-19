@@ -1,5 +1,7 @@
 2005-10-19  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: $GPG == `gpg' now when no gpg was found.
+
 	* sanity.sh: Cause GPG to create its option file with a noop command.
 	Allow secret key import during setup.
 
