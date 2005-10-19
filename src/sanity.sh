@@ -1686,7 +1686,7 @@ mkdir home
 HOME=$TESTDIR/home; export HOME
 
 # If $GPG is set, create a key for /uu
-if test x"$GPG" != xno; then
+if test x"$GPG" != xgpg; then
   $GPG --list-keys >>$LOGFILE 2>&1
   $GPG --import - <<EOF >>$LOGFILE 2>&1
 -----BEGIN PGP PUBLIC KEY BLOCK-----
