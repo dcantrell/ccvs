@@ -1687,6 +1687,7 @@ HOME=$TESTDIR/home; export HOME
 
 # If $GPG is set, create a key for /uu
 if test x"$GPG" != xno; then
+  $GPG --list-keys >>$LOGFILE 2>&1
   $GPG --import - <<EOF >>$LOGFILE 2>&1
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG v1.4.2 (GNU/Linux)
@@ -1720,7 +1721,7 @@ B0RRhW3h2s/P7BCMAKDKqifj54oz/mJotQABGP13nW/gOA==
 =7ufq
 -----END PGP PUBLIC KEY BLOCK-----
 EOF
-  $GPG --import - <<EOF >>$LOGFILE 2>&1
+  $GPG --allow-secret-key-import --import - <<EOF >>$LOGFILE 2>&1
 -----BEGIN PGP PRIVATE KEY BLOCK-----
 Version: GnuPG v1.4.2 (GNU/Linux)
 
