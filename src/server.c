@@ -13,6 +13,7 @@
 /* CVS */
 #include "edit.h"
 #include "fileattr.h"
+#include "gpg.h"
 #include "watch.h"
 
 /* GNULIB */
@@ -132,6 +133,7 @@ static struct buffer *buf_to_net;
 
 /* This buffer is used to read input from the client.  */
 static struct buffer *buf_from_net;
+static struct buffer *sig_buf;
 
 
 
@@ -2029,6 +2031,97 @@ serve_modified (char *arg)
        non-kopt case alone.  */
     if (kopt != NULL)
 	serve_is_modified (arg);
+
+    /* If an OpenPGP signature was sent for this file, write it to a temp
+     * file.
+     */
+    if (sig_buf)
+    {
+	char *sigfile_name, *sig_data;
+	int fd, rc;
+	size_t got;
+
+	/* Write the file.  */
+	sigfile_name = get_sigfile_name (arg);
+	fd = CVS_OPEN (sigfile_name, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+	if (fd < 0)
+	{
+	    int save_errno = errno;
+	    if (alloc_pending (40 + strlen (arg)))
+		sprintf (pending_error_text, "E cannot open `%s'",
+			 sigfile_name);
+	    pending_error = save_errno;
+	    return;
+	}
+
+	while (!buf_empty_p (sig_buf))
+	{
+	    if ((rc = buf_read_data (sig_buf, buf_length (sig_buf), &sig_data,
+				     &got)))
+	    {
+		/* Since !buf_empty_p confirmed that the buffer was not empty,
+		 * it should be impossible to get EOF here.
+		 */
+		assert (rc != -1);
+
+		if (rc == -2)
+		    pending_error = ENOMEM;
+		else if (alloc_pending (80))
+		    sprintf (pending_error_text,
+			     "E error reading signature buffer.");
+		pending_error = rc;
+		return;
+	    }
+
+	    if (write (fd, sig_data, got) < 0)
+	    {
+		int save_errno = errno;
+		if (alloc_pending (80 + strlen (sigfile_name)))
+		    sprintf (pending_error_text,
+			     "E error writing temporary signature file `%s'.",
+			     sigfile_name);
+		pending_error = save_errno;
+		return;
+	     }
+	}
+
+	if (close (fd) < 0 
+	    && alloc_pending_warning (80 + strlen (sigfile_name)))
+	    sprintf (pending_warning_text,
+		     "E error closing temporary signature file `%s'.",
+		     sigfile_name);
+	free (sigfile_name);
+
+	/* We're done with the SIG_BUF.  */
+	buf_free (sig_buf);
+	sig_buf = NULL;
+    }
+}
+
+
+
+static void
+serve_signature (char *arg)
+{
+    int status;
+
+    if (sig_buf)
+    {
+	if (alloc_pending (80))
+	    sprintf (pending_error_text,
+"E Multiple Signature requests received for a single file.");
+    }
+    else
+	sig_buf = buf_nonio_initialize (NULL);
+
+    status = read_signature (buf_from_net, sig_buf);
+    if (status)
+    {
+	if (alloc_pending (80))
+	    sprintf (pending_error_text,
+		     "E Malformed Signature encountered.");
+    }
+    return;
 }
 
 
@@ -5887,6 +5980,7 @@ struct request requests[] =
   REQ_LINE("Kopt", serve_kopt, 0),
   REQ_LINE("Checkin-time", serve_checkin_time, 0),
   REQ_LINE("Modified", serve_modified, RQ_ESSENTIAL),
+  REQ_LINE("Signature", serve_signature, 0),
   REQ_LINE("Is-modified", serve_is_modified, 0),
 
   /* The client must send this request to interoperate with CVS 1.5

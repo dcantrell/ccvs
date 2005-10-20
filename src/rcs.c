@@ -14,9 +14,17 @@
  * manipulation
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "rcs.h"
+
 #include "cvs.h"
 #include "edit.h"
 #include "hardlink.h"
+#include "sign.h"
 
 /* These need to be source after cvs.h or HAVE_MMAP won't be set... */
 #ifdef HAVE_MMAP
@@ -425,6 +433,17 @@ l_error:
 
 
 
+/* Return a Node type for a newphrase buffer entry.  */
+static Ntype
+rcsbuf_get_node_type (struct rcsbuffer *rcsbuf)
+{
+    if (rcsbuf_valcmp (rcsbuf)) return RCSCMPFLD;
+    /* else */ if (rcsbuf->at_string) return RCSSTRING;
+    /* else */ return RCSFIELD;
+}
+
+
+
 /* Do the real work of parsing an RCS file.
 
    On error, die with a fatal error; if it returns at all it was successful.
@@ -576,9 +595,10 @@ RCS_reparsercsfile (RCSNode *rdata, FILE **pfp, struct rcsbuffer *rcsbufp)
 	if (rdata->other == NULL)
 	    rdata->other = getlist ();
 	kv = getnode ();
-	kv->type = rcsbuf_valcmp (&rcsbuf) ? RCSCMPFLD : RCSFIELD;
+        kv->type = rcsbuf_get_node_type (&rcsbuf);
 	kv->key = xstrdup (key);
-	kv->data = rcsbuf_valcopy (&rcsbuf, value, kv->type == RCSFIELD, NULL);
+	kv->data = rcsbuf_valcopy (&rcsbuf, value, kv->type != RCSCMPFLD,
+				   &kv->len);
 	if (addnode (rdata->other, kv) != 0)
 	{
 	    error (0, 0, "warning: duplicate key `%s' in RCS file `%s'",
@@ -780,10 +800,10 @@ RCS_fully_parse (RCSNode *rcs)
 		if (vnode->other == NULL)
 		    vnode->other = getlist ();
 		kv = getnode ();
-		kv->type = rcsbuf_valcmp (&rcsbuf) ? RCSCMPFLD : RCSFIELD;
+		kv->type = rcsbuf_get_node_type (&rcsbuf);
 		kv->key = xstrdup (key);
-		kv->data = rcsbuf_valcopy (&rcsbuf, value, kv->type == RCSFIELD,
-					   NULL);
+		kv->data = rcsbuf_valcopy (&rcsbuf, value,
+					   kv->type != RCSCMPFLD, NULL);
 		if (addnode (vnode->other, kv) != 0)
 		{
 		    error (0, 0,
@@ -5101,6 +5121,18 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
     np->data = xstrdup(global_session_id);
     addnode (delta->other_delta, np);
 
+    /* Save the OpenPGP signature.  */
+    if (get_sign_commits (server_active, true)
+	|| have_sigfile (server_active, workfile))
+    {
+	np = getnode();
+	np->type = RCSSTRING;
+	np->key = xstrdup ("openpgp-signatures");
+	np->data = get_signature (server_active, "", workfile,
+				  rcs->expand && STREQ (rcs->expand, "b"),
+				  &np->len);
+	addnode (delta->other_delta, np);
+    }
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
     /* If permissions should be preserved on this project, then
@@ -7754,9 +7786,10 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	if (vnode->other_delta == NULL)
 	    vnode->other_delta = getlist ();
 	kv = getnode ();
-	kv->type = rcsbuf_valcmp (rcsbuf) ? RCSCMPFLD : RCSFIELD;
+	kv->type = rcsbuf_get_node_type (rcsbuf);
 	kv->key = xstrdup (key);
-	kv->data = rcsbuf_valcopy (rcsbuf, value, kv->type == RCSFIELD, NULL);
+	kv->data = rcsbuf_valcopy (rcsbuf, value, kv->type != RCSCMPFLD,
+				   &kv->len);
 	if (addnode (vnode->other_delta, kv) != 0)
 	{
 	    /* Complaining about duplicate keys in newphrases seems
@@ -7839,9 +7872,10 @@ RCS_getdeltatext (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf)
 	    break;
 
 	p = getnode();
-	p->type = rcsbuf_valcmp (rcsbuf) ? RCSCMPFLD : RCSFIELD;
+	p->type = rcsbuf_get_node_type (rcsbuf);
 	p->key = xstrdup (key);
-	p->data = rcsbuf_valcopy (rcsbuf, value, p->type == RCSFIELD, NULL);
+	p->data = rcsbuf_valcopy (rcsbuf, value, p->type != RCSCMPFLD,
+				  &p->len);
 	if (addnode (d->other, p) < 0)
 	{
 	    error (0, 0, "warning: %s, delta %s: duplicate field `%s'",
@@ -7908,23 +7942,17 @@ putrcsfield_proc (Node *node, void *vfp)
     fprintf (fp, "\n%s\t", node->key);
     if (node->data != NULL)
     {
-	/* If the field's value contains evil characters,
+	/* If the field's value may contain evil characters,
 	   it must be stringified. */
-	/* FIXME: This does not quite get it right.  "7jk8f" is not a valid
-	   value for a value in a newpharse, according to doc/RCSFILES,
-	   because digits are not valid in an "id".  We might do OK by
-	   always writing strings (enclosed in @@).  Would be nice to
-	   explicitly mention this one way or another in doc/RCSFILES.
-	   A case where we are wrong in a much more clear-cut way is that
-	   we let through non-graphic characters such as whitespace and
-	   control characters.  */
-
-	if (node->type == RCSCMPFLD || strpbrk (node->data, "$,.:;@") == NULL)
-	    fputs (node->data, fp);
+	if (node->type != RCSSTRING)
+	    fwrite (node->data, 1, node->len ? node->len : strlen (node->data),
+		    fp);
 	else
 	{
 	    putc ('@', fp);
-	    expand_at_signs (node->data, (off_t) strlen (node->data), fp);
+	    expand_at_signs (node->data,
+			     node->len ? node->len : strlen (node->data),
+			     fp);
 	    putc ('@', fp);
 	}
     }

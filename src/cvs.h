@@ -233,12 +233,6 @@ char *strerror (int);
 #define	CVSLCKSLEEP	30		/* wait 30 seconds before retrying */
 #define	CVSBRANCH	"1.1.1"		/* RCS branch used for vendor srcs */
 
-#ifdef USE_VMS_FILENAMES
-# define BAKPREFIX	"_$"
-#else /* USE_VMS_FILENAMES */
-# define BAKPREFIX	".#"		/* when rcsmerge'ing */
-#endif /* USE_VMS_FILENAMES */
-
 /*
  * Special tags. -rHEAD	refers to the head of an RCS file, regardless of any
  * sticky tags. -rBASE	refers to the current revision the user has checked
@@ -485,56 +479,11 @@ int Parse_Info (const char *infofile, const char *repository,
 
 typedef	RETSIGTYPE (*SIGCLEANUPPROC)	(int);
 int SIG_register (int sig, SIGCLEANUPPROC sigcleanup);
-bool isdir (const char *file);
-bool isfile (const char *file);
-ssize_t islink (const char *file);
-bool isdevice (const char *file);
-bool isreadable (const char *file);
-bool iswritable (const char *file);
-bool isaccessible (const char *file, const int mode);
-const char *last_component (const char *path);
-char *get_homedir (void);
-char *strcat_filename_onto_homedir (const char *, const char *);
-char *cvs_temp_name (void);
-FILE *cvs_temp_file (char **filename);
+
+#include "filesubr.h"
+#include "subr.h"
 
 int ls (int argc, char *argv[]);
-int unlink_file (const char *f);
-int unlink_file_dir (const char *f);
-
-/* This is the structure that the recursion processor passes to the
-   fileproc to tell it about a particular file.  */
-struct file_info
-{
-    /* Name of the file, without any directory component.  */
-    const char *file;
-
-    /* Name of the directory we are in, relative to the directory in
-       which this command was issued.  We have cd'd to this directory
-       (either in the working directory or in the repository, depending
-       on which sort of recursion we are doing).  If we are in the directory
-       in which the command was issued, this is "".  */
-    const char *update_dir;
-
-    /* update_dir and file put together, with a slash between them as
-       necessary.  This is the proper way to refer to the file in user
-       messages.  */
-    const char *fullname;
-
-    /* Name of the directory corresponding to the repository which contains
-       this file.  */
-    const char *repository;
-
-    /* The pre-parsed entries for this directory.  */
-    List *entries;
-
-    RCSNode *rcs;
-};
-
-/* This needs to be included after the struct file_info definition since some
- * of the functions subr.h defines refer to struct file_info.
- */
-#include "subr.h"
 
 int update (int argc, char *argv[]);
 /* The only place this is currently used outside of update.c is add.c.
@@ -683,10 +632,7 @@ int run_exec (const char *stin, const char *stout, const char *sterr,
               int flags);
 int run_piped (int *, int *);
 
-/* other similar-minded stuff from run.c.  */
-FILE *run_popen (const char *, const char *);
-int piped_child (char *const *, int *, int *, bool);
-void close_on_exec (int);
+#include "run.h"
 
 pid_t waitpid (pid_t, int *, int);
 

@@ -1685,6 +1685,80 @@ getrlogdate () {
 mkdir home
 HOME=$TESTDIR/home; export HOME
 
+# If $GPG is set, create a key for /uu
+if test x"$GPG" != xgpg; then
+  $GPG --list-keys >>$LOGFILE 2>&1
+  $GPG --import - <<EOF >>$LOGFILE 2>&1
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.2 (GNU/Linux)
+
+mQGiBENKukgRBADJERMkgpE7Uo+ZahIZ8rsgnhyiRtn96SQFumeBuclUcRIbT/XK
+2Qt1vvzd/QtunFP+U/V2sZHpt4e4dkXUNMssmTO8bZZgJJnhHkVTzEtMVY+qIfvC
+lgZw99aGAHthTjpn2NFRRFlU8dOlCeoEYMsQ9kG7lC2DWfr8QF6Wv537VwCg5a+q
+2Tp0OdnPzdx9ZczHeRPLyosD/2IWoMuz76O3M2WqWV07S0OwGFBWS9NulwSZafgz
+6AzWcgJN4DvXruSCHUg/89zE8gMkM+jCBABi9jUT5O/zCMccRfOyzprwP+Darfp/
+83s3OerU+nvZkG6fTkoUJt4oZkhJ+034aac6SiCE8vD4KvNZ+ZQyq9AQjXHGTfq/
+SUhzA/9MsX9FwkruhbMti9nOuSBV9tqsEM+8vWjSJ+hlSviWCkFWV0De8yHiTq6m
+7Bfymk4/mR336C0gSWVucA6qSfH5bYC+0jfqpc9poc/slxZA6T4gd9JZ41WvBqPj
+BOs4lsvBnTKk9f7Jyg5BzrXT9ukVPfeyTVi3I49+1TV/BMk2ubRuQ1ZTIFRlc3Qg
+U2NyaXB0IChUaGlzIHNlY3JldCBrZXkgaXMgcHVibGljIGFuZCB1c2VkIGZvciB0
+ZXN0aW5nIHNpZ25lZCBjb21taXRzIHdpdGggQ1ZTLikgPGJ1Zy1jdnNAbm9uZ251
+Lm9yZz6IYAQTEQIAIAUCQ0q6SAIbAwYLCQgHAwIEFQIIAwQWAgMBAh4BAheAAAoJ
+EI4MLH7xM73pnmQAn36k+iNEi+fdfFxoWNdB8DPIzOY8AKCWVfBZa/jAH64FaQYL
+ls1jFXLbELkCDQRDSrpbEAgAm3FjA6iU71Dm/iJy+RoI5T7MIZeiz6vpIg1IA0Ch
+h2lSaEbPxNAImRQyz+KNyMPofIA/DsS5rAHmMfTXFQf5JWrnotaVokHY3ucnPU7y
+vZGiYR+DJNbSThCRW+sgxYSUQLXPsIGQ4/MnI2rJO+y8RIRvGQYi63OpkTzsGAAO
+vfi42ui6SAfEvKQ73KvzF/lf5a9NokmM+nDkFzOJCfSFitY4KD/UmL62fq5TadGT
+mPscQF+DZ+V1txxN+xcnXJAG3OiOkDsKRap8sY4kG8WSG0vPCVdm+O4xzTQY/JQe
+aCs4le1J5nR4OKcmEnojlOZqPA4oZ52mXGFxBLHevvzokwADBQf/TJVH/iFqjbKx
+28Sw7aB4iYmE5P7+mCQcDmJERR1DJI8/awU/5kLSIETGKsXuAA/V9NPPAyd/AKve
+ulwLqjFEFNyFU3Vm1CAL6EcSw+Km2MseaUqA8MJCEyCd3NKc66Evarf+0G7iFV7h
+xJDnzUfhhaZBULPDBVgJ6AqNjC7tQm0EsBuGKxDIlxBQ+skO/nrI9vX6dwbEtBDs
+ClnpLOGebqZZArGsv0xEpfjMq/qPnwy53jEQYk5hxvLUHy4wZlIHD0SE9Q+kAElp
+9NE6IxKOqRR6vLs3m9833BMeGsIIbY8oBPAOd6BVbdGxLsGMX/FVGRhvExZX8k6C
+iqU/6EnlkYhJBBgRAgAJBQJDSrpbAhsMAAoJEI4MLH7xM73p/wMAnRvt70NgB6st
+B0RRhW3h2s/P7BCMAKDKqifj54oz/mJotQABGP13nW/gOA==
+=7ufq
+-----END PGP PUBLIC KEY BLOCK-----
+EOF
+  $GPG --allow-secret-key-import --import - <<EOF >>$LOGFILE 2>&1
+-----BEGIN PGP PRIVATE KEY BLOCK-----
+Version: GnuPG v1.4.2 (GNU/Linux)
+
+lQG7BENKukgRBADJERMkgpE7Uo+ZahIZ8rsgnhyiRtn96SQFumeBuclUcRIbT/XK
+2Qt1vvzd/QtunFP+U/V2sZHpt4e4dkXUNMssmTO8bZZgJJnhHkVTzEtMVY+qIfvC
+lgZw99aGAHthTjpn2NFRRFlU8dOlCeoEYMsQ9kG7lC2DWfr8QF6Wv537VwCg5a+q
+2Tp0OdnPzdx9ZczHeRPLyosD/2IWoMuz76O3M2WqWV07S0OwGFBWS9NulwSZafgz
+6AzWcgJN4DvXruSCHUg/89zE8gMkM+jCBABi9jUT5O/zCMccRfOyzprwP+Darfp/
+83s3OerU+nvZkG6fTkoUJt4oZkhJ+034aac6SiCE8vD4KvNZ+ZQyq9AQjXHGTfq/
+SUhzA/9MsX9FwkruhbMti9nOuSBV9tqsEM+8vWjSJ+hlSviWCkFWV0De8yHiTq6m
+7Bfymk4/mR336C0gSWVucA6qSfH5bYC+0jfqpc9poc/slxZA6T4gd9JZ41WvBqPj
+BOs4lsvBnTKk9f7Jyg5BzrXT9ukVPfeyTVi3I49+1TV/BMk2uQAAn2yLGViOPcBN
+n3q8J05O/mgSJII1CMq0bkNWUyBUZXN0IFNjcmlwdCAoVGhpcyBzZWNyZXQga2V5
+IGlzIHB1YmxpYyBhbmQgdXNlZCBmb3IgdGVzdGluZyBzaWduZWQgY29tbWl0cyB3
+aXRoIENWUy4pIDxidWctY3ZzQG5vbmdudS5vcmc+iGAEExECACAFAkNKukgCGwMG
+CwkIBwMCBBUCCAMEFgIDAQIeAQIXgAAKCRCODCx+8TO96Z5kAJ9+pPojRIvn3Xxc
+aFjXQfAzyMzmPACgllXwWWv4wB+uBWkGC5bNYxVy2xCdAj0EQ0q6WxAIAJtxYwOo
+lO9Q5v4icvkaCOU+zCGXos+r6SINSANAoYdpUmhGz8TQCJkUMs/ijcjD6HyAPw7E
+uawB5jH01xUH+SVq56LWlaJB2N7nJz1O8r2RomEfgyTW0k4QkVvrIMWElEC1z7CB
+kOPzJyNqyTvsvESEbxkGIutzqZE87BgADr34uNroukgHxLykO9yr8xf5X+WvTaJJ
+jPpw5BcziQn0hYrWOCg/1Ji+tn6uU2nRk5j7HEBfg2fldbccTfsXJ1yQBtzojpA7
+CkWqfLGOJBvFkhtLzwlXZvjuMc00GPyUHmgrOJXtSeZ0eDinJhJ6I5TmajwOKGed
+plxhcQSx3r786JMAAwUH/0yVR/4hao2ysdvEsO2geImJhOT+/pgkHA5iREUdQySP
+P2sFP+ZC0iBExirF7gAP1fTTzwMnfwCr3rpcC6oxRBTchVN1ZtQgC+hHEsPiptjL
+HmlKgPDCQhMgndzSnOuhL2q3/tBu4hVe4cSQ581H4YWmQVCzwwVYCegKjYwu7UJt
+BLAbhisQyJcQUPrJDv56yPb1+ncGxLQQ7ApZ6Szhnm6mWQKxrL9MRKX4zKv6j58M
+ud4xEGJOYcby1B8uMGZSBw9EhPUPpABJafTROiMSjqkUery7N5vfN9wTHhrCCG2P
+KATwDnegVW3RsS7BjF/xVRkYbxMWV/JOgoqlP+hJ5ZEAAVICdnxl8jck88Pp3iBR
+9KOIKN6r1zfz4/9rlkHXH5yiNCTYxwPx2qLMH2LbGJ+ISQQYEQIACQUCQ0q6WwIb
+DAAKCRCODCx+8TO96f8DAJ9CnJg/ewM3MoWqO1AY+KSSMJkCGgCeI8vv810E1G+C
+B2xyFA1/6G+hv7k=
+=k49u
+-----END PGP PRIVATE KEY BLOCK-----
+EOF
+fi # GPG set
+
+
 # Make sure this variable is not defined to anything that would
 # change the format of rcs dates.  Otherwise people using e.g.,
 # RCSINIT=-zLT get lots of spurious failures.
@@ -2985,6 +3059,7 @@ ${CPROG}"' \[commit aborted\]: correct above errors first!' \
 "${SPROG} tag: nothing known about ssfile
 ${SPROG} "'\[tag aborted\]: correct the above errors first!'
 	  cd ../..
+
 	  dotest basica-5 "${testcvs} -q ci -m add-it" \
 "$CVSROOT_DIRNAME/first-dir/sdir/ssdir/ssfile,v  <--  sdir/ssdir/ssfile
 initial revision: 1\.1"
@@ -31954,7 +32029,7 @@ EOF
 	  save_CVS_SERVER=$CVS_SERVER
 	  ln -s $PRIMARY_CVSROOT_DIRNAME $TESTDIR/primary_link
 	  dotest writeproxy-0 "$CVS_SERVER server" \
-"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Signature Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
 ok
 ok
 ok" \
@@ -32238,7 +32313,7 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	  mv $TESTDIR/save-root $PRIMARY_CVSROOT_DIRNAME
 
 	  dotest writeproxy-noredirect-5 "$CVS_SERVER server" \
-"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Signature Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
 ok
 ok
 ok
@@ -32270,7 +32345,7 @@ EOF
 	  cd firstdir
 	  echo now you see me >file1
 	  dotest writeproxy-noredirect-6 "$CVS_SERVER server" \
-"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Signature Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
 ok
 ok
 ok
@@ -32300,7 +32375,7 @@ EOF
 	  echo /file1/0/dummy+timestamp// >>CVS/Entries
 
 	  dotest writeproxy-noredirect-7 "$CVS_SERVER server" \
-"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Signature Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
 ok
 ok
 Mode u=rw,g=rw,o=r

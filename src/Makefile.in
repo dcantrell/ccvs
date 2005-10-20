@@ -140,9 +140,9 @@ am_cvs_OBJECTS = add.$(OBJEXT) admin.$(OBJEXT) annotate.$(OBJEXT) \
 	create_adm.$(OBJEXT) cvsrc.$(OBJEXT) diff.$(OBJEXT) \
 	edit.$(OBJEXT) entries.$(OBJEXT) error.$(OBJEXT) \
 	exithandle.$(OBJEXT) expand_path.$(OBJEXT) fileattr.$(OBJEXT) \
-	filesubr.$(OBJEXT) find_names.$(OBJEXT) hardlink.$(OBJEXT) \
-	hash.$(OBJEXT) history.$(OBJEXT) ignore.$(OBJEXT) \
-	import.$(OBJEXT) lock.$(OBJEXT) log.$(OBJEXT) \
+	filesubr.$(OBJEXT) find_names.$(OBJEXT) gpg.$(OBJEXT) \
+	hardlink.$(OBJEXT) hash.$(OBJEXT) history.$(OBJEXT) \
+	ignore.$(OBJEXT) import.$(OBJEXT) lock.$(OBJEXT) log.$(OBJEXT) \
 	log-buffer.$(OBJEXT) login.$(OBJEXT) logmsg.$(OBJEXT) \
 	ls.$(OBJEXT) main.$(OBJEXT) mkmodules.$(OBJEXT) \
 	modules.$(OBJEXT) ms-buffer.$(OBJEXT) myndbm.$(OBJEXT) \
@@ -150,10 +150,10 @@ am_cvs_OBJECTS = add.$(OBJEXT) admin.$(OBJEXT) annotate.$(OBJEXT) \
 	rcs.$(OBJEXT) rcscmds.$(OBJEXT) recurse.$(OBJEXT) \
 	release.$(OBJEXT) remove.$(OBJEXT) repos.$(OBJEXT) \
 	root.$(OBJEXT) rsh-client.$(OBJEXT) run.$(OBJEXT) \
-	scramble.$(OBJEXT) server.$(OBJEXT) stack.$(OBJEXT) \
-	status.$(OBJEXT) subr.$(OBJEXT) tag.$(OBJEXT) update.$(OBJEXT) \
-	version.$(OBJEXT) vers_ts.$(OBJEXT) watch.$(OBJEXT) \
-	wrapper.$(OBJEXT) zlib.$(OBJEXT)
+	scramble.$(OBJEXT) server.$(OBJEXT) sign.$(OBJEXT) \
+	stack.$(OBJEXT) status.$(OBJEXT) subr.$(OBJEXT) tag.$(OBJEXT) \
+	update.$(OBJEXT) version.$(OBJEXT) vers_ts.$(OBJEXT) \
+	watch.$(OBJEXT) wrapper.$(OBJEXT) zlib.$(OBJEXT)
 cvs_OBJECTS = $(am_cvs_OBJECTS)
 am__DEPENDENCIES_1 =
 binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
@@ -200,6 +200,7 @@ FNMATCH_H = @FNMATCH_H@
 GETOPT_H = @GETOPT_H@
 GLOB_H = @GLOB_H@
 GMSGFMT = @GMSGFMT@
+GPG = @GPG@
 HAVE_LONG_64BIT = @HAVE_LONG_64BIT@
 HAVE_LONG_LONG_64BIT = @HAVE_LONG_LONG_64BIT@
 HAVE__BOOL = @HAVE__BOOL@
@@ -329,6 +330,7 @@ cvs_SOURCES = \
 	fileattr.c \
 	filesubr.c \
 	find_names.c \
+	gpg.c gpg.h \
 	hardlink.c \
 	hash.c \
 	history.c \
@@ -359,6 +361,7 @@ cvs_SOURCES = \
 	run.c \
 	scramble.c \
 	server.c \
+	sign.c sign.h \
 	stack.c stack.h \
 	status.c \
 	subr.c subr.h \
@@ -521,6 +524,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fileattr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filesubr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/find_names.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gpg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gssapi-client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hardlink.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hash.Po@am__quote@
@@ -553,6 +557,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/run.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scramble.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/server.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sign.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/socket-client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stack.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/status.Po@am__quote@

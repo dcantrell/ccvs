@@ -12,11 +12,18 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.  */
 
-/* CVS headers.  */
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /* CONFIG_H */
+
+/* Verify interface.  */
+#include "run.h"
 
 /* GNULIB headers.  */
 #include "wait.h"
+
+/* CVS headers.  */
+#include "cvs.h"
 
 
 

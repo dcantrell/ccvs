@@ -24,6 +24,10 @@
 #include "strftime.h"
 #include "xgethostname.h"
 
+#include "sign.h"
+
+
+
 const char *program_name;
 const char *program_path;
 const char *cvs_cmd_name;
@@ -300,6 +304,19 @@ static const char *const opt_usage[] =
     "    -a           Authenticate all net traffic.\n",
 #endif
     "    -s VAR=VAL   Set CVS user variable.\n",
+    "\n",
+    "    -g           Force OpenPGP commit signatures (default autonegotiates).\n",
+    "    --sign[=(on | off | auto)] | --no-sign\n",
+    "                 Force (or forbid) OpenPGP commit signatures\n",
+    "                 (default autonegotiates).\n",
+    "    -G TEMPLATE\n",
+    "    --sign-template TEMPLATE\n",
+    "                 Use TEMPLATE to generate OpenPGP signatures.\n",
+    "    --sign-arg ARG\n",
+    "                 Pass ARG to OpenPGP TEMPLATE when sigining.\n",
+    "    --textmode ARG\n",
+    "                 Pass ARG to OpenPGP TEMPLATE when verifying or\n",
+    "                 generating signatures.\n",
     "(Specify the --help option for a list of other help options)\n",
     NULL
 };
@@ -511,7 +528,7 @@ main (int argc, char **argv)
     int help = 0;		/* Has the user asked for help?  This
 				   lets us support the `cvs -H cmd'
 				   convention to give help for cmd. */
-    static const char short_options[] = "+QqrwtnRvb:T:e:d:Hfz:s:xa";
+    static const char short_options[] = "+QqrwtnRvb:T:e:d:Hfz:s:xag::G:";
     static struct option long_options[] =
     {
         {"help", 0, NULL, 'H'},
@@ -519,6 +536,11 @@ main (int argc, char **argv)
 	{"help-commands", 0, NULL, 1},
 	{"help-synonyms", 0, NULL, 2},
 	{"help-options", 0, NULL, 4},
+	{"sign", optional_argument, NULL, 'g'},
+	{"no-sign", 0, NULL, 5},
+	{"sign-template", required_argument, NULL, 'G'},
+	{"sign-arg", required_argument, NULL, '6'},
+	{"sign-textmode", required_argument, NULL, 7},
 #ifdef SERVER_SUPPORT
 	{"allow-root", required_argument, NULL, 3},
 #endif /* SERVER_SUPPORT */
@@ -547,8 +569,9 @@ main (int argc, char **argv)
 #endif
 
     /*
-     * Just save the last component of the path for error messages
+     * Initialize globals.
      */
+    /* Just save the last component of the path for error messages.  */
     program_path = xstrdup (argv[0]);
 #ifdef ARGV0_NOT_PROGRAM_NAME
     /* On some systems, e.g. VMS, argv[0] is not the name of the command
@@ -557,6 +580,7 @@ main (int argc, char **argv)
 #else
     program_name = last_component (argv[0]);
 #endif
+
 
     /*
      * Query the environment variables up-front, so that
@@ -639,6 +663,40 @@ main (int argc, char **argv)
 	    case 4:
 		/* --help-options */
 		usage (opt_usage);
+		break;
+	    case 'g':
+		/* --sign */
+		if (optarg)
+		{
+		    if (!strcasecmp (optarg, "auto")
+			|| !strcasecmp (optarg, "server"))
+			set_sign_commits (SIGN_DEFAULT);
+		    else if (!strcasecmp (optarg, "on"))
+			set_sign_commits (SIGN_ALWAYS);
+		    else if (!strcasecmp (optarg, "off"))
+			set_sign_commits (SIGN_NEVER);
+		    else
+			error (1, 0, "Unrecognized argument to sign (`%s')",
+			       optarg);
+		}
+		else
+		    set_sign_commits (SIGN_ALWAYS);
+		break;
+	    case 5:
+		/* --no-sign */
+		set_sign_commits (SIGN_NEVER);
+		break;
+	    case 'G':
+		/* --sign-template */
+		set_sign_template (optarg);
+		break;
+	    case 6:
+		/* --sign-arg */
+		add_sign_arg (optarg);
+		break;
+	    case 7:
+		/* --sign-textmode */
+		set_sign_textmode (optarg);
 		break;
 #ifdef SERVER_SUPPORT
 	    case 3:
