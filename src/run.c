@@ -12,7 +12,11 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.  */
 
+/* CVS headers.  */
 #include "cvs.h"
+
+/* GNULIB headers.  */
+#include "wait.h"
 
 
 

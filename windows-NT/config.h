@@ -542,9 +542,6 @@
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #define HAVE_NDIR_H 1
 
-/* Define to 1 if you have the <netdb.h> header file. */
-#undef HAVE_NETDB_H
-
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #undef HAVE_NETINET_IN_H
 
@@ -1064,10 +1061,6 @@
 /* Define if tzset clobbers localtime's static buffer. */
 #undef TZSET_CLOBBERS_LOCALTIME_BUFFER
 
-/* Define to its maximum value if an unsigned integer type of width exactly 32
-   bits exists and the standard includes do not define UINT32_MAX. */
-#undef UINT32_MAX
-
 /* The default umask to use when creating or otherwise setting file or
    directory permissions in the repository. Must be a value in the range of 0
    through 0777. For example, a value of 002 allows group rwx access and world
@@ -1169,11 +1162,6 @@
 
 /* Define to force lib/regex.c to define re_comp et al. */
 #define _REGEX_RE_COMP 1
-
-/* Define for Solaris 2.5.1 so uint32_t typedef from <sys/synch.h>,
-   <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the
-   #define below would cause a syntax error. */
-#undef _UINT32_T
 
 /* Enable extensions on Solaris.  */
 #ifndef __EXTENSIONS__
@@ -1331,10 +1319,6 @@
 
 /* Define to `int' if <sys/types.h> doesn't define. */
 #undef uid_t
-
-/* Define to the type of a unsigned integer type of width exactly 32 bits if
-   such a type exists and the standard includes do not define it. */
-#undef uint32_t
 
 /* Define to unsigned long or unsigned long long if <stdint.h> and
    <inttypes.h> don't define. */
