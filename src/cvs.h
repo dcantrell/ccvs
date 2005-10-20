@@ -93,8 +93,6 @@ char *strerror (int);
 #include <ndbm.h>
 #endif /* MY_NDBM */
 
-#include "wait.h"
-
 #include "rcs.h"
 
 

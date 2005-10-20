@@ -391,7 +391,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/timespec.m4
   m4/tm_gmtoff.m4
   m4/tzset.m4
-  m4/uint32_t.m4
   m4/uintmax_t.m4
   m4/ulonglong.m4
   m4/unistd-safer.m4
