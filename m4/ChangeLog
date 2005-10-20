@@ -1,4 +1,10 @@
-2005-10-03 Derek Price  <derek@ximbiot.com>
+2005-10-20  Derek Price  <derek@ximbiot.com>
+
+	Update from GNULIB.
+	* getaddrinfo.m4, md5.m4, stdbool.m4: Updated.
+	* uint32_t.m4: Removed.
+
+2005-10-03  Derek Price  <derek@ximbiot.com>
 
 	* fcntl-safer.m4, socklen.m4: New files from GNULIB.
 	* canonicalize.m4, chdir-long.m4, dup2.m4, fnmatch.m4, ftruncate.m4,
