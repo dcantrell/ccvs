@@ -112,15 +112,15 @@ send_file_names (int argc, char **argv, unsigned int flags);
  * the files to operate on (or empty for everything), not options.
  * local is nonzero if we should not recurse (-l option).
  */
-void
-send_files (int argc, char **argv, int local, int aflag,
-		  unsigned int flags);
+void send_files (int argc, char **argv, int local, int aflag,
+		 unsigned int flags);
 
 /* Flags for send_files.  */
 # define SEND_BUILD_DIRS	(1 << 0)
 # define SEND_FORCE		(1 << 1)
 # define SEND_NO_CONTENTS	(1 << 2)
 # define BACKUP_MODIFIED_FILES	(1 << 3)
+# define SEND_SIGNATURES	(1 << 4)
 
 /* Send an argument to the remote server.  */
 void

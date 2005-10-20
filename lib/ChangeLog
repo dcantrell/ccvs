@@ -1,3 +1,7 @@
+2005-10-19  Derek Price  <derek@ximbiot.com>
+
+	* wait.h: #include "xtime.h" for FreeBSD 4.11.
+
 2005-10-20  Derek Price  <derek@ximbiot.com>
 
 	 * md5.c, md5.h, strcasecmp.c, strncasecmp.c: Update from GNULIB.

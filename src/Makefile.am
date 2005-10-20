@@ -46,6 +46,7 @@ cvs_SOURCES = \
 	fileattr.c \
 	filesubr.c \
 	find_names.c \
+	gpg.c gpg.h \
 	hardlink.c \
 	hash.c \
 	history.c \
@@ -76,6 +77,7 @@ cvs_SOURCES = \
 	run.c \
 	scramble.c \
 	server.c \
+	sign.c sign.h \
 	stack.c stack.h \
 	status.c \
 	subr.c subr.h \

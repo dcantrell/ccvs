@@ -24,6 +24,7 @@
 
 # include "log-buffer.h"
 # include "md5.h"
+# include "sign.h"
 
 #include "socket-client.h"
 #include "rsh-client.h"
@@ -4423,16 +4424,32 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
 
 
 
+static void
+send_signature (const char *srepos, const char *filename, bool bin)
+{
+    char *sigbuf;
+    size_t len;
+
+    sigbuf = gen_signature (srepos, filename, bin, &len);
+
+    send_to_server ("Signature\012", 0);
+    send_to_server (sigbuf, len);
+    free (sigbuf);
+}
+
+
+
 /* The address of an instance of this structure is passed to
    send_fileproc, send_filesdoneproc, and send_direntproc, as the
    callerdat parameter.  */
 struct send_data
 {
     /* Each of the following flags are zero for clear or nonzero for set.  */
-    int build_dirs;
-    int force;
-    int no_contents;
-    int backup_modified;
+    bool build_dirs;
+    bool force;
+    bool no_contents;
+    bool backup_modified;
+    bool sign;
 };
 
 /* Deal with one file.  */
@@ -4546,7 +4563,19 @@ warning: ignoring -k options due to server limitations");
 	    send_to_server ("\012", 1);
 	}
 	else
+	{
+	    if (args->sign
+	        && get_sign_commits (false, supported_request ("Signature")))
+	    {
+		if (!supported_request ("Signature"))
+		    error (1, 0, "Server doesn't support commit signatures.");
+
+		send_signature (Short_Repository (finfo->repository),
+				finfo->file,
+				vers && !strcmp (vers->options, "-kb"));
+	    }
 	    send_modified (filename, finfo->fullname, vers);
+	}
 
         if (args->backup_modified)
         {
@@ -4931,15 +4960,25 @@ send_max_dotdot (argc, argv)
 
 
 
-/* Send Repository, Modified and Entry.  argc and argv contain only
-  the files to operate on (or empty for everything), not options.
-  local is nonzero if we should not recurse (-l option).  flags &
-  SEND_BUILD_DIRS is nonzero if nonexistent directories should be
-  sent.  flags & SEND_FORCE is nonzero if we should send unmodified
-  files to the server as though they were modified.  flags &
-  SEND_NO_CONTENTS means that this command only needs to know
-  _whether_ a file is modified, not the contents.  Also sends Argument
-  lines for argc and argv, so should be called after options are sent.  */
+/*
+ * Send Repository, Modified and Entry.  Also sends Argument lines for argc
+ * and argv, so should be called after options are sent.  
+ *
+ * ARGUMENTS
+ *   argc	# of files to operate on (0 for everything).
+ *   argv	Paths to file to operate on.
+ *   local	nonzero if we should not recurse (-l option).
+ *   flags	FLAGS & SEND_BUILD_DIRS if nonexistent directories should be
+ *		sent.
+ *		FLAGS & SEND_FORCE if we should send unmodified files to the
+ *		server as though they were modified.
+ *		FLAGS & SEND_NO_CONTENTS means that this command only needs to
+ *		know _whether_ a file is modified, not the contents.
+ *   sign	Whether to send files signatures.
+ *
+ * RETURNS
+ *   Nothing.
+ */
 void
 send_files (int argc, char **argv, int local, int aflag, unsigned int flags)
 {
@@ -4957,6 +4996,7 @@ send_files (int argc, char **argv, int local, int aflag, unsigned int flags)
     args.force = flags & SEND_FORCE;
     args.no_contents = flags & SEND_NO_CONTENTS;
     args.backup_modified = flags & BACKUP_MODIFIED_FILES;
+    args.sign = flags & SEND_SIGNATURES;
     err = start_recursion
 	(send_fileproc, send_filesdoneproc, send_dirent_proc,
          send_dirleave_proc, &args, argc, argv, local, W_LOCAL, aflag,
@@ -5058,6 +5098,17 @@ client_process_import_file (char *message, char *vfile, char *vtag, int targc,
 	    error (0, 0,
 		   "warning: ignoring -d option due to server limitations");
     }
+
+    /* Send signature.  */
+    if (get_sign_commits (false, supported_request ("Signature")))
+    {
+	if (!supported_request ("Signature"))
+	    error (1, 0, "Server doesn't support commit signatures.");
+
+	send_signature (Short_Repository (repository), vfile,
+			vers.options && !strcmp (vers.options, "-kb"));
+    }
+
     send_modified (vfile, fullname, &vers);
     if (vers.options)
 	free (vers.options);

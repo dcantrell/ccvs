@@ -10,6 +10,9 @@
  * specified in the README file that comes with the CVS source distribution.
  */
 
+#ifndef HASH_H
+#define HASH_H
+
 /*
  * The number of buckets for the hash table contained in each list.  This
  * should probably be prime.
@@ -23,7 +26,7 @@ enum ntype
 {
     NT_UNKNOWN, HEADER, ENTRIES, FILES, LIST, RCSNODE,
     RCSVERS, DIRS, UPDATE, LOCK, NDBMNODE, FILEATTR,
-    VARIABLE, RCSFIELD, RCSCMPFLD
+    VARIABLE, RCSFIELD, RCSCMPFLD, RCSSTRING
 };
 typedef enum ntype Ntype;
 
@@ -36,6 +39,7 @@ struct node
     struct node *hashprev;
     char *key;
     void *data;
+    size_t len;			/* Length of DATA.  */
     void (*delproc) (struct node *);
 };
 typedef struct node Node;
@@ -64,3 +68,5 @@ void delnode (Node *p);
 void freenode (Node *p);
 void sortlist (List *list, int (*)(const Node *, const Node *));
 int fsortcmp (const Node *p, const Node *q);
+
+#endif /* HASH_H */
