@@ -1760,11 +1760,10 @@ EOF
 
   # Some tests check the content of the RCS file and whether there is a
   # signature phrase or not depends on whether they were being generated.
-  OPENPGP_PHRASE='openpgp-signatures	@[a-zA-Z0-9/+]*=*@;'
+  # The trailing EOL is important.
+  OPENPGP_PHRASE='openpgp-signatures	@[a-zA-Z0-9/+]*=*@;
+'
 fi # GPG set
-# Add the trailing EOL, always.
-OPENPGP_PHRASE="$OPENPGP_PHRASE
-"
 
 
 # Make sure this variable is not defined to anything that would
