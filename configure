@@ -5655,6 +5655,16 @@ echo "${ECHO_T}no" >&6
 fi
 
 if test x"$GPG" != xgpg; then
+  # The GPG on at least one of my FreeBSD 4.11 test systems fails to run
+  # because libintl is missing.
+  if $GPG --version >/dev/null 2>&1; then :; else
+    # GPG is broken.  Pretend it isn't there.
+    { echo "$as_me:$LINENO: WARNING: GPG is installed as \`$GPG', but is broken.  Ignoring it." >&5
+echo "$as_me: WARNING: GPG is installed as \`$GPG', but is broken.  Ignoring it." >&2;}
+    GPG=gpg
+  fi
+fi
+if test x"$GPG" != xgpg; then
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_OPENPGP 1
