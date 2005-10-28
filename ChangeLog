@@ -1,3 +1,8 @@
+2005-10-28  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Verify that `$GPG --version' works.  Print a warning
+	when it doesn't.
+
 2005-10-27  Derek Price  <derek@ximbiot.com>
 
 	* GPG-TODO: Update status.
