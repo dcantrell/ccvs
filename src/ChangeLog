@@ -1,5 +1,7 @@
 2005-10-28  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Print a warning when GPG is not being used.
+
 	* sanity.sh (OPENPGP_PHRASE): Only add the trailing EOL when there is
 	content.
 

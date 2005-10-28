@@ -1763,6 +1763,9 @@ EOF
   # The trailing EOL is important.
   OPENPGP_PHRASE='openpgp-signatures	@[a-zA-Z0-9/+]*=*@;
 '
+else # GPG not set
+  echo "No working GPG was found.  This test suite will run, but OpenPGP" >&2
+  echo "commit signatures will not be tested." >&2
 fi # GPG set
 
 
