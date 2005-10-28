@@ -1,10 +1,10 @@
 Segment 1: Sign Commits and Store Signatures (6 days)
-    4.3.1 Scan for Keywords in Commit Data & Error/Warn
+>   4.3.1 Scan for Keywords in Commit Data & Error/Warn
           & Supply Force Option: 1 day
 *   4.3.1 Convert EOLs, Sign, Accept Command Line Template
           Option, Send Signature in New Server Request: 2 days
->   4.3.2 Receive New Sig Request and Save in RCS File: 1 day
-    4.1 Parse New RCS Phrase, Parse & Store Signatures: 2 days
+*   4.3.2 Receive New Sig Request and Save in RCS File: 1 day
+*   4.1 Parse New RCS Phrase, Parse & Store Signatures: 2 days
 
 Segment 2: Use CVS/Base Files (8 days)
     4.2.2 New Naming Convention: 1 day
