@@ -8630,17 +8630,17 @@ EOF
 	  # one revision with the working copy.
 
 	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
-	  dotest rcsdiff-1 "${testcvs} -q co first-dir" ''
+	  dotest rcslib-diff1 "${testcvs} -q co first-dir" ''
 	  cd first-dir
 	  echo "I am the first foo, and my name is $""Name$." > foo.c
-	  dotest rcsdiff-2 "${testcvs} add -m new-file foo.c" \
+	  dotest rcslib-diff2 "${testcvs} add -m new-file foo.c" \
 "${SPROG} add: scheduling file .foo\.c. for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest rcsdiff-3 "${testcvs} commit -m rev1 foo.c" \
+	  dotest rcslib-diff3 "${testcvs} commit -m rev1 foo.c" \
 "${CVSROOT_DIRNAME}/first-dir/foo.c,v  <--  foo\.c
 initial revision: 1\.1"
-	  dotest rcsdiff-4 "${testcvs} tag first foo.c" "T foo\.c"
-	  dotest rcsdiff-5 "${testcvs} update -p -r first foo.c" \
+	  dotest rcslib-diff4 "${testcvs} tag first foo.c" "T foo\.c"
+	  dotest rcslib-diff5 "${testcvs} update -p -r first foo.c" \
 "===================================================================
 Checking out foo\.c
 RCS:  ${CVSROOT_DIRNAME}/first-dir/foo\.c,v
@@ -8649,11 +8649,11 @@ VERS: 1\.1
 I am the first foo, and my name is \$""Name: first \$\."
 
 	  echo "I am the second foo, and my name is $""Name$." > foo.c
-	  dotest rcsdiff-6 "${testcvs} commit -m rev2 foo.c" \
+	  dotest rcslib-diff6 "${testcvs} commit -m rev2 foo.c" \
 "${CVSROOT_DIRNAME}/first-dir/foo\.c,v  <--  foo\.c
 new revision: 1\.2; previous revision: 1\.1"
-	  dotest rcsdiff-7 "${testcvs} tag second foo.c" "T foo\.c"
-	  dotest rcsdiff-8 "${testcvs} update -p -r second foo.c" \
+	  dotest rcslib-diff7 "${testcvs} tag second foo.c" "T foo\.c"
+	  dotest rcslib-diff8 "${testcvs} update -p -r second foo.c" \
 "===================================================================
 Checking out foo\.c
 RCS:  ${CVSROOT_DIRNAME}/first-dir/foo\.c,v
@@ -8661,7 +8661,7 @@ VERS: 1\.2
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 I am the second foo, and my name is \$""Name: second \$\."
 
-	dotest_fail rcsdiff-9 "${testcvs} diff -r first -r second" \
+	dotest_fail rcslib-diff9 "${testcvs} diff -r first -r second" \
 "${SPROG} diff: Diffing \.
 Index: foo\.c
 ===================================================================
@@ -8675,7 +8675,7 @@ diff -r1\.1 -r1\.2
 > I am the second foo, and my name is \$""Name:  \$\."
 
 	  echo "I am the once and future foo, and my name is $""Name$." > foo.c
-	  dotest_fail rcsdiff-10 "${testcvs} diff -r first" \
+	  dotest_fail rcslib-diff10 "${testcvs} diff -r first" \
 "${SPROG} diff: Diffing \.
 Index: foo\.c
 ===================================================================
