@@ -1,6 +1,11 @@
 Changes since 1.12.13:
 **********************
 
+NEW FEATURES
+
+* A problem with compression that could cause the server to block indefinitely
+  has been fixed.  (CVS bug #14840.)
+
 Changes from 1.12.12 to 1.12.13:
 ********************************
 
