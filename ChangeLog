@@ -1,3 +1,7 @@
+2005-10-28  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note compression buffer fix.
+
 2005-10-18  Derek Price  <derek@ximbiot.com>
 
 	* KEYS: New file, suggested by Antoine Lexy-Lambert <antoine@gmx.de>.
