@@ -1,6 +1,9 @@
 2005-10-28  Derek Price  <derek@ximbiot.com>
 
 	[bug #14840]
+	* sanity.sh (compression): New test for problem fixed below.
+
+	[bug #14840]
 	* zlib.c (compress_bufer_input): Don't assume the number of bytes the
 	caller requested will be available from the stream underlying the
 	compression buffer - the data is compressed and should be shorter by

@@ -1735,7 +1735,7 @@ if test x"$*" = x; then
 	tests="${tests} ignore ignore-on-branch binfiles binfiles2 binfiles3"
 	tests="${tests} mcopy binwrap binwrap2"
 	tests="${tests} binwrap3 mwrap info taginfo posttag"
-	tests="$tests config config2 config3 config4"
+	tests="$tests config config2 config3 config4 compression"
 	tests="${tests} serverpatch log log2 logopt ann ann-id"
 	# Repository Storage (RCS file format, CVS lock files, creating
 	# a repository without "cvs init", &c).
@@ -20437,6 +20437,78 @@ $SPROG commit: Rebuilding administrative file database"
 	  cd ../..
 	  rm -r config4
 	  modify_repo rm -rf $CVSROOT_DIRNAME/config4
+	  ;;
+
+
+
+	compression)
+	  # Try to reproduce some old compression buffer problems.
+
+	  # No point in testing compression effects in local mode.
+          if $remote; then :; else
+            remoteonly config2
+	    continue
+	  fi
+
+	  mkdir compression; cd compression
+	  dotest compression-init1 "$testcvs -z6 -Q co -l -d toplevel ."
+	  cd toplevel
+	  mkdir compression
+	  dotest compression-init2 "$testcvs -z6 -Q add compression"
+	  cd ..
+
+	  dotest compression-init3 "$testcvs -z6 -q co compression"
+	  cd compression
+
+	  # Want a big file
+	  cat >big_file <<EOF
+a lot of data on a line to make a really big file once it is copied, copied,
+copied, the digital equivalent of a mile.
+EOF
+	  for a in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16; do
+	    cat big_file >>tmp
+	    cat big_file >>tmp
+	    mv tmp big_file
+	  done
+
+	  dotest compression-1 "$testcvs -z6 -Q add big_file"
+
+	  # The following command hung due to a bug in CVS 1.12.13.  This was
+	  # because the command that grabbed more data to uncompress from the
+	  # underlying buffer in zlib.c:compress_buffer_input would try to read
+	  # the amount of data actually needed by the caller, even though this
+	  # should be shorter in the underlying buffer (since it is
+	  # compressed).  e.g., if the caller wanted 5 bytes, there may only be
+	  # 3 bytes in the underlying buffer though it will uncompress to 5
+	  # bytes, and a blocking read looking for 5 bytes will block
+	  # indefinitely since the data will never become available.
+	  #
+	  # The only odd thing is that it worked at all, sometimes.  For
+	  # example, I needed big_file to be at least 1MB in size to reproduce
+	  # this here (for a in 1..14 - I used 1..16 just for good measure).
+	  # My guess is that this has something to do with the amount the file
+	  # gets compressed and how much other data preceded it in the data
+	  # stream - the current buffer read will read as much data as is
+	  # available, up to the system page size, in blocking or nonblocking
+	  # modes.  So, when the compressed data is much less than the system
+	  # page size, it is cached in full from previous reads and the
+	  # blocking read request for more than the available data is never
+	  # made.  The smallest file I could reproduce this with above
+	  # compressed to just under 7k, on a system with a 4k page size.  In
+	  # this case, the call to compress_buffer_input decompressed all the
+	  # available buffered data, causing a read request for maybe half a
+	  # megabyte, with only 3k left to read, and the server blocked
+	  # waiting for the nonexistent data.  The same could happen with a
+	  # smaller file if its compressed data happened to cross a page
+	  # boundry or if timing issues caused a similar effect.
+	  dotest compression-2 "$testcvs -z6 -q ci -mForce-zerror." \
+"$CVSROOT_DIRNAME/compression/big_file,v  <--  big_file
+initial revision: 1\.1"
+
+	  dokeep
+	  cd ../..
+	  rm -r compression
+	  modify_repo rm -rf $CVSROOT_DIRNAME/compression
 	  ;;
 
 
