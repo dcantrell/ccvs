@@ -1,5 +1,7 @@
 2005-10-28  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (rcslib): Rename some misnamed tests.
+
 	[bug #14840]
 	* sanity.sh (compression): New test for problem fixed below.
 
