@@ -1,5 +1,8 @@
 2005-10-28  Derek Price  <derek@ximbiot.com>
 
+	* commit.c (check_fileproc): Don't print conflict marker warning in
+	really quiet mode.
+
 	* sanity.sh (rcslib): Rename some misnamed tests.
 
 	[bug #14840]
