@@ -1,3 +1,8 @@
+2005-10-28  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (OPENPGP_PHRASE): Only add the trailing EOL when there is
+	content.
+
 2005-10-27  Derek Price  <derek@ximbiot.com>
 
 	* rcs.c (RCS_checkin): Base64 encode GPG signatures to avoid having
