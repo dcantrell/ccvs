@@ -21,10 +21,14 @@
 /* Verify interface.  */
 #include "rcs.h"
 
+/* CVS headers.  */
 #include "cvs.h"
 #include "edit.h"
 #include "hardlink.h"
 #include "sign.h"
+
+/* GNULIB headers.  */
+#include "base64.h"
 
 /* These need to be source after cvs.h or HAVE_MMAP won't be set... */
 #ifdef HAVE_MMAP
@@ -5125,12 +5129,17 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
     if (get_sign_commits (server_active, true)
 	|| have_sigfile (server_active, workfile))
     {
+	char *rawsig;
+	size_t rawlen;
+
 	np = getnode();
 	np->type = RCSSTRING;
 	np->key = xstrdup ("openpgp-signatures");
-	np->data = get_signature (server_active, "", workfile,
-				  rcs->expand && STREQ (rcs->expand, "b"),
-				  &np->len);
+	rawsig = get_signature (server_active, "", workfile,
+				rcs->expand && STREQ (rcs->expand, "b"),
+				&rawlen);
+	np->len = base64_encode_alloc (rawsig, rawlen, (char **)&np->data);
+	free (rawsig);
 	addnode (delta->other_delta, np);
     }
 
@@ -7770,6 +7779,7 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	    vnode->state = xstrdup (RCSDEAD);
 	    continue;
 	}
+
 	/* if we have a new revision number, we're done with this delta */
 	for (cp = key;
 	     (isdigit ((unsigned char) *cp) || *cp == '.') && *cp != '\0';

@@ -1686,6 +1686,7 @@ mkdir home
 HOME=$TESTDIR/home; export HOME
 
 # If $GPG is set, create a key for /uu
+OPENPGP_PHRASE=
 if test x"$GPG" != xgpg; then
   $GPG --list-keys >>$LOGFILE 2>&1
   $GPG --import - <<EOF >>$LOGFILE 2>&1
@@ -1756,7 +1757,14 @@ B2xyFA1/6G+hv7k=
 =k49u
 -----END PGP PRIVATE KEY BLOCK-----
 EOF
+
+  # Some tests check the content of the RCS file and whether there is a
+  # signature phrase or not depends on whether they were being generated.
+  OPENPGP_PHRASE='openpgp-signatures	@[a-zA-Z0-9/+]*=*@;'
 fi # GPG set
+# Add the trailing EOL, always.
+OPENPGP_PHRASE="$OPENPGP_PHRASE
+"
 
 
 # Make sure this variable is not defined to anything that would
@@ -22515,7 +22523,7 @@ date	[0-9.]*;	author ${username};	state Exp;
 branches;
 next	;
 commitid	${commitid};
-
+$OPENPGP_PHRASE
 
 desc
 @@
@@ -26364,13 +26372,13 @@ branches
 	1\.1\.2\.1;
 next	;
 commitid	${commitid};
-
+$OPENPGP_PHRASE
 1\.1\.2\.1
 date	${RCSDELTADATE};	author ${username};	state foo;
 branches;
 next	;
 commitid	${commitid};
-
+$OPENPGP_PHRASE
 
 desc
 @@
@@ -26785,13 +26793,13 @@ branches
 	1\.1\.2\.1;
 next	;
 commitid	${commitid};
-
+$OPENPGP_PHRASE
 1\.1\.2\.1
 date	${RCSDELTADATE};	author ${username};	state foo;
 branches;
 next	;
 commitid	${commitid};
-
+$OPENPGP_PHRASE
 
 desc
 @@
@@ -26960,19 +26968,19 @@ date	${RCSDELTADATE};	author ${username};	state Exp;
 branches;
 next	1\.3;
 commitid	${commitid};
-
+$OPENPGP_PHRASE
 1\.3
 date	${RCSDELTADATE};	author ${username};	state Exp;
 branches;
 next	1\.2;
 commitid	${commitid};
-
+$OPENPGP_PHRASE
 1\.2
 date	${RCSDELTADATE};	author ${username};	state Exp;
 branches;
 next	;
 commitid	${commitid};
-
+$OPENPGP_PHRASE
 
 desc
 @@
