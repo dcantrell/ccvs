@@ -221,15 +221,14 @@ compress_buffer_input (void *closure, char *data, size_t need, size_t size,
            point.  */
 	assert (bd->size == 0);
 
-	/* This will work well in the server, because this call will
-	   do an unblocked read and fetch all the available data.  In
-	   the client, this will read a single byte from the stdio
-	   stream, which will cause us to call inflate once per byte.
-	   It would be more efficient if we could make a call which
-	   would fetch all the available bytes, and at least one byte.  */
-
+	/* On the server, this will do an unblocking read of as much data as is
+	 * available.  On the client, with a blocking input descriptor and the
+	 * current fd_buffer implementation, this should read as much data as
+	 * is currently available, and at least 1 byte (or EOF), from the
+	 * underlying buffer.
+	 */
 	status = (*cb->buf->input) (cb->buf->closure, bd->text,
-				    need, BUFFER_DATA_SIZE, &nread);
+				    need ? 1 : 0, BUFFER_DATA_SIZE, &nread);
 
 	if (status == -2)
 	    /* Don't try to recover from memory allcoation errors.  */
