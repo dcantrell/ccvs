@@ -894,7 +894,8 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 		       finfo->fullname);
 		goto out;
 	    }
-	    if (status == T_MODIFIED && !force_ci && file_has_markers (finfo))
+	    if (status == T_MODIFIED && !force_ci && !really_quiet
+		&& file_has_markers (finfo))
 	    {
 		/* Make this a warning, not an error, because we have
 		   no way of knowing whether the "conflict indicators"
