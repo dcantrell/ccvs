@@ -5578,20 +5578,14 @@ U trdiff/bar
 U trdiff/foo"
 		cd trdiff
 		echo something >> foo
-		dotest rdiff-3 \
-		  "${testcvs} ci -m added-something foo" \
-"${CVSROOT_DIRNAME}/trdiff/foo,v  <--  foo
-new revision: 1\.2; previous revision: 1\.1"
+		dotest rdiff-3 "$testcvs -Q ci -m added-something foo"
 		echo '#ident	"@(#)trdiff:$''Name$:$''Id$"' > new
 		echo "new file" >> new
 		dotest rdiff-4 \
 		  "${testcvs} add -m new-file-description new" \
 "${SPROG} add: scheduling file \`new' for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
-		dotest rdiff-5 \
-		  "${testcvs} commit -m added-new-file new" \
-"${CVSROOT_DIRNAME}/trdiff/new,v  <--  new
-initial revision: 1\.1"
+		dotest rdiff-5 "$testcvs -Q commit -m added-new-file new"
 		dotest rdiff-6 \
 		  "${testcvs} tag local-v0" \
 "${SPROG} tag: Tagging .
@@ -8721,9 +8715,7 @@ EOF
 	  dotest rcsdiff-2 "${testcvs} add -m new-file foo.c" \
 "${SPROG} add: scheduling file .foo\.c. for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest rcsdiff-3 "${testcvs} commit -m rev1 foo.c" \
-"${CVSROOT_DIRNAME}/first-dir/foo.c,v  <--  foo\.c
-initial revision: 1\.1"
+	  dotest rcsdiff-3 "$testcvs -Q commit -m rev1 foo.c"
 	  dotest rcsdiff-4 "${testcvs} tag first foo.c" "T foo\.c"
 	  dotest rcsdiff-5 "${testcvs} update -p -r first foo.c" \
 "===================================================================
@@ -8734,9 +8726,7 @@ VERS: 1\.1
 I am the first foo, and my name is \$""Name: first \$\."
 
 	  echo "I am the second foo, and my name is $""Name$." > foo.c
-	  dotest rcsdiff-6 "${testcvs} commit -m rev2 foo.c" \
-"${CVSROOT_DIRNAME}/first-dir/foo\.c,v  <--  foo\.c
-new revision: 1\.2; previous revision: 1\.1"
+	  dotest rcsdiff-6 "$testcvs -Q commit -m rev2 foo.c"
 	  dotest rcsdiff-7 "${testcvs} tag second foo.c" "T foo\.c"
 	  dotest rcsdiff-8 "${testcvs} update -p -r second foo.c" \
 "===================================================================
@@ -8853,13 +8843,9 @@ diff -c -F '\.\* (' -r1\.1 rgx\.c
 	  echo '3' >> file1
 	  dotest rcslib-merge-4 "${testcvs} -q add file1" \
 "${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest rcslib-merge-5 "${testcvs} -q commit -m '' file1" \
-"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-initial revision: 1\.1"
+	  dotest rcslib-merge-5 "$testcvs -Q commit -mr1 file1"
 	  sed -e 's/2/two/' file1 > f; mv f file1
-	  dotest rcslib-merge-6 "${testcvs} -q commit -m '' file1" \
-"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-new revision: 1\.2; previous revision: 1\.1"
+	  dotest rcslib-merge-6 "$testcvs -Q commit -mr2 file1"
 	  dotest rcslib-merge-7 "${testcvs} -q tag -b -r 1.1 patch1" "T file1"
 	  dotest rcslib-merge-8 "${testcvs} -q update -r patch1" "[UP] file1"
 	  dotest rcslib-merge-9 "${testcvs} -q status" \
@@ -8877,9 +8863,7 @@ File: file1            	Status: Up-to-date
 2
 3'
 	  sed -e 's/3/three/' file1 > f; mv f file1
-	  dotest rcslib-merge-11 "${testcvs} -q commit -m '' file1" \
-"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-new revision: 1\.1\.2\.1; previous revision: 1\.1"
+	  dotest rcslib-merge-11 "$testcvs -Q commit -mb1 file1"
 	  dotest rcslib-merge-12 "${testcvs} -q update -kv -j1.2" \
 "U file1
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
@@ -8910,9 +8894,7 @@ two
 	  fi
 	  dotest rcslib-symlink-2 "$testcvs update file2" "U file2"
 	  echo "This is a change" >> file2
-	  dotest rcslib-symlink-3 "$testcvs ci -m because file2" \
-"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file2
-new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1"
+	  dotest rcslib-symlink-3 "$testcvs -Q ci -m b2 file2"
 
 	  # Switch as for rcslib-symlink-1
 	  if test -n "$remotehost"; then
@@ -9050,8 +9032,9 @@ U second-dir/fileX"
 	  echo change-it >>fileX
 
 	  # Writes actually cause symlinks to be resolved.
+	  # $DOTSTAR here accounts for the keyword-in-signed-file warning.
 	  dotest rcslib-long-symlink-3 "$testcvs -q ci -mwrite-it" \
-"$CVSROOT_DIRNAME/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/file1,v  <--  fileX
+"$DOTSTAR$CVSROOT_DIRNAME/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/123456789012345678901234567890/file1,v  <--  fileX
 new revision: 1\.5; previous revision: 1\.4"
 
 	  dokeep
@@ -9225,11 +9208,12 @@ U first-dir/imported-f4"
 		echo local-change >> imported-f2
 
 		# commit
-		dotest import-100 "${testcvs} ci -m local-changes" \
-"${CPROG} commit: Examining .
-${CVSROOT_DIRNAME}/first-dir/imported-f1,v  <--  imported-f1
+		# $DOTSTAR accounts for the keyword-in-signed-file warning.
+		dotest import-100 "$testcvs ci -m local-changes" \
+"$CPROG commit: Examining .
+$DOTSTAR$CVSROOT_DIRNAME/first-dir/imported-f1,v  <--  imported-f1
 new revision: delete; previous revision: 1\.1\.1\.1
-${CVSROOT_DIRNAME}/first-dir/imported-f2,v  <--  imported-f2
+$CVSROOT_DIRNAME/first-dir/imported-f2,v  <--  imported-f2
 new revision: 1\.2; previous revision: 1\.1"
 
 		# log
@@ -18054,9 +18038,7 @@ File: binfile          	Status: Up-to-date
 
 	  cd 2/first-dir
 	  echo 'this file is $''RCSfile$' >binfile
-	  dotest binfiles-14a "${testcvs} -q ci -m modify-it" \
-"$CVSROOT_DIRNAME/first-dir/binfile,v  <--  binfile
-new revision: 1\.5; previous revision: 1\.4"
+	  dotest binfiles-14a "${testcvs} -Q ci -m modify-it"
 	  dotest binfiles-14b "cat binfile" 'this file is $''RCSfile$'
 	  # See binfiles-5.5 for discussion of -kb.
 	  dotest binfiles-14c "${testcvs} status binfile" \
@@ -20545,9 +20527,7 @@ $SPROG commit: Rebuilding administrative file database"
 "$SPROG add: scheduling file \`file1' for addition
 $SPROG add: use \`$SPROG commit' to add this file permanently"
 
-	  dotest serverpatch-3 "${testcvs} -q commit -m add" \
-"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-initial revision: 1\.1"
+	  dotest serverpatch-3 "$testcvs -Q commit -m add"
 
 	  # Tag the file.
 	  dotest serverpatch-4 "${testcvs} -q tag tag file1" 'T file1'
@@ -20566,9 +20546,7 @@ initial revision: 1\.1"
 	  # Modify and check in the first copy.
 	  cd ../1/first-dir
 	  echo '2' >> file1
-	  dotest serverpatch-7 "${testcvs} -q ci -mx file1" \
-"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-new revision: 1\.2; previous revision: 1\.1"
+	  dotest serverpatch-7 "$testcvs -Q ci -mx file1"
 
 	  # Now update the second copy.  When using remote CVS, the
 	  # patch will fail, forcing the file to be refetched.
@@ -24150,11 +24128,8 @@ ${SPROG} add: use .${SPROG} commit. to add these files permanently"
 	  dotest stamps-4kw \
 "$diff_u $TESTDIR/1/stamp.kw.touch $TESTDIR/1/stamp.kw.add"
 	  sleep 60
-	  dotest stamps-5 "${testcvs} -q ci -m add" \
-"$CVSROOT_DIRNAME/first-dir/aa,v  <--  aa
-initial revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/kw,v  <--  kw
-initial revision: 1\.1"
+	  dotest stamps-5 "$testcvs -Q ci -m add"
+
 	  # Cygwin, *cough*, puts the year in the time column until the minute
 	  # is no longer the current minute.  Sleep 60 seconds to avoid this
 	  # problem.
@@ -24193,11 +24168,7 @@ U first-dir/kw"
 	  sleep 60
 	  echo add a line >>aa
 	  echo add a line >>kw
-	  dotest stamps-9 "${testcvs} -q ci -m change-them" \
-"$CVSROOT_DIRNAME/first-dir/aa,v  <--  aa
-new revision: 1\.2; previous revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/kw,v  <--  kw
-new revision: 1\.2; previous revision: 1\.1"
+	  dotest stamps-9 "$testcvs -Q ci -m change-them"
 	  
 	  # Cygwin, *cough*, puts the year in the time column until the minute
 	  # is no longer the current minute.  Sleep 60 seconds to avoid this
@@ -24590,9 +24561,7 @@ U file1" "U file1"
 	  dotest keyword-3 "${testcvs} add file1" \
 "${SPROG} add: scheduling file .file1. for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest keyword-4 "${testcvs} -q ci -m add" \
-"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-initial revision: 1\.1"
+	  dotest keyword-4 "$testcvs -Q ci -m add"
 	  dotest keyword-5 "cat file1" \
 '\$'"Author: ${username} "'\$'"
 "'\$'"Date: [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9] "'\$'"
@@ -24722,14 +24691,10 @@ xx "'\$'"Log"'\$'
 	  dotest keyword-17 "${testcvs} update -A file1" "U file1"
 
 	  echo '$''Name$' > file1
-	  dotest keyword-18 "${testcvs} ci -m modify file1" \
-"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
-new revision: 1\.2; previous revision: 1\.1"
+	  dotest keyword-18 "$testcvs -Q ci -m modify file1"
 	  dotest keyword-19 "${testcvs} -q tag tag1" "T file1"
 	  echo "change" >> file1
-	  dotest keyword-20 "${testcvs} -q ci -m mod2 file1" \
-"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-new revision: 1\.3; previous revision: 1\.2"
+	  dotest keyword-20 "$testcvs -Q ci -m mod2 file1"
 	  # FIXCVS - These unpatchable files are happening because the tag
 	  # associated with the current base version of the file in the
 	  # sandbox is not available in these cases.  See the note in the
@@ -24800,9 +24765,7 @@ EOF
 ${SPROG} \[commit aborted\]: correct above errors first!"
 	  dotest keywordlog-4c "${testcvs} -q update -A" "M file1"
 
-	  dotest keywordlog-5 "${testcvs} ci -F ${TESTDIR}/comment.tmp file1" \
-"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
-new revision: 1\.4; previous revision: 1\.3"
+	  dotest keywordlog-5 "$testcvs -Q ci -F $TESTDIR/comment.tmp file1"
 	  rm -f ${TESTDIR}/comment.tmp
 	  dotest keywordlog-6 "${testcvs} -q tag -b br" "T file1"
 	  dotest keywordlog-7 "cat file1" \
@@ -24825,9 +24788,7 @@ xx"
 	  cd ../../1/first-dir
 
 	  echo "change" >> file1
-	  dotest keywordlog-10 "${testcvs} ci -m modify file1" \
-"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
-new revision: 1\.5; previous revision: 1\.4"
+	  dotest keywordlog-10 "$testcvs -Q ci -m modify file1"
 	  dotest keywordlog-11 "cat file1" \
 "initial
 xx "'\$'"Log: file1,v "'\$'"
@@ -24857,9 +24818,7 @@ change"
 	  cd ../../1/first-dir
 	  dotest keywordlog-14 "${testcvs} -q update -r br" "[UP] file1"
 	  echo br-change >>file1
-	  dotest keywordlog-15 "${testcvs} -q ci -m br-modify" \
-"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-new revision: 1\.4\.2\.1; previous revision: 1\.4"
+	  dotest keywordlog-15 "$testcvs -Q ci -m br-modify"
 	  dotest keywordlog-16 "cat file1" \
 "initial
 xx "'\$'"Log: file1,v "'\$'"
@@ -25079,11 +25038,7 @@ ${SPROG} add: scheduling file .file2. for addition
 ${SPROG} add: use .${SPROG} commit. to add these files permanently"
 
 	  # See "rmadd" for a list of other tests of cvs ci -r.
-	  dotest keywordname-init-4 "${testcvs} -q ci -r 1.3 -m add" \
-"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-initial revision: 1\.3
-$CVSROOT_DIRNAME/first-dir/file2,v  <--  file2
-initial revision: 1\.3"
+	  dotest keywordname-init-4 "$testcvs -Q ci -r 1.3 -m add"
 
 	  dotest keywordname-init-6 "${testcvs} -q up -A"
 	  dotest keywordname-init-7 "${testcvs} -q tag -b br" \
@@ -25091,9 +25046,7 @@ initial revision: 1\.3"
 T file2"
 
 	  echo new data >>file1
-	  dotest keywordname-init-8 "${testcvs} -q ci -mchange" \
-"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-new revision: 1\.4; previous revision: 1\.3"
+	  dotest keywordname-init-8 "$testcvs -Q ci -mchange"
 
 	  # First check out a branch.
 	  #
@@ -25217,27 +25170,19 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 "${SPROG} add: scheduling file .binfile\.dat. for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 
-	  dotest keyword2-6 "${testcvs} -q ci -m add" \
-"$CVSROOT_DIRNAME/first-dir/binfile\.dat,v  <--  binfile\.dat
-initial revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-initial revision: 1\.1"
+	  dotest keyword2-6 "$testcvs -Q ci -m add"
 
 	  dotest keyword2-7 "${testcvs} -q tag -b branch" \
 "T binfile\.dat
 T file1"
 
 	  sed -e 's/our/the best of and the worst of/' file1 >f; mv f file1
-	  dotest keyword2-8 "${testcvs} -q ci -m change" \
-"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-new revision: 1\.2; previous revision: 1\.1"
+	  dotest keyword2-8 "$testcvs -Q ci -m change"
 
 	  dotest keyword2-9 "${testcvs} -q update -r branch" '[UP] file1'
 
 	  echo "what else do we have?" >>file1
-	  dotest keyword2-10 "${testcvs} -q ci -m change" \
-"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-new revision: 1\.1\.2\.1; previous revision: 1\.1"
+	  dotest keyword2-10 "$testcvs -Q ci -m change"
 
 	  # Okay, first a conflict in file1 - should be okay with binfile.dat
 	  dotest keyword2-11 "${testcvs} -q update -A -j branch" \
@@ -25275,8 +25220,9 @@ Merging differences between 1\.1 and 1\.1\.2\.1 into file1"
 
 	  # binfile won't get checked in, but it is now corrupt and could
 	  # have been checked in if it had changed on the branch...
+	  # $DOTSTAR here accounts for the keyword-in-signed-file warning.
 	  dotest keyword2-14 "${testcvs} -q ci -m change" \
-"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+"$DOTSTAR$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2"
 
 	  # "-kk" no longer corrupts binary files
@@ -25293,8 +25239,9 @@ T file1"
 
 	  ${AWK} 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
 	    </dev/null | ${TR} '@' '\000' >>binfile.dat
+	  # $DOTSTAR here accounts for the keyword-in-signed-file warning.
 	  dotest keyword2-19 "$testcvs -q ci -m badbadbad" \
-"$CVSROOT_DIRNAME/first-dir/binfile\.dat,v  <--  binfile\.dat
+"$DOTSTAR$CVSROOT_DIRNAME/first-dir/binfile\.dat,v  <--  binfile\.dat
 new revision: 1\.1\.4\.1; previous revision: 1\.1"
 	  # "-kk" no longer affects binary files
 

@@ -307,5 +307,6 @@ extern int add_rcs_file (const char *, const char *, const char *,
                          const char *, int, char **, const char *, size_t,
                          FILE *, bool);
 void free_keywords (void *keywords);
+bool contains_keyword (char *buf, size_t len);
 
 #endif /* RCS_H */

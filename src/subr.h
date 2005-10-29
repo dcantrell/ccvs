@@ -49,6 +49,7 @@ char *gca (const char *rev1, const char *rev2);
 void check_numeric (const char *, int, char **);
 char *make_message_rcsvalid (const char *message);
 int file_has_markers (const struct file_info *);
+bool file_contains_keyword (const struct file_info *finfo);
 void get_file (const char *, const char *, const char *,
                char **, size_t *, size_t *);
 void resolve_symlink (char **filename);
