@@ -1,3 +1,14 @@
+2005-10-29  Derek Price  <derek@ximbiot.com>
+
+	* commit.c (check_fileproc): Warn when a signed file contains keywords.
+	* rcs.c (next_keyword): New function factored from...
+	(expand_keyword): ...here.
+	(contains_keyword): New function.
+	* rcs.h (contains_keyword): Prototype new function.
+	* subr.c (file_contains_keyword): New function.
+	* subr.h (file_contains_keyword): Proto for same.
+	* sanity.sh: Compensate for the new warning.
+
 2005-10-28  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: Print a warning when GPG is not being used.

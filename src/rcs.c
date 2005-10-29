@@ -3641,6 +3641,105 @@ escape_keyword_value (const char *value, int *free_value)
 
 
 
+/* Search for keywords in the *LEN bytes starting at *START.  Return the
+ * struct rcs_keyword describing the keyword found, or NULL when none is found.
+ * On return, *START will point to the first character after the `$'
+ * introductin the keyword, *END will point to the trailing `$', and *LEN
+ * will be decremented by the number of characters *START was incremented by.
+ *
+ * Not sure how to delcare *START and *END as const here.  I keep getting
+ * warnings.
+ */
+static const struct rcs_keyword *
+next_keyword (char **start, size_t *len, char **end)
+{
+    char *srch, *srch_next, *s = NULL;
+    size_t srch_len;
+    const struct rcs_keyword *keywords, *keyword = NULL;
+
+    if (!config->keywords) config->keywords = new_keywords ();
+    keywords = config->keywords;
+
+    srch = *start;
+    srch_len = *len;
+    TRACE (TRACE_DATA, "next_keyword: searching `%s'", srch);
+    while ((srch_next = memchr (srch, '$', srch_len)))
+    {
+	const char *send;
+	size_t slen;
+
+	srch_len -= (srch_next + 1) - srch;
+	srch = srch_next + 1;
+
+	/* Look for the first non alphabetic character after the '$'.  */
+	send = srch + srch_len;
+	for (s = srch; s < send; s++)
+	    if (!isalpha ((unsigned char) *s))
+		break;
+
+	/* If the first non alphabetic character is not '$' or ':',
+           then this is not an RCS keyword.  */
+	if (s == send || (*s != '$' && *s != ':'))
+	    continue;
+
+	/* See if this is one of the keywords.  */
+	slen = s - srch;
+	for (keyword = keywords; keyword->string; keyword++)
+	{
+	    if (keyword->expandit
+		&& keyword->len == slen
+		&& !strncmp (keyword->string, srch, slen))
+	    {
+		break;
+	    }
+	}
+	if (!keyword->string)
+	    continue;
+
+	/* If the keyword ends with a ':', then the old value consists
+           of the characters up to the next '$'.  If there is no '$'
+           before the end of the line, though, then this wasn't an RCS
+           keyword after all.  */
+
+	if (*s == ':')
+	{
+	    for (; s < send; s++)
+		if (*s == '$' || *s == '\n')
+		    break;
+	    if (s == send || *s != '$')
+		/* not resetting this the last time through this loop can cause
+		 * erroneous return codes.
+		 */
+		keyword = NULL;
+	}
+
+	if (keyword)
+	    break;
+    }
+
+    if (keyword && keyword->string)
+    {
+	*start = srch;
+	*end = s;
+	*len = srch_len;
+	TRACE (TRACE_DATA,
+	       "next_keyword: returning keyword `%s' and remainder `%s'",
+	       keyword->string, s);
+	return keyword;
+    }
+    /* else */ return NULL;
+}
+
+
+
+bool contains_keyword (char *buf, size_t len)
+{
+    char *s;
+    return next_keyword (&buf, &len, &s);
+}
+
+
+
 /* Expand RCS keywords in the memory buffer BUF of length LEN.  This
    applies to file RCS and version VERS.  If NAME is not NULL, and is
    not a numeric revision, then it is the symbolic tag used for the
@@ -3663,9 +3762,9 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
     struct expand_buffer *ebuf_last = NULL;
     size_t ebuf_len = 0;
     char *locker;
-    char *srch, *srch_next;
+    char *srch, *s;
     size_t srch_len;
-    const struct rcs_keyword *keywords;
+    const struct rcs_keyword *keywords, *keyword;
 
     if (!config /* For `cvs init', config may not be set.  */
 	||expand == KFLAG_O || expand == KFLAG_B)
@@ -3691,59 +3790,15 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
     /* RCS keywords look like $STRING$ or $STRING: VALUE$.  */
     srch = buf;
     srch_len = len;
-    while ((srch_next = memchr (srch, '$', srch_len)) != NULL)
+    while ((keyword = next_keyword (&srch, &srch_len, &s)))
     {
-	char *s, *send;
-	size_t slen;
-	const struct rcs_keyword *keyword;
 	char *value;
 	int free_value;
 	char *sub;
 	size_t sublen;
-
-	srch_len -= (srch_next + 1) - srch;
-	srch = srch_next + 1;
-
-	/* Look for the first non alphabetic character after the '$'.  */
-	send = srch + srch_len;
-	for (s = srch; s < send; s++)
-	    if (! isalpha ((unsigned char) *s))
-		break;
-
-	/* If the first non alphabetic character is not '$' or ':',
-           then this is not an RCS keyword.  */
-	if (s == send || (*s != '$' && *s != ':'))
-	    continue;
-
-	/* See if this is one of the keywords.  */
-	slen = s - srch;
-	for (keyword = keywords; keyword->string != NULL; keyword++)
-	{
-	    if (keyword->expandit
-		&& keyword->len == slen
-		&& strncmp (keyword->string, srch, slen) == 0)
-	    {
-		break;
-	    }
-	}
-	if (keyword->string == NULL)
-	    continue;
-
-	/* If the keyword ends with a ':', then the old value consists
-           of the characters up to the next '$'.  If there is no '$'
-           before the end of the line, though, then this wasn't an RCS
-           keyword after all.  */
-	if (*s == ':')
-	{
-	    for (; s < send; s++)
-		if (*s == '$' || *s == '\n')
-		    break;
-	    if (s == send || *s != '$')
-		continue;
-	}
-
+	
 	/* At this point we must replace the string from SRCH to S
-           with the expansion of the keyword KW.  */
+           with the expansion of the keyword KEYWORD.  */
 
 	/* Get the value to use.  */
 	free_value = 0;

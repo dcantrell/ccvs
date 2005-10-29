@@ -616,6 +616,31 @@ out:
 
 
 
+bool
+file_contains_keyword (const struct file_info *finfo)
+{
+    FILE *fp;
+    bool result;
+    struct stat st;
+    char *content;
+
+    fp = CVS_FOPEN (finfo->file, "r");
+    if (fp == NULL)
+	error (1, errno, "cannot open %s", finfo->fullname);
+    if (fstat (fileno (fp), &st))
+	error (1, errno, "cannot fstat `%s'", finfo->fullname);
+    content = xmalloc (st.st_size);
+    if (fread (content, sizeof *content, st.st_size, fp) < st.st_size)
+	error (1, errno, "Failed to read from `%s'", finfo->fullname);
+    result = contains_keyword (content, st.st_size);
+    if (fclose (fp) < 0)
+	error (0, errno, "cannot close %s", finfo->fullname);
+    free (content);
+    return result;
+}
+
+
+
 /* Read the entire contents of the file NAME into *BUF.
    If NAME is NULL, read from stdin.  *BUF
    is a pointer returned from malloc (or NULL), pointing to *BUFSIZE

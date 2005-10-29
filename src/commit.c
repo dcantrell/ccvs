@@ -24,6 +24,7 @@
 #include "edit.h"
 #include "fileattr.h"
 #include "hardlink.h"
+#include "sign.h"
 
 static Dtype check_direntproc (void *callerdat, const char *dir,
                                const char *repos, const char *update_dir,
@@ -920,6 +921,22 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 		error (0, 0,
 		       "\
 warning: file `%s' seems to still contain conflict indicators",
+		       finfo->fullname);
+	    }
+
+	    if ((status == T_ADDED || status == T_MODIFIED)
+		&& !force_ci && !really_quiet
+		/* This will not be called from the client.  */
+		&& (get_sign_commits (server_active, true)
+		    || have_sigfile (server_active, finfo->file))
+		&& file_contains_keyword (finfo))
+	    {
+		/* Make this a warning, not an error, because the user may
+		 * be intentionally signing a file with keywords.  Such a file
+		 * may still be verified when checked out -ko.
+		 */
+		error (0, 0,
+"warning: signed file `%s' contains at least one RCS keyword",
 		       finfo->fullname);
 	    }
 
