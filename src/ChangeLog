@@ -1,3 +1,7 @@
+2005-10-31  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (contains_keyword): Convert return type to bool.
+
 2005-10-29  Derek Price  <derek@ximbiot.com>
 
 	* commit.c (check_fileproc): Warn when a signed file contains keywords.
