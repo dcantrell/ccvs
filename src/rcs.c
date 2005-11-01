@@ -3735,7 +3735,7 @@ next_keyword (char **start, size_t *len, char **end)
 bool contains_keyword (char *buf, size_t len)
 {
     char *s;
-    return next_keyword (&buf, &len, &s);
+    return !!next_keyword (&buf, &len, &s);
 }
 
 
