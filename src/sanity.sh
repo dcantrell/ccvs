@@ -20465,8 +20465,10 @@ $SPROG commit: Rebuilding administrative file database"
 a lot of data on a line to make a really big file once it is copied, copied,
 copied, the digital equivalent of a mile.
 EOF
+	  # 1..14 creates about a 1MB file, the minimum required on the system
+	  # I initially tested this on.  1..16 creates about a 4MB file.
 	  for a in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16; do
-	    cat big_file >>tmp
+	    cat big_file >tmp
 	    cat big_file >>tmp
 	    mv tmp big_file
 	  done
@@ -20485,7 +20487,8 @@ EOF
 	  #
 	  # The only odd thing is that it worked at all, sometimes.  For
 	  # example, I needed big_file to be at least 1MB in size to reproduce
-	  # this here (for a in 1..14 - I used 1..16 just for good measure).
+	  # this here (for a in 1..14 - I used 1..16 above just 4 good measure
+	  # - this compresses to c. 26k and should handle up 2 a c. 16k pg sz).
 	  # My guess is that this has something to do with the amount the file
 	  # gets compressed and how much other data preceded it in the data
 	  # stream - the current buffer read will read as much data as is
