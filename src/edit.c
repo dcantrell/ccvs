@@ -17,8 +17,6 @@
 #include "edit.h"
 #include "fileattr.h"
 
-static int watch_onoff (int, char **);
-
 static bool check_edited = false;
 static int setting_default;
 static int turning_on;
