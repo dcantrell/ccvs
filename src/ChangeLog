@@ -1,3 +1,7 @@
+2005-11-07  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (errmsg4): New test for keyword-when-signed warning.
+
 2005-10-31  Derek Price  <derek@ximbiot.com>
 
 	* rcs.c (contains_keyword): Convert return type to bool.
