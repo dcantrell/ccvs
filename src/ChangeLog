@@ -1,3 +1,7 @@
+2005-11-07  Derek Price  <derek@ximbiot.com>
+
+	* edit.c (watch_onoff): Remove unneeded proto.
+
 2005-11-03  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (compression): Elucidate.
