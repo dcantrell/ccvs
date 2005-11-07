@@ -1763,9 +1763,11 @@ EOF
   # The trailing EOL is important.
   OPENPGP_PHRASE='openpgp-signatures	@[a-zA-Z0-9/+]*=*@;
 '
+  gpg=:
 else # GPG not set
   echo "No working GPG was found.  This test suite will run, but OpenPGP" >&2
   echo "commit signatures will not be tested." >&2
+  gpg=false
 fi # GPG set
 
 
@@ -1809,7 +1811,7 @@ if test x"$*" = x; then
         tests="${tests} rstar-toplevel trailingslashes checkout_repository"
 	# Log messages, error messages.
 	tests="${tests} mflag editor env errmsg1 errmsg2 adderrmsg opterrmsg"
-	tests="${tests} errmsg3"
+	tests="$tests errmsg3 errmsg4"
 	tests="${tests} close-stdout"
 	tests="$tests debug-log-nonfatal"
 	# Watches, binary files, history browsing, &c.
@@ -16443,6 +16445,38 @@ ${CPROG} \[update aborted\]: \*PANIC\* administration files missing!"
 	  dokeep
 	  cd ..
 	  rm -r errmsg3
+	  ;;
+
+
+
+	errmsg4)
+	  # Look for the warning when files with keywords are committed with
+	  # an OpenPGP signature.
+	  if $gpg; then :; else
+	    skip errmsg4 "No OpenPGP tool configured."
+	    continue
+	  fi
+
+	  mkdir errmsg4
+	  cd errmsg4
+	  dotest errmsg4-init-1 "$testcvs -Q import -m. errmsg4 VENDOR RELEASE"
+	  dotest errmsg4-init-2 "$testcvs -Q co errmsg4"
+
+	  cd errmsg4
+	  echo '$Revision$' >filewithkeyword
+	  dotest errmsg4-init-3 "$testcvs -Q add filewithkeyword"
+
+	  # The following test intentionally uses -q.  This message should only
+	  # disappear with -Q.
+	  dotest errmsg4-1 "$testcvs -q ci -mgen-msg" \
+"$CPROG commit: warning: signed file \`filewithkeyword' contains at least one RCS keyword
+$CVSROOT_DIRNAME/errmsg4/filewithkeyword,v  <--  filewithkeyword
+initial revision: 1\.1"
+
+	  dokeep
+	  cd ../..
+	  rm -rf errmsg4
+	  modify_repo rm -rf $CVSROOT_DIRNAME/errmsg4
 	  ;;
 
 
