@@ -1,3 +1,13 @@
+2005-11-09  Mark D. Baushke  <mdb@gnu.org>
+
+	* filesubr.c (VMS_filename_classes): New table data.
+	* filesubr.c (last_component): Returns const char * everywhere.
+	* vms.h (link): both args should be const char *.
+	(Patch suggested by Piet Schuermans <pschuermans@mac.com>).
+
+	* config.h.in (PACKAGE_BUGREPORT): Add missing macro.
+	* config.h: Regenerated.
+	
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in (HAVE_PUTENV): Remove.
