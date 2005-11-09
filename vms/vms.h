@@ -37,7 +37,7 @@ int vms_unlink(char *path);
 #else
 int vms_unlink(char const*path);
 #endif
-int link(char *from, char *to);
+int link(const char *from, const char *to);
 
 #define stat(a, b) wrapped_stat(a, b)
 #define lstat stat

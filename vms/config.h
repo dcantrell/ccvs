@@ -9,6 +9,7 @@
               June 1995 - <benjamin@cyclic.com> */
 
 /* The following macro are defined by running ./configure under UNIX OSs.  */
+#define PACKAGE_BUGREPORT "bug-cvs@nongnu.org"
 #define PACKAGE_STRING "Concurrent Versions System (CVS) 1.11.21.1"
 
 /* We only want to build the client */
