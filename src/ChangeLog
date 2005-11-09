@@ -1,3 +1,8 @@
+2005-11-09  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (pserver-4.2): Accept a "no such sytem user" message when
+	a root attempt is made.
+
 2005-11-07  Derek Price  <derek@ximbiot.com>
 
 	* edit.c (watch_onoff): Remove unneeded proto.
