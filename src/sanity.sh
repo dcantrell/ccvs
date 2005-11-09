@@ -30590,9 +30590,13 @@ Root $CVSROOT_DIRNAME
 noop
 EOF
 
+	    # The "no such system user" error is occurring on at least one of
+	    # our BSD 2.0.2 nightly test platforms.
 	    dotest_fail pserver-4.2 \
 "$servercvs --allow-root=$CVSROOT_DIRNAME pserver" \
-"error 0: root not allowed" <<EOF
+"error 0: root not allowed" \
+"E Fatal error, aborting\.
+error 0 root: no such system user" <<EOF
 BEGIN AUTH REQUEST
 $CVSROOT_DIRNAME
 dontroot
