@@ -1,5 +1,7 @@
 2005-11-09  Derek Price  <derek@ximbiot.com>
 
+	* edit.h: Remove unneeded `extern' from function decls.
+
 	* sanity.sh (pserver-4.2): Accept a "no such sytem user" message when
 	a root attempt is made.
 
