@@ -43,6 +43,7 @@ EXTRA_DIST = \
 	cvsnt.mak \
 	cvs.spec \
 	mktemp.sh \
+	build-aux/bison-missing \
 	m4/ChangeLog \
 	m4/README
 
