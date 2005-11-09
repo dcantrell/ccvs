@@ -1,3 +1,11 @@
+2005-11-09  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (stamp-ch): Sub PACKAGE_STRING & PACKAGE_BUGREPORT.
+	Don't sub PACKAGE_VERSION.
+	* config.h.in [PACKAGE_STRING]: Sub directly from the autoconf
+	generated value.
+	[PACKAGE_BUGREPORT]: Sub from autoconf generated value.
+
 2005-11-09  Mark D. Baushke  <mdb@gnu.org>
 
 	* filesubr.c (VMS_filename_classes): New table data.
