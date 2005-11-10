@@ -29,6 +29,7 @@ cvs_SOURCES = \
 	add.c \
 	admin.c \
 	annotate.c \
+	base.c base.h \
 	buffer.c \
 	checkin.c \
 	checkout.c \
