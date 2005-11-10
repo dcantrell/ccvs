@@ -412,6 +412,7 @@ commit (argc, argv)
 		/* Silently ignore -n for compatibility with old
 		 * clients.
 		 */
+		if (!server_active) error(0, 0, "the `-n' option is obsolete");
 		break;
 #endif /* SERVER_SUPPORT */
 	    case 'm':
