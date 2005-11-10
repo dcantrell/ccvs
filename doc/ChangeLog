@@ -1,3 +1,9 @@
+2005-11-10  Larry Jones  <lawrence.jones@ugs.com>
+
+	* cvs.texinfo (Common options): -n no longer applies to commit.
+	(commit): Remove reference to the defunct -n option.
+	* cvs.1, stamp-vti, version.texi: Regenerated
+
 2005-10-12  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo: Remove text that created unintentional cross-references
