@@ -760,7 +760,7 @@ unedit (int argc, char **argv)
 
 
 void
-mark_up_to_date (const char *file)
+mark_up_to_date (const char*update_dir, const char *file)
 {
     char *base;
 
@@ -768,7 +768,7 @@ mark_up_to_date (const char *file)
        date file in CVSADM_BASE.  */
     base = Xasprintf ("%s/%s", CVSADM_BASE, file);
     if (unlink_file (base) < 0 && ! existence_error (errno))
-	error (0, errno, "cannot remove %s", file);
+	error (0, errno, "cannot remove `%s/%s'", update_dir, base);
     free (base);
 }
 
