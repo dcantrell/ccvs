@@ -135,25 +135,26 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_cvs_OBJECTS = add.$(OBJEXT) admin.$(OBJEXT) annotate.$(OBJEXT) \
-	buffer.$(OBJEXT) checkin.$(OBJEXT) checkout.$(OBJEXT) \
-	classify.$(OBJEXT) client.$(OBJEXT) commit.$(OBJEXT) \
-	create_adm.$(OBJEXT) cvsrc.$(OBJEXT) diff.$(OBJEXT) \
-	edit.$(OBJEXT) entries.$(OBJEXT) error.$(OBJEXT) \
-	exithandle.$(OBJEXT) expand_path.$(OBJEXT) fileattr.$(OBJEXT) \
-	filesubr.$(OBJEXT) find_names.$(OBJEXT) gpg.$(OBJEXT) \
-	hardlink.$(OBJEXT) hash.$(OBJEXT) history.$(OBJEXT) \
-	ignore.$(OBJEXT) import.$(OBJEXT) lock.$(OBJEXT) log.$(OBJEXT) \
-	log-buffer.$(OBJEXT) login.$(OBJEXT) logmsg.$(OBJEXT) \
-	ls.$(OBJEXT) main.$(OBJEXT) mkmodules.$(OBJEXT) \
-	modules.$(OBJEXT) ms-buffer.$(OBJEXT) myndbm.$(OBJEXT) \
-	no_diff.$(OBJEXT) parseinfo.$(OBJEXT) patch.$(OBJEXT) \
-	rcs.$(OBJEXT) rcscmds.$(OBJEXT) recurse.$(OBJEXT) \
-	release.$(OBJEXT) remove.$(OBJEXT) repos.$(OBJEXT) \
-	root.$(OBJEXT) rsh-client.$(OBJEXT) run.$(OBJEXT) \
-	scramble.$(OBJEXT) server.$(OBJEXT) sign.$(OBJEXT) \
-	stack.$(OBJEXT) status.$(OBJEXT) subr.$(OBJEXT) tag.$(OBJEXT) \
-	update.$(OBJEXT) version.$(OBJEXT) vers_ts.$(OBJEXT) \
-	watch.$(OBJEXT) wrapper.$(OBJEXT) zlib.$(OBJEXT)
+	base.$(OBJEXT) buffer.$(OBJEXT) checkin.$(OBJEXT) \
+	checkout.$(OBJEXT) classify.$(OBJEXT) client.$(OBJEXT) \
+	commit.$(OBJEXT) create_adm.$(OBJEXT) cvsrc.$(OBJEXT) \
+	diff.$(OBJEXT) edit.$(OBJEXT) entries.$(OBJEXT) \
+	error.$(OBJEXT) exithandle.$(OBJEXT) expand_path.$(OBJEXT) \
+	fileattr.$(OBJEXT) filesubr.$(OBJEXT) find_names.$(OBJEXT) \
+	gpg.$(OBJEXT) hardlink.$(OBJEXT) hash.$(OBJEXT) \
+	history.$(OBJEXT) ignore.$(OBJEXT) import.$(OBJEXT) \
+	lock.$(OBJEXT) log.$(OBJEXT) log-buffer.$(OBJEXT) \
+	login.$(OBJEXT) logmsg.$(OBJEXT) ls.$(OBJEXT) main.$(OBJEXT) \
+	mkmodules.$(OBJEXT) modules.$(OBJEXT) ms-buffer.$(OBJEXT) \
+	myndbm.$(OBJEXT) no_diff.$(OBJEXT) parseinfo.$(OBJEXT) \
+	patch.$(OBJEXT) rcs.$(OBJEXT) rcscmds.$(OBJEXT) \
+	recurse.$(OBJEXT) release.$(OBJEXT) remove.$(OBJEXT) \
+	repos.$(OBJEXT) root.$(OBJEXT) rsh-client.$(OBJEXT) \
+	run.$(OBJEXT) scramble.$(OBJEXT) server.$(OBJEXT) \
+	sign.$(OBJEXT) stack.$(OBJEXT) status.$(OBJEXT) subr.$(OBJEXT) \
+	tag.$(OBJEXT) update.$(OBJEXT) version.$(OBJEXT) \
+	vers_ts.$(OBJEXT) watch.$(OBJEXT) wrapper.$(OBJEXT) \
+	zlib.$(OBJEXT)
 cvs_OBJECTS = $(am_cvs_OBJECTS)
 am__DEPENDENCIES_1 =
 binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
@@ -313,6 +314,7 @@ cvs_SOURCES = \
 	add.c \
 	admin.c \
 	annotate.c \
+	base.c base.h \
 	buffer.c \
 	checkin.c \
 	checkout.c \
@@ -507,6 +509,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/add.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/admin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/annotate.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/base.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buffer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checkin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checkout.Po@am__quote@

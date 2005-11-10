@@ -721,11 +721,6 @@ int No_Difference (struct file_info *finfo, Vers_TS *vers);
 int special_file_mismatch (struct file_info *finfo,
 				  char *rev1, char *rev2);
 
-/* CVSADM_BASEREV stuff, from entries.c.  */
-char *base_get (struct file_info *);
-void base_register (struct file_info *, char *);
-void base_deregister (struct file_info *);
-
 /*
  * defines for Classify_File() to determine the current state of a file.
  * These are also used as types in the data field for the list we make for

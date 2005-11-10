@@ -16,6 +16,7 @@
 #include "watch.h"
 #include "edit.h"
 #include "fileattr.h"
+#include "base.h"
 
 static int watch_onoff (int, char **);
 
@@ -320,24 +321,47 @@ edit_file (void *data, List *ent_list, const char *short_pathname,
 {
     Node *node;
     struct file_info finfo;
-    char *basefilename;
+    char *editbasefn, *basefn, *rev;
 
-    xchmod (filename, 1);
-
-    mkdir_if_needed (CVSADM_BASE);
-    basefilename = Xasprintf ("%s/%s", CVSADM_BASE, filename);
-    copy_file (filename, basefilename);
-    free (basefilename);
 
     node = findnode_fn (ent_list, filename);
-    if (node != NULL)
+
+    /* I'm not sure why this isn't an error.  */
+    if (!node) return;
+    rev = ((Entnode *) node->data)->version;
+
+    xchmod (filename, 1);
+    mkdir_if_needed (CVSADM_BASE);
+    basefn = make_base_file_name (filename, rev);
+
+    if (!isfile (basefn))
     {
-	finfo.file = filename;
-	finfo.fullname = short_pathname;
-	finfo.update_dir = dir_name (short_pathname);
-	base_register (&finfo, ((Entnode *) node->data)->version);
-	free ((char *)finfo.update_dir);
+	/* If this client is interoperating with clients older than 1.12.14,
+	 * then the CVS/Base/.#FILENAME.REV may not have been created on
+	 * checkout/update/commit.
+	 */
+	if (!quiet)
+	{
+	    error (0, 0, "Base revision (%s) for `%s' is missing.",
+		   rev, short_pathname);
+	    error (0, 0, "Using `%s' to create unedit fallback.",
+		   short_pathname);
+	}
+
+	free (basefn);
+	basefn = xstrdup (filename);
     }
+
+    editbasefn = Xasprintf ("%s/%s", CVSADM_BASE, filename);
+    copy_file (basefn, editbasefn);
+    free (basefn);
+    free (editbasefn);
+
+    finfo.file = filename;
+    finfo.fullname = short_pathname;
+    finfo.update_dir = dir_name (short_pathname);
+    base_register (finfo.update_dir, finfo.file, rev);
+    free ((char *)finfo.update_dir);
 }
 
 
@@ -670,7 +694,7 @@ unedit_fileproc (void *callerdat, struct file_info *finfo)
 	Node *node;
 	Entnode *entdata;
 
-	baserev = base_get (finfo);
+	baserev = base_get (finfo->update_dir, finfo->file);
 	node = findnode_fn (finfo->entries, finfo->file);
 	/* The case where node is NULL probably should be an error or
 	   something, but I don't want to think about it too hard right
@@ -703,7 +727,7 @@ unedit_fileproc (void *callerdat, struct file_info *finfo)
 		      entdata->conflict);
 	}
 	free (baserev);
-	base_deregister (finfo);
+	base_deregister (finfo->update_dir, finfo->file);
     }
 
     xchmod (finfo->file, 0);
@@ -770,7 +794,7 @@ mark_up_to_date (const char *file)
        date file in CVSADM_BASE.  */
     base = Xasprintf ("%s/%s", CVSADM_BASE, file);
     if (unlink_file (base) < 0 && ! existence_error (errno))
-	error (0, errno, "cannot remove %s", file);
+	error (0, errno, "cannot remove `%s'", base);
     free (base);
 }
 

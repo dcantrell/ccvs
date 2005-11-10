@@ -1,5 +1,17 @@
-2005-11-07  Derek Price  <derek@ximbiot.com>
+2005-11-09  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (cvs_SOURCES): Add base.c & base.h.
+	* cvs.h (base_get, base_register, base_deregister): Move protos to...
+	* base.h: ...this new file.
+	* entries.c (base_get, base_register, base_deregister): Move to...
+	* base.c: ...this new file.  Split update_dir & file name out of finfo
+	arg into two args.
+	* edit.c: Update all callers.
+	(edit_file): Try to copy upcoming update-base file as edit
+	base before falling back to the 1.11 way.
+
+2005-11-07  Derek Price  <derek@ximbiot.com>
+	
 	* sanity.sh (errmsg4): New test for keyword-when-signed warning.
 
 2005-10-31  Derek Price  <derek@ximbiot.com>
