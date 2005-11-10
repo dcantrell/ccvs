@@ -8663,7 +8663,7 @@ database (@pxref{modules}); this option bypasses it).
 @strong{This is not the same as the @samp{cvs -n}
 program option, which you can specify to the left of a cvs command!}
 
-Available with the @code{checkout}, @code{commit}, @code{export},
+Available with the @code{checkout}, @code{export},
 and @code{rtag} commands.
 
 @item -P
@@ -9455,7 +9455,7 @@ $ cvs checkout -D yesterday tc
 
 @itemize @bullet
 @item
-Synopsis: commit [-lnRf] [-m 'log_message' |
+Synopsis: commit [-lRf] [-m 'log_message' |
 -F file] [-r revision] [files@dots{}]
 @item
 Requires: working directory, repository.
