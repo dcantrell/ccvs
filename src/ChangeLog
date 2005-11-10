@@ -1,3 +1,8 @@
+2005-11-10  Larry Jones  <lawrence.jones@ugs.com>
+
+	* commit.c (commit): Complain about obsolete -n option if not in
+	server mode.
+
 2005-11-10  Derek Price  <derek@ximbiot.com>
 
 	* edit.c (mark_up_to_date): Accept update_dir for error messages.
