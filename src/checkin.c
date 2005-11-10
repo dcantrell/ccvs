@@ -171,7 +171,7 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
     }
     else
 #endif
-	mark_up_to_date (finfo->file);
+	mark_up_to_date (finfo->update_dir, finfo->file);
 
     freevers_ts (&vers);
     return 0;

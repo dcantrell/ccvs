@@ -1,3 +1,10 @@
+2005-11-10  Derek Price  <derek@ximbiot.com>
+
+	* edit.c (mark_up_to_date): Accept update_dir for error messages.
+	Print correct, quoted file name in error message.
+	* edit.h (mark_up_to_date): Update proto to match.
+	* checkin.c, client.c: Update all callers.
+
 2005-11-09  Derek Price  <derek@ximbiot.com>
 
 	* edit.h: Remove unneeded `extern' from function decls.

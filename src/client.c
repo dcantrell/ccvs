@@ -1885,7 +1885,11 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	       cvsclient.texi accordingly.  */
 
 	    if (!strcmp (cvs_cmd_name, "commit"))
-		mark_up_to_date (filename);
+	    {
+		char *update_dir = dir_name (short_pathname);
+		mark_up_to_date (update_dir, filename);
+		free (update_dir);
+	    }
 	}
 
 	Register (ent_list, filename, vn, local_timestamp,

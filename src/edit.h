@@ -36,7 +36,7 @@ void editor_set (const char *filename, const char *editor, const char *val);
 
 /* Take note of the fact that FILE is up to date (this munges CVS/Base;
    processing of CVS/Entries is done separately).  */
-void mark_up_to_date (const char *file);
+void mark_up_to_date (const char *update_dir, const char *file);
 
 void editors_output (const char *fullname, const char *them);
 
