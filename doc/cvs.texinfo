@@ -9124,6 +9124,24 @@ files.  However, @sc{cvs} has always required that the
 @sc{rcs} files used by @sc{cvs} end in @samp{,v}, so
 this option has never done anything useful.
 
+@c List long options after the short options
+@item --execute
+On unix systems, when @sc{cvs} adds a new file to a repository,
+the execute bits of the file are applied to the @sc{rcs} file
+and are thus preserved. This can be useful for shell scripts
+or other files that you want to be executable when they are
+later checked out (saves you from doing chmod +x to alter the
+file permissions).
+This option can turn on the execute bits for repository files
+that where originally added without them (or were made
+non-executable with the --no-execute option).
+
+@item --no-execute
+This option turns off the execute bits from repository files,
+(useful for files that where originally added as executables or
+were made executable with the --execute option) when you want to
+avoid those files from being executable on subsequent checkouts.
+
 @c The rcs -z option, to specify the timezone, has
 @c never been documented as a cvs admin option.
 @end table
@@ -11816,6 +11834,15 @@ Set file description to @var{string}.
 
 @item -u[@var{rev}]
 Unlock revision @var{rev}, or latest revision.
+
+@c List long options after the short options
+@item --execute
+Turn on execute bits on repository file.
+See @ref{admin options} for more information.
+
+@item --no-execute
+Turn off execute bits on repository file.
+See @ref{admin options} for more information.
 @end table
 
 @c ------------------------------------------------------------

@@ -15,6 +15,13 @@
 #include "getline.h"
 #include "history.h"
 
+
+/* From admin.c.  */
+char *make_UserAdminOptions (const char *infopath, unsigned int ln,
+			     const char *s);
+
+
+
 /*
  * Parse the INFOFILE file for the specified REPOSITORY.  Invoke CALLPROC for
  * the first line in the file that matches the REPOSITORY, or if ALL != 0, any
@@ -657,7 +664,7 @@ parse_config (const char *cvsroot, const char *path)
 	     */
 	}
 	else if (strcmp (line, "UserAdminOptions") == 0)
-	    retval->UserAdminOptions = xstrdup (p);
+	    retval->UserAdminOptions = make_UserAdminOptions (infopath, ln, p);
 	else if (strcmp (line, "UseNewInfoFmtStrings") == 0)
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 	    readBool (infopath, "UseNewInfoFmtStrings", p,

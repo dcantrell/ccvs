@@ -6,6 +6,9 @@ NEW FEATURES
 * A problem with compression that could cause the server to block indefinitely
   has been fixed.  (CVS bug #14840.)
 
+* New admin options (--execute/--no-execute) have been added to modify
+  the execute bits of files in the repository.  (CVS patch #4446.)
+
 Changes from 1.12.12 to 1.12.13:
 ********************************
 

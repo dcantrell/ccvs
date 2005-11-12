@@ -65,6 +65,8 @@ static const char *const admin_usage[] =
     "\t-u[rev]    Unlock the revision (latest revision on branch,\n",
     "\t           latest revision on trunk if omitted).\n",
     "\t-U         Unset strict locking.\n",
+    "\t--no-execute Turn off execute bits on repository file.\n",
+    "\t--execute    Turn on execute bits on respoitory file.\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
@@ -100,6 +102,8 @@ struct admin_data
 
     /* Interactive (-I).  Problematic with client/server.  */
     int interactive;
+
+    enum {AVOID = 0, NOEXECUTE, EXECUTE} execute;
 
     /* This is the cheesy part.  It is a vector with the options which
        we don't deal with above (e.g. "-afoo" "-abar,baz").  In the future
@@ -206,6 +210,93 @@ admin_filesdoneproc (void *callerdat, int err, const char *repository,
 
 
 
+static struct option long_options[] =
+{
+    {"no-execute", 0, NULL, 1},
+    {"execute", 0, NULL, 2},
+    {0, 0, 0, 0}
+};
+
+
+
+/* Accept a `;' delimited string and break it into tokens.  Allocate a return
+ * string.  Copy the first token into the return string.  For remaining tokens,
+ * convert to the long option VAL (from the global LONG_OPTIONS above) and
+ * append that char to the return value.  When long option tokens are
+ * unrecognized, a warning is printed and they are ignored.
+ *
+ * i.e., S will be of the format `[SHORTOPTIONS][;LONGOPTION]...'.  It is
+ * perfectly acceptable for SHORTOPTIONS to resolve to the empty string, but
+ * an empty LONGOPTION will cause a warning message to be printed.
+ */
+char *
+make_UserAdminOptions (const char *infopath, unsigned int ln, const char *s)
+{
+    const char *p;
+    bool first = true;
+    char *ns = xmalloc (1);
+
+    assert (s);
+
+    p = s;
+    *ns = '\0';
+    do
+    {
+	struct option *found;
+	const char *q;
+	size_t len;
+
+	q = strchr (p, ';');
+	if (q) len = q - p;
+	else len = strlen (p);
+
+	if (first)
+	{
+	    first = false;
+	    found = NULL;
+	}
+	else
+	    for (found = long_options; found->name; found++)
+		if (len == strlen (found->name)
+		    && !strncmp (p, found->name, len))
+		    break;
+
+	if (found && found->name)
+	{
+	    ns = xrealloc (ns, len + 2);
+	    ns[len++] = found->val;
+	    ns[len] = '\0';
+	    TRACE (TRACE_FUNCTION, "Adding long UserAdminOptions `%s'",
+		   found->name);
+	}
+	else if (first)
+	{
+	    size_t nslen = strlen (ns);
+	    ns = xrealloc (ns, nslen + len + 1);
+	    strncat (ns, p, len);
+	    ns[nslen + len] = '\0';
+	    TRACE (TRACE_FUNCTION, "Appending `%s' to UserAdminOptions",
+		   ns + nslen);
+	}
+	else
+	{
+	    char *tmp = xmalloc (len + 1);
+	    strncpy (tmp, p, len);
+	    ns[len] = '\0';
+	    error (0, 0,
+		   "%s [%u]: Unrecognized long admin option `%s'.",
+		   infopath, ln, tmp);
+	    free (tmp);
+	}
+
+	p = q;
+    } while (p);
+	
+    return ns;
+}
+
+
+
 int
 admin (int argc, char **argv)
 {
@@ -219,6 +310,9 @@ admin (int argc, char **argv)
     int i;
     bool only_allowed_options;
 
+    static const char short_options[] =
+	"+ib::c:a:A:e::l::u::LUn:N:m:o:s:t::IqxV:k:";
+
     if (argc <= 1)
 	usage (admin_usage);
 
@@ -231,8 +325,9 @@ admin (int argc, char **argv)
 
     optind = 0;
     only_allowed_options = true;
-    while ((c = getopt (argc, argv,
-			"+ib::c:a:A:e::l::u::LUn:N:m:o:s:t::IqxV:k:")) != -1)
+    while ((c = getopt_long
+	    (argc, argv, short_options, long_options, &optind))
+	   != EOF)
     {
 	if (
 # ifdef CLIENT_SUPPORT
@@ -244,6 +339,14 @@ admin (int argc, char **argv)
 
 	switch (c)
 	{
+	    case 1:		/* --no-execute */
+		admin_data.execute = NOEXECUTE;
+		break;
+
+	    case 2:		/* --execute */
+		admin_data.execute = EXECUTE;
+		break;
+
 	    case 'i':
 		/* This has always been documented as useless in cvs.texinfo
 		   and it really is--admin_fileproc silently does nothing
@@ -532,6 +635,10 @@ admin (int argc, char **argv)
 	    send_arg ("-U");
 	if (admin_data.delete_revs != NULL)
 	    send_arg (admin_data.delete_revs);
+	if (admin_data.execute == EXECUTE)
+	    send_arg ("--execute");
+	else if (admin_data.execute == NOEXECUTE)
+	    send_arg ("--no-execute");
 	if (admin_data.desc != NULL)
 	{
 	    char *p = admin_data.desc;
@@ -974,6 +1081,48 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
     if (status == 0)
     {
 	RCS_rewrite (rcs, NULL, NULL);
+
+        /*
+         * Update the execute bit for the file if requested.
+         */
+        if (admin_data->execute != AVOID)
+        {
+            struct stat sb;
+ 
+            if (stat (rcs->path, &sb) < 0)
+                error (0, errno, "cannot stat `%s'", rcs->path);
+            else
+            {
+                mode_t mode;
+ 
+                if (admin_data->execute == EXECUTE)
+                    mode = (sb.st_mode
+                            | (((sb.st_mode & S_IRUSR) ? S_IXUSR : 0)
+                                  | ((sb.st_mode & S_IRGRP) ? S_IXGRP : 0)
+                                  | ((sb.st_mode & S_IROTH) ? S_IXOTH : 0)));
+                else /* admin_data->execute == NOEXECUTE */
+                    mode = (sb.st_mode
+                            & ~(S_IEXEC | S_IXGRP | S_IXOTH));
+ 
+                if (mode == sb.st_mode)
+                    error (0, 0, "%s: already has mode=0%o",
+			   rcs->path, (unsigned int) mode);
+                else
+                {
+                    TRACE (TRACE_FLOW, "chmod(%s,0%o)", rcs->path,
+                           (unsigned int) mode);
+                    
+		    if (!noexec)
+		    {
+			if (chmod (rcs->path, mode) < 0)
+			    error (0, errno,
+				   "cannot change mode of file `%s'",
+				   rcs->path);
+		    }
+                }
+            }
+        }
+
 	if (!really_quiet)
 	    cvs_output ("done\n", 5);
     }
