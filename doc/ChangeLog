@@ -1,3 +1,9 @@
+2005-11-12  Mark D. Baushke  <mdb@gnu.org>
+
+	* cvs.texinfo (admin options): Document new --execute and
+	--no-execute options.
+	(Based on CVS patch #4446 from Alex Manoussakis.)
+
 2005-11-10  Larry Jones  <lawrence.jones@ugs.com>
 
 	* cvs.texinfo (Common options): -n no longer applies to commit.

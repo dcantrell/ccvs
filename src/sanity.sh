@@ -23919,6 +23919,42 @@ new revision: 1\.3; previous revision: 1\.2"
 "-r--r----- .*"
 	  fi
 
+	  # Check admin --execute
+	  # Cygwin, already.
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost \
+"chmod ugo=r ${CVSROOT_DIRNAME}/first-dir/aa,v"
+	  else
+	    chmod ugo=r ${CVSROOT_DIRNAME}/first-dir/aa,v
+	  fi
+	  dotest modes-execute-1 "${testcvs} admin --execute aa" \
+"RCS file: /tmp/cvs-sanity/cvsroot/first-dir/aa,v
+done"
+	  # Cygwin.
+	  if test -n "$remotehost"; then
+	    dotest modes-execute-2r \
+"$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v'" \
+"-r-xr-xr-x .*"
+	  else
+	    dotest modes-execute-2 "ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v" \
+"-r-xr-xr-x .*"
+	  fi
+
+	  # Test if admin --no-execute removes the execute bit:
+	  dotest modes-execute-3 "${testcvs} admin --no-execute aa" \
+"RCS file: /tmp/cvs-sanity/cvsroot/first-dir/aa,v
+done"
+	  # Cygwin.
+	  if test -n "$remotehost"; then
+	    dotest modes-execue-4r \
+"$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v'" \
+"-r--r--r-- .*"
+	  else
+	    dotest modes-execute-4 \
+"ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v" \
+"-r--r--r-- .*"
+	  fi
+
 	  CVSUMASK=007
 	  export CVSUMASK
 	  touch ab
@@ -23946,6 +23982,34 @@ initial revision: 1\.1"
 	  # one of the innumerable Cygwin issues?
 	  dotest modes-10 "ls -l $CVSROOT_DIRNAME/first-dir/ab,v" \
 "-r-xr-x---.*"
+
+	  # Checkout --no-execute
+	  # Test if admin --no-execute removes the execute bit:
+	  dotest modes-execute-5 "${testcvs} admin --no-execute ab" \
+"RCS file: /tmp/cvs-sanity/cvsroot/first-dir/ab,v
+done"
+	  # Cygwin.
+	  if test -n "$remotehost"; then
+	    dotest modes-execue-6r \
+"$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v'" \
+"-r--r----- .*"
+	  else
+	    dotest modes-execute-6 \
+"ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v" \
+"-r--r----- .*"
+	  dotest modes-execute-7 "${testcvs} admin --execute ab" \
+"RCS file: /tmp/cvs-sanity/cvsroot/first-dir/ab,v
+done"
+          fi
+	  # Cygwin.
+	  if test -n "$remotehost"; then
+	    dotest modes-execue-8r \
+"$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v'" \
+"-r-xr-x--- .*"
+	  else
+	    dotest modes-execute-8 "ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v" \
+"-r-xr-x--- .*"
+          fi
 
 	  # OK, now add a file on a branch.  Check that the mode gets
 	  # set the same way (it is a different code path in CVS).

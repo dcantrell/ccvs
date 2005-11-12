@@ -1,3 +1,16 @@
+2005-11-12  Mark D. Baushke  <mdb@gnu.org>
+
+	* admin.c: Add long option processing.
+	(make_UserAdminOptions): New option for administrative permission
+	of long options.
+	(admin): Use long option processing. Add support for --execute and
+	--no-execute options.	
+	* parseinfo.c (parse_config): Use new make_UserAdminOptions
+	function to process the UserAdminOptions= configuration line.
+	* sanity.sh (modes): Added tests for admin --execute/--no-execute
+	options.
+	(Based on CVS patch #4446 from Alex Manoussakis.)
+
 2005-11-10  Larry Jones  <lawrence.jones@ugs.com>
 
 	* commit.c (commit): Complain about obsolete -n option if not in
