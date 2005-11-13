@@ -23928,7 +23928,7 @@ new revision: 1\.3; previous revision: 1\.2"
 	    chmod ugo=r ${CVSROOT_DIRNAME}/first-dir/aa,v
 	  fi
 	  dotest modes-execute-1 "${testcvs} admin --execute aa" \
-"RCS file: /tmp/cvs-sanity/cvsroot/first-dir/aa,v
+"RCS file: $CVSROOT_DIRNAME/first-dir/aa,v
 done"
 	  # Cygwin.
 	  if test -n "$remotehost"; then
@@ -23942,7 +23942,7 @@ done"
 
 	  # Test if admin --no-execute removes the execute bit:
 	  dotest modes-execute-3 "${testcvs} admin --no-execute aa" \
-"RCS file: /tmp/cvs-sanity/cvsroot/first-dir/aa,v
+"RCS file: $CVSROOT_DIRNAME/first-dir/aa,v
 done"
 	  # Cygwin.
 	  if test -n "$remotehost"; then
@@ -23986,7 +23986,7 @@ initial revision: 1\.1"
 	  # Checkout --no-execute
 	  # Test if admin --no-execute removes the execute bit:
 	  dotest modes-execute-5 "${testcvs} admin --no-execute ab" \
-"RCS file: /tmp/cvs-sanity/cvsroot/first-dir/ab,v
+"RCS file: $CVSROOT_DIRNAME/first-dir/ab,v
 done"
 	  # Cygwin.
 	  if test -n "$remotehost"; then
@@ -23998,7 +23998,7 @@ done"
 "ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v" \
 "-r--r----- .*"
 	  dotest modes-execute-7 "${testcvs} admin --execute ab" \
-"RCS file: /tmp/cvs-sanity/cvsroot/first-dir/ab,v
+"RCS file: $CVSROOT_DIRNAME/first-dir/ab,v
 done"
           fi
 	  # Cygwin.
