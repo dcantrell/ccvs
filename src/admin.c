@@ -65,8 +65,8 @@ static const char *const admin_usage[] =
     "\t-u[rev]    Unlock the revision (latest revision on branch,\n",
     "\t           latest revision on trunk if omitted).\n",
     "\t-U         Unset strict locking.\n",
+    "\t--execute    Turn on execute bits on repository file.\n",
     "\t--no-execute Turn off execute bits on repository file.\n",
-    "\t--execute    Turn on execute bits on respoitory file.\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
 };

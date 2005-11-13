@@ -1,3 +1,9 @@
+2005-11-13  Mark D. Baushke  <mdb@gnu.org>
+
+	* admin.c (admin_usage): Fix spelling in help string.
+	Alphabetize long options.
+	(Patch from Alexandros Manoussakis.)
+
 2005-11-12  Mark D. Baushke  <mdb@gnu.org>
 
 	* admin.c: Add long option processing.
