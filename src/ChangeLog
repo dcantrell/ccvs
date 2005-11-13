@@ -1,5 +1,8 @@
 2005-11-13  Mark D. Baushke  <mdb@gnu.org>
 
+	* sanity.sh (modes-execute-*): Use $CVSROOT_DIRNAME rather than
+	default text for expected data.
+
 	* admin.c (admin_usage): Fix spelling in help string.
 	Alphabetize long options.
 	(Patch from Alexandros Manoussakis.)
