@@ -534,7 +534,7 @@ static const char *const config_contents[] = {
     "#\n",
     "# The following string would enable all `cvs admin' commands for all\n",
     "# users:\n",
-    "#UserAdminOptions=aAbceIklLmnNostuU\n",
+    "#UserAdminOptions=aAbceIklLmnNostuU;execute;no-execute\n",
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
     "\n",
     "# Set `UseNewInfoFmtStrings' to `no' if you must support a legacy system by\n",
