@@ -1,3 +1,8 @@
+2005-11-14  Mark D. Baushke  <mdb@gnu.org>
+
+	* system.h (FOLD_FN_CHAR): Distinguish OSX_ and VMS_ variations
+	based on USE_VMS_FILENAME macro.
+
 2005-11-09  Mark D. Baushke  <mdb@gnu.org>
 
 	* system.h (FOLD_FN_CHAR): Create a VMS alternative of this macro
