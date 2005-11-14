@@ -1,3 +1,7 @@
+2005-11-14  Derek Price  <derek@ximbiot.com>
+
+	* HACKING (Rebuilding YACC sources): Expound on Bison/YACC requirement.
+
 2005-11-12  Mark D. Baushke  <mdb@gnu.org>
 
 	* NEWS: Note new admin [--execute|--no-execute] options.

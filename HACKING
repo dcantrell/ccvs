@@ -347,11 +347,14 @@ If for some reason you end up regenerating the *.mak files to submit a patch,
 please run windows-NT/fix-msvc-mak.pl to remove the absolute paths from the
 generated *.mak files before generating any patches.
 
-* Rebuilding Yacc sources
+* Rebuilding YACC sources
 
-The lib/getdate.y file requires GNU Bison 1.875 to rebuild lib/getdate.c.  Not
-having GNU Bison 1.875 should not stop the build unless the lib/getdate.c file
-is actually missing, perhaps deleted via `make maintainerclean'.
+The lib/getdate.c file was last generated from lib/getdate.y using GNU Bison
+version 2.0.  Earlier versions of GNU Bison may be usable for this purpose,
+though non-GNU YACCs and versions of GNU Bison earlier than 1.875 are known to
+break on this file.  Not having a working GNU Bison should not stop most builds
+unless the lib/getdate.c file is actually missing, perhaps deleted via
+`make maintainerclean'.
 
 * Writing patches (strategy)
 
