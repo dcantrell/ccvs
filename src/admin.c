@@ -210,88 +210,114 @@ admin_filesdoneproc (void *callerdat, int err, const char *repository,
 
 
 
+static const char short_options[] =
+    "+ib::c:a:A:e::l::u::LUn:N:m:o:s:t::IqxV:k:";
+
+enum {OPT_NONE = 0, OPT_EXECUTE, OPT_NOEXECUTE} opt_values;
 static struct option long_options[] =
 {
-    {"no-execute", 0, NULL, 1},
-    {"execute", 0, NULL, 2},
-    {0, 0, 0, 0}
+    {"execute", 0, NULL, OPT_EXECUTE},
+    {"no-execute", 0, NULL, OPT_NOEXECUTE},
+    {0, 0, NULL, OPT_NONE}
 };
 
 
 
-/* Accept a `;' delimited string and break it into tokens.  Allocate a return
- * string.  Copy the first token into the return string.  For remaining tokens,
- * convert to the long option VAL (from the global LONG_OPTIONS above) and
- * append that char to the return value.  When long option tokens are
+/* Accept a `;' delimited string and break it into tokens.  Allocate a
+ * return string.  Copy the first token into the return string
+ * checking to be sure that each character is a valid option character
+ * of the short_options string. For remaining tokens, convert to the
+ * long option VAL (from the global LONG_OPTIONS above) and append
+ * that char to the return value.  When long option tokens are
  * unrecognized, a warning is printed and they are ignored.
  *
  * i.e., S will be of the format `[SHORTOPTIONS][;LONGOPTION]...'.  It is
- * perfectly acceptable for SHORTOPTIONS to resolve to the empty string, but
- * an empty LONGOPTION will cause a warning message to be printed.
+ * perfectly acceptable for SHORTOPTIONS to resolve to the empty string, 
+ * an empty LONGOPTION will also be ignored.
  */
 char *
 make_UserAdminOptions (const char *infopath, unsigned int ln, const char *s)
 {
-    const char *p;
-    bool first = true;
-    char *ns = xmalloc (1);
+    const char *cur_opt, *next_opt;
+    size_t len;
+    char *ns;
 
     assert (s);
 
-    p = s;
+    cur_opt = s;
+
+    next_opt = strchr (cur_opt, ';');
+    if (next_opt)
+	len = next_opt - cur_opt;
+    else
+	len = strlen (cur_opt);
+
+    ns = xmalloc (len + 1);
     *ns = '\0';
-    do
+    if (len > 0)
     {
-	struct option *found;
-	const char *q;
-	size_t len;
-
-	q = strchr (p, ';');
-	if (q) len = q - p;
-	else len = strlen (p);
-
-	if (first)
+	const char *p;
+	size_t nspos = 0;
+	/* validate short options */
+	for (p = cur_opt; p < (cur_opt + len); p++)
 	{
-	    first = false;
-	    found = NULL;
+	    if (*p == '+' || *p == ':' || strchr (short_options, *p) == NULL)
+		error (0, 0,
+		       "%s [%u]: Unrecognized short admin option `%c'.",
+		       infopath, ln, *p);
+	    else
+		ns[nspos++] = *p;
 	}
+	ns[nspos] = '\0';
+	if (nspos > 0)
+	    TRACE (TRACE_FUNCTION, "Setting short UserAdminOptions `%s'", ns);
+    }
+
+    /* process long options (if any) */
+    while ((cur_opt = next_opt))
+    {
+	next_opt = strchr (++cur_opt, ';');
+
+	if (next_opt)
+	    len = next_opt - cur_opt;
 	else
+	    len = strlen (cur_opt);
+
+	/* ignore empty long options (ie, ';;') */
+	if (len > 0)
+	{
+	    struct option *found;
+
 	    for (found = long_options; found->name; found++)
 		if (len == strlen (found->name)
-		    && !strncmp (p, found->name, len))
+		    && !strncmp (cur_opt, found->name, len))
 		    break;
 
-	if (found && found->name)
-	{
-	    ns = xrealloc (ns, len + 2);
-	    ns[len++] = found->val;
-	    ns[len] = '\0';
-	    TRACE (TRACE_FUNCTION, "Adding long UserAdminOptions `%s'",
-		   found->name);
-	}
-	else if (first)
-	{
-	    size_t nslen = strlen (ns);
-	    ns = xrealloc (ns, nslen + len + 1);
-	    strncat (ns, p, len);
-	    ns[nslen + len] = '\0';
-	    TRACE (TRACE_FUNCTION, "Appending `%s' to UserAdminOptions",
-		   ns + nslen);
-	}
-	else
-	{
-	    char *tmp = xmalloc (len + 1);
-	    strncpy (tmp, p, len);
-	    ns[len] = '\0';
-	    error (0, 0,
-		   "%s [%u]: Unrecognized long admin option `%s'.",
-		   infopath, ln, tmp);
-	    free (tmp);
-	}
+	    if (found->name)
+	    {
+		size_t nslen = strlen (ns);
 
-	p = q;
-    } while (p);
-	
+		assert (found->val);
+
+		ns = xrealloc (ns, nslen + 2);
+		ns[nslen++] = found->val;
+		ns[nslen] = '\0';
+		TRACE (TRACE_FUNCTION, "Adding long UserAdminOptions `%s'",
+		       found->name);
+	    }
+	    else
+	    {
+		char *tmp = xmalloc (len + 1);
+		strncpy (tmp, cur_opt, len);
+		tmp[len] = '\0';
+		error (0, 0,
+		       "%s [%u]: Unrecognized long admin option `%s'.",
+		       infopath, ln, tmp);
+		free (tmp);
+	    }
+	}
+    }
+
     return ns;
 }
 
@@ -309,9 +335,6 @@ admin (int argc, char **argv)
     int c;
     int i;
     bool only_allowed_options;
-
-    static const char short_options[] =
-	"+ib::c:a:A:e::l::u::LUn:N:m:o:s:t::IqxV:k:";
 
     if (argc <= 1)
 	usage (admin_usage);
@@ -339,12 +362,12 @@ admin (int argc, char **argv)
 
 	switch (c)
 	{
-	    case 1:		/* --no-execute */
-		admin_data.execute = NOEXECUTE;
+	    case OPT_EXECUTE:	/* --execute */
+		admin_data.execute = EXECUTE;
 		break;
 
-	    case 2:		/* --execute */
-		admin_data.execute = EXECUTE;
+	    case OPT_NOEXECUTE:	/* --no-execute */
+		admin_data.execute = NOEXECUTE;
 		break;
 
 	    case 'i':
@@ -569,7 +592,7 @@ admin (int argc, char **argv)
 	    if (grps[i] == grp->gr_gid) break;
 	free (grps);
 	if (i > n)
-	    error (1, 0, "usage is restricted to members of the group %s",
+	    error (1, 0, "usage is restricted to members of the group `%s'",
 		   CVS_ADMIN_GROUP);
 #else
 	char *me = getcaller ();

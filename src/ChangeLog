@@ -1,3 +1,15 @@
+2005-11-14  Mark D. Baushke  <mdb@gnu.org>
+
+	* admin.c (opt_values): New enum for long option values.
+	(short_options): Now in file scope for validation of
+	UserAdminOptions.
+	(long_options): Use opt_value enums for option.value entries.
+	(make_UserAdminOptions): Rewrite.
+	(admin): Use opt_value enumes for long_option cases.
+	Quote the name of the restricted admin group.
+	* mkmodules.c (UserAdminOptions): Add defaults for execute and
+	no-execute.
+
 2005-11-13  Mark D. Baushke  <mdb@gnu.org>
 
 	* sanity.sh (modes-execute-*): Use $CVSROOT_DIRNAME rather than
