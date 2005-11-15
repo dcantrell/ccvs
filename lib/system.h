@@ -500,12 +500,12 @@ extern unsigned char WNT_filename_classes[];
    * WOE32 needs its own class since \ and C:\ style absolute paths also need
    * to be accounted for.
    */
-#  if defined(MACOS) || defined(TARGET_OS_MAC)
-#   define FOLD_FN_CHAR(c) (OSX_filename_classes[(unsigned char) (c)])
-extern unsigned char OSX_filename_classes[];
-#  else
+#  if defined(USE_VMS_FILENAMES)
 #   define FOLD_FN_CHAR(c) (VMS_filename_classes[(unsigned char) (c)])
 extern unsigned char VMS_filename_classes[];
+#  else
+#   define FOLD_FN_CHAR(c) (OSX_filename_classes[(unsigned char) (c)])
+extern unsigned char OSX_filename_classes[];
 #  endif
 # endif /* __CYGWIN32__ || WOE32 */
 
