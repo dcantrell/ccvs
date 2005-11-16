@@ -1,3 +1,7 @@
+2005-11-15  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note s/P/U/g.
+
 2005-11-14  Derek Price  <derek@ximbiot.com>
 
 	* HACKING (Rebuilding YACC sources): Expound on Bison/YACC requirement.
