@@ -254,6 +254,7 @@ update (int argc, char **argv)
     if (current_parsed_root->isremote) 
     {
 	int pass;
+	unsigned int flags = 0;
 
 	/* The first pass does the regular update.  If we receive at least
 	   one patch which failed, we do a second pass and just fetch
@@ -293,8 +294,6 @@ update (int argc, char **argv)
 
 	    if (failed_patches_count == 0)
 	    {
-                unsigned int flags = 0;
-
 		/* If the server supports the command "update-patches", that 
 		   means that it knows how to handle the -u argument to update,
 		   which means to send patches instead of complete files.
@@ -326,10 +325,7 @@ update (int argc, char **argv)
 	    }
 	    else
 	    {
-		int i;
-
-		(void) printf ("%s client: refetching unpatchable files\n",
-			       program_name);
+		TRACE (TRACE_FUNCTION, "refetching unpatchable files\n");
 
 		if (toplevel_wd != NULL
 		    && CVS_CHDIR (toplevel_wd) < 0)
@@ -339,13 +335,13 @@ update (int argc, char **argv)
 
 		send_arg ("--");
 
-		for (i = 0; i < failed_patches_count; i++)
-		    if (unlink_file (failed_patches[i]) < 0
-			&& !existence_error (errno))
-			error (0, errno, "cannot remove %s",
-			       failed_patches[i]);
+		/* Failed patches should only occur with files that were not
+		 * locally modified.
+		 */
+		flags |= SEND_NO_CONTENTS;
+
 		send_files (failed_patches_count, failed_patches, local,
-			    aflag, update_build_dirs ? SEND_BUILD_DIRS : 0);
+			    aflag, flags);
 		send_file_names (failed_patches_count, failed_patches, 0);
 		free_names (&failed_patches_count, failed_patches);
 	    }
@@ -1759,7 +1755,10 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
 
 	if (!really_quiet)
 	{
-	    write_letter (finfo, 'P');
+	    if (trace)
+		write_letter (finfo, 'P');
+	    else
+		write_letter (finfo, 'U');
 	}
     }
     else
