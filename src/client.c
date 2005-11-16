@@ -1631,22 +1631,6 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		error (1, errno, "writing %s", short_pathname);
 	}
 
-	/* This is after we have read the file from the net (a change
-	   from previous versions, where the server would send us
-	   "M U foo.c" before Update-existing or whatever), but before
-	   we finish writing the file (arguably a bug).  The timing
-	   affects a user who wants status info about how far we have
-	   gotten, and also affects whether "U foo.c" appears in addition
-	   to various error messages.  */
-	if (updated_fname)
-	{
-	    cvs_output ("U ", 0);
-	    cvs_output (updated_fname, 0);
-	    cvs_output ("\n", 1);
-	    free (updated_fname);
-	    updated_fname = 0;
-	}
-
 	patch_failed = 0;
 
 	if (data->contents == UPDATE_ENTRIES_UPDATE)
@@ -1703,8 +1687,8 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		    md5_buffer (patchedbuf, patchedlen, checksum);
 		    if (memcmp (checksum, stored_checksum, 16) != 0)
 		    {
-			error (0, 0,
-"checksum failure after patch to %s; will refetch",
+			TRACE (TRACE_FUNCTION,
+"checksum failure after patch to `%s'; will refetch",
 			       short_pathname);
 
 			patch_failed = 1;
@@ -1774,7 +1758,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		    error (1, 0, "checksum failure on %s",
 			   short_pathname);
 
-		error (0, 0,
+		TRACE (TRACE_FUNCTION,
 		       "checksum failure after patch to %s; will refetch",
 		       short_pathname);
 
@@ -1798,7 +1782,21 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    free (scratch_entries);
 	    free (entries_line);
 
+	    if (updated_fname)
+	    {
+		free (updated_fname);
+		updated_fname = NULL;
+	    }
+
 	    return;
+	}
+	else if (updated_fname)
+	{
+	    cvs_output ("U ", 0);
+	    cvs_output (updated_fname, 0);
+	    cvs_output ("\n", 1);
+	    free (updated_fname);
+	    updated_fname = NULL;
 	}
 
         {

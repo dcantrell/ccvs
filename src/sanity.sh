@@ -3083,7 +3083,7 @@ $SPROG commit: could not check in ssfile"
 "$CVSROOT_DIRNAME/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
 new revision: 3\.1\.2\.1; previous revision: 3\.1"
 	  # now get rid of the sticky tag and go back to the trunk
-	  dotest basica-8a5 "${testcvs} -q up -A ./" "[UP] ssfile"
+	  dotest basica-8a5 "${testcvs} -q up -A ./" "U ssfile"
 
 	  cd ../..
 	  dotest basica-8b "${testcvs} -q diff -r1.2 -r1.3"
@@ -4670,7 +4670,7 @@ U second-dir/dir1/dir2/file7"
 		# update the top, cancelling sticky tags, retag, update other copy, compare.
 		cd first-dir
 		dotest basic2-34 "${testcvs} update -A -l *file*" \
-"[UP] file6
+"U file6
 ${SPROG} update: \`file7' is no longer in the repository"
 
 		# If we don't delete the tag first, cvs won't retag it.
@@ -6451,7 +6451,7 @@ new revision: delete; previous revision: 1\.1"
 
 	  # Back to the trunk.
 	  dotest death2-11 "${testcvs} -q update -A" \
-"[UP] file1
+"U file1
 U file4"
 
 	  # Add another file on the trunk.
@@ -6474,7 +6474,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # look right to me, but that's what CVS currently prints for
 	  # this case.
 	  dotest death2-14 "${testcvs} -q update -r branch" \
-"[UP] file1
+"U file1
 ${SPROG} update: \`file2' is no longer in the repository
 ${SPROG} update: \`file4' is no longer in the repository"
 
@@ -6577,7 +6577,7 @@ diff -N file4
 
 	  # Switch to the nonbranch tag.
 	  dotest death2-19 "${testcvs} -q update -r tag" \
-"[UP] file1
+"U file1
 ${SPROG} update: \`file2' is no longer in the repository
 ${SPROG} update: \`file3' is no longer in the repository
 U file4"
@@ -6604,7 +6604,7 @@ ${PLUS} first revision"
 	  # now back to the trunk
 	  dotest death2-21 "${testcvs} -q update -A" \
 "U file2
-[UP] file4"
+U file4"
 
 	  # test merging with a dead file
 	  dotest death2-22 "${testcvs} -q co first-dir" \
@@ -7373,8 +7373,8 @@ new revision: 1\.2\.2\.1\.2\.1; previous revision: 1\.2\.2\.1"
 3:ancest
 4:brbr'
 	  dotest branches-11 "${testcvs} -q update -r br1" \
-'[UP] file1
-[UP] file4'
+'U file1
+U file4'
 	  dotest branches-12 "cat file1 file2 file3 file4" '1:br1
 2:br1
 3:ancest
@@ -7383,9 +7383,9 @@ new revision: 1\.2\.2\.1\.2\.1; previous revision: 1\.2\.2\.1"
 	  dotest branches-12.2 "${testcvs} -q ci -m change-on-br1" \
 "$CVSROOT_DIRNAME/first-dir/file4,v  <--  file4
 new revision: 1\.2\.2\.2; previous revision: 1\.2\.2\.1"
-	  dotest branches-13 "${testcvs} -q update -A" '[UP] file1
-[UP] file2
-[UP] file4'
+	  dotest branches-13 "${testcvs} -q update -A" 'U file1
+U file2
+U file4'
 	  dotest branches-14 "cat file1 file2 file3 file4" '1:ancest
 2:ancest
 3:ancest
@@ -8776,7 +8776,7 @@ initial revision: 1\.1"
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1"
 	  dotest rcslib-merge-7 "${testcvs} -q tag -b -r 1.1 patch1" "T file1"
-	  dotest rcslib-merge-8 "${testcvs} -q update -r patch1" "[UP] file1"
+	  dotest rcslib-merge-8 "${testcvs} -q update -r patch1" "U file1"
 	  dotest rcslib-merge-9 "${testcvs} -q status" \
 "===================================================================
 File: file1            	Status: Up-to-date
@@ -8848,7 +8848,7 @@ U file1"
 	  dotest rcslib-symlink-3b "${testcvs} ci -m because file1" \
 "${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.1\.2\.[0-9]*; previous revision: 1\.1\.2\.[0-9]*"
-	  dotest rcslib-symlink-3c "${testcvs} update file2" "[UP] file2"
+	  dotest rcslib-symlink-3c "${testcvs} update file2" "U file2"
 
 	  echo some new text >file3
 	  dotest rcslib-symlink-3d "${testcvs} -Q add file3" ''
@@ -9018,14 +9018,14 @@ T file1"
 	  dotest multibranch-7 "${testcvs} -q ci -m modify-on-br1" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.1\.2\.1; previous revision: 1\.1"
-	  dotest multibranch-8 "${testcvs} -q update -r br2" '[UP] file1'
+	  dotest multibranch-8 "${testcvs} -q update -r br2" 'U file1'
 	  echo br2 adds a line >>file1
 	  dotest multibranch-9 "${testcvs} -q ci -m modify-on-br2" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.1\.4\.1; previous revision: 1\.1"
-	  dotest multibranch-10 "${testcvs} -q update -r br1" '[UP] file1'
+	  dotest multibranch-10 "${testcvs} -q update -r br1" 'U file1'
 	  dotest multibranch-11 "cat file1" 'on-br1'
-	  dotest multibranch-12 "${testcvs} -q update -r br2" '[UP] file1'
+	  dotest multibranch-12 "${testcvs} -q update -r br2" 'U file1'
 	  dotest multibranch-13 "cat file1" '1:trunk-1
 br2 adds a line'
 
@@ -9180,8 +9180,8 @@ first-import
 		# update into the vendor branch.
 		dotest import-102 "${testcvs} update -rvendor-branch" \
 "${SPROG} update: Updating .
-[UP] imported-f1
-[UP] imported-f2"
+U imported-f1
+U imported-f2"
 
 		# remove file4 on the vendor branch
 		rm imported-f4
@@ -9198,7 +9198,7 @@ new revision: delete; previous revision: 1\.1\.1\.1"
 		# update to main line
 		dotest import-105 "${testcvs} -q update -A" \
 "${SPROG} update: \`imported-f1' is no longer in the repository
-[UP] imported-f2"
+U imported-f2"
 
 		# second import - file4 deliberately unchanged
 		cd ../import-dir
@@ -9230,8 +9230,8 @@ Use the following command to help the merge:"
 		# co
 		dotest import-107 "${testcvs} co first-dir" \
 "${SPROG} checkout: Updating first-dir
-[UP] first-dir/imported-f3
-[UP] first-dir/imported-f4"
+U first-dir/imported-f3
+U first-dir/imported-f4"
 
 		cd first-dir
 
@@ -9243,15 +9243,15 @@ Use the following command to help the merge:"
 
 		# check vendor branch for file4
 		dotest import-110 "${testcvs} -q update -rvendor-branch" \
-"[UP] imported-f1
-[UP] imported-f2"
+"U imported-f1
+U imported-f2"
 
 		dotest import-111 "test -f imported-f4" ''
 
 		# update to main line
 		dotest import-112 "${testcvs} -q update -A" \
 "${SPROG} update: \`imported-f1' is no longer in the repository
-[UP] imported-f2"
+U imported-f2"
 
 		cd ..
 
@@ -9687,7 +9687,7 @@ add
 	  mkdir wnt
 	  cd wnt
 
-	  dotest importX2-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
+	  dotest importX2-1 "${testcvs} -q co CVSROOT" "U CVSROOT${DOTSTAR}"
 	  cd CVSROOT
           echo "ImportNewFilesToVendorBranchOnly=yes" >> config
 
@@ -10488,7 +10488,7 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 
 	  # Here is the unusual/pathological part.  We switch back to
 	  # the trunk *for file1 only*, not for the whole directory.
-	  dotest join2-8 "${testcvs} -q update -A file1" '[UP] file1'
+	  dotest join2-8 "${testcvs} -q update -A file1" 'U file1'
 	  dotest join2-9 "${testcvs} -q status file1" \
 "===================================================================
 File: file1            	Status: Up-to-date
@@ -10528,7 +10528,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # OK, the above is all well and good and has worked for some
 	  # time.  Now try the case where the file had been added on
 	  # the branch.
-	  dotest join2-16 "${testcvs} -q update -r br1" "[UP] file1"
+	  dotest join2-16 "${testcvs} -q update -r br1" "U file1"
 	  # The workaround is to update the whole directory.
 	  # The non-circumvented version won't work.  The reason is that
 	  # update removes the entry from CVS/Entries, so of course we get
@@ -10539,7 +10539,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # it.
 	  dotest join2-17-circumvent "${testcvs} -q update -A" \
 "${SPROG} update: \`bradd' is no longer in the repository
-[UP] file1"
+U file1"
 :	  dotest join2-17 "${testcvs} -q update -A bradd" \
 "${SPROG} update: warning: \`bradd' is not (any longer) pertinent"
 	  dotest join2-18 "${testcvs} -q update -j br1 bradd" "U bradd"
@@ -10592,7 +10592,7 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 	  # Now back to the trunk for:
 	  # another revision and another branch for file1.
 	  # add file2, which will exist on trunk and br2 but not br1.
-	  dotest join3-8 "${testcvs} -q update -A" "[UP] file1"
+	  dotest join3-8 "${testcvs} -q update -A" "U file1"
 	  echo 'trunk:line1' > file2
 	  dotest join3-8a "${testcvs} add file2" \
 "${SPROG} add: scheduling file .file2. for addition
@@ -10607,7 +10607,7 @@ initial revision: 1\.1"
 T file2"
 
 	  # Before we actually have any revision on br2, let's try a join
-	  dotest join3-11 "${testcvs} -q update -r br1" "[UP] file1
+	  dotest join3-11 "${testcvs} -q update -r br1" "U file1
 ${SPROG} update: \`file2' is no longer in the repository"
 	  dotest join3-12 "${testcvs} -q update -j br2" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
@@ -10635,7 +10635,7 @@ U file1" "U file1"
 new revision: 1\.2\.2\.1; previous revision: 1\.2"
 
 	  # OK, now we can join br2 to br1
-	  dotest join3-16 "${testcvs} -q update -r br1 file1" "[UP] file1"
+	  dotest join3-16 "${testcvs} -q update -r br1 file1" "U file1"
 	  # It may seem odd, to merge a higher branch into a lower
 	  # branch, but in fact CVS defines the ancestor as 1.1
 	  # and so it merges both the 1.1->1.2 and 1.2->1.2.2.1 changes.
@@ -11740,12 +11740,12 @@ File: a                	Status: Up-to-date
 		cd ../../2
 		mkdir first-dir/dir1 first-dir/sdir
 		dotest conflicts-136 "${testcvs} -q update first-dir" \
-'[UP] first-dir/abc
+'U first-dir/abc
 '"${QUESTION}"' first-dir/dir1
 '"${QUESTION}"' first-dir/sdir' \
 ''"${QUESTION}"' first-dir/dir1
 '"${QUESTION}"' first-dir/sdir
-[UP] first-dir/abc'
+U first-dir/abc'
 		dotest conflicts-137 'test -f first-dir/abc' ''
 		rmdir first-dir/dir1 first-dir/sdir
 
@@ -17911,7 +17911,7 @@ File: binfile          	Status: Up-to-date
 "$CVSROOT_DIRNAME/first-dir/binfile,v  <--  binfile
 new revision: 1\.2; previous revision: 1\.1"
 	  cd ../../1/first-dir
-	  dotest binfiles-7 "${testcvs} -q update" '[UP] binfile'
+	  dotest binfiles-7 "${testcvs} -q update" 'U binfile'
 	  dotest binfiles-8 "cmp ../binfile2.dat binfile" ''
 
 	  # Now test handling of conflicts with binary files.
@@ -17937,7 +17937,7 @@ C binfile"
 "$CVSROOT_DIRNAME/first-dir/binfile,v  <--  binfile
 new revision: 1\.4; previous revision: 1\.3"
 	  cd ../../1/first-dir
-	  dotest binfiles-con5 "${testcvs} -q update" '[UP] binfile'
+	  dotest binfiles-con5 "${testcvs} -q update" 'U binfile'
 
 	  dotest binfiles-9 "${testcvs} -q update -A" ''
 	  # "-kk" no longer does anything with "-kb"
@@ -18002,7 +18002,7 @@ File: binfile          	Status: Up-to-date
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kb"
-	  dotest binfiles-14g "${testcvs} -q update -A" '[UP] binfile'
+	  dotest binfiles-14g "${testcvs} -q update -A" 'U binfile'
 	  dotest binfiles-14h "cat binfile" 'this file is binfile,v'
 	  dotest binfiles-14i "${testcvs} status binfile" \
 "===================================================================
@@ -18023,7 +18023,7 @@ File: binfile          	Status: Up-to-date
 "$CVSROOT_DIRNAME/first-dir/nibfile,v  <--  nibfile
 initial revision: 1\.1"
 	  dotest binfiles-sticky3 "${testcvs} -q update -kb nibfile" \
-	    '[UP] nibfile'
+	    'U nibfile'
 	  dotest binfiles-sticky4 "${testcvs} -q status nibfile" \
 "===================================================================
 File: nibfile          	Status: Up-to-date
@@ -18037,7 +18037,7 @@ File: nibfile          	Status: Up-to-date
 
 	  # Now test that -A can clear the sticky option.
 	  dotest binfiles-sticky5 "${testcvs} -q update -A nibfile" \
-"[UP] nibfile"
+"U nibfile"
 	  dotest binfiles-sticky6 "${testcvs} -q status nibfile" \
 "===================================================================
 File: nibfile          	Status: Up-to-date
@@ -18051,7 +18051,7 @@ File: nibfile          	Status: Up-to-date
 	  dotest binfiles-15 "${testcvs} -q admin -kb nibfile" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/nibfile,v
 done"
-	  dotest binfiles-16 "${testcvs} -q update nibfile" "[UP] nibfile"
+	  dotest binfiles-16 "${testcvs} -q update nibfile" "U nibfile"
 	  dotest binfiles-17 "${testcvs} -q status nibfile" \
 "===================================================================
 File: nibfile          	Status: Up-to-date
@@ -18175,9 +18175,9 @@ $CVSROOT_DIRNAME/first-dir/brmod-wdmod,v  <--  brmod-wdmod
 new revision: 1\.1\.2\.1; previous revision: 1\.1"
 	  dotest binfiles2-6 "${testcvs} -q update -A" \
 "${SPROG} update: \`binfile\.dat' is no longer in the repository
-[UP] brmod
-[UP] brmod-trmod
-[UP] brmod-wdmod"
+U brmod
+U brmod-trmod
+U brmod-wdmod"
 	  dotest_fail binfiles2-7 "test -f binfile.dat" ''
 	  dotest binfiles2-7-brmod "cmp ../binfile brmod"
 	  cp ../binfile3 brmod-trmod
@@ -18408,9 +18408,9 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1
 $CVSROOT_DIRNAME/first-dir/brmod-wdmod,v  <--  brmod-wdmod
 new revision: 1\.1\.2\.1; previous revision: 1\.1"
 	    dotest mcopy-6 "${testcvs} -q update -A" \
-"[UP] brmod
-[UP] brmod-trmod
-[UP] brmod-wdmod"
+"U brmod
+U brmod-trmod
+U brmod-wdmod"
 	    dotest mcopy-7 "cat brmod brmod-trmod brmod-wdmod" \
 "brmod initial contents
 brmod-trmod initial contents
@@ -18673,7 +18673,7 @@ File: foo\.exe          	Status: Up-to-date
           echo ${binwrap3_text} > binwrap3/sub2/subsub/foo-t.st
 
           # Now set up CVSROOT/cvswrappers, the easy way:
-	  dotest binwrap3-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
+	  dotest binwrap3-1 "${testcvs} -q co CVSROOT" "U CVSROOT${DOTSTAR}"
 	  cd CVSROOT
           # This destroys anything currently in cvswrappers, but
 	  # presumably other tests will take care of it themselves if
@@ -18853,7 +18853,7 @@ initial revision: 1\.1"
 	  mkdir wnt
 	  cd wnt
 
-	  dotest mwrap-c1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
+	  dotest mwrap-c1 "${testcvs} -q co CVSROOT" "U CVSROOT${DOTSTAR}"
 	  cd CVSROOT
 	  echo "* -m 'COPY'" >>cvswrappers
 	  dotest mwrap-c2 "${testcvs} -q ci -m wrapper-mod" \
@@ -18930,7 +18930,7 @@ C aa"
 	  mkdir wnt
 	  cd wnt
 
-	  dotest info-1 "$testcvs -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
+	  dotest info-1 "$testcvs -q co CVSROOT" "U CVSROOT${DOTSTAR}"
 	  cd CVSROOT
 	  dotest info-2 "$testcvs -Q tag info-start"
 	  sed -e's/%p/ALL/' <loginfo >tmploginfo
@@ -19734,7 +19734,7 @@ EOF
 
 	  cd ..
 	  cd first-dir
-	  dotest taginfo-newfmt-2 "${testcvs} -q update -A" "[UP] file1"
+	  dotest taginfo-newfmt-2 "${testcvs} -q update -A" "U file1"
 	  echo "bull pucky" >'file 2'
 	  dotest taginfo-newfmt-2b "${testcvs} add 'file 2'" \
 "${SPROG} add: scheduling file .file 2. for addition
@@ -19853,7 +19853,7 @@ initial revision: 1\.1"
 "T file 2
 W file1 : br already exists on branch 1\.1\.2\.1 : NOT MOVING tag to branch 1\.1\.0\.4
 T sdir/file3"
-	  dotest taginfo-newfmt-10 "${testcvs} -q update -r br" "[UP] file1"
+	  dotest taginfo-newfmt-10 "${testcvs} -q update -r br" "U file1"
 	  echo add more text on branch >>file1
 	  dotest taginfo-newfmt-11 "${testcvs} -q ci -m modify-on-br" \
 "${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
@@ -20563,13 +20563,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # Now update the second copy.  When using remote CVS, the
 	  # patch will fail, forcing the file to be refetched.
 	  cd ../../2/first-dir
-	  dotest serverpatch-8 "${testcvs} -q update" \
-'U file1' \
-"P file1
-${CPROG} update: checksum failure after patch to \./file1; will refetch
-${CPROG} client: refetching unpatchable files
-$SPROG update: warning: \`file1' was lost
-U file1"
+	  dotest serverpatch-8 "$testcvs -q update" 'U file1'
 
 	  dokeep
 	  cd ../..
@@ -20641,7 +20635,7 @@ new revision: 1\.3; previous revision: 1\.2"
 	  dotest log-6a "${testcvs} -q tag tag2 file2" 'T file2'
 
 	  dotest log-7 "${testcvs} -q update -r branch" \
-"[UP] file1
+"U file1
 ${SPROG} update: \`file2' is no longer in the repository"
 
 	  echo 'first branch revision' > file1
@@ -20980,7 +20974,7 @@ description:
 ${log_rev2b}
 ${log_trailer}"
 
-	  dotest log-28 "${testcvs} -q up -r1.2 file1" "[UP] file1"
+	  dotest log-28 "${testcvs} -q up -r1.2 file1" "U file1"
 	  dotest log-29 "${testcvs} log -rBASE file1" \
 "${log_header1}
 ${log_tags1}
@@ -20990,7 +20984,7 @@ description:
 ${log_rev2}
 ${log_trailer}"
 
-	  dotest log-30 "${testcvs} -q up -rbranch file1" "[UP] file1"
+	  dotest log-30 "${testcvs} -q up -rbranch file1" "U file1"
 
 	  # Now the same tests but with rlog
 
@@ -21261,7 +21255,7 @@ total revisions: 5;	selected revisions: 0
 description:
 ${log_trailer}"
 
-	  dotest log-r28 "${testcvs} -q up -r1.2 file1" "[UP] file1"
+	  dotest log-r28 "${testcvs} -q up -r1.2 file1" "U file1"
 	  dotest log-r29 "${testcvs} rlog -rBASE first-dir/file1" \
 "${SPROG} rlog: warning: no revision .BASE. in .${CVSROOT_DIRNAME}/first-dir/file1,v.
 ${rlog_header1}
@@ -21274,7 +21268,7 @@ ${log_trailer}"
 	  # Test when head is dead
 
 	  dotest log-d0 "${testcvs} -q up -A" \
-"[UP] file1
+"U file1
 U file2"
 	  dotest log-d1 "${testcvs} -q rm -f file1" \
 "${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
@@ -21586,7 +21580,7 @@ ${log_rev22}
 ${log_trailer}"
 
 	  dotest log-d99 "${testcvs} -q up -rbranch" \
-"[UP] file1
+"U file1
 ${SPROG} update: \`file2' is no longer in the repository"
 
 	  # Now test outdating revisions
@@ -21845,7 +21839,7 @@ EOF
 	  dotest ann-7 "${testcvs} -q ci -m modify file1" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2"
-	  dotest ann-8 "${testcvs} -q update -r br" "[UP] file1"
+	  dotest ann-8 "${testcvs} -q update -r br" "U file1"
 	  cat >file1 <<EOF
 this
 is
@@ -22922,7 +22916,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # time.
 	  dotest rcs4-5 \
 "${testcvs} -q update -D 'October 1, 2001 UTC' file1" \
-'[UP] file1'
+'U file1'
 	  dotest rcs4-6 \
 "${testcvs} -q status file1" \
 '===================================================================
@@ -23832,7 +23826,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  cd ../2/first-dir
 	  # The idea here is particularly to test the Rcs-diff response
 	  # and the reallocing thereof, for remote.
-	  dotest big-6 "$testcvs -q update" "[UP] file1"
+	  dotest big-6 "$testcvs -q update" "U file1"
 
 	  dokeep
 	  cd ../..
@@ -24262,8 +24256,8 @@ new revision: 1\.2; previous revision: 1\.1"
 	  cd ../..
 	  cd 1/first-dir
 	  sleep 60
-	  dotest stamps-10 "${testcvs} -q update" '[UP] aa
-[UP] kw'
+	  dotest stamps-10 "${testcvs} -q update" 'U aa
+U kw'
 	  # this doesn't serve any function other than being able to
 	  # look at it manually, as we have no machinery for dates being
 	  # newer or older than other dates.
@@ -24404,7 +24398,7 @@ initial revision: 1\.1"
 	  dotest symlinks2-6 "${testcvs} -q ci -m linkify" \
 "$CVSROOT_DIRNAME/first-dir/slink,v  <--  slink
 new revision: 1\.2; previous revision: 1\.1"
-	  dotest symlinks2-7 "${testcvs} -q update -r 1.1 slink" "[UP] slink"
+	  dotest symlinks2-7 "${testcvs} -q update -r 1.1 slink" "U slink"
 	  dotest symlinks2-8 "cat slink" "nonsymlink"
 	  dotest symlinks2-9 "ls -l slink" "-[-rwx]* .* slink"
 
@@ -24530,16 +24524,16 @@ initial revision: 1\.1"
 	  dotest sticky-6 "$testcvs -q ci -m modify" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1"
-	  dotest sticky-7 "$testcvs -q update -r tag1" "[UP] file1"
+	  dotest sticky-7 "$testcvs -q update -r tag1" "U file1"
 	  dotest sticky-8 "cat file1" ''
 	  dotest sticky-9 "$testcvs -q update" ''
 	  dotest sticky-10 "cat file1" ''
 	  touch file2
 	  dotest_fail sticky-11 "$testcvs add file2" \
 "$SPROG add: cannot add file on non-branch tag \`tag1'"
-	  dotest sticky-12 "$testcvs -q update -A" "[UP] file1
+	  dotest sticky-12 "$testcvs -q update -A" "U file1
 $QUESTION file2" "$QUESTION file2
-[UP] file1"
+U file1"
 	  dotest sticky-13 "${testcvs} add file2" \
 "$SPROG add: scheduling file .file2. for addition
 $SPROG add: use .$SPROG commit. to add this file permanently"
@@ -24548,7 +24542,7 @@ $SPROG add: use .$SPROG commit. to add this file permanently"
 initial revision: 1\.1"
 
 	  # Now back to tag1
-	  dotest sticky-15 "${testcvs} -q update -r tag1" "[UP] file1
+	  dotest sticky-15 "${testcvs} -q update -r tag1" "U file1
 $SPROG update: \`file2' is no longer in the repository"
 
 	  rm file1
@@ -24788,26 +24782,12 @@ new revision: 1\.3; previous revision: 1\.2"
 	  # associated with the current base version of the file in the
 	  # sandbox is not available in these cases.  See the note in the
 	  # patch_file function in update.c.
-	  dotest keyword-21 "${testcvs} -q update -r tag1" "U file1" \
-"P file1
-${CPROG} update: checksum failure after patch to \./file1; will refetch
-${CPROG} client: refetching unpatchable files
-$SPROG update: warning: \`file1' was lost
-U file1"
+	  dotest keyword-21 "$testcvs -q update -r tag1" "U file1"
 
 	  dotest keyword-22 "cat file1" '\$'"Name: tag1 "'\$'
 
-	  if $remote; then
-	    # Like serverpatch-8.  Not sure there is anything much we
-	    # can or should do about this.
-	    dotest keyword-23r "${testcvs} update -A file1" "P file1
-${CPROG} update: checksum failure after patch to \./file1; will refetch
-${CPROG} client: refetching unpatchable files
-$SPROG update: warning: \`file1' was lost
-U file1"
-	  else
-	    dotest keyword-23 "${testcvs} update -A file1" "[UP] file1"
-	  fi
+	  # Like serverpatch-8, a patch is refetched here.
+	  dotest keyword-23 "$testcvs update -A file1" "U file1"
 	  dotest keyword-24 "cat file1" '\$'"Name:  "'\$'"
 change"
 
@@ -24868,7 +24848,7 @@ xx Second log line
 xx"
 
 	  cd ../../2/first-dir
-	  dotest keywordlog-8 "${testcvs} -q update" "[UP] file1"
+	  dotest keywordlog-8 "${testcvs} -q update" "U file1"
 	  dotest keywordlog-9 "cat file1" \
 "initial
 xx "'\$'"Log: file1,v "'\$'"
@@ -24895,7 +24875,7 @@ xx
 change"
 
 	  cd ../../2/first-dir
-	  dotest keywordlog-12 "${testcvs} -q update" "[UP] file1"
+	  dotest keywordlog-12 "${testcvs} -q update" "U file1"
 	  dotest keywordlog-13 "cat file1" \
 "initial
 xx "'\$'"Log: file1,v "'\$'"
@@ -24909,7 +24889,7 @@ xx
 change"
 
 	  cd ../../1/first-dir
-	  dotest keywordlog-14 "${testcvs} -q update -r br" "[UP] file1"
+	  dotest keywordlog-14 "${testcvs} -q update -r br" "U file1"
 	  echo br-change >>file1
 	  dotest keywordlog-15 "${testcvs} -q ci -m br-modify" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
@@ -24926,7 +24906,7 @@ xx Second log line
 xx
 br-change"
 	  cd ../../2/first-dir
-	  dotest keywordlog-17 "${testcvs} -q update -r br" "[UP] file1"
+	  dotest keywordlog-17 "${testcvs} -q update -r br" "U file1"
 	  dotest keywordlog-18 "cat file1" \
 "initial
 xx "'\$'"Log: file1,v "'\$'"
@@ -25159,12 +25139,7 @@ new revision: 1\.4; previous revision: 1\.3"
 	  # An update -kk or -A will unsub and sub keywords without updates
 	  # being required.
 	  # FIXCVS - see note above keyword-21
-	  dotest keywordname-update-1 "${testcvs} -q up -rbr" "U file1" \
-"P file1
-${CPROG} update: checksum failure after patch to \./file1; will refetch
-${CPROG} client: refetching unpatchable files
-$SPROG update: warning: \`file1' was lost
-U file1"
+	  dotest keywordname-update-1 "$testcvs -q up -rbr" "U file1"
 	  dotest keywordname-update-2 "cat file1" '\$'"Name: br "'\$'
 	  dotest keywordname-update-3 "cat file2" '\$'"Name:  "'\$'
 
@@ -25174,12 +25149,7 @@ U file1"
 "T file1
 T file2"
 	  # FIXCVS - see note above keyword-21
-	  dotest keywordname-update-5 "${testcvs} -q up -A" "U file1" \
-"P file1
-${CPROG} update: checksum failure after patch to \./file1; will refetch
-${CPROG} client: refetching unpatchable files
-$SPROG update: warning: \`file1' was lost
-U file1"
+	  dotest keywordname-update-5 "$testcvs -q up -A" "U file1"
 	  dotest keywordname-update-6 "cat file1" \
 '\$'"Name:  "'\$'"
 new data"
@@ -25187,22 +25157,12 @@ new data"
 
 	  # But updating to a static tag does cause a substitution
 	  # FIXCVS - see same note above
-	  dotest keywordname-update-8 "${testcvs} -q up -rfirsttag" "U file1" \
-"P file1
-${CPROG} update: checksum failure after patch to \./file1; will refetch
-${CPROG} client: refetching unpatchable files
-$SPROG update: warning: \`file1' was lost
-U file1"
+	  dotest keywordname-update-8 "$testcvs -q up -rfirsttag" "U file1"
 	  dotest keywordname-update-9 "cat file1" '\$'"Name: firsttag "'\$'
 	  dotest keywordname-update-10 "cat file2" '\$'"Name:  "'\$'
 
 	  # And reverify the trunk update when the change is actually removed.
-	  dotest keywordname-update-11 "${testcvs} -q up -A" "[UP] file1" \
-"P file1
-${CPROG} update: checksum failure after patch to ./file1; will refetch
-${CPROG} client: refetching unpatchable files
-$SPROG update: warning: \`file1' was lost
-U file1"
+	  dotest keywordname-update-11 "$testcvs -q up -A" "U file1"
 	  dotest keywordname-update-12 "cat file1" \
 '\$'"Name:  "'\$'"
 new data"
@@ -25286,7 +25246,7 @@ T file1"
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1"
 
-	  dotest keyword2-9 "${testcvs} -q update -r branch" '[UP] file1'
+	  dotest keyword2-9 "${testcvs} -q update -r branch" 'U file1'
 
 	  echo "what else do we have?" >>file1
 	  dotest keyword2-10 "${testcvs} -q ci -m change" \
@@ -25339,7 +25299,7 @@ new revision: 1\.3; previous revision: 1\.2"
 	  # Okay, restore everything and make CVS try and merge a binary file...
 	  # "-kk" no longer affects binary files
 	  dotest keyword2-16 "${testcvs} -q update -A" \
-"[UP] file1"
+"U file1"
 	  dotest keyword2-17 "${testcvs} -q tag -b branch2" \
 "T binfile\.dat
 T file1"
@@ -25419,7 +25379,7 @@ T file2"
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.3\.2\.2; previous revision: 1\.3\.2\.1"
 	  # With no sticky tags, HEAD is the head of the trunk.
-	  dotest head-trunk-setup "${testcvs} -q update -A" "[UP] file1"
+	  dotest head-trunk-setup "${testcvs} -q update -A" "U file1"
 	  dotest head-trunk-update "${testcvs} -q update -r HEAD -p file1" \
 "imported contents
 add a line on trunk
@@ -25445,7 +25405,7 @@ ${PLUS} modify on branch
 ${PLUS} modify on branch after brtag"
 
 	  # With a branch sticky tag, HEAD is the head of the trunk.
-	  dotest head-br1-setup "${testcvs} -q update -r br1" "[UP] file1"
+	  dotest head-br1-setup "${testcvs} -q update -r br1" "U file1"
 	  dotest head-br1-update "${testcvs} -q update -r HEAD -p file1" \
 "imported contents
 add a line on trunk
@@ -25456,7 +25416,7 @@ add a line on trunk after trunktag"
 
 	  # With a nonbranch sticky tag on a branch,
 	  # HEAD is the head of the trunk
-	  dotest head-brtag-setup "${testcvs} -q update -r brtag" "[UP] file1"
+	  dotest head-brtag-setup "${testcvs} -q update -r brtag" "U file1"
 	  dotest head-brtag-update "${testcvs} -q update -r HEAD -p file1" \
 "imported contents
 add a line on trunk
@@ -25470,7 +25430,7 @@ add a line on trunk after trunktag"
 	  # With a nonbranch sticky tag on the trunk, HEAD is the head
 	  # of the trunk, I think.
 	  dotest head-trunktag-setup "${testcvs} -q update -r trunktag" \
-"[UP] file1"
+"U file1"
 	  dotest head-trunktag-check "cat file1" "imported contents
 add a line on trunk"
 	  dotest head-trunktag-update "${testcvs} -q update -r HEAD -p file1" \
@@ -25578,7 +25538,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # any revisions.  First the case where br2 doesn't have any
 	  # revisions either:
 	  dotest tagdate-8 "${testcvs} -q update -p -r br1 -D now" "trunk-1"
-	  dotest tagdate-9 "${testcvs} -q update -r br2" "[UP] file1"
+	  dotest tagdate-9 "${testcvs} -q update -r br2" "U file1"
 	  echo br2-1 >file1
 	  dotest tagdate-10 "${testcvs} -q ci -m modify-on-br2" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
@@ -25617,7 +25577,7 @@ ${PLUS}br2-2"
 	  # Tag a date on a branch.
 	  dotest tagdate-13c "$testcvs -q tag -rbr2:'$date_T3' tagdate" \
 "T file1"
-	  dotest tagdate-13d "$testcvs -q update -rtagdate" "[UP] file1"
+	  dotest tagdate-13d "$testcvs -q update -rtagdate" "U file1"
 	  dotest tagdate-13e "cat file1" "br2-1"
 
 	  # This one should fail, though currently without an error message,
@@ -25625,17 +25585,17 @@ ${PLUS}br2-2"
 	  dotest tagdate-13f "$testcvs -q tag -rtagdate:'$date_T3' tagdate"
 
 	  # and restore to using the trunk for future tests.
-	  dotest tagdate-13g "$testcvs -q up -rbr2" "[UP] file1"
+	  dotest tagdate-13g "$testcvs -q up -rbr2" "U file1"
 
 	  cd ../..
 	  mkdir 2; cd 2
 	  dotest tagdate-14 \
 "$testcvs -q export -r br2 -D'$date_T3' first-dir" \
-"[UP] first-dir/file1"
+"U first-dir/file1"
 	  dotest tagdate-14b "cat first-dir/file1" "br2-1"
 	  dotest tagdate-15 \
 "$testcvs -q export -rbr2:'$date_T3' -dsecond-dir first-dir" \
-"[UP] second-dir/file1"
+"U second-dir/file1"
 	  dotest tagdate-15b "cat second-dir/file1" "br2-1"
 
 	  # Now for annotate
@@ -26060,8 +26020,8 @@ new revision: 1\.1\.4\.1; previous revision: 1\.1
 $CVSROOT_DIRNAME/first-dir/file2,v  <--  file2
 new revision: 1\.1\.4\.1; previous revision: 1\.1"
 
-	  dotest multibranch2-9 "${testcvs} -q update -r A" '[UP] file1
-[UP] file2'
+	  dotest multibranch2-9 "${testcvs} -q update -r A" 'U file1
+U file2'
 	  echo branch-A >file1
 	  # When using cvs-1.9.20, this commit gets a failed assertion in rcs.c.
 	  dotest multibranch2-10 "${testcvs} -q ci -m modify-on-A" \
@@ -26123,10 +26083,10 @@ add
 	  # bring the changes from B to A.  Probably tests many of the
 	  # same code paths but might as well keep it separate, I guess.
 
-	  dotest multibranch2-13 "${testcvs} -q update -r B" "[UP] file1
-[UP] file2"
+	  dotest multibranch2-13 "${testcvs} -q update -r B" "U file1
+U file2"
 	  dotest multibranch2-14 "${testcvs} -q update -r A -j B file2" \
-"[UP] file2
+"U file2
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
 retrieving revision 1.1
 retrieving revision 1.1.4.1
@@ -29245,10 +29205,10 @@ ${SPROG} update: Updating mod1-1
 ${SPROG} update: Updating mod1-2
 ${SPROG} update: Updating mod2-2
 ${SPROG} update: Updating mod2-2/mod1-2
-P mod2-2/mod1-2/file1-2
+U mod2-2/mod1-2/file1-2
 ${SPROG} update: Updating mod1-2
 ${SPROG} update: Updating mod1-2/mod2-2
-P mod1-2/mod2-2/file2-2
+U mod1-2/mod2-2/file2-2
 ${SPROG} update: Updating mod2-1
 ${SPROG} update: Updating mod2-2"
 
