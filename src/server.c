@@ -8,6 +8,13 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Validate API.  */
+#include "server.h"
+
 #include "cvs.h"
 
 /* CVS */
@@ -5050,6 +5057,164 @@ server_modtime (struct file_info *finfo, Vers_TS *vers_ts)
 
 
 
+void
+server_send_checksum (const unsigned char *checksum)
+{
+    static int checksum_supported = -1;
+
+    if (checksum_supported < 0)
+	checksum_supported = supported_response ("Checksum");
+
+    if (checksum_supported)
+    {
+	int i;
+	char buf[3];
+
+	buf_output0 (protocol, "Checksum ");
+	for (i = 0; i < 16; i++)
+	{
+	    sprintf (buf, "%02x", (unsigned int) checksum[i]);
+	    buf_output0 (protocol, buf);
+	}
+	buf_append_char (protocol, '\n');
+    }
+}
+
+
+
+static inline void
+output_mode_string (mode_t mode)
+{
+    char *mode_string;
+
+    mode_string = mode_to_string (mode);
+    buf_output0 (protocol, mode_string);
+    buf_output0 (protocol, "\n");
+    free (mode_string);
+}
+
+
+
+void
+server_send_buffer_as_file (struct buffer *in, mode_t mode)
+{
+    unsigned long size;
+    char *buf;
+
+    if (mode == (mode_t) -1)
+	error (1, 0,
+"CVS server internal error: no mode in server_send_data_as_file");
+
+    output_mode_string (mode);
+
+    size = buf_length (in);
+
+    buf = Xasprintf ("%lu\n", size);
+    buf_output0 (protocol, buf);
+    free (buf);
+
+    buf_append_buffer (protocol, in);
+}
+
+
+
+void
+server_send_file (const char *file, const char *fullname, mode_t mode)
+{
+    struct stat sb;
+    unsigned long size;
+    char *buf;
+    FILE *f;
+
+    /* The contents of the file will be in one of filebuf or list/last.  */
+    struct buffer_data *list, *last;
+    unsigned char *contents;
+
+    if (stat (file, &sb) < 0)
+	error (1, errno, "reading %s", fullname);
+
+    if (mode == (mode_t) -1)
+	/* FIXME: When we check out files the umask of the
+	   server (set in .bashrc if rsh is in use) affects
+	   what mode we send, and it shouldn't.  */
+	mode = sb.st_mode;
+
+    output_mode_string (mode);
+
+    size = sb.st_size;
+    contents = NULL;
+
+    /* Throughout this section we use binary mode to read the
+       file we are sending.  The client handles any line ending
+       translation if necessary.  */
+
+    if (file_gzip_level
+	/*
+	 * For really tiny files, the gzip process startup
+	 * time will outweigh the compression savings.  This
+	 * might be computable somehow; using 100 here is just
+	 * a first approximation.
+	 */
+	&& size > 100)
+    {
+	/* Basing this routine on read_and_gzip is not a
+	   high-performance approach.  But it seems easier
+	   to code than the alternative (and less
+	   vulnerable to subtle bugs).  Given that this feature
+	   is mainly for compatibility, that is the better
+	   tradeoff.  */
+
+	int fd;
+	size_t file_allocated = 0;
+	size_t file_used = 0;
+
+	fd = CVS_OPEN (file, O_RDONLY | OPEN_BINARY, 0);
+	if (fd < 0)
+	    error (1, errno, "reading %s", fullname);
+	if (read_and_gzip (fd, fullname, &contents,
+			   &file_allocated, &file_used,
+			   file_gzip_level))
+	    error (1, 0, "aborting due to compression error");
+	size = file_used;
+	if (close (fd) < 0)
+	    error (1, errno, "reading %s", fullname);
+	/* Prepending length with "z" is flag for using gzip here.  */
+	buf_output0 (protocol, "z");
+    }
+    else if (size > 0)
+    {
+	long status;
+
+	f = CVS_FOPEN (file, "rb");
+	if (f == NULL)
+	    error (1, errno, "reading %s", fullname);
+	status = buf_read_file (f, size, &list, &last);
+	if (status == -2)
+	    (*protocol->memory_error) (protocol);
+	else if (status != 0)
+	    error (1, ferror (f) ? errno : 0, "reading %s", fullname);
+	if (fclose (f) == EOF)
+	    error (1, errno, "reading %s", fullname);
+    }
+    else
+	contents = (unsigned char *) xstrdup ("");
+
+    buf = Xasprintf ("%lu\n", size);
+    buf_output0 (protocol, buf);
+    free (buf);
+
+    if (contents)
+    {
+	buf_output (protocol, (char *) contents, size);
+	free (contents);
+    }
+    else
+	buf_append_data (protocol, list, last);
+    /* Note we only send a newline here if the file ended with one.  */
+}
+
+
+
 /* See server.h for description.  */
 void
 server_updated (
@@ -5060,6 +5225,11 @@ server_updated (
     unsigned char *checksum,
     struct buffer *filebuf)
 {
+    /* The case counter to the assertion below should be easy to handle but it
+     * never has been, to my knowledge, so there appears to be no need.
+     */
+    assert (!(filebuf && file_gzip_level));
+
     if (noexec)
     {
 	/* Hmm, maybe if we did the same thing for entries_file, we
@@ -5077,75 +5247,19 @@ server_updated (
 
     if (entries_line != NULL && scratched_file == NULL)
     {
-	FILE *f;
-	struct buffer_data *list, *last;
-	unsigned long size;
-	char size_text[80];
-
-	/* The contents of the file will be in one of filebuf,
-	   list/last, or here.  */
-	unsigned char *file;
-	size_t file_allocated;
-	size_t file_used;
-
-	if (filebuf != NULL)
+	if (!filebuf && !isfile (finfo->file))
 	{
-	    size = buf_length (filebuf);
-	    if (mode == (mode_t) -1)
-		error (1, 0, "\
-CVS server internal error: no mode in server_updated");
-	}
-	else
-	{
-	    struct stat sb;
-
-	    if (stat (finfo->file, &sb) < 0)
-	    {
-		if (existence_error (errno))
-		{
-		    /* If we have a sticky tag for a branch on which
-		       the file is dead, and cvs update the directory,
-		       it gets a T_CHECKOUT but no file.  So in this
-		       case just forget the whole thing.  */
-		    free (entries_line);
-		    entries_line = NULL;
-		    goto done;
-		}
-		error (1, errno, "reading %s", finfo->fullname);
-	    }
-	    size = sb.st_size;
-	    if (mode == (mode_t) -1)
-	    {
-		/* FIXME: When we check out files the umask of the
-		   server (set in .bashrc if rsh is in use) affects
-		   what mode we send, and it shouldn't.  */
-		mode = sb.st_mode;
-	    }
+	    /* If we have a sticky tag for a branch on which
+	       the file is dead, and cvs update the directory,
+	       it gets a T_CHECKOUT but no file.  So in this
+	       case just forget the whole thing.  */
+	    free (entries_line);
+	    entries_line = NULL;
+	    goto done;
 	}
 
-	if (checksum != NULL)
-	{
-	    static int checksum_supported = -1;
-
-	    if (checksum_supported == -1)
-	    {
-		checksum_supported = supported_response ("Checksum");
-	    }
-
-	    if (checksum_supported)
-	    {
-		int i;
-		char buf[3];
-
-		buf_output0 (protocol, "Checksum ");
-		for (i = 0; i < 16; i++)
-		{
-		    sprintf (buf, "%02x", (unsigned int) checksum[i]);
-		    buf_output0 (protocol, buf);
-		}
-		buf_append_char (protocol, '\n');
-	    }
-	}
+	if (checksum)
+	    server_send_checksum (checksum);
 
 	if (updated == SERVER_UPDATED)
 	{
@@ -5186,98 +5300,10 @@ CVS server internal error: no mode in server_updated");
 
 	new_entries_line ();
 
-	{
-	    char *mode_string;
-
-	    mode_string = mode_to_string (mode);
-	    buf_output0 (protocol, mode_string);
-	    buf_output0 (protocol, "\n");
-	    free (mode_string);
-	}
-
-	list = last = NULL;
-
-	file = NULL;
-	file_allocated = 0;
-	file_used = 0;
-
-	if (size > 0)
-	{
-	    /* Throughout this section we use binary mode to read the
-	       file we are sending.  The client handles any line ending
-	       translation if necessary.  */
-
-	    if (file_gzip_level
-		/*
-		 * For really tiny files, the gzip process startup
-		 * time will outweigh the compression savings.  This
-		 * might be computable somehow; using 100 here is just
-		 * a first approximation.
-		 */
-		&& size > 100)
-	    {
-		/* Basing this routine on read_and_gzip is not a
-		   high-performance approach.  But it seems easier
-		   to code than the alternative (and less
-		   vulnerable to subtle bugs).  Given that this feature
-		   is mainly for compatibility, that is the better
-		   tradeoff.  */
-
-		int fd;
-
-		/* Callers must avoid passing us a buffer if
-		   file_gzip_level is set.  We could handle this case,
-		   but it's not worth it since this case never arises
-		   with a current client and server.  */
-		if (filebuf != NULL)
-		    error (1, 0, "\
-CVS server internal error: unhandled case in server_updated");
-
-		fd = CVS_OPEN (finfo->file, O_RDONLY | OPEN_BINARY, 0);
-		if (fd < 0)
-		    error (1, errno, "reading %s", finfo->fullname);
-		if (read_and_gzip (fd, finfo->fullname, &file,
-				   &file_allocated, &file_used,
-				   file_gzip_level))
-		    error (1, 0, "aborting due to compression error");
-		size = file_used;
-		if (close (fd) < 0)
-		    error (1, errno, "reading %s", finfo->fullname);
-		/* Prepending length with "z" is flag for using gzip here.  */
-		buf_output0 (protocol, "z");
-	    }
-	    else if (filebuf == NULL)
-	    {
-		long status;
-
-		f = CVS_FOPEN (finfo->file, "rb");
-		if (f == NULL)
-		    error (1, errno, "reading %s", finfo->fullname);
-		status = buf_read_file (f, size, &list, &last);
-		if (status == -2)
-		    (*protocol->memory_error) (protocol);
-		else if (status != 0)
-		    error (1, ferror (f) ? errno : 0, "reading %s",
-			   finfo->fullname);
-		if (fclose (f) == EOF)
-		    error (1, errno, "reading %s", finfo->fullname);
-	    }
-	}
-
-	sprintf (size_text, "%lu\n", size);
-	buf_output0 (protocol, size_text);
-
-	if (file != NULL)
-	{
-	    buf_output (protocol, (char *) file, file_used);
-	    free (file);
-	    file = NULL;
-	}
-	else if (filebuf == NULL)
-	    buf_append_data (protocol, list, last);
+	if (filebuf)
+	    server_send_buffer_as_file (filebuf, mode);
 	else
-	    buf_append_buffer (protocol, filebuf);
-	/* Note we only send a newline here if the file ended with one.  */
+	    server_send_file (finfo->file, finfo->fullname, mode);
 
 	/*
 	 * Avoid using up too much disk space for temporary files.
@@ -8080,6 +8106,28 @@ cvs_output_tagged (const char *tag, const char *text)
 	}
 	else if (text != NULL)
 	    cvs_output (text, 0);
+    }
+}
+
+
+
+/* Try to tell the client about checking out a base REV of FILE, sending the
+ * diff against PREV when possible.  If the client doesn't understand this
+ * response, just ignore it and later code will also avoid the Base-*
+ * responses.
+ */
+void
+server_base_checkout (const char *file, const char *prev, const char *rev)
+{
+    if (!supported_response ("Base-checkout")) return;
+
+    if (prev)
+    {
+	/* FIXME: Send diff.  */
+    }
+    else
+    {
+	/* FIXME: Send whole file.  */
     }
 }
 
