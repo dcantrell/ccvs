@@ -12,6 +12,13 @@
  * This file contains the interface between the server and the rest of CVS.
  */
 
+#ifndef SERVER_H
+#define SERVER_H
+
+/* CVS Headers.  */
+#include "root.h"
+#include "vers_ts.h"
+
 /* Miscellaneous stuff which isn't actually particularly server-specific.  */
 #ifndef STDIN_FILENO
 #define STDIN_FILENO 0
@@ -219,3 +226,7 @@ void cvs_trace (int level, const char *fmt, ...)
 #define TRACE_DATA		3
 
 extern cvsroot_t *referrer;
+
+void server_base_checkout (const char *file, const char *prev, const char *rev);
+
+#endif /* !defined SERVER_H */

@@ -16,6 +16,14 @@
  * the Entries file.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Validate API.  */
+#include "entries.h"
+
+/* CVS */
 #include "cvs.h"
 #include "getline.h"
 
