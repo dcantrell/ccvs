@@ -1065,6 +1065,27 @@ files.  However, \fBcvs\fR has always required that the
 \fBrcs\fR files used by \fBcvs\fR end in \fB,v\fR, so
 this option has never done anything useful.
 .SP
+.IP "" 0
+\fB--execute\fR
+.IP "" 2
+On unix systems, when \fBcvs\fR adds a new file to a repository,
+the execute bits of the file are applied to the \fBrcs\fR file
+and are thus preserved. This can be useful for shell scripts
+or other files that you want to be executable when they are
+later checked out (saves you from doing chmod +x to alter the
+file permissions).
+This option can turn on the execute bits for repository files
+that where originally added without them (or were made
+non-executable with the --no-execute option).
+.SP
+.IP "" 0
+\fB--no-execute\fR
+.IP "" 2
+This option turns off the execute bits from repository files,
+(useful for files that where originally added as executables or
+were made executable with the --execute option) when you want to
+avoid those files from being executable on subsequent checkouts.
+.SP
 .SP
 .SH "annotate"
 .SS "What revision modified each line of a file?"
@@ -3557,12 +3578,9 @@ up-to-date.
 .IP "" 0
 \fBU \fIfile\fB\fR
 .IP "" 2
-.IP "" 0
-\fBP \fIfile\fB\fR
-.IP "" 2
 There exists a newer revision of this file in the
 repository, and you have not modified your local copy
-of the file (\fBU\fR and \fBP\fR mean the same thing).
+of the file.
 .SP
 .IP "" 0
 \fBA \fIfile\fB\fR
@@ -3836,12 +3854,6 @@ repository.  This is done for any file that exists in
 the repository but not in your working directory, and for files
 that you haven\(aqt changed but are not the most recent
 versions available in the repository.
-.SP
-.IP "" 0
-\fBP \fIfile\fB\fR
-.IP "" 2
-Like \fBU\fR, but the \fBcvs\fR server sends a patch instead of an entire
-file.  This accomplishes the same thing as \fBU\fR using less bandwidth.
 .SP
 .IP "" 0
 \fBA \fIfile\fB\fR

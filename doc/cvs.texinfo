@@ -11319,10 +11319,9 @@ up-to-date.
 
 @table @code
 @item U @var{file}
-@itemx P @var{file}
 There exists a newer revision of this file in the
 repository, and you have not modified your local copy
-of the file (@samp{U} and @samp{P} mean the same thing).
+of the file.
 
 @item A @var{file}
 The file has been added to your private copy of the
@@ -11573,10 +11572,6 @@ repository.  This is done for any file that exists in
 the repository but not in your working directory, and for files
 that you haven't changed but are not the most recent
 versions available in the repository.
-
-@item P @var{file}
-Like @samp{U}, but the @sc{cvs} server sends a patch instead of an entire
-file.  This accomplishes the same thing as @samp{U} using less bandwidth.
 
 @item A @var{file}
 The file has been added to your private copy of the
