@@ -1368,6 +1368,121 @@ struct update_entries_data
 
 
 
+static void
+discard_file (void)
+{
+    char *mode_string;
+    char *size_string;
+    size_t size, nread;
+
+    read_line (&mode_string);
+    free (mode_string);
+
+    read_line (&size_string);
+    if (size_string[0] == 'z')
+	size = atoi (size_string + 1);
+    else
+	size = atoi (size_string);
+    free (size_string);
+
+    /* Now read and discard the file contents.  */
+    nread = 0;
+    while (nread < size)
+    {
+	char buf[8192];
+	size_t toread;
+
+	toread = size - nread;
+	if (toread > sizeof buf)
+	    toread = sizeof buf;
+
+	nread += try_read_from_server (buf, toread);
+	if (nread == size)
+	    break;
+    }
+
+    /* The Mode, Mod-time, and Checksum responses should not carry
+       over to a subsequent Created (or whatever) response, even
+       in the error case.  */
+    if (stored_mode)
+    {
+	free (stored_mode);
+	stored_mode = NULL;
+    }
+    stored_modtime_valid = 0;
+    stored_checksum_valid = 0;
+
+    if (updated_fname)
+    {
+	free (updated_fname);
+	updated_fname = NULL;
+    }
+    return;
+}
+
+
+
+static char *
+newfilename (const char *filename)
+{
+#ifdef USE_VMS_FILENAMES
+    /* A VMS rename of "blah.dat" to "foo" to implies a
+     * destination of "foo.dat" which is unfortinate for CVS.
+     */
+    return Xasprintf ("%s_new_", filename);
+#else
+#ifdef _POSIX_NO_TRUNC
+    return Xasprintf (".new.%.9s", filename);
+#else /* _POSIX_NO_TRUNC */
+    return Xasprintf (".new.%s", filename);
+#endif /* _POSIX_NO_TRUNC */
+#endif /* USE_VMS_FILENAMES */
+}
+
+
+
+static char *
+read_file_from_server (const char *filename, const char *fullname,
+		       char **mode_string, size_t *size)
+{
+    char *size_string;
+    bool use_gzip;
+    char *buf;
+
+    read_line (mode_string);
+    
+    read_line (&size_string);
+    if (size_string[0] == 'z')
+    {
+	use_gzip = true;
+	*size = atoi (size_string + 1);
+    }
+    else
+    {
+	use_gzip = false;
+	*size = atoi (size_string);
+    }
+    free (size_string);
+
+    buf = xmalloc (*size);
+    read_from_server (buf, *size);
+
+    if (use_gzip)
+    {
+	char *outbuf;
+
+	if (gunzip_in_mem (fullname, (unsigned char *) buf, size, &outbuf))
+	    error (1, 0, "aborting due to compression error");
+
+	free (buf);
+	buf = outbuf;
+    }
+
+    return buf;
+}
+
+
+
 /* Update the Entries line for this file.  */
 static void
 update_entries (void *data_arg, List *ent_list, const char *short_pathname,
@@ -1435,28 +1550,11 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	|| data->contents == UPDATE_ENTRIES_PATCH
 	|| data->contents == UPDATE_ENTRIES_RCS_DIFF)
     {
-	char *size_string;
 	char *mode_string;
-	int size;
-	char *buf;
 	char *temp_filename;
-	int use_gzip;
-	int patch_failed;
-
-	read_line (&mode_string);
-	
-	read_line (&size_string);
-	if (size_string[0] == 'z')
-	{
-	    use_gzip = 1;
-	    size = atoi (size_string+1);
-	}
-	else
-	{
-	    use_gzip = 0;
-	    size = atoi (size_string);
-	}
-	free (size_string);
+	size_t size;
+	char *buf;
+	bool patch_failed;
 
 	/* Note that checking this separately from writing the file is
 	   a race condition: if the existence or lack thereof of the
@@ -1475,17 +1573,6 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	if (data->existp == UPDATE_ENTRIES_NEW
 	    && isfile (filename))
 	{
-	    /* Emit a warning and refuse to update the file; we don't want
-	       to clobber a user's file.  */
-	    size_t nread;
-	    size_t toread;
-
-	    /* size should be unsigned, but until we get around to fixing
-	       that, work around it.  */
-	    size_t usize;
-
-	    char buf[8192];
-
 	    /* This error might be confusing; it isn't really clear to
 	       the user what to do about it.  Keep in mind that it has
 	       several causes: (1) something/someone creates the file
@@ -1515,57 +1602,14 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    failure_exit = true;
 
 	discard_file_and_return:
-	    /* Now read and discard the file contents.  */
-	    usize = size;
-	    nread = 0;
-	    while (nread < usize)
-	    {
-		toread = usize - nread;
-		if (toread > sizeof buf)
-		    toread = sizeof buf;
-
-		nread += try_read_from_server (buf, toread);
-		if (nread == usize)
-		    break;
-	    }
-
-	    free (mode_string);
+	    discard_file ();
 	    free (scratch_entries);
 	    free (entries_line);
-
-	    /* The Mode, Mod-time, and Checksum responses should not carry
-	       over to a subsequent Created (or whatever) response, even
-	       in the error case.  */
-	    if (stored_mode)
-	    {
-		free (stored_mode);
-		stored_mode = NULL;
-	    }
-	    stored_modtime_valid = 0;
-	    stored_checksum_valid = 0;
-
-	    if (updated_fname)
-	    {
-		free (updated_fname);
-		updated_fname = NULL;
-	    }
 	    return;
 	}
 
-	temp_filename = xmalloc (strlen (filename) + 80);
-#ifdef USE_VMS_FILENAMES
-        /* A VMS rename of "blah.dat" to "foo" to implies a
-           destination of "foo.dat" which is unfortinate for CVS */
-	sprintf (temp_filename, "%s_new_", filename);
-#else
-#ifdef _POSIX_NO_TRUNC
-	sprintf (temp_filename, ".new.%.9s", filename);
-#else /* _POSIX_NO_TRUNC */
-	sprintf (temp_filename, ".new.%s", filename);
-#endif /* _POSIX_NO_TRUNC */
-#endif /* USE_VMS_FILENAMES */
-
-	buf = xmalloc (size);
+	buf = read_file_from_server (filename, short_pathname,
+				     &mode_string, &size);
 
         /* Some systems, like OS/2 and Windows NT, end lines with CRLF
            instead of just LF.  Format translation is done in the C
@@ -1573,24 +1617,14 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
            convert -- if this file is marked "binary" with the RCS -kb
            flag, then we don't want to convert, else we do (because
            CVS assumes text files by default). */
-
 	if (options)
 	    bin = !strcmp (options, "-kb");
 	else
 	    bin = 0;
 
-	if (data->contents == UPDATE_ENTRIES_RCS_DIFF)
-	{
-	    /* This is an RCS change text.  We just hold the change
-	       text in memory.  */
+	temp_filename = newfilename (filename);
 
-	    if (use_gzip)
-		error (1, 0,
-		       "server error: gzip invalid with RCS change text");
-
-	    read_from_server (buf, size);
-	}
-	else
+	if (data->contents != UPDATE_ENTRIES_RCS_DIFF)
 	{
 	    int fd;
 
@@ -1614,19 +1648,8 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		goto discard_file_and_return;
 	    }
 
-	    if (size > 0)
-	    {
-		read_from_server (buf, size);
-
-		if (use_gzip)
-		{
-		    if (gunzip_and_write (fd, short_pathname, 
-					  (unsigned char *) buf, size))
-			error (1, 0, "aborting due to compression error");
-		}
-		else if (write (fd, buf, size) != size)
-		    error (1, errno, "writing %s", short_pathname);
-	    }
+	    if (write (fd, buf, size) != size)
+		error (1, errno, "writing %s", short_pathname);
 
 	    if (close (fd) < 0)
 		error (1, errno, "writing %s", short_pathname);
@@ -1648,7 +1671,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    updated_fname = 0;
 	}
 
-	patch_failed = 0;
+	patch_failed = false;
 
 	if (data->contents == UPDATE_ENTRIES_UPDATE)
 	{
@@ -1663,7 +1686,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	       or not based on whether the server supports "Rcs-diff".  
 
 	       Fall back to transmitting entire files.  */
-	    patch_failed = 1;
+	    patch_failed = true;
 	}
 	else
 	{
@@ -1689,9 +1712,9 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
                The contents of the patch from the network are in BUF,
                and the length of the patch is in SIZE.  */
 
-	    if (! rcs_change_text (short_pathname, filebuf, nread, buf, size,
+	    if (!rcs_change_text (short_pathname, filebuf, nread, buf, size,
 				   &patchedbuf, &patchedlen))
-		patch_failed = 1;
+		patch_failed = true;
 	    else
 	    {
 		if (stored_checksum_valid)
@@ -1708,13 +1731,13 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 "checksum failure after patch to %s; will refetch",
 			       short_pathname);
 
-			patch_failed = 1;
+			patch_failed = true;
 		    }
 
 		    stored_checksum_valid = 0;
 		}
 
-		if (! patch_failed)
+		if (!patch_failed)
 		{
 		    FILE *e;
 
@@ -1734,9 +1757,10 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    free (filebuf);
 	}
 
+	free (buf);
 	free (temp_filename);
 
-	if (stored_checksum_valid && ! patch_failed)
+	if (stored_checksum_valid && !patch_failed)
 	{
 	    FILE *e;
 	    struct md5_ctx context;
@@ -1779,7 +1803,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		       "checksum failure after patch to %s; will refetch",
 		       short_pathname);
 
-		patch_failed = 1;
+		patch_failed = true;
 	    }
 	}
 
@@ -1795,7 +1819,6 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    stored_checksum_valid = 0;
 
 	    free (mode_string);
-	    free (buf);
 	    free (scratch_entries);
 	    free (entries_line);
 
@@ -1809,7 +1832,6 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	}
 
 	free (mode_string);
-	free (buf);
     }
 
     if (stored_mode)

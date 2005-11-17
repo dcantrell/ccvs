@@ -1,3 +1,11 @@
+2005-11-17  Derek Price  <derek@ximbiot.com>
+
+	* client.c (read_file_from_sever, discard_file): New functions...
+	(update_entries): ...factored from here.
+	* server.h (gunzip_to_mem): New function proto.
+	* zlib.c (gunzip_to_mem): New function factored from...
+	(gunzip_and_write): ...here.
+
 2005-11-15  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h (struct entnode, Entnode, struct vers_ts, Vers_TS): Move to...
