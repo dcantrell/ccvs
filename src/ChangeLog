@@ -1,3 +1,17 @@
+2005-11-15  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (struct entnode, Entnode, struct vers_ts, Vers_TS): Move to...
+	* entries.h: ...this new file and...
+	* vers_ts.h: ...this new file.
+	* entries.c: Include config.h directly.  Validate API.
+	* server.c: Ditto.
+	(server_send_checksum, output_mode_string, server_send_buffer_as_file,
+	server_send_file): New functions factored from...
+	(server_updated): ...here.
+	(server_base_checkout): New stub.
+	* server.h: Include root.h & vers_ts.h in order to add...
+	(server_base_checkout): This new proto.
+
 2005-11-09  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (cvs_SOURCES): Add base.c & base.h.
