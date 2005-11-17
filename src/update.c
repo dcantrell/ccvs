@@ -325,7 +325,8 @@ update (int argc, char **argv)
 	    }
 	    else
 	    {
-		TRACE (TRACE_FUNCTION, "refetching unpatchable files\n");
+		fprintf (stderr, "%s client: refetching unpatchable files\n",
+			 program_name);
 
 		if (toplevel_wd != NULL
 		    && CVS_CHDIR (toplevel_wd) < 0)
