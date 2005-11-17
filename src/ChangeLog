@@ -1,3 +1,9 @@
+2005-11-17  Derek Price  <derek@ximbiot.com>
+
+	* client.c (update_entries), update.c (update): Restore refetch
+	notices and add two new ones.
+	* sanity.sh: Update to compensate.
+
 2005-11-15  Derek Price  <derek@ximbiot.com>
 
 	* client.c (update_entries): Only print "U ..." when patches are

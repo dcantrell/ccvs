@@ -1646,6 +1646,9 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	       or not based on whether the server supports "Rcs-diff".  
 
 	       Fall back to transmitting entire files.  */
+	    error (0, 0,
+		   "unsupported patch format received for `%s'; will refetch",
+		   short_pathname);
 	    patch_failed = 1;
 	}
 	else
@@ -1674,7 +1677,11 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 
 	    if (! rcs_change_text (short_pathname, filebuf, nread, buf, size,
 				   &patchedbuf, &patchedlen))
+	    {
+		error (0, 0, "patch failed for `%s'; will refetch",
+		       short_pathname);
 		patch_failed = 1;
+	    }
 	    else
 	    {
 		if (stored_checksum_valid)
@@ -1687,7 +1694,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		    md5_buffer (patchedbuf, patchedlen, checksum);
 		    if (memcmp (checksum, stored_checksum, 16) != 0)
 		    {
-			TRACE (TRACE_FUNCTION,
+			error (0, 0,
 "checksum failure after patch to `%s'; will refetch",
 			       short_pathname);
 
@@ -1758,8 +1765,8 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		    error (1, 0, "checksum failure on %s",
 			   short_pathname);
 
-		TRACE (TRACE_FUNCTION,
-		       "checksum failure after patch to %s; will refetch",
+		error (0, 0,
+		       "checksum failure after patch to `%s'; will refetch",
 		       short_pathname);
 
 		patch_failed = 1;

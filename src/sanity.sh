@@ -20563,7 +20563,10 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # Now update the second copy.  When using remote CVS, the
 	  # patch will fail, forcing the file to be refetched.
 	  cd ../../2/first-dir
-	  dotest serverpatch-8 "$testcvs -q update" 'U file1'
+	  dotest serverpatch-8 "$testcvs -q update" 'U file1' \
+"$CPROG update: checksum failure after patch to \`\./file1'; will refetch
+$CPROG client: refetching unpatchable files
+U file1"
 
 	  dokeep
 	  cd ../..
@@ -24782,12 +24785,23 @@ new revision: 1\.3; previous revision: 1\.2"
 	  # associated with the current base version of the file in the
 	  # sandbox is not available in these cases.  See the note in the
 	  # patch_file function in update.c.
-	  dotest keyword-21 "$testcvs -q update -r tag1" "U file1"
+	  dotest keyword-21 "${testcvs} -q update -r tag1" "U file1" \
+"$CPROG update: checksum failure after patch to \`\./file1'; will refetch
+$CPROG client: refetching unpatchable files
+U file1"
 
 	  dotest keyword-22 "cat file1" '\$'"Name: tag1 "'\$'
 
-	  # Like serverpatch-8, a patch is refetched here.
-	  dotest keyword-23 "$testcvs update -A file1" "U file1"
+	  if $remote; then
+	    # Like serverpatch-8.  Not sure there is anything much we
+	    # can or should do about this.
+	    dotest keyword-23r "${testcvs} update -A file1" \
+"$CPROG update: checksum failure after patch to \`\./file1'; will refetch
+$CPROG client: refetching unpatchable files
+U file1"
+	  else
+	    dotest keyword-23 "${testcvs} update -A file1" "U file1"
+	  fi
 	  dotest keyword-24 "cat file1" '\$'"Name:  "'\$'"
 change"
 
@@ -25139,7 +25153,10 @@ new revision: 1\.4; previous revision: 1\.3"
 	  # An update -kk or -A will unsub and sub keywords without updates
 	  # being required.
 	  # FIXCVS - see note above keyword-21
-	  dotest keywordname-update-1 "$testcvs -q up -rbr" "U file1"
+	  dotest keywordname-update-1 "${testcvs} -q up -rbr" "U file1" \
+"$CPROG update: checksum failure after patch to \`\./file1'; will refetch
+$CPROG client: refetching unpatchable files
+U file1"
 	  dotest keywordname-update-2 "cat file1" '\$'"Name: br "'\$'
 	  dotest keywordname-update-3 "cat file2" '\$'"Name:  "'\$'
 
@@ -25149,7 +25166,10 @@ new revision: 1\.4; previous revision: 1\.3"
 "T file1
 T file2"
 	  # FIXCVS - see note above keyword-21
-	  dotest keywordname-update-5 "$testcvs -q up -A" "U file1"
+	  dotest keywordname-update-5 "${testcvs} -q up -A" "U file1" \
+"$CPROG update: checksum failure after patch to \`\./file1'; will refetch
+$CPROG client: refetching unpatchable files
+U file1"
 	  dotest keywordname-update-6 "cat file1" \
 '\$'"Name:  "'\$'"
 new data"
@@ -25157,12 +25177,18 @@ new data"
 
 	  # But updating to a static tag does cause a substitution
 	  # FIXCVS - see same note above
-	  dotest keywordname-update-8 "$testcvs -q up -rfirsttag" "U file1"
+	  dotest keywordname-update-8 "${testcvs} -q up -rfirsttag" "U file1" \
+"$CPROG update: checksum failure after patch to \`\./file1'; will refetch
+$CPROG client: refetching unpatchable files
+U file1"
 	  dotest keywordname-update-9 "cat file1" '\$'"Name: firsttag "'\$'
 	  dotest keywordname-update-10 "cat file2" '\$'"Name:  "'\$'
 
 	  # And reverify the trunk update when the change is actually removed.
-	  dotest keywordname-update-11 "$testcvs -q up -A" "U file1"
+	  dotest keywordname-update-11 "${testcvs} -q up -A" "U file1" \
+"$CPROG update: checksum failure after patch to \`./file1'; will refetch
+$CPROG client: refetching unpatchable files
+U file1"
 	  dotest keywordname-update-12 "cat file1" \
 '\$'"Name:  "'\$'"
 new data"
