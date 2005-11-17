@@ -202,6 +202,7 @@ struct request
 extern struct request requests[];
 
 /* Gzip library, see zlib.c.  */
+int gunzip_in_mem (const char *, unsigned char *, size_t *, char **);
 int gunzip_and_write (int, const char *, unsigned char *, size_t);
 int read_and_gzip (int, const char *, unsigned char **, size_t *, size_t *,
                    int);
