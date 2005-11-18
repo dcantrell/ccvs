@@ -1,3 +1,8 @@
+2005-11-18  Derek Price  <derek@ximbiot.com>
+
+	* cvs.spec.in (%files): Install PDFs, not PSs.
+	(%changelog): Correct date to a format RPM accepts.
+
 2005-11-15  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note s/P/U/g.
