@@ -15,12 +15,14 @@
 /* Validate API.  */
 #include "server.h"
 
-#include "cvs.h"
 
 /* CVS */
+#include "base.h"
+#include "gpg.h"
+
+#include "cvs.h"
 #include "edit.h"
 #include "fileattr.h"
-#include "gpg.h"
 #include "watch.h"
 
 /* GNULIB */
@@ -5095,7 +5097,7 @@ output_mode_string (mode_t mode)
 
 
 
-void
+static void
 server_send_buffer_as_file (struct buffer *in, mode_t mode)
 {
     unsigned long size;
@@ -5118,7 +5120,7 @@ server_send_buffer_as_file (struct buffer *in, mode_t mode)
 
 
 
-void
+static void
 server_send_file (const char *file, const char *fullname, mode_t mode)
 {
     struct stat sb;
@@ -5223,7 +5225,8 @@ server_updated (
     enum server_updated_arg4 updated,
     mode_t mode,
     unsigned char *checksum,
-    struct buffer *filebuf)
+    struct buffer *filebuf,
+    bool use_base)
 {
     /* The case counter to the assertion below should be easy to handle but it
      * never has been, to my knowledge, so there appears to be no need.
@@ -5255,7 +5258,22 @@ server_updated (
 	       case just forget the whole thing.  */
 	    free (entries_line);
 	    entries_line = NULL;
-	    goto done;
+	    return;
+	}
+
+	if (use_base && supported_response ("Base-entry"))
+	{
+	    /* The client was already asked to create the base file and copy
+	     * it into a temp file.  This will complete the process and print
+	     * the "U file" line.
+	     */
+	    buf_output0 (protocol, "Base-entry ");
+	    output_dir (finfo->update_dir, finfo->repository);
+	    buf_output0 (protocol, finfo->file);
+	    buf_output (protocol, "\n", 1);
+	    new_entries_line ();
+	    buf_send_counted (protocol);
+	    return;
 	}
 
 	if (checksum)
@@ -5372,7 +5390,6 @@ server_updated (
 	error (1, 0,
 	       "CVS server internal error: Register *and* Scratch_Entry.\n");
     buf_send_counted (protocol);
-  done:;
 }
 
 
@@ -8117,18 +8134,63 @@ cvs_output_tagged (const char *tag, const char *text)
  * responses.
  */
 void
-server_base_checkout (const char *file, const char *prev, const char *rev)
+server_base_checkout (struct file_info *finfo,
+		      const char *options, const char *prev, const char *rev)
 {
+    char *basefile;
+    char *fullbase;
+
+    assert (rev);
+
     if (!supported_response ("Base-checkout")) return;
 
-    if (prev)
-    {
-	/* FIXME: Send diff.  */
-    }
-    else
-    {
-	/* FIXME: Send whole file.  */
-    }
+    //if (prev && strcmp (prev, rev))
+	/* The client should already have this file.  */
+//	return;
+
+    basefile = make_base_file_name (finfo->file, rev);
+    fullbase = Xasprintf ("%s/%s",
+			  *(finfo->update_dir) ? finfo->update_dir : ".",
+			  basefile);
+
+    buf_output0 (protocol, "Base-checkout ");
+    output_dir (finfo->update_dir, finfo->repository);
+    buf_output0 (protocol, finfo->file);
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, options);
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, prev ? prev : "");
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, rev);
+    buf_output (protocol, "\n", 1);
+
+   // if (prev)
+    //{
+	/* FIXME: Compute and send diff.  */
+    //}
+    //else
+	/* Send whole file.  */
+	server_send_file (basefile, fullbase, -1);
+
+    free (fullbase);
+    free (basefile);
+}
+
+
+
+void
+server_base_copy (struct file_info *finfo, const char *rev, const char *exists)
+{
+    if (!supported_response ("Base-copy")) return;
+
+    buf_output0 (protocol, "Base-copy ");
+    output_dir (finfo->update_dir, finfo->repository);
+    buf_output0 (protocol, finfo->file);
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, rev);
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, exists);
+    buf_output (protocol, "\n", 1);
 }
 
 

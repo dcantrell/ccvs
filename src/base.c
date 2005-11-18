@@ -29,6 +29,7 @@
 /* GNULIB headers.  */
 
 /* CVS headers.  */
+#include "server.h"
 #include "subr.h"
 #include "cvs.h"	/* For CVSADM_BASE. */
 
@@ -240,4 +241,45 @@ void
 base_deregister (const char *update_dir, const char *file)
 {
     base_walk (BASE_DEREGISTER, update_dir, file, NULL);
+}
+
+
+
+int
+base_checkout (RCSNode *rcs, struct file_info *finfo,
+	       const char *prev, const char *rev, const char *tag,
+	       const char *options, bool writable)
+{
+    int status;
+
+    mkdir_if_needed (CVSADM_BASE);
+
+    if (!current_parsed_root->isremote)
+    {
+	char *basefile = make_base_file_name (finfo->file, rev);
+	status = RCS_checkout (rcs, basefile, rev, tag, options,
+			       NULL, NULL, NULL);
+	xchmod (basefile, writable);
+	free (basefile);
+    }
+    else
+	status = 0;
+
+    if (server_active)
+	server_base_checkout (finfo, options, prev, rev);
+
+    return status;
+}
+
+
+
+void
+base_copy (struct file_info *finfo, const char *rev, const char *exists)
+{
+    char *basefile = make_base_file_name (finfo->file, rev);
+    copy_file (basefile, finfo->file);
+    free (basefile);
+
+    if (server_active)
+	server_base_copy (finfo, rev, exists);
 }

@@ -30,9 +30,14 @@
  */
 
 #include <assert.h>
+
+/* CVS */
+#include "base.h"
 #include "cvs.h"
-#include "save-cwd.h"
 #include "fileattr.h"
+
+/* GNULIB */
+#include "save-cwd.h"
 
 static int add_directory (struct file_info *finfo);
 static int build_entry (const char *repository, const char *user,
@@ -493,11 +498,9 @@ add (int argc, char **argv)
 				error (0, 0,
 "Resurrecting file `%s' from revision %s.",
 			               finfo.fullname, prev);
-			    status = RCS_checkout (vers->srcfile, finfo.file,
-						   prev, vers->tag,
-						   vers->options, RUN_TTY,
-			                           NULL, NULL);
-			    xchmod (finfo.file, 1);
+			    status = base_checkout (vers->srcfile, &finfo,
+						    NULL, prev, vers->tag,
+						    vers->options, true);
 			    if (status != 0)
 			    {
 				error (0, 0, "Failed to resurrect revision %s",
@@ -507,8 +510,9 @@ add (int argc, char **argv)
 			    else
 			    {
 				/* I don't actually set vers->ts_user here
-				 * because it would confuse server_update().
+				 * because it would confuse server_update ().
 				 */
+				base_copy (&finfo, prev, "n");
 				timestamp = time_stamp (finfo.file);
 				if (!really_quiet)
 				    write_letter (&finfo, 'U');
@@ -543,7 +547,7 @@ add (int argc, char **argv)
 			     */
 			    server_updated (&finfo, vers,
 					    SERVER_UPDATED,
-					    (mode_t) -1, NULL, NULL);
+					    (mode_t) -1, NULL, NULL, true);
 			    /* This is kinda hacky or, at least, it renders the
 			     * name "begin_added_files" obsolete, but we want
 			     * the added_files to be counted without triggering
@@ -601,18 +605,17 @@ add (int argc, char **argv)
 		else
 		{
 		    int status;
+		    char *tmp;
+
 		    /*
 		     * There is an RCS file, so remove the "-" from the
 		     * version number and restore the file
 		     */
-		    char *tmp = xstrdup (vers->vn_user + 1);
-		    (void) strcpy (vers->vn_user, tmp);
-		    free (tmp);
-		    status = RCS_checkout (vers->srcfile, finfo.file,
-					   vers->vn_user, vers->tag,
-					   vers->options, RUN_TTY,
-					   NULL, NULL);
-		    xchmod (finfo.file, cvswrite);
+		    memmove (vers->vn_user, vers->vn_user + 1,
+			     strlen (vers->vn_user));
+		    status = base_checkout (vers->srcfile, &finfo,
+					    vers->vn_user, vers->vn_user,
+					    vers->tag, vers->options, cvswrite);
 		    if (status != 0)
 		    {
 			error (0, 0, "Failed to resurrect revision %s.",
@@ -625,6 +628,8 @@ add (int argc, char **argv)
 			/* I don't actually set vers->ts_user here because it
 			 * would confuse server_update().
 			 */
+			base_copy (&finfo, vers->vn_user, "n");
+			xchmod (finfo.file, cvswrite);
 			tmp = time_stamp (finfo.file);
 			write_letter (&finfo, 'U');
 			if (!quiet)
@@ -643,7 +648,7 @@ add (int argc, char **argv)
 			 */
 			server_updated (&finfo, vers,
 					SERVER_UPDATED,
-					(mode_t) -1, NULL, NULL);
+					(mode_t) -1, NULL, NULL, true);
 		    }
 		   /* We don't increment added_files here because this isn't
 		    * a change that needs to be committed.

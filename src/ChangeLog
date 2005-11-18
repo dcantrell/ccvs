@@ -1,3 +1,22 @@
+2005-11-18  Derek Price  <derek@ximbiot.com>
+
+	* add.c (add): Begin using new base functions.
+	* base.c (base_checkout, base_copy): New functions.
+	* base.h: Ditto for the protos.
+	* client.c (enum update_existing): Extract decl from...
+	(struct update_entries_data): ...this struct.  Add UPDATE_ENTRIES_BASE.
+	(read_file_from_server): Drop filename arg.
+	(validate_change): New function factored from...
+	(update_entries): ...here.  Add support for UPDATE_ENTRIES_BASE.
+	(client_base_checkout, handle_base_checkout, translates_exists,
+	client_base_copy, handle_base_copy, handle_base_entry): New functions.
+	(responses): Add Base-checkout, Base-copy, & Base-entry.
+	* server.c (server_base_checkout): Send data for non-diffs.
+	(server_base_copy): New function.
+	(server_updated): Send Base-entry when possible.  Accept temporary
+	USE_BASE arg.
+	* add.c, checkin.c, commit.c, update.c, server.h: Update all callers.
+
 2005-11-17  Derek Price  <derek@ximbiot.com>
 
 	* client.c (read_file_from_sever, discard_file): New functions...

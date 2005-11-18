@@ -122,7 +122,8 @@ struct buffer;
 
 void server_updated (struct file_info *finfo, Vers_TS *vers,
                      enum server_updated_arg4 updated, mode_t mode,
-                     unsigned char *checksum, struct buffer *filebuf);
+                     unsigned char *checksum, struct buffer *filebuf,
+		     bool use_base);
 
 /* Whether we should send RCS format patches.  */
 int server_use_rcs_diff (void);
@@ -228,6 +229,10 @@ void cvs_trace (int level, const char *fmt, ...)
 
 extern cvsroot_t *referrer;
 
-void server_base_checkout (const char *file, const char *prev, const char *rev);
+void server_base_checkout (struct file_info *finfo, const char *options,
+			   const char *prev, const char *rev);
+
+void server_base_copy (struct file_info *file, const char *rev,
+		       const char *exists);
 
 #endif /* !defined SERVER_H */

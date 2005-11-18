@@ -3311,13 +3311,16 @@ initial revision: 1\.1"
 	  cd ..
 	  rm -r 1
 	  mkdir 2; cd 2
+#export CVS_CLIENT_LOG=/tmp/cvsgpglog
 	  dotest basicb-0d "${testcvs} -q co -l ." "U topfile"
+#exit
 	  # Now test the ability to run checkout on an existing working
 	  # directory without having it lose its mind.  I don't know
 	  # whether this is tested elsewhere in sanity.sh.  A more elaborate
 	  # test might also have modified files, make sure it works if
 	  # the modules file was modified to add new directories to the
 	  # module, and such.
+#export CVS_CLIENT_LOG=/tmp/cvsgpglog
 	  dotest basicb-0d0 "${testcvs} -q co -l ." ""
 	  mkdir first-dir
 	  dotest basicb-0e "${testcvs} add first-dir" \
@@ -7178,7 +7181,8 @@ new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1"
 	  dotest_sort resurrection-14 "$testcvs -r add file1" \
 "U file1
 $SPROG add: \`file1', version 1\.3, resurrected"
-	  dotest_fail resurrection-15 'test -w file1' ''
+export CVS_CLIENT_LOG=/tmp/cvsclientlog
+	  dotest_fail resurrection-15 'test -w file1'
 
 	  dokeep
 	  cd ../..
@@ -16648,7 +16652,7 @@ U first-dir/abc"
 	  dotest_fail devcom-9b "test -w abc"
 
 	  dotest devcom-10 "$testcvs editors"
-	  dotest devcom-11 "$testcvs edit abb"
+	  dotest devcom-11 "$testcvs -q edit abb"
 
 	  # Here we test for the traditional ISO C ctime() date format.
 	  # We assume the C locale; I guess that works provided we set
@@ -16670,11 +16674,11 @@ new revision: 1\.2; previous revision: 1\.1"
 
 	  dotest_fail devcom-16 "test -w abb"
 
-	  dotest devcom-17 "$testcvs edit abc"
+	  dotest devcom-17 "$testcvs -q edit abc"
 
 	  # Unedit of an unmodified file.
 	  dotest devcom-18 "$testcvs unedit abc"
-	  dotest devcom-19 "$testcvs edit abc"
+	  dotest devcom-19 "$testcvs -q edit abc"
 
 	  echo changedabc >abc
 	  # Try to unedit a modified file; cvs should ask for confirmation
@@ -17057,7 +17061,7 @@ U first-dir/subdir/sfile"
 	  dotest_fail watch4-8 "test -w first-dir/file1" ''
 	  dotest_fail watch4-9 "test -w first-dir/subdir/sfile" ''
 	  cd first-dir
-	  dotest watch4-10 "${testcvs} edit file1" ''
+	  dotest watch4-10 "$testcvs -q edit file1"
 	  echo 'edited in 2' >file1
 	  cd ../..
 
@@ -17067,7 +17071,7 @@ U first-dir/subdir/sfile"
             #  to maintain partial compatibility with CVS versions
             #  prior to the edit check patch.
           editorsLineRE="file1	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	$hostname	$TESTDIR/2/first-dir"
-	  dotest watch4-11 "$testcvs edit file1" "$editorsLineRE"
+	  dotest watch4-11 "$testcvs -q edit file1"
 
 	  echo 'edited in 1' >file1
 	  dotest watch4-12 "${testcvs} -q ci -m edit-in-1" \
@@ -17144,7 +17148,7 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest watch5-3 "${testcvs} -q ci -m add" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 initial revision: 1\.1"
-	  dotest watch5-4 "${testcvs} edit file1" ''
+	  dotest watch5-4 "$testcvs -q edit file1"
 	  dotest watch5-5 "test -f CVS/Base/file1" ''
 	  if ${testcvs} status file1 >>${LOGFILE} 2>&1; then
 		pass watch5-6
@@ -17348,8 +17352,8 @@ initial revision: 1\.1"
 
           NF_editorsLineRE="	[-a-zA-Z0-9_]*	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	$hostname	$TESTDIR/edit-check/first-dir"
 
-          dotest edit-check-3 "$testcvs edit file1"
-          dotest edit-check-4 "$testcvs edit file1" "$editorsLineRE"
+          dotest edit-check-3 "$testcvs -q edit file1"
+          dotest edit-check-4 "$testcvs -q edit file1"
 
           dotest_fail edit-check-5a "$testcvs edit -c file1" \
 "$editorsLineRE
@@ -17357,7 +17361,7 @@ $SPROG edit: Skipping file \`file1' due to existing editors\."
 
           dotest edit-check-5b "$testcvs editors" "$editorsLineRE"
 
-          dotest edit-check-6a "$testcvs edit -c -f file1" "$editorsLineRE"
+          dotest edit-check-6a "$testcvs -q edit -c -f file1"
           dotest edit-check-6b "$testcvs editors" "$editorsLineRE"
 
           dotest edit-check-7a "cat file1" "foo"
@@ -17390,10 +17394,9 @@ $SPROG edit: Skipping file \`file1' due to existing editors\."
           dotest edit-check-9b "$testcvs editors"
           dotest edit-check-9c "cat file1" "foo"
 
-          dotest edit-check-10 "$testcvs edit -c file1"
-          dotest_fail edit-check-11 "$testcvs edit -c file1" \
-"$editorsLineRE
-$SPROG edit: Skipping file \`file1' due to existing editors\."
+          dotest edit-check-10 "$testcvs -q edit -c file1"
+          dotest_fail edit-check-11 "$testcvs -q edit -c file1" \
+"$SPROG edit: Skipping file \`file1' due to existing editors\."
 
           echo "morefoo" > file1
           dotest edit-check-12a "$testcvs commit -m 'c2' -c file1" \
@@ -17413,7 +17416,7 @@ $SPROG \[[a-z]* aborted\]: correct above errors first!"
 new revision: 1\.3; previous revision: 1\.2"
           dotest edit-check-14b "$testcvs editors file1"
 
-          dotest edit-check-15 "$testcvs edit -c file1"
+          dotest edit-check-15 "$testcvs -q edit -c file1"
           cd ..
 
           dotest edit-check-16a "echo yes | $testcvs release -d first-dir" \
@@ -17425,11 +17428,10 @@ Are you sure you want to release (and delete) directory \`first-dir': "
           dotest edit-check-16c "$testcvs editors file1"
 
           cd ..
-          dotest edit-check-17a "$testcvs edit -c"
-          dotest_fail edit-check-17b "$testcvs edit -c" \
-"$R_editorsLineRE
-$SPROG edit: Skipping file \`first-dir/file1' due to existing editors\."
-          dotest edit-check-17c "$testcvs edit -c -f" "$R_editorsLineRE"
+          dotest edit-check-17a "$testcvs -q edit -c"
+          dotest_fail edit-check-17b "$testcvs -q edit -c" \
+"$SPROG edit: Skipping file \`first-dir/file1' due to existing editors\."
+          dotest edit-check-17c "$testcvs -q edit -c -f"
 
           echo "more changes" > first-dir/file1
           dotest edit-check-18a "$testcvs -q commit -m 'c5' -c" \
@@ -17465,7 +17467,7 @@ D${tabChar}_watched=" > $CVSROOT_DIRNAME/first-dir/CVS/fileattr
 
           O_editorsLineRE="file1	$otherUser	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	$hostname	$TESTDIR[0-9]/edit-check/first-dir"
 
-          dotest edit-check-19a "$testcvs edit file1" "$O_editorsLineRE"
+          dotest edit-check-19a "$testcvs -q edit file1"
           dotest edit-check-19b "$testcvs editors" \
 "$A_editorsLineRE
 $NF_editorsLineRE"
@@ -17473,12 +17475,11 @@ $NF_editorsLineRE"
           dotest edit-check-20a "$testcvs unedit file1"
           dotest edit-check-20b "$testcvs editors" "$O_editorsLineRE"
 
-          dotest_fail edit-check-21a "$testcvs edit -c file1" \
-"$O_editorsLineRE
-$SPROG edit: Skipping file \`file1' due to existing editors\."
+          dotest_fail edit-check-21a "$testcvs -q edit -c file1" \
+"$SPROG edit: Skipping file \`file1' due to existing editors\."
           dotest edit-check-21b "$testcvs editors" "$O_editorsLineRE"
 
-          dotest edit-check-22a "$testcvs edit -c -f file1" "$O_editorsLineRE"
+          dotest edit-check-22a "$testcvs -q edit -c -f file1"
           dotest edit-check-22b "$testcvs editors" \
 "$A_editorsLineRE
 $NF_editorsLineRE"
@@ -17503,7 +17504,7 @@ $NF_editorsLineRE"
           dotest edit-check-25b "$testcvs editors" "$O_editorsLineRE"
           dotest_fail edit-check-25c "test -w file1"
 
-          dotest edit-check-26a "$testcvs edit file1" "$O_editorsLineRE"
+          dotest edit-check-26a "$testcvs -q edit file1"
           dotest edit-check-26b "$testcvs editors file1" \
 "$A_editorsLineRE
 $NF_editorsLineRE"
@@ -17544,7 +17545,7 @@ new revision: 1\.6; previous revision: 1\.5"
             # (if the process doing the exec exits before the parent
             # gets around to sending data to it) or "broken pipe" (if it
             # is the other way around).
-            dotest_fail edit-check-31ar "$testcvs edit file1" \
+            dotest_fail edit-check-31ar "$testcvs -q edit file1" \
 "$SPROG \[edit aborted\]: cannot exec $TESTDIR/cvs-none: $DOTSTAR"
             dotest edit-check-31br "test -w file1"
             dotest edit-check-31cr "cat CVS/Notify" \
@@ -17587,7 +17588,7 @@ initial revision: 1\.1"
 
           cd ..
 
-          dotest edit-check-33a "$testcvs edit -c"
+          dotest edit-check-33a "$testcvs -q edit -c"
 
           dotest edit-check-33b "$testcvs editors" \
 "$AF_editorsLineRE
@@ -17595,10 +17596,8 @@ $AF_editorsLineRE
 $F3_editorsLineRE"
           dotest edit-check-33c "test -w second-dir/file3"
 
-          dotest_fail edit-check-34a "$testcvs edit -c file1 file2" \
-"$AF_editorsLineRE
-$SPROG edit: Skipping file \`file1' due to existing editors\.
-$AF_editorsLineRE
+          dotest_fail edit-check-34a "$testcvs -q edit -c file1 file2" \
+"$SPROG edit: Skipping file \`file1' due to existing editors\.
 $SPROG edit: Skipping file \`file2' due to existing editors\."
 
           dotest edit-check-34b "$testcvs editors file1 file2" \
@@ -17663,14 +17662,14 @@ U m"
 	  dotest unedit-without-baserev-7 "${testcvs} -Q co x" ''
 	  cd x
 
-	  dotest unedit-without-baserev-10 "${testcvs} edit m" ''
+	  dotest unedit-without-baserev-10 "$testcvs -q edit m"
 	  echo 'edited in 2' >m
 	  cd ../..
 
 	  cd 1/x
 
           editorsLineRE="m	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] -0000	$hostname	$TESTDIR/2/x"
-	  dotest unedit-without-baserev-11 "$testcvs edit m" "$editorsLineRE"
+	  dotest unedit-without-baserev-11 "$testcvs -q edit m"
 
 	  echo 'edited in 1' >m
 	  dotest unedit-without-baserev-12 "${testcvs} -q ci -m edit-in-1" \
@@ -28308,13 +28307,13 @@ $SPROG update: Updating first-dir"
 	  dotest release-20 '$testcvs -q ci -m add' \
 "$CVSROOT_DIRNAME/first-dir/second-dir/file1,v  <--  file1
 initial revision: 1\.1"
-	  dotest release-21 "$testcvs edit file1"
+	  dotest release-21 "$testcvs -q edit file1"
 	  cd ..
 	  dotest release-22 "echo yes | $testcvs release -d second-dir" \
 "You have \[0\] altered files in this repository.
 Are you sure you want to release (and delete) directory \`second-dir': "
 	  dotest release-23 "$testcvs -q update -d" "U second-dir/file1"
-	  dotest release-24 "$testcvs edit"
+	  dotest release-24 "$testcvs -q edit"
 
 	  dokeep
 	  cd ../..
