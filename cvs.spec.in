@@ -113,7 +113,7 @@ fi
 %files
 %defattr(-,root,root)
 %doc AUTHORS BUGS FAQ MINOR-BUGS NEWS PROJECTS TODO README
-%doc doc/RCSFILES doc/*.ps
+%doc doc/RCSFILES doc/*.pdf
 %{_bindir}/*
 %{_mandir}/*/*
 %{_infodir}/*.info*
@@ -129,7 +129,7 @@ fi
 * Wed Aug 31 2005 Derek Price <derek@ximbiot.com>
 - Update links to Savannah.  s/Copyright/License/ for RPM 4.mumble.
 
-* Mon July 20 2005 Derek Price <derek@ximbiot.com>
+* Mon Jul 20 2005 Derek Price <derek@ximbiot.com>
 - Update to homepage on Savannah.
 
 * Mon May 09 2005 Derek Price <derek@ximbiot.com>
