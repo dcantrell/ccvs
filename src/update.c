@@ -1208,7 +1208,9 @@ checkout_file (struct file_info *finfo, Vers_TS *vers_ts, int adding,
 	backup = Xasprintf ("%s/%s%s", CVSADM, CVSPREFIX, finfo->file);
 	if (isfile (finfo->file))
 	    rename_file (finfo->file, backup);
-	else
+	else /* FIXME: -f/-t has been disabled for so long it should probably
+	      * just be stripped out to reduce clutter.
+	      */
 	{
 	    /* If -f/-t wrappers are being used to wrap up a directory,
 	       then backup might be a directory instead of just a file.  */

@@ -1,3 +1,7 @@
+2005-11-18  Derek Price  <derek@ximbiot.com>
+
+	* update.c (checkout_file): Add FIXME.
+
 2005-11-17  Derek Price  <derek@ximbiot.com>
 
 	* client.c (update_entries), update.c (update): Restore refetch
