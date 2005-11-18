@@ -19,10 +19,16 @@
 #ifndef BASE_H
 #define BASE_H
 
+#include "rcs.h"
+
 char *make_base_file_name (const char *filename, const char *rev);
 
 char *base_get (const char *update_dir, const char *file);
 void base_register (const char *update_dir, const char *file, char *rev);
 void base_deregister (const char *update_dir, const char *file);
 
+int base_checkout (RCSNode *rcs, struct file_info *finfo,
+		   const char *prev, const char *rev, const char *tag,
+		   const char *options, bool writable);
+void base_copy (struct file_info *finfo, const char *rev, const char *exists);
 #endif /* BASE_H */

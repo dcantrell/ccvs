@@ -736,7 +736,7 @@ update_fileproc (void *callerdat, struct file_info *finfo)
 					     ? SERVER_RCS_DIFF
 					     : SERVER_PATCHED),
 					    file_info.st_mode, checksum,
-					    NULL);
+					    NULL, false);
 			break;
 		    }
 		}
@@ -1160,7 +1160,8 @@ scratch_file (struct file_info *finfo, Vers_TS *vers)
     {
 	if (vers->ts_user == NULL)
 	    server_scratch_entry_only ();
-	server_updated (finfo, vers, SERVER_UPDATED, (mode_t) -1, NULL, NULL);
+	server_updated (finfo, vers, SERVER_UPDATED, (mode_t) -1, NULL, NULL,
+			false);
     }
 #endif
     if (unlink_file (finfo->file) < 0 && ! existence_error (errno))
@@ -1431,7 +1432,7 @@ VERS: ", 0);
 	if (update_server && server_active)
 	    server_updated (finfo, vers_ts,
 			    merging ? SERVER_MERGED : SERVER_UPDATED,
-			    mode, NULL, revbuf);
+			    mode, NULL, revbuf, false);
 #endif
     }
     else
@@ -1888,7 +1889,8 @@ RegisterMerge (struct file_info *finfo, Vers_TS *vers,
     {
         server_copy_file (finfo->file, finfo->update_dir, finfo->repository,
 			  backup);
-	server_updated (finfo, vers, SERVER_MERGED, (mode_t) -1, NULL, NULL);
+	server_updated (finfo, vers, SERVER_MERGED, (mode_t) -1, NULL, NULL,
+			false);
     }
 #endif
 }
@@ -2262,7 +2264,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	{
 	    server_scratch (finfo->file);
 	    server_updated (finfo, vers, SERVER_UPDATED, (mode_t) -1,
-			    NULL, NULL);
+			    NULL, NULL, false);
 	}
 #endif
 	Register (finfo->entries, finfo->file, mrev, vers->ts_rcs,

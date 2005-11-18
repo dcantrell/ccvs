@@ -14,11 +14,16 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include "cvs.h"
+/* GNULIB */
 #include "getline.h"
-#include "edit.h"
-#include "buffer.h"
 #include "save-cwd.h"
+
+/* CVS */
+#include "base.h"
+
+#include "cvs.h"
+#include "buffer.h"
+#include "edit.h"
 
 #ifdef CLIENT_SUPPORT
 
@@ -1328,6 +1333,15 @@ handle_mod_time (char *args, size_t len)
 char **failed_patches;
 int failed_patches_count;
 
+enum update_existing {
+    /* We are replacing an existing file.  */
+    UPDATE_ENTRIES_EXISTING,
+    /* We are creating a new file.  */
+    UPDATE_ENTRIES_NEW,
+    /* We don't know whether it is existing or new.  */
+    UPDATE_ENTRIES_EXISTING_OR_NEW
+};
+
 struct update_entries_data
 {
     enum {
@@ -1336,6 +1350,10 @@ struct update_entries_data
        * correct.
        */
       UPDATE_ENTRIES_CHECKIN,
+
+      /* The file content may be in a temp file, waiting to be renamed.  */
+      UPDATE_ENTRIES_BASE,
+
       /* We are getting the file contents as well.  */
       UPDATE_ENTRIES_UPDATE,
       /*
@@ -1350,14 +1368,7 @@ struct update_entries_data
       UPDATE_ENTRIES_RCS_DIFF
     } contents;
 
-    enum {
-	/* We are replacing an existing file.  */
-	UPDATE_ENTRIES_EXISTING,
-	/* We are creating a new file.  */
-	UPDATE_ENTRIES_NEW,
-	/* We don't know whether it is existing or new.  */
-	UPDATE_ENTRIES_EXISTING_OR_NEW
-    } existp;
+    enum update_existing existp;
 
     /*
      * String to put in the timestamp field or NULL to use the timestamp
@@ -1442,8 +1453,7 @@ newfilename (const char *filename)
 
 
 static char *
-read_file_from_server (const char *filename, const char *fullname,
-		       char **mode_string, size_t *size)
+read_file_from_server (const char *fullname, char **mode_string, size_t *size)
 {
     char *size_string;
     bool use_gzip;
@@ -1483,6 +1493,61 @@ read_file_from_server (const char *filename, const char *fullname,
 
 
 
+/* Returns false on error.  */
+static bool
+validate_change (enum update_existing existp, const char *filename,
+		 const char *fullname)
+{
+    /* Note that checking this separately from writing the file is
+       a race condition: if the existence or lack thereof of the
+       file changes between now and the actual calls which
+       operate on it, we lose.  However (a) there are so many
+       cases, I'm reluctant to try to fix them all, (b) in some
+       cases the system might not even have a system call which
+       does the right thing, and (c) it isn't clear this needs to
+       work.  */
+    if (existp == UPDATE_ENTRIES_EXISTING
+	&& !isfile (filename))
+	/* Emit a warning and update the file anyway.  */
+	error (0, 0, "warning: %s unexpectedly disappeared", fullname);
+    else if (existp == UPDATE_ENTRIES_NEW
+	&& isfile (filename))
+    {
+	/* This error might be confusing; it isn't really clear to
+	   the user what to do about it.  Keep in mind that it has
+	   several causes: (1) something/someone creates the file
+	   during the time that CVS is running, (2) the repository
+	   has two files whose names clash for the client because
+	   of case-insensitivity or similar causes, See 3 for
+	   additional notes.  (3) a special case of this is that a
+	   file gets renamed for example from a.c to A.C.  A
+	   "cvs update" on a case-insensitive client will get this
+	   error.  In this case and in case 2, the filename
+	   (short_pathname) printed in the error message will likely _not_
+	   have the same case as seen by the user in a directory listing.
+	   (4) the client has a file which the server doesn't know
+	   about (e.g. "? foo" file), and that name clashes with a file
+	   the server does know about, (5) classify.c will print the same
+	   message for other reasons.
+
+	   I hope the above paragraph makes it clear that making this
+	   clearer is not a one-line fix.  */
+	error (0, 0, "move away `%s'; it is in the way", fullname);
+	if (updated_fname)
+	{
+	    cvs_output ("C ", 0);
+	    cvs_output (updated_fname, 0);
+	    cvs_output ("\n", 1);
+	}
+	failure_exit = true;
+	return false;
+    }
+
+    return true;
+}
+
+
+
 /* Update the Entries line for this file.  */
 static void
 update_entries (void *data_arg, List *ent_list, const char *short_pathname,
@@ -1501,7 +1566,8 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
     char *date = NULL;
     char *tag_or_date;
     char *scratch_entries = NULL;
-    int bin;
+    bool bin;
+    char *temp_filename;
 
 #ifdef UTIME_EXPECTS_WRITABLE
     int change_it_back = 0;
@@ -1546,61 +1612,19 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 
     /* Done parsing the entries line. */
 
+    temp_filename = newfilename (filename);
+
     if (data->contents == UPDATE_ENTRIES_UPDATE
 	|| data->contents == UPDATE_ENTRIES_PATCH
 	|| data->contents == UPDATE_ENTRIES_RCS_DIFF)
     {
 	char *mode_string;
-	char *temp_filename;
 	size_t size;
 	char *buf;
 	bool patch_failed;
 
-	/* Note that checking this separately from writing the file is
-	   a race condition: if the existence or lack thereof of the
-	   file changes between now and the actual calls which
-	   operate on it, we lose.  However (a) there are so many
-	   cases, I'm reluctant to try to fix them all, (b) in some
-	   cases the system might not even have a system call which
-	   does the right thing, and (c) it isn't clear this needs to
-	   work.  */
-	if (data->existp == UPDATE_ENTRIES_EXISTING
-	    && !isfile (filename))
-	    /* Emit a warning and update the file anyway.  */
-	    error (0, 0, "warning: %s unexpectedly disappeared",
-		   short_pathname);
-
-	if (data->existp == UPDATE_ENTRIES_NEW
-	    && isfile (filename))
+	if (!validate_change (data->existp, filename, short_pathname))
 	{
-	    /* This error might be confusing; it isn't really clear to
-	       the user what to do about it.  Keep in mind that it has
-	       several causes: (1) something/someone creates the file
-	       during the time that CVS is running, (2) the repository
-	       has two files whose names clash for the client because
-	       of case-insensitivity or similar causes, See 3 for
-	       additional notes.  (3) a special case of this is that a
-	       file gets renamed for example from a.c to A.C.  A
-	       "cvs update" on a case-insensitive client will get this
-	       error.  In this case and in case 2, the filename
-	       (short_pathname) printed in the error message will likely _not_
-	       have the same case as seen by the user in a directory listing.
-	       (4) the client has a file which the server doesn't know
-	       about (e.g. "? foo" file), and that name clashes with a file
-	       the server does know about, (5) classify.c will print the same
-	       message for other reasons.
-
-	       I hope the above paragraph makes it clear that making this
-	       clearer is not a one-line fix.  */
-	    error (0, 0, "move away `%s'; it is in the way", short_pathname);
-	    if (updated_fname)
-	    {
-		cvs_output ("C ", 0);
-		cvs_output (updated_fname, 0);
-		cvs_output ("\n", 1);
-	    }
-	    failure_exit = true;
-
 	discard_file_and_return:
 	    discard_file ();
 	    free (scratch_entries);
@@ -1608,8 +1632,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    return;
 	}
 
-	buf = read_file_from_server (filename, short_pathname,
-				     &mode_string, &size);
+	buf = read_file_from_server (short_pathname, &mode_string, &size);
 
         /* Some systems, like OS/2 and Windows NT, end lines with CRLF
            instead of just LF.  Format translation is done in the C
@@ -1620,9 +1643,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	if (options)
 	    bin = !strcmp (options, "-kb");
 	else
-	    bin = 0;
-
-	temp_filename = newfilename (filename);
+	    bin = false;
 
 	if (data->contents != UPDATE_ENTRIES_RCS_DIFF)
 	{
@@ -1833,6 +1854,10 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 
 	free (mode_string);
     }
+    else if (data->contents == UPDATE_ENTRIES_BASE)
+    {
+	rename_file (temp_filename, filename);
+    }
 
     if (stored_mode)
     {
@@ -2016,6 +2041,165 @@ handle_rcs_diff (char *args, size_t len)
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_RCS_DIFF;
     /* Think this could be UPDATE_ENTRIES_EXISTING, but just in case...  */
+    dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
+    dat.timestamp = NULL;
+    call_in_directory (args, update_entries, &dat);
+}
+
+
+
+static void
+client_base_checkout (void *data_arg, List *ent_list,
+		     const char *short_pathname, const char *filename)
+{
+    char *options, *prev, *rev;
+    char *basefile;
+
+    read_line (&options);
+    read_line (&prev);
+    read_line (&rev);
+
+    basefile = make_base_file_name (filename, rev);
+
+    /* FIXME: Reenable this check once update is working.  */
+    //if (isfile (basefile))
+	//error (1, 0, "Server sent base file `%s', which already exists.",
+	//       basefile);
+
+    if (*prev && strcmp (prev, rev))
+    {
+	/* FIXME: Handle diff.  */
+    }
+    else
+    {
+	int fd;
+	int bin;
+	char *buf;
+	char *mode_string;
+	size_t size;
+	int status;
+
+	mkdir_if_needed (CVSADM_BASE);
+	/* FIXME: Read/write to file is repeated and could be optimized to
+	 * write directly to disk without using so much mem.
+	 */
+	buf = read_file_from_server (short_pathname, &mode_string, &size);
+	if (options) bin = strcmp (options, "-kb") ? 0 : OPEN_BINARY;
+	else bin = 0;
+
+
+	fd = CVS_OPEN (basefile, (O_WRONLY | O_CREAT | O_TRUNC | bin), 0777);
+
+	if (fd < 0)
+	{
+	    /* I can see a case for making this a fatal error; for
+	       a condition like disk full or network unreachable
+	       (for a file server), carrying on and giving an
+	       error on each file seems unnecessary.  But if it is
+	       a permission problem, or some such, then it is
+	       entirely possible that future files will not have
+	       the same problem.  */
+	    error (0, errno, "cannot write %s", short_pathname);
+	    free (basefile);
+	    free (buf);
+	    free (rev);
+	    free (prev);
+	    return;
+	}
+
+	if (write (fd, buf, size) != size)
+	    error (1, errno, "writing %s", short_pathname);
+
+	if (close (fd) < 0)
+	    error (1, errno, "writing %s", short_pathname);
+
+	free (buf);
+
+	status = change_mode (basefile, mode_string, 1);
+	if (status != 0)
+	    error (0, status, "cannot change mode of %s", short_pathname);
+    }
+
+    /* FIXME: When enabled, verify base file via openpgp signature.  */
+
+    free (rev);
+    free (prev);
+    free (basefile);
+}
+
+
+
+static void
+handle_base_checkout (char *args, size_t len)
+{
+    call_in_directory (args, client_base_checkout, NULL);
+}
+
+
+
+static enum update_existing
+translate_exists (const char *exists)
+{
+    if (*exists == 'n') return UPDATE_ENTRIES_NEW;
+    if (*exists == 'y') return UPDATE_ENTRIES_EXISTING;
+    if (*exists == 'm') return UPDATE_ENTRIES_EXISTING_OR_NEW;
+    error (1, 0, "unknown existence code received from server: `%s'",
+	   exists);
+    assert (!"Internal error");  /* Placate GCC.  */
+}
+
+
+
+/* Create am up-to-date temporary workfile from a base file.  */
+static void
+client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
+		  const char *filename)
+{
+    char *rev, *exists;
+    char *basefile;
+    char *temp_filename;
+
+    read_line (&rev);
+
+    read_line (&exists);
+    if (!validate_change (translate_exists (exists), filename, short_pathname))
+    {
+	free (rev);
+	free (exists);
+	return;
+    }
+    free (exists);
+
+    basefile = make_base_file_name (filename, rev);
+    temp_filename = newfilename (filename);
+    copy_file (basefile, temp_filename);
+
+    /* I think it is ok to assume that if the server is sending base_copy,
+     * then it sent the commands necessary to create the required base file.
+     * If not, then it may be necessary to provide a way to request the base
+     * file be sent.
+     */
+
+    free (temp_filename);
+    free (basefile);
+    free (rev);
+}
+
+
+
+static void
+handle_base_copy (char *args, size_t len)
+{
+    call_in_directory (args, client_base_copy, NULL);
+}
+
+
+
+static void
+handle_base_entry (char *args, size_t len)
+{
+    struct update_entries_data dat;
+    dat.contents = UPDATE_ENTRIES_BASE;
     dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = NULL;
     call_in_directory (args, update_entries, &dat);
@@ -3103,6 +3287,12 @@ struct response responses[] =
     RSP_LINE("E", handle_e, response_type_normal, rs_essential),
     RSP_LINE("F", handle_f, response_type_normal, rs_optional),
     RSP_LINE("MT", handle_mt, response_type_normal, rs_optional),
+    RSP_LINE("Base-checkout", handle_base_checkout, response_type_normal,
+	     rs_optional),
+    RSP_LINE("Base-copy", handle_base_copy, response_type_normal,
+	     rs_optional),
+    RSP_LINE("Base-entry", handle_base_entry, response_type_normal,
+	     rs_optional),
     /* Possibly should be response_type_error.  */
     RSP_LINE(NULL, NULL, response_type_normal, rs_essential)
 

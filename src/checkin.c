@@ -164,7 +164,7 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 	if (set_time)
 	    /* Need to update the checked out file on the client side.  */
 	    server_updated (finfo, vers, SERVER_UPDATED,
-			    (mode_t) -1, NULL, NULL);
+			    (mode_t) -1, NULL, NULL, false);
 	else
 	    server_checked_in (finfo->file, finfo->update_dir,
 			       finfo->repository);
