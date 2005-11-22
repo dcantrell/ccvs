@@ -20,6 +20,13 @@
  * Returns non-zero on error.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* CVS */
+#include "base.h"
+
 #include "cvs.h"
 #include "fileattr.h"
 #include "edit.h"
@@ -28,7 +35,7 @@ int
 Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 	 char *options, char *message)
 {
-    Vers_TS *vers;
+    Vers_TS *vers, *pvers;
     int set_time;
     char *tocvsPath = NULL;
 
@@ -51,6 +58,7 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
      */
     assert (finfo->rcs != NULL);
 
+    pvers = Version_TS (finfo, NULL, tag, NULL, 1, 0);
     switch (RCS_checkin (finfo->rcs, finfo->update_dir, finfo->file, message,
 			 rev, 0, RCS_FLAGS_KEEPFILE))
     {
@@ -82,20 +90,25 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 		 && (!strcmp (options, "-ko") || !strcmp (options, "-kb")))
 		|| !RCS_cmp_file (finfo->rcs, rev, NULL, NULL,
 	                          options, finfo->file))
-	    {
 		/* The existing file is correct.  We don't have to do
                    anything.  */
 		set_time = 0;
-	    }
 	    else
+		set_time = 1;
+
+	    vers = Version_TS (finfo, NULL, tag, NULL, 1, set_time);
+
+	    if (set_time)
 	    {
 		/* The existing file is incorrect.  We need to check
                    out the correct file contents.  */
-		if (RCS_checkout (finfo->rcs, finfo->file, rev, NULL,
-				  options, RUN_TTY, NULL, NULL) != 0)
+		if (base_checkout (finfo->rcs, finfo, pvers->vn_user,
+				   vers->vn_rcs, NULL, options,
+				  cvswrite
+				  || fileattr_get (finfo->file, "_watched")))
 		    error (1, 0, "failed when checking out new copy of %s",
 			   finfo->fullname);
-		xchmod (finfo->file, 1);
+		base_copy (finfo, rev, "y");
 		set_time = 1;
 	    }
 
@@ -109,7 +122,6 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 		xchmod (finfo->file, 0);
 
 	    /* Re-register with the new data.  */
-	    vers = Version_TS (finfo, NULL, tag, NULL, 1, set_time);
 	    if (strcmp (vers->options, "-V4") == 0)
 		vers->options[0] = '\0';
 	    Register (finfo->entries, finfo->file, vers->vn_rcs, vers->ts_user,
@@ -164,7 +176,7 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 	if (set_time)
 	    /* Need to update the checked out file on the client side.  */
 	    server_updated (finfo, vers, SERVER_UPDATED,
-			    (mode_t) -1, NULL, NULL, false);
+			    (mode_t) -1, NULL, NULL, true);
 	else
 	    server_checked_in (finfo->file, finfo->update_dir,
 			       finfo->repository);

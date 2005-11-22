@@ -125,6 +125,7 @@ void server_updated (struct file_info *finfo, Vers_TS *vers,
                      unsigned char *checksum, struct buffer *filebuf,
 		     bool use_base);
 
+bool server_use_bases (void);
 /* Whether we should send RCS format patches.  */
 int server_use_rcs_diff (void);
 
@@ -229,8 +230,9 @@ void cvs_trace (int level, const char *fmt, ...)
 
 extern cvsroot_t *referrer;
 
-void server_base_checkout (struct file_info *finfo, const char *options,
-			   const char *prev, const char *rev);
+void server_base_checkout (RCSNode *rcs, struct file_info *finfo,
+			   const char *prev, const char *rev, const char *tag,
+			   const char *options);
 
 void server_base_copy (struct file_info *file, const char *rev,
 		       const char *exists);
