@@ -5394,6 +5394,15 @@ server_updated (
 
 
 
+/* Return whether we should send operations on base files.  */
+bool
+server_use_bases (void)
+{
+    return supported_response ("Base-checkout");
+}
+
+
+
 /* Return whether we should send patches in RCS format.  */
 int
 server_use_rcs_diff (void)
@@ -8134,24 +8143,62 @@ cvs_output_tagged (const char *tag, const char *text)
  * responses.
  */
 void
-server_base_checkout (struct file_info *finfo,
-		      const char *options, const char *prev, const char *rev)
+server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
+		      const char *rev, const char *tag, const char *options)
 {
     char *basefile;
     char *fullbase;
+    char *tmpfile = NULL;
+    bool senddiff;
 
     assert (rev);
 
     if (!supported_response ("Base-checkout")) return;
 
-    //if (prev && strcmp (prev, rev))
-	/* The client should already have this file.  */
-//	return;
+    if (prev && !strcmp (prev, rev))
+	/* PREV & REV are the same, so the client should already have this
+	 * file.
+	 */
+	return;
 
     basefile = make_base_file_name (finfo->file, rev);
     fullbase = Xasprintf ("%s/%s",
 			  *(finfo->update_dir) ? finfo->update_dir : ".",
 			  basefile);
+
+    if (prev)
+    {
+	/* Compute and send diff.  */
+	int dargc = 0;
+	size_t darg_allocated = 0;
+	char **dargv = NULL;
+	int status;
+	char *pbasefile;
+
+	pbasefile = make_base_file_name (finfo->file, prev);
+	status = RCS_checkout (rcs, pbasefile, prev, tag, options,
+			       NULL, NULL, NULL);
+	if (status)
+	    error (1, 0, "Failed to checkout revision %s of `%s'",
+		   finfo->file, prev);
+
+	run_add_arg_p (&dargc, &darg_allocated, &dargv, "-n");
+	tmpfile = cvs_temp_name ();
+	status = diff_exec (basefile, pbasefile, NULL, NULL, dargc, dargv,
+			    tmpfile);
+	run_arg_free_p (dargc, dargv);
+	free (dargv);
+	if (unlink_file (pbasefile) < 0)
+	    error (0, errno, "cannot remove `%s'", pbasefile);
+	free (pbasefile);
+
+	/* A STATUS of 0 means no differences.  1 means some differences.  */
+	if (status != 0 && status != 1)
+	    senddiff = false;
+	else
+	    senddiff = true;
+    }
+    else senddiff = false;
 
     buf_output0 (protocol, "Base-checkout ");
     output_dir (finfo->update_dir, finfo->repository);
@@ -8159,19 +8206,42 @@ server_base_checkout (struct file_info *finfo,
     buf_output (protocol, "\n", 1);
     buf_output0 (protocol, options);
     buf_output (protocol, "\n", 1);
-    buf_output0 (protocol, prev ? prev : "");
+
+    /* If we are not sending a diff, don't send PREV, or the client will expect
+     * one.
+     */
+    buf_output0 (protocol, prev && senddiff ? prev : "");
     buf_output (protocol, "\n", 1);
     buf_output0 (protocol, rev);
     buf_output (protocol, "\n", 1);
 
-   // if (prev)
-    //{
-	/* FIXME: Compute and send diff.  */
-    //}
-    //else
-	/* Send whole file.  */
+    if (senddiff)
+    {
+	struct stat bfi, dfi;
+
+	/* Check to make sure the patch is really shorter */
+	if (stat (basefile, &bfi) < 0)
+	    error (1, errno, "could not stat `%s'", basefile);
+	if (stat (tmpfile, &dfi) < 0)
+	    error (1, errno, "could not stat `%s'", tmpfile);
+	if (bfi.st_size <= dfi.st_size)
+	    senddiff = false;
+    }
+
+    if (senddiff)
+	server_send_file (tmpfile, fullbase, -1);
+    else
+	/* The client does not have a previous base revision, so send the whole
+	 * file.
+	 */
 	server_send_file (basefile, fullbase, -1);
 
+    if (tmpfile)
+    {
+	if (unlink_file (tmpfile) < 0)
+	    error (0, errno, "cannot remove `%s'", tmpfile);
+	free (tmpfile);
+    }
     free (fullbase);
     free (basefile);
 }

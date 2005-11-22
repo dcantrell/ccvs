@@ -38,23 +38,34 @@
  * as well.
  */
 
-#include "cvs.h"
-#include <assert.h>
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* GNULIB */
+#include "getline.h"
 #include "save-cwd.h"
+
 #ifdef SERVER_SUPPORT
 # include "md5.h"
 #endif
+
+/* CVS */
+#include "base.h"
+
+#include "cvs.h"
 #include "watch.h"
 #include "fileattr.h"
 #include "edit.h"
-#include "getline.h"
 #include "buffer.h"
 #include "hardlink.h"
+
+/* C89 */
+#include <assert.h>
 
 static int checkout_file (struct file_info *finfo, Vers_TS *vers_ts,
 				 int adding, int merging, int update_server);
 #ifdef SERVER_SUPPORT
-static void checkout_to_buffer (void *, const char *, size_t);
 static int patch_file (struct file_info *finfo,
                        Vers_TS *vers_ts, 
                        int *docheckout, struct stat *file_info,
@@ -107,8 +118,8 @@ static int update_prune_dirs = 0;
 static int pipeout = 0;
 static int dotemplate = 0;
 #ifdef SERVER_SUPPORT
-static int patches = 0;
-static int rcs_diff_patches = 0;
+static bool bases;
+static bool rcs_diff_patches;
 #endif
 static List *ignlist = NULL;
 static time_t last_register_time;
@@ -234,8 +245,10 @@ update (int argc, char **argv)
 #ifdef SERVER_SUPPORT
 		if (server_active)
 		{
-		    patches = 1;
-		    rcs_diff_patches = server_use_rcs_diff ();
+		    if (server_use_bases ())
+			bases = true;
+		    else
+			rcs_diff_patches = server_use_rcs_diff ();
 		}
 		else
 #endif
@@ -719,7 +732,7 @@ update_fileproc (void *callerdat, struct file_info *finfo)
 		break;
 	    case T_PATCH:		/* needs patch */
 #ifdef SERVER_SUPPORT
-		if (patches)
+		if (server_active && !bases)
 		{
 		    int docheckout;
 		    struct stat file_info;
@@ -728,9 +741,9 @@ update_fileproc (void *callerdat, struct file_info *finfo)
 		    retval = patch_file (finfo,
 					 vers, &docheckout,
 					 &file_info, checksum);
-		    if (! docheckout)
+		    if (!docheckout)
 		    {
-		        if (server_active && retval == 0)
+		        if (retval == 0)
 			    server_updated (finfo, vers,
 					    (rcs_diff_patches
 					     ? SERVER_RCS_DIFF
@@ -741,9 +754,10 @@ update_fileproc (void *callerdat, struct file_info *finfo)
 		    }
 		}
 #endif
-		/* If we're not running as a server, just check the
-		   file out.  It's simpler and faster than producing
-		   and applying patches.  */
+		/* If we're not running as a server or the client can handle
+		 * base operations, just check the file out.  It's simpler and
+		 * faster than producing and applying patches.
+		 */
 		/* Fall through.  */
 	    case T_CHECKOUT:		/* needs checkout */
 		retval = checkout_file (finfo, vers, 0, 0, 1);
@@ -1191,6 +1205,13 @@ scratch_file (struct file_info *finfo, Vers_TS *vers)
 
 /*
  * Check out a file.
+ *
+ * INPUTS
+ *   finfo		The file to be updated.
+ *   vers_ts		Version information about the file to be updated.
+ *   adding
+ *   merging
+ *   update_server
  */
 static int
 checkout_file (struct file_info *finfo, Vers_TS *vers_ts, int adding,
@@ -1200,10 +1221,8 @@ checkout_file (struct file_info *finfo, Vers_TS *vers_ts, int adding,
     int set_time, retval = 0;
     int status;
     int file_is_dead;
-    struct buffer *revbuf;
 
     backup = NULL;
-    revbuf = NULL;
 
     /* Don't screw with backup files if we're going to stdout, or if
        we are the server.  */
@@ -1251,73 +1270,38 @@ VERS: ", 0);
 		cvs_outerr (vers_ts->vn_rcs, 0);
 		cvs_outerr ("\n***************\n", 0);
 	    }
-	}
 
-#ifdef SERVER_SUPPORT
-	if (update_server
-	    && server_active
-	    && ! pipeout
-	    && ! file_gzip_level
-	    && ! joining ()
-	    && ! wrap_name_has (finfo->file, WRAP_FROMCVS))
-	{
-	    revbuf = buf_nonio_initialize (NULL);
-	    status = RCS_checkout (vers_ts->srcfile, NULL,
-				   vers_ts->vn_rcs, vers_ts->tag,
-				   vers_ts->options, RUN_TTY,
-				   checkout_to_buffer, revbuf);
-	}
-	else
-#endif
 	    status = RCS_checkout (vers_ts->srcfile,
 				   pipeout ? NULL : finfo->file,
 				   vers_ts->vn_rcs, vers_ts->tag,
 				   vers_ts->options, RUN_TTY, NULL, NULL);
+	}
+	else
+	    /* There used to be a special case here to check out to a buffer
+	     * when UPDATE_SERVER && SERVER_ACTIVE && !PIPEOUT
+	     * && !FILE_GZIP_LEVEL && !joining ()
+	     * && !wrap_name_has (finfo->file, WRAP_FROMCVS), but I don't think
+	     * it is important to optimize for old clients which don't support
+	     * bandwidth saving base files and openpgp signatures.
+	     */
+	    status = base_checkout (vers_ts->srcfile, finfo,
+				    vers_ts->vn_user, vers_ts->vn_rcs,
+				    vers_ts->tag, vers_ts->options,
+				    cvswrite
+				    && !fileattr_get (finfo->file,
+						      "_watched"));
     }
+
     if (file_is_dead || status == 0)
     {
-	mode_t mode;
-
-	mode = (mode_t) -1;
+	mode_t mode = (mode_t) -1;
 
 	if (!pipeout)
 	{
 	    Vers_TS *xvers_ts;
 
-	    if (revbuf != NULL && !noexec)
-	    {
-		struct stat sb;
-
-		/* FIXME: We should have RCS_checkout return the mode.
-		   That would also fix the kludge with noexec, above, which
-		   is here only because noexec doesn't write srcfile->path
-		   for us to stat.  */
-		if (stat (vers_ts->srcfile->path, &sb) < 0)
-		{
-#if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
-		    buf_free (revbuf);
-#endif /* defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT) */
-		    error (1, errno, "cannot stat %s",
-			   vers_ts->srcfile->path);
-		}
-		mode = sb.st_mode &~ (S_IWRITE | S_IWGRP | S_IWOTH);
-	    }
-
-	    if (cvswrite
-		&& !file_is_dead
-		&& !fileattr_get (finfo->file, "_watched"))
-	    {
-		if (revbuf == NULL)
-		    xchmod (finfo->file, 1);
-		else
-		{
-		    /* We know that we are the server here, so
-                       although xchmod checks umask, we don't bother.  */
-		    mode |= (((mode & S_IRUSR) ? S_IWUSR : 0)
-			     | ((mode & S_IRGRP) ? S_IWGRP : 0)
-			     | ((mode & S_IROTH) ? S_IWOTH : 0));
-		}
-	    }
+	    if (!file_is_dead)
+		base_copy (finfo, vers_ts->vn_rcs, "m");
 
 	    {
 		/* A newly checked out file is never under the spell
@@ -1338,8 +1322,8 @@ VERS: ", 0);
 	    /* set the time from the RCS file iff it was unknown before */
 	    set_time =
 		(!noexec
-		 && (vers_ts->vn_user == NULL ||
-		     strncmp (vers_ts->ts_rcs, "Initial", 7) == 0)
+		 && (!vers_ts->vn_user ||
+		     !strncmp (vers_ts->ts_rcs, "Initial", 7))
 		 && !file_is_dead);
 
 	    wrap_fromcvs_process_file (finfo->file);
@@ -1348,27 +1332,6 @@ VERS: ", 0);
 				   force_tag_match, set_time);
 	    if (strcmp (xvers_ts->options, "-V4") == 0)
 		xvers_ts->options[0] = '\0';
-
-	    if (revbuf != NULL)
-	    {
-		/* If we stored the file data into a buffer, then we
-                   didn't create a file at all, so xvers_ts->ts_user
-                   is wrong.  The correct value is to have it be the
-                   same as xvers_ts->ts_rcs, meaning that the working
-                   file is unchanged from the RCS file.
-
-		   FIXME: We should tell Version_TS not to waste time
-		   statting the nonexistent file.
-
-		   FIXME: Actually, I don't think the ts_user value
-		   matters at all here.  The only use I know of is
-		   that it is printed in a trace message by
-		   Server_Register.  */
-
-		if (xvers_ts->ts_user != NULL)
-		    free (xvers_ts->ts_user);
-		xvers_ts->ts_user = xstrdup (xvers_ts->ts_rcs);
-	    }
 
 	    (void) time (&last_register_time);
 
@@ -1417,22 +1380,20 @@ VERS: ", 0);
 
 	    /* If this is really Update and not Checkout, recode history */
 	    if (strcmp (cvs_cmd_name, "update") == 0)
-		history_write ('U', finfo->update_dir, xvers_ts->vn_rcs, finfo->file,
-			       finfo->repository);
+		history_write ('U', finfo->update_dir, xvers_ts->vn_rcs,
+			       finfo->file, finfo->repository);
 
 	    freevers_ts (&xvers_ts);
 
 	    if (!really_quiet && !file_is_dead)
-	    {
 		write_letter (finfo, 'U');
-	    }
 	}
 
 #ifdef SERVER_SUPPORT
 	if (update_server && server_active)
 	    server_updated (finfo, vers_ts,
 			    merging ? SERVER_MERGED : SERVER_UPDATED,
-			    mode, NULL, revbuf, false);
+			    mode, NULL, NULL, true);
 #endif
     }
     else
@@ -1449,7 +1410,7 @@ VERS: ", 0);
 	retval = status;
     }
 
-    if (backup != NULL)
+    if (backup)
     {
 	/* If -f/-t wrappers are being used to wrap up a directory,
 	   then backup might be a directory instead of just a file.  */
@@ -1463,29 +1424,10 @@ VERS: ", 0);
 	free (backup);
     }
 
-#if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
-    if (revbuf != NULL)
-	buf_free (revbuf);
-#endif /* defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT) */
     return retval;
 }
 
 
-
-#ifdef SERVER_SUPPORT
-
-/* This function is used to write data from a file being checked out
-   into a buffer.  */
-
-static void
-checkout_to_buffer (void *callerdat, const char *data, size_t len)
-{
-    struct buffer *buf = (struct buffer *) callerdat;
-
-    buf_output (buf, data, len);
-}
-
-#endif /* SERVER_SUPPORT */
 
 #ifdef SERVER_SUPPORT
 

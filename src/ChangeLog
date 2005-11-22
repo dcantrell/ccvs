@@ -1,3 +1,23 @@
+2005-11-22  Derek Price  <derek@ximbiot.com>
+
+	* base.c (base_checkout): Assume this function is not called from the
+	client.
+	(base_remove): New function.
+	* base.h (base_remove): New proto.
+	* checkin.c (Checkin): Use base files when possible.
+	* client.c (validate_change): Expand header comment block.
+	(update_entries): Create base files on checkin.  Remove old base files
+	when creating new ones.
+	(client_base_checkout): Handle diffs.
+	* server.c (server_use_bases): New function.
+	(server_base_checkout): Send diffs when possible.
+	* server.h (server_base_checkout): Update proto.
+	* update.c (checkout_to_buffer): Remove obsolete function.
+	(bases): New global.
+	(update): Set BASES.
+	(update_fileproc): Use base functions for T_NEED_PATCH && T_CHECKOUT.
+	(checkout_file): Expand header comment block.  Use bases when possible.
+	
 2005-11-18  Derek Price  <derek@ximbiot.com>
 
 	* add.c (add): Begin using new base functions.

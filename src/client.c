@@ -1493,7 +1493,11 @@ read_file_from_server (const char *fullname, char **mode_string, size_t *size)
 
 
 
-/* Returns false on error.  */
+/* Validate the existance of FILENAME against whether we think it should exist
+ * or not.  If it should exist and doesn't, issue a warning and return success.
+ * If it shouldn't exist and does, issue a warning and return false to avoid
+ * accidentally overwriting a user's changes.
+ */
 static bool
 validate_change (enum update_existing existp, const char *filename,
 		 const char *fullname)
@@ -1856,7 +1860,27 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
     }
     else if (data->contents == UPDATE_ENTRIES_BASE)
     {
+	Node *n;
+	if ((n = findnode_fn (ent_list, filename)))
+	{
+	    Entnode *e = n->data;
+	    base_remove (filename, e->version);
+	}
 	rename_file (temp_filename, filename);
+    }
+    else if (data->contents == UPDATE_ENTRIES_CHECKIN && strcmp (vn, "0"))
+    {
+	/* On checkin, create the base file.  */
+	char *basefile = make_base_file_name (filename, vn);
+	Node *n;
+	if ((n = findnode_fn (ent_list, filename)))
+	{
+	    Entnode *e = n->data;
+	    base_remove (filename, e->version);
+	}
+	mkdir_if_needed (CVSADM_BASE);
+	copy_file (filename, basefile);
+	free (basefile);
     }
 
     if (stored_mode)
@@ -2052,79 +2076,148 @@ static void
 client_base_checkout (void *data_arg, List *ent_list,
 		     const char *short_pathname, const char *filename)
 {
+    /* Options for this file, a Previous REVision if this is a diff, and the
+     * REVision of the new file.
+     */
     char *options, *prev, *rev;
-    char *basefile;
 
+    /* The base file to be created.  */
+    char *basefile;
+    char *update_dir;
+    char *fullbase;
+
+    /* File buf from net.  May be an RCS diff from PREV to REV.  */
+    char *buf;
+    char *mode_string;
+    size_t size;
+
+    bool bin;
+    bool patch_failed;
+
+    /* Read OPTIONS, PREV, and REV from the server.  */
     read_line (&options);
     read_line (&prev);
     read_line (&rev);
 
+    /* Use these values to get our base file name.  */
     basefile = make_base_file_name (filename, rev);
 
-    /* FIXME: Reenable this check once update is working.  */
-    //if (isfile (basefile))
-	//error (1, 0, "Server sent base file `%s', which already exists.",
-	//       basefile);
+    if (isfile (basefile))
+	error (1, 0, "Server sent base file `%s', which already exists.",
+	       basefile);
+
+    update_dir = dir_name (short_pathname);
+    if (!*update_dir) fullbase = xstrdup (basefile);
+    else fullbase = Xasprintf ("%s/%s", update_dir, basefile);
+
+    /* Read the file or patch from the server.  */
+    /* FIXME: Read/write to file is repeated and could be optimized to
+     * write directly to disk without using so much mem.
+     */
+    buf = read_file_from_server (fullbase, &mode_string, &size);
+
+    if (options) bin = !strcmp (options, "-kb");
+    else bin = false;
 
     if (*prev && strcmp (prev, rev))
     {
-	/* FIXME: Handle diff.  */
+	char *filebuf;
+	size_t filebufsize;
+	size_t nread;
+	char *patchedbuf;
+	size_t patchedlen;
+	char *pbasefile;
+	char *pfullbase;
+
+	/* Handle UPDATE_ENTRIES_RCS_DIFF.  */
+
+	pbasefile = make_base_file_name (filename, prev);
+	if (!*update_dir) pfullbase = xstrdup (pbasefile);
+	else pfullbase = Xasprintf ("%s/%s", update_dir, pbasefile);
+
+	if (!isfile (pbasefile))
+	    error (1, 0, "patch original file `%s' does not exist",
+		   pfullbase);
+
+	filebuf = NULL;
+	filebufsize = 0;
+	nread = 0;
+
+	get_file (pbasefile, pfullbase, bin ? FOPEN_BINARY_READ : "r",
+		  &filebuf, &filebufsize, &nread);
+	/* At this point the contents of the existing file are in
+	 * FILEBUF, and the length of the contents is in NREAD.
+	 * The contents of the patch from the network are in BUF,
+	 * and the length of the patch is in SIZE.
+	 */
+
+	patch_failed = !rcs_change_text (fullbase, filebuf, nread, buf,
+					 size, &patchedbuf, &patchedlen);
+
+	if (!patch_failed)
+	{
+	    free (buf);
+	    buf = patchedbuf;
+	    size = patchedlen;
+	}
+	else
+	    free (patchedbuf);
+
+	free (filebuf);
+	free (pbasefile);
+	free (pfullbase);
     }
     else
+	patch_failed = false;
+
+    //if (!patch_failed)
+    //{
+	    /* FIXME - OPENPGP: Send and verify checksums for base files.  */
+	    //if (stored_checksum_valid)
+	    //{
+	//	unsigned char checksum[16];
+
+		/* We have a checksum.  Check it before writing
+		   the file out, so that we don't have to read it
+		   back in again.  */
+	//	md5_buffer (buf, size, checksum);
+	//	if (memcmp (checksum, stored_checksum, 16) != 0)
+	//	{
+	//	    error (0, 0,
+//"checksum failure after patch to %s; will refetch",
+//			   short_pathname);
+//
+//		    patch_failed = true;
+//		}
+//
+//		stored_checksum_valid = 0;
+//	    }
+    //}
+
+    if (!patch_failed)
     {
-	int fd;
-	int bin;
-	char *buf;
-	char *mode_string;
-	size_t size;
+	FILE *e;
 	int status;
 
-	mkdir_if_needed (CVSADM_BASE);
-	/* FIXME: Read/write to file is repeated and could be optimized to
-	 * write directly to disk without using so much mem.
-	 */
-	buf = read_file_from_server (short_pathname, &mode_string, &size);
-	if (options) bin = strcmp (options, "-kb") ? 0 : OPEN_BINARY;
-	else bin = 0;
-
-
-	fd = CVS_OPEN (basefile, (O_WRONLY | O_CREAT | O_TRUNC | bin), 0777);
-
-	if (fd < 0)
-	{
-	    /* I can see a case for making this a fatal error; for
-	       a condition like disk full or network unreachable
-	       (for a file server), carrying on and giving an
-	       error on each file seems unnecessary.  But if it is
-	       a permission problem, or some such, then it is
-	       entirely possible that future files will not have
-	       the same problem.  */
-	    error (0, errno, "cannot write %s", short_pathname);
-	    free (basefile);
-	    free (buf);
-	    free (rev);
-	    free (prev);
-	    return;
-	}
-
-	if (write (fd, buf, size) != size)
-	    error (1, errno, "writing %s", short_pathname);
-
-	if (close (fd) < 0)
-	    error (1, errno, "writing %s", short_pathname);
-
-	free (buf);
+	e = xfopen (basefile, bin ? FOPEN_BINARY_WRITE : "w");
+	if (fwrite (buf, sizeof *buf, size, e) != size)
+	    error (1, errno, "cannot write %s", fullbase);
+	if (fclose (e) == EOF)
+	    error (0, errno, "cannot close %s", fullbase);
 
 	status = change_mode (basefile, mode_string, 1);
 	if (status != 0)
-	    error (0, status, "cannot change mode of %s", short_pathname);
+	    error (0, status, "cannot change mode of %s", fullbase);
     }
 
     /* FIXME: When enabled, verify base file via openpgp signature.  */
 
+    free (buf);
     free (rev);
     free (prev);
     free (basefile);
+    free (update_dir);
+    free (fullbase);
 }
 
 

@@ -251,22 +251,20 @@ base_checkout (RCSNode *rcs, struct file_info *finfo,
 	       const char *options, bool writable)
 {
     int status;
+    char *basefile;
 
     mkdir_if_needed (CVSADM_BASE);
 
-    if (!current_parsed_root->isremote)
-    {
-	char *basefile = make_base_file_name (finfo->file, rev);
-	status = RCS_checkout (rcs, basefile, rev, tag, options,
-			       NULL, NULL, NULL);
-	xchmod (basefile, writable);
-	free (basefile);
-    }
-    else
-	status = 0;
+    assert (!current_parsed_root->isremote);
+
+    basefile = make_base_file_name (finfo->file, rev);
+    status = RCS_checkout (rcs, basefile, rev, tag, options,
+			   NULL, NULL, NULL);
+    xchmod (basefile, writable);
+    free (basefile);
 
     if (server_active)
-	server_base_checkout (finfo, options, prev, rev);
+	server_base_checkout (rcs, finfo, prev, rev, tag, options);
 
     return status;
 }
@@ -282,4 +280,15 @@ base_copy (struct file_info *finfo, const char *rev, const char *exists)
 
     if (server_active)
 	server_base_copy (finfo, rev, exists);
+}
+
+
+
+void
+base_remove (const char *file, const char *rev)
+{
+    char *basefile = make_base_file_name (file, rev);
+    if (unlink_file (basefile) < 0 && !existence_error (errno))
+	error (0, errno, "Failed to remove `%s'", basefile);
+    free (basefile);
 }

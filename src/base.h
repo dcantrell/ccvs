@@ -31,4 +31,5 @@ int base_checkout (RCSNode *rcs, struct file_info *finfo,
 		   const char *prev, const char *rev, const char *tag,
 		   const char *options, bool writable);
 void base_copy (struct file_info *finfo, const char *rev, const char *exists);
+void base_remove (const char *file, const char *rev);
 #endif /* BASE_H */
