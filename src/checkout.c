@@ -1090,48 +1090,6 @@ internal error: %s doesn't start with %s in checkout_proc",
 	goto out;
     }
 
-    if (!pipeout)
-    {
-	int i;
-	List *entries;
-
-	/* we are only doing files, so register them */
-	entries = Entries_Open (0, NULL);
-	for (i = 1; i < argc; i++)
-	{
-	    char *line;
-	    Vers_TS *vers;
-	    struct file_info finfo;
-
-	    memset (&finfo, 0, sizeof finfo);
-	    finfo.file = argv[i];
-	    /* Shouldn't be used, so set to arbitrary value.  */
-	    finfo.update_dir = NULL;
-	    finfo.fullname = argv[i];
-	    finfo.repository = repository;
-	    finfo.entries = entries;
-	    /* The rcs slot is needed to get the options from the RCS
-               file */
-	    finfo.rcs = RCS_parse (finfo.file, repository);
-
-	    vers = Version_TS (&finfo, options, tag, date,
-			       force_tag_match, 0);
-	    if (vers->ts_user == NULL)
-	    {
-		line = Xasprintf ("Initial %s", finfo.file);
-		Register (entries, finfo.file,
-			  vers->vn_rcs ? vers->vn_rcs : "0",
-			  line, vers->options, vers->tag,
-			  vers->date, NULL);
-		free (line);
-	    }
-	    freevers_ts (&vers);
-	    freercsnode (&finfo.rcs);
-	}
-
-	Entries_Close (entries);
-    }
-
     /* Don't log "export", just regular "checkouts" */
     if (m_type == CHECKOUT && !pipeout)
 	history_write ('O', preload_update_dir, history_name, where,
