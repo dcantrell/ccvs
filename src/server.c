@@ -3846,6 +3846,7 @@ error  \n");
 	   that CVS can't write such lines unless there is a bug.  */
 
 	buf_free (protocol);
+	protocol = NULL;
 
 	/* Close the pipes explicitly in order to send an EOF to the parent,
 	 * then wait for the parent to close the flow control pipe.  This
@@ -5261,7 +5262,8 @@ server_updated (
 	    return;
 	}
 
-	if (use_base && supported_response ("Base-entry"))
+	if (use_base && strcmp (cvs_cmd_name, "export")
+	    && supported_response ("Base-entry"))
 	{
 	    /* The client was already asked to create the base file and copy
 	     * it into a temp file.  This will complete the process and print
@@ -6397,12 +6399,12 @@ server_cleanup (void)
 	     * than getting lost.
 	     */
 	    struct buffer *buf_to_net_save = buf_to_net;
+	    error_use_protocol = 0;
 	    buf_to_net = NULL;
 
 	    (void) buf_flush (buf_to_net_save, 1);
 	    (void) buf_shutdown (buf_to_net_save);
 	    buf_free (buf_to_net_save);
-	    error_use_protocol = 0;
 	}
 	/* SIG_endCrSect(); */
     }
@@ -8141,6 +8143,9 @@ cvs_output_tagged (const char *tag, const char *text)
  * diff against PREV when possible.  If the client doesn't understand this
  * response, just ignore it and later code will also avoid the Base-*
  * responses.
+ *
+ * NOTES
+ *   Processes PREV == NULL, PREV == REV, and PREV == "0", for convenience.
  */
 void
 server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
@@ -8152,6 +8157,9 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
     bool senddiff;
 
     assert (rev);
+
+    TRACE (TRACE_FUNCTION, "server_base_checkout (%s, %s, %s, %s, %s)",
+	   finfo->fullname, prev, rev, tag, options);
 
     if (!supported_response ("Base-checkout")) return;
 
@@ -8166,7 +8174,7 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 			  *(finfo->update_dir) ? finfo->update_dir : ".",
 			  basefile);
 
-    if (prev)
+    if (prev && strcmp (prev, "0"))
     {
 	/* Compute and send diff.  */
 	int dargc = 0;
@@ -8184,7 +8192,7 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 
 	run_add_arg_p (&dargc, &darg_allocated, &dargv, "-n");
 	tmpfile = cvs_temp_name ();
-	status = diff_exec (basefile, pbasefile, NULL, NULL, dargc, dargv,
+	status = diff_exec (pbasefile, basefile, NULL, NULL, dargc, dargv,
 			    tmpfile);
 	run_arg_free_p (dargc, dargv);
 	free (dargv);
@@ -8200,6 +8208,19 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
     }
     else senddiff = false;
 
+    if (senddiff)
+    {
+	struct stat bfi, dfi;
+
+	/* Check to make sure the patch is really shorter */
+	if (stat (basefile, &bfi) < 0)
+	    error (1, errno, "could not stat `%s'", basefile);
+	if (stat (tmpfile, &dfi) < 0)
+	    error (1, errno, "could not stat `%s'", tmpfile);
+	if (bfi.st_size <= dfi.st_size)
+	    senddiff = false;
+    }
+
     buf_output0 (protocol, "Base-checkout ");
     output_dir (finfo->update_dir, finfo->repository);
     buf_output0 (protocol, finfo->file);
@@ -8214,19 +8235,6 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
     buf_output (protocol, "\n", 1);
     buf_output0 (protocol, rev);
     buf_output (protocol, "\n", 1);
-
-    if (senddiff)
-    {
-	struct stat bfi, dfi;
-
-	/* Check to make sure the patch is really shorter */
-	if (stat (basefile, &bfi) < 0)
-	    error (1, errno, "could not stat `%s'", basefile);
-	if (stat (tmpfile, &dfi) < 0)
-	    error (1, errno, "could not stat `%s'", tmpfile);
-	if (bfi.st_size <= dfi.st_size)
-	    senddiff = false;
-    }
 
     if (senddiff)
 	server_send_file (tmpfile, fullbase, -1);
@@ -8277,15 +8285,20 @@ cvs_trace (int level, const char *fmt, ...)
     if (trace >= level)
     {
 	va_list va;
+	char *buf;
+	int size;
 
 	va_start (va, fmt);
 #ifdef SERVER_SUPPORT
-	fprintf (stderr,"%c -> ",server_active?(isProxyServer()?'P':'S'):' ');
-#else /* ! SERVER_SUPPORT */
-	fprintf (stderr,"  -> ");
+	cvs_outerr (server_active ? (isProxyServer() ? "P" : "S") : " ", 1);
+#else
+	cvs_outerr (" ", 1);
 #endif
-	vfprintf (stderr, fmt, va);
-	fprintf (stderr,"\n");
+	cvs_outerr (" -> ", 4);
+	if ((size = vasprintf (&buf, fmt, va)) < 0)
+	    abort ();
+	cvs_outerr (buf, size);
+	cvs_outerr ("\n", 1);
 	va_end (va);
     }
 }

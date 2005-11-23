@@ -3311,9 +3311,7 @@ initial revision: 1\.1"
 	  cd ..
 	  rm -r 1
 	  mkdir 2; cd 2
-#export CVS_CLIENT_LOG=/tmp/cvsgpglog
 	  dotest basicb-0d "${testcvs} -q co -l ." "U topfile"
-#exit
 	  # Now test the ability to run checkout on an existing working
 	  # directory without having it lose its mind.  I don't know
 	  # whether this is tested elsewhere in sanity.sh.  A more elaborate
@@ -4853,7 +4851,7 @@ T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-head:A\]
 T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-tag:rtagged-by-head\]
 T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
 O [0-9-]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= <remote>/\*
-P [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == <remote>
+U [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == <remote>
 W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == <remote>"
 	  fi
 
