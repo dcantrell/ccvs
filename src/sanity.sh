@@ -11504,13 +11504,12 @@ ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 "$CVSROOT_DIRNAME/first-dir/a,v  <--  a
 new revision: delete; previous revision: 1\.1"
 
-	  # Check out the file on the branch.  This should report
-	  # that the file is not pertinent, but it should not
-	  # say anything else.
+	  # Check out the file on the branch.  This used to report
+	  # that the file is not pertinent, but this only makes sense on
+	  # update.
 	  cd ..
 	  rm -r first-dir
-	  dotest newb-123i "${testcvs} -q co -r branch first-dir/a" \
-"${SPROG} checkout: warning: \`first-dir/a' is not (any longer) pertinent"
+	  dotest newb-123i "$testcvs -q co -r branch first-dir/a"
 
 	  # Update the other copy, and make sure that a is removed.
 	  cd ../1/first-dir
@@ -12670,8 +12669,8 @@ Are you sure you want to release (and delete) directory .dirmodule.: "
 	  # We accept a zero exit status because it is what CVS does
 	  # (Dec 95).  Probably the exit status should be nonzero,
 	  # however.
-	  dotest modules-150g1 "${testcvs} co dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born \`dirmodule/nonexist' has disappeared"
+	  dotest modules-150g1 "$testcvs co dirmodule/nonexist" \
+"$SPROG checkout: nothing known about \`dirmodule/nonexist'"
 	  # We tolerate the creation of the dirmodule directory, since that
 	  # is what CVS does, not because we view that as preferable to not
 	  # creating it.
@@ -12764,9 +12763,8 @@ U first-dir/file2"
 new revision: delete; previous revision: 1\.1"
 	  cd ..
 	  rm -r first-dir
-	  dotest modules-155c8 "${testcvs} -q co topfiles" \
-"${SPROG} checkout: warning: \`first-dir/file1' is not (any longer) pertinent
-U first-dir/file2"
+	  dotest modules-155c8 "$testcvs -q co topfiles" \
+"U first-dir/file2"
 
 	  dokeep
 	  cd ..
@@ -13494,16 +13492,16 @@ Are you sure you want to release (and delete) directory .dirmodule.: "
 	  # (Dec 95).  Probably the exit status should be nonzero,
 	  # however.
 	  if $remote; then
-	    dotest modules5-22 "${testcvs} co dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born \`dirmodule/nonexist' has disappeared
-${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
-checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
+	    dotest modules5-22r "$testcvs co dirmodule/nonexist" \
+"$SPROG checkout: nothing known about \`dirmodule/nonexist'
+$SPROG checkout: Executing ..$CVSROOT_DIRNAME/checkout\.sh. .dirmodule..
+checkout script invoked in $TMPDIR/cvs-serv[0-9a-z]*
 args: dirmodule"
 	  else
-	    dotest modules5-22 "${testcvs} co dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born \`dirmodule/nonexist' has disappeared
-${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
-checkout script invoked in ${TESTDIR}/1
+	    dotest modules5-22 "$testcvs co dirmodule/nonexist" \
+"$SPROG checkout: nothing known about \`dirmodule/nonexist'
+$SPROG checkout: Executing ..$CVSROOT_DIRNAME/checkout\.sh. .dirmodule..
+checkout script invoked in $TESTDIR/1
 args: dirmodule"
 	  fi
 	  # We tolerate the creation of the dirmodule directory, since that
@@ -13646,16 +13644,16 @@ Are you sure you want to release (and delete) directory .mydir.: "
 	  # (Dec 95).  Probably the exit status should be nonzero,
 	  # however.
 	  if $remote; then
-	    dotest modules5-42 "${testcvs} co -d mydir dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born \`mydir/nonexist' has disappeared
-${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .mydir..
-checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
+	    dotest modules5-42r "$testcvs co -d mydir dirmodule/nonexist" \
+"$SPROG checkout: nothing known about \`mydir/nonexist'
+$SPROG checkout: Executing ..$CVSROOT_DIRNAME/checkout\.sh. .mydir..
+checkout script invoked in $TMPDIR/cvs-serv[0-9a-z]*
 args: mydir"
 	  else
-	    dotest modules5-42 "${testcvs} co -d mydir dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born \`mydir/nonexist' has disappeared
-${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .mydir..
-checkout script invoked in ${TESTDIR}/1
+	    dotest modules5-42 "$testcvs co -d mydir dirmodule/nonexist" \
+"$SPROG checkout: nothing known about \`mydir/nonexist'
+$SPROG checkout: Executing ..$CVSROOT_DIRNAME/checkout\.sh. .mydir..
+checkout script invoked in $TESTDIR/1
 args: mydir"
 	  fi
 	  # We tolerate the creation of the mydir directory, since that
