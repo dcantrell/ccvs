@@ -1,5 +1,33 @@
 2005-11-22  Derek Price  <derek@ximbiot.com>
 
+	* base.c (base_checkout): Add trace.  Avoid using bases with export.
+	(base_copy): Likewise.  Replace read-only files.
+	(base_remove): Deal with leading '-' in revision number.
+	* checkin.c (Checkin): Copy correct base revision when keywords are
+	present.
+	* checkout.c (checkout_proc): Bury sacrificial chicken.
+	* classify.c (Classify_File): Add trace.
+	* client.c (update_entries): Don't remove base files when noexec.
+	Print UPDATED_FNAME for base updates.
+	(client_base_checkout): Make CVS/BAse dir when needed.
+	(client_base_copy): Add trace.
+	* entries.c (Scratch_Entry): Remove base files.
+	(Register): Make trace first call.
+	* server.c (do_cvs_command): Set protocol buf to NULL after closing.
+	(server_updated): Avoid using base commands with export.
+	(server_cleanup): Set error_use_protocol to 0 while setting buf_to_net
+	to NULL.
+	(server_base_checkout): Expand header block comment.  Add trace.  Avoid
+	sending diffs when PREV is 0.  Compute diff in correct order.  Check
+	that diff will really be sent before telling the client that it will
+	be.
+	(cvs_trace): Use cvs_outerr instead of fprintf.
+	* update.c (update_fileproc): Add trace.
+	(checkout_file): Prefer bool to int.  Add trace.
+	* vers_ts.c (Version_TS): Add traces.
+	* sanity.sh (basicb): Remove old debugging cruft.
+	(basic2): Handle s/P/U/.
+	
 	* base.c (base_checkout): Assume this function is not called from the
 	client.
 	(base_remove): New function.

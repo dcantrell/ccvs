@@ -48,6 +48,10 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
     Entnode *entdata;
     char *rcsexpand = NULL;
 
+    TRACE (TRACE_FUNCTION, "Version_TS (%s, %s, %s, %s, %d, %d)",
+	   finfo->fullname, options ? options : "(null)", tag ? tag : "(null)",
+	   date ? date : "(null)", force_tag_match, set_time);
+
     /* get a new Vers_TS struct */
 
     vers_ts = xmalloc (sizeof (Vers_TS));
@@ -71,6 +75,7 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
 
     if (p == NULL)
     {
+	TRACE (TRACE_DATA, "Version_TS: No entries data found.");
 	entdata = NULL;
     }
     else

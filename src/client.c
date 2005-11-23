@@ -1861,14 +1861,23 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
     else if (data->contents == UPDATE_ENTRIES_BASE)
     {
 	Node *n;
-	if ((n = findnode_fn (ent_list, filename)))
+	if (!noexec && (n = findnode_fn (ent_list, filename)))
 	{
 	    Entnode *e = n->data;
 	    base_remove (filename, e->version);
 	}
 	rename_file (temp_filename, filename);
+	if (updated_fname)
+	{
+	    cvs_output ("U ", 0);
+	    cvs_output (updated_fname, 0);
+	    cvs_output ("\n", 1);
+	    free (updated_fname);
+	    updated_fname = NULL;
+	}
     }
-    else if (data->contents == UPDATE_ENTRIES_CHECKIN && strcmp (vn, "0"))
+    else if (!noexec && data->contents == UPDATE_ENTRIES_CHECKIN
+	     && strcmp (vn, "0") && *vn != '-')
     {
 	/* On checkin, create the base file.  */
 	char *basefile = make_base_file_name (filename, vn);
@@ -2094,6 +2103,8 @@ client_base_checkout (void *data_arg, List *ent_list,
     bool bin;
     bool patch_failed;
 
+    TRACE (TRACE_FUNCTION, "client_base_checkout (%s)", short_pathname);
+
     /* Read OPTIONS, PREV, and REV from the server.  */
     read_line (&options);
     read_line (&prev);
@@ -2199,15 +2210,16 @@ client_base_checkout (void *data_arg, List *ent_list,
 	FILE *e;
 	int status;
 
+	mkdir_if_needed (CVSADM_BASE);
 	e = xfopen (basefile, bin ? FOPEN_BINARY_WRITE : "w");
 	if (fwrite (buf, sizeof *buf, size, e) != size)
-	    error (1, errno, "cannot write %s", fullbase);
+	    error (1, errno, "cannot write `%s'", fullbase);
 	if (fclose (e) == EOF)
-	    error (0, errno, "cannot close %s", fullbase);
+	    error (0, errno, "cannot close `%s'", fullbase);
 
 	status = change_mode (basefile, mode_string, 1);
 	if (status != 0)
-	    error (0, status, "cannot change mode of %s", fullbase);
+	    error (0, status, "cannot change mode of `%s'", fullbase);
     }
 
     /* FIXME: When enabled, verify base file via openpgp signature.  */
@@ -2251,6 +2263,8 @@ client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
     char *rev, *exists;
     char *basefile;
     char *temp_filename;
+
+    TRACE (TRACE_FUNCTION, "client_base_copy (%s)", short_pathname);
 
     read_line (&rev);
 

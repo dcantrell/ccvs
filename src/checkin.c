@@ -108,7 +108,7 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 				  || fileattr_get (finfo->file, "_watched")))
 		    error (1, 0, "failed when checking out new copy of %s",
 			   finfo->fullname);
-		base_copy (finfo, rev, "y");
+		base_copy (finfo, vers->vn_rcs, "y");
 		set_time = 1;
 	    }
 

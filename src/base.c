@@ -253,6 +253,9 @@ base_checkout (RCSNode *rcs, struct file_info *finfo,
     int status;
     char *basefile;
 
+    TRACE (TRACE_FUNCTION, "base_checkout (%s, %s, %s, %s, %s)",
+	   finfo->fullname, prev, rev, tag, options);
+
     mkdir_if_needed (CVSADM_BASE);
 
     assert (!current_parsed_root->isremote);
@@ -263,7 +266,7 @@ base_checkout (RCSNode *rcs, struct file_info *finfo,
     xchmod (basefile, writable);
     free (basefile);
 
-    if (server_active)
+    if (server_active && strcmp (cvs_cmd_name, "export"))
 	server_base_checkout (rcs, finfo, prev, rev, tag, options);
 
     return status;
@@ -274,11 +277,18 @@ base_checkout (RCSNode *rcs, struct file_info *finfo,
 void
 base_copy (struct file_info *finfo, const char *rev, const char *exists)
 {
-    char *basefile = make_base_file_name (finfo->file, rev);
+    char *basefile;
+
+    TRACE (TRACE_FUNCTION, "base_copy (%s, %s, %s)",
+	   finfo->fullname, rev, exists);
+
+    basefile = make_base_file_name (finfo->file, rev);
+    if (isfile (finfo->file))
+	xchmod (finfo->file, true);
     copy_file (basefile, finfo->file);
     free (basefile);
 
-    if (server_active)
+    if (server_active && strcmp (cvs_cmd_name, "export"))
 	server_base_copy (finfo, rev, exists);
 }
 
@@ -287,7 +297,10 @@ base_copy (struct file_info *finfo, const char *rev, const char *exists)
 void
 base_remove (const char *file, const char *rev)
 {
-    char *basefile = make_base_file_name (file, rev);
+    char *basefile;
+
+    if (*rev == '-') rev++;
+    basefile = make_base_file_name (file, rev);
     if (unlink_file (basefile) < 0 && !existence_error (errno))
 	error (0, errno, "Failed to remove `%s'", basefile);
     free (basefile);

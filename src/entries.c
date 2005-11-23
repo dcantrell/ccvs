@@ -23,9 +23,13 @@
 /* Validate API.  */
 #include "entries.h"
 
-/* CVS */
-#include "cvs.h"
+/* GNULIB */
 #include "getline.h"
+
+/* CVS */
+#include "base.h"
+
+#include "cvs.h"
 
 static Node *AddEntryNode (List * list, Entnode *entnode);
 
@@ -164,6 +168,7 @@ write_entries (List *list)
 
 /*
  * Removes the argument file from the Entries file if necessary.
+ * Deletes the base file, if it existed.
  */
 void
 Scratch_Entry (List *list, const char *fname)
@@ -177,6 +182,9 @@ Scratch_Entry (List *list, const char *fname)
     {
 	if (!noexec)
 	{
+	    Entnode *e = node->data;
+	    base_remove (fname, e->version);
+
 	    entfilename = CVSADM_ENTLOG;
 	    entfile = xfopen (entfilename, "a");
 
@@ -212,17 +220,17 @@ Register (List *list, const char *fname, const char *vn, const char *ts,
     Entnode *entnode;
     Node *node;
 
+    TRACE (TRACE_FUNCTION, "Register(%s, %s, %s%s%s, %s, %s %s)",
+	   fname, vn, ts ? ts : "",
+	   ts_conflict ? "+" : "", ts_conflict ? ts_conflict : "",
+	   options, tag ? tag : "", date ? date : "");
+
 #ifdef SERVER_SUPPORT
     if (server_active)
     {
 	server_register (fname, vn, ts, options, tag, date, ts_conflict);
     }
 #endif
-
-    TRACE (TRACE_FUNCTION, "Register(%s, %s, %s%s%s, %s, %s %s)",
-	   fname, vn, ts ? ts : "",
-	   ts_conflict ? "+" : "", ts_conflict ? ts_conflict : "",
-	   options, tag ? tag : "", date ? date : "");
 
     entnode = Entnode_Create (ENT_FILE, fname, vn, ts, options, tag, date,
 			      ts_conflict);

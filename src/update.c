@@ -606,6 +606,8 @@ update_fileproc (void *callerdat, struct file_info *finfo)
     Ctype status;
     Vers_TS *vers;
 
+    TRACE (TRACE_FUNCTION, "update_fileproc (%s)", finfo->fullname);
+
     status = Classify_File (finfo, tag, date, options, force_tag_match,
 			    aflag, &vers, pipeout);
 
@@ -1220,7 +1222,9 @@ checkout_file (struct file_info *finfo, Vers_TS *vers_ts, int adding,
     char *backup;
     int set_time, retval = 0;
     int status;
-    int file_is_dead;
+    bool file_is_dead;
+
+    TRACE (TRACE_FUNCTION, "checkout_file (%s)", finfo->fullname);
 
     backup = NULL;
 
