@@ -1,3 +1,8 @@
+2005-11-27  Mark D. Baushke  <mdb@gnu.org>
+
+	* chdir-long.m4, fpending.m4, gnulib-comp.m4, mbiter.m4: Update
+	from GNULIB.
+
 2005-10-20  Derek Price  <derek@ximbiot.com>
 
 	Update from GNULIB.
