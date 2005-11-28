@@ -26,6 +26,7 @@ AC_DEFUN([gl_EARLY],
 # "Check for header files, types and library functions".
 AC_DEFUN([gl_INIT],
 [
+AM_CONDITIONAL([GL_COND_LIBTOOL], [false])
   gl_FUNC_ALLOCA
   gl_ALLOCSA
   gl_FUNC_ATEXIT
