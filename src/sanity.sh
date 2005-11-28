@@ -16465,7 +16465,7 @@ ${CPROG} \[update aborted\]: \*PANIC\* administration files missing!"
 	  dotest errmsg4-init-2 "$testcvs -Q co errmsg4"
 
 	  cd errmsg4
-	  echo '$Revision$' >filewithkeyword
+	  echo '$''Revision$' >filewithkeyword
 	  dotest errmsg4-init-3 "$testcvs -Q add filewithkeyword"
 
 	  # The following test intentionally uses -q.  This message should only
