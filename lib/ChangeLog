@@ -1,3 +1,7 @@
+2005-11-27  Mark D. Baushke  <mdb@gnu.org>
+
+	* getaddrinfo.h, getcwd.c, md5.c, md5.h: Update from GNULIB.
+
 2005-11-14  Mark D. Baushke  <mdb@gnu.org>
 
 	* system.h (FOLD_FN_CHAR): Distinguish OSX_ and VMS_ variations
