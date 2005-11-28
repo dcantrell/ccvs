@@ -327,7 +327,7 @@ ac_includes_default="\
 
 gl_header_list=
 gl_func_list=
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar ac_prefix_program MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CPP EGREP RANLIB ac_ct_RANLIB LN_S PERL CSH MKTEMP SENDMAIL PR ROFF PS2PDF TEXI2DVI MAKE_TARGETS_IN_VPATH_TRUE MAKE_TARGETS_IN_VPATH_FALSE LIBOBJS ALLOCA ALLOCA_H STDBOOL_H HAVE__BOOL FNMATCH_H YACC YFLAGS LIB_CLOCK_GETTIME GETOPT_H GLOB_H LIB_NANOSLEEP HAVE_LONG_64BIT HAVE_LONG_LONG_64BIT STDINT_H EOVERFLOW MKINSTALLDIRS USE_NLS MSGFMT GMSGFMT XGETTEXT MSGMERGE build build_cpu build_vendor build_os host host_cpu host_vendor host_os INTL_MACOSX_LIBS LIBICONV LTLIBICONV INTLLIBS LIBINTL LTLIBINTL POSUB cvs_client_objects KRB4 ZLIB_SUBDIRS ZLIB_CPPFLAGS ZLIB_LIBS with_default_rsh RSH_DFLT EDITOR LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar ac_prefix_program MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CPP EGREP RANLIB ac_ct_RANLIB LN_S PERL CSH MKTEMP SENDMAIL PR ROFF PS2PDF TEXI2DVI MAKE_TARGETS_IN_VPATH_TRUE MAKE_TARGETS_IN_VPATH_FALSE LIBOBJS GL_COND_LIBTOOL_TRUE GL_COND_LIBTOOL_FALSE ALLOCA ALLOCA_H STDBOOL_H HAVE__BOOL FNMATCH_H YACC YFLAGS LIB_CLOCK_GETTIME GETOPT_H GLOB_H LIB_NANOSLEEP HAVE_LONG_64BIT HAVE_LONG_LONG_64BIT STDINT_H EOVERFLOW MKINSTALLDIRS USE_NLS MSGFMT GMSGFMT XGETTEXT MSGMERGE build build_cpu build_vendor build_os host host_cpu host_vendor host_os INTL_MACOSX_LIBS LIBICONV LTLIBICONV INTLLIBS LIBINTL LTLIBINTL POSUB cvs_client_objects KRB4 ZLIB_SUBDIRS ZLIB_CPPFLAGS ZLIB_LIBS with_default_rsh RSH_DFLT EDITOR LTLIBOBJS'
 ac_subst_files='MKTEMP_SH_FUNCTION'
 
 # Initialize some variables set by options.
@@ -1487,11 +1487,11 @@ gl_func_list="$gl_func_list getlogin_r"
 gl_func_list="$gl_func_list getpwnam_r"
 gl_header_list="$gl_header_list wchar.h"
 gl_header_list="$gl_header_list wctype.h"
-gl_func_list="$gl_func_list mbsinit"
 gl_func_list="$gl_func_list alarm"
 gl_func_list="$gl_func_list siginterrupt"
 gl_func_list="$gl_func_list posix_memalign"
 gl_func_list="$gl_func_list iswprint"
+gl_func_list="$gl_func_list mbsinit"
 gl_header_list="$gl_header_list locale.h"
 gl_func_list="$gl_func_list isblank"
 gl_func_list="$gl_func_list mbrtowc"
@@ -13056,12 +13056,6 @@ fi
 
 
 
-
-
-
-
-
-
     echo "$as_me:$LINENO: checking whether mbrtowc and mbstate_t are properly declared" >&5
 echo $ECHO_N "checking whether mbrtowc and mbstate_t are properly declared... $ECHO_C" >&6
 if test "${gl_cv_func_mbrtowc+set}" = set; then
@@ -14507,6 +14501,12 @@ _ACEOF
 
     fi
   fi
+
+
+
+
+
+
 
 
 
@@ -16524,6 +16524,16 @@ _ACEOF
 
 
 
+if false; then
+  GL_COND_LIBTOOL_TRUE=
+  GL_COND_LIBTOOL_FALSE='#'
+else
+  GL_COND_LIBTOOL_TRUE='#'
+  GL_COND_LIBTOOL_FALSE=
+fi
+
+
+
 
 
 
@@ -16975,9 +16985,9 @@ done
 
 
 
-  echo "$as_me:$LINENO: checking whether this system has a definition of PATH_MAX" >&5
-echo $ECHO_N "checking whether this system has a definition of PATH_MAX... $ECHO_C" >&6
-if test "${gl_have_path_max_definition+set}" = set; then
+  echo "$as_me:$LINENO: checking whether this system has an arbitrary file name length limit" >&5
+echo $ECHO_N "checking whether this system has an arbitrary file name length limit... $ECHO_C" >&6
+if test "${gl_have_arbitrary_file_name_length_limit+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
@@ -16988,23 +16998,23 @@ cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 #include <unistd.h>
 #include <limits.h>
-#ifdef PATH_MAX
-have_path_max_definition
+#if defined PATH_MAX || defined MAXPATHLEN
+have_arbitrary_file_name_length_limit
 #endif
 _ACEOF
 if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "have_path_max_definition" >/dev/null 2>&1; then
-  gl_have_path_max_definition=yes
+  $EGREP "have_arbitrary_file_name_length_limit" >/dev/null 2>&1; then
+  gl_have_arbitrary_file_name_length_limit=yes
 else
-  gl_have_path_max_definition=no
+  gl_have_arbitrary_file_name_length_limit=no
 fi
 rm -f conftest*
 
 fi
-echo "$as_me:$LINENO: result: $gl_have_path_max_definition" >&5
-echo "${ECHO_T}$gl_have_path_max_definition" >&6
+echo "$as_me:$LINENO: result: $gl_have_arbitrary_file_name_length_limit" >&5
+echo "${ECHO_T}$gl_have_arbitrary_file_name_length_limit" >&6
 
-  if test $gl_have_path_max_definition = yes; then
+  if test $gl_have_arbitrary_file_name_length_limit = yes; then
     case $LIBOBJS in
     "chdir-long.$ac_objext"   | \
   *" chdir-long.$ac_objext"   | \
@@ -18415,7 +18425,7 @@ else
 	    'fp->_p - fp->_bf._base'				\
 								\
 	    '# SCO, Unixware'					\
-	    'fp->__ptr - fp->__base'				\
+	    '(fp->__ptr ? fp->__ptr - fp->__base : 0)'		\
 								\
 	    '# old glibc?'					\
 	    'fp->__bufp - fp->__buffer'				\
@@ -22159,13 +22169,6 @@ fi
 esac
 
   fi
-
-
-
-  :
-
-
-
 
 
 
@@ -43085,6 +43088,13 @@ echo "$as_me: error: conditional \"MAKE_TARGETS_IN_VPATH\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
+if test -z "${GL_COND_LIBTOOL_TRUE}" && test -z "${GL_COND_LIBTOOL_FALSE}"; then
+  { { echo "$as_me:$LINENO: error: conditional \"GL_COND_LIBTOOL\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+echo "$as_me: error: conditional \"GL_COND_LIBTOOL\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
 
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
@@ -43716,6 +43726,8 @@ s,@TEXI2DVI@,$TEXI2DVI,;t t
 s,@MAKE_TARGETS_IN_VPATH_TRUE@,$MAKE_TARGETS_IN_VPATH_TRUE,;t t
 s,@MAKE_TARGETS_IN_VPATH_FALSE@,$MAKE_TARGETS_IN_VPATH_FALSE,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
+s,@GL_COND_LIBTOOL_TRUE@,$GL_COND_LIBTOOL_TRUE,;t t
+s,@GL_COND_LIBTOOL_FALSE@,$GL_COND_LIBTOOL_FALSE,;t t
 s,@ALLOCA@,$ALLOCA,;t t
 s,@ALLOCA_H@,$ALLOCA_H,;t t
 s,@STDBOOL_H@,$STDBOOL_H,;t t
