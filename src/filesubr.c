@@ -17,10 +17,20 @@
    definitions under operating systems (like, say, Windows NT) with different
    file system semantics.  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "filesubr.h"
+
+/* GNULIB */
 #include "lstat.h"
 #include "save-cwd.h"
 #include "xsize.h"
+
+/* CVS */
+#include "cvs.h"
 
 static int deep_remove_dir (const char *path);
 

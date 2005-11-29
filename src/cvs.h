@@ -389,8 +389,6 @@ extern char *hostname;
 
 /* Externs that are included directly in the CVS sources */
 
-int RCS_merge (RCSNode *, const char *, const char *, const char *,
-               const char *, const char *);
 /* Flags used by RCS_* functions.  See the description of the individual
    functions for which flags mean what for each function.  */
 #define RCS_FLAGS_FORCE 1
@@ -508,7 +506,6 @@ void WriteTemplate (const char *update_dir, int dotemplate,
 void cat_module (int status);
 void check_entries (char *dir);
 void close_module (DBM * db);
-void copy_file (const char *from, const char *to);
 void fperrmsg (FILE * fp, int status, int errnum, char *message,...);
 
 int ign_name (char *name);
@@ -590,24 +587,6 @@ void SIG_beginCrSect (void);
 void SIG_endCrSect (void);
 int SIG_inCrSect (void);
 void read_cvsrc (int *argc, char ***argv, const char *cmdname);
-
-/* flags for run_exec(), the fast system() for CVS */
-#define	RUN_NORMAL            0x0000    /* no special behaviour */
-#define	RUN_COMBINED          0x0001    /* stdout is duped to stderr */
-#define	RUN_REALLY            0x0002    /* do the exec, even if noexec is on */
-#define	RUN_STDOUT_APPEND     0x0004    /* append to stdout, don't truncate */
-#define	RUN_STDERR_APPEND     0x0008    /* append to stderr, don't truncate */
-#define	RUN_SIGIGNORE         0x0010    /* ignore interrupts for command */
-#define	RUN_TTY               (char *)0 /* for the benefit of lint */
-
-void run_add_arg_p (int *, size_t *, char ***, const char *s);
-void run_arg_free_p (int, char **);
-void run_add_arg (const char *s);
-void run_print (FILE * fp);
-void run_setup (const char *prog);
-int run_exec (const char *stin, const char *stout, const char *sterr,
-              int flags);
-int run_piped (int *, int *);
 
 #include "run.h"
 
@@ -764,14 +743,6 @@ char *normalize_cvsroot (const cvsroot_t *root)
 void tag_check_valid (const char *, int, char **, int, int, char *, bool);
 
 #include "server.h"
-
-/* From server.c and documented there.  */
-void cvs_output (const char *, size_t);
-void cvs_output_binary (char *, size_t);
-void cvs_outerr (const char *, size_t);
-void cvs_flusherr (void);
-void cvs_flushout (void);
-void cvs_output_tagged (const char *, const char *);
 
 extern const char *global_session_id;
 

@@ -138,23 +138,23 @@ am_cvs_OBJECTS = add.$(OBJEXT) admin.$(OBJEXT) annotate.$(OBJEXT) \
 	base.$(OBJEXT) buffer.$(OBJEXT) checkin.$(OBJEXT) \
 	checkout.$(OBJEXT) classify.$(OBJEXT) client.$(OBJEXT) \
 	commit.$(OBJEXT) create_adm.$(OBJEXT) cvsrc.$(OBJEXT) \
-	diff.$(OBJEXT) edit.$(OBJEXT) entries.$(OBJEXT) \
-	error.$(OBJEXT) exithandle.$(OBJEXT) expand_path.$(OBJEXT) \
-	fileattr.$(OBJEXT) filesubr.$(OBJEXT) find_names.$(OBJEXT) \
-	gpg.$(OBJEXT) hardlink.$(OBJEXT) hash.$(OBJEXT) \
-	history.$(OBJEXT) ignore.$(OBJEXT) import.$(OBJEXT) \
-	lock.$(OBJEXT) log.$(OBJEXT) log-buffer.$(OBJEXT) \
-	login.$(OBJEXT) logmsg.$(OBJEXT) ls.$(OBJEXT) main.$(OBJEXT) \
-	mkmodules.$(OBJEXT) modules.$(OBJEXT) ms-buffer.$(OBJEXT) \
-	myndbm.$(OBJEXT) no_diff.$(OBJEXT) parseinfo.$(OBJEXT) \
-	patch.$(OBJEXT) rcs.$(OBJEXT) rcscmds.$(OBJEXT) \
-	recurse.$(OBJEXT) release.$(OBJEXT) remove.$(OBJEXT) \
-	repos.$(OBJEXT) root.$(OBJEXT) rsh-client.$(OBJEXT) \
-	run.$(OBJEXT) scramble.$(OBJEXT) server.$(OBJEXT) \
-	sign.$(OBJEXT) stack.$(OBJEXT) status.$(OBJEXT) subr.$(OBJEXT) \
-	tag.$(OBJEXT) update.$(OBJEXT) version.$(OBJEXT) \
-	vers_ts.$(OBJEXT) watch.$(OBJEXT) wrapper.$(OBJEXT) \
-	zlib.$(OBJEXT)
+	diff.$(OBJEXT) difflib.$(OBJEXT) edit.$(OBJEXT) \
+	entries.$(OBJEXT) error.$(OBJEXT) exithandle.$(OBJEXT) \
+	expand_path.$(OBJEXT) fileattr.$(OBJEXT) filesubr.$(OBJEXT) \
+	find_names.$(OBJEXT) gpg.$(OBJEXT) hardlink.$(OBJEXT) \
+	hash.$(OBJEXT) history.$(OBJEXT) ignore.$(OBJEXT) \
+	import.$(OBJEXT) lock.$(OBJEXT) log.$(OBJEXT) \
+	log-buffer.$(OBJEXT) login.$(OBJEXT) logmsg.$(OBJEXT) \
+	ls.$(OBJEXT) main.$(OBJEXT) mkmodules.$(OBJEXT) \
+	modules.$(OBJEXT) ms-buffer.$(OBJEXT) myndbm.$(OBJEXT) \
+	no_diff.$(OBJEXT) parseinfo.$(OBJEXT) patch.$(OBJEXT) \
+	rcs.$(OBJEXT) rcscmds.$(OBJEXT) recurse.$(OBJEXT) \
+	release.$(OBJEXT) remove.$(OBJEXT) repos.$(OBJEXT) \
+	root.$(OBJEXT) rsh-client.$(OBJEXT) run.$(OBJEXT) \
+	scramble.$(OBJEXT) server.$(OBJEXT) sign.$(OBJEXT) \
+	stack.$(OBJEXT) status.$(OBJEXT) subr.$(OBJEXT) tag.$(OBJEXT) \
+	update.$(OBJEXT) version.$(OBJEXT) vers_ts.$(OBJEXT) \
+	watch.$(OBJEXT) wrapper.$(OBJEXT) zlib.$(OBJEXT)
 cvs_OBJECTS = $(am_cvs_OBJECTS)
 am__DEPENDENCIES_1 =
 binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
@@ -324,6 +324,7 @@ cvs_SOURCES = \
 	create_adm.c \
 	cvsrc.c \
 	diff.c \
+	difflib.c difflib.h \
 	edit.c \
 	entries.c \
 	error.c \
@@ -519,6 +520,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/create_adm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cvsrc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/diff.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/difflib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/edit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/entries.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/error.Po@am__quote@

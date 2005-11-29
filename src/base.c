@@ -29,6 +29,7 @@
 /* GNULIB headers.  */
 
 /* CVS headers.  */
+#include "difflib.h"
 #include "server.h"
 #include "subr.h"
 #include "cvs.h"	/* For CVSADM_BASE. */
@@ -248,7 +249,7 @@ base_deregister (const char *update_dir, const char *file)
 int
 base_checkout (RCSNode *rcs, struct file_info *finfo,
 	       const char *prev, const char *rev, const char *tag,
-	       const char *options, bool writable)
+	       const char *options)
 {
     int status;
     char *basefile;
@@ -263,7 +264,11 @@ base_checkout (RCSNode *rcs, struct file_info *finfo,
     basefile = make_base_file_name (finfo->file, rev);
     status = RCS_checkout (rcs, basefile, rev, tag, options,
 			   NULL, NULL, NULL);
-    xchmod (basefile, writable);
+
+    /* Always mark base files as read-only, to make disturbing them
+     * accidentally at least slightly challenging.
+     */
+    xchmod (basefile, false);
     free (basefile);
 
     if (server_active && strcmp (cvs_cmd_name, "export"))
@@ -275,21 +280,25 @@ base_checkout (RCSNode *rcs, struct file_info *finfo,
 
 
 void
-base_copy (struct file_info *finfo, const char *rev, const char *exists)
+base_copy (struct file_info *finfo, const char *rev, const char *flags)
 {
     char *basefile;
 
     TRACE (TRACE_FUNCTION, "base_copy (%s, %s, %s)",
-	   finfo->fullname, rev, exists);
+	   finfo->fullname, rev, flags);
+
+    assert (flags && flags[0] && flags[1]);
 
     basefile = make_base_file_name (finfo->file, rev);
     if (isfile (finfo->file))
 	xchmod (finfo->file, true);
     copy_file (basefile, finfo->file);
+    if (flags[1] == 'y')
+	xchmod (finfo->file, true);
     free (basefile);
 
     if (server_active && strcmp (cvs_cmd_name, "export"))
-	server_base_copy (finfo, rev, exists);
+	server_base_copy (finfo, rev, flags);
 }
 
 
@@ -304,4 +313,68 @@ base_remove (const char *file, const char *rev)
     if (unlink_file (basefile) < 0 && !existence_error (errno))
 	error (0, errno, "Failed to remove `%s'", basefile);
     free (basefile);
+}
+
+
+
+/* Merge revisions REV1 and REV2. */
+int
+base_merge (RCSNode *rcs, struct file_info *finfo, const char *options,
+	    const char *urev, const char *rev1, const char *rev2)
+{
+    char *f1, *f2;
+    int retval;
+
+    assert (!options || !options[0]
+	    || (options[0] == '-' && options[1] == 'k'));
+
+    /* Check out chosen revisions.  The error message when RCS_checkout
+       fails is not very informative -- it is taken verbatim from RCS 5.7,
+       and relies on RCS_checkout saying something intelligent upon failure. */
+
+    if (base_checkout (rcs, finfo, urev, rev1, rev1, options))
+	error (1, 0, "checkout of revision %s of `%s' failed.\n",
+	       rev1, finfo->fullname);
+
+    if (base_checkout (rcs, finfo, urev, rev2, rev2, options))
+	error (1, 0, "checkout of revision %s of `%s' failed.\n",
+	       rev2, finfo->fullname);
+
+    f1 = make_base_file_name (finfo->file, rev1);
+    f2 = make_base_file_name (finfo->file, rev2);
+
+    if (!server_active || !server_use_bases())
+    {
+	/* Merge changes. */
+	/* It may violate the current abstraction to fail to generate the same
+	 * files on the server as will be generated on the client, but I do not
+	 * believe that they are being used currently and it saves server CPU.
+	 */
+	cvs_output ("Merging differences between revisions ", 0);
+	cvs_output (rev1, 0);
+	cvs_output (" and ", 5);
+	cvs_output (rev2, 0);
+	cvs_output (" into `", 7);
+	if (!finfo->update_dir || !strcmp (finfo->update_dir, "."))
+	    cvs_output (finfo->file, 0);
+	else
+	    cvs_output (finfo->fullname, 0);
+	cvs_output ("'\n", 2);
+
+	retval = merge (finfo->file, f1, f2, rev1, rev2);
+    }
+    else
+	retval = 0;
+
+    if (server_active)
+	server_base_merge (finfo, rev1, rev2);
+
+    if (strcmp (urev, rev1) && unlink_file (f1) < 0)
+	error (0, errno, "unable to remove `%s'", f1);
+    if (strcmp (urev, rev2) && unlink_file (f2) < 0)
+	error (0, errno, "unable to remove `%s'", f2);
+    free (f1);
+    free (f2);
+
+    return retval;
 }

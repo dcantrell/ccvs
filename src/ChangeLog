@@ -1,3 +1,32 @@
+2005-11-29  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (cvs_SOURCES): Add difflib.[ch].
+	* difflib.c, difflib.h: New files with content from...
+	* rcscmds.c: ...here.
+	* base.c (base_checkout): Move writable processing...
+	(base_copy): ...here.
+	(base_merge): New function.
+	* add.c, base.h, checkin.c, update.c: Update all references.
+	* client.c (last_merge, last_merge_conflict): Keep track of whether
+	merges for update_entries.
+	(update_entries): Use merge result.
+	(client_base_copy): Handle new flags.
+	(client_base_merge, handle_base_merge): New functions.
+	(responses): Add "Base-merge" response.
+	* server.h: Move some protos in from...
+	* cvs.h: ...here and move some run.c stuff...
+	* run.h: ...here.
+	* filesubr.c: Reorg headers.
+	* filesubr.h: Give standalone API.  Move copy_file proto from cvs.h.
+	* server.c (server_base_checkout, server_base_copy): Push data to
+	client when done.
+	(server_base_merge): New function.
+	(server_updated): Assume base handling.
+	* update.c (RegisterMerge, merge_file, join_file): Offload merging to
+	client.
+	* add.c, checkin.c, commit.c, update.c: Update all references.
+	* sanity.sh: Misc accomodations.
+
 2005-11-28  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (errmsg4): Protect keyword.

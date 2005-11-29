@@ -122,8 +122,7 @@ struct buffer;
 
 void server_updated (struct file_info *finfo, Vers_TS *vers,
                      enum server_updated_arg4 updated, mode_t mode,
-                     unsigned char *checksum, struct buffer *filebuf,
-		     bool use_base);
+                     unsigned char *checksum, struct buffer *filebuf);
 
 bool server_use_bases (void);
 /* Whether we should send RCS format patches.  */
@@ -235,6 +234,16 @@ void server_base_checkout (RCSNode *rcs, struct file_info *finfo,
 			   const char *options);
 
 void server_base_copy (struct file_info *file, const char *rev,
-		       const char *exists);
+		       const char *flags);
+void server_base_merge (struct file_info *finfo, const char *rev1,
+			const char *rev2);
+bool server_use_bases (void);
+
+void cvs_output (const char *, size_t);
+void cvs_output_binary (char *, size_t);
+void cvs_outerr (const char *, size_t);
+void cvs_flusherr (void);
+void cvs_flushout (void);
+void cvs_output_tagged (const char *, const char *);
 
 #endif /* !defined SERVER_H */

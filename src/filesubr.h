@@ -20,6 +20,7 @@
 #define FILESUBR_H
 
 #include <stdbool.h>
+#include <stdio.h>      /* Get FILE. */
 #include <sys/types.h>  /* Get ssize_t.  */
 
 
@@ -38,5 +39,6 @@ char *cvs_temp_name (void);
 FILE *cvs_temp_file (char **filename);
 int unlink_file (const char *f);
 int unlink_file_dir (const char *f);
+void copy_file (const char *from, const char *to);
 
 #endif /* FILESUBR_H */

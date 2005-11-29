@@ -15,23 +15,14 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
+#ifndef DIFFLIB_H
+#define DIFFLIB_H
 
-#ifndef BASE_H
-#define BASE_H
+int call_diff (const char *out);
+int call_diff3 (char *out);
+void call_diff_add_arg (const char *s);
+void call_diff_setup (const char *prog, int argc, char * const *argv);
+int merge (const char *dest, const char *j1, const char *j2,
+	   const char *rev1, const char *rev2);
 
-#include "rcs.h"
-
-char *make_base_file_name (const char *filename, const char *rev);
-
-char *base_get (const char *update_dir, const char *file);
-void base_register (const char *update_dir, const char *file, char *rev);
-void base_deregister (const char *update_dir, const char *file);
-
-int base_checkout (RCSNode *rcs, struct file_info *finfo,
-		   const char *prev, const char *rev, const char *tag,
-		   const char *options);
-void base_copy (struct file_info *finfo, const char *rev, const char *flags);
-void base_remove (const char *file, const char *rev);
-int base_merge (RCSNode *rcs, struct file_info *finfo, const char *options,
-	        const char *urev, const char *rev1, const char *rev2);
-#endif /* BASE_H */
+#endif /* DIFFLIB_H */

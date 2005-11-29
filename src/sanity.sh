@@ -3318,7 +3318,6 @@ initial revision: 1\.1"
 	  # test might also have modified files, make sure it works if
 	  # the modules file was modified to add new directories to the
 	  # module, and such.
-#export CVS_CLIENT_LOG=/tmp/cvsgpglog
 	  dotest basicb-0d0 "${testcvs} -q co -l ." ""
 	  mkdir first-dir
 	  dotest basicb-0e "${testcvs} add first-dir" \
@@ -5389,14 +5388,9 @@ initial revision: 1\.1"
 new revision: 1\.2; previous revision: 1\.1"
 		cd ../first-dir
 		echo force a conflict >>tfile
-		dotest status-init-7 "${testcvs} -q up" \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/tfile,v
-retrieving revision 1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into tfile
-rcsmerge: warning: conflicts during merge
-${SPROG} update: conflicts found in tfile
-C tfile"
+		dotest status-init-7 "$testcvs -q up" \
+"Merging differences between 1\.1 and 1\.2 into \`tfile'
+cvs update: conflicts during merge"
 
 		# Now note our status
 		dotest status-1 "${testcvs} status tfile" \
@@ -6209,81 +6203,48 @@ diff -c first-dir/file3:1\.1\.2\.1 first-dir/file3:removed
 		fi
 
 		# commit
-		if ${CVS} ci -m test  >> ${LOGFILE} 2>&1; then
-		    pass 80
-		else
-		    fail 80
-		fi
+		dotest death-80 "$testcvs -Q ci -m test"
 
 		# change the first file
 		echo line2 from branch1 >> file1
 
 		# commit
-		if ${CVS} ci -m test  >> ${LOGFILE} 2>&1; then
-		    pass 81
-		else
-		    fail 81
-		fi
+		dotest death-81 "$testcvs -Q ci -m test"
 
 		# remove the second
 		rm file2
-		if ${CVS} rm file2  2>> ${LOGFILE}; then
-		    pass 82
-		else
-		    fail 82
-		fi
+		dotest death-82 "$testcvs -Q rm file2"
 
 		# commit
-		if ${CVS} ci -m test  >>${LOGFILE}; then
-		    pass 83
-		else
-		    fail 83
-		fi
+		dotest death-83 "$testcvs -Q ci -m test"
 
 		# back to the trunk.
-		if ${CVS} update -A  2>> ${LOGFILE}; then
-		    pass 84
-		else
-		    fail 84
-		fi
+		dotest death-84 "$testcvs -Q update -A"
 
 		dotest_fail death-file4-4 "test -f file4" ''
 
-		if test -f file3 ; then
-		    fail 85
-		else
-		    pass 85
-		fi
+		dotest_fail death-85 "test -f file3"
 
 		# join
 		dotest death-86 "$testcvs -q update -j branch1" \
-"RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
-retrieving revision 1\.3
-retrieving revision 1\.3\.2\.1
-Merging differences between 1\.3 and 1\.3\.2\.1 into file1
-${SPROG} update: scheduling \`file2' for removal
-U file3"
+"Merging differences between 1\.3 and 1\.3\.2\.1 into \`file1'
+$SPROG update: scheduling \`file2' for removal
+$SPROG update: scheduling addition from revision 1\.1\.2\.3 of \`file3'\."
+		dotest_fail death-file4-5 "test -f file4"
 
-		dotest_fail death-file4-5 "test -f file4" ''
-
-		if test -f file3 ; then
-		    pass 87
-		else
-		    fail 87
-		fi
+		dotest death-87 "test -f file3"
 
 		# Make sure that we joined the correct change to file1
 		dotest death-87a "echo line2 from branch1 |$diff_u - file1"
 
 		# update
-		if ${CVS} update  ; then
-		    pass 88
-		else
-		    fail 88
-		fi
+		dotest death-88 "$testcvs -q update" \
+"M file1
+R file2
+A file3"
 
 		# commit
-		dotest 89 "${testcvs} -q ci -m test" \
+		dotest deatch-89 "$testcvs -q ci -m test" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.4; previous revision: 1\.3
 $CVSROOT_DIRNAME/first-dir/file2,v  <--  file2
@@ -6293,7 +6254,8 @@ new revision: 1\.2; previous revision: 1\.1"
 		cd ..
 		mkdir 2
 		cd 2
-		dotest 89a "${testcvs} -q co first-dir" 'U first-dir/file1
+		dotest death-89a "$testcvs -q co first-dir" \
+'U first-dir/file1
 U first-dir/file3'
 		cd ..
 		rm -r 2
@@ -6301,68 +6263,40 @@ U first-dir/file3'
 
 		# remove first file.
 		rm file1
-		if ${CVS} rm file1  2>> ${LOGFILE}; then
-		    pass 90
-		else
-		    fail 90
-		fi
+		dotest death-90 "$testcvs -Q rm file1"
 
 		# commit
-		if ${CVS} ci -m test  >>${LOGFILE}; then
-		    pass 91
-		else
-		    fail 91
-		fi
-
-		if test -f file1 ; then
-		    fail 92
-		else
-		    pass 92
-		fi
+		dotest death-91 "$testcvs -Q ci -m test"
+		dotest_fail death-92 "test -f file1"
 
 		# typo; try to get to the branch and fail
 		dotest_fail 92.1a "$testcvs update -r brnach1" \
 		  "$SPROG \[update aborted\]: no such tag \`brnach1'"
 		# Make sure we are still on the trunk
-		if test -f file1 ; then
-		    fail 92.1b
-		else
-		    pass 92.1b
-		fi
-		if test -f file3 ; then
-		    pass 92.1c
-		else
-		    fail 92.1c
-		fi
+		dotest_fail death-92.1b "test -f file1"
+		dotest death-92.1c "test -f file3"
 
 		# back to branch1
-		if ${CVS} update -r branch1  2>> ${LOGFILE}; then
-		    pass 93
-		else
-		    fail 93
-		fi
+		dotest death-93 "$testcvs -q update -r branch1" \
+"U file1
+U file3"
 
-		dotest_fail death-file4-6 "test -f file4" ''
-
-		if test -f file1 ; then
-		    pass 94
-		else
-		    fail 94
-		fi
+		dotest_fail death-file4-6 "test -f file4"
+		dotest death-94 "test -f file1"
 
 		# and join
-		dotest 95 "${testcvs} -q update -j HEAD" \
-"${SPROG}"' update: file file1 has been modified, but has been removed in revision HEAD
-'"${SPROG}"' update: file file3 exists, but has been added in revision HEAD'
+		dotest death-95 "$testcvs -q update -j HEAD" \
+"$SPROG update: file file1 has been modified, but has been removed in revision HEAD
+$SPROG update: file file3 exists, but has been added in revision HEAD"
 
-		dotest_fail death-file4-7 "test -f file4" ''
+		dotest_fail death-file4-7 "test -f file4"
 
 		# file2 should not have been recreated.  It was
 		# deleted on the branch, and has not been modified on
 		# the trunk.  That means that there have been no
 		# changes between the greatest common ancestor (the
 		# trunk version) and HEAD.
-		dotest_fail death-file2-1 "test -f file2" ''
+		dotest_fail death-file2-1 "test -f file2"
 
 		dokeep
 		cd ..
@@ -6973,7 +6907,8 @@ ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  dotest rmadd2-6 "${testcvs} -q ci -m remove" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: delete; previous revision: 1\.1"
-	  dotest rmadd2-7 "$testcvs -q update -j 1.2 -j 1.1 file1" "U file1"
+	  dotest rmadd2-7 "$testcvs -q update -j 1.2 -j 1.1 file1" \
+"$SPROG update: scheduling addition from revision 1\.1 of \`file1'\."
 	  dotest rmadd2-8 "${testcvs} -q ci -m readd" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2"
@@ -6982,10 +6917,7 @@ new revision: 1\.3; previous revision: 1\.2"
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.4; previous revision: 1\.3"
 	  dotest rmadd2-10 "${testcvs} -q update -j 1.4 -j 1.3 file1" \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.4
-retrieving revision 1\.3
-Merging differences between 1\.4 and 1\.3 into file1"
+"Merging differences between 1\.4 and 1\.3 into \`file1'"
 	  dotest rmadd2-11 "${testcvs} -q ci -m undo" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.5; previous revision: 1\.4"
@@ -7138,7 +7070,7 @@ $SPROG add: \`file1', version 1\.1, resurrected"
 $SPROG add: Re-adding file \`file1' after dead revision 1\.2\.
 $SPROG add: Resurrecting file \`file1' from revision 1\.1\.
 $SPROG add: use \`$SPROG commit' to add this file permanently"
-	  dotest resurrection-4 "$testcvs -q diff -r1.1 file1" ""
+	  dotest resurrection-4 "$testcvs -q diff -r1.1 file1"
 	  dotest resurrection-5 "$testcvs -q ci -mreadd" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2"
@@ -7179,7 +7111,6 @@ new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1"
 	  dotest_sort resurrection-14 "$testcvs -r add file1" \
 "U file1
 $SPROG add: \`file1', version 1\.3, resurrected"
-export CVS_CLIENT_LOG=/tmp/cvsclientlog
 	  dotest_fail resurrection-15 'test -w file1'
 
 	  dokeep
@@ -7247,7 +7178,7 @@ You have \[0\] altered files in this repository\.
 Are you sure you want to release (and delete) directory .dir1/sdir': .. .release' aborted by user choice."
 
 	  # OK, if "cvs release" won't help, we'll try it the other way...
-	  rm -r dir1/sdir
+	  rm -rf dir1/sdir
 
 	  dotest dirs-5 "cat dir1/CVS/Entries" \
 "/file1/1.1.1.1/[a-zA-Z0-9 :]*//
@@ -7261,7 +7192,7 @@ D/sdir////"
 
 	  dokeep
 	  cd ..
-	  rm -r imp-dir 1
+	  rm -rf imp-dir 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/dir1
 	  ;;
 
@@ -7551,11 +7482,8 @@ diff -c -r1\.1 -r1\.2\.2\.1
 ! 4:br1"
 	  dotest branches-15 \
 	    "${testcvs} update -j 1.1.2.1 -j 1.1.2.1.2.1 file1" \
-	    "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.1\.2\.1
-retrieving revision 1\.1\.2\.1\.2\.1
-Merging differences between 1\.1\.2\.1 and 1\.1\.2\.1\.2\.1 into file1
-rcsmerge: warning: conflicts during merge"
+"Merging differences between 1\.1\.2\.1 and 1\.1\.2\.1\.2\.1 into \`file1'
+$CPROG update: conflicts during merge"
 	  dotest branches-16 "cat file1" '<<<<<<< file1
 1:ancest
 [=]======
@@ -8427,13 +8355,8 @@ done"
 	  # directories so that the update -r br would need to
 	  # a merge to get from 1.1.2.1 to the head of the 1.1.2 branch.
 	  dotest tagf-13 "${testcvs} -q update -r br" \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.1\.2\.1
-retrieving revision 1\.1
-Merging differences between 1\.1\.2\.1 and 1\.1 into file1
-rcsmerge: warning: conflicts during merge
-${SPROG} update: conflicts found in file1
-C file1
+"Merging differences between 1\.1\.2\.1 and 1\.1 into \`file1'
+$CPROG update: conflicts during merge
 M file2"
 	  # CVS is giving a conflict because we are trying to get back to
 	  # 1.1.4.  I'm not sure why it is a conflict rather than just
@@ -8870,11 +8793,8 @@ File: file1            	Status: Up-to-date
 	  dotest rcslib-merge-11 "$testcvs -Q commit -mb1 file1"
 	  dotest rcslib-merge-12 "${testcvs} -q update -kv -j1.2" \
 "U file1
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into file1
-rcsmerge: warning: conflicts during merge"
+Merging differences between 1\.1 and 1\.2 into \`file1'
+$CPROG update: conflicts during merge"
 	  dotest rcslib-merge-13 "cat file1" \
 "<<<<<<< file1
 1\.1\.2\.1
@@ -9329,13 +9249,10 @@ Use the following command to help the merge:"
 		cd ..
 
 		dotest import-113 \
-"${testcvs} -q co -jjunk-1_0 -jjunk-2_0 first-dir" \
-"${SPROG} checkout: file first-dir/imported-f1 does not exist, but is present in revision junk-2_0
-RCS file: ${CVSROOT_DIRNAME}/first-dir/imported-f2,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.2
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into imported-f2
-rcsmerge: warning: conflicts during merge
+"$testcvs -q co -jjunk-1_0 -jjunk-2_0 first-dir" \
+"$SPROG checkout: file first-dir/imported-f1 does not exist, but is present in revision junk-2_0
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into \`imported-f2'
+$CPROG update: conflicts during merge
 first-dir/imported-f3 already contains the differences between 1\.1\.1\.1 and 1\.1\.1\.2
 first-dir/imported-f4 already contains the differences between 1\.1\.1\.1 and 1\.1\.1\.3"
 
@@ -10333,19 +10250,16 @@ M file4'
 	  # on branches.
 	  cd ../../3
 	  rm -r first-dir
-	  dotest join-20 "${testcvs} -q co -jbranch first-dir" \
+	  dotest join-20 "$testcvs -q co -jbranch first-dir" \
 "U first-dir/file1
 U first-dir/file2
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
-retrieving revision 1\.1
-retrieving revision 1\.1\.2\.2
-Merging differences between 1\.1 and 1\.1\.2\.2 into file2
+Merging differences between 1\.1 and 1\.1\.2\.2 into \`file2'
 U first-dir/file3
-${SPROG} checkout: scheduling \`first-dir/file3' for removal
+$SPROG checkout: scheduling \`first-dir/file3' for removal
 U first-dir/file4
-${SPROG} checkout: file first-dir/file4 has been modified, but has been removed in revision branch
+$SPROG checkout: file first-dir/file4 has been modified, but has been removed in revision branch
 U first-dir/file7
-${SPROG} checkout: file first-dir/file9 does not exist, but is present in revision branch"
+$SPROG checkout: file first-dir/file9 does not exist, but is present in revision branch"
 
 	  # Verify that the right changes have been scheduled.
 	  # The M file2 line is a bug; see above join-20.
@@ -10371,14 +10285,11 @@ U first-dir/file7'
 	  echo 'third revision of file4' > file4
 	  dotest join-23 "${testcvs} -q update -jbranch ." \
 "U file1
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
-retrieving revision 1\.1
-retrieving revision 1\.1\.2\.2
-Merging differences between 1\.1 and 1\.1\.2\.2 into file2
-${SPROG} update: scheduling \`file3' for removal
+Merging differences between 1\.1 and 1\.1\.2\.2 into \`file2'
+$SPROG update: scheduling \`file3' for removal
 M file4
-${SPROG} update: file file4 is locally modified, but has been removed in revision branch
-${SPROG} update: file file9 does not exist, but is present in revision branch"
+$SPROG update: file file4 is locally modified, but has been removed in revision branch
+$SPROG update: file file9 does not exist, but is present in revision branch"
 
 	  # Verify that the right changes have been scheduled.
 	  # The M file2 line is a bug; see above join-20
@@ -10410,12 +10321,9 @@ T file7"
 	  # the trunk (e.g. join-23).
 	  dotest join-28 "${testcvs} -q update -j branch" \
 "U file1
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
-retrieving revision 1.1
-retrieving revision 1.1.2.2
-Merging differences between 1.1 and 1.1.2.2 into file2
-${SPROG} update: scheduling \`file3' for removal
-${SPROG} update: file file4 has been modified, but has been removed in revision branch
+Merging differences between 1.1 and 1.1.2.2 into \`file2'
+$SPROG update: scheduling \`file3' for removal
+$SPROG update: file file4 has been modified, but has been removed in revision branch
 U file8
 U file9"
 	  # Verify that the right changes have been scheduled.
@@ -10440,22 +10348,19 @@ U first-dir/file2
 U first-dir/file8
 U first-dir/file9'
 	  cd first-dir
-	  dotest join-twobranch-2 "${testcvs} -q update -rbr2 -jbranch" \
-"${SPROG} update: \`file1' is no longer in the repository
+	  dotest join-twobranch-2 "$testcvs -q update -rbr2 -jbranch" \
+"$SPROG update: \`file1' is no longer in the repository
 U file1
 U file2
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
-retrieving revision 1\.1
-retrieving revision 1\.1\.2\.2
-Merging differences between 1\.1 and 1\.1\.2\.2 into file2
+Merging differences between 1\.1 and 1\.1\.2\.2 into \`file2'
 U file3
-${SPROG} update: scheduling \`file3' for removal
+$SPROG update: scheduling \`file3' for removal
 U file4
-${SPROG} update: file file4 has been modified, but has been removed in revision branch
+$SPROG update: file file4 has been modified, but has been removed in revision branch
 U file7
-${SPROG} update: \`file8' is no longer in the repository
+$SPROG update: \`file8' is no longer in the repository
 U file8
-${SPROG} update: \`file9' is no longer in the repository
+$SPROG update: \`file9' is no longer in the repository
 U file9"
 	  # Verify that the right changes have been scheduled.
 	  dotest join-twobranch-3 "${testcvs} -q update" \
@@ -10511,10 +10416,7 @@ U file7"
 	  # happens to do the right thing; see above join-20.
 	  dotest join-36 "${testcvs} -q up -j T3 -j T4" \
 "A file7
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file7,v
-retrieving revision 1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into file7"
+Merging differences between 1\.1 and 1\.2 into \`file7'"
 
 	  # Verify that the right changes have been scheduled.
 	  dotest join-37 "${testcvs} -q update" \
@@ -10575,10 +10477,7 @@ File: file1            	Status: Up-to-date
 	  dotest join2-10 "cat CVS/Tag" "Tbr1"
 
 	  dotest join2-11 "${testcvs} -q update -j br1 file1" \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.1
-retrieving revision 1\.1\.2\.1
-Merging differences between 1\.1 and 1\.1\.2\.1 into file1"
+"Merging differences between 1\.1 and 1\.1\.2\.1 into \`file1'"
 	  dotest join2-12 "cat file1" "initial contents of file1
 modify on branch"
 	  # We should have no sticky tag on file1
@@ -10683,11 +10582,8 @@ T file2"
 	  dotest join3-11 "${testcvs} -q update -r br1" "[UP] file1
 ${SPROG} update: \`file2' is no longer in the repository"
 	  dotest join3-12 "${testcvs} -q update -j br2" \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into file1
-rcsmerge: warning: conflicts during merge
+"Merging differences between 1\.1 and 1\.2 into \`file1'
+$CPROG update: conflicts during merge
 U file2"
 	  dotest join3-13 "cat file1" \
 "initial contents of file1
@@ -10714,11 +10610,8 @@ new revision: 1\.2\.2\.1; previous revision: 1\.2"
 	  # and so it merges both the 1.1->1.2 and 1.2->1.2.2.1 changes.
 	  # This seems like a reasonably plausible behavior.
 	  dotest join3-17 "${testcvs} -q update -j br2 file1" \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.1
-retrieving revision 1\.2\.2\.1
-Merging differences between 1\.1 and 1\.2\.2\.1 into file1
-rcsmerge: warning: conflicts during merge"
+"Merging differences between 1\.1 and 1\.2\.2\.1 into file1
+$CPROG update: conflicts during merge"
 	  dotest join3-18 "cat file1" \
 "initial contents of file1
 [<]<<<<<< file1
@@ -10959,15 +10852,10 @@ new revision: 1\.2; previous revision: 1\.1"
 	  cd 1/join5
 	  echo "but maybe it could charge bytheword" >>-file
 	  # This is the test that used to spew complaints from diff3:
-	  dotest join5 "${testcvs} up" \
-"${SPROG} update: Updating \.
-RCS file: ${CVSROOT_DIRNAME}/join5/-file,v
-retrieving revision 1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into -file
-rcsmerge: warning: conflicts during merge
-${SPROG} update: conflicts found in -file
-C -file"
+	  dotest join5 "$testcvs up" \
+"$SPROG update: Updating \.
+Merging differences between 1\.1 and 1\.2 into \`-file'
+$CPROG update: conflicts during merge"
 
 	  dokeep
 	  cd ../../..
@@ -11012,11 +10900,8 @@ new revision: 1\.2; previous revision: 1\.1"
 	  echo ddd >>temp.txt
 	  dotest join6-3.5 "${testcvs} update -j1.1 -j1.2 temp.txt" \
 "M temp\.txt
-RCS file: ${CVSROOT_DIRNAME}/join6/temp\.txt,v
-retrieving revision 1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into temp\.txt
-temp\.txt already contains the differences between 1\.1 and 1\.2"
+Merging differences between 1\.1 and 1\.2 into \`temp\.txt'
+\`temp\.txt' already contains the differences between 1\.1 and 1\.2"
 	  dotest_fail join6-3.6 "${testcvs} diff temp.txt" \
 "Index: temp\.txt
 ===================================================================
@@ -11038,20 +10923,14 @@ diff -r1\.2 temp\.txt
 
 	  dotest join6-5 "${testcvs} update -j1.1 -j1.2 temp.txt" \
 "M temp\.txt
-RCS file: ${CVSROOT_DIRNAME}/join6/temp\.txt,v
-retrieving revision 1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into temp\.txt"
+Merging differences between 1\.1 and 1\.2 into \`temp\.txt'"
 	  dotest join6-6 "${testcvs} diff temp.txt" ""
 	  mv temp.txt temp3.txt
 	  dotest join6-7 "sed 's/ddd/dddd/' < temp3.txt > temp.txt" ""
 	  dotest join6-8 "${testcvs} update -j1.1 -j1.2 temp.txt" \
 "M temp\.txt
-RCS file: ${CVSROOT_DIRNAME}/join6/temp\.txt,v
-retrieving revision 1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into temp\.txt
-rcsmerge: warning: conflicts during merge"
+Merging differences between 1\.1 and 1\.2 into \`temp\.txt'
+$CPROG update: conflicts during merge"
 	  dotest_fail join6-9 "${testcvs} diff temp.txt" \
 "Index: temp\.txt
 ===================================================================
@@ -11077,12 +10956,9 @@ retrieving revision 1\.3
 diff -r1\.3 temp\.txt
 3a4
 > ddd"
-	  dotest join6-12 "${testcvs} update -j1.2 -j1.3 temp.txt" \
+	  dotest join6-12 "$testcvs update -j1.2 -j1.3 temp.txt" \
 "M temp\.txt
-RCS file: ${CVSROOT_DIRNAME}/join6/temp\.txt,v
-retrieving revision 1\.2
-retrieving revision 1\.3
-Merging differences between 1\.2 and 1\.3 into temp\.txt"
+Merging differences between 1\.2 and 1\.3 into \`temp\.txt'"
 	  dotest join6-13 "${testcvs} diff temp.txt" ""
 
 	  # The case where the merge target wasn't created until after the
@@ -11103,10 +10979,7 @@ T temp2.txt"
 "$CVSROOT_DIRNAME/join6/temp.txt,v  <--  temp\.txt
 new revision: 1\.4; previous revision: 1\.3"
 	  dotest join6-25 "${testcvs} -q up -jt1 -jt2" \
-"RCS file: ${CVSROOT_DIRNAME}/join6/temp.txt,v
-retrieving revision 1\.1
-retrieving revision 1\.3
-Merging differences between 1\.1 and 1\.3 into temp.txt
+"Merging differences between 1\.1 and 1\.3 into \`temp.txt'
 temp.txt already contains the differences between 1\.1 and 1\.3
 temp2.txt already contains the differences between creation and 1\.1"
 
@@ -11118,29 +10991,10 @@ temp2.txt already contains the differences between creation and 1\.1"
 "$CVSROOT_DIRNAME/join6/temp2\.txt,v  <--  temp2\.txt
 new revision: delete; previous revision: 1\.1"
 	  echo new >temp2.txt
-	  # FIXCVS: Local and remote really shouldn't be different and there
-	  # really shouldn't be two different status lines for temp2.txt
-	  if $remote; then
-	    dotest_fail join6-32 "${testcvs} -q up -jt1 -jt2" \
+	  dotest_fail join6-32 "${testcvs} -q up -jt1 -jt2" \
 "? temp2\.txt
-RCS file: ${CVSROOT_DIRNAME}/join6/temp.txt,v
-retrieving revision 1\.1
-retrieving revision 1\.3
-Merging differences between 1\.1 and 1\.3 into temp.txt
-temp.txt already contains the differences between 1\.1 and 1\.3
-$CPROG update: move away .\./temp2\.txt.; it is in the way
-C temp2\.txt"
-	  else
-	    dotest join6-32 "${testcvs} -q up -jt1 -jt2" \
-"RCS file: ${CVSROOT_DIRNAME}/join6/temp.txt,v
-retrieving revision 1\.1
-retrieving revision 1\.3
-Merging differences between 1\.1 and 1\.3 into temp.txt
-temp.txt already contains the differences between 1\.1 and 1\.3
-${SPROG} update: use .${SPROG} add. to create an entry for .temp2\.txt.
-U temp2\.txt
-? temp2\.txt"
-	  fi
+Merging differences between 1\.1 and 1\.3 into \`temp.txt'
+\`temp.txt' already contains the differences between 1\.1 and 1\.3"
 
 	  dokeep
 	  cd ../../..
@@ -11175,24 +11029,13 @@ U temp2\.txt
 ""
 	  cd ../join7
 	  dotest join7-5 \
-"${testcvs} -n update -jvers-1 -jvers-2 temp.txt" \
-"RCS file: $CVSROOT_DIRNAME/join7/temp.txt,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.2
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into temp.txt
-rcsmerge: warning: conflicts during merge"
+"$testcvs -n update -jvers-1 -jvers-2 temp.txt" \
+"Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into \`temp.txt'
+$CPROG update: conflicts during merge"
 	  touch temp.txt
-	  dotest join7-6 "${testcvs} -n update -jvers-1 -jvers-2 temp.txt" \
-"RCS file: $CVSROOT_DIRNAME/join7/temp.txt,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.2
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into temp.txt
-rcsmerge: warning: conflicts during merge" \
-"RCS file: $CVSROOT_DIRNAME/join7/temp.txt,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.2
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into temp.txt
-rcsmerge: warning: conflicts during merge"
+	  dotest join7-6 "$testcvs -n update -jvers-1 -jvers-2 temp.txt" \
+"Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into \`temp.txt'
+$CPROG update: conflicts during merge"
 
 	  dokeep
 	  cd ../..
@@ -11242,13 +11085,8 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 	  # preserve a file's read-only permissions.
 	  echo conflict > $file; chmod u-w $file
 	  dotest join-readonly-conflict-8 "$testcvs update -r B $file" \
-"RCS file: $CVSROOT_DIRNAME/$module/$file,v
-retrieving revision 1\.1
-retrieving revision 1\.1\.2\.1
-Merging differences between 1\.1 and 1\.1\.2\.1 into $file
-rcsmerge: warning: conflicts during merge
-${SPROG} update: conflicts found in $file
-C $file"
+"Merging differences between 1\.1 and 1\.1\.2\.1 into \`$file'
+$CPROG update: conflicts during merge"
 
 	  # restore to the trunk
 	  rm -f $file
@@ -11265,13 +11103,8 @@ C $file"
 	    pass "join-readonly-conflict-10"
 	  fi
 	  dotest join-readonly-conflict-11 "$testcvs update -r B $file" \
-"RCS file: $CVSROOT_DIRNAME/$module/$file,v
-retrieving revision 1\.1
-retrieving revision 1\.1\.2\.1
-Merging differences between 1\.1 and 1\.1\.2\.1 into $file
-rcsmerge: warning: conflicts during merge
-${SPROG} update: conflicts found in $file
-C m"
+"Merging differences between 1\.1 and 1\.1\.2\.1 into \`$file'
+$CPROG update: conflicts during merge"
 
 	  dokeep
 	  cd ../..
@@ -11368,21 +11201,15 @@ File: b                	Status: Up-to-date
 "${SPROG} update: Updating .
 U b
 U e
-RCS file: ${CVSROOT_DIRNAME}/x/e,v
-retrieving revision 1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into e
-e already contains the differences between 1\.1 and 1\.2
+Merging differences between 1\.1 and 1\.2 into \`e'
+\`e' already contains the differences between 1\.1 and 1\.2
 ${QUESTION} e0" \
 "${QUESTION} e0
 ${SPROG} update: Updating .
 U b
 U e
-RCS file: ${CVSROOT_DIRNAME}/x/e,v
-retrieving revision 1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into e
-e already contains the differences between 1\.1 and 1\.2"
+Merging differences between 1\.1 and 1\.2 into \`e'
+\`e' already contains the differences between 1\.1 and 1\.2"
 
 	  # Verify that the $Id.$ string is not expanded.
 	  dotest join-admin-2-15 "cat e" '$''Id$'
@@ -11695,32 +11522,17 @@ File: a                	Status: Needs Merge
    Sticky Date:		(none)
    Sticky Options:	(none)"
 		dotest conflicts-129a "${testcvs} -nq update a" \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/a,v
-retrieving revision 1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into a
-rcsmerge: warning: conflicts during merge
-${SPROG} update: conflicts found in a
-C a"
+"Merging differences between 1\.1 and 1\.2 into \`a'
+$CPROG update: conflicts during merge"
 		dotest conflicts-130 "${testcvs} -q update" \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/a,v
-retrieving revision 1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into a
-rcsmerge: warning: conflicts during merge
-${SPROG} update: conflicts found in a
-C a
+"Merging differences between 1\.1 and 1\.2 into \`a'
+$CPROG update: conflicts during merge
 ${QUESTION} dir1
 ${QUESTION} sdir" \
 "${QUESTION} dir1
 ${QUESTION} sdir
-RCS file: ${CVSROOT_DIRNAME}/first-dir/a,v
-retrieving revision 1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into a
-rcsmerge: warning: conflicts during merge
-${SPROG} update: conflicts found in a
-C a"
+Merging differences between 1\.1 and 1\.2 into \`a'
+$CPROG update: conflicts during merge"
 		rmdir dir1 sdir
 
 		dotest conflicts-status-1 "${testcvs} status a" \
@@ -12316,13 +12128,8 @@ new revision: 1\.2; previous revision: 1\.1"
 	  cd ../first-dir
 	  echo "fish" >> cleanme.txt
 	  dotest clean-17 "${testcvs} -nq update" \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/cleanme\.txt,v
-retrieving revision 1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into cleanme\.txt
-rcsmerge: warning: conflicts during merge
-${SPROG} update: conflicts found in cleanme\.txt
-C cleanme\.txt"
+"Merging differences between 1\.1 and 1\.2 into \`cleanme\.txt'
+$CPROG update: conflicts during merge"
 	  dotest clean-18 "${testcvs} -q update -C" \
 "(Locally modified cleanme\.txt moved to \.#cleanme\.txt\.1\.1)
 U cleanme\.txt"
@@ -17078,10 +16885,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  cd ../..
 	  cd 2/first-dir
 	  dotest watch4-13 "${testcvs} -q update" \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1 and 1\.2 into file1
+"Merging differences between 1\.1 and 1\.2 into file1
 rcsmerge: warning: conflicts during merge
 ${SPROG} update: conflicts found in file1
 C file1"
