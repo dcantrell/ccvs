@@ -20,6 +20,7 @@
 
 /* CVS */
 #include "base.h"
+#include "difflib.h"
 
 #include "cvs.h"
 #include "buffer.h"
@@ -41,6 +42,14 @@
 # ifdef HAVE_KERBEROS
 #   include "kerberos4-client.h"
 # endif
+
+
+
+/* Whether the last Base-merge command from the server resulted in a conflict
+ * or not.
+ */
+static bool last_merge;
+static bool last_merge_conflict;
 
 
 
@@ -1969,8 +1978,12 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		mark_up_to_date (filename);
 	}
 
-	Register (ent_list, filename, vn, local_timestamp,
-		  options, tag, date, ts[0] == '+' ? file_timestamp : NULL);
+	Register (ent_list, filename, vn,
+		  last_merge ? "Result of merge" : local_timestamp,
+		  options, tag, date,
+		  ts[0] == '+' || last_merge_conflict ? file_timestamp : NULL);
+	last_merge= false;
+	last_merge_conflict = false;
 
 	if (file_timestamp)
 	    free (file_timestamp);
@@ -2260,7 +2273,7 @@ static void
 client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
 		  const char *filename)
 {
-    char *rev, *exists;
+    char *rev, *flags;
     char *basefile;
     char *temp_filename;
 
@@ -2268,18 +2281,22 @@ client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
 
     read_line (&rev);
 
-    read_line (&exists);
-    if (!validate_change (translate_exists (exists), filename, short_pathname))
+    read_line (&flags);
+    if (!validate_change (translate_exists (flags), filename, short_pathname))
     {
 	free (rev);
-	free (exists);
+	free (flags);
 	return;
     }
-    free (exists);
 
     basefile = make_base_file_name (filename, rev);
     temp_filename = newfilename (filename);
     copy_file (basefile, temp_filename);
+
+    if (flags[0] && flags[1] == 'n')
+	xchmod (temp_filename, false);
+    else
+	xchmod (temp_filename, true);
 
     /* I think it is ok to assume that if the server is sending base_copy,
      * then it sent the commands necessary to create the required base file.
@@ -2287,6 +2304,13 @@ client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
      * file be sent.
      */
 
+    /* If EXISTS[2] == "d", don't keep the base file.  This happens
+     * when a merge adds a file and when `cvs add' resurrects a file.
+     */
+    if (flags[0] && flags [1] && flags[2] == 'd' && unlink_file (basefile) < 0)
+	error (0, errno, "Failed to delete `%s'", short_pathname);
+
+    free (flags);
     free (temp_filename);
     free (basefile);
     free (rev);
@@ -2298,6 +2322,93 @@ static void
 handle_base_copy (char *args, size_t len)
 {
     call_in_directory (args, client_base_copy, NULL);
+}
+
+
+
+static void
+client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
+		   const char *filename)
+{
+    char *rev1, *rev2;
+    char *f1, *f2;
+    char *temp_filename;
+    int status;
+
+    TRACE (TRACE_FUNCTION, "client_base_merge (%s)", short_pathname);
+
+    if (short_pathname[0] == '.' && short_pathname[1] == '/')
+	short_pathname += 2;
+
+    read_line (&rev1);
+    read_line (&rev2);
+
+    cvs_output ("Merging differences between ", 0);
+    cvs_output (rev1, 0);
+    cvs_output (" and ", 5);
+    cvs_output (rev2, 0);
+    cvs_output (" into `", 7);
+    cvs_output (short_pathname, 0);
+    cvs_output ("'\n", 2);
+
+    f1 = make_base_file_name (filename, rev1);
+    f2 = make_base_file_name (filename, rev2);
+    temp_filename = newfilename (filename);
+
+    copy_file (filename, temp_filename);
+
+    status = merge (temp_filename, f1, f2, rev1, rev2);
+
+    if (status != 0 && status != 1)
+	error (status == -1, status == -1 ? errno : 0,
+	       "could not merge differences between %s & %s of `%s'",
+	       rev1, rev2, short_pathname);
+
+    if (last_merge)
+	error (1, 0,
+"protocol error: received two `Base-merge' responses without a `Base-entry'");
+
+    last_merge = true;
+    if (status == 1)
+	last_merge_conflict = true;
+
+    if (!quiet && !xcmp (temp_filename, filename))
+    {
+	cvs_output ("`", 1);
+	cvs_output (short_pathname, 0);
+	cvs_output ("' already contains the differences between ", 0);
+	cvs_output (rev1, 0);
+	cvs_output (" and ", 5);
+	cvs_output (rev2, 0);
+	cvs_output ("\n", 1);
+    }
+
+    /* Won't need these now that the merge is complete.  */
+    {
+	Node *n;
+	Entnode *e;
+	if ((n = findnode_fn (ent_list, filename)))
+	    e = n->data;
+	else
+	    e = NULL;
+	
+	if (e && strcmp (e->version, rev1) && unlink_file (f1) < 0)
+	    error (0, errno, "unable to remove `%s'", f1);
+	if (e && strcmp (e->version, rev2) && unlink_file (f2) < 0)
+	    error (0, errno, "unable to remove `%s'", f2);
+    }
+    free (f1);
+    free (f2);
+    free (rev1);
+    free (rev2);
+}
+
+
+
+static void
+handle_base_merge (char *args, size_t len)
+{
+    call_in_directory (args, client_base_merge, NULL);
 }
 
 
@@ -3394,12 +3505,19 @@ struct response responses[] =
     RSP_LINE("E", handle_e, response_type_normal, rs_essential),
     RSP_LINE("F", handle_f, response_type_normal, rs_optional),
     RSP_LINE("MT", handle_mt, response_type_normal, rs_optional),
+
+    /* The server makes the assumption that if the client handles one of the
+     * Base-* responses, then it will handle all of them.
+     */
     RSP_LINE("Base-checkout", handle_base_checkout, response_type_normal,
 	     rs_optional),
     RSP_LINE("Base-copy", handle_base_copy, response_type_normal,
 	     rs_optional),
+    RSP_LINE("Base-merge", handle_base_merge, response_type_normal,
+	     rs_optional),
     RSP_LINE("Base-entry", handle_base_entry, response_type_normal,
 	     rs_optional),
+
     /* Possibly should be response_type_error.  */
     RSP_LINE(NULL, NULL, response_type_normal, rs_essential)
 

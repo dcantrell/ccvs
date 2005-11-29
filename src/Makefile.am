@@ -39,6 +39,7 @@ cvs_SOURCES = \
 	create_adm.c \
 	cvsrc.c \
 	diff.c \
+	difflib.c difflib.h \
 	edit.c \
 	entries.c \
 	error.c \

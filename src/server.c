@@ -5226,8 +5226,7 @@ server_updated (
     enum server_updated_arg4 updated,
     mode_t mode,
     unsigned char *checksum,
-    struct buffer *filebuf,
-    bool use_base)
+    struct buffer *filebuf)
 {
     /* The case counter to the assertion below should be easy to handle but it
      * never has been, to my knowledge, so there appears to be no need.
@@ -5262,7 +5261,7 @@ server_updated (
 	    return;
 	}
 
-	if (use_base && strcmp (cvs_cmd_name, "export")
+	if (strcmp (cvs_cmd_name, "export")
 	    && supported_response ("Base-entry"))
 	{
 	    /* The client was already asked to create the base file and copy
@@ -8244,6 +8243,8 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 	 */
 	server_send_file (basefile, fullbase, -1);
 
+    buf_send_counted (protocol);
+
     if (tmpfile)
     {
 	if (unlink_file (tmpfile) < 0)
@@ -8257,7 +8258,7 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 
 
 void
-server_base_copy (struct file_info *finfo, const char *rev, const char *exists)
+server_base_copy (struct file_info *finfo, const char *rev, const char *flags)
 {
     if (!supported_response ("Base-copy")) return;
 
@@ -8267,8 +8268,32 @@ server_base_copy (struct file_info *finfo, const char *rev, const char *exists)
     buf_output (protocol, "\n", 1);
     buf_output0 (protocol, rev);
     buf_output (protocol, "\n", 1);
-    buf_output0 (protocol, exists);
+    buf_output0 (protocol, flags);
     buf_output (protocol, "\n", 1);
+    buf_send_counted (protocol);
+}
+
+
+
+/* Assume CVS/Base/.#FILE.REV1 & CVS/Base/FILE.REV2 exist.  If the client
+ * supports it, ask it to perform a merge using these files.  If not, perform
+ * the merge ourselves.
+ */
+void
+server_base_merge (struct file_info *finfo, const char *rev1, const char *rev2)
+{
+    if (!supported_response ("Base-merge")) return;
+
+    buf_output0 (protocol, "Base-merge ");
+    output_dir (finfo->update_dir, finfo->repository);
+    buf_output0 (protocol, finfo->file);
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, rev1);
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, rev2);
+    buf_output (protocol, "\n", 1);
+    buf_send_counted (protocol);
+    return;
 }
 
 

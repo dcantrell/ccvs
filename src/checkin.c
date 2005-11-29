@@ -103,12 +103,12 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 		/* The existing file is incorrect.  We need to check
                    out the correct file contents.  */
 		if (base_checkout (finfo->rcs, finfo, pvers->vn_user,
-				   vers->vn_rcs, NULL, options,
-				  cvswrite
-				  || fileattr_get (finfo->file, "_watched")))
+				   vers->vn_rcs, NULL, options))
 		    error (1, 0, "failed when checking out new copy of %s",
 			   finfo->fullname);
-		base_copy (finfo, vers->vn_rcs, "y");
+		base_copy (finfo, vers->vn_rcs,
+			   cvswrite && !fileattr_get (finfo->file, "_watched")
+			   ? "yy" : "yn");
 		set_time = 1;
 	    }
 
@@ -176,7 +176,7 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 	if (set_time)
 	    /* Need to update the checked out file on the client side.  */
 	    server_updated (finfo, vers, SERVER_UPDATED,
-			    (mode_t) -1, NULL, NULL, true);
+			    (mode_t) -1, NULL, NULL);
 	else
 	    server_checked_in (finfo->file, finfo->update_dir,
 			       finfo->repository);

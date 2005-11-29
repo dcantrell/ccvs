@@ -500,7 +500,7 @@ add (int argc, char **argv)
 			               finfo.fullname, prev);
 			    status = base_checkout (vers->srcfile, &finfo,
 						    NULL, prev, vers->tag,
-						    vers->options, true);
+						    vers->options);
 			    if (status != 0)
 			    {
 				error (0, 0, "Failed to resurrect revision %s",
@@ -512,7 +512,7 @@ add (int argc, char **argv)
 				/* I don't actually set vers->ts_user here
 				 * because it would confuse server_update ().
 				 */
-				base_copy (&finfo, prev, "n");
+				base_copy (&finfo, prev, "nyd");
 				timestamp = time_stamp (finfo.file);
 				if (!really_quiet)
 				    write_letter (&finfo, 'U');
@@ -547,7 +547,7 @@ add (int argc, char **argv)
 			     */
 			    server_updated (&finfo, vers,
 					    SERVER_UPDATED,
-					    (mode_t) -1, NULL, NULL, true);
+					    (mode_t) -1, NULL, NULL);
 			    /* This is kinda hacky or, at least, it renders the
 			     * name "begin_added_files" obsolete, but we want
 			     * the added_files to be counted without triggering
@@ -615,7 +615,7 @@ add (int argc, char **argv)
 			     strlen (vers->vn_user));
 		    status = base_checkout (vers->srcfile, &finfo,
 					    vers->vn_user, vers->vn_user,
-					    vers->tag, vers->options, cvswrite);
+					    vers->tag, vers->options);
 		    if (status != 0)
 		    {
 			error (0, 0, "Failed to resurrect revision %s.",
@@ -628,10 +628,11 @@ add (int argc, char **argv)
 			/* I don't actually set vers->ts_user here because it
 			 * would confuse server_update().
 			 */
-			base_copy (&finfo, vers->vn_user, "n");
-			xchmod (finfo.file, cvswrite);
+			base_copy (&finfo, vers->vn_user,
+				   cvswrite ? "ny" : "nn");
 			tmp = time_stamp (finfo.file);
-			write_letter (&finfo, 'U');
+			if (!really_quiet)
+			    write_letter (&finfo, 'U');
 			if (!quiet)
 			     error (0, 0, "`%s', version %s, resurrected",
 			            finfo.fullname, vers->vn_user);
@@ -648,7 +649,7 @@ add (int argc, char **argv)
 			 */
 			server_updated (&finfo, vers,
 					SERVER_UPDATED,
-					(mode_t) -1, NULL, NULL, true);
+					(mode_t) -1, NULL, NULL);
 		    }
 		   /* We don't increment added_files here because this isn't
 		    * a change that needs to be committed.
