@@ -9078,7 +9078,7 @@ modify-on-br1
 	  dokeep
 	  cd ..
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
-	  rm -r first-dir
+	  rm -rf first-dir
 	  ;;
 
 
@@ -9276,10 +9276,9 @@ Use the following command to help the merge:"
 		dotest import-113 \
 "$testcvs -q co -jjunk-1_0 -jjunk-2_0 first-dir" \
 "$SPROG checkout: file first-dir/imported-f1 does not exist, but is present in revision junk-2_0
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into \`imported-f2'
-$CPROG update: conflicts during merge
-first-dir/imported-f3 already contains the differences between 1\.1\.1\.1 and 1\.1\.1\.2
-first-dir/imported-f4 already contains the differences between 1\.1\.1\.1 and 1\.1\.1\.3"
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into \`first-dir/imported-f2'
+$CPROG checkout: conflicts during merge
+C first-dir/imported-f2"
 
 		cd first-dir
 
@@ -9407,7 +9406,7 @@ add
 
 	  dokeep
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
 			     $CVSROOT_DIRNAME/second-dir
 	  ;;

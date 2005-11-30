@@ -244,12 +244,7 @@ update (int argc, char **argv)
 	    case 'u':
 #ifdef SERVER_SUPPORT
 		if (server_active)
-		{
-		    if (server_use_bases ())
-			bases = true;
-		    else
-			rcs_diff_patches = server_use_rcs_diff ();
-		}
+		    rcs_diff_patches = server_use_rcs_diff ();
 		else
 #endif
 		    usage (update_usage);
@@ -487,6 +482,10 @@ do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate,
 	   xjoin_date2 ? xjoin_date2 : "(null)",
 	   preload_update_dir ? preload_update_dir : "(null)", xdotemplate,
 	   repository ? repository : "(null)");
+
+    /* Set globals.  */
+    if (server_active && server_use_bases ())
+	bases = true;
 
     /* fill in the statics */
     options = xoptions;
@@ -1985,13 +1984,17 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 	   xcmp on the temporary files without much hassle, I think.  */
 	if (!noexec && !bases && !xcmp (backup, finfo->file))
 	{
-	    /* The client will handle these messages when BASES.  */
-	    cvs_output (finfo->fullname, 0);
-	    cvs_output (" already contains the differences between ", 0);
-	    cvs_output (vers->vn_user, 0);
-	    cvs_output (" and ", 0);
-	    cvs_output (vers->vn_rcs, 0);
-	    cvs_output ("\n", 1);
+	    if (!quiet)
+	    {
+		/* The client will handle these messages when BASES.  */
+		cvs_output ("`", 1);
+		cvs_output (finfo->fullname, 0);
+		cvs_output ("' already contains the differences between ", 0);
+		cvs_output (vers->vn_user, 0);
+		cvs_output (" and ", 5);
+		cvs_output (vers->vn_rcs, 0);
+		cvs_output ("\n", 1);
+	    }
 
 	    retval = 0;
 	    goto out;
@@ -2276,12 +2279,13 @@ join_file (struct file_info *finfo, Vers_TS *vers)
         && strcmp (vers->ts_user, vers->ts_rcs) == 0
         && strcmp (rev2, vers->vn_user) == 0)
     {
-	if (!really_quiet)
+	if (!quiet)
 	{
+	    cvs_output ("`", 1);
 	    cvs_output (finfo->fullname, 0);
-	    cvs_output (" already contains the differences between ", 0);
+	    cvs_output ("' already contains the differences between ", 0);
 	    cvs_output (rev1 ? rev1 : "creation", 0);
-	    cvs_output (" and ", 0);
+	    cvs_output (" and ", 5);
 	    cvs_output (rev2, 0);
 	    cvs_output ("\n", 1);
 	}
@@ -2500,7 +2504,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	   xcmp on the temporary files without much hassle, I think.  */
 	if (!noexec && !xcmp (backup, finfo->file))
 	{
-	    if (!really_quiet)
+	    if (!quiet)
 	    {
 		cvs_output ("`", 1);
 		cvs_output (finfo->fullname, 0);
