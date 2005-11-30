@@ -1,5 +1,8 @@
 2005-11-30  Derek Price  <derek@ximbiot.com>
 
+	* client.c (update_entries): Avoid removing base files when they are
+	still needed.
+
 	* update.c (join_file): Avoid dereferencing NULL.
 
 	* client.c (update_entries): Don't output update status lines when

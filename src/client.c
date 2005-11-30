@@ -1880,7 +1880,11 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	if (!noexec && (n = findnode_fn (ent_list, filename)))
 	{
 	    Entnode *e = n->data;
-	    base_remove (filename, e->version);
+	    /* After a join, control can get here without having changed the
+	     * version number.  In this case, do not remove the base file.
+	     */
+	    if (strcmp (vn, e->version))
+		base_remove (filename, e->version);
 	}
 	if (base_copy_error)
 	{
@@ -2446,9 +2450,9 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
     }
 
     /* Won't need these now that the merge is complete.  */
-    if (e && strcmp (e->version, rev1) && unlink_file (f1) < 0)
+    if ((!e || strcmp (e->version, rev1)) && unlink_file (f1) < 0)
 	error (0, errno, "unable to remove `%s'", f1);
-    if (e && strcmp (e->version, rev2) && unlink_file (f2) < 0)
+    if ((!e || strcmp (e->version, rev2)) && unlink_file (f2) < 0)
 	error (0, errno, "unable to remove `%s'", f2);
     free (f1);
     free (f2);
