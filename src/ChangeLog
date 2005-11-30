@@ -1,3 +1,16 @@
+2005-11-30  Mark D. Baushke  <mdb@gnu.org>
+
+	[bug #14900] Add 'cvs server' handling for --allow-root
+	* root.c (root_allow_used): New function.
+	* root.h (root_allow_used): Ditto.
+	* server.c (serve_root): Call new function in server mode.
+	* sanity.sh (server2-3): Fix typo in test name.
+	(server2-5, server2-6): New tests for --allow-root feature.
+	(proxy-init): Fix --allow-root instances for primary-wrapper
+	to include the primary and the secondary in the list.
+	(writeproxy-noredirect): Ditto.
+	(writeproxy-ssh-noredirect): Ditto.
+
 2005-11-22  Derek Price  <derek@ximbiot.com>
 
 	* checkout.c (checkout_proc): Bury sacrificial chicken.

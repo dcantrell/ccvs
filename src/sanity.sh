@@ -2722,7 +2722,7 @@ export CVS_SERVER
 
 # No need to check the PID of the last client since we are testing with
 # Redirect disabled.
-proot_arg="--allow-root=$SECONDARY_CVSROOT_DIRNAME"
+proot_arg="--allow-root=$SECONDARY_CVSROOT_DIRNAME --allow-root=$PRIMARY_CVSROOT_DIRNAME"
 exec $CVS_SERVER \$proot_arg "\$@"
 EOF
 	cat <<EOF >$TESTDIR/primary-wrapper
@@ -31314,7 +31314,7 @@ ${CVSROOT_DIRNAME}dir1
 noop
 EOF
 
-	    dotest 2-3 "${servercvs} server" \
+	    dotest server2-3 "${servercvs} server" \
 "E protocol error: directory '${TESTDIR}' not within root '${CVSROOT_DIRNAME}'
 error  " <<EOF
 Root ${CVSROOT_DIRNAME}
@@ -31334,6 +31334,20 @@ Root ${CVSROOT_DIRNAME}
 Directory .
 ${CVSROOT_DIRNAME}
 Unchanged foo/bar
+noop
+EOF
+
+	    dotest server2-5 \
+"${servercvs} --allow-root=${CVSROOT_DIRNAME}.bad server" \
+"E Bad root ${CVSROOT_DIRNAME}
+error  " <<EOF
+Root ${CVSROOT_DIRNAME}
+noop
+EOF
+	    dotest server2-6 \
+"${servercvs} --allow-root=${CVSROOT_DIRNAME} server" \
+"ok" <<EOF
+Root ${CVSROOT_DIRNAME}
 noop
 EOF
 	    servercvs=$save_servercvs
@@ -32301,7 +32315,7 @@ export CVS_SERVER
 
 # No need to check the PID of the last client since we are testing with
 # Redirect disabled.
-proot_arg="--allow-root $SECONDARY_CVSROOT_DIRNAME"
+proot_arg="--allow-root $SECONDARY_CVSROOT_DIRNAME --allow-root $PRIMARY_CVSROOT_DIRNAME"
 exec $servercvs \$proot_arg "\$@"
 EOF
 	  cat <<EOF >$TESTDIR/writeproxy-primary-wrapper
@@ -32676,7 +32690,7 @@ export CVS_SERVER
 
 # No need to check the PID of the last client since we are testing with
 # Redirect disabled.
-proot_arg="--allow-root=$SECONDARY_CVSROOT_DIRNAME"
+proot_arg="--allow-root=$SECONDARY_CVSROOT_DIRNAME --allow-root=$PRIMARY_CVSROOT_DIRNAME"
 exec $CVS_SERVER \$proot_arg "\$@"
 EOF
 	  cat <<EOF >$TESTDIR/writeproxy-primary-wrapper
