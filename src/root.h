@@ -63,6 +63,7 @@ cvsroot_t *local_cvsroot (const char *dir)
 void Create_Root (const char *dir, const char *rootdir);
 void root_allow_add (const char *, const char *configPath);
 void root_allow_free (void);
+bool root_allow_used (void);
 bool root_allow_ok (const char *);
 struct config *get_root_allow_config (const char *arg, const char *configPath);
 const char *primary_root_translate (const char *root_in);

@@ -294,6 +294,12 @@ root_allow_free (void)
 }
 
 bool
+root_allow_used (void)
+{
+    return root_allow != NULL;
+}
+
+bool
 root_allow_ok (const char *arg)
 {
     if (!root_allow)
