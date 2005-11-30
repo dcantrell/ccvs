@@ -9687,7 +9687,7 @@ add
 ============================================================================="
 
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
@@ -9767,7 +9767,7 @@ add
 	  cd ../..
 	  restore_adm
 	  rm -r 1
-	  rm -r wnt
+	  rm -rf wnt
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -10226,16 +10226,16 @@ T file9'
 	  cd ../..
 	  mkdir 3
 	  cd 3
-	  dotest join-16 "${testcvs} -q co -jT1 -jT2 first-dir" \
-"U first-dir/file1
+	  dotest join-16 "$testcvs -q co -jT1 -jT2 first-dir" \
+"$SPROG checkout: scheduling addition from revision 1\.1\.2\.1 of \`first-dir/file1'\.
 U first-dir/file2
-${SPROG} checkout: file first-dir/file2 exists, but has been added in revision T2
+$SPROG checkout: file first-dir/file2 exists, but has been added in revision T2
 U first-dir/file3
-${SPROG} checkout: scheduling \`first-dir/file3' for removal
+$SPROG checkout: scheduling \`first-dir/file3' for removal
 U first-dir/file4
-${SPROG} checkout: scheduling \`first-dir/file4' for removal
+$SPROG checkout: scheduling \`first-dir/file4' for removal
 U first-dir/file7
-${SPROG} checkout: file first-dir/file9 does not exist, but is present in revision T2"
+$SPROG checkout: file first-dir/file9 does not exist, but is present in revision T2"
 
 	  # Verify that the right changes have been scheduled.
 	  cd first-dir
@@ -10248,7 +10248,7 @@ R file4'
 	  cd ../../1/first-dir
 	  echo 'third revision of file4' > file4
 	  dotest join-18 "${testcvs} -q update -jT1 -jT2 ." \
-"U file1
+"$SPROG update: scheduling addition from revision 1\.1\.2\.1 of \`file1'\.
 $SPROG update: file file2 exists, but has been added in revision T2
 $SPROG update: scheduling \`file3' for removal
 M file4
@@ -10273,11 +10273,12 @@ M file4'
 	  # revision which can be used as the source for files added
 	  # on branches.
 	  cd ../../3
-	  rm -r first-dir
+	  rm -rf first-dir
 	  dotest join-20 "$testcvs -q co -jbranch first-dir" \
-"U first-dir/file1
+"$SPROG checkout: scheduling addition from revision 1\.1\.2\.1 of \`first-dir/file1'\.
 U first-dir/file2
-Merging differences between 1\.1 and 1\.1\.2\.2 into \`file2'
+Merging differences between 1\.1 and 1\.1\.2\.2 into \`first-dir/file2'
+M first-dir/file2
 U first-dir/file3
 $SPROG checkout: scheduling \`first-dir/file3' for removal
 U first-dir/file4
@@ -10308,8 +10309,9 @@ U first-dir/file7'
 	  cd first-dir
 	  echo 'third revision of file4' > file4
 	  dotest join-23 "${testcvs} -q update -jbranch ." \
-"U file1
+"$SPROG update: scheduling addition from revision 1\.1\.2\.1 of \`file1'\.
 Merging differences between 1\.1 and 1\.1\.2\.2 into \`file2'
+M file2
 $SPROG update: scheduling \`file3' for removal
 M file4
 $SPROG update: file file4 is locally modified, but has been removed in revision branch
@@ -10327,7 +10329,7 @@ M file4'
 
 	  # Checkout the main line again and make a new branch which we
 	  # merge to.
-	  rm -r first-dir
+	  rm -rf first-dir
 	  dotest join-25 "${testcvs} -q co first-dir" \
 'U first-dir/file2
 U first-dir/file3
@@ -10343,13 +10345,14 @@ T file7"
 	  # The handling of file8 and file9 here look fishy to me.  I don't
 	  # see why it should be different from the case where we merge to
 	  # the trunk (e.g. join-23).
-	  dotest join-28 "${testcvs} -q update -j branch" \
-"U file1
+	  dotest join-28 "$testcvs -q update -j branch" \
+"$SPROG update: scheduling addition from revision 1\.1\.2\.1 of \`file1'\.
 Merging differences between 1.1 and 1.1.2.2 into \`file2'
+M file2
 $SPROG update: scheduling \`file3' for removal
 $SPROG update: file file4 has been modified, but has been removed in revision branch
-U file8
-U file9"
+$SPROG update: scheduling addition from revision 1\.1 of \`file8'\.
+$SPROG update: scheduling addition from revision 1\.1\.2\.2 of \`file9'\."
 	  # Verify that the right changes have been scheduled.
 	  dotest join-29 "${testcvs} -q update" \
 "A file1
@@ -10374,18 +10377,19 @@ U first-dir/file9'
 	  cd first-dir
 	  dotest join-twobranch-2 "$testcvs -q update -rbr2 -jbranch" \
 "$SPROG update: \`file1' is no longer in the repository
-U file1
+$SPROG update: scheduling addition from revision 1\.1\.2\.1 of \`file1'\.
 U file2
 Merging differences between 1\.1 and 1\.1\.2\.2 into \`file2'
+M file2
 U file3
 $SPROG update: scheduling \`file3' for removal
 U file4
 $SPROG update: file file4 has been modified, but has been removed in revision branch
 U file7
 $SPROG update: \`file8' is no longer in the repository
-U file8
+$SPROG update: scheduling addition from revision 1\.1 of \`file8'\.
 $SPROG update: \`file9' is no longer in the repository
-U file9"
+$SPROG update: scheduling addition from revision 1\.1\.2\.2 of \`file9'\."
 	  # Verify that the right changes have been scheduled.
 	  dotest join-twobranch-3 "${testcvs} -q update" \
 "A file1
@@ -10397,7 +10401,7 @@ A file9"
 	  # Checkout the mainline again to try merging from the trunk
 	  # to a branch.
 	  cd ..
-	  rm -r first-dir
+	  rm -rf first-dir
 	  dotest join-30 "${testcvs} -q co first-dir" \
 'U first-dir/file2
 U first-dir/file3
@@ -10427,9 +10431,9 @@ T file7'
 
 	  # Now update branch to T3.
 	  cd ../../2/first-dir
-	  dotest join-34 "${testcvs} -q up -jT3" \
-"${SPROG} update: file file4 does not exist, but is present in revision T3
-U file7"
+	  dotest join-34 "$testcvs -q up -jT3" \
+"$SPROG update: file file4 does not exist, but is present in revision T3
+$SPROG update: scheduling addition from revision 1\.1 of \`file7'\."
 
 	  # Verify that the right changes have been scheduled.
 	  dotest join-35 "${testcvs} -q update" \
@@ -10440,7 +10444,8 @@ U file7"
 	  # happens to do the right thing; see above join-20.
 	  dotest join-36 "${testcvs} -q up -j T3 -j T4" \
 "A file7
-Merging differences between 1\.1 and 1\.2 into \`file7'"
+Merging differences between 1\.1 and 1\.2 into \`file7'
+M file7"
 
 	  # Verify that the right changes have been scheduled.
 	  dotest join-37 "${testcvs} -q update" \
@@ -10448,7 +10453,7 @@ Merging differences between 1\.1 and 1\.2 into \`file7'"
 
 	  dokeep
 	  cd ../..
-	  rm -r 1 2 3
+	  rm -rf 1 2 3
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -10501,7 +10506,8 @@ File: file1            	Status: Up-to-date
 	  dotest join2-10 "cat CVS/Tag" "Tbr1"
 
 	  dotest join2-11 "${testcvs} -q update -j br1 file1" \
-"Merging differences between 1\.1 and 1\.1\.2\.1 into \`file1'"
+"Merging differences between 1\.1 and 1\.1\.2\.1 into \`file1'
+M file1"
 	  dotest join2-12 "cat file1" "initial contents of file1
 modify on branch"
 	  # We should have no sticky tag on file1
@@ -10538,7 +10544,8 @@ new revision: 1\.2; previous revision: 1\.1"
 [UP] file1"
 :	  dotest join2-17 "${testcvs} -q update -A bradd" \
 "${SPROG} update: warning: \`bradd' is not (any longer) pertinent"
-	  dotest join2-18 "${testcvs} -q update -j br1 bradd" "U bradd"
+	  dotest join2-18 "$testcvs -q update -j br1 bradd" \
+"$SPROG update: scheduling addition from revision 1\.1\.2\.1 of \`bradd'\."
 	  dotest join2-19 "${testcvs} -q status bradd" \
 "===================================================================
 File: bradd            	Status: Locally Added
@@ -10605,10 +10612,11 @@ T file2"
 	  # Before we actually have any revision on br2, let's try a join
 	  dotest join3-11 "${testcvs} -q update -r br1" "[UP] file1
 ${SPROG} update: \`file2' is no longer in the repository"
-	  dotest join3-12 "${testcvs} -q update -j br2" \
+	  dotest join3-12 "$testcvs -q update -j br2" \
 "Merging differences between 1\.1 and 1\.2 into \`file1'
 $CPROG update: conflicts during merge
-U file2"
+C file1
+$SPROG update: scheduling addition from revision 1\.1 of \`file2'\."
 	  dotest join3-13 "cat file1" \
 "initial contents of file1
 [<]<<<<<< file1
@@ -10619,8 +10627,8 @@ trunk:line1
 	  rm file1
 
 	  # OK, we'll try the same thing with a revision on br2.
-	  dotest join3-14 "${testcvs} -q update -r br2 file1" \
-"${SPROG} update: warning: \`file1' was lost
+	  dotest join3-14 "$testcvs -q update -r br2 file1" \
+"$SPROG update: warning: \`file1' was lost
 U file1" "U file1"
 	  echo 'br2:line1' >>file1
 	  dotest join3-15 "${testcvs} -q ci -m modify file1" \
