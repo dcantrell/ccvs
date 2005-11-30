@@ -10642,8 +10642,9 @@ new revision: 1\.2\.2\.1; previous revision: 1\.2"
 	  # and so it merges both the 1.1->1.2 and 1.2->1.2.2.1 changes.
 	  # This seems like a reasonably plausible behavior.
 	  dotest join3-17 "${testcvs} -q update -j br2 file1" \
-"Merging differences between 1\.1 and 1\.2\.2\.1 into file1
-$CPROG update: conflicts during merge"
+"Merging differences between 1\.1 and 1\.2\.2\.1 into \`file1'
+$CPROG update: conflicts during merge
+C file1"
 	  dotest join3-18 "cat file1" \
 "initial contents of file1
 [<]<<<<<< file1
