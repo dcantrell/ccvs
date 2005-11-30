@@ -7797,9 +7797,10 @@ dir1:"
 	  # we should release it instead.  We do it a few other places
 	  # below as well.
 	  rm -rf dir1
-	  dotest branches2-15 "${testcvs} update -d -j b1 dir1" \
-"${SPROG} update: Updating dir1
-U dir1/file3"
+	  dotest branches2-15 "$testcvs update -d -j b1 dir1" \
+"$SPROG update: Updating dir1
+$SPROG update: scheduling addition from revision 1\.1\.2\.1 of \`dir1/file3'\."
+
 	  # FIXCVS: The `No revision control file' stuff seems to be
 	  # CVS's way of telling us that we're adding the file on a
 	  # branch, and the file is not on that branch yet.  This
@@ -7852,10 +7853,10 @@ File: file3            	Status: Up-to-date
    Sticky Date:		(none)
    Sticky Options:	(none)"
 
-	  rm -r dir1
-	  dotest branches2-21 "${testcvs} update -d -P -j b1 dir1" \
-"${SPROG} update: Updating dir1
-U dir1/file3"
+	  rm -rf dir1
+	  dotest branches2-21 "$testcvs update -d -P -j b1 dir1" \
+"$SPROG update: Updating dir1
+$SPROG update: scheduling addition from revision 1\.1\.2\.1 of \`dir1/file3'\."
 	  dotest branches2-22 "${testcvs} -q status" \
 "===================================================================
 File: file1            	Status: Up-to-date
@@ -7878,7 +7879,7 @@ File: file3            	Status: Locally Added
    Sticky Options:	(none)"
 
 	  cd ../..
-	  rm -r b1 b2
+	  rm -rf b1 b2
 
 	  # Check out branch b1 twice.  Crate a new directory in one
 	  # working directory, then do a cvs update in the other
@@ -7927,7 +7928,7 @@ File: file4            	Status: Up-to-date
 
 	  # Test update -A on a subdirectory
 	  cd ..
-	  rm -r dir2
+	  rm -rf dir2
 	  dotest branches2-31 "${testcvs} update -A -d dir2" \
 "${SPROG} update: Updating dir2"
 	  cd dir2
@@ -7975,7 +7976,7 @@ first-dir/dir2:
 	  dokeep
 	  cd ../../..
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
-	  rm -r trunk b1a b1b
+	  rm -rf trunk b1a b1b
 	  ;;
 
 
@@ -8184,7 +8185,7 @@ T file2"
 
 	  dokeep
 	  cd ../..
-	  rm -r 1 2
+	  rm -rf 1 2
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 

@@ -1,5 +1,8 @@
 2005-11-30  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.  Other minor corrections.
+
 	* difflib.c (merge): Add label argument.
 	* base.c, client.c, difflib.h: Update all references.
 	* client.c (update_entries, client_base_copy): Handle existance
