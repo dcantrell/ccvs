@@ -1301,10 +1301,19 @@ VERS: ", 0);
 	    Vers_TS *xvers_ts;
 
 	    if (!file_is_dead)
-		base_copy (finfo, vers_ts->vn_rcs,
-			   cvswrite && !fileattr_get (finfo->file, "_watched")
-			   ? "my" : "mn");
-
+	    {
+		char flags[3];
+		if (vers_ts->ts_user)
+		    flags[0] = 'y';
+		else
+		    flags[0] = 'n';
+		if (cvswrite && !fileattr_get (finfo->file, "_watched"))
+		    flags[1] = 'y';
+		else
+		    flags[1] = 'n';
+		flags[2] = '\0';
+		base_copy (finfo, vers_ts->vn_rcs, flags);
+	    }
 	    {
 		/* A newly checked out file is never under the spell
 		   of "cvs edit".  If we think we were editing it

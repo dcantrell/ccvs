@@ -7227,7 +7227,7 @@ ${SPROG} update: Updating sdir
 ${CPROG} update: move away \`sdir/file1'; it is in the way
 C sdir/file1"
 	    rm sdir/file1
-	    rm -r sdir/CVS
+	    rm -rf sdir/CVS
 
 	    # This is where things are not just like conflicts3-23
 	    dotest dirs2-7r "${testcvs} update -d" \
@@ -7251,7 +7251,7 @@ ${QUESTION} sdir"
 	  dotest dirs2-8 "${testcvs} -q co first-dir" 'U first-dir/sdir/file1'
 	  cd first-dir
 	  dotest dirs2-9 "${testcvs} -q tag -b br" "T sdir/file1"
-	  rm -r sdir/CVS
+	  rm -rf sdir/CVS
 
 	  if $remote; then
 	    # val-tags used to have a cute little quirk; if an update didn't
@@ -7294,7 +7294,7 @@ ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 new revision: delete; previous revision: 1\.1"
 	  cd ../../2/first-dir
 	  if $remote; then
-	    dotest dirs2-14 "${testcvs} update -d -r br" \
+	    dotest dirs2-14r "${testcvs} update -d -r br" \
 "${QUESTION} sdir/file1
 ${SPROG} update: Updating \.
 ${SPROG} update: Updating sdir"
@@ -7306,7 +7306,7 @@ ${QUESTION} sdir"
 
 	  dokeep
 	  cd ../..
-	  rm -r 1 2 3
+	  rm -rf 1 2 3
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -7503,7 +7503,7 @@ done"
 	  dokeep
 	  cd ..
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
-	  rm -r first-dir
+	  rm -rf first-dir
 	  ;;
 
 
@@ -7796,7 +7796,7 @@ dir1:"
 	  # tacky, although people generally expect it to work.  Maybe
 	  # we should release it instead.  We do it a few other places
 	  # below as well.
-	  rm -r dir1
+	  rm -rf dir1
 	  dotest branches2-15 "${testcvs} update -d -j b1 dir1" \
 "${SPROG} update: Updating dir1
 U dir1/file3"

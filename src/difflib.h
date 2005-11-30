@@ -22,7 +22,7 @@ int call_diff (const char *out);
 int call_diff3 (char *out);
 void call_diff_add_arg (const char *s);
 void call_diff_setup (const char *prog, int argc, char * const *argv);
-int merge (const char *dest, const char *j1, const char *j2,
-	   const char *rev1, const char *rev2);
+int merge (const char *dlabel, const char *dest, const char *j1,
+	   const char *j2, const char *rev1, const char *rev2);
 
 #endif /* DIFFLIB_H */
