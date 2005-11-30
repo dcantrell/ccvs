@@ -184,7 +184,7 @@ call_diff3 (char *out)
  * particular files using strings REV1 & REV2.
  */
 int
-merge (const char *dest, const char *j1, const char *j2,
+merge (const char *dlabel, const char *dest, const char *j1, const char *j2,
        const char *rev1, const char *rev2)
 {
     char *diffout;
@@ -199,7 +199,7 @@ merge (const char *dest, const char *j1, const char *j2,
     call_diff_add_arg ("-am");
 
     call_diff_add_arg ("-L");
-    call_diff_add_arg (dest);
+    call_diff_add_arg (dlabel);
     call_diff_add_arg ("-L");
     call_diff_add_arg (rev1);
     call_diff_add_arg ("-L");

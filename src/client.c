@@ -51,6 +51,9 @@
 static bool last_merge;
 static bool last_merge_conflict;
 
+/* Similarly, to ignore bad entries on error.  */
+static bool base_copy_error;
+
 
 
 /* Keep track of any paths we are sending for Max-dotdot so that we can verify
@@ -1875,6 +1878,23 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    Entnode *e = n->data;
 	    base_remove (filename, e->version);
 	}
+	if (base_copy_error)
+	{
+	    /* The previous base_copy command returned an error, such as in the
+	     * "move away `FILE'; it is in the way" case.  Do not allow the
+	     * entry to be updated.
+	     */
+	    base_copy_error = false;
+	    if (updated_fname)
+	    {
+		cvs_output ("C ", 0);
+		cvs_output (updated_fname, 0);
+		cvs_output ("\n", 1);
+		free (updated_fname);
+		updated_fname = 0;
+	    }
+	    return;
+	}
 	rename_file (temp_filename, filename);
 	if (updated_fname)
 	{
@@ -2284,6 +2304,7 @@ client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
     read_line (&flags);
     if (!validate_change (translate_exists (flags), filename, short_pathname))
     {
+	base_copy_error = true;
 	free (rev);
 	free (flags);
 	return;
@@ -2357,7 +2378,7 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
 
     copy_file (filename, temp_filename);
 
-    status = merge (temp_filename, f1, f2, rev1, rev2);
+    status = merge (filename, temp_filename, f1, f2, rev1, rev2);
 
     if (status != 0 && status != 1)
 	error (status == -1, status == -1 ? errno : 0,

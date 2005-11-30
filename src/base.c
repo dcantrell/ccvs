@@ -361,7 +361,7 @@ base_merge (RCSNode *rcs, struct file_info *finfo, const char *options,
 	    cvs_output (finfo->fullname, 0);
 	cvs_output ("'\n", 2);
 
-	retval = merge (finfo->file, f1, f2, rev1, rev2);
+	retval = merge (finfo->file, finfo->file, f1, f2, rev1, rev2);
     }
     else
 	retval = 0;

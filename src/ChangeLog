@@ -1,3 +1,13 @@
+2005-11-30  Derek Price  <derek@ximbiot.com>
+
+	* difflib.c (merge): Add label argument.
+	* base.c, client.c, difflib.h: Update all references.
+	* client.c (update_entries, client_base_copy): Handle existance
+	errors.
+	* update.c (checkout_file): Set correct existance flags.
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.
+
 2005-11-29  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: Compensate for new read-only Base files by forcing some
