@@ -3323,7 +3323,7 @@ initial revision: 1\.1"
 	  dotest basicb-0e "${testcvs} add first-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
 	  cd ..
-	  rm -r 2
+	  rm -rf 2
 
 	  dotest basicb-1 "${testcvs} -q co first-dir" ''
 
@@ -3404,7 +3404,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  dotest basicb-cod-1 "${testcvs} -q co -d first-dir1 first-dir" \
 'U first-dir1/Emptydir/sfile1
 U first-dir1/sdir2/sfile2'
-	  rm -r first-dir1
+	  rm -rf first-dir1
 
 	  rm -r first-dir
 
@@ -3441,7 +3441,7 @@ U newdir/first-dir/sdir2/sfile2'
 "sfile1 develops
 sfile2 starts"
 
-	  rm -r newdir
+	  rm -rf newdir
 
 	  # Hmm, this might be a case for CVSNULLREPOS, but CVS doesn't
 	  # seem to deal with it...
@@ -3490,7 +3490,7 @@ deleting revision 1\.2
 deleting revision 1\.1
 ${SPROG} \[admin aborted\]: attempt to delete all revisions"
 	  cd ..
-	  rm -r 1
+	  rm -rf 1
 
 	  mkdir 1; cd 1
 	  # Note that -H is an invalid option.
@@ -3607,7 +3607,7 @@ D/first-dir////
 D/second-dir////"
 
 	  cd ..
-	  rm -r 1 2
+	  rm -rf 1 2
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
 			     $CVSROOT_DIRNAME/second-dir
 	  ;;
@@ -4748,9 +4748,8 @@ U second-dir/dir1/dir2/file7"
 
 		dotest basic2-33 "directory_cmp first-dir second-dir"
 
-		rm -r second-dir
-
-		rm -r export-dir first-dir
+		rm -rf first-dir second-dir
+		rm -r export-dir
 		mkdir first-dir
 		(cd first-dir.cpy ; tar cf - . | (cd ../first-dir ; tar xf -))
 
@@ -4789,7 +4788,7 @@ ${SPROG} update: Updating dir1/dir2"
 		#### and fix or remove the test.
 #		dotest basic2-39 "directory_cmp 1dir first-dir"
 
-		rm -r 1dir first-dir
+		rm -rf 1dir first-dir
 
 		# Test the cvs history command.
 		#
@@ -5110,7 +5109,7 @@ $output_dead"
 
 	  dokeep
 	  cd ../../..
-	  rm -r ls
+	  rm -rf ls
 	  modify_repo rm -rf $CVSROOT_DIRNAME/notcheckedout \
 			     $CVSROOT_DIRNAME/cemetery
 	  unset output_living output_dead
@@ -5322,7 +5321,7 @@ initial revision: 1\.1"
 "U first dir/a file"
 	  cd ..
 
-	  rm -r 1 2 3
+	  rm -rf 1 2 3
 	  modify_repo rm -rf "'$CVSROOT_DIRNAME/first dir'" \
 			     $CVSROOT_DIRNAME/-b $CVSROOT_DIRNAME/-c,v
 	  ;;
@@ -23416,7 +23415,7 @@ EOF
 	  # A degenerate remote case, just the server name and the directory
 	  # name, with no :'s to help parsing.  It can be mistaken for a
 	  # relative directory name.
-	  rm -r CVSROOT
+	  rm -rf CVSROOT
 	  CVSROOT=$host$CVSROOT_DIRNAME
 	  dotest parseroot2-3 "$testcvs -Q co CVSROOT"
 	  cd CVSROOT
@@ -23425,7 +23424,7 @@ EOF
 	  dokeep
 	  cd ../..
 	  CVSROOT=$save_CVSROOT
-	  rm -r parseroot2
+	  rm -rf parseroot2
 	  ;;
 
 
@@ -23460,7 +23459,7 @@ EOF
 	  cd ..
 
 	  # Initial checkout.
-	  rm -r CVSROOT
+	  rm -rf CVSROOT
 	  CVSROOT=":ext;cvs_RSH=$save_CVS_RSH;CVS_Server=$save_CVS_SERVER:$host$CVSROOT_DIRNAME"
 	  dotest parseroot3-3 "$testcvs -Q co CVSROOT"
 	  cd CVSROOT
@@ -23468,7 +23467,7 @@ EOF
 	  cd ..
 
 	  # Checkout bogus values for Redirect
-	  rm -r CVSROOT
+	  rm -rf CVSROOT
 	  CVSROOT=":ext;Redirect=bogus;CVS_RSH=$save_CVS_RSH;CVS_SERVER=$save_CVS_SERVER:$host$CVSROOT_DIRNAME"
 	  dotest parseroot3-5 "$testcvs -Q co CVSROOT" \
 "$SPROG checkout: CVSROOT: unrecognized value \`bogus' for \`Redirect'"
@@ -23480,7 +23479,7 @@ EOF
 	  cd ..
 
 	  # Checkout good values for Redirect
-	  rm -r CVSROOT
+	  rm -rf CVSROOT
 	  CVSROOT=":EXT;Redirect=no;CVS_RSH=$save_CVS_RSH;CVS_SERVER=$save_CVS_SERVER:$host$CVSROOT_DIRNAME"
 	  dotest parseroot3-7 "$testcvs -Q co CVSROOT"
 	  cd CVSROOT
@@ -23498,7 +23497,7 @@ EOF
 	  CVS_RSH=$save_CVS_RSH
 	  CVS_SERVER=$save_CVS_SERVER
 	  export CVS_RSH CVS_SERVER
-	  rm -r parseroot3
+	  rm -rf parseroot3
 	  ;;
 
 
