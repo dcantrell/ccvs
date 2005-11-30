@@ -5389,7 +5389,8 @@ new revision: 1\.2; previous revision: 1\.1"
 		echo force a conflict >>tfile
 		dotest status-init-7 "$testcvs -q up" \
 "Merging differences between 1\.1 and 1\.2 into \`tfile'
-cvs update: conflicts during merge"
+$CPROG update: conflicts during merge
+M tfile"
 
 		# Now note our status
 		dotest status-1 "${testcvs} status tfile" \
@@ -5606,7 +5607,7 @@ File: foo              	Status: Up-to-date
 	TRDIFF                   	(branch: 1\.1\.1)"
 
 		cd ..
-		rm -r trdiff
+		rm -rf trdiff
 
 		dotest rdiff-8 \
 		  "${testcvs} rdiff -r T1 -r local-v0 trdiff" \
@@ -6243,7 +6244,7 @@ R file2
 A file3"
 
 		# commit
-		dotest deatch-89 "$testcvs -q ci -m test" \
+		dotest death-89 "$testcvs -q ci -m test" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.4; previous revision: 1\.3
 $CVSROOT_DIRNAME/first-dir/file2,v  <--  file2
@@ -6257,7 +6258,7 @@ new revision: 1\.2; previous revision: 1\.1"
 'U first-dir/file1
 U first-dir/file3'
 		cd ..
-		rm -r 2
+		rm -rf 2
 		cd first-dir
 
 		# remove first file.
@@ -6299,7 +6300,7 @@ $SPROG update: file file3 exists, but has been added in revision HEAD"
 
 		dokeep
 		cd ..
-		rm -r first-dir
+		rm -rf first-dir
 		modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 		;;
 
@@ -6642,7 +6643,7 @@ C file4"
 
 	  dokeep
 	  cd ..
-	  rm -r first-dir
+	  rm -rf first-dir
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
