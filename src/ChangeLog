@@ -1,5 +1,8 @@
 2005-11-30  Derek Price  <derek@ximbiot.com>
 
+	* client.c (update_entries): Don't output update status lines when
+	REALLY_QUIET.
+
 	* update.c (update, do_update): Set bases separately from -u.
 	(merge_file, join_file): Consistently output "already contains the
 	differences" messages when !QUIET.

@@ -2008,15 +2008,21 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		  ts[0] == '+' || last_merge_conflict ? file_timestamp : NULL);
 	if (last_merge_conflict)
 	{
-	    cvs_output ("C ", 2);
-	    cvs_output (short_pathname, 0);
-	    cvs_output ("\n", 1);
+	    if (!really_quiet)
+	    {
+		cvs_output ("C ", 2);
+		cvs_output (short_pathname, 0);
+		cvs_output ("\n", 1);
+	    }
 	}
 	else if (last_merge)
 	{
-	    cvs_output ("M ", 2);
-	    cvs_output (short_pathname, 0);
-	    cvs_output ("\n", 1);
+	    if (!really_quiet)
+	    {
+		cvs_output ("M ", 2);
+		cvs_output (short_pathname, 0);
+		cvs_output ("\n", 1);
+	    }
 	}
 	last_merge= false;
 	last_merge_conflict = false;
