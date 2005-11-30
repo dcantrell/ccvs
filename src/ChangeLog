@@ -1,5 +1,9 @@
 2005-11-30  Derek Price  <derek@ximbiot.com>
 
+	* update.c (update, do_update): Set bases separately from -u.
+	(merge_file, join_file): Consistently output "already contains the
+	differences" messages when !QUIET.
+
 	* server.c (server_base_checkout): Accept poptions argument & resend
 	Base files when options have changed.
 	* base.c, server.h: Change all references.
