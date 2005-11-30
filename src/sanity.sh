@@ -8358,6 +8358,7 @@ done"
 	  dotest tagf-13 "${testcvs} -q update -r br" \
 "Merging differences between 1\.1\.2\.1 and 1\.1 into \`file1'
 $CPROG update: conflicts during merge
+C file1
 M file2"
 	  # CVS is giving a conflict because we are trying to get back to
 	  # 1.1.4.  I'm not sure why it is a conflict rather than just
@@ -8616,13 +8617,9 @@ EOF
 	  # problem.  Hopefully, if a new issue arises, one of the above tests
 	  # will catch the problem.
 
-	  if $keep; then
-	    echo Keeping $TESTDIR and exiting due to --keep
-	    exit 0
-	  fi
-
+	  dokeep
 	  cd ../..
-	  rm -r 1 2
+	  rm -rf 1 2
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
 	                     $CVSROOT_DIRNAME/second-dir
 	  ;;
@@ -8754,7 +8751,7 @@ diff -c -F '\.\* (' -r1\.1 rgx\.c
 	  cd ..
 
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
-	  rm -r first-dir
+	  rm -rf first-dir
 
 	  mkdir 1; cd 1
 	  dotest rcslib-merge-1 "$testcvs -q co -l ."
@@ -8792,10 +8789,11 @@ File: file1            	Status: Up-to-date
 3'
 	  sed -e 's/3/three/' file1 > f; mv f file1
 	  dotest rcslib-merge-11 "$testcvs -Q commit -mb1 file1"
-	  dotest rcslib-merge-12 "${testcvs} -q update -kv -j1.2" \
+	  dotest rcslib-merge-12 "$testcvs -q update -kv -j1.2" \
 "U file1
 Merging differences between 1\.1 and 1\.2 into \`file1'
-$CPROG update: conflicts during merge"
+$CPROG update: conflicts during merge
+C file1"
 	  dotest rcslib-merge-13 "cat file1" \
 "<<<<<<< file1
 1\.1\.2\.1
@@ -8853,19 +8851,35 @@ new revision: 1\.1\.2\.[0-9]*; previous revision: 1\.1\.2\.[0-9]*"
 	  else
 	    modify_repo ln -s Attic/file3,v $CVSROOT_DIRNAME/first-dir/file2,v
 	  fi
+	  if $remote; then
+	    dotest_fail rcslib-symlink-3gr "$testcvs update file2" \
+"$SPROG \[update aborted\]: could not find desired version 1\.1\.2\.3 in $CVSROOT_DIRNAME/first-dir/file2,v"
+	  else
+	    # FIXCVS?  Local mode silently overwrites what it thinks is
+	    # revision 1.1.2.3 of file2 with revision 1.1.2.1 of file2 when
+	    # the later revisions disappear.  This doesn't sound right.
+	    dotest rcslib-symlink-3g "$testcvs update file2" "U file2"
+	  fi
 
-	  dotest rcslib-symlink-3g "$testcvs update file2" "U file2"
+	  if test -n "$remotehost"; then
+	    modify_repo "$CVS_RSH $remotehost 'ln -s Attic/file3,v $CVSROOT_DIRNAME/first-dir/file4,v'"
+	  else
+	    modify_repo ln -s Attic/file3,v $CVSROOT_DIRNAME/first-dir/file4,v
+	  fi
+	  dotest rcslib-symlink-3g-2 "$testcvs update file4" "U file4"
 
 	  # restore the link to file1 for the following tests
-	  dotest rcslib-symlink-3i "$testcvs -Q rm -f file3" ''
+	  dotest rcslib-symlink-3i "$testcvs -Q rm -f file3"
 	  dotest rcslib-symlink-3j "$testcvs -Q ci -mwhatever file3"
+	  dotest rcslib-symlink-3k "$testcvs -Q up file2"
 	  rm -f $CVSROOT_DIRNAME/first-dir/file2,v
+	  rm -f $CVSROOT_DIRNAME/first-dir/file4,v
 	  rm -f $CVSROOT_DIRNAME/first-dir/Attic/file3,v
 	  # As for rcslib-symlink-1
 	  if test -n "$remotehost"; then
-	    modify_repo "$CVS_RSH $remotehost 'ln -s file1,v $CVSROOT_DIRNAME/first-dir/file2,v'"
+	    modify_repo "$CVS_RSH $remotehost 'ln -s file1,v $CVSROOT_DIRNAME/first-dir/file4,v'"
 	  else
-	    modify_repo ln -s file1,v $CVSROOT_DIRNAME/first-dir/file2,v
+	    modify_repo ln -s file1,v $CVSROOT_DIRNAME/first-dir/file4,v
 	  fi
 
 	  # Test 5 reveals a problem with having symlinks in the
@@ -8878,14 +8892,24 @@ new revision: 1\.1\.2\.[0-9]*; previous revision: 1\.1\.2\.[0-9]*"
 	  dotest rcslib-symlink-5 "$testcvs tag the_tag" \
 "$SPROG tag: Tagging .
 T file1
-W file2 : the_tag already exists on version 1.1.2.3 : NOT MOVING tag to version 1.1.2.1"
+W file4 : the_tag already exists on version 1.1.2.3 : NOT MOVING tag to version 1.1.2.1"
 	  # As for rcslib-symlink-1
 	  if test -n "$remotehost"; then
-	    dotest rcslib-symlink-6 "$CVS_RSH $remotehost 'ls -l $CVSROOT_DIRNAME/first-dir/file2,v'" \
-".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
+	    dotest rcslib-symlink-6 "$CVS_RSH $remotehost 'ls -l $CVSROOT_DIRNAME/first-dir/file4,v'" \
+".*$CVSROOT_DIRNAME/first-dir/file4,v -> file1,v"
 	  else
-	    dotest rcslib-symlink-6 "ls -l $CVSROOT_DIRNAME/first-dir/file2,v" \
-".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
+	    dotest rcslib-symlink-6 "ls -l $CVSROOT_DIRNAME/first-dir/file4,v" \
+".*$CVSROOT_DIRNAME/first-dir/file4,v -> file1,v"
+	  fi
+
+	  # Restore file2 link for the next few tests.
+	  rm -f $CVSROOT_DIRNAME/first-dir/file4,v
+	  dotest rcslib-symlink-6b "$testcvs -Q up file4"
+	  # As for rcslib-symlink-1
+	  if test -n "$remotehost"; then
+	    modify_repo "$CVS_RSH $remotehost 'ln -s file1,v $CVSROOT_DIRNAME/first-dir/file2,v'"
+	  else
+	    modify_repo ln -s file1,v $CVSROOT_DIRNAME/first-dir/file2,v
 	  fi
 
 	  # Symlinks tend to interact poorly with the Attic.
@@ -8981,7 +9005,7 @@ new revision: 1\.5; previous revision: 1\.4"
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
 			     $CVSROOT_DIRNAME/second-dir \
 			     $CVSROOT_DIRNAME/123456789012345678901234567890
-	  rm -r first-dir second-dir 2
+	  rm -rf first-dir second-dir 2
 	  ;;
 
 

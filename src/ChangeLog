@@ -1,5 +1,17 @@
 2005-11-30  Derek Price  <derek@ximbiot.com>
 
+	* server.c (server_base_checkout): Accept poptions argument & resend
+	Base files when options have changed.
+	* base.c, server.h: Change all references.
+	* base.c (base_checkout): Accept poptions argument.
+	* add.c, base.c, base.h, checkin.c, update.c: Change all references.
+	* client.c (call_in_directory): Remove leading "./" from short_pathname
+	when present.
+	(update_entries): Output "C" & "M" lines when needed.
+	(client_base_checkout): Allow Base files to be replaced.
+	(client_base_merge): Try to pretend merges never happened when they
+	have no effect.
+
 	* sanity.sh: Compensate for new read-only Base files by forcing some
 	directory removals.  Other minor corrections.
 

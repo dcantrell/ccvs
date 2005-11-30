@@ -500,7 +500,7 @@ add (int argc, char **argv)
 			               finfo.fullname, prev);
 			    status = base_checkout (vers->srcfile, &finfo,
 						    NULL, prev, vers->tag,
-						    vers->options);
+						    NULL, vers->options);
 			    if (status != 0)
 			    {
 				error (0, 0, "Failed to resurrect revision %s",
@@ -615,7 +615,8 @@ add (int argc, char **argv)
 			     strlen (vers->vn_user));
 		    status = base_checkout (vers->srcfile, &finfo,
 					    vers->vn_user, vers->vn_user,
-					    vers->tag, vers->options);
+					    vers->tag, vers->entdata->options,
+					    vers->options);
 		    if (status != 0)
 		    {
 			error (0, 0, "Failed to resurrect revision %s.",

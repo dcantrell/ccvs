@@ -8148,7 +8148,8 @@ cvs_output_tagged (const char *tag, const char *text)
  */
 void
 server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
-		      const char *rev, const char *tag, const char *options)
+		      const char *rev, const char *tag, const char *poptions,
+		      const char *options)
 {
     char *basefile;
     char *fullbase;
@@ -8162,7 +8163,14 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 
     if (!supported_response ("Base-checkout")) return;
 
-    if (prev && !strcmp (prev, rev))
+    if (/* Entry rev and new rev are the same...  */
+	prev && !strcmp (prev, rev)
+	/* ...and... */
+	&& (   /* ...both option specs are empty...  */
+	    (  (!poptions || !poptions[0]) && (!options || !options[0]))
+	       /* ...or the option specs match.  */
+	    || (poptions && options && !strcmp (poptions, options)))
+       )
 	/* PREV & REV are the same, so the client should already have this
 	 * file.
 	 */
@@ -8173,7 +8181,7 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 			  *(finfo->update_dir) ? finfo->update_dir : ".",
 			  basefile);
 
-    if (prev && strcmp (prev, "0"))
+    if (prev && strcmp (prev, "0") && strcmp (prev, rev))
     {
 	/* Compute and send diff.  */
 	int dargc = 0;
