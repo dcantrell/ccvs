@@ -1289,7 +1289,11 @@ VERS: ", 0);
 	     */
 	    status = base_checkout (vers_ts->srcfile, finfo,
 				    vers_ts->vn_user, vers_ts->vn_rcs,
-				    vers_ts->tag, vers_ts->options);
+				    vers_ts->tag,
+				    vers_ts->entdata
+				    ? vers_ts->entdata->options
+				    : NULL,
+				    vers_ts->options);
     }
 
     if (file_is_dead || status == 0)
@@ -1897,7 +1901,8 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 	   to treat any such mismatch as an automatic conflict. -twp */
 
 	status = base_checkout (finfo->rcs, finfo, vers->vn_user, vers->vn_rcs,
-			        vers->tag, vers->options);
+			        vers->tag, vers->entdata->options,
+				vers->options);
 	base_copy (finfo, vers->vn_rcs, "yy");
 
 	if (status)
@@ -1992,7 +1997,11 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 	    goto out;
 	}
 
-	write_letter (finfo, 'M');
+	if (!bases)
+	    /* The client may determine this is a conflict rather than
+	     * modified.  Let it write the correct message.
+	     */
+	    write_letter (finfo, 'M');
     }
     retval = 0;
  out:
@@ -2317,7 +2326,8 @@ join_file (struct file_info *finfo, Vers_TS *vers)
                return a non-zero exit status.  */
 	    status = base_checkout (xvers->srcfile, finfo,
 				    NULL, xvers->vn_rcs,
-				    xvers->tag, xvers->options);
+				    xvers->tag, xvers->entdata->options,
+				    xvers->options);
 	    /* Added files are always writable until commit.  */
 	    base_copy (finfo, xvers->vn_rcs, "nyd");
 
@@ -2444,7 +2454,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	 * substitution is happening during the binary mode checkout.
 	 */
 	if (base_checkout (finfo->rcs, finfo, vers->vn_user, rev2, vers->tag,
-			   t_options) != 0)
+			   vers->entdata->options, t_options) != 0)
 	    status = 2;
 	else
 	    status = 0;

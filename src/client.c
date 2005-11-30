@@ -798,7 +798,11 @@ call_in_directory (const char *pathname,
 	++filename;
 
     short_pathname = xmalloc (strlen (pathname) + strlen (filename) + 5);
-    strcpy (short_pathname, pathname);
+    /* Leave off the path when it is the CWD.  */
+    if (strcmp (pathname, "./"))
+	strcpy (short_pathname, pathname);
+    else
+	short_pathname[0] = '\0';
     strcat (short_pathname, filename);
 
     /* Now that we know the path to the file we were requested to operate on,
@@ -2002,6 +2006,18 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		  last_merge ? "Result of merge" : local_timestamp,
 		  options, tag, date,
 		  ts[0] == '+' || last_merge_conflict ? file_timestamp : NULL);
+	if (last_merge_conflict)
+	{
+	    cvs_output ("C ", 2);
+	    cvs_output (short_pathname, 0);
+	    cvs_output ("\n", 1);
+	}
+	else if (last_merge)
+	{
+	    cvs_output ("M ", 2);
+	    cvs_output (short_pathname, 0);
+	    cvs_output ("\n", 1);
+	}
 	last_merge= false;
 	last_merge_conflict = false;
 
@@ -2146,9 +2162,11 @@ client_base_checkout (void *data_arg, List *ent_list,
     /* Use these values to get our base file name.  */
     basefile = make_base_file_name (filename, rev);
 
+    /* FIXME?  It might be nice to verify that base files aren't being
+     * overwritten except when the kwyword mode has changed.
+     */
     if (isfile (basefile))
-	error (1, 0, "Server sent base file `%s', which already exists.",
-	       basefile);
+	xchmod (basefile, true);
 
     update_dir = dir_name (short_pathname);
     if (!*update_dir) fullbase = xstrdup (basefile);
@@ -2355,11 +2373,10 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
     char *f1, *f2;
     char *temp_filename;
     int status;
+    Node *n;
+    Entnode *e;
 
     TRACE (TRACE_FUNCTION, "client_base_merge (%s)", short_pathname);
-
-    if (short_pathname[0] == '.' && short_pathname[1] == '/')
-	short_pathname += 2;
 
     read_line (&rev1);
     read_line (&rev2);
@@ -2388,36 +2405,45 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
     if (last_merge)
 	error (1, 0,
 "protocol error: received two `Base-merge' responses without a `Base-entry'");
-
     last_merge = true;
+
+    if ((n = findnode_fn (ent_list, filename)))
+	e = n->data;
+    else
+	e = NULL;
+
     if (status == 1)
 	last_merge_conflict = true;
-
-    if (!quiet && !xcmp (temp_filename, filename))
+    else if (!xcmp (temp_filename, filename))
     {
-	cvs_output ("`", 1);
-	cvs_output (short_pathname, 0);
-	cvs_output ("' already contains the differences between ", 0);
-	cvs_output (rev1, 0);
-	cvs_output (" and ", 5);
-	cvs_output (rev2, 0);
-	cvs_output ("\n", 1);
+	if (!quiet)
+	{
+	    cvs_output ("`", 1);
+	    cvs_output (short_pathname, 0);
+	    cvs_output ("' already contains the differences between ", 0);
+	    cvs_output (rev1, 0);
+	    cvs_output (" and ", 5);
+	    cvs_output (rev2, 0);
+	    cvs_output ("\n", 1);
+	}
+
+	if (e)
+	{
+	    char *basefile = make_base_file_name (filename, e->version);
+	    if (!xcmp (basefile, filename))
+		/* The user's file is identical to the base file.  Pretend this
+		 * merge never happened.
+		 */
+		last_merge = false;
+	    free (basefile);
+	}
     }
 
     /* Won't need these now that the merge is complete.  */
-    {
-	Node *n;
-	Entnode *e;
-	if ((n = findnode_fn (ent_list, filename)))
-	    e = n->data;
-	else
-	    e = NULL;
-	
-	if (e && strcmp (e->version, rev1) && unlink_file (f1) < 0)
-	    error (0, errno, "unable to remove `%s'", f1);
-	if (e && strcmp (e->version, rev2) && unlink_file (f2) < 0)
-	    error (0, errno, "unable to remove `%s'", f2);
-    }
+    if (e && strcmp (e->version, rev1) && unlink_file (f1) < 0)
+	error (0, errno, "unable to remove `%s'", f1);
+    if (e && strcmp (e->version, rev2) && unlink_file (f2) < 0)
+	error (0, errno, "unable to remove `%s'", f2);
     free (f1);
     free (f2);
     free (rev1);
