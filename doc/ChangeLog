@@ -1,3 +1,10 @@
+2005-11-30  Mark D. Baushke  <mdb@gnu.org>
+
+	[bug #14900] Add 'cvs server' handling for --allow-root
+	* cvs.texinfo (Error messages): Add a note about the Bad root
+	error that may arise if --allow-root is used and does not include
+	the directory the cvs client wants to use.
+
 2005-11-15  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (release output, update output): Remove references to P.

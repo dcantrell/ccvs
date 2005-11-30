@@ -15196,6 +15196,12 @@ the username and password specified are correct and
 that the @code{CVSROOT} specified is allowed by @samp{--allow-root}
 in @file{inetd.conf}.  See @ref{Password authenticated}.
 
+@item cvs @var{command}: Bad root @var{directory}
+This message indicates that there were one or more
+explicit @samp{--allow-root} arguments on the cvs
+server command line which did not match the directory
+passed by the client to the server.
+
 @item cvs @var{command}: conflict: removed @var{file} was modified by second party
 This message indicates that you removed a file, and
 someone else modified it.  To resolve the conflict,
