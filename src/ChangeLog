@@ -1,5 +1,8 @@
 2005-11-29  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.
+
 	* Makefile.am (cvs_SOURCES): Add difflib.[ch].
 	* difflib.c, difflib.h: New files with content from...
 	* rcscmds.c: ...here.
