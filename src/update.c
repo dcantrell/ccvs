@@ -2330,7 +2330,9 @@ join_file (struct file_info *finfo, Vers_TS *vers)
                return a non-zero exit status.  */
 	    status = base_checkout (xvers->srcfile, finfo,
 				    NULL, xvers->vn_rcs,
-				    xvers->tag, xvers->entdata->options,
+				    xvers->tag,
+				    xvers->entdata
+				    ? xvers->entdata->options : NULL,
 				    xvers->options);
 	    /* Added files are always writable until commit.  */
 	    base_copy (finfo, xvers->vn_rcs, "nyd");
