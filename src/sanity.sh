@@ -16927,10 +16927,9 @@ U first-dir/subdir/sfile"
 new revision: 1\.2; previous revision: 1\.1"
 	  cd ../..
 	  cd 2/first-dir
-	  dotest watch4-13 "${testcvs} -q update" \
+	  dotest watch4-13 "$testcvs -q update" \
 "Merging differences between 1\.1 and 1\.2 into file1
-rcsmerge: warning: conflicts during merge
-${SPROG} update: conflicts found in file1
+$CPROG update: conflicts during merge
 C file1"
 	  if (echo yes | ${testcvs} unedit file1) >>${LOGFILE}; then
 	    pass watch4-14

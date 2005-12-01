@@ -1,3 +1,10 @@
+2005-12-01  Derek Price  <derek@ximbiot.com>
+
+	* base.c (base_walk): Invert fopen error detection.
+
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.  Other minor corrections.
+
 2005-11-30  Derek Price  <derek@ximbiot.com>
 
 	* client.c (discard_file): Move code which discards stored metadata...
