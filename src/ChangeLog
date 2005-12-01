@@ -1,5 +1,8 @@
 2005-11-30  Derek Price  <derek@ximbiot.com>
 
+	* update.c (join_file): Don't preserve keyword modes when adding files
+	via join.
+
 	* commit.c (checkaddfile): Provide more information when changing
 	keyword expansion mode.
 
