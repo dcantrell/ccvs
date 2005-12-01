@@ -50,6 +50,9 @@
  */
 static bool last_merge;
 static bool last_merge_conflict;
+static bool last_merge_no_change;
+static char *base_merge_rev1;
+static char *base_merge_rev2;
 
 /* Similarly, to ignore bad entries on error.  */
 static bool base_copy_error;
@@ -1885,6 +1888,18 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    if (strcmp (vn, e->version))
 		base_remove (filename, e->version);
 	}
+
+	if (last_merge)
+	{
+	    /* Won't need these now that the merge is complete.  */
+	    if (strcmp (vn, base_merge_rev1))
+		base_remove (filename, base_merge_rev1);
+	    free (base_merge_rev1);
+	    if (strcmp (vn, base_merge_rev2))
+		base_remove (filename, base_merge_rev2);
+	    free (base_merge_rev2);
+	}
+
 	if (base_copy_error)
 	{
 	    /* The previous base_copy command returned an error, such as in the
@@ -1974,6 +1989,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
     {
 	char *local_timestamp;
 	char *file_timestamp;
+	bool ignore_merge;
 
 	(void) time (&last_register_time);
 
@@ -2006,12 +2022,37 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		mark_up_to_date (filename);
 	}
 
+	if (last_merge)
+	{
+	    if (last_merge_no_change)
+	    {
+		Node *n;
+		Entnode *e;
+
+		n = findnode_fn (ent_list, filename);
+		assert (n);
+
+		e = n->data;
+		if (strcmp (vn, e->version))
+		    /* Merge.  */
+		    ignore_merge = false;
+		else
+		    /* Join. */
+		    ignore_merge = true;
+	    }
+	    else
+		ignore_merge = false;
+	}
+	else
+	    ignore_merge = true;
+	
 	Register (ent_list, filename, vn,
-		  last_merge ? "Result of merge" : local_timestamp,
+		  ignore_merge ? local_timestamp : "Result of merge",
 		  options, tag, date,
 		  ts[0] == '+' || last_merge_conflict ? file_timestamp : NULL);
 	if (last_merge_conflict)
 	{
+	    assert (!ignore_merge);
 	    if (!really_quiet)
 	    {
 		cvs_output ("C ", 2);
@@ -2019,7 +2060,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		cvs_output ("\n", 1);
 	    }
 	}
-	else if (last_merge)
+	else if (!ignore_merge)
 	{
 	    if (!really_quiet)
 	    {
@@ -2030,6 +2071,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	}
 	last_merge= false;
 	last_merge_conflict = false;
+	last_merge_no_change = false;
 
 	if (file_timestamp)
 	    free (file_timestamp);
@@ -2379,89 +2421,83 @@ static void
 client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
 		   const char *filename)
 {
-    char *rev1, *rev2;
     char *f1, *f2;
     char *temp_filename;
     int status;
-    Node *n;
-    Entnode *e;
 
     TRACE (TRACE_FUNCTION, "client_base_merge (%s)", short_pathname);
 
-    read_line (&rev1);
-    read_line (&rev2);
+    read_line (&base_merge_rev1);
+    read_line (&base_merge_rev2);
 
     cvs_output ("Merging differences between ", 0);
-    cvs_output (rev1, 0);
+    cvs_output (base_merge_rev1, 0);
     cvs_output (" and ", 5);
-    cvs_output (rev2, 0);
+    cvs_output (base_merge_rev2, 0);
     cvs_output (" into `", 7);
     cvs_output (short_pathname, 0);
     cvs_output ("'\n", 2);
 
-    f1 = make_base_file_name (filename, rev1);
-    f2 = make_base_file_name (filename, rev2);
+    f1 = make_base_file_name (filename, base_merge_rev1);
+    f2 = make_base_file_name (filename, base_merge_rev2);
     temp_filename = newfilename (filename);
 
     force_copy_file (filename, temp_filename);
     force_xchmod (temp_filename, true);
 
-    status = merge (filename, temp_filename, f1, f2, rev1, rev2);
+    status = merge (filename, temp_filename, f1, f2,
+		    base_merge_rev1, base_merge_rev2);
 
     if (status != 0 && status != 1)
 	error (status == -1, status == -1 ? errno : 0,
 	       "could not merge differences between %s & %s of `%s'",
-	       rev1, rev2, short_pathname);
+	       base_merge_rev1, base_merge_rev2, short_pathname);
 
     if (last_merge)
 	error (1, 0,
 "protocol error: received two `Base-merge' responses without a `Base-entry'");
     last_merge = true;
 
-    if ((n = findnode_fn (ent_list, filename)))
-	e = n->data;
-    else
-	e = NULL;
-
     if (status == 1)
 	last_merge_conflict = true;
     else if (!xcmp (temp_filename, filename))
     {
+	Node *n;
+
 	if (!quiet)
 	{
 	    cvs_output ("`", 1);
 	    cvs_output (short_pathname, 0);
 	    cvs_output ("' already contains the differences between ", 0);
-	    cvs_output (rev1, 0);
+	    cvs_output (base_merge_rev1, 0);
 	    cvs_output (" and ", 5);
-	    cvs_output (rev2, 0);
+	    cvs_output (base_merge_rev2, 0);
 	    cvs_output ("\n", 1);
 	}
 
-	if (e)
+	if ((n = findnode_fn (ent_list, filename)))
 	{
+	    Entnode *e = n->data;
 	    char *basefile = make_base_file_name (filename, e->version);
 	    if (!xcmp (basefile, filename))
 		/* The user's file is identical to the base file.  Pretend this
 		 * merge never happened.
 		 */
-		last_merge = false;
+		last_merge_no_change = true;
 	    free (basefile);
 	}
     }
 
+    /* In the noexec case, just remove our results.  */
     if (noexec && CVS_UNLINK (temp_filename) < 0)
 	error (0, errno, "Failed to remove `%s'", temp_filename);
 
-    /* Won't need these now that the merge is complete.  */
-    if ((!e || strcmp (e->version, rev1)) && CVS_UNLINK (f1) < 0)
-	error (0, errno, "unable to remove `%s'", f1);
-    if ((!e || strcmp (e->version, rev2)) && CVS_UNLINK (f2) < 0)
-	error (0, errno, "unable to remove `%s'", f2);
+    /* Let update_entries remove our "temporary" base files, since it should
+     * know which one should be kept.
+     */
+
     free (f1);
     free (f2);
-    free (rev1);
-    free (rev2);
 }
 
 

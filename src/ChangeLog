@@ -1,5 +1,13 @@
 2005-12-01  Derek Price  <derek@ximbiot.com>
 
+	* client.c (base_merge_rev1, base_merge_rev2, last_merge_no_change):
+	New globals.
+	(update_entries): Delete merge temp files when not needed.  Don't
+	ignore merges (only joins), since rev changes.
+	(merge): Skip deleting temp files since this function cannot know which
+	is needed.
+	* edit.c (edit_file): Deal with read-only edit base files.
+
 	* filesubr.c (force_xchmod, ixchmod, force_copy_file): New functions.
 	(copy_file, xchmod): Wrap the force_* functions.
 	* cvs.h (xchmod): Move proto...
