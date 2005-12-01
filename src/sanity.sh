@@ -11180,7 +11180,7 @@ C $file"
 	  dotest join-admin-0-9 "$testcvs -Q tag -b M2" ''
 
 	  dotest join-admin-0-10 "$testcvs -Q update -r B" ''
-	  dotest join-admin-0-11 "$testcvs -Q update -kk -jM1 -jM2" ''
+	  dotest join-admin-0-11 "$testcvs -Q update -kk -jM1 -jM2"
 	  dotest join-admin-0-12 "$testcvs -Q ci -m. b"
 
 	  dotest join-admin-0-13 "$testcvs -Q update -A" ''
@@ -11242,15 +11242,15 @@ File: b                	Status: Up-to-date
 
 	  dotest join-admin-2-13 "$testcvs -Q update -r T" '' "${QUESTION} e0"
 	  dotest join-admin-2-14 "$testcvs update -kk -jM1 -jM2" \
-"${SPROG} update: Updating .
-U b
+"$SPROG update: Updating .
+$SPROG update: scheduling addition from revision 1\.1 of \`b'\.
 U e
 Merging differences between 1\.1 and 1\.2 into \`e'
 \`e' already contains the differences between 1\.1 and 1\.2
-${QUESTION} e0" \
-"${QUESTION} e0
-${SPROG} update: Updating .
-U b
+$QUESTION e0" \
+"$QUESTION e0
+$SPROG update: Updating .
+$SPROG update: scheduling addition from revision 1\.1 of \`b'\.
 U e
 Merging differences between 1\.1 and 1\.2 into \`e'
 \`e' already contains the differences between 1\.1 and 1\.2"
@@ -11373,7 +11373,7 @@ File: a                	Status: Up-to-date
 	  dokeep
 	  cd ../..
 	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
-	  rm -r $module
+	  rm -rf $module
 	  ;;
 
 
@@ -11448,13 +11448,11 @@ ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 "$CVSROOT_DIRNAME/first-dir/a,v  <--  a
 new revision: delete; previous revision: 1\.1"
 
-	  # Check out the file on the branch.  This should report
-	  # that the file is not pertinent, but it should not
-	  # say anything else.
+	  # Check out the file on the branch.  This used to say the file
+	  # wasn't pertinent, but this wasn't the same behavior as update.
 	  cd ..
 	  rm -r first-dir
-	  dotest newb-123i "${testcvs} -q co -r branch first-dir/a" \
-"${SPROG} checkout: warning: \`first-dir/a' is not (any longer) pertinent"
+	  dotest newb-123i "$testcvs -q co -r branch first-dir/a"
 
 	  # Update the other copy, and make sure that a is removed.
 	  cd ../1/first-dir
@@ -11568,15 +11566,17 @@ File: a                	Status: Needs Merge
 		dotest conflicts-129a "${testcvs} -nq update a" \
 "Merging differences between 1\.1 and 1\.2 into \`a'
 $CPROG update: conflicts during merge"
-		dotest conflicts-130 "${testcvs} -q update" \
+		dotest conflicts-130 "$testcvs -q update" \
 "Merging differences between 1\.1 and 1\.2 into \`a'
 $CPROG update: conflicts during merge
-${QUESTION} dir1
-${QUESTION} sdir" \
-"${QUESTION} dir1
-${QUESTION} sdir
+C a
+$QUESTION dir1
+$QUESTION sdir" \
+"$QUESTION dir1
+$QUESTION sdir
 Merging differences between 1\.1 and 1\.2 into \`a'
-$CPROG update: conflicts during merge"
+$CPROG update: conflicts during merge
+C a"
 		rmdir dir1 sdir
 
 		dotest conflicts-status-1 "${testcvs} status a" \
@@ -11700,7 +11700,7 @@ File: a                	Status: Up-to-date
 
 		dokeep
 		cd ../..
-		rm -r 1 2 3
+		rm -rf 1 2 3
 		modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 		restore_adm
 		;;
@@ -11866,14 +11866,14 @@ initial revision: 1\.1"
 	  # the local CVS behavior for remote without the cvs add seems 
 	  # pretty difficult).
 	  if $remote; then
-	    dotest_fail conflicts2-142d2r "${testcvs} -q update" \
-"${QUESTION} aa\.c
-${QUESTION} same\.c
-${CPROG} update: move away \`\./aa\.c'; it is in the way
+	    dotest_fail conflicts2-142d2r "$testcvs -q update" \
+"$QUESTION aa\.c
+$QUESTION same\.c
+$CPROG update: move away \`aa\.c'; it is in the way
 C aa\.c
-${SPROG} update: conflict: \`bb\.c' created independently by second party
+$SPROG update: conflict: \`bb\.c' created independently by second party
 C bb\.c
-${CPROG} update: move away \`\./same\.c'; it is in the way
+$CPROG update: move away \`same\.c'; it is in the way
 C same\.c"
 	  else
 	    dotest_fail conflicts2-142d2 "${testcvs} -q update" \
@@ -11944,7 +11944,7 @@ File: bb\.c             	Status: Unresolved Conflict
 
 	  dokeep
 	  cd ../..
-	  rm -r 1 2
+	  rm -rf 1 2
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -12074,7 +12074,7 @@ ${SPROG} update: ignoring first-dir/sdir (CVS/Entries missing)"
 	  cd first-dir
 
 	  dotest conflicts3-21 "${testcvs} -q update -d sdir" "U sdir/sfile"
-	  rm -r sdir/CVS
+	  rm -rf sdir/CVS
 	  dotest conflicts3-22 "${testcvs} -q update" "${QUESTION} sdir"
 	  if $remote; then
 	    dotest_fail conflicts3-23 "${testcvs} -q update -PdA" \
@@ -12092,7 +12092,7 @@ C sdir/sfile"
 	  # by removing each file (and using update -P or some such).  Then
 	  # suppose that the build process creates an sdir directory which
 	  # is not supposed to be under CVS.
-	  rm -r sdir
+	  rm -rf sdir
 	  dotest conflicts3-24 "${testcvs} -q update -d sdir" "U sdir/sfile"
 	  rm sdir/sfile
 	  dotest conflicts3-25 "${testcvs} rm sdir/sfile" \
@@ -12595,11 +12595,11 @@ Are you sure you want to release (and delete) directory .dirmodule.: "
 	  # (Dec 95).  Probably the exit status should be nonzero,
 	  # however.
 	  dotest modules-150g1 "${testcvs} co dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born \`dirmodule/nonexist' has disappeared"
+"$SPROG checkout: nothing known about \`dirmodule/nonexist'"
 	  # We tolerate the creation of the dirmodule directory, since that
 	  # is what CVS does, not because we view that as preferable to not
 	  # creating it.
-	  dotest_fail modules-150g2 "test -f dirmodule/a || test -f dirmodule/b" ""
+	  dotest_fail modules-150g2 "test -f dirmodule/a || test -f dirmodule/b"
 	  rm -r dirmodule
 
 	  # Now test that a module using -d checks out to the specified
@@ -12621,10 +12621,10 @@ Are you sure you want to release (and delete) directory .nameddir.: "
 	  dotest modules-151 "${testcvs} co aliasmodule" ""
 	  dotest_fail modules-152 "test -d aliasmodule" ""
 	  echo abc >>first-dir/subdir/a
-	  dotest modules-153 "${testcvs} -q co aliasmodule" "M first-dir/subdir/a"
+	  dotest modules-153 "$testcvs -q co aliasmodule" "M first-dir/subdir/a"
 
 	  cd ..
-	  rm -r 1
+	  rm -rf 1
 
 	  mkdir 2
 	  cd 2
@@ -12648,7 +12648,7 @@ first-dir"
 U first-dir/subdir/a
 U first-dir/subdir/b"
 	  cd ..
-	  rm -r 1
+	  rm -rf 1
 
 	  # Test checking out a module which lists at least two
 	  # specific files twice.  At one time, this failed over
@@ -12666,14 +12666,14 @@ U first-dir/subdir/b"
 "${SPROG}"' add: scheduling file `file1'\'' for addition
 '"${SPROG}"' add: scheduling file `file2'\'' for addition
 '"${SPROG}"' add: use .'"${SPROG}"' commit. to add these files permanently'
-	  dotest modules-155c3 "${testcvs} -q ci -m add-it" \
+	  dotest modules-155c3 "$testcvs -q ci -m add-it" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 $CVSROOT_DIRNAME/first-dir/file2,v  <--  file2
 initial revision: 1\.1"
 
 	  cd ..
-	  rm -r first-dir
+	  rm -rf first-dir
 	  dotest modules-155c4 "${testcvs} -q co topfiles" \
 "U first-dir/file1
 U first-dir/file2"
@@ -12687,14 +12687,13 @@ U first-dir/file2"
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: delete; previous revision: 1\.1"
 	  cd ..
-	  rm -r first-dir
-	  dotest modules-155c8 "${testcvs} -q co topfiles" \
-"${SPROG} checkout: warning: \`first-dir/file1' is not (any longer) pertinent
-U first-dir/file2"
+	  rm -rf first-dir
+	  dotest modules-155c8 "$testcvs -q co topfiles" \
+"U first-dir/file2"
 
 	  dokeep
 	  cd ..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -12832,9 +12831,9 @@ initial revision: 1\.1"
 ${SPROG} checkout: Updating first-dir
 U first-dir/amper1"
 	  dotest modules2-15 "test -f combmodule/file3" ""
-	  dotest modules2-16 "test -f combmodule/first-dir/amper1" ""
+	  dotest modules2-16 "test -f combmodule/first-dir/amper1"
 	  cd combmodule
-	  rm -r first-dir
+	  rm -rf first-dir
 	  # At least for now there is no way to tell CVS that
 	  # some files/subdirectories come from one repository directory,
 	  # and others from another.
@@ -12850,7 +12849,7 @@ U first-dir/amper1"
 "U first-dir/amper1"
 	  dotest modules2-19 "test -f combmodule/first-dir/amper1" ""
 	  cd ..
-	  rm -r 1
+	  rm -rf 1
 
 	  # Now test the "ampdirmod" and "badmod" modules to be sure that
 	  # options work with ampersand modules but don't prevent the
@@ -12867,7 +12866,7 @@ ${SPROG} checkout: Updating second-dir"
 "${SPROG} server: modules file missing directory for module badmod
 ${CPROG} \[checkout aborted\]: cannot expand modules"
 	  cd ..
-	  rm -r 1
+	  rm -rf 1
 
 	  # Confirm that a rename with added depth nested in an ampersand
 	  # module works.
@@ -12878,7 +12877,7 @@ ${CPROG} \[checkout aborted\]: cannot expand modules"
 	  dotest modules2-nestedrename-3 "test -d messymod/sdir/CVS" ''
 	  dotest modules2-nestedrename-4 "test -d messymod/sdir/child" ''
 	  dotest modules2-nestedrename-5 "test -d messymod/sdir/child/CVS" ''
-	  cd ..; rm -r 1
+	  cd ..; rm -rf 1
 
 	  # FIXME:  client/server has a bug.  It should be working like a local
 	  # repository in this case, but fails to check out the second module
@@ -12890,13 +12889,13 @@ ${CPROG} \[checkout aborted\]: cannot expand modules"
 	  dotest modules2-ampertag-1 "${testcvs} -q co -rtag ampermodule" \
 "U first-dir/amper1"
 	  if $remote; then
-	    dotest_fail modules2-ampertag-2 "test -d ampermodule/second-dir" ''
-	    dotest_fail modules2-ampertag-3 "test -d ampermodule/second-dir/CVS" ''
+	    dotest_fail modules2-ampertag-2r "test -d ampermodule/second-dir" ''
+	    dotest_fail modules2-ampertag-3r "test -d ampermodule/second-dir/CVS" ''
 	  else
 	    dotest modules2-ampertag-2 "test -d ampermodule/second-dir" ''
 	    dotest modules2-ampertag-3 "test -d ampermodule/second-dir/CVS" ''
 	  fi
-	  cd ..; rm -r 1
+	  cd ..; rm -rf 1
 
 	  # Test for tag files when an ampermod is renamed with more path
 	  # elements than it started with.
@@ -12914,7 +12913,7 @@ ${CPROG} \[checkout aborted\]: cannot expand modules"
 	  else
 	    dotest modules2-tagfiles-2 "cat messymod/sdir/CVS/Tag" 'Ttag'
 	  fi
-	  cd ..; rm -r 1
+	  cd ..; rm -rf 1
 
 	  # Test that CVS gives an error if one combines -a with
 	  # other options.
@@ -12989,7 +12988,7 @@ $SPROG commit: Rebuilding administrative file database"
 	  rm -r first-dir
 	  dotest modules3-7 "${testcvs} -q co bigmod" 'U first-dir/file1'
 	  cd ..
-	  rm -r 1
+	  rm -rf 1
 
 	  mkdir 1; cd 1
 	  mkdir suba
@@ -13041,7 +13040,7 @@ initial revision: 1\.1"
 'U src/sub/dir/file1'
 	  dotest modules3-9 "test -f src/sub/dir/file1" ''
 	  cd ..
-	  rm -r 1
+	  rm -rf 1
 
 	  # Try the same thing, but with the directories nested even
 	  # deeper (deeply enough so they are nested more deeply than
@@ -13055,13 +13054,13 @@ initial revision: 1\.1"
 	  # While we are doing things like twisted uses of '/' (e.g.
 	  # modules3-12), try this one.
 	  if $remote; then
-	    dotest_fail modules3-11b \
+	    dotest_fail modules3-11br \
 "${testcvs} -q update ${TESTDIR}/1/src/sub1/sub2/sub3/dir/file1" \
 "absolute pathnames invalid for server (specified .${TESTDIR}/1/src/sub1/sub2/sub3/dir.)"
 	  fi # end of remote-only tests
 
 	  cd ..
-	  rm -r 1
+	  rm -rf 1
 
 	  # This one is almost too twisted for words.  The pathname output
 	  # in the message from "co" doesn't include the "path/in/modules",
@@ -13105,7 +13104,7 @@ initial revision: 1\.1"
 	  dotest modules3-17 "cat another/path/test/file1" 'file1'
 
 	  dokeep
-	  cd ..; rm -r 2
+	  cd ..; rm -rf 2
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
 			     $CVSROOT_DIRNAME/second-dir
 	  ;;
@@ -13176,14 +13175,14 @@ $SPROG commit: Rebuilding administrative file database"
 "U first-dir/file1
 U first-dir/subdir/file2
 U first-dir/subdir_long/file3"
-	  rm -r first-dir
+	  rm -rf first-dir
 
 	  dotest modules4-11 "${testcvs} -q co some" \
 "U first-dir/file1
 U first-dir/subdir_long/file3"
 	  dotest_fail modules4-12 "test -d first-dir/subdir" ''
 	  dotest modules4-13 "test -d first-dir/subdir_long" ''
-	  rm -r first-dir
+	  rm -rf first-dir
 
 	  if $remote; then
 	    # But remote seems to do it the other way.
@@ -13204,13 +13203,13 @@ U first-dir/subdir_long/file3"
 	    dotest modules4-14-2 "test -d first-dir/subdir" ''
 	    dotest modules4-14-3 "test -d first-dir/subdir_long" ''
 	  fi
-	  rm -r first-dir
+	  rm -rf first-dir
 
 	  dotest modules4-15 "${testcvs} -q co other" \
 "U first-dir/file1"
 	  dotest_fail modules4-16 "test -d first-dir/subdir" ''
 	  dotest_fail modules4-17 "test -d first-dir/subdir_long" ''
-	  rm -r first-dir
+	  rm -rf first-dir
 
 	  cd ..
 	  rm -r 2
@@ -13240,7 +13239,7 @@ add-it
 
 	  dokeep
 	  cd ../../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -13418,10 +13417,10 @@ Are you sure you want to release (and delete) directory .dirmodule.: "
 	  # (Dec 95).  Probably the exit status should be nonzero,
 	  # however.
 	  if $remote; then
-	    dotest modules5-22 "${testcvs} co dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born \`dirmodule/nonexist' has disappeared
-${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
-checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
+	    dotest modules5-22r "$testcvs co dirmodule/nonexist" \
+"$SPROG checkout: nothing known about \`dirmodule/nonexist'
+$SPROG checkout: Executing ..$CVSROOT_DIRNAME/checkout\.sh. .dirmodule..
+checkout script invoked in $TMPDIR/cvs-serv[0-9a-z]*
 args: dirmodule"
 	  else
 	    dotest modules5-22 "${testcvs} co dirmodule/nonexist" \
@@ -13570,10 +13569,10 @@ Are you sure you want to release (and delete) directory .mydir.: "
 	  # (Dec 95).  Probably the exit status should be nonzero,
 	  # however.
 	  if $remote; then
-	    dotest modules5-42 "${testcvs} co -d mydir dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born \`mydir/nonexist' has disappeared
-${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .mydir..
-checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
+	    dotest modules5-42r "$testcvs co -d mydir dirmodule/nonexist" \
+"$SPROG checkout: nothing known about \`mydir/nonexist'
+$SPROG checkout: Executing ..$CVSROOT_DIRNAME/checkout\.sh. .mydir..
+checkout script invoked in $TMPDIR/cvs-serv[0-9a-z]*
 args: mydir"
 	  else
 	    dotest modules5-42 "${testcvs} co -d mydir dirmodule/nonexist" \
@@ -13680,7 +13679,7 @@ ${CPROG} \[checkout aborted\]: cannot expand modules"
 	  dokeep
 	  restore_adm
 	  cd ..
-	  rm -r modules6
+	  rm -rf modules6
 	  ;;
 
 
@@ -13764,7 +13763,7 @@ U one/file1"
 
 	  dokeep
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  ;;
 
 
@@ -13852,7 +13851,7 @@ U dir5/sdir/file2"
 	  dokeep
 	  cd ../..
 	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
-	  rm -r $module
+	  rm -rf $module
 	  ;;
 
 
@@ -15050,7 +15049,7 @@ U dir2d1/sub/sub2d1/file1"
 	  # This tests the code in find_dirs which skips Emptydir.
 	  dotest emptydir-11 "${testcvs} -q -n update -d -P" ''
 	  cd ../..
-	  rm -r edir
+	  rm -rf edir
 	  cd ..
 
 	  # Now start playing with moda.
@@ -15078,14 +15077,14 @@ ${SPROG} checkout: Updating dir2d1/suba"
 U dir2d1/sub/sub2d1/file1"
 
 	  if $remote; then
-	    dotest emptydir-17 "cat dir2d1/CVS/Repository" "CVSROOT/Emptydir"
+	    dotest emptydir-17r "cat dir2d1/CVS/Repository" "CVSROOT/Emptydir"
 	  else
 	    dotest_fail emptydir-17 "test -d dir2d1/CVS"
 	  fi
 
 	  dokeep
 	  cd ..
-	  rm -r 1 2 3
+	  rm -rf 1 2 3
 	  modify_repo rm -rf $CVSROOT_DIRNAME/mod1 $CVSROOT_DIRNAME/moda
 	  # I guess for the moment the convention is going to be
 	  # that we don't need to remove $CVSROOT_DIRNAME/CVSROOT/Emptydir
@@ -15149,7 +15148,7 @@ U ${TESTDIR}/1/file1"
 	  dotest abspath-2b "cat ${TESTDIR}/1/CVS/Repository" "mod1"
 
 	  # Done.  Clean up.
-	  rm -r $TESTDIR/1
+	  rm -rf $TESTDIR/1
 
 
 	  # Now try in a subdirectory.  We're not covering any more
@@ -15167,7 +15166,7 @@ U ${TESTDIR}/1/file1"
 	  fi
 	  dotest abspath-3.2 "$testcvs -q co -d 1/2 mod1" \
 "U 1/2/file1"
-	  rm -r 1
+	  rm -rf 1
 
 	  # We don't to mess with an existing directory just to traverse it,
 	  # for example by creating a CVS directory, but currently we can't
@@ -15289,7 +15288,7 @@ ${SPROG} \[checkout aborted\]: than the 0 which Max-dotdot specified"
 	  # Finished with all tests.  Cleanup.
 	  dokeep
 	  cd ../..
-	  rm -r 1 2 3
+	  rm -rf 1 2 3
 	  modify_repo rm -rf $CVSROOT_DIRNAME/mod1 $CVSROOT_DIRNAME/mod2
 	  ;;
 
@@ -15390,7 +15389,7 @@ ${DOTSTAR}
 ${SPROG} update: Updating top-dir"
 
 	  cd ..
-	  rm -r 1; mkdir 1; cd 1
+	  rm -rf 1; mkdir 1; cd 1
 	  dotest toplevel-10 "${testcvs} co top-dir" \
 "${SPROG} checkout: Updating top-dir
 U top-dir/file1"
@@ -15427,7 +15426,7 @@ ${SPROG} checkout: Updating top-dir"
 	  dokeep
 	  restore_adm
 	  cd ..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/top-dir \
 			     $CVSROOT_DIRNAME/second-dir
 	  ;;
@@ -15495,7 +15494,7 @@ U top-dir/file1"
 "${SPROG} update: Updating top-dir"
 
 	  cd ..
-	  rm -r 1; mkdir 1; cd 1
+	  rm -rf 1; mkdir 1; cd 1
 	  dotest toplevel2-10 "${testcvs} co top-dir" \
 "${SPROG} checkout: Updating top-dir
 U top-dir/file1"
@@ -15507,7 +15506,7 @@ U top-dir/file1"
 	  dokeep
 	  cd ..
 	  restore_adm
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/top-dir \
 			     $CVSROOT_DIRNAME/second-dir
 	  ;;
@@ -16135,7 +16134,7 @@ initial revision: 1\.1"
 	  if $remote; then
 	    dotest errmsg1-168r "${testcvs} -q update" \
 "${SPROG} update: \`foo' is no longer in the repository
-$CPROG update: unable to remove \./foo: Permission denied" \
+$CPROG update: unable to remove foo: Permission denied" \
 "${SPROG} update: \`foo' is no longer in the repository"
 	  else
 	    dotest errmsg1-168 "${testcvs} -q update" \
@@ -16352,7 +16351,7 @@ initial revision: 1\.1"
 
 	    dokeep
 	    cd ..
-	    rm -r close-stdout
+	    rm -rf close-stdout
 	    modify_repo rm -rf $CVSROOT_DIRNAME/closeout
 	  else
 	    skip close-stdout '/dev/full is not available'
