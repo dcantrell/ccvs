@@ -102,7 +102,7 @@ base_walk (enum base_walk code, const char *update_dir, const char *file,
     }
 
     fp = CVS_FOPEN (CVSADM_BASEREV, "r");
-    if (fp)
+    if (!fp)
     {
 	if (!existence_error (errno))
 	{
