@@ -1,5 +1,8 @@
 2005-11-30  Derek Price  <derek@ximbiot.com>
 
+	* commit.c (checkaddfile): Provide more information when changing
+	keyword expansion mode.
+
 	* client.c (update_entries): Honor noexec.
 	(client_base_merge): Ignore noexec when working with temp files.
 	* difflib.c (merge): Ditto.
