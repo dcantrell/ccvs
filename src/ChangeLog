@@ -1,5 +1,8 @@
 2005-11-30  Derek Price  <derek@ximbiot.com>
 
+	* client.c (discard_file): Move code which discards stored metadata...
+	(validate_change): ...here.
+
 	* update.c (join_file): Don't preserve keyword modes when adding files
 	via join.
 
