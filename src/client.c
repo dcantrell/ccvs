@@ -1428,22 +1428,6 @@ discard_file (void)
 	    break;
     }
 
-    /* The Mode, Mod-time, and Checksum responses should not carry
-       over to a subsequent Created (or whatever) response, even
-       in the error case.  */
-    if (stored_mode)
-    {
-	free (stored_mode);
-	stored_mode = NULL;
-    }
-    stored_modtime_valid = 0;
-    stored_checksum_valid = 0;
-
-    if (updated_fname)
-    {
-	free (updated_fname);
-	updated_fname = NULL;
-    }
     return;
 }
 
@@ -1553,12 +1537,27 @@ validate_change (enum update_existing existp, const char *filename,
 	   I hope the above paragraph makes it clear that making this
 	   clearer is not a one-line fix.  */
 	error (0, 0, "move away `%s'; it is in the way", fullname);
+
+	/* The Mode, Mod-time, and Checksum responses should not carry
+	 * over to a subsequent Created (or whatever) response, even
+	 * in the error case.
+	 */
 	if (updated_fname)
 	{
 	    cvs_output ("C ", 0);
 	    cvs_output (updated_fname, 0);
 	    cvs_output ("\n", 1);
+	    free (updated_fname);
+	    updated_fname = NULL;
 	}
+	if (stored_mode)
+	{
+	    free (stored_mode);
+	    stored_mode = NULL;
+	}
+	stored_modtime_valid = 0;
+	stored_checksum_valid = 0;
+
 	failure_exit = true;
 	return false;
     }
