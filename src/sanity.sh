@@ -18143,17 +18143,18 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 new revision: 1\.2; previous revision: 1\.1"
 	  cp ../binfile3 brmod-wdmod
 
-	  dotest binfiles2-8 "${testcvs} -q update -j br" \
+	  dotest binfiles2-8 "$testcvs -q update -j br" \
 "$SPROG update: scheduling addition from revision 1\.1\.2\.1 of \`binfile.dat'\.
-U brmod
-${SPROG} update: nonmergeable file needs merge
-${SPROG} update: revision 1.1.2.1 from repository is now in brmod-trmod
-${SPROG} update: file from working directory is now in .#brmod-trmod.1.2
+$SPROG update: Replacing \`brmod' with contents of revision 1\.1\.2\.1\.
+M brmod
+$SPROG update: Nonmergeable file needs merge\.
+$SPROG update: Replacing \`brmod-trmod' with contents of revision 1\.1\.2\.1\.
+$SPROG update: File from working directory is now in \`\.#brmod-trmod\.1\.2'\.
 C brmod-trmod
 M brmod-wdmod
-${SPROG} update: nonmergeable file needs merge
-${SPROG} update: revision 1.1.2.1 from repository is now in brmod-wdmod
-${SPROG} update: file from working directory is now in .#brmod-wdmod.1.1
+$SPROG update: Nonmergeable file needs merge\.
+$SPROG update: Replacing \`brmod-wdmod' with contents of revision 1\.1\.2\.1\.
+$SPROG update: File from working directory is now in \`\.#brmod-wdmod\.1\.1'\.
 C brmod-wdmod"
 
 	  dotest binfiles2-9 "cmp ../binfile binfile.dat"
@@ -18164,7 +18165,13 @@ C brmod-wdmod"
 	  dotest binfiles2-9a-brmod-wdmod "cmp ../binfile3 .#brmod-wdmod.1.1"
 
 	  # Test that everything was properly scheduled.
-	  dotest binfiles2-10 "${testcvs} -q ci -m checkin" \
+	  dotest_fail binfiles2-10a "${testcvs} -q ci -m checkin" \
+"$SPROG commit: file \`brmod-trmod' had a conflict and has not been modified
+$SPROG commit: file \`brmod-wdmod' had a conflict and has not been modified
+$SPROG \[commit aborted\]: correct above errors first!"
+
+	  touch brmod-trmod brmod-wdmod
+	  dotest binfiles2-10b "${testcvs} -q ci -m checkin" \
 "$CVSROOT_DIRNAME/first-dir/binfile\.dat,v  <--  binfile\.dat
 new revision: 1\.2; previous revision: 1\.1
 $CVSROOT_DIRNAME/first-dir/brmod,v  <--  brmod
@@ -18207,7 +18214,7 @@ checkin
 	  dokeep
 	  cd ../..
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
-	  rm -r 1
+	  rm -rf 1
 	  ;;
 
 
@@ -18249,7 +18256,7 @@ D"
 	  # in checkaddfile()); should also test the case in which
 	  # we are changing it from one non-default value to another.
 	  dotest binfiles3-7 "$testcvs -q ci -m readd-it" \
-"$SPROG commit: changing keyword expansion mode to -kb
+"$SPROG commit: changing keyword expansion mode of \`file1' from \`-kkv' to \`-kb'
 $CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2"
 	  dotest binfiles3-8 "${testcvs} -q log -h -N file1" "
@@ -18287,7 +18294,7 @@ done"
 
 	  dokeep
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 

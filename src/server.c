@@ -5268,7 +5268,10 @@ server_updated (
 	     * it into a temp file.  This will complete the process and print
 	     * the "U file" line.
 	     */
-	    buf_output0 (protocol, "Base-entry ");
+	    if (updated == SERVER_MERGED)
+		buf_output0 (protocol, "Base-merged ");
+	    else
+		buf_output0 (protocol, "Base-entry ");
 	    output_dir (finfo->update_dir, finfo->repository);
 	    buf_output0 (protocol, finfo->file);
 	    buf_output (protocol, "\n", 1);

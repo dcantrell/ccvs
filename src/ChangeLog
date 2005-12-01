@@ -1,5 +1,12 @@
 2005-12-01  Derek Price  <derek@ximbiot.com>
 
+	* client.c (client_base_merge): Print `Merging differences' message
+	only when !REALLY_QUIET.
+	(handle_base_merged): New function.
+	(responses): Add Base-merged.
+	* server.c (server_updated): Send Base-merged for merges.
+	* update.c (join_file): Handle replacing files and binaries correctly.
+
 	* client.c (base_merge_rev1, base_merge_rev2, last_merge_no_change):
 	New globals.
 	(update_entries): Delete merge temp files when not needed.  Don't

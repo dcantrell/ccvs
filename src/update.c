@@ -2043,6 +2043,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
     char *jrev2;
     char *jdate1;
     char *jdate2;
+    bool replace_it;
 
     TRACE (TRACE_FUNCTION, "join_file(%s, %s%s%s%s, %s, %s)",
 	   finfo->file,
@@ -2428,20 +2429,27 @@ join_file (struct file_info *finfo, Vers_TS *vers)
        as such).  In the text file case, this is probably quite
        similar to the RCS_merge, but in the binary file case,
        RCS_merge gives all kinds of trouble.  */
-    if ((strcmp (t_options, "-kb") == 0
-	     || wrap_merge_is_copy (finfo->file))
-        && ((vers->vn_user != NULL
-	     && strcmp (rev1, vers->vn_user) == 0
-	     /* See comments above about how No_Difference has already been
-	        called.  */
-	     && vers->ts_user != NULL
-	     && strcmp (vers->ts_user, vers->ts_rcs) == 0)
+    replace_it =
+	vers->vn_user && !strcmp (rev1, vers->vn_user)
+	/* See comments above about how No_Difference has already been
+	   called.  */
+	&& vers->ts_user && !strcmp (vers->ts_user, vers->ts_rcs);
 
-	    || special_file_mismatch (finfo, rev1, rev2)))
+    if (!strcmp (vers->options, "-kb")
+	|| special_file_mismatch (finfo, rev1, rev2)
+	|| replace_it)
     {
-	if (!really_quiet && !special_file_mismatch (finfo, rev1, rev2))
+	if (!really_quiet)
+	{
+	    /* Is there a better term than "nonmergeable file"?  What we
+	       really mean is, not something that CVS cannot or does not
+	       want to merge (there might be an external manual or
+	       automatic merge process).  */
+	    if (!replace_it)
+		error (0, 0, "Nonmergeable file needs merge.");
 	    error (0, 0, "Replacing `%s' with contents of revision %s.",
 		   finfo->fullname, rev2);
+	}
 
 	/* FIXME: Verify my comment below:
 	 *
@@ -2461,26 +2469,30 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	 */
 	if (base_checkout (finfo->rcs, finfo, vers->vn_user, rev2, vers->tag,
 			   vers->entdata->options, t_options) != 0)
-	    status = 2;
-	else
-	    status = 0;
+	    error (1, 0, "Checkout of revision %s of `%s' failed.",
+		   rev2, finfo->fullname);
 
 	base_copy (finfo, rev2, "yy");
-	if (!really_quiet && special_file_mismatch (finfo, rev1, rev2))
+
+	if (replace_it)
 	{
-	    /* Hmm.  We don't give them REV1 anywhere.  I guess most people
-	       probably don't have a 3-way merge tool for the file type in
-	       question, and might just get confused if we tried to either
-	       provide them with a copy of the file from REV1, or even just
-	       told them what REV1 is so they can get it themself, but it
-	       might be worth thinking about.  */
-	    /* See comment in merge_file about the "nonmergeable file"
-	       terminology.  */
-	    error (0, 0, "nonmergeable file needs merge");
-	    error (0, 0, "revision %s from repository is now in %s",
-		   rev2, finfo->fullname);
-	    error (0, 0, "file from working directory is now in %s", backup);
-	    write_letter (finfo, 'C');
+		/* Is there a better term than "nonmergeable file"?  What we
+		   really mean is, not something that CVS cannot or does not
+		   want to merge (there might be an external manual or
+		   automatic merge process).  */
+	    if (!really_quiet)
+		write_letter (finfo, 'M');
+	    status = 0;
+	}
+	else
+	{
+	    if (!really_quiet)
+		{
+		    error (0, 0, "File from working directory is now in `%s'.",
+			   backup);
+		    write_letter (finfo, 'C');
+		}
+	    status = 1;
 	}
     }
     else
