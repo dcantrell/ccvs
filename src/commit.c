@@ -2124,7 +2124,9 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	    /* We tell the user about this, because it means that the
 	       old revisions will no longer retrieve the way that they
 	       used to.  */
-	    error (0, 0, "changing keyword expansion mode to %s", options);
+	    error (0, 0,
+"changing keyword expansion mode of `%s' from `-k%s' to `%s'",
+		   file, oldexpand ? oldexpand : "kv", options);
 	    RCS_setexpand (rcs, options + 2);
 	}
 
