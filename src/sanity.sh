@@ -5390,7 +5390,7 @@ new revision: 1\.2; previous revision: 1\.1"
 		dotest status-init-7 "$testcvs -q up" \
 "Merging differences between 1\.1 and 1\.2 into \`tfile'
 $CPROG update: conflicts during merge
-M tfile"
+C tfile"
 
 		# Now note our status
 		dotest status-1 "${testcvs} status tfile" \
@@ -6228,6 +6228,7 @@ diff -c first-dir/file3:1\.1\.2\.1 first-dir/file3:removed
 		# join
 		dotest death-86 "$testcvs -q update -j branch1" \
 "Merging differences between 1\.3 and 1\.3\.2\.1 into \`file1'
+M file1
 $SPROG update: scheduling \`file2' for removal
 $SPROG update: scheduling addition from revision 1\.1\.2\.3 of \`file3'\."
 		dotest_fail death-file4-5 "test -f file4"
@@ -6917,7 +6918,8 @@ new revision: 1\.3; previous revision: 1\.2"
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.4; previous revision: 1\.3"
 	  dotest rmadd2-10 "${testcvs} -q update -j 1.4 -j 1.3 file1" \
-"Merging differences between 1\.4 and 1\.3 into \`file1'"
+"Merging differences between 1\.4 and 1\.3 into \`file1'
+M file1"
 	  dotest rmadd2-11 "${testcvs} -q ci -m undo" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.5; previous revision: 1\.4"
@@ -7483,7 +7485,8 @@ diff -c -r1\.1 -r1\.2\.2\.1
 	  dotest branches-15 \
 	    "${testcvs} update -j 1.1.2.1 -j 1.1.2.1.2.1 file1" \
 "Merging differences between 1\.1\.2\.1 and 1\.1\.2\.1\.2\.1 into \`file1'
-$CPROG update: conflicts during merge"
+$CPROG update: conflicts during merge
+C file1"
 	  dotest branches-16 "cat file1" '<<<<<<< file1
 1:ancest
 [=]======
@@ -16928,7 +16931,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  cd ../..
 	  cd 2/first-dir
 	  dotest watch4-13 "$testcvs -q update" \
-"Merging differences between 1\.1 and 1\.2 into file1
+"Merging differences between 1\.1 and 1\.2 into \`file1'
 $CPROG update: conflicts during merge
 C file1"
 	  if (echo yes | ${testcvs} unedit file1) >>${LOGFILE}; then
