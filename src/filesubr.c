@@ -402,7 +402,8 @@ rename_file (const char *from, const char *to)
 }
 
 /*
- * unlink a file, if possible.
+ * unlink a file, if possible.  Use CVS_UNLINK if you want to ignore the
+ * noexec flag.
  */
 int
 unlink_file (const char *f)

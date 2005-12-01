@@ -10817,14 +10817,14 @@ T file9'
 	  # Modify file4 locally, and do an update with a merge.
 	  cd ../../1/first-dir
 	  echo 'third revision of file4' > file4
-	  dotest join4-18 "${testcvs} -q update -jT1 -jT2 ." \
-"U file1
+	  dotest join4-18 "$testcvs -q update -jT1 -jT2 ." \
+"$SPROG update: scheduling addition from revision 1\.1\.2\.1 of \`file1'\.
 R file10
 A file2
-${SPROG} update: file file2 exists, but has been added in revision T2
-${SPROG} update: scheduling \`file3' for removal
+$SPROG update: file file2 exists, but has been added in revision T2
+$SPROG update: scheduling \`file3' for removal
 M file4
-${SPROG} update: file file4 is locally modified, but has been removed in revision T2
+$SPROG update: file file4 is locally modified, but has been removed in revision T2
 R file6
 A file7
 R file8
@@ -10845,7 +10845,7 @@ R file9'
 
 	  dokeep
 	  cd ../..
-	  rm -r 1 2
+	  rm -rf 1 2
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -10888,7 +10888,8 @@ new revision: 1\.2; previous revision: 1\.1"
 	  dotest join5 "$testcvs up" \
 "$SPROG update: Updating \.
 Merging differences between 1\.1 and 1\.2 into \`-file'
-$CPROG update: conflicts during merge"
+$CPROG update: conflicts during merge
+C -file"
 
 	  dokeep
 	  cd ../../..
@@ -10922,9 +10923,9 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # matches the second argument to -j: CVS doesn't bother attempting
 	  # the merge since it already knows that the target contains the
 	  # change.
-	  dotest join6-3.3 "${testcvs} update -j1.1 -j1.2 temp.txt" \
-"temp\.txt already contains the differences between 1\.1 and 1\.2"
-	  dotest join6-3.4 "${testcvs} diff temp.txt" ""
+	  dotest join6-3.3 "$testcvs update -j1.1 -j1.2 temp.txt" \
+"\`temp\.txt' already contains the differences between 1\.1 and 1\.2"
+	  dotest join6-3.4 "$testcvs diff temp.txt"
 
 	  # The case where the merge target is modified but already contains
 	  # the change.
@@ -10934,7 +10935,8 @@ new revision: 1\.2; previous revision: 1\.1"
 	  dotest join6-3.5 "${testcvs} update -j1.1 -j1.2 temp.txt" \
 "M temp\.txt
 Merging differences between 1\.1 and 1\.2 into \`temp\.txt'
-\`temp\.txt' already contains the differences between 1\.1 and 1\.2"
+\`temp\.txt' already contains the differences between 1\.1 and 1\.2
+M temp.txt"
 	  dotest_fail join6-3.6 "${testcvs} diff temp.txt" \
 "Index: temp\.txt
 ===================================================================
@@ -10956,14 +10958,16 @@ diff -r1\.2 temp\.txt
 
 	  dotest join6-5 "${testcvs} update -j1.1 -j1.2 temp.txt" \
 "M temp\.txt
-Merging differences between 1\.1 and 1\.2 into \`temp\.txt'"
+Merging differences between 1\.1 and 1\.2 into \`temp\.txt'
+M temp\.txt"
 	  dotest join6-6 "${testcvs} diff temp.txt" ""
 	  mv temp.txt temp3.txt
 	  dotest join6-7 "sed 's/ddd/dddd/' < temp3.txt > temp.txt" ""
 	  dotest join6-8 "${testcvs} update -j1.1 -j1.2 temp.txt" \
 "M temp\.txt
 Merging differences between 1\.1 and 1\.2 into \`temp\.txt'
-$CPROG update: conflicts during merge"
+$CPROG update: conflicts during merge
+C temp\.txt"
 	  dotest_fail join6-9 "${testcvs} diff temp.txt" \
 "Index: temp\.txt
 ===================================================================
@@ -10991,7 +10995,8 @@ diff -r1\.3 temp\.txt
 > ddd"
 	  dotest join6-12 "$testcvs update -j1.2 -j1.3 temp.txt" \
 "M temp\.txt
-Merging differences between 1\.2 and 1\.3 into \`temp\.txt'"
+Merging differences between 1\.2 and 1\.3 into \`temp\.txt'
+M temp\.txt"
 	  dotest join6-13 "${testcvs} diff temp.txt" ""
 
 	  # The case where the merge target wasn't created until after the
@@ -11011,10 +11016,9 @@ T temp2.txt"
 	  dotest join6-24 "${testcvs} -q ci -m." \
 "$CVSROOT_DIRNAME/join6/temp.txt,v  <--  temp\.txt
 new revision: 1\.4; previous revision: 1\.3"
-	  dotest join6-25 "${testcvs} -q up -jt1 -jt2" \
-"Merging differences between 1\.1 and 1\.3 into \`temp.txt'
-temp.txt already contains the differences between 1\.1 and 1\.3
-temp2.txt already contains the differences between creation and 1\.1"
+	  dotest join6-25 "$testcvs -q up -jt1 -jt2" \
+"Merging differences between 1\.1 and 1\.3 into \`temp.txt'"
+	  dotest join6-25-2 "$testcvs -q up"
 
 	  # Now for my next trick: delete the file, recreate it, and
 	  # try to merge
@@ -11024,14 +11028,19 @@ temp2.txt already contains the differences between creation and 1\.1"
 "$CVSROOT_DIRNAME/join6/temp2\.txt,v  <--  temp2\.txt
 new revision: delete; previous revision: 1\.1"
 	  echo new >temp2.txt
-	  dotest_fail join6-32 "${testcvs} -q up -jt1 -jt2" \
+	  dotest_fail join6-32 "$testcvs up -jt1 -jt2" \
 "? temp2\.txt
+$SPROG update: Updating \.
 Merging differences between 1\.1 and 1\.3 into \`temp.txt'
-\`temp.txt' already contains the differences between 1\.1 and 1\.3"
+\`temp.txt' already contains the differences between 1\.1 and 1\.3
+$SPROG update: scheduling addition from revision 1\.1 of \`temp2\.txt'\.
+$CPROG update: move away \`temp2\.txt'; it is in the way"
+
+	  dotest join6-33 "$testcvs -q up" "? temp2\.txt"
 
 	  dokeep
 	  cd ../../..
-	  rm -r join6
+	  rm -rf join6
 	  modify_repo rm -rf $CVSROOT_DIRNAME/join6
 	  ;;
 
@@ -11119,7 +11128,8 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 	  echo conflict > $file; chmod u-w $file
 	  dotest join-readonly-conflict-8 "$testcvs update -r B $file" \
 "Merging differences between 1\.1 and 1\.1\.2\.1 into \`$file'
-$CPROG update: conflicts during merge"
+$CPROG update: conflicts during merge
+C $file"
 
 	  # restore to the trunk
 	  rm -f $file
@@ -11137,7 +11147,8 @@ $CPROG update: conflicts during merge"
 	  fi
 	  dotest join-readonly-conflict-11 "$testcvs update -r B $file" \
 "Merging differences between 1\.1 and 1\.1\.2\.1 into \`$file'
-$CPROG update: conflicts during merge"
+$CPROG update: conflicts during merge
+C $file"
 
 	  dokeep
 	  cd ../..
@@ -11170,7 +11181,7 @@ $CPROG update: conflicts during merge"
 
 	  dotest join-admin-0-10 "$testcvs -Q update -r B" ''
 	  dotest join-admin-0-11 "$testcvs -Q update -kk -jM1 -jM2" ''
-	  dotest join-admin-0-12 "$testcvs -Q ci -m. b" ''
+	  dotest join-admin-0-12 "$testcvs -Q ci -m. b"
 
 	  dotest join-admin-0-13 "$testcvs -Q update -A" ''
 
