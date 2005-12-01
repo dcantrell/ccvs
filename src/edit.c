@@ -353,6 +353,8 @@ edit_file (void *data, List *ent_list, const char *short_pathname,
     }
 
     editbasefn = Xasprintf ("%s/%s", CVSADM_BASE, filename);
+    if (isfile (editbasefn))
+	xchmod (editbasefn, true);
     copy_file (basefn, editbasefn);
     free (basefn);
     free (editbasefn);

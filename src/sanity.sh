@@ -17524,21 +17524,21 @@ U m"
 new revision: 1\.2; previous revision: 1\.1"
 	  cd ../..
 	  cd 2/x
-	  dotest unedit-without-baserev-13 "${testcvs} -q update" \
-"RCS file: ${CVSROOT_DIRNAME}/x/m,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.2
-Merging differences between 1\.1\.1\.1 and 1\.2 into m
-rcsmerge: warning: conflicts during merge
-${SPROG} update: conflicts found in m
+test -f CVS/Base/.#m.1.1.1.1 || exit
+	  dotest unedit-without-baserev-13 "$testcvs -q update" \
+"Merging differences between 1\.1\.1\.1 and 1\.2 into \`m'
+$CPROG update: conflicts during merge
 C m"
+test -f CVS/Base/.#m.1.2 || exit
 	  rm CVS/Baserev
 	  dotest unedit-without-baserev-14 "echo yes |${testcvs} unedit m" \
 "m has been modified; revert changes${QUESTION} ${CPROG} unedit: m not mentioned in CVS/Baserev
 ${CPROG} unedit: run update to complete the unedit"
+test -f CVS/Base/.#m.1.2 || exit
 	  dotest unedit-without-baserev-15 "${testcvs} -q update" \
 "$SPROG update: warning: \`m' was lost
 U m"
+test -f CVS/Base/.#m.1.2 || exit
 	  # The following tests are kind of degenerate compared with
 	  # watch4-16 through watch4-18 but might as well make sure that
 	  # nothing seriously wrong has happened to the working directory.
@@ -17550,7 +17550,7 @@ U m"
 	  dokeep
 	  cd ../..
 	  rm -rf 1
-	  rm -r 2
+	  rm -rf 2
 	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
 	  ;;
 
@@ -17744,7 +17744,8 @@ T file1'
 new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1"
 	  dotest ignore-on-branch-6 "$testcvs -q up -rbranch2" \
 "${SPROG} update: \`file2' is no longer in the repository"
-	  dotest ignore-on-branch-7 "$testcvs -q up -jbranch" 'U file2'
+	  dotest ignore-on-branch-7 "$testcvs -q up -jbranch" \
+"$SPROG update: scheduling addition from revision 1\.1\.2\.2 of \`file2'\."
 
 	  dokeep
 	  cd ../..
@@ -17819,7 +17820,7 @@ File: binfile          	Status: Up-to-date
 	  # also used when operating on files instead of whole
 	  # directories
           cd ../..
-	  rm -r 2a
+	  rm -rf 2a
 	  mkdir 3; cd 3
 	  dotest binfiles-5.5b0 "${testcvs} -q co first-dir/binfile" \
 'U first-dir/binfile'
@@ -17835,13 +17836,13 @@ File: binfile          	Status: Up-to-date
    Sticky Date:		(none)
    Sticky Options:	-kb"
 	  cd ../..
-	  rm -r 3
+	  rm -rf 3
 	  # test that "-kk" does not override "-kb"
 	  mkdir 3; cd 3
-	  dotest binfiles-5.5b0 "${testcvs} -q co -kk first-dir/binfile" \
+	  dotest binfiles-5.5b2 "${testcvs} -q co -kk first-dir/binfile" \
 'U first-dir/binfile'
 	  cd first-dir
-	  dotest binfiles-5.5b1 "${testcvs} status binfile" \
+	  dotest binfiles-5.5b3 "${testcvs} status binfile" \
 "===================================================================
 File: binfile          	Status: Up-to-date
 
@@ -17852,7 +17853,7 @@ File: binfile          	Status: Up-to-date
    Sticky Date:		(none)
    Sticky Options:	-kb"
 	  cd ../..
-	  rm -r 3
+	  rm -rf 3
 	  cd 2/first-dir
 
 	  cp ../../1/binfile2.dat binfile
@@ -17914,7 +17915,7 @@ File: binfile          	Status: Up-to-date
    Sticky Date:		(none)
    Sticky Options:	-kb"
 	  cd ../..
-	  rm -r 3
+	  rm -rf 3
 
 	  cd 2/first-dir
 	  echo 'this file is $''RCSfile$' >binfile
@@ -18033,13 +18034,22 @@ total revisions: 1
 
 	  # Check that the contents were right.  This isn't the hard case
 	  # (in which RCS_delete_revs does a diff), but might as well.
-	  dotest binfiles-o4 "${testcvs} -q update binfile" "U binfile"
-	  dotest binfiles-o5 "cmp binfile ../../1/binfile.dat" ""
+	  if $remote; then
+	    dotest_fail binfiles-o4r "$testcvs -q update binfile" \
+"$SPROG \[update aborted\]: could not find desired version 1\.5 in $CVSROOT_DIRNAME/first-dir/binfile,v"
+	  else
+	    # FIXCVS: Local mode silently overwrites what it thinks is
+	    # revision 1.5 of binfile with revision 1.3 of binfile when
+	    # the later revisions disappear.  This doesn't sound right.
+	    # Either way, the behavior should match.
+	    dotest binfiles-o4 "$testcvs -q update binfile" "U binfile"
+	    dotest binfiles-o5 "cmp binfile ../../1/binfile.dat"
+	  fi
 
 	  dokeep
 	  cd ../..
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
-	  rm -r 1 2
+	  rm -rf 1 2
 	  ;;
 
 
@@ -18134,7 +18144,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  cp ../binfile3 brmod-wdmod
 
 	  dotest binfiles2-8 "${testcvs} -q update -j br" \
-"U binfile\.dat
+"$SPROG update: scheduling addition from revision 1\.1\.2\.1 of \`binfile.dat'\.
 U brmod
 ${SPROG} update: nonmergeable file needs merge
 ${SPROG} update: revision 1.1.2.1 from repository is now in brmod-trmod
