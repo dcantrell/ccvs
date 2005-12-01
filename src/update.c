@@ -2310,21 +2310,21 @@ join_file (struct file_info *finfo, Vers_TS *vers)
            addition.  */
 	if (vers->vn_user == NULL)
 	{
-	    char *saved_options = options;
+	    char *saved_options;
 	    Vers_TS *xvers;
 
-	    xvers = Version_TS (finfo, vers->options, jrev2, jdate2, 1, 0);
-
-	    /* Reset any keyword expansion option.  Otherwise, when a
+	    /* Use NULL for keyword expansion options.  Otherwise, when a
 	       command like `cvs update -kk -jT1 -jT2' creates a new file
 	       (because a file had the T2 tag, but not T1), the subsequent
 	       commit of that just-added file effectively would set the
 	       admin `-kk' option for that file in the repository.  */
-	    options = NULL;
+	    xvers = Version_TS (finfo, NULL, jrev2, jdate2, 1, 0);
 
 	    if (!really_quiet)
 		error (0, 0, "scheduling addition from revision %s of `%s'.",
 		       xvers->vn_rcs, finfo->fullname);
+
+	    TRACE (TRACE_DATA, "Adding with keyword mode `%s'", xvers->options);
 
 	    /* FIXME: If base_checkout fails, we should arrange to
                return a non-zero exit status.  */
@@ -2339,13 +2339,13 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 
 	    backup = Xasprintf ("%s%s.%s", BAKPREFIX, finfo->file,
 				vers->vn_user);
+	    saved_options = vers->options;
+	    vers->options = NULL;
 	    RegisterMerge (finfo, vers, backup, false, true);
+	    vers->options = saved_options;
 	    free (backup);
 
-	    options = saved_options;
-
 	    freevers_ts (&xvers);
-
 	    return;
 	}
 
