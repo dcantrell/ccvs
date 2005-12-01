@@ -2385,7 +2385,6 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
     int status;
     Node *n;
     Entnode *e;
-    bool save_noexec;
 
     TRACE (TRACE_FUNCTION, "client_base_merge (%s)", short_pathname);
 
@@ -2404,11 +2403,8 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
     f2 = make_base_file_name (filename, rev2);
     temp_filename = newfilename (filename);
 
-    save_noexec = noexec;
-    noexec = false;
-    copy_file (filename, temp_filename);
-    xchmod (temp_filename, true);
-    noexec = save_noexec;
+    force_copy_file (filename, temp_filename);
+    force_xchmod (temp_filename, true);
 
     status = merge (filename, temp_filename, f1, f2, rev1, rev2);
 

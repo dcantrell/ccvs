@@ -189,7 +189,6 @@ merge (const char *dlabel, const char *dest, const char *j1, const char *j2,
 {
     char *diffout;
     int retval;
-    bool save_noexec;
 
     /* Remember that the first word in the `call_diff_setup' string is used
        now only for diagnostic messages -- CVS no longer forks to run
@@ -218,23 +217,12 @@ merge (const char *dlabel, const char *dest, const char *j1, const char *j2,
     else if (retval == 2)
 	error (1, 0, "diff3 failed.");
 
-    save_noexec = noexec;
-    noexec = false;
-    copy_file (diffout, dest);
-    noexec = save_noexec;
+    force_copy_file (diffout, dest);
 
     /* Clean up. */
-    {
-	int save_noexec = noexec;
-	noexec = 0;
-	if (unlink_file (diffout) < 0)
-	{
-	    if (!existence_error (errno))
-		error (0, errno, "cannot remove temp file `%s'", diffout);
-	}
-	free (diffout);
-	noexec = save_noexec;
-    }
+    if (CVS_UNLINK (diffout) < 0 && !existence_error (errno))
+	error (0, errno, "cannot remove temp file `%s'", diffout);
+    free (diffout);
 
     return retval;
 }
