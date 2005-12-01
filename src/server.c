@@ -8190,12 +8190,12 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 	int status;
 	char *pbasefile;
 
-	pbasefile = make_base_file_name (finfo->file, prev);
+	pbasefile = cvs_temp_name ();
 	status = RCS_checkout (rcs, pbasefile, prev, tag, options,
 			       NULL, NULL, NULL);
 	if (status)
 	    error (1, 0, "Failed to checkout revision %s of `%s'",
-		   finfo->file, prev);
+		   prev, finfo->file);
 
 	run_add_arg_p (&dargc, &darg_allocated, &dargv, "-n");
 	tmpfile = cvs_temp_name ();
@@ -8203,7 +8203,7 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 			    tmpfile);
 	run_arg_free_p (dargc, dargv);
 	free (dargv);
-	if (unlink_file (pbasefile) < 0)
+	if (CVS_UNLINK (pbasefile) < 0)
 	    error (0, errno, "cannot remove `%s'", pbasefile);
 	free (pbasefile);
 

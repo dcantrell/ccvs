@@ -1,5 +1,12 @@
 2005-11-30  Derek Price  <derek@ximbiot.com>
 
+	* client.c (update_entries): Honor noexec.
+	(client_base_merge): Ignore noexec when working with temp files.
+	* difflib.c (merge): Ditto.
+	* filesubr.c (unlink_file): Expand header comment block.
+	* server.c (server_base_checkout): Keep temp files in tmp.  Ignore
+	noexec when removing temp files.
+
 	* client.c (update_entries): Avoid removing base files when they are
 	still needed.
 

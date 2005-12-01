@@ -1903,7 +1903,8 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    }
 	    return;
 	}
-	rename_file (temp_filename, filename);
+	if (!noexec)
+	    rename_file (temp_filename, filename);
 	if (updated_fname)
 	{
 	    cvs_output ("U ", 0);
@@ -2385,6 +2386,7 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
     int status;
     Node *n;
     Entnode *e;
+    bool save_noexec;
 
     TRACE (TRACE_FUNCTION, "client_base_merge (%s)", short_pathname);
 
@@ -2403,7 +2405,11 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
     f2 = make_base_file_name (filename, rev2);
     temp_filename = newfilename (filename);
 
+    save_noexec = noexec;
+    noexec = false;
     copy_file (filename, temp_filename);
+    xchmod (temp_filename, true);
+    noexec = save_noexec;
 
     status = merge (filename, temp_filename, f1, f2, rev1, rev2);
 
@@ -2449,10 +2455,13 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
 	}
     }
 
+    if (noexec && CVS_UNLINK (temp_filename) < 0)
+	error (0, errno, "Failed to remove `%s'", temp_filename);
+
     /* Won't need these now that the merge is complete.  */
-    if ((!e || strcmp (e->version, rev1)) && unlink_file (f1) < 0)
+    if ((!e || strcmp (e->version, rev1)) && CVS_UNLINK (f1) < 0)
 	error (0, errno, "unable to remove `%s'", f1);
-    if ((!e || strcmp (e->version, rev2)) && unlink_file (f2) < 0)
+    if ((!e || strcmp (e->version, rev2)) && CVS_UNLINK (f2) < 0)
 	error (0, errno, "unable to remove `%s'", f2);
     free (f1);
     free (f2);
