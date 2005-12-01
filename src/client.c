@@ -2430,13 +2430,16 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
     read_line (&base_merge_rev1);
     read_line (&base_merge_rev2);
 
-    cvs_output ("Merging differences between ", 0);
-    cvs_output (base_merge_rev1, 0);
-    cvs_output (" and ", 5);
-    cvs_output (base_merge_rev2, 0);
-    cvs_output (" into `", 7);
-    cvs_output (short_pathname, 0);
-    cvs_output ("'\n", 2);
+    if (!really_quiet)
+    {
+	cvs_output ("Merging differences between ", 0);
+	cvs_output (base_merge_rev1, 0);
+	cvs_output (" and ", 5);
+	cvs_output (base_merge_rev2, 0);
+	cvs_output (" into `", 7);
+	cvs_output (short_pathname, 0);
+	cvs_output ("'\n", 2);
+    }
 
     f1 = make_base_file_name (filename, base_merge_rev1);
     f2 = make_base_file_name (filename, base_merge_rev2);
@@ -2517,6 +2520,18 @@ handle_base_entry (char *args, size_t len)
     dat.contents = UPDATE_ENTRIES_BASE;
     dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = NULL;
+    call_in_directory (args, update_entries, &dat);
+}
+
+
+
+static void
+handle_base_merged (char *args, size_t len)
+{
+    struct update_entries_data dat;
+    dat.contents = UPDATE_ENTRIES_BASE;
+    dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
+    dat.timestamp = "Result of merge";
     call_in_directory (args, update_entries, &dat);
 }
 
@@ -3613,6 +3628,8 @@ struct response responses[] =
     RSP_LINE("Base-merge", handle_base_merge, response_type_normal,
 	     rs_optional),
     RSP_LINE("Base-entry", handle_base_entry, response_type_normal,
+	     rs_optional),
+    RSP_LINE("Base-merged", handle_base_merged, response_type_normal,
 	     rs_optional),
 
     /* Possibly should be response_type_error.  */
