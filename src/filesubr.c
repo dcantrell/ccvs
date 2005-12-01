@@ -34,21 +34,18 @@
 
 static int deep_remove_dir (const char *path);
 
+
+
 /*
- * Copies "from" to "to".
+ * Copies FROM to TO.  Ignores NOEXEC.
  */
 void
-copy_file (const char *from, const char *to)
+force_copy_file (const char *from, const char *to)
 {
     struct stat sb;
     struct utimbuf t;
     int fdin, fdout;
     ssize_t rsize;
-
-    TRACE (TRACE_FUNCTION, "copy(%s,%s)", from, to);
-
-    if (noexec)
-	return;
 
     /* If the file to be copied is a link or a device, then just create
        the new link or device appropriately. */
@@ -115,6 +112,19 @@ copy_file (const char *from, const char *to)
     t.actime = sb.st_atime;
     t.modtime = sb.st_mtime;
     (void) utime (to, &t);
+}
+
+
+
+/*
+ * Copies FROM to TO.  Honors NOEXEC.
+ */
+void
+copy_file (const char *from, const char *to)
+{
+    TRACE (TRACE_FUNCTION, "copy (%s, %s)", from, to);
+    if (noexec) return;
+    force_copy_file (from, to);
 }
 
 
@@ -339,6 +349,8 @@ mkdir_if_needed (const char *name)
     return 0;
 }
 
+
+
 /*
  * Change the mode of a file, either adding write permissions, or removing
  * all write permissions.  Either change honors the current umask setting.
@@ -346,8 +358,8 @@ mkdir_if_needed (const char *name)
  * Don't do anything if PreservePermissions is set to `yes'.  This may
  * have unexpected consequences for some uses of xchmod.
  */
-void
-xchmod (const char *fname, int writable)
+static void
+ixchmod (const char *fname, bool writable, bool noexec)
 {
     struct stat sb;
     mode_t mode, oumask;
@@ -366,16 +378,12 @@ xchmod (const char *fname, int writable)
     oumask = umask (0);
     (void) umask (oumask);
     if (writable)
-    {
 	mode = sb.st_mode | (~oumask
 			     & (((sb.st_mode & S_IRUSR) ? S_IWUSR : 0)
 				| ((sb.st_mode & S_IRGRP) ? S_IWGRP : 0)
 				| ((sb.st_mode & S_IROTH) ? S_IWOTH : 0)));
-    }
     else
-    {
 	mode = sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH) & ~oumask;
-    }
 
     TRACE (TRACE_FUNCTION, "chmod(%s,%o)", fname, (unsigned int) mode);
 
@@ -385,6 +393,26 @@ xchmod (const char *fname, int writable)
     if (chmod (fname, mode) < 0)
 	error (0, errno, "cannot change mode of file %s", fname);
 }
+
+
+
+/* See description for ixchmod.  Ignores NOEXEC.  */
+void
+force_xchmod (const char *fname, bool writable)
+{
+    ixchmod (fname, writable, false);
+}
+
+
+
+/* See description for ixchmod.  Honors NOEXEC.  */
+void
+xchmod (const char *fname, bool writable)
+{
+    ixchmod (fname, writable, noexec);
+}
+
+
 
 /*
  * Rename a file and die if it fails

@@ -40,5 +40,8 @@ FILE *cvs_temp_file (char **filename);
 int unlink_file (const char *f);
 int unlink_file_dir (const char *f);
 void copy_file (const char *from, const char *to);
+void force_copy_file (const char *from, const char *to);
+void xchmod (const char *fname, bool writable);
+void force_xchmod (const char *fname, bool writable);
 
 #endif /* FILESUBR_H */
