@@ -8204,16 +8204,6 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 	status = RCS_checkout (rcs, pbasefile, prev, ptag, poptions,
 			       NULL, NULL, NULL);
 
-	if (trace)
-	{
-	    char *tmp = Xasprintf ("cat %s >/tmp/basefile", basefile);
-	    system (tmp);
-	    free (tmp);
-	    tmp = Xasprintf ("cat %s >/tmp/pbasefile", pbasefile);
-	    system (tmp);
-	    free (tmp);
-	}
-
 	if (status)
 	    error (1, 0, "Failed to checkout revision %s of `%s'",
 		   prev, finfo->file);
