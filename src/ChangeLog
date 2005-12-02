@@ -1,5 +1,7 @@
 2005-12-02  Derek Price  <derek@ximbiot.com>
 
+	* checkin.c (Checkin): Actually pass the previous options.
+
 	* server.c (server_base_checkout), server.h: Accept new previous tag
 	and options arguments and use them when checking out the previous
 	revision to build a diff.

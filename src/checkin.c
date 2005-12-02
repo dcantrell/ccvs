@@ -104,7 +104,8 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
                    out the correct file contents.  */
 		if (base_checkout (finfo->rcs, finfo, pvers->vn_user,
 				   vers->vn_rcs, pvers->entdata->tag,
-				   vers->tag, NULL, options))
+				   vers->tag, pvers->entdata->options,
+				   options))
 		    error (1, 0, "failed when checking out new copy of %s",
 			   finfo->fullname);
 		base_copy (finfo, vers->vn_rcs,
