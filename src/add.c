@@ -499,7 +499,8 @@ add (int argc, char **argv)
 "Resurrecting file `%s' from revision %s.",
 			               finfo.fullname, prev);
 			    status = base_checkout (vers->srcfile, &finfo,
-						    NULL, prev, vers->tag,
+						    NULL, prev, NULL,
+						    vers->tag,
 						    NULL, vers->options);
 			    if (status != 0)
 			    {
@@ -615,7 +616,8 @@ add (int argc, char **argv)
 			     strlen (vers->vn_user));
 		    status = base_checkout (vers->srcfile, &finfo,
 					    vers->vn_user, vers->vn_user,
-					    vers->tag, vers->entdata->options,
+					    vers->entdata->tag, vers->tag,
+					    vers->entdata->options,
 					    vers->options);
 		    if (status != 0)
 		    {

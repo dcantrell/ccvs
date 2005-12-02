@@ -28,10 +28,11 @@ void base_register (const char *update_dir, const char *file, char *rev);
 void base_deregister (const char *update_dir, const char *file);
 
 int base_checkout (RCSNode *rcs, struct file_info *finfo,
-		   const char *prev, const char *rev, const char *tag,
-		   const char *poptions, const char *options);
+		   const char *prev, const char *rev, const char *ptag,
+		   const char *tag, const char *poptions, const char *options);
 void base_copy (struct file_info *finfo, const char *rev, const char *flags);
 void base_remove (const char *file, const char *rev);
-int base_merge (RCSNode *rcs, struct file_info *finfo, const char *options,
+int base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
+		const char *poptions, const char *options,
 	        const char *urev, const char *rev1, const char *rev2);
 #endif /* BASE_H */

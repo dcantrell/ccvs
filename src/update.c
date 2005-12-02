@@ -1288,10 +1288,11 @@ VERS: ", 0);
 	     */
 	    status = base_checkout (vers_ts->srcfile, finfo,
 				    vers_ts->vn_user, vers_ts->vn_rcs,
+				    vers_ts->entdata
+				    ? vers_ts->entdata->tag : NULL,
 				    vers_ts->tag,
 				    vers_ts->entdata
-				    ? vers_ts->entdata->options
-				    : NULL,
+				    ? vers_ts->entdata->options : NULL,
 				    vers_ts->options);
     }
 
@@ -1900,8 +1901,8 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 	   to treat any such mismatch as an automatic conflict. -twp */
 
 	status = base_checkout (finfo->rcs, finfo, vers->vn_user, vers->vn_rcs,
-			        vers->tag, vers->entdata->options,
-				vers->options);
+			        vers->entdata->tag, vers->tag,
+				vers->entdata->options, vers->options);
 	base_copy (finfo, vers->vn_rcs, "yy");
 
 	if (status)
@@ -1932,7 +1933,8 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 	goto out;
     }
 
-    status = base_merge (finfo->rcs, finfo, vers->options, vers->vn_user,
+    status = base_merge (finfo->rcs, finfo, vers->entdata->tag,
+			 vers->entdata->options, vers->options, vers->vn_user,
 			 vers->vn_user, vers->vn_rcs);
 
     if (status != 0 && status != 1)
@@ -2331,6 +2333,8 @@ join_file (struct file_info *finfo, Vers_TS *vers)
                return a non-zero exit status.  */
 	    status = base_checkout (xvers->srcfile, finfo,
 				    NULL, xvers->vn_rcs,
+				    xvers->entdata
+				    ? xvers->entdata->tag : NULL,
 				    xvers->tag,
 				    xvers->entdata
 				    ? xvers->entdata->options : NULL,
@@ -2467,7 +2471,8 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	 * Also, it is safe to pass in NULL for nametag since we know no
 	 * substitution is happening during the binary mode checkout.
 	 */
-	if (base_checkout (finfo->rcs, finfo, vers->vn_user, rev2, vers->tag,
+	if (base_checkout (finfo->rcs, finfo, vers->vn_user, rev2,
+			   vers->entdata->tag, vers->tag,
 			   vers->entdata->options, t_options) != 0)
 	    error (1, 0, "Checkout of revision %s of `%s' failed.",
 		   rev2, finfo->fullname);
@@ -2496,7 +2501,8 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	}
     }
     else
-	status = base_merge (finfo->rcs, finfo, t_options,
+	status = base_merge (finfo->rcs, finfo, vers->entdata->tag,
+			     vers->entdata->options, t_options,
 			     vers->vn_user, rev1, rev2);
 
     if (status != 0)

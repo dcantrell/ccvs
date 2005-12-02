@@ -8151,8 +8151,8 @@ cvs_output_tagged (const char *tag, const char *text)
  */
 void
 server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
-		      const char *rev, const char *tag, const char *poptions,
-		      const char *options)
+		      const char *rev, const char *ptag, const char *tag,
+		      const char *poptions, const char *options)
 {
     char *basefile;
     char *fullbase;
@@ -8161,8 +8161,8 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 
     assert (rev);
 
-    TRACE (TRACE_FUNCTION, "server_base_checkout (%s, %s, %s, %s, %s)",
-	   finfo->fullname, prev, rev, tag, options);
+    TRACE (TRACE_FUNCTION, "server_base_checkout (%s, %s, %s, %s, %s, %s, %s)",
+	   finfo->fullname, prev, rev, ptag, tag, poptions, options);
 
     if (!supported_response ("Base-checkout")) return;
 
@@ -8194,7 +8194,7 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 	char *pbasefile;
 
 	pbasefile = cvs_temp_name ();
-	status = RCS_checkout (rcs, pbasefile, prev, tag, options,
+	status = RCS_checkout (rcs, pbasefile, prev, ptag, poptions,
 			       NULL, NULL, NULL);
 	if (status)
 	    error (1, 0, "Failed to checkout revision %s of `%s'",

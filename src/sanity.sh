@@ -23255,11 +23255,23 @@ new revision: 1\.6; previous revision: 1\.5"
 	  #
 	  # Feel free to imagine the horrific scream of despair
 	  cd ../../1/first-dir
-	  dotest backuprecover-15 "${testcvs} update" \
-"${SPROG} update: Updating .
+	  if $remote; then
+	    # FIXCVS
+	    # See the note above about lost data and a few other comments in
+	    # other tests.  At least with base files, no data is lost, but this
+	    # is a side effect of sending diffs against bases and should
+	    # probably be caught explicitly, such that it would also be caught
+	    # in local mode.
+	    dotest_fail backuprecover-15r "$testcvs update" \
+"$SPROG update: Updating .
+$SPROG \[update aborted\]: could not find desired version 1\.5 in $CVSROOT_DIRNAME/first-dir/file1,v"
+	  else
+	    dotest backuprecover-15 "$testcvs update" \
+"$SPROG update: Updating .
 U file1
-${SPROG} update: Updating dir
+$SPROG update: Updating dir
 U dir/file2"
+	  fi
 
 	  # Developer 3 tries the same thing (he has an office)
 	  # but fails without losing data since all of his files have
@@ -23310,20 +23322,12 @@ new revision: 1\.4; previous revision: 1\.3"
 	  cd ../../4/first-dir
 	  dotest backuprecover-20 "${testcvs} update" \
 "${SPROG} update: Updating \.
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.3
-retrieving revision 1\.4
-Merging differences between 1\.3 and 1\.4 into file1
-rcsmerge: warning: conflicts during merge
-${SPROG} update: conflicts found in file1
+Merging differences between 1\.3 and 1\.4 into \`file1'
+$CPROG update: conflicts during merge
 C file1
-${SPROG} update: Updating dir
-RCS file: ${CVSROOT_DIRNAME}/first-dir/dir/file2,v
-retrieving revision 1\.3
-retrieving revision 1\.4
-Merging differences between 1\.3 and 1\.4 into file2
-rcsmerge: warning: conflicts during merge
-${SPROG} update: conflicts found in dir/file2
+$SPROG update: Updating dir
+Merging differences between 1\.3 and 1\.4 into \`dir/file2'
+$CPROG update: conflicts during merge
 C dir/file2"
 	  sed -e \
 "/^<<<<<<</,/^=======/d
@@ -23338,15 +23342,7 @@ new revision: 1\.5; previous revision: 1\.4"
 
 	  # go back and commit developer 2's stuff to prove it can still be done
 	  cd ../../2/first-dir
-	  dotest backuprecover-22 "${testcvs} -Q update" \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.2
-retrieving revision 1\.4
-Merging differences between 1\.2 and 1\.4 into file1
-RCS file: ${CVSROOT_DIRNAME}/first-dir/dir/file2,v
-retrieving revision 1\.2
-retrieving revision 1\.5
-Merging differences between 1\.2 and 1\.5 into file2"
+	  dotest backuprecover-22 "$testcvs -Q update"
 	  dotest backuprecover-23 "${testcvs} -q ci -mtest" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.5; previous revision: 1\.4
@@ -23355,11 +23351,11 @@ new revision: 1\.6; previous revision: 1\.5"
 
 	  # and restore the data to developer 1
 	  cd ../../1/first-dir
-	  dotest backuprecover-24 "${testcvs} -Q update" ''
+	  dotest backuprecover-24 "$testcvs -Q update" 
 
 	  dokeep
 	  cd ../../..
-	  rm -r backuprecover
+	  rm -rf backuprecover
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -23975,7 +23971,7 @@ ${SPROG} update: Updating second-dir"
 
 	  dokeep
 	  cd ..
-	  rm -r 1
+	  rm -rf 1
 	  # quiet down this one as it will be noisy in proxy mode
 	  modify_repo chmod u+rwx $CVSROOT_DIRNAME/first-dir 2>/dev/null
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
@@ -24091,7 +24087,7 @@ U first-dir/kw"
 
 	  dokeep
 	  cd ../..
-	  rm -r 1 2
+	  rm -rf 1 2
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -24402,7 +24398,7 @@ U file1" "U file1"
 	  dokeep
 	  restore_adm
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -24583,36 +24579,18 @@ xx "'\$'"Log"'\$'
 	  dotest keyword-19 "${testcvs} -q tag tag1" "T file1"
 	  echo "change" >> file1
 	  dotest keyword-20 "$testcvs -Q ci -m mod2 file1"
-	  # FIXCVS - These unpatchable files are happening because the tag
-	  # associated with the current base version of the file in the
-	  # sandbox is not available in these cases.  See the note in the
-	  # patch_file function in update.c.
-	  dotest keyword-21 "${testcvs} -q update -r tag1" "U file1" \
-"P file1
-${CPROG} update: checksum failure after patch to \./file1; will refetch
-${CPROG} client: refetching unpatchable files
-$SPROG update: warning: \`file1' was lost
-U file1"
+	  dotest keyword-21 "$testcvs -q update -r tag1" "U file1" \
+"U file1"
 
 	  dotest keyword-22 "cat file1" '\$'"Name: tag1 "'\$'
 
-	  if $remote; then
-	    # Like serverpatch-8.  Not sure there is anything much we
-	    # can or should do about this.
-	    dotest keyword-23r "${testcvs} update -A file1" "P file1
-${CPROG} update: checksum failure after patch to \./file1; will refetch
-${CPROG} client: refetching unpatchable files
-$SPROG update: warning: \`file1' was lost
-U file1"
-	  else
-	    dotest keyword-23 "${testcvs} update -A file1" "[UP] file1"
-	  fi
+	  dotest keyword-23 "$testcvs update -A file1" "U file1"
 	  dotest keyword-24 "cat file1" '\$'"Name:  "'\$'"
 change"
 
 	  dokeep
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
