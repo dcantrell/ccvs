@@ -5233,6 +5233,9 @@ server_updated (
      */
     assert (!(filebuf && file_gzip_level));
 
+    TRACE (TRACE_FUNCTION, "server_updated (%s, %s, %s)",
+	   finfo->fullname, vers->vn_rcs, vers->options);
+
     if (noexec)
     {
 	/* Hmm, maybe if we did the same thing for entries_file, we
@@ -8173,6 +8176,10 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 	    (  (!poptions || !poptions[0]) && (!options || !options[0]))
 	       /* ...or the option specs match.  */
 	    || (poptions && options && !strcmp (poptions, options)))
+	&& (   /* ...both option specs are empty...  */
+	    (  (!ptag || !ptag[0]) && (!tag || !tag[0]))
+	       /* ...or the option specs match.  */
+	    || (ptag && tag && !strcmp (ptag, tag)))
        )
 	/* PREV & REV are the same, so the client should already have this
 	 * file.
@@ -8184,7 +8191,7 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 			  *(finfo->update_dir) ? finfo->update_dir : ".",
 			  basefile);
 
-    if (prev && strcmp (prev, "0") && strcmp (prev, rev))
+    if (prev && strcmp (prev, "0"))
     {
 	/* Compute and send diff.  */
 	int dargc = 0;
@@ -8196,6 +8203,17 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 	pbasefile = cvs_temp_name ();
 	status = RCS_checkout (rcs, pbasefile, prev, ptag, poptions,
 			       NULL, NULL, NULL);
+
+	if (trace)
+	{
+	    char *tmp = Xasprintf ("cat %s >/tmp/basefile", basefile);
+	    system (tmp);
+	    free (tmp);
+	    tmp = Xasprintf ("cat %s >/tmp/pbasefile", pbasefile);
+	    system (tmp);
+	    free (tmp);
+	}
+
 	if (status)
 	    error (1, 0, "Failed to checkout revision %s of `%s'",
 		   prev, finfo->file);
