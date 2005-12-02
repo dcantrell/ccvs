@@ -230,8 +230,9 @@ void cvs_trace (int level, const char *fmt, ...)
 extern cvsroot_t *referrer;
 
 void server_base_checkout (RCSNode *rcs, struct file_info *finfo,
-			   const char *prev, const char *rev, const char *tag,
-			   const char *poptions, const char *options);
+			   const char *prev, const char *rev, const char *ptag,
+			   const char *tag, const char *poptions,
+			   const char *options);
 
 void server_base_copy (struct file_info *file, const char *rev,
 		       const char *flags);

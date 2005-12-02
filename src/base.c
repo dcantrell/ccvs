@@ -248,14 +248,14 @@ base_deregister (const char *update_dir, const char *file)
 
 int
 base_checkout (RCSNode *rcs, struct file_info *finfo,
-	       const char *prev, const char *rev, const char *tag,
-	       const char *poptions, const char *options)
+	       const char *prev, const char *rev, const char *ptag,
+	       const char *tag, const char *poptions, const char *options)
 {
     int status;
     char *basefile;
 
-    TRACE (TRACE_FUNCTION, "base_checkout (%s, %s, %s, %s, %s, %s)",
-	   finfo->fullname, prev, rev, tag, poptions, options);
+    TRACE (TRACE_FUNCTION, "base_checkout (%s, %s, %s, %s, %s, %s, %s)",
+	   finfo->fullname, prev, rev, ptag, tag, poptions, options);
 
     mkdir_if_needed (CVSADM_BASE);
 
@@ -272,7 +272,8 @@ base_checkout (RCSNode *rcs, struct file_info *finfo,
     free (basefile);
 
     if (server_active && strcmp (cvs_cmd_name, "export"))
-	server_base_checkout (rcs, finfo, prev, rev, tag, poptions, options);
+	server_base_checkout (rcs, finfo, prev, rev, ptag, tag,
+			      poptions, options);
 
     return status;
 }
@@ -319,8 +320,9 @@ base_remove (const char *file, const char *rev)
 
 /* Merge revisions REV1 and REV2. */
 int
-base_merge (RCSNode *rcs, struct file_info *finfo, const char *options,
-	    const char *urev, const char *rev1, const char *rev2)
+base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
+	    const char *poptions, const char *options, const char *urev,
+	    const char *rev1, const char *rev2)
 {
     char *f1, *f2;
     int retval;
@@ -332,11 +334,11 @@ base_merge (RCSNode *rcs, struct file_info *finfo, const char *options,
        fails is not very informative -- it is taken verbatim from RCS 5.7,
        and relies on RCS_checkout saying something intelligent upon failure. */
 
-    if (base_checkout (rcs, finfo, urev, rev1, rev1, NULL, options))
+    if (base_checkout (rcs, finfo, urev, rev1, ptag, rev1, poptions, options))
 	error (1, 0, "checkout of revision %s of `%s' failed.\n",
 	       rev1, finfo->fullname);
 
-    if (base_checkout (rcs, finfo, urev, rev2, rev2, NULL, options))
+    if (base_checkout (rcs, finfo, urev, rev2, ptag, rev2, poptions, options))
 	error (1, 0, "checkout of revision %s of `%s' failed.\n",
 	       rev2, finfo->fullname);
 
