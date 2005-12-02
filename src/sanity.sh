@@ -18470,7 +18470,7 @@ File: foo\.exe          	Status: Up-to-date
    Sticky Options:	-kb"
 
 	  dokeep
-	  rm -r first-dir
+	  rm -rf first-dir
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -18521,7 +18521,7 @@ File: foo\.exe          	Status: Up-to-date
    Sticky Options:	-kb"
 
 	  dokeep
-	  rm -r first-dir
+	  rm -rf first-dir
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -18686,7 +18686,7 @@ initial revision: 1\.1"
 
           # Now check out the module and see which files are binary.
           cd ..
-	  rm -r binwrap3
+	  rm -rf binwrap3
           dotest binwrap3-3 "${testcvs} co binwrap3" "${DOTSTAR}"
           cd binwrap3
 
@@ -18786,7 +18786,7 @@ initial revision: 1\.1"
           # Restore and clean up
 	  dokeep
           cd ..
-	  rm -r binwrap3 CVSROOT
+	  rm -rf binwrap3 CVSROOT
 	  cd ..
 	  rm -r wnt
 	  modify_repo rm -rf $CVSROOT_DIRNAME/binwrap3
@@ -18865,8 +18865,8 @@ C aa"
 	  dokeep
 	  restore_adm
 	  cd ../..
-	  rm -r CVSROOT
-	  rm -r m1 m2
+	  rm -rf CVSROOT
+	  rm -rf m1 m2
 	  cd ..
 	  rm -r wnt
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
@@ -19899,7 +19899,7 @@ tag1 ? del first-dir/sdir"
 	  dokeep
 	  restore_adm
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -20028,7 +20028,7 @@ file1
 	  dokeep
 	  cd ../..
 	  restore_adm
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -20059,11 +20059,7 @@ file1
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 	  dotest config-3a "$testcvs -Q update -jHEAD -jconfig-start" \
-"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: syntax error: missing \`=' between keyword and value
-RCS file: $CVSROOT_DIRNAME/CVSROOT/config,v
-retrieving revision 1.[0-9]*
-retrieving revision 1.[0-9]*
-Merging differences between 1.[0-9]* and 1.[0-9]* into config"
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: syntax error: missing \`=' between keyword and value"
 	  echo 'BogusOption=yes' >>config
 	  if $proxy; then
 	    dotest config-4p "$testcvs -q ci -m change-to-bogus-opt" \
@@ -20132,7 +20128,7 @@ M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == $TESTDIR/wnt
 	  dokeep
 	  restore_adm
 	  cd ../..
-	  rm -r wnt
+	  rm -rf wnt
 	  ;;
 
 
@@ -20215,8 +20211,10 @@ $SPROG commit: Rebuilding administrative file database"
 	  dokeep
 	  restore_adm
 	  cd ../..
-	  rm -r wnt
+	  rm -rf wnt
 	  ;;
+
+
 
 	config3)
 	  # Verify comments, white space, & [rootspecs] in CVSROOT/config
@@ -20254,8 +20252,7 @@ $SPROG checkout: Updating config3"
 
 	  cd CVSROOT
 	  dotest config3-init-2a "$testcvs -Q up -jHEAD -jinitial-config" \
-"$DOTSTAR
-Merging differences between 1\.[0-9]* and 1\.[0-9]* into config"
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[0-9]*\]: unrecognized keyword \`GLOBAL-BAD-OPTION'"
 
 	  cat <<EOF >>config
 	      # Ignore a comment with leading spaces.
@@ -20302,8 +20299,7 @@ $SPROG checkout: Updating config3"
 	  # root is ignored.
 	  cd CVSROOT
 	  dotest config3-init-3a "$testcvs -Q up -jHEAD -jinitial-config" \
-"$DOTSTAR
-Merging differences between 1\.[0-9]* and 1\.[0-9]* into config"
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[0-9]*\]: unrecognized keyword \`PROCESS-BAD-OPTION'"
 
 	  cat <<EOF >>config
 	      HistoryLogPath=$TESTDIR/historylog
@@ -20360,7 +20356,7 @@ T [0-9-]* [0-9:]* ${PLUS}0000 $username config3 \[testtag:A\]"
 	  dokeep
 	  restore_adm
 	  cd ..
-	  rm -r config3
+	  rm -rf config3
 	  modify_repo rm -rf $CVSROOT_DIRNAME/config3
 	  ;;
 
@@ -20399,7 +20395,7 @@ $SPROG commit: Rebuilding administrative file database"
 	  dokeep
 	  restore_adm
 	  cd ../..
-	  rm -r config4
+	  rm -rf config4
 	  modify_repo rm -rf $CVSROOT_DIRNAME/config4
 	  ;;
 
@@ -21515,7 +21511,7 @@ ${log_trailer}"
 
 	  dokeep
 	  cd ..
-	  rm -r first-dir
+	  rm -rf first-dir
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -22070,14 +22066,9 @@ ${SPROG} update: Updating crerepos-dir"
 
           CVS_SERVER=$CVS_SERVER_save; export CVS_SERVER
 
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
-
 	  dokeep
           rm -f $TESTDIR/cvs-setHome
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  rm -rf $TESTDIR/crerepos
 	  ;;
@@ -22574,7 +22565,7 @@ revision 1\.4"
 	  dokeep
 	  TZ=$save_TZ
 	  cd ..
-	  rm -r first-dir
+	  rm -rf first-dir
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -22663,7 +22654,7 @@ EOF
 
 	  dokeep
 	  cd ..
-	  rm -r first-dir
+	  rm -rf first-dir
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -22733,7 +22724,7 @@ EOF
 
 	  dokeep
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -22884,7 +22875,7 @@ EOF
 line5"
 
 	  cd ..
-          rm -r rcs5
+          rm -rf rcs5
           modify_repo rm -rf $CVSROOT_DIRNAME/rcs5
 	  ;;
 
@@ -23110,7 +23101,7 @@ $SPROG commit: Rebuilding administrative file database"
 	  umask $save_umask
 	  unset CVSUMASK
 	  rm -r $TESTDIR/locks
-	  rm -r 1 2 3
+	  rm -rf 1 2 3
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 

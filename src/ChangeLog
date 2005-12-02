@@ -1,3 +1,8 @@
+2005-12-02  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.  Other minor corrections.
+
 2005-12-01  Derek Price  <derek@ximbiot.com>
 
 	* client.c (client_base_merge): Print `Merging differences' message
