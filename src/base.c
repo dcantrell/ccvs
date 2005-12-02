@@ -309,6 +309,8 @@ base_remove (const char *file, const char *rev)
 {
     char *basefile;
 
+    TRACE (TRACE_FUNCTION, "base_remove (%s, %s)", file, rev);
+
     if (*rev == '-') rev++;
     basefile = make_base_file_name (file, rev);
     if (unlink_file (basefile) < 0 && !existence_error (errno))

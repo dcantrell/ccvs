@@ -1,5 +1,12 @@
 2005-12-02  Derek Price  <derek@ximbiot.com>
 
+	* base.c (base_remove), rcs,c (RCS_checkin), server.c (server_updated):
+	 Add traces.
+	* client.c (update_entries): Don't assume UPDATE_ENTRIES_CHECKIN
+	actually means this was a checkin.
+	* server.c (server_base_checkout): Name (tag) changes could also create
+	a diff.
+
 	* checkin.c (Checkin): Actually pass the previous options.
 
 	* server.c (server_base_checkout), server.h: Accept new previous tag

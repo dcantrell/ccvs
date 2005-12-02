@@ -5103,6 +5103,9 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
 #endif
     Node *np;
 
+    TRACE (TRACE_FUNCTION, "RCS_checkin (%s, %s, %s, %s, %s)",
+	   rcs->print_path, update_dir, workfile_in, message, rev);
+
     commitpt = NULL;
 
     if (rcs->flags & PARTIAL)

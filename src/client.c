@@ -1932,16 +1932,30 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	     && strcmp (vn, "0") && *vn != '-')
     {
 	/* On checkin, create the base file.  */
-	char *basefile = make_base_file_name (filename, vn);
 	Node *n;
+	bool makebase = true;
 	if ((n = findnode_fn (ent_list, filename)))
 	{
+	    /* This could be a readd of a locally removed file or, for
+	     * instance, an update that changed keyword options without
+	     * changing the revision number or the base file.
+	     */
 	    Entnode *e = n->data;
-	    base_remove (filename, e->version);
+	    if (strcmp (vn, e->version))
+		/* The version number has changed.  */
+		base_remove (filename, e->version);
+	    else
+		/* The version number has not changed.  */
+		makebase = false;
 	}
-	mkdir_if_needed (CVSADM_BASE);
-	copy_file (filename, basefile);
-	free (basefile);
+	if (makebase)
+	{
+	    /* A real checkin.  */
+	    char *basefile = make_base_file_name (filename, vn);
+	    mkdir_if_needed (CVSADM_BASE);
+	    copy_file (filename, basefile);
+	    free (basefile);
+	}
     }
 
     if (stored_mode)
