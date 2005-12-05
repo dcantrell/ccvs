@@ -1,5 +1,7 @@
 2005-12-05  Derek Price  <derek@ximbiot.com>
 
+	* client.c (update_entries): Create timestamp when LAST_MERGE_CONFLICT.
+
 	* server.c (server_updated): Don't dereference NULL.  Don't send diffs
 	when revisions are identical.
 
