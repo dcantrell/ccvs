@@ -2008,7 +2008,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	(void) time (&last_register_time);
 
 	local_timestamp = data->timestamp;
-	if (!local_timestamp || ts[0] == '+')
+	if (!local_timestamp || ts[0] == '+' || last_merge_conflict)
 	    file_timestamp = time_stamp (filename);
 	else
 	    file_timestamp = NULL;
