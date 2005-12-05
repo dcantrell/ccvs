@@ -5234,7 +5234,8 @@ server_updated (
     assert (!(filebuf && file_gzip_level));
 
     TRACE (TRACE_FUNCTION, "server_updated (%s, %s, %s)",
-	   finfo->fullname, vers->vn_rcs, vers->options);
+	   finfo->fullname, vers ? vers->vn_rcs : "(null)",
+	   vers ? vers->options : "(null)");
 
     if (noexec)
     {
@@ -8191,7 +8192,10 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 			  *(finfo->update_dir) ? finfo->update_dir : ".",
 			  basefile);
 
-    if (prev && strcmp (prev, "0"))
+    /* FIXME: It would be more efficient if diffs could be sent when the
+     * revision numbers haven't changed but the keywords have.
+     */
+    if (prev && strcmp (prev, "0") && strcmp (prev, rev))
     {
 	/* Compute and send diff.  */
 	int dargc = 0;

@@ -1,5 +1,8 @@
 2005-12-05  Derek Price  <derek@ximbiot.com>
 
+	* server.c (server_updated): Don't dereference NULL.  Don't send diffs
+	when revisions are identical.
+
 	* cvs.h (Register): Move proto to...
 	* entries.h: ...here.  Include hash.h.
 	* entries.c (Entnode_Destroy): Add traces.
