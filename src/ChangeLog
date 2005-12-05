@@ -1,3 +1,15 @@
+2005-12-05  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (Register): Move proto to...
+	* entries.h: ...here.  Include hash.h.
+	* entries.c (Entnode_Destroy): Add traces.
+	* hash.c: Verify interface.
+	* hash.h: Include <stddef.h> for size_t.
+	* update.c (update_fileproc): Fix vers_ts->entdata after a merge.
+
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.  Other minor corrections.
+
 2005-12-02  Derek Price  <derek@ximbiot.com>
 
 	* base.c (base_remove), rcs,c (RCS_checkin), server.c (server_updated):

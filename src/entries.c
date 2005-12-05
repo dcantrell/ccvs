@@ -75,6 +75,8 @@ static void Entnode_Destroy (Entnode *);
 static void
 Entnode_Destroy (Entnode *ent)
 {
+    TRACE (TRACE_FLOW, "Entnode_Destroy ()");
+
     free (ent->user);
     free (ent->version);
     free (ent->timestamp);
@@ -214,8 +216,8 @@ Scratch_Entry (List *list, const char *fname)
  */
 void
 Register (List *list, const char *fname, const char *vn, const char *ts,
-          const char *options, const char *tag, const char *date,
-          const char *ts_conflict)
+	  const char *options, const char *tag, const char *date,
+	  const char *ts_conflict)
 {
     Entnode *entnode;
     Node *node;
