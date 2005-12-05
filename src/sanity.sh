@@ -25088,10 +25088,11 @@ diff -r1\.2 file1
 
 	  # Here's the problem... shouldn't -kk a binary file...
 	  rm file1
-	  dotest keyword2-13 "$testcvs -ttt update -A -kk -j branch" \
+	  dotest keyword2-13 "$testcvs -q update -A -kk -j branch" \
 "$SPROG update: warning: \`file1' was lost
 U file1
-Merging differences between 1\.1 and 1\.1\.2\.1 into \`file1'"
+Merging differences between 1\.1 and 1\.1\.2\.1 into \`file1'
+M file1"
 
 	  # binfile won't get checked in, but it is now corrupt and could
 	  # have been checked in if it had changed on the branch...
@@ -25124,12 +25125,13 @@ new revision: 1\.1\.4\.1; previous revision: 1\.1"
 	  #       looks like a bug!
 	  dotest keyword2-20 "${testcvs} -q update -A -kk -j branch2" \
 "U binfile\.dat
-U binfile\.dat
+$SPROG update: Replacing \`binfile\.dat' with contents of revision 1\.1\.4\.1\.
+M binfile\.dat
 U file1"
 
 	  dokeep
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -25293,7 +25295,7 @@ done"
 
 	  dokeep
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -25785,7 +25787,7 @@ File: file3            	Status: Up-to-date
 	  TZ=$save_TZ
 
 	  dokeep
-	  rm -r 1 2 3 4
+	  rm -rf 1 2 3 4
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -25893,19 +25895,17 @@ add
 
 	  dotest multibranch2-13 "${testcvs} -q update -r B" "[UP] file1
 [UP] file2"
-	  dotest multibranch2-14 "${testcvs} -q update -r A -j B file2" \
-"[UP] file2
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
-retrieving revision 1.1
-retrieving revision 1.1.4.1
-Merging differences between 1.1 and 1.1.4.1 into file2"
+	  dotest multibranch2-14 "$testcvs -q update -r A -j B file2" \
+"U file2
+$SPROG update: Replacing \`file2' with contents of revision 1\.1\.4\.1\.
+M file2"
 	  dotest multibranch2-15 "${testcvs} -q ci -m commit-on-A file2" \
 "$CVSROOT_DIRNAME/first-dir/file2,v  <--  file2
 new revision: 1\.1\.2\.1; previous revision: 1\.1"
 
 	  dokeep
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -25979,7 +25979,7 @@ $SPROG add: use .$SPROG commit. to add this file permanently"
 
 	  dokeep
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
 	  ;;
 
@@ -26493,7 +26493,11 @@ first
 ============================================================================="
 
 	  dotest admin-22-o14 "${testcvs} tag -b -r1.3 br1 aaa" "T aaa"
-	  dotest admin-22-o15 "${testcvs} update -rbr1 aaa" "U aaa"
+	  dotest_fail admin-22-o15a "$testcvs update -rbr1 aaa" \
+"$SPROG \[update aborted\]: could not find desired version 1\.6 in $CVSROOT_DIRNAME/first-dir/aaa,v"
+	  rm -f aaa CVS/Base/.#aaa.1.6
+	  sed /aaa/d <CVS/Entries >tmp; mv tmp CVS/Entries
+	  dotest admin-22-o15b "$testcvs update -rbr1 aaa" "U aaa"
 	  echo new branch rev >> aaa
 	  dotest admin-22-o16 "${testcvs} ci -m new-branch aaa" \
 "$CVSROOT_DIRNAME/first-dir/aaa,v  <--  aaa
@@ -26977,7 +26981,7 @@ another-log-message
 	  # clean up our after ourselves
 	  restore_adm
 	  cd ../..
-	  rm -r 1 2
+	  rm -rf 1 2
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -27181,7 +27185,7 @@ new revision: 1\.3; previous revision: 1\.2
 $SPROG commit: Rebuilding administrative file database"
 
 	  dokeep
-	  cd ..; rm -r CVSROOT
+	  cd ..; rm -rf CVSROOT
 	  cd ..
 	  rm -r 1
 	  rm $TESTDIR/lockme
@@ -27277,56 +27281,37 @@ new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1"
 	  # update, after both my modifications and your checkin:
 	  cd ../mine
 	  diffmerge_create_my_files
-	  dotest diffmerge1_mine "${testcvs} -q update -j tag" \
-"M testcase01
-RCS file: ${CVSROOT_DIRNAME}/diffmerge1/testcase01,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.1\.2\.1
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase01
+	  dotest diffmerge1_mine "$testcvs update -j tag" \
+"$SPROG update: Updating \.
+M testcase01
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into \`testcase01'
+M testcase01
 M testcase02
-RCS file: ${CVSROOT_DIRNAME}/diffmerge1/testcase02,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.1\.2\.1
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase02
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into \`testcase02'
+M testcase02
 M testcase03
-RCS file: ${CVSROOT_DIRNAME}/diffmerge1/testcase03,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.1\.2\.1
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase03
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into \`testcase03'
+M testcase03
 M testcase04
-RCS file: ${CVSROOT_DIRNAME}/diffmerge1/testcase04,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.1\.2\.1
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase04
-RCS file: ${CVSROOT_DIRNAME}/diffmerge1/testcase05,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.1\.2\.1
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase05
-RCS file: ${CVSROOT_DIRNAME}/diffmerge1/testcase06,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.1\.2\.1
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase06
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into \`testcase04'
+M testcase04
+$SPROG update: Replacing \`testcase05' with contents of revision 1\.1\.1\.1\.2\.1\.
+M testcase05
+$SPROG update: Replacing \`testcase06' with contents of revision 1\.1\.1\.1\.2\.1\.
+M testcase06
 M testcase07
-RCS file: ${CVSROOT_DIRNAME}/diffmerge1/testcase07,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.1\.2\.1
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase07
-testcase07 already contains the differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into \`testcase07'
+\`testcase07' already contains the differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1
+M testcase07
 M testcase08
-RCS file: ${CVSROOT_DIRNAME}/diffmerge1/testcase08,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.1\.2\.1
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase08
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into \`testcase08'
+M testcase08
 M testcase09
-RCS file: ${CVSROOT_DIRNAME}/diffmerge1/testcase09,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.1\.2\.1
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase09
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into \`testcase09'
+M testcase09
 M testcase10
-RCS file: ${CVSROOT_DIRNAME}/diffmerge1/testcase10,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.1\.1\.1\.2\.1
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase10"
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into \`testcase10'
+M testcase10"
 
 	  # So if your changes didn't make it into my working copy, or
 	  # in any case if the files do not look like the final text
@@ -27343,7 +27328,7 @@ Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase10"
 	  # Clean up after ourselves:
 	  dokeep
 	  cd ..
-	  rm -r diffmerge1
+	  rm -rf diffmerge1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/diffmerge1
 	  ;;
 
@@ -28024,8 +28009,9 @@ d472 12
 	    "$testcvs co diffmerge2" "${DOTSTAR}U $DOTSTAR"
 	  cd diffmerge2
 	  dotest diffmerge2_update \
-	    "${testcvs} update -j Review_Phase_2_Enhancements sgrid.h" \
-	    "${DOTSTAR}erging ${DOTSTAR}"
+	    "$testcvs update -j Review_Phase_2_Enhancements sgrid.h" \
+	    "$SPROG update: Replacing \`sgrid.h' with contents of revision 1\.1\.2\.1\.
+M sgrid\.h"
 	  # This is the one that counts -- there should be no output:
 	  dotest diffmerge2_diff \
 	    "${testcvs} diff -r Review_V1p3 sgrid.h" ''
@@ -28159,7 +28145,7 @@ Are you sure you want to release (and delete) directory \`second-dir': "
 
 	  dokeep
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf 1 $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -28718,7 +28704,7 @@ C first-dir/FiLe"
 
 	  dokeep
 	  cd ..
-	  rm -r 1 2 3
+	  rm -rf 1 2 3
 	  if $server_sensitive && test -n "$remotehost"; then
 	    # It is necessary to remove one of the case-conflicted files before
 	    # recursively removing the rest under Cygwin on a Samba share or
@@ -29013,10 +28999,10 @@ ${SPROG} update: Updating mod1-1
 ${SPROG} update: Updating mod1-2
 ${SPROG} update: Updating mod2-2
 ${SPROG} update: Updating mod2-2/mod1-2
-P mod2-2/mod1-2/file1-2
+U mod2-2/mod1-2/file1-2
 ${SPROG} update: Updating mod1-2
 ${SPROG} update: Updating mod1-2/mod2-2
-P mod1-2/mod2-2/file2-2
+U mod1-2/mod2-2/file2-2
 ${SPROG} update: Updating mod2-1
 ${SPROG} update: Updating mod2-2"
 
@@ -29832,7 +29818,7 @@ anyone
 
 	  # clean up after ourselves
 	  cd ..
-	  rm -r 1
+	  rm -rf 1
 
 	  # clean up our repositories
 	  rm -rf ${CVSROOT1_DIRNAME} ${CVSROOT2_DIRNAME}
@@ -29980,14 +29966,10 @@ ${PLUS}${PLUS}${PLUS} dir1/sdir/sfile	${RFCDATE}	1\.2
  sfile
 ${PLUS}change him too"
 
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
-
 	  # clean up after ourselves
+	  dokeep
 	  cd ..
-	  rm -r imp-dir 1
+	  rm -rf imp-dir 1
 
 	  # clean up our repositories
 	  rm -rf root1 root2
@@ -30337,7 +30319,7 @@ ${CPROG} \[update aborted\]: ${TESTDIR}/root-none/CVSROOT: No such file or direc
 	  # sure that CVS is using the correct one.
 
 	  cd ../..
-	  rm -r imp-dir 1
+	  rm -rf imp-dir 1
 	  rm -rf root1 root2
 	  unset CVSROOT1
 	  ;;
@@ -30802,7 +30784,7 @@ $SPROG commit: Rebuilding administrative file database"
 
 	    dokeep
 	    cd ../..
-	    rm -r 1
+	    rm -rf 1
 	    restore_adm
 	    servercvs=$save_servercvs
 	  fi # skip the whole thing for local
@@ -31317,7 +31299,7 @@ cat >/dev/null
 EOF
 	  sleep 1
 	  dotest_fail client-11 "$testcvs update" \
-"$CPROG \[update aborted\]: patch original file \./\.bashrc does not exist"
+"$CPROG \[update aborted\]: patch original file \.bashrc does not exist"
 
 	  # A third try at a client exploit.  This one did used to fail like
 	  # client-10.
@@ -31510,7 +31492,7 @@ U module1/dir2/file1"
 	  dokeep
 
 	  rm -rf ${CVSROOT_DIRNAME}
-	  rm -r dir1 module1
+	  rm -rf dir1 module1
 	  CVSROOT_DIRNAME=${CVSROOT_DIRNAME_save}
 	  CVSROOT=${CVSROOT_save}
 	  ;;
@@ -32008,7 +31990,7 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSRO
 
 	  dokeep
 	  cd ../../..
-	  rm -r writeproxy $TESTDIR/referrer
+	  rm -rf writeproxy $TESTDIR/referrer
 	  rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
 	  PRIMARY_CVSROOT_DIRNAME=$PRIMARY_CVSROOT_DIRNAME_save
 	  PRIMARY_CVSROOT=$PRIMARY_CVSROOT_save
@@ -32272,7 +32254,7 @@ EOF
 
 	  dokeep
 	  cd ../../../..
-	  rm -r writeproxy-noredirect
+	  rm -rf writeproxy-noredirect
 	  rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
 	  rm $TESTDIR/writeproxy-secondary-wrapper \
 	     $TESTDIR/writeproxy-primary-wrapper
@@ -32378,7 +32360,7 @@ EOF
 
 	  dokeep
 	  cd ../../..
-	  rm -r writeproxy-ssh
+	  rm -rf writeproxy-ssh
 	  rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
 	  PRIMARY_CVSROOT_DIRNAME=$PRIMARY_CVSROOT_DIRNAME_save
 	  PRIMARY_CVSROOT=$PRIMARY_CVSROOT_save
@@ -32504,7 +32486,7 @@ EOF
 
 	  dokeep
 	  cd ../../..
-	  rm -r writeproxy-ssh-noredirect
+	  rm -rf writeproxy-ssh-noredirect
 	  rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
 	  PRIMARY_CVSROOT_DIRNAME=$PRIMARY_CVSROOT_DIRNAME_save
 	  PRIMARY_CVSROOT=$PRIMARY_CVSROOT_save
