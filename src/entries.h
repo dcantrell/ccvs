@@ -19,6 +19,8 @@
 #ifndef ENTRIES_H
 #define ENTRIES_H
 
+#include "hash.h"
+
 /* The type of an entnode.  */
 enum ent_type
 {
@@ -44,4 +46,7 @@ struct entnode
 };
 typedef struct entnode Entnode;
 
+void Register (List *list, const char *fname, const char *vn,
+	       const char *ts, const char *options, const char *tag,
+	       const char *date, const char *ts_conflict);
 #endif /* !defined ENTRIES_H */

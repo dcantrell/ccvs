@@ -542,9 +542,6 @@ void update_delproc (Node * p);
 void usage (const char *const *cpp);
 List *Find_Names (char *repository, int which, int aflag,
 		  List ** optentries);
-void Register (List * list, const char *fname, const char *vn, const char *ts,
-               const char *options, const char *tag, const char *date,
-               const char *ts_conflict);
 void Update_Logfile (const char *repository, const char *xmessage,
                      FILE *xlogfp, List *xchanges);
 void do_editor (const char *dir, char **messagep,

@@ -13,6 +13,8 @@
 #ifndef HASH_H
 #define HASH_H
 
+#include <stddef.h>
+
 /*
  * The number of buckets for the hash table contained in each list.  This
  * should probably be prime.

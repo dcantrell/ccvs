@@ -1383,6 +1383,8 @@ VERS: ", 0);
 	    /* fix up the vers structure, in case it is used by join */
 	    if (join_rev1)
 	    {
+		Node *n;
+
 		/* FIXME: Throwing away the original revision info is almost
 		   certainly wrong -- what if join_rev1 is "BASE"?  */
 		if (vers_ts->vn_user != NULL)
@@ -1391,6 +1393,11 @@ VERS: ", 0);
 		    free (vers_ts->vn_rcs);
 		vers_ts->vn_user = xstrdup (xvers_ts->vn_rcs);
 		vers_ts->vn_rcs = xstrdup (xvers_ts->vn_rcs);
+		n = findnode_fn (finfo->entries, finfo->file);
+		if (n)
+		    vers_ts->entdata = n->data;
+		else
+		    vers_ts->entdata = NULL;
 	    }
 
 	    /* If this is really Update and not Checkout, recode history */
@@ -2047,7 +2054,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
     char *jdate2;
     bool replace_it;
 
-    TRACE (TRACE_FUNCTION, "join_file(%s, %s%s%s%s, %s, %s)",
+    TRACE (TRACE_FUNCTION, "join_file (%s, %s%s%s%s, %s, %s)",
 	   finfo->file,
 	   vers->tag ? vers->tag : "",
 	   vers->tag ? " (" : "",
