@@ -1,3 +1,12 @@
+2005-12-06  Derek Price  <derek@ximbiot.com>
+
+	* client.c (client_base_checkout): Make base checkouts work when in
+	noexec mode.
+	* server.c (server_base_checkout): Unlink temp file in noexec mode.
+
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.  Other minor corrections.
+
 2005-12-05  Derek Price  <derek@ximbiot.com>
 
 	* client.c (update_entries): Create timestamp when LAST_MERGE_CONFLICT.

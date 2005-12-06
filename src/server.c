@@ -8270,7 +8270,7 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 
     if (tmpfile)
     {
-	if (unlink_file (tmpfile) < 0)
+	if (CVS_UNLINK (tmpfile) < 0)
 	    error (0, errno, "cannot remove `%s'", tmpfile);
 	free (tmpfile);
     }

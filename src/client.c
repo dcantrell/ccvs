@@ -2232,7 +2232,7 @@ client_base_checkout (void *data_arg, List *ent_list,
      * overwritten except when the kwyword mode has changed.
      */
     if (isfile (basefile))
-	xchmod (basefile, true);
+	force_xchmod (basefile, true);
 
     update_dir = dir_name (short_pathname);
     if (!*update_dir) fullbase = xstrdup (basefile);

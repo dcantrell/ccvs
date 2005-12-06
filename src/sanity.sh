@@ -6227,7 +6227,7 @@ diff -c first-dir/file3:1\.1\.2\.1 first-dir/file3:removed
 
 		# join
 		dotest death-86 "$testcvs -q update -j branch1" \
-"Merging differences between 1\.3 and 1\.3\.2\.1 into \`file1'
+"$SPROG update: Replacing \`file1' with contents of revision 1\.3\.2\.1\.
 M file1
 $SPROG update: scheduling \`file2' for removal
 $SPROG update: scheduling addition from revision 1\.1\.2\.3 of \`file3'\."
@@ -6917,8 +6917,8 @@ new revision: 1\.3; previous revision: 1\.2"
 	  dotest rmadd2-9 "${testcvs} -q ci -m modify" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.4; previous revision: 1\.3"
-	  dotest rmadd2-10 "${testcvs} -q update -j 1.4 -j 1.3 file1" \
-"Merging differences between 1\.4 and 1\.3 into \`file1'
+	  dotest rmadd2-10 "$testcvs -q update -j 1.4 -j 1.3 file1" \
+"$SPROG update: Replacing \`file1' with contents of revision 1\.3\.
 M file1"
 	  dotest rmadd2-11 "${testcvs} -q ci -m undo" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
@@ -6964,7 +6964,7 @@ File: no file file1		Status: Up-to-date
 
 	  dokeep
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -9303,7 +9303,7 @@ rev 2 of file 2
 
 		dokeep
 		cd ..
-		rm -r first-dir
+		rm -rf first-dir
 		modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 		rm -r import-dir
 		;;
@@ -9547,7 +9547,7 @@ import-it
 	  dokeep
 	  TZ=$save_TZ
 	  cd ..
-	  rm -r 1 2
+	  rm -rf 1 2
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -9976,7 +9976,7 @@ new revision: 1\.1\.1\.1\.2\.2; previous revision: 1\.1\.1\.1\.2\.1"
 
 	  dokeep
 	  cd ../..
-	  rm -r branch-after-import
+	  rm -rf branch-after-import
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -10313,7 +10313,7 @@ U first-dir/file7'
 	  echo 'third revision of file4' > file4
 	  dotest join-23 "${testcvs} -q update -jbranch ." \
 "$SPROG update: scheduling addition from revision 1\.1\.2\.1 of \`file1'\.
-Merging differences between 1\.1 and 1\.1\.2\.2 into \`file2'
+$SPROG update: Replacing \`file2' with contents of revision 1\.1\.2\.2\.
 M file2
 $SPROG update: scheduling \`file3' for removal
 M file4
@@ -10350,7 +10350,7 @@ T file7"
 	  # the trunk (e.g. join-23).
 	  dotest join-28 "$testcvs -q update -j branch" \
 "$SPROG update: scheduling addition from revision 1\.1\.2\.1 of \`file1'\.
-Merging differences between 1.1 and 1.1.2.2 into \`file2'
+$SPROG update: Replacing \`file2' with contents of revision 1\.1\.2\.2\.
 M file2
 $SPROG update: scheduling \`file3' for removal
 $SPROG update: file file4 has been modified, but has been removed in revision branch
@@ -10371,7 +10371,7 @@ A file9"
 	  # once that if the file was removed in the update then it wouldn't be
 	  # readded in the merge
 	  cd ..
-	  rm -r first-dir
+	  rm -rf first-dir
 	  dotest join-twobranch-1 "${testcvs} -q co -rbranch first-dir" \
 'U first-dir/file1
 U first-dir/file2
@@ -10382,7 +10382,7 @@ U first-dir/file9'
 "$SPROG update: \`file1' is no longer in the repository
 $SPROG update: scheduling addition from revision 1\.1\.2\.1 of \`file1'\.
 U file2
-Merging differences between 1\.1 and 1\.1\.2\.2 into \`file2'
+$SPROG update: Replacing \`file2' with contents of revision 1\.1\.2\.2\.
 M file2
 U file3
 $SPROG update: scheduling \`file3' for removal
@@ -10509,7 +10509,7 @@ File: file1            	Status: Up-to-date
 	  dotest join2-10 "cat CVS/Tag" "Tbr1"
 
 	  dotest join2-11 "${testcvs} -q update -j br1 file1" \
-"Merging differences between 1\.1 and 1\.1\.2\.1 into \`file1'
+"$SPROG update: Replacing \`file1' with contents of revision 1\.1\.2\.1\.
 M file1"
 	  dotest join2-12 "cat file1" "initial contents of file1
 modify on branch"
@@ -11084,7 +11084,7 @@ $CPROG update: conflicts during merge"
 
 	  dokeep
 	  cd ../..
-	  rm -r join7
+	  rm -rf join7
 	  modify_repo rm -rf $CVSROOT_DIRNAME/join7
 	  ;;
 
@@ -11155,7 +11155,7 @@ C $file"
 
 	  dokeep
 	  cd ../..
-	  rm -r join-readonly-conflict
+	  rm -rf join-readonly-conflict
 	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
 	  ;;
 
@@ -17749,7 +17749,7 @@ new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1"
 
 	  dokeep
 	  cd ../..
-	  rm -r ignore-on-branch
+	  rm -rf ignore-on-branch
 	  modify_repo rm -rf $CVSROOT_DIRNAME/ignore-on-branch
 	  ;;
 
