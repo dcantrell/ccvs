@@ -1,3 +1,9 @@
+2005-12-07  Derek Price  <derek@ximbiot.com>
+
+	* client.c (start_server), root.c (method_names), root.h (CVSmethod):
+	Handle :extssh: as a kindness to Eclipse users.
+	(Suggestion from Joseph P. Skudlarek <Jskud@Jskud.com>.)
+
 2005-12-07  Mark D. Baushke  <mdb@gnu.org>
 
 	* buffer.c (fd_buffer_shutdown): Use error (0, ...) instead of
