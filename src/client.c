@@ -4351,6 +4351,7 @@ start_server ()
 #endif /* HAVE_GSSAPI */
 
 	case ext_method:
+	case extssh_method:
 #ifdef NO_EXT_METHOD
 	    error (0, 0, ":ext: method not supported by this port of CVS");
 	    error (1, 0, "try :server: instead");
