@@ -3908,6 +3908,7 @@ open_connection_to_server (cvsroot_t *root, struct buffer **to_server_p,
 	    break;
 
 	case ext_method:
+	case extssh_method:
 #ifdef NO_EXT_METHOD
 	    error (0, 0, ":ext: method not supported by this port of CVS");
 	    error (1, 0, "try :server: instead");
