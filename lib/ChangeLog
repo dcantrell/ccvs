@@ -1,3 +1,7 @@
+2005-12-07  Mark D. Baushke  <mdb@gnu.org>
+
+	* stdint_.h: Update from GNULIB.
+
 2005-11-27  Mark D. Baushke  <mdb@gnu.org>
 
 	* getaddrinfo.h, getcwd.c, md5.c, md5.h: Update from GNULIB.
