@@ -2118,7 +2118,7 @@ fd_buffer_shutdown (struct buffer *buf)
 	 */
 	else if (fb->root && pclose (fb->fd) == EOF)
 	{
-	    error (1, errno, "closing connection to %s",
+	    error (0, errno, "closing connection to %s",
 		   fb->root->hostname);
 	    closefd = false;
 	}
@@ -2158,13 +2158,16 @@ fd_buffer_shutdown (struct buffer *buf)
             /* Syslog this? */
 	}
 # ifdef CLIENT_SUPPORT
+	/* We are already closing the connection.
+	 * On error, print a warning and try to
+	 * continue to avoid infinte loops.
+	 */
 	else if (fb->root)
-            error (1, errno, "closing down connection to %s",
+            error (0, errno, "closing down connection to %s",
                    fb->root->hostname);
-	    /* EXITS */
 # endif /* CLIENT_SUPPORT */
-
-	error (0, errno, "closing down buffer");
+	else
+	    error (0, errno, "closing down buffer");
     }
 
     /* If we were talking to a process, make sure it exited */
@@ -2175,8 +2178,13 @@ fd_buffer_shutdown (struct buffer *buf)
 	do
 	    w = waitpid (fb->child_pid, NULL, 0);
 	while (w == -1 && errno == EINTR);
+
+	/* We are already closing the connection.
+	 * On error, print a warning and try to
+	 * continue to avoid infinte loops.
+	 */
 	if (w == -1)
-	    error (1, errno, "waiting for process %d", fb->child_pid);
+	    error (0, errno, "waiting for process %d", fb->child_pid);
     }
 
     free (buf->closure);
