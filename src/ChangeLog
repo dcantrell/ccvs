@@ -1,3 +1,10 @@
+2005-12-06  Mark D. Baushke  <mdb@gnu.org>
+
+	* buffer.c (stdio_buffer_shutdown): No longer assert() the
+	fstat(). Use error (0, ...) instead of error (1, ...) to avoid
+	infinite loops. (patch #4678)
+	Patch adapted from "Allan L. Bazinet" <allan.bazinet@gmail.com>
+
 2005-11-10  Larry Jones  <lawrence.jones@ugs.com>
 
 	* commit.c (commit): Complain about obsolete -n option if not in
