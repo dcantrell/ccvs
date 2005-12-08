@@ -2326,7 +2326,6 @@ join_file (struct file_info *finfo, Vers_TS *vers)
            addition.  */
 	if (vers->vn_user == NULL)
 	{
-	    char *saved_options;
 	    Vers_TS *xvers;
 
 	    /* Use NULL for keyword expansion options.  Otherwise, when a
@@ -2355,13 +2354,14 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	    /* Added files are always writable until commit.  */
 	    base_copy (finfo, xvers->vn_rcs, "nyd");
 
-	    backup = Xasprintf ("%s%s.%s", BAKPREFIX, finfo->file,
-				vers->vn_user);
-	    saved_options = vers->options;
-	    vers->options = NULL;
-	    RegisterMerge (finfo, vers, backup, false, true);
-	    vers->options = saved_options;
-	    free (backup);
+	    Register (finfo->entries, finfo->file, "0",
+		      "Result of merge", NULL, vers->tag, vers->date, NULL);
+	    if (server_active)
+		/* No need to create a backup for an addition - if the file
+		 * exists, the client will abort with a warning.
+		 */
+		server_updated (finfo, vers, SERVER_UPDATED, (mode_t) -1,
+				NULL, NULL);
 
 	    freevers_ts (&xvers);
 	    return;
@@ -2545,7 +2545,11 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	else
 	    unchanged = false;
 	basefile = make_base_file_name (finfo->file, vers->vn_user);
-	if (!noexec && isfile (basefile) && !xcmp (basefile, finfo->file))
+	if (!noexec
+	    && ((isfile (basefile) && !xcmp (basefile, finfo->file))
+		|| (strcmp (vers->vn_user, "0")
+		    && !RCS_cmp_file (finfo->rcs, vers->vn_user, NULL, NULL,
+	                              vers->options, finfo->file))))
 	    isbase = true;
 	else
 	    isbase = false;

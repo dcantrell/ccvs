@@ -2312,6 +2312,8 @@ static void
 handle_base_checkout (char *args, size_t len)
 {
     bool istemp = false;
+    if (suppress_bases)
+	error (1, 0, "Server sent Base-* response when asked not to.");
     call_in_directory (args, client_base_checkout, &istemp);
 }
 
@@ -2321,6 +2323,8 @@ static void
 handle_temp_checkout (char *args, size_t len)
 {
     bool istemp = true;
+    if (suppress_bases)
+	error (1, 0, "Server sent Base-* response when asked not to.");
     call_in_directory (args, client_base_checkout, &istemp);
 }
 
@@ -2384,7 +2388,7 @@ client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
     /* If EXISTS[2] == "d", don't keep the base file.  This happens
      * when a merge adds a file and when `cvs add' resurrects a file.
      */
-    if (flags[0] && flags [1] && flags[2] == 'd' && unlink_file (basefile) < 0)
+    if (flags[0] && flags [1] && flags[2] == 'd' && CVS_UNLINK (basefile) < 0)
 	error (0, errno, "Failed to delete `%s'", short_pathname);
 
     free (flags);
@@ -2398,6 +2402,8 @@ client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
 static void
 handle_base_copy (char *args, size_t len)
 {
+    if (suppress_bases)
+	error (1, 0, "Server sent Base-* response when asked not to.");
     call_in_directory (args, client_base_copy, NULL);
 }
 
@@ -2541,6 +2547,8 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
 static void
 handle_base_merge (char *args, size_t len)
 {
+    if (suppress_bases)
+	error (1, 0, "Server sent Base-* response when asked not to.");
     call_in_directory (args, client_base_merge, NULL);
 }
 
@@ -2550,6 +2558,8 @@ static void
 handle_base_entry (char *args, size_t len)
 {
     struct update_entries_data dat;
+    if (suppress_bases)
+	error (1, 0, "Server sent Base-* response when asked not to.");
     dat.contents = UPDATE_ENTRIES_BASE;
     dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = NULL;
@@ -2562,6 +2572,8 @@ static void
 handle_base_merged (char *args, size_t len)
 {
     struct update_entries_data dat;
+    if (suppress_bases)
+	error (1, 0, "Server sent Base-* response when asked not to.");
     dat.contents = UPDATE_ENTRIES_BASE;
     dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = "Result of merge";
@@ -4596,6 +4608,10 @@ start_server (void)
 	    for (rs = responses; rs->name; ++rs)
 	    {
 		if (suppress_redirect && !strcmp (rs->name, "Redirect"))
+		    continue;
+		if (suppress_bases && !strncmp (rs->name, "Base-", 5))
+		    continue;
+		if (suppress_bases && !strcmp (rs->name, "Temp-checkout"))
 		    continue;
 
 		send_to_server (" ", 0);

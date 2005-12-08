@@ -47,6 +47,7 @@ int trace = 0;
 int noexec = 0;
 int readonlyfs = 0;
 int logoff = 0;
+bool suppress_bases = false;
 
 
 
@@ -297,6 +298,7 @@ static const char *const opt_usage[] =
     "    -d CVS_root  Overrides $CVSROOT as the root of the CVS tree.\n",
     "    -f           Do not use the ~/.cvsrc file.\n",
 #ifdef CLIENT_SUPPORT
+    "    -B           Suppress use of base files.\n",
     "    -z #         Request compression level '#' for net traffic.\n",
 #ifdef ENCRYPTION
     "    -x           Encrypt all net traffic.\n",
@@ -528,7 +530,7 @@ main (int argc, char **argv)
     int help = 0;		/* Has the user asked for help?  This
 				   lets us support the `cvs -H cmd'
 				   convention to give help for cmd. */
-    static const char short_options[] = "+QqrwtnRvb:T:e:d:Hfz:s:xag::G:";
+    static const char short_options[] = "+QBqrwtnRvb:T:e:d:Hfz:s:xag::G:";
     static struct option long_options[] =
     {
         {"help", 0, NULL, 'H'},
@@ -790,6 +792,9 @@ distribution kit for a complete list of contributors and copyrights.\n",
 		 * `cvs -z -n up' which read -n as the argument to -z without
 		 * complaining.  */
 		break;
+	    case 'B':
+		suppress_bases = true;
+		break;
 	    case 's':
 		variable_set (optarg);
 		break;
@@ -922,6 +927,9 @@ cause intermittent sandbox corruption.");
 		error (1, errno, "invalid umask value in %s (%s)",
 		       CVSUMASK_ENV, cp);
 	}
+
+	if (getenv (CVSNOBASES_ENV))
+	    suppress_bases = true;
 
 	/* HOSTNAME & SERVER_HOSTNAME need to be set before they are
 	 * potentially used in gserver_authenticate_connection() (called from

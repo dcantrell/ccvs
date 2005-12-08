@@ -38,6 +38,7 @@ exit_help ()
     usage
     echo
     echo "-H|--help	display this text"
+    echo "-q            Reduce verbosity."
     echo "-c CONFIG-FILE"
     echo "--config=CONFIG_FILE"
     echo "		use an alternate test suite config file (defaults to"
@@ -74,6 +75,7 @@ exit_help ()
     echo "		use CVS-FOR-CVS-SERVER as the path to the CVS SERVER"
     echo "		executable to be tested (defaults to CVS-TO-TEST and"
     echo "		implies --remote)"
+    echo "-B|--no-bases suppress use of Base files."
     echo
     echo "CVS-TO-TEST	the path to the CVS executable to be tested; used as"
     echo "		the path to the CVS client when CVS-FOR-CVS-SERVER is"
@@ -125,14 +127,16 @@ unset configfile
 unset fromtest
 unset remotehost
 unset rootoptions
+unset CVSNOBASES
 keep=false
 linkroot=false
 noredirect=false
 proxy=false
+quiet=false
 remote=false
 servercvs=false
 skipfail=false
-while getopts Hc:ef:h:klnprs:-: option ; do
+while getopts BHc:ef:h:klnpqrs:-: option ; do
     # convert the long opts to short opts
     if test x$option = x-;  then
 	# remove any argument
@@ -204,6 +208,9 @@ while getopts Hc:ef:h:klnprs:-: option ; do
 	esac
     fi
     case "$option" in
+	B)
+	    export CVSNOBASES=:
+	    ;;
 	c)
 	    configfile="$OPTARG"
 	    ;;
@@ -242,6 +249,9 @@ while getopts Hc:ef:h:klnprs:-: option ; do
         p)
 	    proxy=:
 	    remote=:
+	    ;;
+	q)
+	    quiet=:
 	    ;;
 	r)
 	    remote=:
@@ -432,11 +442,15 @@ dokeep()
 # "debugger"
 #set -x
 
-echo 'This test should produce no other output than this message, and a final "OK".'
-echo '(Note that the test can take an hour or more to run and periodically stops'
-echo 'for as long as one minute.  Do not assume there is a problem just because'
-echo 'nothing seems to happen for a long time.  If you cannot live without'
-echo "running status, try the command: \`tail -f check.log' from another window.)"
+if $quiet; then :; else
+  cat <<EOF
+This test should produce no other output than this message, and a final "OK".
+(Note that the test can take an hour or more to run and periodically stops
+for as long as one minute.  Do not assume there is a problem just because
+nothing seems to happen for a long time.  If you cannot live without
+running status, try the command: \`tail -f check.log' from another window.)
+EOF
+fi
 
 # Regexp to match what the CVS client will call itself in output that it prints.
 # FIXME: we don't properly quote this--if the name contains . we'll
@@ -4849,7 +4863,7 @@ T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-head:A\]
 T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-tag:rtagged-by-head\]
 T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
 O [0-9-]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= <remote>/\*
-U [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == <remote>
+[UP] [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == <remote>
 W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == <remote>"
 	  fi
 
@@ -6280,7 +6294,7 @@ U first-dir/file3'
 		# back to branch1
 		dotest death-93 "$testcvs -q update -r branch1" \
 "U file1
-U file3"
+[UP] file3"
 
 		dotest_fail death-file4-6 "test -f file4"
 		dotest death-94 "test -f file1"
@@ -8854,7 +8868,7 @@ new revision: 1\.1\.2\.[0-9]*; previous revision: 1\.1\.2\.[0-9]*"
 	  else
 	    modify_repo ln -s Attic/file3,v $CVSROOT_DIRNAME/first-dir/file2,v
 	  fi
-	  if $remote; then
+	  if $remote && test -z "$CVSNOBASES"; then
 	    dotest_fail rcslib-symlink-3gr "$testcvs update file2" \
 "$SPROG \[update aborted\]: could not find desired version 1\.1\.2\.3 in $CVSROOT_DIRNAME/first-dir/file2,v"
 	  else
@@ -17534,21 +17548,17 @@ U m"
 new revision: 1\.2; previous revision: 1\.1"
 	  cd ../..
 	  cd 2/x
-test -f CVS/Base/.#m.1.1.1.1 || exit
 	  dotest unedit-without-baserev-13 "$testcvs -q update" \
 "Merging differences between 1\.1\.1\.1 and 1\.2 into \`m'
 $CPROG update: conflicts during merge
 C m"
-test -f CVS/Base/.#m.1.2 || exit
 	  rm CVS/Baserev
 	  dotest unedit-without-baserev-14 "echo yes |${testcvs} unedit m" \
 "m has been modified; revert changes${QUESTION} ${CPROG} unedit: m not mentioned in CVS/Baserev
 ${CPROG} unedit: run update to complete the unedit"
-test -f CVS/Base/.#m.1.2 || exit
 	  dotest unedit-without-baserev-15 "${testcvs} -q update" \
 "$SPROG update: warning: \`m' was lost
 U m"
-test -f CVS/Base/.#m.1.2 || exit
 	  # The following tests are kind of degenerate compared with
 	  # watch4-16 through watch4-18 but might as well make sure that
 	  # nothing seriously wrong has happened to the working directory.
