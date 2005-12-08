@@ -51,8 +51,11 @@
 static bool last_merge;
 static bool last_merge_conflict;
 static bool last_merge_no_change;
+static bool last_merge_made_base;
 static char *base_merge_rev1;
 static char *base_merge_rev2;
+static char *temp_checkout1;
+static char *temp_checkout2;
 
 /* Similarly, to ignore bad entries on error.  */
 static bool base_copy_error;
@@ -633,7 +636,7 @@ handle_redirect (char *args, size_t len)
     else
     {
 	if (!redirects) redirects = getlist();
-	push_string (redirects, args);
+	push_string (redirects, xstrdup (args));
     }
 
     if (referred_since_last_redirect)
@@ -1352,14 +1355,7 @@ handle_mod_time (char *args, size_t len)
 char **failed_patches;
 int failed_patches_count;
 
-enum update_existing {
-    /* We are replacing an existing file.  */
-    UPDATE_ENTRIES_EXISTING,
-    /* We are creating a new file.  */
-    UPDATE_ENTRIES_NEW,
-    /* We don't know whether it is existing or new.  */
-    UPDATE_ENTRIES_EXISTING_OR_NEW
-};
+
 
 struct update_entries_data
 {
@@ -1496,80 +1492,6 @@ read_file_from_server (const char *fullname, char **mode_string, size_t *size)
 
 
 
-/* Validate the existance of FILENAME against whether we think it should exist
- * or not.  If it should exist and doesn't, issue a warning and return success.
- * If it shouldn't exist and does, issue a warning and return false to avoid
- * accidentally overwriting a user's changes.
- */
-static bool
-validate_change (enum update_existing existp, const char *filename,
-		 const char *fullname)
-{
-    /* Note that checking this separately from writing the file is
-       a race condition: if the existence or lack thereof of the
-       file changes between now and the actual calls which
-       operate on it, we lose.  However (a) there are so many
-       cases, I'm reluctant to try to fix them all, (b) in some
-       cases the system might not even have a system call which
-       does the right thing, and (c) it isn't clear this needs to
-       work.  */
-    if (existp == UPDATE_ENTRIES_EXISTING
-	&& !isfile (filename))
-	/* Emit a warning and update the file anyway.  */
-	error (0, 0, "warning: %s unexpectedly disappeared", fullname);
-    else if (existp == UPDATE_ENTRIES_NEW
-	&& isfile (filename))
-    {
-	/* This error might be confusing; it isn't really clear to
-	   the user what to do about it.  Keep in mind that it has
-	   several causes: (1) something/someone creates the file
-	   during the time that CVS is running, (2) the repository
-	   has two files whose names clash for the client because
-	   of case-insensitivity or similar causes, See 3 for
-	   additional notes.  (3) a special case of this is that a
-	   file gets renamed for example from a.c to A.C.  A
-	   "cvs update" on a case-insensitive client will get this
-	   error.  In this case and in case 2, the filename
-	   (short_pathname) printed in the error message will likely _not_
-	   have the same case as seen by the user in a directory listing.
-	   (4) the client has a file which the server doesn't know
-	   about (e.g. "? foo" file), and that name clashes with a file
-	   the server does know about, (5) classify.c will print the same
-	   message for other reasons.
-
-	   I hope the above paragraph makes it clear that making this
-	   clearer is not a one-line fix.  */
-	error (0, 0, "move away `%s'; it is in the way", fullname);
-
-	/* The Mode, Mod-time, and Checksum responses should not carry
-	 * over to a subsequent Created (or whatever) response, even
-	 * in the error case.
-	 */
-	if (updated_fname)
-	{
-	    cvs_output ("C ", 0);
-	    cvs_output (updated_fname, 0);
-	    cvs_output ("\n", 1);
-	    free (updated_fname);
-	    updated_fname = NULL;
-	}
-	if (stored_mode)
-	{
-	    free (stored_mode);
-	    stored_mode = NULL;
-	}
-	stored_modtime_valid = 0;
-	stored_checksum_valid = 0;
-
-	failure_exit = true;
-	return false;
-    }
-
-    return true;
-}
-
-
-
 /* Update the Entries line for this file.  */
 static void
 update_entries (void *data_arg, List *ent_list, const char *short_pathname,
@@ -1647,6 +1569,25 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 
 	if (!validate_change (data->existp, filename, short_pathname))
 	{
+	    /* The Mode, Mod-time, and Checksum responses should not carry
+	     * over to a subsequent Created (or whatever) response, even
+	     * in the error case.
+	     */
+	    if (updated_fname)
+	    {
+		free (updated_fname);
+		updated_fname = NULL;
+	    }
+	    if (stored_mode)
+	    {
+		free (stored_mode);
+		stored_mode = NULL;
+	    }
+	    stored_modtime_valid = 0;
+	    stored_checksum_valid = 0;
+
+	    failure_exit = true;
+
 	discard_file_and_return:
 	    discard_file ();
 	    free (scratch_entries);
@@ -1906,15 +1847,15 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	     * "move away `FILE'; it is in the way" case.  Do not allow the
 	     * entry to be updated.
 	     */
-	    base_copy_error = false;
 	    if (updated_fname)
 	    {
-		cvs_output ("C ", 0);
-		cvs_output (updated_fname, 0);
-		cvs_output ("\n", 1);
+		/* validate_change() has already printed "C filename" via the
+		 * call from client_base_copy().
+		 */
 		free (updated_fname);
-		updated_fname = 0;
+		updated_fname = false;
 	    }
+	    base_copy_error = false;
 	    return;
 	}
 	if (!noexec)
@@ -2038,7 +1979,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 
 	if (last_merge)
 	{
-	    if (last_merge_no_change)
+	    if (last_merge_made_base)
 	    {
 		Node *n;
 		Entnode *e;
@@ -2083,8 +2024,9 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		cvs_output ("\n", 1);
 	    }
 	}
-	last_merge= false;
+	last_merge = false;
 	last_merge_conflict = false;
+	last_merge_made_base = false;
 	last_merge_no_change = false;
 
 	if (file_timestamp)
@@ -2198,7 +2140,7 @@ handle_rcs_diff (char *args, size_t len)
 
 static void
 client_base_checkout (void *data_arg, List *ent_list,
-		     const char *short_pathname, const char *filename)
+		      const char *short_pathname, const char *filename)
 {
     /* Options for this file, a Previous REVision if this is a diff, and the
      * REVision of the new file.
@@ -2217,6 +2159,7 @@ client_base_checkout (void *data_arg, List *ent_list,
 
     bool bin;
     bool patch_failed;
+    bool *istemp = data_arg;
 
     TRACE (TRACE_FUNCTION, "client_base_checkout (%s)", short_pathname);
 
@@ -2226,16 +2169,28 @@ client_base_checkout (void *data_arg, List *ent_list,
     read_line (&rev);
 
     /* Use these values to get our base file name.  */
-    basefile = make_base_file_name (filename, rev);
+    if (*istemp)
+    {
+	if (temp_checkout2)
+	    error (1, 0,
+		   "Server sent more than two temp files without using them.");
+	basefile = cvs_temp_name ();
+	if (temp_checkout1)
+	    temp_checkout2 = basefile;
+	else
+	    temp_checkout1 = basefile;
+    }
+    else
+	basefile = make_base_file_name (filename, rev);
 
     /* FIXME?  It might be nice to verify that base files aren't being
-     * overwritten except when the kwyword mode has changed.
+     * overwritten except when the keyword mode has changed.
      */
-    if (isfile (basefile))
+    if (!*istemp && isfile (basefile))
 	force_xchmod (basefile, true);
 
     update_dir = dir_name (short_pathname);
-    if (!*update_dir) fullbase = xstrdup (basefile);
+    if (*istemp || !*update_dir) fullbase = xstrdup (basefile);
     else fullbase = Xasprintf ("%s/%s", update_dir, basefile);
 
     /* Read the file or patch from the server.  */
@@ -2327,7 +2282,8 @@ client_base_checkout (void *data_arg, List *ent_list,
 	FILE *e;
 	int status;
 
-	mkdir_if_needed (CVSADM_BASE);
+	if (!*istemp)
+	    mkdir_if_needed (CVSADM_BASE);
 	e = xfopen (basefile, bin ? FOPEN_BINARY_WRITE : "w");
 	if (fwrite (buf, sizeof *buf, size, e) != size)
 	    error (1, errno, "cannot write `%s'", fullbase);
@@ -2344,7 +2300,8 @@ client_base_checkout (void *data_arg, List *ent_list,
     free (buf);
     free (rev);
     free (prev);
-    free (basefile);
+    if (!*istemp)
+	free (basefile);
     free (update_dir);
     free (fullbase);
 }
@@ -2354,20 +2311,17 @@ client_base_checkout (void *data_arg, List *ent_list,
 static void
 handle_base_checkout (char *args, size_t len)
 {
-    call_in_directory (args, client_base_checkout, NULL);
+    bool istemp = false;
+    call_in_directory (args, client_base_checkout, &istemp);
 }
 
 
 
-static enum update_existing
-translate_exists (const char *exists)
+static void
+handle_temp_checkout (char *args, size_t len)
 {
-    if (*exists == 'n') return UPDATE_ENTRIES_NEW;
-    if (*exists == 'y') return UPDATE_ENTRIES_EXISTING;
-    if (*exists == 'm') return UPDATE_ENTRIES_EXISTING_OR_NEW;
-    error (1, 0, "unknown existence code received from server: `%s'",
-	   exists);
-    assert (!"Internal error");  /* Placate GCC.  */
+    bool istemp = true;
+    call_in_directory (args, client_base_checkout, &istemp);
 }
 
 
@@ -2388,6 +2342,24 @@ client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
     read_line (&flags);
     if (!validate_change (translate_exists (flags), filename, short_pathname))
     {
+	/* The Mode, Mod-time, and Checksum responses should not carry
+	 * over to a subsequent Created (or whatever) response, even
+	 * in the error case.
+	 */
+	if (updated_fname)
+	{
+	    free (updated_fname);
+	    updated_fname = NULL;
+	}
+	if (stored_mode)
+	{
+	    free (stored_mode);
+	    stored_mode = NULL;
+	}
+	stored_modtime_valid = 0;
+	stored_checksum_valid = 0;
+
+	failure_exit = true;
 	base_copy_error = true;
 	free (rev);
 	free (flags);
@@ -2455,52 +2427,87 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
 	cvs_output ("'\n", 2);
     }
 
-    f1 = make_base_file_name (filename, base_merge_rev1);
-    f2 = make_base_file_name (filename, base_merge_rev2);
+    if (temp_checkout1)
+    {
+	f1 = temp_checkout1;
+	if (temp_checkout2)
+	    f2 = temp_checkout2;
+	else
+	{
+	    f2 = make_base_file_name (filename, base_merge_rev2);
+	    if (!isfile (f2))
+		error (1, 0, "Server sent only one temp file before a merge.");
+	}
+    }
+    else
+    {
+	f1 = make_base_file_name (filename, base_merge_rev1);
+	f2 = make_base_file_name (filename, base_merge_rev2);
+    }
+
     temp_filename = newfilename (filename);
 
     force_copy_file (filename, temp_filename);
     force_xchmod (temp_filename, true);
 
-    status = merge (filename, temp_filename, f1, f2,
-		    base_merge_rev1, base_merge_rev2);
+    status = merge (temp_filename, filename, f1, base_merge_rev1, f2,
+		    base_merge_rev2);
 
     if (status != 0 && status != 1)
 	error (status == -1, status == -1 ? errno : 0,
 	       "could not merge differences between %s & %s of `%s'",
 	       base_merge_rev1, base_merge_rev2, short_pathname);
 
-    if (last_merge)
+    if (last_merge && !noexec)
 	error (1, 0,
 "protocol error: received two `Base-merge' responses without a `Base-entry'");
     last_merge = true;
 
     if (status == 1)
+    {
+	/* The server won't send a response telling the client to update the
+	 * entry in noexec mode.  Normally the client delays printing the
+	 * "C filename" line until then.
+	 */
 	last_merge_conflict = true;
-    else if (!xcmp (temp_filename, filename))
+	if (noexec && !really_quiet)
+	{
+	    cvs_output ("C ", 2);
+	    cvs_output (short_pathname, 0);
+	    cvs_output ("\n", 1);
+	}
+    }
+    else
     {
 	Node *n;
 
-	if (!quiet)
+	if (!xcmp (temp_filename, filename))
 	{
-	    cvs_output ("`", 1);
-	    cvs_output (short_pathname, 0);
-	    cvs_output ("' already contains the differences between ", 0);
-	    cvs_output (base_merge_rev1, 0);
-	    cvs_output (" and ", 5);
-	    cvs_output (base_merge_rev2, 0);
-	    cvs_output ("\n", 1);
+	    if (!quiet)
+	    {
+		cvs_output ("`", 1);
+		cvs_output (short_pathname, 0);
+		cvs_output ("' already contains the differences between ", 0);
+		cvs_output (base_merge_rev1, 0);
+		cvs_output (" and ", 5);
+		cvs_output (base_merge_rev2, 0);
+		cvs_output ("\n", 1);
+	    }
+	    last_merge_no_change = true;
 	}
 
+	/* This next is a separate case because a join could restore the file
+	 * to its state at checkout time.
+	 */
 	if ((n = findnode_fn (ent_list, filename)))
 	{
 	    Entnode *e = n->data;
 	    char *basefile = make_base_file_name (filename, e->version);
-	    if (!xcmp (basefile, filename))
-		/* The user's file is identical to the base file.  Pretend this
-		 * merge never happened.
+	    if (isfile (basefile) && !xcmp (basefile, temp_filename))
+		/* The user's file is identical to the base file.
+		 * Pretend this merge never happened.
 		 */
-		last_merge_no_change = true;
+		last_merge_made_base = true;
 	    free (basefile);
 	}
     }
@@ -2513,6 +2520,18 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
      * know which one should be kept.
      */
 
+    if (temp_checkout1)
+    {
+	temp_checkout1 = NULL;
+	if (CVS_UNLINK (f1) < 0)
+	    error (0, errno, "Failed to remove temp file `%s'", f1);
+    }
+    if (temp_checkout2)
+    {
+	temp_checkout2 = NULL;
+	if (CVS_UNLINK (f2) < 0)
+	    error (0, errno, "Failed to remove temp file `%s'", f2);
+    }
     free (f1);
     free (f2);
 }
@@ -3636,6 +3655,8 @@ struct response responses[] =
      * Base-* responses, then it will handle all of them.
      */
     RSP_LINE("Base-checkout", handle_base_checkout, response_type_normal,
+	     rs_optional),
+    RSP_LINE("Temp-checkout", handle_temp_checkout, response_type_normal,
 	     rs_optional),
     RSP_LINE("Base-copy", handle_base_copy, response_type_normal,
 	     rs_optional),

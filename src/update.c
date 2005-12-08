@@ -1232,7 +1232,7 @@ checkout_file (struct file_info *finfo, Vers_TS *vers_ts, int adding,
     {
 	backup = Xasprintf ("%s/%s%s", CVSADM, CVSPREFIX, finfo->file);
 	if (isfile (finfo->file))
-	    rename_file (finfo->file, backup);
+	    force_copy_file (finfo->file, backup);
 	else
 	{
 	    /* If -f/-t wrappers are being used to wrap up a directory,
@@ -1835,6 +1835,11 @@ RegisterMerge (struct file_info *finfo, Vers_TS *vers,
        not compare equal to any actual timestamp.  */
     char *cp = NULL;
 
+    TRACE (TRACE_FUNCTION, "RegisterMerge (%s, %s, %s, %s, %s)",
+	   finfo->fullname, vers->vn_user, backup,
+	   has_conflicts ? "true" : "false",
+	   force_addition ? "true" : "false");
+
     if (has_conflicts)
     {
 	time (&last_register_time);
@@ -1942,7 +1947,7 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 
     status = base_merge (finfo->rcs, finfo, vers->entdata->tag,
 			 vers->entdata->options, vers->options, vers->vn_user,
-			 vers->vn_user, vers->vn_rcs);
+			 vers->vn_user, vers->vn_rcs, false);
 
     if (status != 0 && status != 1)
     {
@@ -1953,8 +1958,10 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 	       finfo->fullname, backup);
 	rename_file (backup, finfo->file);
 	retval = 1;
+	base_remove (finfo->file, vers->vn_rcs);
 	goto out;
     }
+    base_remove (finfo->file, vers->vn_user);
 
     if (strcmp (vers->options, "-V4") == 0)
 	vers->options[0] = '\0';
@@ -1973,9 +1980,8 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 
     if (status == 1)
     {
-	error (0, 0, "conflicts found in %s", finfo->fullname);
-
-	write_letter (finfo, 'C');
+	if (!really_quiet)
+	    write_letter (finfo, 'C');
 
 	history_write ('C', finfo->update_dir, vers->vn_rcs, finfo->file,
 	               finfo->repository);
@@ -2488,29 +2494,27 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 
 	if (replace_it)
 	{
-		/* Is there a better term than "nonmergeable file"?  What we
-		   really mean is, not something that CVS cannot or does not
-		   want to merge (there might be an external manual or
-		   automatic merge process).  */
-	    if (!really_quiet)
+	    /* FIXME: It would be more consistent if the client printed this
+	     * message when BASES.
+	     */
+	    if (!really_quiet && bases)
 		write_letter (finfo, 'M');
 	    status = 0;
 	}
 	else
 	{
 	    if (!really_quiet)
-		{
-		    error (0, 0, "File from working directory is now in `%s'.",
-			   backup);
-		    write_letter (finfo, 'C');
-		}
+	    {
+		error (0, 0, "File from working directory is now in `%s'.",
+		       backup);
+	    }
 	    status = 1;
 	}
     }
     else
 	status = base_merge (finfo->rcs, finfo, vers->entdata->tag,
 			     vers->entdata->options, t_options,
-			     vers->vn_user, rev1, rev2);
+			     vers->vn_user, rev1, rev2, true);
 
     if (status != 0)
     {
@@ -2522,31 +2526,49 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 		   finfo->fullname, backup);
 	    rename_file (backup, finfo->file);
 	}
+	else if (!really_quiet)
+	    /* FIXME: It would be more consistent if the client printed
+	     * this message when BASES.
+	     */
+	    write_letter (finfo, 'C');
     }
     else if (!bases) /* status == 0 */
     {
+	bool unchanged, isbase;
+	char *basefile;
 	/* The client will handle these messages when BASES.  */
 
 	/* FIXME: the noexec case is broken.  RCS_merge could be doing the
 	   xcmp on the temporary files without much hassle, I think.  */
 	if (!noexec && !xcmp (backup, finfo->file))
+	    unchanged = true;
+	else
+	    unchanged = false;
+	basefile = make_base_file_name (finfo->file, vers->vn_user);
+	if (!noexec && isfile (basefile) && !xcmp (basefile, finfo->file))
+	    isbase = true;
+	else
+	    isbase = false;
+	free (basefile);
+	if (unchanged && !quiet)
 	{
-	    if (!quiet)
-	    {
-		cvs_output ("`", 1);
-		cvs_output (finfo->fullname, 0);
-		cvs_output ("' already contains the differences between ", 0);
-		cvs_output (rev1, 0);
-		cvs_output (" and ", 5);
-		cvs_output (rev2, 0);
-		cvs_output ("\n", 1);
-	    }
+	    cvs_output ("`", 1);
+	    cvs_output (finfo->fullname, 0);
+	    cvs_output ("' already contains the differences between ", 0);
+	    cvs_output (rev1, 0);
+	    cvs_output (" and ", 5);
+	    cvs_output (rev2, 0);
+	    cvs_output ("\n", 1);
+	}
 
+	if (!isbase && !really_quiet)
+	    write_letter (finfo, 'M');
+
+	if (unchanged)
 	    /* and skip the registering and sending the new file since it
 	     * hasn't been updated.
 	     */
 	    goto out;
-	}
     }
 
     /* The file has changed, but if we just checked it out it may
