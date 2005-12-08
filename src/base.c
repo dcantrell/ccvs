@@ -257,6 +257,9 @@ base_checkout (RCSNode *rcs, struct file_info *finfo,
     TRACE (TRACE_FUNCTION, "base_checkout (%s, %s, %s, %s, %s, %s, %s)",
 	   finfo->fullname, prev, rev, ptag, tag, poptions, options);
 
+    if (noexec)
+	return 0;
+
     mkdir_if_needed (CVSADM_BASE);
 
     assert (!current_parsed_root->isremote);
@@ -280,6 +283,121 @@ base_checkout (RCSNode *rcs, struct file_info *finfo,
 
 
 
+static char *
+temp_checkout (RCSNode *rcs, struct file_info *finfo,
+	       const char *prev, const char *rev, const char *ptag,
+	       const char *tag, const char *poptions, const char *options)
+{
+    char *tempfile;
+    bool save_noexec;
+
+    TRACE (TRACE_FUNCTION, "temp_checkout (%s, %s, %s, %s, %s, %s, %s)",
+	   finfo->fullname, prev, rev, ptag, tag, poptions, options);
+
+    assert (!current_parsed_root->isremote);
+
+    tempfile = cvs_temp_name ();
+    save_noexec = noexec;
+    noexec = false;
+    if (RCS_checkout (rcs, tempfile, rev, tag, options, NULL, NULL, NULL))
+    {
+	error (0, 0, "Failed to check out revision %s of `%s'",
+	       rev, finfo->fullname);
+	free (tempfile);
+	noexec = save_noexec;
+	return NULL;
+    }
+    noexec = save_noexec;
+
+    assert (strcmp (cvs_cmd_name, "export"));
+    if (server_active)
+	server_temp_checkout (rcs, finfo, prev, rev, ptag, tag,
+			      poptions, options, tempfile);
+
+    return tempfile;
+}
+
+
+
+enum update_existing
+translate_exists (const char *exists)
+{
+    if (*exists == 'n') return UPDATE_ENTRIES_NEW;
+    if (*exists == 'y') return UPDATE_ENTRIES_EXISTING;
+    if (*exists == 'm') return UPDATE_ENTRIES_EXISTING_OR_NEW;
+    /* The error below should only happen due to a programming error or when
+     * the server sends a bad response.
+     */
+    error (1, 0, "unknown existence code received from server: `%s'",
+	   exists);
+    assert (!"Internal error");  /* Placate GCC.  */
+}
+
+
+
+/* Validate the existance of FILENAME against whether we think it should exist
+ * or not.  If it should exist and doesn't, issue a warning and return success.
+ * If it shouldn't exist and does, issue a warning and return false to avoid
+ * accidentally overwriting a user's changes.
+ */
+bool
+validate_change (enum update_existing existp, const char *filename,
+		 const char *fullname)
+{
+    /* Note that checking this separately from writing the file is
+       a race condition: if the existence or lack thereof of the
+       file changes between now and the actual calls which
+       operate on it, we lose.  However (a) there are so many
+       cases, I'm reluctant to try to fix them all, (b) in some
+       cases the system might not even have a system call which
+       does the right thing, and (c) it isn't clear this needs to
+       work.  */
+    if (existp == UPDATE_ENTRIES_EXISTING
+	&& !isfile (filename))
+	/* Emit a warning and update the file anyway.  */
+	error (0, 0, "warning: %s unexpectedly disappeared", fullname);
+    else if (existp == UPDATE_ENTRIES_NEW
+	&& isfile (filename))
+    {
+	/* This error might be confusing; it isn't really clear to
+	   the user what to do about it.  Keep in mind that it has
+	   several causes: (1) something/someone creates the file
+	   during the time that CVS is running, (2) the repository
+	   has two files whose names clash for the client because
+	   of case-insensitivity or similar causes, See 3 for
+	   additional notes.  (3) a special case of this is that a
+	   file gets renamed for example from a.c to A.C.  A
+	   "cvs update" on a case-insensitive client will get this
+	   error.  In this case and in case 2, the filename
+	   (short_pathname) printed in the error message will likely _not_
+	   have the same case as seen by the user in a directory listing.
+	   (4) the client has a file which the server doesn't know
+	   about (e.g. "? foo" file), and that name clashes with a file
+	   the server does know about, (5) classify.c will print the same
+	   message for other reasons.
+
+	   I hope the above paragraph makes it clear that making this
+	   clearer is not a one-line fix.  */
+	error (0, 0, "move away `%s'; it is in the way", fullname);
+
+	/* The Mode, Mod-time, and Checksum responses should not carry
+	 * over to a subsequent Created (or whatever) response, even
+	 * in the error case.
+	 */
+	if (!really_quiet)
+	{
+	    cvs_output ("C ", 0);
+	    cvs_output (fullname, 0);
+	    cvs_output ("\n", 1);
+	}
+	return false;
+    }
+
+    return true;
+}
+
+
+
 void
 base_copy (struct file_info *finfo, const char *rev, const char *flags)
 {
@@ -290,9 +408,20 @@ base_copy (struct file_info *finfo, const char *rev, const char *flags)
 
     assert (flags && flags[0] && flags[1]);
 
+    if (!server_active /* The server still doesn't stay perfectly in sync with
+			* the client workspace.
+			*/
+	&& !validate_change (translate_exists (flags), finfo->file,
+			     finfo->fullname))
+	exit (EXIT_FAILURE);
+
+    if (noexec)
+	return;
+
     basefile = make_base_file_name (finfo->file, rev);
     if (isfile (finfo->file))
 	xchmod (finfo->file, true);
+
     copy_file (basefile, finfo->file);
     if (flags[1] == 'y')
 	xchmod (finfo->file, true);
@@ -324,7 +453,7 @@ base_remove (const char *file, const char *rev)
 int
 base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
 	    const char *poptions, const char *options, const char *urev,
-	    const char *rev1, const char *rev2)
+	    const char *rev1, const char *rev2, bool join)
 {
     char *f1, *f2;
     int retval;
@@ -336,16 +465,26 @@ base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
        fails is not very informative -- it is taken verbatim from RCS 5.7,
        and relies on RCS_checkout saying something intelligent upon failure. */
 
-    if (base_checkout (rcs, finfo, urev, rev1, ptag, rev1, poptions, options))
+    if (!(f1 = temp_checkout (rcs, finfo, urev, rev1, ptag, rev1, poptions,
+			      options)))
 	error (1, 0, "checkout of revision %s of `%s' failed.\n",
 	       rev1, finfo->fullname);
+    if (join || noexec)
+    {
+	if (!(f2 = temp_checkout (rcs, finfo, urev, rev2, ptag, rev2, poptions,
+				  options)))
+	    error (1, 0, "checkout of revision %s of `%s' failed.\n",
+		   rev2, finfo->fullname);
+    }
+    else
+    {
+	if (base_checkout (rcs, finfo, urev, rev2, ptag, rev2, poptions,
+			   options))
+	    error (1, 0, "checkout of revision %s of `%s' failed.\n",
+		   rev2, finfo->fullname);
+	f2 = make_base_file_name (finfo->file, rev2);
+    }
 
-    if (base_checkout (rcs, finfo, urev, rev2, ptag, rev2, poptions, options))
-	error (1, 0, "checkout of revision %s of `%s' failed.\n",
-	       rev2, finfo->fullname);
-
-    f1 = make_base_file_name (finfo->file, rev1);
-    f2 = make_base_file_name (finfo->file, rev2);
 
     if (!server_active || !server_use_bases())
     {
@@ -354,18 +493,21 @@ base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
 	 * files on the server as will be generated on the client, but I do not
 	 * believe that they are being used currently and it saves server CPU.
 	 */
-	cvs_output ("Merging differences between revisions ", 0);
-	cvs_output (rev1, 0);
-	cvs_output (" and ", 5);
-	cvs_output (rev2, 0);
-	cvs_output (" into `", 7);
-	if (!finfo->update_dir || !strcmp (finfo->update_dir, "."))
-	    cvs_output (finfo->file, 0);
-	else
-	    cvs_output (finfo->fullname, 0);
-	cvs_output ("'\n", 2);
+	if (!really_quiet)
+	{
+	    cvs_output ("Merging differences between ", 0);
+	    cvs_output (rev1, 0);
+	    cvs_output (" and ", 5);
+	    cvs_output (rev2, 0);
+	    cvs_output (" into `", 7);
+	    if (!finfo->update_dir || !strcmp (finfo->update_dir, "."))
+		cvs_output (finfo->file, 0);
+	    else
+		cvs_output (finfo->fullname, 0);
+	    cvs_output ("'\n", 2);
+	}
 
-	retval = merge (finfo->file, finfo->file, f1, f2, rev1, rev2);
+	retval = merge (finfo->file, finfo->file, f1, rev1, f2, rev2);
     }
     else
 	retval = 0;
@@ -373,10 +515,18 @@ base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
     if (server_active)
 	server_base_merge (finfo, rev1, rev2);
 
-    if (strcmp (urev, rev1) && unlink_file (f1) < 0)
+    if (CVS_UNLINK (f1) < 0)
 	error (0, errno, "unable to remove `%s'", f1);
-    if (strcmp (urev, rev2) && unlink_file (f2) < 0)
-	error (0, errno, "unable to remove `%s'", f2);
+    /* Using a base file instead of a temp file here and not deleting it is an
+     * optimization since, for instance, on merge from 1.1 to 1.4 with local
+     * changes, the client is going to want to leave base 1.4 and delete base
+     * 1.1 rather than the other way around.
+     */
+    if (join || noexec)
+    {
+	if (CVS_UNLINK (f2) < 0)
+	    error (0, errno, "unable to remove `%s'", f2);
+    }
     free (f1);
     free (f2);
 

@@ -21,6 +21,17 @@
 
 #include "rcs.h"
 
+enum update_existing {
+    /* We are replacing an existing file.  */
+    UPDATE_ENTRIES_EXISTING,
+    /* We are creating a new file.  */
+    UPDATE_ENTRIES_NEW,
+    /* We don't know whether it is existing or new.  */
+    UPDATE_ENTRIES_EXISTING_OR_NEW
+};
+
+
+
 char *make_base_file_name (const char *filename, const char *rev);
 
 char *base_get (const char *update_dir, const char *file);
@@ -30,9 +41,13 @@ void base_deregister (const char *update_dir, const char *file);
 int base_checkout (RCSNode *rcs, struct file_info *finfo,
 		   const char *prev, const char *rev, const char *ptag,
 		   const char *tag, const char *poptions, const char *options);
+enum update_existing translate_exists (const char *exists);
+bool validate_change (enum update_existing existp, const char *filename,
+		      const char *fullname);
 void base_copy (struct file_info *finfo, const char *rev, const char *flags);
 void base_remove (const char *file, const char *rev);
 int base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
 		const char *poptions, const char *options,
-	        const char *urev, const char *rev1, const char *rev2);
+	        const char *urev, const char *rev1, const char *rev2,
+		bool join);
 #endif /* BASE_H */

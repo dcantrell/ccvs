@@ -184,8 +184,8 @@ call_diff3 (char *out)
  * particular files using strings REV1 & REV2.
  */
 int
-merge (const char *dlabel, const char *dest, const char *j1, const char *j2,
-       const char *rev1, const char *rev2)
+merge (const char *dest, const char *dlabel, const char *j1,
+       const char *j1label, const char *j2, const char *j2label)
 {
     char *diffout;
     int retval;
@@ -201,9 +201,9 @@ merge (const char *dlabel, const char *dest, const char *j1, const char *j2,
     call_diff_add_arg ("-L");
     call_diff_add_arg (dlabel);
     call_diff_add_arg ("-L");
-    call_diff_add_arg (rev1);
+    call_diff_add_arg (j1label);
     call_diff_add_arg ("-L");
-    call_diff_add_arg (rev2);
+    call_diff_add_arg (j2label);
 
     call_diff_add_arg ("--");
     call_diff_add_arg (dest);
@@ -217,7 +217,7 @@ merge (const char *dlabel, const char *dest, const char *j1, const char *j2,
     else if (retval == 2)
 	error (1, 0, "diff3 failed.");
 
-    force_copy_file (diffout, dest);
+    copy_file (diffout, dest);
 
     /* Clean up. */
     if (CVS_UNLINK (diffout) < 0 && !existence_error (errno))

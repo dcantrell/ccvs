@@ -1819,7 +1819,7 @@ if test x"$*" = x; then
         tests="${tests} edit-check"
 	tests="${tests} unedit-without-baserev"
 	tests="${tests} ignore ignore-on-branch binfiles binfiles2 binfiles3"
-	tests="${tests} mcopy binwrap binwrap2"
+	tests="${tests} binwrap binwrap2"
 	tests="${tests} binwrap3 mwrap info taginfo posttag"
 	tests="$tests config config2 config3 config4"
 	tests="${tests} serverpatch log log2 logopt ann ann-id"
@@ -5168,7 +5168,7 @@ $CPROG \[checkout aborted\]: Bad CVSROOT: \`$CVSROOT'\."
 	  # Clean up
 	  CVSROOT=$CVSROOT_save
 	  cd ..
-	  rm -r 1
+	  rm -rf 1
 	  ;;
 
 
@@ -6673,7 +6673,7 @@ U $file"
 
 	  dokeep
 	  cd ../..
-	  rm -r rm-update-message
+	  rm -rf rm-update-message
 	  modify_repo rm -rf $CVSROOT_DIRNAME/rm-update-message
 	  ;;
 
@@ -7483,7 +7483,7 @@ diff -c -r1\.1 -r1\.2\.2\.1
 --- 1 ----
 ! 4:br1"
 	  dotest branches-15 \
-	    "${testcvs} update -j 1.1.2.1 -j 1.1.2.1.2.1 file1" \
+	    "$testcvs update -j 1.1.2.1 -j 1.1.2.1.2.1 file1" \
 "Merging differences between 1\.1\.2\.1 and 1\.1\.2\.1\.2\.1 into \`file1'
 $CPROG update: conflicts during merge
 C file1"
@@ -8476,7 +8476,7 @@ ${SPROG} rtag: first-dir/file1: Not moving non-branch tag .regulartag. from 1\.1
 
 	  dokeep
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -10299,7 +10299,7 @@ R file3'
 
 	  # Checkout the main line again.
 	  cd ../../1
-	  rm -r first-dir
+	  rm -rf first-dir
 	  dotest join-22 "${testcvs} -q co first-dir" \
 'U first-dir/file2
 U first-dir/file3
@@ -10565,7 +10565,7 @@ new revision: 1\.2; previous revision: 1\.1"
 
 	  dokeep
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -10659,7 +10659,7 @@ br2:line1
 
 	  dokeep
 	  cd ../..
-	  rm -r 1
+	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -10888,7 +10888,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  cd 1/join5
 	  echo "but maybe it could charge bytheword" >>-file
 	  # This is the test that used to spew complaints from diff3:
-	  dotest join5 "$testcvs up" \
+	  dotest join5-1 "$testcvs up" \
 "$SPROG update: Updating \.
 Merging differences between 1\.1 and 1\.2 into \`-file'
 $CPROG update: conflicts during merge
@@ -10896,7 +10896,7 @@ C -file"
 
 	  dokeep
 	  cd ../../..
-	  rm -r join5
+	  rm -rf join5
 	  modify_repo rm -rf $CVSROOT_DIRNAME/join5
 	  ;;
 
@@ -10939,7 +10939,7 @@ new revision: 1\.2; previous revision: 1\.1"
 "M temp\.txt
 Merging differences between 1\.1 and 1\.2 into \`temp\.txt'
 \`temp\.txt' already contains the differences between 1\.1 and 1\.2
-M temp.txt"
+M temp\.txt"
 	  dotest_fail join6-3.6 "${testcvs} diff temp.txt" \
 "Index: temp\.txt
 ===================================================================
@@ -10961,8 +10961,7 @@ diff -r1\.2 temp\.txt
 
 	  dotest join6-5 "${testcvs} update -j1.1 -j1.2 temp.txt" \
 "M temp\.txt
-Merging differences between 1\.1 and 1\.2 into \`temp\.txt'
-M temp\.txt"
+Merging differences between 1\.1 and 1\.2 into \`temp\.txt'"
 	  dotest join6-6 "${testcvs} diff temp.txt" ""
 	  mv temp.txt temp3.txt
 	  dotest join6-7 "sed 's/ddd/dddd/' < temp3.txt > temp.txt" ""
@@ -10998,8 +10997,7 @@ diff -r1\.3 temp\.txt
 > ddd"
 	  dotest join6-12 "$testcvs update -j1.2 -j1.3 temp.txt" \
 "M temp\.txt
-Merging differences between 1\.2 and 1\.3 into \`temp\.txt'
-M temp\.txt"
+Merging differences between 1\.2 and 1\.3 into \`temp\.txt'"
 	  dotest join6-13 "${testcvs} diff temp.txt" ""
 
 	  # The case where the merge target wasn't created until after the
@@ -11037,7 +11035,15 @@ $SPROG update: Updating \.
 Merging differences between 1\.1 and 1\.3 into \`temp.txt'
 \`temp.txt' already contains the differences between 1\.1 and 1\.3
 $SPROG update: scheduling addition from revision 1\.1 of \`temp2\.txt'\.
-$CPROG update: move away \`temp2\.txt'; it is in the way"
+$CPROG update: move away \`temp2\.txt'; it is in the way
+C temp2.txt" \
+"$SPROG update: Updating \.
+Merging differences between 1\.1 and 1\.3 into \`temp.txt'
+\`temp.txt' already contains the differences between 1\.1 and 1\.3
+$SPROG update: use \`cvs add' to create an entry for \`temp2\.txt'
+$SPROG update: scheduling addition from revision 1\.1 of \`temp2\.txt'\.
+$CPROG update: move away \`temp2\.txt'; it is in the way
+C temp2.txt"
 
 	  dotest join6-33 "$testcvs -q up" "? temp2\.txt"
 
@@ -11075,12 +11081,14 @@ $CPROG update: move away \`temp2\.txt'; it is in the way"
 	  cd ../join7
 	  dotest join7-5 \
 "$testcvs -n update -jvers-1 -jvers-2 temp.txt" \
-"Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into \`temp.txt'
-$CPROG update: conflicts during merge"
+"Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into \`temp\.txt'
+$CPROG update: conflicts during merge
+C temp\.txt"
 	  touch temp.txt
 	  dotest join7-6 "$testcvs -n update -jvers-1 -jvers-2 temp.txt" \
 "Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into \`temp.txt'
-$CPROG update: conflicts during merge"
+$CPROG update: conflicts during merge
+C temp\.txt"
 
 	  dokeep
 	  cd ../..
@@ -11566,9 +11574,10 @@ File: a                	Status: Needs Merge
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
-		dotest conflicts-129a "${testcvs} -nq update a" \
+		dotest conflicts-129a "$testcvs -nq update a" \
 "Merging differences between 1\.1 and 1\.2 into \`a'
-$CPROG update: conflicts during merge"
+$CPROG update: conflicts during merge
+C a"
 		dotest conflicts-130 "$testcvs -q update" \
 "Merging differences between 1\.1 and 1\.2 into \`a'
 $CPROG update: conflicts during merge
@@ -12174,9 +12183,10 @@ bluegill"
 new revision: 1\.2; previous revision: 1\.1"
 	  cd ../first-dir
 	  echo "fish" >> cleanme.txt
-	  dotest clean-17 "${testcvs} -nq update" \
+	  dotest clean-17 "$testcvs -nq update" \
 "Merging differences between 1\.1 and 1\.2 into \`cleanme\.txt'
-$CPROG update: conflicts during merge"
+$CPROG update: conflicts during merge
+C cleanme\.txt"
 	  dotest clean-18 "${testcvs} -q update -C" \
 "(Locally modified cleanme\.txt moved to \.#cleanme\.txt\.1\.1)
 U cleanme\.txt"
@@ -13083,7 +13093,7 @@ initial revision: 1\.1"
 	    dotest modules3-12 "${testcvs} -q co path/in/modules" \
 "U first-dir/file1"
 	    dotest modules3-13 "test -f path/in/modules/first-dir/file1" ''
-	    cd ..; rm -r 1
+	    cd ..; rm -rf 1
 	  fi # end of tests skipped for remote
 
 	  # Now here is where it used to get seriously bogus.
@@ -13426,10 +13436,10 @@ $SPROG checkout: Executing ..$CVSROOT_DIRNAME/checkout\.sh. .dirmodule..
 checkout script invoked in $TMPDIR/cvs-serv[0-9a-z]*
 args: dirmodule"
 	  else
-	    dotest modules5-22 "${testcvs} co dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born \`dirmodule/nonexist' has disappeared
-${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
-checkout script invoked in ${TESTDIR}/1
+	    dotest modules5-22 "$testcvs co dirmodule/nonexist" \
+"$SPROG checkout: nothing known about \`dirmodule/nonexist'
+$SPROG checkout: Executing ..$CVSROOT_DIRNAME/checkout\.sh. .dirmodule..
+checkout script invoked in $TESTDIR/1
 args: dirmodule"
 	  fi
 	  # We tolerate the creation of the dirmodule directory, since that
@@ -13578,10 +13588,10 @@ $SPROG checkout: Executing ..$CVSROOT_DIRNAME/checkout\.sh. .mydir..
 checkout script invoked in $TMPDIR/cvs-serv[0-9a-z]*
 args: mydir"
 	  else
-	    dotest modules5-42 "${testcvs} co -d mydir dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born \`mydir/nonexist' has disappeared
-${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .mydir..
-checkout script invoked in ${TESTDIR}/1
+	    dotest modules5-42 "$testcvs co -d mydir dirmodule/nonexist" \
+"$SPROG checkout: nothing known about \`mydir/nonexist'
+$SPROG checkout: Executing ..$CVSROOT_DIRNAME/checkout\.sh. .mydir..
+checkout script invoked in $TESTDIR/1
 args: mydir"
 	  fi
 	  # We tolerate the creation of the mydir directory, since that
@@ -15165,7 +15175,7 @@ U ${TESTDIR}/1/file1"
 	  if $remote; then :; else
 	    dotest abspath-3.1 "$testcvs -q co -d $TESTDIR/1/2 mod1" \
 "U $TESTDIR/1/2/file1"
-	    rm -r $TESTDIR/1
+	    rm -rf $TESTDIR/1
 	  fi
 	  dotest abspath-3.2 "$testcvs -q co -d 1/2 mod1" \
 "U 1/2/file1"
@@ -18386,16 +18396,17 @@ brmod-wdmod initial contents"
 new revision: 1\.2; previous revision: 1\.1"
 	    echo 'modify brmod-wdmod in working dir' >brmod-wdmod
 
-	    dotest mcopy-8 "${testcvs} -q update -j br" \
-"U brmod
-${SPROG} update: nonmergeable file needs merge
-${SPROG} update: revision 1.1.2.1 from repository is now in brmod-trmod
-${SPROG} update: file from working directory is now in .#brmod-trmod.1.2
+	    dotest mcopy-8 "$testcvs -q update -j br" \
+"$SPROG update: Replacing \`brmod' with contents of revision 1\.1\.2\.1\.
+M brmod
+$SPROG update: nonmergeable file needs merge
+$SPROG update: revision 1.1.2.1 from repository is now in brmod-trmod
+$SPROG update: file from working directory is now in .#brmod-trmod.1.2
 C brmod-trmod
 M brmod-wdmod
-${SPROG} update: nonmergeable file needs merge
-${SPROG} update: revision 1.1.2.1 from repository is now in brmod-wdmod
-${SPROG} update: file from working directory is now in .#brmod-wdmod.1.1
+$SPROG update: nonmergeable file needs merge
+$SPROG update: revision 1.1.2.1 from repository is now in brmod-wdmod
+$SPROG update: file from working directory is now in .#brmod-wdmod.1.1
 C brmod-wdmod"
 
 	    dotest mcopy-9 "cat brmod brmod-trmod brmod-wdmod" \
@@ -20454,7 +20465,7 @@ U file1"
 
 	  dokeep
 	  cd ../..
-	  rm -r 1 2
+	  rm -rf 1 2
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -22814,7 +22825,7 @@ File: file1            	Status: Up-to-date
 	  dokeep
 	  TZ=$save_TZ
 	  cd ../..
-          rm -r rcs4
+          rm -rf rcs4
           modify_repo rm -rf $CVSROOT_DIRNAME/rcs4-dir
 	  ;;
 
@@ -23708,7 +23719,7 @@ new revision: 1\.2; previous revision: 1\.1"
 
 	  dokeep
 	  cd ../..
-	  rm -r first-dir 2
+	  rm -rf first-dir 2
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
@@ -24012,6 +24023,7 @@ ${SPROG} add: use .${SPROG} commit. to add these files permanently"
 	  dotest stamps-4kw \
 "$diff_u $TESTDIR/1/stamp.kw.touch $TESTDIR/1/stamp.kw.add"
 	  sleep 60
+export CVS_CLIENT_LOG=/tmp/cvsclientlog
 	  dotest stamps-5 "$testcvs -Q ci -m add"
 
 	  # Cygwin, *cough*, puts the year in the time column until the minute
@@ -26493,10 +26505,13 @@ first
 ============================================================================="
 
 	  dotest admin-22-o14 "${testcvs} tag -b -r1.3 br1 aaa" "T aaa"
-	  dotest_fail admin-22-o15a "$testcvs update -rbr1 aaa" \
+	  if $remote; then
+	    # FIXCVS: The remote behavior is probably correct here.
+	    dotest_fail admin-22-o15ar "$testcvs update -rbr1 aaa" \
 "$SPROG \[update aborted\]: could not find desired version 1\.6 in $CVSROOT_DIRNAME/first-dir/aaa,v"
-	  rm -f aaa CVS/Base/.#aaa.1.6
-	  sed /aaa/d <CVS/Entries >tmp; mv tmp CVS/Entries
+	    rm -f aaa CVS/Base/.#aaa.1.6
+	    sed /aaa/d <CVS/Entries >tmp; mv tmp CVS/Entries
+	  fi
 	  dotest admin-22-o15b "$testcvs update -rbr1 aaa" "U aaa"
 	  echo new branch rev >> aaa
 	  dotest admin-22-o16 "${testcvs} ci -m new-branch aaa" \
@@ -29910,6 +29925,9 @@ ${CPROG} update: Updating \.
  *-> Write_Template (dir1, ${TESTDIR}/root1/dir1)
 ${CPROG} update: Updating dir1
  *-> Reader_Lock(${TESTDIR}/root1/dir1)
+ *-> update_fileproc (dir1/file1)
+ *-> classify_file (dir1/file1, (null), (null), (null))
+ *-> Version_TS (dir1/file1, (null), (null), (null), 1, 0)
  *-> Simple_Lock_Cleanup()
  *-> main loop with CVSROOT=${TESTDIR}/root2
  *-> parse_config ($TESTDIR/root2)
@@ -29917,10 +29935,16 @@ ${CPROG} update: Updating dir1
  *-> Write_Template (dir1/sdir, ${TESTDIR}/root2/dir1/sdir)
 ${CPROG} update: Updating dir1/sdir
  *-> Reader_Lock(${TESTDIR}/root2/sdir)
+ *-> update_fileproc (dir1/sdir/sfile)
+ *-> classify_file (dir1/sdir/sfile, (null), (null), (null))
+ *-> Version_TS (dir1/sdir/sfile, (null), (null), (null), 1, 0)
  *-> Simple_Lock_Cleanup()
  *-> Write_Template (dir1/sdir/ssdir, ${TESTDIR}/root2/sdir/ssdir)
 ${CPROG} update: Updating dir1/sdir/ssdir
  *-> Reader_Lock(${TESTDIR}/root2/sdir/ssdir)
+ *-> update_fileproc (dir1/sdir/ssdir/ssfile)
+ *-> classify_file (dir1/sdir/ssdir/ssfile, (null), (null), (null))
+ *-> Version_TS (dir1/sdir/ssdir/ssfile, (null), (null), (null), 1, 0)
  *-> Simple_Lock_Cleanup()
  *-> Lock_Cleanup()
  *-> Simple_Lock_Cleanup()"

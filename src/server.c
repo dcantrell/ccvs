@@ -5233,9 +5233,9 @@ server_updated (
      */
     assert (!(filebuf && file_gzip_level));
 
-    TRACE (TRACE_FUNCTION, "server_updated (%s, %s, %s)",
+    TRACE (TRACE_FUNCTION, "server_updated (%s, %s, %s, %d)",
 	   finfo->fullname, vers ? vers->vn_rcs : "(null)",
-	   vers ? vers->options : "(null)");
+	   vers ? vers->options : "(null)", updated);
 
     if (noexec)
     {
@@ -8153,22 +8153,24 @@ cvs_output_tagged (const char *tag, const char *text)
  * NOTES
  *   Processes PREV == NULL, PREV == REV, and PREV == "0", for convenience.
  */
-void
-server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
-		      const char *rev, const char *ptag, const char *tag,
-		      const char *poptions, const char *options)
+static void
+iserver_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
+		       const char *rev, const char *ptag, const char *tag,
+		       const char *poptions, const char *options,
+		       const char *basefile, const char *fullbase, bool istemp)
 {
-    char *basefile;
-    char *fullbase;
     char *tmpfile = NULL;
     bool senddiff;
 
     assert (rev);
 
-    TRACE (TRACE_FUNCTION, "server_base_checkout (%s, %s, %s, %s, %s, %s, %s)",
-	   finfo->fullname, prev, rev, ptag, tag, poptions, options);
+    TRACE (TRACE_FUNCTION,
+	   "iserver_base_checkout (%s, %s, %s, %s, %s, %s, %s, %s)",
+	   finfo->fullname, prev, rev, ptag, tag, poptions, options,
+	   istemp ? "true" : "false");
 
-    if (!supported_response ("Base-checkout")) return;
+    if (!supported_response (istemp ? "Temp-checkout" : "Base-checkout"))
+	return;
 
     if (/* Entry rev and new rev are the same...  */
 	prev && !strcmp (prev, rev)
@@ -8187,11 +8189,6 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 	 */
 	return;
 
-    basefile = make_base_file_name (finfo->file, rev);
-    fullbase = Xasprintf ("%s/%s",
-			  *(finfo->update_dir) ? finfo->update_dir : ".",
-			  basefile);
-
     /* FIXME: It would be more efficient if diffs could be sent when the
      * revision numbers haven't changed but the keywords have.
      */
@@ -8203,10 +8200,13 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 	char **dargv = NULL;
 	int status;
 	char *pbasefile;
+	bool save_noexec = noexec;
 
 	pbasefile = cvs_temp_name ();
+	noexec = false;
 	status = RCS_checkout (rcs, pbasefile, prev, ptag, poptions,
 			       NULL, NULL, NULL);
+	noexec = save_noexec;
 
 	if (status)
 	    error (1, 0, "Failed to checkout revision %s of `%s'",
@@ -8243,7 +8243,7 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 	    senddiff = false;
     }
 
-    buf_output0 (protocol, "Base-checkout ");
+    buf_output0 (protocol, istemp ? "Temp-checkout " : "Base-checkout ");
     output_dir (finfo->update_dir, finfo->repository);
     buf_output0 (protocol, finfo->file);
     buf_output (protocol, "\n", 1);
@@ -8274,8 +8274,40 @@ server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 	    error (0, errno, "cannot remove `%s'", tmpfile);
 	free (tmpfile);
     }
+}
+
+
+
+void
+server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
+		      const char *rev, const char *ptag, const char *tag,
+		      const char *poptions, const char *options)
+{
+    char *basefile;
+    char *fullbase;
+
+    basefile = make_base_file_name (finfo->file, rev);
+    fullbase = Xasprintf ("%s/%s",
+			  *(finfo->update_dir) ? finfo->update_dir : ".",
+			  basefile);
+
+    iserver_base_checkout (rcs, finfo, prev, rev, ptag, tag, poptions, options,
+			   basefile, fullbase, false);
+
     free (fullbase);
     free (basefile);
+}
+
+
+
+void
+server_temp_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
+		      const char *rev, const char *ptag, const char *tag,
+		      const char *poptions, const char *options,
+		      const char *tempfile)
+{
+    iserver_base_checkout (rcs, finfo, prev, rev, ptag, tag, poptions, options,
+			   tempfile, tempfile, true);
 }
 
 

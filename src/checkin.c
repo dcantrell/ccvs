@@ -113,6 +113,17 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 			   ? "yy" : "yn");
 		set_time = 1;
 	    }
+	    else
+	    {
+		/* Still need to update the base file.  */
+		char *basefile;
+		mkdir_if_needed (CVSADM_BASE);
+		basefile = make_base_file_name (finfo->file, vers->vn_rcs);
+		copy_file (finfo->file, basefile);
+		free (basefile);
+	    }
+	    /* Remove the previous base file, in local mode.  */
+	    base_remove (finfo->file, pvers->vn_user);
 
 	    wrap_fromcvs_process_file (finfo->file);
 

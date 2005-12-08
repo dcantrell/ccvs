@@ -1,3 +1,39 @@
+2005-12-08  Derek Price  <derek@ximbiot.com>
+
+	* base.c (base_checkout): Don't checkout base files when NOEXEC.
+	(temp_checkout): New function.
+	(base_copy): This function can't rely on the client to validate changes
+	in local mode.  Avoid copying when NOEXEC.
+	(base_merge): Use temp files when joining and in noexec mode to avoid
+	overwriting base files.  Suppress merging messages when REALLY_QUIET.
+	(translate_exists, validate_change): Move from...
+	* client.c: ...here.
+	(handle_redirect): Avoid double-free.
+	(update_entries): Move error handling from validate_change.  Sync
+	messages between local & client/server.
+	(client_base_checkout): Handle temp checkouts.
+	(handle_temp_checkout): New function.
+	(client_base_merge): Move error handling from validate_change.  Use
+	temp checkouts.  Sync messages.  Fix bugs in xcmp tests.
+	* base.h (update_existing, translate_exists, validate_change): Move
+	structs and protos from...
+	* client.h: ...here.
+	* checkin.c (Checkin): Update base file in local mode.
+	* difflib.h (merge), difflib.c (merge): Reorder args for clarity.
+	* server.c (server_updated): Expand traces.
+	(iserver_base_checkout): New function factored from...
+	(server_base_checkout): ...here.
+	(server_temp_checkout): New function.
+	* server.h (server_temp_checkout): New proto.
+	* update.c (checkout_file): Copy backup for error checks.
+	(RegisterMerge): Add traces.
+	(merge_file): Update base files when done.
+	(join_file): Sync messages.
+
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.  Other minor corrections.
+	(mcopy): Disable this test.
+
 2005-12-06  Derek Price  <derek@ximbiot.com>
 
 	* client.c (client_base_checkout): Make base checkouts work when in
