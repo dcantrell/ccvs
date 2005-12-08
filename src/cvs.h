@@ -265,6 +265,10 @@ char *strerror (int);
 
 #define	CVSUMASK_ENV	"CVSUMASK"	/* Effective umask for repository */
 
+#define	CVSNOBASES_ENV	"CVSNOBASES"	/* Suppress use of base files when
+					 * set.
+					 */
+
 /*
  * If the beginning of the Repository matches the following string, strip it
  * so that the output to the logfile does not contain a full pathname.
@@ -366,6 +370,7 @@ extern int trace;		/* Show all commands */
 extern int noexec;		/* Don't modify disk anywhere */
 extern int readonlyfs;		/* fail on all write locks; succeed all read locks */
 extern int logoff;		/* Don't write history entry */
+extern bool suppress_bases;
 
 
 

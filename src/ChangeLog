@@ -1,5 +1,30 @@
 2005-12-08  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (maintainercheck-local, nobaseremotecheck,
+	nobaselocalcheck, nobaseproxycheck): New targets.
+	(check-local): Add nobaseremotecheck.
+	* base.c (base_copy, base_merge): Remove files when bases are
+	suppressed.
+	* checkin.c (Checkin): Don't create bases when suppressed.
+	* client.c (handle_base_checkout, handle_temp_checkout,
+	handle_base_copy, handle_base_merge, handle_base_entry,
+	handle_base_merged): Abort if these responses are received when the
+	client has requested the server not send them.
+	(client_base_copy): Force removal of temp files in noexec mode.
+	(start_server): Avoid sending Base-* and Temp-checkout as part of
+	valid_responses when the user has suppressed these.
+	* cvs.h (NOBASES_ENV): New macro.
+	(suppress_bases): New global.
+	* main.c (bases): Ditto.
+	(opt_usage, short_options, main): Add & process -B.
+	* update.c (join_file): Prefer Register to the potentially ambiguous
+	RegisterMerge when the merge actually only added a file.  Use
+	RCS_cmp_file to test if the file == its base when a base file is not
+	available.
+
+	* sanity.sh: Add processing for -B and -q options.
+	(unedit-without-baserev): Remove accidental commit.
+	
 	* base.c (base_checkout): Don't checkout base files when NOEXEC.
 	(temp_checkout): New function.
 	(base_copy): This function can't rely on the client to validate changes

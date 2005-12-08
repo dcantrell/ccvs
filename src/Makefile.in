@@ -761,19 +761,34 @@ uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
 	uninstall-info-am
 
 
-check-local: localcheck remotecheck proxycheck
+check-local: localcheck remotecheck nobaseremotecheck proxycheck
+
+.PHONY: maintainercheck-local
+maintainercheck-local: check-local nobaselocalcheck nobaseproxycheck
 
 .PHONY: localcheck
-localcheck: sanity.config.sh
+localcheck: all sanity.config.sh
 	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs$(EXEEXT)
+
+.PHONY: nobaselocalcheck
+nobaselocalcheck: all sanity.config.sh
+	$(SHELL) $(srcdir)/sanity.sh -B `pwd`/cvs$(EXEEXT)
 
 .PHONY: remotecheck
 remotecheck: all sanity.config.sh
 	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs$(EXEEXT)
 
+.PHONY: nobaseremotecheck
+nobaseremotecheck: all sanity.config.sh
+	$(SHELL) $(srcdir)/sanity.sh -Br `pwd`/cvs$(EXEEXT)
+
 .PHONY: proxycheck
 proxycheck: all sanity.config.sh
 	$(SHELL) $(srcdir)/sanity.sh -p `pwd`/cvs$(EXEEXT)
+
+.PHONY: nobaseproxycheck
+nobaseproxycheck: all sanity.config.sh
+	$(SHELL) $(srcdir)/sanity.sh -Bp `pwd`/cvs$(EXEEXT)
 
 # Our distclean targets
 distclean-local:

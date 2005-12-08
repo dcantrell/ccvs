@@ -425,10 +425,13 @@ base_copy (struct file_info *finfo, const char *rev, const char *flags)
     copy_file (basefile, finfo->file);
     if (flags[1] == 'y')
 	xchmod (finfo->file, true);
-    free (basefile);
 
     if (server_active && strcmp (cvs_cmd_name, "export"))
 	server_base_copy (finfo, rev, flags);
+
+    if (suppress_bases && CVS_UNLINK (basefile) < 0)
+	error (0, errno, "Failed to remove temp file `%s'", basefile);
+    free (basefile);
 }
 
 
@@ -469,7 +472,7 @@ base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
 			      options)))
 	error (1, 0, "checkout of revision %s of `%s' failed.\n",
 	       rev1, finfo->fullname);
-    if (join || noexec)
+    if (join || noexec || suppress_bases)
     {
 	if (!(f2 = temp_checkout (rcs, finfo, urev, rev2, ptag, rev2, poptions,
 				  options)))
@@ -522,7 +525,7 @@ base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
      * changes, the client is going to want to leave base 1.4 and delete base
      * 1.1 rather than the other way around.
      */
-    if (join || noexec)
+    if (join || noexec || suppress_bases)
     {
 	if (CVS_UNLINK (f2) < 0)
 	    error (0, errno, "unable to remove `%s'", f2);

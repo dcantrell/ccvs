@@ -113,7 +113,7 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 			   ? "yy" : "yn");
 		set_time = 1;
 	    }
-	    else
+	    else if (!suppress_bases)
 	    {
 		/* Still need to update the base file.  */
 		char *basefile;
