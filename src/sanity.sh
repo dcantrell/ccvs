@@ -24603,11 +24603,20 @@ xx "'\$'"Log"'\$'
 	  echo "change" >> file1
 	  dotest keyword-20 "$testcvs -Q ci -m mod2 file1"
 	  dotest keyword-21 "$testcvs -q update -r tag1" "U file1" \
-"U file1"
+"P file1
+$CPROG update: checksum failure after patch to file1; will refetch
+$CPROG client: refetching unpatchable files
+$CPROG update: warning: \`file1' was lost
+U file1"
 
 	  dotest keyword-22 "cat file1" '\$'"Name: tag1 "'\$'
 
-	  dotest keyword-23 "$testcvs update -A file1" "U file1"
+	  dotest keyword-23 "$testcvs update -A file1" "U file1" \
+"P file1
+$CPROG update: checksum failure after patch to file1; will refetch
+$CPROG client: refetching unpatchable files
+$CPROG update: warning: \`file1' was lost
+U file1"
 	  dotest keyword-24 "cat file1" '\$'"Name:  "'\$'"
 change"
 
@@ -24961,10 +24970,10 @@ T file2"
 	  # An update -kk or -A will unsub and sub keywords without updates
 	  # being required.
 	  # FIXCVS - see note above keyword-21
-	  dotest keywordname-update-1 "${testcvs} -q up -rbr" "U file1" \
+	  dotest keywordname-update-1 "$testcvs -q up -rbr" "U file1" \
 "P file1
-${CPROG} update: checksum failure after patch to \./file1; will refetch
-${CPROG} client: refetching unpatchable files
+$CPROG update: checksum failure after patch to file1; will refetch
+$CPROG client: refetching unpatchable files
 $SPROG update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-2 "cat file1" '\$'"Name: br "'\$'
@@ -24976,10 +24985,10 @@ U file1"
 "T file1
 T file2"
 	  # FIXCVS - see note above keyword-21
-	  dotest keywordname-update-5 "${testcvs} -q up -A" "U file1" \
+	  dotest keywordname-update-5 "$testcvs -q up -A" "U file1" \
 "P file1
-${CPROG} update: checksum failure after patch to \./file1; will refetch
-${CPROG} client: refetching unpatchable files
+$CPROG update: checksum failure after patch to file1; will refetch
+$CPROG client: refetching unpatchable files
 $SPROG update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-6 "cat file1" \
@@ -24989,20 +24998,20 @@ new data"
 
 	  # But updating to a static tag does cause a substitution
 	  # FIXCVS - see same note above
-	  dotest keywordname-update-8 "${testcvs} -q up -rfirsttag" "U file1" \
+	  dotest keywordname-update-8 "$testcvs -q up -rfirsttag" "U file1" \
 "P file1
-${CPROG} update: checksum failure after patch to \./file1; will refetch
-${CPROG} client: refetching unpatchable files
+$CPROG update: checksum failure after patch to file1; will refetch
+$CPROG client: refetching unpatchable files
 $SPROG update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-9 "cat file1" '\$'"Name: firsttag "'\$'
 	  dotest keywordname-update-10 "cat file2" '\$'"Name:  "'\$'
 
 	  # And reverify the trunk update when the change is actually removed.
-	  dotest keywordname-update-11 "${testcvs} -q up -A" "[UP] file1" \
+	  dotest keywordname-update-11 "$testcvs -q up -A" "[UP] file1" \
 "P file1
-${CPROG} update: checksum failure after patch to ./file1; will refetch
-${CPROG} client: refetching unpatchable files
+$CPROG update: checksum failure after patch to file1; will refetch
+$CPROG client: refetching unpatchable files
 $SPROG update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-12 "cat file1" \
@@ -26516,7 +26525,7 @@ first
 ============================================================================="
 
 	  dotest admin-22-o14 "${testcvs} tag -b -r1.3 br1 aaa" "T aaa"
-	  if $remote; then
+	  if $remote && test -z "$CVSNOBASES"; then
 	    # FIXCVS: The remote behavior is probably correct here.
 	    dotest_fail admin-22-o15ar "$testcvs update -rbr1 aaa" \
 "$SPROG \[update aborted\]: could not find desired version 1\.6 in $CVSROOT_DIRNAME/first-dir/aaa,v"
@@ -29025,10 +29034,10 @@ ${SPROG} update: Updating mod1-1
 ${SPROG} update: Updating mod1-2
 ${SPROG} update: Updating mod2-2
 ${SPROG} update: Updating mod2-2/mod1-2
-U mod2-2/mod1-2/file1-2
+[UP] mod2-2/mod1-2/file1-2
 ${SPROG} update: Updating mod1-2
 ${SPROG} update: Updating mod1-2/mod2-2
-U mod1-2/mod2-2/file2-2
+[UP] mod1-2/mod2-2/file2-2
 ${SPROG} update: Updating mod2-1
 ${SPROG} update: Updating mod2-2"
 

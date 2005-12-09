@@ -1,6 +1,6 @@
 2005-12-09  Derek Price  <derek@ximbiot.com>
 
-	* sanity.sh: Monor corrections for nobase testing.
+	* sanity.sh: Minor corrections for nobase testing.
 	(modes): Unset CVSUMASK when done.
 
 2005-12-08  Derek Price  <derek@ximbiot.com>
