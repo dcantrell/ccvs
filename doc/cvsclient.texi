@@ -535,12 +535,13 @@ Here are the requests:
 @table @code
 @item Root @var{pathname} \n
 Response expected: no.  Tell the server which @code{CVSROOT} to use.
-Note that @var{pathname} is a local directory and @emph{not} a fully
-qualified @code{CVSROOT} variable.  @var{pathname} must
-already exist; if creating a new root, use the @code{init} request, not
-@code{Root}.  @var{pathname} does not include the hostname of the
-server, how to access the server, etc.; by the time the CVS protocol is
-in use, connection, authentication, etc., are already taken care of.
+Note that @var{pathname} is @emph{not} a fully qualified @code{CVSROOT}
+variable, but only the local directory part of it.  @var{pathname} must
+already exist on the server; if creating a new root, use the @code{init}
+request, not @code{Root}.  Again, @var{pathname} @emph{does not} include
+the hostname of the server, how to access the server, etc.; by the time
+the CVS protocol is in use, connection, authentication, etc., are
+already taken care of.
 
 The @code{Root} request must be sent only once, and it must be sent
 before any requests other than @code{Valid-responses},

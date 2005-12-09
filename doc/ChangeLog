@@ -1,3 +1,8 @@
+2005-12-09  Derek Price  <derek@ximbiot.com>
+
+	[patch #4634]
+	* cvsclient.texi (Root request): Clarify.
+
 2005-11-10  Larry Jones  <lawrence.jones@ugs.com>
 
 	* cvs.texinfo (Common options): -n no longer applies to commit.
