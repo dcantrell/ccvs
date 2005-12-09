@@ -18054,7 +18054,7 @@ total revisions: 1
 
 	  # Check that the contents were right.  This isn't the hard case
 	  # (in which RCS_delete_revs does a diff), but might as well.
-	  if $remote; then
+	  if $remote && test -z "$CVSNOBASES"; then
 	    dotest_fail binfiles-o4r "$testcvs -q update binfile" \
 "$SPROG \[update aborted\]: could not find desired version 1\.5 in $CVSROOT_DIRNAME/first-dir/binfile,v"
 	  else
@@ -20465,11 +20465,11 @@ $SPROG add: use \`$SPROG commit' to add this file permanently"
 	  # Now update the second copy.  When using remote CVS, the
 	  # patch will fail, forcing the file to be refetched.
 	  cd ../../2/first-dir
-	  dotest serverpatch-8 "${testcvs} -q update" \
+	  dotest serverpatch-8 "$testcvs -q update" \
 'U file1' \
 "P file1
-${CPROG} update: checksum failure after patch to \./file1; will refetch
-${CPROG} client: refetching unpatchable files
+$CPROG update: checksum failure after patch to file1; will refetch
+$CPROG client: refetching unpatchable files
 $SPROG update: warning: \`file1' was lost
 U file1"
 
@@ -23276,7 +23276,7 @@ new revision: 1\.6; previous revision: 1\.5"
 	  #
 	  # Feel free to imagine the horrific scream of despair
 	  cd ../../1/first-dir
-	  if $remote; then
+	  if $remote && test -z "$CVSNOBASES"; then
 	    # FIXCVS
 	    # See the note above about lost data and a few other comments in
 	    # other tests.  At least with base files, no data is lost, but this
@@ -23865,6 +23865,7 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 	  cd ../..
 	  # Restore umask.
 	  umask $save_umask
+	  unset CVSUMASK
 	  rm -r 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
