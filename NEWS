@@ -18,6 +18,8 @@ BUG FIXES
   :extssh: has been added as a synonym of the :ext: access method, as a
   kindness to users of old version of Eclipse.
 
+* Misc documentation updates and minor bug fixes.
+
 Changes from 1.12.12 to 1.12.13:
 ********************************
 
