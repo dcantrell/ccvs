@@ -24661,12 +24661,16 @@ EOF
 "${testcvs} ci -F ${TESTDIR}/comment.tmp file1" \
 "${SPROG} commit: sticky tag .1\.3. for file .file1. is not a branch
 ${SPROG} \[commit aborted\]: correct above errors first!"
-	  dotest keywordlog-4b-2 "cat CVS/Base/.#file1.1.3" initial
+	  if test -z "$CVSNOBASES"; then
+	    dotest keywordlog-4b-2 "cat CVS/Base/.#file1.1.3" initial
+	  fi
 	  dotest keywordlog-4b-3 "cat file1" \
 'initial
 xx $''Log$'
 	  dotest keywordlog-4c "$testcvs -q update -A" "M file1"
-	  dotest keywordlog-4c-2 "cat CVS/Base/.#file1.1.3" initial
+	  if test -z "$CVSNOBASES"; then
+	    dotest keywordlog-4c-2 "cat CVS/Base/.#file1.1.3" initial
+	  fi
 	  dotest keywordlog-4c-3 "cat file1" \
 'initial
 xx $''Log$'

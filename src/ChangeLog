@@ -1,3 +1,7 @@
+2005-12-10  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Minor corrections for nobase testing.
+
 2005-12-09  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: Minor corrections for nobase testing.
