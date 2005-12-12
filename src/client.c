@@ -2370,7 +2370,15 @@ client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
 	return;
     }
 
-    basefile = make_base_file_name (filename, rev);
+    if (temp_checkout1)
+    {
+	if (temp_checkout2)
+	    error (1, 0, "Server sent two temp files before a Base-copy.");
+	basefile = temp_checkout1;
+    }
+    else
+	basefile = make_base_file_name (filename, rev);
+
     temp_filename = newfilename (filename);
     copy_file (basefile, temp_filename);
 
@@ -2385,11 +2393,12 @@ client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
      * file be sent.
      */
 
-    /* If EXISTS[2] == "d", don't keep the base file.  This happens
-     * when a merge adds a file and when `cvs add' resurrects a file.
-     */
-    if (flags[0] && flags [1] && flags[2] == 'd' && CVS_UNLINK (basefile) < 0)
-	error (0, errno, "Failed to delete `%s'", short_pathname);
+    if (temp_checkout1)
+    {
+	temp_checkout1 = NULL;
+	if (CVS_UNLINK (basefile) < 0)
+	    error (0, errno, "Failed to remove temp file `%s'", basefile);
+    }
 
     free (flags);
     free (temp_filename);

@@ -283,7 +283,7 @@ base_checkout (RCSNode *rcs, struct file_info *finfo,
 
 
 
-static char *
+char *
 temp_checkout (RCSNode *rcs, struct file_info *finfo,
 	       const char *prev, const char *rev, const char *ptag,
 	       const char *tag, const char *poptions, const char *options)
@@ -398,13 +398,15 @@ validate_change (enum update_existing existp, const char *filename,
 
 
 
-void
-base_copy (struct file_info *finfo, const char *rev, const char *flags)
+static void
+ibase_copy (struct file_info *finfo, const char *rev, const char *flags,
+	    const char *tempfile)
 {
     char *basefile;
 
-    TRACE (TRACE_FUNCTION, "base_copy (%s, %s, %s)",
-	   finfo->fullname, rev, flags);
+    TRACE (TRACE_FUNCTION, "ibase_copy (%s, %s, %s, %s)",
+	   finfo->fullname, rev, flags,
+	   tempfile ? tempfile : "(null)");
 
     assert (flags && flags[0] && flags[1]);
 
@@ -418,7 +420,11 @@ base_copy (struct file_info *finfo, const char *rev, const char *flags)
     if (noexec)
 	return;
 
-    basefile = make_base_file_name (finfo->file, rev);
+    if (tempfile)
+	basefile = tempfile;
+    else
+	basefile = make_base_file_name (finfo->file, rev);
+
     if (isfile (finfo->file))
 	xchmod (finfo->file, true);
 
@@ -427,11 +433,28 @@ base_copy (struct file_info *finfo, const char *rev, const char *flags)
 	xchmod (finfo->file, true);
 
     if (server_active && strcmp (cvs_cmd_name, "export"))
-	server_base_copy (finfo, rev, flags);
+	server_base_copy (finfo, rev ? rev : "", flags);
 
-    if (suppress_bases && CVS_UNLINK (basefile) < 0)
+    if ((suppress_bases || tempfile) && CVS_UNLINK (basefile) < 0)
 	error (0, errno, "Failed to remove temp file `%s'", basefile);
-    free (basefile);
+    if (!tempfile)
+	free (basefile);
+}
+
+
+
+void
+temp_copy (struct file_info *finfo, const char *flags, const char *tempfile)
+{
+    ibase_copy (finfo, NULL, flags, tempfile);
+}
+
+
+
+void
+base_copy (struct file_info *finfo, const char *rev, const char *flags)
+{
+    ibase_copy (finfo, rev, flags, NULL);
 }
 
 

@@ -1,3 +1,15 @@
+2005-12-12  Derek Price  <derek@ximbiot.com>
+
+	Simplify protocol slightly.
+	* add.c (add), update.c (join_file): Use temp files rather than base
+	files for resurrection and additions via join.
+	* base.c (temp_checkout): Export function.
+	(ibase_copy): Factor from...
+	(base_copy): ...here.
+	(temp_copy): New function.
+	* base.h (temp_checkout, temp_copy): New functions.
+	* client.c (client_base_copy): Work with temp files when necessary.
+	
 2005-12-10  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: Minor corrections for nobase testing.
