@@ -2327,6 +2327,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	if (vers->vn_user == NULL)
 	{
 	    Vers_TS *xvers;
+	    char *tempfile;
 
 	    /* Use NULL for keyword expansion options.  Otherwise, when a
 	       command like `cvs update -kk -jT1 -jT2' creates a new file
@@ -2343,16 +2344,17 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 
 	    /* FIXME: If base_checkout fails, we should arrange to
                return a non-zero exit status.  */
-	    status = base_checkout (xvers->srcfile, finfo,
-				    NULL, xvers->vn_rcs,
-				    xvers->entdata
-				    ? xvers->entdata->tag : NULL,
-				    xvers->tag,
-				    xvers->entdata
-				    ? xvers->entdata->options : NULL,
-				    xvers->options);
+	    tempfile = temp_checkout (xvers->srcfile, finfo,
+				      NULL, xvers->vn_rcs,
+				      xvers->entdata
+				      ? xvers->entdata->tag : NULL,
+				      xvers->tag,
+				      xvers->entdata
+				      ? xvers->entdata->options : NULL,
+				      xvers->options);
 	    /* Added files are always writable until commit.  */
-	    base_copy (finfo, xvers->vn_rcs, "nyd");
+	    temp_copy (finfo, "ny", tempfile);
+	    free (tempfile);
 
 	    Register (finfo->entries, finfo->file, "0",
 		      "Result of merge", NULL, vers->tag, vers->date, NULL);

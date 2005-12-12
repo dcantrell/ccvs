@@ -474,7 +474,7 @@ add (int argc, char **argv)
 			     */
 			    char *prev = previous_rev (vers->srcfile,
 			                               vers->vn_rcs);
-			    int status;
+			    char *tempfile;
 			    if (prev == NULL)
 			    {
 				/* There is no previous revision.  Either:
@@ -498,11 +498,11 @@ add (int argc, char **argv)
 				error (0, 0,
 "Resurrecting file `%s' from revision %s.",
 			               finfo.fullname, prev);
-			    status = base_checkout (vers->srcfile, &finfo,
-						    NULL, prev, NULL,
-						    vers->tag,
-						    NULL, vers->options);
-			    if (status != 0)
+			    tempfile = temp_checkout (vers->srcfile, &finfo,
+						      NULL, prev, NULL,
+						      vers->tag,
+						      NULL, vers->options);
+			    if (!tempfile)
 			    {
 				error (0, 0, "Failed to resurrect revision %s",
 				       prev);
@@ -513,10 +513,11 @@ add (int argc, char **argv)
 				/* I don't actually set vers->ts_user here
 				 * because it would confuse server_update ().
 				 */
-				base_copy (&finfo, prev, "nyd");
+				temp_copy (&finfo, "ny", tempfile);
 				timestamp = time_stamp (finfo.file);
 				if (!really_quiet)
 				    write_letter (&finfo, 'U');
+				free (tempfile);
 			    }
 			    free (prev);
 			}

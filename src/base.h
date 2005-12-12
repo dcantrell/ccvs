@@ -41,10 +41,16 @@ void base_deregister (const char *update_dir, const char *file);
 int base_checkout (RCSNode *rcs, struct file_info *finfo,
 		   const char *prev, const char *rev, const char *ptag,
 		   const char *tag, const char *poptions, const char *options);
+char *temp_checkout (RCSNode *rcs, struct file_info *finfo,
+		     const char *prev, const char *rev, const char *ptag,
+		     const char *tag, const char *poptions,
+		     const char *options);
 enum update_existing translate_exists (const char *exists);
 bool validate_change (enum update_existing existp, const char *filename,
 		      const char *fullname);
 void base_copy (struct file_info *finfo, const char *rev, const char *flags);
+void temp_copy (struct file_info *finfo, const char *flags,
+		const char *tempfile);
 void base_remove (const char *file, const char *rev);
 int base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
 		const char *poptions, const char *options,
