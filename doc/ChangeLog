@@ -1,3 +1,7 @@
+2005-12-12  Derek Price  <derek@ximbiot.com>
+
+	* cvsclient.texi (Responses): Add new Base-* & Temp-checkout responses.
+
 2005-10-16  Derek Price  <derek@ximbiot.com>
 
 	* RCSFILES: Note new openpgp-signatures newphrase.
