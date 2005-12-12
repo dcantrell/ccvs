@@ -1429,9 +1429,7 @@ a previous request which doesn't expect a response produced an error.
 When the client is done, it drops the connection.
 
 @node Response intro
-@section Introduction to R
-Checkout a base file preliminary to a @code{Base-copy} or @code{Base-merge}.
-esponses
+@section Introduction to Responses
 
 After a command which expects a response, the server sends however many
 of the following responses are appropriate.  The server should not send
@@ -1915,7 +1913,7 @@ Merge the differences between @var{rev1} & @var{rev2} of @var{pathname} into
 use it in place of the base file for @var{rev1}.  If two temp files were
 received, then use the first in place of the base file for @var{rev1} and the
 second in place of the base file for @var{rev2}.  Temp files may be deleted
-after the merge is complete.
+and forgotten after the merge is complete.
 
 @item Base-entry @var{pathname} \n
 Additional data: New Entries line, \n
