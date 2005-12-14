@@ -437,8 +437,15 @@ ibase_copy (struct file_info *finfo, const char *rev, const char *flags,
     if (server_active && strcmp (cvs_cmd_name, "export"))
 	server_base_copy (finfo, rev ? rev : "", flags);
 
-    if ((suppress_bases || tempfile) && CVS_UNLINK (basefile) < 0)
-	error (0, errno, "Failed to remove temp file `%s'", basefile);
+    if (suppress_bases || tempfile)
+    {
+	char *sigfile = Xasprintf ("%s.sig", basefile);
+	if (CVS_UNLINK (basefile) < 0)
+	    error (0, errno, "Failed to remove temp file `%s'", basefile);
+	if (CVS_UNLINK (sigfile) < 0 && !existence_error (errno))
+	    error (0, errno, "Failed to remove temp file `%s'", sigfile);
+	free (sigfile);
+    }
     if (!tempfile)
 	free ((char *)basefile);
 }
@@ -559,8 +566,12 @@ base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
      */
     if (join || noexec || suppress_bases)
     {
+	char *sigfile = Xasprintf ("%s.sig", f2);
 	if (CVS_UNLINK (f2) < 0)
 	    error (0, errno, "unable to remove `%s'", f2);
+	if (CVS_UNLINK (sigfile) < 0 && !existence_error (errno))
+	    error (0, errno, "unable to remove `%s'", sigfile);
+	free (sigfile);
     }
     free (f1);
     free (f2);

@@ -1,5 +1,8 @@
 2005-12-13  Derek Price  <derek@ximbiot.com>
 
+	* base.c (ibase_copy, base_merge): Remove signature files when using
+	temp files or SUPPRESS_BASES.
+
 	Send signature files to client with base files.
 	* base.c (base_checkout): Comment where the signature verification
 	will take place.
