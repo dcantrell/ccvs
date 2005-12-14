@@ -3306,7 +3306,7 @@ add-it
 	  cd ..
 
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
-	  rm -r first-dir
+	  rm -rf first-dir
 	  ;;
 
 

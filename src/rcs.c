@@ -4770,6 +4770,28 @@ workfile);
 
 
 
+const char *
+RCS_get_openpgp_signatures (RCSNode *rcs, const char *rev)
+{
+    RCSVers *vers;
+    Node *n;
+
+    n = findnode (rcs->versions, rev);
+    if (!n)
+	error (1, 0, "internal error: no revision information for %s", rev);
+    vers = n->data;
+
+    /* First we look for symlinks, which are simplest to handle. */
+    n = findnode (vers->other_delta, "openpgp-signatures");
+    if (!n)
+	return NULL;
+    /* else */
+
+    return n->data;
+}
+
+
+
 /* Find the delta currently locked by the user.  From the `ci' man page:
 
 	"If rev is omitted, ci tries to  derive  the  new  revision

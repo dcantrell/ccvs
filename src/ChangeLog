@@ -1,3 +1,22 @@
+2005-12-13  Derek Price  <derek@ximbiot.com>
+
+	Send signature files to client with base files.
+	* base.c (base_checkout): Comment where the signature verification
+	will take place.
+	(ibase_copy): Suppress warning.
+	(base_remove): Add header comment.  Remove signature files with bases.
+	* client.c: Include base64.h.
+	(handle_openpgp_signatures): New function.
+	(client_base_checkout): Remove ugly comment.  Save stored signatures to
+	a file.
+	(responses): Add OpenPGP-signatures.
+	* rcs.c (RCS_get_openpgp_signatures): New function.
+	* rcs.h: Add proto for same.
+	* sanity.sh (basica): Force remove directory when done.
+	* server.c: Reorder headers for consistency.
+	(server_send_signatures): New function.
+	(ibase_server_checkout): Use new function to send signatures.
+
 2005-12-12  Derek Price  <derek@ximbiot.com>
 
 	Simplify protocol slightly.
