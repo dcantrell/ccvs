@@ -274,6 +274,8 @@ base_checkout (RCSNode *rcs, struct file_info *finfo,
     xchmod (basefile, false);
     free (basefile);
 
+    /* FIXME: Verify the signature in local mode.  */
+
     if (server_active && strcmp (cvs_cmd_name, "export"))
 	server_base_checkout (rcs, finfo, prev, rev, ptag, tag,
 			      poptions, options);
@@ -402,7 +404,7 @@ static void
 ibase_copy (struct file_info *finfo, const char *rev, const char *flags,
 	    const char *tempfile)
 {
-    char *basefile;
+    const char *basefile;
 
     TRACE (TRACE_FUNCTION, "ibase_copy (%s, %s, %s, %s)",
 	   finfo->fullname, rev, flags,
@@ -438,7 +440,7 @@ ibase_copy (struct file_info *finfo, const char *rev, const char *flags,
     if ((suppress_bases || tempfile) && CVS_UNLINK (basefile) < 0)
 	error (0, errno, "Failed to remove temp file `%s'", basefile);
     if (!tempfile)
-	free (basefile);
+	free ((char *)basefile);
 }
 
 
@@ -459,10 +461,13 @@ base_copy (struct file_info *finfo, const char *rev, const char *flags)
 
 
 
+/* Remove the base file for FILE & REV, and any sigfile present for the same.
+ */
 void
 base_remove (const char *file, const char *rev)
 {
     char *basefile;
+    char *sigfile;
 
     TRACE (TRACE_FUNCTION, "base_remove (%s, %s)", file, rev);
 
@@ -470,6 +475,10 @@ base_remove (const char *file, const char *rev)
     basefile = make_base_file_name (file, rev);
     if (unlink_file (basefile) < 0 && !existence_error (errno))
 	error (0, errno, "Failed to remove `%s'", basefile);
+    sigfile = Xasprintf ("%s.sig", basefile);
+    if (unlink_file (sigfile) < 0 && !existence_error (errno))
+	error (0, errno, "Failed to remove `%s'", sigfile);
+    free (sigfile);
     free (basefile);
 }
 

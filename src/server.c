@@ -16,21 +16,21 @@
 #include "server.h"
 
 
+/* GNULIB */
+#include "getline.h"
+#include "getnline.h"
+#include "setenv.h"
+#include "wait.h"
+
 /* CVS */
 #include "base.h"
+#include "buffer.h"
 #include "gpg.h"
 
 #include "cvs.h"
 #include "edit.h"
 #include "fileattr.h"
 #include "watch.h"
-
-/* GNULIB */
-#include "buffer.h"
-#include "getline.h"
-#include "getnline.h"
-#include "setenv.h"
-#include "wait.h"
 
 int server_active = 0;
 
@@ -8145,6 +8145,25 @@ cvs_output_tagged (const char *tag, const char *text)
 
 
 
+static void
+server_send_signatures (RCSNode *rcs, const char *rev)
+{
+    const char *signatures;
+
+    if (!supported_response ("OpenPGP-signatures"))
+	return;
+
+    if (!(signatures = RCS_get_openpgp_signatures (rcs, rev)))
+	return;
+
+    buf_output0 (protocol, "OpenPGP-signatures ");
+    buf_output0 (protocol, signatures);
+    buf_output (protocol, "\n", 1);
+    buf_send_counted (protocol);
+}
+
+
+
 /* Try to tell the client about checking out a base REV of FILE, sending the
  * diff against PREV when possible.  If the client doesn't understand this
  * response, just ignore it and later code will also avoid the Base-*
@@ -8188,6 +8207,8 @@ iserver_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 	 * file.
 	 */
 	return;
+
+    server_send_signatures (rcs, rev);
 
     /* FIXME: It would be more efficient if diffs could be sent when the
      * revision numbers haven't changed but the keywords have.

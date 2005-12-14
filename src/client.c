@@ -15,6 +15,7 @@
 #endif /* HAVE_CONFIG_H */
 
 /* GNULIB */
+#include "base64.h"
 #include "getline.h"
 #include "save-cwd.h"
 
@@ -2138,6 +2139,28 @@ handle_rcs_diff (char *args, size_t len)
 
 
 
+/*
+ * The OpenPGP-signatures response gives the signature for the file to be
+ * transmitted in the next Base-checkout or Temp-checkout response.
+ */
+static char *stored_signatures;
+static size_t stored_signatures_len;
+static void
+handle_openpgp_signatures (char *args, size_t len)
+{
+    if (stored_signatures)
+        error (1, 0, "OpenPGP-signatures received before last one was used");
+
+    if (!base64_decode_alloc (args, len, &stored_signatures,
+			      &stored_signatures_len))
+	error (1, 0, "Bad signature received from server.");
+
+    if (!stored_signatures)
+	error (1, errno, "Failed to allocate memory");
+}
+
+
+
 static void
 client_base_checkout (void *data_arg, List *ent_list,
 		      const char *short_pathname, const char *filename)
@@ -2253,30 +2276,6 @@ client_base_checkout (void *data_arg, List *ent_list,
     else
 	patch_failed = false;
 
-    //if (!patch_failed)
-    //{
-	    /* FIXME - OPENPGP: Send and verify checksums for base files.  */
-	    //if (stored_checksum_valid)
-	    //{
-	//	unsigned char checksum[16];
-
-		/* We have a checksum.  Check it before writing
-		   the file out, so that we don't have to read it
-		   back in again.  */
-	//	md5_buffer (buf, size, checksum);
-	//	if (memcmp (checksum, stored_checksum, 16) != 0)
-	//	{
-	//	    error (0, 0,
-//"checksum failure after patch to %s; will refetch",
-//			   short_pathname);
-//
-//		    patch_failed = true;
-//		}
-//
-//		stored_checksum_valid = 0;
-//	    }
-    //}
-
     if (!patch_failed)
     {
 	FILE *e;
@@ -2293,6 +2292,33 @@ client_base_checkout (void *data_arg, List *ent_list,
 	status = change_mode (basefile, mode_string, 1);
 	if (status != 0)
 	    error (0, status, "cannot change mode of `%s'", fullbase);
+
+	if (stored_signatures)
+	{
+	    char *sigfile = Xasprintf ("%s.sig", basefile);
+	    
+	    if (!*istemp && isfile (sigfile))
+		xchmod (sigfile, true);
+	    e = xfopen (sigfile, FOPEN_BINARY_WRITE);
+	    if (fwrite (stored_signatures, sizeof *stored_signatures,
+			stored_signatures_len, e) != stored_signatures_len)
+		error (1, errno, "cannot write signature file `%s'", sigfile);
+	    if (fclose (e) == EOF)
+		error (0, errno, "cannot close signature file `%s'", sigfile);
+
+	    if (!*istemp)
+		xchmod (sigfile, false);
+
+	    /* FIXME: Verify the signature here, when configured to do so.  */
+
+	    if (*istemp && CVS_UNLINK (sigfile) < 0)
+		error (0, errno, "Failed to remove temp sig file `%s'",
+		       sigfile);
+
+	    free (sigfile);
+	    free (stored_signatures);
+	    stored_signatures = NULL;
+	}
     }
 
     /* FIXME: When enabled, verify base file via openpgp signature.  */
@@ -3687,6 +3713,9 @@ struct response responses[] =
 	     rs_optional),
     RSP_LINE("Base-merged", handle_base_merged, response_type_normal,
 	     rs_optional),
+
+    RSP_LINE("OpenPGP-signatures", handle_openpgp_signatures,
+	     response_type_normal, rs_optional),
 
     /* Possibly should be response_type_error.  */
     RSP_LINE(NULL, NULL, response_type_normal, rs_essential)
