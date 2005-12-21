@@ -12,6 +12,13 @@
  * This file contains the interface between the server and the rest of CVS.
  */
 
+#ifndef SERVER_H
+#define SERVER_H
+
+/* CVS Headers.  */
+#include "root.h"
+#include "vers_ts.h"
+
 /* Miscellaneous stuff which isn't actually particularly server-specific.  */
 #ifndef STDIN_FILENO
 #define STDIN_FILENO 0
@@ -117,6 +124,7 @@ void server_updated (struct file_info *finfo, Vers_TS *vers,
                      enum server_updated_arg4 updated, mode_t mode,
                      unsigned char *checksum, struct buffer *filebuf);
 
+bool server_use_bases (void);
 /* Whether we should send RCS format patches.  */
 int server_use_rcs_diff (void);
 
@@ -195,6 +203,7 @@ struct request
 extern struct request requests[];
 
 /* Gzip library, see zlib.c.  */
+int gunzip_in_mem (const char *, unsigned char *, size_t *, char **);
 int gunzip_and_write (int, const char *, unsigned char *, size_t);
 int read_and_gzip (int, const char *, unsigned char **, size_t *, size_t *,
                    int);
@@ -219,3 +228,27 @@ void cvs_trace (int level, const char *fmt, ...)
 #define TRACE_DATA		3
 
 extern cvsroot_t *referrer;
+
+void server_base_checkout (RCSNode *rcs, struct file_info *finfo,
+			   const char *prev, const char *rev, const char *ptag,
+			   const char *tag, const char *poptions,
+			   const char *options);
+void server_temp_checkout (RCSNode *rcs, struct file_info *finfo,
+			   const char *prev, const char *rev, const char *ptag,
+			   const char *tag, const char *poptions,
+			   const char *options, const char *tempfile);
+
+void server_base_copy (struct file_info *file, const char *rev,
+		       const char *flags);
+void server_base_merge (struct file_info *finfo, const char *rev1,
+			const char *rev2);
+bool server_use_bases (void);
+
+void cvs_output (const char *, size_t);
+void cvs_output_binary (char *, size_t);
+void cvs_outerr (const char *, size_t);
+void cvs_flusherr (void);
+void cvs_flushout (void);
+void cvs_output_tagged (const char *, const char *);
+
+#endif /* !defined SERVER_H */

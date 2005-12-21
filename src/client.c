@@ -14,16 +14,24 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include "cvs.h"
+/* GNULIB */
+#include "base64.h"
 #include "getline.h"
-#include "edit.h"
-#include "buffer.h"
 #include "save-cwd.h"
+
+/* CVS */
+#include "base.h"
+#include "difflib.h"
+
+#include "cvs.h"
+#include "buffer.h"
+#include "edit.h"
 
 #ifdef CLIENT_SUPPORT
 
 # include "log-buffer.h"
 # include "md5.h"
+# include "sign.h"
 
 #include "socket-client.h"
 #include "rsh-client.h"
@@ -35,6 +43,23 @@
 # ifdef HAVE_KERBEROS
 #   include "kerberos4-client.h"
 # endif
+
+
+
+/* Whether the last Base-merge command from the server resulted in a conflict
+ * or not.
+ */
+static bool last_merge;
+static bool last_merge_conflict;
+static bool last_merge_no_change;
+static bool last_merge_made_base;
+static char *base_merge_rev1;
+static char *base_merge_rev2;
+static char *temp_checkout1;
+static char *temp_checkout2;
+
+/* Similarly, to ignore bad entries on error.  */
+static bool base_copy_error;
 
 
 
@@ -780,7 +805,11 @@ call_in_directory (const char *pathname,
 	++filename;
 
     short_pathname = xmalloc (strlen (pathname) + strlen (filename) + 5);
-    strcpy (short_pathname, pathname);
+    /* Leave off the path when it is the CWD.  */
+    if (strcmp (pathname, "./"))
+	strcpy (short_pathname, pathname);
+    else
+	short_pathname[0] = '\0';
     strcat (short_pathname, filename);
 
     /* Now that we know the path to the file we were requested to operate on,
@@ -1327,6 +1356,8 @@ handle_mod_time (char *args, size_t len)
 char **failed_patches;
 int failed_patches_count;
 
+
+
 struct update_entries_data
 {
     enum {
@@ -1335,6 +1366,10 @@ struct update_entries_data
        * correct.
        */
       UPDATE_ENTRIES_CHECKIN,
+
+      /* The file content may be in a temp file, waiting to be renamed.  */
+      UPDATE_ENTRIES_BASE,
+
       /* We are getting the file contents as well.  */
       UPDATE_ENTRIES_UPDATE,
       /*
@@ -1349,14 +1384,7 @@ struct update_entries_data
       UPDATE_ENTRIES_RCS_DIFF
     } contents;
 
-    enum {
-	/* We are replacing an existing file.  */
-	UPDATE_ENTRIES_EXISTING,
-	/* We are creating a new file.  */
-	UPDATE_ENTRIES_NEW,
-	/* We don't know whether it is existing or new.  */
-	UPDATE_ENTRIES_EXISTING_OR_NEW
-    } existp;
+    enum update_existing existp;
 
     /*
      * String to put in the timestamp field or NULL to use the timestamp
@@ -1364,6 +1392,104 @@ struct update_entries_data
      */
     char *timestamp;
 };
+
+
+
+static void
+discard_file (void)
+{
+    char *mode_string;
+    char *size_string;
+    size_t size, nread;
+
+    read_line (&mode_string);
+    free (mode_string);
+
+    read_line (&size_string);
+    if (size_string[0] == 'z')
+	size = atoi (size_string + 1);
+    else
+	size = atoi (size_string);
+    free (size_string);
+
+    /* Now read and discard the file contents.  */
+    nread = 0;
+    while (nread < size)
+    {
+	char buf[8192];
+	size_t toread;
+
+	toread = size - nread;
+	if (toread > sizeof buf)
+	    toread = sizeof buf;
+
+	nread += try_read_from_server (buf, toread);
+	if (nread == size)
+	    break;
+    }
+
+    return;
+}
+
+
+
+static char *
+newfilename (const char *filename)
+{
+#ifdef USE_VMS_FILENAMES
+    /* A VMS rename of "blah.dat" to "foo" to implies a
+     * destination of "foo.dat" which is unfortinate for CVS.
+     */
+    return Xasprintf ("%s_new_", filename);
+#else
+#ifdef _POSIX_NO_TRUNC
+    return Xasprintf (".new.%.9s", filename);
+#else /* _POSIX_NO_TRUNC */
+    return Xasprintf (".new.%s", filename);
+#endif /* _POSIX_NO_TRUNC */
+#endif /* USE_VMS_FILENAMES */
+}
+
+
+
+static char *
+read_file_from_server (const char *fullname, char **mode_string, size_t *size)
+{
+    char *size_string;
+    bool use_gzip;
+    char *buf;
+
+    read_line (mode_string);
+    
+    read_line (&size_string);
+    if (size_string[0] == 'z')
+    {
+	use_gzip = true;
+	*size = atoi (size_string + 1);
+    }
+    else
+    {
+	use_gzip = false;
+	*size = atoi (size_string);
+    }
+    free (size_string);
+
+    buf = xmalloc (*size);
+    read_from_server (buf, *size);
+
+    if (use_gzip)
+    {
+	char *outbuf;
+
+	if (gunzip_in_mem (fullname, (unsigned char *) buf, size, &outbuf))
+	    error (1, 0, "aborting due to compression error");
+
+	free (buf);
+	buf = outbuf;
+    }
+
+    return buf;
+}
 
 
 
@@ -1385,7 +1511,8 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
     char *date = NULL;
     char *tag_or_date;
     char *scratch_entries = NULL;
-    int bin;
+    bool bin;
+    char *temp_filename;
 
 #ifdef UTIME_EXPECTS_WRITABLE
     int change_it_back = 0;
@@ -1430,111 +1557,28 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 
     /* Done parsing the entries line. */
 
+    temp_filename = newfilename (filename);
+
     if (data->contents == UPDATE_ENTRIES_UPDATE
 	|| data->contents == UPDATE_ENTRIES_PATCH
 	|| data->contents == UPDATE_ENTRIES_RCS_DIFF)
     {
-	char *size_string;
 	char *mode_string;
-	int size;
+	size_t size;
 	char *buf;
-	char *temp_filename;
-	int use_gzip;
-	int patch_failed;
+	bool patch_failed;
 
-	read_line (&mode_string);
-	
-	read_line (&size_string);
-	if (size_string[0] == 'z')
+	if (!validate_change (data->existp, filename, short_pathname))
 	{
-	    use_gzip = 1;
-	    size = atoi (size_string+1);
-	}
-	else
-	{
-	    use_gzip = 0;
-	    size = atoi (size_string);
-	}
-	free (size_string);
-
-	/* Note that checking this separately from writing the file is
-	   a race condition: if the existence or lack thereof of the
-	   file changes between now and the actual calls which
-	   operate on it, we lose.  However (a) there are so many
-	   cases, I'm reluctant to try to fix them all, (b) in some
-	   cases the system might not even have a system call which
-	   does the right thing, and (c) it isn't clear this needs to
-	   work.  */
-	if (data->existp == UPDATE_ENTRIES_EXISTING
-	    && !isfile (filename))
-	    /* Emit a warning and update the file anyway.  */
-	    error (0, 0, "warning: %s unexpectedly disappeared",
-		   short_pathname);
-
-	if (data->existp == UPDATE_ENTRIES_NEW
-	    && isfile (filename))
-	{
-	    /* Emit a warning and refuse to update the file; we don't want
-	       to clobber a user's file.  */
-	    size_t nread;
-	    size_t toread;
-
-	    /* size should be unsigned, but until we get around to fixing
-	       that, work around it.  */
-	    size_t usize;
-
-	    char buf[8192];
-
-	    /* This error might be confusing; it isn't really clear to
-	       the user what to do about it.  Keep in mind that it has
-	       several causes: (1) something/someone creates the file
-	       during the time that CVS is running, (2) the repository
-	       has two files whose names clash for the client because
-	       of case-insensitivity or similar causes, See 3 for
-	       additional notes.  (3) a special case of this is that a
-	       file gets renamed for example from a.c to A.C.  A
-	       "cvs update" on a case-insensitive client will get this
-	       error.  In this case and in case 2, the filename
-	       (short_pathname) printed in the error message will likely _not_
-	       have the same case as seen by the user in a directory listing.
-	       (4) the client has a file which the server doesn't know
-	       about (e.g. "? foo" file), and that name clashes with a file
-	       the server does know about, (5) classify.c will print the same
-	       message for other reasons.
-
-	       I hope the above paragraph makes it clear that making this
-	       clearer is not a one-line fix.  */
-	    error (0, 0, "move away `%s'; it is in the way", short_pathname);
+	    /* The Mode, Mod-time, and Checksum responses should not carry
+	     * over to a subsequent Created (or whatever) response, even
+	     * in the error case.
+	     */
 	    if (updated_fname)
 	    {
-		cvs_output ("C ", 0);
-		cvs_output (updated_fname, 0);
-		cvs_output ("\n", 1);
+		free (updated_fname);
+		updated_fname = NULL;
 	    }
-	    failure_exit = true;
-
-	discard_file_and_return:
-	    /* Now read and discard the file contents.  */
-	    usize = size;
-	    nread = 0;
-	    while (nread < usize)
-	    {
-		toread = usize - nread;
-		if (toread > sizeof buf)
-		    toread = sizeof buf;
-
-		nread += try_read_from_server (buf, toread);
-		if (nread == usize)
-		    break;
-	    }
-
-	    free (mode_string);
-	    free (scratch_entries);
-	    free (entries_line);
-
-	    /* The Mode, Mod-time, and Checksum responses should not carry
-	       over to a subsequent Created (or whatever) response, even
-	       in the error case.  */
 	    if (stored_mode)
 	    {
 		free (stored_mode);
@@ -1543,28 +1587,16 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    stored_modtime_valid = 0;
 	    stored_checksum_valid = 0;
 
-	    if (updated_fname)
-	    {
-		free (updated_fname);
-		updated_fname = NULL;
-	    }
+	    failure_exit = true;
+
+	discard_file_and_return:
+	    discard_file ();
+	    free (scratch_entries);
+	    free (entries_line);
 	    return;
 	}
 
-	temp_filename = xmalloc (strlen (filename) + 80);
-#ifdef USE_VMS_FILENAMES
-        /* A VMS rename of "blah.dat" to "foo" to implies a
-           destination of "foo.dat" which is unfortinate for CVS */
-	sprintf (temp_filename, "%s_new_", filename);
-#else
-#ifdef _POSIX_NO_TRUNC
-	sprintf (temp_filename, ".new.%.9s", filename);
-#else /* _POSIX_NO_TRUNC */
-	sprintf (temp_filename, ".new.%s", filename);
-#endif /* _POSIX_NO_TRUNC */
-#endif /* USE_VMS_FILENAMES */
-
-	buf = xmalloc (size);
+	buf = read_file_from_server (short_pathname, &mode_string, &size);
 
         /* Some systems, like OS/2 and Windows NT, end lines with CRLF
            instead of just LF.  Format translation is done in the C
@@ -1572,24 +1604,12 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
            convert -- if this file is marked "binary" with the RCS -kb
            flag, then we don't want to convert, else we do (because
            CVS assumes text files by default). */
-
 	if (options)
 	    bin = !strcmp (options, "-kb");
 	else
-	    bin = 0;
+	    bin = false;
 
-	if (data->contents == UPDATE_ENTRIES_RCS_DIFF)
-	{
-	    /* This is an RCS change text.  We just hold the change
-	       text in memory.  */
-
-	    if (use_gzip)
-		error (1, 0,
-		       "server error: gzip invalid with RCS change text");
-
-	    read_from_server (buf, size);
-	}
-	else
+	if (data->contents != UPDATE_ENTRIES_RCS_DIFF)
 	{
 	    int fd;
 
@@ -1613,25 +1633,14 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		goto discard_file_and_return;
 	    }
 
-	    if (size > 0)
-	    {
-		read_from_server (buf, size);
-
-		if (use_gzip)
-		{
-		    if (gunzip_and_write (fd, short_pathname, 
-					  (unsigned char *) buf, size))
-			error (1, 0, "aborting due to compression error");
-		}
-		else if (write (fd, buf, size) != size)
-		    error (1, errno, "writing %s", short_pathname);
-	    }
+	    if (write (fd, buf, size) != size)
+		error (1, errno, "writing %s", short_pathname);
 
 	    if (close (fd) < 0)
 		error (1, errno, "writing %s", short_pathname);
 	}
 
-	patch_failed = 0;
+	patch_failed = false;
 
 	if (data->contents == UPDATE_ENTRIES_UPDATE)
 	{
@@ -1649,7 +1658,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    error (0, 0,
 		   "unsupported patch format received for `%s'; will refetch",
 		   short_pathname);
-	    patch_failed = 1;
+	    patch_failed = true;
 	}
 	else
 	{
@@ -1675,12 +1684,12 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
                The contents of the patch from the network are in BUF,
                and the length of the patch is in SIZE.  */
 
-	    if (! rcs_change_text (short_pathname, filebuf, nread, buf, size,
+	    if (!rcs_change_text (short_pathname, filebuf, nread, buf, size,
 				   &patchedbuf, &patchedlen))
 	    {
 		error (0, 0, "patch failed for `%s'; will refetch",
 		       short_pathname);
-		patch_failed = 1;
+		patch_failed = true;
 	    }
 	    else
 	    {
@@ -1698,13 +1707,13 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 "checksum failure after patch to `%s'; will refetch",
 			       short_pathname);
 
-			patch_failed = 1;
+			patch_failed = true;
 		    }
 
 		    stored_checksum_valid = 0;
 		}
 
-		if (! patch_failed)
+		if (!patch_failed)
 		{
 		    FILE *e;
 
@@ -1724,9 +1733,10 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    free (filebuf);
 	}
 
+	free (buf);
 	free (temp_filename);
 
-	if (stored_checksum_valid && ! patch_failed)
+	if (stored_checksum_valid && !patch_failed)
 	{
 	    FILE *e;
 	    struct md5_ctx context;
@@ -1769,7 +1779,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		       "checksum failure after patch to `%s'; will refetch",
 		       short_pathname);
 
-		patch_failed = 1;
+		patch_failed = true;
 	    }
 	}
 
@@ -1785,7 +1795,6 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    stored_checksum_valid = 0;
 
 	    free (mode_string);
-	    free (buf);
 	    free (scratch_entries);
 	    free (entries_line);
 
@@ -1813,7 +1822,87 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	}
 
 	free (mode_string);
-	free (buf);
+    }
+    else if (data->contents == UPDATE_ENTRIES_BASE)
+    {
+	Node *n;
+	if (!noexec && (n = findnode_fn (ent_list, filename)))
+	{
+	    Entnode *e = n->data;
+	    /* After a join, control can get here without having changed the
+	     * version number.  In this case, do not remove the base file.
+	     */
+	    if (strcmp (vn, e->version))
+		base_remove (filename, e->version);
+	}
+
+	if (last_merge)
+	{
+	    /* Won't need these now that the merge is complete.  */
+	    if (strcmp (vn, base_merge_rev1))
+		base_remove (filename, base_merge_rev1);
+	    free (base_merge_rev1);
+	    if (strcmp (vn, base_merge_rev2))
+		base_remove (filename, base_merge_rev2);
+	    free (base_merge_rev2);
+	}
+
+	if (base_copy_error)
+	{
+	    /* The previous base_copy command returned an error, such as in the
+	     * "move away `FILE'; it is in the way" case.  Do not allow the
+	     * entry to be updated.
+	     */
+	    if (updated_fname)
+	    {
+		/* validate_change() has already printed "C filename" via the
+		 * call from client_base_copy().
+		 */
+		free (updated_fname);
+		updated_fname = false;
+	    }
+	    base_copy_error = false;
+	    return;
+	}
+	if (!noexec)
+	    rename_file (temp_filename, filename);
+	if (updated_fname)
+	{
+	    cvs_output ("U ", 0);
+	    cvs_output (updated_fname, 0);
+	    cvs_output ("\n", 1);
+	    free (updated_fname);
+	    updated_fname = NULL;
+	}
+    }
+    else if (!noexec && data->contents == UPDATE_ENTRIES_CHECKIN
+	     && strcmp (vn, "0") && *vn != '-')
+    {
+	/* On checkin, create the base file.  */
+	Node *n;
+	bool makebase = true;
+	if ((n = findnode_fn (ent_list, filename)))
+	{
+	    /* This could be a readd of a locally removed file or, for
+	     * instance, an update that changed keyword options without
+	     * changing the revision number or the base file.
+	     */
+	    Entnode *e = n->data;
+	    if (strcmp (vn, e->version))
+		/* The version number has changed.  */
+		base_remove (filename, e->version);
+	    else
+		/* The version number has not changed.  */
+		makebase = false;
+	}
+	if (makebase)
+	{
+	    /* A real checkin.  */
+	    char *basefile = make_base_file_name (filename, vn);
+	    mkdir_if_needed (CVSADM_BASE);
+	    copy_file (filename, basefile);
+	    free (basefile);
+	}
     }
 
     if (stored_mode)
@@ -1861,11 +1950,12 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
     {
 	char *local_timestamp;
 	char *file_timestamp;
+	bool ignore_merge;
 
 	(void) time (&last_register_time);
 
 	local_timestamp = data->timestamp;
-	if (!local_timestamp || ts[0] == '+')
+	if (!local_timestamp || ts[0] == '+' || last_merge_conflict)
 	    file_timestamp = time_stamp (filename);
 	else
 	    file_timestamp = NULL;
@@ -1897,8 +1987,57 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    }
 	}
 
-	Register (ent_list, filename, vn, local_timestamp,
-		  options, tag, date, ts[0] == '+' ? file_timestamp : NULL);
+	if (last_merge)
+	{
+	    if (last_merge_made_base)
+	    {
+		Node *n;
+		Entnode *e;
+
+		n = findnode_fn (ent_list, filename);
+		assert (n);
+
+		e = n->data;
+		if (strcmp (vn, e->version))
+		    /* Merge.  */
+		    ignore_merge = false;
+		else
+		    /* Join. */
+		    ignore_merge = true;
+	    }
+	    else
+		ignore_merge = false;
+	}
+	else
+	    ignore_merge = true;
+	
+	Register (ent_list, filename, vn,
+		  ignore_merge ? local_timestamp : "Result of merge",
+		  options, tag, date,
+		  ts[0] == '+' || last_merge_conflict ? file_timestamp : NULL);
+	if (last_merge_conflict)
+	{
+	    assert (!ignore_merge);
+	    if (!really_quiet)
+	    {
+		cvs_output ("C ", 2);
+		cvs_output (short_pathname, 0);
+		cvs_output ("\n", 1);
+	    }
+	}
+	else if (!ignore_merge)
+	{
+	    if (!really_quiet)
+	    {
+		cvs_output ("M ", 2);
+		cvs_output (short_pathname, 0);
+		cvs_output ("\n", 1);
+	    }
+	}
+	last_merge = false;
+	last_merge_conflict = false;
+	last_merge_made_base = false;
+	last_merge_no_change = false;
 
 	if (file_timestamp)
 	    free (file_timestamp);
@@ -2004,6 +2143,484 @@ handle_rcs_diff (char *args, size_t len)
     /* Think this could be UPDATE_ENTRIES_EXISTING, but just in case...  */
     dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = NULL;
+    call_in_directory (args, update_entries, &dat);
+}
+
+
+
+/*
+ * The OpenPGP-signatures response gives the signature for the file to be
+ * transmitted in the next Base-checkout or Temp-checkout response.
+ */
+static char *stored_signatures;
+static size_t stored_signatures_len;
+static void
+handle_openpgp_signatures (char *args, size_t len)
+{
+    if (stored_signatures)
+        error (1, 0, "OpenPGP-signatures received before last one was used");
+
+    if (!base64_decode_alloc (args, len, &stored_signatures,
+			      &stored_signatures_len))
+	error (1, 0, "Bad signature received from server.");
+
+    if (!stored_signatures)
+	error (1, errno, "Failed to allocate memory");
+}
+
+
+
+static void
+client_base_checkout (void *data_arg, List *ent_list,
+		      const char *short_pathname, const char *filename)
+{
+    /* Options for this file, a Previous REVision if this is a diff, and the
+     * REVision of the new file.
+     */
+    char *options, *prev, *rev;
+
+    /* The base file to be created.  */
+    char *basefile;
+    char *update_dir;
+    char *fullbase;
+
+    /* File buf from net.  May be an RCS diff from PREV to REV.  */
+    char *buf;
+    char *mode_string;
+    size_t size;
+
+    bool bin;
+    bool patch_failed;
+    bool *istemp = data_arg;
+
+    TRACE (TRACE_FUNCTION, "client_base_checkout (%s)", short_pathname);
+
+    /* Read OPTIONS, PREV, and REV from the server.  */
+    read_line (&options);
+    read_line (&prev);
+    read_line (&rev);
+
+    /* Use these values to get our base file name.  */
+    if (*istemp)
+    {
+	if (temp_checkout2)
+	    error (1, 0,
+		   "Server sent more than two temp files without using them.");
+	basefile = cvs_temp_name ();
+	if (temp_checkout1)
+	    temp_checkout2 = basefile;
+	else
+	    temp_checkout1 = basefile;
+    }
+    else
+	basefile = make_base_file_name (filename, rev);
+
+    /* FIXME?  It might be nice to verify that base files aren't being
+     * overwritten except when the keyword mode has changed.
+     */
+    if (!*istemp && isfile (basefile))
+	force_xchmod (basefile, true);
+
+    update_dir = dir_name (short_pathname);
+    if (*istemp || !*update_dir) fullbase = xstrdup (basefile);
+    else fullbase = Xasprintf ("%s/%s", update_dir, basefile);
+
+    /* Read the file or patch from the server.  */
+    /* FIXME: Read/write to file is repeated and could be optimized to
+     * write directly to disk without using so much mem.
+     */
+    buf = read_file_from_server (fullbase, &mode_string, &size);
+
+    if (options) bin = !strcmp (options, "-kb");
+    else bin = false;
+
+    if (*prev && strcmp (prev, rev))
+    {
+	char *filebuf;
+	size_t filebufsize;
+	size_t nread;
+	char *patchedbuf;
+	size_t patchedlen;
+	char *pbasefile;
+	char *pfullbase;
+
+	/* Handle UPDATE_ENTRIES_RCS_DIFF.  */
+
+	pbasefile = make_base_file_name (filename, prev);
+	if (!*update_dir) pfullbase = xstrdup (pbasefile);
+	else pfullbase = Xasprintf ("%s/%s", update_dir, pbasefile);
+
+	if (!isfile (pbasefile))
+	    error (1, 0, "patch original file `%s' does not exist",
+		   pfullbase);
+
+	filebuf = NULL;
+	filebufsize = 0;
+	nread = 0;
+
+	get_file (pbasefile, pfullbase, bin ? FOPEN_BINARY_READ : "r",
+		  &filebuf, &filebufsize, &nread);
+	/* At this point the contents of the existing file are in
+	 * FILEBUF, and the length of the contents is in NREAD.
+	 * The contents of the patch from the network are in BUF,
+	 * and the length of the patch is in SIZE.
+	 */
+
+	patch_failed = !rcs_change_text (fullbase, filebuf, nread, buf,
+					 size, &patchedbuf, &patchedlen);
+
+	if (!patch_failed)
+	{
+	    free (buf);
+	    buf = patchedbuf;
+	    size = patchedlen;
+	}
+	else
+	    free (patchedbuf);
+
+	free (filebuf);
+	free (pbasefile);
+	free (pfullbase);
+    }
+    else
+	patch_failed = false;
+
+    if (!patch_failed)
+    {
+	FILE *e;
+	int status;
+
+	if (!*istemp)
+	    mkdir_if_needed (CVSADM_BASE);
+	e = xfopen (basefile, bin ? FOPEN_BINARY_WRITE : "w");
+	if (fwrite (buf, sizeof *buf, size, e) != size)
+	    error (1, errno, "cannot write `%s'", fullbase);
+	if (fclose (e) == EOF)
+	    error (0, errno, "cannot close `%s'", fullbase);
+
+	status = change_mode (basefile, mode_string, 1);
+	if (status != 0)
+	    error (0, status, "cannot change mode of `%s'", fullbase);
+
+	if (stored_signatures)
+	{
+	    char *sigfile = Xasprintf ("%s.sig", basefile);
+	    
+	    if (!*istemp && isfile (sigfile))
+		xchmod (sigfile, true);
+	    e = xfopen (sigfile, FOPEN_BINARY_WRITE);
+	    if (fwrite (stored_signatures, sizeof *stored_signatures,
+			stored_signatures_len, e) != stored_signatures_len)
+		error (1, errno, "cannot write signature file `%s'", sigfile);
+	    if (fclose (e) == EOF)
+		error (0, errno, "cannot close signature file `%s'", sigfile);
+
+	    if (!*istemp)
+		xchmod (sigfile, false);
+
+	    /* FIXME: Verify the signature here, when configured to do so.  */
+
+	    if (*istemp && CVS_UNLINK (sigfile) < 0)
+		error (0, errno, "Failed to remove temp sig file `%s'",
+		       sigfile);
+
+	    free (sigfile);
+	    free (stored_signatures);
+	    stored_signatures = NULL;
+	}
+    }
+
+    /* FIXME: When enabled, verify base file via openpgp signature.  */
+
+    free (buf);
+    free (rev);
+    free (prev);
+    if (!*istemp)
+	free (basefile);
+    free (update_dir);
+    free (fullbase);
+}
+
+
+
+static void
+handle_base_checkout (char *args, size_t len)
+{
+    bool istemp = false;
+    if (suppress_bases)
+	error (1, 0, "Server sent Base-* response when asked not to.");
+    call_in_directory (args, client_base_checkout, &istemp);
+}
+
+
+
+static void
+handle_temp_checkout (char *args, size_t len)
+{
+    bool istemp = true;
+    if (suppress_bases)
+	error (1, 0, "Server sent Base-* response when asked not to.");
+    call_in_directory (args, client_base_checkout, &istemp);
+}
+
+
+
+/* Create am up-to-date temporary workfile from a base file.  */
+static void
+client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
+		  const char *filename)
+{
+    char *rev, *flags;
+    char *basefile;
+    char *temp_filename;
+
+    TRACE (TRACE_FUNCTION, "client_base_copy (%s)", short_pathname);
+
+    read_line (&rev);
+
+    read_line (&flags);
+    if (!validate_change (translate_exists (flags), filename, short_pathname))
+    {
+	/* The Mode, Mod-time, and Checksum responses should not carry
+	 * over to a subsequent Created (or whatever) response, even
+	 * in the error case.
+	 */
+	if (updated_fname)
+	{
+	    free (updated_fname);
+	    updated_fname = NULL;
+	}
+	if (stored_mode)
+	{
+	    free (stored_mode);
+	    stored_mode = NULL;
+	}
+	stored_modtime_valid = 0;
+	stored_checksum_valid = 0;
+
+	failure_exit = true;
+	base_copy_error = true;
+	free (rev);
+	free (flags);
+	return;
+    }
+
+    if (temp_checkout1)
+    {
+	if (temp_checkout2)
+	    error (1, 0, "Server sent two temp files before a Base-copy.");
+	basefile = temp_checkout1;
+    }
+    else
+	basefile = make_base_file_name (filename, rev);
+
+    temp_filename = newfilename (filename);
+    copy_file (basefile, temp_filename);
+
+    if (flags[0] && flags[1] == 'n')
+	xchmod (temp_filename, false);
+    else
+	xchmod (temp_filename, true);
+
+    /* I think it is ok to assume that if the server is sending base_copy,
+     * then it sent the commands necessary to create the required base file.
+     * If not, then it may be necessary to provide a way to request the base
+     * file be sent.
+     */
+
+    if (temp_checkout1)
+    {
+	temp_checkout1 = NULL;
+	if (CVS_UNLINK (basefile) < 0)
+	    error (0, errno, "Failed to remove temp file `%s'", basefile);
+    }
+
+    free (flags);
+    free (temp_filename);
+    free (basefile);
+    free (rev);
+}
+
+
+
+static void
+handle_base_copy (char *args, size_t len)
+{
+    if (suppress_bases)
+	error (1, 0, "Server sent Base-* response when asked not to.");
+    call_in_directory (args, client_base_copy, NULL);
+}
+
+
+
+static void
+client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
+		   const char *filename)
+{
+    char *f1, *f2;
+    char *temp_filename;
+    int status;
+
+    TRACE (TRACE_FUNCTION, "client_base_merge (%s)", short_pathname);
+
+    read_line (&base_merge_rev1);
+    read_line (&base_merge_rev2);
+
+    if (!really_quiet)
+    {
+	cvs_output ("Merging differences between ", 0);
+	cvs_output (base_merge_rev1, 0);
+	cvs_output (" and ", 5);
+	cvs_output (base_merge_rev2, 0);
+	cvs_output (" into `", 7);
+	cvs_output (short_pathname, 0);
+	cvs_output ("'\n", 2);
+    }
+
+    if (temp_checkout1)
+    {
+	f1 = temp_checkout1;
+	if (temp_checkout2)
+	    f2 = temp_checkout2;
+	else
+	{
+	    f2 = make_base_file_name (filename, base_merge_rev2);
+	    if (!isfile (f2))
+		error (1, 0, "Server sent only one temp file before a merge.");
+	}
+    }
+    else
+    {
+	f1 = make_base_file_name (filename, base_merge_rev1);
+	f2 = make_base_file_name (filename, base_merge_rev2);
+    }
+
+    temp_filename = newfilename (filename);
+
+    force_copy_file (filename, temp_filename);
+    force_xchmod (temp_filename, true);
+
+    status = merge (temp_filename, filename, f1, base_merge_rev1, f2,
+		    base_merge_rev2);
+
+    if (status != 0 && status != 1)
+	error (status == -1, status == -1 ? errno : 0,
+	       "could not merge differences between %s & %s of `%s'",
+	       base_merge_rev1, base_merge_rev2, short_pathname);
+
+    if (last_merge && !noexec)
+	error (1, 0,
+"protocol error: received two `Base-merge' responses without a `Base-entry'");
+    last_merge = true;
+
+    if (status == 1)
+    {
+	/* The server won't send a response telling the client to update the
+	 * entry in noexec mode.  Normally the client delays printing the
+	 * "C filename" line until then.
+	 */
+	last_merge_conflict = true;
+	if (noexec && !really_quiet)
+	{
+	    cvs_output ("C ", 2);
+	    cvs_output (short_pathname, 0);
+	    cvs_output ("\n", 1);
+	}
+    }
+    else
+    {
+	Node *n;
+
+	if (!xcmp (temp_filename, filename))
+	{
+	    if (!quiet)
+	    {
+		cvs_output ("`", 1);
+		cvs_output (short_pathname, 0);
+		cvs_output ("' already contains the differences between ", 0);
+		cvs_output (base_merge_rev1, 0);
+		cvs_output (" and ", 5);
+		cvs_output (base_merge_rev2, 0);
+		cvs_output ("\n", 1);
+	    }
+	    last_merge_no_change = true;
+	}
+
+	/* This next is a separate case because a join could restore the file
+	 * to its state at checkout time.
+	 */
+	if ((n = findnode_fn (ent_list, filename)))
+	{
+	    Entnode *e = n->data;
+	    char *basefile = make_base_file_name (filename, e->version);
+	    if (isfile (basefile) && !xcmp (basefile, temp_filename))
+		/* The user's file is identical to the base file.
+		 * Pretend this merge never happened.
+		 */
+		last_merge_made_base = true;
+	    free (basefile);
+	}
+    }
+
+    /* In the noexec case, just remove our results.  */
+    if (noexec && CVS_UNLINK (temp_filename) < 0)
+	error (0, errno, "Failed to remove `%s'", temp_filename);
+
+    /* Let update_entries remove our "temporary" base files, since it should
+     * know which one should be kept.
+     */
+
+    if (temp_checkout1)
+    {
+	temp_checkout1 = NULL;
+	if (CVS_UNLINK (f1) < 0)
+	    error (0, errno, "Failed to remove temp file `%s'", f1);
+    }
+    if (temp_checkout2)
+    {
+	temp_checkout2 = NULL;
+	if (CVS_UNLINK (f2) < 0)
+	    error (0, errno, "Failed to remove temp file `%s'", f2);
+    }
+    free (f1);
+    free (f2);
+}
+
+
+
+static void
+handle_base_merge (char *args, size_t len)
+{
+    if (suppress_bases)
+	error (1, 0, "Server sent Base-* response when asked not to.");
+    call_in_directory (args, client_base_merge, NULL);
+}
+
+
+
+static void
+handle_base_entry (char *args, size_t len)
+{
+    struct update_entries_data dat;
+    if (suppress_bases)
+	error (1, 0, "Server sent Base-* response when asked not to.");
+    dat.contents = UPDATE_ENTRIES_BASE;
+    dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
+    dat.timestamp = NULL;
+    call_in_directory (args, update_entries, &dat);
+}
+
+
+
+static void
+handle_base_merged (char *args, size_t len)
+{
+    struct update_entries_data dat;
+    if (suppress_bases)
+	error (1, 0, "Server sent Base-* response when asked not to.");
+    dat.contents = UPDATE_ENTRIES_BASE;
+    dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
+    dat.timestamp = "Result of merge";
     call_in_directory (args, update_entries, &dat);
 }
 
@@ -3089,6 +3706,26 @@ struct response responses[] =
     RSP_LINE("E", handle_e, response_type_normal, rs_essential),
     RSP_LINE("F", handle_f, response_type_normal, rs_optional),
     RSP_LINE("MT", handle_mt, response_type_normal, rs_optional),
+
+    /* The server makes the assumption that if the client handles one of the
+     * Base-* responses, then it will handle all of them.
+     */
+    RSP_LINE("Base-checkout", handle_base_checkout, response_type_normal,
+	     rs_optional),
+    RSP_LINE("Temp-checkout", handle_temp_checkout, response_type_normal,
+	     rs_optional),
+    RSP_LINE("Base-copy", handle_base_copy, response_type_normal,
+	     rs_optional),
+    RSP_LINE("Base-merge", handle_base_merge, response_type_normal,
+	     rs_optional),
+    RSP_LINE("Base-entry", handle_base_entry, response_type_normal,
+	     rs_optional),
+    RSP_LINE("Base-merged", handle_base_merged, response_type_normal,
+	     rs_optional),
+
+    RSP_LINE("OpenPGP-signatures", handle_openpgp_signatures,
+	     response_type_normal, rs_optional),
+
     /* Possibly should be response_type_error.  */
     RSP_LINE(NULL, NULL, response_type_normal, rs_essential)
 
@@ -4020,6 +4657,10 @@ start_server (void)
 	    {
 		if (suppress_redirect && !strcmp (rs->name, "Redirect"))
 		    continue;
+		if (suppress_bases && !strncmp (rs->name, "Base-", 5))
+		    continue;
+		if (suppress_bases && !strcmp (rs->name, "Temp-checkout"))
+		    continue;
 
 		send_to_server (" ", 0);
 		send_to_server (rs->name, 0);
@@ -4433,16 +5074,32 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
 
 
 
+static void
+send_signature (const char *srepos, const char *filename, bool bin)
+{
+    char *sigbuf;
+    size_t len;
+
+    sigbuf = gen_signature (srepos, filename, bin, &len);
+
+    send_to_server ("Signature\012", 0);
+    send_to_server (sigbuf, len);
+    free (sigbuf);
+}
+
+
+
 /* The address of an instance of this structure is passed to
    send_fileproc, send_filesdoneproc, and send_direntproc, as the
    callerdat parameter.  */
 struct send_data
 {
     /* Each of the following flags are zero for clear or nonzero for set.  */
-    int build_dirs;
-    int force;
-    int no_contents;
-    int backup_modified;
+    bool build_dirs;
+    bool force;
+    bool no_contents;
+    bool backup_modified;
+    bool sign;
 };
 
 /* Deal with one file.  */
@@ -4556,7 +5213,19 @@ warning: ignoring -k options due to server limitations");
 	    send_to_server ("\012", 1);
 	}
 	else
+	{
+	    if (args->sign
+	        && get_sign_commits (false, supported_request ("Signature")))
+	    {
+		if (!supported_request ("Signature"))
+		    error (1, 0, "Server doesn't support commit signatures.");
+
+		send_signature (Short_Repository (finfo->repository),
+				finfo->file,
+				vers && !strcmp (vers->options, "-kb"));
+	    }
 	    send_modified (filename, finfo->fullname, vers);
+	}
 
         if (args->backup_modified)
         {
@@ -4941,15 +5610,25 @@ send_max_dotdot (argc, argv)
 
 
 
-/* Send Repository, Modified and Entry.  argc and argv contain only
-  the files to operate on (or empty for everything), not options.
-  local is nonzero if we should not recurse (-l option).  flags &
-  SEND_BUILD_DIRS is nonzero if nonexistent directories should be
-  sent.  flags & SEND_FORCE is nonzero if we should send unmodified
-  files to the server as though they were modified.  flags &
-  SEND_NO_CONTENTS means that this command only needs to know
-  _whether_ a file is modified, not the contents.  Also sends Argument
-  lines for argc and argv, so should be called after options are sent.  */
+/*
+ * Send Repository, Modified and Entry.  Also sends Argument lines for argc
+ * and argv, so should be called after options are sent.  
+ *
+ * ARGUMENTS
+ *   argc	# of files to operate on (0 for everything).
+ *   argv	Paths to file to operate on.
+ *   local	nonzero if we should not recurse (-l option).
+ *   flags	FLAGS & SEND_BUILD_DIRS if nonexistent directories should be
+ *		sent.
+ *		FLAGS & SEND_FORCE if we should send unmodified files to the
+ *		server as though they were modified.
+ *		FLAGS & SEND_NO_CONTENTS means that this command only needs to
+ *		know _whether_ a file is modified, not the contents.
+ *   sign	Whether to send files signatures.
+ *
+ * RETURNS
+ *   Nothing.
+ */
 void
 send_files (int argc, char **argv, int local, int aflag, unsigned int flags)
 {
@@ -4967,6 +5646,7 @@ send_files (int argc, char **argv, int local, int aflag, unsigned int flags)
     args.force = flags & SEND_FORCE;
     args.no_contents = flags & SEND_NO_CONTENTS;
     args.backup_modified = flags & BACKUP_MODIFIED_FILES;
+    args.sign = flags & SEND_SIGNATURES;
     err = start_recursion
 	(send_fileproc, send_filesdoneproc, send_dirent_proc,
          send_dirleave_proc, &args, argc, argv, local, W_LOCAL, aflag,
@@ -5068,6 +5748,17 @@ client_process_import_file (char *message, char *vfile, char *vtag, int targc,
 	    error (0, 0,
 		   "warning: ignoring -d option due to server limitations");
     }
+
+    /* Send signature.  */
+    if (get_sign_commits (false, supported_request ("Signature")))
+    {
+	if (!supported_request ("Signature"))
+	    error (1, 0, "Server doesn't support commit signatures.");
+
+	send_signature (Short_Repository (repository), vfile,
+			vers.options && !strcmp (vers.options, "-kb"));
+    }
+
     send_modified (vfile, fullname, &vers);
     if (vers.options)
 	free (vers.options);

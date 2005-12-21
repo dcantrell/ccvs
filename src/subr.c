@@ -13,6 +13,13 @@
  * Various useful functions for the CVS support code.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "subr.h"
+
 #include "cvs.h"
 
 #include "canonicalize.h"
@@ -604,6 +611,31 @@ out:
 	error (0, errno, "cannot close %s", finfo->fullname);
     if (line != NULL)
 	free (line);
+    return result;
+}
+
+
+
+bool
+file_contains_keyword (const struct file_info *finfo)
+{
+    FILE *fp;
+    bool result;
+    struct stat st;
+    char *content;
+
+    fp = CVS_FOPEN (finfo->file, "r");
+    if (fp == NULL)
+	error (1, errno, "cannot open %s", finfo->fullname);
+    if (fstat (fileno (fp), &st))
+	error (1, errno, "cannot fstat `%s'", finfo->fullname);
+    content = xmalloc (st.st_size);
+    if (fread (content, sizeof *content, st.st_size, fp) < st.st_size)
+	error (1, errno, "Failed to read from `%s'", finfo->fullname);
+    result = contains_keyword (content, st.st_size);
+    if (fclose (fp) < 0)
+	error (0, errno, "cannot close %s", finfo->fullname);
+    free (content);
     return result;
 }
 
@@ -1689,15 +1721,23 @@ format_cmdline (const char *format, ...)
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 			    /* the *only* case possible without
 			     * SUPPORT_OLD_INFO_FORMAT_STRINGS
-			     * - !onearg */
-			    if (!inquotes)
+			     * - !onearg
+			     */
+			    /* Avoid adding an empty argument for NULL data.
+			     */
+			    if (!inquotes && b->data)
 			    {
 				doff = d - buf;
 				expand_string (&buf, &length, doff + 1);
 				d = buf + doff;
 				*d++ = '"';
 			    }
-			    outstr = cmdlineescape (inquotes ? inquotes : '"', b->data);
+			    if (b->data)
+				outstr = cmdlineescape (inquotes ? inquotes
+								 : '"',
+							b->data);
+			    else
+				outstr = xstrdup ("");
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 			} /* onearg */
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
@@ -1711,7 +1751,7 @@ format_cmdline (const char *format, ...)
 			{
 			    free(outstr);
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-			    if (!inquotes)
+			    if (!inquotes && b->data)
 			    {
 				doff = d - buf;
 				expand_string (&buf, &length, doff + 1);

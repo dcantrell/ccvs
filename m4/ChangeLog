@@ -1,3 +1,7 @@
+2005-10-27  Derek Price  <derek@ximbiot.com>
+
+	* base64.m4: New file from GNULIB.
+
 2005-12-07  Mark D. Baushke  <mdb@gnu.org>
 
 	* regex.m4, socklen.m4: Update from GNULIB.

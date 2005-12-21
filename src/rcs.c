@@ -14,9 +14,21 @@
  * manipulation
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "rcs.h"
+
+/* CVS headers.  */
 #include "cvs.h"
 #include "edit.h"
 #include "hardlink.h"
+#include "sign.h"
+
+/* GNULIB headers.  */
+#include "base64.h"
 
 /* These need to be source after cvs.h or HAVE_MMAP won't be set... */
 #ifdef HAVE_MMAP
@@ -425,6 +437,17 @@ l_error:
 
 
 
+/* Return a Node type for a newphrase buffer entry.  */
+static Ntype
+rcsbuf_get_node_type (struct rcsbuffer *rcsbuf)
+{
+    if (rcsbuf_valcmp (rcsbuf)) return RCSCMPFLD;
+    /* else */ if (rcsbuf->at_string) return RCSSTRING;
+    /* else */ return RCSFIELD;
+}
+
+
+
 /* Do the real work of parsing an RCS file.
 
    On error, die with a fatal error; if it returns at all it was successful.
@@ -576,9 +599,10 @@ RCS_reparsercsfile (RCSNode *rdata, FILE **pfp, struct rcsbuffer *rcsbufp)
 	if (rdata->other == NULL)
 	    rdata->other = getlist ();
 	kv = getnode ();
-	kv->type = rcsbuf_valcmp (&rcsbuf) ? RCSCMPFLD : RCSFIELD;
+        kv->type = rcsbuf_get_node_type (&rcsbuf);
 	kv->key = xstrdup (key);
-	kv->data = rcsbuf_valcopy (&rcsbuf, value, kv->type == RCSFIELD, NULL);
+	kv->data = rcsbuf_valcopy (&rcsbuf, value, kv->type != RCSCMPFLD,
+				   &kv->len);
 	if (addnode (rdata->other, kv) != 0)
 	{
 	    error (0, 0, "warning: duplicate key `%s' in RCS file `%s'",
@@ -780,10 +804,10 @@ RCS_fully_parse (RCSNode *rcs)
 		if (vnode->other == NULL)
 		    vnode->other = getlist ();
 		kv = getnode ();
-		kv->type = rcsbuf_valcmp (&rcsbuf) ? RCSCMPFLD : RCSFIELD;
+		kv->type = rcsbuf_get_node_type (&rcsbuf);
 		kv->key = xstrdup (key);
-		kv->data = rcsbuf_valcopy (&rcsbuf, value, kv->type == RCSFIELD,
-					   NULL);
+		kv->data = rcsbuf_valcopy (&rcsbuf, value,
+					   kv->type != RCSCMPFLD, NULL);
 		if (addnode (vnode->other, kv) != 0)
 		{
 		    error (0, 0,
@@ -3617,6 +3641,105 @@ escape_keyword_value (const char *value, int *free_value)
 
 
 
+/* Search for keywords in the *LEN bytes starting at *START.  Return the
+ * struct rcs_keyword describing the keyword found, or NULL when none is found.
+ * On return, *START will point to the first character after the `$'
+ * introductin the keyword, *END will point to the trailing `$', and *LEN
+ * will be decremented by the number of characters *START was incremented by.
+ *
+ * Not sure how to delcare *START and *END as const here.  I keep getting
+ * warnings.
+ */
+static const struct rcs_keyword *
+next_keyword (char **start, size_t *len, char **end)
+{
+    char *srch, *srch_next, *s = NULL;
+    size_t srch_len;
+    const struct rcs_keyword *keywords, *keyword = NULL;
+
+    if (!config->keywords) config->keywords = new_keywords ();
+    keywords = config->keywords;
+
+    srch = *start;
+    srch_len = *len;
+    TRACE (TRACE_DATA, "next_keyword: searching `%s'", srch);
+    while ((srch_next = memchr (srch, '$', srch_len)))
+    {
+	const char *send;
+	size_t slen;
+
+	srch_len -= (srch_next + 1) - srch;
+	srch = srch_next + 1;
+
+	/* Look for the first non alphabetic character after the '$'.  */
+	send = srch + srch_len;
+	for (s = srch; s < send; s++)
+	    if (!isalpha ((unsigned char) *s))
+		break;
+
+	/* If the first non alphabetic character is not '$' or ':',
+           then this is not an RCS keyword.  */
+	if (s == send || (*s != '$' && *s != ':'))
+	    continue;
+
+	/* See if this is one of the keywords.  */
+	slen = s - srch;
+	for (keyword = keywords; keyword->string; keyword++)
+	{
+	    if (keyword->expandit
+		&& keyword->len == slen
+		&& !strncmp (keyword->string, srch, slen))
+	    {
+		break;
+	    }
+	}
+	if (!keyword->string)
+	    continue;
+
+	/* If the keyword ends with a ':', then the old value consists
+           of the characters up to the next '$'.  If there is no '$'
+           before the end of the line, though, then this wasn't an RCS
+           keyword after all.  */
+
+	if (*s == ':')
+	{
+	    for (; s < send; s++)
+		if (*s == '$' || *s == '\n')
+		    break;
+	    if (s == send || *s != '$')
+		/* not resetting this the last time through this loop can cause
+		 * erroneous return codes.
+		 */
+		keyword = NULL;
+	}
+
+	if (keyword)
+	    break;
+    }
+
+    if (keyword && keyword->string)
+    {
+	*start = srch;
+	*end = s;
+	*len = srch_len;
+	TRACE (TRACE_DATA,
+	       "next_keyword: returning keyword `%s' and remainder `%s'",
+	       keyword->string, s);
+	return keyword;
+    }
+    /* else */ return NULL;
+}
+
+
+
+bool contains_keyword (char *buf, size_t len)
+{
+    char *s;
+    return !!next_keyword (&buf, &len, &s);
+}
+
+
+
 /* Expand RCS keywords in the memory buffer BUF of length LEN.  This
    applies to file RCS and version VERS.  If NAME is not NULL, and is
    not a numeric revision, then it is the symbolic tag used for the
@@ -3639,9 +3762,9 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
     struct expand_buffer *ebuf_last = NULL;
     size_t ebuf_len = 0;
     char *locker;
-    char *srch, *srch_next;
+    char *srch, *s;
     size_t srch_len;
-    const struct rcs_keyword *keywords;
+    const struct rcs_keyword *keywords, *keyword;
 
     if (!config /* For `cvs init', config may not be set.  */
 	||expand == KFLAG_O || expand == KFLAG_B)
@@ -3667,59 +3790,15 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
     /* RCS keywords look like $STRING$ or $STRING: VALUE$.  */
     srch = buf;
     srch_len = len;
-    while ((srch_next = memchr (srch, '$', srch_len)) != NULL)
+    while ((keyword = next_keyword (&srch, &srch_len, &s)))
     {
-	char *s, *send;
-	size_t slen;
-	const struct rcs_keyword *keyword;
 	char *value;
 	int free_value;
 	char *sub;
 	size_t sublen;
-
-	srch_len -= (srch_next + 1) - srch;
-	srch = srch_next + 1;
-
-	/* Look for the first non alphabetic character after the '$'.  */
-	send = srch + srch_len;
-	for (s = srch; s < send; s++)
-	    if (! isalpha ((unsigned char) *s))
-		break;
-
-	/* If the first non alphabetic character is not '$' or ':',
-           then this is not an RCS keyword.  */
-	if (s == send || (*s != '$' && *s != ':'))
-	    continue;
-
-	/* See if this is one of the keywords.  */
-	slen = s - srch;
-	for (keyword = keywords; keyword->string != NULL; keyword++)
-	{
-	    if (keyword->expandit
-		&& keyword->len == slen
-		&& strncmp (keyword->string, srch, slen) == 0)
-	    {
-		break;
-	    }
-	}
-	if (keyword->string == NULL)
-	    continue;
-
-	/* If the keyword ends with a ':', then the old value consists
-           of the characters up to the next '$'.  If there is no '$'
-           before the end of the line, though, then this wasn't an RCS
-           keyword after all.  */
-	if (*s == ':')
-	{
-	    for (; s < send; s++)
-		if (*s == '$' || *s == '\n')
-		    break;
-	    if (s == send || *s != '$')
-		continue;
-	}
-
+	
 	/* At this point we must replace the string from SRCH to S
-           with the expansion of the keyword KW.  */
+           with the expansion of the keyword KEYWORD.  */
 
 	/* Get the value to use.  */
 	free_value = 0;
@@ -4691,6 +4770,28 @@ workfile);
 
 
 
+const char *
+RCS_get_openpgp_signatures (RCSNode *rcs, const char *rev)
+{
+    RCSVers *vers;
+    Node *n;
+
+    n = findnode (rcs->versions, rev);
+    if (!n)
+	error (1, 0, "internal error: no revision information for %s", rev);
+    vers = n->data;
+
+    /* First we look for symlinks, which are simplest to handle. */
+    n = findnode (vers->other_delta, "openpgp-signatures");
+    if (!n)
+	return NULL;
+    /* else */
+
+    return n->data;
+}
+
+
+
 /* Find the delta currently locked by the user.  From the `ci' man page:
 
 	"If rev is omitted, ci tries to  derive  the  new  revision
@@ -5024,6 +5125,9 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
 #endif
     Node *np;
 
+    TRACE (TRACE_FUNCTION, "RCS_checkin (%s, %s, %s, %s, %s)",
+	   rcs->print_path, update_dir, workfile_in, message, rev);
+
     commitpt = NULL;
 
     if (rcs->flags & PARTIAL)
@@ -5101,6 +5205,23 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
     np->data = xstrdup(global_session_id);
     addnode (delta->other_delta, np);
 
+    /* Save the OpenPGP signature.  */
+    if (get_sign_commits (server_active, true)
+	|| have_sigfile (server_active, workfile))
+    {
+	char *rawsig;
+	size_t rawlen;
+
+	np = getnode();
+	np->type = RCSSTRING;
+	np->key = xstrdup ("openpgp-signatures");
+	rawsig = get_signature (server_active, "", workfile,
+				rcs->expand && STREQ (rcs->expand, "b"),
+				&rawlen);
+	np->len = base64_encode_alloc (rawsig, rawlen, (char **)&np->data);
+	free (rawsig);
+	addnode (delta->other_delta, np);
+    }
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
     /* If permissions should be preserved on this project, then
@@ -7738,6 +7859,7 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	    vnode->state = xstrdup (RCSDEAD);
 	    continue;
 	}
+
 	/* if we have a new revision number, we're done with this delta */
 	for (cp = key;
 	     (isdigit ((unsigned char) *cp) || *cp == '.') && *cp != '\0';
@@ -7754,9 +7876,10 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	if (vnode->other_delta == NULL)
 	    vnode->other_delta = getlist ();
 	kv = getnode ();
-	kv->type = rcsbuf_valcmp (rcsbuf) ? RCSCMPFLD : RCSFIELD;
+	kv->type = rcsbuf_get_node_type (rcsbuf);
 	kv->key = xstrdup (key);
-	kv->data = rcsbuf_valcopy (rcsbuf, value, kv->type == RCSFIELD, NULL);
+	kv->data = rcsbuf_valcopy (rcsbuf, value, kv->type != RCSCMPFLD,
+				   &kv->len);
 	if (addnode (vnode->other_delta, kv) != 0)
 	{
 	    /* Complaining about duplicate keys in newphrases seems
@@ -7839,9 +7962,10 @@ RCS_getdeltatext (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf)
 	    break;
 
 	p = getnode();
-	p->type = rcsbuf_valcmp (rcsbuf) ? RCSCMPFLD : RCSFIELD;
+	p->type = rcsbuf_get_node_type (rcsbuf);
 	p->key = xstrdup (key);
-	p->data = rcsbuf_valcopy (rcsbuf, value, p->type == RCSFIELD, NULL);
+	p->data = rcsbuf_valcopy (rcsbuf, value, p->type != RCSCMPFLD,
+				  &p->len);
 	if (addnode (d->other, p) < 0)
 	{
 	    error (0, 0, "warning: %s, delta %s: duplicate field `%s'",
@@ -7908,23 +8032,17 @@ putrcsfield_proc (Node *node, void *vfp)
     fprintf (fp, "\n%s\t", node->key);
     if (node->data != NULL)
     {
-	/* If the field's value contains evil characters,
+	/* If the field's value may contain evil characters,
 	   it must be stringified. */
-	/* FIXME: This does not quite get it right.  "7jk8f" is not a valid
-	   value for a value in a newpharse, according to doc/RCSFILES,
-	   because digits are not valid in an "id".  We might do OK by
-	   always writing strings (enclosed in @@).  Would be nice to
-	   explicitly mention this one way or another in doc/RCSFILES.
-	   A case where we are wrong in a much more clear-cut way is that
-	   we let through non-graphic characters such as whitespace and
-	   control characters.  */
-
-	if (node->type == RCSCMPFLD || strpbrk (node->data, "$,.:;@") == NULL)
-	    fputs (node->data, fp);
+	if (node->type != RCSSTRING)
+	    fwrite (node->data, 1, node->len ? node->len : strlen (node->data),
+		    fp);
 	else
 	{
 	    putc ('@', fp);
-	    expand_at_signs (node->data, (off_t) strlen (node->data), fp);
+	    expand_at_signs (node->data,
+			     node->len ? node->len : strlen (node->data),
+			     fp);
 	    putc ('@', fp);
 	}
     }

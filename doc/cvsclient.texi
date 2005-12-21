@@ -840,6 +840,12 @@ servers which can maintain timestamp and time of checkin separately).
 This request should affect the @code{import} request, and may optionally
 affect the @code{ci} request or other relevant requests if any.
 
+@item Signature \n
+Response expect: no.  Additional data: signature transmission.
+Send the server the OpenPGP signature for the next Modified request.
+The OpenPGP signature should be
+@url{http://www.ietf.org/rfc/rfc2440.txt, RFC 2440} compliant.
+
 @item Modified @var{filename} \n
 Response expected: no.  Additional data: mode, \n, file transmission.
 Send the server a copy of one locally modified file.  @var{filename} is
@@ -1866,6 +1872,64 @@ for standard error, the way that the @code{E} response does).
 
 @item ok \n
 The command completed successfully.
+
+@end table
+
+The following responses are all optional, but if one is implemented, then all
+should be.  Servers may make this assumption.
+
+@table @code
+@item Base-checkout @var{pathname} \n
+Additional data: @var{RCS keyword options}. \n, @var{previous revision}. \n
+@var{new revision}. \n @var{mode}, \n, file transmission.
+
+Checkout a base file preliminary to a @code{Base-copy} or @code{Base-merge}
+response.  If @var{previous revision} is not empty, it should specify the
+previous base revision of this file, as determined by the entry for the file
+sent to the server.  The file transmission will then be an RCS diff, as for the
+@code{Rcs-diff} response, but against the previous base file.
+
+@item Temp-checkout @var{pathname} \n
+This response is identical to @code{Base-checkout}, except the new file should
+be checked out as a temp file rather than stored with the other base files,
+to avoid overwriting earlier base checkouts.
+
+@item Base-copy @var{pathname} \n
+Additional data: @var{revision}. \n @var{flags} \n
+
+Copy a previously transmitted base file for @var{revision}, or the previously
+transmitted temp file when @var{revision} is not specified, over the
+file specified by @var{pathname}.  @var{flags} is two characters.  The
+first, for error checking purposes, is @samp{y} if @var{pathname} is expected
+to exist, @samp{n} if @var{pathname} is not expected to exist, and
+@samp{m} if @var{pathname} might exist.  The second character must be @samp{y}
+if the new @var{pathanme} should be writable and @samp{n}, otherwise.  When
+a temp file is used, it may be deleted and forgotten afterwards.
+
+@item Base-merge @var{pathname} \n
+Additional data: @var{rev1} \n @var{rev2} \n
+
+Merge the differences between @var{rev1} & @var{rev2} of @var{pathname} into
+@var{pathname}.  If one temp file was received via @var{Temp-checkout}, then
+use it in place of the base file for @var{rev1}.  If two temp files were
+received, then use the first in place of the base file for @var{rev1} and the
+second in place of the base file for @var{rev2}.  Temp files may be deleted
+and forgotten after the merge is complete.
+
+@item Base-entry @var{pathname} \n
+Additional data: New Entries line, \n
+
+Use new entry for @var{pathname}.  Any base files for revisions of
+@var{pathname} other than the one specified in the new entries line may now be
+deleted.
+
+@item Base-merged @var{pathname} \n
+Additional data: New Entries line, \n
+
+Use new entry for @var{pathname}.  Any base files for revisions of
+@var{pathname} other than the one specified in the new entries line may now be
+deleted.
+
 @end table
 
 @node Text tags
