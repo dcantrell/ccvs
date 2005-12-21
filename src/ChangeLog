@@ -1,5 +1,7 @@
 2005-12-20  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (config3): Accept `.' in paths.
+
 	* admin.c (admin): Don't pass the global optind to getopt_long as
 	longindex - it causes infinite loops on some systems.
 
