@@ -1,3 +1,21 @@
+2005-11-10  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Note progress.
+
+2005-11-07  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Keep up to date.  Mark EOL delay unneeded due to GPG
+	--textmode option.
+
+2005-10-28  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Verify that `$GPG --version' works.  Print a warning
+	when it doesn't.
+
+2005-10-27  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Update status.
+
 2005-12-09  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note misc doc & bug fixes.
@@ -35,6 +53,16 @@
 
 	* KEYS: New file, suggested by Antoine Lexy-Lambert <antoine@gmx.de>.
 	* README: Mention KEYS file.
+
+2005-10-16  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Define DEFAULT_SIGN_TEMPLATE & DEFAULT_SIGN_TEXTMODE
+	here.  Don't define GPG_PROGRAM.
+
+2005-10-11  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: New file.
+	* configure.in: Search for gpg.
 
 2005-10-06  Derek Price  <derek@ximbiot.com>
 

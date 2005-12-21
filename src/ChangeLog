@@ -1,3 +1,524 @@
+2005-12-13  Derek Price  <derek@ximbiot.com>
+
+	* base.c (ibase_copy, base_merge): Remove signature files when using
+	temp files or SUPPRESS_BASES.
+
+	Send signature files to client with base files.
+	* base.c (base_checkout): Comment where the signature verification
+	will take place.
+	(ibase_copy): Suppress warning.
+	(base_remove): Add header comment.  Remove signature files with bases.
+	* client.c: Include base64.h.
+	(handle_openpgp_signatures): New function.
+	(client_base_checkout): Remove ugly comment.  Save stored signatures to
+	a file.
+	(responses): Add OpenPGP-signatures.
+	* rcs.c (RCS_get_openpgp_signatures): New function.
+	* rcs.h: Add proto for same.
+	* sanity.sh (basica): Force remove directory when done.
+	* server.c: Reorder headers for consistency.
+	(server_send_signatures): New function.
+	(ibase_server_checkout): Use new function to send signatures.
+
+2005-12-12  Derek Price  <derek@ximbiot.com>
+
+	Simplify protocol slightly.
+	* add.c (add), update.c (join_file): Use temp files rather than base
+	files for resurrection and additions via join.
+	* base.c (temp_checkout): Export function.
+	(ibase_copy): Factor from...
+	(base_copy): ...here.
+	(temp_copy): New function.
+	* base.h (temp_checkout, temp_copy): New functions.
+	* client.c (client_base_copy): Work with temp files when necessary.
+	
+2005-12-10  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Minor corrections for nobase testing.
+
+2005-12-09  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Minor corrections for nobase testing.
+	(modes): Unset CVSUMASK when done.
+
+2005-12-08  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (maintainercheck-local, nobaseremotecheck,
+	nobaselocalcheck, nobaseproxycheck): New targets.
+	(check-local): Add nobaseremotecheck.
+	* base.c (base_copy, base_merge): Remove files when bases are
+	suppressed.
+	* checkin.c (Checkin): Don't create bases when suppressed.
+	* client.c (handle_base_checkout, handle_temp_checkout,
+	handle_base_copy, handle_base_merge, handle_base_entry,
+	handle_base_merged): Abort if these responses are received when the
+	client has requested the server not send them.
+	(client_base_copy): Force removal of temp files in noexec mode.
+	(start_server): Avoid sending Base-* and Temp-checkout as part of
+	valid_responses when the user has suppressed these.
+	* cvs.h (NOBASES_ENV): New macro.
+	(suppress_bases): New global.
+	* main.c (bases): Ditto.
+	(opt_usage, short_options, main): Add & process -B.
+	* update.c (join_file): Prefer Register to the potentially ambiguous
+	RegisterMerge when the merge actually only added a file.  Use
+	RCS_cmp_file to test if the file == its base when a base file is not
+	available.
+
+	* sanity.sh: Add processing for -B and -q options.
+	(unedit-without-baserev): Remove accidental commit.
+	
+	* base.c (base_checkout): Don't checkout base files when NOEXEC.
+	(temp_checkout): New function.
+	(base_copy): This function can't rely on the client to validate changes
+	in local mode.  Avoid copying when NOEXEC.
+	(base_merge): Use temp files when joining and in noexec mode to avoid
+	overwriting base files.  Suppress merging messages when REALLY_QUIET.
+	(translate_exists, validate_change): Move from...
+	* client.c: ...here.
+	(handle_redirect): Avoid double-free.
+	(update_entries): Move error handling from validate_change.  Sync
+	messages between local & client/server.
+	(client_base_checkout): Handle temp checkouts.
+	(handle_temp_checkout): New function.
+	(client_base_merge): Move error handling from validate_change.  Use
+	temp checkouts.  Sync messages.  Fix bugs in xcmp tests.
+	* base.h (update_existing, translate_exists, validate_change): Move
+	structs and protos from...
+	* client.h: ...here.
+	* checkin.c (Checkin): Update base file in local mode.
+	* difflib.h (merge), difflib.c (merge): Reorder args for clarity.
+	* server.c (server_updated): Expand traces.
+	(iserver_base_checkout): New function factored from...
+	(server_base_checkout): ...here.
+	(server_temp_checkout): New function.
+	* server.h (server_temp_checkout): New proto.
+	* update.c (checkout_file): Copy backup for error checks.
+	(RegisterMerge): Add traces.
+	(merge_file): Update base files when done.
+	(join_file): Sync messages.
+
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.  Other minor corrections.
+	(mcopy): Disable this test.
+
+2005-12-06  Derek Price  <derek@ximbiot.com>
+
+	* client.c (client_base_checkout): Make base checkouts work when in
+	noexec mode.
+	* server.c (server_base_checkout): Unlink temp file in noexec mode.
+
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.  Other minor corrections.
+
+2005-12-05  Derek Price  <derek@ximbiot.com>
+
+	* client.c (update_entries): Create timestamp when LAST_MERGE_CONFLICT.
+
+	* server.c (server_updated): Don't dereference NULL.  Don't send diffs
+	when revisions are identical.
+
+	* cvs.h (Register): Move proto to...
+	* entries.h: ...here.  Include hash.h.
+	* entries.c (Entnode_Destroy): Add traces.
+	* hash.c: Verify interface.
+	* hash.h: Include <stddef.h> for size_t.
+	* update.c (update_fileproc): Fix vers_ts->entdata after a merge.
+
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.  Other minor corrections.
+
+2005-12-02  Derek Price  <derek@ximbiot.com>
+
+	* base.c (base_remove), rcs,c (RCS_checkin), server.c (server_updated):
+	 Add traces.
+	* client.c (update_entries): Don't assume UPDATE_ENTRIES_CHECKIN
+	actually means this was a checkin.
+	* server.c (server_base_checkout): Name (tag) changes could also create
+	a diff.
+
+	* checkin.c (Checkin): Actually pass the previous options.
+
+	* server.c (server_base_checkout), server.h: Accept new previous tag
+	and options arguments and use them when checking out the previous
+	revision to build a diff.
+	* base.c (base_checkout, base_merge): Accept new previous tag and
+	previous options arguments and pass them through to
+	server_base_checkout.
+	* add.c, base.c, base.h, checkin.c, update.c: Update all references.
+
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.  Other minor corrections.
+
+2005-12-01  Derek Price  <derek@ximbiot.com>
+
+	* client.c (client_base_merge): Print `Merging differences' message
+	only when !REALLY_QUIET.
+	(handle_base_merged): New function.
+	(responses): Add Base-merged.
+	* server.c (server_updated): Send Base-merged for merges.
+	* update.c (join_file): Handle replacing files and binaries correctly.
+
+	* client.c (base_merge_rev1, base_merge_rev2, last_merge_no_change):
+	New globals.
+	(update_entries): Delete merge temp files when not needed.  Don't
+	ignore merges (only joins), since rev changes.
+	(merge): Skip deleting temp files since this function cannot know which
+	is needed.
+	* edit.c (edit_file): Deal with read-only edit base files.
+
+	* filesubr.c (force_xchmod, ixchmod, force_copy_file): New functions.
+	(copy_file, xchmod): Wrap the force_* functions.
+	* cvs.h (xchmod): Move proto...
+	* filesubr.h (xchmod): ...here.
+	(force_xchmod, force_copy_file): New protos.
+	* client.c (client_base_merge), difflib.c (merge): Use new force_* API
+	rather than saving NOEXEC.
+
+	* base.c (base_walk): Invert fopen error detection.
+
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.  Other minor corrections.
+
+2005-11-30  Derek Price  <derek@ximbiot.com>
+
+	* client.c (discard_file): Move code which discards stored metadata...
+	(validate_change): ...here.
+
+	* update.c (join_file): Don't preserve keyword modes when adding files
+	via join.
+
+	* commit.c (checkaddfile): Provide more information when changing
+	keyword expansion mode.
+
+	* client.c (update_entries): Honor noexec.
+	(client_base_merge): Ignore noexec when working with temp files.
+	* difflib.c (merge): Ditto.
+	* filesubr.c (unlink_file): Expand header comment block.
+	* server.c (server_base_checkout): Keep temp files in tmp.  Ignore
+	noexec when removing temp files.
+
+	* client.c (update_entries): Avoid removing base files when they are
+	still needed.
+
+	* update.c (join_file): Avoid dereferencing NULL.
+
+	* client.c (update_entries): Don't output update status lines when
+	REALLY_QUIET.
+
+	* update.c (update, do_update): Set bases separately from -u.
+	(merge_file, join_file): Consistently output "already contains the
+	differences" messages when !QUIET.
+
+	* server.c (server_base_checkout): Accept poptions argument & resend
+	Base files when options have changed.
+	* base.c, server.h: Change all references.
+	* base.c (base_checkout): Accept poptions argument.
+	* add.c, base.c, base.h, checkin.c, update.c: Change all references.
+	* client.c (call_in_directory): Remove leading "./" from short_pathname
+	when present.
+	(update_entries): Output "C" & "M" lines when needed.
+	(client_base_checkout): Allow Base files to be replaced.
+	(client_base_merge): Try to pretend merges never happened when they
+	have no effect.
+
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.  Other minor corrections.
+
+	* difflib.c (merge): Add label argument.
+	* base.c, client.c, difflib.h: Update all references.
+	* client.c (update_entries, client_base_copy): Handle existance
+	errors.
+	* update.c (checkout_file): Set correct existance flags.
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.
+
+2005-11-29  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Compensate for new read-only Base files by forcing some
+	directory removals.  Compensate for new output.
+
+	* Makefile.am (cvs_SOURCES): Add difflib.[ch].
+	* difflib.c, difflib.h: New files with content from...
+	* rcscmds.c: ...here.
+	* base.c (base_checkout): Move writable processing...
+	(base_copy): ...here.
+	(base_merge): New function.
+	* add.c, base.h, checkin.c, update.c: Update all references.
+	* client.c (last_merge, last_merge_conflict): Keep track of whether
+	merges for update_entries.
+	(update_entries): Use merge result.
+	(client_base_copy): Handle new flags.
+	(client_base_merge, handle_base_merge): New functions.
+	(responses): Add "Base-merge" response.
+	* server.h: Move some protos in from...
+	* cvs.h: ...here and move some run.c stuff...
+	* run.h: ...here.
+	* filesubr.c: Reorg headers.
+	* filesubr.h: Give standalone API.  Move copy_file proto from cvs.h.
+	* server.c (server_base_checkout, server_base_copy): Push data to
+	client when done.
+	(server_base_merge): New function.
+	(server_updated): Assume base handling.
+	* update.c (RegisterMerge, merge_file, join_file): Offload merging to
+	client.
+	* add.c, checkin.c, commit.c, update.c: Update all references.
+	* sanity.sh: Misc accomodations.
+
+2005-11-28  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (errmsg4): Protect keyword.
+
+2005-11-22  Derek Price  <derek@ximbiot.com>
+
+	* base.c (base_checkout): Add trace.  Avoid using bases with export.
+	(base_copy): Likewise.  Replace read-only files.
+	(base_remove): Deal with leading '-' in revision number.
+	* checkin.c (Checkin): Copy correct base revision when keywords are
+	present.
+	* checkout.c (checkout_proc): Bury sacrificial chicken.
+	* classify.c (Classify_File): Add trace.
+	* client.c (update_entries): Don't remove base files when noexec.
+	Print UPDATED_FNAME for base updates.
+	(client_base_checkout): Make CVS/BAse dir when needed.
+	(client_base_copy): Add trace.
+	* entries.c (Scratch_Entry): Remove base files.
+	(Register): Make trace first call.
+	* server.c (do_cvs_command): Set protocol buf to NULL after closing.
+	(server_updated): Avoid using base commands with export.
+	(server_cleanup): Set error_use_protocol to 0 while setting buf_to_net
+	to NULL.
+	(server_base_checkout): Expand header block comment.  Add trace.  Avoid
+	sending diffs when PREV is 0.  Compute diff in correct order.  Check
+	that diff will really be sent before telling the client that it will
+	be.
+	(cvs_trace): Use cvs_outerr instead of fprintf.
+	* update.c (update_fileproc): Add trace.
+	(checkout_file): Prefer bool to int.  Add trace.
+	* vers_ts.c (Version_TS): Add traces.
+	* sanity.sh (basicb): Remove old debugging cruft.
+	(basic2): Handle s/P/U/.
+	
+	* base.c (base_checkout): Assume this function is not called from the
+	client.
+	(base_remove): New function.
+	* base.h (base_remove): New proto.
+	* checkin.c (Checkin): Use base files when possible.
+	* client.c (validate_change): Expand header comment block.
+	(update_entries): Create base files on checkin.  Remove old base files
+	when creating new ones.
+	(client_base_checkout): Handle diffs.
+	* server.c (server_use_bases): New function.
+	(server_base_checkout): Send diffs when possible.
+	* server.h (server_base_checkout): Update proto.
+	* update.c (checkout_to_buffer): Remove obsolete function.
+	(bases): New global.
+	(update): Set BASES.
+	(update_fileproc): Use base functions for T_NEED_PATCH && T_CHECKOUT.
+	(checkout_file): Expand header comment block.  Use bases when possible.
+	
+2005-11-18  Derek Price  <derek@ximbiot.com>
+
+	* add.c (add): Begin using new base functions.
+	* base.c (base_checkout, base_copy): New functions.
+	* base.h: Ditto for the protos.
+	* client.c (enum update_existing): Extract decl from...
+	(struct update_entries_data): ...this struct.  Add UPDATE_ENTRIES_BASE.
+	(read_file_from_server): Drop filename arg.
+	(validate_change): New function factored from...
+	(update_entries): ...here.  Add support for UPDATE_ENTRIES_BASE.
+	(client_base_checkout, handle_base_checkout, translates_exists,
+	client_base_copy, handle_base_copy, handle_base_entry): New functions.
+	(responses): Add Base-checkout, Base-copy, & Base-entry.
+	* server.c (server_base_checkout): Send data for non-diffs.
+	(server_base_copy): New function.
+	(server_updated): Send Base-entry when possible.  Accept temporary
+	USE_BASE arg.
+	* add.c, checkin.c, commit.c, update.c, server.h: Update all callers.
+
+2005-11-17  Derek Price  <derek@ximbiot.com>
+
+	* client.c (read_file_from_sever, discard_file): New functions...
+	(update_entries): ...factored from here.
+	* server.h (gunzip_to_mem): New function proto.
+	* zlib.c (gunzip_to_mem): New function factored from...
+	(gunzip_and_write): ...here.
+
+2005-11-15  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (struct entnode, Entnode, struct vers_ts, Vers_TS): Move to...
+	* entries.h: ...this new file and...
+	* vers_ts.h: ...this new file.
+	* entries.c: Include config.h directly.  Validate API.
+	* server.c: Ditto.
+	(server_send_checksum, output_mode_string, server_send_buffer_as_file,
+	server_send_file): New functions factored from...
+	(server_updated): ...here.
+	(server_base_checkout): New stub.
+	* server.h: Include root.h & vers_ts.h in order to add...
+	(server_base_checkout): This new proto.
+
+2005-11-09  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (cvs_SOURCES): Add base.c & base.h.
+	* cvs.h (base_get, base_register, base_deregister): Move protos to...
+	* base.h: ...this new file.
+	* entries.c (base_get, base_register, base_deregister): Move to...
+	* base.c: ...this new file.  Split update_dir & file name out of finfo
+	arg into two args.
+	* edit.c: Update all callers.
+	(edit_file): Try to copy upcoming update-base file as edit
+	base before falling back to the 1.11 way.
+
+2005-11-07  Derek Price  <derek@ximbiot.com>
+	
+	* sanity.sh (errmsg4): New test for keyword-when-signed warning.
+
+2005-10-31  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (contains_keyword): Convert return type to bool.
+
+2005-10-29  Derek Price  <derek@ximbiot.com>
+
+	* commit.c (check_fileproc): Warn when a signed file contains keywords.
+	* rcs.c (next_keyword): New function factored from...
+	(expand_keyword): ...here.
+	(contains_keyword): New function.
+	* rcs.h (contains_keyword): Prototype new function.
+	* subr.c (file_contains_keyword): New function.
+	* subr.h (file_contains_keyword): Proto for same.
+	* sanity.sh: Compensate for the new warning.
+
+2005-10-28  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Print a warning when GPG is not being used.
+
+	* sanity.sh (OPENPGP_PHRASE): Only add the trailing EOL when there is
+	content.
+
+2005-10-27  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (RCS_checkin): Base64 encode GPG signatures to avoid having
+	tools like grep and diff decide signed files are binary.
+	* sanity.sh: Compensate for new signatures in RCS archive content.
+
+2005-10-19  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: $GPG == `gpg' now when no gpg was found.
+
+	* sanity.sh: Cause GPG to create its option file with a noop command.
+	Allow secret key import during setup.
+
+2005-10-18  Derek Price  <derek@ximbiot.com>
+
+	* sign.c: #include "wait.h" from GNULIB.
+
+	* filesubr.h: #include <sys/types.h> for ssize_t.
+	* filesubr.c (islink): Add FIXME.
+
+2005-10-16  Derek Price  <derek@ximbiot.com>
+
+	* sign.c (sign_commits): Base defaults on new HAVE_OPENPGP macro rather
+	than obsolete GPG_PROGRAM.
+
+	* client.c (send_signature, send_fileproc, client_process_import_file):
+	Use new APIs.
+	* cvs.h: Move function prototypes into...
+	* filesubr.h: ...this new header.
+	* hash.c (nodetypestring): Add RCSSTRING.
+	* hash.h (Ntype): Add RCSSTRING.
+	(Node): Add data len field.
+	* rcs.c: Verify interface.
+	(rcsbuf_get_node_type): New function.
+	(RCS_reparsercsfile, RCS_fully_parse, getdelta, RCS_getdeltatext):
+	Handle new RCSSTRING newphrase node type.
+	(RCS_checkin): Generate and save OpenPGP signature when needed.
+	(putrcsfield_proc): Remove FIXME.  Handle new Node type.  Use Node len
+	when available.
+	* server.c (serve_modified): Get sig file name via new API.
+	* sign.c (get_sign_commits): Return false in serve_mode.
+	(get_sigfile_name, have_sigfile, read_signature): New functions.
+	(gen_signature): New function with content originally from...
+	(get_signature): ...this function, which now also handles loading from
+	a sigfile when required.
+	* sign.h (get_sign_commits, get_signature): Add server_active arg.
+	(gen_signature, have_sigfile): New function protos.
+
+	* sign.h (DEFAULT_SIGN_PROGRAM, DEFAULT_SIGN_TEXTMODE): Move to
+	configure.in.
+
+	* cvs.h (BAKPREFIX): Move to...
+	* subr.h (BAKPREFIX): ...this more appropriate location.
+
+	* sanity.sh (crerepos): Remove CVS_CLIENT_LOG set while debugging.
+
+2005-10-14  Derek Price  <derek@ximbiot.com>
+
+	* sign.h: Protos for new signature API.
+	* sign.c (init_signatures, set_sign_commits, set_sign_template,
+	set_sign_textmode, add_sign_arg, get_sign_commits, get_signature): New
+	signing API.
+	(sign_args_list_to_args_proc, get_signature): Move from...
+	* client.c (sign_args_list_to_args_proc): ...here...
+	(send_signature): ...and here.
+	(send_files): Only accept SEND_SIGNATURES flag to differentiate commit
+	from other callers.
+	(send_signature): Use new signing interface.
+	(client_send_import_file): Send signatures.
+	* client.h (send_files): Update proto.
+	* add.c, admin.c, annotate.c, client.c, diff.c, edit.c, log.c, ls.c,
+	remove.c, status.c, tag.c, update.c, watch.c: Change all callers.
+	* commit.c (commit): Move sign arg handling to...
+	* main.c (main): ...here.
+	* server.c (serve_modified): Save signatures to a temp file.
+	(serve_signature): Send error message on receipt of multiple sigs.
+
+	* rcs.c: Test interface.
+	* rcs.h: Protect against double-inclusion.
+	(struct file_info): Move from...
+	* cvs.h: ...here.  #include "run.h".
+	* subr.c, subr.h: Include "rcs.h" to imporve interface.
+	* run.c: #include "run.h".
+	* run.h: New file.
+
+	* gpg.c: Remove unsightly comments.
+
+	* Makefile.am (cvs_SOURCES): Add gpg.c & gpg.h.
+	* gpg.c, gpg.h: New files.
+	* server.c (sig_buf): New global.
+	(serve_signature): Extract signature correctly & store it.
+	* buffer.c, root.c: #include buffer.h first, to test interface.
+	* buffer.c (buf_read_data): Handle input from nonio (memory) buffers.
+	* buffer.h, root.h: Protect against double inclusion.  #include enough
+	headers to make interface standalone.
+
+2005-10-11  Derek Price  <derek@ximbiot.com>
+
+	* commit.c (commit_usage), main.c (opt_usage): Describe OpenPGP related
+	options.
+
+	* Makefile.am (cvs_SOURCES): Add sign.c & sign.h.
+	* client.c (sign_args_list_to_args_proc, send_signature): New
+	functions.
+	(struct send_data): Add sign mode and template.
+	(send_fileproc): Send signature.
+	(send_files): Accept sign mode and sign template.
+	* client.h (send_files): Update proto.
+	* add.c, admin.c, annotate.c, client.c, diff.c, edit.c, log.c, ls.c,
+	remove.c, status.c, tag.c, update.c, watch.c: Change all callers.
+	* commit.c (commit): Accept and handle new sign options.
+	* hash.h: Avoid double-inclusion.
+	* main.c (main): Handle new sign options.
+	* root.c (new_cvsroot_t, free_cvsroot_t, parse_cvsroot_t), sign.h
+	(cvsroot_t): Handle new sign method options.
+	* server.c (serve_signature): New stub function.
+	(requests): Add `Signature' request.
+	* sign.c, sign.h: New files.
+	* subr.c (format_cmdline): Handle NULL data.
+	* sanity.config.sh: Set $GPG.
+	* sanity.sh: Set up gpg keys for tests when $GPG is set.
+	(writeproxy*): Compensate for new server requests.
+
 2005-12-07  Derek Price  <derek@ximbiot.com>
 
 	* client.c (handle_redirect): Give stack control of string key.

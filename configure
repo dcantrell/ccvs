@@ -327,7 +327,7 @@ ac_includes_default="\
 
 gl_header_list=
 gl_func_list=
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar ac_prefix_program MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CPP EGREP RANLIB ac_ct_RANLIB LN_S PERL CSH MKTEMP SENDMAIL PR ROFF PS2PDF TEXI2DVI MAKE_TARGETS_IN_VPATH_TRUE MAKE_TARGETS_IN_VPATH_FALSE LIBOBJS GL_COND_LIBTOOL_TRUE GL_COND_LIBTOOL_FALSE ALLOCA ALLOCA_H STDBOOL_H HAVE__BOOL FNMATCH_H YACC YFLAGS LIB_CLOCK_GETTIME GETOPT_H GLOB_H LIB_NANOSLEEP HAVE_LONG_64BIT HAVE_LONG_LONG_64BIT STDINT_H EOVERFLOW MKINSTALLDIRS USE_NLS MSGFMT GMSGFMT XGETTEXT MSGMERGE build build_cpu build_vendor build_os host host_cpu host_vendor host_os INTL_MACOSX_LIBS LIBICONV LTLIBICONV INTLLIBS LIBINTL LTLIBINTL POSUB cvs_client_objects KRB4 ZLIB_SUBDIRS ZLIB_CPPFLAGS ZLIB_LIBS with_default_rsh RSH_DFLT EDITOR LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar ac_prefix_program MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CPP EGREP RANLIB ac_ct_RANLIB LN_S PERL CSH MKTEMP SENDMAIL PR GPG ROFF PS2PDF TEXI2DVI MAKE_TARGETS_IN_VPATH_TRUE MAKE_TARGETS_IN_VPATH_FALSE LIBOBJS GL_COND_LIBTOOL_TRUE GL_COND_LIBTOOL_FALSE ALLOCA ALLOCA_H STDBOOL_H HAVE__BOOL FNMATCH_H YACC YFLAGS LIB_CLOCK_GETTIME GETOPT_H GLOB_H LIB_NANOSLEEP HAVE_LONG_64BIT HAVE_LONG_LONG_64BIT STDINT_H EOVERFLOW MKINSTALLDIRS USE_NLS MSGFMT GMSGFMT XGETTEXT MSGMERGE build build_cpu build_vendor build_os host host_cpu host_vendor host_os INTL_MACOSX_LIBS LIBICONV LTLIBICONV INTLLIBS LIBINTL LTLIBINTL POSUB cvs_client_objects KRB4 ZLIB_SUBDIRS ZLIB_CPPFLAGS ZLIB_LIBS with_default_rsh RSH_DFLT EDITOR LTLIBOBJS'
 ac_subst_files='MKTEMP_SH_FUNCTION'
 
 # Initialize some variables set by options.
@@ -5611,6 +5611,74 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 fi
+# For src/gpg.c
+# Extract the first word of "gpg", so it can be a program name with args.
+set dummy gpg; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_GPG+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $GPG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_GPG="$GPG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_GPG="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+  test -z "$ac_cv_path_GPG" && ac_cv_path_GPG="gpg"
+  ;;
+esac
+fi
+GPG=$ac_cv_path_GPG
+
+if test -n "$GPG"; then
+  echo "$as_me:$LINENO: result: $GPG" >&5
+echo "${ECHO_T}$GPG" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+if test x"$GPG" != xgpg; then
+  # The GPG on at least one of my FreeBSD 4.11 test systems fails to run
+  # because libintl is missing.
+  if $GPG --version >/dev/null 2>&1; then :; else
+    # GPG is broken.  Pretend it isn't there.
+    { echo "$as_me:$LINENO: WARNING: GPG is installed as \`$GPG', but is broken.  Ignoring it." >&5
+echo "$as_me: WARNING: GPG is installed as \`$GPG', but is broken.  Ignoring it." >&2;}
+    GPG=gpg
+  fi
+fi
+if test x"$GPG" != xgpg; then
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_OPENPGP 1
+_ACEOF
+
+fi
+
+cat >>confdefs.h <<_ACEOF
+#define DEFAULT_SIGN_TEMPLATE "$GPG --detach-sign --output - %t %a -- %s"
+_ACEOF
+
+
+cat >>confdefs.h <<\_ACEOF
+#define DEFAULT_SIGN_TEXTMODE "--textmode"
+_ACEOF
+
 
 missing_dir=`cd $ac_aux_dir && pwd`
 glocs="$PATH:/usr/local/bin:/usr/contrib/bin:/usr/gnu/bin:/local/bin:/local/gnu/bin:/gnu/bin"
@@ -8617,6 +8685,77 @@ _ACEOF
 
   fi
 
+echo "$as_me:$LINENO: checking for inline" >&5
+echo $ECHO_N "checking for inline... $ECHO_C" >&6
+if test "${ac_cv_c_inline+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_cv_c_inline=no
+for ac_kw in inline __inline__ __inline; do
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#ifndef __cplusplus
+typedef int foo_t;
+static $ac_kw foo_t static_foo () {return 0; }
+$ac_kw foo_t foo () {return 0; }
+#endif
+
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_c_inline=$ac_kw; break
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+done
+
+fi
+echo "$as_me:$LINENO: result: $ac_cv_c_inline" >&5
+echo "${ECHO_T}$ac_cv_c_inline" >&6
+
+
+case $ac_cv_c_inline in
+  inline | yes) ;;
+  *)
+    case $ac_cv_c_inline in
+      no) ac_val=;;
+      *) ac_val=$ac_cv_c_inline;;
+    esac
+    cat >>confdefs.h <<_ACEOF
+#ifndef __cplusplus
+#define inline $ac_val
+#endif
+_ACEOF
+    ;;
+esac
+
 echo "$as_me:$LINENO: checking for C/C++ restrict keyword" >&5
 echo $ECHO_N "checking for C/C++ restrict keyword... $ECHO_C" >&6
 if test "${gl_cv_c_restrict+set}" = set; then
@@ -8809,77 +8948,6 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
   fi
-
-echo "$as_me:$LINENO: checking for inline" >&5
-echo $ECHO_N "checking for inline... $ECHO_C" >&6
-if test "${ac_cv_c_inline+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_cv_c_inline=no
-for ac_kw in inline __inline__ __inline; do
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#ifndef __cplusplus
-typedef int foo_t;
-static $ac_kw foo_t static_foo () {return 0; }
-$ac_kw foo_t foo () {return 0; }
-#endif
-
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_c_inline=$ac_kw; break
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-fi
-rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
-done
-
-fi
-echo "$as_me:$LINENO: result: $ac_cv_c_inline" >&5
-echo "${ECHO_T}$ac_cv_c_inline" >&6
-
-
-case $ac_cv_c_inline in
-  inline | yes) ;;
-  *)
-    case $ac_cv_c_inline in
-      no) ac_val=;;
-      *) ac_val=$ac_cv_c_inline;;
-    esac
-    cat >>confdefs.h <<_ACEOF
-#ifndef __cplusplus
-#define inline $ac_val
-#endif
-_ACEOF
-    ;;
-esac
 
 
 
@@ -16689,6 +16757,12 @@ done
   :
 
   fi
+
+
+
+
+
+
 
 
 
@@ -43687,6 +43761,7 @@ s,@CSH@,$CSH,;t t
 s,@MKTEMP@,$MKTEMP,;t t
 s,@SENDMAIL@,$SENDMAIL,;t t
 s,@PR@,$PR,;t t
+s,@GPG@,$GPG,;t t
 s,@ROFF@,$ROFF,;t t
 s,@PS2PDF@,$PS2PDF,;t t
 s,@TEXI2DVI@,$TEXI2DVI,;t t

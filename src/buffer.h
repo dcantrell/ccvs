@@ -14,6 +14,16 @@
 
 /* Declarations concerning the buffer data structure.  */
 
+#ifndef BUFFER_H
+#define BUFFER_H
+
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <sys/types.h>
+
+#include "root.h"
+
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 
 # include "getpagesize.h"
@@ -194,3 +204,5 @@ fd_buffer_initialize (int fd, pid_t child_pid, cvsroot_t *root, bool input,
 #   define blocking_error(err) ((err) == EAGAIN)
 # endif
 #endif /* defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT) */
+
+#endif /* BUFFER_H */

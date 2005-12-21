@@ -1,3 +1,23 @@
+2005-12-12  Derek Price  <derek@ximbiot.com>
+
+	* cvsclient.texi (Responses): Add new Base-* & Temp-checkout responses.
+
+2005-10-16  Derek Price  <derek@ximbiot.com>
+
+	* RCSFILES: Note new openpgp-signatures newphrase.
+
+2005-10-15  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (commit options): Move OpenPGP stuff...
+	(Global options): ...here.  Add index entries.
+	(The connection method): Add index entries.
+
+2005-10-11  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (The connection method, commit options): Describe new
+	OpenPGP signature related options.
+	* cvsclient.texi (Requests): Describe Signature request.
+
 2005-12-09  Derek Price  <derek@ximbiot.com>
 
 	[patch #4634]

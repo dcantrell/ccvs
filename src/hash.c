@@ -12,6 +12,14 @@
  * Polk's hash list manager.  So cool.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "hash.h"
+
+/* CVS */
 #include "cvs.h"
 
 /* Global caches.  The idea is that we maintain a linked list of "free"d
@@ -523,6 +531,7 @@ nodetypestring (Ntype type)
     case VARIABLE:	return "VARIABLE";
     case RCSFIELD:	return "RCSFIELD";
     case RCSCMPFLD:	return "RCSCMPFLD";
+    case RCSSTRING:	return "RCSSTRING";
     }
 
     return "<trash>";

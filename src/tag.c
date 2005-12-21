@@ -240,9 +240,10 @@ cvstag (int argc, char **argv)
 	{
 	    send_files (argc, argv, local, 0,
 
-		    /* I think the -c case is like "cvs status", in
-		       which we really better be correct rather than
-		       being fast; it is just too confusing otherwise.  */
+			/* I think the -c case is like "cvs status", in
+			 * which we really better be correct rather than
+			 * being fast; it is just too confusing otherwise.
+			 */
 			check_uptodate ? 0 : SEND_NO_CONTENTS);
 	    send_file_names (argc, argv, SEND_EXPAND_WILD);
 	    send_to_server ("tag\012", 0);

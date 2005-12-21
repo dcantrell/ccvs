@@ -233,12 +233,6 @@ char *strerror (int);
 #define	CVSLCKSLEEP	30		/* wait 30 seconds before retrying */
 #define	CVSBRANCH	"1.1.1"		/* RCS branch used for vendor srcs */
 
-#ifdef USE_VMS_FILENAMES
-# define BAKPREFIX	"_$"
-#else /* USE_VMS_FILENAMES */
-# define BAKPREFIX	".#"		/* when rcsmerge'ing */
-#endif /* USE_VMS_FILENAMES */
-
 /*
  * Special tags. -rHEAD	refers to the head of an RCS file, regardless of any
  * sticky tags. -rBASE	refers to the current revision the user has checked
@@ -271,6 +265,10 @@ char *strerror (int);
 
 #define	CVSUMASK_ENV	"CVSUMASK"	/* Effective umask for repository */
 
+#define	CVSNOBASES_ENV	"CVSNOBASES"	/* Suppress use of base files when
+					 * set.
+					 */
+
 /*
  * If the beginning of the Repository matches the following string, strip it
  * so that the output to the logfile does not contain a full pathname.
@@ -284,30 +282,7 @@ char *strerror (int);
    command line, the client, etc.  */
 #define MAXDATELEN	50
 
-/* The type of an entnode.  */
-enum ent_type
-{
-    ENT_FILE, ENT_SUBDIR
-};
-
-/* structure of a entry record */
-struct entnode
-{
-    enum ent_type type;
-    char *user;
-    char *version;
-
-    /* Timestamp, or "" if none (never NULL).  */
-    char *timestamp;
-
-    /* Keyword expansion options, or "" if none (never NULL).  */
-    char *options;
-
-    char *tag;
-    char *date;
-    char *conflict;
-};
-typedef struct entnode Entnode;
+#include "entries.h"
 
 /* The type of request that is being done in do_module() */
 enum mtype
@@ -395,6 +370,7 @@ extern int trace;		/* Show all commands */
 extern int noexec;		/* Don't modify disk anywhere */
 extern int readonlyfs;		/* fail on all write locks; succeed all read locks */
 extern int logoff;		/* Don't write history entry */
+extern bool suppress_bases;
 
 
 
@@ -418,8 +394,6 @@ extern char *hostname;
 
 /* Externs that are included directly in the CVS sources */
 
-int RCS_merge (RCSNode *, const char *, const char *, const char *,
-               const char *, const char *);
 /* Flags used by RCS_* functions.  See the description of the individual
    functions for which flags mean what for each function.  */
 #define RCS_FLAGS_FORCE 1
@@ -485,56 +459,11 @@ int Parse_Info (const char *infofile, const char *repository,
 
 typedef	RETSIGTYPE (*SIGCLEANUPPROC)	(int);
 int SIG_register (int sig, SIGCLEANUPPROC sigcleanup);
-bool isdir (const char *file);
-bool isfile (const char *file);
-ssize_t islink (const char *file);
-bool isdevice (const char *file);
-bool isreadable (const char *file);
-bool iswritable (const char *file);
-bool isaccessible (const char *file, const int mode);
-const char *last_component (const char *path);
-char *get_homedir (void);
-char *strcat_filename_onto_homedir (const char *, const char *);
-char *cvs_temp_name (void);
-FILE *cvs_temp_file (char **filename);
+
+#include "filesubr.h"
+#include "subr.h"
 
 int ls (int argc, char *argv[]);
-int unlink_file (const char *f);
-int unlink_file_dir (const char *f);
-
-/* This is the structure that the recursion processor passes to the
-   fileproc to tell it about a particular file.  */
-struct file_info
-{
-    /* Name of the file, without any directory component.  */
-    const char *file;
-
-    /* Name of the directory we are in, relative to the directory in
-       which this command was issued.  We have cd'd to this directory
-       (either in the working directory or in the repository, depending
-       on which sort of recursion we are doing).  If we are in the directory
-       in which the command was issued, this is "".  */
-    const char *update_dir;
-
-    /* update_dir and file put together, with a slash between them as
-       necessary.  This is the proper way to refer to the file in user
-       messages.  */
-    const char *fullname;
-
-    /* Name of the directory corresponding to the repository which contains
-       this file.  */
-    const char *repository;
-
-    /* The pre-parsed entries for this directory.  */
-    List *entries;
-
-    RCSNode *rcs;
-};
-
-/* This needs to be included after the struct file_info definition since some
- * of the functions subr.h defines refer to struct file_info.
- */
-#include "subr.h"
 
 int update (int argc, char *argv[]);
 /* The only place this is currently used outside of update.c is add.c.
@@ -582,7 +511,6 @@ void WriteTemplate (const char *update_dir, int dotemplate,
 void cat_module (int status);
 void check_entries (char *dir);
 void close_module (DBM * db);
-void copy_file (const char *from, const char *to);
 void fperrmsg (FILE * fp, int status, int errnum, char *message,...);
 
 int ign_name (char *name);
@@ -617,12 +545,8 @@ void cleanup_register (void (*handler) (void));
 
 void update_delproc (Node * p);
 void usage (const char *const *cpp);
-void xchmod (const char *fname, int writable);
 List *Find_Names (char *repository, int which, int aflag,
 		  List ** optentries);
-void Register (List * list, const char *fname, const char *vn, const char *ts,
-               const char *options, const char *tag, const char *date,
-               const char *ts_conflict);
 void Update_Logfile (const char *repository, const char *xmessage,
                      FILE *xlogfp, List *xchanges);
 void do_editor (const char *dir, char **messagep,
@@ -665,28 +589,7 @@ void SIG_endCrSect (void);
 int SIG_inCrSect (void);
 void read_cvsrc (int *argc, char ***argv, const char *cmdname);
 
-/* flags for run_exec(), the fast system() for CVS */
-#define	RUN_NORMAL            0x0000    /* no special behaviour */
-#define	RUN_COMBINED          0x0001    /* stdout is duped to stderr */
-#define	RUN_REALLY            0x0002    /* do the exec, even if noexec is on */
-#define	RUN_STDOUT_APPEND     0x0004    /* append to stdout, don't truncate */
-#define	RUN_STDERR_APPEND     0x0008    /* append to stderr, don't truncate */
-#define	RUN_SIGIGNORE         0x0010    /* ignore interrupts for command */
-#define	RUN_TTY               (char *)0 /* for the benefit of lint */
-
-void run_add_arg_p (int *, size_t *, char ***, const char *s);
-void run_arg_free_p (int, char **);
-void run_add_arg (const char *s);
-void run_print (FILE * fp);
-void run_setup (const char *prog);
-int run_exec (const char *stin, const char *stout, const char *sterr,
-              int flags);
-int run_piped (int *, int *);
-
-/* other similar-minded stuff from run.c.  */
-FILE *run_popen (const char *, const char *);
-int piped_child (char *const *, int *, int *, bool);
-void close_on_exec (int);
+#include "run.h"
 
 pid_t waitpid (pid_t, int *, int);
 
@@ -697,68 +600,8 @@ pid_t waitpid (pid_t, int *, int);
  * this is usually obtained from a call to Version_TS which takes a
  * tag argument for the RCS file if desired
  */
-struct vers_ts
-{
-    /* rcs version user file derives from, from CVS/Entries.
-       It can have the following special values:
 
-       NULL = file is not mentioned in Entries (this is also used for a
-	      directory).
-       "" = INVALID!  The comment used to say that it meant "no user file"
-	    but as far as I know CVS didn't actually use it that way.
-	    Note that according to cvs.texinfo, "" is not valid in the
-	    Entries file.
-       0 = user file is new
-       -vers = user file to be removed.  */
-    char *vn_user;
-
-    /* Numeric revision number corresponding to ->vn_tag (->vn_tag
-       will often be symbolic).  */
-    char *vn_rcs;
-    /* If ->tag is a simple tag in the RCS file--a tag which really
-       exists which is not a magic revision--and if ->date is NULL,
-       then this is a copy of ->tag.  Otherwise, it is a copy of
-       ->vn_rcs.  */
-    char *vn_tag;
-
-    /* This is the timestamp from stating the file in the working directory.
-       It is NULL if there is no file in the working directory.  It is
-       "Is-modified" if we know the file is modified but don't have its
-       contents.  */
-    char *ts_user;
-    /* Timestamp from CVS/Entries.  For the server, ts_user and ts_rcs
-       are computed in a slightly different way, but the fact remains that
-       if they are equal the file in the working directory is unmodified
-       and if they differ it is modified.  */
-    char *ts_rcs;
-
-    /* Options from CVS/Entries (keyword expansion), malloc'd.  If none,
-       then it is an empty string (never NULL).  */
-    char *options;
-
-    /* If non-NULL, there was a conflict (or merely a merge?  See merge_file)
-       and the time stamp in this field is the time stamp of the working
-       directory file which was created with the conflict markers in it.
-       This is from CVS/Entries.  */
-    char *ts_conflict;
-
-    /* Tag specified on the command line, or if none, tag stored in
-       CVS/Entries.  */
-    char *tag;
-    /* Date specified on the command line, or if none, date stored in
-       CVS/Entries.  */
-    char *date;
-    /* If this is 1, then tag is not a branch tag.  If this is 0, then
-       tag may or may not be a branch tag.  */
-    int nonbranch;
-
-    /* Pointer to entries file node  */
-    Entnode *entdata;
-
-    /* Pointer to parsed src file info */
-    RCSNode *srcfile;
-};
-typedef struct vers_ts Vers_TS;
+#include "vers_ts.h"
 
 Vers_TS *Version_TS (struct file_info *finfo, char *options, char *tag,
 			    char *date, int force_tag_match,
@@ -774,11 +617,6 @@ int No_Difference (struct file_info *finfo, Vers_TS *vers);
 /* TODO: can the finfo argument to special_file_mismatch be changed? -twp */
 int special_file_mismatch (struct file_info *finfo,
 				  char *rev1, char *rev2);
-
-/* CVSADM_BASEREV stuff, from entries.c.  */
-char *base_get (struct file_info *);
-void base_register (struct file_info *, char *);
-void base_deregister (struct file_info *);
 
 /*
  * defines for Classify_File() to determine the current state of a file.
@@ -906,14 +744,6 @@ char *normalize_cvsroot (const cvsroot_t *root)
 void tag_check_valid (const char *, int, char **, int, int, char *, bool);
 
 #include "server.h"
-
-/* From server.c and documented there.  */
-void cvs_output (const char *, size_t);
-void cvs_output_binary (char *, size_t);
-void cvs_outerr (const char *, size_t);
-void cvs_flusherr (void);
-void cvs_flushout (void);
-void cvs_output_tagged (const char *, const char *);
 
 extern const char *global_session_id;
 

@@ -429,10 +429,8 @@ diff (int argc, char **argv)
 	send_arg ("--");
 
 	/* Send the current files unless diffing two revs from the archive */
-	if (!diff_rev2 && !diff_date2)
-	    send_files (argc, argv, local, 0, 0);
-	else
-	    send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
+	send_files (argc, argv, local, 0,
+		    (diff_rev2 || diff_date2) ? SEND_NO_CONTENTS : 0);
 
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 

@@ -30,6 +30,7 @@ AM_CONDITIONAL([GL_COND_LIBTOOL], [false])
   gl_FUNC_ALLOCA
   gl_ALLOCSA
   gl_FUNC_ATEXIT
+  gl_FUNC_BASE64
   gl_CANON_HOST
   AC_FUNC_CANONICALIZE_FILE_NAME
   gl_FUNC_CHDIR_LONG
@@ -129,6 +130,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/asnprintf.c
   lib/asprintf.c
   lib/atexit.c
+  lib/base64.c
+  lib/base64.h
   lib/basename.c
   lib/canon-host.c
   lib/canon-host.h
@@ -284,6 +287,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/alloca.m4
   m4/allocsa.m4
   m4/atexit.m4
+  m4/base64.m4
   m4/bison.m4
   m4/canon-host.m4
   m4/canonicalize.m4

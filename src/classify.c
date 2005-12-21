@@ -43,6 +43,10 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
     Vers_TS *vers;
     Ctype ret;
 
+    TRACE (TRACE_FUNCTION, "classify_file (%s, %s, %s, %s)",
+	   finfo->fullname, tag ? tag : "(null)", date ? date : "(null)",
+	   options ? options : "(null)");
+
     /* get all kinds of good data about the file */
     vers = Version_TS (finfo, options, tag, date,
 		       force_tag_match, 0);
