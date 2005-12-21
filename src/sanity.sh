@@ -20388,7 +20388,7 @@ initial revision: 1\.1"
 
 	  cd ..
 	  dotest config3-7 "$testcvs history -ea" \
-"A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 newfile config3 == [-_/a-zA-Z0-9<>]*
+"A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 newfile config3 == [-_/a-zA-Z0-9<>.]*
 T [0-9-]* [0-9:]* ${PLUS}0000 $username config3 \[testtag:A\]"
 
 	  dokeep
