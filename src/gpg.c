@@ -128,6 +128,23 @@ read_u16 (struct buffer *bpin, size_t *rn)
 
 
 
+static int
+read_u32 (struct buffer *bpin, unsigned long *rn)
+{
+  size_t tmp;
+  int rc;
+
+  if ((rc = read_u16 (bpin, &tmp)))
+    return rc;
+  *rn = tmp << 16;
+  if ((rc = read_u16 (bpin, &tmp)))
+    return rc;
+  *rn |= tmp;
+  return 0;
+}
+
+
+
 /* hdr must point to a buffer large enough to hold all header bytes */
 static int
 write_part (struct buffer *bpin, struct buffer *bpout, unsigned long pktlen,
@@ -217,33 +234,67 @@ read_signature (struct buffer *bpin, struct buffer *bpout)
       return 1;
     }
   if ( (ctb & 0x40) )
-    /* new CTB */
-    pkttype =  (ctb & 0x3f);
+    {
+      /* new CTB */
+      pkttype =  (ctb & 0x3f);
+
+      if ((rc = read_u8 (bpin, &c)))
+	return rc;
+
+      header[header_idx++] = c;
+
+      if ( c < 192 )
+        pktlen = c;
+      else if ( c < 224 )
+        {
+          pktlen = (c - 192) * 256;
+	  if ((rc = read_u8 (bpin, &c)))
+	    return rc;
+          header[header_idx++] = c;
+          pktlen += c + 192;
+	}
+      else if ( c == 255 ) 
+        {
+	  if ((rc = read_u32 (bpin, &pktlen)))
+	    return rc;
+          header[header_idx++] = pktlen >> 24;
+          header[header_idx++] = pktlen >> 16;
+          header[header_idx++] = pktlen >> 8;
+          header[header_idx++] = pktlen; 
+	}
+      else
+        { /* partial body length */
+          pktlen = c;
+          partial = 1;
+	}
+    }
   else
-    pkttype = (ctb>>2)&0xf;
+    {
+      pkttype = (ctb>>2)&0xf;
+
+      lenbytes = ((ctb&3)==3)? 0 : (1<<(ctb & 3));
+      if (!lenbytes )
+	{
+	  pktlen = 0; /* don't know the value */
+	  partial = 2; /* the old GnuPG partial length encoding */
+	}
+      else
+	{
+	  for (; lenbytes; lenbytes--) 
+	    {
+	      pktlen <<= 8;
+	      if ((rc = read_u8 (bpin, &c)))
+		return rc;
+	      header[header_idx++] = c;
+	      
+	      pktlen |= c;
+	    }
+	}
+    }
 
   if (pkttype != PKT_SIGNATURE)
     error (1, 0, "Inavlid OpenPGP packet type (%s)",
 	   pkttype_to_string (pkttype));
-
-  lenbytes = ((ctb&3)==3)? 0 : (1<<(ctb & 3));
-  if (!lenbytes )
-    {
-      pktlen = 0; /* don't know the value */
-      partial = 2; /* the old GnuPG partial length encoding */
-    }
-  else
-    {
-      for (; lenbytes; lenbytes--) 
-	{
-	  pktlen <<= 8;
-	  if ((rc = read_u8 (bpin, &c)))
-	    return rc;
-	  header[header_idx++] = c;
-	  
-	  pktlen |= c;
-	}
-    }
 
   return write_part (bpin, bpout, pktlen, pkttype, partial,
                      header, header_idx);
