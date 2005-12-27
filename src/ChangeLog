@@ -1,3 +1,8 @@
+2005-12-27  Derek Price  <derek@ximbiot.com>
+
+	* gpg.c (read_u32): New function.
+	(read_signature): Handle new style CTB packets.
+
 2005-12-13  Derek Price  <derek@ximbiot.com>
 
 	* base.c (ibase_copy, base_merge): Remove signature files when using
