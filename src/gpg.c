@@ -27,9 +27,12 @@
 /* Verify interface.  */
 #include "gpg.h"
 
+/* ANSI C Headers.  */
 #include <assert.h>
+#include <stdint.h>
 #include <string.h>
 
+/* GNULIB Headers.  */
 #include "error.h"
 
 
@@ -198,29 +201,27 @@ write_part (struct buffer *bpin, struct buffer *bpout, unsigned long pktlen,
 
 
 
-/* Read a single signature packet from BPIN, copying it to BPOUT.
+/* Read a single signature packet header from BPIN.
  *
  * RETURNS
  *   0		On success.
  *   -1		If EOF is encountered before a full packet is read.
  *   -2		On memory allocation errors from buf_read_data().
  *
- * ERRORS
- *   Aside from the error returns above, buf_output() can call its memory
- *   failure function on memory allocation failures, which could exit.
  */
 int
-read_signature (struct buffer *bpin, struct buffer *bpout)
+parse_header (struct buffer *bpin, int *pkttype, unsigned long *pktlen,
+    	      int *partial, unsigned char *header, int *header_len)
 {
-  int ctb, pkttype;
-  unsigned long pktlen = 0;
-  int partial = 0;
-  unsigned char header[20];
+  int ctb;
   int header_idx = 0;
   int lenbytes;
   int rc;
   unsigned char c;
-  
+
+  *pktlen = 0;
+  *partial = 0;
+
   if ((rc = read_u8 (bpin, &c)))
     return rc;
 
@@ -236,7 +237,7 @@ read_signature (struct buffer *bpin, struct buffer *bpout)
   if ( (ctb & 0x40) )
     {
       /* new CTB */
-      pkttype =  (ctb & 0x3f);
+      *pkttype =  (ctb & 0x3f);
 
       if ((rc = read_u8 (bpin, &c)))
 	return rc;
@@ -244,58 +245,134 @@ read_signature (struct buffer *bpin, struct buffer *bpout)
       header[header_idx++] = c;
 
       if ( c < 192 )
-        pktlen = c;
+        *pktlen = c;
       else if ( c < 224 )
         {
-          pktlen = (c - 192) * 256;
+          *pktlen = (c - 192) * 256;
 	  if ((rc = read_u8 (bpin, &c)))
 	    return rc;
           header[header_idx++] = c;
-          pktlen += c + 192;
+          *pktlen += c + 192;
 	}
       else if ( c == 255 ) 
         {
-	  if ((rc = read_u32 (bpin, &pktlen)))
+	  if ((rc = read_u32 (bpin, pktlen)))
 	    return rc;
-          header[header_idx++] = pktlen >> 24;
-          header[header_idx++] = pktlen >> 16;
-          header[header_idx++] = pktlen >> 8;
-          header[header_idx++] = pktlen; 
+          header[header_idx++] = *pktlen >> 24;
+          header[header_idx++] = *pktlen >> 16;
+          header[header_idx++] = *pktlen >> 8;
+          header[header_idx++] = *pktlen; 
 	}
       else
         { /* partial body length */
-          pktlen = c;
-          partial = 1;
+          *pktlen = c;
+          *partial = 1;
 	}
     }
   else
     {
-      pkttype = (ctb>>2)&0xf;
+      *pkttype = (ctb>>2)&0xf;
 
       lenbytes = ((ctb&3)==3)? 0 : (1<<(ctb & 3));
       if (!lenbytes )
 	{
-	  pktlen = 0; /* don't know the value */
-	  partial = 2; /* the old GnuPG partial length encoding */
+	  *pktlen = 0; /* don't know the value */
+	  *partial = 2; /* the old GnuPG partial length encoding */
 	}
       else
 	{
 	  for (; lenbytes; lenbytes--) 
 	    {
-	      pktlen <<= 8;
+	      *pktlen <<= 8;
 	      if ((rc = read_u8 (bpin, &c)))
 		return rc;
 	      header[header_idx++] = c;
 	      
-	      pktlen |= c;
+	      *pktlen |= c;
 	    }
 	}
     }
+
+  *header_len = header_idx;
+  return 0;
+}
+
+
+
+/* Read a single signature packet from BPIN, copying it to BPOUT.
+ *
+ * RETURNS
+ *   0		On success.
+ *   -1		If EOF is encountered before a full packet is read.
+ *   -2		On memory allocation errors from buf_read_data().
+ *
+ * ERRORS
+ *   Aside from the error returns above, buf_output() can call its memory
+ *   failure function on memory allocation failures, which could exit.
+ */
+int
+read_signature (struct buffer *bpin, struct buffer *bpout)
+{
+  int pkttype;
+  unsigned long pktlen;
+  int partial;
+  unsigned char header[20];
+  int header_len = sizeof header;
+  int rc;
+
+  if ((rc = parse_header (bpin, &pkttype, &pktlen, &partial, header,
+			  &header_len)))
+    return rc;
 
   if (pkttype != PKT_SIGNATURE)
     error (1, 0, "Inavlid OpenPGP packet type (%s)",
 	   pkttype_to_string (pkttype));
 
   return write_part (bpin, bpout, pktlen, pkttype, partial,
-                     header, header_idx);
+                     header, header_len);
+}
+
+
+
+struct openpgp_signature
+{
+  uint64_t sigid;
+};
+
+
+
+/* Parse a single signature packet from BPIN, copying it to BPOUT.
+ *
+ * RETURNS
+ *   0		On success.
+ *   -1		If EOF is encountered before a full packet is read.
+ *   -2		On memory allocation errors from buf_read_data().
+ *
+ * ERRORS
+ *   Aside from the error returns above, buf_output() can call its memory
+ *   failure function on memory allocation failures, which could exit.
+ */
+int
+parse_signature (struct buffer *bpin, struct openpgp_signature *sout)
+{
+  int pkttype;
+  unsigned long pktlen;
+  int partial;
+  unsigned char header[20];
+  int header_len = sizeof header;
+  int rc;
+  unsigned char c;
+
+  if ((rc = parse_header (bpin, &pkttype, &pktlen, &partial, header,
+			  &header_len)))
+    return rc;
+
+  if (pkttype != PKT_SIGNATURE)
+    error (1, 0, "Inavlid OpenPGP packet type (%s)",
+	   pkttype_to_string (pkttype));
+
+  if ((rc = read_u8 (bpin, &c)))
+    return rc;
+
+  return 0;
 }

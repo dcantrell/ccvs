@@ -1,3 +1,11 @@
+2005-12-30  Derek Price  <derek@ximbiot.com>
+
+	* gpg.c: Include <stdint.h>.
+	(parse_header): New function factored from...
+	(read_signature): ...here.
+	(struct openpgp_signature): New decl.
+	(parse_signature): New function.
+
 2005-12-27  Derek Price  <derek@ximbiot.com>
 
 	* gpg.c (read_u32): New function.
