@@ -98,7 +98,7 @@ pkttype_to_string (int pkttype)
 
 
 
-static int
+static inline int
 read_u8 (struct buffer *bpin, uint8_t *rn)
 {
   char *tmp;
@@ -114,7 +114,7 @@ read_u8 (struct buffer *bpin, uint8_t *rn)
 
 
 
-static int
+static inline int
 read_u16 (struct buffer *bpin, uint16_t *rn)
 {
   uint8_t tmp;
@@ -131,7 +131,7 @@ read_u16 (struct buffer *bpin, uint16_t *rn)
 
 
 
-static int
+static inline int
 read_u32 (struct buffer *bpin, uint32_t *rn)
 {
   uint16_t tmp;
@@ -141,6 +141,25 @@ read_u32 (struct buffer *bpin, uint32_t *rn)
     return rc;
   *rn = tmp << 16;
   if ((rc = read_u16 (bpin, &tmp)))
+    return rc;
+  *rn |= tmp;
+  return 0;
+}
+
+
+
+static inline int
+read_u64 (struct buffer *bpin, uint64_t *rn)
+{
+  uint32_t tmp;
+  int rc;
+
+  if ((rc = read_u32 (bpin, &tmp)))
+    return rc;
+  /* This next is done in two steps to suppress a GCC warning.  */
+  *rn = tmp;
+  *rn <<= 32;
+  if ((rc = read_u32 (bpin, &tmp)))
     return rc;
   *rn |= tmp;
   return 0;
@@ -202,6 +221,17 @@ write_part (struct buffer *bpin, struct buffer *bpout, unsigned long pktlen,
 
 
 /* Read a single signature packet header from BPIN.
+ *
+ * INPUTS
+ *   BPIN	Pointer to the buffer to read from.
+ *
+ * OUTPUTS
+ *   *PKTTYPE	PGP Packet type read from buffer.
+ *   *PKTLEN	Length of data remaining in buffer (PKTLEN + HEADER_LEN =
+ *   		Full length of OpenPGP packet).
+ *   PARTIAL	1 if this is a partial packet, 0 otherwise.
+ *   HEADER	Copy of header block from PGP packet.
+ *   HEADER_LEN	Length of HEADER.
  *
  * RETURNS
  *   0		On success.
@@ -333,11 +363,6 @@ read_signature (struct buffer *bpin, struct buffer *bpout)
 
 
 
-struct openpgp_signature
-{
-  uint64_t sigid;
-};
-
 /* Parse a single signature packet from BPIN, populating structure at SPOUT.
  *
  * RETURNS
@@ -359,18 +384,63 @@ parse_signature (struct buffer *bpin, struct openpgp_signature *spout)
   int header_len = sizeof header;
   int rc;
   uint8_t c;
+  uint32_t tmp32;
 
   if ((rc = parse_header (bpin, &pkttype, &pktlen, &partial, header,
 			  &header_len)))
     return rc;
 
+  if (partial)
+    error (1, 0, "Unhandled OpenPGP packet type (partial)");
   if (pkttype != PKT_SIGNATURE)
-    error (1, 0, "Inavlid OpenPGP packet type (%s)",
+    error (1, 0, "Unhandled OpenPGP packet type (%s)",
 	   pkttype_to_string (pkttype));
+
+  if (pktlen < 19)
+    error (1, 0, "Malformed OpenPGP signature packet (too short)");
 
   if ((rc = read_u8 (bpin, &c)))
     return rc;
+  pktlen -= 1;
 
+  if (c != 3)
+    error (1, 0, "Unhandled OpenPGP signature version (%hhu)", c);
+
+  if ((rc = read_u8 (bpin, &c)))
+    return rc;
+  pktlen -= 1;
+
+  if (c != 5)
+    error (1, 0, "Malformed OpenPGP signature (type/time length invalid)");
+
+  if ((rc = read_u8 (bpin, &c)))
+    return rc;
+  pktlen -= 1;
+
+  if (c & 0xF0)
+    error (1, 0, "Unhandled OpenPGP signature type (%hhu)", c);
+
+  /* Read the creation time.  */
+  if ((rc = read_u32 (bpin, &tmp32)))
+    return rc;
+  spout->ctime = tmp32;
+  pktlen -= 4;
+
+  /* Read the key ID.  */
+  if ((rc = read_u64 (bpin, &spout->keyid)))
+    return rc;
+  pktlen -= 8;
+
+  /* Don't need the rest of the packet yet.  */
+  while (pktlen)
+    {
+      size_t got;
+      char *tmp;
+      if ((rc = buf_read_data (bpin, pktlen, &tmp, &got)) < 0)
+	return rc;
+      assert (got);  /* Blocking buffers cannot return 0 bytes.  */
+      pktlen -= got;
+    }
 
   return 0;
 }

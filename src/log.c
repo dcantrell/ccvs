@@ -17,8 +17,22 @@
  * (recursive by default).
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h> 
+#endif
+
+/* ANSI C Headers.  */
 #include <assert.h>
+
+/* GNULIB Headers.  */
+#include "base64.h"
+
+/* CVS Headers.  */
+#include "gpg.h"
+
+#include "cvs.h"
+
+
 
 /* This structure holds information parsed from the -r option.  */
 
@@ -1667,6 +1681,42 @@ log_version (struct log_data *log_data, struct revlist *revlist, RCSNode *rcs,
 	cvs_output ("branches:", 0);
 	walklist (ver->branches, log_branch, NULL);
 	cvs_output ("\n", 1);
+    }
+
+    p = findnode (ver->other_delta, "openpgp-signatures");
+    if (p)
+    {
+	char *rawsig;
+	size_t rawsiglen;
+	struct buffer *membuf;
+	struct openpgp_signature sig;
+	int rc;
+
+	if (!base64_decode_alloc (p->data, p->len, &rawsig, &rawsiglen))
+	    error (0, 0, "Unable to base64-decode OpenPGP signature.");
+	if (!rawsig)
+	    xalloc_die ();
+
+	membuf = buf_nonio_initialize (NULL);
+	buf_output (membuf, rawsig, rawsiglen);
+
+	while (!(rc = parse_signature (membuf, &sig)))
+	{
+	    unsigned long long printablesig = sig.keyid;
+	    char *hexsig;
+	    cvs_output_tagged ("openpgp-keyid-header",
+			       "OpenPGP signature using key ID 0x");
+	    hexsig = Xasprintf ("%llx", printablesig);
+	    cvs_output_tagged ("openpgp-keyid", hexsig);
+	    free (hexsig);
+	    cvs_output_tagged ("openpgp-keyid-footer", ";");
+	    cvs_output_tagged ("newline", NULL);
+	}
+
+	if (rc == -2)
+	    error (1, 0, "Memory allocation failure parsing signature.");
+
+	buf_free (membuf);
     }
 
     p = findnode (ver->other, "log");

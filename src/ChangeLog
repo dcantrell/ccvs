@@ -1,5 +1,16 @@
 2005-12-30  Derek Price  <derek@ximbiot.com>
 
+	* gpg.c (read_u8, read_u16, read_u32): Declare inline.
+	(read_u64): New function.
+	(read_signature): Expand header comment block.
+	(parse_signature): Parse up to key ID.
+	(struct openpgp_signature): Move decl to...
+	gpg.h (struct openpgp_signature): ...here.
+	(parse_signature): New proto.
+	* log.c: Include "base64.h" & "gpg.h".
+	(log_version): Print signature information when available.
+	* sanity.sh: Accept new signature info in log messages.
+
 	* gpg.c (write_part, parse_header, read_signature, parse_signature):
 	Use uint8_t rather than unsigned char.
 
