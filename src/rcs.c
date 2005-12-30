@@ -4781,7 +4781,6 @@ RCS_get_openpgp_signatures (RCSNode *rcs, const char *rev)
 	error (1, 0, "internal error: no revision information for %s", rev);
     vers = n->data;
 
-    /* First we look for symlinks, which are simplest to handle. */
     n = findnode (vers->other_delta, "openpgp-signatures");
     if (!n)
 	return NULL;
