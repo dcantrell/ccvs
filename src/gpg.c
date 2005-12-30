@@ -207,7 +207,6 @@ write_part (struct buffer *bpin, struct buffer *bpout, unsigned long pktlen,
  *   0		On success.
  *   -1		If EOF is encountered before a full packet is read.
  *   -2		On memory allocation errors from buf_read_data().
- *
  */
 int
 parse_header (struct buffer *bpin, int *pkttype, unsigned long *pktlen,
@@ -339,9 +338,7 @@ struct openpgp_signature
   uint64_t sigid;
 };
 
-
-
-/* Parse a single signature packet from BPIN, copying it to BPOUT.
+/* Parse a single signature packet from BPIN, populating structure at SPOUT.
  *
  * RETURNS
  *   0		On success.
@@ -353,7 +350,7 @@ struct openpgp_signature
  *   failure function on memory allocation failures, which could exit.
  */
 int
-parse_signature (struct buffer *bpin, struct openpgp_signature *sout)
+parse_signature (struct buffer *bpin, struct openpgp_signature *spout)
 {
   int pkttype;
   unsigned long pktlen;

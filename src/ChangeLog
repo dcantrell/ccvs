@@ -1,5 +1,7 @@
 2005-12-30  Derek Price  <derek@ximbiot.com>
 
+	* gpg.c: Minor comment fixes.
+
 	* gpg.c: Include <stdint.h>.
 	(parse_header): New function factored from...
 	(read_signature): ...here.
