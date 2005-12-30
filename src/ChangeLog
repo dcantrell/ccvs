@@ -1,5 +1,7 @@
 2005-12-30  Derek Price  <derek@ximbiot.com>
 
+	* client.c (handle_openpgp_signatures): Clarify error message.
+
 	* rcs.c (RCS_get_openpgp_signatures): Remove erroneous comment.
 
 	* gpg.c (read_u8, read_u16, read_u32): Declare inline.
