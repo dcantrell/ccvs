@@ -151,7 +151,7 @@ read_u32 (struct buffer *bpin, uint32_t *rn)
 /* hdr must point to a buffer large enough to hold all header bytes */
 static int
 write_part (struct buffer *bpin, struct buffer *bpout, unsigned long pktlen,
-            int pkttype, int partial, unsigned char *hdr, size_t hdrlen)
+            int pkttype, int partial, uint8_t *hdr, size_t hdrlen)
 {
   char *tmp;
   int rc;
@@ -210,13 +210,13 @@ write_part (struct buffer *bpin, struct buffer *bpout, unsigned long pktlen,
  */
 int
 parse_header (struct buffer *bpin, int *pkttype, uint32_t *pktlen,
-    	      int *partial, unsigned char *header, int *header_len)
+    	      int *partial, uint8_t *header, int *header_len)
 {
   int ctb;
   int header_idx = 0;
   int lenbytes;
   int rc;
-  unsigned char c;
+  uint8_t c;
 
   *pktlen = 0;
   *partial = 0;
@@ -315,7 +315,7 @@ read_signature (struct buffer *bpin, struct buffer *bpout)
   int pkttype;
   uint32_t pktlen;
   int partial;
-  unsigned char header[20];
+  uint8_t header[20];
   int header_len = sizeof header;
   int rc;
 
@@ -355,10 +355,10 @@ parse_signature (struct buffer *bpin, struct openpgp_signature *spout)
   int pkttype;
   uint32_t pktlen;
   int partial;
-  unsigned char header[20];
+  uint8_t header[20];
   int header_len = sizeof header;
   int rc;
-  unsigned char c;
+  uint8_t c;
 
   if ((rc = parse_header (bpin, &pkttype, &pktlen, &partial, header,
 			  &header_len)))
@@ -370,6 +370,7 @@ parse_signature (struct buffer *bpin, struct openpgp_signature *spout)
 
   if ((rc = read_u8 (bpin, &c)))
     return rc;
+
 
   return 0;
 }

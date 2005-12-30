@@ -1,5 +1,8 @@
 2005-12-30  Derek Price  <derek@ximbiot.com>
 
+	* gpg.c (write_part, parse_header, read_signature, parse_signature):
+	Use uint8_t rather than unsigned char.
+
 	* gpg.c (read_u8, read_u16, read_u32): Use <stdint.h> uintN_t types for
 	output rather than potentially variable bit length types.
 	(write_part, parse_header, read_signature, parse_signature): Carry
