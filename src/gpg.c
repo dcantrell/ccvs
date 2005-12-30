@@ -99,7 +99,7 @@ pkttype_to_string (int pkttype)
 
 
 static int
-read_u8 (struct buffer *bpin, unsigned char *rn)
+read_u8 (struct buffer *bpin, uint8_t *rn)
 {
   char *tmp;
   size_t got;
@@ -115,9 +115,9 @@ read_u8 (struct buffer *bpin, unsigned char *rn)
 
 
 static int
-read_u16 (struct buffer *bpin, size_t *rn)
+read_u16 (struct buffer *bpin, uint16_t *rn)
 {
-  unsigned char tmp;
+  uint8_t tmp;
   int rc;
 
   if ((rc = read_u8 (bpin, &tmp)))
@@ -132,9 +132,9 @@ read_u16 (struct buffer *bpin, size_t *rn)
 
 
 static int
-read_u32 (struct buffer *bpin, unsigned long *rn)
+read_u32 (struct buffer *bpin, uint32_t *rn)
 {
-  size_t tmp;
+  uint16_t tmp;
   int rc;
 
   if ((rc = read_u16 (bpin, &tmp)))
@@ -158,7 +158,7 @@ write_part (struct buffer *bpin, struct buffer *bpout, unsigned long pktlen,
 
   while (partial)
     {
-      size_t partlen;
+      uint16_t partlen;
       
       assert (partial == 2);
       /* old gnupg */
@@ -209,7 +209,7 @@ write_part (struct buffer *bpin, struct buffer *bpout, unsigned long pktlen,
  *   -2		On memory allocation errors from buf_read_data().
  */
 int
-parse_header (struct buffer *bpin, int *pkttype, unsigned long *pktlen,
+parse_header (struct buffer *bpin, int *pkttype, uint32_t *pktlen,
     	      int *partial, unsigned char *header, int *header_len)
 {
   int ctb;
@@ -313,7 +313,7 @@ int
 read_signature (struct buffer *bpin, struct buffer *bpout)
 {
   int pkttype;
-  unsigned long pktlen;
+  uint32_t pktlen;
   int partial;
   unsigned char header[20];
   int header_len = sizeof header;
@@ -353,7 +353,7 @@ int
 parse_signature (struct buffer *bpin, struct openpgp_signature *spout)
 {
   int pkttype;
-  unsigned long pktlen;
+  uint32_t pktlen;
   int partial;
   unsigned char header[20];
   int header_len = sizeof header;
