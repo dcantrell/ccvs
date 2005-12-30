@@ -2162,7 +2162,8 @@ handle_openpgp_signatures (char *args, size_t len)
 
     if (!base64_decode_alloc (args, len, &stored_signatures,
 			      &stored_signatures_len))
-	error (1, 0, "Bad signature received from server.");
+	error (1, 0,
+	       "Bad signature received from server (base64 decode failed).");
 
     if (!stored_signatures)
 	error (1, errno, "Failed to allocate memory");
