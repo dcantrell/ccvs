@@ -22,8 +22,23 @@
 #ifndef GPG_H
 #define GPG_H
 
+/* ANSI C Headers.  */
+#include <stdint.h>
+
+/* CVS Headers.  */
 #include "buffer.h"
 
+
+
+struct openpgp_signature
+{
+  time_t ctime;
+  uint64_t keyid;
+};
+
+
+
 int read_signature (struct buffer *bpin, struct buffer *bpout);
+int parse_signature (struct buffer *bpin, struct openpgp_signature *spout);
 
 #endif /* GPG_H */

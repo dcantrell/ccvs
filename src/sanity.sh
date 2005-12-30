@@ -472,6 +472,9 @@ hostname="[-_.a-zA-Z0-9]*"
 # Regexp to match a commitid
 commitid="[a-zA-Z0-9]*"
 
+# Regexp to match an OpenPGP key id.
+keyid="0x[0-9a-f]*"
+
 # Regexp to match the name of a temporary file (from cvs_temp_name).
 # This appears in certain diff output.
 tempfile="cvs[-a-zA-Z0-9.%_]*"
@@ -1701,6 +1704,7 @@ HOME=$TESTDIR/home; export HOME
 
 # If $GPG is set, create a key for /uu
 OPENPGP_PHRASE=
+log_keyid=
 if test x"$GPG" != xgpg; then
   $GPG --list-keys >>$LOGFILE 2>&1
   $GPG --import - <<EOF >>$LOGFILE 2>&1
@@ -1777,6 +1781,8 @@ EOF
   # The trailing EOL is important.
   OPENPGP_PHRASE='openpgp-signatures	@[a-zA-Z0-9/+]*=*@;
 '
+  log_keyid="OpenPGP signature using key ID 0x[0-9a-f]*;
+"
   gpg=:
 else # GPG not set
   echo "No working GPG was found.  This test suite will run, but OpenPGP" >&2
@@ -3290,15 +3296,15 @@ description:
 ----------------------------
 revision 3\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
-bump-it
+${log_keyid}bump-it
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-modify-it
+${log_keyid}modify-it
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-add-it
+${log_keyid}add-it
 ============================================================================="
 	  dotest basica-o8 "${testcvs} -q update -p -r 1.1 ./ssfile" "ssfile"
 	  cd ../..
@@ -4301,7 +4307,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-second dive
+${log_keyid}second dive
 =============================================================================
 
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file7,v
@@ -4318,7 +4324,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-second dive
+${log_keyid}second dive
 =============================================================================
 ${SPROG} log: Logging first-dir/dir1
 ${SPROG} log: file14 has been added, but not committed
@@ -4337,7 +4343,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-second dive
+${log_keyid}second dive
 =============================================================================
 
 RCS file: ${CVSROOT_DIRNAME}/first-dir/dir1/file7,v
@@ -4354,7 +4360,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-second dive
+${log_keyid}second dive
 =============================================================================
 ${SPROG} log: Logging first-dir/dir1/dir2
 ${SPROG} log: file14 has been added, but not committed
@@ -4373,7 +4379,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-second dive
+${log_keyid}second dive
 =============================================================================
 
 RCS file: ${CVSROOT_DIRNAME}/first-dir/dir1/dir2/file7,v
@@ -4390,7 +4396,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-second dive
+${log_keyid}second dive
 ============================================================================="
 
 		dotest basic2-14 "${testcvs} status first-dir" \
@@ -7442,29 +7448,29 @@ description:
 ----------------------------
 revision 1\.3
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
-trunk-change-after-branch
+${log_keyid}trunk-change-after-branch
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
 branches:  1\.2\.2;
-trunk-before-branch
+${log_keyid}trunk-before-branch
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-add-it
+${log_keyid}add-it
 ----------------------------
 revision 1\.2\.2\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
-change-on-br1
+${log_keyid}change-on-br1
 ----------------------------
 revision 1\.2\.2\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
 branches:  1\.2\.2\.1\.2;
-modify
+${log_keyid}modify
 ----------------------------
 revision 1\.2\.2\.1\.2\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
-modify
+${log_keyid}modify
 ============================================================================="
 	  dotest_fail branches-14.4 \
 	    "${testcvs} diff -c -r 1.1 -r 1.3 file4" \
@@ -8043,7 +8049,7 @@ description:
 ----------------------------
 revision 1.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-add
+${log_keyid}add
 ============================================================================="
 
 	    dokeep
@@ -9081,15 +9087,15 @@ description:
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;  1\.1\.4;
-add-it
+${log_keyid}add-it
 ----------------------------
 revision 1\.1\.4\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-modify-on-br2
+${log_keyid}modify-on-br2
 ----------------------------
 revision 1\.1\.2\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
-modify-on-br1
+${log_keyid}modify-on-br1
 ============================================================================="
 
 	  dokeep
@@ -9414,7 +9420,7 @@ Initial revision
 ----------------------------
 revision 1\.1\.3\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
-add
+${log_keyid}add
 ----------------------------
 revision 1\.1\.1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
@@ -9519,7 +9525,7 @@ import-it
 ----------------------------
 revision 1\.1\.1\.1\.2\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-modify
+${log_keyid}modify
 ============================================================================="
 
 	  dotest importc-9 "${testcvs} -q log bdir/subdir/file1" "
@@ -9663,7 +9669,7 @@ Initial revision
 ----------------------------
 revision 1\.1\.1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
-add
+${log_keyid}add
 ----------------------------
 revision 1\.1\.1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
@@ -9696,7 +9702,7 @@ Initial revision
 ----------------------------
 revision 1\.1\.1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
-add
+${log_keyid}add
 ----------------------------
 revision 1\.1\.1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
@@ -11365,7 +11371,7 @@ save the merge
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 branches:  1.1.2;
-add-em
+${log_keyid}add-em
 ----------------------------
 revision 1\.1\.2\.1
 date: ${ISO8601DATE};  author: $username;  state: dead;  lines: ${PLUS}0 -0;  commitid: ${commitid};
@@ -13262,7 +13268,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-add-it
+${log_keyid}add-it
 ============================================================================="
 
 	  dokeep
@@ -15776,7 +15782,7 @@ description:
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
-xCVS: ----------------------------------------------------------------------
+${log_keyid}xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
 xCVS: Committing in .
@@ -15787,7 +15793,7 @@ xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-xCVS: ----------------------------------------------------------------------
+${log_keyid}xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
 xCVS: Committing in .
@@ -15814,7 +15820,7 @@ description:
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
-xCVS: ----------------------------------------------------------------------
+${log_keyid}xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
 xCVS: Committing in .
@@ -15825,7 +15831,7 @@ xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-xCVS: ----------------------------------------------------------------------
+${log_keyid}xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
 xCVS: Modified Files:
@@ -15846,7 +15852,7 @@ description:
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
-xCVS: ----------------------------------------------------------------------
+${log_keyid}xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
 xCVS: Committing in .
@@ -15857,7 +15863,7 @@ xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-xCVS: ----------------------------------------------------------------------
+${log_keyid}xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
 xCVS: Committing in .
@@ -16013,7 +16019,7 @@ description:
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +0 -0;  commitid: ${commitid};
-\*\*\* empty log message \*\*\*
+${log_keyid}\*\*\* empty log message \*\*\*
 ============================================================================="
 
 	  # clean up
@@ -18229,7 +18235,7 @@ description:
 ----------------------------
 revision 1\.3
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-checkin
+${log_keyid}checkin
 ============================================================================="
 
 	  dokeep
@@ -20657,22 +20663,22 @@ revision'
 	  log_commitid="  commitid: ${commitid};"
 	  log_rev1="${log_dash} 1\.1
 ${log_date}${log_commitid}
-line 1
+${log_keyid}line 1
 
 line 2"
 	  log_rev2="${log_dash} 1\.2
 ${log_date}${log_lines}${log_commitid}
 branches:  1\.2\.2;
-2"
+${log_keyid}2"
 	  log_rev3="${log_dash} 1\.3
 ${log_date}${log_lines}${log_commitid}
-3"
+${log_keyid}3"
 	  log_rev1b="${log_dash} 1\.2\.2\.1
 ${log_date}${log_lines}${log_commitid}
-1b"
+${log_keyid}1b"
 	  log_rev2b="${log_dash} 1\.2\.2\.2
 ${log_date}${log_lines}${log_commitid}
-2b"
+${log_keyid}2b"
 	  log_trailer='============================================================================='
 
 	  # Now, finally, test the log output.
@@ -21291,7 +21297,7 @@ date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: ${PLUS}0 -0;  
 4"
 	  log_rev22="${log_dash} 1\.2
 ${log_date}${log_lines}${log_commitid}
-2"
+${log_keyid}2"
 
 	  dotest log-d3 "${testcvs} log -rbranch file1" \
 "${log_header1}
@@ -21643,7 +21649,7 @@ file1-is-for-testing
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-1
+${log_keyid}1
 ============================================================================="
 
 	  fi # end of tests skipped for remote
@@ -21665,7 +21671,7 @@ change-description
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-1
+${log_keyid}1
 ============================================================================="
 
 	  echo 'longer description' >${TESTDIR}/descrip
@@ -21690,7 +21696,7 @@ with two lines
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-1
+${log_keyid}1
 ============================================================================="
 
 	  # TODO: `cvs admin -t "my message" file1' is a request to
@@ -21713,7 +21719,7 @@ change from stdin
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-1
+${log_keyid}1
 ============================================================================="
 
 	  dokeep
@@ -22610,7 +22616,7 @@ date: 1970-12-31 11:00:05 [+-]0000;  author: joe;  state: bogus;
 ----------------------------
 revision 1\.2\.6\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
-mod
+${log_keyid}mod
 ----------------------------
 revision 1\.2\.6\.1
 date: 1971-01-01 08:00:05 [+-]0000;  author: joe;  state: Exp;  lines: ${PLUS}1 -1;
@@ -26017,15 +26023,15 @@ description:
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;  1\.1\.4;
-add
+${log_keyid}add
 ----------------------------
 revision 1\.1\.4\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
-modify-on-B
+${log_keyid}modify-on-B
 ----------------------------
 revision 1\.1\.2\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: ${PLUS}1 -1;  commitid: ${commitid};
-modify-on-A
+${log_keyid}modify-on-A
 ============================================================================="
 
 	  # This one is more concise.
@@ -26047,7 +26053,7 @@ description:
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;  1\.1\.4;
-add
+${log_keyid}add
 ============================================================================="
 
 	  # OK, try very much the same thing except we run update -j to
@@ -26294,11 +26300,11 @@ description:
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
-add
+${log_keyid}add
 ----------------------------
 revision 1\.1\.2\.1
 date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-modify-on-branch
+${log_keyid}modify-on-branch
 ============================================================================="
 	  dotest admin-12 "${testcvs} -q admin -bbr file1" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
@@ -26320,11 +26326,11 @@ description:
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
-add
+${log_keyid}add
 ----------------------------
 revision 1\.1\.2\.1
 date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-modify-on-branch
+${log_keyid}modify-on-branch
 ============================================================================="
 
 	  # "cvs log" doesn't print the comment leader.  RCS 5.7 will print
@@ -26405,7 +26411,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-add
+${log_keyid}add
 ============================================================================="
 
 	  dotest admin-14-3 "${testcvs} -q admin -aauth3 -aauth2,foo \
@@ -26431,7 +26437,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: oneone;  commitid: ${commitid};
-changed-log-message
+${log_keyid}changed-log-message
 ============================================================================="
 
 	  dotest admin-16 "${testcvs} -q admin \
@@ -26459,11 +26465,11 @@ description:
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
-add
+${log_keyid}add
 ----------------------------
 revision 1\.1\.2\.1
 date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-modify-on-branch
+${log_keyid}modify-on-branch
 ============================================================================="
 
 	  dotest_fail admin-18 "${testcvs} -q admin -nbr:1.1.2 file1" \
@@ -26490,11 +26496,11 @@ description:
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
-add
+${log_keyid}add
 ----------------------------
 revision 1.1.2.1
 date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-modify-on-branch
+${log_keyid}modify-on-branch
 ============================================================================="
 
 	  # OK, this is starting to get ridiculous, in terms of
@@ -26609,7 +26615,7 @@ description:
 ----------------------------
 revision 1\.6	locked by: ${username};
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-sixth
+${log_keyid}sixth
 ============================================================================="
 	  dotest_fail admin-22-o10 "${testcvs} admin -o1.5: aaa" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/aaa,v
@@ -26638,19 +26644,19 @@ description:
 ----------------------------
 revision 1\.4
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-fourth
+${log_keyid}fourth
 ----------------------------
 revision 1\.3
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-third
+${log_keyid}third
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-second
+${log_keyid}second
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-first
+${log_keyid}first
 ============================================================================="
 
 	  dotest admin-22-o14 "${testcvs} tag -b -r1.3 br1 aaa" "T aaa"
@@ -26714,24 +26720,24 @@ description:
 ----------------------------
 revision 1\.4
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-fourth
+${log_keyid}fourth
 ----------------------------
 revision 1\.3
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 branches:  1\.3\.2;
-third
+${log_keyid}third
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-second
+${log_keyid}second
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-first
+${log_keyid}first
 ----------------------------
 revision 1\.3\.2\.4
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}4 -0;  commitid: ${commitid};
-branch-four
+${log_keyid}branch-four
 ============================================================================="
 
 	  dotest admin-22-o24 "${testcvs} -q update -p -r 1.3.2.4 aaa" \
@@ -26766,7 +26772,7 @@ description:
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-modify
+${log_keyid}modify
 ============================================================================="
 
 	  dotest admin-25 "cat ${CVSROOT_DIRNAME}/first-dir/file1,v" \
@@ -27033,24 +27039,24 @@ description:
 ----------------------------
 revision 1\.4
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-fourth
+${log_keyid}fourth
 ----------------------------
 revision 1\.3
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
 branches:  1\.3\.2;
-third
+${log_keyid}third
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-second
+${log_keyid}second
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-first
+${log_keyid}first
 ----------------------------
 revision 1\.3\.2\.4
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}4 -0;  commitid: ${commitid};
-branch-four
+${log_keyid}branch-four
 =============================================================================
 
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
@@ -27071,11 +27077,11 @@ description:
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
 branches:  1\.1\.2;
-add
+${log_keyid}add
 ----------------------------
 revision 1\.1\.2\.1
 date: ${ISO8601DATE};  author: ${username};  state: foo;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-modify-on-branch
+${log_keyid}modify-on-branch
 =============================================================================
 
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
@@ -27102,15 +27108,15 @@ description:
 ----------------------------
 revision 1\.4
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-yet_another
+${log_keyid}yet_another
 ----------------------------
 revision 1\.3
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-nuthr_line
+${log_keyid}nuthr_line
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-modify
+${log_keyid}modify
 =============================================================================
 
 RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
@@ -27128,11 +27134,11 @@ description:
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: dead;  commitid: ${commitid};
 branches:  1\.1\.2;
-file file3 was initially added on branch br\.
+${log_keyid}file file3 was initially added on branch br\.
 ----------------------------
 revision 1\.1\.2\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-another-log-message
+${log_keyid}another-log-message
 ============================================================================="
 
 	  # Currently, this test outputs 36 identical lines, so I am just
@@ -27196,7 +27202,7 @@ description:
 ----------------------------
 revision 1\.1	locked by: ${username};
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-add
+${log_keyid}add
 ============================================================================="
 
 	  # Note that this just tests the owner of the lock giving
@@ -27219,7 +27225,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-add
+${log_keyid}add
 ============================================================================="
 
 	  # rcslock.pl tests.  Of course, the point isn't to test
@@ -28439,7 +28445,7 @@ rm
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
-add
+${log_keyid}add
 ============================================================================="
 	      dotest recase-6sscs "$testcvs status FiLe" \
 "===================================================================
@@ -28466,7 +28472,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
-recase
+${log_keyid}recase
 ============================================================================="
 	    else # server sensitive && client insensitive
 	      # Client finds same Entry for file & FiLe.
@@ -28495,7 +28501,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
-recase
+${log_keyid}recase
 ============================================================================="
 	      dotest recase-6ss "$testcvs status FiLe" \
 "===================================================================
@@ -28522,7 +28528,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
-recase
+${log_keyid}recase
 ============================================================================="
 	    fi
 	  else # server insensitive
@@ -28554,15 +28560,15 @@ description:
 ----------------------------
 revision 1\.3
 date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: +1 -1;  commitid: ${commitid};
-recase
+${log_keyid}recase
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0;  commitid: ${commitid};
-rm
+${log_keyid}rm
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
-add
+${log_keyid}add
 ============================================================================="
 	    dotest recase-6si "$testcvs status FiLe" \
 "===================================================================
@@ -28590,15 +28596,15 @@ description:
 ----------------------------
 revision 1\.3
 date: ${ISO8601DATE};  author: $username;  state: Exp;  lines: +1 -1;  commitid: ${commitid};
-recase
+${log_keyid}recase
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0;  commitid: ${commitid};
-rm
+${log_keyid}rm
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
-add
+${log_keyid}add
 ============================================================================="
 	  fi
 
@@ -28707,7 +28713,7 @@ rm
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
-add
+${log_keyid}add
 ============================================================================="
 	    dotest recase-15sscs "$testcvs status FiLe" \
 "===================================================================
@@ -28734,7 +28740,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
-recase
+${log_keyid}recase
 ============================================================================="
 	      dotest recase-17sscs "$testcvs status FILE" \
 "===================================================================
@@ -28761,7 +28767,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
-recase
+${log_keyid}recase
 ============================================================================="
 	    else # $server_sensitive && !$client_sensitive
 	      # Client finds same Entry for file & FiLe.
@@ -28790,7 +28796,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
-recase
+${log_keyid}recase
 ============================================================================="
 	      dotest recase-17ssci "$testcvs status FILE" \
 "===================================================================
@@ -28817,7 +28823,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
-recase
+${log_keyid}recase
 ============================================================================="
 	    fi
 	  else # !$server_sensitive
@@ -29528,7 +29534,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-reading
+${log_keyid}reading
 =============================================================================
 
 RCS file: ${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
@@ -29545,11 +29551,11 @@ description:
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-actually
+${log_keyid}actually
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-is
+${log_keyid}is
 =============================================================================
 ${SPROG} log: Logging mod1-2
 
@@ -29566,7 +29572,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-reading
+${log_keyid}reading
 =============================================================================
 
 RCS file: ${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
@@ -29583,11 +29589,11 @@ description:
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-actually
+${log_keyid}actually
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-is
+${log_keyid}is
 =============================================================================
 ${SPROG} log: Logging mod2-2/mod1-2
 
@@ -29604,7 +29610,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-reading
+${log_keyid}reading
 =============================================================================
 
 RCS file: ${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
@@ -29621,11 +29627,11 @@ description:
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-actually
+${log_keyid}actually
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-is
+${log_keyid}is
 =============================================================================
 ${SPROG} log: Logging mod1-2/mod2-2
 
@@ -29642,7 +29648,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-reading
+${log_keyid}reading
 =============================================================================
 
 RCS file: ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
@@ -29659,11 +29665,11 @@ description:
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-actually
+${log_keyid}actually
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-anyone
+${log_keyid}anyone
 =============================================================================
 ${SPROG} log: Logging mod2-1
 
@@ -29680,7 +29686,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-reading
+${log_keyid}reading
 =============================================================================
 
 RCS file: ${CVSROOT2_DIRNAME}/mod2-1/file2-1,v
@@ -29697,11 +29703,11 @@ description:
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-actually
+${log_keyid}actually
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-anyone
+${log_keyid}anyone
 =============================================================================
 ${SPROG} log: Logging mod2-2
 
@@ -29718,7 +29724,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-reading
+${log_keyid}reading
 =============================================================================
 
 RCS file: ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
@@ -29735,11 +29741,11 @@ description:
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-actually
+${log_keyid}actually
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-anyone
+${log_keyid}anyone
 =============================================================================" \
 "${SPROG} log: Logging \.
 ${SPROG} log: Logging mod1-1
@@ -29757,7 +29763,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-reading
+${log_keyid}reading
 =============================================================================
 
 RCS file: ${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
@@ -29774,11 +29780,11 @@ description:
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-actually
+${log_keyid}actually
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-is
+${log_keyid}is
 =============================================================================
 ${SPROG} log: Logging mod1-2
 
@@ -29795,7 +29801,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-reading
+${log_keyid}reading
 =============================================================================
 
 RCS file: ${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
@@ -29812,11 +29818,11 @@ description:
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-actually
+${log_keyid}actually
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-is
+${log_keyid}is
 =============================================================================
 ${SPROG} log: Logging mod2-2
 ${SPROG} log: Logging mod2-2/mod1-2
@@ -29834,7 +29840,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-reading
+${log_keyid}reading
 =============================================================================
 
 RCS file: ${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
@@ -29851,11 +29857,11 @@ description:
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-actually
+${log_keyid}actually
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-is
+${log_keyid}is
 =============================================================================
 ${SPROG} log: Logging mod1-2
 ${SPROG} log: Logging mod1-2/mod2-2
@@ -29873,7 +29879,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-reading
+${log_keyid}reading
 =============================================================================
 
 RCS file: ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
@@ -29890,11 +29896,11 @@ description:
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-actually
+${log_keyid}actually
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-anyone
+${log_keyid}anyone
 =============================================================================
 ${SPROG} log: Logging mod2-1
 
@@ -29911,7 +29917,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-reading
+${log_keyid}reading
 =============================================================================
 
 RCS file: ${CVSROOT2_DIRNAME}/mod2-1/file2-1,v
@@ -29928,11 +29934,11 @@ description:
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-actually
+${log_keyid}actually
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-anyone
+${log_keyid}anyone
 =============================================================================
 ${SPROG} log: Logging mod2-2
 
@@ -29949,7 +29955,7 @@ description:
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-reading
+${log_keyid}reading
 =============================================================================
 
 RCS file: ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
@@ -29966,11 +29972,11 @@ description:
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
-actually
+${log_keyid}actually
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
-anyone
+${log_keyid}anyone
 ============================================================================="
 
 
