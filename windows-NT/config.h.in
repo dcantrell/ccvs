@@ -74,6 +74,13 @@
    time in place of `%t' in the DEFAULT_SIGN_TEMPLATE). */
 #undef DEFAULT_SIGN_TEXTMODE
 
+/* Define to a command line template that will read an OpenPGP signature from
+   the file `%s' and use it to verify the integrity of the file `%d'. `%t' is
+   substituted at run time with an option which flags files as text files,
+   when necessary, and the empty string, otherwise. `%a' is substituted with a
+   list of arguments provided by the user. */
+#undef DEFAULT_VERIFY_TEMPLATE
+
 /* Define if there is a member named d_ino in the struct describing directory
    headers. */
 #undef D_INO_IN_DIRENT
