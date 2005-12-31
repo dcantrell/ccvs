@@ -16,9 +16,12 @@
 #ifndef ROOT_H
 #define ROOT_H
 
+/* ANSI C includes.  */
 #include <stdbool.h>
 
+/* CVS Includes.  */
 #include "sign.h"
+#include "verify.h"
 
 /* Access method specified in CVSroot. */
 typedef enum {
@@ -47,6 +50,13 @@ typedef struct cvsroot_s {
     char *sign_textmode;	/* The arg GPG needs for text files.  */
     List *sign_args;		/* Keep track of any additional arguments for
 				 * the sign tool.
+				 */
+    verify_state verify;	/* Whether to verify checkouts.  */
+    char *verify_template;	/* The template to use to launch the external
+				 * program to verify GPG signatures.
+				 */
+    List *verify_args;		/* Keep track of any additional arguments for
+				 * the verify tool.
 				 */
 
 /* The following is required for servers now to allow Redirects to be sent

@@ -402,6 +402,9 @@ new_cvsroot_t (void)
     newroot->sign_template = xstrdup (DEFAULT_SIGN_TEMPLATE);
     newroot->sign_textmode = xstrdup (DEFAULT_SIGN_TEXTMODE);
     newroot->sign_args = getlist ();
+    newroot->verify = VERIFY_DEFAULT;
+    newroot->verify_template = xstrdup (DEFAULT_VERIFY_TEMPLATE);
+    newroot->verify_args = getlist ();
 #ifdef CLIENT_SUPPORT
     newroot->username = NULL;
     newroot->password = NULL;
@@ -438,6 +441,9 @@ free_cvsroot_t (cvsroot_t *root)
     if (root->sign_textmode)
 	free (root->sign_textmode);
     dellist (&root->sign_args);
+    if (root->verify_template)
+	free (root->verify_template);
+    dellist (&root->verify_args);
 #ifdef CLIENT_SUPPORT
     if (root->username != NULL)
 	free (root->username);
@@ -646,6 +652,34 @@ parse_cvsroot (const char *root_in)
 		newroot->sign_textmode = xstrdup (q);
 	    else if (!strcasecmp (p, "sign-arg"))
 		push_string (newroot->sign_args, q);
+	    else if (!strcasecmp (p, "no-verify"))
+		newroot->verify = VERIFY_OFF;
+	    else if (!strcasecmp (p, "verify"))
+	    {
+		if (!q)
+		    newroot->verify = VERIFY_FATAL;
+		else if (!strcasecmp (q, "fatal"))
+		    newroot->verify = VERIFY_FATAL;
+		else if (!strcasecmp (q, "warn"))
+		    newroot->verify = VERIFY_WARN;
+		else
+		{
+		    bool on;
+		    if (readBool ("CVSROOT", "verify", q, &on))
+		    {
+			if (on)
+			    newroot->verify = VERIFY_FATAL;
+			else
+			    newroot->verify = VERIFY_OFF;
+		    }
+		    else
+			goto error_exit;
+		}
+	    }
+	    else if (!strcasecmp (p, "verify-template"))
+		newroot->verify_template = xstrdup (q);
+	    else if (!strcasecmp (p, "verify-arg"))
+		push_string (newroot->verify_args, q);
 	    else if (!strcasecmp (p, "CVS_RSH"))
 	    {
 		/* override CVS_RSH environment variable */

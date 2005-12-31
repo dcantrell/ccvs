@@ -85,6 +85,7 @@ cvs_SOURCES = \
 	subr.c subr.h \
 	tag.c \
 	update.c \
+	verify.c verify.h \
 	version.c \
 	vers_ts.c \
 	watch.c \
