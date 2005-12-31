@@ -1,3 +1,16 @@
+2005-12-31  Mark D. Baushke  <mdb@gnu.org>
+
+	[Add CVSNT compatible [-w width] switch to cvs (r)annotate command.]
+	* rcs.c (RCS_deltas): Provide for annotate_width for author field
+	and use Xasprintf in place of xmalloc/sprintf.
+	* rcs.h (annotate_width): New global.
+	* annotate.c (annotate_width): Default to 8.
+	(annotate_usage): New -w width option.
+	(annotate): Ditto.
+	* sanity.sh (userlen, username1): New variables.
+	(basica-10w1, basica-10wmax, ann-10w1, ann-10wmax): New tests for
+	the annotate -w width option.
+	
 2005-12-20  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (config3): Accept `.' in paths.
