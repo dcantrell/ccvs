@@ -255,6 +255,7 @@ void RCS_setlocalid (const char *, unsigned int, void **, const char *arg);
 char *make_file_label (const char *, const char *, RCSNode *);
 
 extern bool preserve_perms;
+extern int annotate_width;
 
 /* From import.c.  */
 extern int add_rcs_file (const char *, const char *, const char *,
