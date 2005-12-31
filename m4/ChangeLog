@@ -1,3 +1,7 @@
+2005-12-31  Mark D. Baushke  <mdb@gnu.org>
+
+	* bison.m4: Merge copyright update from GNULIB.
+
 2005-12-07  Mark D. Baushke  <mdb@gnu.org>
 
 	* regex.m4, socklen.m4: Update from GNULIB.
