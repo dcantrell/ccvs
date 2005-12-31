@@ -16,8 +16,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef SIGN_H
-#define SIGN_H
+#ifndef VERIFY_H
+#define VERIFY_H
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -27,25 +27,24 @@
 
 
 
-typedef enum { SIGN_DEFAULT, SIGN_ALWAYS, SIGN_NEVER } sign_state;
+typedef enum
+{
+  VERIFY_DEFAULT,
+  VERIFY_OFF,
+  VERIFY_WARN,
+  VERIFY_FATAL
+} verify_state;
 
 
 
 /* Set values to override current_parsed_root.  */
-void set_sign_commits (sign_state sign);
-void set_sign_template (const char *template);
-void set_sign_textmode (const char *textmode);
-void add_sign_arg (const char *arg);
+void set_verify_checkouts (verify_state verify);
+void set_verify_template (const char *template);
+void set_verify_textmode (const char *textmode);
+void add_verify_arg (const char *arg);
 
 /* Get values.  */
-bool get_sign_commits (bool server_active, bool server_support);
-const char *get_sign_textmode (void);
-char *gen_signature (const char *srepos, const char *filename, bool bin,
-		     size_t *len);
-char *get_signature (bool server_active, const char *srepos,
-		     const char *filename, bool bin, size_t *len);
-
-/* Other utilities.  */
-bool have_sigfile (bool server_active, const char *fn);
-char *get_sigfile_name (const char *fn);
-#endif /* SIGN_H */
+bool get_verify_checkouts (bool server_active, bool server_support);
+char *verify_signature (const char *srepos, const char *filename, bool bin,
+			size_t *len);
+#endif /* VERIFY_H */

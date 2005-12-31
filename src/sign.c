@@ -144,8 +144,11 @@ get_sign_template (void)
 
 /* Return SIGN_TEXTMODE from the command line if it exists, else return the
  * SIGN_TEXTMODE from CURRENT_PARSED_ROOT.
+ *
+ * This function is not static because sign_textmode is reused for
+ * verify_textmode.
  */
-static inline const char *
+const char *
 get_sign_textmode (void)
 {
     if (sign_textmode) return sign_textmode;

@@ -17,14 +17,21 @@
  *
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
+/* GNULIB includes.  */
 #include "closeout.h"
 #include "setenv.h"
 #include "strftime.h"
 #include "xgethostname.h"
 
+/* CVS includes.  */
 #include "sign.h"
+#include "verify.h"
+
+#include "cvs.h"
 
 
 
@@ -319,6 +326,14 @@ static const char *const opt_usage[] =
     "    --textmode ARG\n",
     "                 Pass ARG to OpenPGP TEMPLATE when verifying or\n",
     "                 generating signatures.\n",
+    "    --verify[=(off | warn | fatal)] | --no-verify\n",
+    "                 Force (or forbid) OpenPGP signature verification\n",
+    "                 (default warns).\n",
+    "    -G TEMPLATE\n",
+    "    --verify-template TEMPLATE\n",
+    "                 Use TEMPLATE to verify OpenPGP signatures.\n",
+    "    --verify-arg ARG\n",
+    "                 Pass ARG to OpenPGP TEMPLATE when verifying.\n",
     "(Specify the --help option for a list of other help options)\n",
     NULL
 };
@@ -541,8 +556,12 @@ main (int argc, char **argv)
 	{"sign", optional_argument, NULL, 'g'},
 	{"no-sign", 0, NULL, 5},
 	{"sign-template", required_argument, NULL, 'G'},
-	{"sign-arg", required_argument, NULL, '6'},
-	{"sign-textmode", required_argument, NULL, 7},
+	{"sign-arg", required_argument, NULL, 6},
+	{"textmode", required_argument, NULL, 7},
+	{"verify", optional_argument, NULL, 8},
+	{"no-verify", 0, NULL, 9},
+	{"verify-template", required_argument, NULL, 10},
+	{"verify-arg", required_argument, NULL, 11},
 #ifdef SERVER_SUPPORT
 	{"allow-root", required_argument, NULL, 3},
 #endif /* SERVER_SUPPORT */
@@ -678,7 +697,7 @@ main (int argc, char **argv)
 		    else if (!strcasecmp (optarg, "off"))
 			set_sign_commits (SIGN_NEVER);
 		    else
-			error (1, 0, "Unrecognized argument to sign (`%s')",
+			error (1, 0, "Unrecognized argument to --sign (`%s')",
 			       optarg);
 		}
 		else
@@ -697,8 +716,43 @@ main (int argc, char **argv)
 		add_sign_arg (optarg);
 		break;
 	    case 7:
-		/* --sign-textmode */
+		/* --textmode */
 		set_sign_textmode (optarg);
+		break;
+	    case 8:
+		/* --verify */
+		if (optarg)
+		{
+		    if (!strcasecmp (optarg, "off")
+			|| !strcasecmp (optarg, "never")
+			|| !strcasecmp (optarg, "false"))
+			set_verify_checkouts (VERIFY_OFF);
+		    else if (!strcasecmp (optarg, "warn"))
+			set_verify_checkouts (VERIFY_WARN);
+		    else if (!strcasecmp (optarg, "always")
+			     || !strcasecmp (optarg, "fatal")
+			     || !strcasecmp (optarg, "on")
+			     || !strcasecmp (optarg, "true"))
+			set_verify_checkouts (VERIFY_FATAL);
+		    else
+			error (1, 0,
+			       "Unrecognized argument to --verify (`%s')",
+			       optarg);
+		}
+		else
+		    set_verify_checkouts (VERIFY_FATAL);
+		break;
+	    case 9:
+	        /* --no-verify */
+		set_verify_checkouts (VERIFY_OFF);
+		break;
+	    case 10:
+		/* --verify-template */
+		set_verify_template (optarg);
+		break;
+	    case 11:
+		/* --verify-arg */
+		add_verify_arg (optarg);
 		break;
 #ifdef SERVER_SUPPORT
 	    case 3:
