@@ -1,3 +1,7 @@
+2006-01-01  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Note progress.
+
 2005-12-31  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Define DEFAULT_VERIFY_TEMPLATE.
