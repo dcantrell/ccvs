@@ -1,3 +1,14 @@
+2005-12-31  Mark D. Baushke  <mdb@gnu.org>
+
+	* config.h.in.in: Add #undef missing symbols found by mkconfig.pl
+	(HAVE_COMPOUND_LITERALS, HAVE_DECL_FREEADDRINFO,
+	HAVE_DECL_GAI_STRERROR, HAVE_DECL_GETADDRINFO, HAVE_FDOPENDIR,
+	HAVE_NETINET_IN_H, HAVE_STRUCT_ADDRINFO, re_comp,
+	re_compile_fastmap, re_compile_pattern, re_exec, re_match,
+	re_match_2, re_search, re_search_2, re_set_registers,
+	re_set_syntax, re_syntax_options, regcomp, regerror, regexec,
+	regfree, socklen_t).
+
 2005-12-07  Mark D. Baushke  <mdb@gnu.org>
 
 	* stdint.h: Update from GNULIB.
