@@ -731,6 +731,31 @@ get_file (const char *name, const char *fullname, const char *mode, char **buf,
 
 
 
+void
+write_file (const char *file, const char *data, size_t len)
+{
+    FILE *fp;
+
+    TRACE (TRACE_FUNCTION,
+	   "write_file (%s, %s, %u)", file, data, (unsigned int)len);
+
+    if (noexec) return;
+
+    if (!(fp = fopen (file, "w")))
+	error (1, errno, "cannot create `%s'", file);
+
+    if (len > 0)
+    {
+	if (fwrite (data, sizeof *data, len, fp) != len)
+	    error (1, errno, "cannot write file `%s'", file);
+    }
+
+    if (fclose (fp) < 0)
+	error (1, errno, "cannot close `%s'", file);
+}
+
+
+
 /* Follow a chain of symbolic links to its destination.  FILENAME
    should be a handle to a malloc'd block of memory which contains the
    beginning of the chain.  This routine will replace the contents of

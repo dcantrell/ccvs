@@ -1,5 +1,15 @@
 2006-01-01  Derek Price  <derek@ximbiot.com>
 
+	* client.c (sig_cache): New static global.
+	(update_entries): Save signatures to CVS/Base after a commit.
+	(send_signature): Cache signatures after sending them to the server.
+	Accept full file name as an argument.  Update all callers.
+	* sanity.sh: Set GPG trust for test key.
+	(verify): New test.
+	* subr.c (write_file), subr.h: New function.
+	* verify.c (iverify_signature): New function factored from...
+	(verify_signature): ...here.
+
 	* sign.c (read_signature): Remove bin argument.  Update caller.
 
 	* base.c (translate_exists): Suppress GCC warning.

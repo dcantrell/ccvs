@@ -186,6 +186,7 @@ static const struct cmd
     { "tag",      "ta",       "freeze",    cvstag,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
     { "unedit",   NULL,       NULL,        unedit,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
     { "update",   "up",       "upd",       update,    CVS_CMD_USES_WORK_DIR },
+    { "verify",   "ver",      NULL,        verify,    0 },
     { "version",  "ve",       "ver",       version,   0 },
     { "watch",    NULL,       NULL,        watch,     CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
     { "watchers", NULL,       NULL,        watchers,  CVS_CMD_USES_WORK_DIR },

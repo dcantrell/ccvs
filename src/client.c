@@ -1493,6 +1493,13 @@ read_file_from_server (const char *fullname, char **mode_string, size_t *size)
 
 
 
+/* Cache for OpenPGP signatures so they may be written to a file only on a
+ * successful commit.
+ */
+static List *sig_cache;
+
+
+
 /* Update the Entries line for this file.  */
 static void
 update_entries (void *data_arg, List *ent_list, const char *short_pathname,
@@ -1901,6 +1908,25 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    char *basefile = make_base_file_name (filename, vn);
 	    mkdir_if_needed (CVSADM_BASE);
 	    copy_file (filename, basefile);
+
+	    if (get_sign_commits (false, supported_request ("Signature")))
+	    {
+		if ((n = findnode_fn (sig_cache, short_pathname)))
+		{
+		    char *sigfile = Xasprintf ("%s%s", basefile, ".sig");
+		    write_file (sigfile, n->data, n->len);
+		    delnode (n);
+		    free (sigfile);
+		}
+		else
+		{
+		    error (0, 0,
+"Internal error: OpenPGP signature for `%s' not found in cache.",
+			   short_pathname);
+		    printlist (sig_cache);
+		}
+	    }
+
 	    free (basefile);
 	}
     }
@@ -5075,17 +5101,32 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
 
 
 
+/* Generate and send an OpenPGP signature to the server.
+ */
 static void
-send_signature (const char *srepos, const char *filename, bool bin)
+send_signature (const char *srepos, const char *filename, const char *fullname,
+		bool bin)
 {
     char *sigbuf;
     size_t len;
+    Node *n;
 
     sigbuf = gen_signature (srepos, filename, bin, &len);
 
     send_to_server ("Signature\012", 0);
     send_to_server (sigbuf, len);
-    free (sigbuf);
+
+    /* Cache the signature for use with the base file which will be
+     * automatically generated later since the server will not send a new base
+     * file and signature unless keywords cause the file to change after it is
+     * committed.
+     */
+    if (!sig_cache) sig_cache = getlist ();
+    n = getnode ();
+    n->key = xstrdup (fullname);
+    n->data = sigbuf;
+    n->len = len;
+    addnode (sig_cache, n);
 }
 
 
@@ -5222,7 +5263,7 @@ warning: ignoring -k options due to server limitations");
 		    error (1, 0, "Server doesn't support commit signatures.");
 
 		send_signature (Short_Repository (finfo->repository),
-				finfo->file,
+				finfo->file, finfo->fullname,
 				vers && !strcmp (vers->options, "-kb"));
 	    }
 	    send_modified (filename, finfo->fullname, vers);
@@ -5756,7 +5797,7 @@ client_process_import_file (char *message, char *vfile, char *vtag, int targc,
 	if (!supported_request ("Signature"))
 	    error (1, 0, "Server doesn't support commit signatures.");
 
-	send_signature (Short_Repository (repository), vfile,
+	send_signature (Short_Repository (repository), vfile, fullname,
 			vers.options && !strcmp (vers.options, "-kb"));
     }
 
