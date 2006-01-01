@@ -1775,6 +1775,9 @@ B2xyFA1/6G+hv7k=
 =k49u
 -----END PGP PRIVATE KEY BLOCK-----
 EOF
+  $GPG --import-ownertrust <<EOF >>$LOGFILE 2>&1
+F1D6D5842814BC3A264BE7068E0C2C7EF133BDE9:6:
+EOF
 
   # Some tests check the content of the RCS file and whether there is a
   # signature phrase or not depends on whether they were being generated.
@@ -1869,6 +1872,7 @@ if test x"$*" = x; then
 	tests="${tests} dottedroot fork commit-d template"
 	tests="${tests} writeproxy writeproxy-noredirect writeproxy-ssh"
 	tests="${tests} writeproxy-ssh-noredirect"
+	tests="$tests verify"
 else
 	tests="$*"
 fi
@@ -32692,6 +32696,30 @@ EOF
 	  rm $TESTDIR/writeproxy-secondary-wrapper \
 	     $TESTDIR/writeproxy-primary-wrapper
 	  CVS_SERVER=$CVS_SERVER_save
+	  ;;
+
+
+
+	verify)
+	  # More tests of basic/miscellaneous functionality.
+	  mkdir verify; cd verify
+	  mkdir top; cd top
+	  dotest verify-init-1 "$testcvs -q co -l ."
+	  mkdir verify
+	  dotest verify-init-2 "$testcvs -Q add verify"
+	  cd ..
+	  dotest verify-init-3 "$testcvs -q co verify"
+	  cd verify
+	  echo some content >file1
+	  dotest verify-init-4 "$testcvs -Q add file1"
+	  dotest verify-init-5 "$testcvs -Q ci -m newfile file1"
+	  dotest verify-1 "$testcvs verify file1" \
+"$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
+
+	  dokeep
+	  cd ../..
+	  rm -rf verify
+	  modify_repo rm -rf $CVSROOT_DIRNAME/verify
 	  ;;
 
 

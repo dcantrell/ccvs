@@ -45,6 +45,9 @@ void add_verify_arg (const char *arg);
 
 /* Get values.  */
 bool get_verify_checkouts (bool server_active, bool server_support);
-char *verify_signature (const char *srepos, const char *filename, bool bin,
-			size_t *len);
+bool verify_signature (const char *srepos, const char *filename, bool bin,
+		       bool server_active, bool server_support);
+
+/* User command.  */
+int verify (int argc, char **argv);
 #endif /* VERIFY_H */

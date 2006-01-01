@@ -32,6 +32,7 @@
 #include "xalloc.h"
 
 /* CVS headers.  */
+#include "base.h"
 #include "stack.h"
 
 /* Get current_parsed_root.  */
@@ -235,9 +236,204 @@ verify_args_list_to_args_proc (Node *p, void *closure)
 
 
 
-/* Generate a signature and return it in allocated memory.  */
-char *
-verify_signature (const char *srepos, const char *filename, bool bin,\
-		  size_t *len)
+/* Verify a signature, returning true or false.
+ *
+ * ERRORS
+ *   Exits with a fatal error when FATAL and a signature cannot be verified.
+ */
+static bool
+iverify_signature (const char *srepos, const char *filename, bool bin,
+		  bool fatal)
 {
+    char *cmdline;
+    char *sigfile = Xasprintf ("%s%s", filename, ".sig");
+    FILE *pipefp;
+    bool save_noexec = noexec;
+    size_t len;
+    char buf[256];
+    int pipestatus;
+    bool retval;
+
+    if (!isfile (sigfile))
+    {
+	error (fatal, 0, "No signature file found (`%s')", sigfile);
+	free (sigfile);
+	return false;
+    }
+
+    /*
+     * %p = shortrepos
+     * %r = repository
+     * %{a} = user defined sign args
+     * %t = textmode flag
+     * %s = signature file name
+     * %d = signed (data) file name
+     */
+    /*
+     * Cast any NULL arguments as appropriate pointers as this is an
+     * stdarg function and we need to be certain the caller gets what
+     * is expected.
+     */
+    cmdline = format_cmdline (
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+	                      false, srepos,
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	                      get_verify_template (),
+	                      "a", ",", get_verify_args (),
+			      verify_args_list_to_args_proc, (void *) NULL,
+	                      "r", "s", current_parsed_root->directory,
+	                      "p", "s", srepos,
+	                      "t", "s", bin ? NULL : get_sign_textmode (),
+	                      "s", "s", sigfile,
+	                      "d", "s", filename,
+	                      (char *) NULL);
+
+    if (!cmdline || !strlen (cmdline))
+    {
+	error (fatal, 0, "verify template resolved to the empty string!");
+	if (cmdline) free (cmdline);
+	free (sigfile);
+	return false;
+    }
+
+    noexec = false;
+    if (!(pipefp = run_popen (cmdline, "r")))
+    {
+	error (fatal, errno, "failed to execute signature verifier");
+	retval = false;
+	goto done;
+    }
+    noexec = save_noexec;
+
+    do
+    {
+	len = fread (buf, sizeof *buf, sizeof buf, pipefp);
+	if (!really_quiet && len)
+	    cvs_output (buf, len);
+	/* Fewer bytes than requested means EOF or error.  */
+    } while (len == sizeof buf);
+
+    if (ferror (pipefp))
+	error (0, ferror (pipefp), "Error reading from verify program.");
+
+    pipestatus = pclose (pipefp);
+    if (pipestatus == -1)
+    {
+	error (fatal, errno,
+	       "failed to obtain exit status from verify program");
+	retval = false;
+    }
+    else if (pipestatus)
+    {
+	if (WIFEXITED (pipestatus))
+	    error (fatal, 0, "verify program exited with error code %d",
+		   WEXITSTATUS (pipestatus));
+	else
+	    error (fatal, 0, "verify program exited via signal %d",
+		   WTERMSIG (pipestatus));
+	retval = false;
+    }
+    else
+	retval = true;
+
+done:
+    free (sigfile);
+    free (cmdline);
+
+    return retval;
+}
+
+
+
+/* Verify a signature, returning true or false.
+ *
+ * ERRORS
+ *   Exits with a fatal error when the verify mode is VERIFY_FATAL and a
+ *   signature cannot be verified.
+ */
+bool
+verify_signature (const char *srepos, const char *filename, bool bin,
+		  bool server_active, bool server_support)
+{
+    bool fatal = iget_verify_checkouts (server_active, server_support)
+	         == VERIFY_FATAL;
+    return iverify_signature (srepos, filename, bin, fatal);
+}
+
+
+
+static const char *const verify_usage[] =
+{
+    "Usage: %s %s [-lR]\n",
+    "\t-l\tLocal directory only, no recursion.\n",
+    "\t-R\tProcess directories recursively.\n",
+    "(Specify the --help global option for a list of other help options)\n",
+    NULL
+};
+
+
+
+static int
+verify_fileproc (void *callerdat, struct file_info *finfo)
+{
+    const char *srepos = Short_Repository (finfo->repository);
+    Node *n;
+    bool bin;
+    Entnode *e;
+    bool retval;
+    char *basefn;
+
+    n = findnode (finfo->entries, finfo->file);
+    assert (n);
+
+    e = n->data;
+    bin = !strcmp (e->options, "-kb");
+
+    basefn = make_base_file_name (finfo->file, e->version);
+
+    retval = !iverify_signature (srepos, basefn, bin, false);
+
+    free (basefn);
+    return retval;
+}
+
+
+
+int
+verify (int argc, char **argv)
+{
+    bool local = false;
+    char c;
+    int err;
+
+    if (argc == -1)
+	usage (verify_usage);
+
+    /* parse the args */
+    optind = 0;
+    while ((c = getopt (argc, argv, "+lR")) != -1)
+    {
+	switch (c)
+	{
+	    case 'l':
+		local = true;
+		break;
+	    case 'R':
+		local = false;
+		break;
+	    case '?':
+	    default:
+		usage (verify_usage);
+		break;
+	}
+    }
+    argc -= optind;
+    argv += optind;
+
+    /* call the recursion processor */
+    err = start_recursion (verify_fileproc, NULL, NULL, NULL, NULL,
+			   argc, argv, local, W_LOCAL, false, CVS_LOCK_NONE,
+			   NULL, 1, NULL);
+
+    return err;
 }
