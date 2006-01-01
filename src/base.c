@@ -332,7 +332,10 @@ translate_exists (const char *exists)
      */
     error (1, 0, "unknown existence code received from server: `%s'",
 	   exists);
-    assert (!"Internal error");  /* Placate GCC.  */
+
+    /* Placate GCC.  */
+    assert (!"Internal error");
+    return UPDATE_ENTRIES_EXISTING_OR_NEW;
 }
 
 
