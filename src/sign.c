@@ -343,13 +343,13 @@ gen_signature (const char *srepos, const char *filename, bool bin, size_t *len)
 
 /* Read a signature from a file and return it in allocated memory.  */
 static char *
-read_signature (const char *fn, bool bin, size_t *len)
+read_signature (const char *fn, size_t *len)
 {
     char *sfn = get_sigfile_name (fn);
     char *data = NULL;
     size_t datasize;
 
-    get_file (sfn, sfn, bin ? "rb" : "r", &data, &datasize, len);
+    get_file (sfn, sfn, "rb", &data, &datasize, len);
 
     free (sfn);
     return data;
@@ -364,6 +364,6 @@ char *
 get_signature (bool server_active, const char *srepos, const char *filename,
 	       bool bin, size_t *len)
 {
-    if (server_active) return read_signature (filename, bin, len);
+    if (server_active) return read_signature (filename, len);
     /* else */ return gen_signature (srepos, filename, bin, len);
 }
