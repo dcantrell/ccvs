@@ -1,5 +1,7 @@
 2005-12-31  Mark D. Baushke  <mdb@gnu.org>
 
+	* gnulib-comp.m4: Update from GNULIB.
+
 	* bison.m4: Merge copyright update from GNULIB.
 
 2005-12-07  Mark D. Baushke  <mdb@gnu.org>
