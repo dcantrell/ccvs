@@ -1,5 +1,7 @@
 2006-01-01  Derek Price  <derek@ximbiot.com>
 
+	* sign.c (read_signature): Remove bin argument.  Update caller.
+
 	* base.c (translate_exists): Suppress GCC warning.
 
 2005-12-31  Derek Price  <derek@ximbiot.com>
