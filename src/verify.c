@@ -373,9 +373,17 @@ static const char *const verify_usage[] =
 
 
 
+struct verify_closure
+{
+    bool pipeout;
+};
+
+
+
 static int
 verify_fileproc (void *callerdat, struct file_info *finfo)
 {
+    struct verify_closure *userargs = callerdat;
     const char *srepos = Short_Repository (finfo->repository);
     Node *n;
     bool bin;
@@ -391,7 +399,25 @@ verify_fileproc (void *callerdat, struct file_info *finfo)
 
     basefn = make_base_file_name (finfo->file, e->version);
 
-    retval = !iverify_signature (srepos, basefn, bin, false);
+    if (userargs->pipeout)
+    {
+	char *sigfile = Xasprintf ("%s%s", basefn, ".sig");
+	char *fullsigfile = Xasprintf ("%s/%s", finfo->update_dir, sigfile);
+	char *sigdata;
+	size_t buflen;
+	size_t siglen;
+	
+	get_file (sigfile, fullsigfile, "rb", &sigdata, &buflen, &siglen);
+	if (siglen)
+	    cvs_output (sigdata, siglen);
+	if (sigdata)
+	    free (sigdata);
+	free (sigfile);
+	free (fullsigfile);
+	retval = false;
+    }
+    else
+	retval = !iverify_signature (srepos, basefn, bin, false);
 
     free (basefn);
     return retval;
@@ -405,13 +431,15 @@ verify (int argc, char **argv)
     bool local = false;
     char c;
     int err;
+    struct verify_closure userargs;
 
     if (argc == -1)
 	usage (verify_usage);
 
     /* parse the args */
+    userargs.pipeout = false;
     optind = 0;
-    while ((c = getopt (argc, argv, "+lR")) != -1)
+    while ((c = getopt (argc, argv, "+lRp")) != -1)
     {
 	switch (c)
 	{
@@ -420,6 +448,9 @@ verify (int argc, char **argv)
 		break;
 	    case 'R':
 		local = false;
+		break;
+	    case 'p':
+		userargs.pipeout = true;
 		break;
 	    case '?':
 	    default:
@@ -431,7 +462,7 @@ verify (int argc, char **argv)
     argv += optind;
 
     /* call the recursion processor */
-    err = start_recursion (verify_fileproc, NULL, NULL, NULL, NULL,
+    err = start_recursion (verify_fileproc, NULL, NULL, NULL, &userargs,
 			   argc, argv, local, W_LOCAL, false, CVS_LOCK_NONE,
 			   NULL, 1, NULL);
 
