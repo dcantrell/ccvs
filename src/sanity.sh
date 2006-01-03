@@ -32715,6 +32715,8 @@ EOF
 	  dotest verify-init-5 "$testcvs -Q ci -m newfile file1"
 	  dotest verify-1 "$testcvs verify file1" \
 "$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
+	  dotest verify-2 "$testcvs verify -p file1 >tmp"
+	  dotest verify-3 "cmp tmp CVS/Base/.#file1.1.1.sig"
 
 	  dokeep
 	  cd ../..
