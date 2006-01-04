@@ -15,9 +15,9 @@ Segment 2: Use CVS/Base Files (8 days)
 Segment 3: CVS Log, Status, Verify, & Sign (6 days)
 *   4.5 cvs log Prints Sig Summary Data: 1 day
 *   4.6 Download Base Revision, Download Sig, Verify: 1 day
->   4.6.3 cvs verify -p Cats Sig to stdout, cvs status
+*   4.6.3 cvs verify -p Cats Sig to stdout, cvs status
           Automatically Verifies: 1 day
-    4.7 cvs sign Command: 1 day
+>   4.7 cvs sign Command: 1 day
     4.7 cvs sign -d to Delete Signatures from Revisions: 1 day
     4.3.2 Server Verifies Signatures when Configured So: 1 day
 
