@@ -1,3 +1,7 @@
+2006-01-05  Derek Price  <derek@ximbiot.com>
+
+	* recurse.c (start_recursion): Expand header comment block.
+
 2005-12-31  Mark D. Baushke  <mdb@gnu.org>
 
 	[Add CVSNT compatible [-w width] switch to cvs (r)annotate command.]
