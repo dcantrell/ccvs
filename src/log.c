@@ -29,6 +29,8 @@
 
 /* CVS Headers.  */
 #include "gpg.h"
+#include "ignore.h"
+#include "recurse.h"
 
 #include "cvs.h"
 

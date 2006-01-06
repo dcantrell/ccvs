@@ -1,5 +1,30 @@
 2006-01-06  Derek Price  <derek@ximbiot.com>
 
+	* client.c, client.h, commit.c, log.c, mkmodules.c, patch.c, server.c,
+	status.c: Use stricter include formatting.
+	(update_entries): Generalize sig_cache handling.
+	(client_write_sigfile): New function factored from...
+	(client_base_checkout): ...here.
+	(client_base_signatures, handle_base_signatures): New functions.
+	(responses): Add Base-signatures.
+	(struct send_data, send_files): Remove sign flag.
+	(send_fileproc): Compensate.  Send signatures for sign command.
+	* client.h [SEND_SIGNATURES]: Remove.
+	* commit.c (check_direntproc): Compensate.
+	* main.c (cmd): Add `sign' command.  
+	* rcs.c (RCS_add_openpgp_signature): New function.
+	* server.c (server_write_sigfile): New function factored from...
+	(serve_modified): ...here.
+	(serve_unchanged): Write signatures.
+	(requests): Add `sign' request.
+	(serve_sign, server_base_signatures): New functions.
+	* server.h (server_write_sigfile): Add proto.
+	* sign.c (sign_fileproc, sign): New functions.
+	(sign_usage): Add.
+
+	* sanity.sh (verify): Rename to...
+	(openpgp): ...this and add sign test.
+
 	* add.c, admin.c, annotate.c, base.c, buffer.c, checkin.c, checkout.c,
 	classify.c, diff.c, edit.c, edit.h, entries.c, fileattr.c,
 	find_names.c, history.c, ignore.c, import.c, lock.c, logmsg.c, ls.c,

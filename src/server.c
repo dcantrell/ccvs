@@ -15,22 +15,24 @@
 /* Validate API.  */
 #include "server.h"
 
-
-/* GNULIB */
+/* GNULIB headers.  */
 #include "getline.h"
 #include "getnline.h"
 #include "setenv.h"
 #include "wait.h"
 
-/* CVS */
+/* CVS headers.  */
 #include "base.h"
 #include "buffer.h"
+#include "edit.h"
 #include "gpg.h"
+#include "ignore.h"
 
 #include "cvs.h"
-#include "edit.h"
 #include "fileattr.h"
 #include "watch.h"
+
+
 
 int server_active = 0;
 
@@ -1879,6 +1881,81 @@ serve_is_modified (char *arg)
 
 
 
+/* Returns false on errors.
+ */
+static bool
+server_write_sigfile (const char *file, struct buffer *sig_buf)
+{
+    char *sigfile_name, *sig_data;
+    int fd, rc;
+    size_t got;
+    bool err = false;
+
+    /* Write the file.  */
+    sigfile_name = get_sigfile_name (file);
+    fd = CVS_OPEN (sigfile_name, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+    if (fd < 0)
+    {
+	int save_errno = errno;
+	if (alloc_pending (40 + strlen (sigfile_name)))
+	    sprintf (pending_error_text, "E cannot open `%s'",
+		     sigfile_name);
+	pending_error = save_errno;
+	err = true;
+	goto done;
+    }
+
+    while (!buf_empty_p (sig_buf))
+    {
+	if ((rc = buf_read_data (sig_buf, buf_length (sig_buf), &sig_data,
+				 &got)))
+	{
+	    /* Since !buf_empty_p confirmed that the buffer was not empty,
+	     * it should be impossible to get EOF here.
+	     */
+	    assert (rc != -1);
+
+	    if (rc == -2)
+		pending_error = ENOMEM;
+	    else if (alloc_pending (80))
+		sprintf (pending_error_text,
+			 "E error reading signature buffer.");
+	    pending_error = rc;
+	    err = true;
+	    goto done;
+	}
+
+	if (write (fd, sig_data, got) < 0)
+	{
+	    int save_errno = errno;
+	    if (alloc_pending (80 + strlen (sigfile_name)))
+		sprintf (pending_error_text,
+			 "E error writing temporary signature file `%s'.",
+			 sigfile_name);
+	    pending_error = save_errno;
+	    err = true;
+	    goto done;
+	 }
+    }
+
+done:
+    if (fd >= 0
+	&& close (fd) < 0)
+    {
+	if (!error_pending ()
+	    && alloc_pending_warning (80 + strlen (sigfile_name)))
+	    sprintf (pending_warning_text,
+		     "E error closing temporary signature file `%s'.",
+		     sigfile_name);
+	err = true;
+    }
+
+    free (sigfile_name);
+    return !err;
+}
+
+
+
 static void
 serve_modified (char *arg)
 {
@@ -2059,64 +2136,13 @@ serve_modified (char *arg)
      */
     if (sig_buf)
     {
-	char *sigfile_name, *sig_data;
-	int fd, rc;
-	size_t got;
-
-	/* Write the file.  */
-	sigfile_name = get_sigfile_name (arg);
-	fd = CVS_OPEN (sigfile_name, O_WRONLY | O_CREAT | O_TRUNC, 0600);
-	if (fd < 0)
-	{
-	    int save_errno = errno;
-	    if (alloc_pending (40 + strlen (arg)))
-		sprintf (pending_error_text, "E cannot open `%s'",
-			 sigfile_name);
-	    pending_error = save_errno;
-	    return;
-	}
-
-	while (!buf_empty_p (sig_buf))
-	{
-	    if ((rc = buf_read_data (sig_buf, buf_length (sig_buf), &sig_data,
-				     &got)))
-	    {
-		/* Since !buf_empty_p confirmed that the buffer was not empty,
-		 * it should be impossible to get EOF here.
-		 */
-		assert (rc != -1);
-
-		if (rc == -2)
-		    pending_error = ENOMEM;
-		else if (alloc_pending (80))
-		    sprintf (pending_error_text,
-			     "E error reading signature buffer.");
-		pending_error = rc;
-		return;
-	    }
-
-	    if (write (fd, sig_data, got) < 0)
-	    {
-		int save_errno = errno;
-		if (alloc_pending (80 + strlen (sigfile_name)))
-		    sprintf (pending_error_text,
-			     "E error writing temporary signature file `%s'.",
-			     sigfile_name);
-		pending_error = save_errno;
-		return;
-	     }
-	}
-
-	if (close (fd) < 0 
-	    && alloc_pending_warning (80 + strlen (sigfile_name)))
-	    sprintf (pending_warning_text,
-		     "E error closing temporary signature file `%s'.",
-		     sigfile_name);
-	free (sigfile_name);
+	bool err = !server_write_sigfile (arg, sig_buf);
 
 	/* We're done with the SIG_BUF.  */
 	buf_free (sig_buf);
 	sig_buf = NULL;
+
+	if (err) return;
     }
 }
 
@@ -2263,6 +2289,20 @@ serve_unchanged (char *arg)
 	    }
 	    break;
 	}
+    }
+
+    /* If an OpenPGP signature was sent for this file, write it to a temp
+     * file.
+     */
+    if (sig_buf)
+    {
+	bool err = !server_write_sigfile (arg, sig_buf);
+
+	/* We're done with the SIG_BUF.  */
+	buf_free (sig_buf);
+	sig_buf = NULL;
+
+	if (err) return;
     }
 }
 
@@ -4756,6 +4796,14 @@ serve_remove (char *arg)
 
 
 static void
+serve_sign (char *arg)
+{
+    do_cvs_command ("sign", sign);
+}
+
+
+
+static void
 serve_status (char *arg)
 {
     do_cvs_command ("status", cvsstatus);
@@ -6111,6 +6159,7 @@ struct request requests[] =
   REQ_LINE("remove", serve_remove, 0),
   REQ_LINE("update-patches", serve_ignore, 0),
   REQ_LINE("gzip-file-contents", serve_gzip_contents, RQ_ROOTLESS),
+  REQ_LINE("sign", serve_sign, 0),
   REQ_LINE("status", serve_status, 0),
   REQ_LINE("rdiff", serve_rdiff, 0),
   REQ_LINE("tag", serve_tag, 0),
@@ -8380,6 +8429,23 @@ server_base_merge (struct file_info *finfo, const char *rev1, const char *rev2)
     buf_output0 (protocol, rev1);
     buf_output (protocol, "\n", 1);
     buf_output0 (protocol, rev2);
+    buf_output (protocol, "\n", 1);
+    buf_send_counted (protocol);
+    return;
+}
+
+
+
+void
+server_base_signatures (struct file_info *finfo, const char *rev)
+{
+    server_send_signatures (finfo->rcs, rev);
+
+    buf_output0 (protocol, "Base-signatures ");
+    output_dir (finfo->update_dir, finfo->repository);
+    buf_output0 (protocol, finfo->file);
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, rev);
     buf_output (protocol, "\n", 1);
     buf_send_counted (protocol);
     return;

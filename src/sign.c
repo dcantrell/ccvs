@@ -26,6 +26,7 @@
 /* Standard headers.  */
 #include <assert.h>
 #include <errno.h>
+#include <getopt.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -36,16 +37,27 @@
 #include "xalloc.h"
 
 /* CVS headers.  */
+#include "classify.h"
+#include "client.h"
 #include "filesubr.h"
+#include "ignore.h"
+#include "recurse.h"
 #include "root.h"
 #include "run.h"
+#include "server.h"	/* Get TRACE ().  */
 #include "stack.h"
 #include "stack.h"
 #include "subr.h"
+#include "vers_ts.h"
 
 
 
+/* FIXME: Once cvs.h is pared ot the bare essentials, it may be included for
+ * the following.
+ */
 extern int noexec;
+extern int quiet, really_quiet;
+void usage (const char *const *cpp);
 
 
 
@@ -366,4 +378,148 @@ get_signature (bool server_active, const char *srepos, const char *filename,
 {
     if (server_active) return read_signature (filename, len);
     /* else */ return gen_signature (srepos, filename, bin, len);
+}
+
+
+
+static int
+sign_fileproc (void *callerdat, struct file_info *finfo)
+{
+    Vers_TS *vers;
+    int err = 0;
+    Ctype status;
+
+    TRACE (TRACE_FUNCTION, "sign_fileproc (%s)", finfo->fullname);
+
+    status = Classify_File (finfo, NULL, NULL, NULL, true,
+			    false, &vers, false);
+
+    switch (status)
+    {
+	case T_UNKNOWN:			/* unknown file was explicitly asked
+					 * about */
+	    error (0, 0, "Nothing known about `%s'", finfo->fullname);
+	    err++;
+	    break;
+	case T_CONFLICT:		/* old punt-type errors */
+	case T_NEEDS_MERGE:		/* needs merging */
+	case T_MODIFIED:		/* locally modified */
+	case T_ADDED:			/* added but not committed */
+	case T_REMOVED:			/* removed but not committed */
+	    error (0, 0, "Locally modified file `%s' may not be signed.",
+		   finfo->fullname);
+	    err++;
+	    break;
+	case T_CHECKOUT:		/* needs checkout */
+	    if (!vers->ts_user)
+	    {
+		assert (vers->vn_user);
+		error (0, 0,
+"File `%s' not present locally (checkout before signing)",
+		       finfo->fullname);
+		err++;
+		break;
+	    }
+	    /* else, fall through */
+	case T_REMOVE_ENTRY:		/* needs to be un-registered */
+	case T_PATCH:			/* needs patch */
+	case T_UPTODATE:		/* file was already up-to-date */
+	    if (!isfile (finfo->file))
+		RCS_checkout (finfo->rcs, finfo->file, vers->vn_user, 
+			      vers->tag, vers->options, NULL, NULL, NULL);
+	    if (file_contains_keyword (finfo))
+	    {
+		/* Make this a warning, not an error, because the user may
+		 * be intentionally signing a file with keywords.  Such a file
+		 * may still be verified when checked out -ko.
+		 */
+		if (!quiet)
+		    error (0, 0,
+"warning: signed file `%s' contains at least one RCS keyword",
+			   finfo->fullname);
+	    }
+
+	    RCS_add_openpgp_signature (finfo, vers->vn_user);
+	    if (server_active)
+		server_base_signatures (finfo, vers->vn_user);
+	    break;
+	default:			/* can't ever happen :-) */
+	    error (0, 0,
+		   "unknown file status %d for file `%s'",
+		   status, finfo->file);
+	    err++;
+	    break;
+    }
+
+    return err;
+}
+
+
+
+static const char *const sign_usage[] =
+{
+    "Usage: %s %s [-lR] [files...]\n",
+    "\t-l\tProcess this directory only (not recursive).\n",
+    "\t-R\tProcess directories recursively.\n",
+    "(Specify the --help global option for a list of other help options)\n",
+    NULL
+};
+
+int
+sign (int argc, char **argv)
+{
+    int c;
+    int err = 0;
+    bool local = false;
+
+    if (argc == -1)
+	usage (sign_usage);
+
+    optind = 0;
+    while ((c = getopt (argc, argv, "+lR")) != -1)
+    {
+	switch (c)
+	{
+	    case 'l':
+		local = 1;
+		break;
+	    case 'R':
+		local = 0;
+		break;
+	    case '?':
+	    default:
+		usage (sign_usage);
+		break;
+	}
+    }
+    argc -= optind;
+    argv += optind;
+
+#ifdef CLIENT_SUPPORT
+    if (current_parsed_root->isremote)
+    {
+	start_server ();
+
+	ign_setup ();
+
+	if (local)
+	    send_arg("-l");
+	send_arg ("--");
+
+	send_files (argc, argv, local, false, 0);
+	send_file_names (argc, argv, SEND_EXPAND_WILD);
+
+	send_to_server ("sign\012", 0);
+	err = get_responses_and_close ();
+
+	return err;
+    }
+#endif
+
+    /* start the recursion processor */
+    err = start_recursion (sign_fileproc, NULL, NULL, NULL, NULL, argc, argv,
+			   local, W_LOCAL, false, CVS_LOCK_WRITE, NULL, true,
+			   NULL);
+
+    return err;
 }

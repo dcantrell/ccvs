@@ -182,6 +182,7 @@ static const struct cmd
 #ifdef SERVER_SUPPORT
     { "server",   NULL,       NULL,        server,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
 #endif
+    { "sign",   "sig",        NULL,        sign,      0 },
     { "status",   "st",       "stat",      cvsstatus, CVS_CMD_USES_WORK_DIR },
     { "tag",      "ta",       "freeze",    cvstag,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
     { "unedit",   NULL,       NULL,        unedit,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },

@@ -48,4 +48,8 @@ char *get_signature (bool server_active, const char *srepos,
 /* Other utilities.  */
 bool have_sigfile (bool server_active, const char *fn);
 char *get_sigfile_name (const char *fn);
+
+/* Sign command.  */
+int sign (int argc, char **argv);
+
 #endif /* SIGN_H */
