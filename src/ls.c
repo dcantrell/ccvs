@@ -1,8 +1,9 @@
 /*
+ * Copyright (C) 2006 The Free Software Foundation, Inc.
+ * Copyright (c) 2004, Derek R. Price & Ximbiot <http://ximbiot.com>
+ * Copyright (c) 2001, Tony Hoyle
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
- * Copyright (c) 2001, Tony Hoyle
- * Copyright (c) 2004, Derek R. Price & Ximbiot <http://ximbiot.com>
  *
  * You may distribute under the terms of the GNU General Public License as
  * specified in the README file that comes with the CVS source distribution.

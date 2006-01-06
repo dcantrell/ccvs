@@ -1,5 +1,13 @@
 2006-01-06  Derek Price  <derek@ximbiot.com>
 
+	* add.c, admin.c, annotate.c, base.c, buffer.c, checkin.c, checkout.c,
+	classify.c, client.c, client.h, commit.c, cvs.h, diff.c, edit.c,
+	edit.h, entries.c, fileattr.c, find_names.c, history.c, ignore.c,
+	import.c, lock.c, log.c, logmsg.c, ls.c, main.c, mkmodules.c,
+	modules.c, patch.c, rcs.c, recurse.c, release.c, remove.c, sanity.sh,
+	server.c, server.h, sign.c, status.c, tag.c, update.c, verify.c,
+	watch.c: Update copyright notices.
+
 	* client.c, client.h, commit.c, log.c, mkmodules.c, patch.c, server.c,
 	status.c: Use stricter include formatting.
 	(update_entries): Generalize sig_cache handling.
