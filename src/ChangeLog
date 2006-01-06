@@ -1,3 +1,13 @@
+2006-01-06  Derek Price  <derek@ximbiot.com>
+
+	* add.c, admin.c, annotate.c, base.c, buffer.c, checkin.c, checkout.c,
+	classify.c, diff.c, edit.c, edit.h, entries.c, fileattr.c,
+	find_names.c, history.c, ignore.c, import.c, lock.c, logmsg.c, ls.c,
+	modules.c, recurse.c, release.c, remove.c, tag.c, update.c, verify.c,
+	watch.c: Use stricter include formatting.
+	* cvs.h: Move decls to...
+	* classify.h, ignore.h, logmsg.h, recurse.h: ...these new files.
+
 2006-01-03  Derek Price  <derek@ximbiot.com>
 
 	* verify.c (verify): Accept -p option.

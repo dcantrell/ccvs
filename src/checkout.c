@@ -38,7 +38,17 @@
  * edited by the user, if necessary (when the repository is moved, e.g.)
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* CVS headers.  */
+#include "ignore.h"
+#include "recurse.h"
+
 #include "cvs.h"
+
+
 
 static char *findslash (char *start, char *p);
 static int checkout_proc (int argc, char **argv, char *where,

@@ -31,6 +31,8 @@
 
 #include "cvs.h"
 
+
+
 static Node *AddEntryNode (List * list, Entnode *entnode);
 
 static Entnode *fgetentent (FILE *, char *, int *);

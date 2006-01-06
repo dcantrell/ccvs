@@ -17,8 +17,21 @@
  * the modules database, if necessary.
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* GNULIB headers.  */
 #include "save-cwd.h"
+
+/* CVS headers.  */
+#include "classify.h"
+#include "ignore.h"
+#include "recurse.h"
+
+#include "cvs.h"
+
+
 
 static int rtag_proc (int argc, char **argv, char *xwhere,
 		      char *mwhere, char *mfile, int shorten,

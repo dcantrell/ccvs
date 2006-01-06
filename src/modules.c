@@ -26,10 +26,20 @@
  *	command line.
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* GNULIB headers.  */
 #include "save-cwd.h"
 
-
+/* CVS headers.  */
+#include "ignore.h"
+
+#include "cvs.h"
+
+
+
 /* Defines related to the syntax of the modules file.  */
 
 /* Options in modules file.  Note that it is OK to use GNU getopt features;

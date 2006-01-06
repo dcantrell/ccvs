@@ -18,10 +18,16 @@
 # include <config.h>
 #endif
 
+/* Verify interface.  */
 #include "buffer.h"
 
-#include "cvs.h"
+/* GNULIB headers.  */
 #include "pagealign_alloc.h"
+
+/* CVS headers.  */
+#include "cvs.h"
+
+
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 

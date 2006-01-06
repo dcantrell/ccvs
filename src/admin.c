@@ -14,10 +14,22 @@
  * 
  */
 
-#include "cvs.h"
-#ifdef CVS_ADMIN_GROUP
-#include <grp.h>
+#ifdef HAVE_CONFIG_H
+# include <config.h>
 #endif
+
+/* ANSI C headers.  */
+#ifdef CVS_ADMIN_GROUP
+# include <grp.h>
+#endif
+
+/* CVS headers.  */
+#include "ignore.h"
+#include "recurse.h"
+
+#include "cvs.h"
+
+
 
 static Dtype admin_dirproc (void *callerdat, const char *dir,
                             const char *repos, const char *update_dir,

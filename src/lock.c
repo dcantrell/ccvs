@@ -69,6 +69,13 @@
    which can handle various connections in one process, but there is
    much, much work still to be done before this is feasible.  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* CVS headers.  */
+#include "recurse.h"
+
 #include "cvs.h"
 
 

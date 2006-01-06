@@ -10,9 +10,20 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.  */
 
-#include "cvs.h"
-#include "getline.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
 #include "fileattr.h"
+
+/* GNULIB headers.  */
+#include "getline.h"
+
+/* CVS headers.  */
+#include "cvs.h"
+
+
 
 static void fileattr_read (void);
 static int writeattr_proc (Node *, void *);

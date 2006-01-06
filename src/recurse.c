@@ -14,10 +14,22 @@
  *
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "recurse.h"
+
+/* GNULIB headers.  */
 #include "save-cwd.h"
+
+/* CVS headers.  */
+#include "cvs.h"
 #include "fileattr.h"
 #include "edit.h"
+
+
 
 static int do_dir_proc (Node * p, void *closure);
 static int do_file_proc (Node * p, void *closure);

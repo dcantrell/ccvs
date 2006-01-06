@@ -33,6 +33,7 @@
 
 /* CVS headers.  */
 #include "base.h"
+#include "recurse.h"
 #include "stack.h"
 
 /* Get current_parsed_root.  */

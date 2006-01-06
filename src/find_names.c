@@ -21,9 +21,20 @@
  * repository (and optionally the attic)
  */
 
-#include "cvs.h"
-#include <glob.h>
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* ANSI C headers.  */
 #include <assert.h>
+#include <glob.h>
+
+/* CVS headers.  */
+#include "recurse.h"
+
+#include "cvs.h"
+
+
 
 static int find_dirs (char *dir, List * list, int checkadm,
 			    List *entries);

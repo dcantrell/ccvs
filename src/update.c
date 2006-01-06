@@ -50,18 +50,23 @@
 # include "md5.h"
 #endif
 
-/* CVS */
+/* ANSI C headers.  */
+#include <assert.h>
+
+/* CVS headers.  */
 #include "base.h"
+#include "buffer.h"
+#include "classify.h"
+#include "edit.h"
+#include "ignore.h"
+#include "recurse.h"
 
 #include "cvs.h"
 #include "watch.h"
 #include "fileattr.h"
-#include "edit.h"
-#include "buffer.h"
 #include "hardlink.h"
 
-/* C89 */
-#include <assert.h>
+
 
 static int checkout_file (struct file_info *finfo, Vers_TS *vers_ts,
 				 int adding, int merging, int update_server);

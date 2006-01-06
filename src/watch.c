@@ -10,10 +10,20 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* CVS headers.  */
 #include "edit.h"
+#include "ignore.h"
+#include "recurse.h"
+
+#include "cvs.h"
 #include "fileattr.h"
 #include "watch.h"
+
+
 
 const char *const watch_usage[] =
 {

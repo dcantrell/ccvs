@@ -20,7 +20,17 @@
  * correctly.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* CVS headers.  */
+#include "ignore.h"
+#include "recurse.h"
+
 #include "cvs.h"
+
+
 
 #ifdef CLIENT_SUPPORT
 static int remove_force_fileproc (void *callerdat,
