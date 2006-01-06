@@ -2,9 +2,8 @@
 :
 #	sanity.sh -- a growing testsuite for cvs.
 #
-# The copyright notice said: "Copyright (C) 1992, 1993 Cygnus Support"
-# I'm not adding new copyright notices for new years as our recent 
-# practice has been to include copying terms without copyright notices.
+# Copyright (C) 2006 The Free Software Foundation, Inc.
+# Copyright (C) 1992, 1993 Cygnus Support
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
