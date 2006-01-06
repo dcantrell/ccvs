@@ -19,12 +19,23 @@
  *
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* GNULIB headers.  */
 #include "getline.h"
+
+/* CVS headers.  */
 #include "edit.h"
+#include "ignore.h"
+#include "logmsg.h"
+#include "recurse.h"
+#include "sign.h"
+
+#include "cvs.h"
 #include "fileattr.h"
 #include "hardlink.h"
-#include "sign.h"
 
 static Dtype check_direntproc (void *callerdat, const char *dir,
                                const char *repos, const char *update_dir,
@@ -612,7 +623,6 @@ commit (int argc, char **argv)
 	   program, which we used to call, wanted the file to exist,
 	   then it would be relatively simple to fix in the server.  */
 	flags = find_args.force ? SEND_FORCE : 0;
-	flags |= SEND_SIGNATURES;
 	send_files (find_args.argc, find_args.argv, local, 0, flags);
 
 	/* Sending only the names of the files which were modified, added,
@@ -937,9 +947,10 @@ warning: file `%s' seems to still contain conflict indicators",
 		 * be intentionally signing a file with keywords.  Such a file
 		 * may still be verified when checked out -ko.
 		 */
-		error (0, 0,
+		if (!quiet)
+		    error (0, 0,
 "warning: signed file `%s' contains at least one RCS keyword",
-		       finfo->fullname);
+			   finfo->fullname);
 	    }
 
 	    if (status == T_REMOVED)

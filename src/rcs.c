@@ -4791,6 +4791,72 @@ RCS_get_openpgp_signatures (RCSNode *rcs, const char *rev)
 
 
 
+void
+RCS_add_openpgp_signature (struct file_info *finfo, const char *rev)
+{
+    RCSVers *vers;
+    Node *n;
+    char *oldsigs;
+    size_t oldlen;
+    char *newsig;
+    size_t newlen;
+
+    TRACE (TRACE_FUNCTION, "RCS_add_openpgp_signature (%s, %s)",
+	   finfo->fullname, rev);
+
+    if (finfo->rcs->flags & PARTIAL)
+	RCS_reparsercsfile (finfo->rcs, NULL, NULL);
+
+    n = findnode (finfo->rcs->versions, rev);
+    if (!n)
+	error (1, 0, "internal error: no revision information for %s", rev);
+    vers = n->data;
+
+    n = findnode (vers->other_delta, "openpgp-signatures");
+    if (!n)
+    {
+	n = getnode();
+	n->type = RCSSTRING;
+	n->key = xstrdup ("openpgp-signatures");
+	oldsigs = NULL;
+	oldlen = 0;
+	addnode (vers->other_delta, n);
+    }
+    else
+    {
+	TRACE (TRACE_DATA,
+	       "RCS_add_openpgp_signature: found oldsigs = %s, len = %u",
+	       (char *)n->data, (unsigned int)n->len);
+	if (!base64_decode_alloc (n->data, n->len, &oldsigs, &oldlen))
+	    error (1, 0, "Invalid binhex data in signature (`%s', rev %s)",
+		   finfo->rcs->print_path, rev);
+	if (!oldsigs)
+	    error (1, errno, "Memory allocation error");
+	free (n->data);
+    }
+
+    newsig = get_signature (server_active,
+		    	    Short_Repository (finfo->repository), finfo->file,
+			    finfo->rcs->expand
+			    && STREQ (finfo->rcs->expand, "b"),
+			    &newlen);
+
+    oldsigs = xrealloc (oldsigs, oldlen + newlen);
+    memcpy (oldsigs + oldlen, newsig, newlen);
+    free (newsig);
+
+    n->len = base64_encode_alloc (oldsigs, oldlen + newlen, (char **)&n->data);
+    free (oldsigs);
+
+    TRACE (TRACE_DATA,
+	   "RCS_add_openpgp_signature: found oldsigs = %s, len = %u",
+	   (char *)n->data, (unsigned int)n->len);
+
+    RCS_rewrite (finfo->rcs, NULL, NULL);
+}
+
+
+
 /* Find the delta currently locked by the user.  From the `ci' man page:
 
 	"If rev is omitted, ci tries to  derive  the  new  revision

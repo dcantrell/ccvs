@@ -13,7 +13,18 @@
  * Status Information
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* CVS headers.  */
+#include "classify.h"
+#include "ignore.h"
+#include "recurse.h"
+
 #include "cvs.h"
+
+
 
 static Dtype status_dirproc (void *callerdat, const char *dir,
                              const char *repos, const char *update_dir,

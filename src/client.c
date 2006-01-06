@@ -14,18 +14,25 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-/* GNULIB */
+/* Verify interface.  */
+#include "client.h"
+
+/* GNULIB headers.  */
 #include "base64.h"
 #include "getline.h"
 #include "save-cwd.h"
 
-/* CVS */
+/* CVS headers.  */
 #include "base.h"
+#include "buffer.h"
 #include "difflib.h"
+#include "edit.h"
+#include "ignore.h"
+#include "recurse.h"
 
 #include "cvs.h"
-#include "buffer.h"
-#include "edit.h"
+
+
 
 #ifdef CLIENT_SUPPORT
 
@@ -1888,6 +1895,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	/* On checkin, create the base file.  */
 	Node *n;
 	bool makebase = true;
+
 	if ((n = findnode_fn (ent_list, filename)))
 	{
 	    /* This could be a readd of a locally removed file or, for
@@ -1902,31 +1910,26 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		/* The version number has not changed.  */
 		makebase = false;
 	}
+
 	if (makebase)
 	{
 	    /* A real checkin.  */
 	    char *basefile = make_base_file_name (filename, vn);
+
 	    mkdir_if_needed (CVSADM_BASE);
 	    copy_file (filename, basefile);
 
-	    if (get_sign_commits (false, supported_request ("Signature")))
+	    if ((n = findnode_fn (sig_cache, short_pathname)))
 	    {
-		if ((n = findnode_fn (sig_cache, short_pathname)))
-		{
-		    char *sigfile = Xasprintf ("%s%s", basefile, ".sig");
-		    write_file (sigfile, n->data, n->len);
-		    delnode (n);
-		    free (sigfile);
-		}
-		else
-		{
-		    error (0, 0,
-"Internal error: OpenPGP signature for `%s' not found in cache.",
-			   short_pathname);
-		    printlist (sig_cache);
-		}
+		char *sigfile = Xasprintf ("%s%s", basefile, ".sig");
+		write_file (sigfile, n->data, n->len);
+		delnode (n);
+		free (sigfile);
 	    }
-
+	    else if (get_sign_commits (false, supported_request ("Signature")))
+		error (0, 0,
+"Internal error: OpenPGP signature for `%s' not found in cache.",
+		       short_pathname);
 	    free (basefile);
 	}
     }
@@ -2198,6 +2201,32 @@ handle_openpgp_signatures (char *args, size_t len)
 
 
 static void
+client_write_sigfile (const char *sigfile, bool writable)
+{
+    FILE *e;
+
+    if (!stored_signatures)
+	return;
+
+    if (!writable && isfile (sigfile))
+	xchmod (sigfile, true);
+    e = xfopen (sigfile, FOPEN_BINARY_WRITE);
+    if (fwrite (stored_signatures, sizeof *stored_signatures,
+		stored_signatures_len, e) != stored_signatures_len)
+	error (1, errno, "cannot write signature file `%s'", sigfile);
+    if (fclose (e) == EOF)
+	error (0, errno, "cannot close signature file `%s'", sigfile);
+
+    if (!writable)
+	xchmod (sigfile, false);
+
+    free (stored_signatures);
+    stored_signatures = NULL;
+}
+
+
+
+static void
 client_base_checkout (void *data_arg, List *ent_list,
 		      const char *short_pathname, const char *filename)
 {
@@ -2332,28 +2361,16 @@ client_base_checkout (void *data_arg, List *ent_list,
 	if (stored_signatures)
 	{
 	    char *sigfile = Xasprintf ("%s.sig", basefile);
-	    
-	    if (!*istemp && isfile (sigfile))
-		xchmod (sigfile, true);
-	    e = xfopen (sigfile, FOPEN_BINARY_WRITE);
-	    if (fwrite (stored_signatures, sizeof *stored_signatures,
-			stored_signatures_len, e) != stored_signatures_len)
-		error (1, errno, "cannot write signature file `%s'", sigfile);
-	    if (fclose (e) == EOF)
-		error (0, errno, "cannot close signature file `%s'", sigfile);
 
-	    if (!*istemp)
-		xchmod (sigfile, false);
+	    client_write_sigfile (sigfile, *istemp);
 
 	    /* FIXME: Verify the signature here, when configured to do so.  */
 
-	    if (*istemp && CVS_UNLINK (sigfile) < 0)
+	    if (istemp && CVS_UNLINK (sigfile) < 0)
 		error (0, errno, "Failed to remove temp sig file `%s'",
 		       sigfile);
 
 	    free (sigfile);
-	    free (stored_signatures);
-	    stored_signatures = NULL;
 	}
     }
 
@@ -2388,6 +2405,45 @@ handle_temp_checkout (char *args, size_t len)
     if (suppress_bases)
 	error (1, 0, "Server sent Base-* response when asked not to.");
     call_in_directory (args, client_base_checkout, &istemp);
+}
+
+
+
+static void
+client_base_signatures (void *data_arg, List *ent_list,
+			const char *short_pathname, const char *filename)
+{
+    char *rev;
+    char *basefile;
+    char *sigfile;
+
+    TRACE (TRACE_FUNCTION, "client_base_signatures (%s)", short_pathname);
+
+    if (!stored_signatures)
+	error (1, 0,
+	       "Server sent `Base-signatures' response without signature.");
+
+    /* Read OPTIONS, PREV, and REV from the server.  */
+    read_line (&rev);
+
+    basefile = make_base_file_name (filename, rev);
+    sigfile = Xasprintf ("%s.sig", basefile);
+
+    client_write_sigfile (sigfile, false);
+
+    free (rev);
+    free (basefile);
+    free (sigfile);
+}
+
+
+
+static void
+handle_base_signatures (char *args, size_t len)
+{
+    if (suppress_bases)
+	error (1, 0, "Server sent Base-* response when asked not to.");
+    call_in_directory (args, client_base_signatures, NULL);
 }
 
 
@@ -3750,6 +3806,8 @@ struct response responses[] =
     RSP_LINE("Base-merged", handle_base_merged, response_type_normal,
 	     rs_optional),
 
+    RSP_LINE("Base-signatures", handle_base_signatures, response_type_normal,
+	     rs_optional),
     RSP_LINE("OpenPGP-signatures", handle_openpgp_signatures,
 	     response_type_normal, rs_optional),
 
@@ -5141,7 +5199,6 @@ struct send_data
     bool force;
     bool no_contents;
     bool backup_modified;
-    bool sign;
 };
 
 /* Deal with one file.  */
@@ -5247,6 +5304,18 @@ warning: ignoring -k options due to server limitations");
 		        ? vers->ts_conflict : vers->ts_rcs, vers->ts_user)
 	     || (vers->ts_conflict && !strcmp (cvs_cmd_name, "diff")))
     {
+	if (!strcmp (cvs_cmd_name, "sign")
+	    || (!strcmp (cvs_cmd_name, "commit")
+	        && get_sign_commits (false, supported_request ("Signature"))))
+	{
+	    if (!supported_request ("Signature"))
+		error (1, 0, "Server doesn't support commit signatures.");
+
+	    send_signature (Short_Repository (finfo->repository),
+			    finfo->file, finfo->fullname,
+			    vers && !strcmp (vers->options, "-kb"));
+	}
+
 	if (args->no_contents
 	    && supported_request ("Is-modified"))
 	{
@@ -5255,19 +5324,7 @@ warning: ignoring -k options due to server limitations");
 	    send_to_server ("\012", 1);
 	}
 	else
-	{
-	    if (args->sign
-	        && get_sign_commits (false, supported_request ("Signature")))
-	    {
-		if (!supported_request ("Signature"))
-		    error (1, 0, "Server doesn't support commit signatures.");
-
-		send_signature (Short_Repository (finfo->repository),
-				finfo->file, finfo->fullname,
-				vers && !strcmp (vers->options, "-kb"));
-	    }
 	    send_modified (filename, finfo->fullname, vers);
-	}
 
         if (args->backup_modified)
         {
@@ -5283,6 +5340,16 @@ warning: ignoring -k options due to server limitations");
     }
     else
     {
+	if (!strcmp (cvs_cmd_name, "sign"))
+	{
+	    if (!supported_request ("Signature"))
+		error (1, 0, "Server doesn't support commit signatures.");
+
+	    send_signature (Short_Repository (finfo->repository),
+			    finfo->file, finfo->fullname,
+			    vers && !strcmp (vers->options, "-kb"));
+	}
+
 	send_to_server ("Unchanged ", 0);
 	send_to_server (filename, 0);
 	send_to_server ("\012", 1);
@@ -5666,7 +5733,6 @@ send_max_dotdot (argc, argv)
  *		server as though they were modified.
  *		FLAGS & SEND_NO_CONTENTS means that this command only needs to
  *		know _whether_ a file is modified, not the contents.
- *   sign	Whether to send files signatures.
  *
  * RETURNS
  *   Nothing.
@@ -5688,7 +5754,6 @@ send_files (int argc, char **argv, int local, int aflag, unsigned int flags)
     args.force = flags & SEND_FORCE;
     args.no_contents = flags & SEND_NO_CONTENTS;
     args.backup_modified = flags & BACKUP_MODIFIED_FILES;
-    args.sign = flags & SEND_SIGNATURES;
     err = start_recursion
 	(send_fileproc, send_filesdoneproc, send_dirent_proc,
          send_dirleave_proc, &args, argc, argv, local, W_LOCAL, aflag,

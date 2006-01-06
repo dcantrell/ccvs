@@ -1872,7 +1872,7 @@ if test x"$*" = x; then
 	tests="${tests} dottedroot fork commit-d template"
 	tests="${tests} writeproxy writeproxy-noredirect writeproxy-ssh"
 	tests="${tests} writeproxy-ssh-noredirect"
-	tests="$tests verify"
+	tests="$tests openpgp"
 else
 	tests="$*"
 fi
@@ -32700,28 +32700,33 @@ EOF
 
 
 
-	verify)
-	  # More tests of basic/miscellaneous functionality.
-	  mkdir verify; cd verify
+	openpgp)
+	  # More tests of basic/miscellaneous openpgp functionality.
+	  mkdir openpgp; cd openpgp
 	  mkdir top; cd top
-	  dotest verify-init-1 "$testcvs -q co -l ."
-	  mkdir verify
-	  dotest verify-init-2 "$testcvs -Q add verify"
+	  dotest openpgp-init-1 "$testcvs -q co -l ."
+	  mkdir openpgp
+	  dotest openpgp-init-2 "$testcvs -Q add openpgp"
 	  cd ..
-	  dotest verify-init-3 "$testcvs -q co verify"
-	  cd verify
+	  dotest openpgp-init-3 "$testcvs -q co openpgp"
+	  cd openpgp
 	  echo some content >file1
-	  dotest verify-init-4 "$testcvs -Q add file1"
-	  dotest verify-init-5 "$testcvs -Q ci -m newfile file1"
-	  dotest verify-1 "$testcvs verify file1" \
+	  dotest openpgp-init-4 "$testcvs -Q add file1"
+	  dotest openpgp-init-5 "$testcvs -Q ci -m newfile file1"
+	  dotest openpgp-1 "$testcvs verify file1" \
 "$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
-	  dotest verify-2 "$testcvs verify -p file1 >tmp"
-	  dotest verify-3 "cmp tmp CVS/Base/.#file1.1.1.sig"
+	  dotest openpgp-2 "$testcvs verify -p file1 >tmp"
+	  dotest openpgp-3 "cmp tmp CVS/Base/.#file1.1.1.sig"
+
+	  dotest openpgp-4 "$testcvs sign file1"
+	  dotest openpgp-5 "$testcvs verify file1" \
+"$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR
+$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
 
 	  dokeep
 	  cd ../..
-	  rm -rf verify
-	  modify_repo rm -rf $CVSROOT_DIRNAME/verify
+	  rm -rf openpgp
+	  modify_repo rm -rf $CVSROOT_DIRNAME/openpgp
 	  ;;
 
 
