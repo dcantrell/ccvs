@@ -11,9 +11,18 @@
  * specified in the README file that comes with the CVS source distribution.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
-#include "cvs.h"
+/* Verify interface.  */
+#include "logmsg.h"
+
+/* GNULIB Headers.  */
 #include "getline.h"
+
+/* CVS Headers.  */
+#include "cvs.h"
 
 static int find_type (Node * p, void *closure);
 static int fmt_proc (Node * p, void *closure);

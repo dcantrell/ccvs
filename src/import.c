@@ -21,9 +21,21 @@
  * Additional arguments specify more Vendor Release Tags.
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* GNULIB headers.  */
 #include "lstat.h"
 #include "save-cwd.h"
+
+/* CVS headers.  */
+#include "ignore.h"
+#include "logmsg.h"
+
+#include "cvs.h"
+
+
 
 static char *get_comment (const char *user);
 static int add_rev (char *message, RCSNode *rcs, char *vfile,

@@ -309,30 +309,6 @@ struct stickydirtag
     int subdirs;
 };
 
-/* Flags for find_{names,dirs} routines */
-#define W_LOCAL			0x01	/* look for files locally */
-#define W_REPOS			0x02	/* look for files in the repository */
-#define W_ATTIC			0x04	/* look for files in the attic */
-
-/* Flags for return values of direnter procs for the recursion processor */
-enum direnter_type
-{
-    R_PROCESS = 1,			/* process files and maybe dirs */
-    R_SKIP_FILES,			/* don't process files in this dir */
-    R_SKIP_DIRS,			/* don't process sub-dirs */
-    R_SKIP_ALL				/* don't process files or dirs */
-};
-#ifdef ENUMS_CAN_BE_TROUBLE
-typedef int Dtype;
-#else
-typedef enum direnter_type Dtype;
-#endif
-
-/* Recursion processor lock types */
-#define CVS_LOCK_NONE	0
-#define CVS_LOCK_READ	1
-#define CVS_LOCK_WRITE	2
-
 /* Option flags for Parse_Info() */
 #define PIOPT_ALL 1	/* accept "all" keyword */
 
@@ -513,16 +489,6 @@ void check_entries (char *dir);
 void close_module (DBM * db);
 void fperrmsg (FILE * fp, int status, int errnum, char *message,...);
 
-int ign_name (char *name);
-void ign_add (char *ign, int hold);
-void ign_add_file (char *file, int hold);
-void ign_setup (void);
-void ign_dir_add (char *name);
-int ignore_directory (const char *name);
-typedef void (*Ignore_proc) (const char *, const char *);
-void ignore_files (List *, List *, const char *, Ignore_proc);
-extern int ign_inhibit_server;
-
 #include "update.h"
 
 void make_directories (const char *name);
@@ -558,17 +524,6 @@ typedef	int (*CALLBACKPROC)	(int argc, char *argv[], char *where,
 	char *mwhere, char *mfile, int shorten, int local_specified,
 	char *omodule, char *msg);
 
-
-typedef	int (*FILEPROC) (void *callerdat, struct file_info *finfo);
-typedef	int (*FILESDONEPROC) (void *callerdat, int err,
-                              const char *repository, const char *update_dir,
-                              List *entries);
-typedef	Dtype (*DIRENTPROC) (void *callerdat, const char *dir,
-                             const char *repos, const char *update_dir,
-                             List *entries);
-typedef	int (*DIRLEAVEPROC) (void *callerdat, const char *dir, int err,
-                             const char *update_dir, List *entries);
-
 int mkmodules (char *dir);
 int init (int argc, char **argv);
 
@@ -578,12 +533,6 @@ int do_module (DBM * db, char *mname, enum mtype m_type, char *msg,
 		char *extra_arg);
 void history_write (int type, const char *update_dir, const char *revs,
                     const char *name, const char *repository);
-int start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
-		     DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc,
-		     void *callerdat,
-		     int argc, char *argv[], int local, int which,
-		     int aflag, int locktype, char *update_preload,
-		     int dosrcs, char *repository);
 void SIG_beginCrSect (void);
 void SIG_endCrSect (void);
 int SIG_inCrSect (void);
@@ -618,44 +567,6 @@ int No_Difference (struct file_info *finfo, Vers_TS *vers);
 int special_file_mismatch (struct file_info *finfo,
 				  char *rev1, char *rev2);
 
-/*
- * defines for Classify_File() to determine the current state of a file.
- * These are also used as types in the data field for the list we make for
- * Update_Logfile in commit, import, and add.
- */
-enum classify_type
-{
-    T_UNKNOWN = 1,			/* no old-style analog existed	 */
-    T_CONFLICT,				/* C (conflict) list		 */
-    T_NEEDS_MERGE,			/* G (needs merging) list	 */
-    T_MODIFIED,				/* M (needs checked in) list 	 */
-    T_CHECKOUT,				/* O (needs checkout) list	 */
-    T_ADDED,				/* A (added file) list		 */
-    T_REMOVED,				/* R (removed file) list	 */
-    T_REMOVE_ENTRY,			/* W (removed entry) list	 */
-    T_UPTODATE,				/* File is up-to-date		 */
-    T_PATCH,				/* P Like C, but can patch	 */
-    T_TITLE				/* title for node type 		 */
-};
-typedef enum classify_type Ctype;
-
-Ctype Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
-      int force_tag_match, int aflag, Vers_TS **versp, int pipeout);
-
-/*
- * structure used for list nodes passed to Update_Logfile() and
- * do_editor().
- */
-struct logfile_info
-{
-  enum classify_type type;
-  char *tag;
-  char *rev_old;		/* rev number before a commit/modify,
-				   NULL for add or import */
-  char *rev_new;		/* rev number after a commit/modify,
-				   add, or import, NULL for remove */
-};
-
 /* Wrappers.  */
 
 typedef enum { WRAP_MERGE, WRAP_COPY } WrapMergeMethod;

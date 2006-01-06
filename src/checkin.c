@@ -26,10 +26,12 @@
 
 /* CVS */
 #include "base.h"
+#include "edit.h"
 
 #include "cvs.h"
 #include "fileattr.h"
-#include "edit.h"
+
+
 
 int
 Checkin (int type, struct file_info *finfo, char *rev, char *tag,

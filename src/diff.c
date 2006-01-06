@@ -19,7 +19,17 @@
  * files.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* CVS headers.  */
+#include "ignore.h"
+#include "recurse.h"
+
 #include "cvs.h"
+
+
 
 enum diff_file
 {

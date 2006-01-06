@@ -19,10 +19,21 @@
  * delete the local working directory.
  */
 
-#include "cvs.h"
-#include "save-cwd.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* GNULIB headers.  */
 #include "getline.h"
+#include "save-cwd.h"
 #include "yesno.h"
+
+/* CVS headers.  */
+#include "ignore.h"
+
+#include "cvs.h"
+
+
 
 static const char *const release_usage[] =
 {

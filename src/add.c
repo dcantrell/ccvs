@@ -31,13 +31,22 @@
 
 #include <assert.h>
 
-/* CVS */
-#include "base.h"
-#include "cvs.h"
-#include "fileattr.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
-/* GNULIB */
+/* GNULIB headers.  */
 #include "save-cwd.h"
+
+/* CVS headers.  */
+#include "base.h"
+#include "fileattr.h"
+#include "ignore.h"
+#include "logmsg.h"
+
+#include "cvs.h"
+
+
 
 static int add_directory (struct file_info *finfo);
 static int build_entry (const char *repository, const char *user,

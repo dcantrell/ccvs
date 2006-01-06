@@ -12,6 +12,14 @@
  * 
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "classify.h"
+
+/* CVS Headers.  */
 #include "cvs.h"
 
 static void sticky_ck (struct file_info *finfo, int aflag,

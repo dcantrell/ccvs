@@ -17,7 +17,17 @@
  * all the files in the directory (recursive by default).
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* CVS headers.  */
+#include "ignore.h"
+#include "recurse.h"
+
 #include "cvs.h"
+
+
 
 /* Options from the command line.  */
 

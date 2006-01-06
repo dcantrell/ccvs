@@ -10,8 +10,20 @@
  * Query CVS/Entries from server
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* ANSI C headers.  */
 #include <stdbool.h>
+
+/* CVS headers.  */
+#include "ignore.h"
+#include "recurse.h"
+
+#include "cvs.h"
+
+
 
 static int ls_proc (int argc, char **argv, char *xwhere, char *mwhere,
                     char *mfile, int shorten, int local, char *mname,

@@ -10,6 +10,13 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.  */
 
+#ifndef EDIT_H
+#define EDIT_H
+
+#include "hash.h"
+
+
+
 int watch_on (int argc, char **argv);
 int watch_off (int argc, char **argv);
 
@@ -42,3 +49,5 @@ void editors_output (const char *fullname, const char *them);
 
 void edit_file (void *data, List *ent_list, const char *short_pathname,
 		const char *filename);
+
+#endif /* EDIT_H */

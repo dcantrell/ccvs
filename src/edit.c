@@ -10,13 +10,27 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "edit.h"
+
+/* GNULIB headers.  */
 #include "getline.h"
 #include "yesno.h"
-#include "watch.h"
-#include "edit.h"
-#include "fileattr.h"
+
+/* CVS headers.  */
 #include "base.h"
+#include "ignore.h"
+#include "recurse.h"
+
+#include "cvs.h"
+#include "watch.h"
+#include "fileattr.h"
+
+
 
 static bool check_edited = false;
 static int setting_default;

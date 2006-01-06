@@ -12,6 +12,23 @@
  * GNU General Public License for more details.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "history.h"
+
+/* GNULIB headers.  */
+#include "save-cwd.h"
+
+/* CVS headers.  */
+#include "ignore.h"
+
+#include "cvs.h"
+
+
+
 /* **************** History of Users and Module ****************
  *
  * LOGGING:  Append record to "${CVSROOT}/CVSROOTADM/CVSROOTADM_HISTORY".
@@ -187,9 +204,7 @@
  *
  */
 
-#include "cvs.h"
-#include "history.h"
-#include "save-cwd.h"
+
 
 static struct hrec
 {

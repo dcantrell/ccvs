@@ -12,9 +12,21 @@
  * .cvsignore file support contributed by David G. Grubbs <dgg@odi.com>
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "ignore.h"
+
+/* GNULIB headers.  */
 #include "getline.h"
 #include "lstat.h"
+
+/* CVS headers.  */
+#include "cvs.h"
+
+
 
 /*
  * Ignore file section.
