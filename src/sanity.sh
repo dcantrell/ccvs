@@ -16357,8 +16357,9 @@ ${CPROG} \[update aborted\]: \*PANIC\* administration files missing!"
 
 	  # The following test intentionally uses -q.  This message should only
 	  # disappear with -Q.
-	  dotest errmsg4-1 "$testcvs -q ci -mgen-msg" \
-"$CPROG commit: warning: signed file \`filewithkeyword' contains at least one RCS keyword
+	  dotest errmsg4-1 "$testcvs ci -mgen-msg" \
+"$CPROG commit: Examining \.
+$CPROG commit: warning: signed file \`filewithkeyword' contains at least one RCS keyword
 $CVSROOT_DIRNAME/errmsg4/filewithkeyword,v  <--  filewithkeyword
 initial revision: 1\.1"
 
