@@ -1,3 +1,8 @@
+2006-01-09  Larry Jones  <lawrence.jones@ugs.com>
+
+	* commit.c (remove_file): Record correct revision in history file.
+	(Reported by Chris Reed <cr@progress.com>.)
+
 2005-12-07  Derek Price  <derek@ximbiot.com>
 
 	* client.c (start_server), root.c (method_names), root.h (CVSmethod):
