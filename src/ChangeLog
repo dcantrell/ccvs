@@ -1,3 +1,8 @@
+2006-01-09  Larry Jones  <lawrence.jones@ugs.com>
+
+	* commit.c (remove_file): Record correct revision in history file.
+	(Reported by Chris Reed <cr@progress.com>.)
+
 2006-01-05  Derek Price  <derek@ximbiot.com>
 
 	* recurse.c (start_recursion): Expand header comment block.
