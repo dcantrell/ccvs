@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 The Free Software Foundation, Inc.
+ * Copyright (C) 2006 The Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,13 @@
 #include "entries.h"
 #include "rcs.h"
 
+/*
+ * a struct vers_ts contains all the information about a file including the
+ * user and rcs file names, and the version checked out and the head.
+ *
+ * this is usually obtained from a call to Version_TS which takes a
+ * tag argument for the RCS file if desired
+ */
 struct vers_ts
 {
     /* rcs version user file derives from, from CVS/Entries.
@@ -84,5 +91,10 @@ struct vers_ts
     RCSNode *srcfile;
 };
 typedef struct vers_ts Vers_TS;
+
+Vers_TS *Version_TS (struct file_info *finfo, char *options, char *tag,
+		     char *date, int force_tag_match, int set_time);
+void freevers_ts (Vers_TS **versp);
+char *time_stamp (const char *file);
 
 #endif /* VERS_TS_H */

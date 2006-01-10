@@ -20,6 +20,8 @@
 #include "classify.h"
 
 /* CVS Headers.  */
+#include "no_diff.h"
+
 #include "cvs.h"
 
 static void sticky_ck (struct file_info *finfo, int aflag,

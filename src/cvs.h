@@ -426,7 +426,6 @@ void Sanitize_Repository_Name (char *repository);
 
 char *entries_time (time_t unixtime);
 time_t unix_time_stamp (const char *file);
-char *time_stamp (const char *file);
 
 typedef	int (*CALLPROC)	(const char *repository, const char *value,
                          void *closure);
@@ -448,7 +447,6 @@ int update (int argc, char *argv[]);
  * resurrected file done and print the fact otherwise.
  */
 void write_letter (struct file_info *finfo, int letter);
-int xcmp (const char *file1, const char *file2);
 void *valloc (size_t bytes);
 
 int Create_Admin (const char *dir, const char *update_dir,
@@ -542,54 +540,16 @@ void read_cvsrc (int *argc, char ***argv, const char *cmdname);
 
 pid_t waitpid (pid_t, int *, int);
 
-/*
- * a struct vers_ts contains all the information about a file including the
- * user and rcs file names, and the version checked out and the head.
- *
- * this is usually obtained from a call to Version_TS which takes a
- * tag argument for the RCS file if desired
- */
-
 #include "vers_ts.h"
 
-Vers_TS *Version_TS (struct file_info *finfo, char *options, char *tag,
-			    char *date, int force_tag_match,
-			    int set_time);
-void freevers_ts (Vers_TS ** versp);
-
 /* Miscellaneous CVS infrastructure which layers on top of the recursion
    processor (for example, needs struct file_info).  */
 
 int Checkin (int type, struct file_info *finfo, char *rev,
 	     char *tag, char *options, char *message);
-int No_Difference (struct file_info *finfo, Vers_TS *vers);
 /* TODO: can the finfo argument to special_file_mismatch be changed? -twp */
 int special_file_mismatch (struct file_info *finfo,
 				  char *rev1, char *rev2);
-
-/* Wrappers.  */
-
-typedef enum { WRAP_MERGE, WRAP_COPY } WrapMergeMethod;
-typedef enum {
-    /* -t and -f wrapper options.  Treating directories as single files.  */
-    WRAP_TOCVS,
-    WRAP_FROMCVS,
-    /* -k wrapper option.  Default keyword expansion options.  */
-    WRAP_RCSOPTION
-} WrapMergeHas;
-
-void  wrap_setup (void);
-int   wrap_name_has (const char *name,WrapMergeHas has);
-char *wrap_rcsoption (const char *fileName, int asFlag);
-char *wrap_tocvs_process_file (const char *fileName);
-int   wrap_merge_is_copy (const char *fileName);
-void wrap_fromcvs_process_file (const char *fileName);
-void wrap_add_file (const char *file,int temp);
-void wrap_add (char *line,int temp);
-void wrap_send (void);
-#if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
-void wrap_unparse_rcs_options (char **, int);
-#endif /* SERVER_SUPPORT || CLIENT_SUPPORT */
 
 /* Pathname expansion */
 char *expand_path (const char *name, const char *cvsroot, bool formatsafe,

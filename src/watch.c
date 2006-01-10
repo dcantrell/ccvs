@@ -18,14 +18,16 @@
 # include <config.h>
 #endif
 
+/* Verify interface.  */
+#include "watch.h"
+
 /* CVS headers.  */
 #include "edit.h"
+#include "fileattr.h"
 #include "ignore.h"
 #include "recurse.h"
 
 #include "cvs.h"
-#include "fileattr.h"
-#include "watch.h"
 
 
 
