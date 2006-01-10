@@ -62,7 +62,7 @@ exit_help ()
     echo "		--keep"
     echo "-l|--link-root"
     echo "		test CVS using a symlink to a real CVSROOT"
-    echo "-n|--noredirect"
+    echo "-n|--no-redirect"
     echo "              test a secondary/primary CVS server (writeproxy)"
     echo "              configuration with the Redirect response disabled"
     echo "              (implies --proxy)."
@@ -126,7 +126,7 @@ unset configfile
 unset fromtest
 unset remotehost
 unset rootoptions
-unset CVSNOBASES
+bases=:
 keep=false
 linkroot=false
 noredirect=false
@@ -177,7 +177,15 @@ while getopts BHc:ef:h:klnpqrs:-: option ; do
 		option=l
 		OPTARG=
 		;;
-	    n|no|nor|nore|nored|noredi|noredir|noredire|noredirec|noredirect)
+	    no-*)
+	        echo "Ambiguous option \`$LONGOPT'" >&2
+		exit 2
+		;;
+	    no-b|no-ba|no-bas|no-base|no-bases)
+	        option=B
+		OPTARG=
+		;;
+	    no-r|no-re|no-red|no-redi|no-redir|no-redire|no-redirec|no-redirect)
 		option=n
 		OPTARG=
 		;;
@@ -208,7 +216,7 @@ while getopts BHc:ef:h:klnpqrs:-: option ; do
     fi
     case "$option" in
 	B)
-	    export CVSNOBASES=:
+	    bases=false
 	    ;;
 	c)
 	    configfile="$OPTARG"
@@ -420,6 +428,13 @@ then
   testcvs_server_support=:
 else
   testcvs_server_support=false
+fi
+
+if $bases; then
+  unset CVSNOBASES
+else
+  # Force the client to not report base support to the server.
+  export CVSNOBASES=:
 fi
 
 
@@ -8877,7 +8892,7 @@ new revision: 1\.1\.2\.[0-9]*; previous revision: 1\.1\.2\.[0-9]*"
 	  else
 	    modify_repo ln -s Attic/file3,v $CVSROOT_DIRNAME/first-dir/file2,v
 	  fi
-	  if $remote && test -z "$CVSNOBASES"; then
+	  if $remote && $bases; then
 	    dotest_fail rcslib-symlink-3gr "$testcvs update file2" \
 "$SPROG \[update aborted\]: could not find desired version 1\.1\.2\.3 in $CVSROOT_DIRNAME/first-dir/file2,v"
 	  else
@@ -18065,7 +18080,7 @@ total revisions: 1
 
 	  # Check that the contents were right.  This isn't the hard case
 	  # (in which RCS_delete_revs does a diff), but might as well.
-	  if $remote && test -z "$CVSNOBASES"; then
+	  if $remote && $bases; then
 	    dotest_fail binfiles-o4r "$testcvs -q update binfile" \
 "$SPROG \[update aborted\]: could not find desired version 1\.5 in $CVSROOT_DIRNAME/first-dir/binfile,v"
 	  else
@@ -23359,7 +23374,7 @@ new revision: 1\.6; previous revision: 1\.5"
 	  #
 	  # Feel free to imagine the horrific scream of despair
 	  cd ../../1/first-dir
-	  if $remote && test -z "$CVSNOBASES"; then
+	  if $remote && $bases; then
 	    # FIXCVS
 	    # See the note above about lost data and a few other comments in
 	    # other tests.  At least with base files, no data is lost, but this
@@ -24181,7 +24196,6 @@ ${SPROG} add: use .${SPROG} commit. to add these files permanently"
 	  dotest stamps-4kw \
 "$diff_u $TESTDIR/1/stamp.kw.touch $TESTDIR/1/stamp.kw.add"
 	  sleep 60
-export CVS_CLIENT_LOG=/tmp/cvsclientlog
 	  dotest stamps-5 "$testcvs -Q ci -m add"
 
 	  # Cygwin, *cough*, puts the year in the time column until the minute
@@ -24804,14 +24818,14 @@ EOF
 "${testcvs} ci -F ${TESTDIR}/comment.tmp file1" \
 "${SPROG} commit: sticky tag .1\.3. for file .file1. is not a branch
 ${SPROG} \[commit aborted\]: correct above errors first!"
-	  if test -z "$CVSNOBASES"; then
+	  if $bases; then
 	    dotest keywordlog-4b-2 "cat CVS/Base/.#file1.1.3" initial
 	  fi
 	  dotest keywordlog-4b-3 "cat file1" \
 'initial
 xx $''Log$'
 	  dotest keywordlog-4c "$testcvs -q update -A" "M file1"
-	  if test -z "$CVSNOBASES"; then
+	  if $bases; then
 	    dotest keywordlog-4c-2 "cat CVS/Base/.#file1.1.3" initial
 	  fi
 	  dotest keywordlog-4c-3 "cat file1" \
@@ -26664,7 +26678,7 @@ ${log_keyid}first
 ============================================================================="
 
 	  dotest admin-22-o14 "${testcvs} tag -b -r1.3 br1 aaa" "T aaa"
-	  if $remote && test -z "$CVSNOBASES"; then
+	  if $remote && $bases; then
 	    # FIXCVS: The remote behavior is probably correct here.
 	    dotest_fail admin-22-o15ar "$testcvs update -rbr1 aaa" \
 "$SPROG \[update aborted\]: could not find desired version 1\.6 in $CVSROOT_DIRNAME/first-dir/aaa,v"
@@ -27138,7 +27152,7 @@ description:
 revision 1\.1
 date: ${ISO8601DATE};  author: ${username};  state: dead;  commitid: ${commitid};
 branches:  1\.1\.2;
-${log_keyid}file file3 was initially added on branch br\.
+file file3 was initially added on branch br\.
 ----------------------------
 revision 1\.1\.2\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
@@ -32701,6 +32715,18 @@ EOF
 
 
 	openpgp)
+	  if $gpg; then :; else
+	    skip openpgp "No OpenPGP tool configured."
+	    continue
+	  fi
+
+	  if $remote; then
+	    if $bases; then :; else
+	      skip openpgp "OpenPGP signatures require support for Base files."
+	      continue
+	    fi
+	  fi
+
 	  # More tests of basic/miscellaneous openpgp functionality.
 	  mkdir openpgp; cd openpgp
 	  mkdir top; cd top
@@ -32716,7 +32742,11 @@ EOF
 	  dotest openpgp-1 "$testcvs verify file1" \
 "$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
 	  dotest openpgp-2 "$testcvs verify -p file1 >tmp"
-	  dotest openpgp-3 "cmp tmp CVS/Base/.#file1.1.1.sig"
+
+	  if $remote; then
+	    # CVS/Base files are not used in local mode.
+	    dotest openpgp-3 "cmp tmp CVS/Base/.#file1.1.1.sig"
+	  fi
 
 	  dotest openpgp-4 "$testcvs sign file1"
 	  dotest openpgp-5 "$testcvs verify file1" \

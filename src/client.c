@@ -4750,6 +4750,8 @@ start_server (void)
 		    continue;
 		if (suppress_bases && !strncmp (rs->name, "Base-", 5))
 		    continue;
+		if (suppress_bases && !strcmp (rs->name, "OpenPGP-signatures"))
+		    continue;
 		if (suppress_bases && !strcmp (rs->name, "Temp-checkout"))
 		    continue;
 

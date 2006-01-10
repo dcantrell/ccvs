@@ -4771,10 +4771,13 @@ workfile);
 
 
 const char *
-RCS_get_openpgp_signatures (RCSNode *rcs, const char *rev)
+RCS_get_openpgp_signatures (RCSNode *rcs, const char *rev, size_t *len)
 {
     RCSVers *vers;
     Node *n;
+
+    if (rcs->flags & PARTIAL)
+	RCS_reparsercsfile (rcs, NULL, NULL);
 
     n = findnode (rcs->versions, rev);
     if (!n)
@@ -4786,6 +4789,7 @@ RCS_get_openpgp_signatures (RCSNode *rcs, const char *rev)
 	return NULL;
     /* else */
 
+    if (len) *len = n->len;
     return n->data;
 }
 
@@ -5271,8 +5275,9 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
     addnode (delta->other_delta, np);
 
     /* Save the OpenPGP signature.  */
-    if (get_sign_commits (server_active, true)
-	|| have_sigfile (server_active, workfile))
+    if (!delta->dead
+	&& (get_sign_commits (server_active, true)
+	    || have_sigfile (server_active, workfile)))
     {
 	char *rawsig;
 	size_t rawlen;
