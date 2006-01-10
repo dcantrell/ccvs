@@ -28,13 +28,13 @@
 
 /* CVS headers.  */
 #include "edit.h"
+#include "fileattr.h"
 #include "ignore.h"
 #include "logmsg.h"
 #include "recurse.h"
-#include "sign.h"
+#include "wrapper.h"
 
 #include "cvs.h"
-#include "fileattr.h"
 #include "hardlink.h"
 
 static Dtype check_direntproc (void *callerdat, const char *dir,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -20,13 +20,17 @@
 /* Verify interface.  */
 #include "subr.h"
 
-#include "cvs.h"
-
+/* GNULIB headers.  */
 #include "canonicalize.h"
 #include "canon-host.h"
 #include "getline.h"
 #include "vasprintf.h"
 #include "vasnprintf.h"
+
+/* CVS headers.  */
+#include "wrapper.h"
+
+#include "cvs.h"
 
 /* Get wint_t.  */
 #ifdef HAVE_WINT_T

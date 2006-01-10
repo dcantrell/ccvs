@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -19,8 +19,30 @@
  * returns 0 if no differences are found and non-zero otherwise
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "no_diff.h"
+
+/* ANSI C headers.  */
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* GNULIB headers.  */
+#include "error.h"
+#include "xalloc.h"
+
+/* CVS headers.  */
+#include "rcs.h"
+#include "server.h"
+#include "system.h"
+#include "vers_ts.h"
+#include "wrapper.h"
+
+
 
 int
 No_Difference (struct file_info *finfo, Vers_TS *vers)
@@ -87,7 +109,7 @@ No_Difference (struct file_info *finfo, Vers_TS *vers)
 	/* Need to call unlink myself because the noexec variable
 	 * has been set to 1.  */
 	TRACE (TRACE_FUNCTION, "unlink (%s)", tocvsPath);
-	if ( CVS_UNLINK (tocvsPath) < 0)
+	if (CVS_UNLINK (tocvsPath) < 0)
 	    error (0, errno, "could not remove %s", tocvsPath);
     }
 

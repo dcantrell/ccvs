@@ -25,9 +25,11 @@
 #include "save-cwd.h"
 
 /* CVS headers.  */
-#include "cvs.h"
-#include "fileattr.h"
 #include "edit.h"
+#include "fileattr.h"
+#include "wrapper.h"
+
+#include "cvs.h"
 
 
 

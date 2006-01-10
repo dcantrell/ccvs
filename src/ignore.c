@@ -28,6 +28,8 @@
 #include "lstat.h"
 
 /* CVS headers.  */
+#include "wrapper.h"
+
 #include "cvs.h"
 
 

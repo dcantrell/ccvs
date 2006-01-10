@@ -58,12 +58,14 @@
 #include "buffer.h"
 #include "classify.h"
 #include "edit.h"
+#include "fileattr.h"
 #include "ignore.h"
+#include "no_diff.h"
 #include "recurse.h"
+#include "watch.h"
+#include "wrapper.h"
 
 #include "cvs.h"
-#include "watch.h"
-#include "fileattr.h"
 #include "hardlink.h"
 
 

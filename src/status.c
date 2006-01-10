@@ -21,6 +21,7 @@
 #include "classify.h"
 #include "ignore.h"
 #include "recurse.h"
+#include "wrapper.h"
 
 #include "cvs.h"
 

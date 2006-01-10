@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 The Free Software Foundation, Inc.
+ * Copyright (C) 2006 The Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,5 +43,6 @@ void copy_file (const char *from, const char *to);
 void force_copy_file (const char *from, const char *to);
 void xchmod (const char *fname, bool writable);
 void force_xchmod (const char *fname, bool writable);
+int xcmp (const char *file1, const char *file2);
 
 #endif /* FILESUBR_H */
