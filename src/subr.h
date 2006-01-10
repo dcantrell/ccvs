@@ -52,6 +52,7 @@ int file_has_markers (const struct file_info *);
 bool file_contains_keyword (const struct file_info *finfo);
 void get_file (const char *, const char *, const char *,
                char **, size_t *, size_t *);
+void force_write_file (const char *file, const char *data, size_t len);
 void write_file (const char *file, const char *data, size_t len);
 void resolve_symlink (char **filename);
 char *backup_file (const char *file, const char *suffix);

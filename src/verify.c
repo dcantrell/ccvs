@@ -28,6 +28,7 @@
 #include <stdlib.h>
 
 /* GNULIB headers.  */
+#include "base64.h"
 #include "error.h"
 #include "xalloc.h"
 
@@ -239,12 +240,15 @@ verify_args_list_to_args_proc (Node *p, void *closure)
 
 /* Verify a signature, returning true or false.
  *
+ * INPUTS
+ *   finfo	File information on the file being signed.
+ *
  * ERRORS
  *   Exits with a fatal error when FATAL and a signature cannot be verified.
  */
 static bool
 iverify_signature (const char *srepos, const char *filename, bool bin,
-		  bool fatal)
+		   bool fatal)
 {
     char *cmdline;
     char *sigfile = Xasprintf ("%s%s", filename, ".sig");
@@ -346,23 +350,6 @@ done:
 
 
 
-/* Verify a signature, returning true or false.
- *
- * ERRORS
- *   Exits with a fatal error when the verify mode is VERIFY_FATAL and a
- *   signature cannot be verified.
- */
-bool
-verify_signature (const char *srepos, const char *filename, bool bin,
-		  bool server_active, bool server_support)
-{
-    bool fatal = iget_verify_checkouts (server_active, server_support)
-	         == VERIFY_FATAL;
-    return iverify_signature (srepos, filename, bin, fatal);
-}
-
-
-
 static const char *const verify_usage[] =
 {
     "Usage: %s %s [-lR]\n",
@@ -381,16 +368,28 @@ struct verify_closure
 
 
 
+/*
+ * GLOBALS
+ *   CURRENT_PARSED_ROOT->ISREMOTE
+ *
+ * NOTES
+ *   Need to deal with all 4 combinations of USERARGS->PIPEOUT &
+ *   CURRENT_PARSED_ROOT->ISREMOTE.
+ */
 static int
 verify_fileproc (void *callerdat, struct file_info *finfo)
 {
     struct verify_closure *userargs = callerdat;
-    const char *srepos = Short_Repository (finfo->repository);
     Node *n;
     bool bin;
     Entnode *e;
-    bool retval;
-    char *basefn;
+    bool errors = false;
+    char *basefn, *basesigfn;
+    char *tmpfn = NULL, *tmpsigfn = NULL;
+    const char *signedfn = NULL, *sigfn = NULL;
+    char *sigdata = NULL;
+    size_t buflen;
+    size_t siglen;
 
     n = findnode (finfo->entries, finfo->file);
     assert (n);
@@ -399,29 +398,124 @@ verify_fileproc (void *callerdat, struct file_info *finfo)
     bin = !strcmp (e->options, "-kb");
 
     basefn = make_base_file_name (finfo->file, e->version);
+    basesigfn = Xasprintf ("%s%s", basefn, ".sig");
 
-    if (userargs->pipeout)
+    if (current_parsed_root->isremote)
     {
-	char *sigfile = Xasprintf ("%s%s", basefn, ".sig");
-	char *fullsigfile = Xasprintf ("%s/%s", finfo->update_dir, sigfile);
-	char *sigdata;
-	size_t buflen;
-	size_t siglen;
-	
-	get_file (sigfile, fullsigfile, "rb", &sigdata, &buflen, &siglen);
-	if (siglen)
-	    cvs_output (sigdata, siglen);
-	if (sigdata)
-	    free (sigdata);
-	free (sigfile);
-	free (fullsigfile);
-	retval = false;
+	char *updateprefix = finfo->update_dir
+			     ? Xasprintf ("%s/", finfo->update_dir) : "";
+	char *fullbasefn = Xasprintf ("%s%s", updateprefix, basefn);
+	char *fullsigfn = Xasprintf ("%s%s", updateprefix, basesigfn);
+
+	/* FIXME: These errors should refetch instead.  */
+	if (!isfile (basefn))
+	    error (1, 0, "Base file missing `%s'", fullbasefn);
+	if (!isfile (basesigfn))
+	    error (1, 0, "Signature file missing `%s'", fullsigfn);
+
+	/* FIXME: Once a "soft" connect to the server is possible, then when
+	 * the server is available, the signatures should be updated here.
+	 */
+
+	if (userargs->pipeout)
+	    get_file (basesigfn, fullsigfn, "rb", &sigdata, &buflen, &siglen);
+	else
+	{
+	    signedfn = basefn;
+	    sigfn = basesigfn;
+	}
+
+	free (updateprefix);
+	free (fullbasefn);
+	free (fullsigfn);
     }
     else
-	retval = !iverify_signature (srepos, basefn, bin, false);
+    {
+	/* In local mode, the signature data is still in the archive.  */
 
+	const char *b64sig;
+	size_t b64len;
+
+	assert (finfo->rcs);
+	if ((b64sig = RCS_get_openpgp_signatures (finfo->rcs, e->version,
+						  &b64len)))
+	{
+	    if (!base64_decode_alloc (b64sig, b64len, &sigdata, &siglen))
+	    {
+		error (0, 0, "Failed to decode base64 signature for `%s'",
+		       finfo->fullname);
+		errors = true;
+	    }
+	    /* else, got usable signature data in SIGDATA... fall out.  */
+	}
+	else if (!b64sig)
+	    error (1, ENOMEM, "Memory allocation failed");
+	else
+	{
+	    error (0, 0, "No signature available for `%s'",
+		   finfo->fullname);
+	    errors = true;
+	}
+    }
+
+    /* In the remote/non-pipeout case, the signed data and the signature are
+     * still in the base file and its signature counterpart, respectively.  In
+     * the other three cases, the signature is in SIGDATA or ERRORS is true
+     * (on error).
+     */
+
+    if (!errors && sigdata)
+    {
+	if (!siglen)
+	{
+	    error (0, 0, "No signature data found for `%s'",
+		   finfo->fullname);
+	    errors = true;
+	}
+	else if (userargs->pipeout)
+	    /* First deal with both the piped cases - it's easy.  */
+	    cvs_output (sigdata, siglen);
+	else
+	{
+	    /* This must be the local case, where the signature had to be
+	     * loaded from the archive.  Write the clean file and the signature
+	     * to temp files.
+	     */
+	    assert (!current_parsed_root->isremote);
+
+	    signedfn = tmpfn = cvs_temp_name ();
+
+	    if (RCS_checkout (finfo->rcs, NULL, e->version, e->tag, e->options,
+			      tmpfn, NULL, NULL))
+		errors = true;
+	    else
+	    {
+		sigfn = tmpsigfn = Xasprintf ("%s.sig", tmpfn);
+		force_write_file (tmpsigfn, sigdata, siglen);
+	    }
+	}
+    }
+
+    if (!errors && !userargs->pipeout)
+	errors = !iverify_signature (Short_Repository (finfo->repository),
+				     signedfn, bin, false);
+
+    if (tmpfn)
+    {
+	if (CVS_UNLINK (tmpfn))
+	    error (0, 0, "Failed to remove temp file `%s'", tmpfn);
+	free (tmpfn);
+    }
+    if (tmpsigfn)
+    {
+	if (CVS_UNLINK (tmpsigfn))
+	    error (0, 0, "Failed to remove temp file `%s'", tmpsigfn);
+	free (tmpsigfn);
+    }
+    if (sigdata) free (sigdata);
     free (basefn);
-    return retval;
+    free (basesigfn);
+    return errors;
 }
 
 

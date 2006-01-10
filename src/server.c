@@ -5792,7 +5792,7 @@ serve_wrapper_sendme_rcs_options (char *arg)
     {
 	buf_output0 (buf_to_net, "Wrapper-rcsOption ");
 	buf_output0 (buf_to_net, wrapper_line);
-	buf_output0 (buf_to_net, "\012");;
+	buf_output0 (buf_to_net, "\012");
 	free (wrapper_line);
     }
 
@@ -8215,15 +8215,16 @@ static void
 server_send_signatures (RCSNode *rcs, const char *rev)
 {
     const char *signatures;
+    size_t siglen;
 
     if (!supported_response ("OpenPGP-signatures"))
 	return;
 
-    if (!(signatures = RCS_get_openpgp_signatures (rcs, rev)))
+    if (!(signatures = RCS_get_openpgp_signatures (rcs, rev, &siglen)))
 	return;
 
     buf_output0 (protocol, "OpenPGP-signatures ");
-    buf_output0 (protocol, signatures);
+    buf_output (protocol, signatures, siglen);
     buf_output (protocol, "\n", 1);
     buf_send_counted (protocol);
 }
@@ -8443,6 +8444,9 @@ server_base_merge (struct file_info *finfo, const char *rev1, const char *rev2)
 void
 server_base_signatures (struct file_info *finfo, const char *rev)
 {
+    if (!supported_response ("Base-signatures"))
+	return;
+
     server_send_signatures (finfo->rcs, rev);
 
     buf_output0 (protocol, "Base-signatures ");

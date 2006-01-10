@@ -1,5 +1,27 @@
 2006-01-09  Derek Price  <derek@ximbiot.com>
 
+	* client.c (start_server): Suppress advertising OpenPGP-signatures
+	response when base support suppressed.
+	* rcs.c (RCS_get_openpgp_signatures): Support returning length for
+	convenience.  Fully parse archives when necessary.
+	(RCS_checkin): Don't sign dead revisions.
+	* rcs.h (RCS_get_openpgp_signatures): Add len to API.
+	* server.c (serve_wrapper_sendme_rcs_options): Remove extra semicolon.
+	(server_send_signatures): Use cached signature len.
+	(server_base_signatures): Check for option support before sending.
+	* subr.c (force_write_file): New function factored from...
+	(write_file): ...here.
+	* subr.h (force_write_file): New proto.
+	* verify.c (verify_fileproc): Handle local mode.
+	(verify_signature): Remove function.
+	* verify.h (verify_signature): Remove proto.
+
+	* sanity.sh: Support --no-bases.  s/--noredirect/--no-redirect/g, for
+	consistency.  Replace `test -z "$CVSNOBASES"' with boolean $bases.
+	(import): Don't expect signature on dead revision.
+	(openpgp): Skip without GPG and when bases are suppressed in remote
+	mode.
+
 	* sanity.sh (errmsg4-1): Increase verbosity to preserve warning being
 	tested.
 

@@ -731,17 +731,16 @@ get_file (const char *name, const char *fullname, const char *mode, char **buf,
 
 
 
+/* Write DATA of length LEN to FILE, ignoring NOEXEC.  */
 void
-write_file (const char *file, const char *data, size_t len)
+force_write_file (const char *file, const char *data, size_t len)
 {
     FILE *fp;
 
     TRACE (TRACE_FUNCTION,
-	   "write_file (%s, %s, %u)", file, data, (unsigned int)len);
+	   "force_write_file (%s, %s, %u)", file, data, (unsigned int)len);
 
-    if (noexec) return;
-
-    if (!(fp = fopen (file, "w")))
+    if (!(fp = fopen (file, "wb")))
 	error (1, errno, "cannot create `%s'", file);
 
     if (len > 0)
@@ -752,6 +751,20 @@ write_file (const char *file, const char *data, size_t len)
 
     if (fclose (fp) < 0)
 	error (1, errno, "cannot close `%s'", file);
+}
+
+
+
+/* Write DATA of length LEN to FILE, honoring NOEXEC.  */
+void
+write_file (const char *file, const char *data, size_t len)
+{
+    TRACE (TRACE_FUNCTION,
+	   "write_file (%s, %s, %u)", file, data, (unsigned int)len);
+
+    if (noexec) return;
+
+    force_write_file (file, data, len);
 }
 
 
