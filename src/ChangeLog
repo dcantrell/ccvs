@@ -1,3 +1,7 @@
+2006-01-10  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (valloc): Remove unused proto.
+
 2006-01-09  Larry Jones  <lawrence.jones@ugs.com>
 
 	* commit.c (remove_file): Record correct revision in history file.
