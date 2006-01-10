@@ -1,5 +1,13 @@
 2006-01-10  Derek Price  <derek@ximbiot.com>
 
+	* client.c (send_fileproc): Compare files to base revision when
+	available.
+	(send_files): Accept FORCE_SIGNATURE flag.
+	* client.h: Define FORCE_SIGNATURE.
+	* sign.c (sign_check_fileproc): New function to verify files are
+	unmodified before wasting bandwidth.
+	(sign, sign_fileproc): Accept -d flag.
+
 	* no_diff.h, wrapper.h: New files with decls from...
 	* cvs.h: ...here.  Some decls moved to...
 	* filesubr.h, vers_ts.h: ...here.

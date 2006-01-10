@@ -35,6 +35,7 @@
 #include "edit.h"
 #include "ignore.h"
 #include "recurse.h"
+#include "wrapper.h"
 
 #include "cvs.h"
 
@@ -5207,6 +5208,7 @@ struct send_data
     bool force;
     bool no_contents;
     bool backup_modified;
+    bool force_signatures;
 };
 
 /* Deal with one file.  */
@@ -5219,6 +5221,7 @@ send_fileproc (void *callerdat, struct file_info *finfo)
     /* File name to actually use.  Might differ in case from
        finfo->file.  */
     const char *filename;
+    bool may_be_modified;
 
     send_a_repository ("", finfo->repository, finfo->update_dir);
 
@@ -5307,60 +5310,79 @@ warning: ignoring -k options due to server limitations");
 	/* File no longer exists.  Don't do anything, missing files
 	   just happen.  */
     }
-    else if (!vers->ts_rcs || args->force
-	     || strcmp (vers->ts_conflict
-		        ? vers->ts_conflict : vers->ts_rcs, vers->ts_user)
+    else if (!vers->ts_rcs || args->force)
+	may_be_modified = true;
+    else if (strcmp (vers->ts_conflict
+		     ? vers->ts_conflict : vers->ts_rcs, vers->ts_user)
 	     || (vers->ts_conflict && !strcmp (cvs_cmd_name, "diff")))
     {
-	if (!strcmp (cvs_cmd_name, "sign")
-	    || (!strcmp (cvs_cmd_name, "commit")
-	        && get_sign_commits (false, supported_request ("Signature"))))
-	{
-	    if (!supported_request ("Signature"))
-		error (1, 0, "Server doesn't support commit signatures.");
-
-	    send_signature (Short_Repository (finfo->repository),
-			    finfo->file, finfo->fullname,
-			    vers && !strcmp (vers->options, "-kb"));
-	}
-
-	if (args->no_contents
-	    && supported_request ("Is-modified"))
-	{
-	    send_to_server ("Is-modified ", 0);
-	    send_to_server (filename, 0);
-	    send_to_server ("\012", 1);
-	}
+	char *basefn = make_base_file_name (filename, vers->ts_user);
+	if (!isfile (basefn) || xcmp (filename, basefn))
+	    may_be_modified = true;
 	else
-	    send_modified (filename, finfo->fullname, vers);
-
-        if (args->backup_modified)
-        {
-            char *bakname;
-            bakname = backup_file (filename, vers->vn_user);
-            /* This behavior is sufficiently unexpected to
-               justify overinformativeness, I think. */
-            if (! really_quiet)
-                printf ("(Locally modified %s moved to %s)\n",
-                        filename, bakname);
-            free (bakname);
-        }
+	    may_be_modified = false;
+	free (basefn);
     }
     else
     {
-	if (!strcmp (cvs_cmd_name, "sign"))
+	may_be_modified = false;
+    }
+
+    if (vers->ts_user)
+    {
+	if (may_be_modified)
 	{
-	    if (!supported_request ("Signature"))
-		error (1, 0, "Server doesn't support commit signatures.");
+	    if (args->force_signatures
+		|| (!strcmp (cvs_cmd_name, "commit")
+		    && get_sign_commits (false,
+					 supported_request ("Signature"))))
+	    {
+		if (!supported_request ("Signature"))
+		    error (1, 0, "Server doesn't support commit signatures.");
 
-	    send_signature (Short_Repository (finfo->repository),
-			    finfo->file, finfo->fullname,
-			    vers && !strcmp (vers->options, "-kb"));
+		send_signature (Short_Repository (finfo->repository),
+				finfo->file, finfo->fullname,
+				vers && !strcmp (vers->options, "-kb"));
+	    }
+
+	    if (args->no_contents
+		&& supported_request ("Is-modified"))
+	    {
+		send_to_server ("Is-modified ", 0);
+		send_to_server (filename, 0);
+		send_to_server ("\012", 1);
+	    }
+	    else
+		send_modified (filename, finfo->fullname, vers);
+
+	    if (args->backup_modified)
+	    {
+		char *bakname;
+		bakname = backup_file (filename, vers->vn_user);
+		/* This behavior is sufficiently unexpected to
+		   justify overinformativeness, I think. */
+		if (! really_quiet)
+		    printf ("(Locally modified %s moved to %s)\n",
+			    filename, bakname);
+		free (bakname);
+	    }
 	}
+	else
+	{
+	    if (args->force_signatures)
+	    {
+		if (!supported_request ("Signature"))
+		    error (1, 0, "Server doesn't support commit signatures.");
 
-	send_to_server ("Unchanged ", 0);
-	send_to_server (filename, 0);
-	send_to_server ("\012", 1);
+		send_signature (Short_Repository (finfo->repository),
+				finfo->file, finfo->fullname,
+				vers && !strcmp (vers->options, "-kb"));
+	    }
+
+	    send_to_server ("Unchanged ", 0);
+	    send_to_server (filename, 0);
+	    send_to_server ("\012", 1);
+	}
     }
 
     /* if this directory has an ignore list, add this file to it */
@@ -5741,6 +5763,9 @@ send_max_dotdot (argc, argv)
  *		server as though they were modified.
  *		FLAGS & SEND_NO_CONTENTS means that this command only needs to
  *		know _whether_ a file is modified, not the contents.
+ *		FLAGS & FORCE_SIGNATURES means that OpenPGP signatures should
+ *		be sent with files regardless of other settings, including
+ *		server support.
  *
  * RETURNS
  *   Nothing.
@@ -5762,6 +5787,7 @@ send_files (int argc, char **argv, int local, int aflag, unsigned int flags)
     args.force = flags & SEND_FORCE;
     args.no_contents = flags & SEND_NO_CONTENTS;
     args.backup_modified = flags & BACKUP_MODIFIED_FILES;
+    args.force_signatures = flags & FORCE_SIGNATURES;
     err = start_recursion
 	(send_fileproc, send_filesdoneproc, send_dirent_proc,
          send_dirleave_proc, &args, argc, argv, local, W_LOCAL, aflag,
