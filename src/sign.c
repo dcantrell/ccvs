@@ -37,6 +37,7 @@
 #include "xalloc.h"
 
 /* CVS headers.  */
+#include "base.h"
 #include "classify.h"
 #include "client.h"
 #include "filesubr.h"
@@ -383,11 +384,63 @@ get_signature (bool server_active, const char *srepos, const char *filename,
 
 
 static int
+sign_check_fileproc (void *callerdat, struct file_info *finfo)
+{
+    int err = 0;
+    struct file_info xfinfo;
+    Vers_TS *vers;
+
+    TRACE (TRACE_FUNCTION, "sign_check_fileproc (%s)", finfo->fullname);
+
+    xfinfo = *finfo;
+    xfinfo.repository = NULL;
+    xfinfo.rcs = NULL;
+    vers = Version_TS (&xfinfo, NULL, NULL, NULL, 0, 0);
+
+    if (!vers->ts_user)
+    {
+	error (0, 0, "No such file `%s'", finfo->fullname);
+	return 1;
+    }
+
+    if (!vers->ts_rcs)
+    {
+	error (0, 0, "Uncommitted file `%s' may not be signed.",
+	       finfo->fullname);
+        return 1;
+    }
+
+    if (strcmp (vers->ts_conflict
+		? vers->ts_conflict : vers->ts_rcs, vers->ts_user))
+    {
+	char *basefn = make_base_file_name (finfo->file, vers->ts_user);
+	if (!isfile (basefn))
+	{
+	    /* FIXME: This could refetch.  */
+	    error (0, 0, "Base file `%s' not found for `%s'",
+		   basefn, finfo->fullname);
+	    err++;
+	}
+	else if (xcmp (finfo->file, basefn))
+	{
+	    error (0, 0, "Cannot sign modified file `%s'", finfo->fullname);
+	    err++;
+	}
+	free (basefn);
+    }
+
+    return err;
+}
+
+
+
+static int
 sign_fileproc (void *callerdat, struct file_info *finfo)
 {
     Vers_TS *vers;
     int err = 0;
     Ctype status;
+    const char *delkey = callerdat;
 
     TRACE (TRACE_FUNCTION, "sign_fileproc (%s)", finfo->fullname);
 
@@ -461,6 +514,7 @@ static const char *const sign_usage[] =
     "Usage: %s %s [-lR] [files...]\n",
     "\t-l\tProcess this directory only (not recursive).\n",
     "\t-R\tProcess directories recursively.\n",
+    "\t-d KEYID\tDelete signatures with key ID KEYID from revision.\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
@@ -471,15 +525,20 @@ sign (int argc, char **argv)
     int c;
     int err = 0;
     bool local = false;
+    char *delkey = NULL;
 
     if (argc == -1)
 	usage (sign_usage);
 
     optind = 0;
-    while ((c = getopt (argc, argv, "+lR")) != -1)
+    while ((c = getopt (argc, argv, "+d:lR")) != -1)
     {
 	switch (c)
 	{
+	    case 'd':
+		if (delkey) free (delkey);
+		delkey = xstrdup (optarg);
+		break;
 	    case 'l':
 		local = 1;
 		break;
@@ -495,6 +554,14 @@ sign (int argc, char **argv)
     argc -= optind;
     argv += optind;
 
+    if (!delkey)
+	err = start_recursion
+	    (sign_check_fileproc, NULL, NULL, NULL, NULL,
+	     argc, argv, local, W_LOCAL, false, CVS_LOCK_NONE, NULL,
+	     current_parsed_root->isremote ? false : true, NULL);
+    if (err)
+	error (1, 0, "Correct above errors before rerunning this command.");
+
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root->isremote)
     {
@@ -503,10 +570,19 @@ sign (int argc, char **argv)
 	ign_setup ();
 
 	if (local)
-	    send_arg("-l");
+	    send_arg ("-l");
+	if (delkey)
+	{
+	    send_arg ("-d");
+	    send_arg (delkey);
+	}
 	send_arg ("--");
 
-	send_files (argc, argv, local, false, 0);
+	/* Full file contents need to be sent to the server when signing since
+	 * the server may have unique keywords configured in CVSROOT/config.
+	 */
+	send_files (argc, argv, local, false,
+		    delkey ? SEND_NO_CONTENTS : FORCE_SIGNATURES);
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 
 	send_to_server ("sign\012", 0);
@@ -517,7 +593,7 @@ sign (int argc, char **argv)
 #endif
 
     /* start the recursion processor */
-    err = start_recursion (sign_fileproc, NULL, NULL, NULL, NULL, argc, argv,
+    err = start_recursion (sign_fileproc, NULL, NULL, NULL, delkey, argc, argv,
 			   local, W_LOCAL, false, CVS_LOCK_WRITE, NULL, true,
 			   NULL);
 

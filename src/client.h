@@ -128,6 +128,7 @@ void send_files (int argc, char **argv, int local, int aflag,
 # define SEND_FORCE		(1 << 1)
 # define SEND_NO_CONTENTS	(1 << 2)
 # define BACKUP_MODIFIED_FILES	(1 << 3)
+# define FORCE_SIGNATURES	(1 << 4)
 
 /* Send an argument to the remote server.  */
 void
