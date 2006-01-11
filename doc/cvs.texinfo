@@ -2324,11 +2324,11 @@ Force OpenPGP signatures on or off.  @samp{sign} will cause the commit to abort
 if the server does not support OpenPGP signatures.  Without one of these
 options, CVS will autonegotiate signing, attempting to sign commits when the
 server supports it.  May be overridden by the @samp{--sign} and @samp{--no-sign}
-commit options (@pxref{commit options}).
+global options (@pxref{Global options}).
 
 @item sign-template=@var{template}
 Use @var{template} as the command line template to generate OpenPGP signatures.
-Format strings in this template are substituted before the commit is run:
+Format strings in this template are substituted before the command is run:
 
 @table @code
 @item %t
@@ -2344,8 +2344,50 @@ Substitute the name of the file to generate a signature for.
 @end table
 
 This template should send the generated signature to its standard output.
-Overrides the @samp{sign-template} method optoin and defaults to something like
+IS overridden by the @samp{--sign-template} global command line option
+@pxref{Global options} and defaults to
 @samp{/usr/bin/gpg --detach-sign --output - %t %a %s}.
+
+@item textmode
+The value passed to both in place of %t in both the OpenPGP signature
+and the OpenPGP verification command line templates.  Defaults to
+@samp{--textmode}.
+
+@item verify
+@itemx no-verify
+Force OpenPGP signature verification on checkout off, or set the failure mode.
+With a failure mode of @samp{warn}, the user will be warned of invalid
+signatures but the checkout will be allowed.  With a failure mode of
+@samp{fatal}, the checkout will be aborted when the first corrupt file is
+received.  If the server does not support OpenPGP signatures, a failure mode
+of @samp{fatal} will disallow the entire checkout.  May be overridden by the
+@samp{--verify} and @samp{--no-verify} global options (@pxref{Global options}).
+
+@item verify-template=@var{template}
+Use @var{template} as the command line template to verify OpenPGP signatures.
+Format strings in this template are substituted before the command is run:
+
+@table @code
+@item %t
+Substitute in the textmode flag (defaults to @samp{--textmode}) when a
+signature is being verified for a text file.
+
+@item %a
+Substitute in any @var{arg}s set via the @samp{--verify-arg} option or the
+CVSROOT verify-arg method option.
+
+@item %S
+Substitute the name of the file containing the signature.
+
+@item %s
+Substitute the name of the signed file.
+@end table
+
+This template should exit with an exit code of zero if the signature is valid
+for the signed file and a non-zero exit code otherwise.  This method option is
+overridden by the @samp{--verify-template} global command line option
+@pxref{Global options} and defaults to something like
+@samp{/usr/bin/gpg --detach-sign --output - %t %a %S %s}.
 @end table
 
 As a further example, to combine both the @code{CVS_RSH} and @code{CVS_SERVER}
@@ -8539,8 +8581,49 @@ Substitute the name of the file to generate a signature for.
 @end table
 
 This template should send the generated signature to its standard output.
-Overrides the @samp{sign-template} method optoin and defaults to something like
+Overrides the @samp{sign-template} method option and defaults to something like
 @samp{/usr/bin/gpg --detach-sign --output - %t %a %s}.
+
+@item --textmode
+The value passed to both in place of %t in both the OpenPGP signature
+and the OpenPGP verification command line templates.  Defaults to
+@samp{--textmode}.
+
+@item --verify
+@itemx --no-verify
+Force OpenPGP signature verification on checkout off, or set the failure mode.
+With a failure mode of @samp{warn}, the user will be warned of invalid
+signatures but the checkout will be allowed.  With a failure mode of
+@samp{fatal}, the checkout will be aborted when the first corrupt file is
+received.  If the server does not support OpenPGP signatures, a failure mode
+of @samp{fatal} will disallow the entire checkout.  Overrides the @samp{verify}
+and @samp{no-verify} method options (@pxref{The connection method}).
+
+@item --verify-template=@var{template}
+Use @var{template} as the command line template to verify OpenPGP signatures.
+Format strings in this template are substituted before the command is run:
+
+@table @code
+@item %t
+Substitute in the textmode flag (defaults to @samp{--textmode}) when a
+signature is being verified for a text file.
+
+@item %a
+Substitute in any @var{arg}s set via the @samp{--verify-arg} option or the
+CVSROOT @samp{verify-arg} method option.
+
+@item %S
+Substitute the name of the file containing the signature.
+
+@item %s
+Substitute the name of the signed file.
+@end table
+
+This template should exit with an exit code of zero if the signature is valid
+for the signed file and a non-zero exit code otherwise.  Overrides the
+@samp{verify-template} method option @pxref{The connection method} and
+defaults to something like
+@samp{/usr/bin/gpg --detach-sign --output - %t %a %S %s}.
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

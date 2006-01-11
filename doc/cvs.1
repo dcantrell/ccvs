@@ -491,8 +491,56 @@ CVSROOT sign-arg method option.
 Substitute the name of the file to generate a signature for.
 .SP
 This template should send the generated signature to its standard output.
-Overrides the \fBsign-template\fR method optoin and defaults to something like
+Overrides the \fBsign-template\fR method option and defaults to something like
 \fB/usr/bin/gpg --detach-sign --output - %t %a %s\fR.
+.SP
+.IP "" 0
+\fB--verify\fR
+.IP "" 2
+.IP "" 0
+\fB--no-verify\fR
+.IP "" 2
+Force OpenPGP signature verification on checkout off, or set the failure mode.
+With a failure mode of \fBwarn\fR, the user will be warned of invalid
+signatures but the checkout will be allowed.  With a failure mode of
+\fBfatal\fR, the checkout will be aborted when the first corrupt file is
+received.  If the server does not support OpenPGP signatures, a failure mode
+of \fBfatal\fR will disallow the entire checkout.  Overrides the \fBverify\fR
+and \fBno-verify\fR method options (see node `The connection method\(aq in the CVS manual).
+.SP
+.IP "" 0
+\fB--verify-template=\fItemplate\fB\fR
+.IP "" 2
+Use \fItemplate\fR as the command line template to verify OpenPGP signatures.
+Format strings in this template are substituted before the command is run:
+.SP
+.IP "" 2
+\fB%t\fR
+.IP "" 4
+Substitute in the textmode flag (defaults to \fB--textmode\fR) when a
+signature is being verified for a text file.
+.SP
+.IP "" 2
+\fB%a\fR
+.IP "" 4
+Substitute in any \fIarg\fRs set via the \fB--verify-arg\fR option or the
+CVSROOT \fBverify-arg\fR method option.
+.SP
+.IP "" 2
+\fB%S\fR
+.IP "" 4
+Substitute the name of the file containing the signature.
+.SP
+.IP "" 2
+\fB%s\fR
+.IP "" 4
+Substitute the name of the signed file.
+.SP
+This template should exit with an exit code of zero if the signature is valid
+for the signed file and a non-zero exit code otherwise.  Overrides the
+\fBverify-template\fR method option see node `The connection method\(aq in the CVS manual and
+defaults to something like
+\fB/usr/bin/gpg --detach-sign --output - %t %a %S %s\fR.
 .SP
 .SH "Common options"
 .SS "Common command options"
