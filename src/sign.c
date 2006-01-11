@@ -529,10 +529,11 @@ sign_fileproc (void *callerdat, struct file_info *finfo)
 
 static const char *const sign_usage[] =
 {
-    "Usage: %s %s [-lR] [files...]\n",
+    "Usage: %s %s [-lR] [-d KEYID [-r TAG]] [files...]\n",
     "\t-l\tProcess this directory only (not recursive).\n",
     "\t-R\tProcess directories recursively.\n",
     "\t-d KEYID\tDelete signatures with key ID KEYID from revision.\n",
+    "\t-r TAG\tDelete signatures from revision designated by TAG.\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
 };

@@ -1,5 +1,7 @@
 2006-01-10  Derek Price  <derek@ximbiot.com>
 
+	* sign.c (sign_usage): Add usage for `-r'.
+
 	* admin.c: Use "wrapper.h".
 	* client.c (client_base_signatures): Allow removal of signature files.
 	(handle_base_signature): Support new clear argument for
