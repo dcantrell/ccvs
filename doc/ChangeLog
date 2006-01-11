@@ -1,3 +1,9 @@
+2006-01-11  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (The connection method, Global options): Note new
+	--verify and --verify-template configuration options.  Note
+	--textmode.
+
 2005-12-12  Derek Price  <derek@ximbiot.com>
 
 	* cvsclient.texi (Responses): Add new Base-* & Temp-checkout responses.
