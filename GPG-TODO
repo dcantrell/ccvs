@@ -18,8 +18,8 @@ Segment 3: CVS Log, Status, Verify, & Sign (6 days)
 *   4.6.3 cvs verify -p Cats Sig to stdout, cvs status
           Automatically Verifies: 1 day
 *   4.7 cvs sign Command: 1 day
->   4.7 cvs sign -d to Delete Signatures from Revisions: 1 day
-    4.3.2 Server Verifies Signatures when Configured So: 1 day
+*   4.7 cvs sign -d to Delete Signatures from Revisions: 1 day
+>   4.3.2 Server Verifies Signatures when Configured So: 1 day
 
 Segment 4: Checkout/Update/Diff (8 days)
     4.4.1 Verify each Revision after Download: 1 day
