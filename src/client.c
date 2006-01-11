@@ -2423,20 +2423,28 @@ client_base_signatures (void *data_arg, List *ent_list,
     char *rev;
     char *basefile;
     char *sigfile;
+    bool *clear = data_arg;
 
     TRACE (TRACE_FUNCTION, "client_base_signatures (%s)", short_pathname);
 
-    if (!stored_signatures)
+    if (!stored_signatures && !*clear)
 	error (1, 0,
 	       "Server sent `Base-signatures' response without signature.");
 
-    /* Read OPTIONS, PREV, and REV from the server.  */
+    /* Read REV from the server.  */
     read_line (&rev);
 
     basefile = make_base_file_name (filename, rev);
     sigfile = Xasprintf ("%s.sig", basefile);
 
-    client_write_sigfile (sigfile, false);
+    if (*clear)
+    {
+	if (unlink_file (sigfile) < 0 && !existence_error (errno))
+	    error (0, 0, "Failed to delete signature file `%s'",
+		   sigfile);
+    }
+    else
+	client_write_sigfile (sigfile, false);
 
     free (rev);
     free (basefile);
@@ -2448,9 +2456,21 @@ client_base_signatures (void *data_arg, List *ent_list,
 static void
 handle_base_signatures (char *args, size_t len)
 {
+    bool clear = false;
     if (suppress_bases)
 	error (1, 0, "Server sent Base-* response when asked not to.");
-    call_in_directory (args, client_base_signatures, NULL);
+    call_in_directory (args, client_base_signatures, &clear);
+}
+
+
+
+static void
+handle_base_clear_signatures (char *args, size_t len)
+{
+    bool clear = true;
+    if (suppress_bases)
+	error (1, 0, "Server sent Base-* response when asked not to.");
+    call_in_directory (args, client_base_signatures, &clear);
 }
 
 
@@ -3815,6 +3835,8 @@ struct response responses[] =
 
     RSP_LINE("Base-signatures", handle_base_signatures, response_type_normal,
 	     rs_optional),
+    RSP_LINE("Base-clear-signatures", handle_base_clear_signatures,
+	     response_type_normal, rs_optional),
     RSP_LINE("OpenPGP-signatures", handle_openpgp_signatures,
 	     response_type_normal, rs_optional),
 

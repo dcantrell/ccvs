@@ -1,5 +1,5 @@
 /* gpgsplit.c - An OpenPGP signature packet splitting tool
- * Copyright (C) 2001, 2002, 2003 Free Software Foundation, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2006 Free Software Foundation, Inc.
  *
  * This file is part of of CVS
  * (derived from gpgsplit.c distributed with GnuPG).
@@ -34,6 +34,7 @@
 
 /* GNULIB Headers.  */
 #include "error.h"
+#include "xalloc.h"
 
 
 
@@ -385,6 +386,7 @@ parse_signature (struct buffer *bpin, struct openpgp_signature *spout)
   int rc;
   uint8_t c;
   uint32_t tmp32;
+  size_t raw_idx = 0;
 
   if ((rc = parse_header (bpin, &pkttype, &pktlen, &partial, header,
 			  &header_len)))
@@ -396,11 +398,16 @@ parse_signature (struct buffer *bpin, struct openpgp_signature *spout)
     error (1, 0, "Unhandled OpenPGP packet type (%s)",
 	   pkttype_to_string (pkttype));
 
+  spout->raw = xmalloc (header_len + pktlen);
+  memcpy (spout->raw + raw_idx, header, header_len);
+  raw_idx += header_len;
+
   if (pktlen < 19)
     error (1, 0, "Malformed OpenPGP signature packet (too short)");
 
   if ((rc = read_u8 (bpin, &c)))
     return rc;
+  spout->raw[raw_idx++] = c;
   pktlen -= 1;
 
   if (c != 3)
@@ -408,6 +415,7 @@ parse_signature (struct buffer *bpin, struct openpgp_signature *spout)
 
   if ((rc = read_u8 (bpin, &c)))
     return rc;
+  spout->raw[raw_idx++] = c;
   pktlen -= 1;
 
   if (c != 5)
@@ -415,6 +423,7 @@ parse_signature (struct buffer *bpin, struct openpgp_signature *spout)
 
   if ((rc = read_u8 (bpin, &c)))
     return rc;
+  spout->raw[raw_idx++] = c;
   pktlen -= 1;
 
   if (c & 0xF0)
@@ -424,11 +433,23 @@ parse_signature (struct buffer *bpin, struct openpgp_signature *spout)
   if ((rc = read_u32 (bpin, &tmp32)))
     return rc;
   spout->ctime = tmp32;
+  spout->raw[raw_idx++] = (tmp32 >> 24) & 0xFF;
+  spout->raw[raw_idx++] = (tmp32 >> 16) & 0xFF;
+  spout->raw[raw_idx++] = (tmp32 >> 8) & 0xFF;
+  spout->raw[raw_idx++] = tmp32 & 0xFF;
   pktlen -= 4;
 
   /* Read the key ID.  */
   if ((rc = read_u64 (bpin, &spout->keyid)))
     return rc;
+  spout->raw[raw_idx++] = (spout->keyid >> 56) & 0xFF;
+  spout->raw[raw_idx++] = (spout->keyid >> 48) & 0xFF;
+  spout->raw[raw_idx++] = (spout->keyid >> 40) & 0xFF;
+  spout->raw[raw_idx++] = (spout->keyid >> 32) & 0xFF;
+  spout->raw[raw_idx++] = (spout->keyid >> 24) & 0xFF;
+  spout->raw[raw_idx++] = (spout->keyid >> 16) & 0xFF;
+  spout->raw[raw_idx++] = (spout->keyid >> 8) & 0xFF;
+  spout->raw[raw_idx++] = spout->keyid & 0xFF;
   pktlen -= 8;
 
   /* Don't need the rest of the packet yet.  */
@@ -439,8 +460,11 @@ parse_signature (struct buffer *bpin, struct openpgp_signature *spout)
       if ((rc = buf_read_data (bpin, pktlen, &tmp, &got)) < 0)
 	return rc;
       assert (got);  /* Blocking buffers cannot return 0 bytes.  */
+      memcpy (spout->raw + raw_idx, tmp, got);
+      raw_idx += got;
       pktlen -= got;
     }
 
+  spout->rawlen = raw_idx;
   return 0;
 }

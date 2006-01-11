@@ -17,6 +17,7 @@
 #define RCS_H
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <sys/types.h>
 
@@ -277,6 +278,8 @@ int RCS_checkout (RCSNode *, const char *, const char *, const char *,
 const char *RCS_get_openpgp_signatures (RCSNode *rcs, const char *rev,
 					size_t *len);
 void RCS_add_openpgp_signature (struct file_info *finfo, const char *rev);
+int RCS_delete_openpgp_signatures (struct file_info *finfo, const char *rev,
+				   uint32_t keyid);
 int RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile,
 		 const char *message, const char *rev, time_t citime,
 		 int flags);

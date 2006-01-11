@@ -1,5 +1,29 @@
 2006-01-10  Derek Price  <derek@ximbiot.com>
 
+	* admin.c: Use "wrapper.h".
+	* client.c (client_base_signatures): Allow removal of signature files.
+	(handle_base_signature): Support new clear argument for
+	client_base_signatures.
+	(handle_base_clear_signature): New file.
+	(responses): Add Base-clear-signatures.
+	* gpg.c (parse_signature): Preserve raw signature.
+	* gpg.h (struct openpgp_signature): Add storage for raw signature.
+	* log.c (log_version): Display only low 32 bits of key IDs to users,
+	mimicing GnuPG.
+	* rcs.c: Use stricter include formatting.
+	(RCS_add_openpgp_signature): Use xalloc_die for memory errors.
+	(RCS_delete_openpgp_signatures): New function.
+	* rcs.h (RCS_delete_openpgp_signatures): Add proto.
+	* server.c (server_base_signatures): Send clear when there are no
+	signatures.
+	* sign.c (struct sign_args): Caller data for sign_fileproc.
+	(sign_fileproc, sign): Handle key deletion.
+	* verify.c (verify_fileproc): Match warning messages in local and
+	client/server mode.  Don't treat lack of signatures as an error.
+	* vers_ts.c (Version_TS), vers_ts.h (Version_TS): Make args const.
+
+	* sanity.sh (openpgp): Add signature deletion tests.
+
 	* client.c (send_fileproc): Compare files to base revision when
 	available.
 	(send_files): Accept FORCE_SIGNATURE flag.

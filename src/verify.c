@@ -402,27 +402,36 @@ verify_fileproc (void *callerdat, struct file_info *finfo)
 
     if (current_parsed_root->isremote)
     {
-	char *updateprefix = finfo->update_dir
-			     ? Xasprintf ("%s/", finfo->update_dir) : "";
+	char *updateprefix = finfo->update_dir && *finfo->update_dir
+			     ? Xasprintf ("%s/", finfo->update_dir)
+			     : xstrdup ("");
 	char *fullbasefn = Xasprintf ("%s%s", updateprefix, basefn);
 	char *fullsigfn = Xasprintf ("%s%s", updateprefix, basesigfn);
 
-	/* FIXME: These errors should refetch instead.  */
+	/* FIXME: These errors should attempt a refetch instead.  */
 	if (!isfile (basefn))
 	    error (1, 0, "Base file missing `%s'", fullbasefn);
+
 	if (!isfile (basesigfn))
-	    error (1, 0, "Signature file missing `%s'", fullsigfn);
+	{
+	    error (0, 0, "No signature available for `%s'", finfo->fullname);
+	    errors = true;
+	}
 
 	/* FIXME: Once a "soft" connect to the server is possible, then when
 	 * the server is available, the signatures should be updated here.
 	 */
 
-	if (userargs->pipeout)
-	    get_file (basesigfn, fullsigfn, "rb", &sigdata, &buflen, &siglen);
-	else
+	if (!errors)
 	{
-	    signedfn = basefn;
-	    sigfn = basesigfn;
+	    if (userargs->pipeout)
+		get_file (basesigfn, fullsigfn, "rb",
+			  &sigdata, &buflen, &siglen);
+	    else
+	    {
+		signedfn = basefn;
+		sigfn = basesigfn;
+	    }
 	}
 
 	free (updateprefix);
@@ -446,10 +455,10 @@ verify_fileproc (void *callerdat, struct file_info *finfo)
 		       finfo->fullname);
 		errors = true;
 	    }
+	    else if (!b64sig)
+		xalloc_die ();
 	    /* else, got usable signature data in SIGDATA... fall out.  */
 	}
-	else if (!b64sig)
-	    error (1, ENOMEM, "Memory allocation failed");
 	else
 	{
 	    error (0, 0, "No signature available for `%s'",

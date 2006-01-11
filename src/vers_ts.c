@@ -38,8 +38,8 @@ static void time_stamp_server (const char *, Vers_TS *, Entnode *);
  *   Vers_TS structure for FINFO.
  */
 Vers_TS *
-Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
-            int force_tag_match, int set_time)
+Version_TS (struct file_info *finfo, const char *options, const char *tag,
+	    const char *date, int force_tag_match, int set_time)
 {
     Node *p;
     RCSNode *rcsdata;

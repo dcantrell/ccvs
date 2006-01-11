@@ -8445,12 +8445,17 @@ server_base_merge (struct file_info *finfo, const char *rev1, const char *rev2)
 void
 server_base_signatures (struct file_info *finfo, const char *rev)
 {
-    if (!supported_response ("Base-signatures"))
+    if (!supported_response ("Base-signatures")
+	|| !supported_response ("Base-clear-signatures"))
 	return;
 
     server_send_signatures (finfo->rcs, rev);
 
-    buf_output0 (protocol, "Base-signatures ");
+    if (RCS_get_openpgp_signatures (finfo->rcs, rev, NULL))
+	buf_output0 (protocol, "Base-signatures ");
+    else
+	buf_output0 (protocol, "Base-clear-signatures ");
+
     output_dir (finfo->update_dir, finfo->repository);
     buf_output0 (protocol, finfo->file);
     buf_output (protocol, "\n", 1);

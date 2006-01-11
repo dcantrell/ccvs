@@ -34,6 +34,8 @@ struct openpgp_signature
 {
   time_t ctime;
   uint64_t keyid;
+  uint8_t *raw;
+  size_t rawlen;
 };
 
 
