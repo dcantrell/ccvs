@@ -32753,6 +32753,10 @@ EOF
 "$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR
 $DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
 
+	  dotest openpgp-6 "$testcvs sign -d0xF133BDE9 file1"
+	  dotest_fail openpgp-7 "$testcvs verify file1" \
+"$SPROG verify: No signature available for \`file1'"
+
 	  dokeep
 	  cd ../..
 	  rm -rf openpgp

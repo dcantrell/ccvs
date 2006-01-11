@@ -1705,7 +1705,8 @@ log_version (struct log_data *log_data, struct revlist *revlist, RCSNode *rcs,
 
 	while (!(rc = parse_signature (membuf, &sig)))
 	{
-	    unsigned long long printablesig = sig.keyid;
+	    /* GnuPG truncates this too.  */
+	    unsigned long long printablesig = sig.keyid & 0xFFFFFFFF;
 	    char *hexsig;
 	    cvs_output_tagged ("openpgp-keyid-header",
 			       "OpenPGP signature using key ID 0x");

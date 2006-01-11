@@ -92,8 +92,9 @@ struct vers_ts
 };
 typedef struct vers_ts Vers_TS;
 
-Vers_TS *Version_TS (struct file_info *finfo, char *options, char *tag,
-		     char *date, int force_tag_match, int set_time);
+Vers_TS *Version_TS (struct file_info *finfo, const char *options,
+		     const char *tag, const char *date, int force_tag_match,
+		     int set_time);
 void freevers_ts (Vers_TS **versp);
 char *time_stamp (const char *file);
 

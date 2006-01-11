@@ -434,15 +434,33 @@ sign_check_fileproc (void *callerdat, struct file_info *finfo)
 
 
 
+struct sign_args
+{
+    uint32_t keyid;
+    const char *tag;
+};
+
 static int
 sign_fileproc (void *callerdat, struct file_info *finfo)
 {
     Vers_TS *vers;
     int err = 0;
     Ctype status;
-    const char *delkey = callerdat;
+    struct sign_args *args = callerdat;
 
     TRACE (TRACE_FUNCTION, "sign_fileproc (%s)", finfo->fullname);
+
+    if (args->keyid)
+    {
+	vers = Version_TS (finfo, NULL, args->tag, NULL, true, 0);
+	err = RCS_delete_openpgp_signatures (finfo,
+					     vers->vn_rcs
+					     ? vers->vn_rcs : vers->vn_user,
+					     args->keyid);
+	if (server_active)
+	    server_base_signatures (finfo, vers->vn_user);
+	return err;
+    }
 
     status = Classify_File (finfo, NULL, NULL, NULL, true,
 			    false, &vers, false);
@@ -526,12 +544,14 @@ sign (int argc, char **argv)
     int err = 0;
     bool local = false;
     char *delkey = NULL;
+    char *tag = NULL;
+    struct sign_args args;
 
     if (argc == -1)
 	usage (sign_usage);
 
     optind = 0;
-    while ((c = getopt (argc, argv, "+d:lR")) != -1)
+    while ((c = getopt (argc, argv, "+d:lr:R")) != -1)
     {
 	switch (c)
 	{
@@ -541,6 +561,10 @@ sign (int argc, char **argv)
 		break;
 	    case 'l':
 		local = 1;
+		break;
+	    case 'r':
+		if (tag) free (tag);
+		tag = xstrdup (optarg);
 		break;
 	    case 'R':
 		local = 0;
@@ -553,6 +577,13 @@ sign (int argc, char **argv)
     }
     argc -= optind;
     argv += optind;
+
+    if (tag && !delkey)
+    {
+	error (0, 0,
+"`cvs sign' may only be used to sign unmodified files in the current sandbox");
+	error (1, 0, "(`-r' option to `cvs sign' is valid only with `-d')");
+    }
 
     if (!delkey)
 	err = start_recursion
@@ -569,12 +600,17 @@ sign (int argc, char **argv)
 
 	ign_setup ();
 
-	if (local)
-	    send_arg ("-l");
 	if (delkey)
 	{
 	    send_arg ("-d");
 	    send_arg (delkey);
+	}
+	if (local)
+	    send_arg ("-l");
+	if (tag)
+	{
+	    send_arg ("-r");
+	    send_arg (tag);
 	}
 	send_arg ("--");
 
@@ -592,10 +628,35 @@ sign (int argc, char **argv)
     }
 #endif
 
+    if (delkey)
+    {
+	char *n;
+	long long tmp;
+
+	tmp = strtoull (delkey, &n, 0);
+	if (n == delkey || *n != '\0' || tmp == 0)
+	{
+	    error (0, 0, "invalid key ID `%s'", delkey);
+	    return 1;
+	}
+	if (tmp > UINT32_MAX)
+	{
+	    error (0, 0, "invalid key ID `%s'", delkey);
+	    return 1;
+	}
+	args.keyid = (uint32_t) tmp;
+    }
+    else
+	args.keyid = 0;
+
     /* start the recursion processor */
-    err = start_recursion (sign_fileproc, NULL, NULL, NULL, delkey, argc, argv,
+    args.tag = tag;
+    err = start_recursion (sign_fileproc, NULL, NULL, NULL, &args, argc, argv,
 			   local, W_LOCAL, false, CVS_LOCK_WRITE, NULL, true,
 			   NULL);
+
+    if (delkey) free (delkey);
+    if (tag) free (tag);
 
     return err;
 }

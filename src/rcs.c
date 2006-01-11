@@ -21,14 +21,16 @@
 /* Verify interface.  */
 #include "rcs.h"
 
-/* CVS headers.  */
-#include "cvs.h"
-#include "edit.h"
-#include "hardlink.h"
-#include "sign.h"
-
 /* GNULIB headers.  */
 #include "base64.h"
+
+/* CVS headers.  */
+#include "edit.h"
+#include "gpg.h"
+#include "sign.h"
+
+#include "cvs.h"
+#include "hardlink.h"
 
 /* These need to be source after cvs.h or HAVE_MMAP won't be set... */
 #ifdef HAVE_MMAP
@@ -4835,7 +4837,7 @@ RCS_add_openpgp_signature (struct file_info *finfo, const char *rev)
 	    error (1, 0, "Invalid binhex data in signature (`%s', rev %s)",
 		   finfo->rcs->print_path, rev);
 	if (!oldsigs)
-	    error (1, errno, "Memory allocation error");
+	    xalloc_die ();
 	free (n->data);
     }
 
@@ -4857,6 +4859,106 @@ RCS_add_openpgp_signature (struct file_info *finfo, const char *rev)
 	   (char *)n->data, (unsigned int)n->len);
 
     RCS_rewrite (finfo->rcs, NULL, NULL);
+}
+
+
+
+int
+RCS_delete_openpgp_signatures (struct file_info *finfo, const char *rev,
+			       uint32_t keyid)
+{
+    RCSVers *vers;
+    Node *n;
+    char *oldsigs;
+    size_t oldlen;
+    struct buffer *membuf;
+    struct openpgp_signature sig;
+    char *newsigs = NULL;
+    size_t newlen = 0;
+    bool found = false;
+    int rc;
+
+    TRACE (TRACE_FUNCTION, "RCS_delete_openpgp_signatures (%s, %s, %llx)",
+	   finfo->fullname, rev, (unsigned long long)keyid);
+
+    if (finfo->rcs->flags & PARTIAL)
+	RCS_reparsercsfile (finfo->rcs, NULL, NULL);
+
+    n = findnode (finfo->rcs->versions, rev);
+    if (!n)
+	error (1, 0, "internal error: no revision information for %s", rev);
+    vers = n->data;
+
+    n = findnode (vers->other_delta, "openpgp-signatures");
+    if (!n)
+    {
+	error (0, 0, "No signatures attached to revision %s of `%s'",
+	       rev, finfo->fullname);
+	return 1;
+    }
+
+    TRACE (TRACE_DATA,
+	   "RCS_delete_openpgp_signatures: found oldsigs = %s, len = %u",
+	   (char *)n->data, (unsigned int)n->len);
+
+    if (!base64_decode_alloc (n->data, n->len, &oldsigs, &oldlen))
+	error (1, 0, "Invalid binhex data in signature (`%s', rev %s)",
+	       finfo->rcs->print_path, rev);
+    if (!oldsigs)
+	xalloc_die ();
+    free (n->data);
+
+    membuf = buf_nonio_initialize (NULL);
+    buf_output (membuf, oldsigs, oldlen);
+
+    while (!(rc = parse_signature (membuf, &sig)))
+    {
+	char *hexid1 = Xasprintf ("0x%llx", (unsigned long long) keyid);
+	char *hexid2 = Xasprintf ("0x%llx", (unsigned long long) sig.keyid);
+	if ((sig.keyid & 0xFFFFFFFF) == keyid)
+	{
+	    TRACE (TRACE_DATA, "%s is a match for %s", hexid1, hexid2);
+	    found = true;
+	}
+	else
+	{
+	    TRACE (TRACE_DATA, "%s is not a match for %s", hexid1, hexid2);
+	    newsigs = xrealloc (newsigs, newlen + sig.rawlen);
+	    memcpy (newsigs + newlen, sig.raw, sig.rawlen);
+	    newlen += sig.rawlen;
+	}
+	free (hexid1);
+	free (hexid2);
+	free (sig.raw);
+    }
+
+    if (!found)
+    {
+	char *hexid = Xasprintf ("0x%llx", (unsigned long long) keyid);
+	error (0, 0,
+	       "No signatures with key ID %s found in revision %s of `%s'",
+	       hexid, rev, finfo->fullname);
+	free (hexid);
+	if (newsigs) free (newsigs);
+	return 1;
+    }
+
+    if (newsigs)
+    {
+	n->len = base64_encode_alloc (newsigs, newlen, (char **)&n->data);
+	free (newsigs);
+    }
+    else
+	delnode (n);
+
+
+    TRACE (TRACE_DATA,
+	   "RCS_add_openpgp_signature: found oldsigs = %s, len = %u",
+	   (char *)n->data, (unsigned int)n->len);
+
+    RCS_rewrite (finfo->rcs, NULL, NULL);
+
+    return 0;
 }
 
 
