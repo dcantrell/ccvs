@@ -5658,7 +5658,7 @@ _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define DEFAULT_VERIFY_TEMPLATE "$GPG --verify %t %a -- %s %d"
+#define DEFAULT_VERIFY_TEMPLATE "$GPG --verify %t %a -- %S %s"
 _ACEOF
 
 
