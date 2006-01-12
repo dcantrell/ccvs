@@ -155,7 +155,9 @@ static inline const char *
 get_verify_template (void)
 {
     if (verify_template) return verify_template;
-    return current_parsed_root->verify_template;
+    if (current_parsed_root->verify_template)
+	return current_parsed_root->verify_template;
+    return DEFAULT_VERIFY_TEMPLATE;
 }
 
 
@@ -289,8 +291,8 @@ iverify_signature (const char *srepos, const char *filename, bool bin,
 	                      "r", "s", current_parsed_root->directory,
 	                      "p", "s", srepos,
 	                      "t", "s", bin ? NULL : get_sign_textmode (),
-	                      "s", "s", sigfile,
-	                      "d", "s", filename,
+	                      "S", "s", sigfile,
+	                      "s", "s", filename,
 	                      (char *) NULL);
 
     if (!cmdline || !strlen (cmdline))

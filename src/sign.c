@@ -150,7 +150,9 @@ static inline const char *
 get_sign_template (void)
 {
     if (sign_template) return sign_template;
-    return current_parsed_root->sign_template;
+    if (current_parsed_root->sign_template)
+	return current_parsed_root->sign_template;
+    return DEFAULT_SIGN_TEMPLATE;
 }
 
 
@@ -164,8 +166,18 @@ get_sign_template (void)
 const char *
 get_sign_textmode (void)
 {
-    if (sign_textmode) return sign_textmode;
-    return current_parsed_root->sign_textmode;
+    const char *tmp = NULL;
+
+    if (sign_textmode)
+	tmp = sign_textmode;
+    else if (current_parsed_root->sign_textmode)
+    	tmp = current_parsed_root->sign_textmode;
+    else
+	tmp = DEFAULT_SIGN_TEXTMODE;
+
+    if (tmp && !strlen (tmp)) return NULL;
+    /* else */
+    return tmp;
 }
 
 

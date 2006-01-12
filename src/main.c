@@ -330,7 +330,7 @@ static const char *const opt_usage[] =
     "                 generating signatures.\n",
     "    --verify[=(off | warn | fatal)] | --no-verify\n",
     "                 Force (or forbid) OpenPGP signature verification\n",
-    "                 (default warns).\n",
+    "                 on checkout (default warns on failure).\n",
     "    -G TEMPLATE\n",
     "    --verify-template TEMPLATE\n",
     "                 Use TEMPLATE to verify OpenPGP signatures.\n",
@@ -560,10 +560,11 @@ main (int argc, char **argv)
 	{"sign-template", required_argument, NULL, 'G'},
 	{"sign-arg", required_argument, NULL, 6},
 	{"textmode", required_argument, NULL, 7},
-	{"verify", optional_argument, NULL, 8},
-	{"no-verify", 0, NULL, 9},
-	{"verify-template", required_argument, NULL, 10},
-	{"verify-arg", required_argument, NULL, 11},
+	{"no-textmode", NULL, NULL, 8},
+	{"verify", optional_argument, NULL, 9},
+	{"no-verify", 0, NULL, 10},
+	{"verify-template", required_argument, NULL, 11},
+	{"verify-arg", required_argument, NULL, 12},
 #ifdef SERVER_SUPPORT
 	{"allow-root", required_argument, NULL, 3},
 #endif /* SERVER_SUPPORT */
@@ -722,6 +723,10 @@ main (int argc, char **argv)
 		set_sign_textmode (optarg);
 		break;
 	    case 8:
+		/* --no-textmode */
+		set_sign_textmode ("");
+		break;
+	    case 9:
 		/* --verify */
 		if (optarg)
 		{
@@ -744,15 +749,15 @@ main (int argc, char **argv)
 		else
 		    set_verify_checkouts (VERIFY_FATAL);
 		break;
-	    case 9:
+	    case 10:
 	        /* --no-verify */
 		set_verify_checkouts (VERIFY_OFF);
 		break;
-	    case 10:
+	    case 11:
 		/* --verify-template */
 		set_verify_template (optarg);
 		break;
-	    case 11:
+	    case 12:
 		/* --verify-arg */
 		add_verify_arg (optarg);
 		break;

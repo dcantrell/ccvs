@@ -1,3 +1,17 @@
+2006-01-11  Derek Price  <derek@ximbiot.com>
+
+	* main.c (opt_usage): Clarify --verify usage.
+	(main): Accept `--no-textmode'.
+	* root.c (new_cvsroot_t): Default sign/verify options to NULL.
+	(parse_cvsroot_t): Handle multiple textmode options and no-textmode.
+	* sign.c (get_sign_template): Return default when method option is
+	NULL.
+	(get_sign_textmode): Ditto, but return NULL when an option is set to
+	the empty string.
+	* verify.c (get_verify_template): Return default when method option is
+	NULL.
+	(iverify_signature): Use documented template format strings.
+
 2006-01-10  Derek Price  <derek@ximbiot.com>
 
 	* sign.c (sign_usage): Add usage for `-r'.
