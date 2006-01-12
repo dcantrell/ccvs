@@ -29,6 +29,7 @@
 #include "base.h"
 #include "ignore.h"
 #include "recurse.h"
+#include "repos.h"
 
 #include "cvs.h"
 #include "watch.h"

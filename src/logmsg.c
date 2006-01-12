@@ -22,7 +22,11 @@
 #include "getline.h"
 
 /* CVS Headers.  */
+#include "repos.h"
+
 #include "cvs.h"
+
+
 
 static int find_type (Node * p, void *closure);
 static int fmt_proc (Node * p, void *closure);

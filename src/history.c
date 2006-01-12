@@ -24,6 +24,7 @@
 
 /* CVS headers.  */
 #include "ignore.h"
+#include "repos.h"
 
 #include "cvs.h"
 

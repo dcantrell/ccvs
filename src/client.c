@@ -35,6 +35,7 @@
 #include "edit.h"
 #include "ignore.h"
 #include "recurse.h"
+#include "repos.h"
 #include "wrapper.h"
 
 #include "cvs.h"

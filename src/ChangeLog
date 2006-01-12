@@ -1,3 +1,12 @@
+2006-01-12  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h: Move some protos into...
+	* repos.h: ...this new file.
+	* add.c, admin.c, checkout.c, client.c, commit.c, edit.c, fileattr.c,
+	history.c, logmsg.c, rcs.c, server.c, tag.c, update.c: #include
+	"repos.h".
+	* create_adm.c, repos.c: Ditto, and use stricter include formatting.
+
 2006-01-11  Derek Price  <derek@ximbiot.com>
 
 	* main.c (opt_usage): Clarify --verify usage.
