@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 The Free Software Foundation, Inc.
+ * Copyright (C) 2005-2006 The Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,12 +34,10 @@ typedef enum { SIGN_DEFAULT, SIGN_ALWAYS, SIGN_NEVER } sign_state;
 /* Set values to override current_parsed_root.  */
 void set_sign_commits (sign_state sign);
 void set_sign_template (const char *template);
-void set_sign_textmode (const char *textmode);
 void add_sign_arg (const char *arg);
 
 /* Get values.  */
 bool get_sign_commits (bool server_active, bool server_support);
-const char *get_sign_textmode (void);
 char *gen_signature (const char *srepos, const char *filename, bool bin,
 		     size_t *len);
 char *get_signature (bool server_active, const char *srepos,

@@ -30,11 +30,15 @@
 /* ANSI C Headers.  */
 #include <assert.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 /* GNULIB Headers.  */
 #include "error.h"
 #include "xalloc.h"
+
+/* CVS headers.  */
+#include "parseinfo.h"
 
 
 
@@ -467,4 +471,44 @@ parse_signature (struct buffer *bpin, struct openpgp_signature *spout)
 
   spout->rawlen = raw_idx;
   return 0;
+}
+
+
+
+static char *openpgp_textmode;
+
+void
+set_openpgp_textmode (const char *textmode)
+{
+    assert (textmode);
+    if (openpgp_textmode) free (openpgp_textmode);
+    openpgp_textmode = xstrdup (textmode);
+}
+
+
+
+/* Return OPENPGP_TEXTMODE from the command line if it exists, else if
+ * CONFIG->OPENPGPTEXTMODE is set, return that, else if OPENPGP_TEXTMODE
+ * is set in the CURRENT_PARSED_ROOT return that, else return the default
+ * mode.
+ *
+ * If the value to be returned is the empty string, then return NULL so that
+ * format_cmdline will skip the argument rather than passing an empty string.
+ */
+const char *
+get_openpgp_textmode (void)
+{
+    const char *tmp = NULL;
+
+    if (openpgp_textmode)
+	tmp = openpgp_textmode;
+    else if (config && config->OpenPGPTextmode)
+	tmp = config->OpenPGPTextmode;
+    else if (current_parsed_root->openpgp_textmode)
+	tmp = current_parsed_root->openpgp_textmode;
+    else
+	tmp = DEFAULT_SIGN_TEXTMODE;
+
+    if (tmp && !strlen (tmp)) return NULL;
+    /* else */ return tmp;
 }

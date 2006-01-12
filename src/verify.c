@@ -25,7 +25,9 @@
 
 /* ANSI C headers.  */
 #include <assert.h>
+#include <errno.h>
 #include <stdlib.h>
+#include <string.h>
 
 /* GNULIB headers.  */
 #include "base64.h"
@@ -34,15 +36,24 @@
 
 /* CVS headers.  */
 #include "base.h"
+#include "entries.h"
+#include "filesubr.h"
+#include "gpg.h"
+#include "parseinfo.h"
 #include "recurse.h"
+#include "repos.h"
+#include "root.h"		/* Get current_parsed_root.  */
+#include "run.h"
+#include "server.h"
 #include "stack.h"
-
-/* Get current_parsed_root.  */
-#include "cvs.h"
+#include "subr.h"
+#include "system.h"
 
 
 
 extern int noexec;
+extern int really_quiet, quiet;
+void usage (const char *const *cpp);
 
 
 
@@ -56,8 +67,10 @@ extern int noexec;
  */
 #ifdef HAVE_OPENPGP
 static verify_state verify_checkouts = VERIFY_DEFAULT;
+static verify_state verify_commits = VERIFY_DEFAULT;
 #else
 static verify_state verify_checkouts = VERIFY_NEVER;
+static verify_state verify_commits = VERIFY_OFF;
 #endif
 
 static char *verify_template;
@@ -114,10 +127,10 @@ iget_verify_checkouts (bool server_active, bool server_support)
     /* Only verify checkouts from the client (and in local mode).  */
     if (server_active) return false;
 
-    if (verify_checkouts == VERIFY_DEFAULT)
+    tmp = verify_checkouts;
+
+    if (tmp == VERIFY_DEFAULT)
 	tmp = current_parsed_root->verify;
-    else
-	tmp = verify_checkouts;
 
     if (tmp == VERIFY_DEFAULT)
 	tmp = VERIFY_FATAL;
@@ -148,6 +161,44 @@ get_verify_checkouts (bool server_active, bool server_support)
 
 
 
+/* Return the current verify_state based on the command line options, current
+ * config, and compiled default.
+ *
+ * RETURNS
+ *   VERIFY_OFF, VERIFY_WARN, or VERIFY_FATAL.
+ */
+static verify_state
+iget_verify_commits (void)
+{
+    verify_state tmp;
+
+    /* Only verify checkouts from the server (and in local mode).  */
+    if (current_parsed_root->isremote) return false;
+
+    tmp = verify_commits;
+
+    if (config && tmp == VERIFY_DEFAULT)
+	tmp = config->VerifyCommits;
+
+    if (tmp == VERIFY_DEFAULT)
+	tmp = VERIFY_OFF;
+
+    return tmp;
+}
+
+
+
+/* Return true if the server should attempt to verify files sent by the client.
+ */
+bool
+get_verify_commits (void)
+{
+    verify_state tmp = iget_verify_commits ();
+    return tmp == VERIFY_WARN || tmp == VERIFY_FATAL;
+}
+
+
+
 /* Return VERIFY_TEMPLATE from the command line if it exists, else return the
  * VERIFY_TEMPLATE from CURRENT_PARSED_ROOT.
  */
@@ -155,6 +206,8 @@ static inline const char *
 get_verify_template (void)
 {
     if (verify_template) return verify_template;
+    if (config && config->VerifyTemplate)
+	return config->VerifyTemplate;
     if (current_parsed_root->verify_template)
 	return current_parsed_root->verify_template;
     return DEFAULT_VERIFY_TEMPLATE;
@@ -169,6 +222,8 @@ static inline List *
 get_verify_args (void)
 {
     if (verify_args && !list_isempty (verify_args)) return verify_args;
+    if (config && config->VerifyArgs && !list_isempty (config->VerifyArgs))
+	return config->VerifyArgs;
     return current_parsed_root->verify_args;
 }
 
@@ -290,7 +345,7 @@ iverify_signature (const char *srepos, const char *filename, bool bin,
 			      verify_args_list_to_args_proc, (void *) NULL,
 	                      "r", "s", current_parsed_root->directory,
 	                      "p", "s", srepos,
-	                      "t", "s", bin ? NULL : get_sign_textmode (),
+	                      "t", "s", bin ? NULL : get_openpgp_textmode (),
 	                      "S", "s", sigfile,
 	                      "s", "s", filename,
 	                      (char *) NULL);

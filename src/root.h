@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -47,10 +47,10 @@ typedef struct cvsroot_s {
     char *sign_template;	/* The template to use to launch the external
 				 * program to produce GPG signatures.
 				 */
-    char *sign_textmode;	/* The arg GPG needs for text files.  */
     List *sign_args;		/* Keep track of any additional arguments for
 				 * the sign tool.
 				 */
+    char *openpgp_textmode;     /* The arg GPG needs for text files.  */
     verify_state verify;	/* Whether to verify checkouts.  */
     char *verify_template;	/* The template to use to launch the external
 				 * program to verify GPG signatures.

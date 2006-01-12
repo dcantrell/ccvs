@@ -77,7 +77,6 @@ static sign_state sign_commits = SIGN_NEVER;
 #endif
 
 static char *sign_template;
-static char *sign_textmode;
 static List *sign_args;
 
 
@@ -96,16 +95,6 @@ set_sign_template (const char *template)
     assert (template);
     if (sign_template) free (sign_template);
     sign_template = xstrdup (template);
-}
-
-
-
-void
-set_sign_textmode (const char *textmode)
-{
-    assert (textmode);
-    if (sign_textmode) free (sign_textmode);
-    sign_textmode = xstrdup (textmode);
 }
 
 
@@ -153,31 +142,6 @@ get_sign_template (void)
     if (current_parsed_root->sign_template)
 	return current_parsed_root->sign_template;
     return DEFAULT_SIGN_TEMPLATE;
-}
-
-
-
-/* Return SIGN_TEXTMODE from the command line if it exists, else return the
- * SIGN_TEXTMODE from CURRENT_PARSED_ROOT.
- *
- * This function is not static because sign_textmode is reused for
- * verify_textmode.
- */
-const char *
-get_sign_textmode (void)
-{
-    const char *tmp = NULL;
-
-    if (sign_textmode)
-	tmp = sign_textmode;
-    else if (current_parsed_root->sign_textmode)
-    	tmp = current_parsed_root->sign_textmode;
-    else
-	tmp = DEFAULT_SIGN_TEXTMODE;
-
-    if (tmp && !strlen (tmp)) return NULL;
-    /* else */
-    return tmp;
 }
 
 
@@ -319,7 +283,7 @@ gen_signature (const char *srepos, const char *filename, bool bin, size_t *len)
 			      sign_args_list_to_args_proc, (void *) NULL,
 	                      "r", "s", current_parsed_root->directory,
 	                      "p", "s", srepos,
-	                      "t", "s", bin ? NULL : get_sign_textmode (),
+	                      "t", "s", bin ? NULL : get_openpgp_textmode (),
 	                      "s", "s", filename,
 	                      (char *) NULL);
 

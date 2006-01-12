@@ -28,6 +28,7 @@
 #include "xgethostname.h"
 
 /* CVS includes.  */
+#include "gpg.h"
 #include "sign.h"
 #include "verify.h"
 
@@ -55,20 +56,7 @@ int noexec = 0;
 int readonlyfs = 0;
 int logoff = 0;
 bool suppress_bases = false;
-
-
-
-/***
- ***
- ***   CVSROOT/config options
- ***
- ***/
-struct config *config;
-
-
-
 mode_t cvsumask = UMASK_DFLT;
-
 char *CurDir;
 
 /*
@@ -325,7 +313,7 @@ static const char *const opt_usage[] =
     "                 Use TEMPLATE to generate OpenPGP signatures.\n",
     "    --sign-arg ARG\n",
     "                 Pass ARG to OpenPGP TEMPLATE when sigining.\n",
-    "    --textmode ARG\n",
+    "    --openpgp-textmode ARG\n",
     "                 Pass ARG to OpenPGP TEMPLATE when verifying or\n",
     "                 generating signatures.\n",
     "    --verify[=(off | warn | fatal)] | --no-verify\n",
@@ -559,8 +547,8 @@ main (int argc, char **argv)
 	{"no-sign", 0, NULL, 5},
 	{"sign-template", required_argument, NULL, 'G'},
 	{"sign-arg", required_argument, NULL, 6},
-	{"textmode", required_argument, NULL, 7},
-	{"no-textmode", NULL, NULL, 8},
+	{"openpgp-textmode", required_argument, NULL, 7},
+	{"no-openpgp-textmode", 0, NULL, 8},
 	{"verify", optional_argument, NULL, 9},
 	{"no-verify", 0, NULL, 10},
 	{"verify-template", required_argument, NULL, 11},
@@ -719,12 +707,12 @@ main (int argc, char **argv)
 		add_sign_arg (optarg);
 		break;
 	    case 7:
-		/* --textmode */
-		set_sign_textmode (optarg);
+		/* --openpgp-textmode */
+		set_openpgp_textmode (optarg);
 		break;
 	    case 8:
-		/* --no-textmode */
-		set_sign_textmode ("");
+		/* --no-openpgp-textmode */
+		set_openpgp_textmode ("");
 		break;
 	    case 9:
 		/* --verify */

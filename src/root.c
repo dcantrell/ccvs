@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -21,11 +21,19 @@
 /* Verify interface.  */
 #include "root.h"
 
-#include "cvs.h"
+/* ANSI C headers.  */
 #include <assert.h>
+
+/* GNULIB headers.  */
 #include "getline.h"
 
+/* CVS headers.  */
+#include "repos.h"
 #include "stack.h"
+
+#include "cvs.h"
+
+
 
 /* Printable names for things in the current_parsed_root->method enum variable.
    Watch out if the enum is changed in cvs.h! */
@@ -400,7 +408,7 @@ new_cvsroot_t (void)
     newroot->isremote = false;
     newroot->sign = SIGN_DEFAULT;
     newroot->sign_template = NULL;
-    newroot->sign_textmode = NULL;
+    newroot->openpgp_textmode = NULL;
     newroot->sign_args = getlist ();
     newroot->verify = VERIFY_DEFAULT;
     newroot->verify_template = NULL;
@@ -438,8 +446,8 @@ free_cvsroot_t (cvsroot_t *root)
 	free (root->directory);
     if (root->sign_template)
 	free (root->sign_template);
-    if (root->sign_textmode)
-	free (root->sign_textmode);
+    if (root->openpgp_textmode)
+	free (root->openpgp_textmode);
     dellist (&root->sign_args);
     if (root->verify_template)
 	free (root->verify_template);
@@ -648,17 +656,17 @@ parse_cvsroot (const char *root_in)
 		newroot->sign = SIGN_NEVER;
 	    else if (!strcasecmp (p, "sign-template"))
 		newroot->sign_template = xstrdup (q);
-	    else if (!strcasecmp (p, "textmode"))
+	    else if (!strcasecmp (p, "openpgp-textmode"))
 	    {
-		if (newroot->sign_textmode)
-		    free (newroot->sign_textmode);
-		newroot->sign_textmode = xstrdup (q);
+		if (newroot->openpgp_textmode)
+		    free (newroot->openpgp_textmode);
+		newroot->openpgp_textmode = xstrdup (q);
 	    }
-	    else if (!strcasecmp (p, "no-textmode"))
+	    else if (!strcasecmp (p, "no-openpgp-textmode"))
 	    {
-		if (newroot->sign_textmode)
-		    free (newroot->sign_textmode);
-		newroot->sign_textmode = xstrdup ("");
+		if (newroot->openpgp_textmode)
+		    free (newroot->openpgp_textmode);
+		newroot->openpgp_textmode = xstrdup ("");
 	    }
 	    else if (!strcasecmp (p, "sign-arg"))
 		push_string (newroot->sign_args, q);
