@@ -1,5 +1,7 @@
 2006-01-12  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (writeproxy-0): Accept `sign' requests.
+
 	* gpg.h: #include "parseinfo.h" for struct config.
 	(openpgp_textmode, set_openpgp_textmode, get_openpgp_textmode): Move
 	global, functions from...

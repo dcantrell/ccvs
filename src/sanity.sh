@@ -32058,7 +32058,7 @@ EOF
 	  save_CVS_SERVER=$CVS_SERVER
 	  ln -s $PRIMARY_CVSROOT_DIRNAME $TESTDIR/primary_link
 	  dotest writeproxy-0 "$CVS_SERVER server" \
-"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Signature Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Signature Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents sign status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
 ok
 ok
 ok" \
