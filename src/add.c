@@ -43,6 +43,7 @@
 #include "fileattr.h"
 #include "ignore.h"
 #include "logmsg.h"
+#include "repos.h"
 #include "wrapper.h"
 
 #include "cvs.h"

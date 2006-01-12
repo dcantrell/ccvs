@@ -420,10 +420,6 @@ void tm_to_internet (char *, const struct tm *);
 char *gmformat_time_t (time_t unixtime);
 char *format_date_alloc (char *text);
 
-char *Name_Repository (const char *dir, const char *update_dir);
-const char *Short_Repository (const char *repository);
-void Sanitize_Repository_Name (char *repository);
-
 char *entries_time (time_t unixtime);
 time_t unix_time_stamp (const char *file);
 

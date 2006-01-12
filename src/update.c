@@ -62,6 +62,7 @@
 #include "ignore.h"
 #include "no_diff.h"
 #include "recurse.h"
+#include "repos.h"
 #include "watch.h"
 #include "wrapper.h"
 

@@ -32,6 +32,7 @@
 #include "fileattr.h"
 #include "gpg.h"
 #include "ignore.h"
+#include "repos.h"
 #include "watch.h"
 #include "wrapper.h"
 

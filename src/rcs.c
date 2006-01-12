@@ -27,6 +27,7 @@
 /* CVS headers.  */
 #include "edit.h"
 #include "gpg.h"
+#include "repos.h"
 #include "sign.h"
 
 #include "cvs.h"

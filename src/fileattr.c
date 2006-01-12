@@ -25,6 +25,8 @@
 #include "getline.h"
 
 /* CVS headers.  */
+#include "repos.h"
+
 #include "cvs.h"
 
 

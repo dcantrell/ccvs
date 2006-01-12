@@ -28,6 +28,7 @@
 #include "classify.h"
 #include "ignore.h"
 #include "recurse.h"
+#include "repos.h"
 
 #include "cvs.h"
 
