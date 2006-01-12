@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 The Free Software Foundation, Inc.
+ * Copyright (C) 2005-2006 The Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 
 typedef enum
 {
-  VERIFY_DEFAULT,
+  VERIFY_DEFAULT = 0,
   VERIFY_OFF,
   VERIFY_WARN,
   VERIFY_FATAL

@@ -1,5 +1,29 @@
 2006-01-12  Derek Price  <derek@ximbiot.com>
 
+	* gpg.h: #include "parseinfo.h" for struct config.
+	(openpgp_textmode, set_openpgp_textmode, get_openpgp_textmode): Move
+	global, functions from...
+	* sign.c (sign_textmode, set_sign_textmode, get_sign_textmode):
+	...here.
+	* gpg.h (set_openpgp_textmode, get_openpgp_textmode): New protos...
+	* sign.h (set_sign_textmode, get_sign_textmode): ...here.
+	* main.c (main): Rename `textmode' to `openpgp-textmode'.
+	(config): Move global to...
+	* parseinfo.c (config): ...here.
+	(parse_config): Handle Verify* keys.
+	* parseinfo.h: Use stricter include formatting.
+	(config): Declare extern.
+	* root.c (new_cvsroot_t, free_cvsroot_t, parse_cvsroot), root.h
+	(cvsroot_t): Rename sign_textmode as above.
+	* verify.c: Stop using "cvs.h".  Add protos for a few functions and
+	globals still in main.c.
+	(verify_commits): New static global.
+	(iget_verify_checkouts): Reformat slightly for readability.
+	(iget_verify_commits, get_verify_commits): New functions.
+	(get_verify_template, get_verify_args): Process config keys.
+	* verify.h (verify_state): Force VERIFY_DEFAULT to 0 so that no
+	initialization is necessary for structs initialized with xcalloc().
+
 	* cvs.h: Move some protos into...
 	* repos.h: ...this new file.
 	* add.c, admin.c, checkout.c, client.c, commit.c, edit.c, fileattr.c,

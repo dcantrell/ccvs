@@ -1,5 +1,5 @@
 /* gpg.h - OpenPGP functions header.
- * Copyright (C) 2005 Free Software Foundation, Inc.
+ * Copyright (C) 2005-2006 Free Software Foundation, Inc.
  *
  * This file is part of of CVS.
  *
@@ -43,4 +43,6 @@ struct openpgp_signature
 int read_signature (struct buffer *bpin, struct buffer *bpout);
 int parse_signature (struct buffer *bpin, struct openpgp_signature *spout);
 
+void set_openpgp_textmode (const char *textmode);
+const char *get_openpgp_textmode (void);
 #endif /* GPG_H */

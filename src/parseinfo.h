@@ -1,16 +1,26 @@
 /*
- *    Copyright (c) 2004  Derek Price, Ximbiot <http://ximbiot.com>,
- *                        and the Free Software Foundation
+ *  Copyright (C) 2004, 2006 The Free Software Foundation, Inc.
+ *  Copyright (C) 2004  Derek Price, Ximbiot <http://ximbiot.com>
  *
- *    You may distribute under the terms of the GNU General Public License
- *    as specified in the README file that comes with the CVS source
- *    distribution.
+ *  You may distribute under the terms of the GNU General Public License
+ *  as specified in the README file that comes with the CVS source
+ *  distribution.
  *
  * This is the header file for definitions and functions shared by parseinfo.c
  * with other portions of CVS.
  */
 #ifndef PARSEINFO_H
 # define PARSEINFO_H
+
+/* ANSI C headers.  */
+#include <stdbool.h>
+#include <stddef.h>	/* Get size_t.  */
+
+/* CVS headers.  */
+#include "root.h"
+#include "verify.h"
+
+
 
 struct config
 {
@@ -56,10 +66,27 @@ struct config
     size_t MinCompressionLevel;
     size_t MaxCompressionLevel;
 #endif /* SERVER_SUPPORT */
+
+    verify_state VerifyCommits;
+    char *VerifyTemplate;
+    char *OpenPGPTextmode;
+    List *VerifyArgs;
+
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
     bool preserve_perms;
 #endif /* PRESERVE_PERMISSIONS_SUPPORT */
 };
+
+
+
+/***
+ ***
+ ***   CVSROOT/config options
+ ***
+ ***/
+extern struct config *config;
+
+
 
 bool parse_error (const char *, unsigned int);
 struct config *parse_config (const char *, const char *);
