@@ -399,11 +399,11 @@ new_cvsroot_t (void)
     newroot->method = null_method;
     newroot->isremote = false;
     newroot->sign = SIGN_DEFAULT;
-    newroot->sign_template = xstrdup (DEFAULT_SIGN_TEMPLATE);
-    newroot->sign_textmode = xstrdup (DEFAULT_SIGN_TEXTMODE);
+    newroot->sign_template = NULL;
+    newroot->sign_textmode = NULL;
     newroot->sign_args = getlist ();
     newroot->verify = VERIFY_DEFAULT;
-    newroot->verify_template = xstrdup (DEFAULT_VERIFY_TEMPLATE);
+    newroot->verify_template = NULL;
     newroot->verify_args = getlist ();
 #ifdef CLIENT_SUPPORT
     newroot->username = NULL;
@@ -648,8 +648,18 @@ parse_cvsroot (const char *root_in)
 		newroot->sign = SIGN_NEVER;
 	    else if (!strcasecmp (p, "sign-template"))
 		newroot->sign_template = xstrdup (q);
-	    else if (!strcasecmp (p, "sign-textmode"))
+	    else if (!strcasecmp (p, "textmode"))
+	    {
+		if (newroot->sign_textmode)
+		    free (newroot->sign_textmode);
 		newroot->sign_textmode = xstrdup (q);
+	    }
+	    else if (!strcasecmp (p, "no-textmode"))
+	    {
+		if (newroot->sign_textmode)
+		    free (newroot->sign_textmode);
+		newroot->sign_textmode = xstrdup ("");
+	    }
 	    else if (!strcasecmp (p, "sign-arg"))
 		push_string (newroot->sign_args, q);
 	    else if (!strcasecmp (p, "no-verify"))
