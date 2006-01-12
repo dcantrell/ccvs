@@ -27,6 +27,7 @@
 /* CVS headers.  */
 #include "edit.h"
 #include "fileattr.h"
+#include "repos.h"
 #include "wrapper.h"
 
 #include "cvs.h"
