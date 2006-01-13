@@ -550,9 +550,11 @@ parse_config (const char *cvsroot, const char *path)
 
 	/* The first '=' separates keyword from value.  */
 	p = strchr (line, '=');
-	if (!p
-	    /* The following keys have optional arguments.  */
-	    && strcmp (line, "VerifyCommits"))
+	if (p)
+	    *p++ = '\0';
+	else if (
+		 /* The following keys have optional arguments.  */
+		 strcmp (line, "VerifyCommits"))
 	{
 	    if (!parse_error (infopath, ln))
 		error (0, 0,
@@ -561,7 +563,6 @@ parse_config (const char *cvsroot, const char *path)
 	    continue;
 	}
 
-	*p++ = '\0';
 
 	if (strcmp (line, "RCSBIN") == 0)
 	{

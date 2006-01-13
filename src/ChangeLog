@@ -1,3 +1,9 @@
+2006-01-13  Derek Price  <derek@ximbiot.com>
+
+	* parseinfo.c (parse_config): Avoid a core dump.
+	* sanity.sh (openpgp): Add a few tests for commit signature
+	verification.
+
 2006-01-12  Derek Price  <derek@ximbiot.com>
 
 	* gpg.c (read_signature): Rename to...
