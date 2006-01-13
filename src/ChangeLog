@@ -1,3 +1,8 @@
+2006-01-13  Larry Jones  <lawrence.jones@ugs.com>
+
+	* mkmodules.c (config_contents): Change SystemAuth to yes to match
+	the default value.  Add missing newline in RereadLogAfterVerify.
+
 2006-01-09  Larry Jones  <lawrence.jones@ugs.com>
 
 	* commit.c (remove_file): Record correct revision in history file.
