@@ -161,6 +161,24 @@ get_verify_checkouts (bool server_support)
 
 
 
+/* Return true if a client failure to verify a checkout should be fatal.
+ *
+ * GLOBALS
+ *   server_active	Whether the server is active (via
+ *   			iget_verify_checkouts).
+ *
+ * INPUTS
+ *   server_support	Whether the server supports signed files.
+ */
+bool
+get_verify_checkouts_fatal (void)
+{
+    verify_state tmp = iget_verify_checkouts (true);
+    return tmp == VERIFY_FATAL;
+}
+
+
+
 static const char *
 verify_state_to_string (verify_state state)
 {

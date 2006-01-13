@@ -1,5 +1,12 @@
 2006-01-13  Derek Price  <derek@ximbiot.com>
 
+	* client.c (update_entries): Warn/exit when unsigned file contents are
+	received from the server.
+	* verify.c (get_verify_checkouts_fatal): New function.
+	* verify.h (get_verify_checkouts_fatal): New proto.
+	* sanity.sh (client): Skip tests incompatible with OpenPGP signatures.
+	(openpgp2): New tests.
+
 	* parseinfo.c (parse_config): Avoid a core dump.
 	* sanity.sh (openpgp): Add a few tests for commit signature
 	verification.

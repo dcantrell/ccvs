@@ -31326,6 +31326,13 @@ EOF
 	    continue
 	  fi
 
+	  if $gpg; then
+	    # The openpgp2 tests test client responses to these old Responses.
+	    skip client \
+"Tested functionality incompatible with checkout signature verification."
+	    continue
+	  fi
+
 	  if $proxy; then
 	    # Skip these tests in proxy mode since they assume we are not
 	    # writing through a proxy server.  There is no writeproxy-client
@@ -32774,6 +32781,127 @@ $DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
 	  restore_adm
 	  rm -rf openpgp
 	  modify_repo rm -rf $CVSROOT_DIRNAME/openpgp
+	  ;;
+
+	openpgp2)
+	  # Some tests of the client (independent of the server).
+	  if $remote; then :; else
+	    remoteonly openpgp2
+	    continue
+	  fi
+
+	  if $proxy; then
+	    # Skip these tests in proxy mode since they assume we are not
+	    # writing through a proxy server.  There is no writeproxy-openpgp
+	    # test currently.  The writeproxy & writeproxy-noredirect tests
+	    # test the writeproxy server.
+	    notproxy openpgp2
+	    continue
+	  fi
+
+	  cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
+# This is admittedly a bit cheezy, in the sense that we make lots
+# of assumptions about what the client is going to send us.
+# We don't mention Repository, because current clients don't require it.
+# Sending these at our own pace, rather than waiting for the client to
+# make the requests, is bogus, but hopefully we can get away with it.
+cat <<IEOF
+Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update
+ok
+M special message
+Created first-dir/
+$CVSROOT_DIRNAME/first-dir/file1
+/file1/1.1///
+u=rw,g=rw,o=rw
+4
+xyz
+ok
+M second special message
+IEOF
+cat >/dev/null
+EOF
+	  # Cygwin.  Pthffffffffft!
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod +x $TESTDIR/serveme"
+	  else
+	    chmod +x $TESTDIR/serveme
+	  fi
+	  save_CVS_SERVER=$CVS_SERVER
+	  CVS_SERVER=$TESTDIR/serveme; export CVS_SERVER
+	  mkdir openpgp2; cd openpgp2
+	  dotest_fail openpgp2-1 "$testcvs co first-dir" \
+"special message
+$CPROG \[checkout aborted\]: The server sent unsigned file content\."
+
+	  cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
+# This is admittedly a bit cheezy, in the sense that we make lots
+# of assumptions about what the client is going to send us.
+# We don't mention Repository, because current clients don't require it.
+# Sending these at our own pace, rather than waiting for the client to
+# make the requests, is bogus, but hopefully we can get away with it.
+cat <<IEOF
+Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update
+ok
+M special message
+Patched first-dir/
+$CVSROOT_DIRNAME/first-dir/file1
+/file1/1.1///
+u=rw,g=rw,o=rw
+4
+xyz
+ok
+M second special message
+IEOF
+cat >/dev/null
+EOF
+	  # Cygwin.  Pthffffffffft!
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod +x $TESTDIR/serveme"
+	  else
+	    chmod +x $TESTDIR/serveme
+	  fi
+	  dotest_fail openpgp2-2 "$testcvs co first-dir" \
+"special message
+$CPROG \[checkout aborted\]: The server sent unsigned file content\."
+
+	  cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
+# This is admittedly a bit cheezy, in the sense that we make lots
+# of assumptions about what the client is going to send us.
+# We don't mention Repository, because current clients don't require it.
+# Sending these at our own pace, rather than waiting for the client to
+# make the requests, is bogus, but hopefully we can get away with it.
+cat <<IEOF
+Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update
+ok
+M special message
+Rcs-diff first-dir/
+$CVSROOT_DIRNAME/first-dir/file1
+/file1/1.1///
+u=rw,g=rw,o=rw
+4
+xyz
+ok
+M second special message
+IEOF
+cat >/dev/null
+EOF
+	  # Cygwin.  Pthffffffffft!
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod +x $TESTDIR/serveme"
+	  else
+	    chmod +x $TESTDIR/serveme
+	  fi
+	  dotest_fail openpgp2-3 "$testcvs co first-dir" \
+"special message
+$CPROG \[checkout aborted\]: The server sent unsigned file content\."
+
+	  dokeep
+	  cd ..
+	  rm -r openpgp2
+	  CVS_SERVER=$save_CVS_SERVER; export CVS_SERVER
 	  ;;
 
 
