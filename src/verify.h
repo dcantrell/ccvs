@@ -44,7 +44,10 @@ void set_verify_textmode (const char *textmode);
 void add_verify_arg (const char *arg);
 
 /* Get values.  */
-bool get_verify_checkouts (bool server_active, bool server_support);
+bool get_verify_checkouts (bool server_support);
+bool get_verify_commits (void);
+bool verify_signature (const char *srepos, const char *sig, size_t siglen,
+		       const char *filename, bool bin);
 
 /* User command.  */
 int verify (int argc, char **argv);

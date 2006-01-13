@@ -41,6 +41,7 @@
 #include "classify.h"
 #include "client.h"
 #include "filesubr.h"
+#include "gpg.h"
 #include "ignore.h"
 #include "recurse.h"
 #include "root.h"
@@ -348,13 +349,26 @@ read_signature (const char *fn, size_t *len)
 
 /* Generate a signature or read one from the sigfile and return it in
  * allocated memory.
+ *
+ * ERRORS
+ *   When configured to do so, verify the signature.  If it isn't valid, then
+ *   exit with an error as configured.
  */
 char *
 get_signature (bool server_active, const char *srepos, const char *filename,
 	       bool bin, size_t *len)
 {
-    if (server_active) return read_signature (filename, len);
-    /* else */ return gen_signature (srepos, filename, bin, len);
+    char *sig;
+
+    if (server_active)
+	sig = read_signature (filename, len);
+    else
+	sig = gen_signature (srepos, filename, bin, len);
+    
+    if (get_verify_commits ())
+	verify_signature (srepos, sig, *len, filename, bin);
+
+    return sig;
 }
 
 

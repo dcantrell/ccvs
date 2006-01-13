@@ -1,5 +1,24 @@
 2006-01-12  Derek Price  <derek@ximbiot.com>
 
+	* gpg.c (read_signature): Rename to...
+	(next_signature): ...this to avoid conflicts with sign.c.
+	* gpg.h: Ditto.
+	* cvs.h (trace): Move decl...
+	* server.h (trace): ...here.
+	* main.c (trace): Move global...
+	* server.c (trace): ...here.
+	(serve_signature): s/read_signature/next_signature/.
+	* sign.c (get_signature): Verify signature when configured to.
+	* verify.c (iget_verify_checkouts, get_verify_checkouts): Use global
+	server_support.
+	(verify_state_to_string): New function.
+	(iget_verify_commits): Allow tracing of state.
+	(iverify_signature): Handle sig in a buffer.
+	(verify_signature): New function.
+	(verify_fileproc): Use new iverify_signature API.
+	* verify.h (get_verify_checkouts): Update proto.
+	(get_verify_commits, verify_signature): New protos.
+
 	* sanity.sh (writeproxy-0): Accept `sign' requests.
 
 	* gpg.h: #include "parseinfo.h" for struct config.

@@ -120,7 +120,7 @@ add_verify_arg (const char *arg)
  *   VERIFY_OFF, VERIFY_WARN, or VERIFY_FATAL.
  */
 static verify_state
-iget_verify_checkouts (bool server_active, bool server_support)
+iget_verify_checkouts (bool server_support)
 {
     verify_state tmp;
 
@@ -153,10 +153,31 @@ iget_verify_checkouts (bool server_active, bool server_support)
  *   This function exits with a fatal error if iget_verify_checkouts does.
  */
 bool
-get_verify_checkouts (bool server_active, bool server_support)
+get_verify_checkouts (bool server_support)
 {
-    verify_state tmp = iget_verify_checkouts (server_active, server_support);
+    verify_state tmp = iget_verify_checkouts (server_support);
     return tmp == VERIFY_WARN || tmp == VERIFY_FATAL;
+}
+
+
+
+static const char *
+verify_state_to_string (verify_state state)
+{
+    switch (state)
+    {
+	case VERIFY_FATAL:
+	    return "VERIFY_FATAL";
+	case VERIFY_WARN:
+	    return "VERIFY_WARN";
+	case VERIFY_OFF:
+	    return "VERIFY_OFF";
+	case VERIFY_DEFAULT:
+	    return "VERIFY_DEFAULT";
+	default:
+	    error (1, 0, "Unknown verify_state %d", state);
+	    return "Can't reach";
+    }
 }
 
 
@@ -182,6 +203,9 @@ iget_verify_commits (void)
 
     if (tmp == VERIFY_DEFAULT)
 	tmp = VERIFY_OFF;
+
+    TRACE (TRACE_DATA, "iget_verify_commits () returning %s",
+	   trace >= TRACE_DATA ? verify_state_to_string (tmp) : "");
 
     return tmp;
 }
@@ -295,7 +319,9 @@ verify_args_list_to_args_proc (Node *p, void *closure)
 
 
 
-/* Verify a signature, returning true or false.
+/* Verify a signature for the data in WORKFILE, returning true or false.  If
+ * SIG is set, it must contain signature data of length of length SIGLEN.
+ * Otherwise, assume WORKFILE.sig contains the signature data.
  *
  * INPUTS
  *   finfo	File information on the file being signed.
@@ -304,19 +330,22 @@ verify_args_list_to_args_proc (Node *p, void *closure)
  *   Exits with a fatal error when FATAL and a signature cannot be verified.
  */
 static bool
-iverify_signature (const char *srepos, const char *filename, bool bin,
-		   bool fatal)
+iverify_signature (const char *srepos, const char *sig, size_t siglen,
+		   const char *filename, bool bin, bool fatal)
 {
     char *cmdline;
-    char *sigfile = Xasprintf ("%s%s", filename, ".sig");
+    char *sigfile;
     FILE *pipefp;
     bool save_noexec = noexec;
-    size_t len;
-    char buf[256];
     int pipestatus;
     bool retval;
 
-    if (!isfile (sigfile))
+    if (sig)
+	sigfile = "-";
+    else
+	sigfile = Xasprintf ("%s%s", filename, ".sig");
+
+    if (!sig && !isfile (sigfile))
     {
 	error (fatal, 0, "No signature file found (`%s')", sigfile);
 	free (sigfile);
@@ -359,7 +388,7 @@ iverify_signature (const char *srepos, const char *filename, bool bin,
     }
 
     noexec = false;
-    if (!(pipefp = run_popen (cmdline, "r")))
+    if (!(pipefp = run_popen (cmdline, "w")))
     {
 	error (fatal, errno, "failed to execute signature verifier");
 	retval = false;
@@ -367,16 +396,13 @@ iverify_signature (const char *srepos, const char *filename, bool bin,
     }
     noexec = save_noexec;
 
-    do
+    if (sig)
     {
-	len = fread (buf, sizeof *buf, sizeof buf, pipefp);
-	if (!really_quiet && len)
-	    cvs_output (buf, len);
-	/* Fewer bytes than requested means EOF or error.  */
-    } while (len == sizeof buf);
-
-    if (ferror (pipefp))
-	error (0, ferror (pipefp), "Error reading from verify program.");
+	size_t len;
+	len = fwrite (sig, sizeof *sig, siglen, pipefp);
+	if (len < siglen)
+	    error (0, ferror (pipefp), "Error writing to verify program.");
+    }
 
     pipestatus = pclose (pipefp);
     if (pipestatus == -1)
@@ -399,10 +425,21 @@ iverify_signature (const char *srepos, const char *filename, bool bin,
 	retval = true;
 
 done:
-    free (sigfile);
+    if (!sig)
+	free (sigfile);
     free (cmdline);
 
     return retval;
+}
+
+
+
+bool
+verify_signature (const char *srepos, const char *sig, size_t siglen,
+		  const char *filename, bool bin)
+{
+    return iverify_signature (srepos, sig, siglen, filename, bin,
+			      iget_verify_commits () == VERIFY_FATAL);
 }
 
 
@@ -564,7 +601,7 @@ verify_fileproc (void *callerdat, struct file_info *finfo)
 
     if (!errors && !userargs->pipeout)
 	errors = !iverify_signature (Short_Repository (finfo->repository),
-				     signedfn, bin, false);
+				     NULL, 0, signedfn, bin, false);
 
     if (tmpfn)
     {
