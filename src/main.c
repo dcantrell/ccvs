@@ -51,7 +51,6 @@ int use_cvsrc = 1;
 int cvswrite = !CVSREAD_DFLT;
 int really_quiet = 0;
 int quiet = 0;
-int trace = 0;
 int noexec = 0;
 int readonlyfs = 0;
 int logoff = 0;

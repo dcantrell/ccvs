@@ -345,7 +345,7 @@ parse_header (struct buffer *bpin, int *pkttype, uint32_t *pktlen,
  *   failure function on memory allocation failures, which could exit.
  */
 int
-read_signature (struct buffer *bpin, struct buffer *bpout)
+next_signature (struct buffer *bpin, struct buffer *bpout)
 {
   int pkttype;
   uint32_t pktlen;

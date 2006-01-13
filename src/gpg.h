@@ -40,7 +40,7 @@ struct openpgp_signature
 
 
 
-int read_signature (struct buffer *bpin, struct buffer *bpout);
+int next_signature (struct buffer *bpin, struct buffer *bpout);
 int parse_signature (struct buffer *bpin, struct openpgp_signature *spout);
 
 void set_openpgp_textmode (const char *textmode);

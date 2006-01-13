@@ -41,9 +41,9 @@
 
 
 int server_active = 0;
+int trace = 0;
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
-
 # include "log-buffer.h"
 # include "ms-buffer.h"
 #endif	/* defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT) */
@@ -2168,7 +2168,7 @@ serve_signature (char *arg)
     else
 	sig_buf = buf_nonio_initialize (NULL);
 
-    status = read_signature (buf_from_net, sig_buf);
+    status = next_signature (buf_from_net, sig_buf);
     if (status)
     {
 	if (alloc_pending (80))

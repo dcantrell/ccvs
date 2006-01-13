@@ -342,7 +342,6 @@ extern List *root_directories;
 char *emptydir_name (void);
 int safe_location (char *);
 
-extern int trace;		/* Show all commands */
 extern int noexec;		/* Don't modify disk anywhere */
 extern int readonlyfs;		/* fail on all write locks; succeed all read locks */
 extern int logoff;		/* Don't write history entry */

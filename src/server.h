@@ -209,7 +209,10 @@ int read_and_gzip (int, const char *, unsigned char **, size_t *, size_t *,
                    int);
 void server_edit_file (struct file_info *finfo);
 
+
+
 /* The TRACE macro */
+extern int trace;		/* User defined trace level.  */
 void cvs_trace (int level, const char *fmt, ...)
   __attribute__ ((__format__ (__printf__, 2, 3)));
 #define TRACE cvs_trace
@@ -226,6 +229,8 @@ void cvs_trace (int level, const char *fmt, ...)
 #define TRACE_FUNCTION		1
 #define TRACE_FLOW		2
 #define TRACE_DATA		3
+
+
 
 extern cvsroot_t *referrer;
 
