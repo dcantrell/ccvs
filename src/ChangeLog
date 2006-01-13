@@ -1,5 +1,7 @@
 2006-01-13  Derek Price  <derek@ximbiot.com>
 
+	* client.c (update_entries): Don't require signatures for `cvs export'.
+
 	* client.c (update_entries): Warn/exit when unsigned file contents are
 	received from the server.
 	* verify.c (get_verify_checkouts_fatal): New function.

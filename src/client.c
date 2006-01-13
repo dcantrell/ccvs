@@ -1590,7 +1590,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	char *buf;
 	bool patch_failed;
 
-	if (get_verify_checkouts (true))
+	if (get_verify_checkouts (true) && strcmp (cvs_cmd_name, "export"))
 	    error (get_verify_checkouts_fatal (), 0,
 		   "The server sent unsigned file content.");
 
