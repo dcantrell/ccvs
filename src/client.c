@@ -1590,6 +1590,10 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	char *buf;
 	bool patch_failed;
 
+	if (get_verify_checkouts (true))
+	    error (get_verify_checkouts_fatal (), 0,
+		   "The server sent unsigned file content.");
+
 	if (!validate_change (data->existp, filename, short_pathname))
 	{
 	    /* The Mode, Mod-time, and Checksum responses should not carry
@@ -1897,7 +1901,9 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    updated_fname = NULL;
 	}
     }
-    else if (!noexec && data->contents == UPDATE_ENTRIES_CHECKIN
+    else if (data->contents == UPDATE_ENTRIES_CHECKIN
+	     && !noexec
+	     /* This isn't add or remove.  */
 	     && strcmp (vn, "0") && *vn != '-')
     {
 	/* On checkin, create the base file.  */
@@ -1941,6 +1947,16 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    free (basefile);
 	}
     }
+    else if (data->contents != UPDATE_ENTRIES_CHECKIN)
+	/* This error is important.  It makes sure that all three cases which
+	 * write files are caught by the openpgp2 set of tests when the user
+	 * has requested that failed checkout verification is fatal and the
+	 * server attempts to bypass signatures by sending old-style responses
+	 * which do not support signatures.  (The `Checkin' response does not
+	 * count since it does not accept any file data from the server and is
+	 * used in both modes.)
+	 */
+	error (1, 0, "internal error: unhandled update_entries cases.");
 
     if (stored_mode)
     {
