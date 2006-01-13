@@ -32733,12 +32733,23 @@ EOF
 	  dotest openpgp-init-1 "$testcvs -q co -l ."
 	  mkdir openpgp
 	  dotest openpgp-init-2 "$testcvs -Q add openpgp"
+
 	  cd ..
-	  dotest openpgp-init-3 "$testcvs -q co openpgp"
+	  dotest openpgp-init-3 "$testcvs -Q co CVSROOT"
+	  cd CVSROOT
+	  echo VerifyCommits >>config
+	  dotest openpgp-init-4 \
+"$testcvs -Q ci -m'Turn on commit verification.'"
+
+	  cd ..
+	  dotest openpgp-init-5 "$testcvs -q co openpgp"
 	  cd openpgp
 	  echo some content >file1
-	  dotest openpgp-init-4 "$testcvs -Q add file1"
-	  dotest openpgp-init-5 "$testcvs -Q ci -m newfile file1"
+	  dotest openpgp-init-6 "$testcvs -Q add file1"
+
+	  dotest openpgp-0 "$testcvs -Q ci -m newfile file1" \
+"$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
+
 	  dotest openpgp-1 "$testcvs verify file1" \
 "$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
 	  dotest openpgp-2 "$testcvs verify -p file1 >tmp"
@@ -32748,7 +32759,8 @@ EOF
 	    dotest openpgp-3 "cmp tmp CVS/Base/.#file1.1.1.sig"
 	  fi
 
-	  dotest openpgp-4 "$testcvs sign file1"
+	  dotest openpgp-4 "$testcvs sign file1" \
+"$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
 	  dotest openpgp-5 "$testcvs verify file1" \
 "$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR
 $DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
@@ -32759,6 +32771,7 @@ $DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
 
 	  dokeep
 	  cd ../..
+	  restore_adm
 	  rm -rf openpgp
 	  modify_repo rm -rf $CVSROOT_DIRNAME/openpgp
 	  ;;
