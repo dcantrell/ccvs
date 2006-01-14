@@ -245,7 +245,16 @@ char *strerror (int);
 #define	CVSREAD_ENV	"CVSREAD"	/* make files read-only */
 #define	CVSREAD_DFLT	0		/* writable files by default */
 
-#define	CVSREADONLYFS_ENV "CVSREADONLYFS" /* repository is read-only */
+					/* repository is read-only */
+#define	CVSREADONLYFS_ENV "CVSREADONLYFS"
+
+					/* verify checkouts */
+#define	CVS_VERIFY_CHECKOUTS_ENV \
+			"CVS_VERIFY_CHECKOUTS"
+
+					/* sign commits */
+#define	CVS_SIGN_COMMITS_ENV \
+			"CVS_SIGN_COMMITS"
 
 #define	TMPDIR_ENV	"TMPDIR"	/* Temporary directory */
 #define	CVS_PID_ENV	"CVS_PID"	/* pid of running cvs */

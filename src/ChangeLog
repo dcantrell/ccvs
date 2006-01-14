@@ -1,3 +1,9 @@
+2006-01-14  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h [CVS_VERIFY_CHECKOUTS_ENV, CVS_SIGN_COMMITS_ENV]: New macros.
+	* main.c (main): Process $CVS_VERIFY_CHECKOUTS & $CVS_SIGN_COMMITS.
+	* sanity.sh: Turn off GPG in remote mode eith base files disabled.
+
 2006-01-13  Derek Price  <derek@ximbiot.com>
 
 	* client.c (update_entries): Don't require signatures for `cvs export'.
