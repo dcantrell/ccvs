@@ -609,6 +609,38 @@ main (int argc, char **argv)
 	readonlyfs = 1;
 	logoff = 1;
     }
+    if ((cp = getenv (CVS_VERIFY_CHECKOUTS_ENV)))
+    {
+	if (!strcasecmp (cp, "off")
+	    || !strcasecmp (cp, "never")
+	    || !strcasecmp (cp, "false"))
+	    set_verify_checkouts (VERIFY_OFF);
+	else if (!strcasecmp (cp, "warn"))
+	    set_verify_checkouts (VERIFY_WARN);
+	else if (!strcasecmp (cp, "always")
+		 || !strcasecmp (cp, "fatal")
+		 || !strcasecmp (cp, "on")
+		 || !strcasecmp (cp, "true"))
+	    set_verify_checkouts (VERIFY_FATAL);
+	else
+	    error (1, 0,
+		   "Unrecognized content (`%s') in $%s",
+		   cp, CVS_VERIFY_CHECKOUTS_ENV);
+    }
+    if ((cp = getenv (CVS_SIGN_COMMITS_ENV)))
+    {
+	if (!strcasecmp (cp, "auto")
+	    || !strcasecmp (cp, "server"))
+	    set_sign_commits (SIGN_DEFAULT);
+	else if (!strcasecmp (cp, "on"))
+	    set_sign_commits (SIGN_ALWAYS);
+	else if (!strcasecmp (cp, "off"))
+	    set_sign_commits (SIGN_NEVER);
+	else
+	    error (0, 0,
+		   "Unrecognized content (`%s') in $%s ignored",
+		   cp, CVS_SIGN_COMMITS_ENV);
+    }
 
     /* Set this to 0 to force getopt initialization.  getopt() sets
        this to 1 internally.  */
