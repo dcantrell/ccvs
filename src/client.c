@@ -24,7 +24,6 @@
 #include "client.h"
 
 /* GNULIB headers.  */
-#include "base64.h"
 #include "getline.h"
 #include "save-cwd.h"
 
@@ -33,6 +32,7 @@
 #include "buffer.h"
 #include "difflib.h"
 #include "edit.h"
+#include "gpg.h"
 #include "ignore.h"
 #include "recurse.h"
 #include "repos.h"
@@ -2202,24 +2202,23 @@ handle_rcs_diff (char *args, size_t len)
 
 
 /*
- * The OpenPGP-signatures response gives the signature for the file to be
+ * The OpenPGP-signature response gives the signature for the file to be
  * transmitted in the next Base-checkout or Temp-checkout response.
  */
-static char *stored_signatures;
-static size_t stored_signatures_len;
+static struct buffer *stored_signatures;
 static void
-handle_openpgp_signatures (char *args, size_t len)
+handle_openpgp_signature (char *args, size_t len)
 {
-    if (stored_signatures)
-        error (1, 0, "OpenPGP-signatures received before last one was used");
-
-    if (!base64_decode_alloc (args, len, &stored_signatures,
-			      &stored_signatures_len))
-	error (1, 0,
-	       "Bad signature received from server (base64 decode failed).");
+    int status;
 
     if (!stored_signatures)
-	error (1, errno, "Failed to allocate memory");
+	stored_signatures = buf_nonio_initialize (NULL);
+
+    status = next_signature (global_from_server, stored_signatures);
+    if (status == -2)
+	xalloc_die ();
+    else if (status)
+	error (1, 0, "Malformed signature received from server.");
 }
 
 
@@ -2228,6 +2227,7 @@ static void
 client_write_sigfile (const char *sigfile, bool writable)
 {
     FILE *e;
+    size_t want;
 
     if (!stored_signatures)
 	return;
@@ -2235,16 +2235,28 @@ client_write_sigfile (const char *sigfile, bool writable)
     if (!writable && isfile (sigfile))
 	xchmod (sigfile, true);
     e = xfopen (sigfile, FOPEN_BINARY_WRITE);
-    if (fwrite (stored_signatures, sizeof *stored_signatures,
-		stored_signatures_len, e) != stored_signatures_len)
-	error (1, errno, "cannot write signature file `%s'", sigfile);
+
+    want = buf_length (stored_signatures);
+    while (want > 0)
+    {
+	char *data;
+	size_t got;
+
+	buf_read_data (stored_signatures, want, &data, &got);
+
+	if (fwrite (data, sizeof *data, got, e) != got)
+	    error (1, errno, "cannot write signature file `%s'", sigfile);
+
+	want -= got;
+    }
+	
     if (fclose (e) == EOF)
 	error (0, errno, "cannot close signature file `%s'", sigfile);
 
     if (!writable)
 	xchmod (sigfile, false);
 
-    free (stored_signatures);
+    buf_free (stored_signatures);
     stored_signatures = NULL;
 }
 
@@ -2447,6 +2459,9 @@ client_base_signatures (void *data_arg, List *ent_list,
     if (!stored_signatures && !*clear)
 	error (1, 0,
 	       "Server sent `Base-signatures' response without signature.");
+
+    if (stored_signatures && *clear)
+	error (1, 0, "Server sent unused signature data.");
 
     /* Read REV from the server.  */
     read_line (&rev);
@@ -3854,7 +3869,7 @@ struct response responses[] =
 	     rs_optional),
     RSP_LINE("Base-clear-signatures", handle_base_clear_signatures,
 	     response_type_normal, rs_optional),
-    RSP_LINE("OpenPGP-signatures", handle_openpgp_signatures,
+    RSP_LINE("OpenPGP-signature", handle_openpgp_signature,
 	     response_type_normal, rs_optional),
 
     /* Possibly should be response_type_error.  */
@@ -4790,7 +4805,7 @@ start_server (void)
 		    continue;
 		if (suppress_bases && !strncmp (rs->name, "Base-", 5))
 		    continue;
-		if (suppress_bases && !strcmp (rs->name, "OpenPGP-signatures"))
+		if (suppress_bases && !strcmp (rs->name, "OpenPGP-signature"))
 		    continue;
 		if (suppress_bases && !strcmp (rs->name, "Temp-checkout"))
 		    continue;

@@ -30,7 +30,6 @@
 #include <string.h>
 
 /* GNULIB headers.  */
-#include "base64.h"
 #include "error.h"
 #include "xalloc.h"
 
@@ -553,25 +552,15 @@ verify_fileproc (void *callerdat, struct file_info *finfo)
     else
     {
 	/* In local mode, the signature data is still in the archive.  */
-
-	const char *b64sig;
-	size_t b64len;
-
 	assert (finfo->rcs);
-	if ((b64sig = RCS_get_openpgp_signatures (finfo->rcs, e->version,
-						  &b64len)))
+	if (!RCS_get_openpgp_signatures (finfo, e->version, &sigdata,
+					 &siglen))
 	{
-	    if (!base64_decode_alloc (b64sig, b64len, &sigdata, &siglen))
-	    {
-		error (0, 0, "Failed to decode base64 signature for `%s'",
-		       finfo->fullname);
-		errors = true;
-	    }
-	    else if (!b64sig)
-		xalloc_die ();
-	    /* else, got usable signature data in SIGDATA... fall out.  */
+	    error (0, 0, "Failed to decode base64 signature for `%s'",
+		   finfo->fullname);
+	    errors = true;
 	}
-	else
+	else if (!sigdata)
 	{
 	    error (0, 0, "No signature available for `%s'",
 		   finfo->fullname);
