@@ -26,6 +26,7 @@ static int force_binary = 0;
 static char *tag = NULL;
 static int tag_validated;
 static char *date = NULL;
+int annotate_width = 8;		/* Used in RCS_deltas() */
 
 static int is_rannotate;
 
@@ -43,6 +44,7 @@ static const char *const annotate_usage[] =
     "\t-F\tAnnotate binary files.\n",
     "\t-r rev\tAnnotate file as of specified revision/tag.\n",
     "\t-D date\tAnnotate file as of specified date.\n",
+    "\t-w width\tModify width of username field (default 8, 0 < width < 80).\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
@@ -55,6 +57,7 @@ annotate (int argc, char **argv)
 {
     int local = 0;
     int err = 0;
+    char *widthstr = NULL;
     int c;
 
     is_rannotate = (strcmp(cvs_cmd_name, "rannotate") == 0);
@@ -63,7 +66,7 @@ annotate (int argc, char **argv)
 	usage (annotate_usage);
 
     optind = 0;
-    while ((c = getopt (argc, argv, "+lr:D:fFR")) != -1)
+    while ((c = getopt (argc, argv, "+lr:D:fFRw:")) != -1)
     {
 	switch (c)
 	{
@@ -85,6 +88,20 @@ annotate (int argc, char **argv)
 		break;
 	    case 'F':
 	        force_binary = 1;
+		break;
+	    case 'w':
+		{
+		    int w = atoi(optarg);
+		    /* check bounds */
+		    if (0 < w && w < 80)
+		    {
+			widthstr = optarg;
+			annotate_width = w;
+		    }
+		    else
+			error (1, 0, "-w %d is invalid, must be > 0 && < 80",
+			       w);
+		}
 		break;
 	    case '?':
 	    default:
@@ -114,6 +131,8 @@ annotate (int argc, char **argv)
 	option_with_arg ("-r", tag);
 	if (date)
 	    client_senddate (date);
+	if (widthstr)
+	    option_with_arg ("-w", widthstr);
 	send_arg ("--");
 	if (is_rannotate)
 	{

@@ -544,7 +544,6 @@ int update (int argc, char *argv[]);
  */
 void write_letter (struct file_info *finfo, int letter);
 int xcmp (const char *file1, const char *file2);
-void *valloc (size_t bytes);
 
 int Create_Admin (const char *dir, const char *update_dir,
                   const char *repository, const char *tag, const char *date,

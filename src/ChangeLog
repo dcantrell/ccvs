@@ -1,3 +1,47 @@
+2006-01-16  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (join-16a): Test "no such tag" error with -j.
+
+	* update.c (update): Correct typo.
+
+2006-01-13  Larry Jones  <lawrence.jones@ugs.com>
+
+	* mkmodules.c (config_contents): Change SystemAuth to yes to match
+	the default value.
+
+2006-01-10  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (valloc): Remove unused proto.
+
+2006-01-09  Larry Jones  <lawrence.jones@ugs.com>
+
+	* commit.c (remove_file): Record correct revision in history file.
+	(Reported by Chris Reed <cr@progress.com>.)
+
+2006-01-05  Derek Price  <derek@ximbiot.com>
+
+	* recurse.c (start_recursion): Expand header comment block.
+
+2005-12-31  Mark D. Baushke  <mdb@gnu.org>
+
+	[Add CVSNT compatible [-w width] switch to cvs (r)annotate command.]
+	* rcs.c (RCS_deltas): Provide for annotate_width for author field
+	and use Xasprintf in place of xmalloc/sprintf.
+	* rcs.h (annotate_width): New global.
+	* annotate.c (annotate_width): Default to 8.
+	(annotate_usage): New -w width option.
+	(annotate): Ditto.
+	* sanity.sh (userlen, username1): New variables.
+	(basica-10w1, basica-10wmax, ann-10w1, ann-10wmax): New tests for
+	the annotate -w width option.
+	
+2005-12-20  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (config3): Accept `.' in paths.
+
+	* admin.c (admin): Don't pass the global optind to getopt_long as
+	longindex - it causes infinite loops on some systems.
+
 2005-12-07  Derek Price  <derek@ximbiot.com>
 
 	* client.c (handle_redirect): Give stack control of string key.

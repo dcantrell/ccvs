@@ -1092,11 +1092,22 @@ else
   exit 1
 fi
 
+# Also check for exactly the length of the username
+userlen=`echo $username | wc -c`
+userlen=`expr $userlen - 1`
+
 # Only 8 characters of $username appear in some output.
 if test `echo $username |wc -c` -gt 8; then
   username8=`echo $username |sed 's/^\(........\).*/\1/'`
 else
   username8=$username
+fi
+
+# Only 1 character of $username appear in some output.
+if test `echo $username |wc -c` -gt 1; then
+  username1=`echo $username |sed 's/^\(.\).*/\1/'`
+else
+  username1=$username
 fi
 
 # Rarely, we need to match any username, not just the name of the user
@@ -3105,6 +3116,21 @@ Annotations for sdir/ssdir/ssfile
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.1          .'"$username8"' *[0-9a-zA-Z-]*.: ssfile
 1\.2          .'"$username8"' *[0-9a-zA-Z-]*.: ssfile line 2'
+
+	  dotest basica-10w1 "${testcvs} annotate -w 1" \
+'
+Annotations for sdir/ssdir/ssfile
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1          .'"$username1"' *[0-9a-zA-Z-]*.: ssfile
+1\.2          .'"$username1"' *[0-9a-zA-Z-]*.: ssfile line 2'
+	  if test $userlen -lt 80; then
+	    dotest basica-10wmax "${testcvs} annotate -w $userlen" \
+'
+Annotations for sdir/ssdir/ssfile
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1          .'"$username"' *[0-9a-zA-Z-]*.: ssfile
+1\.2          .'"$username"' *[0-9a-zA-Z-]*.: ssfile line 2'
+	  fi
 
 	  # Test resurrecting with strange revision numbers
 	  cd sdir/ssdir
@@ -10212,7 +10238,11 @@ T file9'
 	  cd ../..
 	  mkdir 3
 	  cd 3
-	  dotest join-16 "${testcvs} -q co -jT1 -jT2 first-dir" \
+	  dotest_fail join-16a \
+"$testcvs -q co -jno-such-tag -jT2 first-dir" \
+"$SPROG \[checkout aborted\]: no such tag \`no-such-tag'"
+
+	  dotest join-16b "$testcvs -q co -jT1 -jT2 first-dir" \
 "U first-dir/file1
 U first-dir/file2
 ${SPROG} checkout: file first-dir/file2 exists, but has been added in revision T2
@@ -20388,7 +20418,7 @@ initial revision: 1\.1"
 
 	  cd ..
 	  dotest config3-7 "$testcvs history -ea" \
-"A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 newfile config3 == [-_/a-zA-Z0-9<>]*
+"A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 newfile config3 == [-_/a-zA-Z0-9<>.]*
 T [0-9-]* [0-9:]* ${PLUS}0000 $username config3 \[testtag:A\]"
 
 	  dokeep
@@ -21874,6 +21904,34 @@ Annotations for file1
 1\.2          ($username8 *[0-9a-zA-Z-]*): a
 1\.2          ($username8 *[0-9a-zA-Z-]*): blank
 1\.2          ($username8 *[0-9a-zA-Z-]*): line"
+	  dotest ann-10w1 "${testcvs} ann -w 1" \
+"
+Annotations for file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1          ($username1 *[0-9a-zA-Z-]*): this
+1\.1          ($username1 *[0-9a-zA-Z-]*): is
+1\.2          ($username1 *[0-9a-zA-Z-]*): a
+1\.3          ($username1 *[0-9a-zA-Z-]*): trunk file
+1\.2          ($username1 *[0-9a-zA-Z-]*): 
+1\.2          ($username1 *[0-9a-zA-Z-]*): with
+1\.2          ($username1 *[0-9a-zA-Z-]*): a
+1\.2          ($username1 *[0-9a-zA-Z-]*): blank
+1\.2          ($username1 *[0-9a-zA-Z-]*): line"
+	  if test $userlen -lt 80; then
+	    dotest ann-10wmax "${testcvs} ann -w $userlen" \
+"
+Annotations for file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1          ($username *[0-9a-zA-Z-]*): this
+1\.1          ($username *[0-9a-zA-Z-]*): is
+1\.2          ($username *[0-9a-zA-Z-]*): a
+1\.3          ($username *[0-9a-zA-Z-]*): trunk file
+1\.2          ($username *[0-9a-zA-Z-]*): 
+1\.2          ($username *[0-9a-zA-Z-]*): with
+1\.2          ($username *[0-9a-zA-Z-]*): a
+1\.2          ($username *[0-9a-zA-Z-]*): blank
+1\.2          ($username *[0-9a-zA-Z-]*): line"
+	  fi
 	  dotest ann-11 "${testcvs} ann -r br" \
 "
 Annotations for file1

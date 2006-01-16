@@ -9197,6 +9197,10 @@ existed on @var{date}.  See @ref{Common options}.
 
 @item -D @var{date}
 Annotate file as of specified date.
+
+@item -w @var{width}
+Modify the width of the username field (default 8).
+The specified @var{width} must be greater than 0 and less than 80.
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -11869,6 +11873,10 @@ behavior}.
 Annotate revisions specified by @var{tag} or, when @var{date} is specified
 and @var{tag} is a branch tag, the version from the branch @var{tag} as it
 existed on @var{date}.  See @ref{Common options}.
+
+@item -w @var{width}
+Modify the width of the username field (default 8).
+The specified @var{width} must be greater than 0 and less than 80.
 @end table
 
 @c ------------------------------------------------------------
@@ -12275,6 +12283,10 @@ Operate recursively (default).  @xref{Recursive behavior}.
 Annotate the revision specified by @var{tag} or, when @var{date} is specified
 and @var{tag} is a branch tag, the version from the branch @var{tag}
 as it existed on @var{date}.  See @ref{Common options}.
+
+@item -w @var{width}
+Modify the width of the username field (default 8).
+The specified @var{width} must be greater than 0 and less than 80.
 @end table
 
 @c ------------------------------------------------------------

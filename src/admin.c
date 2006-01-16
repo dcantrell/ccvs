@@ -349,7 +349,7 @@ admin (int argc, char **argv)
     optind = 0;
     only_allowed_options = true;
     while ((c = getopt_long
-	    (argc, argv, short_options, long_options, &optind))
+	    (argc, argv, short_options, long_options, NULL))
 	   != EOF)
     {
 	if (

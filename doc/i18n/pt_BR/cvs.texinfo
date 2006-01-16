@@ -5050,9 +5050,9 @@ mesmo nome que usuários do sistema.
 @c <en>        Here is a complete description of the server's
 @c <en>behavior in deciding whether to grant read-only or
 @c <en>read-write access:
-        Here is a complete description of the server's
-behavior in deciding whether to grant read-only or
-read-write access:
+        Aqui está uma descrição completa do
+comportamento do servidor em decidir se dá acesso
+somente-leitura ou leitura-escrita:
 
 @c <en>        If @file{readers} exists, and this user is
 @c <en>listed in it, then she gets read-only access.  Or if
@@ -5060,23 +5060,23 @@ read-write access:
 @c <en>it, then she also gets read-only access (this is true
 @c <en>even if @file{readers} exists but she is not listed
 @c <en>there).  Otherwise, she gets full read-write access.
-        If @file{readers} exists, and this user is
-listed in it, then she gets read-only access.  Or if
-@file{writers} exists, and this user is NOT listed in
-it, then she also gets read-only access (this is true
-even if @file{readers} exists but she is not listed
-there).  Otherwise, she gets full read-write access.
+        Se @file{readers} existe, e a usuária está
+nele, então ela obtem acesso somente-leitura.  Ou se
+@file{writers} existe, e esta usuária NÃO está listada
+nele, então ela também obtem acesso somente-leitura
+(isto é verdade mesmo se @file{readers} existe mas ela
+não está listada nele).  Caso contrário, ela obtem
+acesso leitura-escrita total.
 
 @c <en>        Of course there is a conflict if the user is
 @c <en>listed in both files.  This is resolved in the more
 @c <en>conservative way, it being better to protect the
 @c <en>repository too much than too little: such a user gets
 @c <en>read-only access.
-        Of course there is a conflict if the user is
-listed in both files.  This is resolved in the more
-conservative way, it being better to protect the
-repository too much than too little: such a user gets
-read-only access.
+        Claro que há um conflito se o usuário estiver
+nos dois arquivos.  O conflito é resolvido da forma
+mais conservativa, sendo melhor proteger o repositório
+a mais do que a menos: a usuária obtem acesso somente-leitura.
 
 @c <en>@node Server temporary directory
 @node Diretório temporário do servidor
@@ -12793,7 +12793,7 @@ Argumentos para os comandos.
 @c <en>take the above categorization too seriously.  Look at
 @c <en>the documentation instead.
 Infelizmente, existe alguma confusão entre
-@code{cvs_options} e @code{command_options}. @samp{-l},
+@code{cvs_options} e @code{opções_de_comando}. @samp{-l},
 quando passado como @code{cvs_option}, afeta apenas
 alguns dos comandos.  Quando é passado como um
 @code{command_option} tem um significado diferente, e é
@@ -12977,7 +12977,7 @@ faz com que o @sc{cvs} use compressão de nível 6.
 @cindex Left-hand options
 
 As @samp{cvs_options} disponíveis (as que são dadas à
-esquerda do @samp{cvs_command}) são:
+esquerda do @samp{comando_cvs}) são:
 
 @table @code
 @c <en>@item --allow-root=@var{rootdir}
@@ -13102,7 +13102,7 @@ de etiquetas.
 @c <en>(but do not actually execute the command).  If you don't specify
 @c <en>a command name, @samp{cvs -H} displays overall help for
 @c <en>@sc{cvs}, including a list of other help options.
-Mostra informações sobre o uso de determinado @samp{cvs_command}
+Mostra informações sobre o uso de determinado @samp{comando_cvs}
 (mas não executa o comando na verdade).  Se você não
 especificar o nome do comando, o @samp{cvs -H} vai
 mostrar uma ajuda geral para o @sc{cvs}, inclusive uma
@@ -13115,7 +13115,7 @@ lista de outras opções de ajuda.
 @item -l
 @c <en>Do not log the @samp{cvs_command} in the command history (but execute it
 @c <en>anyway).  @xref{history}, for information on command history.
-Não registra o @samp{cvs_command} no histórico de
+Não registra o @samp{comando_cvs} no histórico de
 comandos (mas executa o comando).  @xref{history}, para
 informações sobre o histórico de comandos.
 
@@ -13145,7 +13145,7 @@ O mesmo efeito é obtido se a variável de ambiente
 @c <en>@samp{cvs_command}, but only to issue reports; do not remove,
 @c <en>update, or merge any existing files, or create any new files.
 Não mude nenhum arquivo.  tente executar o
-@samp{cvs_command}, mas apenas para mostrar a saída;
+@samp{comando_cvs}, mas apenas para mostrar a saída;
 não remove, atualiza, ou mescla qualquer arquivo
 existente, ou cria novos arquivos.
 
@@ -13278,46 +13278,64 @@ compressão (o padrão). Tem efeito apenas no cliente @sc{cvs}.
 @c <en>@cindex Right-hand options
 @cindex Right-hand options
 
-This section describes the @samp{command_options} that
-are available across several @sc{cvs} commands.  These
-options are always given to the right of
-@samp{cvs_command}. Not all
-commands support all of these options; each option is
-only supported for commands where it makes sense.
-However, when a command has one of these options you
-can almost always count on the same behavior of the
-option as in other commands.  (Other command options,
-which are listed with the individual commands, may have
-different behavior from one @sc{cvs} command to the other).
+Esta seção descreve as @samp{opções_de_comando} que
+estão disponíveis em vários comandos do @sc{cvs}.
+Estas opções são sempre fornecidas à esquerda do
+@samp{comando_cvs}.  Nem todos os comandos
+suportam todas estas opções; cada uma das opções é
+suportada apenas pelos comandos nos quais ela faz
+sentido. Entretanto, quando um comando tem uma destas
+opções você pode quase sempre esperar o mesmo
+comportamento da opção em outros comandos.  (Outras
+opções de comando, que são listadas com os comandos
+individualmente, podem ter comportamento diferente
+entre um comando do @sc{cvs} e outro).
 
-@strong{Note: the @samp{history} command is an exception; it supports
-many options that conflict even with these standard options.}
+@strong{Obs.: o comando @samp{history} é uma exceção;
+ele suporta muitas opções que conflitam até mesmo com
+essas opções padrão.}
 
+@c <en>@table @code
 @table @code
+@c <en>@cindex Dates
 @cindex Dates
+@c <en>@cindex Time
 @cindex Time
-@cindex Specifying dates
+@c <en>@cindex Specifying dates
+@cindex Especificando datas
+@c <en>@item -D @var{date_spec}
 @item -D @var{date_spec}
-Use the most recent revision no later than @var{date_spec}.
-@var{date_spec} is a single argument, a date description
-specifying a date in the past.
+@c <en>Use the most recent revision no later than @var{date_spec}.
+@c <en>@var{date_spec} is a single argument, a date description
+@c <en>specifying a date in the past.
+Usa a revisão mais recente que não seja mais recente
+que @var{date_spec}.  @var{date_spec} é um único
+argumento, uma descrição de data especificando uma data
+passada.
 
 @c <en>The specification is @dfn{sticky} when you use it to make a
 @c <en>private copy of a source file; that is, when you get a working
 @c <en>file using @samp{-D}, @sc{cvs} records the date you specified, so that
 @c <en>further updates in the same directory will use the same date
 @c <en>(for more information on sticky tags/dates, @pxref{Sticky tags}).
-The specification is @dfn{sticky} when you use it to make a
-private copy of a source file; that is, when you get a working
-file using @samp{-D}, @sc{cvs} records the date you specified, so that
-further updates in the same directory will use the same date
-(for more information on sticky tags/dates, @pxref{Etiquetas adesivas}).
+A especificação é @dfn{adesiva} qunado você a usa para
+criar uma ???private copy??? de um arquivo fonte; ou
+seja, quando você pega um ???working file??? usando
+@samp{-D}, o @sc{cvs} guarda a data que você
+especificou, de forma que próximas atualizações no
+mesmo diretório vão usar a mesma dara (para mais
+informações sobre datas/etiquetas adesivas, @pxref{Etiquetas adesivas}).
 
-@samp{-D} is available with the @code{annotate}, @code{checkout},
+@c <en>@samp{-D} is available with the @code{annotate}, @code{checkout},
+@c <en>@code{diff}, @code{export}, @code{history},
+@c <en>@code{rdiff}, @code{rtag}, @code{tag}, and @code{update} commands.
+@c <en>(The @code{history} command uses this option in a
+@c <en>slightly different way; @pxref{history options}).
+@samp{-D} está disponível com os comandos @code{annotate}, @code{checkout},
 @code{diff}, @code{export}, @code{history},
-@code{rdiff}, @code{rtag}, @code{tag}, and @code{update} commands.
-(The @code{history} command uses this option in a
-slightly different way; @pxref{history options}).
+@code{rdiff}, @code{rtag}, @code{tag} e
+@code{update}. (O comando @code{history} usa esta opção
+de uma forma um pouco diferente; @pxref{history options}).
 
 @c What other formats should we accept?  I don't want
 @c to start accepting a whole mess of non-standard
@@ -13382,12 +13400,19 @@ slightly different way; @pxref{history options}).
 @c Headers Issue 4, Version 2 (September 1994), in the
 @c entry for getdate() on page 231
 
+@c <en>@cindex Timezone, in input
 @cindex Timezone, in input
+@c <en>@cindex Zone, time, in input
 @cindex Zone, time, in input
-A wide variety of date formats are supported by
-@sc{cvs}.  The most standard ones are ISO8601 (from the
-International Standards Organization) and the Internet
-e-mail standard (specified in RFC822 as amended by
+@c <en>A wide variety of date formats are supported by
+@c <en>@sc{cvs}.  The most standard ones are ISO8601 (from the
+@c <en>International Standards Organization) and the Internet
+@c <en>e-mail standard (specified in RFC822 as amended by
+@c <en>RFC1123).
+Uma ampla variedade de formatos de data é suportada pelo
+@sc{cvs}.  As mais comuns são a ISO8601 (da
+International Standards Organization) e o Internet
+e-mail standard (especificado na RFC822 ???as amended by???
 RFC1123).
 
 @c Probably should be doing more to spell out just what
@@ -13403,8 +13428,10 @@ RFC1123).
 @c hour when daylight savings time goes into or out of
 @c effect.  Pretty obscure, so I'm not at all sure we
 @c should be documenting the behavior in that case.
-ISO8601 dates have many variants but a few examples
-are:
+@c <en>ISO8601 dates have many variants but a few examples
+@c <en>are:
+Datas ISO8601 tem muitas variantes, mas alguns exemplos
+são:
 
 @example
 1972-09-24
@@ -13416,9 +13443,12 @@ are:
 @c bizarre and it has lots of gratuitous multiple ways
 @c to specify the same thing.
 
-There are a lot more ISO8601 date formats, and @sc{cvs}
-accepts many of them, but you probably don't want to
-hear the @emph{whole} long story :-).
+@c <en>There are a lot more ISO8601 date formats, and @sc{cvs}
+@c <en>accepts many of them, but you probably don't want to
+@c <en>hear the @emph{whole} long story :-).
+Existem muitos outros formatos de data ISO8601, e o
+@sc{cvs} aceita muitos deles, mas você provavelmente
+não vai querer ouvir @emph{toda} esta longa história :-).
 
 @c Citing a URL here is kind of problematic given how
 @c much they change and people who have old versions of
@@ -13429,9 +13459,12 @@ hear the @emph{whole} long story :-).
 @c Citing some other ISO8601 source is probably even
 @c worse :-).
 
-In addition to the dates allowed in Internet e-mail
-itself, @sc{cvs} also allows some of the fields to be
-omitted.  For example:
+@c <en>In addition to the dates allowed in Internet e-mail
+@c <en>itself, @sc{cvs} also allows some of the fields to be
+@c <en>omitted.  For example:
+Além das datas permitidas nos próprios ???Internet e-mail???
+, o @sc{cvs} também permite que alguns campos sejam
+omitidos.  Por exemplo:
 @c FIXME: Need to figure out better, and document,
 @c what we want to allow the user to omit.
 @c NOTE: "omit" does not imply "reorder".
@@ -13443,15 +13476,23 @@ omitted.  For example:
 24 Sep
 @end example
 
-The date is interpreted as being in the
-local timezone, unless a specific timezone is
-specified.
+@c <en>The date is interpreted as being in the
+@c <en>local timezone, unless a specific timezone is
+@c <en>specified.
+A data é interpretada como estando no fuso horário
+local, a não ser que o fuso horário seja especificado.
 
-These two date formats are preferred.  However,
-@sc{cvs} currently accepts a wide variety of other date
-formats.  They are intentionally not documented here in
-any detail, and future versions of @sc{cvs} might not
-accept all of them.
+@c <en>These two date formats are preferred.  However,
+@c <en>@sc{cvs} currently accepts a wide variety of other date
+@c <en>formats.  They are intentionally not documented here in
+@c <en>any detail, and future versions of @sc{cvs} might not
+@c <en>accept all of them.
+Estes dois formatos de data são preferenciais.
+Entretanto, o @sc{cvs} atualmente aceita uma ampla
+variedade de outros formatos de data.  Eles não são
+documentados aqui em nenhum detalhe, de forma
+intencional, e versões futuras de @sc{cvs} podem não
+aceitar todos eles.
 @c We should document and testsuite "now" and
 @c "yesterday".  "now" is mentioned in the FAQ and
 @c "yesterday" is mentioned in this document (and the
@@ -13465,49 +13506,76 @@ accept all of them.
 @c misunderstandings, and/or formats people never/rarely
 @c use to specify dates)?
 
-One such format is
-@code{@var{month}/@var{day}/@var{year}}.  This may
-confuse people who are accustomed to having the month
-and day in the other order; @samp{1/4/96} is January 4,
-not April 1.
+@c <en>One such format is
+@c <en>@code{@var{month}/@var{day}/@var{year}}.  This may
+@c <en>confuse people who are accustomed to having the month
+@c <en>and day in the other order; @samp{1/4/96} is January 4,
+@c <en>not April 1.
+Um destes formatos é
+@code{@var{mês}/@var{dia}/@var{ano}}.  Isto pode
+confundir as pessoas que estão acostumadas a ter o mês
+e o dia na outra ordem; @samp{1/4/96} é janeiro 4,
+não abril 1.
 
-Remember to quote the argument to the @samp{-D}
-flag so that your shell doesn't interpret spaces as
-argument separators.  A command using the @samp{-D}
-flag can look like this:
+@c <en>Remember to quote the argument to the @samp{-D}
+@c <en>flag so that your shell doesn't interpret spaces as
+@c <en>argument separators.  A command using the @samp{-D}
+@c <en>flag can look like this:
+Lembre-se de por aspas no argumento da opção @samp{-D}
+para que o seu shell não interprete espaços como
+separadores de comandos.  Um comando usando a opção
+@samp{-D} deve se parecer com isto:
 
 @example
 $ cvs diff -D "1 hour ago" cvs.texinfo
 @end example
 
+@c <en>@cindex Forcing a tag match
 @cindex Forcing a tag match
+@c <en>@item -f
 @item -f
-When you specify a particular date or tag to @sc{cvs} commands, they
-normally ignore files that do not contain the tag (or did not
-exist prior to the date) that you specified.  Use the @samp{-f} option
-if you want files retrieved even when there is no match for the
-tag or date.  (The most recent revision of the file
-will be used).
+@c <en>When you specify a particular date or tag to @sc{cvs} commands, they
+@c <en>normally ignore files that do not contain the tag (or did not
+@c <en>exist prior to the date) that you specified.  Use the @samp{-f} option
+@c <en>if you want files retrieved even when there is no match for the
+@c <en>tag or date.  (The most recent revision of the file
+@c <en>will be used).
+Quando você especifica uma data ou etiqueta em
+particular para os comandos do @sc{cvs}, eles
+normalmente ignoram os arquivos que não contem a
+etiqueta (ou não existem até o momento da data) que
+você especificou.  Use a opção @samp{-f} se você quer
+que os arquivos sejam recuperados mesmo se não tem uma
+etiqueta ou data que combine.  (A versão mais nova do
+arquivo vai ser usada).
 
-Note that even with @samp{-f}, a tag that you specify
-must exist (that is, in some file, not necessary in
-every file).  This is so that @sc{cvs} will continue to
-give an error if you mistype a tag name.
+@c <en>Note that even with @samp{-f}, a tag that you specify
+@c <en>must exist (that is, in some file, not necessary in
+@c <en>every file).  This is so that @sc{cvs} will continue to
+@c <en>give an error if you mistype a tag name.
+Observe que mesmo com o @samp{-f}, a etiqueta que voc
+especificar deve existir (ou seja, em algum arquivo,
+não necessariamente em todos).  Isto é assim para que o
+@sc{cvs} continue dando uma mensagem de erro enquanto
+você estiver digitando a etiqueta errado.
 
 @need 800
-@samp{-f} is available with these commands:
+@c <en>@samp{-f} is available with these commands:
+@c <en>@code{annotate}, @code{checkout}, @code{export},
+@c <en>@code{rdiff}, @code{rtag}, and @code{update}.
+O @samp{-f} está disponível com estes comandos:
 @code{annotate}, @code{checkout}, @code{export},
-@code{rdiff}, @code{rtag}, and @code{update}.
+@code{rdiff}, @code{rtag} e @code{update}.
 
 @c <en>@strong{WARNING:  The @code{commit} and @code{remove}
 @c <en>commands also have a
 @c <en>@samp{-f} option, but it has a different behavior for
 @c <en>those commands.  See @ref{commit options}, and
 @c <en>@ref{Removing files}.}
-@strong{WARNING:  The @code{commit} and @code{remove}
-commands also have a
-@samp{-f} option, but it has a different behavior for
-those commands.  See @ref{commit options}, and
+@strong{ATENÇÃO:  Os comandos @code{commit} e
+@code{remove} também têm uma opção
+@samp{-f}, mas esta tem um comportamento diferente
+nestes comandos.  veja em ???@ref{commit options}???, e
 @ref{Removendo arquivos}.}
 
 @c <en>@item -k @var{kflag}
@@ -13521,110 +13589,138 @@ those commands.  See @ref{commit options}, and
 @c <en>@sc{cvs} associates your selected @var{kflag} with any files
 @c <en>it operates on, and continues to use that @var{kflag} with future
 @c <en>commands on the same files until you specify otherwise.
-Override the default processing of RCS keywords other than
-@samp{-kb}.  @xref{Substituição de palavra-chave}, for the meaning of
-@var{kflag}.  Used with the @code{checkout} and @code{update}
-commands, your @var{kflag} specification is
-@dfn{sticky}; that is, when you use this option
-with a @code{checkout} or @code{update} command,
-@sc{cvs} associates your selected @var{kflag} with any files
-it operates on, and continues to use that @var{kflag} with future
-commands on the same files until you specify otherwise.
+Sobrepõe o processamento padrão de palavras-cahve do
+RCS que não sejam o @samp{-kb}.  @xref{Substituição de
+palavra-chave}, pelo significado em @var{kflag}.  Usado
+com os comandos @code{checkout} e @code{update}, o que
+você especifica para o @var{kflag} torna-se
+@dfn{adesivo}; ou seja, quando você usa esta opção com
+o comando @code{checkout} ou o comando @code{update}, o
+@sc{cvs} associa o @var{kflag} que você selecionou com
+quaisquer arquivos nos quais ele operou, e continua a
+usar este @var{kflag} com comandos futuros em tais
+arquivos até que você especifique outra coisa.
 
 @c <en>The @samp{-k} option is available with the @code{add},
 @c <en>@code{checkout}, @code{diff}, @code{export}, @code{import} and
 @c <en>@code{update} commands.
-The @samp{-k} option is available with the @code{add},
-@code{checkout}, @code{diff}, @code{export}, @code{import} and
-@code{update} commands.
+A opção @samp{-k} esta disponível com os comandos @code{add},
+@code{checkout}, @code{diff}, @code{export}, @code{import} e
+@code{update}.
 
 @c <en>@strong{WARNING: Prior to CVS version 1.12.2, the @samp{-k} flag
 @c <en>overrode the @samp{-kb} indication for a binary file.  This could
 @c <en>sometimes corrupt binary files.  @xref{Merging and keywords}, for
 @c <en>more.}
-@strong{WARNING: Prior to CVS version 1.12.2, the @samp{-k} flag
-overrode the @samp{-kb} indication for a binary file.  This could
-sometimes corrupt binary files.  @xref{Mesclagem e palavras-chave}, for
-more.}
+@strong{ATENÇÃO: Antes da versão 1.12.2 do CVS, a opção
+@samp{-k} se sobrepunha à indicação @samp{-kb} para um
+arquivo binário.  Isto algumas vezes corrompia os
+arquivos binários.  @xref{Mesclagem e palavras-chave},
+para mais.}
 
 @c <en>@item -l
 @item -l
 @c <en>Local; run only in current working directory, rather than
 @c <en>recursing through subdirectories.
-Local; run only in current working directory, rather than
-recursing through subdirectories.
+Local; Roda apenas no diretório atual, ao invés de
+descer recursivamente nos subdiretórios.
 
 @c <en>Available with the following commands: @code{annotate}, @code{checkout},
 @c <en>@code{commit}, @code{diff}, @code{edit}, @code{editors}, @code{export},
 @c <en>@code{log}, @code{rdiff}, @code{remove}, @code{rtag},
 @c <en>@code{status}, @code{tag}, @code{unedit}, @code{update}, @code{watch},
 @c <en>and @code{watchers}.
-Available with the following commands: @code{annotate}, @code{checkout},
+Disponível com os seguintes comandos: @code{annotate}, @code{checkout},
 @code{commit}, @code{diff}, @code{edit}, @code{editors}, @code{export},
 @code{log}, @code{rdiff}, @code{remove}, @code{rtag},
-@code{status}, @code{tag}, @code{unedit}, @code{update}, @code{watch},
-and @code{watchers}.
+@code{status}, @code{tag}, @code{unedit},
+@code{update}, @code{watch} e @code{watchers}.
 
 @c <en>@cindex Editor, avoiding invocation of
-@cindex Editor, avoiding invocation of
+@cindex Editor, evitando chamar o
 @c <en>@cindex Avoiding editor invocation
-@cindex Avoiding editor invocation
+@cindex Evitando chamar o editor
 @c <en>@item -m @var{message}
-@item -m @var{message}
+@item -m @var{mensagem}
 @c <en>Use @var{message} as log information, instead of
 @c <en>invoking an editor.
-Use @var{message} as log information, instead of
-invoking an editor.
+Use @var{mensagem} como informação do registro (log),
+ao invés de chamar um editor.
 
 @c <en>Available with the following commands: @code{add},
 @c <en>@code{commit} and @code{import}.
-Available with the following commands: @code{add},
-@code{commit} and @code{import}.
+Disponível com os seguintes comandos: @code{add},
+@code{commit} e @code{import}.
 
 @c <en>@item -n
 @item -n
 @c <en>Do not run any tag program.  (A program can be
 @c <en>specified to run in the modules
 @c <en>database (@pxref{modules}); this option bypasses it).
-Do not run any tag program.  (A program can be
-specified to run in the modules
-database (@pxref{modules}); this option bypasses it).
+Não roda qualquer ???tag program???.  (Um programa pode
+ser especificado para rodar em ???the modules
+database??? (@pxref{modules}); eta opção contorna isto).
 
 @c <en>@strong{Note: this is not the same as the @samp{cvs -n}
 @c <en>program option, which you can specify to the left of a cvs command!}
-@strong{Note: this is not the same as the @samp{cvs -n}
-program option, which you can specify to the left of a cvs command!}
+@strong{Observação: isto não é igual à opção de
+programa @samp{cvs -n}, que você especifica à esquerda
+de um ???cvs command???!}
 
-Available with the @code{checkout}, @code{commit}, @code{export},
-and @code{rtag} commands.
+@c <en>Available with the @code{checkout}, @code{commit}, @code{export},
+@c <en>and @code{rtag} commands.
+Disponível com os comandos @code{checkout},
+@code{commit}, @code{export} e @code{rtag}.
 
+@c <en>@item -P
 @item -P
 @c <en>Prune empty directories.  See @ref{Removing directories}.
-Prune empty directories.  See @ref{Removendo diretórios}.
+Elimina completamente diretórios vazios.  Veja em @ref{Removendo diretórios}.
 
 @item -p
-Pipe the files retrieved from the repository to standard output,
-rather than writing them in the current directory.  Available
-with the @code{checkout} and @code{update} commands.
+@c <en>Pipe the files retrieved from the repository to standard output,
+@c <en>rather than writing them in the current directory.  Available
+@c <en>with the @code{checkout} and @code{update} commands.
+Direciona os arquivos recebidos do repositório para a
+saída padrão, ao invés de escrevê-los no diretório
+atual.  Disponível com os comandos @code{checkout} e @code{update}.
 
 @item -R
-Process directories recursively.  This is on by default.
+@c <en>Process directories recursively.  This is on by default.
+Porcessa os diretórios recursivamente.  Este é o padrão.
 
-Available with the following commands: @code{annotate}, @code{checkout},
+@c <en>Available with the following commands: @code{annotate}, @code{checkout},
+@c <en>@code{commit}, @code{diff}, @code{edit}, @code{editors}, @code{export},
+@c <en>@code{rdiff}, @code{remove}, @code{rtag},
+@c <en>@code{status}, @code{tag}, @code{unedit}, @code{update}, @code{watch},
+@c <en>and @code{watchers}.
+Disponível com so seguintes comandos: @code{annotate}, @code{checkout},
 @code{commit}, @code{diff}, @code{edit}, @code{editors}, @code{export},
 @code{rdiff}, @code{remove}, @code{rtag},
-@code{status}, @code{tag}, @code{unedit}, @code{update}, @code{watch},
-and @code{watchers}.
+@code{status}, @code{tag}, @code{unedit},
+@code{update}, @code{watch} e @code{watchers}.
 
-@item -r @var{tag}
-@cindex HEAD, special tag
-@cindex BASE, special tag
-Use the revision specified by the @var{tag} argument instead of the
-default @dfn{head} revision.  As well as arbitrary tags defined
-with the @code{tag} or @code{rtag} command, two special tags are
-always available: @samp{HEAD} refers to the most recent version
-available in the repository, and @samp{BASE} refers to the
-revision you last checked out into the current working directory.
+@c <en>@item -r @var{tag}
+@item -r @var{etiqueta}
+@c <en>@cindex HEAD, special tag
+@cindex HEAD, etiqueta especial
+@c <en>@cindex BASE, special tag
+@cindex BASE, etiqueta especial
+@c <en>Use the revision specified by the @var{tag} argument instead of the
+@c <en>default @dfn{head} revision.  As well as arbitrary tags defined
+@c <en>with the @code{tag} or @code{rtag} command, two special tags are
+@c <en>always available: @samp{HEAD} refers to the most recent version
+@c <en>available in the repository, and @samp{BASE} refers to the
+@c <en>revision you last checked out into the current working directory.
+Usa a revisão especificada pelo argumento
+@var{etiqueta} ao invés da revisão padrão @dfn{head}.
+Além das etiquetas arbitrárias definidas com os
+comandos @code{tag} ou @code{rtag}, duas etiquetas
+especiais estão sempre disponíveis: @samp{HEAD} se
+refere à versão mais recente disponível no repositório,
+e @samp{BASE} se refere à revisão à partir da qual você
+fez ???check out??? da ultima vez para o seu diretório
+de trabalho.
 
 @c FIXME: What does HEAD really mean?  I believe that
 @c the current answer is the head of the default branch
@@ -13655,39 +13751,58 @@ revision you last checked out into the current working directory.
 @c <en>copy of a file: @sc{cvs} remembers the tag and continues to use it on
 @c <en>future update commands, until you specify otherwise (for more information
 @c <en>on sticky tags/dates, @pxref{Sticky tags}).
-The tag specification is sticky when you use this
+A especificação da etiqueta é adesiva quando você usa com
 @c option
-with @code{checkout} or @code{update} to make your own
-copy of a file: @sc{cvs} remembers the tag and continues to use it on
-future update commands, until you specify otherwise (for more information
-on sticky tags/dates, @pxref{Etiquetas adesivas}).
+@code{checkout} ou @code{update} para trazer uma cópia
+para você de um arquivo: o @sc{cvs} vai lembrar da
+etiqueta e continuar a usá-la para futuros comandos
+update, até você especificar outra coisa (para mais
+informações sobre datas/etiquetas adesivas, @pxref{Etiquetas adesivas}).
 
 @c <en>The tag can be either a symbolic or numeric tag, as
 @c <en>described in @ref{Tags}, or the name of a branch, as
 @c <en>described in @ref{Branching and merging}.
-The tag can be either a symbolic or numeric tag, as
-described in @ref{Etiquetas}, or the name of a branch, as
-described in @ref{Ramificando e mesclando}.
+A etiqueta pode ser tanto simbólica quanto numérica,
+como descrito em @ref{Etiquetas}, ou pode ser o nome de
+um ramo, como descrito em @ref{Ramificando e
+mesclando}.
 
-Specifying the @samp{-q} global option along with the
-@samp{-r} command option is often useful, to suppress
-the warning messages when the @sc{rcs} file
-does not contain the specified tag.
+@c <en>Specifying the @samp{-q} global option along with the
+@c <en>@samp{-r} command option is often useful, to suppress
+@c <en>the warning messages when the @sc{rcs} file
+@c <en>does not contain the specified tag.
+Especificar a opção global @samp{-q} junto com a opção
+de comando @samp{-r} é frequentemente útil, para
+eliminar as mensagens de alerta quando o arquivo do
+@sc{rcs} não contém a etiqueta específica.
 
-@strong{Note: this is not the same as the overall @samp{cvs -r} option,
-which you can specify to the left of a @sc{cvs} command!}
+@c <en>@strong{Note: this is not the same as the overall @samp{cvs -r} option,
+@c <en>which you can specify to the left of a @sc{cvs} command!}
+@strong{Observação: isto não é igual à opção global
+@samp{cvs -r}, que você pode especificar à esquerda de
+um comando @sc{cvs}!}
 
-@samp{-r} is available with the @code{annotate}, @code{checkout},
+@c <en>@samp{-r} is available with the @code{annotate}, @code{checkout},
+@c <en>@code{commit}, @code{diff}, @code{history}, @code{export}, @code{rdiff},
+@c <en>@code{rtag}, and @code{update} commands.
+O @samp{-r} está disponível com os comandos @code{annotate}, @code{checkout},
 @code{commit}, @code{diff}, @code{history}, @code{export}, @code{rdiff},
-@code{rtag}, and @code{update} commands.
+@code{rtag} e @code{update}.
 
+@c <en>@item -W
 @item -W
-Specify file names that should be filtered.  You can
-use this option repeatedly.  The spec can be a file
-name pattern of the same type that you can specify in
-the @file{.cvswrappers} file.
-Available with the following commands: @code{import},
-and @code{update}.
+@c <en>Specify file names that should be filtered.  You can
+@c <en>use this option repeatedly.  The spec can be a file
+@c <en>name pattern of the same type that you can specify in
+@c <en>the @file{.cvswrappers} file.
+@c <en>Available with the following commands: @code{import},
+@c <en>and @code{update}.
+Especifica nomes de arquivos que devem ser filtrados.
+Você pode usar esta opção repetidamente.  O argumento
+pode ser uma expressão regular de nome de arquivo do
+mesmo tipo dos que se especifica no arquivo
+@file{.cvswrappers}. Disponívjel nos seguintes
+comandos: @code{import} e @code{update}.
 
 @end table
 
