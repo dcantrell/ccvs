@@ -275,8 +275,9 @@ char *RCS_getexpand (RCSNode *);
 void RCS_setexpand (RCSNode *, const char *);
 int RCS_checkout (RCSNode *, const char *, const char *, const char *,
                   const char *, const char *, RCSCHECKOUTPROC, void *);
-const char *RCS_get_openpgp_signatures (RCSNode *rcs, const char *rev,
-					size_t *len);
+bool RCS_get_openpgp_signatures (struct file_info *finfo, const char *rev,
+				 char **out, size_t *len);
+bool RCS_has_openpgp_signatures (struct file_info *finfo, const char *rev);
 void RCS_add_openpgp_signature (struct file_info *finfo, const char *rev);
 int RCS_delete_openpgp_signatures (struct file_info *finfo, const char *rev,
 				   uint32_t keyid);

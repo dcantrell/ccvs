@@ -8214,20 +8214,46 @@ cvs_output_tagged (const char *tag, const char *text)
 
 
 static void
-server_send_signatures (RCSNode *rcs, const char *rev)
+server_send_signatures (struct file_info *finfo, const char *rev)
 {
-    const char *signatures;
-    size_t siglen;
+    char *sig;
+    size_t len;
+    int status;
+    struct buffer *inbuf, *outbuf;
 
-    if (!supported_response ("OpenPGP-signatures"))
+    if (!supported_response ("OpenPGP-signature"))
 	return;
 
-    if (!(signatures = RCS_get_openpgp_signatures (rcs, rev, &siglen)))
+    if (!RCS_get_openpgp_signatures (finfo, rev, &sig, &len))
+	error (1, 0,
+	       "Corrupt signature in r%s of `%s' (base64 decode failed).",
+	       rev, finfo->fullname);
+
+    if (!sig)
+	/* No signature data available.  */
 	return;
 
-    buf_output0 (protocol, "OpenPGP-signatures ");
-    buf_output (protocol, signatures, siglen);
-    buf_output (protocol, "\n", 1);
+    /* Copy the sig into an input buffer.  */
+    inbuf = buf_nonio_initialize (NULL);
+    buf_output (inbuf, sig, len);
+    free (sig);
+
+    /* Create an output buffer.  */
+    outbuf = buf_nonio_initialize (NULL);
+
+    /* Read each signature, copying them to the net.  */
+    do
+    {
+	status = next_signature (inbuf, outbuf);
+	if (!status)
+	{
+	    buf_output0 (protocol, "OpenPGP-signature\n");
+	    buf_append_buffer (protocol, outbuf);
+	} else if (status == -2)
+	    xalloc_die ();
+	/* else status == EOF */
+    } while (!status);
+
     buf_send_counted (protocol);
 }
 
@@ -8277,7 +8303,7 @@ iserver_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
 	 */
 	return;
 
-    server_send_signatures (rcs, rev);
+    server_send_signatures (finfo, rev);
 
     /* FIXME: It would be more efficient if diffs could be sent when the
      * revision numbers haven't changed but the keywords have.
@@ -8450,10 +8476,11 @@ server_base_signatures (struct file_info *finfo, const char *rev)
 	|| !supported_response ("Base-clear-signatures"))
 	return;
 
-    server_send_signatures (finfo->rcs, rev);
-
-    if (RCS_get_openpgp_signatures (finfo->rcs, rev, NULL))
+    if (RCS_has_openpgp_signatures (finfo, rev))
+    {
+	server_send_signatures (finfo, rev);
 	buf_output0 (protocol, "Base-signatures ");
+    }
     else
 	buf_output0 (protocol, "Base-clear-signatures ");
 

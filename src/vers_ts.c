@@ -34,6 +34,10 @@ static void time_stamp_server (const char *, Vers_TS *, Entnode *);
  *   set_time		If set, set the last modification time of the user file
  *			specified by FINFO to the checkin time of RET->vn_rcs.
  *
+ * OUTPUTS
+ *   finfo		FINFO->RCS will be updated if it was empty and RCS data
+ *			is found and parsed.
+ *
  * RETURNS
  *   Vers_TS structure for FINFO.
  */
@@ -195,6 +199,11 @@ Version_TS (struct file_info *finfo, const char *options, const char *tag,
     {
 	/* squirrel away the rcsdata pointer for others */
 	vers_ts->srcfile = rcsdata;
+	if (!finfo->rcs)
+	{
+	    rcsdata->refcount++;
+	    finfo->rcs = rcsdata;
+	}
 
 	if (vers_ts->tag && strcmp (vers_ts->tag, TAG_BASE) == 0)
 	{

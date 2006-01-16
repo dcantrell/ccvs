@@ -4773,8 +4773,8 @@ workfile);
 
 
 
-const char *
-RCS_get_openpgp_signatures (RCSNode *rcs, const char *rev, size_t *len)
+static const char *
+iRCS_get_openpgp_signatures (RCSNode *rcs, const char *rev, size_t *len)
 {
     RCSVers *vers;
     Node *n;
@@ -4784,7 +4784,8 @@ RCS_get_openpgp_signatures (RCSNode *rcs, const char *rev, size_t *len)
 
     n = findnode (rcs->versions, rev);
     if (!n)
-	error (1, 0, "internal error: no revision information for %s", rev);
+	error (1, 0, "internal error: no revision information for r%s of %s",
+	       rev, rcs->print_path);
     vers = n->data;
 
     n = findnode (vers->other_delta, "openpgp-signatures");
@@ -4794,6 +4795,50 @@ RCS_get_openpgp_signatures (RCSNode *rcs, const char *rev, size_t *len)
 
     if (len) *len = n->len;
     return n->data;
+}
+
+
+
+/* Returns false on error.  It is not an error if the requested revision has
+ * no OpenPGP signatures, but *OUT will be set to NULL.
+ */
+bool
+RCS_get_openpgp_signatures (struct file_info *finfo, const char *rev,
+			    char **out, size_t *len)
+{
+    const char *b64sig;
+    size_t b64len;
+
+    b64sig = iRCS_get_openpgp_signatures (finfo->rcs, rev, &b64len);
+
+    if (!b64sig)
+    {
+	*out = NULL;
+	*len = 0;
+	return true;
+    }
+
+    if (!base64_decode_alloc (b64sig, b64len, out, len))
+    {
+	error (0, 0, "Failed to decode base64 signature for `%s'",
+	       finfo->fullname);
+	return false;
+    }
+    else if (!*out)
+	xalloc_die ();
+
+    return true;
+}
+
+
+
+/* Return true if the specified revision has any OpenPGP signature data
+ * attached.
+ */
+bool
+RCS_has_openpgp_signatures (struct file_info *finfo, const char *rev)
+{
+    return iRCS_get_openpgp_signatures (finfo->rcs, rev, NULL);
 }
 
 

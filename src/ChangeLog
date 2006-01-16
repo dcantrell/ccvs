@@ -1,3 +1,23 @@
+2006-01-16  Derek Price  <derek@ximbiot.com>
+
+	* client.c (handle_openpgp_signatures): Rename to...
+	(handle_openpgp_signature): ...this and handle OpenPGP-signature
+	responses as documented.
+	(client_write_sigfile): Ditto on the response handling.
+	(responses): Rename OpenPGP-signatures to OpenPGP-signature.  Handle
+	new function name.
+	* rcs.c (iRCS_get_openpgp_signatures): New function factored from...
+	(RCS_get_openpgp_signatures): ...here.  Change API to return sigs
+	after base 64 decoding.
+	(RCS_has_openpgp_signatures): New function.
+	* rcs.h (RCS_get_openpgp_signatures): Update proto.
+	(RCS_has_openpgp_signatures): New proto.
+	* server.c (server_send_signatures): Handle raw signatures and match
+	response documentation.
+	(server_base_signatures): Use RCS_has_openpgp_signatures.
+	* verify.c (verify_fileproc): Handle raw signatures.
+	* vers_ts.c (Version_TS): Save RCSNode in input finfo.
+	
 2006-01-14  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h [CVS_VERIFY_CHECKOUTS_ENV, CVS_SIGN_COMMITS_ENV]: New macros.
