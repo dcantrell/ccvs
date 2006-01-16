@@ -1,3 +1,7 @@
+2006-01-16  Derek Price  <derek@ximbiot.com>
+
+	* cvsclient.text (Responses): Document OpenPGP-signature response.
+
 2006-01-11  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (The connection method, Global options): Note new
