@@ -1879,6 +1879,17 @@ The following responses are all optional, but if one is implemented, then all
 should be.  Servers may make this assumption.
 
 @table @code
+@item OpenPGP-signature \n
+Additional data: signature transmission.
+
+Send the client an OpenPGP signature to be used with the next
+@code{Base-checkout}, @code{Temp-checkout}, or @code{Base-signatures} response.
+The OpenPGP signature should be
+@url{http://www.ietf.org/rfc/rfc2440.txt, RFC 2440} compliant.
+
+Any number of signatures may be sent before any of these responses, and all
+signatures received will be considered to apply to the subsequent response.
+
 @item Base-checkout @var{pathname} \n
 Additional data: @var{RCS keyword options}. \n, @var{previous revision}. \n
 @var{new revision}. \n @var{mode}, \n, file transmission.
