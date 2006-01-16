@@ -7496,10 +7496,10 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
 		    if (prvers == NULL)
 			prvers = vers;
 
-		    buf = xmalloc (strlen (prvers->version) + 24);
-		    sprintf (buf, "%-12s (%-8.8s ",
-			     prvers->version,
-			     prvers->author);
+		    buf = Xasprintf ("%-12s (%-*.*s ",
+				     prvers->version,
+				     annotate_width, annotate_width,
+				     prvers->author);
 		    cvs_output (buf, 0);
 		    free (buf);
 

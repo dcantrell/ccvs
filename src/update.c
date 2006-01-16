@@ -381,9 +381,9 @@ update (int argc, char **argv)
 
     if (tag != NULL)
 	tag_check_valid (tag, argc, argv, local, aflag, "", false);
-    if (join_rev1 != NULL)
+    if (xjoin_rev1 != NULL)
 	tag_check_valid (xjoin_rev1, argc, argv, local, aflag, "", false);
-    if (join_rev2 != NULL)
+    if (xjoin_rev2 != NULL)
 	tag_check_valid (xjoin_rev2, argc, argv, local, aflag, "", false);
 
     /*

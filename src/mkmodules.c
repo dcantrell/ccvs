@@ -490,7 +490,7 @@ static const char *const modules_contents[] = {
 
 static const char *const config_contents[] = {
     "# Set `SystemAuth' to `no' if pserver shouldn't check system users/passwords.\n",
-    "#SystemAuth=no\n",
+    "#SystemAuth=yes\n",
     "\n",
     "# Set `LocalKeyword' to specify a local alias for a standard keyword.\n",
     "#LocalKeyword=MYCVS=CVSHeader\n",

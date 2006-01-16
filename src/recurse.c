@@ -95,6 +95,9 @@ struct frame_and_entries {
  *     current directory (`.').
  *
  *   local
+ *     When true, operate on files in the local directory only (i.e., do not
+ *     recurse into subdirectories - this should generally correspond to the
+ *     user-supplied -R/-l options).
  *
  *   which
  *     specifies the kind of recursion.  There are several cases:
@@ -120,9 +123,22 @@ struct frame_and_entries {
  *       think those are the only two cases).
  *
  *   aflag
+ *     Whether any sitcky tags/dates/kopts should be reset.  Should correspond
+ *     to the -A command line option accepted by some CVS commands.
+ *
  *   locktype
+ *     CVS_LOCK_NONE	Do not create any locks.
+ *     CVS_LOCK_READ	Read lock files before handing to the processor
+ *     			functions.
+ *     CVS_LOCK_WRITE	Lock files for write before handing to the processor
+ *     			functions.  Deletes promotable locks when they exist.
+ *
  *   update_preload
+ *     The top level directory for printing in error messages (called
+ *     "update_dir" by many other functions).  If NULL, assume "".
+ *
  *   dosrcs
+ *     Whether to parse RCS files when possible.
  *
  *   repository_in
  *     keeps track of the repository string.  This is only for the remote mode,
