@@ -1,5 +1,7 @@
 2006-01-16  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (join-16a): Test "no such tag" error with -j.
+
 	* update.c (update): Correct typo.
 
 2006-01-13  Larry Jones  <lawrence.jones@ugs.com>

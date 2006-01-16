@@ -10238,7 +10238,11 @@ T file9'
 	  cd ../..
 	  mkdir 3
 	  cd 3
-	  dotest join-16 "${testcvs} -q co -jT1 -jT2 first-dir" \
+	  dotest_fail join-16a \
+"$testcvs -q co -jno-such-tag -jT2 first-dir" \
+"$SPROG \[checkout aborted\]: no such tag \`no-such-tag'"
+
+	  dotest join-16b "$testcvs -q co -jT1 -jT2 first-dir" \
 "U first-dir/file1
 U first-dir/file2
 ${SPROG} checkout: file first-dir/file2 exists, but has been added in revision T2
