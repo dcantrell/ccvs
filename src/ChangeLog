@@ -1,3 +1,7 @@
+2006-01-17  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (RCS_has_openpgp_signatures): Suppress error on some systems.
+
 2006-01-16  Derek Price  <derek@ximbiot.com>
 
 	* client.c (handle_openpgp_signatures): Rename to...

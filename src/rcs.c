@@ -4838,7 +4838,7 @@ RCS_get_openpgp_signatures (struct file_info *finfo, const char *rev,
 bool
 RCS_has_openpgp_signatures (struct file_info *finfo, const char *rev)
 {
-    return iRCS_get_openpgp_signatures (finfo->rcs, rev, NULL);
+    return !!iRCS_get_openpgp_signatures (finfo->rcs, rev, NULL);
 }
 
 
