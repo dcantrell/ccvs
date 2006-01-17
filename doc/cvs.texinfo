@@ -3591,6 +3591,7 @@ numeric revision in each file.
 * Versions revisions releases::  Terminology used in this manual
 * Assigning revisions::         Assigning revisions
 * Tags::                        Tags--Symbolic revisions
+* Tags (builtin)::              Tags--builtin
 * Tagging the working directory::  The cvs tag command
 * Tagging by date/tag::         The cvs rtag command
 * Modifying tags::              Adding, renaming, and deleting tags
@@ -3897,6 +3898,171 @@ like this:
         1.4                     1.4
                                 1.5
 @end group
+@end example
+
+@node Tags (builtin)
+@section Tags--builtin
+@cindex Tags (builtin)
+
+@noindent
+The following builtin tags are available:
+
+HEAD BASE .head .base .trunk .root .origin .prev .next .commitid
+
+@noindent
+The builtin tags can be separated into categories:
+
+@itemize
+@item A. Static tags:
+Static tags always mark a specific revision, no matter
+how they are used.
+Static tags are: Symbolic tags, numeric revision numbers, commitids
+
+@item B. Dynamic tags:
+Dynamic tags specify a specific revision depending
+on the the revision they are based upon.
+Dynamic tags are: HEAD, BASE, '.head', '.root', '.prev',
+'.next', '.origin', '.base'
+
+@item C. Branch tags:
+Branch tags are ambiguous regarding static/dynamic
+behavior. Taken standalone, a branch tag points onto
+the most recent revision of a branch, impersonating
+static behavior. However, branch tags are dynamic tags
+as their focus changes when a branch is updated.
+@end itemize
+
+@noindent
+The different tags may be combined. For describing
+combined behavior, another definition is required:
+
+@itemize
+@item Absolute tags:
+Absolute tag means a tag that specifies either a revision or a trunk/branch.
+'.trunk', '.base', '1.2.3.4', '.commitid.1.2.3.4' and symbolic tags/branch
+tags are absolute tags.
+
+@item Relative tags:
+Relative tag means a tag that specifies a revision
+relative to a certain starting point.
+'.prev', '.next', '.root', '.origin' and '.head'
+are relative tags.
+@end itemize
+
+@noindent
+Combination of builtin tags:
+
+The builtin tags may be combined. Combined tags are resolved from
+left to right. When using tags with directories, combined tags need
+to start with an absolute tag. Relative tags can be appended. If a
+relative tag follows an absolute tag, the result will be absolute.
+
+When using tags with files only, the tag does not need to be absolute.
+If a relative tag is used, the absolute position is taken from:
+
+@enumerate
+@item The sandbox revisions revision number
+@item The sandbox revision's tag
+@item The sandbox revision's dir-tag
+@item The mainline
+@end enumerate
+
+@noindent
+in this order, whatever is first available.
+
+If a combined tag with relative extensions is used for commands that change
+the local sandbox and set sticky tags, the resulting numeric revision is used
+for sticky tagging in case the last tag is either '.prev' or '.next'.
+
+@noindent
+Following the mainline (backwards):
+
+Starting from a specific rev. number X on the trunk or a branch, the line is
+followed backwards up to the first revision Z on the trunk. It doesn't matter
+if there are dead or missing revisions in between. If revision Z is dead,
+and its the 1.1 rev., stop here.
+If 1.1 is not dead, and 1.1 was created at the same time the first vendor
+branch rev. was created, jump to the vendor branch, and take the latest
+revision prior to the date of Y (Z is the predecessor of Y).
+Otherwise take 1.1.
+
+@noindent
+Focused branch:
+
+The 'focused branch' is used as a synonym for either the trunk or the branch,
+depending on the sticky tag of the addressed file or the workdir.
+
+@noindent
+What the tags mean:
+
+'.trunk': Serves as a synonym for the trunk-branch. Resolves to the
+most recent revision of the mainline, and allows to be used as a
+branch tag. Combination with a date ('xxx -r ".trunk:2005-03-08 18:00:00")
+is possible.
+
+'.origin': Will always resolve to the very first revision. If a file has
+been added on a branch, .origin will resolve to the first revision on
+that branch, otherwise it will follow the mainline.
+
+'.root': Will resolv to the first revision on a branch, the revision
+which is shared with its parent.
+
+'.base': The current sandbox revision. May only be used standalone.
+
+'.head': The most recent revision on the focused branch.
+
+'.prev': The previous revision on the focused branch. Follows the mainline.
+
+'.next': The next revision on the trunk/branch.
+
+'.commitid': Prefix for a following commitid, separated by a dot.
+
+@noindent
+Warning (when using '.origin' or '.root' with directories):
+
+While file1.root.head from the branch of a branch could yield
+the head of the first branch, file2.root.head could yield the
+head of the trunk. This must be taken into account since tags
+can be spread over a project in unpredictible manner, and there
+is no guarantee that a combined tag resolves to something usefull
+under all circumstances.
+
+@noindent
+Examples:
+
+@example
+cvs diff -r .base.prev test.txt
+cvs update -r .trunk.prev.prev
+@end example
+
+@noindent
+Backward compatibility:
+
+The '.head' and '.base' are a replacement for the well known
+HEAD and BASE tags. However there is a slight difference:
+
+When '.head' is used as a relative tag, it resolves to the
+head of trunk or branch depending on the current sandbox state.
+If '.head' shall be used as an absolute tag (i.e. to ignore a
+sticky dir tag), '.trunk' or any other absolute tag must be
+prepended.
+
+@noindent
+CVSNT compatibility:
+
+Instead of '.commitid', CVSNT uses '@@' as a prefix for a
+following commitid. If '@@<' is used, the previous revision is
+addressed. This is similar to '.commitid.xyzxyzxyzxyzxyzx.prev'.
+Usage of the CVSNT '@@' syntax is not supported in combined tags.
+
+@noindent
+Examples:
+
+@example
+cvs diff -r @@xyzxyzxyzxyzxyzx test.txt
+cvs diff -r @@<xyzxyzxyzxyzxyzx test.txt
+cvs diff -r .commitid.xyzxyzxyzxyzxyzx test.txt
+cvs diff -r .commitid.xyzxyzxyzxyzxyzx.prev test.txt
 @end example
 
 @node Tagging the working directory
@@ -11759,6 +11925,20 @@ $@splitrcskeyword{State}: Exp $
 $@splitrcskeyword{Log}: file1,v $
 Revision 1.1  1993/12/09 03:30:17  joe
 Initial revision
+
+@end example
+
+Tags (@pxref{Tags (builtin)})
+
+@example
+.trunk
+.head
+.base
+.origin
+.root
+.prev
+.next
+.commitid
 
 @end example
 
