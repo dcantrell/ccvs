@@ -246,6 +246,14 @@ char *strerror (int);
  */
 #define	TAG_HEAD	"HEAD"
 #define	TAG_BASE	"BASE"
+#define TAG_DOTHEAD     "head"
+#define TAG_DOTBASE     "base"
+#define TAG_COMMITID    "commitid"
+#define TAG_PREVIOUS    "prev"
+#define TAG_TRUNK       "trunk"
+#define TAG_ORIGIN      "origin"
+#define TAG_ROOT        "root"
+#define TAG_NEXT        "next"
 
 /* Environment variable used by CVS */
 #define	CVSREAD_ENV	"CVSREAD"	/* make files read-only */
@@ -763,6 +771,8 @@ Vers_TS *Version_TS (struct file_info *finfo, char *options, char *tag,
 			    char *date, int force_tag_match,
 			    int set_time);
 void freevers_ts (Vers_TS ** versp);
+char *Version_resolve_relTag (struct file_info *, const char *, bool);
+
 
 /* Miscellaneous CVS infrastructure which layers on top of the recursion
    processor (for example, needs struct file_info).  */

@@ -1,5 +1,95 @@
 2006-01-16  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h: New fn (Version_release_relTag)
+	* vers_ts: New fn (Version_release_relTag): Prepend revision number
+	to relative tags
+	* patch.c: (patch_fileproc): Prepend revision number to relative tags 
+	* tag.c: (check_fileproc, tag_fileproc): dito
+	* annotate.c: (annotate_fileproc): dito
+	* log.c: (log_expand_revlist): dito, change params: RCSNode->file_info
+	* update.c: (update_fileproc): dito
+	(join_file): make jrev1, jrev2 fn params so relative tags can be
+	resolved per file.
+	* rcs.h: New fns: RCS_is_symbolic, RCS_is_relative
+	* rcs.c: (is_symbolic): Comment fixed.
+	New fns: RCS_is_symbolic, RCS_is_relative
+	(RCS_getprevious): Fixed for branches without revisions.
+	(RCS_getroot): dito, Gratious reformatting.
+	(RCS_getcommitid): Ignore dead revisions if duplicate commitids
+	exist (file added on branch, dead rev. on trunk);
+	For '@<' compare timestamp to determine predecessor
+	* sanity.sh: More tests
+	* cvs.texinfo: Improved; Mention 'commitid' and compatibility issues,
+	(Patch from Frank Hemer <frank@hemer.org>.)
+
+2005-04-19  Derek Price  <derek@ximbiot.com>
+
+	* admin.c (admin_fileproc): Undo last commit. TAG_TRUNK test removed.
+	* commit.c (check_fileproc): Imporve comments. TAG_TRUNK test removed.
+	(commit_fileproc): TAG_TRUNK test removed.
+	(remove_file): TAG_TRUNK test removed.
+	* update.c (update_fileproc): TAG_TRUNK test removed.
+	* rcs.c: Improve comments.
+	(RCS_gethead): Remove this fn.
+	(RCS_getversion): TAG_TRUNK test removed.
+	(RCS_gettag): Remove magic conversion.
+	(RCS_nodeisbranch): Properly detect magic for numeric rev.
+	Remove magic conversion.
+	(RCS_whatbranch): Gratious reformatting. Simplify.
+	(translate_tag): Always return non-magic branches for symbolic/extended
+	tags. Add param flag to prevent conversion for non-extended tags.
+	Improve assumption verification.
+	(RCS_extract_tag): Adapt error msg to cvs conventions.
+	(RCS_getprevious): Rootdate comparison fixed.
+	(RCS_getroot): Remove magic conversion.
+	* sanity.sh: More tests added.
+	(Patch from Frank Hemer <frank@hemer.org>.)
+
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (RCS_getprevious): Remove erroneous FIXME.
+
+2005-03-20  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (RCS_nodeisbranch): Improve comments.  Return bool.  Gratuitous
+	reformatting.
+	(RCS_getprevious): NULL return from RCS_branch_head means a tag does
+	not exist.  Factor common code from then/else.  Add FIXME note.
+	Gratuitous reformatting.  Simplify.
+	(RCS_getorigin): Simplify.
+	(translate_tag): Gratuitous reformatting.
+	* rcs.h (RCS_nodeisbranch): Update prototype.
+
+2005-03-19  Derek Price  <derek@ximbiot.com>
+
+	Begin cleanup.  tag-ext test still broken.
+	* admin.c (admin_fileproc): Remove obfuscations.
+	* rcs.c (RCS_tag2rev): Remove obfuscations.  Gratuitous reformatting.
+	(is_symbolic): New function.
+	(RCS_gettag, RCS_nodeisbranch): s/isrevnumonly/!is_symbolic/.
+	(RCS_whatbranch): s/rev/tag/ where appropriate.  Improve comments.
+	Assert assumptions.  Gratuitous reformatting.  Process symbols first.
+	(RCS_branch_head): Remove obfuscations.  Gratuitous reformatting.
+	Assert assumptions.  Process symbols first.
+	(truncate_revnum_in_place): Declare inline.
+	(RCS_head): Improve comments.  Perform error checking.
+	(RCS_getprevious): Remove obfuscations.
+	(translate_tag): Improve comments.  Simplify.  Return branches when
+	input is a branch name.
+	(truncate_revnum): Simplify.
+	* status.c: Gratuitous reformatting.
+	* subr.c (isrevnumonly): Remove this function.
+	* subr.h (isrevnumonly): Remove this proto.
+	* sanity.sh (tag-ext): Cleanup.
+
+2005-03-19  Derek Price  <derek@ximbiot.com>
+
+	* admin.c, subr.h, update.c, rcs.h, subr.c, import.c, sanity.sh,
+	cvs.h, vers_ts.c, tag.c, commit.c, rcs.c: Tag extensions added
+	(Patch from Frank Hemer <frank@hemer.org>.)
+
+2006-01-16  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (join-16a): Test "no such tag" error with -j.
 
 	* update.c (update): Correct typo.

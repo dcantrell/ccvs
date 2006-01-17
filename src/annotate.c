@@ -272,7 +272,8 @@ rannotate_proc (int argc, char **argv, char *xwhere, char *mwhere,
 static int
 annotate_fileproc (void *callerdat, struct file_info *finfo)
 {
-    char *expand, *version;
+    char *expand;
+    char *version = NULL;
 
     if (finfo->rcs == NULL)
         return 1;
@@ -281,9 +282,28 @@ annotate_fileproc (void *callerdat, struct file_info *finfo)
         RCS_reparsercsfile (finfo->rcs, NULL, NULL);
 
     expand = RCS_getexpand (finfo->rcs);
-    version = RCS_getversion (finfo->rcs, tag, date, force_tag_match, NULL);
 
-    if (version == NULL)
+    /* bogus annotate behavior needs to be kept for backward compatibility */
+    if (!tag)
+        version = Xasprintf (".%s", TAG_TRUNK);
+    else if (RCS_is_relative (tag))
+    {
+        version = Version_resolve_relTag (finfo, tag, !is_rannotate);
+        if (!version)
+        {
+            if (!really_quiet)
+                error (0, 0, "Cannot resolve relative tag: `%s'.", tag);
+            return 0;
+        }
+    }
+    else
+        version = xstrdup (tag);
+
+    char *tmp = version;
+    version = RCS_getversion (finfo->rcs, version, date, force_tag_match, NULL);
+    free (tmp);
+
+    if (!version)
         return 0;
 
     /* Distinguish output for various files if we are processing
@@ -298,9 +318,10 @@ annotate_fileproc (void *callerdat, struct file_info *finfo)
     }
     else
     {
-	RCS_deltas (finfo->rcs, NULL, NULL,
-		    version, RCS_ANNOTATE, NULL, NULL, NULL, NULL);
+        RCS_deltas (finfo->rcs, NULL, NULL,
+            version, RCS_ANNOTATE, NULL, NULL, NULL, NULL);
     }
+
     free (version);
     return 0;
 }

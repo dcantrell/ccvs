@@ -211,18 +211,19 @@ char *RCS_getversion (RCSNode *rcs, const char *tag, const char *date,
 		      int force_tag_match, int *simple_tag);
 char *RCS_magicrev (RCSNode *rcs, char *rev);
 int RCS_isbranch (RCSNode *rcs, const char *rev);
-int RCS_nodeisbranch (RCSNode *rcs, const char *tag);
+bool RCS_nodeisbranch (RCSNode *rcs, const char *tag);
 char *RCS_whatbranch (RCSNode *rcs, const char *tag);
 char *RCS_head (RCSNode * rcs);
 int RCS_datecmp (const char *date1, const char *date2);
 time_t RCS_getrevtime (RCSNode * rcs, const char *rev, char *date, int fudge);
 List *RCS_symbols (RCSNode *rcs);
 void RCS_check_tag (const char *tag);
+char *RCS_extract_tag (const char *tag, bool files);
 int RCS_valid_rev (const char *rev);
 List *RCS_getlocks (RCSNode *rcs);
 void freercsnode (RCSNode ** rnodep);
 char *RCS_getbranch (RCSNode *rcs, const char *tag, int force_tag_match);
-char *RCS_branch_head (RCSNode *rcs, char *rev);
+char *RCS_branch_head (RCSNode *rcs, const char *tag);
 
 int RCS_isdead (RCSNode *, const char *);
 char *RCS_getexpand (RCSNode *);
@@ -253,6 +254,8 @@ void RCS_deltas (RCSNode *, FILE *, struct rcsbuffer *, const char *,
 void RCS_setincexc (void **, const char *arg);
 void RCS_setlocalid (const char *, unsigned int, void **, const char *arg);
 char *make_file_label (const char *, const char *, RCSNode *);
+bool RCS_is_symbolic (const char *);
+bool RCS_is_relative (const char *);
 
 extern bool preserve_perms;
 extern int annotate_width;

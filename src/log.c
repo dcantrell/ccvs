@@ -128,7 +128,7 @@ static int log_fileproc (void *callerdat, struct file_info *finfo);
 static struct option_revlist *log_parse_revlist (const char *);
 static void log_parse_date (struct log_data *, const char *);
 static void log_parse_list (List **, const char *);
-static struct revlist *log_expand_revlist (RCSNode *, char *,
+static struct revlist *log_expand_revlist (struct file_info *, char *,
                                            struct option_revlist *, int);
 static void log_free_revlist (struct revlist *);
 static int log_version_requested (struct log_data *, struct revlist *,
@@ -842,7 +842,7 @@ log_fileproc (void *callerdat, struct file_info *finfo)
 
 	/* Turn any symbolic revisions in the revision list into numeric
 	   revisions.  */
-	revlist = log_expand_revlist (rcsfile, baserev, log_data->revlist,
+	revlist = log_expand_revlist (finfo, baserev, log_data->revlist,
 				      log_data->default_branch);
 	if (log_data->sup_header
             || (!log_data->header && !log_data->long_header))
@@ -1032,12 +1032,14 @@ log_fileproc (void *callerdat, struct file_info *finfo)
  * Expand any symbolic revisions.
  */
 static struct revlist *
-log_expand_revlist (RCSNode *rcs, char *baserev,
+log_expand_revlist (struct file_info *finfo, char *baserev,
                     struct option_revlist *revlist, int default_branch)
 {
     struct option_revlist *r;
     struct revlist *ret, **pr;
-
+    char *first = NULL;
+    char *last = NULL;
+    RCSNode *rcs = finfo->rcs;
     ret = NULL;
     pr = &ret;
     for (r = revlist; r != NULL; r = r->next)
@@ -1047,7 +1049,28 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
 	nr = xmalloc (sizeof *nr);
 	nr->inclusive = r->inclusive;
 
-	if (r->first == NULL && r->last == NULL)
+        if (RCS_is_relative (r->first)) {
+           first = Version_resolve_relTag (finfo, r->first, !is_rlog);
+           if (!first)
+           {
+               if (!really_quiet)
+                   error (0, 0, "Cannot resolve relative tag: `%s'.", r->first);
+           }
+        } else {
+           first = xstrdup (r->first);
+        }
+        if (RCS_is_relative (r->last)) {
+           last = Version_resolve_relTag (finfo, r->last, !is_rlog);
+           if (!last && first)
+           {
+               if (!really_quiet)
+                   error (0, 0, "Cannot resolve relative tag: `%s'.", r->last);
+           }
+        } else {
+           last = xstrdup (r->last);
+        }
+
+	if (first == NULL && last == NULL)
 	{
 	    /* If both first and last are NULL, it means that we want
 	       just the head of the default branch, which is RCS_head.  */
@@ -1071,19 +1094,20 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
 	    char *branch;
 
 	    /* Print just the head of the branch.  */
-	    if (isdigit ((unsigned char) r->first[0]))
-		nr->first = RCS_getbranch (rcs, r->first, 1);
-	    else
-	    {
-		branch = RCS_whatbranch (rcs, r->first);
-		if (branch == NULL)
-		    nr->first = NULL;
-		else
-		{
-		    nr->first = RCS_getbranch (rcs, branch, 1);
-		    free (branch);
-		}
-	    }
+  	    if (!RCS_is_symbolic (first))
+ 		nr->first = RCS_getbranch (rcs, first, 1);
+ 	    else
+ 	    {
+ 		branch = RCS_whatbranch (rcs, first);
+ 		if (branch == NULL)
+ 		    nr->first = NULL;
+ 		else
+ 		{
+ 		    nr->first = RCS_getbranch (rcs, branch, 1);
+ 		    free (branch);
+ 		}
+ 	    }
+
 	    if (!nr->first)
 	    {
 		if (!really_quiet)
@@ -1100,16 +1124,16 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
 	}
 	else
 	{
-	    if (r->first == NULL || isdigit ((unsigned char) r->first[0]))
-		nr->first = xstrdup (r->first);
+	    if (first == NULL || !RCS_is_symbolic (first))
+		nr->first = xstrdup (first);
 	    else
 	    {
-		if (baserev && strcmp (r->first, TAG_BASE) == 0)
+		if (baserev && strcmp (first, TAG_BASE) == 0)
 		    nr->first = xstrdup (baserev);
-		else if (RCS_nodeisbranch (rcs, r->first))
-		    nr->first = RCS_whatbranch (rcs, r->first);
+		else if (RCS_nodeisbranch (rcs, first))
+		    nr->first = RCS_whatbranch (rcs, first);
 		else
-		    nr->first = RCS_gettag (rcs, r->first, 1, NULL);
+		    nr->first = RCS_gettag (rcs, first, 1, NULL);
 		if (nr->first == NULL && !really_quiet)
 		{
 		    error (0, 0, "warning: no revision `%s' in `%s'",
@@ -1120,16 +1144,16 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
 	    if (r->last == r->first || (r->last != NULL && r->first != NULL &&
 					strcmp (r->last, r->first) == 0))
 		nr->last = xstrdup (nr->first);
-	    else if (r->last == NULL || isdigit ((unsigned char) r->last[0]))
-		nr->last = xstrdup (r->last);
+	    else if (last == NULL || !RCS_is_symbolic (last))
+		nr->last = xstrdup (last);
 	    else
 	    {
-		if (baserev && strcmp (r->last, TAG_BASE) == 0)
+		if (baserev && strcmp (last, TAG_BASE) == 0)
 		    nr->last = xstrdup (baserev);
-		else if (RCS_nodeisbranch (rcs, r->last))
-		    nr->last = RCS_whatbranch (rcs, r->last);
+		else if (RCS_nodeisbranch (rcs, last))
+		    nr->last = RCS_whatbranch (rcs, last);
 		else
-		    nr->last = RCS_gettag (rcs, r->last, 1, NULL);
+		    nr->last = RCS_gettag (rcs, last, 1, NULL);
 		if (nr->last == NULL && !really_quiet)
 		{
 		    error (0, 0, "warning: no revision `%s' in `%s'",
@@ -1141,7 +1165,7 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
                does.  This code is a bit cryptic for my tastes, but
                keeping the same implementation as rlog ensures a
                certain degree of compatibility.  */
-	    if (r->first == NULL && nr->last != NULL)
+	    if (first == NULL && nr->last != NULL)
 	    {
 		nr->fields = numdots (nr->last) + 1;
 		if (nr->fields < 2)
@@ -1156,7 +1180,7 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
 		    strcpy (cp + 1, "0");
 		}
 	    }
-	    else if (r->last == NULL && nr->first != NULL)
+	    else if (last == NULL && nr->first != NULL)
 	    {
 		nr->fields = numdots (nr->first) + 1;
 		nr->last = xstrdup (nr->first);
@@ -1278,6 +1302,8 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
 	*pr = nr;
     }
 
+    free (first);
+    free (last);
     return ret;
 }
 
