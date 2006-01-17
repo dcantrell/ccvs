@@ -631,9 +631,26 @@ check_fileproc (void *callerdat, struct file_info *finfo)
     if (!is_rtag && numtag == NULL && date == NULL)
 	ti->rev = xstrdup (vers->vn_user);
     else
-	ti->rev = RCS_getversion (vers->srcfile, numtag, date,
+    {
+        char *tmp;
+        if (RCS_is_relative (numtag))
+        {
+            tmp = Version_resolve_relTag (finfo, numtag, !is_rtag);
+            if (!tmp)
+            {
+                if (!really_quiet)
+                    error (0, 0, "Cannot resolve relative tag: `%s'.", numtag);
+                return 1;
+            }
+        }
+        else
+        {
+           tmp = xstrdup (numtag);
+        }
+	ti->rev = RCS_getversion (vers->srcfile, tmp, date,
 				  force_tag_match, NULL);
-
+        free (tmp);
+    }
     if (ti->rev != NULL)
     {
         ti->oldrev = RCS_getversion (vers->srcfile, symtag, NULL, 1, NULL);
@@ -967,7 +984,6 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 	    goto free_vars_and_return;
 	}
     }
-
     version = RCS_getversion (rcsfile, numtag, date, force_tag_match, NULL);
     if (version == NULL)
     {
@@ -1162,8 +1178,24 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 
     if (numtag || date)
     {
-        nversion = RCS_getversion (vers->srcfile, numtag, date,
+        char *tmp;
+        if (RCS_is_relative (numtag))
+        {
+            tmp = Version_resolve_relTag (finfo, numtag, true);
+            if (!tmp)
+            {
+                if (!really_quiet)
+                    error (0, 0, "Cannot resolve relative tag: `%s'.", numtag);
+                return 1;
+            }
+        }
+        else
+        {
+           tmp = xstrdup (numtag);
+        }
+        nversion = RCS_getversion (vers->srcfile, tmp, date,
                                    force_tag_match, NULL);
+        free (tmp);
         if (!nversion)
 	    goto free_vars_and_return;
     }
@@ -1596,9 +1628,10 @@ val_direntproc (void *callerdat, const char *dir, const char *repository,
  *   Nothing.
  */
 void
-tag_check_valid (const char *name, int argc, char **argv, int local, int aflag,
+tag_check_valid (const char *oriname, int argc, char **argv, int local, int aflag,
                  char *repository, bool valid)
 {
+    char *name;
     struct val_args the_val_args;
     struct saved_cwd cwd;
     int which;
@@ -1607,44 +1640,38 @@ tag_check_valid (const char *name, int argc, char **argv, int local, int aflag,
     TRACE (TRACE_FUNCTION,
 	   "tag_check_valid (name=%s, argc=%d, argv=%p, local=%d,\n"
       "                      aflag=%d, repository=%s, valid=%s)",
-	   name ? name : "(name)", argc, (void *)argv, local, aflag,
+	   oriname ? oriname : "(name)", argc, (void *)argv, local, aflag,
 	   repository ? repository : "(null)",
 	   valid ? "true" : "false");
 #else
     TRACE (TRACE_FUNCTION,
 	   "tag_check_valid (name=%s, argc=%d, argv=%lx, local=%d,\n"
       "                      aflag=%d, repository=%s, valid=%s)",
-	   name ? name : "(name)", argc, (unsigned long)argv, local, aflag,
+	   oriname ? oriname : "(name)", argc, (unsigned long)argv, local, aflag,
 	   repository ? repository : "(null)",
 	   valid ? "true" : "false");
 #endif
 
-    /* Numeric tags require only a syntactic check.  */
-    if (isdigit ((unsigned char) name[0]))
+    /* validate tag and return symbolic tag if any */
+    bool files = (argc > 0);
+    int i;
+    for (i=0; i<argc; ++i)
+       if (isdir (argv[i]))
+       {
+	   files = false;
+	   break;
+       }
+    if (!(name = RCS_extract_tag (oriname, files)))
     {
-	/* insert is not possible for numeric revisions */
-	assert (!valid);
-	if (RCS_valid_rev (name)) return;
-	else
-	    error (1, 0, "\
-Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
-    }
-
-    /* Special tags are always valid.  */
-    if (strcmp (name, TAG_BASE) == 0
-	|| strcmp (name, TAG_HEAD) == 0)
-    {
-	/* insert is not possible for numeric revisions */
 	assert (!valid);
 	return;
     }
 
-    /* Verify that the tag is valid syntactically.  Some later code once made
-     * assumptions about this.
-     */
-    RCS_check_tag (name);
-
-    if (is_in_val_tags (NULL, name)) return;
+    if (is_in_val_tags (NULL, name))
+    {
+        free (name);
+        return;
+    }
 
     if (!valid)
     {
@@ -1686,4 +1713,5 @@ Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
 
     /* The tags is valid but not mentioned in val-tags.  Add it.  */
     add_to_val_tags (name);
+    free (name);
 }

@@ -1729,6 +1729,7 @@ if test x"$*" = x; then
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	tests="${tests} clean"
 	tests="${tests} keywordexpand"
+	tests="${tests} tag-ext"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
 	tests="${tests} modules7 mkmodules co-d"
@@ -12429,6 +12430,967 @@ $SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: LocalKeyword ign
 	  rm -rf $TESTDIR/keywordexpand
           modify_repo rm -rf $CVSROOT_DIRNAME/keywordexpand
 	  restore_adm
+	  ;;
+
+
+
+	tag-ext)
+	  # Test the new tag extensions:
+	  #   .trunk
+	  #   .base
+	  #   .next
+	  #   .prev
+	  #   .root
+	  #   .origin
+	  save_TZ=$TZ
+	  TZ=UTC0; export TZ
+	  module=tag-ext
+	  mkdir $module; cd $module
+	  mkdir top; cd top
+	  dotest tag-ext-init-1 "$testcvs -Q co -l ."
+	  mkdir tag-ext
+	  dotest tag-ext-init-1b "$testcvs -Q add tag-ext"
+	  cd ..
+	  dotest tag-ext-init-1c "$testcvs -Q co $module"
+	  cd $module
+	  echo content >file1
+	  echo different content >file2
+	  dotest tag-ext-init-2 "$testcvs -Q add file1 file2"
+	  dotest tag-ext-init-3 "$testcvs -Q ci -madd-em"
+	  echo content2 >file1
+	  echo different content2 >file2
+	  dotest tag-ext-init-4 "$testcvs -Q ci -mvers2"
+	  dotest tag-ext-init-5 "$testcvs -Q tag -b BRANCH1"
+	  echo content3 >file1
+	  echo different content3 >file2
+	  dotest tag-ext-init-6 "$testcvs -Q ci -mvers3"
+	  dotest tag-ext-init-7 "$testcvs -Q tag -b BRANCH2"
+	  dotest tag-ext-init-8 "$testcvs -Q update -r BRANCH1"
+	  echo b1content >file3
+	  dotest tag-ext-init-9 "$testcvs -Q add file3"
+	  dotest tag-ext-init-10 "$testcvs -Q ci -maddbranch1"
+	  dotest tag-ext-init-11 "$testcvs -Q update -r BRANCH2"
+	  echo b2content >file3
+	  dotest tag-ext-init-12 "$testcvs -Q add file3"
+	  dotest tag-ext-init-13 "$testcvs -Q ci -maddbranch2"
+	  dotest tag-ext-init-14 "$testcvs -Q update -A"
+	  echo content >file3
+	  dotest tag-ext-init-15 "$testcvs -Q add file3"
+	  dotest tag-ext-init-16 "$testcvs -Q ci -maddtrunk"
+	  cd ..
+	  mkdir import
+	  cd import
+	  echo content vicontent >file3
+	  dotest tag-ext-init-17 \
+"$testcvs -Q import -mimportvendor tag-ext VENDOR RELEASE"
+	  cd ..
+	  rm -r import
+	  cd $module
+
+
+
+	  dotest tag-ext-1 "$testcvs -q log" "
+RCS file: $CVSROOT_DIRNAME/$module/file1,v
+Working file: file1
+head: 1\.3
+branch:
+locks: strict
+access list:
+symbolic names:
+	BRANCH2: 1\.3\.0\.2
+	BRANCH1: 1\.2\.0\.2
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.3
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+vers3
+----------------------------
+revision 1\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+vers2
+----------------------------
+revision 1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
+add-em
+=============================================================================
+
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
+Working file: file2
+head: 1\.3
+branch:
+locks: strict
+access list:
+symbolic names:
+	BRANCH2: 1\.3\.0\.2
+	BRANCH1: 1\.2\.0\.2
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.3
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+vers3
+----------------------------
+revision 1\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+vers2
+----------------------------
+revision 1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
+add-em
+=============================================================================
+
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+Working file: file3
+head: 1\.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	RELEASE: 1\.1\.1\.1
+	VENDOR: 1\.1\.1
+	BRANCH2: 1\.1\.0\.4
+	BRANCH1: 1\.1\.0\.2
+keyword substitution: kv
+total revisions: 6;	selected revisions: 6
+description:
+----------------------------
+revision 1\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -0;  commitid: ${commitid};
+addtrunk
+----------------------------
+revision 1\.1
+date: ${ISO8601DATE};  author: ${username};  state: dead;  commitid: ${commitid};
+branches:  1\.1\.1;  1\.1\.2;  1\.1\.4;
+file file3 was initially added on branch BRANCH1\.
+----------------------------
+revision 1\.1\.4\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -0;  commitid: ${commitid};
+addbranch2
+----------------------------
+revision 1\.1\.4\.1
+date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: +0 -0;  commitid: ${commitid};
+file file3 was added on branch BRANCH2 on ${ISO8601DATE}
+----------------------------
+revision 1\.1\.2\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -0;  commitid: ${commitid};
+addbranch1
+----------------------------
+revision 1\.1\.1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -0;  commitid: ${commitid};
+importvendor
+============================================================================="
+
+	  dotest tag-ext-2 "$testcvs -q update -r.base"
+	  dotest tag-ext-3 "cat CVS/Entries && cat CVS/Tag" \
+"/file1/1\.3/[a-zA-Z0-9 :]*//T\.base
+/file2/1\.3/[a-zA-Z0-9 :]*//T\.base
+/file3/1\.2/[a-zA-Z0-9 :]*//T\.base
+D
+T\.base"
+
+	  dotest tag-ext-4 "$testcvs -q update -r.trunk"
+	  dotest tag-ext-5 "cat CVS/Entries && cat CVS/Tag" \
+"/file1/1\.3/[a-zA-Z0-9 :]*//T\.trunk
+/file2/1\.3/[a-zA-Z0-9 :]*//T\.trunk
+/file3/1\.2/[a-zA-Z0-9 :]*//T\.trunk
+D
+T\.trunk"
+
+	  dotest tag-ext-6 "$testcvs -q update -r.trunk.prev" \
+"U file1
+U file2
+cvs update: \`file3' is no longer in the repository"
+	  dotest tag-ext-7 "cat CVS/Entries && cat CVS/Tag" \
+"/file1/1\.2/[a-zA-Z0-9 :]*//T1\.2
+/file2/1\.2/[a-zA-Z0-9 :]*//T1\.2
+D
+N\.trunk\.prev"
+
+	  dotest tag-ext-8 "$testcvs -q update -rBRANCH1" \
+"U file3"
+	  dotest tag-ext-9 "cat CVS/Entries && cat CVS/Tag" \
+"/file1/1\.2/[a-zA-Z0-9 :]*//TBRANCH1
+/file2/1\.2/[a-zA-Z0-9 :]*//TBRANCH1
+/file3/1\.1\.2\.1/[a-zA-Z0-9 :]*//TBRANCH1
+D
+TBRANCH1"
+
+	  echo b1content >file1
+	  echo b1content >file2
+	  echo b1content >file3
+	  dotest tag-ext-10 "$testcvs -Q ci -maddbranch1"
+	  dotest tag-ext-12 "$testcvs -Q tag -b BRANCH1-1"
+	  echo b1content2 >file1
+	  echo b1content2 >file2
+	  echo b1content2 >file3
+	  dotest tag-ext-13 "$testcvs -Q ci -maddbranch1"
+	  dotest tag-ext-14 "$testcvs -q update -rBRANCH1-1" \
+"U file1
+U file2
+U file3"
+	  echo b1-1content >file1
+	  echo b1-1content >file2
+	  echo b1-1content >file3
+	  dotest tag-ext-15 "$testcvs -Q ci -maddbranch1-1"
+	  echo b1-1content2 >file1
+	  echo b1-1content2 >file2
+	  echo b1-1content2 >file3
+	  dotest tag-ext-16 "$testcvs -Q ci -maddbranch1-1"
+	  dotest tag-ext-17 "cat CVS/Entries && cat CVS/Tag" \
+"/file1/1\.2\.2\.1\.2\.2/[a-zA-Z0-9 :]*//TBRANCH1-1
+/file2/1\.2\.2\.1\.2\.2/[a-zA-Z0-9 :]*//TBRANCH1-1
+/file3/1\.1\.2\.1\.2\.2/[a-zA-Z0-9 :]*//TBRANCH1-1
+D
+TBRANCH1-1"
+
+	  dotest_fail tag-ext-18 "$testcvs -Q -n diff -r \.prev" \
+"${SPROG} \[diff aborted\]: Tag .\.prev. invalid\. Tag must not be relative: .\.prev."
+
+	  dotest_fail tag-ext-19 "$testcvs diff -r \.prev file2 file3" \
+"Index: file2
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
+retrieving revision 1\.2\.2\.1\.2\.1
+retrieving revision 1\.2\.2\.1\.2\.2
+diff -r1\.2\.2\.1\.2\.1 -r1\.2\.2\.1\.2\.2
+1c1
+< b1-1content
+---
+> b1-1content2
+Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.1\.2\.1
+retrieving revision 1\.1\.2\.1\.2\.2
+diff -r1\.1\.2\.1\.2\.1 -r1\.1\.2\.1\.2\.2
+1c1
+< b1-1content
+---
+> b1-1content2"
+
+	  dotest_fail tag-ext-20 "$testcvs diff -r \.root file2 file3" \
+"Index: file2
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
+retrieving revision 1\.2\.2\.1
+retrieving revision 1\.2\.2\.1\.2\.2
+diff -r1\.2\.2\.1 -r1\.2\.2\.1\.2\.2
+1c1
+< b1content
+---
+> b1-1content2
+Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.1
+retrieving revision 1\.1\.2\.1\.2\.2
+diff -r1\.1\.2\.1 -r1\.1\.2\.1\.2\.2
+1c1
+< b1content
+---
+> b1-1content2"
+
+	  dotest_fail tag-ext-21 "$testcvs diff -r \.root.root file2 file3" \
+"Index: file2
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
+retrieving revision 1\.2
+retrieving revision 1\.2\.2\.1\.2\.2
+diff -r1\.2 -r1\.2\.2\.1\.2\.2
+1c1
+< different content2
+---
+> b1-1content2
+${SPROG} diff: Tag \.root\.root refers to a dead (removed) revision in file .file3.\.
+cvs diff: No comparison available\.  Pass .-N. to .${SPROG} diff.${QUESTION}"
+
+	  dotest_fail tag-ext-22 "$testcvs diff -r \.origin file2 file3" \
+"Index: file2
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
+retrieving revision 1\.1
+retrieving revision 1\.2\.2\.1\.2\.2
+diff -r1\.1 -r1\.2\.2\.1\.2\.2
+1c1
+< different content
+---
+> b1-1content2
+Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.1
+retrieving revision 1\.1\.2\.1\.2\.2
+diff -r1\.1\.2\.1 -r1\.1\.2\.1\.2\.2
+1c1
+< b1content
+---
+> b1-1content2"
+
+	  dotest_fail tag-ext-23 "$testcvs diff -r \.origin.head file2 file3" \
+"Index: file2
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
+retrieving revision 1\.3
+retrieving revision 1\.2\.2\.1\.2\.2
+diff -r1\.3 -r1\.2\.2\.1\.2\.2
+1c1
+< different content3
+---
+> b1-1content2
+Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.2
+retrieving revision 1\.1\.2\.1\.2\.2
+diff -r1\.1\.2\.2 -r1\.1\.2\.1\.2\.2
+1c1
+< b1content2
+---
+> b1-1content2"
+
+	  dotest tag-ext-24 "$testcvs -q update -r\.trunk" \
+"U file1
+U file2
+U file3"
+
+	  echo tcontent >file3
+	  dotest tag-ext-25 "$testcvs -Q ci -maddtrunk"
+
+	  dotest_fail tag-ext-26 "$testcvs -Q -n diff -r \.prev" \
+"${SPROG} \[diff aborted\]: Tag .\.prev. invalid\. Tag must not be relative: .\.prev."
+
+	  echo tcontent >file4
+	  dotest tag-ext-27 "$testcvs -Q add file4"
+
+	  dotest tag-ext-28 "$testcvs -Q ci -maddtrunk"
+
+	  rm file4
+	  dotest tag-ext-29 "$testcvs remove file4" \
+"cvs remove: scheduling \`file4' for removal
+cvs remove: use \`cvs commit' to remove this file permanently"
+
+	  dotest tag-ext-30 "$testcvs -Q ci -mremtrunk"
+
+	  dotest_fail tag-ext-31 "$testcvs diff -r \.prev file2 file3" \
+"Index: file2
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
+retrieving revision 1\.2
+retrieving revision 1\.3
+diff -r1\.2 -r1\.3
+1c1
+< different content2
+---
+> different content3
+Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.2
+retrieving revision 1\.3
+diff -r1\.2 -r1\.3
+1c1
+< content
+---
+> tcontent"
+
+	  dotest_fail tag-ext-32 "$testcvs diff -r \.root file2 file3" \
+"cvs diff: tag \.root is not in file file2
+cvs diff: tag \.root is not in file file3"
+
+	  dotest tag-ext-33 "$testcvs diff -r \.origin.head file2 file3"
+
+	  dotest_fail tag-ext-34 "$testcvs diff -r BRANCH1-1\.root file2 file3" \
+"Index: file2
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
+retrieving revision 1\.2\.2\.1
+retrieving revision 1\.3
+diff -r1\.2\.2\.1 -r1\.3
+1c1
+< b1content
+---
+> different content3
+Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.1
+retrieving revision 1\.3
+diff -r1\.1\.2\.1 -r1\.3
+1c1
+< b1content
+---
+> tcontent"
+
+	  dotest_fail tag-ext-35 "$testcvs diff -r BRANCH1-1\.root\.prev\.head file2 file3" \
+"cvs diff: tag BRANCH1-1\.root\.prev\.head is not in file file3"
+
+	  dotest tag-ext-36 "$testcvs -q update -r BRANCH1 file3" \
+"U file3"
+
+	  dotest tag-ext-37 "$testcvs tag -b BRANCH1-2 file3" \
+"T file3"
+
+	  echo b1content3 >file3
+	  dotest tag-ext-38 "$testcvs -Q ci -maddbranch1 file3"
+
+	  dotest tag-ext-39 "$testcvs -q update -r BRANCH1-2 file3" \
+"U file3"
+
+	  echo b1-2content1 >file3
+	  dotest tag-ext-40 "$testcvs -Q ci -maddbranch1-2.1 file3"
+
+	  echo b1-2content2 >file3
+	  dotest tag-ext-41 "$testcvs -Q ci -maddbranch1-2.2 file3"
+
+	  dotest tag-ext-42 "$testcvs tag -b BRANCH1-2-1 file3" \
+"T file3"
+
+	  echo b1-2content3 >file3
+	  dotest tag-ext-43 "$testcvs -Q ci -maddbranch1-2.3 file3"
+
+	  dotest tag-ext-44 "$testcvs -q update -r BRANCH1-2-1 file3" \
+"U file3"
+
+	  echo b1-2-1content1 >file3
+	  dotest tag-ext-45 "$testcvs -Q ci -maddbranch1-2-1.1 file3"
+
+	  echo b1-2-1content2 >file3
+	  dotest tag-ext-46 "$testcvs -Q ci -maddbranch1-2-1.2 file3"
+
+
+	  echo b1-2-1content3 >file3
+	  dotest tag-ext-47 "$testcvs -Q ci -maddbranch1-2-1.3 file3"
+
+	  echo b1-2-1content4 >file3
+	  dotest tag-ext-48 "$testcvs -Q ci -maddbranch1-2-1.4 file3"
+
+	  echo b1-2-1content5 >file3
+	  dotest tag-ext-49 "$testcvs -Q ci -maddbranch1-2-1.5 file3"
+
+	  echo b1-2-1content6 >file3
+	  dotest tag-ext-50 "$testcvs -Q ci -maddbranch1-2-1.6 file3"
+
+	  echo b1-2-1content7 >file3
+	  dotest tag-ext-51 "$testcvs -Q ci -maddbranch1-2-1.7 file3"
+
+	  echo b1-2-1content8 >file3
+	  dotest tag-ext-52 "$testcvs -Q ci -maddbranch1-2-1.8 file3"
+
+	  echo b1-2-1content9 >file3
+	  dotest tag-ext-53 "$testcvs -Q ci -maddbranch1-2-1.9 file3"
+
+	  dotest tag-ext-54 "$testcvs tag -b BRANCH1-2-1-1 file3" \
+"T file3"
+
+	  echo b1-2-1content10 >file3
+	  dotest tag-ext-55 "$testcvs -Q ci -maddbranch1-2-1.10 file3"
+
+	  rm file3
+	  dotest tag-ext-56 "$testcvs remove file3" \
+"cvs remove: scheduling \`file3' for removal
+cvs remove: use \`cvs commit' to remove this file permanently"
+
+	  dotest tag-ext-57 "$testcvs -Q ci -mremBRANCH1-2-1.11 file3"
+
+	  dotest tag-ext-58 "$testcvs -q update -r BRANCH1-2-1-1 file3" \
+"U file3"
+
+	  echo b1-2-1-1content1 >file3
+	  dotest tag-ext-59 "$testcvs -Q ci -maddbranch1-2-1-1.1 file3"
+
+	  echo b1-2-1-1content2 >file3
+	  dotest tag-ext-60 "$testcvs -Q ci -maddbranch1-2-1-1.2 file3"
+
+	  dotest tag-ext-61 "$testcvs tag -b BRANCH1-2-1-1-1-1 file3" \
+"T file3"
+
+	  echo b1-2-1-1content3 >file3
+	  dotest tag-ext-62 "$testcvs -Q ci -maddbranch1-2-1-1.3 file3"
+
+	  dotest tag-ext-63 "$testcvs admin -o 1.1.2.2.2.2.2.4::1.1.2.2.2.2.2.8 file3" \
+"RCS file: $CVSROOT_DIRNAME/$module/file3,v
+deleting revision 1\.1\.2\.2\.2\.2\.2\.5
+deleting revision 1\.1\.2\.2\.2\.2\.2\.6
+deleting revision 1\.1\.2\.2\.2\.2\.2\.7
+done"
+
+	  dotest tag-ext-64 "$testcvs admin -o 1.1.2.2.2.2.2.2::1.1.2.2.2.2.2.4 file3" \
+"RCS file: $CVSROOT_DIRNAME/$module/file3,v
+deleting revision 1\.1\.2\.2\.2\.2\.2\.3
+done"
+
+	  dotest_fail tag-ext-65 "$testcvs diff -r \.root\.root\.root\.head file3" \
+"Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.3
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+diff -r1\.1\.2\.3 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+1c1
+< b1content3
+---
+> b1-2-1-1content3"
+
+	  dotest_fail tag-ext-66 "$testcvs diff -r \.origin -r \.origin\.head file3" \
+"Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.1
+retrieving revision 1\.1\.2\.3
+diff -r1\.1\.2\.1 -r1\.1\.2\.3
+1c1
+< b1content
+---
+> b1content3"
+
+	  dotest tag-ext-67 "$testcvs diff -r \.origin\.prev -r \.root\.head file3"
+
+	  dotest_fail tag-ext-68 "$testcvs diff -r \.origin\.prev -r \.root file3" \
+"cvs diff: tag \.origin\.prev is not in file file3"
+
+	  dotest_fail tag-ext-69 "$testcvs diff -r \.origin -r \.root\.head file3" \
+"cvs diff: Tag \.root\.head refers to a dead (removed) revision in file \`file3'\.
+cvs diff: No comparison available\.  Pass \`-N' to \`cvs diff'?"
+
+	  dotest_fail tag-ext-70 "$testcvs diff -r \.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev file3" \
+"Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.1
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+diff -r1\.1\.2\.1 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+1c1
+< b1content
+---
+> b1-2-1-1content3"
+
+	  date_T1=`getrlogdate -r1\.2 tag-ext/file3`
+	  date_T2=`getrlogdate -r1\.1\.2\.2\.2\.2\.2\.8 tag-ext/file3`
+	  
+	  dotest_fail tag-ext-71 "$testcvs diff -r \.trunk:'$date_T1' file3" \
+"Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.2
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+diff -r1\.2 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+1c1
+< content
+---
+> b1-2-1-1content3"
+
+	  dotest_fail tag-ext-72 "$testcvs diff -r BRANCH1-2-1:'$date_T2' file3" \
+"Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.8
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+diff -r1\.1\.2\.2\.2\.2\.2\.8 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+1c1
+< b1-2-1content8
+---
+> b1-2-1-1content3"
+
+          dotest_fail tag-ext-73 "$testcvs diff -rBRANCH1.prev file1" \
+"Index: file1
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file1,v
+retrieving revision 1\.2\.2\.1
+retrieving revision 1\.3
+diff -r1\.2\.2\.1 -r1\.3
+1c1
+< b1content
+---
+> content3"
+
+          COMMITID=$(cat $CVSROOT_DIRNAME/tag-ext/file3,v | grep -m 21 commitid | tail -n 1);
+          COMMITID=`expr match ${COMMITID:9} '\([a-zA-Z0-9]*\)'`
+	  dotest_fail tag-ext-74 "$testcvs diff -r .commitid.$COMMITID file3" \
+"Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.2
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+diff -r1\.1\.2\.2\.2\.2\.2\.9\.2\.2 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+1c1
+< b1-2-1-1content2
+---
+> b1-2-1-1content3"
+
+	  dotest_fail tag-ext-75 "$testcvs diff -r @$COMMITID file3" \
+"Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.2
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+diff -r1\.1\.2\.2\.2\.2\.2\.9\.2\.2 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+1c1
+< b1-2-1-1content2
+---
+> b1-2-1-1content3"
+
+	  dotest_fail tag-ext-76 "$testcvs diff -r '@<$COMMITID' file3" \
+"Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.1
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+diff -r1\.1\.2\.2\.2\.2\.2\.9\.2\.1 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+1c1
+< b1-2-1-1content1
+---
+> b1-2-1-1content3"
+
+          COMMITID=$(cat $CVSROOT_DIRNAME/tag-ext/file1,v | grep -m 3 commitid | tail -n 1);
+          COMMITID=`expr match ${COMMITID:9} '\([a-zA-Z0-9]*\)'`
+          dotest tag-ext-77 "$testcvs update -r .commitid.$COMMITID" \
+"cvs update: Updating .
+U file1
+U file2
+cvs update: \`file3' is no longer in the repository"
+
+	  dotest tag-ext-78 "cat CVS/Entries && cat CVS/Tag" \
+"/file1/1\.1/[a-zA-Z0-9 :]*//T\.commitid\.$COMMITID
+/file2/1\.1/[a-zA-Z0-9 :]*//T\.commitid\.$COMMITID
+D
+N\.commitid\.$COMMITID"
+
+          dotest tag-ext-79 "$testcvs update -r @$COMMITID" \
+"cvs update: Updating ."
+
+	  dotest tag-ext-80 "cat CVS/Entries && cat CVS/Tag" \
+"/file1/1\.1/[a-zA-Z0-9 :]*//T@$COMMITID
+/file2/1\.1/[a-zA-Z0-9 :]*//T@$COMMITID
+D
+N@$COMMITID"
+
+	  dotest tag-ext-81 "$testcvs -Q update -r BRANCH1-1"
+
+	  dotest tag-ext-82 "$testcvs -Q update -r BRANCH1 file1"
+
+          COMMITID=$(cat $CVSROOT_DIRNAME/tag-ext/file3,v | grep -m 3 commitid | tail -n 1);
+          COMMITID=`expr match ${COMMITID:9} '\([a-zA-Z0-9]*\)'`
+          dotest_fail tag-ext-83 "$testcvs diff -r .commitid.$COMMITID" \
+"cvs diff: Diffing .
+cvs diff: tag .commitid.$COMMITID is not in file file1
+cvs diff: tag .commitid.$COMMITID is not in file file2
+Index: file3
+===================================================================
+RCS file: /tmp/cvs-sanity/cvsroot/tag-ext/file3,v
+retrieving revision 1\.1\.2\.1
+retrieving revision 1\.1\.2\.1\.2\.2
+diff -r1\.1\.2\.1 -r1\.1\.2\.1\.2\.2
+1c1
+< b1content
+---
+> b1-1content2"
+
+          dotest_fail tag-ext-84 "$testcvs diff -r '@<$COMMITID'" \
+"cvs diff: Diffing .
+cvs diff: tag @<$COMMITID is not in file file1
+cvs diff: tag @<$COMMITID is not in file file2
+cvs diff: tag @<$COMMITID is not in file file3"
+
+          COMMITID=$(cat $CVSROOT_DIRNAME/tag-ext/file3,v | grep -m 2 commitid | tail -n 1);
+          COMMITID=`expr match ${COMMITID:9} '\([a-zA-Z0-9]*\)'`
+          dotest_fail tag-ext-85 "$testcvs diff -r '@<$COMMITID'" \
+"cvs diff: Diffing .
+cvs diff: tag @<$COMMITID is not in file file1
+cvs diff: tag @<$COMMITID is not in file file2
+Index: file3
+===================================================================
+RCS file: /tmp/cvs-sanity/cvsroot/tag-ext/file3,v
+retrieving revision 1\.1\.2\.1
+retrieving revision 1\.1\.2\.1\.2\.2
+diff -r1\.1\.2\.1 -r1\.1\.2\.1\.2\.2
+1c1
+< b1content
+---
+> b1-1content2"
+
+          dotest tag-ext-86 "$testcvs update -j .origin -j .prev file1 file2 file3" \
+"RCS file: /tmp/cvs-sanity/cvsroot/tag-ext/file1,v
+retrieving revision 1\.1
+retrieving revision 1\.2\.2\.1
+Merging differences between 1\.1 and 1\.2\.2\.1 into file1
+rcsmerge: warning: conflicts during merge
+RCS file: /tmp/cvs-sanity/cvsroot/tag-ext/file2,v
+retrieving revision 1\.1
+retrieving revision 1\.2\.2\.1\.2\.1
+Merging differences between 1\.1 and 1\.2\.2\.1\.2\.1 into file2
+rcsmerge: warning: conflicts during merge
+RCS file: /tmp/cvs-sanity/cvsroot/tag-ext/file3,v
+retrieving revision 1\.1\.2\.1
+retrieving revision 1\.1\.2\.1\.2\.1
+Merging differences between 1\.1\.2\.1 and 1\.1\.2\.1\.2\.1 into file3
+rcsmerge: warning: conflicts during merge"
+
+          dotest tag-ext-87 "cat CVS/Entries && cat CVS/Tag" \
+"/file1/1\.2\.2\.2/Result of merge+[a-zA-Z0-9 :]*//TBRANCH1
+/file2/1\.2\.2\.1\.2\.2/Result of merge+[a-zA-Z0-9 :]*//TBRANCH1-1
+/file3/1\.1\.2\.1\.2\.2/Result of merge+[a-zA-Z0-9 :]*//TBRANCH1-1
+D
+TBRANCH1-1"
+
+          dotest tag-ext-88 "$testcvs tag -r .prev atag file1 file2 file3" \
+"T file1
+T file2
+T file3"
+
+          dotest tag-ext-89 "$testcvs rtag -r BRANCH1-1.root.next btag tag-ext" \
+"cvs rtag: Tagging tag-ext"
+
+          dotest tag-ext-90 "$testcvs rlog tag-ext" \
+"cvs rlog: Logging tag-ext
+
+RCS file: $CVSROOT_DIRNAME/$module/file1,v
+head: 1\.3
+branch:
+locks: strict
+access list:
+symbolic names:
+	btag: 1\.2\.2\.2
+	atag: 1\.2\.2\.1
+	BRANCH1-1: 1\.2\.2\.1\.0\.2
+	BRANCH2: 1\.3\.0\.2
+	BRANCH1: 1\.2\.0\.2
+keyword substitution: kv
+total revisions: 7;	selected revisions: 7
+description:
+----------------------------
+revision 1\.3
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+vers3
+----------------------------
+revision 1\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+branches:  1\.2\.2;
+vers2
+----------------------------
+revision 1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
+add-em
+----------------------------
+revision 1\.2\.2\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1
+----------------------------
+revision 1\.2\.2\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+branches:  1\.2\.2\.1\.2;
+addbranch1
+----------------------------
+revision 1\.2\.2\.1\.2\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-1
+----------------------------
+revision 1\.2\.2\.1\.2\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-1
+=============================================================================
+
+RCS file: $CVSROOT_DIRNAME/$module/file2,v
+head: 1\.3
+branch:
+locks: strict
+access list:
+symbolic names:
+	btag: 1\.2\.2\.2
+	atag: 1\.2\.2\.1\.2\.1
+	BRANCH1-1: 1\.2\.2\.1\.0\.2
+	BRANCH2: 1\.3\.0\.2
+	BRANCH1: 1\.2\.0\.2
+keyword substitution: kv
+total revisions: 7;	selected revisions: 7
+description:
+----------------------------
+revision 1\.3
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+vers3
+----------------------------
+revision 1\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+branches:  1\.2\.2;
+vers2
+----------------------------
+revision 1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
+add-em
+----------------------------
+revision 1\.2\.2\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1
+----------------------------
+revision 1\.2\.2\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+branches:  1\.2\.2\.1\.2;
+addbranch1
+----------------------------
+revision 1\.2\.2\.1\.2\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-1
+----------------------------
+revision 1\.2\.2\.1\.2\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-1
+=============================================================================
+
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+head: 1\.3
+branch:
+locks: strict
+access list:
+symbolic names:
+	btag: 1\.1\.2\.2
+	atag: 1\.1\.2\.1\.2\.1
+	BRANCH1-2-1-1-1-1: 1\.1\.2\.2\.2\.2\.2\.9\.2\.2\.0\.2
+	BRANCH1-2-1-1: 1\.1\.2\.2\.2\.2\.2\.9\.0\.2
+	BRANCH1-2-1: 1\.1\.2\.2\.2\.2\.0\.2
+	BRANCH1-2: 1\.1\.2\.2\.0\.2
+	BRANCH1-1: 1\.1\.2\.1\.0\.2
+	RELEASE: 1\.1\.1\.1
+	VENDOR: 1\.1\.1
+	BRANCH2: 1\.1\.0\.4
+	BRANCH1: 1\.1\.0\.2
+keyword substitution: kv
+total revisions: 24;	selected revisions: 24
+description:
+----------------------------
+revision 1\.3
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addtrunk
+----------------------------
+revision 1\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -0;  commitid: ${commitid};
+addtrunk
+----------------------------
+revision 1\.1
+date: ${ISO8601DATE};  author: ${username};  state: dead;  commitid: ${commitid};
+branches:  1\.1\.1;  1\.1\.2;  1\.1\.4;
+file file3 was initially added on branch BRANCH1\.
+----------------------------
+revision 1\.1\.4\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -0;  commitid: ${commitid};
+addbranch2
+----------------------------
+revision 1\.1\.4\.1
+date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: +0 -0;  commitid: ${commitid};
+file file3 was added on branch BRANCH2 on ${ISO8601DATE}
+----------------------------
+revision 1\.1\.2\.3
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1
+----------------------------
+revision 1\.1\.2\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+branches:  1\.1\.2\.2\.2;
+addbranch1
+----------------------------
+revision 1\.1\.2\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -0;  commitid: ${commitid};
+branches:  1\.1\.2\.1\.2;
+addbranch1
+----------------------------
+revision 1\.1\.2\.2\.2\.3
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-2\.3
+----------------------------
+revision 1\.1\.2\.2\.2\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+branches:  1\.1\.2\.2\.2\.2\.2;
+addbranch1-2\.2
+----------------------------
+revision 1\.1\.2\.2\.2\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-2\.1
+----------------------------
+revision 1\.1\.2\.2\.2\.2\.2\.11
+date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: +0 -0;  commitid: ${commitid};
+remBRANCH1-2-1\.11
+----------------------------
+revision 1\.1\.2\.2\.2\.2\.2\.10
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-2-1\.10
+----------------------------
+revision 1\.1\.2\.2\.2\.2\.2\.9
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+branches:  1\.1\.2\.2\.2\.2\.2\.9\.2;
+addbranch1-2-1\.9
+----------------------------
+revision 1\.1\.2\.2\.2\.2\.2\.8
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-2-1\.8
+----------------------------
+revision 1\.1\.2\.2\.2\.2\.2\.4
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-2-1\.4
+----------------------------
+revision 1\.1\.2\.2\.2\.2\.2\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-2-1\.2
+----------------------------
+revision 1\.1\.2\.2\.2\.2\.2\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-2-1\.1
+----------------------------
+revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-2-1-1\.3
+----------------------------
+revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-2-1-1\.2
+----------------------------
+revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-2-1-1\.1
+----------------------------
+revision 1\.1\.2\.1\.2\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-1
+----------------------------
+revision 1\.1\.2\.1\.2\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -1;  commitid: ${commitid};
+addbranch1-1
+----------------------------
+revision 1\.1\.1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -0;  commitid: ${commitid};
+importvendor
+=============================================================================
+
+RCS file: $CVSROOT_DIRNAME/$module/Attic/file4,v
+head: 1\.3
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.3
+date: ${ISO8601DATE};  author: ${username};  state: dead;  lines: +0 -0;  commitid: ${commitid};
+remtrunk
+----------------------------
+revision 1\.2
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +1 -0;  commitid: ${commitid};
+addtrunk
+----------------------------
+revision 1\.1
+date: ${ISO8601DATE};  author: ${username};  state: dead;  commitid: ${commitid};
+file file4 was initially added on branch \.trunk\.
+============================================================================="
+
+	  # clean up
+	  dokeep
+	  restore_adm
+	  cd ../..
+	  rm -r $module
+	  modify_repo rm -rf $CVSROOT_DIRNAME/tag-ext
+	  TZ=$save_TZ
 	  ;;
 
 
@@ -27025,7 +27987,7 @@ ${SPROG} \[admin aborted\]: revision .2\.1\.2. does not exist"
 	  #
 	  dotest_fail admin-28-4 "${testcvs} admin -ntagnine:1.a.2 file2"  \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
-${SPROG} \[admin aborted\]: tag .1\.a\.2. must start with a letter"
+${SPROG} \[admin aborted\]: Tag .1\.a\.2. invalid. Cannot resolve extension: \`a'"
 
 	  # Confirm that a missing tag is not a fatal error.
 	  dotest admin-28-5.1 "${testcvs} -Q tag BO+GUS file1" ''

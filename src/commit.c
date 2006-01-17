@@ -697,6 +697,12 @@ commit (int argc, char **argv)
     Lock_Cleanup ();
     dellist (&mulist);
 
+    /* add the commitid to val-tags
+     */
+    char *commitid = Xasprintf ("@%s", global_session_id);
+    tag_check_valid (commitid, argc, argv, local, aflag, "", true);
+    free (commitid);
+
     /* see if we need to sleep before returning to avoid time-stamp races */
     if (!server_active && last_register_time)
     {

@@ -77,7 +77,8 @@ static int update_filesdone_proc (void *callerdat, int err,
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 static int get_linkinfo_proc( void *_callerdat, struct _finfo * );
 #endif
-static void join_file (struct file_info *finfo, Vers_TS *vers_ts);
+static void join_file (struct file_info *finfo, Vers_TS *vers_ts,
+                       const char *j1, const char *j2);
 
 static char *options = NULL;
 static char *tag = NULL;
@@ -766,7 +767,36 @@ update_fileproc (void *callerdat, struct file_info *finfo)
 
     /* only try to join if things have gone well thus far */
     if (retval == 0 && join_rev1)
-	join_file (finfo, vers);
+    {
+        char *j1;
+        char *j2;
+        bool invalid_tag = false;
+        if (RCS_is_relative (join_rev1))
+        {
+            j1 = Version_resolve_relTag (finfo, join_rev1, false);
+            if (!j1)
+                invalid_tag = true;
+        }
+        else
+            j1 = xstrdup (join_rev1);
+        if (join_rev2 && RCS_is_relative (join_rev2))
+        {
+            j2 = Version_resolve_relTag (finfo, join_rev2, false);
+            if (!j2)
+                invalid_tag = true;
+        }
+        else
+            j2 = xstrdup (join_rev2);
+        if (invalid_tag)
+        {
+            if (!really_quiet)
+                error (0, 0, "Cannot resolve relative tag: `%s'.", j1);
+        }
+        else
+            join_file (finfo, vers, j1, j2);
+        free (j1);
+        free (j2);
+    }
 
     /* if this directory has an ignore list, add this file to it */
     if (ignlist && (status != T_UNKNOWN || vers->ts_user == NULL))
@@ -2059,7 +2089,7 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
  *   1.  Is not called in client mode.
  */
 static void
-join_file (struct file_info *finfo, Vers_TS *vers)
+join_file (struct file_info *finfo, Vers_TS *vers, const char *j1, const char *j2)
 {
     char *backup;
     char *t_options;
@@ -2078,11 +2108,11 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	   vers->tag ? " (" : "",
 	   vers->vn_rcs ? vers->vn_rcs : "",
 	   vers->tag ? ")" : "",
-	   join_rev1 ? join_rev1 : "",
-	   join_rev2 ? join_rev2 : "");
+	   j1 ? j1 : "",
+	   j2 ? j2 : "");
 
-    jrev1 = join_rev1;
-    jrev2 = join_rev2;
+    jrev1 = j1;
+    jrev2 = j2;
     jdate1 = join_date1;
     jdate2 = join_date2;
 
@@ -2224,7 +2254,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
            been changed since the greatest common ancestor (rev1),
            then there is a conflict we can not resolve.  See above for
            the rationale.  */
-	if (join_rev2 == NULL
+	if (j2 == NULL
 	    && strcmp (rev1, vers->vn_user) != 0)
 	{
 	    if (jdate2 != NULL)

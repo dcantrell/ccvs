@@ -394,6 +394,7 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
     int dargc = 0;
     size_t darg_allocated = 0;
     char **dargv = NULL;
+    Vers_TS *vers;
 
     line1 = NULL;
     line1_chars_allocated = 0;
@@ -417,8 +418,11 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
 	vers_head = NULL;
     else
     {
-	vers_head = RCS_getversion (rcsfile, rev2, date2, force_tag_match,
-				    NULL);
+        vers = Version_TS (finfo, NULL, rev2, date2, force_tag_match, 0);
+        if (vers->vn_rcs != NULL)
+            vers_head = xstrdup (vers->vn_rcs);
+        freevers_ts (&vers);
+
 	if (vers_head != NULL && RCS_isdead (rcsfile, vers_head))
 	{
 	    free (vers_head);
@@ -446,7 +450,10 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
 	    goto out2;
 	}
     }
-    vers_tag = RCS_getversion (rcsfile, rev1, date1, force_tag_match, NULL);
+    vers = Version_TS (finfo, NULL, rev1, date1, force_tag_match, 0);
+    if (vers->vn_rcs != NULL)
+        vers_tag = xstrdup (vers->vn_rcs);
+    freevers_ts (&vers);
     if (vers_tag != NULL && RCS_isdead (rcsfile, vers_tag))
     {
         free (vers_tag);
