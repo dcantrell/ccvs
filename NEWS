@@ -3,6 +3,12 @@ Changes since 1.12.13:
 
 NEW FEATURES
 
+* New builtin tags are available: '.base' and '.head' as a replacement for
+  the well known HEAD and BASE tags and a new '.trunk'.  New `tag modifiers'
+  have also been added: '.root', '.origin', '.prev', '.next'.  Tag modifiers
+  are used like, `BRANCH.root', and `TAG.prev'.  Please see the documentation
+  for more.
+
 * Update's "P" status has been merged with "U" and the refetching messages
   have been supressed.
 
