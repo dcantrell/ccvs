@@ -119,7 +119,7 @@ Newphrases are also used to implement the 'commitid' & OpenPGP signature
 features. The following new keywords are defined for these purposes:
 
    commitid
-   signatures
+   openpgp-signatures
 
 The rules regarding keyword expansion are not documented along with
 the rest of the RCS file format; they are documented in the co(1)
