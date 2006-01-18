@@ -22,6 +22,6 @@ Segment 3: CVS Log, Status, Verify, & Sign (6 days)
 *   4.3.2 Server Verifies Signatures when Configured So: 1 day
 
 Segment 4: Checkout/Update/Diff (8 days)
->   4.4.1 Verify each Revision after Download: 1 day
+*   4.4.1 Verify each Revision after Download: 1 day
 *   4.4.2 Client-side Merges: 5 days
-    4.2.5.2 Client-side Diffs: 2 days
+>   4.2.5.2 Client-side Diffs: 2 days
