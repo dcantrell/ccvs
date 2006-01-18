@@ -80,6 +80,7 @@ static List *verify_args;
 void
 set_verify_checkouts (verify_state verify)
 {
+    TRACE (TRACE_FUNCTION, "set_verify_checkouts (%d)", verify);
     verify_checkouts = verify;
 }
 
@@ -240,6 +241,15 @@ get_verify_commits (void)
 
 
 
+bool
+get_verify_commits_fatal (void)
+{
+    verify_state tmp = iget_verify_commits ();
+    return tmp == VERIFY_FATAL;
+}
+
+
+
 /* Return VERIFY_TEMPLATE from the command line if it exists, else return the
  * VERIFY_TEMPLATE from CURRENT_PARSED_ROOT.
  */
@@ -346,9 +356,9 @@ verify_args_list_to_args_proc (Node *p, void *closure)
  * ERRORS
  *   Exits with a fatal error when FATAL and a signature cannot be verified.
  */
-static bool
-iverify_signature (const char *srepos, const char *sig, size_t siglen,
-		   const char *filename, bool bin, bool fatal)
+bool
+verify_signature (const char *srepos, const char *sig, size_t siglen,
+		  const char *filename, bool bin, bool fatal)
 {
     char *cmdline;
     char *sigfile;
@@ -431,11 +441,12 @@ iverify_signature (const char *srepos, const char *sig, size_t siglen,
     else if (pipestatus)
     {
 	if (WIFEXITED (pipestatus))
-	    error (fatal, 0, "verify program exited with error code %d",
-		   WEXITSTATUS (pipestatus));
+	    error (fatal, 0,
+		   "failed to verify `%s': exited with error code %d",
+		   filename, WEXITSTATUS (pipestatus));
 	else
-	    error (fatal, 0, "verify program exited via signal %d",
-		   WTERMSIG (pipestatus));
+	    error (fatal, 0, "failed to verify `%s': exited via signal %d",
+		   filename, WTERMSIG (pipestatus));
 	retval = false;
     }
     else
@@ -451,21 +462,12 @@ done:
 
 
 
-bool
-verify_signature (const char *srepos, const char *sig, size_t siglen,
-		  const char *filename, bool bin)
-{
-    return iverify_signature (srepos, sig, siglen, filename, bin,
-			      iget_verify_commits () == VERIFY_FATAL);
-}
-
-
-
 static const char *const verify_usage[] =
 {
     "Usage: %s %s [-lR]\n",
     "\t-l\tLocal directory only, no recursion.\n",
     "\t-R\tProcess directories recursively.\n",
+    "\t-p\tOutput signature to STDOUT without verifying.\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
@@ -607,8 +609,8 @@ verify_fileproc (void *callerdat, struct file_info *finfo)
     }
 
     if (!errors && !userargs->pipeout)
-	errors = !iverify_signature (Short_Repository (finfo->repository),
-				     NULL, 0, signedfn, bin, false);
+	errors = !verify_signature (Short_Repository (finfo->repository),
+				    NULL, 0, signedfn, bin, false);
 
     if (tmpfn)
     {

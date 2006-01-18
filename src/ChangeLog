@@ -1,3 +1,25 @@
+2006-01-18  Derek Price  <derek@ximbiot.com>
+
+	* client.c (update_entries): Improve error messages.
+	(client_write_sigfile): Cache signature when needed.  Update all
+	callers.
+	(client_base_checkout): Used cached signature for checkout
+	verification.
+	* cvs.h (CVS_VERIFY_TEMPLATE_ENV): New macro.
+	* import.c (add_rcs_file): Add with signature when needed.
+	* main.c (main): Standardize parsing of OpenPGP env var content.
+	Parse $CVS_VERIFY_TEMPLATE.
+	* sanity.config.sh.in: Add DEFAULT_VERIFY_TEMPLATE and quote other
+	var content.
+	* sign.c (get_sign_commits, have_sigfile, get_signature): Use global
+	server_active.  Update all references.
+	* verify.c (get_verify_commits_fatal): New function.
+	(iverify_signature): Replace with...
+	(verify_signature): ...this.  Improve error messages.  Accept fatal as
+	an argument.  Update all references.
+	
+	* sanity.sh: Update to compensate.
+	
 2006-01-17  Derek Price  <derek@ximbiot.com>
 
 	* rcs.c (RCS_has_openpgp_signatures): Suppress error on some systems.

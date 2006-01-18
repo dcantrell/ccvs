@@ -433,8 +433,8 @@ fi
 if $bases; then
   unset CVSNOBASES
   # Accept the default GPG mode.
-  unset CVS_VERIFY_CHECKOUTS
   unset CVS_SIGN_COMMITS
+  unset CVS_VERIFY_CHECKOUTS
 else
   # Force the client to not report base support to the server.
   export CVSNOBASES=:
@@ -1262,6 +1262,24 @@ restore_adm ()
     modify_repo cp -Rp $TESTDIR/CVSROOT.save $CVSROOT_DIRNAME/CVSROOT
 }
 
+# OpenPGP signatures don't play nice with RCS keywords, so disable signatures
+# for the duration of a test.
+test_uses_keywords ()
+{
+  save_CVS_VERIFY_CHECKOUTS=$CVS_VERIFY_CHECKOUTS
+  CVS_VERIFY_CHECKOUTS=off; export CVS_VERIFY_CHECKOUTS
+}
+
+test_uses_keywords_done ()
+{
+  if test "x$save_CVS_VERIFY_CHECKOUTS" != x; then
+    CVS_VERIFY_CHECKOUTS=$save_CVS_VERIFY_CHECKOUTS
+    export CVS_VERIFY_CHECKOUTS
+  else
+    unset CVS_VERIFY_CHECKOUTS
+  fi
+}
+
 # Test that $RSYNC supports the options we need or try to find a
 # replacement. If $RSYNC works or we replace it, and return 0.
 # Otherwise, set $skipreason and return 77.
@@ -1813,6 +1831,9 @@ EOF
   log_keyid="OpenPGP signature using key ID 0x[0-9a-f]*;
 "
   gpg=:
+  CVS_VERIFY_TEMPLATE="`echo $DEFAULT_VERIFY_TEMPLATE \
+			|sed 's/ -- / --quiet -- /'` 2>/dev/null"
+  export CVS_VERIFY_TEMPLATE
 else # GPG not set
   echo "No working GPG was found.  This test suite will run, but OpenPGP" >&2
   echo "commit signatures will not be tested." >&2
@@ -2811,19 +2832,22 @@ newroot() {
 # Testing :pserver: would be hard (inetd issues).  (How about using tcpserver
 # and some high port number?  DRP)
 
-if $linkroot; then
-    mkdir ${TESTDIR}/realcvsroot
-    ln -s realcvsroot ${TESTDIR}/cvsroot
-fi
-CVSROOT_DIRNAME=${TESTDIR}/cvsroot
-CVSROOT=`newroot $CVSROOT_DIRNAME`; export CVSROOT
-
 
 
 ###
 ### Initialize the repository
 ###
-dotest init-1 "$testcvs init"
+CVSROOT_DIRNAME=$TESTDIR/cvsroot
+CVSROOT=`newroot $CVSROOT_DIRNAME`; export CVSROOT
+dotest init-1 "$testcvs -d$CVSROOT_DIRNAME init"
+
+
+
+# Hide the real root behind a symlink in $linkroot mode.
+if $linkroot; then
+    mv $CVSROOT_DIRNAME $TESTDIR/realcvsroot
+    ln -s realcvsroot mv $CVSROOT_DIRNAME
+fi
 
 # Now hide the primary root behind a secondary if requested.
 if $proxy; then
@@ -5379,6 +5403,8 @@ initial revision: 1\.1"
 
 
 	commit-readonly)
+	  test_uses_keywords
+
 	  mkdir 1; cd 1
 	  module=x
 
@@ -5407,6 +5433,7 @@ $SPROG add: use .$SPROG commit. to add this file permanently"
 	  cd ../..
 	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/"$module"
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -5602,6 +5629,8 @@ ${SPROG} \[commit aborted\]: lock failed - giving up"
 
 	rdiff)
 		# Test rdiff
+		test_uses_keywords
+
 		# XXX for now this is just the most essential test...
 		cd ${TESTDIR}
 
@@ -5688,6 +5717,7 @@ diff -c /dev/null trdiff/new:1\.1
 		cd ..
 		rm -r testimport
 		modify_repo rm -rf $CVSROOT_DIRNAME/trdiff
+		test_uses_keywords_done
 		;;
 
 
@@ -8686,6 +8716,7 @@ EOF
 	  # neither tag should be expanded in the output.  Also diff
 	  # one revision with the working copy.
 
+	  test_uses_keywords
 	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  dotest rcslib-diff1 "${testcvs} -q co first-dir" ''
 	  cd first-dir
@@ -9059,6 +9090,7 @@ new revision: 1\.5; previous revision: 1\.4"
 			     $CVSROOT_DIRNAME/second-dir \
 			     $CVSROOT_DIRNAME/123456789012345678901234567890
 	  rm -rf first-dir second-dir 2
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -9155,6 +9187,8 @@ ${log_keyid}modify-on-br1
 		#   although it doesn't really do it yet.
 		# import-CVS -- refuse to import directories named "CVS".
 		# import-quirks -- short tests of import quirks.
+
+		test_uses_keywords
 
 		# import
 		mkdir import-dir ; cd import-dir
@@ -9356,6 +9390,7 @@ rev 2 of file 2
 		rm -rf first-dir
 		modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 		rm -r import-dir
+		test_uses_keywords_done
 		;;
 
 
@@ -9454,7 +9489,7 @@ ${log_keyid}add
 ----------------------------
 revision 1\.1\.1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
-add
+${log_keyid}add
 ============================================================================="
 
 	  dokeep
@@ -9551,7 +9586,7 @@ Initial revision
 revision 1\.1\.1\.1
 date: ${ISO8601DATE2034};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
 branches:  1\.1\.1\.1\.2;
-import-it
+${log_keyid}import-it
 ----------------------------
 revision 1\.1\.1\.1\.2\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
@@ -9580,7 +9615,7 @@ Initial revision
 ----------------------------
 revision 1\.1\.1\.1
 date: ${ISO8601DATE1971};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
-import-it
+${log_keyid}import-it
 ============================================================================="
 	  cd ..
 
@@ -9703,7 +9738,7 @@ ${log_keyid}add
 ----------------------------
 revision 1\.1\.1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
-add
+${log_keyid}add
 ============================================================================="
 
 	  dotest importX-6 "${testcvs} -q log file1" "
@@ -9736,7 +9771,7 @@ ${log_keyid}add
 ----------------------------
 revision 1\.1\.1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
-add
+${log_keyid}add
 ============================================================================="
 
 	  cd ../..
@@ -9813,7 +9848,7 @@ Initial revision
 ----------------------------
 revision 1\.1\.1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
-add
+${log_keyid}add
 ============================================================================="
 
 	  dokeep
@@ -11220,6 +11255,7 @@ C $file"
 
 
 	join-admin)
+	  test_uses_keywords
 	  mkdir 1; cd 1
 	  dotest join-admin-0-1 "$testcvs -q co -l ."
 	  module=x
@@ -11263,6 +11299,7 @@ File: b                	Status: Up-to-date
 	  cd ../..
 	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -11272,6 +11309,7 @@ File: b                	Status: Up-to-date
 	  # removes a file, then modifies another containing an $Id...$ line,
 	  # the resulting file contains the unexpanded `$Id.$' string, as
 	  # -kk requires.
+	  test_uses_keywords
 	  mkdir 1; cd 1
 	  dotest join-admin-2-1 "$testcvs -q co -l ." ''
 	  module=x
@@ -11323,6 +11361,7 @@ Merging differences between 1\.1 and 1\.2 into \`e'
 	  cd ../..
 	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -12270,6 +12309,8 @@ fish"
 	    continue
 	  fi
 
+	  test_uses_keywords
+
 	  mkdir keywordexpand; cd keywordexpand
 
 	  dotest keywordexpand-1 "${testcvs} -q co CVSROOT" \
@@ -12388,6 +12429,7 @@ $SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: LocalKeyword ign
 	  rm -rf $TESTDIR/keywordexpand
           modify_repo rm -rf $CVSROOT_DIRNAME/keywordexpand
 	  restore_adm
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -16373,6 +16415,8 @@ ${CPROG} \[update aborted\]: \*PANIC\* administration files missing!"
 	    continue
 	  fi
 
+	  test_uses_keywords
+
 	  mkdir errmsg4
 	  cd errmsg4
 	  dotest errmsg4-init-1 "$testcvs -Q import -m. errmsg4 VENDOR RELEASE"
@@ -16394,6 +16438,7 @@ initial revision: 1\.1"
 	  cd ../..
 	  rm -rf errmsg4
 	  modify_repo rm -rf $CVSROOT_DIRNAME/errmsg4
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -17822,6 +17867,9 @@ new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1"
 	  #   * -k wrappers: binwrap, binwrap2, binwrap3
 	  #   * "cvs import" and wrappers: binwrap, binwrap2, binwrap3
 	  #   * -k option to "cvs import": none yet, as far as I know.
+
+	  test_uses_keywords
+
 	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  mkdir 1; cd 1
 	  dotest binfiles-1 "${testcvs} -q co first-dir" ''
@@ -18108,6 +18156,7 @@ total revisions: 1
 	  cd ../..
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  rm -rf 1 2
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -20540,6 +20589,9 @@ initial revision: 1\.1"
 	  # much of a test for local CVS.
 	  # We test this with some keyword expansion games, but the situation
 	  # also arises if the user modifies the file while CVS is running.
+
+	  test_uses_keywords
+
 	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  mkdir 1
 	  cd 1
@@ -20587,6 +20639,7 @@ U file1"
 	  cd ../..
 	  rm -rf 1 2
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -21988,6 +22041,9 @@ Annotations for first-dir/file1
 	  # the output of `cvs annotate' -- it uses values from the previous
 	  # delta.  In this case, `1.1' instead of `1.2', even though it puts
 	  # the proper version number on the prefix to each line of output.
+
+	  test_uses_keywords
+
 	  mkdir 1; cd 1
 	  dotest ann-id-1 "$testcvs -q co -l ."
 	  module=x
@@ -22020,6 +22076,7 @@ Annotations for $file
 	  cd ../..
 	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -22213,6 +22270,11 @@ ${SPROG} update: Updating crerepos-dir"
 	  # CVS must always be able to import such files.
 
 	  # See tests admin-13, admin-25 and rcs-8a for exporting RCS files.
+
+	  # This test doesn't really use keywords, but there are no signatures
+	  # in the RCS content that has been pasted into this script, so
+	  # supress the OpenPGP support.
+	  test_uses_keywords
 
 	  # Save the timezone and set it to UTC for these tests to make the
 	  # value more predicatable.
@@ -22698,6 +22760,7 @@ revision 1\.4"
 	  cd ..
 	  rm -rf first-dir
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -22706,6 +22769,7 @@ revision 1\.4"
 	  # More date tests.  Might as well do this as a separate
 	  # test from "rcs", so that we don't need to perturb the
 	  # "written by RCS 5.7" RCS file.
+	  test_uses_keywords
 	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  # Significance of various dates:
 	  # * At least one Y2K standard refers to recognizing 9 Sep 1999
@@ -22787,6 +22851,7 @@ EOF
 	  cd ..
 	  rm -rf first-dir
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -22794,6 +22859,7 @@ EOF
 	rcs3)
 	  # More RCS file tests, in particular at least some of the
 	  # error handling issues.
+	  test_uses_keywords
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  cat <<EOF >$TESTDIR/file1,v
 head 1.1; access; symbols; locks; expand o; 1.1 date 2007.03.20.04.03.02
@@ -22857,6 +22923,7 @@ EOF
 	  cd ../..
 	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -22964,6 +23031,7 @@ File: file1            	Status: Up-to-date
 	  # spec, though it doesn't appear to be possible to create such a log
 	  # message using RCS 5.7.
 
+	  test_uses_keywords
 	  modify_repo mkdir $CVSROOT_DIRNAME/rcs5
 	  cat <<\EOF >$TESTDIR/file1,v
 head 1.1;
@@ -23008,6 +23076,7 @@ line5"
 	  cd ..
           rm -rf rcs5
           modify_repo rm -rf $CVSROOT_DIRNAME/rcs5
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -23259,6 +23328,7 @@ $SPROG commit: Rebuilding administrative file database"
 	  #   Granted, the developer should have been notified not to do this
 	  #	by now, but still...
 	  #
+	  test_uses_keywords
 	  mkdir backuprecover; cd backuprecover
 	  mkdir 1; cd 1
 	  dotest backuprecover-1 "$testcvs -q co -l ."
@@ -23488,6 +23558,7 @@ new revision: 1\.6; previous revision: 1\.5"
 	  cd ../../..
 	  rm -rf backuprecover
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -24178,6 +24249,7 @@ ${SPROG} update: Updating second-dir"
 
 	stamps)
 	  # Test timestamps.
+	  test_uses_keywords
 	  mkdir 1; cd 1
 	  dotest stamps-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
@@ -24285,6 +24357,7 @@ U kw'
 	  cd ../..
 	  rm -rf 1 2
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -24613,6 +24686,7 @@ U file1" "U file1"
 	  # I don't think any test is testing "cvs import -k".
 	  # Other keyword expansion tests:
 	  #   keywordlog - $Log.
+	  test_uses_keywords
 	  mkdir 1; cd 1
 	  dotest keyword-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
@@ -24793,12 +24867,14 @@ change"
 	  cd ../..
 	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  test_uses_keywords_done
 	  ;;
 
 
 
 	keywordlog)
 	  # Test the Log keyword.
+	  test_uses_keywords
 	  mkdir 1; cd 1
 	  dotest keywordlog-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
@@ -25099,6 +25175,7 @@ fi
 	  restore_adm
 	  rm -rf 1 2 3
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -25107,6 +25184,7 @@ fi
 	  # Test the Name keyword.
 	  # See the keyword test for a descriptions of some other tests that
 	  # test keyword expansion modes.
+	  test_uses_keywords
 	  mkdir keywordname; cd keywordname
 	  mkdir 1; cd 1
 	  dotest keywordname-init-1 "${testcvs} -q co -l ." ''
@@ -25200,6 +25278,7 @@ U first-dir/file2"
 	  cd ../../..
 	  rm -rf keywordname
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -25214,6 +25293,7 @@ U first-dir/file2"
 	  #    test sequence
 	  # Note2:  We are testing positive on binary corruption here
 	  #    we probably really DON'T want to 'cvs update -kk' a binary file...
+	  test_uses_keywords
 	  mkdir 1; cd 1
 	  dotest keyword2-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
@@ -25330,6 +25410,7 @@ U file1"
 	  cd ../..
 	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -27539,6 +27620,7 @@ M testcase10"
 	  # FIXME: This test should be rewritten to be much more concise.
 	  # It currently weighs in at something like 600 lines, but the
 	  # same thing could probably be tested in more like 50-100 lines.
+	  test_uses_keywords
 	  mkdir diffmerge2
 
 	  # This tests for another diffmerge bug reported by Martin
@@ -28220,6 +28302,7 @@ M sgrid\.h"
 	  cd ..
 	  rm -rf diffmerge2
 	  modify_repo rm -rf $CVSROOT_DIRNAME/diffmerge2
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -32056,7 +32139,7 @@ ${SPROG} update: Updating first/subdir"
 	  SECONDARY_CVSROOT=`newroot $SECONDARY_CVSROOT_DIRNAME`
 
 	  # Initialize the primary repository
-	  dotest writeproxy-init-1 "$testcvs -d$PRIMARY_CVSROOT init"
+	  dotest writeproxy-init-1 "$testcvs -d$PRIMARY_CVSROOT_DIRNAME init"
 	  mkdir writeproxy; cd writeproxy
 	  mkdir primary; cd primary
 	  dotest writeproxy-init-2 "$testcvs -Qd$PRIMARY_CVSROOT co CVSROOT"
@@ -32230,6 +32313,7 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSRO
 	  PRIMARY_CVSROOT=$PRIMARY_CVSROOT_save
 	  SECONDARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME_save
 	  SECONDARY_CVSROOT=$SECONDARY_CVSROOT_save
+	  test_uses_keywords_done
 	  ;;
 
 
@@ -32263,6 +32347,8 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSRO
 	  PRIMARY_CVSROOT=`newroot $PRIMARY_CVSROOT_DIRNAME`
 	  SECONDARY_CVSROOT_DIRNAME_save=$SECONDARY_CVSROOT_DIRNAME
 	  SECONDARY_CVSROOT_DIRNAME=$TESTDIR/writeproxy_cvsroot
+
+	  test_uses_keywords
 
 	  # Initialize the primary repository
 	  dotest writeproxy-noredirect-init-1 \
@@ -32766,6 +32852,10 @@ EOF
 	  echo some content >file1
 	  dotest openpgp-init-6 "$testcvs -Q add file1"
 
+	  # Make GPG noisy again.
+	  save_CVS_VERIFY_TEMPLATE=$CVS_VERIFY_TEMPLATE
+	  unset CVS_VERIFY_TEMPLATE
+
 	  dotest openpgp-0 "$testcvs -Q ci -m newfile file1" \
 "$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
 
@@ -32793,7 +32883,10 @@ $DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
 	  restore_adm
 	  rm -rf openpgp
 	  modify_repo rm -rf $CVSROOT_DIRNAME/openpgp
+	  CVS_VERIFY_TEMPLATE=$save_CVS_VERIFY_TEMPLATE
 	  ;;
+
+
 
 	openpgp2)
 	  # Some tests of the client (independent of the server).
@@ -32810,6 +32903,10 @@ $DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
 	    notproxy openpgp2
 	    continue
 	  fi
+
+	  save_CVS_VERIFY_TEMPLATE=$CVS_VERIFY_TEMPLATE
+	  CVS_VERIFY_TEMPLATE="$DEFAULT_VERIFY_TEMPLATE"
+	  export CVS_VERIFY_TEMPLATE
 
 	  cat >$TESTDIR/serveme <<EOF
 #!$TESTSHELL
@@ -32914,6 +33011,7 @@ $CPROG \[checkout aborted\]: The server sent unsigned file content\."
 	  cd ..
 	  rm -r openpgp2
 	  CVS_SERVER=$save_CVS_SERVER; export CVS_SERVER
+	  CVS_VERIFY_TEMPLATE=$save_CVS_VERIFY_TEMPLATE
 	  ;;
 
 

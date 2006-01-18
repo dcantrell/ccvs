@@ -251,6 +251,9 @@ char *strerror (int);
 					/* verify checkouts */
 #define	CVS_VERIFY_CHECKOUTS_ENV \
 			"CVS_VERIFY_CHECKOUTS"
+					/* verify template */
+#define	CVS_VERIFY_TEMPLATE_ENV \
+			"CVS_VERIFY_TEMPLATE"
 
 					/* sign commits */
 #define	CVS_SIGN_COMMITS_ENV \

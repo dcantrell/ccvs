@@ -37,14 +37,14 @@ void set_sign_template (const char *template);
 void add_sign_arg (const char *arg);
 
 /* Get values.  */
-bool get_sign_commits (bool server_active, bool server_support);
+bool get_sign_commits (bool server_support);
 char *gen_signature (const char *srepos, const char *filename, bool bin,
 		     size_t *len);
-char *get_signature (bool server_active, const char *srepos,
-		     const char *filename, bool bin, size_t *len);
+char *get_signature (const char *srepos, const char *filename, bool bin,
+		     size_t *len);
 
 /* Other utilities.  */
-bool have_sigfile (bool server_active, const char *fn);
+bool have_sigfile (const char *fn);
 char *get_sigfile_name (const char *fn);
 
 /* Sign command.  */
