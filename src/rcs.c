@@ -4887,8 +4887,7 @@ RCS_add_openpgp_signature (struct file_info *finfo, const char *rev)
 	free (n->data);
     }
 
-    newsig = get_signature (server_active,
-		    	    Short_Repository (finfo->repository), finfo->file,
+    newsig = get_signature (Short_Repository (finfo->repository), finfo->file,
 			    finfo->rcs->expand
 			    && STREQ (finfo->rcs->expand, "b"),
 			    &newlen);
@@ -5423,9 +5422,7 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
     addnode (delta->other_delta, np);
 
     /* Save the OpenPGP signature.  */
-    if (!delta->dead
-	&& (get_sign_commits (server_active, true)
-	    || have_sigfile (server_active, workfile)))
+    if (!delta->dead && (get_sign_commits (true) || have_sigfile (workfile)))
     {
 	char *rawsig;
 	size_t rawlen;
@@ -5433,7 +5430,7 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
 	np = getnode();
 	np->type = RCSSTRING;
 	np->key = xstrdup ("openpgp-signatures");
-	rawsig = get_signature (server_active, "", workfile,
+	rawsig = get_signature ("", workfile,
 				rcs->expand && STREQ (rcs->expand, "b"),
 				&rawlen);
 	np->len = base64_encode_alloc (rawsig, rawlen, (char **)&np->data);

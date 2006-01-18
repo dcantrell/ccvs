@@ -85,6 +85,7 @@ static List *sign_args;
 void
 set_sign_commits (sign_state sign)
 {
+    TRACE (TRACE_FUNCTION, "set_sign_commits (%d)", sign);
     sign_commits = sign;
 }
 
@@ -116,7 +117,7 @@ add_sign_arg (const char *arg)
  *   server_support	Whether the server supports signed files.
  */
 bool
-get_sign_commits (bool server_active, bool server_support)
+get_sign_commits (bool server_support)
 {
     sign_state tmp;
 
@@ -234,7 +235,7 @@ get_sigfile_name (const char *fn)
 
 
 bool
-have_sigfile (bool server_active, const char *fn)
+have_sigfile (const char *fn)
 {
     char *sfn;
     bool retval;
@@ -355,8 +356,7 @@ read_signature (const char *fn, size_t *len)
  *   exit with an error as configured.
  */
 char *
-get_signature (bool server_active, const char *srepos, const char *filename,
-	       bool bin, size_t *len)
+get_signature (const char *srepos, const char *filename, bool bin, size_t *len)
 {
     char *sig;
 
@@ -366,7 +366,8 @@ get_signature (bool server_active, const char *srepos, const char *filename,
 	sig = gen_signature (srepos, filename, bin, len);
     
     if (get_verify_commits ())
-	verify_signature (srepos, sig, *len, filename, bin);
+	verify_signature (srepos, sig, *len, filename, bin,
+			  get_verify_commits_fatal ());
 
     return sig;
 }

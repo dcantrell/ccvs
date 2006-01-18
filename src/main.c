@@ -611,36 +611,51 @@ main (int argc, char **argv)
     }
     if ((cp = getenv (CVS_VERIFY_CHECKOUTS_ENV)))
     {
-	if (!strcasecmp (cp, "off")
-	    || !strcasecmp (cp, "never")
-	    || !strcasecmp (cp, "false"))
-	    set_verify_checkouts (VERIFY_OFF);
-	else if (!strcasecmp (cp, "warn"))
+	if (!strcasecmp (cp, "warn"))
 	    set_verify_checkouts (VERIFY_WARN);
-	else if (!strcasecmp (cp, "always")
-		 || !strcasecmp (cp, "fatal")
-		 || !strcasecmp (cp, "on")
-		 || !strcasecmp (cp, "true"))
+	else if (!strcasecmp (cp, "fatal"))
 	    set_verify_checkouts (VERIFY_FATAL);
 	else
-	    error (1, 0,
-		   "Unrecognized content (`%s') in $%s",
-		   cp, CVS_VERIFY_CHECKOUTS_ENV);
+	{
+	    bool on;
+	    if (readBool ("environment", CVS_VERIFY_CHECKOUTS_ENV, cp, &on))
+	    {
+		if (on)
+		    set_verify_checkouts (VERIFY_FATAL);
+		else
+		    set_verify_checkouts (VERIFY_OFF);
+	    }
+	    else
+		error (1, 0,
+		       "Unrecognized content (`%s') in $%s",
+		       cp, CVS_VERIFY_CHECKOUTS_ENV);
+	}
     }
     if ((cp = getenv (CVS_SIGN_COMMITS_ENV)))
     {
 	if (!strcasecmp (cp, "auto")
 	    || !strcasecmp (cp, "server"))
 	    set_sign_commits (SIGN_DEFAULT);
-	else if (!strcasecmp (cp, "on"))
-	    set_sign_commits (SIGN_ALWAYS);
-	else if (!strcasecmp (cp, "off"))
+	else if (!strcasecmp (cp, ""))
 	    set_sign_commits (SIGN_NEVER);
 	else
-	    error (0, 0,
-		   "Unrecognized content (`%s') in $%s ignored",
-		   cp, CVS_SIGN_COMMITS_ENV);
-    }
+	{
+	    bool on;
+	    if (readBool ("environment", CVS_SIGN_COMMITS_ENV, cp, &on))
+	    {
+		if (on)
+		    set_sign_commits (SIGN_ALWAYS);
+		else
+		    set_sign_commits (SIGN_NEVER);
+	    }
+	    else
+		error (0, 0,
+		       "Unrecognized content (`%s') in $%s ignored",
+		       cp, CVS_SIGN_COMMITS_ENV);
+	}
+    } 
+    if ((cp = getenv (CVS_VERIFY_TEMPLATE_ENV)))
+	set_verify_template (cp);
 
     /* Set this to 0 to force getopt initialization.  getopt() sets
        this to 1 internally.  */

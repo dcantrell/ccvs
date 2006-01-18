@@ -940,8 +940,7 @@ warning: file `%s' seems to still contain conflict indicators",
 	    if ((status == T_ADDED || status == T_MODIFIED)
 		&& !force_ci && !really_quiet
 		/* This will not be called from the client.  */
-		&& (get_sign_commits (server_active, true)
-		    || have_sigfile (server_active, finfo->file))
+		&& (get_sign_commits (true) || have_sigfile (finfo->file))
 		&& file_contains_keyword (finfo))
 	    {
 		/* Make this a warning, not an error, because the user may

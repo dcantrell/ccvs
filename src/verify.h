@@ -47,8 +47,9 @@ void add_verify_arg (const char *arg);
 bool get_verify_checkouts (bool server_support);
 bool get_verify_checkouts_fatal (void);
 bool get_verify_commits (void);
+bool get_verify_commits_fatal (void);
 bool verify_signature (const char *srepos, const char *sig, size_t siglen,
-		       const char *filename, bool bin);
+		       const char *filename, bool bin, bool fatal);
 
 /* User command.  */
 int verify (int argc, char **argv);

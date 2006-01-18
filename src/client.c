@@ -1592,7 +1592,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 
 	if (get_verify_checkouts (true) && strcmp (cvs_cmd_name, "export"))
 	    error (get_verify_checkouts_fatal (), 0,
-		   "The server sent unsigned file content.");
+		   "No signature for `%s'.", short_pathname);
 
 	if (!validate_change (data->existp, filename, short_pathname))
 	{
@@ -1940,7 +1940,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		delnode (n);
 		free (sigfile);
 	    }
-	    else if (get_sign_commits (false, supported_request ("Signature")))
+	    else if (get_sign_commits (supported_request ("Signature")))
 		error (0, 0,
 "Internal error: OpenPGP signature for `%s' not found in cache.",
 		       short_pathname);
@@ -2223,11 +2223,19 @@ handle_openpgp_signature (char *args, size_t len)
 
 
 
+/* Write the signatures in the global STORED_SIGNATURES to SIGFILE.  Use
+ * WRITABLE to set permissions.  If SIGCOPY is not NULL, assume that SIGLEN
+ * isn't either and save a copy of the signature in newly allocated memory
+ * stored at *SIGCOPY and set *SIGLEN to its length.
+ */
 static void
-client_write_sigfile (const char *sigfile, bool writable)
+client_write_sigfile (const char *sigfile, bool writable, char **sigcopy,
+		      size_t *siglen)
 {
     FILE *e;
     size_t want;
+
+    assert (!sigcopy || siglen);
 
     if (!stored_signatures)
 	return;
@@ -2237,6 +2245,11 @@ client_write_sigfile (const char *sigfile, bool writable)
     e = xfopen (sigfile, FOPEN_BINARY_WRITE);
 
     want = buf_length (stored_signatures);
+    if (sigcopy)
+    {
+	*sigcopy = NULL;
+	*siglen = 0;
+    }
     while (want > 0)
     {
 	char *data;
@@ -2246,6 +2259,13 @@ client_write_sigfile (const char *sigfile, bool writable)
 
 	if (fwrite (data, sizeof *data, got, e) != got)
 	    error (1, errno, "cannot write signature file `%s'", sigfile);
+
+	if (sigcopy)
+	{
+	    *sigcopy = xrealloc (*sigcopy, *siglen + got);
+	    memcpy (*sigcopy + *siglen, data, got);
+	    *siglen += got;
+	}
 
 	want -= got;
     }
@@ -2381,6 +2401,7 @@ client_base_checkout (void *data_arg, List *ent_list,
     {
 	FILE *e;
 	int status;
+	bool verify = get_verify_checkouts (true);
 
 	if (!*istemp)
 	    mkdir_if_needed (CVSADM_BASE);
@@ -2397,10 +2418,32 @@ client_base_checkout (void *data_arg, List *ent_list,
 	if (stored_signatures)
 	{
 	    char *sigfile = Xasprintf ("%s.sig", basefile);
+	    char *sigcopy;
+	    size_t siglen;
 
-	    client_write_sigfile (sigfile, *istemp);
+	    /* A lot of trouble is gone through here to copy the signatures
+	     * into a buffer in addition to writing them to disk.  Writing to
+	     * disk requires a call to fsync () before the call to
+	     * verify_signature otherwise, and fsync () is quite slow.
+	     */
+	    client_write_sigfile (sigfile, *istemp,
+				  verify ? &sigcopy : NULL, &siglen);
 
-	    /* FIXME: Verify the signature here, when configured to do so.  */
+	    /* Verify the signature here, when configured to do so.  */
+	    if (verify /* cannot be `cvs export'. */)
+	    {
+		char *repos = Name_Repository (NULL, update_dir);
+		const char *srepos = Short_Repository (repos);
+		if (!verify_signature (srepos, sigcopy, siglen, basefile, bin,
+				       get_verify_checkouts_fatal ()))
+		{
+		    /* verify_signature exits when VERIFY_FATAL.  */
+		    assert (!get_verify_checkouts_fatal ());
+		    error (0, 0, "Bad signature for `%s'.", fullbase);
+		}
+		free (repos);
+		free (sigcopy);
+	    }
 
 	    if (istemp && CVS_UNLINK (sigfile) < 0)
 		error (0, errno, "Failed to remove temp sig file `%s'",
@@ -2408,9 +2451,10 @@ client_base_checkout (void *data_arg, List *ent_list,
 
 	    free (sigfile);
 	}
+	else if (verify /* cannot be `cvs export'. */)
+	    error (get_verify_checkouts_fatal (), 0,
+		   "No signature for `%s'.", fullbase);
     }
-
-    /* FIXME: When enabled, verify base file via openpgp signature.  */
 
     free (buf);
     free (rev);
@@ -2476,7 +2520,7 @@ client_base_signatures (void *data_arg, List *ent_list,
 		   sigfile);
     }
     else
-	client_write_sigfile (sigfile, false);
+	client_write_sigfile (sigfile, false, NULL, NULL);
 
     free (rev);
     free (basefile);
@@ -5388,8 +5432,7 @@ warning: ignoring -k options due to server limitations");
 	{
 	    if (args->force_signatures
 		|| (!strcmp (cvs_cmd_name, "commit")
-		    && get_sign_commits (false,
-					 supported_request ("Signature"))))
+		    && get_sign_commits (supported_request ("Signature"))))
 	    {
 		if (!supported_request ("Signature"))
 		    error (1, 0, "Server doesn't support commit signatures.");
@@ -5945,7 +5988,7 @@ client_process_import_file (char *message, char *vfile, char *vtag, int targc,
     }
 
     /* Send signature.  */
-    if (get_sign_commits (false, supported_request ("Signature")))
+    if (get_sign_commits (supported_request ("Signature")))
     {
 	if (!supported_request ("Signature"))
 	    error (1, 0, "Server doesn't support commit signatures.");
