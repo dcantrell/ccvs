@@ -1,3 +1,7 @@
+2006-01-18  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Define $DEFAULT_VERIFY_TEMPLATE for Makefiles.
+
 2006-01-13  Derek Price  <derek@ximbiot.com>
 
 	* GPG-TODO: Note progress.
