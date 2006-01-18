@@ -1,5 +1,9 @@
 2006-01-18  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Create $HOME/.gnupg to work around a problem with at least
+	GnuPG 1.2.6 on an AMD64 running a Linux 2.6.9.
+	(import-101): Expect signed imports.
+
 	* client.c (update_entries): Improve error messages.
 	(client_write_sigfile): Cache signature when needed.  Update all
 	callers.
