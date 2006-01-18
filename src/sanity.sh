@@ -1746,11 +1746,18 @@ getrlogdate () {
 mkdir home
 HOME=$TESTDIR/home; export HOME
 
-# If $GPG is set, create a key for /uu
+# If $GPG is set, create a key for these tests.
 OPENPGP_PHRASE=
 log_keyid=
 if test x"$GPG" != xgpg; then
+  # This works around a problem in at least a GnuPG 1.2.6 on an AMD64 running
+  # a Linux 2.6.9.
+  mkdir $HOME/.gnupg; chmod 0700 $HOME/.gnupg
+
+  # Output some status info to the log and create the key files.
   $GPG --list-keys >>$LOGFILE 2>&1
+
+  # Import the test keys.
   $GPG --import - <<EOF >>$LOGFILE 2>&1
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG v1.4.2 (GNU/Linux)
@@ -9279,7 +9286,7 @@ Initial revision
 ----------------------------
 revision 1\.1\.1\.1
 date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0;  commitid: ${commitid};
-first-import
+${log_keyid}first-import
 ============================================================================="
 
 		# update into the vendor branch.
