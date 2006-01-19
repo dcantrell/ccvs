@@ -53,8 +53,6 @@ static int diff_filesdoneproc (void *callerdat, int err,
 static int diff_dirleaveproc (void *callerdat, const char *dir,
                               int err, const char *update_dir,
                               List *entries);
-static enum diff_file diff_file_nodiff (struct file_info *finfo, Vers_TS *vers,
-                                        enum diff_file, char **rev1_cache );
 static int diff_fileproc (void *callerdat, struct file_info *finfo);
 static void diff_mark_errors (int err);
 
@@ -66,7 +64,6 @@ static void diff_mark_errors (int err);
 static char *diff_rev1, *diff_rev2;
 /* Command line dates, from -D option.  Malloc'd.  */
 static char *diff_date1, *diff_date2;
-static char *use_rev1, *use_rev2;
 static int have_rev1_label, have_rev2_label;
 
 /* Revision of the user file, if it is unchanged from something in the
@@ -494,6 +491,259 @@ diff (int argc, char **argv)
 
 
 /*
+ * verify that a file is different
+ *
+ * INPUTS
+ *   finfo
+ *   vers
+ *   empty_file
+ *
+ * OUTPUTS
+ *   rev1_cache		Cache the contents of rev1 if we look it up.
+ */
+static enum diff_file
+diff_file_nodiff (struct file_info *finfo, Vers_TS *vers,
+                  enum diff_file empty_file, char **rev1_cache,
+		  char **use_rev1, char **use_rev2)
+{
+    Vers_TS *xvers;
+    int retcode;
+
+    TRACE (TRACE_FUNCTION, "diff_file_nodiff (%s, %d)",
+           finfo->fullname ? finfo->fullname : "(null)", empty_file);
+
+    /* free up any old use_rev* variables and reset 'em */
+    *use_rev1 = *use_rev2 = NULL;
+
+    if (diff_rev1 || diff_date1)
+    {
+	/* special handling for TAG_HEAD */
+	if (diff_rev1 && strcmp (diff_rev1, TAG_HEAD) == 0)
+	{
+	    if (vers->vn_rcs != NULL && vers->srcfile != NULL)
+		*use_rev1 = RCS_branch_head (vers->srcfile, vers->vn_rcs);
+	}
+	else
+	{
+	    xvers = Version_TS (finfo, NULL, diff_rev1, diff_date1, 1, 0);
+	    if (xvers->vn_rcs != NULL)
+		*use_rev1 = xstrdup (xvers->vn_rcs);
+	    freevers_ts (&xvers);
+	}
+    }
+    if (diff_rev2 || diff_date2)
+    {
+	/* special handling for TAG_HEAD */
+	if (diff_rev2 && strcmp (diff_rev2, TAG_HEAD) == 0)
+	{
+	    if (vers->vn_rcs && vers->srcfile)
+		*use_rev2 = RCS_branch_head (vers->srcfile, vers->vn_rcs);
+	}
+	else
+	{
+	    xvers = Version_TS (finfo, NULL, diff_rev2, diff_date2, 1, 0);
+	    if (xvers->vn_rcs != NULL)
+		*use_rev2 = xstrdup (xvers->vn_rcs);
+	    freevers_ts (&xvers);
+	}
+
+	if (!*use_rev1 || RCS_isdead (vers->srcfile, *use_rev1))
+	{
+	    /* The first revision does not exist.  If EMPTY_FILES is
+               true, treat this as an added file.  Otherwise, warn
+               about the missing tag.  */
+	    if (!*use_rev2 || RCS_isdead (vers->srcfile, *use_rev2))
+		/* At least in the case where DIFF_REV1 and DIFF_REV2
+		 * are both numeric (and non-existant (NULL), as opposed to
+		 * dead?), we should be returning some kind of error (see
+		 * basicb-8a0 in testsuite).  The symbolic case may be more
+		 * complicated.
+		 */
+		return DIFF_SAME;
+	    if (empty_files)
+		return DIFF_ADDED;
+	    if (*use_rev1)
+	    {
+		if (diff_rev1)
+		{
+		    error (0, 0,
+		       "Tag %s refers to a dead (removed) revision in file `%s'.",
+		       diff_rev1, finfo->fullname);
+		}
+		else
+		{
+		    error (0, 0,
+		       "Date %s refers to a dead (removed) revision in file `%s'.",
+		       diff_date1, finfo->fullname);
+		}
+		error (0, 0,
+		       "No comparison available.  Pass `-N' to `%s diff'?",
+		       program_name);
+	    }
+	    else if (diff_rev1)
+		error (0, 0, "tag %s is not in file %s", diff_rev1,
+		       finfo->fullname);
+	    else
+		error (0, 0, "no revision for date %s in file %s",
+		       diff_date1, finfo->fullname);
+	    return DIFF_ERROR;
+	}
+
+	assert (*use_rev1);
+	if (!*use_rev2 || RCS_isdead (vers->srcfile, *use_rev2))
+	{
+	    /* The second revision does not exist.  If EMPTY_FILES is
+               true, treat this as a removed file.  Otherwise warn
+               about the missing tag.  */
+	    if (empty_files)
+		return DIFF_REMOVED;
+	    if (*use_rev2)
+	    {
+		if (diff_rev2)
+		{
+		    error( 0, 0,
+		       "Tag %s refers to a dead (removed) revision in file `%s'.",
+		       diff_rev2, finfo->fullname );
+		}
+		else
+		{
+		    error( 0, 0,
+		       "Date %s refers to a dead (removed) revision in file `%s'.",
+		       diff_date2, finfo->fullname );
+		}
+		error( 0, 0,
+		       "No comparison available.  Pass `-N' to `%s diff'?",
+		       program_name );
+	    }
+	    else if (diff_rev2)
+		error (0, 0, "tag %s is not in file %s", diff_rev2,
+		       finfo->fullname);
+	    else
+		error (0, 0, "no revision for date %s in file %s",
+		       diff_date2, finfo->fullname);
+	    return DIFF_ERROR;
+	}
+	/* Now, see if we really need to do the diff.  We can't assume that the
+	 * files are different when the revs are.
+	 */
+	assert (*use_rev2);
+	if (!strcmp (*use_rev1, *use_rev2))
+	    return DIFF_SAME;
+	/* else fall through and do the diff */
+    }
+
+    /* If we had a r1/d1 & r2/d2, then at this point we must have a C3P0...
+     * err...  ok, then both rev1 & rev2 must have resolved to an existing,
+     * live version due to if statement we just closed.
+     */
+    assert (!(diff_rev2 || diff_date2) || (*use_rev1 && *use_rev2));
+
+    if ((diff_rev1 || diff_date1) &&
+	(!*use_rev1 || RCS_isdead (vers->srcfile, *use_rev1)))
+    {
+	/* The first revision does not exist, and no second revision
+           was given.  */
+	if (empty_files)
+	{
+	    if (empty_file == DIFF_REMOVED)
+		return DIFF_SAME;
+	    if (user_file_rev && !*use_rev2)
+		*use_rev2 = xstrdup (user_file_rev);
+	    return DIFF_ADDED;
+	}
+	if (*use_rev1)
+	{
+	    if (diff_rev1)
+	    {
+		error( 0, 0,
+		   "Tag %s refers to a dead (removed) revision in file `%s'.",
+		   diff_rev1, finfo->fullname );
+	    }
+	    else
+	    {
+		error( 0, 0,
+		   "Date %s refers to a dead (removed) revision in file `%s'.",
+		   diff_date1, finfo->fullname );
+	    }
+	    error( 0, 0,
+		   "No comparison available.  Pass `-N' to `%s diff'?",
+		   program_name );
+	}
+	else if ( diff_rev1 )
+	    error( 0, 0, "tag %s is not in file %s", diff_rev1,
+		   finfo->fullname );
+	else
+	    error( 0, 0, "no revision for date %s in file %s",
+		   diff_date1, finfo->fullname );
+	return DIFF_ERROR;
+    }
+
+    assert (!diff_rev1 || *use_rev1);
+
+    if (user_file_rev)
+    {
+        /* drop user_file_rev into first unused use_rev */
+        if (!*use_rev1) 
+	    *use_rev1 = xstrdup (user_file_rev);
+	else if (!*use_rev2)
+	    *use_rev2 = xstrdup (user_file_rev);
+	/* and if not, it wasn't needed anyhow */
+	user_file_rev = NULL;
+    }
+
+    /* Now, see if we really need to do the diff.  We can't assume that the
+     * files are different when the revs are.
+     */
+    if (*use_rev1 && *use_rev2) 
+    {
+	if (!strcmp (*use_rev1, *use_rev2))
+	    return DIFF_SAME;
+	/* Fall through and do the diff. */
+    }
+    /* Don't want to do the timestamp check with both *USE_REV1 & *USE_REV2 set.
+     * The timestamp check is just for the default case of diffing the
+     * workspace file against its base revision.
+     */
+    else if (!*use_rev1
+             || (vers->vn_user
+                 && !strcmp (*use_rev1, vers->vn_user)))
+    {
+	if ((empty_file == DIFF_DIFFERENT || empty_file == DIFF_CLIENT)
+	    && vers->ts_user != NULL
+	    && strcmp (vers->ts_rcs, vers->ts_user) == 0
+	    && (!(*options) || strcmp (options, vers->options) == 0))
+	{
+	    return DIFF_SAME;
+	}
+	if (!*use_rev1
+	    && (vers->vn_user[0] != '0' || vers->vn_user[1] != '\0'))
+	{
+	    if (vers->vn_user[0] == '-')
+		*use_rev1 = xstrdup (vers->vn_user + 1);
+	    else
+		*use_rev1 = xstrdup (vers->vn_user);
+	}
+    }
+
+    /* If we already know that the file is being added or removed,
+       then we don't want to do an actual file comparison here.  */
+    if (empty_file != DIFF_DIFFERENT)
+	return empty_file;
+
+    /*
+     * Run a quick cmp to see if we should bother with a full diff.
+     */
+
+    retcode = RCS_cmp_file (vers->srcfile, *use_rev1, rev1_cache,
+                            *use_rev2, *options ? options : vers->options,
+			    finfo->file);
+
+    return retcode == 0 ? DIFF_SAME : DIFF_DIFFERENT;
+}
+
+
+
+/*
  * Do a file diff
  */
 /* ARGSUSED */
@@ -504,12 +754,10 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
     Vers_TS *vers;
     enum diff_file empty_file = server_use_bases ()
 				? DIFF_CLIENT : DIFF_DIFFERENT;
-    char *tmp = NULL;
-    char *tocvsPath = NULL;
-    char *fname = NULL;
     char *label1;
     char *label2;
     char *rev1_cache = NULL;
+    char *use_rev1 = NULL, *use_rev2 = NULL;
     const char *f1 = NULL, *f2 = NULL;
 
     user_file_rev = 0;
@@ -661,7 +909,8 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
     }
 
     
-    empty_file = diff_file_nodiff (finfo, vers, empty_file, &rev1_cache);
+    empty_file = diff_file_nodiff (finfo, vers, empty_file, &rev1_cache,
+				   &use_rev1, &use_rev2);
     if (empty_file == DIFF_SAME)
     {
 	/* In the server case, would be nice to send a "Checked-in"
@@ -681,23 +930,6 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
     cvs_output ("Index: ", 0);
     cvs_output (finfo->fullname, 0);
     cvs_output ("\n", 1);
-
-    if (!server_use_bases ())
-    {
-	tocvsPath = wrap_tocvs_process_file (finfo->file);
-	if (tocvsPath)
-	{
-	    /* Backup the current version of the file to CVS/,,filename */
-	    fname = Xasprintf (fname, "%s/%s%s", CVSADM, CVSPREFIX,
-			       finfo->file);
-	    if (unlink_file_dir (fname) < 0)
-		if (!existence_error (errno))
-		    error (1, errno, "cannot remove %s", fname);
-	    rename_file (finfo->file, fname);
-	    /* Copy the wrapped file to the current directory then go to work */
-	    copy_file (tocvsPath, finfo->file);
-	}
-    }
 
     /* Set up file labels appropriate for compatibility with the Larry Wall
      * implementation of patch if the user didn't specify.  This is irrelevant
@@ -753,6 +985,8 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 			    diff_rev1 && !isdigit (diff_rev1[0])
 			    ? diff_rev1 : vers->tag,
 			    vers->options, *options ? options : vers->options);
+	if (!f1)
+	    goto out;
     }
 
     if (empty_file == DIFF_REMOVED)
@@ -767,6 +1001,8 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 			    diff_rev2 && !isdigit (diff_rev2[0])
 			    ? diff_rev2 : NULL,
 			    vers->options, *options ? options : vers->options);
+	if (!f2)
+	    goto out;
     }
     else
 	f2 = finfo->file;
@@ -794,25 +1030,13 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
     }
 
 out:
-    if (tocvsPath != NULL)
-    {
-	if (unlink_file_dir (finfo->file) < 0)
-	    if (!existence_error (errno))
-		error (1, errno, "cannot remove %s", finfo->file);
-
-	rename_file (fname, finfo->file);
-	if (unlink_file (tocvsPath) < 0)
-	    error (1, errno, "cannot remove %s", tocvsPath);
-	free (fname);
-    }
-
     if (empty_file != DIFF_ADDED && f1)
     {
 	if (CVS_UNLINK (f1) < 0)
 	    error (0, errno, "Failed to remove temp file `%s'", f1);
 	free ((char *)f1);
     }
-    if (empty_file == DIFF_REMOVED && use_rev2 && f2)
+    if (empty_file != DIFF_REMOVED && use_rev2 && f2)
     {
 	if (CVS_UNLINK (f2) < 0)
 	    error (0, errno, "Failed to remove temp file `%s'", f2);
@@ -822,12 +1046,6 @@ out:
     /* Call CVS_UNLINK() rather than unlink_file() below to avoid the check
      * for noexec.
      */
-    if (tmp)
-    {
-	if (CVS_UNLINK (tmp) < 0)
-	    error (0, errno, "cannot remove %s", tmp);
-	free (tmp);
-    }
     if (rev1_cache)
     {
 	if (CVS_UNLINK (rev1_cache) < 0)
@@ -899,260 +1117,4 @@ diff_dirleaveproc (void *callerdat, const char *dir, int err,
                    const char *update_dir, List *entries)
 {
     return diff_errors;
-}
-
-
-
-/*
- * verify that a file is different
- *
- * INPUTS
- *   finfo
- *   vers
- *   empty_file
- *
- * OUTPUTS
- *   rev1_cache		Cache the contents of rev1 if we look it up.
- */
-static enum diff_file
-diff_file_nodiff (struct file_info *finfo, Vers_TS *vers,
-                  enum diff_file empty_file, char **rev1_cache)
-{
-    Vers_TS *xvers;
-    int retcode;
-
-    TRACE (TRACE_FUNCTION, "diff_file_nodiff (%s, %d)",
-           finfo->fullname ? finfo->fullname : "(null)", empty_file);
-
-    /* free up any old use_rev* variables and reset 'em */
-    if (use_rev1)
-	free (use_rev1);
-    if (use_rev2)
-	free (use_rev2);
-    use_rev1 = use_rev2 = NULL;
-
-    if (diff_rev1 || diff_date1)
-    {
-	/* special handling for TAG_HEAD */
-	if (diff_rev1 && strcmp (diff_rev1, TAG_HEAD) == 0)
-	{
-	    if (vers->vn_rcs != NULL && vers->srcfile != NULL)
-		use_rev1 = RCS_branch_head (vers->srcfile, vers->vn_rcs);
-	}
-	else
-	{
-	    xvers = Version_TS (finfo, NULL, diff_rev1, diff_date1, 1, 0);
-	    if (xvers->vn_rcs != NULL)
-		use_rev1 = xstrdup (xvers->vn_rcs);
-	    freevers_ts (&xvers);
-	}
-    }
-    if (diff_rev2 || diff_date2)
-    {
-	/* special handling for TAG_HEAD */
-	if (diff_rev2 && strcmp (diff_rev2, TAG_HEAD) == 0)
-	{
-	    if (vers->vn_rcs && vers->srcfile)
-		use_rev2 = RCS_branch_head (vers->srcfile, vers->vn_rcs);
-	}
-	else
-	{
-	    xvers = Version_TS (finfo, NULL, diff_rev2, diff_date2, 1, 0);
-	    if (xvers->vn_rcs != NULL)
-		use_rev2 = xstrdup (xvers->vn_rcs);
-	    freevers_ts (&xvers);
-	}
-
-	if (use_rev1 == NULL || RCS_isdead (vers->srcfile, use_rev1))
-	{
-	    /* The first revision does not exist.  If EMPTY_FILES is
-               true, treat this as an added file.  Otherwise, warn
-               about the missing tag.  */
-	    if (use_rev2 == NULL || RCS_isdead (vers->srcfile, use_rev2))
-		/* At least in the case where DIFF_REV1 and DIFF_REV2
-		 * are both numeric (and non-existant (NULL), as opposed to
-		 * dead?), we should be returning some kind of error (see
-		 * basicb-8a0 in testsuite).  The symbolic case may be more
-		 * complicated.
-		 */
-		return DIFF_SAME;
-	    if (empty_files)
-		return DIFF_ADDED;
-	    if (use_rev1 != NULL)
-	    {
-		if (diff_rev1)
-		{
-		    error (0, 0,
-		       "Tag %s refers to a dead (removed) revision in file `%s'.",
-		       diff_rev1, finfo->fullname);
-		}
-		else
-		{
-		    error (0, 0,
-		       "Date %s refers to a dead (removed) revision in file `%s'.",
-		       diff_date1, finfo->fullname);
-		}
-		error (0, 0,
-		       "No comparison available.  Pass `-N' to `%s diff'?",
-		       program_name);
-	    }
-	    else if (diff_rev1)
-		error (0, 0, "tag %s is not in file %s", diff_rev1,
-		       finfo->fullname);
-	    else
-		error (0, 0, "no revision for date %s in file %s",
-		       diff_date1, finfo->fullname);
-	    return DIFF_ERROR;
-	}
-
-	assert( use_rev1 != NULL );
-	if( use_rev2 == NULL || RCS_isdead( vers->srcfile, use_rev2 ) )
-	{
-	    /* The second revision does not exist.  If EMPTY_FILES is
-               true, treat this as a removed file.  Otherwise warn
-               about the missing tag.  */
-	    if (empty_files)
-		return DIFF_REMOVED;
-	    if( use_rev2 != NULL )
-	    {
-		if (diff_rev2)
-		{
-		    error( 0, 0,
-		       "Tag %s refers to a dead (removed) revision in file `%s'.",
-		       diff_rev2, finfo->fullname );
-		}
-		else
-		{
-		    error( 0, 0,
-		       "Date %s refers to a dead (removed) revision in file `%s'.",
-		       diff_date2, finfo->fullname );
-		}
-		error( 0, 0,
-		       "No comparison available.  Pass `-N' to `%s diff'?",
-		       program_name );
-	    }
-	    else if (diff_rev2)
-		error (0, 0, "tag %s is not in file %s", diff_rev2,
-		       finfo->fullname);
-	    else
-		error (0, 0, "no revision for date %s in file %s",
-		       diff_date2, finfo->fullname);
-	    return DIFF_ERROR;
-	}
-	/* Now, see if we really need to do the diff.  We can't assume that the
-	 * files are different when the revs are.
-	 */
-	assert( use_rev2 != NULL );
-	if( strcmp (use_rev1, use_rev2) == 0 )
-	    return DIFF_SAME;
-	/* else fall through and do the diff */
-    }
-
-    /* If we had a r1/d1 & r2/d2, then at this point we must have a C3P0...
-     * err...  ok, then both rev1 & rev2 must have resolved to an existing,
-     * live version due to if statement we just closed.
-     */
-    assert (!(diff_rev2 || diff_date2) || (use_rev1 && use_rev2));
-
-    if ((diff_rev1 || diff_date1) &&
-	(use_rev1 == NULL || RCS_isdead (vers->srcfile, use_rev1)))
-    {
-	/* The first revision does not exist, and no second revision
-           was given.  */
-	if (empty_files)
-	{
-	    if (empty_file == DIFF_REMOVED)
-		return DIFF_SAME;
-	    if( user_file_rev && use_rev2 == NULL )
-		use_rev2 = xstrdup( user_file_rev );
-	    return DIFF_ADDED;
-	}
-	if( use_rev1 != NULL )
-	{
-	    if (diff_rev1)
-	    {
-		error( 0, 0,
-		   "Tag %s refers to a dead (removed) revision in file `%s'.",
-		   diff_rev1, finfo->fullname );
-	    }
-	    else
-	    {
-		error( 0, 0,
-		   "Date %s refers to a dead (removed) revision in file `%s'.",
-		   diff_date1, finfo->fullname );
-	    }
-	    error( 0, 0,
-		   "No comparison available.  Pass `-N' to `%s diff'?",
-		   program_name );
-	}
-	else if ( diff_rev1 )
-	    error( 0, 0, "tag %s is not in file %s", diff_rev1,
-		   finfo->fullname );
-	else
-	    error( 0, 0, "no revision for date %s in file %s",
-		   diff_date1, finfo->fullname );
-	return DIFF_ERROR;
-    }
-
-    assert( !diff_rev1 || use_rev1 );
-
-    if (user_file_rev)
-    {
-        /* drop user_file_rev into first unused use_rev */
-        if (!use_rev1) 
-	    use_rev1 = xstrdup (user_file_rev);
-	else if (!use_rev2)
-	    use_rev2 = xstrdup (user_file_rev);
-	/* and if not, it wasn't needed anyhow */
-	user_file_rev = NULL;
-    }
-
-    /* Now, see if we really need to do the diff.  We can't assume that the
-     * files are different when the revs are.
-     */
-    if( use_rev1 && use_rev2) 
-    {
-	if (strcmp (use_rev1, use_rev2) == 0)
-	    return DIFF_SAME;
-	/* Fall through and do the diff. */
-    }
-    /* Don't want to do the timestamp check with both use_rev1 & use_rev2 set.
-     * The timestamp check is just for the default case of diffing the
-     * workspace file against its base revision.
-     */
-    else if( use_rev1 == NULL
-             || ( vers->vn_user != NULL
-                  && strcmp( use_rev1, vers->vn_user ) == 0 ) )
-    {
-	if ((empty_file == DIFF_DIFFERENT || empty_file == DIFF_CLIENT)
-	    && vers->ts_user != NULL
-	    && strcmp (vers->ts_rcs, vers->ts_user) == 0
-	    && (!(*options) || strcmp (options, vers->options) == 0))
-	{
-	    return DIFF_SAME;
-	}
-	if (use_rev1 == NULL
-	    && (vers->vn_user[0] != '0' || vers->vn_user[1] != '\0'))
-	{
-	    if (vers->vn_user[0] == '-')
-		use_rev1 = xstrdup (vers->vn_user + 1);
-	    else
-		use_rev1 = xstrdup (vers->vn_user);
-	}
-    }
-
-    /* If we already know that the file is being added or removed,
-       then we don't want to do an actual file comparison here.  */
-    if (empty_file != DIFF_DIFFERENT)
-	return empty_file;
-
-    /*
-     * Run a quick cmp to see if we should bother with a full diff.
-     */
-
-    retcode = RCS_cmp_file( vers->srcfile, use_rev1, rev1_cache,
-                            use_rev2, *options ? options : vers->options,
-			    finfo->file );
-
-    return retcode == 0 ? DIFF_SAME : DIFF_DIFFERENT;
 }

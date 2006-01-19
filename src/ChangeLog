@@ -1,5 +1,10 @@
 2006-01-19  Derek Price  <derek@ximbiot.com>
 
+	* diff.c (diff_file_nodiff): Remove proto and move function before
+	first invocation.  Return found revisions in args rather than globals.
+	(diff_fileproc): Remove unused variables.  Use new diff_file_nodiff
+	API.  Check for temp_checkout errors.
+
 	* diff.c (enum diff_file): Add DIFF_CLIENT.
 	(diff): Send no content when possible.
 	(diff_fileproc): Consolidate complex handling into a single call to
