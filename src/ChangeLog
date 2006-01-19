@@ -1,3 +1,17 @@
+2006-01-19  Derek Price  <derek@ximbiot.com>
+
+	* diff.c (enum diff_file): Add DIFF_CLIENT.
+	(diff): Send no content when possible.
+	(diff_fileproc): Consolidate complex handling into a single call to
+	diff_exec.
+	(diff_file_nodiff): Punt when only the client knows if there are true
+	differences.
+	* rcs.h (RCS_output_diff_options): Add prototype.
+	* rcscmds.c (RCS_exec_rcsdiff): Remove this unused function.
+	(RCS_output_diff_options): Handle add & remove cases.
+
+	* sanity.sh: Accomodate the above changes.
+
 2006-01-18  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: Create $HOME/.gnupg to work around a problem with at least

@@ -24,7 +24,9 @@
 #endif
 
 /* CVS headers.  */
+#include "base.h"
 #include "ignore.h"
+#include "rcs.h"
 #include "recurse.h"
 #include "wrapper.h"
 
@@ -35,6 +37,7 @@
 enum diff_file
 {
     DIFF_ERROR,
+    DIFF_CLIENT,
     DIFF_ADDED,
     DIFF_REMOVED,
     DIFF_DIFFERENT,
@@ -416,7 +419,10 @@ diff (int argc, char **argv)
 	options = xstrdup ("");
 
 #ifdef CLIENT_SUPPORT
-    if (current_parsed_root->isremote) {
+    if (current_parsed_root->isremote)
+    {
+	int flags;
+
 	/* We're the client side.  Fire up the remote server.  */
 	start_server ();
 	
@@ -440,8 +446,12 @@ diff (int argc, char **argv)
 	send_arg ("--");
 
 	/* Send the current files unless diffing two revs from the archive */
-	send_files (argc, argv, local, 0,
-		    (diff_rev2 || diff_date2) ? SEND_NO_CONTENTS : 0);
+	flags = 0;
+	if ((!suppress_bases && supported_request ("Base-diff"))
+	    || diff_rev2 || diff_date2)
+	    flags |= SEND_NO_CONTENTS;
+
+	send_files (argc, argv, local, 0, flags);
 
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 
@@ -492,13 +502,15 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 {
     int status, err = 2;		/* 2 == trouble, like rcsdiff */
     Vers_TS *vers;
-    enum diff_file empty_file = DIFF_DIFFERENT;
+    enum diff_file empty_file = server_use_bases ()
+				? DIFF_CLIENT : DIFF_DIFFERENT;
     char *tmp = NULL;
     char *tocvsPath = NULL;
     char *fname = NULL;
     char *label1;
     char *label2;
     char *rev1_cache = NULL;
+    const char *f1 = NULL, *f2 = NULL;
 
     user_file_rev = 0;
     vers = Version_TS (finfo, NULL, NULL, NULL, 1, 0);
@@ -648,6 +660,7 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 	}
     }
 
+    
     empty_file = diff_file_nodiff (finfo, vers, empty_file, &rev1_cache);
     if (empty_file == DIFF_SAME)
     {
@@ -669,17 +682,21 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
     cvs_output (finfo->fullname, 0);
     cvs_output ("\n", 1);
 
-    tocvsPath = wrap_tocvs_process_file (finfo->file);
-    if (tocvsPath)
+    if (!server_use_bases ())
     {
-	/* Backup the current version of the file to CVS/,,filename */
-	fname = Xasprintf (fname, "%s/%s%s", CVSADM, CVSPREFIX, finfo->file);
-	if (unlink_file_dir (fname) < 0)
-	    if (!existence_error (errno))
-		error (1, errno, "cannot remove %s", fname);
-	rename_file (finfo->file, fname);
-	/* Copy the wrapped file to the current directory then go to work */
-	copy_file (tocvsPath, finfo->file);
+	tocvsPath = wrap_tocvs_process_file (finfo->file);
+	if (tocvsPath)
+	{
+	    /* Backup the current version of the file to CVS/,,filename */
+	    fname = Xasprintf (fname, "%s/%s%s", CVSADM, CVSPREFIX,
+			       finfo->file);
+	    if (unlink_file_dir (fname) < 0)
+		if (!existence_error (errno))
+		    error (1, errno, "cannot remove %s", fname);
+	    rename_file (finfo->file, fname);
+	    /* Copy the wrapped file to the current directory then go to work */
+	    copy_file (tocvsPath, finfo->file);
+	}
     }
 
     /* Set up file labels appropriate for compatibility with the Larry Wall
@@ -708,66 +725,57 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 	}
     }
 
-    if (empty_file == DIFF_ADDED || empty_file == DIFF_REMOVED)
+    /* Print a header for each file.  */
+    cvs_output (
+"===================================================================\n",
+		0);
+    if (finfo->rcs)
     {
-	/* This is fullname, not file, possibly despite the POSIX.2
-	 * specification, because that's the way all the Larry Wall
-	 * implementations of patch (are there other implementations?) want
-	 * things and the POSIX.2 spec appears to leave room for this.
-	 */
-	cvs_output ("\
-===================================================================\n\
-RCS file: ", 0);
-	cvs_output (finfo->fullname, 0);
-	cvs_output ("\n", 1);
-
-	cvs_output ("diff -N ", 0);
-	cvs_output (finfo->fullname, 0);
-	cvs_output ("\n", 1);
-
-	if (empty_file == DIFF_ADDED)
-	{
-	    if (use_rev2 == NULL)
-                status = diff_exec (DEVNULL, finfo->file, label1, label2,
-				    diff_argc, diff_argv, RUN_TTY);
-	    else
-	    {
-		int retcode;
-
-		tmp = cvs_temp_name ();
-		retcode = RCS_checkout (vers->srcfile, NULL, use_rev2, NULL,
-					*options ? options : vers->options,
-					tmp, NULL, NULL);
-		if (retcode != 0)
-		    goto out;
-
-		status = diff_exec (DEVNULL, tmp, label1, label2,
-				    diff_argc, diff_argv, RUN_TTY);
-	    }
-	}
-	else
-	{
-	    int retcode;
-
-	    tmp = cvs_temp_name ();
-	    retcode = RCS_checkout (vers->srcfile, NULL, use_rev1, NULL,
-				    *options ? options : vers->options,
-				    tmp, NULL, NULL);
-	    if (retcode != 0)
-		goto out;
-
-	    status = diff_exec (tmp, DEVNULL, label1, label2,
-				diff_argc, diff_argv, RUN_TTY);
-	}
+	cvs_output ("RCS file: ", 0);
+	cvs_output (finfo->rcs->print_path, 0);
     }
     else
     {
-	status = RCS_exec_rcsdiff (vers->srcfile, diff_argc, diff_argv,
-                                   *options ? options : vers->options,
-                                   use_rev1, rev1_cache, use_rev2,
-                                   label1, label2, finfo->file);
-
+	cvs_output ("File: ", 0);
+	cvs_output (finfo->fullname, 0);
     }
+    cvs_output ("\n", 1);
+
+    if (empty_file == DIFF_ADDED)
+	f1 = DEVNULL;
+    else
+    {
+	cvs_output ("retrieving revision ", 0);
+	cvs_output (use_rev1, 0);
+	cvs_output ("\n", 1);
+	f1 = temp_checkout (vers->srcfile, finfo, vers->vn_user, use_rev1,
+			    vers->tag,
+			    diff_rev1 && !isdigit (diff_rev1[0])
+			    ? diff_rev1 : vers->tag,
+			    vers->options, *options ? options : vers->options);
+    }
+
+    if (empty_file == DIFF_REMOVED)
+	f2 = DEVNULL;
+    else if (use_rev2)
+    {
+	cvs_output ("retrieving revision ", 0);
+	cvs_output (use_rev2, 0);
+	cvs_output ("\n", 1);
+	f2 = temp_checkout (vers->srcfile, finfo, vers->vn_user, use_rev2,
+			    vers->tag,
+			    diff_rev2 && !isdigit (diff_rev2[0])
+			    ? diff_rev2 : NULL,
+			    vers->options, *options ? options : vers->options);
+    }
+    else
+	f2 = finfo->file;
+
+    RCS_output_diff_options (diff_argc, diff_argv, empty_files,
+			     use_rev1, use_rev2, finfo->file);
+
+    status = diff_exec (f1, f2, label1, label2,
+			diff_argc, diff_argv, RUN_TTY);
 
     if (label1) free (label1);
     if (label2) free (label2);
@@ -786,10 +794,10 @@ RCS file: ", 0);
     }
 
 out:
-    if( tocvsPath != NULL )
+    if (tocvsPath != NULL)
     {
 	if (unlink_file_dir (finfo->file) < 0)
-	    if (! existence_error (errno))
+	    if (!existence_error (errno))
 		error (1, errno, "cannot remove %s", finfo->file);
 
 	rename_file (fname, finfo->file);
@@ -798,16 +806,29 @@ out:
 	free (fname);
     }
 
+    if (empty_file != DIFF_ADDED && f1)
+    {
+	if (CVS_UNLINK (f1) < 0)
+	    error (0, errno, "Failed to remove temp file `%s'", f1);
+	free ((char *)f1);
+    }
+    if (empty_file == DIFF_REMOVED && use_rev2 && f2)
+    {
+	if (CVS_UNLINK (f2) < 0)
+	    error (0, errno, "Failed to remove temp file `%s'", f2);
+	free ((char *)f2);
+    }
+
     /* Call CVS_UNLINK() rather than unlink_file() below to avoid the check
      * for noexec.
      */
-    if (tmp != NULL)
+    if (tmp)
     {
 	if (CVS_UNLINK (tmp) < 0)
 	    error (0, errno, "cannot remove %s", tmp);
 	free (tmp);
     }
-    if (rev1_cache != NULL)
+    if (rev1_cache)
     {
 	if (CVS_UNLINK (rev1_cache) < 0)
 	    error (0, errno, "cannot remove %s", rev1_cache);
@@ -1103,7 +1124,7 @@ diff_file_nodiff (struct file_info *finfo, Vers_TS *vers,
              || ( vers->vn_user != NULL
                   && strcmp( use_rev1, vers->vn_user ) == 0 ) )
     {
-	if (empty_file == DIFF_DIFFERENT
+	if ((empty_file == DIFF_DIFFERENT || empty_file == DIFF_CLIENT)
 	    && vers->ts_user != NULL
 	    && strcmp (vers->ts_rcs, vers->ts_user) == 0
 	    && (!(*options) || strcmp (options, vers->options) == 0))
