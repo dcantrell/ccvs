@@ -6439,8 +6439,9 @@ ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  dotest_fail death2-diff-2 "${testcvs} -q diff -N -c file1" \
 "Index: file1
 ===================================================================
-RCS file: file1
-diff -N file1
+RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
+retrieving revision 1\.1
+diff -c -N -r1\.1 file1
 \*\*\* file1	${RFCDATE}	[0-9.]*
 --- /dev/null	${RFCDATE_EPOCH}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6467,8 +6468,9 @@ ${SPROG} diff: No comparison available\.  Pass .-N. to .${SPROG} diff.${QUESTION
 "${testcvs} -q diff -r1.1 -rbranch -N -c file1" \
 "Index: file1
 ===================================================================
-RCS file: file1
-diff -N file1
+RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
+retrieving revision 1\.1
+diff -c -N -r1\.1 -r1\.1\.2\.1
 \*\*\* file1	${RFCDATE}	[0-9.]*
 --- /dev/null	${RFCDATE_EPOCH}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6480,8 +6482,9 @@ diff -N file1
 "${testcvs} -q diff -rbranch -r1.1 -N -c file1" \
 "Index: file1
 ===================================================================
-RCS file: file1
-diff -N file1
+RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
+retrieving revision 1\.1
+diff -c -N -r1\.1\.2\.1 -r1\.1
 \*\*\* /dev/null	${RFCDATE_EPOCH}
 --- file1	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6496,8 +6499,9 @@ diff -N file1
 	  dotest_fail death2-diff-6 "${testcvs} -q diff -rtag -N -c ." \
 "Index: file1
 ===================================================================
-RCS file: file1
-diff -N file1
+RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
+retrieving revision 1\.1
+diff -c -N -r1\.1 file1
 \*\*\* file1	[-a-zA-Z0-9: ]*	[0-9.]*
 --- /dev/null	${RFCDATE_EPOCH}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6532,8 +6536,8 @@ ${SPROG} add: use \`${SPROG} commit' to add this file permanently"
 	  dotest_fail death2-diff-8 "${testcvs} -q diff -N -c file1" \
 "Index: file1
 ===================================================================
-RCS file: file1
-diff -N file1
+RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
+diff -c -N file1
 \*\*\* /dev/null	${RFCDATE_EPOCH}
 --- file1	${RFCDATE}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6607,8 +6611,9 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 	  dotest_fail death2-diff-10 "${testcvs} -q diff -rtag -N -c file3" \
 "Index: file3
 ===================================================================
-RCS file: file3
-diff -N file3
+RCS file: $CVSROOT_DIRNAME/first-dir/Attic/file3,v
+retrieving revision 1\.1\.2\.1
+diff -c -N -r1\.1\.2\.1 file3
 \*\*\* /dev/null	${RFCDATE_EPOCH}
 --- file3	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6640,7 +6645,7 @@ ${SPROG} diff: file4 no longer exists, no comparison available"
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 retrieving revision 1\.1
 retrieving revision 1\.1\.2\.2
-diff -c -r1\.1 -r1\.1\.2\.2
+diff -c -N -r1\.1 -r1\.1\.2\.2
 \*\*\* file1	${RFCDATE}	[0-9.]*
 --- file1	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6650,8 +6655,9 @@ diff -c -r1\.1 -r1\.1\.2\.2
 ! second revision
 Index: file2
 ===================================================================
-RCS file: file2
-diff -N file2
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
+retrieving revision 1\.1\.2\.2
+diff -c -N -r1\.1\.2\.2 file2
 \*\*\* /dev/null	${RFCDATE_EPOCH}
 --- file2	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6660,8 +6666,9 @@ diff -N file2
 ${PLUS} branch revision
 Index: file3
 ===================================================================
-RCS file: file3
-diff -N file3
+RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+retrieving revision 1\.1\.2\.1
+diff -c -N -r1\.1\.2\.1 file3
 \*\*\* /dev/null	${RFCDATE_EPOCH}
 --- file3	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6670,8 +6677,9 @@ diff -N file3
 ${PLUS} first revision
 Index: file4
 ===================================================================
-RCS file: file4
-diff -N file4
+RCS file: $CVSROOT_DIRNAME/first-dir/file4,v
+retrieving revision 1\.1
+diff -c -N -r1\.1 file4
 \*\*\* file4	${RFCDATE}	[0-9.]*
 --- /dev/null	${RFCDATE_EPOCH}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6696,8 +6704,9 @@ ${SPROG} diff: No comparison available\.  Pass .-N. to .${SPROG} diff.${QUESTION
 	  dotest_fail death2-diff-14 "${testcvs} -q diff -r rdiff-tag -c -N" \
 "Index: file1
 ===================================================================
-RCS file: file1
-diff -N file1
+RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
+retrieving revision 1\.1
+diff -c -N -r1\.1\.2\.1 -r1\.1
 \*\*\* /dev/null	${RFCDATE_EPOCH}
 --- file1	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -8761,9 +8770,9 @@ retrieving revision 1\.1
 retrieving revision 1\.2
 diff -r1\.1 -r1\.2
 1c1
-< I am the first foo, and my name is \$""Name:  \$\.
+< I am the first foo, and my name is \$""Name: first \$\.
 ---
-> I am the second foo, and my name is \$""Name:  \$\."
+> I am the second foo, and my name is \$""Name: second \$\."
 
 	  echo "I am the once and future foo, and my name is $""Name$." > foo.c
 	  dotest_fail rcslib-diff10 "${testcvs} diff -r first" \
@@ -8774,7 +8783,7 @@ RCS file: ${CVSROOT_DIRNAME}/first-dir/foo\.c,v
 retrieving revision 1\.1
 diff -r1\.1 foo\.c
 1c1
-< I am the first foo, and my name is \$""Name:  \$\.
+< I am the first foo, and my name is \$""Name: first \$\.
 ---
 > I am the once and future foo, and my name is \$""Name\$\."
 

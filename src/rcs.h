@@ -315,5 +315,8 @@ extern int add_rcs_file (const char *, const char *, const char *,
                          FILE *, bool);
 void free_keywords (void *keywords);
 bool contains_keyword (char *buf, size_t len);
+void RCS_output_diff_options (int diff_argc, char * const *diff_argv,
+			      bool devnull, const char *rev1, const char *rev2,
+			      const char *workfile);
 
 #endif /* RCS_H */

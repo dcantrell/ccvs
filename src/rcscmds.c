@@ -65,158 +65,12 @@
    On a related note, see the comments at diff_exec, later in this file,
    for more on the diff library.  */
 
-static void RCS_output_diff_options (int, char * const *, const char *,
-				     const char *, const char *);
 
 
 /* Stuff to deal with passing arguments the way libdiff.a wants to deal
    with them.  This is a crufty interface; there is no good reason for it
    to resemble a command line rather than something closer to "struct
    log_data" in log.c.  */
-
-
-
-/* Diff revisions and/or files.  OPTS controls the format of the diff
-   (it contains options such as "-w -c", &c), or "" for the default.
-   OPTIONS controls keyword expansion, as a string starting with "-k",
-   or "" to use the default.  REV1 is the first revision to compare
-   against; it must be non-NULL.  If REV2 is non-NULL, compare REV1
-   and REV2; if REV2 is NULL compare REV1 with the file in the working
-   directory, whose name is WORKFILE.  LABEL1 and LABEL2 are default
-   file labels, and (if non-NULL) should be added as -L options
-   to diff.  Output goes to stdout.
-
-   Return value is 0 for success, -1 for a failure which set errno,
-   or positive for a failure which printed a message on stderr.
-
-   This used to exec rcsdiff, but now calls RCS_checkout and diff_exec.
-
-   An issue is what timezone is used for the dates which appear in the
-   diff output.  rcsdiff uses the -z flag, which is not presently
-   processed by CVS diff, but I'm not sure exactly how hard to worry
-   about this--any such features are undocumented in the context of
-   CVS, and I'm not sure how important to users.  */
-int
-RCS_exec_rcsdiff (RCSNode *rcsfile, int diff_argc,
-		  char * const *diff_argv, const char *options,
-                  const char *rev1, const char *rev1_cache, const char *rev2,
-                  const char *label1, const char *label2, const char *workfile)
-{
-    char *tmpfile1 = NULL;
-    char *tmpfile2 = NULL;
-    const char *use_file1, *use_file2;
-    int status, retval;
-
-
-    cvs_output ("\
-===================================================================\n\
-RCS file: ", 0);
-    cvs_output (rcsfile->print_path, 0);
-    cvs_output ("\n", 1);
-
-    /* Historically, `cvs diff' has expanded the $Name keyword to the
-       empty string when checking out revisions.  This is an accident,
-       but no one has considered the issue thoroughly enough to determine
-       what the best behavior is.  Passing NULL for the `nametag' argument
-       preserves the existing behavior. */
-
-    cvs_output ("retrieving revision ", 0);
-    cvs_output (rev1, 0);
-    cvs_output ("\n", 1);
-
-    if (rev1_cache != NULL)
-	use_file1 = rev1_cache;
-    else
-    {
-	tmpfile1 = cvs_temp_name();
-	status = RCS_checkout (rcsfile, NULL, rev1, NULL, options, tmpfile1,
-	                       NULL, NULL);
-	if (status > 0)
-	{
-	    retval = status;
-	    goto error_return;
-	}
-	else if (status < 0)
-	{
-	    error( 0, errno,
-	           "cannot check out revision %s of %s", rev1, rcsfile->path );
-	    retval = 1;
-	    goto error_return;
-	}
-	use_file1 = tmpfile1;
-    }
-
-    if (rev2 == NULL)
-    {
-	assert (workfile != NULL);
-	use_file2 = workfile;
-    }
-    else
-    {
-	tmpfile2 = cvs_temp_name ();
-	cvs_output ("retrieving revision ", 0);
-	cvs_output (rev2, 0);
-	cvs_output ("\n", 1);
-	status = RCS_checkout (rcsfile, NULL, rev2, NULL, options,
-			       tmpfile2, NULL, NULL);
-	if (status > 0)
-	{
-	    retval = status;
-	    goto error_return;
-	}
-	else if (status < 0)
-	{
-	    error (0, errno,
-		   "cannot check out revision %s of %s", rev2, rcsfile->path);
-	    return 1;
-	}
-	use_file2 = tmpfile2;
-    }
-
-    RCS_output_diff_options (diff_argc, diff_argv, rev1, rev2, workfile);
-    status = diff_exec (use_file1, use_file2, label1, label2,
-			diff_argc, diff_argv, RUN_TTY);
-    if (status >= 0)
-    {
-	retval = status;
-	goto error_return;
-    }
-    else if (status < 0)
-    {
-	error (0, errno,
-	       "cannot diff %s and %s", use_file1, use_file2);
-	retval = 1;
-	goto error_return;
-    }
-
- error_return:
-    {
-	/* Call CVS_UNLINK() below rather than unlink_file to avoid the check
-	 * for noexec.
-	 */
-	if( tmpfile1 != NULL )
-	{
-	    if( CVS_UNLINK( tmpfile1 ) < 0 )
-	    {
-		if( !existence_error( errno ) )
-		    error( 0, errno, "cannot remove temp file %s", tmpfile1 );
-	    }
-	    free( tmpfile1 );
-	}
-	if( tmpfile2 != NULL )
-	{
-	    if( CVS_UNLINK( tmpfile2 ) < 0 )
-	    {
-		if( !existence_error( errno ) )
-		    error( 0, errno, "cannot remove temp file %s", tmpfile2 );
-	    }
-	    free (tmpfile2);
-	}
-    }
-
-    return retval;
-}
-
 
 
 /* Show differences between two files.  This is the start of a diff library.
@@ -313,9 +167,9 @@ diff_exec (const char *file1, const char *file2, const char *label1,
    which not to print.  The code below reproduces every rcsdiff run
    that I have seen. */
 
-static void
+void
 RCS_output_diff_options (int diff_argc, char * const *diff_argv,
-			 const char *rev1, const char *rev2,
+			 bool devnull, const char *rev1, const char *rev2,
                          const char *workfile)
 {
     int i;
@@ -326,19 +180,28 @@ RCS_output_diff_options (int diff_argc, char * const *diff_argv,
         cvs_output (" ", 1);
 	cvs_output (quotearg_style (shell_quoting_style, diff_argv[i]), 0);
     }
-    cvs_output (" -r", 3);
-    cvs_output (rev1, 0);
+
+    if (devnull)
+	cvs_output (" -N", 3);
+
+    if (rev1)
+    {
+	cvs_output (" -r", 3);
+	cvs_output (rev1, 0);
+    }
 
     if (rev2)
     {
 	cvs_output (" -r", 3);
 	cvs_output (rev2, 0);
     }
-    else
+
+    if (!rev1 || !rev2)
     {
-	assert (workfile != NULL);
+	assert (workfile);
 	cvs_output (" ", 1);
 	cvs_output (workfile, 0);
     }
+
     cvs_output ("\n", 1);
 }
