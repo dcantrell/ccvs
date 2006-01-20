@@ -30,6 +30,7 @@
 /* CVS headers.  */
 #include "base.h"
 #include "buffer.h"
+#include "diff.h"
 #include "difflib.h"
 #include "edit.h"
 #include "gpg.h"
@@ -2551,7 +2552,14 @@ handle_base_clear_signatures (char *args, size_t len)
 
 
 
-/* Create am up-to-date temporary workfile from a base file.  */
+/* Create am up-to-date temporary workfile from a base file.
+ *
+ * NOTES
+ *   Base-copy needs to be able to copy temp files in the case of a join which
+ *   adds a file.  Though keeping a base file in this case could potentially
+ *   be interesting, this is not what certain portions of the code currently
+ *   expect.
+ */
 static void
 client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
 		  const char *filename)
@@ -2808,6 +2816,135 @@ handle_base_merged (char *args, size_t len)
     dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = "Result of merge";
     call_in_directory (args, update_entries, &dat);
+}
+
+
+
+static void
+client_base_diff (void *data_arg, List *ent_list, const char *short_pathname,
+		  const char *filename)
+{
+    struct diff_info *di = data_arg;
+    struct file_info finfo;
+    char *ft1, *ft2, *rev1, *rev2, *label1, *label2;
+    const char *f1 = NULL, *f2 = NULL;
+    bool used_t1 = false, used_t2 = false;
+
+    read_line (&ft1);
+
+    read_line (&rev1);
+    if (!*rev1)
+    {
+	free (rev1);
+	rev1 = NULL;
+    }
+
+    read_line (&label1);
+    if (!*label1)
+    {
+	free (label1);
+	label1 = NULL;
+    }
+
+    read_line (&ft2);
+
+    read_line (&rev2);
+    if (!*rev2)
+    {
+	free (rev2);
+	rev2 = NULL;
+    }
+
+    read_line (&label2);
+    if (!*label2)
+    {
+	free (label2);
+	label2 = NULL;
+    }
+
+    if (!strcmp (ft1, "TEMP"))
+    {
+	if (!temp_checkout1)
+	    error (1, 0,
+		   "Server failed to send enough files before Base-diff.");
+	f1 = temp_checkout1;
+
+	used_t1 = true;
+    }
+    else if (!strcmp (ft1, "DEVNULL"))
+	f1 = DEVNULL;
+    else
+	error (1, 0, "Server sent unrecognized diff file type (`%s')", ft1);
+
+    if (!strcmp (ft2, "TEMP"))
+    {
+	if ((used_t1 && !temp_checkout2) || (!used_t1 && !temp_checkout1))
+	    error (1, 0,
+		   "Server failed to send enough files before Base-diff.");
+
+	if (used_t1)
+	{
+	    f2 = temp_checkout2;
+	    used_t2 = true;
+	}
+	else
+	{
+	    f2 = temp_checkout1;
+	    used_t1 = true;
+	}
+    }
+    else if (!strcmp (ft2, "DEVNULL"))
+	f2 = DEVNULL;
+    else if (!strcmp (ft2, "WORKFILE"))
+	f2 = filename;
+    else
+	error (1, 0, "Server sent unrecognized diff file type (`%s')", ft2);
+
+    if ((!used_t1 && temp_checkout1)
+	|| (!used_t2 && temp_checkout2))
+	error (1, 0, "Unused temp files sent from server before Base-diff.");
+
+    finfo.file = filename;
+    finfo.fullname = short_pathname;
+
+    diff_mark_errors (base_diff (&finfo, di->diff_argc, di->diff_argv,
+				 f1, rev1, label1, f2,
+				 rev2, label2, di->empty_files));
+
+    if (ft1) free (ft1);
+    if (ft2) free (ft2);
+    if (rev1) free (rev1);
+    if (rev2) free (rev2);
+    if (label1) free (label1);
+    if (label2) free (label2);
+    if (temp_checkout1)
+    {
+	char *tmp = temp_checkout1;
+	temp_checkout1 = NULL;
+	if (CVS_UNLINK (tmp) < 0)
+	    error (0, errno, "Failed to remove temp file `%s'", tmp);
+	free (tmp);
+    }
+    if (temp_checkout2)
+    {
+	char *tmp = temp_checkout2;
+	temp_checkout2 = NULL;
+	if (CVS_UNLINK (tmp) < 0)
+	    error (0, errno, "Failed to remove temp file `%s'", tmp);
+	free (tmp);
+    }
+
+    return;
+}
+
+
+
+static void
+handle_base_diff (char *args, size_t len)
+{
+    if (suppress_bases)
+	error (1, 0, "Server sent Base-* response when asked not to.");
+    call_in_directory (args, client_base_diff, get_diff_info ());
 }
 
 
@@ -3900,14 +4037,14 @@ struct response responses[] =
 	     rs_optional),
     RSP_LINE("Temp-checkout", handle_temp_checkout, response_type_normal,
 	     rs_optional),
-    RSP_LINE("Base-copy", handle_base_copy, response_type_normal,
-	     rs_optional),
+    RSP_LINE("Base-copy", handle_base_copy, response_type_normal, rs_optional),
     RSP_LINE("Base-merge", handle_base_merge, response_type_normal,
 	     rs_optional),
     RSP_LINE("Base-entry", handle_base_entry, response_type_normal,
 	     rs_optional),
     RSP_LINE("Base-merged", handle_base_merged, response_type_normal,
 	     rs_optional),
+    RSP_LINE("Base-diff", handle_base_diff, response_type_normal, rs_optional),
 
     RSP_LINE("Base-signatures", handle_base_signatures, response_type_normal,
 	     rs_optional),

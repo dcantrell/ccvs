@@ -6108,6 +6108,7 @@ struct request requests[] =
   REQ_LINE("Checkin-time", serve_checkin_time, 0),
   REQ_LINE("Modified", serve_modified, RQ_ESSENTIAL),
   REQ_LINE("Signature", serve_signature, 0),
+  REQ_LINE("Base-diff", serve_noop, 0),
   REQ_LINE("Is-modified", serve_is_modified, 0),
 
   /* The client must send this request to interoperate with CVS 1.5
@@ -8286,20 +8287,23 @@ iserver_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
     if (!supported_response (istemp ? "Temp-checkout" : "Base-checkout"))
 	return;
 
-    if (/* Entry rev and new rev are the same...  */
-	prev && !strcmp (prev, rev)
+    if (/* Not sending a temp file...  */
+	!istemp
+	/* ...and entry rev and new rev are the same...  */
+	&& prev && !strcmp (prev, rev)
 	/* ...and... */
 	&& (   /* ...both option specs are empty...  */
 	    (  (!poptions || !poptions[0]) && (!options || !options[0]))
-	       /* ...or the option specs match.  */
+	       /* ...or the option specs match...  */
 	    || (poptions && options && !strcmp (poptions, options)))
-	&& (   /* ...both option specs are empty...  */
+	/* ...and... */
+	&& (   /* ...both tag specs are empty...  */
 	    (  (!ptag || !ptag[0]) && (!tag || !tag[0]))
-	       /* ...or the option specs match.  */
+	       /* ...or the tag specs match.  */
 	    || (ptag && tag && !strcmp (ptag, tag)))
        )
 	/* PREV & REV are the same, so the client should already have this
-	 * file.
+	 * base file.
 	 */
 	return;
 
@@ -8490,6 +8494,39 @@ server_base_signatures (struct file_info *finfo, const char *rev)
     buf_output0 (protocol, rev);
     buf_output (protocol, "\n", 1);
     buf_send_counted (protocol);
+    return;
+}
+
+
+
+void
+server_base_diff (struct file_info *finfo, const char *f1, const char *rev1,
+		  const char *label1, const char *f2, const char *rev2,
+		  const char *label2)
+{
+    if (!supported_response ("Base-diff"))
+	return;
+
+    buf_output0 (protocol, "Base-diff ");
+    output_dir (finfo->update_dir, finfo->repository);
+    buf_output0 (protocol, finfo->file);
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, strcmp (f1, DEVNULL) ? "TEMP" : "DEVNULL");
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, rev1 ? rev1 : "");
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, label1 ? label1 : "");
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, strcmp (f2, DEVNULL)
+			   ? (rev2 ? "TEMP" : "WORKFILE")
+			   : "DEVNULL");
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, rev2 ? rev2 : "");
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, label2 ? label2 : "");
+    buf_output (protocol, "\n", 1);
+    buf_send_counted (protocol);
+
     return;
 }
 

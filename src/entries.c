@@ -54,7 +54,11 @@ Entnode_Create (enum ent_type type, const char *user, const char *vn,
                 const char *date, const char *ts_conflict)
 {
     Entnode *ent;
-    
+ 
+    TRACE (TRACE_FLOW,
+	   "Entnode_Create (%s, %s, %s, %s, %s, %s, %s)",
+	   user, vn, ts, options, tag, date, ts_conflict);
+
     /* Note that timestamp and options must be non-NULL */
     ent = xmalloc (sizeof (Entnode));
     ent->type      = type;
@@ -461,6 +465,8 @@ Entries_Open (int aflag, char *update_dir)
     FILE *fpin;
     int sawdir;
 
+    TRACE (TRACE_FLOW, "EntriesOpen (%s)", update_dir);
+
     /* get a fresh list... */
     entries = getlist ();
 
@@ -595,6 +601,9 @@ static Node *
 AddEntryNode (List *list, Entnode *entdata)
 {
     Node *p;
+
+    TRACE (TRACE_FLOW, "AddEntryNode (%s, %s)",
+	   entdata->user, entdata->timestamp);
 
     /* was it already there? */
     if ((p  = findnode_fn (list, entdata->user)) != NULL)

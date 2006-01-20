@@ -285,7 +285,7 @@ Version_TS (struct file_info *finfo, const char *options, const char *tag,
 	    vers_ts->ts_user = time_stamp (finfo->file);
     }
 
-    return (vers_ts);
+    return vers_ts;
 }
 
 
@@ -332,9 +332,9 @@ time_stamp_server (const char *file, Vers_TS *vers_ts, Entnode *entdata)
 	else if (entdata->conflict
 		 && entdata->conflict[0] == '=')
 	{
-	    /* These just need matching content.  Might as well minimize it.  */
-	    vers_ts->ts_user = xstrdup ("");
-	    vers_ts->ts_conflict = xstrdup ("");
+	    /* These need matching content that doesn't match ->ts_rcs.  */
+	    vers_ts->ts_user = xstrdup ("Is-modified");
+	    vers_ts->ts_conflict = xstrdup ("Is-modified");
 	}
 	else if (entdata->timestamp
 		 && (entdata->timestamp[0] == 'M'

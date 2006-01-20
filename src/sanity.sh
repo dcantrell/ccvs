@@ -508,6 +508,11 @@ tempfile="cvs[-a-zA-Z0-9.%_]*"
 
 # Regexp to match a date in RFC822 format (as amended by RFC1123).
 RFCDATE="[a-zA-Z0-9 ][a-zA-Z0-9 ]* [0-9:][0-9:]* -0000"
+if $remote; then
+  LOCAL_RFCDATE=
+else
+  LOCAL_RFCDATE="	$RFCDATE"
+fi
 RFCDATE_EPOCH="1 Jan 1970 00:00:00 -0000"
 
 # Special times used in touch -t commands and the regular expresions
@@ -3166,37 +3171,25 @@ ${SPROG} \[tag aborted\]: failed to set tag BASE to revision 1\.1 in ${CVSROOT_D
 	  dotest basica-6 "${testcvs} -q update" ''
 	  echo "ssfile line 2" >>sdir/ssdir/ssfile
 	  dotest_fail basica-6.2 "${testcvs} -q diff -c" \
-"Index: sdir/ssdir/ssfile
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v
-retrieving revision 1\.1
-diff -c -r1\.1 ssfile
+"diff -c -r1\.1 sdir/ssdir/ssfile
 \*\*\* sdir/ssdir/ssfile	${RFCDATE}	1\.1
---- sdir/ssdir/ssfile	${RFCDATE}
+--- sdir/ssdir/ssfile$LOCAL_RFCDATE
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 --- 1,2 ----
   ssfile
 ${PLUS} ssfile line 2"
 	  dotest_fail basica-6.3 "${testcvs} -q diff -c -rBASE" \
-"Index: sdir/ssdir/ssfile
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v
-retrieving revision 1\.1
-diff -c -r1\.1 ssfile
+"diff -c -r1\.1 sdir/ssdir/ssfile
 \*\*\* sdir/ssdir/ssfile	${RFCDATE}	1\.1
---- sdir/ssdir/ssfile	${RFCDATE}
+--- sdir/ssdir/ssfile$LOCAL_RFCDATE
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 --- 1,2 ----
   ssfile
 ${PLUS} ssfile line 2"
 	  dotest_fail basica-6.4 "${testcvs} -q diff -c -rBASE -C3isacrowd" \
-"Index: sdir/ssdir/ssfile
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v
-retrieving revision 1\.1
-diff -c -C 3isacrowd -r1\.1 ssfile
+"diff -c -C 3isacrowd -r1\.1 sdir/ssdir/ssfile
 ${SPROG} diff: invalid context length argument"
 	  dotest basica-7 "${testcvs} -q ci -m modify-it" \
 "$CVSROOT_DIRNAME/first-dir/sdir/ssdir/ssfile,v  <--  sdir/ssdir/ssfile
@@ -5924,11 +5917,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  echo "#include <winsock.h>" >abc
 	  # check the behavior of the --ifdef=MACRO option
 	  dotest_fail diff-7 "${testcvs} -q diff --ifdef=HAVE_WINSOCK_H" \
-"Index: abc
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
-retrieving revision 1\.2
-diff --ifdef HAVE_WINSOCK_H -r1\.2 abc
+"diff --ifdef HAVE_WINSOCK_H -r1\.2 abc
 #ifndef HAVE_WINSOCK_H
 extern int gethostname ();
 #else /\* HAVE_WINSOCK_H \*/
@@ -5963,21 +5952,13 @@ initial revision: 1\.1"
 	  # change to line near EOF
 	  ${AWK} 'BEGIN {printf("one\ntwo\nthree\nfour\nsix")}' </dev/null >abc
 	  dotest_fail diffnl-100 "${testcvs} diff abc" \
-"Index: abc
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
-retrieving revision 1\.1
-diff -r1\.1 abc
+"diff -r1\.1 abc
 5d4
 < five"
           dotest_fail diffnl-101 "${testcvs} diff -u abc" \
-"Index: abc
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
-retrieving revision 1\.1
-diff -u -r1\.1 abc
+"diff -u -r1\.1 abc
 --- abc	${RFCDATE}	1\.1
-+++ abc	${RFCDATE}
++++ abc$LOCAL_RFCDATE
 @@ -2,5 +2,4 @@
  two
  three
@@ -5992,11 +5973,7 @@ new revision: 1\.2; previous revision: 1\.1"
           # Change to last line
 	  ${AWK} 'BEGIN {printf("one\ntwo\nthree\nfour\nseven")}' </dev/null >abc
           dotest_fail diffnl-200 "${testcvs} diff abc" \
-"Index: abc
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
-retrieving revision 1\.2
-diff -r1\.2 abc
+"diff -r1\.2 abc
 5c5
 < six
 \\\\ No newline at end of file
@@ -6004,13 +5981,9 @@ diff -r1\.2 abc
 > seven
 \\\\ No newline at end of file"
 	  dotest_fail diffnl-201 "${testcvs} diff -u abc" \
-"Index: abc
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
-retrieving revision 1\.2
-diff -u -r1\.2 abc
+"diff -u -r1\.2 abc
 --- abc	${RFCDATE}	1\.2
-+++ abc	${RFCDATE}
++++ abc$LOCAL_RFCDATE
 @@ -2,4 +2,4 @@
  two
  three
@@ -6030,24 +6003,16 @@ three
 four
 seven" > abc
 	  dotest_fail diffnl-300 "${testcvs} diff abc" \
-"Index: abc
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
-retrieving revision 1\.3
-diff -r1\.3 abc
+"diff -r1\.3 abc
 5c5
 < seven
 \\\\ No newline at end of file
 ---
 > seven"
 	  dotest_fail diffnl-301 "${testcvs} diff -u abc" \
-"Index: abc
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
-retrieving revision 1\.3
-diff -u -r1\.3 abc
+"diff -u -r1\.3 abc
 --- abc	${RFCDATE}	1\.3
-+++ abc	${RFCDATE}
++++ abc$LOCAL_RFCDATE
 @@ -2,4 +2,4 @@
  two
  three
@@ -6062,24 +6027,16 @@ new revision: 1\.4; previous revision: 1\.3"
 	  # Removal of newline
 	  ${AWK} 'BEGIN {printf("one\ntwo\nthree\nfour\nseven")}' </dev/null >abc
 	  dotest_fail diffnl-400 "${testcvs} diff abc" \
-"Index: abc
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
-retrieving revision 1\.4
-diff -r1\.4 abc
+"diff -r1\.4 abc
 5c5
 < seven
 ---
 > seven
 \\\\ No newline at end of file"
 	  dotest_fail diffnl-401 "${testcvs} diff -u abc" \
-"Index: abc
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
-retrieving revision 1\.4
-diff -u -r1\.4 abc
+"diff -u -r1\.4 abc
 --- abc	${RFCDATE}	1\.4
-+++ abc	${RFCDATE}
++++ abc$LOCAL_RFCDATE
 @@ -2,4 +2,4 @@
  two
  three
@@ -6435,13 +6392,8 @@ ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  # Test diff of the removed file before it is committed.
 	  dotest_fail death2-diff-1 "${testcvs} -q diff file1" \
 "${SPROG} diff: file1 was removed, no comparison available"
-
 	  dotest_fail death2-diff-2 "${testcvs} -q diff -N -c file1" \
-"Index: file1
-===================================================================
-RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
-retrieving revision 1\.1
-diff -c -N -r1\.1 file1
+"diff -c -N -r1\.1 file1
 \*\*\* file1	${RFCDATE}	[0-9.]*
 --- /dev/null	${RFCDATE_EPOCH}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6463,14 +6415,9 @@ ${SPROG} diff: No comparison available\.  Pass .-N. to .${SPROG} diff.${QUESTION
 "${testcvs} -q diff -rbranch -r1.1 -c file1" \
 "${SPROG} diff: Tag branch refers to a dead (removed) revision in file .file1.\.
 ${SPROG} diff: No comparison available\.  Pass .-N. to .${SPROG} diff.${QUESTION}"
-
 	  dotest_fail death2-diff-4 \
 "${testcvs} -q diff -r1.1 -rbranch -N -c file1" \
-"Index: file1
-===================================================================
-RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
-retrieving revision 1\.1
-diff -c -N -r1\.1 -r1\.1\.2\.1
+"diff -c -N -r1\.1 -r1\.1\.2\.1
 \*\*\* file1	${RFCDATE}	[0-9.]*
 --- /dev/null	${RFCDATE_EPOCH}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6480,11 +6427,7 @@ diff -c -N -r1\.1 -r1\.1\.2\.1
 	  # and in reverse
 	  dotest_fail death2-diff-4a \
 "${testcvs} -q diff -rbranch -r1.1 -N -c file1" \
-"Index: file1
-===================================================================
-RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
-retrieving revision 1\.1
-diff -c -N -r1\.1\.2\.1 -r1\.1
+"diff -c -N -r1\.1\.2\.1 -r1\.1
 \*\*\* /dev/null	${RFCDATE_EPOCH}
 --- file1	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6497,11 +6440,7 @@ diff -c -N -r1\.1\.2\.1 -r1\.1
 "${SPROG} diff: file1 no longer exists, no comparison available"
 
 	  dotest_fail death2-diff-6 "${testcvs} -q diff -rtag -N -c ." \
-"Index: file1
-===================================================================
-RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
-retrieving revision 1\.1
-diff -c -N -r1\.1 file1
+"diff -c -N -r1\.1 file1
 \*\*\* file1	[-a-zA-Z0-9: ]*	[0-9.]*
 --- /dev/null	${RFCDATE_EPOCH}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6534,12 +6473,9 @@ ${SPROG} add: use \`${SPROG} commit' to add this file permanently"
 "${SPROG} diff: file1 is a new entry, no comparison available"
 
 	  dotest_fail death2-diff-8 "${testcvs} -q diff -N -c file1" \
-"Index: file1
-===================================================================
-RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
-diff -c -N file1
+"diff -c -N file1
 \*\*\* /dev/null	${RFCDATE_EPOCH}
---- file1	${RFCDATE}
+--- file1$LOCAL_RFCDATE
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1 ----
@@ -6609,11 +6545,7 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 "$SPROG diff: tag tag is not in file file3"
 
 	  dotest_fail death2-diff-10 "${testcvs} -q diff -rtag -N -c file3" \
-"Index: file3
-===================================================================
-RCS file: $CVSROOT_DIRNAME/first-dir/Attic/file3,v
-retrieving revision 1\.1\.2\.1
-diff -c -N -r1\.1\.2\.1 file3
+"diff -c -N -r1\.1\.2\.1 file3
 \*\*\* /dev/null	${RFCDATE_EPOCH}
 --- file3	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6622,12 +6554,7 @@ diff -c -N -r1\.1\.2\.1 file3
 ${PLUS} first revision"
 
 	  dotest_fail death2-diff-11 "${testcvs} -q diff -rtag -c ." \
-"Index: file1
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.1
-retrieving revision 1\.1\.2\.2
-diff -c -r1\.1 -r1\.1\.2\.2
+"diff -c -r1\.1 -r1\.1\.2\.2
 \*\*\* file1	${RFCDATE}	[0-9.]*
 --- file1	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6640,12 +6567,7 @@ ${SPROG} diff: tag tag is not in file file3
 ${SPROG} diff: file4 no longer exists, no comparison available"
 
 	  dotest_fail death2-diff-12 "${testcvs} -q diff -rtag -c -N ." \
-"Index: file1
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.1
-retrieving revision 1\.1\.2\.2
-diff -c -N -r1\.1 -r1\.1\.2\.2
+"diff -c -N -r1\.1 -r1\.1\.2\.2
 \*\*\* file1	${RFCDATE}	[0-9.]*
 --- file1	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6653,10 +6575,6 @@ diff -c -N -r1\.1 -r1\.1\.2\.2
 ! first revision
 --- 1 ----
 ! second revision
-Index: file2
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
-retrieving revision 1\.1\.2\.2
 diff -c -N -r1\.1\.2\.2 file2
 \*\*\* /dev/null	${RFCDATE_EPOCH}
 --- file2	${RFCDATE}	[0-9.]*
@@ -6664,10 +6582,6 @@ diff -c -N -r1\.1\.2\.2 file2
 \*\*\* 0 \*\*\*\*
 --- 1 ----
 ${PLUS} branch revision
-Index: file3
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
-retrieving revision 1\.1\.2\.1
 diff -c -N -r1\.1\.2\.1 file3
 \*\*\* /dev/null	${RFCDATE_EPOCH}
 --- file3	${RFCDATE}	[0-9.]*
@@ -6675,10 +6589,6 @@ diff -c -N -r1\.1\.2\.1 file3
 \*\*\* 0 \*\*\*\*
 --- 1 ----
 ${PLUS} first revision
-Index: file4
-===================================================================
-RCS file: $CVSROOT_DIRNAME/first-dir/file4,v
-retrieving revision 1\.1
 diff -c -N -r1\.1 file4
 \*\*\* file4	${RFCDATE}	[0-9.]*
 --- /dev/null	${RFCDATE_EPOCH}
@@ -6702,11 +6612,7 @@ U file4"
 ${SPROG} diff: No comparison available\.  Pass .-N. to .${SPROG} diff.${QUESTION}"
 
 	  dotest_fail death2-diff-14 "${testcvs} -q diff -r rdiff-tag -c -N" \
-"Index: file1
-===================================================================
-RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
-retrieving revision 1\.1
-diff -c -N -r1\.1\.2\.1 -r1\.1
+"diff -c -N -r1\.1\.2\.1 -r1\.1
 \*\*\* /dev/null	${RFCDATE_EPOCH}
 --- file1	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -7550,12 +7456,7 @@ ${log_keyid}modify
 ============================================================================="
 	  dotest_fail branches-14.4 \
 	    "${testcvs} diff -c -r 1.1 -r 1.3 file4" \
-"Index: file4
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file4,v
-retrieving revision 1\.1
-retrieving revision 1\.3
-diff -c -r1\.1 -r1\.3
+"diff -c -r1\.1 -r1\.3
 \*\*\* file4	${RFCDATE}	1\.1
 --- file4	${RFCDATE}	1\.3
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -7565,12 +7466,7 @@ diff -c -r1\.1 -r1\.3
 ! 4:trunk-3"
 	  dotest_fail branches-14.5 \
 	    "${testcvs} diff -c -r 1.1 -r 1.2.2.1 file4" \
-"Index: file4
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file4,v
-retrieving revision 1\.1
-retrieving revision 1\.2\.2\.1
-diff -c -r1\.1 -r1\.2\.2\.1
+"diff -c -r1\.1 -r1\.2\.2\.1
 \*\*\* file4	${RFCDATE}	1\.1
 --- file4	${RFCDATE}	1\.2\.2\.1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -8763,11 +8659,6 @@ I am the second foo, and my name is \$""Name: second \$\."
 
 	dotest_fail rcslib-diff9 "${testcvs} diff -r first -r second" \
 "${SPROG} diff: Diffing \.
-Index: foo\.c
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/foo\.c,v
-retrieving revision 1\.1
-retrieving revision 1\.2
 diff -r1\.1 -r1\.2
 1c1
 < I am the first foo, and my name is \$""Name: first \$\.
@@ -8777,10 +8668,6 @@ diff -r1\.1 -r1\.2
 	  echo "I am the once and future foo, and my name is $""Name$." > foo.c
 	  dotest_fail rcslib-diff10 "${testcvs} diff -r first" \
 "${SPROG} diff: Diffing \.
-Index: foo\.c
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/foo\.c,v
-retrieving revision 1\.1
 diff -r1\.1 foo\.c
 1c1
 < I am the first foo, and my name is \$""Name: first \$\.
@@ -8822,13 +8709,9 @@ EOF
 	  # Incidentally test that CVS no longer splits diff arguments on
 	  # spaces.
 	  dotest_fail rcslib-diffrgx-3 "$testcvs diff -c -F'.* (' rgx.c" \
-"Index: rgx\.c
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/rgx\.c,v
-retrieving revision 1\.1
-diff -c -F '\.\* (' -r1\.1 rgx\.c
+"diff -c -F '\.\* (' -r1\.1 rgx\.c
 \*\*\* rgx\.c	${RFCDATE}	1\.1
---- rgx\.c	${RFCDATE}
+--- rgx\.c$LOCAL_RFCDATE
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\* test_regex (whiz, bang)
 \*\*\* 3,7 \*\*\*\*
   foo;
@@ -11042,21 +10925,13 @@ Merging differences between 1\.1 and 1\.2 into \`temp\.txt'
 \`temp\.txt' already contains the differences between 1\.1 and 1\.2
 M temp\.txt"
 	  dotest_fail join6-3.6 "${testcvs} diff temp.txt" \
-"Index: temp\.txt
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/join6/temp\.txt,v
-retrieving revision 1\.2
-diff -r1\.2 temp.txt
+"diff -r1\.2 temp.txt
 1d0
 < aaa"
 
 	  cp temp2.txt temp.txt
 	  dotest_fail join6-4 "${testcvs} diff temp.txt" \
-"Index: temp.txt
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/join6/temp\.txt,v
-retrieving revision 1\.2
-diff -r1\.2 temp\.txt
+"diff -r1\.2 temp\.txt
 4d3
 < ddd"
 
@@ -11072,11 +10947,7 @@ Merging differences between 1\.1 and 1\.2 into \`temp\.txt'
 $CPROG update: conflicts during merge
 C temp\.txt"
 	  dotest_fail join6-9 "${testcvs} diff temp.txt" \
-"Index: temp\.txt
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/join6/temp.txt,v
-retrieving revision 1\.2
-diff -r1\.2 temp\.txt
+"diff -r1\.2 temp\.txt
 3a4,6
 > <<<<<<< temp\.txt
 > dddd
@@ -11089,11 +10960,7 @@ diff -r1\.2 temp\.txt
 new revision: 1\.3; previous revision: 1\.2"
           cp temp3.txt temp.txt
 	  dotest_fail join6-11 "${testcvs} diff temp.txt" \
-"Index: temp\.txt
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/join6/temp.txt,v
-retrieving revision 1\.3
-diff -r1\.3 temp\.txt
+"diff -r1\.3 temp\.txt
 3a4
 > ddd"
 	  dotest join6-12 "$testcvs update -j1.2 -j1.3 temp.txt" \
@@ -23903,13 +23770,9 @@ initial revision: 1\.1"
 	  echo "add a line to the end" >>file1
 
 	  dotest_fail big-4b "$testcvs -q diff -u" \
-"Index: file1
-===================================================================
-RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
-retrieving revision 1\.1
-diff -u -r1\.1 file1
+"diff -u -r1\.1 file1
 --- file1	$RFCDATE	1\.1
-$PLUS$PLUS$PLUS file1	$RFCDATE
+$PLUS$PLUS$PLUS file1$LOCAL_RFCDATE
 @@ -998,3 ${PLUS}998,4 @@
  This is line (9,9,7) which goes into the file file1 for testing
  This is line (9,9,8) which goes into the file file1 for testing
@@ -25365,11 +25228,7 @@ $CPROG update: conflicts during merge
 C file1"
 
 	  dotest_fail keyword2-12 "${testcvs} diff file1" \
-"Index: file1
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.2
-diff -r1\.2 file1
+"diff -r1\.2 file1
 0a1
 > <<<<<<< file1
 1a3,5
@@ -25491,12 +25350,7 @@ add a line on trunk after trunktag"
 	  # and diff thinks so too.  Case (a) from the comment in
 	  # cvs.texinfo (Common options).
 	  dotest_fail head-trunk-diff "${testcvs} -q diff -c -r HEAD -r br1" \
-"Index: file1
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.3
-retrieving revision 1\.3\.2\.2
-diff -c -r1\.3 -r1\.3\.2\.2
+"diff -c -r1\.3 -r1\.3\.2\.2
 \*\*\* file1	${RFCDATE}	1\.3
 --- file1	${RFCDATE}	1\.3\.2\.2
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -25544,12 +25398,7 @@ add a line on trunk after trunktag"
 	  # Like head-brtag-diff, there is a non-branch sticky tag.
 	  dotest_fail head-trunktag-diff \
 	    "${testcvs} -q diff -c -r HEAD -r br1" \
-"Index: file1
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.3
-retrieving revision 1\.3\.2\.2
-diff -c -r1\.3 -r1\.3\.2\.2
+"diff -c -r1\.3 -r1\.3\.2\.2
 \*\*\* file1	${RFCDATE}	1\.3
 --- file1	${RFCDATE}	1\.3\.2\.2
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -25666,12 +25515,7 @@ new revision: 1\.1\.4\.2; previous revision: 1\.1\.4\.1"
 	  # Test diff -r<tag>:<date> with two revisions specified.
 	  dotest_fail tagdate-13b \
 "$testcvs -q diff -u -rbr2:'$date_T3' -rbr2:now file1" \
-"Index: file1
-===================================================================
-RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
-retrieving revision 1\.1\.4\.1
-retrieving revision 1\.1\.4\.2
-diff -u -r1\.1\.4\.1 -r1\.1\.4\.2
+"diff -u -r1\.1\.4\.1 -r1\.1\.4\.2
 --- file1	$RFCDATE	1\.1\.4\.1
 +++ file1	$RFCDATE	1\.1\.4\.2
 @@ -1 ${PLUS}1 @@
@@ -29195,54 +29039,30 @@ ${SPROG} update: skipping directory mod2-2/mod1-2"
 	  dotest_fail multiroot-diff-1 "${testcvs} diff" \
 "${SPROG} diff: Diffing \.
 ${SPROG} diff: Diffing mod1-1
-Index: mod1-1/file1-1
-===================================================================
-RCS file: ${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
-retrieving revision 1\.1
-diff -r1\.1 file1-1
+diff -r1\.1 mod1-1/file1-1
 1a2
 > bobby
 ${SPROG} diff: Diffing mod1-2
-Index: mod1-2/file1-2
-===================================================================
-RCS file: ${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
-retrieving revision 1\.1
-diff -r1\.1 file1-2
+diff -r1\.1 mod1-2/file1-2
 1a2
 > brown
 ${SPROG} diff: Diffing mod2-2/mod1-2
 ${SPROG} diff: Diffing mod1-2/mod2-2
 ${SPROG} diff: Diffing mod2-1
-Index: mod2-1/file2-1
-===================================================================
-RCS file: ${CVSROOT2_DIRNAME}/mod2-1/file2-1,v
-retrieving revision 1\.1
-diff -r1\.1 file2-1
+diff -r1\.1 mod2-1/file2-1
 1a2
 > goes
 ${SPROG} diff: Diffing mod2-2
-Index: mod2-2/file2-2
-===================================================================
-RCS file: ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
-retrieving revision 1\.1
-diff -r1\.1 file2-2
+diff -r1\.1 mod2-2/file2-2
 1a2
 > down" \
 "${SPROG} diff: Diffing \.
 ${SPROG} diff: Diffing mod1-1
-Index: mod1-1/file1-1
-===================================================================
-RCS file: ${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
-retrieving revision 1\.1
-diff -r1\.1 file1-1
+diff -r1\.1 mod1-1/file1-1
 1a2
 > bobby
 ${SPROG} diff: Diffing mod1-2
-Index: mod1-2/file1-2
-===================================================================
-RCS file: ${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
-retrieving revision 1\.1
-diff -r1\.1 file1-2
+diff -r1\.1 mod1-2/file1-2
 1a2
 > brown
 ${SPROG} diff: Diffing mod2-2
@@ -29250,19 +29070,11 @@ ${SPROG} diff: Diffing mod2-2/mod1-2
 ${SPROG} diff: Diffing mod1-2
 ${SPROG} diff: Diffing mod1-2/mod2-2
 ${SPROG} diff: Diffing mod2-1
-Index: mod2-1/file2-1
-===================================================================
-RCS file: ${CVSROOT2_DIRNAME}/mod2-1/file2-1,v
-retrieving revision 1\.1
-diff -r1\.1 file2-1
+diff -r1\.1 mod2-1/file2-1
 1a2
 > goes
 ${SPROG} diff: Diffing mod2-2
-Index: mod2-2/file2-2
-===================================================================
-RCS file: ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
-retrieving revision 1\.1
-diff -r1\.1 file2-2
+diff -r1\.1 mod2-2/file2-2
 1a2
 > down"
 
@@ -30251,22 +30063,12 @@ T dir1/sdir/sfile
 T dir1/sdir/ssdir/ssfile"
 	  dotest_fail multiroot2-12 \
 "${testcvs} -q diff -u -r tag1 -r tag2" \
-"Index: dir1/file1
-===================================================================
-RCS file: ${TESTDIR}/root1/dir1/file1,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.2
-diff -u -r1\.1\.1\.1 -r1\.2
+"diff -u -r1\.1\.1\.1 -r1\.2
 --- dir1/file1	${RFCDATE}	1\.1\.1\.1
 ${PLUS}${PLUS}${PLUS} dir1/file1	${RFCDATE}	1\.2
 @@ -1 ${PLUS}1,2 @@
  file1
 ${PLUS}change it
-Index: dir1/sdir/sfile
-===================================================================
-RCS file: ${TESTDIR}/root2/sdir/sfile,v
-retrieving revision 1\.1\.1\.1
-retrieving revision 1\.2
 diff -u -r1\.1\.1\.1 -r1\.2
 --- dir1/sdir/sfile	${RFCDATE}	1\.1\.1\.1
 ${PLUS}${PLUS}${PLUS} dir1/sdir/sfile	${RFCDATE}	1\.2
@@ -32176,7 +31978,7 @@ EOF
 	  save_CVS_SERVER=$CVS_SERVER
 	  ln -s $PRIMARY_CVSROOT_DIRNAME $TESTDIR/primary_link
 	  dotest writeproxy-0 "$CVS_SERVER server" \
-"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Signature Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents sign status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Signature Base-diff Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents sign status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
 ok
 ok
 ok" \
@@ -32463,7 +32265,7 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	  mv $TESTDIR/save-root $PRIMARY_CVSROOT_DIRNAME
 
 	  dotest writeproxy-noredirect-5 "$CVS_SERVER server" \
-"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Signature Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents sign status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Signature Base-diff Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents sign status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
 ok
 ok
 ok
@@ -32495,7 +32297,7 @@ EOF
 	  cd firstdir
 	  echo now you see me >file1
 	  dotest writeproxy-noredirect-6 "$CVS_SERVER server" \
-"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Signature Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents sign status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Signature Base-diff Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents sign status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
 ok
 ok
 ok
@@ -32525,7 +32327,7 @@ EOF
 	  echo /file1/0/dummy+timestamp// >>CVS/Entries
 
 	  dotest writeproxy-noredirect-7 "$CVS_SERVER server" \
-"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Signature Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents sign status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Signature Base-diff Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents sign status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
 ok
 ok
 Mode u=rw,g=rw,o=r
@@ -35275,7 +35077,6 @@ new revision: 1\.2; previous revision: 1\.1"
 0a1
 ===================================================================
 > foo
-Index: file1
 RCS file: ${CVSROOT_DIRNAME}/trace/file1,v
 diff -r1\.1 -r1\.2
 retrieving revision 1\.1

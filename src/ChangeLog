@@ -1,3 +1,25 @@
+2006-01-20  Derek Price  <derek@ximbiot.com>
+
+	* base.c (base_diff): Handle client/server mode.
+	* client.c (base_copy): Expand header comment.
+	(client_base_diff, handle_base_diff): New function.
+	(responses): Add Base-diff.
+	* diff.c (diff_mark_errors): Export.
+	(empty_files): s/int/bool/.
+	(diff_fileproc): Reduce verbosity.  Avoid passing `-' as part of a
+	revision number.  Pass time stamp to make_file_label when available.
+	(get_diff_info): New function.
+	* entries.c: Add traces.
+	* rcs.c (make_file_label), rcs.h: Accept time stamp as an argument.
+	* server.c (requests): Add Base-diff.
+	(iserver_base_checkout): Always send temp files.
+	(server_base_diff): Add new function.
+	* server.h (server_base_diff): New proto.
+	* vers_ts.c (time_stamp_server): Use a time stamp that won't match
+	ts_rcs when the server is running without file contents.
+
+	* sanity.sh: Update to compensate.
+	
 2006-01-19  Derek Price  <derek@ximbiot.com>
 
 	* diff.c (have_rev1_label, have_rev2_label): Make boolean.
