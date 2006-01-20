@@ -23,6 +23,9 @@
 # include <config.h>
 #endif
 
+/* Verify interface.  */
+#include "diff.h"
+
 /* CVS headers.  */
 #include "base.h"
 #include "ignore.h"
@@ -54,7 +57,6 @@ static int diff_dirleaveproc (void *callerdat, const char *dir,
                               int err, const char *update_dir,
                               List *entries);
 static int diff_fileproc (void *callerdat, struct file_info *finfo);
-static void diff_mark_errors (int err);
 
 
 /* Global variables.  Would be cleaner if we just put this stuff in a
@@ -75,7 +77,7 @@ static char **diff_argv;
 static int diff_argc;
 static size_t diff_arg_allocated;
 static int diff_errors;
-static int empty_files;
+static bool empty_files;
 
 static const char *const diff_usage[] =
 {
@@ -398,7 +400,7 @@ diff (int argc, char **argv)
 		    diff_date1 = Make_Date (optarg);
 		break;
 	    case 'N':
-		empty_files = 1;
+		empty_files = true;
 		break;
 	    case '?':
 	    default:
@@ -454,7 +456,7 @@ diff (int argc, char **argv)
         err = get_responses_and_close ();
 	free (options);
 	options = NULL;
-	return err;
+	return diff_errors ? diff_errors : err;
     }
 #endif
 
@@ -905,7 +907,6 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 	}
     }
 
-    
     empty_file = diff_file_nodiff (finfo, vers, empty_file, &rev1_cache,
 				   diff_rev1 && !isdigit (diff_rev1[0])
 				   ? diff_rev1 : vers->tag,
@@ -925,27 +926,6 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
     else if (empty_file == DIFF_ERROR)
 	goto out;
 
-    /* Output an "Index:" line for patch to use */
-    cvs_output ("Index: ", 0);
-    cvs_output (finfo->fullname, 0);
-    cvs_output ("\n", 1);
-
-    /* Print a header for each file.  */
-    cvs_output (
-"===================================================================\n",
-		0);
-    if (finfo->rcs)
-    {
-	cvs_output ("RCS file: ", 0);
-	cvs_output (finfo->rcs->print_path, 0);
-    }
-    else
-    {
-	cvs_output ("File: ", 0);
-	cvs_output (finfo->fullname, 0);
-    }
-    cvs_output ("\n", 1);
-
     if (empty_file == DIFF_ADDED)
 	f1 = DEVNULL;
     else if (rev1_cache)
@@ -953,18 +933,14 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 	/* If this is cached, temp_checkout was not called for the client.
 	 */
 	assert (empty_file != DIFF_CLIENT);
-	cvs_output ("retrieving revision ", 0);
-	cvs_output (use_rev1, 0);
-	cvs_output ("\n", 1);
 	f1 = rev1_cache;
     }
     else
     {
-	cvs_output ("retrieving revision ", 0);
-	cvs_output (use_rev1, 0);
-	cvs_output ("\n", 1);
-	f1 = temp_checkout (vers->srcfile, finfo, vers->vn_user, use_rev1,
-			    vers->tag,
+	f1 = temp_checkout (vers->srcfile, finfo,
+			    vers->vn_user && *(vers->vn_user) == '-'
+			    ? vers->vn_user + 1 : vers->vn_user,
+			    use_rev1, vers->tag,
 			    diff_rev1 && !isdigit (diff_rev1[0])
 			    ? diff_rev1 : vers->tag,
 			    vers->options, *options ? options : vers->options);
@@ -976,11 +952,10 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 	f2 = DEVNULL;
     else if (use_rev2)
     {
-	cvs_output ("retrieving revision ", 0);
-	cvs_output (use_rev2, 0);
-	cvs_output ("\n", 1);
-	f2 = temp_checkout (vers->srcfile, finfo, vers->vn_user, use_rev2,
-			    vers->tag,
+	f2 = temp_checkout (vers->srcfile, finfo,
+			    vers->vn_user && *(vers->vn_user) == '-'
+			    ? vers->vn_user + 1 : vers->vn_user,
+			    use_rev2, vers->tag,
 			    diff_rev2 && !isdigit (diff_rev2[0])
 			    ? diff_rev2 : NULL,
 			    vers->options, *options ? options : vers->options);
@@ -1000,17 +975,17 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
     if (!have_rev2_label)
     {
 	if (empty_file == DIFF_REMOVED)
-	    label2 = make_file_label (DEVNULL, NULL, NULL);
+	    label2 = make_file_label (DEVNULL, NULL, NULL, NULL);
 	else
 	    label2 = make_file_label (finfo->fullname, use_rev2,
-	                              finfo->rcs);
+	                              vers->ts_user, finfo->rcs);
 	if (!have_rev1_label)
 	{
 	    if (empty_file == DIFF_ADDED)
-		label1 = make_file_label (DEVNULL, NULL, NULL);
+		label1 = make_file_label (DEVNULL, NULL, NULL, NULL);
 	    else
 		label1 = make_file_label (finfo->fullname, use_rev1,
-		                          finfo->rcs);
+		                          NULL, finfo->rcs);
 	}
     }
 
@@ -1057,7 +1032,7 @@ out:
 /*
  * Remember the exit status for each file.
  */
-static void
+void
 diff_mark_errors (int err)
 {
     if (err > diff_errors)
@@ -1111,4 +1086,21 @@ diff_dirleaveproc (void *callerdat, const char *dir, int err,
                    const char *update_dir, List *entries)
 {
     return diff_errors;
+}
+
+
+
+struct diff_info *
+get_diff_info (void)
+{
+    static struct diff_info di;
+
+    if (strcmp ("diff", cvs_cmd_name))
+	return NULL;
+
+    di.diff_argc = diff_argc;
+    di.diff_argv = diff_argv;
+    di.empty_files = empty_files;
+
+    return &di;
 }

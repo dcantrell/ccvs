@@ -9013,7 +9013,8 @@ RCS_abandon (RCSNode *rcs)
  * /dev/null to be parsed by patch properly.
  */
 char *
-make_file_label (const char *path, const char *rev, RCSNode *rcs)
+make_file_label (const char *path, const char *rev, const char *ts_user,
+		 RCSNode *rcs)
 {
     char datebuf[MAXDATELEN + 1];
     char *label;
@@ -9022,33 +9023,33 @@ make_file_label (const char *path, const char *rev, RCSNode *rcs)
     {
 	char date[MAXDATELEN + 1];
 	/* revs cannot be attached to /dev/null ... duh. */
-	assert (strcmp(DEVNULL, path));
+	assert (strcmp (DEVNULL, path));
 	RCS_getrevtime (rcs, rev, datebuf, 0);
 	(void) date_to_internet (date, datebuf);
 	label = Xasprintf ("-L%s\t%s\t%s", path, date, rev);
     }
-    else
+    else if (ts_user)
     {
-	struct stat sb;
-	struct tm *wm;
-
-	if (strcmp(DEVNULL, path))
+	if (strcmp (ts_user, "Is-modified"))
 	{
-	    const char *file = last_component (path);
-	    if (stat (file, &sb) < 0)
-		/* Assume that if the stat fails,then the later read for the
-		 * diff will too.
-		 */
-		error (1, errno, "could not get info for `%s'", path);
-	    wm = gmtime (&sb.st_mtime);
+	    struct timespec t;
+	    struct tm *wm;
+	    assert (get_date (&t, ts_user, NULL));
+	    wm = gmtime (&t.tv_sec);
+	    tm_to_internet (datebuf, wm);
+	    label = Xasprintf ("-L%s\t%s", path, datebuf);
 	}
 	else
-	{
-	    time_t t = 0;
-	    wm = gmtime(&t);
-	}
+	    /* Can't get the user's timestamp from the server.  */
+	    label = Xasprintf ("-L%s", path);
+    }
+    else
+    {
+	time_t t = 0;
+	struct tm *wm = gmtime (&t);
 
-	(void) tm_to_internet (datebuf, wm);
+	assert (!strcmp (DEVNULL, path));
+	tm_to_internet (datebuf, wm);
 	label = Xasprintf ("-L%s\t%s", path, datebuf);
     }
     return label;

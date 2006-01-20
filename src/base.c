@@ -592,25 +592,37 @@ base_diff (struct file_info *finfo, int diff_argc, char *const *diff_argv,
 	   const char *f2, const char *use_rev2, const char *label2,
 	   bool empty_files)
 {
-    int status, err = 2;
+    int status, err;
 
-    RCS_output_diff_options (diff_argc, diff_argv, empty_files,
-			     use_rev1, use_rev2, finfo->file);
-
-    status = diff_exec (f1, f2, label1, label2, diff_argc, diff_argv, RUN_TTY);
-
-    switch (status)
+    if (server_use_bases ())
     {
-	case -1:			/* fork failed */
-	    error (1, errno, "fork failed while diffing %s",
-		   finfo->fullname);
-	case 0:				/* everything ok */
-	    err = 0;
-	    break;
-	default:			/* other error */
-	    err = status;
-	    break;
+	server_base_diff (finfo, f1, use_rev1, label1, f2, use_rev2, label2);
+
+	err = 0;
     }
+    else if (xcmp (f1, f2))
+    {
+	RCS_output_diff_options (diff_argc, diff_argv, empty_files,
+				 use_rev1, use_rev2, finfo->fullname);
+
+	status = diff_exec (f1, f2, label1, label2, diff_argc, diff_argv,
+			    RUN_TTY);
+
+	switch (status)
+	{
+	    case -1:			/* fork failed */
+		error (1, errno, "fork failed while diffing %s",
+		       finfo->fullname);
+	    case 0:				/* everything ok */
+		err = 0;
+		break;
+	    default:			/* other error */
+		err = status;
+		break;
+	}
+    }
+    else
+	err = 0;
 
     return err;
 }

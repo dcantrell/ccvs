@@ -304,7 +304,7 @@ void RCS_deltas (RCSNode *, FILE *, struct rcsbuffer *, const char *,
 		 char **, size_t *);
 void RCS_setincexc (void **, const char *arg);
 void RCS_setlocalid (const char *, unsigned int, void **, const char *arg);
-char *make_file_label (const char *, const char *, RCSNode *);
+char *make_file_label (const char *, const char *, const char *, RCSNode *);
 
 extern bool preserve_perms;
 
