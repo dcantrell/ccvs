@@ -1,5 +1,7 @@
 2006-01-20  Derek Price  <derek@ximbiot.com>
 
+	* diff.h: New file.
+
 	* base.c (base_diff): Handle client/server mode.
 	* client.c (base_copy): Expand header comment.
 	(client_base_diff, handle_base_diff): New function.
