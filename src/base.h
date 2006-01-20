@@ -56,4 +56,8 @@ int base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
 		const char *poptions, const char *options,
 	        const char *urev, const char *rev1, const char *rev2,
 		bool join);
+int base_diff (struct file_info *finfo, int diff_argc, char *const *diff_argv,
+	       const char *f1, const char *use_rev1, const char *label1,
+	       const char *f2, const char *use_rev2, const char *label2,
+	       bool empty_files);
 #endif /* BASE_H */

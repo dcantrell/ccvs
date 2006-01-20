@@ -5989,8 +5989,9 @@ struct cmp_file_data
    expansion options.  Return 0 if the contents of the revision are
    the same as the contents of the file, 1 if they are different.  */
 int
-RCS_cmp_file (RCSNode *rcs, const char *rev1, char **rev1_cache,
-              const char *rev2, const char *options, const char *filename)
+RCS_cmp_file (RCSNode *rcs, const char *arg_rev1, const char *rev1,
+	      char **rev1_cache, const char *rev2, const char *options,
+	      const char *filename)
 {
     int binary;
 
@@ -6050,7 +6051,9 @@ RCS_cmp_file (RCSNode *rcs, const char *rev1, char **rev1_cache,
 	{
 	    /* Open & cache rev1 */
 	    tmpfile = cvs_temp_name();
-	    if (RCS_checkout (rcs, NULL, rev1, NULL, options, tmpfile,
+	    if (RCS_checkout (rcs, NULL, rev1,
+			      arg_rev1 && !isdigit (arg_rev1[0])
+			      ? arg_rev1 : NULL, options, tmpfile,
 	                      NULL, NULL))
 		error (1, errno,
 		       "cannot check out revision %s of %s",

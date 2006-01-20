@@ -582,3 +582,35 @@ base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
 
     return retval;
 }
+
+
+
+/* Merge revisions REV1 and REV2. */
+int
+base_diff (struct file_info *finfo, int diff_argc, char *const *diff_argv,
+	   const char *f1, const char *use_rev1, const char *label1,
+	   const char *f2, const char *use_rev2, const char *label2,
+	   bool empty_files)
+{
+    int status, err = 2;
+
+    RCS_output_diff_options (diff_argc, diff_argv, empty_files,
+			     use_rev1, use_rev2, finfo->file);
+
+    status = diff_exec (f1, f2, label1, label2, diff_argc, diff_argv, RUN_TTY);
+
+    switch (status)
+    {
+	case -1:			/* fork failed */
+	    error (1, errno, "fork failed while diffing %s",
+		   finfo->fullname);
+	case 0:				/* everything ok */
+	    err = 0;
+	    break;
+	default:			/* other error */
+	    err = status;
+	    break;
+    }
+
+    return err;
+}
