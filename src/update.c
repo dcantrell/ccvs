@@ -2560,8 +2560,9 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	if (!noexec
 	    && ((isfile (basefile) && !xcmp (basefile, finfo->file))
 		|| (strcmp (vers->vn_user, "0")
-		    && !RCS_cmp_file (finfo->rcs, vers->vn_user, NULL, NULL,
-	                              vers->options, finfo->file))))
+		    && !RCS_cmp_file (finfo->rcs, vers->tag, vers->vn_user,
+				      NULL, NULL, vers->options,
+				      finfo->file))))
 	    isbase = true;
 	else
 	    isbase = false;

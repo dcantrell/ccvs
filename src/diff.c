@@ -64,7 +64,7 @@ static void diff_mark_errors (int err);
 static char *diff_rev1, *diff_rev2;
 /* Command line dates, from -D option.  Malloc'd.  */
 static char *diff_date1, *diff_date2;
-static int have_rev1_label, have_rev2_label;
+static bool have_rev1_label, have_rev2_label;
 
 /* Revision of the user file, if it is unchanged from something in the
    repository and we want to use that fact.  */
@@ -301,8 +301,6 @@ diff (int argc, char **argv)
     if (argc == -1)
 	usage (diff_usage);
 
-    have_rev1_label = have_rev2_label = 0;
-
     /*
      * Note that we catch all the valid arguments here, so that we can
      * intercept the -r arguments for doing revision diffs; and -l/-R for a
@@ -504,7 +502,7 @@ diff (int argc, char **argv)
 static enum diff_file
 diff_file_nodiff (struct file_info *finfo, Vers_TS *vers,
                   enum diff_file empty_file, char **rev1_cache,
-		  char **use_rev1, char **use_rev2)
+		  const char *arg_rev1, char **use_rev1, char **use_rev2)
 {
     Vers_TS *xvers;
     int retcode;
@@ -734,7 +732,7 @@ diff_file_nodiff (struct file_info *finfo, Vers_TS *vers,
      * Run a quick cmp to see if we should bother with a full diff.
      */
 
-    retcode = RCS_cmp_file (vers->srcfile, *use_rev1, rev1_cache,
+    retcode = RCS_cmp_file (vers->srcfile, diff_rev1, *use_rev1, rev1_cache,
                             *use_rev2, *options ? options : vers->options,
 			    finfo->file);
 
@@ -750,15 +748,14 @@ diff_file_nodiff (struct file_info *finfo, Vers_TS *vers,
 static int
 diff_fileproc (void *callerdat, struct file_info *finfo)
 {
-    int status, err = 2;		/* 2 == trouble, like rcsdiff */
+    int err = 2;		/* 2 == trouble, like rcsdiff */
     Vers_TS *vers;
     enum diff_file empty_file = server_use_bases ()
 				? DIFF_CLIENT : DIFF_DIFFERENT;
-    char *label1;
-    char *label2;
     char *rev1_cache = NULL;
     char *use_rev1 = NULL, *use_rev2 = NULL;
     const char *f1 = NULL, *f2 = NULL;
+    char *label1 = NULL, *label2 = NULL;
 
     user_file_rev = 0;
     vers = Version_TS (finfo, NULL, NULL, NULL, 1, 0);
@@ -910,6 +907,8 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 
     
     empty_file = diff_file_nodiff (finfo, vers, empty_file, &rev1_cache,
+				   diff_rev1 && !isdigit (diff_rev1[0])
+				   ? diff_rev1 : vers->tag,
 				   &use_rev1, &use_rev2);
     if (empty_file == DIFF_SAME)
     {
@@ -931,32 +930,6 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
     cvs_output (finfo->fullname, 0);
     cvs_output ("\n", 1);
 
-    /* Set up file labels appropriate for compatibility with the Larry Wall
-     * implementation of patch if the user didn't specify.  This is irrelevant
-     * according to the POSIX.2 specification.
-     */
-    label1 = NULL;
-    label2 = NULL;
-    /* The user cannot set the rev2 label without first setting the rev1
-     * label.
-     */
-    if (!have_rev2_label)
-    {
-	if (empty_file == DIFF_REMOVED)
-	    label2 = make_file_label (DEVNULL, NULL, NULL);
-	else
-	    label2 = make_file_label (finfo->fullname, use_rev2,
-	                              vers->srcfile);
-	if (!have_rev1_label)
-	{
-	    if (empty_file == DIFF_ADDED)
-		label1 = make_file_label (DEVNULL, NULL, NULL);
-	    else
-		label1 = make_file_label (finfo->fullname, use_rev1,
-		                          vers->srcfile);
-	}
-    }
-
     /* Print a header for each file.  */
     cvs_output (
 "===================================================================\n",
@@ -975,6 +948,16 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 
     if (empty_file == DIFF_ADDED)
 	f1 = DEVNULL;
+    else if (rev1_cache)
+    {
+	/* If this is cached, temp_checkout was not called for the client.
+	 */
+	assert (empty_file != DIFF_CLIENT);
+	cvs_output ("retrieving revision ", 0);
+	cvs_output (use_rev1, 0);
+	cvs_output ("\n", 1);
+	f1 = rev1_cache;
+    }
     else
     {
 	cvs_output ("retrieving revision ", 0);
@@ -1007,30 +990,35 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
     else
 	f2 = finfo->file;
 
-    RCS_output_diff_options (diff_argc, diff_argv, empty_files,
-			     use_rev1, use_rev2, finfo->file);
-
-    status = diff_exec (f1, f2, label1, label2,
-			diff_argc, diff_argv, RUN_TTY);
-
-    if (label1) free (label1);
-    if (label2) free (label2);
-
-    switch (status)
+    /* Set up file labels appropriate for compatibility with the Larry Wall
+     * implementation of patch if the user didn't specify.  This is irrelevant
+     * according to the POSIX.2 specification.
+     *
+     * The user cannot set the rev2 label without first setting the rev1
+     * label.
+     */
+    if (!have_rev2_label)
     {
-	case -1:			/* fork failed */
-	    error (1, errno, "fork failed while diffing %s",
-		   vers->srcfile->path);
-	case 0:				/* everything ok */
-	    err = 0;
-	    break;
-	default:			/* other error */
-	    err = status;
-	    break;
+	if (empty_file == DIFF_REMOVED)
+	    label2 = make_file_label (DEVNULL, NULL, NULL);
+	else
+	    label2 = make_file_label (finfo->fullname, use_rev2,
+	                              finfo->rcs);
+	if (!have_rev1_label)
+	{
+	    if (empty_file == DIFF_ADDED)
+		label1 = make_file_label (DEVNULL, NULL, NULL);
+	    else
+		label1 = make_file_label (finfo->fullname, use_rev1,
+		                          finfo->rcs);
+	}
     }
 
+    err = base_diff (finfo, diff_argc, diff_argv, f1, use_rev1, label1,
+		     f2, use_rev2, label2, empty_files);
+
 out:
-    if (empty_file != DIFF_ADDED && f1)
+    if (empty_file != DIFF_ADDED && !rev1_cache && f1)
     {
 	if (CVS_UNLINK (f1) < 0)
 	    error (0, errno, "Failed to remove temp file `%s'", f1);
@@ -1042,6 +1030,11 @@ out:
 	    error (0, errno, "Failed to remove temp file `%s'", f2);
 	free ((char *)f2);
     }
+
+    if (use_rev1) free (use_rev1);
+    if (use_rev2) free (use_rev2);
+    if (label1) free (label1);
+    if (label2) free (label2);
 
     /* Call CVS_UNLINK() rather than unlink_file() below to avoid the check
      * for noexec.
@@ -1055,6 +1048,7 @@ out:
 
     freevers_ts (&vers);
     diff_mark_errors (err);
+
     return err;
 }
 

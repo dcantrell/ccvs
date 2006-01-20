@@ -75,7 +75,8 @@ No_Difference (struct file_info *finfo, Vers_TS *vers)
 	options = xstrdup ("");
 
     tocvsPath = wrap_tocvs_process_file (finfo->file);
-    retcode = RCS_cmp_file (vers->srcfile, vers->vn_user, NULL, NULL, options,
+    retcode = RCS_cmp_file (vers->srcfile, vers->tag, vers->vn_user, NULL,
+			    NULL, options,
 			    tocvsPath == NULL ? finfo->file : tocvsPath);
     if (retcode == 0)
     {

@@ -722,7 +722,7 @@ update_rcs_file (char *message, char *vfile, char *vtag, int targc,
            not NULL?  */
 	expand = (vers->srcfile->expand != NULL
 		  && vers->srcfile->expand[0] == 'b') ? "-kb" : "-ko";
-	different = RCS_cmp_file (vers->srcfile, vers->vn_rcs, NULL,
+	different = RCS_cmp_file (vers->srcfile, vers->tag, vers->vn_rcs, NULL,
 	                          NULL, expand, vfile);
 	if (tocvsPath)
 	    if (unlink_file_dir (tocvsPath) < 0)

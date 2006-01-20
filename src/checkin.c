@@ -91,7 +91,7 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 #endif /* PRESERVE_PERMISSIONS_SUPPORT */
 		 && options
 		 && (!strcmp (options, "-ko") || !strcmp (options, "-kb")))
-		|| !RCS_cmp_file (finfo->rcs, rev, NULL, NULL,
+		|| !RCS_cmp_file (finfo->rcs, pvers->tag, rev, NULL, NULL,
 	                          options, finfo->file))
 		/* The existing file is correct.  We don't have to do
                    anything.  */

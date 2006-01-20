@@ -284,8 +284,8 @@ int RCS_delete_openpgp_signatures (struct file_info *finfo, const char *rev,
 int RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile,
 		 const char *message, const char *rev, time_t citime,
 		 int flags);
-int RCS_cmp_file (RCSNode *, const char *, char **, const char *, const char *,
-		  const char * );
+int RCS_cmp_file (RCSNode *, const char *, const char *, char **, const char *,
+		  const char *, const char *);
 int RCS_settag (RCSNode *, const char *, const char *);
 int RCS_deltag (RCSNode *, const char *);
 int RCS_setbranch (RCSNode *, const char *);

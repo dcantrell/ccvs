@@ -1,5 +1,13 @@
 2006-01-19  Derek Price  <derek@ximbiot.com>
 
+	* diff.c (have_rev1_label, have_rev2_label): Make boolean.
+	(diff_file_nodiff): Accept a tag for Name keywords.
+	(diff_fileproc): Factor some functionality to...
+	* base.c (base_diff), base.h: ...this new function.
+	
+	* rcs.c (RCS_cmp_file), rcs.h: Accept a tag for Name keywords. 
+	* checkin.c, import.c, no_diff.c, update.c: Update all callers.
+
 	* diff.c (diff_file_nodiff): Remove proto and move function before
 	first invocation.  Return found revisions in args rather than globals.
 	(diff_fileproc): Remove unused variables.  Use new diff_file_nodiff
