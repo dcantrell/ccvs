@@ -1,3 +1,11 @@
+2006-01-25  Mark D. Baushke  <mdb@gnu.org>
+
+	* chdir-long.c, getopt.c, gettime.c, glob-libc.h, glob_.h,
+	intprops.h, md5.c, md5.h, mkdirat.c, openat-priv.h, openat.c,
+	openat.h, quotearg.c, regex_internal.h, save-cwd.c, socket_.h,
+	stdbool_.h, stdint_.h, strftime.c, vasnprintf.c: Update from
+	GNULIB.
+
 2005-12-07  Mark D. Baushke  <mdb@gnu.org>
 
 	* stdint_.h: Update from GNULIB.

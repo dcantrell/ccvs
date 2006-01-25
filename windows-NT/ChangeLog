@@ -1,3 +1,7 @@
+2006-01-25  Mark D. Baushke  <mdb@gnu.org>
+
+	* stdint.h: Update from GNULIB.
+
 2005-12-31  Mark D. Baushke  <mdb@gnu.org>
 
 	* config.h.in.in: Add #undef missing symbols found by mkconfig.pl

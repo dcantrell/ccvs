@@ -18,6 +18,7 @@
 # any checks for libraries, header files, types and library functions.
 AC_DEFUN([gl_EARLY],
 [
+  AC_REQUIRE([AC_PROG_RANLIB])
   AC_REQUIRE([AC_GNU_SOURCE])
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
 ])
@@ -26,7 +27,7 @@ AC_DEFUN([gl_EARLY],
 # "Check for header files, types and library functions".
 AC_DEFUN([gl_INIT],
 [
-AM_CONDITIONAL([GL_COND_LIBTOOL], [false])
+  AM_CONDITIONAL([GL_COND_LIBTOOL], [false])
   gl_FUNC_ALLOCA
   gl_ALLOCSA
   gl_FUNC_ATEXIT
@@ -58,6 +59,7 @@ AM_CONDITIONAL([GL_COND_LIBTOOL], [false])
   gl_GETPAGESIZE
   gl_FUNC_GETPASS_GNU
   dnl you must add AM_GNU_GETTEXT([external]) or similar to configure.ac.
+  AM_GNU_GETTEXT_VERSION([0.14.5])
   gl_GETTIME
   AC_FUNC_GETTIMEOFDAY_CLOBBER
   gl_GLOB
@@ -100,6 +102,7 @@ AM_CONDITIONAL([GL_COND_LIBTOOL], [false])
   gl_FUNC_STRSTR
   gl_FUNC_STRTOL
   gl_FUNC_STRTOUL
+  gl_HEADER_SYS_SOCKET
   gl_TIME_R
   gl_TIMESPEC
   gl_FUNC_TZSET_CLOBBER
@@ -191,6 +194,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/glob-libc.h
   lib/glob.c
   lib/glob_.h
+  lib/intprops.h
   lib/lstat.c
   lib/lstat.h
   lib/malloc.c
@@ -207,11 +211,13 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/memrchr.h
   lib/minmax.h
   lib/mkdir.c
+  lib/mkdirat.c
   lib/mkstemp.c
   lib/mktime.c
   lib/nanosleep.c
   lib/open-safer.c
   lib/openat-die.c
+  lib/openat-priv.h
   lib/openat.c
   lib/openat.h
   lib/pagealign_alloc.c
@@ -239,6 +245,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/setenv.c
   lib/setenv.h
   lib/size_max.h
+  lib/socket_.h
   lib/stat-macros.h
   lib/stdbool_.h
   lib/stdint_.h
@@ -388,6 +395,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strstr.m4
   m4/strtol.m4
   m4/strtoul.m4
+  m4/sys_socket_h.m4
   m4/time_r.m4
   m4/timespec.m4
   m4/tm_gmtoff.m4
