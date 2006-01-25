@@ -1,8 +1,6 @@
-/* glob_.h -- Find a path matching a pattern.
-
+/* Provide a sys/socket header file for systems lacking it (read: mingw32).
    Copyright (C) 2005, 2006 Free Software Foundation, Inc.
-
-   Written by Derek Price <derek@ximbiot.com> & Paul Eggert <eggert@CS.UCLA.EDU>
+   Written by Simon Josefsson.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,45 +16,33 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#ifndef GLOB_H
-#define GLOB_H 1
+#ifndef _SYS_SOCKET_H
+#define _SYS_SOCKET_H
 
-#ifdef HAVE_SYS_CDEFS_H
-# include <sys/cdefs.h>
+/* This file is supposed to be used on platforms that lack
+   sys/socket.h.  It is intended to provide definitions and prototypes
+   needed by an application.
+
+   Currently only mingw32 is supported, which has the header files
+   winsock2.h and ws2tcpip.h that declare the sys/socket.h definitions
+   we need. */
+
+#if HAVE_WINSOCK2_H
+# include <winsock2.h>
+#endif
+#if HAVE_WS2TCPIP_H
+# include <ws2tcpip.h>
 #endif
 
-#include <stddef.h>
-
-#ifndef __BEGIN_DECLS
-# define __BEGIN_DECLS
-# define __END_DECLS
+/* For shutdown(). */
+#if !defined SHUT_RD && defined SD_RECEIVE
+# define SHUT_RD SD_RECEIVE
 #endif
-#ifndef __THROW
-# define __THROW
+#if !defined SHUT_WR && defined SD_SEND
+# define SHUT_WR SD_SEND
 #endif
-
-#ifndef __size_t
-# define __size_t	size_t
-#endif
-#ifndef __restrict
-# define __restrict	restrict
-#endif
-#ifndef __USE_GNU
-# define __USE_GNU    1
+#if !defined SHUT_RDWR && defined SD_BOTH
+# define SHUT_RDWR SD_BOTH
 #endif
 
-
-#ifndef HAVE_DIRENT_H
-# define dirent direct
-#endif
-
-#define glob rpl_glob
-#define globfree rpl_globfree
-#define glob_pattern_p rpl_glob_pattern_p
-
-#define __GLOB_GNULIB 1
-
-/* Now the standard GNU C Library header should work.  */
-#include "glob-libc.h"
-
-#endif /* GLOB_H */
+#endif /* _SYS_SOCKET_H */
