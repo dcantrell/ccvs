@@ -68,7 +68,7 @@ void usage (const char *const *cpp);
 static verify_state verify_checkouts = VERIFY_DEFAULT;
 static verify_state verify_commits = VERIFY_DEFAULT;
 #else
-static verify_state verify_checkouts = VERIFY_NEVER;
+static verify_state verify_checkouts = VERIFY_OFF;
 static verify_state verify_commits = VERIFY_OFF;
 #endif
 
