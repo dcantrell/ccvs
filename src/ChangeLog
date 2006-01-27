@@ -1,3 +1,7 @@
+2006-01-27  Derek Price  <derek@ximbiot.com>
+
+	* verify.c: #include "wait.h" from GNULIB.
+
 2006-01-26  Derek Price  <derek@ximbiot.com>
 
 	* verify.c: s/VERIFY_NEVER/VERIFY_OFF/.
