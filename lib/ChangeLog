@@ -1,3 +1,7 @@
+2006-01-26  Mark D. Baushke  <mdb@gnu.org>
+
+	* stdbool_.h: Update from GNULIB.
+
 2006-01-25  Mark D. Baushke  <mdb@gnu.org>
 
 	* chdir-long.c, getopt.c, gettime.c, glob-libc.h, glob_.h,
