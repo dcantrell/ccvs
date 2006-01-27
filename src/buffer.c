@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1996-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1996-2006 The Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 
 #include "cvs.h"
 #include "buffer.h"
-#include "pagealign_alloc.h"
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 
@@ -105,7 +104,7 @@ get_buffer_data (void)
     struct buffer_data *ret;
 
     ret = xmalloc (sizeof (struct buffer_data));
-    ret->text = pagealign_xalloc (BUFFER_DATA_SIZE);
+    ret->text = xmalloc (BUFFER_DATA_SIZE);
 
     return ret;
 }
@@ -256,7 +255,7 @@ buf_free_datas (struct buffer_data *first, struct buffer_data *last)
     {
 	p = b;
 	n = b->next;
-	pagealign_free (b->text);
+	free (b->text);
 	free (b);
 	b = n;
     } while (p != last);

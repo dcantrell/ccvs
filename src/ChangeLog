@@ -1,3 +1,15 @@
+2006-01-26  Mark D. Baushke  <mdb@gnu.org>
+
+	Dump pagealign_alloc in favor of malloc to avoid mmap() problems.
+	* buffer.c: Remove include of pagealign_alloc.h
+	(get_buffer_data): s/pagealign_xalloc/xmalloc/
+	(buf_free_datas): s/pagealign_free/free/
+	* zlib.c: Remove include of pagealign_alloc.h
+	(compress_buffer_input): s/pagealign_xalloc/xmalloc/
+	(compress_buffer_output): Ditto.
+	(compress_buffer_flush): Ditto.
+	(compress_buffer_shutdown_output): Ditto.
+
 2006-01-16  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (join-16a): Test "no such tag" error with -j.
