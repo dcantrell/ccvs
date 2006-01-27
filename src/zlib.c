@@ -18,7 +18,6 @@
 
 #include "cvs.h"
 #include "buffer.h"
-#include "pagealign_alloc.h"
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 
@@ -154,7 +153,7 @@ compress_buffer_input (void *closure, char *data, size_t need, size_t size,
 	bd = xmalloc (sizeof (struct buffer_data));
 	if (bd == NULL)
 	    return -2;
-	bd->text = pagealign_xalloc (BUFFER_DATA_SIZE);
+	bd->text = xmalloc (BUFFER_DATA_SIZE);
 	if (bd->text == NULL)
 	{
 	    free (bd);
@@ -286,7 +285,7 @@ compress_buffer_output (void *closure, const char *data, size_t have,
      */
     static char *buffer = NULL;
     if (!buffer)
-	buffer = pagealign_xalloc (BUFFER_DATA_SIZE);
+	buffer = xmalloc (BUFFER_DATA_SIZE);
 
     if (cb->level != gzip_level)
     {
@@ -337,7 +336,7 @@ compress_buffer_flush (void *closure)
      */
     static char *buffer = NULL;
     if (!buffer)
-	buffer = pagealign_xalloc (BUFFER_DATA_SIZE);
+	buffer = xmalloc (BUFFER_DATA_SIZE);
 
     cb->zstr.avail_in = 0;
     cb->zstr.next_in = NULL;
@@ -442,7 +441,7 @@ compress_buffer_shutdown_output (struct buffer *buf)
      */
     static char *buffer = NULL;
     if (!buffer)
-	buffer = pagealign_xalloc (BUFFER_DATA_SIZE);
+	buffer = xmalloc (BUFFER_DATA_SIZE);
 
     do
     {
