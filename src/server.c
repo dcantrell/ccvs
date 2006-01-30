@@ -2711,6 +2711,25 @@ set_nonblock_fd (fd)
 
 
 
+/*
+ * Set buffer FD to blocking I/O.  Returns 0 for success or errno code.
+ */
+int
+set_block_fd (fd)
+     int fd;
+{
+    int flags;
+
+    flags = fcntl (fd, F_GETFL, 0);
+    if (flags < 0)
+	return errno;
+    if (fcntl (fd, F_SETFL, flags & ~O_NONBLOCK) < 0)
+	return errno;
+    return 0;
+}
+
+
+
 static void
 do_cvs_command (cmd_name, command)
     char *cmd_name;
@@ -2934,8 +2953,8 @@ error  \n");
 	{
 	    char junk;
 	    ssize_t status;
-	    while ((status = read (flowcontrol_pipe[0], &junk, 1)) > 0
-	           || (status == -1 && errno == EAGAIN));
+	    set_block_fd (flowcontrol_pipe[0]);
+	    while ((status = read (flowcontrol_pipe[0], &junk, 1)) > 0);
 	}
 	/* FIXME: No point in printing an error message with error(),
 	 * as STDERR is already closed, but perhaps this could be syslogged?

@@ -1,3 +1,10 @@
+2006-01-30  Derek Price  <derek@ximbiot.com>
+
+	* server.c (do_cvs_command): Set flow control pipe to blocking mode
+	before waiting for it to close.
+	(set_block_fd): New function.
+	(Original patch from Garrett Rooney <grooney@collab.net>.)
+
 2006-01-13  Larry Jones  <lawrence.jones@ugs.com>
 
 	* mkmodules.c (config_contents): Change SystemAuth to yes to match
