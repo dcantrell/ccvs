@@ -214,7 +214,7 @@ locate_rcs (const char *repository, const char *file, int *inattic)
 {
     char *retval;
 
-    /* First, try to find the file as cased. */
+    /* First, try to find the file as if we knew it existed on the trunk.  */
     retval = xmalloc (strlen (repository)
                       + sizeof (CVSATTIC)
                       + strlen (file)
@@ -227,6 +227,8 @@ locate_rcs (const char *repository, const char *file, int *inattic)
 	    *inattic = 0;
 	return retval;
     }
+
+    /* Next, look in the Attic.  */
     sprintf (retval, "%s/%s/%s%s", repository, CVSATTIC, file, RCSEXT);
     if (isreadable (retval))
     {
@@ -294,9 +296,10 @@ RCS_parse (const char *file, const char *repos)
 	free (rcsfile);
 	retval = rcs;
     }
-    else if (!existence_error (errno))
+    else
     {
-	error (0, errno, "cannot open `%s'", rcsfile);
+	if (!existence_error (errno))
+	    error (0, errno, "cannot open `%s'", rcsfile);
 	free (rcsfile);
     }
 
@@ -1972,12 +1975,6 @@ rcsbuf_cache_open (RCSNode *rcs, off_t pos, FILE **pfp,
 	    cached_rcsbuf.pos = pos;
 	}
 	*pfp = cached_rcsbuf.fp;
-
-	/* When RCS_parse opens a file using fopen_case, it frees the
-           filename which we cached in CACHED_RCSBUF and stores a new
-           file name in RCS->PATH.  We avoid problems here by always
-           copying the filename over.  FIXME: This is hackish.  */
-	cached_rcsbuf.filename = rcs->path;
 
 	*prcsbuf = cached_rcsbuf;
 
