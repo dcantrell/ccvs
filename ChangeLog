@@ -1,3 +1,7 @@
+2006-01-30  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note nonblocking flow control pipe fix.
+
 2005-12-09  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note misc doc & bug fixes.
