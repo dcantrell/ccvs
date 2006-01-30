@@ -1,3 +1,9 @@
+2006-01-30  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (locate_rcs): Improve comments and plug memory leak.
+	(rcsbuf_cache_open): Don't recopy file name - it was an ignore case
+	issue.
+
 2006-01-26  Mark D. Baushke  <mdb@gnu.org>
 
 	Dump pagealign_alloc in favor of malloc to avoid mmap() problems.
