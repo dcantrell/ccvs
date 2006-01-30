@@ -3,6 +3,9 @@ Changes since 1.11.21:
 
 BUG FIXES
 
+* Thanks to a report and patch from Garrett Rooney <grooney@collab.net>, paused
+  trigger processes no longer cause the CVS server to consume 100% CPU.
+
 * Thanks to a suggestion from Joseph P. Skudlarek <Jskud@Jskud.com>, an
   :extssh: has been added as a synonym of the :ext: access method, as a
   kindness to users of old version of Eclipse.
