@@ -1,5 +1,10 @@
 2006-01-30  Derek Price  <derek@ximbiot.com>
 
+	* server.c (do_cvs_command): Set flow control pipe to blocking mode
+	before waiting for it to close.
+	(set_block_fd): New function.
+	(Original patch from Garrett Rooney <grooney@collab.net>.)
+
 	* rcs.c (locate_rcs): Improve comments and plug memory leak.
 	(rcsbuf_cache_open): Don't recopy file name - it was an ignore case
 	issue.
