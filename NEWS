@@ -3,6 +3,9 @@ Changes since 1.11.21:
 
 BUG FIXES
 
+* A rare race condition that could leave a lock on the val-tags file has been
+  avoided.
+
 * A potential buffer overflow in the history command has been fixed.
 
 * Thanks to a report and patch from Garrett Rooney <grooney@collab.net>, paused
