@@ -1,5 +1,8 @@
 2006-02-01  Derek Price  <derek@ximbiot.com>
 
+	* tag.c (add_to_val_tags): When a tag turns out to exist in the db when
+	it isn't expected, release the lock.
+
 	* history.c (save_user, save_file, save_mod, read_hrecs): Avoid
 	overflow.
 
