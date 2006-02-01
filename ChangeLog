@@ -1,3 +1,7 @@
+2006-02-01  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note history buffer overflow fix.
+
 2006-01-30  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note nonblocking flow control pipe fix.
