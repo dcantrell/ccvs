@@ -14,6 +14,11 @@ NEW FEATURES
 
 BUG FIXES
 
+* A rare race condition that could leave a lock on the val-tags file has been
+  avoided.
+
+* A potential buffer overflow in the history command has been fixed.
+
 * Thanks to a report and patch from Garrett Rooney <grooney@collab.net>, paused
   trigger processes no longer cause the CVS server to consume 100% CPU.
 

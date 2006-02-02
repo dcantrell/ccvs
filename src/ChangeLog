@@ -1,3 +1,11 @@
+2006-02-01  Derek Price  <derek@ximbiot.com>
+
+	* tag.c (add_to_val_tags): When a tag turns out to exist in the db when
+	it isn't expected, release the lock.
+
+	* history.c (save_user, save_file, save_mod, read_hrecs): Avoid
+	overflow.
+
 2006-01-30  Derek Price  <derek@ximbiot.com>
 
 	* server.c (do_cvs_command): Set flow control pipe to blocking mode
