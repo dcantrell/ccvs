@@ -1,3 +1,8 @@
+2006-02-02  Derek Price  <derek@ximbiot.com>
+
+	* main.c (main), release.c (release), server.c (do_cvs_command): Always
+	call the cleanup hooks before exit.
+
 2006-02-01  Derek Price  <derek@ximbiot.com>
 
 	* tag.c (add_to_val_tags): When a tag turns out to exist in the db when
