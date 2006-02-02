@@ -3799,7 +3799,8 @@ error  \n");
 	    while ((status = read (flowcontrol_pipe[0], &junk, 1)) > 0);
 	}
 	/* FIXME: No point in printing an error message with error(),
-	 * as STDERR is already closed, but perhaps this could be syslogged?
+	 * as STDERR is already closed, but perhaps any read errors could be
+	 * syslogged?
 	 */
 # endif
 
