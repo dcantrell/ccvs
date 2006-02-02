@@ -1532,7 +1532,11 @@ static void add_to_val_tags (const char *name)
     val_tags_lock (current_parsed_root->directory);
 
     /* Check for presence again since we have a lock now.  */
-    if (is_in_val_tags (&db, name)) return;
+    if (is_in_val_tags (&db, name))
+    {
+	clear_val_tags_lock ();
+	return;
+    }
 
     /* Casting out const should be safe here - input datums are not
      * written to by the myndbm functions.

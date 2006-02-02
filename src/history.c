@@ -264,24 +264,24 @@ static struct hrec *last_backto;
    we do.  */
 static char *rec_types;
 
-static int hrec_count;
-static int hrec_max;
+static size_t hrec_count;
+static size_t hrec_max;
 
 static char **user_list;	/* Ptr to array of ptrs to user names */
-static int user_max;		/* Number of elements allocated */
-static int user_count;		/* Number of elements used */
+static size_t user_max;		/* Number of elements allocated */
+static size_t user_count;		/* Number of elements used */
 
 static struct file_list_str
 {
     char *l_file;
     char *l_module;
 } *file_list;			/* Ptr to array file name structs */
-static int file_max;		/* Number of elements allocated */
-static int file_count;		/* Number of elements used */
+static size_t file_max;		/* Number of elements allocated */
+static size_t file_count;		/* Number of elements used */
 
 static char **mod_list;		/* Ptr to array of ptrs to module names */
-static int mod_max;		/* Number of elements allocated */
-static int mod_count;		/* Number of elements used */
+static size_t mod_max;		/* Number of elements allocated */
+static size_t mod_count;	/* Number of elements used */
 
 /* This is pretty unclear.  First of all, separating "flags" vs.
    "options" (I think the distinction is that "options" take arguments)
@@ -951,7 +951,8 @@ save_user (char *name)
     if (user_count == user_max)
     {
 	user_max = xsum (user_max, USER_INCREMENT);
-	if (size_overflow_p (xtimes (user_max, sizeof (char *))))
+	if (user_count == user_max
+	    || size_overflow_p (xtimes (user_max, sizeof (char *))))
 	{
 	    error (0, 0, "save_user: too many users");
 	    return;
@@ -981,7 +982,8 @@ save_file (char *dir, char *name, char *module)
     if (file_count == file_max)
     {
 	file_max = xsum (file_max, FILE_INCREMENT);
-	if (size_overflow_p (xtimes (file_max, sizeof (*fl))))
+	if (file_count == file_max
+	    || size_overflow_p (xtimes (file_max, sizeof (*fl))))
 	{
 	    error (0, 0, "save_file: too many files");
 	    return;
@@ -1013,7 +1015,8 @@ save_module (char *module)
     if (mod_count == mod_max)
     {
 	mod_max = xsum (mod_max, MODULE_INCREMENT);
-	if (size_overflow_p (xtimes (mod_max, sizeof (char *))))
+	if (mod_count == mod_max
+	    || size_overflow_p (xtimes (mod_max, sizeof (char *))))
 	{
 	    error (0, 0, "save_module: too many modules");
 	    return;
@@ -1173,7 +1176,11 @@ read_hrecs_file (Node *p, void *closure)
 	{
 	    struct hrec *old_head = hrec_head;
 
-	    hrec_max += HREC_INCREMENT;
+	    hrec_max = xsum (hrec_max, HREC_INCREMENT);
+	    if (hrec_count == hrec_max
+		|| size_overflow_p (xtimes (hrec_max, sizeof (struct hrec))))
+		error (1, 0, "Too many history records in history file.");
+
 	    hrec_head = xnrealloc (hrec_head, hrec_max, sizeof (struct hrec));
 	    if (last_since_tag)
 		last_since_tag = hrec_head + (last_since_tag - old_head);
