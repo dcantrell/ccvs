@@ -545,6 +545,12 @@ distribution kit for a complete list of contributors and copyrights.\n",
 
 		(void) fputs ("Specify the --help option for further information about CVS\n", stdout);
 
+#ifdef SYSTEM_CLEANUP
+		/* Hook for OS-specific behavior, for example socket subsystems
+		 * on NT and OS2 or dealing with windows and arguments on Mac.
+		 */
+		SYSTEM_CLEANUP ();
+#endif
 		exit (0);
 		break;
 	    case 'b':

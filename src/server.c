@@ -2961,6 +2961,17 @@ error  \n");
 	 */
 #endif
 
+	rcs_cleanup ();
+	Lock_Cleanup ();
+#ifdef SERVER_SUPPORT
+	if (server_active)
+	    server_cleanup (0);
+#endif
+#ifdef SYSTEM_CLEANUP
+	/* Hook for OS-specific behavior, for example socket subsystems on
+	   NT and OS2 or dealing with windows and arguments on Mac.  */
+	SYSTEM_CLEANUP ();
+#endif
 	exit (exitstatus);
     }
 
@@ -5935,6 +5946,8 @@ pserver_authenticate_connection ()
     {
 	printf ("I LOVE YOU\n");
 	fflush (stdout);
+
+	/* It's okay to skip rcs_cleanup() and Lock_Cleanup() here.  */
 
 #ifdef SYSTEM_CLEANUP
 	/* Hook for OS-specific behavior, for example socket subsystems on
