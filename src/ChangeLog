@@ -1,5 +1,7 @@
 2006-02-02  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (sshstdio): Attempt to ignore spurious SSH output.
+
 	* server.c (do_cvs_command): Clarify FIXME.
 
 2006-02-01  Derek Price  <derek@ximbiot.com>

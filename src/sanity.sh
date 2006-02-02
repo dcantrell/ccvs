@@ -23599,14 +23599,29 @@ new revision: 1\.2; previous revision: 1\.1"
 #!$TESTSHELL
 exec "\$@" 2>&1 < /dev/null | cat
 EOF
+
+	  # The sed monstrosity below is an attempt to ignore warnings output
+	  # by some SSH clients but which don't appear to otherwise affect the
+	  # results.  If stderr did not need to be merged with stdout for this
+	  # test, then `2>/dev/null' would have done the trick.
           chmod +x wrapper.sh
           ./wrapper.sh \
            $testcvs -z5 -Q diff --side-by-side -W 500 -r 1.1 -r 1.2 \
-             aaa > wrapper.dif
+             aaa \
+	   |sed -e \
+'/^Write failed flushing stdout buffer\.\?$/d;
+ /^write stdout: Broken pipe\?$/d;
+ : retry
+ /\(Write failed flushing stdout buffer\.\|write stdout: Broken pipe\)\?$/{
+	N;
+	s/\(Write failed flushing stdout buffer\.\|write stdout: Broken pipe\)\?\n//;
+	b retry;}' \
+          > wrapper.dif
   
           $testcvs -z5 -Q diff --side-by-side -W 500 -r 1.1 -r 1.2 \
              aaa > good.dif
-  
+
+
           dotest sshstdio-6 "$diff_u wrapper.dif good.dif"
 
 	  dokeep
