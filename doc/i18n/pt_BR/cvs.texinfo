@@ -9317,8 +9317,8 @@ uma pessoa por vez edite o arquivo. Esta é a única
 solução em alguns sistemas de controle de versão,
 incluindo @sc{rcs} e @sc{sccs}.  Atualmente, a forma
 normal de se ter ???checkouts??? reservados com o @sc{cvs}
-é com o comando @code{cvs admin -l} (@pxref{admin
-options}).  Isto não é tão integrado com o @sc{cvs}
+é com o comando @code{cvs admin -l} (@pxref{Opções do
+admin}).  Isto não é tão integrado com o @sc{cvs}
 quanto a habilidade de ???watch???, descrita abaixo,
 mas vemos que a maioria das pessoas que necessitam de
 ???checkouts??? reservados acham isto adequado.
@@ -11340,7 +11340,7 @@ O caminho completo do arquivo RCS.
 @c <en>The state assigned to the revision.  States can be
 @c <en>assigned with @code{cvs admin -s}---see @ref{admin options}.
 O estado atribuído à revisão.  Estados podem ser
-atribuídos com @code{cvs admin -s}---veja em @ref{admin options}.
+atribuídos com @code{cvs admin -s}---veja em @ref{Opções do admin}.
 
 @c <en>@cindex Local keyword
 @cindex Palavra-chave Local
@@ -12240,7 +12240,7 @@ $ cvs admin -bFSF_DIST .
 @c <en>You must specify the @samp{-bFSF_DIST} without any space
 @c <en>after the @samp{-b}.  @xref{admin options}.
 Você deve especificar o @samp{-bFSF_DIST} sem botar
-espaços depois do @samp{-b}.  @xref{admin options}.
+espaços depois do @samp{-b}.  @xref{Opções do admin}.
 
 @c <en>@node Binary files in imports
 @node Arquivos binários em importações
@@ -13801,7 +13801,7 @@ Especifica nomes de arquivos que devem ser filtrados.
 Você pode usar esta opção repetidamente.  O argumento
 pode ser uma expressão regular de nome de arquivo do
 mesmo tipo dos que se especifica no arquivo
-@file{.cvswrappers}. Disponívjel nos seguintes
+@file{.cvswrappers}. Disponível nos seguintes
 comandos: @code{import} e @code{update}.
 
 @end table
@@ -13820,50 +13820,81 @@ Changes: repository.
 Synonym: rcs
 @end itemize
 
-This is the @sc{cvs} interface to assorted
-administrative facilities.  Some of them have
-questionable usefulness for @sc{cvs} but exist for
-historical purposes.  Some of the questionable options
-are likely to disappear in the future.  This command
-@emph{does} work recursively, so extreme care should be
-used.
+Esta é a interface do @sc{cvs} para agrupar
+???facilities??? administrativas.  Algumas delas tem
+utilidade questionável no @sc{cvs} mas existem por
+questões históricas.  Algumas destas opções questionáves
+devem desaparecer no futuro.  Este comando @emph{NÃO}
+trabalha recursivamente, portanto deve-se ter muito
+cuidado quando usá-lo.
 
+@c <en>@cindex cvsadmin
 @cindex cvsadmin
-@cindex UserAdminOptions, in CVSROOT/config
-On unix, if there is a group named @code{cvsadmin},
-only members of that group can run @code{cvs admin}
-commands, except for those specified using the
-@code{UserAdminOptions} configuration option in the
-@file{CVSROOT/config} file.  Options specified using
-@code{UserAdminOptions} can be run by any user.  See
-@ref{config} for more on @code{UserAdminOptions}.
+@c <en>@cindex UserAdminOptions, in CVSROOT/config
+@cindex UserAdminOptions, em CVSROOT/config
+@c <en>On unix, if there is a group named @code{cvsadmin},
+@c <en>only members of that group can run @code{cvs admin}
+@c <en>commands, except for those specified using the
+@c <en>@code{UserAdminOptions} configuration option in the
+@c <en>@file{CVSROOT/config} file.  Options specified using
+@c <en>@code{UserAdminOptions} can be run by any user.  See
+@c <en>@ref{config} for more on @code{UserAdminOptions}.
+No unix, se existe um grupo chamado @code{cvsadmin},
+apenas membros deste grupo podem rodar os comandos do
+@code{cvs admin}, exceto aqueles especificados na opção
+@code{UserAdminOptions} do arquivo
+@file{CVSROOT/config}.  Opções especificadas usando o
+@code{UserAdminOptions} podem ser executadas por
+qualquer usuário.  Veja em @ref{config} para mais
+informações sobre o @code{UserAdminOptions}.
 
-The @code{cvsadmin} group should exist on the server,
-or any system running the non-client/server @sc{cvs}.
-To disallow @code{cvs admin} for all users, create a
-group with no users in it.  On NT, the @code{cvsadmin}
-feature does not exist and all users
-can run @code{cvs admin}.
+@c <en>The @code{cvsadmin} group should exist on the server,
+@c <en>or any system running the non-client/server @sc{cvs}.
+@c <en>To disallow @code{cvs admin} for all users, create a
+@c <en>group with no users in it.  On NT, the @code{cvsadmin}
+@c <en>feature does not exist and all users
+@c <en>can run @code{cvs admin}.
+O grupo @code{cvsadmin} deve existir no servidor, ou em
+qualquer sistemas rodando o ???não-cliente???/servidor
+do @sc{cvs}. Para desabilitar o @code{cvs admin} para
+todos os usuários, crie um grupo sem usuários nele.  No
+NT, esta característica do @code{cvsadmin} não existe e
+todos os usuários podem rodar o @code{cvs admin}.
 
 @menu
-* admin options::               admin options
+@c <en>* admin options::               admin options
+* Opções do admin::               Opções do admin
 @end menu
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@node admin options
-@appendixsubsec admin options
+@c <en>@node admin options
+@node Opções do admin
+@c <en>@appendixsubsec admin options
+@appendixsubsec Opções do admin
 
+@c <en>Some of these options have questionable usefulness for
+@c <en>@sc{cvs} but exist for historical purposes.  Some even
+@c <en>make it impossible to use @sc{cvs} until you undo the
+@c <en>effect!
 Some of these options have questionable usefulness for
 @sc{cvs} but exist for historical purposes.  Some even
 make it impossible to use @sc{cvs} until you undo the
 effect!
 
 @table @code
+@c <en>@item -A@var{oldfile}
+@c <en>Might not work together with @sc{cvs}.  Append the
+@c <en>access list of @var{oldfile} to the access list of the
+@c <en>@sc{rcs} file.
 @item -A@var{oldfile}
 Might not work together with @sc{cvs}.  Append the
 access list of @var{oldfile} to the access list of the
 @sc{rcs} file.
 
+@c <en>@item -a@var{logins}
+@c <en>Might not work together with @sc{cvs}.  Append the
+@c <en>login names appearing in the comma-separated list
+@c <en>@var{logins} to the access list of the @sc{rcs} file.
 @item -a@var{logins}
 Might not work together with @sc{cvs}.  Append the
 login names appearing in the comma-separated list
@@ -13906,14 +13937,25 @@ leader is not used by current versions of @sc{cvs} or
 @sc{rcs} 5.7.  Therefore, you can almost surely not
 worry about it.  @xref{Substituição de palavra-chave}.
 
+@c <en>@item -e[@var{logins}]
 @item -e[@var{logins}]
+@c <en>Might not work together with @sc{cvs}.  Erase the login
+@c <en>names appearing in the comma-separated list
+@c <en>@var{logins} from the access list of the RCS file.  If
+@c <en>@var{logins} is omitted, erase the entire access list.
+@c <en>There can be no space between @samp{-e} and its argument.
 Might not work together with @sc{cvs}.  Erase the login
 names appearing in the comma-separated list
 @var{logins} from the access list of the RCS file.  If
 @var{logins} is omitted, erase the entire access list.
 There can be no space between @samp{-e} and its argument.
 
+@c <en>@item -I
 @item -I
+@c <en>Run interactively, even if the standard input is not a
+@c <en>terminal.  This option does not work with the
+@c <en>client/server @sc{cvs} and is likely to disappear in
+@c <en>a future release of @sc{cvs}.
 Run interactively, even if the standard input is not a
 terminal.  This option does not work with the
 client/server @sc{cvs} and is likely to disappear in
@@ -13942,13 +13984,28 @@ substitution to @var{subst}.
 @code{cvs update}, @code{cvs export}, or @code{cvs
 checkout} overrides this default.
 
+@c <en>@item -l[@var{rev}]
 @item -l[@var{rev}]
+@c <en>Lock the revision with number @var{rev}.  If a branch
+@c <en>is given, lock the latest revision on that branch.  If
+@c <en>@var{rev} is omitted, lock the latest revision on the
+@c <en>default branch.  There can be no space between
+@c <en>@samp{-l} and its argument.
 Lock the revision with number @var{rev}.  If a branch
 is given, lock the latest revision on that branch.  If
 @var{rev} is omitted, lock the latest revision on the
 default branch.  There can be no space between
 @samp{-l} and its argument.
 
+@c <en>This can be used in conjunction with the
+@c <en>@file{rcslock.pl} script in the @file{contrib}
+@c <en>directory of the @sc{cvs} source distribution to
+@c <en>provide reserved checkouts (where only one user can be
+@c <en>editing a given file at a time).  See the comments in
+@c <en>that file for details (and see the @file{README} file
+@c <en>in that directory for disclaimers about the unsupported
+@c <en>nature of contrib).  According to comments in that
+@c <en>file, locking must set to strict (which is the default).
 This can be used in conjunction with the
 @file{rcslock.pl} script in the @file{contrib}
 directory of the @sc{cvs} source distribution to
@@ -13959,18 +14016,31 @@ in that directory for disclaimers about the unsupported
 nature of contrib).  According to comments in that
 file, locking must set to strict (which is the default).
 
+@c <en>@item -L
 @item -L
+@c <en>Set locking to strict.  Strict locking means that the
+@c <en>owner of an RCS file is not exempt from locking for
+@c <en>checkin.  For use with @sc{cvs}, strict locking must be
+@c <en>set; see the discussion under the @samp{-l} option above.
 Set locking to strict.  Strict locking means that the
 owner of an RCS file is not exempt from locking for
 checkin.  For use with @sc{cvs}, strict locking must be
 set; see the discussion under the @samp{-l} option above.
 
+@c <en>@cindex Changing a log message
 @cindex Changing a log message
+@c <en>@cindex Replacing a log message
 @cindex Replacing a log message
+@c <en>@cindex Correcting a log message
 @cindex Correcting a log message
+@c <en>@cindex Fixing a log message
 @cindex Fixing a log message
+@c <en>@cindex Log message, correcting
 @cindex Log message, correcting
+@c <en>@item -m@var{rev}:@var{msg}
 @item -m@var{rev}:@var{msg}
+@c <en>Replace the log message of revision @var{rev} with
+@c <en>@var{msg}.
 Replace the log message of revision @var{rev} with
 @var{msg}.
 
@@ -13986,7 +14056,26 @@ Act like @samp{-n}, except override any previous
 assignment of @var{name}.  For use with magic branches,
 see @ref{Números de ramos mágicos}.
 
+@c <en>@item -n@var{name}[:[@var{rev}]]
 @item -n@var{name}[:[@var{rev}]]
+@c <en>Associate the symbolic name @var{name} with the branch
+@c <en>or revision @var{rev}.  It is normally better to use
+@c <en>@samp{cvs tag} or @samp{cvs rtag} instead.  Delete the
+@c <en>symbolic name if both @samp{:} and @var{rev} are
+@c <en>omitted; otherwise, print an error message if
+@c <en>@var{name} is already associated with another number.
+@c <en>If @var{rev} is symbolic, it is expanded before
+@c <en>association.  A @var{rev} consisting of a branch number
+@c <en>followed by a @samp{.} stands for the current latest
+@c <en>revision in the branch.  A @samp{:} with an empty
+@c <en>@var{rev} stands for the current latest revision on the
+@c <en>default branch, normally the trunk.  For example,
+@c <en>@samp{cvs admin -n@var{name}:} associates @var{name} with the
+@c <en>current latest revision of all the RCS files;
+@c <en>this contrasts with @samp{cvs admin -n@var{name}:$} which
+@c <en>associates @var{name} with the revision numbers
+@c <en>extracted from keyword strings in the corresponding
+@c <en>working files.
 Associate the symbolic name @var{name} with the branch
 or revision @var{rev}.  It is normally better to use
 @samp{cvs tag} or @samp{cvs rtag} instead.  Delete the
@@ -14006,18 +14095,37 @@ associates @var{name} with the revision numbers
 extracted from keyword strings in the corresponding
 working files.
 
+@c <en>@cindex Deleting revisions
 @cindex Deleting revisions
+@c <en>@cindex Outdating revisions
 @cindex Outdating revisions
+@c <en>@cindex Saving space
 @cindex Saving space
+@c <en>@item -o@var{range}
 @item -o@var{range}
+@c <en>Deletes (@dfn{outdates}) the revisions given by
+@c <en>@var{range}.
 Deletes (@dfn{outdates}) the revisions given by
 @var{range}.
 
+@c <en>Note that this command can be quite dangerous unless
+@c <en>you know @emph{exactly} what you are doing (for example
+@c <en>see the warnings below about how the
+@c <en>@var{rev1}:@var{rev2} syntax is confusing).
 Note that this command can be quite dangerous unless
 you know @emph{exactly} what you are doing (for example
 see the warnings below about how the
 @var{rev1}:@var{rev2} syntax is confusing).
 
+@c <en>If you are short on disc this option might help you.
+@c <en>But think twice before using it---there is no way short
+@c <en>of restoring the latest backup to undo this command!
+@c <en>If you delete different revisions than you planned,
+@c <en>either due to carelessness or (heaven forbid) a @sc{cvs}
+@c <en>bug, there is no opportunity to correct the error
+@c <en>before the revisions are deleted.  It probably would be
+@c <en>a good idea to experiment on a copy of the repository
+@c <en>first.
 If you are short on disc this option might help you.
 But think twice before using it---there is no way short
 of restoring the latest backup to undo this command!
@@ -14028,10 +14136,22 @@ before the revisions are deleted.  It probably would be
 a good idea to experiment on a copy of the repository
 first.
 
+@c <en>Specify @var{range} in one of the following ways:
 Specify @var{range} in one of the following ways:
 
 @table @code
+@c <en>@item @var{rev1}::@var{rev2}
 @item @var{rev1}::@var{rev2}
+@c <en>Collapse all revisions between rev1 and rev2, so that
+@c <en>@sc{cvs} only stores the differences associated with going
+@c <en>from rev1 to rev2, not intermediate steps.  For
+@c <en>example, after @samp{-o 1.3::1.5} one can retrieve
+@c <en>revision 1.3, revision 1.5, or the differences to get
+@c <en>from 1.3 to 1.5, but not the revision 1.4, or the
+@c <en>differences between 1.3 and 1.4.  Other examples:
+@c <en>@samp{-o 1.3::1.4} and @samp{-o 1.3::1.3} have no
+@c <en>effect, because there are no intermediate revisions to
+@c <en>remove.
 Collapse all revisions between rev1 and rev2, so that
 @sc{cvs} only stores the differences associated with going
 from rev1 to rev2, not intermediate steps.  For
@@ -14043,7 +14163,14 @@ differences between 1.3 and 1.4.  Other examples:
 effect, because there are no intermediate revisions to
 remove.
 
+@c <en>@item ::@var{rev}
 @item ::@var{rev}
+@c <en>Collapse revisions between the beginning of the branch
+@c <en>containing @var{rev} and @var{rev} itself.  The
+@c <en>branchpoint and @var{rev} are left intact.  For
+@c <en>example, @samp{-o ::1.3.2.6} deletes revision 1.3.2.1,
+@c <en>revision 1.3.2.5, and everything in between, but leaves
+@c <en>1.3 and 1.3.2.6 intact.
 Collapse revisions between the beginning of the branch
 containing @var{rev} and @var{rev} itself.  The
 branchpoint and @var{rev} are left intact.  For
@@ -14051,12 +14178,19 @@ example, @samp{-o ::1.3.2.6} deletes revision 1.3.2.1,
 revision 1.3.2.5, and everything in between, but leaves
 1.3 and 1.3.2.6 intact.
 
+@c <en>@item @var{rev}::
 @item @var{rev}::
+@c <en>Collapse revisions between @var{rev} and the end of the
+@c <en>branch containing @var{rev}.  Revision @var{rev} is
+@c <en>left intact but the head revision is deleted.
 Collapse revisions between @var{rev} and the end of the
 branch containing @var{rev}.  Revision @var{rev} is
 left intact but the head revision is deleted.
 
+@c <en>@item @var{rev}
 @item @var{rev}
+@c <en>Delete the revision @var{rev}.  For example, @samp{-o
+@c <en>1.3} is equivalent to @samp{-o 1.2::1.4}.
 Delete the revision @var{rev}.  For example, @samp{-o
 1.3} is equivalent to @samp{-o 1.2::1.4}.
 
@@ -14161,6 +14295,7 @@ this reason, this option is not a good way to take back
 a bogus commit; commit a new revision undoing the bogus
 change instead (@pxref{Mesclando duas revisões}).
 
+@c <en>@item -q
 @item -q
 @c <en>Run quietly; do not print diagnostics.
 Run quietly; do not print diagnostics.
@@ -14202,7 +14337,14 @@ take a file to or from the @code{dead} state use
 commands like @code{cvs remove} and @code{cvs add}, not
 @code{cvs admin -s}.
 
+@c <en>@item -t[@var{file}]
 @item -t[@var{file}]
+@c <en>Useful with @sc{cvs}.  Write descriptive text from the
+@c <en>contents of the named @var{file} into the RCS file,
+@c <en>deleting the existing text.  The @var{file} pathname
+@c <en>may not begin with @samp{-}.  The descriptive text can be seen in the
+@c <en>output from @samp{cvs log} (@pxref{log}).
+@c <en>There can be no space between @samp{-t} and its argument.
 Useful with @sc{cvs}.  Write descriptive text from the
 contents of the named @var{file} into the RCS file,
 deleting the existing text.  The @var{file} pathname
@@ -14210,13 +14352,23 @@ may not begin with @samp{-}.  The descriptive text can be seen in the
 output from @samp{cvs log} (@pxref{log}).
 There can be no space between @samp{-t} and its argument.
 
+@c <en>If @var{file} is omitted,
+@c <en>obtain the text from standard input, terminated by
+@c <en>end-of-file or by a line containing @samp{.} by itself.
+@c <en>Prompt for the text if interaction is possible; see
+@c <en>@samp{-I}.
 If @var{file} is omitted,
 obtain the text from standard input, terminated by
 end-of-file or by a line containing @samp{.} by itself.
 Prompt for the text if interaction is possible; see
 @samp{-I}.
 
+@c <en>@item -t-@var{string}
 @item -t-@var{string}
+@c <en>Similar to @samp{-t@var{file}}. Write descriptive text
+@c <en>from the @var{string} into the @sc{rcs} file, deleting
+@c <en>the existing text.
+@c <en>There can be no space between @samp{-t} and its argument.
 Similar to @samp{-t@var{file}}. Write descriptive text
 from the @var{string} into the @sc{rcs} file, deleting
 the existing text.
@@ -14226,7 +14378,13 @@ There can be no space between @samp{-t} and its argument.
 @c minor changes, has never been documented as a
 @c cvs admin option.
 
+@c <en>@item -U
 @item -U
+@c <en>Set locking to non-strict.  Non-strict locking means
+@c <en>that the owner of a file need not lock a revision for
+@c <en>checkin.  For use with @sc{cvs}, strict locking must be
+@c <en>set; see the discussion under the @samp{-l} option
+@c <en>above.
 Set locking to non-strict.  Non-strict locking means
 that the owner of a file need not lock a revision for
 checkin.  For use with @sc{cvs}, strict locking must be
@@ -14256,7 +14414,12 @@ This causes the original locker to be sent a @code{commit}
 notification (@pxref{Recebendo Notificações}).
 There can be no space between @samp{-u} and its argument.
 
+@c <en>@item -V@var{n}
 @item -V@var{n}
+@c <en>In previous versions of @sc{cvs}, this option meant to
+@c <en>write an @sc{rcs} file which would be acceptable to
+@c <en>@sc{rcs} version @var{n}, but it is now obsolete and
+@c <en>specifying it will produce an error.
 In previous versions of @sc{cvs}, this option meant to
 write an @sc{rcs} file which would be acceptable to
 @sc{rcs} version @var{n}, but it is now obsolete and
@@ -14264,7 +14427,13 @@ specifying it will produce an error.
 @c Note that -V without an argument has never been
 @c documented as a cvs admin option.
 
+@c <en>@item -x@var{suffixes}
 @item -x@var{suffixes}
+@c <en>In previous versions of @sc{cvs}, this was documented
+@c <en>as a way of specifying the names of the @sc{rcs}
+@c <en>files.  However, @sc{cvs} has always required that the
+@c <en>@sc{rcs} files used by @sc{cvs} end in @samp{,v}, so
+@c <en>this option has never done anything useful.
 In previous versions of @sc{cvs}, this was documented
 as a way of specifying the names of the @sc{rcs}
 files.  However, @sc{cvs} has always required that the
@@ -16991,7 +17160,7 @@ Replace the log message of revision @var{rev} with
 @c <en>Delete revisions from the repository.  See
 @c <en>@ref{admin options}.
 Delete revisions from the repository.  See
-@ref{admin options}.
+@ref{Opções do admin}.
 
 @c <en>@item -q
 @item -q
