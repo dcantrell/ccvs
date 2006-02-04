@@ -1,5 +1,7 @@
 2006-02-02  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (sshstdio): Attempt to ignore spurious SSH output.
+
 	* main.c (main), release.c (release), server.c (do_cvs_command): Always
 	call the cleanup hooks before exit.
 
