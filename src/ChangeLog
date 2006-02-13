@@ -1,3 +1,7 @@
+2006-02-13  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (sshstdio-6): Rewrite using more portable sed script.
+
 2006-02-02  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (sshstdio): Attempt to ignore spurious SSH output.
