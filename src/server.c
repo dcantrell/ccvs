@@ -2963,10 +2963,7 @@ error  \n");
 
 	rcs_cleanup ();
 	Lock_Cleanup ();
-#ifdef SERVER_SUPPORT
-	if (server_active)
-	    server_cleanup (0);
-#endif
+	/* Don't call server_cleanup - the parent will handle that.  */
 #ifdef SYSTEM_CLEANUP
 	/* Hook for OS-specific behavior, for example socket subsystems on
 	   NT and OS2 or dealing with windows and arguments on Mac.  */
