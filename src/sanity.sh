@@ -23609,13 +23609,19 @@ EOF
            $testcvs -z5 -Q diff --side-by-side -W 500 -r 1.1 -r 1.2 \
              aaa \
 	   |sed -e \
-'/^Write failed flushing stdout buffer\.\?$/d;
- /^write stdout: Broken pipe\?$/d;
- : retry
- /\(Write failed flushing stdout buffer\.\|write stdout: Broken pipe\)\?$/{
+'/^Write failed flushing stdout buffer\.$/d;
+ /^write stdout: Broken pipe$/d;
+ :retry;
+ /Write failed flushing stdout buffer\.$/{
 	N;
-	s/\(Write failed flushing stdout buffer\.\|write stdout: Broken pipe\)\?\n//;
-	b retry;}' \
+	s/Write failed flushing stdout buffer\.\n//;
+	b retry;
+}
+ /write stdout: Broken pipe$/{
+	N;
+	s/write stdout: Broken pipe\n//;
+	b retry;
+}' \
           > wrapper.dif
   
           $testcvs -z5 -Q diff --side-by-side -W 500 -r 1.1 -r 1.2 \
