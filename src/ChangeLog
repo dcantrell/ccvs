@@ -1,5 +1,7 @@
 2006-02-13  Derek Price  <derek@ximbiot.com>
 
+	* server.c (do_cvs_command): Skip server_cleanup in the child process.
+
 	* sanity.sh (sshstdio-6): Rewrite using more portable sed script.
 
 2006-02-02  Derek Price  <derek@ximbiot.com>
