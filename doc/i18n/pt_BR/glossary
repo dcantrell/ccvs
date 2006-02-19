@@ -23,6 +23,9 @@ Words and expressions hard to translate:
   I think that 'efetivar' is good. But people don't like. And some
   people are using commitar (argh!)
 
+- default branch
+  ramo padrão
+
 - head revision
   'revisão no topo'.
   Other options, that I really not like, are 'revisão cabeça',
@@ -61,6 +64,12 @@ Words and expressions hard to translate:
 
 - patch
   'remendo'? 'conserto'?
+
+- prune
+  'elimina completamente'
+
+- rcs file
+  arquivo rcs
 
 - release
   'release' until I find a better translation. A good option is 'lançamento'
@@ -103,6 +112,9 @@ Words and expressions hard to translate:
 
 - vendor tag
   'etiqueta do fornecedor'
+
+- warning message
+  'mensagem de alerta'
 
 - watches
 
