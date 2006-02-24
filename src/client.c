@@ -893,12 +893,6 @@ read_line (resultp)
 #if defined(CLIENT_SUPPORT) || defined(SERVER_SUPPORT)
 
 /*
- * Zero if compression isn't supported or requested; non-zero to indicate
- * a compression level to request from gzip.
- */
-int gzip_level;
-
-/*
  * Level of compression to use when running gzip on a single file.
  */
 int file_gzip_level;
