@@ -583,12 +583,15 @@ distribution kit for a complete list of contributors and copyrights.\n",
 		use_cvsrc = 0; /* unnecessary, since we've done it above */
 		break;
 	    case 'z':
-#ifdef CLIENT_SUPPORT
-		gzip_level = strtol (optarg, &end, 10);
-		if (*end != '\0' || gzip_level < 0 || gzip_level > 9)
-		  error (1, 0,
-			 "gzip compression level must be between 0 and 9");
+		{
+#ifndef CLIENT_SUPPORT
+		    int gzip_level;
 #endif /* CLIENT_SUPPORT */
+		    gzip_level = strtol (optarg, &end, 10);
+		    if (*end != '\0' || gzip_level < 0 || gzip_level > 9)
+		      error (1, 0,
+			     "gzip compression level must be between 0 and 9");
+		}
 		/* If no CLIENT_SUPPORT, we just silently ignore the gzip
 		 * level, so that users can have it in their .cvsrc and not
 		 * cause any trouble.
