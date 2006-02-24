@@ -1,3 +1,8 @@
+2006-02-24  Mark D. Baushke  <mdb@gnu.org>
+
+	* main.c (main): Validate the gzip compression level for
+	--disable-client configurations.
+
 2006-02-13  Derek Price  <derek@ximbiot.com>
 
 	* server.c (do_cvs_command): Skip server_cleanup in the child process.
