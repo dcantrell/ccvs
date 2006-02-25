@@ -1,5 +1,7 @@
 2006-02-25  Mark D. Baushke  <mdb@gnu.org>
 
+	* sanity.sh (crerepos-6a): Simplify expected output expression.
+
 	* edit.c (edit_fileproc): Do not assert (!check_edited) in
 	--disable-client configurations.
 
