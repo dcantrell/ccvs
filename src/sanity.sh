@@ -22170,8 +22170,10 @@ ${CPROG} \[init aborted\]: Bad CVSROOT: .:ext:${hostname}:crerepos.\."
 	    # key or somesuch.  Which error message we get depends on whether
 	    # false finishes running before we try to talk to it or not.
 	    dotest_fail crerepos-6a "CVS_RSH=false ${testcvs} -q -d ../crerepos get ." \
-"${SPROG} \[checkout aborted\]: end of file from server (consult above messages if any)" \
-"${SPROG} \[checkout aborted\]: received broken pipe signal"
+"${SPROG} \[checkout aborted\]: .*" \
+"${SPROG} checkout: CVSROOT is set for a remote access method but your
+${SPROG} checkout: CVS executable doesn't support it\.
+${SPROG} \[checkout aborted\]: Bad CVSROOT: .\.\./crerepos.\."
 	    cd ..
 	    rm -r 1
 

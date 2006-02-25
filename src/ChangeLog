@@ -1,3 +1,14 @@
+2006-02-24  Mark D. Baushke  <mdb@gnu.org>
+
+	* client.c (gzip_level): Move to...
+	* main.c (gzip_level): ...here.
+	(main): Revert previous change in '-z' argument processing and
+	remove CLIENT_SUPPORT ifdef/endif.
+	* sanity.h (crerepos-6a): Deal with --disable-client output.
+
+	* main.c (main): Validate the gzip compression level for
+	--disable-client configurations.
+
 2006-02-13  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (sshstdio-6): Rewrite using more portable sed script.
