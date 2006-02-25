@@ -350,8 +350,6 @@ edit_fileproc (void *callerdat, struct file_info *finfo)
 
 #if defined (CLIENT_SUPPORT)
     assert (!(current_parsed_root->isremote && check_edited));
-#else /* !CLIENT_SUPPORT */
-    assert (!check_edited);
 #endif /* CLIENT_SUPPORT */
 
     if (noexec)
