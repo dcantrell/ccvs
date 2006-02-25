@@ -20155,7 +20155,7 @@ $SPROG commit: Rebuilding administrative file database"
 
 	    # The warning is left over from the previous test.
 	    dotest config-5 "$testcvs -q ci -m set-HistoryLogPath" \
-"$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[98\]: unrecognized keyword \`BogusOption'
+"$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[0-9][0-9]*\]: unrecognized keyword \`BogusOption'
 $CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
@@ -30230,6 +30230,27 @@ ${CPROG} update: Updating dir1/sdir
  *-> Reader_Lock(${TESTDIR}/root2/sdir)
  *-> Simple_Lock_Cleanup()
  *-> Write_Template (dir1/sdir/ssdir, ${TESTDIR}/root2/sdir/ssdir)
+${CPROG} update: Updating dir1/sdir/ssdir
+ *-> Reader_Lock(${TESTDIR}/root2/sdir/ssdir)
+ *-> Simple_Lock_Cleanup()
+ *-> Lock_Cleanup()
+ *-> Simple_Lock_Cleanup()" \
+" *-> main: Session ID is ${commitid}
+ *-> main loop with CVSROOT=${TESTDIR}/root1
+ *-> parse_config ($TESTDIR/root1)
+ *-> do_update ((null), (null), (null), 1, 0, 0, 0, 0, 0, 3, (null), (null), (null), (null), (null), 1, (null))
+${CPROG} update: Updating \.
+ *-> Reader_Lock(${TESTDIR}/root1)
+ *-> Simple_Lock_Cleanup()
+${CPROG} update: Updating dir1
+ *-> Reader_Lock(${TESTDIR}/root1/dir1)
+ *-> Simple_Lock_Cleanup()
+ *-> main loop with CVSROOT=${TESTDIR}/root2
+ *-> parse_config ($TESTDIR/root2)
+ *-> do_update ((null), (null), (null), 1, 0, 0, 0, 0, 0, 3, (null), (null), (null), (null), (null), 1, (null))
+${CPROG} update: Updating dir1/sdir
+ *-> Reader_Lock(${TESTDIR}/root2/sdir)
+ *-> Simple_Lock_Cleanup()
 ${CPROG} update: Updating dir1/sdir/ssdir
  *-> Reader_Lock(${TESTDIR}/root2/sdir/ssdir)
  *-> Simple_Lock_Cleanup()

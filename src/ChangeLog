@@ -1,3 +1,14 @@
+2006-02-25  Mark D. Baushke  <mdb@gnu.org>
+
+	* edit.c (edit_fileproc): Do not assert (!check_edited) in
+	--disable-client configurations.
+
+	* sanity.sh (config-5): The number of lines in the config file
+	vary with --disable-proxy configurations. Use [0-9][0-9]* to match
+	the line number instead of an explicit line 98 in this test.
+	(multiroot2-9a): Deal with Write_Template messages that will not
+	occur in --disable-server configurations.
+
 2006-02-24  Mark D. Baushke  <mdb@gnu.org>
 
 	* client.c (gzip_level): Move to...
