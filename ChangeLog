@@ -1,3 +1,7 @@
+2006-02-26  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note CVSADM fix as an efficiency improvement.
+
 2006-02-01  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note unconditional val-tags lock removal.

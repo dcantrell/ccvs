@@ -14,6 +14,8 @@ NEW FEATURES
 
 BUG FIXES
 
+* Code efficiency has been improved slightly.
+
 * A rare race condition that could leave a lock on the val-tags file has been
   avoided.
 
