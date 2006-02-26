@@ -26,6 +26,9 @@ const char method_names[][16] = {
     "kserver", "gserver", "ext", "extssh", "fork"
 };
 
+#define HOSTNAME_CHARS \
+	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUZWXYZ1234567890-_."
+
 #ifndef DEBUG
 
 cvsroot_t *
@@ -389,7 +392,7 @@ new_cvsroot_t (void)
     newroot->directory = NULL;
     newroot->method = null_method;
     newroot->isremote = false;
-#ifdef CLIENT_SUPPORT
+#if defined CLIENT_SUPPORT || defined SERVER_SUPPORT
     newroot->username = NULL;
     newroot->password = NULL;
     newroot->hostname = NULL;
@@ -625,12 +628,14 @@ parse_cvsroot (const char *root_in)
     }
     else
     {
-	/* If the method isn't specified, assume EXT_METHOD if the string looks
-	   like a relative path and LOCAL_METHOD otherwise.  */
-
-	newroot->method = ((*cvsroot_copy != '/' && strchr (cvsroot_copy, '/'))
-			  ? ext_method
-			  : local_method);
+	/* If the method isn't specified, assume LOCAL_METHOD unless the root
+	 * looks like server:/path.  Then assume EXT_METHOD.
+	 */
+	size_t len = strspn (cvsroot_copy, HOSTNAME_CHARS);
+	if (len > 0 && cvsroot_copy[len] == ':')
+	    newroot->method = ext_method;
+	else
+	    newroot->method = local_method;
     }
 
     /*

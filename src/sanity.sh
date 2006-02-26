@@ -22164,13 +22164,13 @@ ${CPROG} \[init aborted\]: Bad CVSROOT: .:ext:${hostname}:crerepos.\."
 	    # Test that CVS rejects a relative path in CVSROOT.
 
 	    mkdir 1; cd 1
-	    # Set CVS_RSH=false since ocassionally (e.g. when CVS_RSH=ssh on
-	    # some systems) some rsh implementations will block because they
-	    # can look up '..' and want to ask the user about the unknown host
-	    # key or somesuch.  Which error message we get depends on whether
-	    # false finishes running before we try to talk to it or not.
-	    dotest_fail crerepos-6a "CVS_RSH=false ${testcvs} -q -d ../crerepos get ." \
-"${SPROG} \[checkout aborted\]: .*"
+	    # CVS used to interpret this case as hostname/path, but that
+	    # changed with 1.12.22 to interpreting it as a relative path
+	    # and rejecting it.
+	    dotest_fail crerepos-6a "$testcvs -q -d ../crerepos get ." \
+"$SPROG checkout: CVSROOT must be an absolute pathname (not \`\.\./crerepos')
+$SPROG checkout: when using local access method\.
+$SPROG \[checkout aborted\]: Bad CVSROOT: \`\.\./crerepos'\."
 	    cd ..
 	    rm -r 1
 
@@ -23661,16 +23661,10 @@ EOF
 	  dotest parseroot2-1 "$testcvs -Q co CVSROOT"
 	  cd CVSROOT
 	  dotest parseroot2-2 "$testcvs -Q up"
-	  cd ..
 
-	  # A degenerate remote case, just the server name and the directory
-	  # name, with no :'s to help parsing.  It can be mistaken for a
-	  # relative directory name.
-	  rm -r CVSROOT
-	  CVSROOT=$host$CVSROOT_DIRNAME
-	  dotest parseroot2-3 "$testcvs -Q co CVSROOT"
-	  cd CVSROOT
-	  dotest parseroot2-4 "$testcvs -Q up"
+	  # parseroot2-3 & parseroot2-4 used to test the old degenerate case
+	  # hostname/path, but CVS now interprets that as a relative path and
+	  # rejects it, as tested in crerepos-6a.
 
 	  dokeep
 	  cd ../..
