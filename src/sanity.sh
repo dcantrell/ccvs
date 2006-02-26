@@ -14582,7 +14582,6 @@ U top-dir/file1"
 "${PROG} checkout: warning: cannot make directory CVS in \.: Permission denied
 ${PROG} checkout: Updating top-dir" \
 "${PROG} checkout: warning: cannot make directory CVS in \.: Permission denied
-${PROG} checkout: warning: cannot make directory CVS in \.: Permission denied
 ${PROG} checkout: in directory \.:
 ${PROG} checkout: cannot open CVS/Entries for reading: No such file or directory
 ${PROG} checkout: Updating top-dir"
