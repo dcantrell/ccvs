@@ -1,3 +1,9 @@
+2006-02-26  Derek Price  <derek@ximbiot.com>
+
+	* client.c (call_in_directory): Remove unneeded code.
+	* sanity.sh (toplevel-12): Compensate by failing to expect a redundant
+	error message.
+
 2006-02-24  Mark D. Baushke  <mdb@gnu.org>
 
 	* client.c (gzip_level): Move to...
