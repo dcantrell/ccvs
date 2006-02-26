@@ -22165,7 +22165,7 @@ ${CPROG} \[init aborted\]: Bad CVSROOT: .:ext:${hostname}:crerepos.\."
 
 	    mkdir 1; cd 1
 	    # CVS used to interpret this case as hostname/path, but that
-	    # changed with 1.12.22 to interpreting it as a relative path
+	    # changed with 1.12.14 to interpreting it as a relative path
 	    # and rejecting it.
 	    dotest_fail crerepos-6a "$testcvs -q -d ../crerepos get ." \
 "$SPROG checkout: CVSROOT must be an absolute pathname (not \`\.\./crerepos')
