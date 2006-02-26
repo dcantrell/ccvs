@@ -1,3 +1,7 @@
+2006-02-26  Derek Price  <derek@ximbiot.com>
+
+	* client.c (call_in_directory): Remove unneeded code.
+
 2006-02-25  Mark D. Baushke  <mdb@gnu.org>
 
 	* sanity.sh (crerepos-6a): Simplify expected output expression.
