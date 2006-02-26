@@ -3,6 +3,8 @@ Changes since 1.11.21:
 
 BUG FIXES
 
+* Code efficiency has been improved slightly.
+
 * A rare race condition that could leave a lock on the val-tags file has been
   avoided.
 
