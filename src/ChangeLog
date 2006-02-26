@@ -1,5 +1,10 @@
 2006-02-26  Derek Price  <derek@ximbiot.com>
 
+	* root.c [HOSTNAME_CHARS]: New macro.
+	(parse_cvsroot): Interpret specs that look like relative paths as
+	relative paths, not hostname/path.
+	* sanity.sh (crerepos-6a, parseroot2): Update to compensate.
+
 	* client.c (call_in_directory): Remove unneeded code.
 
 2006-02-25  Mark D. Baushke  <mdb@gnu.org>
