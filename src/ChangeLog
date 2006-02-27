@@ -1,3 +1,7 @@
+2006-02-27  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (internal_lock): Improve error message.
+
 2006-02-26  Derek Price  <derek@ximbiot.com>
 
 	* client.c (call_in_directory): Remove unneeded code.
