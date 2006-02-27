@@ -18644,8 +18644,6 @@ File: foo\.exe          	Status: Up-to-date
 
           binwrap3_text="${binwrap3_line1}${binwrap3_line2}${binwrap3_line3}"
 
-          cd ${TESTDIR}
-
 	  # On Windows, we can't check out CVSROOT, because the case
 	  # insensitivity means that this conflicts with cvsroot.
 	  mkdir wnt
