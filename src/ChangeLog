@@ -1,3 +1,9 @@
+2006-02-27  Derek Price  <derek@ximbiot.com>
+
+	* root.c [HOSTNAME_CHARS]: Rename to...
+	[FQDN_CHARS]: ...this and remove underscore from list.
+	(parse_cvsroot): FQDNs cannot start with `.'.
+
 2006-02-26  Derek Price  <derek@ximbiot.com>
 
 	* root.c [HOSTNAME_CHARS]: New macro.
