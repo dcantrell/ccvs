@@ -1,5 +1,7 @@
 2006-02-27  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (binwrap3): Remove unnecessary change dir command.
+
 	* lock.c (internal_lock): Improve error message.
 
 	* root.c [HOSTNAME_CHARS]: Rename to...
