@@ -1083,9 +1083,8 @@ internal_lock (lock, xrepository)
     if (set_lock (lock, 1) != L_OK)
     {
 	if (!really_quiet)
-	    error (0, 0,
-		   "failed to obtain lock `%s' in repository directory `%s'.",
-		   lock->lockdirname, Short_Repository (lock->repository));
+	    error (0, 0, "failed to obtain history lock in repository `%s'",
+		   xrepository);
 
 	return 0;
     }

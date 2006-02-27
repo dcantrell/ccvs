@@ -1,5 +1,8 @@
 2006-02-27  Derek Price  <derek@ximbiot.com>
 
+	* lock.c (internal_lock): Back out previous change, we don't change
+	user visible output on stable unless absolutely necessary.
+
 	* lock.c (internal_lock): Improve error message.
 
 2006-02-26  Derek Price  <derek@ximbiot.com>
