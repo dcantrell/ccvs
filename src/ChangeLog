@@ -1,5 +1,7 @@
 2006-02-27  Derek Price  <derek@ximbiot.com>
 
+	* lock.c (internal_lock): Improve error message.
+
 	* root.c [HOSTNAME_CHARS]: Rename to...
 	[FQDN_CHARS]: ...this and remove underscore from list.
 	(parse_cvsroot): FQDNs cannot start with `.'.
