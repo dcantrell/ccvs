@@ -629,11 +629,32 @@ parse_cvsroot (const char *root_in)
     else
     {
 	/* If the method isn't specified, assume LOCAL_METHOD unless the root
-	 * looks like server:/path.  Then assume EXT_METHOD.
+	 * looks like [[user]@]server:/path.  Then assume EXT_METHOD.
 	 */
-	size_t len = strspn (cvsroot_copy, FQDN_CHARS);
-	if (len > 0 && cvsroot_copy[0] != '.' && cvsroot_copy[len] == ':')
-	    newroot->method = ext_method;
+	char *slash = strchr (cvsroot_copy, '/');
+
+	if (slash)
+	{
+	    char *atchar;
+	    char *p;
+	    size_t len;
+
+	    *slash = '\0';
+	    atchar = strchr (cvsroot_copy, '@');
+	    p = (atchar) ? ++atchar : cvsroot_copy;
+	    len = strspn (p, FQDN_CHARS);
+
+	    /* FQDN_CHARS allows '.' and '-', but RFC 1035 forbids these as the
+	     * first character, and prohibits '-' as the last character. A server
+	     * name must be at least one character long.
+	     */
+	    if (len > 0 && p[0] != '.' && p[0] != '-' && p[len-1] != '-'
+		&& p[len] == ':')
+		newroot->method = ext_method;
+	    else
+		newroot->method = local_method;
+	    *slash = '/';
+	}
 	else
 	    newroot->method = local_method;
     }

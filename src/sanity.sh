@@ -23654,18 +23654,28 @@ EOF
 
 	  # A standard case, hostname:dirname.
 	  mkdir parseroot2; cd parseroot2
+
+	  mkdir 1; cd 1
 	  save_CVSROOT=$CVSROOT
 	  CVSROOT=$host:$CVSROOT_DIRNAME
 	  dotest parseroot2-1 "$testcvs -Q co CVSROOT"
 	  cd CVSROOT
 	  dotest parseroot2-2 "$testcvs -Q up"
+	  cd ../..
 
 	  # parseroot2-3 & parseroot2-4 used to test the old degenerate case
 	  # hostname/path, but CVS now interprets that as a relative path and
-	  # rejects it, as tested in crerepos-6a.
+	  # rejects it, as tested in crerepos-6a.  Instead, test the case of
+	  # @hostname:/path, where CVS interprets the empty username as the
+	  # default (current) username.
+	  mkdir 2; cd 2
+	  CVSROOT=@$host:$CVSROOT_DIRNAME
+	  dotest parseroot2-3 "$testcvs -Q co CVSROOT"
+	  cd CVSROOT
+	  dotest parseroot2-4 "$testcvs -Q up"
 
 	  dokeep
-	  cd ../..
+	  cd ../../..
 	  CVSROOT=$save_CVSROOT
 	  rm -r parseroot2
 	  ;;
