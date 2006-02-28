@@ -1,5 +1,8 @@
 2006-02-27  Derek Price  <derek@ximbiot.com>
 
+	* rcs.c (rcsbuf_cache_open): Back out potentially dangerous change
+	from 2006-01-30.
+
 	* sanity.sh (binwrap3): Remove unnecessary change dir command.
 
 	* lock.c (internal_lock): Improve error message.
