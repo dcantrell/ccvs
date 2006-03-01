@@ -1838,7 +1838,15 @@ It is possible to commit an erroneous administrative
 file.  You can often fix the error and check in a new
 revision, but sometimes a particularly bad error in the
 administrative file makes it impossible to commit new
-revisions.
+revisions.  If and when this happens, you can correct
+the problem by temporarily copying a corrected administrative file
+directly into the @code{$CVSROOT/CVSROOT} repository directory,
+then committing the same correction via a checkout of the @file{CVSROOT}
+module.  It is important that the correction also be made via the
+checked out copy, or the next checkout and commit to the
+<code>CVSROOT</code> module will overwrite the correction that was
+copied directly into the repository, possibly breaking things in such
+a way as to prevent commits again.
 @c @xref{Bad administrative files} for a hint
 @c about how to solve such situations.
 @c -- administrative file checking--

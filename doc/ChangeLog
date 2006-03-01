@@ -1,3 +1,7 @@
+2006-02-28  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Editing administrative files): Import changes from Wiki.
+
 2006-01-25  Mark D. Baushke  <mdb@gnu.org>
 
 	* getdate.texi: Update from GNULIB.
