@@ -1,5 +1,8 @@
 2006-03-01  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Set MALLOC_CHECK_ in hopes of exposing common memory
+	errors when CVS is linked with glibc 2.x.
+
 	* sanity.sh (rdiff, env, diffmerge1): Remove unnecessary cd command.
 
 2006-02-28  Derek Price  <derek@ximbiot.com>
