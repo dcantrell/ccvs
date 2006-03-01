@@ -95,6 +95,10 @@ checklongoptarg()
 # required to make this script work properly.
 unset CVSREAD
 
+# This will cause malloc to run slower but should also catch some common errors
+# when CVS is linked with glibc 2.x.
+MALLOC_CHECK_=2; export MALLOC_CHECK_
+
 # We want to invoke a predictable set of i18n behaviors, not whatever
 # the user running this script might have set.
 # In particular:
