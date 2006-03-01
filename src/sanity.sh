@@ -5496,9 +5496,6 @@ ${SPROG} \[commit aborted\]: lock failed - giving up"
 
 	rdiff)
 		# Test rdiff
-		# XXX for now this is just the most essential test...
-		cd ${TESTDIR}
-
 		mkdir testimport
 		cd testimport
 		echo '$''Id$' > foo
@@ -16107,8 +16104,7 @@ date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +0 -0;  commiti
 
 	env)
 	  # Test to see if the CVS_PID environment variable is being set
-	  mkdir ${TESTDIR}/env
-	  cd ${TESTDIR}/env
+	  mkdir env; cd env
 	  dotest env-1 "${testcvs} -Q co . >>${LOGFILE}" ''
 
 	  cat > ${TESTDIR}/env/test-cvs-pid <<EOF
@@ -27512,9 +27508,6 @@ $SPROG commit: Rebuilding administrative file database"
 	  # handily confirm, no doubt:
 
 	  # First make a repository containing the original text:
-
-	  # We should be here anyway, but cd to it just in case:
-	  cd ${TESTDIR}
 
 	  mkdir diffmerge1
 	  cd diffmerge1

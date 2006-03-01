@@ -1,3 +1,7 @@
+2006-03-01  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (rdiff, env, diffmerge1): Remove unnecessary cd command.
+
 2006-02-28  Derek Price  <derek@ximbiot.com>
 
 	* root.c: Interpret specs that look like @server:/hostname as :ext:.
