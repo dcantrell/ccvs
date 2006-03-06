@@ -5786,7 +5786,8 @@ done"
 	  # Removing -f below avoids this bug.
 	  dotest death-rtag-4 "$testcvs -q rtag -frmybranch wonttag death-rtag"
 
-	  # FIXCVS: <wheresthebeeflady>Where's the tag?!?!</wheresthebeeflady>
+	  # When the bug existed, `wonttag' would not have been present in
+	  # foo,v.
 	  dotest death-rtag-5 "$testcvs -q rlog death-rtag" \
 "
 RCS file: $CVSROOT_DIRNAME/death-rtag/bar,v
@@ -5806,6 +5807,7 @@ branch:
 locks: strict
 access list:
 symbolic names:
+	wonttag: 1\.1
 	willtag: 1\.1
 	mybranch: 1\.1.0\.2
 keyword substitution: kv
