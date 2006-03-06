@@ -5748,6 +5748,80 @@ C file4"
 	  cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
+
+
+	death-rtag)
+	  # This documents a bug in CVS that prevents rtag from tagging files
+	  # in the Attic.
+	  mkdir $CVSROOT_DIRNAME/death-rtag
+	  dotest death-rtag-init-1 "$testcvs -Q co death-rtag"
+	  cd death-rtag
+	  echo "This is the file foo" > foo
+	  echo "This is the file bar" > bar
+	  dotest death-rtag-init-2 "$testcvs -Q add foo bar"
+	  dotest death-rtag-init-3 "$testcvs -Q ci -m 'Add foo and bar.'" \
+"RCS file: $CVSROOT_DIRNAME/death-rtag/bar,v
+done
+Checking in bar;
+$CVSROOT_DIRNAME/death-rtag/bar,v  <--  bar
+initial revision: 1\.[0-9]*
+done
+RCS file: $CVSROOT_DIRNAME/death-rtag/foo,v
+done
+Checking in foo;
+$CVSROOT_DIRNAME/death-rtag/foo,v  <--  foo
+initial revision: 1\.[0-9]*
+done"
+	  dotest death-rtag-init-5 "$testcvs -Q tag -b mybranch"
+
+	  dotest death-rtag-1 "$testcvs -q rtag -frmybranch willtag death-rtag"
+	  dotest death-rtag-2 "$testcvs -Q rm -f foo"
+	  dotest death-rtag-3 "$testcvs -Q ci -m 'Remove foo.'" \
+"Removing foo;
+$CVSROOT_DIRNAME/death-rtag/foo,v  <--  foo
+new revision: delete; previous revision: 1\.[0-9]*
+done"
+	  cd ..
+
+	  # Removing -f below avoids this bug.
+	  dotest death-rtag-4 "$testcvs -q rtag -frmybranch wonttag death-rtag"
+
+	  # FIXCVS: <wheresthebeeflady>Where's the tag?!?!</wheresthebeeflady>
+	  dotest death-rtag-5 "$testcvs -q rlog death-rtag" \
+"
+RCS file: $CVSROOT_DIRNAME/death-rtag/bar,v
+head: 1.[0-9]*
+branch:
+locks: strict
+access list:
+symbolic names:
+	wonttag: 1\.1
+	willtag: 1\.1
+	mybranch: 1\.1.0\.2
+keyword substitution: kv
+$DOTSTAR
+RCS file: $CVSROOT_DIRNAME/death-rtag/Attic/foo,v
+head: 1.[0-9]*
+branch:
+locks: strict
+access list:
+symbolic names:
+	willtag: 1\.1
+	mybranch: 1\.1.0\.2
+keyword substitution: kv
+$DOTSTAR"
+
+	  if $keep; then
+	    echo Keeping $TESTDIR and exiting due to --keep
+	    exit 0
+	  fi
+
+	  rm -r death-rtag
+	  rm -rf $CVSROOT_DIRNAME/death-rtag
+	  ;;
+
+
+
 	rm-update-message)
 	  # FIXME
 	  # local CVS prints a warning message when update notices a missing
