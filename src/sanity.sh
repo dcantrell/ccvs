@@ -1096,7 +1096,7 @@ if test x"$*" = x; then
 	tests="${tests} status"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff rdiff-short"
-	tests="${tests} rdiff2 diff diffnl death death2"
+	tests="${tests} rdiff2 diff diffnl death death2 death-rtag"
 	tests="${tests} rm-update-message rmadd rmadd2 rmadd3 resurrection"
 	tests="${tests} dirs dirs2 branches branches2 tagc tagf tag-space"
 	tests="${tests} rcslib multibranch import importb importc import-CVS"
@@ -5805,7 +5805,7 @@ done"
 	  # When the bug existed, `wonttag' would not have been present in
 	  # foo,v.
 	  #
-	  # A second bug prevents `wontmove' from moving from the branch to
+	  # A second bug prevented `wontmove' from moving from the branch to
 	  # the dead revision on the trunk (death-rtag-3.4 & death-rtag-3.5).
 	  dotest death-rtag-5 "$testcvs -q rlog death-rtag" \
 "
@@ -5828,7 +5828,7 @@ locks: strict
 access list:
 symbolic names:
 	wonttag: 1\.1\.2\.1
-	wontmove: 1\.1\.2\.1
+	wontmove: 1\.2
 	willtag: 1\.1
 	mybranch: 1\.1.0\.2
 keyword substitution: kv
