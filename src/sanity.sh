@@ -5774,20 +5774,39 @@ initial revision: 1\.[0-9]*
 done"
 	  dotest death-rtag-init-5 "$testcvs -Q tag -b mybranch"
 
-	  dotest death-rtag-1 "$testcvs -q rtag -frmybranch willtag death-rtag"
+	  dotest death-rtag-1 "$testcvs -q rtag -rmybranch willtag death-rtag"
 	  dotest death-rtag-2 "$testcvs -Q rm -f foo"
 	  dotest death-rtag-3 "$testcvs -Q ci -m 'Remove foo.'" \
 "Removing foo;
 $CVSROOT_DIRNAME/death-rtag/foo,v  <--  foo
 new revision: delete; previous revision: 1\.[0-9]*
 done"
-	  cd ..
+	  # commit something on the branch so that the moving tag is visible.
+	  dotest death-rtag-3.2 "$testcvs -Q up -rmybranch"
+	  echo some branch content >>foo
+	  echo some branch content >>bar
+	  dotest death-rtag-3.3 "$testcvs -Q ci -m 'Change foo.'" \
+"Checking in bar;
+$CVSROOT_DIRNAME/death-rtag/bar,v  <--  bar
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+Checking in foo;
+$CVSROOT_DIRNAME/death-rtag/Attic/foo,v  <--  foo
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+	  dotest death-rtag-3.4 \
+"$testcvs -q rtag -rmybranch wontmove death-rtag"
+	  dotest death-rtag-3.5 "$testcvs -q rtag -F wontmove death-rtag"
 
+	  cd ..
 	  # Removing -f below avoids this bug.
 	  dotest death-rtag-4 "$testcvs -q rtag -frmybranch wonttag death-rtag"
 
 	  # When the bug existed, `wonttag' would not have been present in
 	  # foo,v.
+	  #
+	  # A second bug prevents `wontmove' from moving from the branch to
+	  # the dead revision on the trunk (death-rtag-3.4 & death-rtag-3.5).
 	  dotest death-rtag-5 "$testcvs -q rlog death-rtag" \
 "
 RCS file: $CVSROOT_DIRNAME/death-rtag/bar,v
@@ -5796,7 +5815,8 @@ branch:
 locks: strict
 access list:
 symbolic names:
-	wonttag: 1\.1
+	wonttag: 1\.1\.2\.1
+	wontmove: 1\.1
 	willtag: 1\.1
 	mybranch: 1\.1.0\.2
 keyword substitution: kv
@@ -5807,7 +5827,8 @@ branch:
 locks: strict
 access list:
 symbolic names:
-	wonttag: 1\.1
+	wonttag: 1\.1\.2\.1
+	wontmove: 1\.1\.2\.1
 	willtag: 1\.1
 	mybranch: 1\.1.0\.2
 keyword substitution: kv
