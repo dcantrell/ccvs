@@ -1,3 +1,7 @@
+2006-03-07  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (death-rtag): Add failing force tag move test.
+
 2006-03-06  Derek Price  <derek@ximbiot.com>
 
 	* tag.c (rtag_proc): Always search in the attic when -r is used.
