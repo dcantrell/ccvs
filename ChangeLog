@@ -1,3 +1,7 @@
+2006-03-07  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note rtag fixes.
+
 2006-02-26  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note CVSADM fix as an efficiency improvement.

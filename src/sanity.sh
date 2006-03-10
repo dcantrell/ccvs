@@ -1720,7 +1720,7 @@ if test x"$*" = x; then
 	tests="${tests} status"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff rdiff-short"
-	tests="${tests} rdiff2 diff diffnl death death2"
+	tests="${tests} rdiff2 diff diffnl death death2 death-rtag"
 	tests="${tests} rm-update-message rmadd rmadd2 rmadd3 resurrection"
 	tests="${tests} dirs dirs2 branches branches2 branches3"
 	tests="${tests} branches4 tagc tagf tag-space"
@@ -6656,6 +6656,77 @@ C file4"
 	  cd ..
 	  rm -r first-dir
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  ;;
+
+
+
+	death-rtag)
+	  # This documents a bug in CVS that prevents rtag from tagging files
+	  # in the Attic.
+	  modify_repo mkdir $CVSROOT_DIRNAME/death-rtag
+	  dotest death-rtag-init-1 "$testcvs -Q co death-rtag"
+	  cd death-rtag
+	  echo "This is the file foo" > foo
+	  echo "This is the file bar" > bar
+	  dotest death-rtag-init-2 "$testcvs -Q add foo bar"
+	  dotest death-rtag-init-3 "$testcvs -Q ci -m 'Add foo and bar.'"
+	  dotest death-rtag-init-5 "$testcvs -Q tag -b mybranch"
+
+	  dotest death-rtag-1 "$testcvs -q rtag -rmybranch willtag death-rtag"
+	  dotest death-rtag-2 "$testcvs -Q rm -f foo"
+	  dotest death-rtag-3 "$testcvs -Q ci -m 'Remove foo.'"
+	  # commit something on the branch so that the moving tag is visible.
+	  dotest death-rtag-3.2 "$testcvs -Q up -rmybranch"
+	  echo some branch content >>foo
+	  echo some branch content >>bar
+	  dotest death-rtag-3.3 "$testcvs -Q ci -m 'Change foo.'"
+	  dotest death-rtag-3.4 \
+"$testcvs -q rtag -rmybranch wontmove death-rtag"
+	  dotest death-rtag-3.5 "$testcvs -q rtag -F wontmove death-rtag"
+
+	  cd ..
+	  # Removing -f below avoids this bug.
+	  dotest death-rtag-4 "$testcvs -q rtag -frmybranch wonttag death-rtag"
+
+	  # When the bug existed, `wonttag' would not have been present in
+	  # foo,v.
+	  #
+	  # A second bug prevented `wontmove' from moving from the branch to
+	  # the dead revision on the trunk (death-rtag-3.4 & death-rtag-3.5).
+	  dotest death-rtag-5 "$testcvs -q rlog death-rtag" \
+"
+RCS file: $CVSROOT_DIRNAME/death-rtag/bar,v
+head: 1.[0-9]*
+branch:
+locks: strict
+access list:
+symbolic names:
+	wonttag: 1\.1\.2\.1
+	wontmove: 1\.1
+	willtag: 1\.1
+	mybranch: 1\.1.0\.2
+keyword substitution: kv
+$DOTSTAR
+RCS file: $CVSROOT_DIRNAME/death-rtag/Attic/foo,v
+head: 1.[0-9]*
+branch:
+locks: strict
+access list:
+symbolic names:
+	wonttag: 1\.1\.2\.1
+	wontmove: 1\.2
+	willtag: 1\.1
+	mybranch: 1\.1.0\.2
+keyword substitution: kv
+$DOTSTAR"
+
+	  if $keep; then
+	    echo Keeping $TESTDIR and exiting due to --keep
+	    exit 0
+	  fi
+
+	  rm -r death-rtag
+	  modify_repo rm -rf $CVSROOT_DIRNAME/death-rtag
 	  ;;
 
 
