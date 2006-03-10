@@ -1977,9 +1977,14 @@ rcsbuf_cache_open (RCSNode *rcs, off_t pos, FILE **pfp,
 	*pfp = cached_rcsbuf.fp;
 
 	/* When RCS_parse opens a file using fopen_case, it frees the
-	   filename which we cached in CACHED_RCSBUF and stores a new
-	   file name in RCS->PATH.  We avoid problems here by always
-	   copying the filename over.  FIXME: This is hackish.  */
+	 * filename which we cached in CACHED_RCSBUF and stores a new
+	 * file name in RCS->PATH.  We avoid problems here by always
+	 * copying the filename over.
+	 *
+	 * FIXME: This is hackish.  It also may not be needed anymore since
+	 * fopen_case is no longer called, but removing this line still
+	 * causes crashes on some systems.  -DRP
+	 */
 	cached_rcsbuf.filename = rcs->path;
 
 	*prcsbuf = cached_rcsbuf;
