@@ -1,3 +1,10 @@
+2006-03-12  Mark D. Baushke  <mdb@gnu.org>
+
+	* validate_repo.pl (main, get_history, check_revision):
+	Accept :local: method and use :local: internall for portability to
+	systems with drive letters in pathnames.
+	(patch suggested by Steven Levine).
+
 2005-10-11  Derek Price  <derek@ximbiot.com>
 
 	* log_accum.pl: Allow arbitrary arguments to be specified for

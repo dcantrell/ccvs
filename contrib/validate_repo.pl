@@ -237,6 +237,7 @@ sub main
 
 	# Fix trailing /'s
     $cvsroot =~ s#[/\\]*$##o;
+        $cvsroot =~ s/^:local://;	# Strip explict local
 
 	for (@scripts)
 	{
@@ -471,7 +472,7 @@ sub get_history
 	my %rinfo;		# Info about revisions in the file.
 	my $revision;
 
-    my $fh = new IO::File( "cvs -d $cvsroot rlog -N \"$file\""
+    my $fh = new IO::File( "cvs -d :local:$cvsroot rlog -N \"$file\""
                            . ($verbose ? "" : " 2>&1") . " |" )
 		or die( "unable to run `cvs rlog', help" );
 
@@ -603,7 +604,7 @@ sub check_revision
 	# Allow binaries to be checked out as such.  Otherwise, use -ko to avoid
 	# replacing keywords in the files.
 	my $kwmode = $finfo->{'kwmode'} eq 'b' ? '' : ' -ko';
-    my $command = "cvs -d $cvsroot co$kwmode -npr $revision \"$file\"";
+    my $command = "cvs -d :local:$cvsroot co$kwmode -npr $revision \"$file\"";
 	my $ret_code;
 	verbose( "Executing `$command'.\n" );
 	if( @scripts )
