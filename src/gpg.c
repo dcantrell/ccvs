@@ -2,7 +2,8 @@
  * Copyright (C) 2001, 2002, 2003, 2006 Free Software Foundation, Inc.
  *
  * This file is part of of CVS
- * (derived from gpgsplit.c distributed with GnuPG).
+ * (originally derived from gpgsplit.c distributed with GnuPG, but much
+ * has been rewritten from scratch using RFC 2440).
  *
  * GnuPG is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -368,6 +369,139 @@ next_signature (struct buffer *bpin, struct buffer *bpout)
 
 
 
+struct openpgp_signature_subpacket
+{
+  uint8_t *raw;
+  size_t rawlen;
+  uint8_t type;
+  union
+  {
+    time_t ctime;
+    uint64_t keyid;
+  } u;
+};
+
+/* Parse a single signature version 4 subpacket from BPIN, populating
+ * structure at SPOUT.
+ *
+ * RETURNS
+ *   0		On success.
+ *   -1		If EOF is encountered before a full packet is read.
+ *   -2		On memory allocation errors from buf_read_data().
+ *
+ * ERRORS
+ *   Aside from the error returns above, buf_output() can call its memory
+ *   failure function on memory allocation failures, which could exit.
+ */
+static int
+parse_signature_subpacket (struct buffer *bpin,
+			   struct openpgp_signature_subpacket *spout)
+{
+  int rc;
+  uint8_t c;
+  uint32_t tmp32;
+  uint32_t splen;
+  size_t raw_idx = 0;
+
+  /* Enough to store the subpacket length.  */
+  spout->raw = xmalloc (4);
+
+  if ((rc = read_u8 (bpin, &c)))
+    return rc;
+
+  spout->raw[raw_idx++] = c;
+
+  if (c < 192)
+    splen = c;
+  else if (c < 255)
+    {
+      splen = (c - 192) << 8;
+      if ((rc = read_u8 (bpin, &c)))
+	return rc;
+      spout->raw[raw_idx++] = c;
+      splen += c + 192;
+    }
+  else /* c == 255 */
+    {
+      if ((rc = read_u32 (bpin, &splen)))
+	return rc;
+      spout->raw[raw_idx++] = splen >> 24;
+      spout->raw[raw_idx++] = splen >> 16;
+      spout->raw[raw_idx++] = splen >> 8;
+      spout->raw[raw_idx++] = splen; 
+    }
+
+  if (splen == 0)
+    error (1, 0, "Received zero length subpacket in OpenPGP signature.");
+
+  /* Allocate enough bytes for the rest of the subpacket.  */
+  spout->raw = xrealloc (spout->raw, splen);
+
+  /* Read the subpacket type.  */
+  if ((rc = read_u8 (bpin, &c)))
+    return rc;
+  spout->raw[raw_idx++] = c;
+  splen -= 1;
+  spout->type = c;
+
+  switch (c)
+  {
+    /* Signature creation time.  */
+    case 2:
+      if (splen != 4)
+	error (1, 0, "Missized signature subpacket (%lu)", (long)splen);
+
+      if ((rc = read_u32 (bpin, &tmp32)))
+	return rc;
+      spout->u.ctime = tmp32;
+      spout->raw[raw_idx++] = (tmp32 >> 24) & 0xFF;
+      spout->raw[raw_idx++] = (tmp32 >> 16) & 0xFF;
+      spout->raw[raw_idx++] = (tmp32 >> 8) & 0xFF;
+      spout->raw[raw_idx++] = tmp32 & 0xFF;
+      break;
+
+    /* Signer's key ID.  */
+    case 16:
+      if (splen != 8)
+	error (1, 0, "Missized signature subpacket (%lu)", (long)splen);
+
+      if ((rc = read_u64 (bpin, &spout->u.keyid)))
+	return rc;
+      spout->raw[raw_idx++] = (spout->u.keyid >> 56) & 0xFF;
+      spout->raw[raw_idx++] = (spout->u.keyid >> 48) & 0xFF;
+      spout->raw[raw_idx++] = (spout->u.keyid >> 40) & 0xFF;
+      spout->raw[raw_idx++] = (spout->u.keyid >> 32) & 0xFF;
+      spout->raw[raw_idx++] = (spout->u.keyid >> 24) & 0xFF;
+      spout->raw[raw_idx++] = (spout->u.keyid >> 16) & 0xFF;
+      spout->raw[raw_idx++] = (spout->u.keyid >> 8) & 0xFF;
+      spout->raw[raw_idx++] = spout->u.keyid & 0xFF;
+      break;
+
+    /* Store but ignore other subpacket types.  */
+    default:
+      while (splen)
+	{
+	  size_t got;
+	  char *tmp;
+	  if ((rc = buf_read_data (bpin, splen, &tmp, &got)) < 0)
+	    return rc;
+	  assert (got);  /* Blocking buffers cannot return 0 bytes.  */
+	  memcpy (spout->raw + raw_idx, tmp, got);
+	  raw_idx += got;
+	  splen -= got;
+	}
+      break;
+  }
+
+  /* This should be the original length read plus the 1, 2, or 5 bytes in the
+   * length header itself.
+   */
+  spout->rawlen = raw_idx;
+  return 0;
+}
+
+
+
 /* Parse a single signature packet from BPIN, populating structure at SPOUT.
  *
  * RETURNS
@@ -389,8 +523,11 @@ parse_signature (struct buffer *bpin, struct openpgp_signature *spout)
   int header_len = sizeof header;
   int rc;
   uint8_t c;
+  uint16_t tsplen;
   uint32_t tmp32;
   size_t raw_idx = 0;
+  bool got_ctime;
+  bool got_keyid;
 
   if ((rc = parse_header (bpin, &pkttype, &pktlen, &partial, header,
 			  &header_len)))
@@ -414,47 +551,198 @@ parse_signature (struct buffer *bpin, struct openpgp_signature *spout)
   spout->raw[raw_idx++] = c;
   pktlen -= 1;
 
-  if (c != 3)
+  if (c != 3 && c != 4)
     error (1, 0, "Unhandled OpenPGP signature version (%hhu)", c);
 
-  if ((rc = read_u8 (bpin, &c)))
-    return rc;
-  spout->raw[raw_idx++] = c;
-  pktlen -= 1;
+  switch (c)
+  {
+    case 3:
+      /* RFC 2440 Section 5.2.2 Version 4 Signature Packet Format  */
+      if ((rc = read_u8 (bpin, &c)))
+	return rc;
+      spout->raw[raw_idx++] = c;
+      pktlen -= 1;
 
-  if (c != 5)
-    error (1, 0, "Malformed OpenPGP signature (type/time length invalid)");
+      if (c != 5)
+	error (1, 0, "Malformed OpenPGP signature (type/time length invalid)");
 
-  if ((rc = read_u8 (bpin, &c)))
-    return rc;
-  spout->raw[raw_idx++] = c;
-  pktlen -= 1;
+      if ((rc = read_u8 (bpin, &c)))
+	return rc;
+      spout->raw[raw_idx++] = c;
+      pktlen -= 1;
 
-  if (c & 0xF0)
-    error (1, 0, "Unhandled OpenPGP signature type (%hhu)", c);
+      if (c & 0xF0)
+	error (1, 0, "Unhandled OpenPGP signature type (%hhu)", c);
 
-  /* Read the creation time.  */
-  if ((rc = read_u32 (bpin, &tmp32)))
-    return rc;
-  spout->ctime = tmp32;
-  spout->raw[raw_idx++] = (tmp32 >> 24) & 0xFF;
-  spout->raw[raw_idx++] = (tmp32 >> 16) & 0xFF;
-  spout->raw[raw_idx++] = (tmp32 >> 8) & 0xFF;
-  spout->raw[raw_idx++] = tmp32 & 0xFF;
-  pktlen -= 4;
+      /* Read the creation time.  */
+      if ((rc = read_u32 (bpin, &tmp32)))
+	return rc;
+      spout->ctime = tmp32;
+      spout->raw[raw_idx++] = (tmp32 >> 24) & 0xFF;
+      spout->raw[raw_idx++] = (tmp32 >> 16) & 0xFF;
+      spout->raw[raw_idx++] = (tmp32 >> 8) & 0xFF;
+      spout->raw[raw_idx++] = tmp32 & 0xFF;
+      pktlen -= 4;
 
-  /* Read the key ID.  */
-  if ((rc = read_u64 (bpin, &spout->keyid)))
-    return rc;
-  spout->raw[raw_idx++] = (spout->keyid >> 56) & 0xFF;
-  spout->raw[raw_idx++] = (spout->keyid >> 48) & 0xFF;
-  spout->raw[raw_idx++] = (spout->keyid >> 40) & 0xFF;
-  spout->raw[raw_idx++] = (spout->keyid >> 32) & 0xFF;
-  spout->raw[raw_idx++] = (spout->keyid >> 24) & 0xFF;
-  spout->raw[raw_idx++] = (spout->keyid >> 16) & 0xFF;
-  spout->raw[raw_idx++] = (spout->keyid >> 8) & 0xFF;
-  spout->raw[raw_idx++] = spout->keyid & 0xFF;
-  pktlen -= 8;
+      /* Read the key ID.  */
+      if ((rc = read_u64 (bpin, &spout->keyid)))
+	return rc;
+      spout->raw[raw_idx++] = (spout->keyid >> 56) & 0xFF;
+      spout->raw[raw_idx++] = (spout->keyid >> 48) & 0xFF;
+      spout->raw[raw_idx++] = (spout->keyid >> 40) & 0xFF;
+      spout->raw[raw_idx++] = (spout->keyid >> 32) & 0xFF;
+      spout->raw[raw_idx++] = (spout->keyid >> 24) & 0xFF;
+      spout->raw[raw_idx++] = (spout->keyid >> 16) & 0xFF;
+      spout->raw[raw_idx++] = (spout->keyid >> 8) & 0xFF;
+      spout->raw[raw_idx++] = spout->keyid & 0xFF;
+      pktlen -= 8;
+      break;
+
+    case 4:
+      /* RFC 2440 Section 5.2.3 Version 4 Signature Packet Format  */
+      got_ctime = false;
+      got_keyid = false;
+
+      /* Discard one-octet signature type.  */
+      if ((rc = read_u8 (bpin, &c)))
+	return rc;
+      spout->raw[raw_idx++] = c;
+      pktlen -= 1;
+
+      /* Discard one-octet public key algorithm.  */
+      if ((rc = read_u8 (bpin, &c)))
+	return rc;
+      spout->raw[raw_idx++] = c;
+      pktlen -= 1;
+
+      /* Discard one-octet hash algorithm.  */
+      if ((rc = read_u8 (bpin, &c)))
+	return rc;
+      spout->raw[raw_idx++] = c;
+      pktlen -= 1;
+
+      /* Read the hashed subpacket length.  */
+      if ((rc = read_u16 (bpin, &tsplen)))
+	return rc;
+      spout->raw[raw_idx++] = (tsplen >> 8) & 0xFF;
+      spout->raw[raw_idx++] = tsplen & 0xFF;
+      pktlen -= 2;
+
+      /* Process hashed subpackets.  */
+      while (tsplen > 0)
+      {
+	struct openpgp_signature_subpacket sp;
+
+	if (got_ctime && got_keyid)
+	{
+	  while (tsplen)
+	    {
+	      size_t got;
+	      char *tmp;
+	      if ((rc = buf_read_data (bpin, tsplen, &tmp, &got)) < 0)
+		return rc;
+	      assert (got);  /* Blocking buffers cannot return 0 bytes.  */
+	      memcpy (spout->raw + raw_idx, tmp, got);
+	      raw_idx += got;
+	      tsplen -= got;
+	      pktlen -= got;
+	    }
+	  break;
+	}
+
+	if ((rc = parse_signature_subpacket (bpin, &sp)))
+	  return rc;
+
+	if (sp.rawlen > tsplen)
+	  error (1, 0,
+"Signature subpacket length exceeds total hashed subpackets length.");
+
+	memcpy (spout->raw + raw_idx, sp.raw, sp.rawlen);
+	free (sp.raw);
+	raw_idx += sp.rawlen;
+	pktlen -= sp.rawlen;
+	tsplen -= sp.rawlen;
+
+	switch (sp.type)
+	{
+	  case 2:
+	    spout->ctime = sp.u.ctime;
+	    got_ctime = true;
+	    break;
+	  case 16:
+	    spout->keyid = sp.u.keyid;
+	    got_keyid = true;
+	    break;
+	  default:
+	    break;
+	}
+      }
+
+      /* Read the unhashed subpacket length.  */
+      if ((rc = read_u16 (bpin, &tsplen)))
+	return rc;
+      spout->raw[raw_idx++] = (tsplen >> 8) & 0xFF;
+      spout->raw[raw_idx++] = tsplen & 0xFF;
+      pktlen -= 2;
+
+      /* Process unhashed subpackets.  */
+      while (tsplen > 0)
+      {
+	struct openpgp_signature_subpacket sp;
+
+	if (got_ctime && got_keyid)
+	{
+	  while (tsplen)
+	    {
+	      size_t got;
+	      char *tmp;
+	      if ((rc = buf_read_data (bpin, tsplen, &tmp, &got)) < 0)
+		return rc;
+	      assert (got);  /* Blocking buffers cannot return 0 bytes.  */
+	      memcpy (spout->raw + raw_idx, tmp, got);
+	      raw_idx += got;
+	      tsplen -= got;
+	      pktlen -= got;
+	    }
+	  break;
+	}
+
+	if ((rc = parse_signature_subpacket (bpin, &sp)))
+	  return rc;
+
+	if (sp.rawlen > tsplen)
+	  error (1, 0,
+"Signature subpacket length exceeds total unhashed subpackets length.");
+
+	memcpy (spout->raw + raw_idx, sp.raw, sp.rawlen);
+	free (sp.raw);
+	raw_idx += sp.rawlen;
+	pktlen -= sp.rawlen;
+	tsplen -= sp.rawlen;
+
+	switch (sp.type)
+	{
+	  case 2:
+	    error (1, 0, "Creation time found in unhashed subpacket.");
+	    /* Exits here, but who knows if that confuses the optimizer.  */
+	    break;
+
+	  case 16:
+	    spout->keyid = sp.u.keyid;
+	    got_keyid = true;
+	    break;
+
+	  default:
+	    break;
+	}
+      }
+
+      if (!got_ctime)
+	error (1, 0, "Signature did not contain creation time.");
+      if (!got_keyid)
+	error (1, 0, "Signature did not contain keyid.");
+      break;
+  }
 
   /* Don't need the rest of the packet yet.  */
   while (pktlen)
