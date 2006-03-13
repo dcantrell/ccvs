@@ -1,3 +1,10 @@
+2006-03-13  Derek Price  <derek@ximbiot.com>
+
+	Handle OpenPGP version 4 signatures.
+	* gpg.c (struct openpgp_signature_subpacket): New struct.
+	(parse_signature_subpacket): New function.
+	(parse_signature): Process version 4 signatures.
+
 2006-01-27  Derek Price  <derek@ximbiot.com>
 
 	* verify.c: #include "wait.h" from GNULIB.
