@@ -106,6 +106,7 @@ AC_DEFUN([gl_INIT],
   gl_TIME_R
   gl_TIMESPEC
   gl_FUNC_TZSET_CLOBBER
+  gl_HEADER_UNISTD
   gl_UNISTD_SAFER
   gl_FUNC_GLIBC_UNLOCKED_IO
   gl_FUNC_VASNPRINTF
@@ -403,6 +404,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/uintmax_t.m4
   m4/ulonglong.m4
   m4/unistd-safer.m4
+  m4/unistd_h.m4
   m4/unlocked-io.m4
   m4/vasnprintf.m4
   m4/vasprintf.m4

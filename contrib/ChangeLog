@@ -1,3 +1,7 @@
+2006-03-19  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.in: Regenerated.
+
 2006-03-12  Mark D. Baushke  <mdb@gnu.org>
 
 	* validate_repo.pl (main, get_history, check_revision):

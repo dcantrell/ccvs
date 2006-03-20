@@ -1,3 +1,7 @@
+2006-03-19  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.in: Regenerated.
+
 2005-03-22  Brian Murphy <brian@murphy.dk>
 
 	* cvs.linux, cvs.solaris: updated to add session support example.

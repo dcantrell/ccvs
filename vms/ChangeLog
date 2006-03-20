@@ -1,3 +1,7 @@
+2006-03-19  Mark D. Baushke  <mdb@juniper.net>
+
+	* Makefile.in: Regeneated.
+
 2005-11-09  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (stamp-ch): Sub PACKAGE_STRING & PACKAGE_BUGREPORT.

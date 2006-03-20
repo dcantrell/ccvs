@@ -1,4 +1,4 @@
-/* Copyright (C) 1991-2002,2003,2004,2005 Free Software Foundation, Inc.
+/* Copyright (C) 1991-2002,2003,2004,2005,2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -34,13 +34,10 @@
 #include <stdio.h>		/* Needed on stupid SunOS for assert.  */
 
 #if !defined _LIBC || !defined GLOB_ONLY_P
-#if defined HAVE_UNISTD_H || defined _LIBC
-# include <unistd.h>
-# ifndef POSIX
-#  ifdef _POSIX_VERSION
-#   define POSIX
-#  endif
-# endif
+
+#include <unistd.h>
+#if !defined POSIX && defined _POSIX_VERSION
+# define POSIX
 #endif
 
 #include <pwd.h>
@@ -322,7 +319,7 @@ glob (pattern, flags, errfunc, pglob)
 	  next = next_brace_sub (begin + 1, flags);
 	  if (next == NULL)
 	    {
-	      /* It is an illegal expression.  */
+	      /* It is an invalid expression.  */
 #ifndef __GNUC__
 	      free (onealt);
 #endif
@@ -336,7 +333,7 @@ glob (pattern, flags, errfunc, pglob)
 	      rest = next_brace_sub (rest + 1, flags);
 	      if (rest == NULL)
 		{
-		  /* It is an illegal expression.  */
+		  /* It is an invalid expression.  */
 #ifndef __GNUC__
 		  free (onealt);
 #endif
