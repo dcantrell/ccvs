@@ -542,6 +542,9 @@
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #define HAVE_NDIR_H 1
 
+/* Define to 1 if you have the <netdb.h> header file. */
+#undef HAVE_NETDB_H
+
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #undef HAVE_NETINET_IN_H
 

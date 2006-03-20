@@ -1,3 +1,7 @@
+2006-03-19  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.in: Regenerated.
+
 2006-03-07  Derek Price  <derek@ximbiot.com>
 
 	* tag.c (rtag_proc): Search the Attic when -F is used.

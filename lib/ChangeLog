@@ -1,3 +1,12 @@
+2006-03-19  Mark D. Baushke  <mdb@gnu.org>
+
+	* closeout.c, fnmatch.c, fnmatch_loop.c, gai_strerror.c,
+	getaddrinfo.h, getcwd.c, getlogin_r.c, getlogin_r.h, glob.c,
+	lstat.c, openat.h, pagealign_alloc.c, regex.h, setenv.c,
+	socket_.h, time_r.c, time_r.h, unsetenv.c, xalloc-die.c: Update
+	from GNULIB.
+	* Makefile.gnulib, Makefile.in: Regenerated.
+
 2006-01-26  Mark D. Baushke  <mdb@gnu.org>
 
 	* stdbool_.h: Update from GNULIB.

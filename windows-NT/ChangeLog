@@ -1,3 +1,7 @@
+2006-03-19  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.in, config.h, config.h.in, stamp-chi: Regenerated.
+
 2006-01-25  Mark D. Baushke  <mdb@gnu.org>
 
 	* stdint.h, stdbool.h: Update from GNULIB.

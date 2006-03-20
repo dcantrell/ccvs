@@ -1,3 +1,7 @@
+2006-03-19  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.in: Regenerated.
+
 2006-02-28  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Editing administrative files): Import changes from Wiki.

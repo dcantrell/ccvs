@@ -1,3 +1,7 @@
+2006-03-19  Mark D. Baushke  <mdb@juniper.net>
+
+	* Makefile.in: Regenerated.
+
 2005-09-01  Derek Price  <derek@ximbiot.com>
 
 	* README: Update links and email addresses.

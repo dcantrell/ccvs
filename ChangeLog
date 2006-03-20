@@ -1,3 +1,7 @@
+2006-03-19  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.in, aclocal.m4, config.h.in, configure: Regenerated.
+
 2006-03-07  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note rtag fixes.
