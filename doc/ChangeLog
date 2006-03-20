@@ -1,3 +1,11 @@
+2006-03-20  Mark D. Baushke  <mdb@gnu.org>
+
+	[patch #4965]
+	* cvs.texinfo (Sticky tags, Merging and keywords)
+	(checkout options, update options): The -A switch
+	does not reset sticky -k options on modified files.
+	* cvs.1, stamp-1, stamp-vti, version.texi: Regenerated.
+
 2006-02-28  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Editing administrative files): Import changes from Wiki.

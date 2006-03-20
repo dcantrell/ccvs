@@ -3841,7 +3841,8 @@ The sticky tags will remain on your working files until
 you delete them with @samp{cvs update -A}.  The
 @samp{-A} option merges local changes into the version of the
 file from the head of the trunk, removing any sticky tags,
-dates, or options.  See @ref{update} for more on the operation
+dates, or options (other than sticky @samp{-k} options on locally
+modified files).  See @ref{update} for more on the operation
 of @code{cvs update}.
 
 @cindex Sticky date
@@ -4628,6 +4629,13 @@ switches attached to the working files as @samp{-A} does.  The workaround
 for this is to release the working directory after the merge has been
 committed and check it out again.
 @end ignore
+
+As a result of using @samp{-kk} during the merge, each file examined by the
+update will have @samp{-kk} set as sticky options.  Running @code{update -A}
+will clear the sticky options on unmodified files, but it will not clear
+the sticky options on modified files.  To get back to the default keyword
+substitution for modified files, you must commit the results of the merge
+and then run @code{update -A}.
 
 @c ---------------------------------------------------------------------
 @node Recursive behavior
@@ -8869,6 +8877,7 @@ options with @code{checkout}:
 @table @code
 @item -A
 Reset any sticky tags, dates, or @samp{-k} options.
+Does not reset sticky @samp{-k} options on modified files.
 See @ref{Sticky tags}, for more information on sticky tags/dates.
 
 @item -c
@@ -10794,6 +10803,7 @@ These special options are also available with
 @table @code
 @item -A
 Reset any sticky tags, dates, or @samp{-k} options.
+Does not reset sticky @samp{-k} options on modified files.
 See @ref{Sticky tags}, for more information on sticky tags/dates.
 
 @item -C
