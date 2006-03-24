@@ -29,6 +29,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* POSIX.2 headers.  */
+#include <getopt.h>
+
 /* GNULIB headers.  */
 #include "error.h"
 #include "wait.h"
@@ -637,7 +640,7 @@ int
 verify (int argc, char **argv)
 {
     bool local = false;
-    char c;
+    int c;
     int err;
     struct verify_closure userargs;
 
