@@ -1,6 +1,9 @@
 2006-03-24  Derek Price  <derek@ximbiot.com>
 
-	* verify.c (verify_usage): Correct usage.
+	* verify.c: #include <getopt.h>.
+	(verify_usage): Correct usage.
+	(verify): Use declared int type for getopt return - char may be
+	unsigned on some systems.
 
 2006-03-13  Derek Price  <derek@ximbiot.com>
 
