@@ -465,7 +465,7 @@ done:
 
 static const char *const verify_usage[] =
 {
-    "Usage: %s %s [-lR]\n",
+    "Usage: %s %s [-lpR] [path...]\n",
     "\t-l\tLocal directory only, no recursion.\n",
     "\t-R\tProcess directories recursively.\n",
     "\t-p\tOutput signature to STDOUT without verifying.\n",
