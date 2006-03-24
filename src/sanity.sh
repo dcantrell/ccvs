@@ -28534,7 +28534,7 @@ Are you sure you want to release (and delete) directory \`second-dir': "
 	  # Some tests of behavior which broke at one time or another when run
 	  # from case insensitive clients against case sensitive servers.
 	  #
-	  # These tests are namned according to the following convention:
+	  # These tests are named according to the following convention:
 	  #
 	  #   ci	Client (sandbox filesystem) case Insensitive
 	  #   cs	Client (sandbox filesystem) case Sensitive
