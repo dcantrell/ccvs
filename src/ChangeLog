@@ -1,3 +1,7 @@
+2006-03-24  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (recase): Correct spelling typo in comment.
+
 2006-03-19  Mark D. Baushke  <mdb@gnu.org>
 
 	* Makefile.in: Regenerated.
