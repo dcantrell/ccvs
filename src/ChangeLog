@@ -1,3 +1,7 @@
+2006-03-24  Derek Price  <derek@ximbiot.com>
+
+	* verify.c (verify_usage): Correct usage.
+
 2006-03-13  Derek Price  <derek@ximbiot.com>
 
 	Handle OpenPGP version 4 signatures.
