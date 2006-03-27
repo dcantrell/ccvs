@@ -1,3 +1,8 @@
+2006-03-26  Mark D. Baushke  <mdb@gnu.org>
+
+	* stdint_.h: Protect against OpenBSD integer types from
+	<sys/types.h>.
+
 2006-03-19  Mark D. Baushke  <mdb@gnu.org>
 
 	* closeout.c, fnmatch.c, fnmatch_loop.c, gai_strerror.c,
