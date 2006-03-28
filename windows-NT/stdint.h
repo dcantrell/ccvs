@@ -40,6 +40,9 @@
 #if defined(__FreeBSD__)
 # include <sys/inttypes.h>
 #endif
+#if defined(__OpenBSD__)
+# include <sys/types.h>
+#endif
 #if defined(__linux__) && HAVE_SYS_BITYPES_H
   /* Linux libc4 >= 4.6.7 and libc5 have a <sys/bitypes.h> that defines
      int{8,16,32,64}_t and __BIT_TYPES_DEFINED__.  In libc5 >= 5.2.2 it is
@@ -69,7 +72,7 @@
 
 /* 7.18.1.1. Exact-width integer types */
 
-#if !defined(__FreeBSD__)
+#if !defined(__FreeBSD__) && !defined(__OpenBSD__)
 
 #ifdef _STDINT_H_NEED_SIGNED_INT_TYPES
 typedef signed char    int8_t;
@@ -104,7 +107,7 @@ typedef unsigned __int64 uint64_t;
 #define _STDINT_H_HAVE_INT64
 #endif
 
-#endif /* !FreeBSD */
+#endif /* !FreeBSD && !OpenBSD */
 
 /* 7.18.1.2. Minimum-width integer types */
 
@@ -134,14 +137,14 @@ typedef uint64_t uint_fast64_t;
 
 /* 7.18.1.4. Integer types capable of holding object pointers */
 
-#if !defined(__FreeBSD__)
+#if !defined(__FreeBSD__) && !defined(__OpenBSD__)
 
 /* On some platforms (like IRIX6 MIPS with -n32) sizeof(void*) < sizeof(long),
    but this doesn't matter here.  */
 typedef long          intptr_t;
 typedef unsigned long uintptr_t;
 
-#endif /* !FreeBSD */
+#endif /* !FreeBSD && !OpenBSD */
 
 /* 7.18.1.5. Greatest-width integer types */
 
