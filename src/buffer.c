@@ -1728,6 +1728,8 @@ struct fd_buffer
     int fd;
     /* Nonzero if the file descriptor is in blocking mode.  */
     int blocking;
+    /* Time to wait for reads and writes to succeed.  */
+    long timeout;
     /* The child process id when fd is a pipe.  */
     pid_t child_pid;
     /* The connection info, when fd is a pipe to a server.  */
@@ -1742,18 +1744,19 @@ static int fd_buffer_get_fd (void *);
 static int fd_buffer_shutdown (struct buffer *);
 
 /* Initialize a buffer built on a file descriptor.  FD is the file
-   descriptor.  INPUT is nonzero if this is for input, zero if this is
+   descriptor.  INPUT is true if this is for input, false if this is
    for output.  MEMORY is the function to call when a memory error
    occurs.  */
 
 struct buffer *
 fd_buffer_initialize (int fd, pid_t child_pid, cvsroot_t *root, bool input,
-                      void (*memory) (struct buffer *))
+                      long timeout, void (*memory) (struct buffer *))
 {
     struct fd_buffer *n;
 
     n = xmalloc (sizeof *n);
     n->fd = fd;
+    n->timeout = timeout;
     n->child_pid = child_pid;
     n->root = root;
     fd_buffer_block (n, true);
@@ -1797,6 +1800,7 @@ fd_buffer_initialize (int fd, pid_t child_pid, cvsroot_t *root, bool input,
  *
  * RETURNS
  *   errno	On error.
+ *   -3		On timeout.
  *   -1		On EOF.
  *   0		Otherwise.
  *
@@ -1809,7 +1813,7 @@ fd_buffer_input (void *closure, char *data, size_t need, size_t size,
 		 size_t *got)
 {
     struct fd_buffer *fb = closure;
-    int nbytes;
+    ssize_t nbytes;
 
     assert (need <= size);
 
@@ -1819,10 +1823,14 @@ fd_buffer_input (void *closure, char *data, size_t need, size_t size,
     {
 	int status;
 	fd_set readfds;
+	struct timeval timeout;
+	struct timeval *timeout_p;
 
 	/* Set non-block.  */
         status = fd_buffer_block (fb, false);
 	if (status != 0) return status;
+	if (fb->timeout) timeout_p = &timeout;
+	else timeout_p = NULL;
 
 	FD_ZERO (&readfds);
 	FD_SET (fb->fd, &readfds);
@@ -1830,14 +1838,27 @@ fd_buffer_input (void *closure, char *data, size_t need, size_t size,
 	{
 	    int numfds;
 
-	    do {
+	    do
+	    {
+		if (timeout_p)
+		{
+		    timeout.tv_sec = fb->timeout;
+		    timeout.tv_usec = 0;
+		}
+
 		/* This used to select on exceptions too, but as far
 		   as I know there was never any reason to do that and
 		   SCO doesn't let you select on exceptions on pipes.  */
-		numfds = fd_select (fb->fd + 1, &readfds, NULL, NULL, NULL);
+		numfds = fd_select (fb->fd + 1, &readfds, NULL, NULL,
+				    timeout_p);
 		if (numfds < 0 && errno != EINTR)
 		{
 		    status = errno;
+		    goto block_done;
+		}
+		else if (numfds == 0)
+		{
+		    status = -3;
 		    goto block_done;
 		}
 	    } while (numfds < 0);
@@ -1917,44 +1938,100 @@ block_done:
 
 
 /* The buffer output function for a buffer built on a file descriptor.  */
-
 static int
 fd_buffer_output (void *closure, const char *data, size_t have, size_t *wrote)
 {
-    struct fd_buffer *fd = closure;
+    struct fd_buffer *fb = closure;
+    ssize_t nbytes;
 
     *wrote = 0;
 
-    while (have > 0)
+    if (fb->blocking)
     {
-	int nbytes;
+	int status;
+	fd_set writefds;
+	struct timeval timeout;
+	struct timeval *timeout_p;
 
-	nbytes = write (fd->fd, data, have);
+	/* Set non-block.  */
+        status = fd_buffer_block (fb, false);
+	if (status != 0) return status;
+	if (fb->timeout) timeout_p = &timeout;
+	else timeout_p = NULL;
 
-	if (nbytes <= 0)
+	FD_ZERO (&writefds);
+	FD_SET (fb->fd, &writefds);
+	do
 	{
-	    if (! fd->blocking
-		&& (nbytes == 0 || blocking_error (errno)))
+	    int numfds;
+
+	    do
 	    {
-		/* A nonblocking write failed to write any data.  Just
-		   return.  */
-		return 0;
+		if (timeout_p)
+		{
+		    timeout.tv_sec = fb->timeout;
+		    timeout.tv_usec = 0;
+		}
+
+		/* This used to select on exceptions too, but as far
+		   as I know there was never any reason to do that and
+		   SCO doesn't let you select on exceptions on pipes.  */
+		numfds = fd_select (fb->fd + 1, NULL, &writefds, NULL,
+				    timeout_p);
+		if (numfds < 0 && errno != EINTR)
+		{
+		    status = errno;
+		    goto block_done;
+		}
+		else if (numfds == 0)
+		{
+		    status = -3;
+		    goto block_done;
+		}
+	    } while (numfds < 0);
+
+	    nbytes = write (fb->fd, data + *wrote, have - *wrote);
+
+	    if (nbytes < 0)
+	    {
+		/* Some error occurred.  */
+		if (!blocking_error (errno))
+		{
+		    status = errno;
+		    break;
+		}
+		/* else Everything's fine, we just didn't get any data.  */
 	    }
 
-	    /* Some sort of error occurred.  */
+	    *wrote += nbytes;
+	} while (*wrote < have);
 
-	    if (nbytes == 0)
-		return EIO;
+block_done:
+	if (status == 0)
+	{
+	    int newstatus;
 
-	    return errno;
+	    /* OK - Reset block.  */
+	    newstatus = fd_buffer_block (fb, true);
+	    if (newstatus) status = newstatus;
 	}
-
-	*wrote += nbytes;
-	data += nbytes;
-	have -= nbytes;
+	return status;
     }
 
-    return 0;
+    /* The above will always return.  Handle non-blocking read.  */
+    nbytes = write (fb->fd, data, have);
+
+    if (nbytes >= 0)
+    {
+	*wrote = nbytes;
+	return 0;
+    }
+
+    if (blocking_error (errno))
+	/* Everything's fine, we just didn't get any data.  */
+	return 0;
+
+    return errno;
 }
 
 

@@ -184,7 +184,7 @@ int buf_count_mem (struct buffer *);
 
 struct buffer *
 fd_buffer_initialize (int fd, pid_t child_pid, cvsroot_t *root, bool input,
-                      void (*memory) (struct buffer *));
+                      long timeout, void (*memory) (struct buffer *));
 
 /* EWOULDBLOCK is not defined by POSIX, but some BSD systems will
    return it, rather than EAGAIN, for nonblocking writes.  */

@@ -11,6 +11,7 @@
 #include "cvs.h"
 
 /* CVS */
+#include "command_line_opt.h"
 #include "edit.h"
 #include "fileattr.h"
 #include "watch.h"
@@ -3707,7 +3708,7 @@ error  \n");
 	error_use_protocol = 0;
 
 	protocol = fd_buffer_initialize (protocol_pipe[1], 0, NULL, false,
-					 protocol_memory_error);
+					 0, protocol_memory_error);
 
 	/* At this point we should no longer be using buf_to_net and
 	   buf_from_net.  Instead, everything should go through
@@ -3844,13 +3845,13 @@ error  \n");
 	}
 
 	stdoutbuf = fd_buffer_initialize (stdout_pipe[0], 0, NULL, true,
-					  input_memory_error);
+					  0, input_memory_error);
 
 	stderrbuf = fd_buffer_initialize (stderr_pipe[0], 0, NULL, true,
-					  input_memory_error);
+					  0, input_memory_error);
 
 	protocol_inbuf = fd_buffer_initialize (protocol_pipe[0], 0, NULL, true,
-					       input_memory_error);
+					       0, input_memory_error);
 
 	set_nonblock (buf_to_net);
 	set_nonblock (stdoutbuf);
@@ -6371,8 +6372,10 @@ server (int argc, char **argv)
     if (!buf_to_net)
     {
 	buf_to_net = fd_buffer_initialize (STDOUT_FILENO, 0, NULL, false,
+					   connection_timeout,
 					   outbuf_memory_error);
 	buf_from_net = fd_buffer_initialize (STDIN_FILENO, 0, NULL, true,
+					     connection_timeout,
 					     outbuf_memory_error);
     }
 
@@ -6443,6 +6446,12 @@ server (int argc, char **argv)
 	{
 	    buf_output0 (buf_to_net, "E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
+	    break;
+	}
+	if (status == -3)
+	{
+	    buf_output0 (buf_to_net, "E Fatal server error, aborting.\n\
+error ETIMEOUT Connection timed out.\n");
 	    break;
 	}
 	if (status != 0)
@@ -7218,8 +7227,10 @@ pserver_authenticate_connection (void)
 
     /* Initialize buffers.  */
     buf_to_net = fd_buffer_initialize (STDOUT_FILENO, 0, NULL, false,
+				       connection_timeout,
 				       outbuf_memory_error);
     buf_from_net = fd_buffer_initialize (STDIN_FILENO, 0, NULL, true,
+				         connection_timeout,
 					 outbuf_memory_error);
 
 #ifdef SO_KEEPALIVE

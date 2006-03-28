@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2006 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
@@ -19,10 +19,16 @@
 
 #include "cvs.h"
 
+/* GNULIB Headers.  */
 #include "closeout.h"
 #include "setenv.h"
 #include "strftime.h"
 #include "xgethostname.h"
+
+/* CVS Headers.  */
+#include "command_line_opt.h"
+
+
 
 const char *program_name;
 const char *program_path;
@@ -43,6 +49,7 @@ int trace = 0;
 int noexec = 0;
 int readonlyfs = 0;
 int logoff = 0;
+long connection_timeout = 0;
 
 /*
  * Zero if compression isn't supported or requested; non-zero to indicate
@@ -291,6 +298,8 @@ static const char *const opt_usage[] =
     "    -n           Do not execute anything that will change the disk.\n",
     "    -t           Show trace of program execution (repeat for more\n",
     "                 verbosity) -- try with -n.\n",
+    "    --timeout SECONDS\n",
+    "                 Time out network connections in SECONDS seconds.\n",
     "    -R           Assume repository is read-only, such as CDROM\n",
     "    -v           CVS version and copyright.\n",
     "    -T tmpdir    Use 'tmpdir' for temporary files.\n",
@@ -526,6 +535,7 @@ main (int argc, char **argv)
 	{"help-options", 0, NULL, 4},
 #ifdef SERVER_SUPPORT
 	{"allow-root", required_argument, NULL, 3},
+	{"timeout", required_argument, NULL, 5},
 #endif /* SERVER_SUPPORT */
         {0, 0, 0, 0}
     };
@@ -649,6 +659,13 @@ main (int argc, char **argv)
 	    case 3:
 		/* --allow-root */
 		root_allow_add (optarg, gConfigPath);
+		break;
+	    case 5:
+		/* --timeout */
+		connection_timeout = strtol (optarg, &end, 10);
+		if (*end != '\0' || connection_timeout < 0)
+		  error (1, 0,
+"argument to --timeout must be greater than or equal to 0");
 		break;
 #endif /* SERVER_SUPPORT */
 	    case 'Q':

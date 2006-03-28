@@ -1,3 +1,18 @@
+2006-03-28  Derek Price  <derek@ximbiot.com>
+
+	[patch #4992]
+	* buffer.c (fd_buffer): Store new connection timeout parameter.
+	(fd_buffer_initialize): Handle and set new connection timeout
+	parameter.
+	(fd_buffer_input, fd_buffer_output): Time out connections when
+	requested.
+	* buffer.h (fd_buffer_initialize): Update proto.
+	* client.c, log-buffer.c, server.c: Update all callers.
+	* server.c (server): Handle time out return from input/output.
+	* command_line_opt.h: New header file.
+	* main.c (main): Handle --timeout global option.
+	* sanity.sh (server-23): New test.
+
 2006-03-24  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (recase): Correct spelling typo in comment.

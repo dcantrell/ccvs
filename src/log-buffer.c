@@ -384,7 +384,7 @@ log_buffer_rewind (struct buffer *buf)
     }
 
     /* Create a new fd buffer around the log.  */
-    retbuf = fd_buffer_initialize (fd, 0, NULL, true, buf->memory_error);
+    retbuf = fd_buffer_initialize (fd, 0, NULL, true, 0, buf->memory_error);
 
     {
 	struct buffer *tmp;
