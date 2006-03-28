@@ -1,3 +1,8 @@
+2006-03-28  Derek Price  <derek@ximbiot.com>
+
+	[patch #4992]
+	* NEWS: Note new --timeout option.
+
 2006-03-19  Mark D. Baushke  <mdb@gnu.org>
 
 	* Makefile.in, aclocal.m4, config.h.in, configure: Regenerated.
