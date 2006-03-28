@@ -401,6 +401,24 @@ Trace program execution; display messages showing the steps of
 \fBcvs\fR activity.  Particularly useful with \fB-n\fR to explore the
 potential impact of an unfamiliar command.
 .SP
+.IX "Network connection timeout"
+.IX "Connection timeout"
+.IX "Timeout, network connections"
+.IX "--timeout, global command line option"
+.IP "" 0
+\fB--timeout \fIseconds\fB\fR
+.IP "" 2
+Time out network connections when no data is accepted by or received from the
+peer for \fIseconds\fR seconds.  It is recommended that \fBcvs\fR clients do not
+set this value to less than 31 seconds for read operations or to a value
+much less than 40 seconds for commits since \fBcvs\fR servers can pause
+legitimately for just over 30 seconds while waiting to obtain a lock and can
+pause for an additional amount of time dependent on server load and the size of
+a commit when the user is attempting a commit.  A value of zero for
+\fIseconds\fR means to wait on the network indefinitely (or until the
+connection is determined to be broken by other means, but this isn\(aqt always
+detectable on some systems).  \fIseconds\fR defaults to zero.
+.SP
 .IP "" 0
 \fB-v\fR
 .IP "" 2
