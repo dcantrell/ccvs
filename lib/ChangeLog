@@ -1,5 +1,6 @@
 2006-03-26  Mark D. Baushke  <mdb@gnu.org>
 
+	[bug #15040]
 	* stdint_.h: Protect against OpenBSD integer types from
 	<sys/types.h>.
 
