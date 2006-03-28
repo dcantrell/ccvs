@@ -15,10 +15,15 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "cvs.h"
+
+/* GNULIB Headers.  */
 #include "getline.h"
-#include "edit.h"
-#include "buffer.h"
 #include "save-cwd.h"
+
+/* CVS Headers.  */
+#include "buffer.h"
+#include "command_line_opt.h"
+#include "edit.h"
 
 #ifdef CLIENT_SUPPORT
 
@@ -3431,9 +3436,10 @@ make_bufs_from_fds(int tofd, int fromfd, int child_pid, cvsroot_t *root,
 	 * child_pid in there.  In theory, it should be stored in both
 	 * buffers with a ref count...
 	 */
-	*to_server_p = fd_buffer_initialize (tofd, 0, root, false, NULL);
+	*to_server_p = fd_buffer_initialize (tofd, 0, root, false,
+					     connection_timeout, NULL);
 	*from_server_p = fd_buffer_initialize (fromfd, child_pid, root,
-                                               true, NULL);
+                                               true, connection_timeout, NULL);
     }
 }
 #endif /* defined (AUTH_CLIENT_SUPPORT) || defined (SERVER_SUPPORT) || defined (HAVE_KERBEROS) || defined(HAVE_GSSAPI) */

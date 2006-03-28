@@ -31441,6 +31441,12 @@ $TESTDIR/crerepos
 noop
 EOF
 
+	    # Test the server timeout feature.  If this fails, this test may
+	    # block indefinitely.
+	    dotest server-23 "$testcvs --timeout 5 server" \
+"E Fatal server error, aborting\.
+error ETIMEOUT Connection timed out\."
+
 	    dokeep
 	    rm -rf $TESTDIR/crerepos
 	    rm gzipped.dat session.dat
