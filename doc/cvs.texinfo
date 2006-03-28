@@ -8450,6 +8450,22 @@ Trace program execution; display messages showing the steps of
 @sc{cvs} activity.  Particularly useful with @samp{-n} to explore the
 potential impact of an unfamiliar command.
 
+@cindex Network connection timeout
+@cindex Connection timeout
+@cindex Timeout, network connections
+@cindex --timeout, global command line option
+@item --timeout @var{seconds}
+Time out network connections when no data is accepted by or received from the
+peer for @var{seconds} seconds.  It is recommended that @sc{cvs} clients do not
+set this value to less than 31 seconds for read operations or to a value
+much less than 40 seconds for commits since @sc{cvs} servers can pause
+legitimately for just over 30 seconds while waiting to obtain a lock and can
+pause for an additional amount of time dependent on server load and the size of
+a commit when the user is attempting a commit.  A value of zero for
+@var{seconds} means to wait on the network indefinitely (or until the
+connection is determined to be broken by other means, but this isn't always
+detectable on some systems).  @var{seconds} defaults to zero.
+
 @item -v
 @item --version
 Display version and copyright information for @sc{cvs}.
