@@ -1,3 +1,7 @@
+2006-03-30  Mark D. Baushke  <mdb@gnu.org>
+
+	* setenv.c, stdint_.h, time_r.c, unsetenv.c: Update from GNULIB.
+
 2006-03-26  Mark D. Baushke  <mdb@gnu.org>
 
 	[bug #15040]
