@@ -24990,7 +24990,7 @@ if test "${with_included_regex+set}" = set; then
 
 fi;
 
-  case $with_included_regex in
+  case $with_included_regex in #(
   yes|no) ac_use_included_regex=$with_included_regex
 	;;
   '')
@@ -25001,11 +25001,11 @@ fi;
     # test #75' in grep-2.3.
     echo "$as_me:$LINENO: checking for working re_compile_pattern" >&5
 echo $ECHO_N "checking for working re_compile_pattern... $ECHO_C" >&6
-if test "${gl_cv_func_re_compile_pattern_broken+set}" = set; then
+if test "${gl_cv_func_re_compile_pattern_working+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   if test "$cross_compiling" = yes; then
-         gl_cv_func_re_compile_pattern_broken=yes
+         gl_cv_func_re_compile_pattern_working=no
 else
   cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
@@ -25015,18 +25015,16 @@ cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 $ac_includes_default
 	   #include <regex.h>
+
 int
 main ()
 {
 static struct re_pattern_buffer regex;
 	    const char *s;
 	    struct re_registers regs;
-	    /* Use the POSIX-compliant spelling with leading REG_,
-	       rather than the traditional GNU spelling with leading RE_,
-	       so that we reject older libc implementations.  */
-	    re_set_syntax (REG_SYNTAX_POSIX_EGREP);
+	    re_set_syntax (RE_SYNTAX_POSIX_EGREP);
 	    memset (&regex, 0, sizeof (regex));
-	    s = re_compile_pattern ("a[:]:]b\n", 9, &regex);
+	    s = re_compile_pattern ("a[[:]:]]b\n", 11, &regex);
 	    /* This should fail with _Invalid character class name_ error.  */
 	    if (!s)
 	      exit (1);
@@ -25060,10 +25058,9 @@ static struct re_pattern_buffer regex;
 	      exit (1);
 
 	    /* The version of regex.c in older versions of gnulib
-	       ignored REG_IGNORE_CASE (which was then called RE_ICASE).
-	       Detect that problem too.  */
+	       ignored RE_ICASE.  Detect that problem too.  */
 	    memset (&regex, 0, sizeof (regex));
-	    re_set_syntax (REG_SYNTAX_EMACS | REG_IGNORE_CASE);
+	    re_set_syntax (RE_SYNTAX_EMACS | RE_ICASE);
 	    s = re_compile_pattern ("x", 1, &regex);
 	    if (s)
 	      exit (1);
@@ -25080,7 +25077,7 @@ static struct re_pattern_buffer regex;
 	       These include glibc 2.3.5 on hosts with 64-bit ptrdiff_t
 	       and 32-bit int.  */
 	    if (sizeof (regoff_t) < sizeof (ptrdiff_t)
-	        || sizeof (regoff_t) < sizeof (ssize_t))
+		|| sizeof (regoff_t) < sizeof (ssize_t))
 	      exit (1);
 
 	    exit (0);
@@ -25099,21 +25096,24 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-  gl_cv_func_re_compile_pattern_broken=no
+  gl_cv_func_re_compile_pattern_working=yes
 else
   echo "$as_me: program exited with status $ac_status" >&5
 echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
 ( exit $ac_status )
-gl_cv_func_re_compile_pattern_broken=yes
+gl_cv_func_re_compile_pattern_working=no
 fi
 rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
 fi
 fi
-echo "$as_me:$LINENO: result: $gl_cv_func_re_compile_pattern_broken" >&5
-echo "${ECHO_T}$gl_cv_func_re_compile_pattern_broken" >&6
-    ac_use_included_regex=$gl_cv_func_re_compile_pattern_broken
+echo "$as_me:$LINENO: result: $gl_cv_func_re_compile_pattern_working" >&5
+echo "${ECHO_T}$gl_cv_func_re_compile_pattern_working" >&6
+    case $gl_cv_func_re_compile_pattern_working in #(
+    yes) ac_use_included_regex=no;; #(
+    no) ac_use_included_regex=yes;;
+    esac
     ;;
   *) { { echo "$as_me:$LINENO: error: Invalid value for --with-included-regex: $with_included_regex" >&5
 echo "$as_me: error: Invalid value for --with-included-regex: $with_included_regex" >&2;}
