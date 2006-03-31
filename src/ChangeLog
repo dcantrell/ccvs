@@ -1,3 +1,8 @@
+2006-03-31  Mark D. Baushke  <mdb@gnu.org>
+
+	* cvsrc.c (read_cvsrc): Deal with \r\n (DOS) line endings in
+	.cvsrc files.
+
 2006-03-28  Derek Price  <derek@ximbiot.com>
 
 	[patch #4992]
