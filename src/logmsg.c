@@ -805,7 +805,7 @@ logfile_write (const char *repository, const char *filter, const char *message,
 #endif /* SERVER_SUPPORT */
 	                      "p", "s", srepos,
 	                      "r", "s", current_parsed_root->directory,
-	                      "sVv", ",", changes,
+	                      "sTVv", ",", changes,
 			      logmsg_list_to_args_proc, (void *) NULL,
 	                      (char *) NULL);
     if (!cmdline || !strlen (cmdline))

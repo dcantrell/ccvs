@@ -1,3 +1,10 @@
+2006-04-05  Mark D. Baushke  <mdb@gnu.org>
+
+	* logmsg.c (logfile_write): Add missing "T" to format_cmdline to
+	avoid "Unknown format character in info file ('T')." error.
+	* sanity.sh (info-setup-newfmt-1, info-newfmt-6): Add a test to
+	exercise it.
+
 2006-03-31  Mark D. Baushke  <mdb@gnu.org>
 
 	* cvsrc.c (read_cvsrc): Deal with \r\n (DOS) line endings in
