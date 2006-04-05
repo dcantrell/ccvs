@@ -2377,9 +2377,9 @@ environment variable @code{CVS_SERVER} on the client
 machine to the filename of the server you want to use,
 for example @file{/usr/local/bin/cvs-1.6}.
 For the @code{ext} and @code{fork} methods, you may
-also specify @var{CVS_SERVER} as an otpion in the
+also specify @var{CVS_SERVER} as an option in the
 @var{CVSROOT} so that you may use different servers for
-differnt roots. See @ref{Remote repositories} for more
+different roots. See @ref{Remote repositories} for more
 details.
 
 There is no need to edit @file{inetd.conf} or start a
