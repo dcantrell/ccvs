@@ -8454,17 +8454,30 @@ potential impact of an unfamiliar command.
 @cindex Connection timeout
 @cindex Timeout, network connections
 @cindex --timeout, global command line option
-@item --timeout @var{seconds}
+@item --timeout @var{waitfor}
 Time out network connections when no data is accepted by or received from the
-peer for @var{seconds} seconds.  It is recommended that @sc{cvs} clients do not
-set this value to less than 31 seconds for read operations or to a value
-much less than 40 seconds for commits since @sc{cvs} servers can pause
-legitimately for just over 30 seconds while waiting to obtain a lock and can
-pause for an additional amount of time dependent on server load and the size of
-a commit when the user is attempting a commit.  A value of zero for
-@var{seconds} means to wait on the network indefinitely (or until the
+peer for the amount of time specified in @var{waitfor}.  @samp{d}, @samp{h},
+@samp{m}, and @samp{s} (days, hours, minutes, and seconds, respectively) are
+acceptable units when found at the end of @var{waitfor} (for example,
+@samp{1d}, @samp{3h}, and @samp{40s} are all acceptable values for
+@var{waitfor}).  If no units are supplied, seconds are assumed.  A value of
+zero for @var{waitfor} means to wait on the network indefinitely (or until the
 connection is determined to be broken by other means, but this isn't always
-detectable on some systems).  @var{seconds} defaults to zero.
+detectable on some systems).  @var{waitfor} defaults to zero.
+
+@strong{It is recommended that @sc{cvs} clients do not set this value to less
+than 31 seconds for read operations or to a value much less than 40 seconds for
+commits since @sc{cvs} servers can pause legitimately for just over 30 seconds
+while waiting to obtain a lock and can pause for an additional amount of time
+dependent on server load and the size of a commit when the user is attempting a
+commit.  It is recommended that servers do not set @var{waitfor} to values
+under one hour since most @sc{cvs} clients hold the connection to the server
+open while the user is constructing their log message.}
+
+@strong{This value is not needed to detect broken TCP connections on most
+systems, but may still be used to detect and abort on rare error conditions
+like hung clients or servers which hold their network connections open, a
+condition undetectable using only the TCP stack.}
 
 @item -v
 @item --version
