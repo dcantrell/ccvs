@@ -1,5 +1,6 @@
 2006-04-05  Derek Price  <derek@ximbiot.com>
 
+	[patch #4992]
 	* main.c (opt_usage): Rephrase --timeout usage.
 	(main): Handle arguments to --timeout which specifying units.
 	* sanity.sh (server): Check --timeout unit handling.

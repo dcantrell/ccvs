@@ -1,5 +1,6 @@
 2006-04-05  Derek Price  <derek@ximbiot.com>
 
+	[patch #4992]
 	* cvs.texinfo (Global options): Allow for units.  Provide suggested
 	minimum value for servers.
 
