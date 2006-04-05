@@ -1,3 +1,9 @@
+2006-04-05  Derek Price  <derek@ximbiot.com>
+
+	* main.c (opt_usage): Rephrase --timeout usage.
+	(main): Handle arguments to --timeout which specifying units.
+	* sanity.sh (server): Check --timeout unit handling.
+
 2006-04-05  Mark D. Baushke  <mdb@gnu.org>
 
 	* logmsg.c (logfile_write): Add missing "T" to format_cmdline to

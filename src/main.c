@@ -298,8 +298,8 @@ static const char *const opt_usage[] =
     "    -n           Do not execute anything that will change the disk.\n",
     "    -t           Show trace of program execution (repeat for more\n",
     "                 verbosity) -- try with -n.\n",
-    "    --timeout SECONDS\n",
-    "                 Time out network connections in SECONDS seconds.\n",
+    "    --timeout WAITFOR\n",
+    "                 Time out network connections in WAITFOR seconds.\n",
     "    -R           Assume repository is read-only, such as CDROM\n",
     "    -v           CVS version and copyright.\n",
     "    -T tmpdir    Use 'tmpdir' for temporary files.\n",
@@ -663,7 +663,31 @@ main (int argc, char **argv)
 	    case 5:
 		/* --timeout */
 		connection_timeout = strtol (optarg, &end, 10);
-		if (*end != '\0' || connection_timeout < 0)
+		if (*end != '\0')
+		{
+		    char tmp = *end++;
+		    if (*end != '\0')
+			tmp = '?';
+		    switch (tmp)
+		    {
+			case 'd':
+			    connection_timeout *= 24;
+			case 'h':
+			    connection_timeout *= 60;
+			case 'm':
+			    connection_timeout *= 60;
+			case 's':
+			    break;
+			default:
+			    error (0, 0,
+"unknown units (`%s') in argument to --timeout",
+				   end - 1);
+			    error (1, 0,
+"(valid units are: none, `d', `h', `m', & `s')");
+			    break;
+		    }
+		}
+		if (connection_timeout < 0)
 		  error (1, 0,
 "argument to --timeout must be greater than or equal to 0");
 		break;
