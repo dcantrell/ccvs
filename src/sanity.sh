@@ -19297,6 +19297,7 @@ third-dir file1ux'
 	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\" %{sVv}" >> loginfo
           # The following cases test the format string substitution
           echo "ALL echo %p \"%{sTVv}\" >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %T >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %{v} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %s >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %{V}AX >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
@@ -19338,14 +19339,17 @@ new revision: 1\.3; previous revision: 1\.2"
 "xenv-valueyz=${username}=${TESTDIR}/cvsroot="
           dotest info-newfmt-7 "cat $TESTDIR/testlog2" \
 'fourth-dir file1  NONE 1\.1
+
 1\.1
 file1
 NONEAX
 fourth-dir file1  1\.1 1\.2
+
 1\.2
 file1
 1\.1AX
 fourth-dir file1  1\.2 1\.3
+
 1\.3
 file1
 1\.2AX'
