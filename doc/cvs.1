@@ -406,18 +406,31 @@ potential impact of an unfamiliar command.
 .IX "Timeout, network connections"
 .IX "--timeout, global command line option"
 .IP "" 0
-\fB--timeout \fIseconds\fB\fR
+\fB--timeout \fIwaitfor\fB\fR
 .IP "" 2
 Time out network connections when no data is accepted by or received from the
-peer for \fIseconds\fR seconds.  It is recommended that \fBcvs\fR clients do not
-set this value to less than 31 seconds for read operations or to a value
-much less than 40 seconds for commits since \fBcvs\fR servers can pause
-legitimately for just over 30 seconds while waiting to obtain a lock and can
-pause for an additional amount of time dependent on server load and the size of
-a commit when the user is attempting a commit.  A value of zero for
-\fIseconds\fR means to wait on the network indefinitely (or until the
+peer for the amount of time specified in \fIwaitfor\fR.  \fBd\fR, \fBh\fR,
+\fBm\fR, and \fBs\fR (days, hours, minutes, and seconds, respectively) are
+acceptable units when found at the end of \fIwaitfor\fR (for example,
+\fB1d\fR, \fB3h\fR, and \fB40s\fR are all acceptable values for
+\fIwaitfor\fR).  If no units are supplied, seconds are assumed.  A value of
+zero for \fIwaitfor\fR means to wait on the network indefinitely (or until the
 connection is determined to be broken by other means, but this isn\(aqt always
-detectable on some systems).  \fIseconds\fR defaults to zero.
+detectable on some systems).  \fIwaitfor\fR defaults to zero.
+.SP
+\fBIt is recommended that \fBcvs\fB clients do not set this value to less
+than 31 seconds for read operations or to a value much less than 40 seconds for
+commits since \fBcvs\fB servers can pause legitimately for just over 30 seconds
+while waiting to obtain a lock and can pause for an additional amount of time
+dependent on server load and the size of a commit when the user is attempting a
+commit.  It is recommended that servers do not set \fIwaitfor\fB to values
+under one hour since most \fBcvs\fB clients hold the connection to the server
+open while the user is constructing their log message.\fR
+.SP
+\fBThis value is not needed to detect broken TCP connections on most
+systems, but may still be used to detect and abort on rare error conditions
+like hung clients or servers which hold their network connections open, a
+condition undetectable using only the TCP stack.\fR
 .SP
 .IP "" 0
 \fB-v\fR
