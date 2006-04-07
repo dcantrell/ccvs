@@ -1,5 +1,9 @@
 2006-04-07  Derek Price  <derek@ximbiot.com>
 
+	* client.c (send_a_repository): Add assertion.
+	(Thanks to an incorrect report from Brendan Harrison
+	<brendan.harrison@klocwork.com>.)
+
 	[patch #4992]
 	* sanity.sh (server): Handle tests launched with stdin closed.
 
