@@ -4560,6 +4560,10 @@ void
 server_checked_in (const char *file, const char *update_dir,
                    const char *repository)
 {
+    assert (file);
+    assert (update_dir);
+    assert (repository);
+
     if (noexec)
 	return;
     if (scratched_file != NULL && entries_line == NULL)
