@@ -2804,7 +2804,10 @@ send_a_repository (dir, repository, update_dir_in)
     const char *repository;
     const char *update_dir_in;
 {
-    char *update_dir = xstrdup (update_dir_in);
+    char *update_dir;
+
+    assert (update_dir_in);
+    update_dir = xstrdup (update_dir_in);
 
     if (toplevel_repos == NULL && repository != NULL)
     {
