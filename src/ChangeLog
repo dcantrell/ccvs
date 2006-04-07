@@ -3,6 +3,13 @@
 	[patch #4992]
 	* sanity.sh (server): Handle tests launched with stdin closed.
 
+2006-04-06  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c (last_component, expand_wild), rcs.c (RCS_deltas,
+	RCS_rewrite), server.c (server_checked_in): Add assertions.
+	(Thanks to an incorrect report from Brendan Harrison
+	<brendan.harrison@klocwork.com>.)
+
 2006-04-05  Derek Price  <derek@ximbiot.com>
 
 	[patch #4992]
