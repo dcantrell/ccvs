@@ -31445,12 +31445,16 @@ $TESTDIR/crerepos
 noop
 EOF
 
-	    # Test the server timeout feature.  If this fails, this test may
-	    # block indefinitely.
-	    dotest server-23 "$testcvs --timeout 5s server" \
+	    # Test the server timeout feature.  The sleep below serves two
+	    # purposes.  First, if the timeout is broken, this test won't pause
+	    # indefinitely.  Second, when this test suite is run with stdin
+	    # closed, the CVS server won't exit immediately.
+	    dotest server-23 \
+"sleep 4 </dev/null |$testcvs --timeout 2s server" \
 "E Fatal server error, aborting\.
 error ETIMEOUT Connection timed out\."
-	    dotest_fail server-24 "$testcvs --timeout 5X server" \
+	    dotest server-24 "sleep 2 </dev/null |$testcvs --timeout 4s server"
+	    dotest_fail server-25 "$testcvs --timeout 5X server" \
 "$CPROG server: unknown units (\`X') in argument to --timeout
 $CPROG \[server aborted\]: (valid units are: none, \`d', \`h', \`m', & \`s')"
 
