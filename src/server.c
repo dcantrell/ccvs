@@ -3728,6 +3728,10 @@ server_checked_in (file, update_dir, repository)
     const char *update_dir;
     const char *repository;
 {
+    assert (file);
+    assert (update_dir);
+    assert (repository);
+
     if (noexec)
 	return;
     if (scratched_file != NULL && entries_line == NULL)

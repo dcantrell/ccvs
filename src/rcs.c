@@ -7355,6 +7355,8 @@ RCS_deltas (rcs, fp, rcsbuf, version, op, text, len, log, loglen)
 	rcsbuf = &rcsbuf_local;
     }
 
+   assert (rcsbuf);
+
    if (log) *log = NULL;
 
     ishead = 1;
@@ -8694,6 +8696,8 @@ RCS_rewrite (rcs, newdtext, insertpt)
 {
     FILE *fin, *fout;
     struct rcsbuffer rcsbufin;
+
+    assert (rcs);
 
     if (noexec)
 	return;

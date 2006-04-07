@@ -959,7 +959,8 @@ last_component (path)
     const char *path;
 {
     const char *last = strrchr (path, '/');
-    
+
+    assert (path);
     if (last && (last != path))
         return last + 1;
     else
@@ -1040,6 +1041,7 @@ expand_wild (argc, argv, pargc, pargv)
     char ***pargv;
 {
     int i;
+    assert (argv || !argc);
     if (size_overflow_p (xtimes (argc, sizeof (char *)))) {
 	*pargc = 0;
 	*pargv = NULL;
