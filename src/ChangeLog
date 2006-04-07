@@ -1,5 +1,10 @@
 2006-04-07  Derek Price  <derek@ximbiot.com>
 
+	* client.c (read_counted_file, update_entries, handle_mbinary): Check
+	for errors when parsing protocol input.  Remove FIXME.
+	(Thanks to a report from Brendan Harrison
+	<brendan.harrison@klocwork.com>.)
+
 	* client.c (send_a_repository): Add assertion.
 	(Thanks to an incorrect report from Brendan Harrison
 	<brendan.harrison@klocwork.com>.)

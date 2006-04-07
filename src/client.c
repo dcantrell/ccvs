@@ -1490,9 +1490,22 @@ read_counted_file (filename, fullname)
     if (size_string[0] == 'z')
 	error (1, 0, "\
 protocol error: compressed files not supported for that operation");
-    /* FIXME: should be doing more error checking, probably.  Like using
-       strtoul and making sure we used up the whole line.  */
-    size = atoi (size_string);
+
+    {
+	long tmp;
+	char *endptr;
+	tmp = strtoul (size_string, &endptr, 0);
+	if (tmp == ULONG_MAX || endptr == size_string)
+	    error (1, tmp == ULONG_MAX ? errno : 0,
+		   "Server sent invalid file size `%s'", size_string);
+	if (*endptr != '\0')
+	    error (1, 0,
+		   "Server sent trailing characters in file size `%s'",
+		   endptr);
+	if (tmp > SIZE_MAX)
+	    error (1, 0, "Server sent file size exceeding client max.");
+	size = (size_t)tmp;
+    }
     free (size_string);
 
     /* A more sophisticated implementation would use only a limited amount
@@ -1774,11 +1787,12 @@ update_entries (data_arg, ent_list, short_pathname, filename)
     {
 	char *size_string;
 	char *mode_string;
-	int size;
+	size_t size;
 	char *buf;
 	char *temp_filename;
 	int use_gzip;
 	int patch_failed;
+	char *s;
 
 	read_line (&mode_string);
 	
@@ -1786,12 +1800,27 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	if (size_string[0] == 'z')
 	{
 	    use_gzip = 1;
-	    size = atoi (size_string+1);
+	    s = size_string + 1;
 	}
 	else
 	{
 	    use_gzip = 0;
-	    size = atoi (size_string);
+	    s = size_string;
+	}
+	{
+	    long tmp;
+	    char *endptr;
+	    tmp = strtoul (s, &endptr, 0);
+	    if (tmp == ULONG_MAX || endptr == s)
+		error (1, tmp == ULONG_MAX ? errno : 0,
+		       "Server sent invalid file size `%s'", size_string);
+	    if (*endptr != '\0')
+		error (1, 0,
+		       "Server sent trailing characters in file size `%s'",
+		       endptr);
+	    if (tmp > SIZE_MAX)
+		error (1, 0, "Server sent file size exceeding client max.");
+	    size = (size_t)tmp;
 	}
 	free (size_string);
 
@@ -3067,7 +3096,21 @@ handle_mbinary (args, len)
 
     /* Get the size.  */
     read_line (&size_string);
-    size = atoi (size_string);
+    {
+	long tmp;
+	char *endptr;
+	tmp = strtoul (size_string, &endptr, 0);
+	if (tmp == ULONG_MAX || endptr == size_string)
+	    error (1, tmp == ULONG_MAX ? errno : 0,
+		   "Server sent invalid file size `%s'", size_string);
+	if (*endptr != '\0')
+	    error (1, 0,
+		   "Server sent trailing characters in file size `%s'",
+		   endptr);
+	if (tmp > SIZE_MAX)
+	    error (1, 0, "Server sent file size exceeding client max.");
+	size = (size_t)tmp;
+    }
     free (size_string);
 
     /* OK, now get all the data.  The algorithm here is that we read
