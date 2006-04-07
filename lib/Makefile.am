@@ -294,6 +294,12 @@ libcvs_a_SOURCES += vasprintf.h
 
 ## end   gnulib module vasprintf
 
+## begin gnulib module verify
+
+libcvs_a_SOURCES += verify.h
+
+## end   gnulib module verify
+
 ## begin gnulib module xalloc-die
 
 libcvs_a_SOURCES += xalloc-die.c

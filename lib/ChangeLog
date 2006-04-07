@@ -1,3 +1,8 @@
+2006-04-07  Derek Price  <derek@ximbiot.com>
+
+	Import strtoumax module from GNULIB.
+	* strtoimax.c, strtoll.c, strtoull.c, strtoumax.c, verify.h: New files.
+
 2006-03-30  Mark D. Baushke  <mdb@gnu.org>
 
 	* setenv.c, stdint_.h, time_r.c, unsetenv.c: Update from GNULIB.
@@ -46,7 +51,7 @@
 
 	* system.h (FOLD_FN_CHAR): Create a VMS alternative of this macro
 	(patch suggested by Piet Schuermans <pschuermans@mac.com>).
-	
+
 2005-10-20  Derek Price  <derek@ximbiot.com>
 
 	 * md5.c, md5.h, strcasecmp.c, strncasecmp.c: Update from GNULIB.
