@@ -7287,6 +7287,8 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
 	rcsbuf = &rcsbuf_local;
     }
 
+   assert (rcsbuf);
+
    if (log) *log = NULL;
 
     ishead = 1;
@@ -8607,6 +8609,8 @@ RCS_rewrite (RCSNode *rcs, Deltatext *newdtext, char *insertpt)
 {
     FILE *fin, *fout;
     struct rcsbuffer rcsbufin;
+
+    assert (rcs);
 
     if (noexec)
 	return;
