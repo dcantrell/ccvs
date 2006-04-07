@@ -1457,7 +1457,44 @@ handle_copy_file (args, len)
 {
     call_in_directory (args, copy_a_file, (char *)NULL);
 }
-
+
+
+
+/* Attempt to read a file size from a string.  Accepts base 8 (0N), base 16
+ * (0xN), or base 10.  Exits on error.
+ *
+ * RETURNS
+ *   The file size, in a size_t.
+ *
+ * FATAL ERRORS
+ *   1.  As strtoul().
+ *   2.  If the number read exceeds SIZE_MAX.
+ */
+static size_t
+strto_file_size (const char *s)
+{
+    unsigned long tmp;
+    char *endptr;
+
+    /* Read it.  */
+    errno = 0;
+    tmp = strtoul (s, &endptr, 0);
+
+    /* Check for errors.  */
+    if (errno || endptr == s)
+	error (1, errno, "Server sent invalid file size `%s'", s);
+    if (*endptr != '\0')
+	error (1, 0,
+	       "Server sent trailing characters in file size `%s'",
+	       endptr);
+    if (tmp > SIZE_MAX)
+	error (1, 0, "Server sent file size exceeding client max.");
+
+    /* Return it.  */
+    return (size_t)tmp;
+}
+
+
 
 static void read_counted_file PROTO ((char *, char *));
 
@@ -1490,22 +1527,7 @@ read_counted_file (filename, fullname)
     if (size_string[0] == 'z')
 	error (1, 0, "\
 protocol error: compressed files not supported for that operation");
-
-    {
-	long tmp;
-	char *endptr;
-	tmp = strtoul (size_string, &endptr, 0);
-	if (tmp == ULONG_MAX || endptr == size_string)
-	    error (1, tmp == ULONG_MAX ? errno : 0,
-		   "Server sent invalid file size `%s'", size_string);
-	if (*endptr != '\0')
-	    error (1, 0,
-		   "Server sent trailing characters in file size `%s'",
-		   endptr);
-	if (tmp > SIZE_MAX)
-	    error (1, 0, "Server sent file size exceeding client max.");
-	size = (size_t)tmp;
-    }
+    size = strto_file_size (size_string);
     free (size_string);
 
     /* A more sophisticated implementation would use only a limited amount
@@ -1807,21 +1829,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    use_gzip = 0;
 	    s = size_string;
 	}
-	{
-	    long tmp;
-	    char *endptr;
-	    tmp = strtoul (s, &endptr, 0);
-	    if (tmp == ULONG_MAX || endptr == s)
-		error (1, tmp == ULONG_MAX ? errno : 0,
-		       "Server sent invalid file size `%s'", size_string);
-	    if (*endptr != '\0')
-		error (1, 0,
-		       "Server sent trailing characters in file size `%s'",
-		       endptr);
-	    if (tmp > SIZE_MAX)
-		error (1, 0, "Server sent file size exceeding client max.");
-	    size = (size_t)tmp;
-	}
+	size = strto_file_size (s);
 	free (size_string);
 
 	/* Note that checking this separately from writing the file is
@@ -3096,21 +3104,7 @@ handle_mbinary (args, len)
 
     /* Get the size.  */
     read_line (&size_string);
-    {
-	long tmp;
-	char *endptr;
-	tmp = strtoul (size_string, &endptr, 0);
-	if (tmp == ULONG_MAX || endptr == size_string)
-	    error (1, tmp == ULONG_MAX ? errno : 0,
-		   "Server sent invalid file size `%s'", size_string);
-	if (*endptr != '\0')
-	    error (1, 0,
-		   "Server sent trailing characters in file size `%s'",
-		   endptr);
-	if (tmp > SIZE_MAX)
-	    error (1, 0, "Server sent file size exceeding client max.");
-	size = (size_t)tmp;
-    }
+    size = strto_file_size (size_string);
     free (size_string);
 
     /* OK, now get all the data.  The algorithm here is that we read
