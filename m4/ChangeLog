@@ -1,3 +1,9 @@
+2006-04-07  Derek Price  <derek@ximbiot.com>
+
+	Import strtoumax module from GNULIB.
+	* strtoimax.m4, strtoll.m4, strtoull.m4, strtoumax.m4: New files.
+	* bison.m4, mbiter.m4: Updated.
+
 2006-03-30  Mark D. Baushke  <mdb@gnu.org>
 
 	* regex.m4: Update from GNULIB.
