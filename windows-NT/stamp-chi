@@ -287,6 +287,14 @@
    don't. */
 #undef HAVE_DECL_STRERROR_R
 
+/* Define to 1 if you have the declaration of `strtoll', and to 0 if you
+   don't. */
+#undef HAVE_DECL_STRTOLL
+
+/* Define to 1 if you have the declaration of `strtoull', and to 0 if you
+   don't. */
+#undef HAVE_DECL_STRTOULL
+
 /* Define to 1 if you have the declaration of `__fpending', and to 0 if you
    don't. */
 #define HAVE_DECL___FPENDING 0
@@ -672,11 +680,23 @@
 /* Define to 1 if you have the `strncasecmp' function. */
 #undef HAVE_STRNCASECMP
 
+/* Define to 1 if you have the `strtoimax' function. */
+#undef HAVE_STRTOIMAX
+
 /* Define to 1 if you have the `strtol' function. */
 #define HAVE_STRTOL 1
 
+/* Define to 1 if you have the `strtoll' function. */
+#undef HAVE_STRTOLL
+
 /* Define to 1 if you have the `strtoul' function. */
 #define HAVE_STRTOUL 1
+
+/* Define to 1 if you have the `strtoull' function. */
+#undef HAVE_STRTOULL
+
+/* Define to 1 if you have the `strtoumax' function. */
+#undef HAVE_STRTOUMAX
 
 /* Define to 1 if the system has the type `struct addrinfo'. */
 #undef HAVE_STRUCT_ADDRINFO
@@ -1213,7 +1233,7 @@
 #define inline __inline
 #endif
 
-/* Define to long or long long if <inttypes.h> and <stdint.h> don't define. */
+/* Define to long or long long if <stdint.h> and <inttypes.h> don't define. */
 #undef intmax_t
 
 /* Define to rpl_localtime if the replacement function should be used. */
