@@ -1,7 +1,9 @@
 2006-04-07  Derek Price  <derek@ximbiot.com>
 
-	* client.c (read_counted_file, update_entries, handle_mbinary): Check
-	for errors when parsing protocol input.  Remove FIXME.
+	* client.c (strto_file_size): New function which checks for errors when
+	parsing protocol input.
+	(read_counted_file, update_entries, handle_mbinary): Use new function.
+	Remove FIXME.
 	(Thanks to a report from Brendan Harrison
 	<brendan.harrison@klocwork.com>.)
 
