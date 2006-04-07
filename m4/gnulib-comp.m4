@@ -100,8 +100,12 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_STRERROR
   gl_FUNC_GNU_STRFTIME
   gl_FUNC_STRSTR
+  gl_FUNC_STRTOIMAX
   gl_FUNC_STRTOL
+  gl_FUNC_STRTOLL
   gl_FUNC_STRTOUL
+  gl_FUNC_STRTOULL
+  gl_FUNC_STRTOUMAX
   gl_HEADER_SYS_SOCKET
   gl_TIME_R
   gl_TIMESPEC
@@ -263,8 +267,12 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strnlen1.h
   lib/strstr.c
   lib/strstr.h
+  lib/strtoimax.c
   lib/strtol.c
+  lib/strtoll.c
   lib/strtoul.c
+  lib/strtoull.c
+  lib/strtoumax.c
   lib/tempname.c
   lib/time_r.c
   lib/time_r.h
@@ -277,6 +285,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/vasnprintf.h
   lib/vasprintf.c
   lib/vasprintf.h
+  lib/verify.h
   lib/xalloc-die.c
   lib/xalloc.h
   lib/xgetcwd.c
@@ -394,8 +403,12 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strerror_r.m4
   m4/strftime.m4
   m4/strstr.m4
+  m4/strtoimax.m4
   m4/strtol.m4
+  m4/strtoll.m4
   m4/strtoul.m4
+  m4/strtoull.m4
+  m4/strtoumax.m4
   m4/sys_socket_h.m4
   m4/time_r.m4
   m4/timespec.m4
