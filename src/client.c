@@ -1096,6 +1096,9 @@ handle_copy_file (char *args, size_t len)
  *   1.  As strtoumax().
  *   2.  If the number read exceeds SIZE_MAX.
  */
+#ifndef HAVE_STRTOUMAX
+uintmax_t strtoumax (const char *, char **, int);
+#endif
 static size_t
 strto_file_size (const char *s)
 {
