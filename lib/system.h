@@ -48,10 +48,11 @@
  */
 #include <sys/types.h>
 
-/* A GNULIB replacement for this C99 header is supplied when it is missing.
+/* A GNULIB replacement for these C99 headers is supplied when any are missing.
  * See the comments in stdbool_.h for its limitations.
  */
 #include <stdbool.h>
+#include <stdint.h>
 
 /* Ditto for these POSIX.2 headers.  */
 #include <fnmatch.h>
@@ -66,10 +67,6 @@
 #endif /* !STDC_HEADERS && HAVE_MEMORY_H */
 #if HAVE_INTTYPES_H
 # include <inttypes.h>
-#else /* ! HAVE_INTTYPES_H */
-# if HAVE_STDINT_H
-#  include <stdint.h>
-# endif /* HAVE_STDINT_H */
 #endif /* HAVE_INTTYPES_H */
 /* End the default set of autoconf includes */
 
