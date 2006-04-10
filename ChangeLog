@@ -1,3 +1,7 @@
+2006-04-10  Derek Price  <derek@ximbiot.com>
+
+	* HACKING: Document assumption of <stdint.h> via GNULIB.
+
 2006-03-30  Mark D. Baushke  <mdb@gnu.org>
 
 	* configure: Regenerated.
