@@ -231,8 +231,8 @@ The following C89 hosted headers can be assumed due to their presence in UNIX
 version 7 and are included from lib/system.h: <assert.h>, <ctype.h>, <errno.h>,
 <math.h>, <setjmp.h>, <signal.h>, <stdio.h>.  <time.h> can also be assumed but
 is included via lib/xtime.h via lib/system.h to include some Autoconf magic
-which avoids including <time.h> and <sys/time.h> on systems that can't handle
-both.
+which avoids including both <time.h> and <sys/time.h> on systems that can't
+handle both.
 
 The following C89 headers are also assumed since we believe GCC includes them
 even on systems where it is installed as a freestanding compiler when the
@@ -245,9 +245,13 @@ GNULIB developer has made a statement that if this turns out to be a problem,
 GNULIB <stdlib.h> and <string.h> substitutes could be included in GNULIB, so if
 we discover the problem, this should be discussed on <bug-gnulib@gnu.org>.
 
-A substitute C99 <stdbool.h> is included from GNULIB for platforms that lack
-this header.  Please see the comments in the lib/stdbool_.h file for its
-limitations.
+Substitute C99 <stdbool.h> & <stdint.h> headers are included from GNULIB for
+platforms that lack one or both of these headers.  The
+{uint,int}_{fast,least}{8,16,32,64}_t types provided by the substitute
+<stdint.h> may not really correspond to the fastest and smallest types
+available on the system, but otherwise should be standards conforming.  Please
+see the comments in the lib/stdbool_.h file for a description of the
+limitations of the substitute <stdbool.h>.
 
 <sys/types.h> can be assumed despite a lack of a presence in even C99, since
 it has been around nearly forever and no-one has ever complained about our code
