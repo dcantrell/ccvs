@@ -1,5 +1,7 @@
 2006-04-11  Derek Price  <derek@ximbiot.com>
 
+	* m4/bison.m4, m4/regex.m4: Update from GNULIB.
+
 	* maint-aux/gnulib-update: Clarify output.
 
 2006-04-10  Derek Price  <derek@ximbiot.com>
