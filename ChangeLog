@@ -1,3 +1,7 @@
+2006-04-11  Derek Price  <derek@ximbiot.com>
+
+	* maint-aux/gnulib-update: Clarify output.
+
 2006-04-10  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Remove now unneeded call to gl_GLOB and update comment

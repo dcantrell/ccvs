@@ -94,7 +94,7 @@ if cmp lib/Makefile.am lib/Makefile.gnulib >/dev/null; then
 else
   cat >&2 <<\EOF
 ********************************************************************
-Makefile.am needs updating. Use `cvs diff lib/Makefile.gnulib' to
+Makefile.am may need updating. Use `cvs diff lib/Makefile.gnulib' to
 view changes.
 ********************************************************************
 EOF
