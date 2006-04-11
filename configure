@@ -25021,16 +25021,22 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 $ac_includes_default
+	   #include <limits.h>
 	   #include <regex.h>
 
 int
 main ()
 {
 static struct re_pattern_buffer regex;
+	    unsigned char folded_chars[UCHAR_MAX + 1];
+	    int i;
 	    const char *s;
 	    struct re_registers regs;
 	    re_set_syntax (RE_SYNTAX_POSIX_EGREP);
 	    memset (&regex, 0, sizeof (regex));
+	    for (i = 0; i <= UCHAR_MAX; i++)
+	      folded_chars[i] = i;
+	    regex.translate = folded_chars;
 	    s = re_compile_pattern ("a[[:]:]]b\n", 11, &regex);
 	    /* This should fail with _Invalid character class name_ error.  */
 	    if (!s)
