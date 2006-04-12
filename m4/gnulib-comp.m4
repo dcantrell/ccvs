@@ -63,6 +63,7 @@ AC_DEFUN([gl_INIT],
   gl_GETTIME
   AC_FUNC_GETTIMEOFDAY_CLOBBER
   gl_GLOB
+  gl_INTTYPES_H
   gl_FUNC_LSTAT
   AC_FUNC_MALLOC
   gl_MBCHAR
@@ -200,6 +201,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/glob.c
   lib/glob_.h
   lib/intprops.h
+  lib/inttypes.h
   lib/lstat.c
   lib/lstat.h
   lib/malloc.c
@@ -298,6 +300,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xsize.h
   lib/yesno.c
   lib/yesno.h
+  m4/_inttypes_h.m4
   m4/alloca.m4
   m4/allocsa.m4
   m4/atexit.m4
@@ -323,6 +326,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fnmatch.m4
   m4/fpending.m4
   m4/ftruncate.m4
+  m4/full-header-path.m4
   m4/getaddrinfo.m4
   m4/getcwd-path-max.m4
   m4/getcwd.m4
@@ -343,6 +347,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/glibc21.m4
   m4/glob.m4
   m4/iconv.m4
+  m4/include_next.m4
   m4/intdiv0.m4
   m4/intmax.m4
   m4/intmax_t.m4
