@@ -9,8 +9,6 @@
 
 AC_DEFUN([gl_ERROR],
 [
-  AC_FUNC_ERROR_AT_LINE
-  dnl Note: AC_FUNC_ERROR_AT_LINE does AC_LIBSOURCES([error.h, error.c]).
   gl_PREREQ_ERROR
 ])
 
