@@ -1,5 +1,9 @@
 2006-04-12  Derek Price  <derek@ximbiot.com>
 
+	* inttypes.h: New file, pre GNULIB.
+	* strtoimax.c: Use new header.
+	* Makefile.gnulib: Regenerated via gnulib-update.
+
 	* Makefile.am (libcvs_SOURCES): Remove time_r.h.
 
 2006-04-11  Derek Price  <derek@ximbiot.com>
