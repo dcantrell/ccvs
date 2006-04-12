@@ -1,3 +1,7 @@
+2006-04-12  Derek Price  <derek@ximbiot.com>
+
+	* lock.c: #include "repos.h" for proto.
+
 2006-03-24  Derek Price  <derek@ximbiot.com>
 
 	* verify.c: #include <getopt.h>.
