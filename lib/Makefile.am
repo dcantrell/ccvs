@@ -276,12 +276,6 @@ libcvs_a_SOURCES += strstr.h
 
 ## end   gnulib module strstr
 
-## begin gnulib module time_r
-
-libcvs_a_SOURCES += time_r.h
-
-## end   gnulib module time_r
-
 ## begin gnulib module vasnprintf
 
 libcvs_a_SOURCES += printf-args.h printf-parse.h vasnprintf.h

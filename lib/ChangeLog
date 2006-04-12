@@ -1,3 +1,7 @@
+2006-04-12  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (libcvs_SOURCES): Remove time_r.h.
+
 2006-04-11  Derek Price  <derek@ximbiot.com>
 
 	* regcomp.c, regex.c, regex.h, regex_internal.c, regex_internal.h,
