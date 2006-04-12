@@ -1,3 +1,8 @@
+2006-04-12  Derek Price  <derek@ximbiot.com>
+
+	* _inttypes_h.m4, full-header-path.m4, include_next.m4: New files, pre
+	GNULIB.
+
 2006-04-07  Derek Price  <derek@ximbiot.com>
 
 	Import strtoumax module from GNULIB.
