@@ -14,17 +14,52 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software Foundation,
-# Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+
+usage()
+{
+  cat <<EOF
+usage: `basename $0` [--help]
+       `basename $0` [--import MODULE...]
+EOF
+}
+
+# Where to find the GNULIB sources.
+GNULIB_DEFAULT=../gnulib
+: ${GNULIB=$GNULIB_DEFAULT}
+GNULIB_TOOL=$GNULIB/gnulib-tool
+
+if test x"$1" == x--help; then
+  usage
+  cat <<EOF
+
+Run without arguments, `basename $0` will update the local GNULIB modules to
+the most recent versions found in \$GNULIB (defaults to \`$GNULIB').
+ 
+OPTIONS
+  --help              Display this text.
+  --import MODULE...  Import new GNULIB module MODULE, in addition to updating
+                      all previously imported modules.
+
+ENVIRONMENT
+  \$GNULIB            The directory to search for new GNULIB modules.
+EOF
+  exit 0
+fi
+
+if test -n "$1"; then
+  if test x"$1" != x--import || test -z "$2"; then
+    usage >&2
+    exit 2
+  fi
+  shift
+fi
 
 if test -f maint-aux/gnulib-update; then :; else
   >&2 echo \
 "This script expects to be run from the top level of the CVS source tree."
   exit 2
 fi
-
-# Where to find the GNULIB sources.
-: ${GNULIB="../gnulib"}
-GNULIB_TOOL=$GNULIB/gnulib-tool
 
 # Are the GNULIB sources really where we expect them?
 if test -r $GNULIB && test -d $GNULIB \
