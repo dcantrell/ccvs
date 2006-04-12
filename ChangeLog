@@ -1,5 +1,7 @@
 2006-04-12  Derek Price  <derek@ximbiot.com>
 
+	* maint-aux/gnulib-update: Allow import of new modules.
+
 	* m4/time_r.m4: Update form GNULIB.
 
 2006-04-11  Derek Price  <derek@ximbiot.com>

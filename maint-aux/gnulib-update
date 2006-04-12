@@ -51,7 +51,7 @@ mv lib/Makefile.am lib/Makefile.am.save
 mv m4/error.m4 m4/error.m4.save
 
 # Run the update.
-if $GNULIB_TOOL --import >/dev/null; then :; else
+if $GNULIB_TOOL --import ${1+"$@"} >/dev/null; then :; else
   exit $?
 fi
 
