@@ -1,3 +1,7 @@
+2006-04-12  Derek Price  <derek@ximbiot.com>
+
+	* m4/time_r.m4: Update form GNULIB.
+
 2006-04-11  Derek Price  <derek@ximbiot.com>
 
 	* m4/bison.m4, m4/regex.m4: Update from GNULIB.

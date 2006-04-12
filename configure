@@ -29782,6 +29782,7 @@ done
 
 
 
+
   echo "$as_me:$LINENO: checking whether localtime_r is compatible with its POSIX signature" >&5
 echo $ECHO_N "checking whether localtime_r is compatible with its POSIX signature... $ECHO_C" >&6
 if test "${gl_cv_time_r_posix+set}" = set; then
