@@ -75,6 +75,7 @@
 
 /* CVS headers.  */
 #include "recurse.h"
+#include "repos.h"
 
 #include "cvs.h"
 
