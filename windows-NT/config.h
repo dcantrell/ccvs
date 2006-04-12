@@ -120,6 +120,9 @@
    message to be appended to the temp file when the editor is started. */
 #undef FORCE_USE_EDITOR
 
+/* Define this to the full path to <inttypes.h>. */
+#undef FULL_PATH_INTTYPES_H
+
 /* Define to an alternative value if GSS_C_NT_HOSTBASED_SERVICE isn't defined
    in the gssapi.h header file. MIT Kerberos 1.2.1 requires this. Only
    relevant when using GSSAPI. */
@@ -294,6 +297,10 @@
    don't. */
 #undef HAVE_DECL_STRERROR_R
 
+/* Define to 1 if you have the declaration of `strtoimax', and to 0 if you
+   don't. */
+#undef HAVE_DECL_STRTOIMAX
+
 /* Define to 1 if you have the declaration of `strtoll', and to 0 if you
    don't. */
 #undef HAVE_DECL_STRTOLL
@@ -301,6 +308,10 @@
 /* Define to 1 if you have the declaration of `strtoull', and to 0 if you
    don't. */
 #undef HAVE_DECL_STRTOULL
+
+/* Define to 1 if you have the declaration of `strtoumax', and to 0 if you
+   don't. */
+#undef HAVE_DECL_STRTOUMAX
 
 /* Define to 1 if you have the declaration of `__fpending', and to 0 if you
    don't. */
@@ -414,6 +425,9 @@
 
 /* Define if you have the iconv() function. */
 #undef HAVE_ICONV
+
+/* Define if your compiler supports the #include_next directive. */
+#undef HAVE_INCLUDE_NEXT
 
 /* Define to 1 if you have the `initgroups' function. */
 #undef HAVE_INITGROUPS
