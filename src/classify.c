@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -11,6 +11,16 @@
  * specified in the README file that comes with the CVS source distribution.
  * 
  */
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "classify.h"
+
+/* CVS Headers.  */
+#include "no_diff.h"
 
 #include "cvs.h"
 
@@ -42,6 +52,10 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 {
     Vers_TS *vers;
     Ctype ret;
+
+    TRACE (TRACE_FUNCTION, "classify_file (%s, %s, %s, %s)",
+	   finfo->fullname, tag ? tag : "(null)", date ? date : "(null)",
+	   options ? options : "(null)");
 
     /* get all kinds of good data about the file */
     vers = Version_TS (finfo, options, tag, date,

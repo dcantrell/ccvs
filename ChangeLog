@@ -1,3 +1,69 @@
+2006-01-20  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Note progress.
+
+2006-01-18  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Note progress.
+
+	* configure.in: Define $DEFAULT_VERIFY_TEMPLATE for Makefiles.
+
+2006-01-13  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Note progress.
+
+2006-01-11  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Define DEFAULT_VERIFY_TEMPLATE as documented.
+
+	* GPG-TODO: Note progress.
+
+2006-01-10  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Note progress.
+
+2006-01-04  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Note progress.
+
+2006-01-03  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Note progress.
+
+2006-01-01  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Note progress.
+
+2005-12-31  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Define DEFAULT_VERIFY_TEMPLATE.
+
+2005-12-30  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Note progress.
+
+2005-12-27  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Note progress.
+
+2005-11-10  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Note progress.
+
+2005-11-07  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Keep up to date.  Mark EOL delay unneeded due to GPG
+	--textmode option.
+
+2005-10-28  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Verify that `$GPG --version' works.  Print a warning
+	when it doesn't.
+
+2005-10-27  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: Update status.
+
 2006-04-11  Derek Price  <derek@ximbiot.com>
 
 	* m4/bison.m4, m4/regex.m4: Update from GNULIB.
@@ -79,6 +145,16 @@
 
 	* KEYS: New file, suggested by Antoine Lexy-Lambert <antoine@gmx.de>.
 	* README: Mention KEYS file.
+
+2005-10-16  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Define DEFAULT_SIGN_TEMPLATE & DEFAULT_SIGN_TEXTMODE
+	here.  Don't define GPG_PROGRAM.
+
+2005-10-11  Derek Price  <derek@ximbiot.com>
+
+	* GPG-TODO: New file.
+	* configure.in: Search for gpg.
 
 2005-10-06  Derek Price  <derek@ximbiot.com>
 

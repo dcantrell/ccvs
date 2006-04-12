@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -19,10 +19,23 @@
  *
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* GNULIB headers.  */
 #include "getline.h"
+
+/* CVS headers.  */
 #include "edit.h"
 #include "fileattr.h"
+#include "ignore.h"
+#include "logmsg.h"
+#include "recurse.h"
+#include "repos.h"
+#include "wrapper.h"
+
+#include "cvs.h"
 #include "hardlink.h"
 
 static Dtype check_direntproc (void *callerdat, const char *dir,
@@ -86,7 +99,8 @@ static time_t last_register_time;
 
 static const char *const commit_usage[] =
 {
-    "Usage: %s %s [-cRlf] [-m msg | -F logfile] [-r rev] files...\n",
+    "Usage: %s %s [-cRlf] [-m msg | -F logfile] [-r rev] [files...]\n",
+    "\n",
     "    -c          Check for valid edits before committing.\n",
     "    -R          Process directories recursively.\n",
     "    -l          Local directory only (not recursive).\n",
@@ -332,17 +346,25 @@ copy_ulist (Node *node, void *data)
 
 
 
-#ifdef SERVER_SUPPORT
-# define COMMIT_OPTIONS "+cnlRm:fF:r:"
-#else /* !SERVER_SUPPORT */
-# define COMMIT_OPTIONS "+clRm:fF:r:"
-#endif /* SERVER_SUPPORT */
+/* Commit options both the client and server accept.  */
+#define COMMIT_OPTIONS "+cgG:lRm:fF:r:"
+
+    
+    
 int
 commit (int argc, char **argv)
 {
     int c;
     int err = 0;
     int local = 0;
+    int flags;
+
+#ifdef SERVER_SUPPORT
+    /* See below for documentation of the `-n' option.  */
+    const char short_options[] = COMMIT_OPTIONS"n";
+#else /* !SERVER_SUPPORT */
+    const char short_options[] = COMMIT_OPTIONS;
+#endif /* SERVER_SUPPORT */
 
     if (argc == -1)
 	usage (commit_usage);
@@ -370,13 +392,14 @@ commit (int argc, char **argv)
 #endif /* CVS_BADROOT */
 
     optind = 0;
-    while ((c = getopt (argc, argv, COMMIT_OPTIONS)) != -1)
+    while ((c = getopt (argc, argv, short_options)) != EOF)
     {
 	switch (c)
 	{
             case 'c':
                 check_valid_edit = 1;
                 break;
+
 #ifdef SERVER_SUPPORT
 	    case 'n':
 		/* Silently ignore -n for compatibility with old
@@ -600,8 +623,8 @@ commit (int argc, char **argv)
 	   _sure_ why this is needed, but if it is because the "ci"
 	   program, which we used to call, wanted the file to exist,
 	   then it would be relatively simple to fix in the server.  */
-	send_files (find_args.argc, find_args.argv, local, 0,
-		    find_args.force ? SEND_FORCE : 0);
+	flags = find_args.force ? SEND_FORCE : 0;
+	send_files (find_args.argc, find_args.argv, local, 0, flags);
 
 	/* Sending only the names of the files which were modified, added,
 	   or removed means that the server will only do an up-to-date
@@ -912,6 +935,22 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 		       "\
 warning: file `%s' seems to still contain conflict indicators",
 		       finfo->fullname);
+	    }
+
+	    if ((status == T_ADDED || status == T_MODIFIED)
+		&& !force_ci && !really_quiet
+		/* This will not be called from the client.  */
+		&& (get_sign_commits (true) || have_sigfile (finfo->file))
+		&& file_contains_keyword (finfo))
+	    {
+		/* Make this a warning, not an error, because the user may
+		 * be intentionally signing a file with keywords.  Such a file
+		 * may still be verified when checked out -ko.
+		 */
+		if (!quiet)
+		    error (0, 0,
+"warning: signed file `%s' contains at least one RCS keyword",
+			   finfo->fullname);
 	    }
 
 	    if (status == T_REMOVED)
@@ -2100,7 +2139,9 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	    /* We tell the user about this, because it means that the
 	       old revisions will no longer retrieve the way that they
 	       used to.  */
-	    error (0, 0, "changing keyword expansion mode to %s", options);
+	    error (0, 0,
+"changing keyword expansion mode of `%s' from `-k%s' to `%s'",
+		   file, oldexpand ? oldexpand : "kv", options);
 	    RCS_setexpand (rcs, options + 2);
 	}
 

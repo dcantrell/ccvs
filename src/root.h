@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -12,6 +12,16 @@
  */
 
 /* CVSroot data structures */
+
+#ifndef ROOT_H
+#define ROOT_H
+
+/* ANSI C includes.  */
+#include <stdbool.h>
+
+/* CVS Includes.  */
+#include "sign.h"
+#include "verify.h"
 
 /* Access method specified in CVSroot. */
 typedef enum {
@@ -33,6 +43,22 @@ typedef struct cvsroot_s {
     CVSmethod method;		/* One of the enum values above. */
     char *directory;		/* The directory name. */
     bool isremote;		/* True if we are doing remote access. */
+    sign_state sign;		/* Whether to sign commits.  */
+    char *sign_template;	/* The template to use to launch the external
+				 * program to produce GPG signatures.
+				 */
+    List *sign_args;		/* Keep track of any additional arguments for
+				 * the sign tool.
+				 */
+    char *openpgp_textmode;     /* The arg GPG needs for text files.  */
+    verify_state verify;	/* Whether to verify checkouts.  */
+    char *verify_template;	/* The template to use to launch the external
+				 * program to verify GPG signatures.
+				 */
+    List *verify_args;		/* Keep track of any additional arguments for
+				 * the verify tool.
+				 */
+
 /* The following is required for servers now to allow Redirects to be sent
  * for remote roots when client support is disabled.
  */
@@ -69,3 +95,5 @@ bool root_allow_ok (const char *);
 struct config *get_root_allow_config (const char *arg, const char *configPath);
 const char *primary_root_translate (const char *root_in);
 const char *primary_root_inverse_translate (const char *root_in);
+
+#endif /* ROOT_H */

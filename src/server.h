@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -11,6 +11,13 @@
  *
  * This file contains the interface between the server and the rest of CVS.
  */
+
+#ifndef SERVER_H
+#define SERVER_H
+
+/* CVS Headers.  */
+#include "root.h"
+#include "vers_ts.h"
 
 /* Miscellaneous stuff which isn't actually particularly server-specific.  */
 #ifndef STDIN_FILENO
@@ -117,6 +124,7 @@ void server_updated (struct file_info *finfo, Vers_TS *vers,
                      enum server_updated_arg4 updated, mode_t mode,
                      unsigned char *checksum, struct buffer *filebuf);
 
+bool server_use_bases (void);
 /* Whether we should send RCS format patches.  */
 int server_use_rcs_diff (void);
 
@@ -195,12 +203,16 @@ struct request
 extern struct request requests[];
 
 /* Gzip library, see zlib.c.  */
+int gunzip_in_mem (const char *, unsigned char *, size_t *, char **);
 int gunzip_and_write (int, const char *, unsigned char *, size_t);
 int read_and_gzip (int, const char *, unsigned char **, size_t *, size_t *,
                    int);
 void server_edit_file (struct file_info *finfo);
 
+
+
 /* The TRACE macro */
+extern int trace;		/* User defined trace level.  */
 void cvs_trace (int level, const char *fmt, ...)
   __attribute__ ((__format__ (__printf__, 2, 3)));
 #define TRACE cvs_trace
@@ -218,4 +230,34 @@ void cvs_trace (int level, const char *fmt, ...)
 #define TRACE_FLOW		2
 #define TRACE_DATA		3
 
+
+
 extern cvsroot_t *referrer;
+
+void server_base_checkout (RCSNode *rcs, struct file_info *finfo,
+			   const char *prev, const char *rev, const char *ptag,
+			   const char *tag, const char *poptions,
+			   const char *options);
+void server_temp_checkout (RCSNode *rcs, struct file_info *finfo,
+			   const char *prev, const char *rev, const char *ptag,
+			   const char *tag, const char *poptions,
+			   const char *options, const char *tempfile);
+
+void server_base_copy (struct file_info *file, const char *rev,
+		       const char *flags);
+void server_base_merge (struct file_info *finfo, const char *rev1,
+			const char *rev2);
+void server_base_signatures (struct file_info *finfo, const char *rev);
+void server_base_diff (struct file_info *finfo, const char *f1,
+		       const char *rev1, const char *label1, const char *f2,
+		       const char *rev2, const char *label2);
+bool server_use_bases (void);
+
+void cvs_output (const char *, size_t);
+void cvs_output_binary (char *, size_t);
+void cvs_outerr (const char *, size_t);
+void cvs_flusherr (void);
+void cvs_flushout (void);
+void cvs_output_tagged (const char *, const char *);
+
+#endif /* !defined SERVER_H */

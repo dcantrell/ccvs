@@ -1,21 +1,41 @@
-/* Implementation for "cvs edit", "cvs watch on", and related commands
+/*
+ * Copyright (C) 2006 The Free Software Foundation, Inc.
+ *
+ * Implementation for "cvs edit", "cvs watch on", and related commands
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.  */
+/* Verify interface.  */
+#include "edit.h"
 
-#include "cvs.h"
+/* GNULIB headers.  */
 #include "getline.h"
 #include "yesno.h"
+
+/* CVS headers.  */
+#include "base.h"
+#include "ignore.h"
+#include "recurse.h"
+#include "repos.h"
+
+#include "cvs.h"
 #include "watch.h"
-#include "edit.h"
 #include "fileattr.h"
+
+
 
 static bool check_edited = false;
 static int setting_default;
@@ -318,24 +338,49 @@ edit_file (void *data, List *ent_list, const char *short_pathname,
 {
     Node *node;
     struct file_info finfo;
-    char *basefilename;
+    char *editbasefn, *basefn, *rev;
 
-    xchmod (filename, 1);
-
-    mkdir_if_needed (CVSADM_BASE);
-    basefilename = Xasprintf ("%s/%s", CVSADM_BASE, filename);
-    copy_file (filename, basefilename);
-    free (basefilename);
 
     node = findnode_fn (ent_list, filename);
-    if (node != NULL)
+
+    /* I'm not sure why this isn't an error.  */
+    if (!node) return;
+    rev = ((Entnode *) node->data)->version;
+
+    xchmod (filename, 1);
+    mkdir_if_needed (CVSADM_BASE);
+    basefn = make_base_file_name (filename, rev);
+
+    if (!isfile (basefn))
     {
-	finfo.file = filename;
-	finfo.fullname = short_pathname;
-	finfo.update_dir = dir_name (short_pathname);
-	base_register (&finfo, ((Entnode *) node->data)->version);
-	free ((char *)finfo.update_dir);
+	/* If this client is interoperating with clients older than 1.12.14,
+	 * then the CVS/Base/.#FILENAME.REV may not have been created on
+	 * checkout/update/commit.
+	 */
+	if (!quiet)
+	{
+	    error (0, 0, "Base revision (%s) for `%s' is missing.",
+		   rev, short_pathname);
+	    error (0, 0, "Using `%s' to create unedit fallback.",
+		   short_pathname);
+	}
+
+	free (basefn);
+	basefn = xstrdup (filename);
     }
+
+    editbasefn = Xasprintf ("%s/%s", CVSADM_BASE, filename);
+    if (isfile (editbasefn))
+	xchmod (editbasefn, true);
+    copy_file (basefn, editbasefn);
+    free (basefn);
+    free (editbasefn);
+
+    finfo.file = filename;
+    finfo.fullname = short_pathname;
+    finfo.update_dir = dir_name (short_pathname);
+    base_register (finfo.update_dir, finfo.file, rev);
+    free ((char *)finfo.update_dir);
 }
 
 
@@ -666,7 +711,7 @@ unedit_fileproc (void *callerdat, struct file_info *finfo)
 	Node *node;
 	Entnode *entdata;
 
-	baserev = base_get (finfo);
+	baserev = base_get (finfo->update_dir, finfo->file);
 	node = findnode_fn (finfo->entries, finfo->file);
 	/* The case where node is NULL probably should be an error or
 	   something, but I don't want to think about it too hard right
@@ -699,7 +744,7 @@ unedit_fileproc (void *callerdat, struct file_info *finfo)
 		      entdata->conflict);
 	}
 	free (baserev);
-	base_deregister (finfo);
+	base_deregister (finfo->update_dir, finfo->file);
     }
 
     xchmod (finfo->file, 0);

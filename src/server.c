@@ -1,32 +1,50 @@
-/* This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+/*
+ * Copyright (C) 2006 The Free Software Foundation, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
 
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.  */
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
-#include "cvs.h"
+/* Validate API.  */
+#include "server.h"
 
-/* CVS */
-#include "command_line_opt.h"
-#include "edit.h"
-#include "fileattr.h"
-#include "watch.h"
-
-/* GNULIB */
-#include "buffer.h"
+/* GNULIB headers.  */
 #include "getline.h"
 #include "getnline.h"
 #include "setenv.h"
 #include "wait.h"
 
+/* CVS headers.  */
+#include "base.h"
+#include "buffer.h"
+#include "command_line_opt.h"
+#include "edit.h"
+#include "fileattr.h"
+#include "gpg.h"
+#include "ignore.h"
+#include "repos.h"
+#include "watch.h"
+#include "wrapper.h"
+
+#include "cvs.h"
+
+
+
 int server_active = 0;
+int trace = 0;
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
-
 # include "log-buffer.h"
 # include "ms-buffer.h"
 #endif	/* defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT) */
@@ -133,6 +151,7 @@ static struct buffer *buf_to_net;
 
 /* This buffer is used to read input from the client.  */
 static struct buffer *buf_from_net;
+static struct buffer *sig_buf;
 
 
 
@@ -1869,6 +1888,81 @@ serve_is_modified (char *arg)
 
 
 
+/* Returns false on errors.
+ */
+static bool
+server_write_sigfile (const char *file, struct buffer *sig_buf)
+{
+    char *sigfile_name, *sig_data;
+    int fd, rc;
+    size_t got;
+    bool err = false;
+
+    /* Write the file.  */
+    sigfile_name = get_sigfile_name (file);
+    fd = CVS_OPEN (sigfile_name, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+    if (fd < 0)
+    {
+	int save_errno = errno;
+	if (alloc_pending (40 + strlen (sigfile_name)))
+	    sprintf (pending_error_text, "E cannot open `%s'",
+		     sigfile_name);
+	pending_error = save_errno;
+	err = true;
+	goto done;
+    }
+
+    while (!buf_empty_p (sig_buf))
+    {
+	if ((rc = buf_read_data (sig_buf, buf_length (sig_buf), &sig_data,
+				 &got)))
+	{
+	    /* Since !buf_empty_p confirmed that the buffer was not empty,
+	     * it should be impossible to get EOF here.
+	     */
+	    assert (rc != -1);
+
+	    if (rc == -2)
+		pending_error = ENOMEM;
+	    else if (alloc_pending (80))
+		sprintf (pending_error_text,
+			 "E error reading signature buffer.");
+	    pending_error = rc;
+	    err = true;
+	    goto done;
+	}
+
+	if (write (fd, sig_data, got) < 0)
+	{
+	    int save_errno = errno;
+	    if (alloc_pending (80 + strlen (sigfile_name)))
+		sprintf (pending_error_text,
+			 "E error writing temporary signature file `%s'.",
+			 sigfile_name);
+	    pending_error = save_errno;
+	    err = true;
+	    goto done;
+	 }
+    }
+
+done:
+    if (fd >= 0
+	&& close (fd) < 0)
+    {
+	if (!error_pending ()
+	    && alloc_pending_warning (80 + strlen (sigfile_name)))
+	    sprintf (pending_warning_text,
+		     "E error closing temporary signature file `%s'.",
+		     sigfile_name);
+	err = true;
+    }
+
+    free (sigfile_name);
+    return !err;
+}
+
+
+
 static void
 serve_modified (char *arg)
 {
@@ -2043,6 +2137,46 @@ serve_modified (char *arg)
        non-kopt case alone.  */
     if (kopt != NULL)
 	serve_is_modified (arg);
+
+    /* If an OpenPGP signature was sent for this file, write it to a temp
+     * file.
+     */
+    if (sig_buf)
+    {
+	bool err = !server_write_sigfile (arg, sig_buf);
+
+	/* We're done with the SIG_BUF.  */
+	buf_free (sig_buf);
+	sig_buf = NULL;
+
+	if (err) return;
+    }
+}
+
+
+
+static void
+serve_signature (char *arg)
+{
+    int status;
+
+    if (sig_buf)
+    {
+	if (alloc_pending (80))
+	    sprintf (pending_error_text,
+"E Multiple Signature requests received for a single file.");
+    }
+    else
+	sig_buf = buf_nonio_initialize (NULL);
+
+    status = next_signature (buf_from_net, sig_buf);
+    if (status)
+    {
+	if (alloc_pending (80))
+	    sprintf (pending_error_text,
+		     "E Malformed Signature encountered.");
+    }
+    return;
 }
 
 
@@ -2162,6 +2296,20 @@ serve_unchanged (char *arg)
 	    }
 	    break;
 	}
+    }
+
+    /* If an OpenPGP signature was sent for this file, write it to a temp
+     * file.
+     */
+    if (sig_buf)
+    {
+	bool err = !server_write_sigfile (arg, sig_buf);
+
+	/* We're done with the SIG_BUF.  */
+	buf_free (sig_buf);
+	sig_buf = NULL;
+
+	if (err) return;
     }
 }
 
@@ -3777,6 +3925,7 @@ error  \n");
 	   that CVS can't write such lines unless there is a bug.  */
 
 	buf_free (protocol);
+	protocol = NULL;
 
 	/* Close the pipes explicitly in order to send an EOF to the parent,
 	 * then wait for the parent to close the flow control pipe.  This
@@ -4678,6 +4827,14 @@ serve_remove (char *arg)
 
 
 static void
+serve_sign (char *arg)
+{
+    do_cvs_command ("sign", sign);
+}
+
+
+
+static void
 serve_status (char *arg)
 {
     do_cvs_command ("status", cvsstatus);
@@ -4995,6 +5152,164 @@ server_modtime (struct file_info *finfo, Vers_TS *vers_ts)
 
 
 
+void
+server_send_checksum (const unsigned char *checksum)
+{
+    static int checksum_supported = -1;
+
+    if (checksum_supported < 0)
+	checksum_supported = supported_response ("Checksum");
+
+    if (checksum_supported)
+    {
+	int i;
+	char buf[3];
+
+	buf_output0 (protocol, "Checksum ");
+	for (i = 0; i < 16; i++)
+	{
+	    sprintf (buf, "%02x", (unsigned int) checksum[i]);
+	    buf_output0 (protocol, buf);
+	}
+	buf_append_char (protocol, '\n');
+    }
+}
+
+
+
+static inline void
+output_mode_string (mode_t mode)
+{
+    char *mode_string;
+
+    mode_string = mode_to_string (mode);
+    buf_output0 (protocol, mode_string);
+    buf_output0 (protocol, "\n");
+    free (mode_string);
+}
+
+
+
+static void
+server_send_buffer_as_file (struct buffer *in, mode_t mode)
+{
+    unsigned long size;
+    char *buf;
+
+    if (mode == (mode_t) -1)
+	error (1, 0,
+"CVS server internal error: no mode in server_send_data_as_file");
+
+    output_mode_string (mode);
+
+    size = buf_length (in);
+
+    buf = Xasprintf ("%lu\n", size);
+    buf_output0 (protocol, buf);
+    free (buf);
+
+    buf_append_buffer (protocol, in);
+}
+
+
+
+static void
+server_send_file (const char *file, const char *fullname, mode_t mode)
+{
+    struct stat sb;
+    unsigned long size;
+    char *buf;
+    FILE *f;
+
+    /* The contents of the file will be in one of filebuf or list/last.  */
+    struct buffer_data *list, *last;
+    unsigned char *contents;
+
+    if (stat (file, &sb) < 0)
+	error (1, errno, "reading %s", fullname);
+
+    if (mode == (mode_t) -1)
+	/* FIXME: When we check out files the umask of the
+	   server (set in .bashrc if rsh is in use) affects
+	   what mode we send, and it shouldn't.  */
+	mode = sb.st_mode;
+
+    output_mode_string (mode);
+
+    size = sb.st_size;
+    contents = NULL;
+
+    /* Throughout this section we use binary mode to read the
+       file we are sending.  The client handles any line ending
+       translation if necessary.  */
+
+    if (file_gzip_level
+	/*
+	 * For really tiny files, the gzip process startup
+	 * time will outweigh the compression savings.  This
+	 * might be computable somehow; using 100 here is just
+	 * a first approximation.
+	 */
+	&& size > 100)
+    {
+	/* Basing this routine on read_and_gzip is not a
+	   high-performance approach.  But it seems easier
+	   to code than the alternative (and less
+	   vulnerable to subtle bugs).  Given that this feature
+	   is mainly for compatibility, that is the better
+	   tradeoff.  */
+
+	int fd;
+	size_t file_allocated = 0;
+	size_t file_used = 0;
+
+	fd = CVS_OPEN (file, O_RDONLY | OPEN_BINARY, 0);
+	if (fd < 0)
+	    error (1, errno, "reading %s", fullname);
+	if (read_and_gzip (fd, fullname, &contents,
+			   &file_allocated, &file_used,
+			   file_gzip_level))
+	    error (1, 0, "aborting due to compression error");
+	size = file_used;
+	if (close (fd) < 0)
+	    error (1, errno, "reading %s", fullname);
+	/* Prepending length with "z" is flag for using gzip here.  */
+	buf_output0 (protocol, "z");
+    }
+    else if (size > 0)
+    {
+	long status;
+
+	f = CVS_FOPEN (file, "rb");
+	if (f == NULL)
+	    error (1, errno, "reading %s", fullname);
+	status = buf_read_file (f, size, &list, &last);
+	if (status == -2)
+	    (*protocol->memory_error) (protocol);
+	else if (status != 0)
+	    error (1, ferror (f) ? errno : 0, "reading %s", fullname);
+	if (fclose (f) == EOF)
+	    error (1, errno, "reading %s", fullname);
+    }
+    else
+	contents = (unsigned char *) xstrdup ("");
+
+    buf = Xasprintf ("%lu\n", size);
+    buf_output0 (protocol, buf);
+    free (buf);
+
+    if (contents)
+    {
+	buf_output (protocol, (char *) contents, size);
+	free (contents);
+    }
+    else
+	buf_append_data (protocol, list, last);
+    /* Note we only send a newline here if the file ended with one.  */
+}
+
+
+
 /* See server.h for description.  */
 void
 server_updated (
@@ -5005,6 +5320,15 @@ server_updated (
     unsigned char *checksum,
     struct buffer *filebuf)
 {
+    /* The case counter to the assertion below should be easy to handle but it
+     * never has been, to my knowledge, so there appears to be no need.
+     */
+    assert (!(filebuf && file_gzip_level));
+
+    TRACE (TRACE_FUNCTION, "server_updated (%s, %s, %s, %d)",
+	   finfo->fullname, vers ? vers->vn_rcs : "(null)",
+	   vers ? vers->options : "(null)", updated);
+
     if (noexec)
     {
 	/* Hmm, maybe if we did the same thing for entries_file, we
@@ -5022,75 +5346,38 @@ server_updated (
 
     if (entries_line != NULL && scratched_file == NULL)
     {
-	FILE *f;
-	struct buffer_data *list, *last;
-	unsigned long size;
-	char size_text[80];
-
-	/* The contents of the file will be in one of filebuf,
-	   list/last, or here.  */
-	unsigned char *file;
-	size_t file_allocated;
-	size_t file_used;
-
-	if (filebuf != NULL)
+	if (!filebuf && !isfile (finfo->file))
 	{
-	    size = buf_length (filebuf);
-	    if (mode == (mode_t) -1)
-		error (1, 0, "\
-CVS server internal error: no mode in server_updated");
-	}
-	else
-	{
-	    struct stat sb;
-
-	    if (stat (finfo->file, &sb) < 0)
-	    {
-		if (existence_error (errno))
-		{
-		    /* If we have a sticky tag for a branch on which
-		       the file is dead, and cvs update the directory,
-		       it gets a T_CHECKOUT but no file.  So in this
-		       case just forget the whole thing.  */
-		    free (entries_line);
-		    entries_line = NULL;
-		    goto done;
-		}
-		error (1, errno, "reading %s", finfo->fullname);
-	    }
-	    size = sb.st_size;
-	    if (mode == (mode_t) -1)
-	    {
-		/* FIXME: When we check out files the umask of the
-		   server (set in .bashrc if rsh is in use) affects
-		   what mode we send, and it shouldn't.  */
-		mode = sb.st_mode;
-	    }
+	    /* If we have a sticky tag for a branch on which
+	       the file is dead, and cvs update the directory,
+	       it gets a T_CHECKOUT but no file.  So in this
+	       case just forget the whole thing.  */
+	    free (entries_line);
+	    entries_line = NULL;
+	    return;
 	}
 
-	if (checksum != NULL)
+	if (strcmp (cvs_cmd_name, "export")
+	    && supported_response ("Base-entry"))
 	{
-	    static int checksum_supported = -1;
-
-	    if (checksum_supported == -1)
-	    {
-		checksum_supported = supported_response ("Checksum");
-	    }
-
-	    if (checksum_supported)
-	    {
-		int i;
-		char buf[3];
-
-		buf_output0 (protocol, "Checksum ");
-		for (i = 0; i < 16; i++)
-		{
-		    sprintf (buf, "%02x", (unsigned int) checksum[i]);
-		    buf_output0 (protocol, buf);
-		}
-		buf_append_char (protocol, '\n');
-	    }
+	    /* The client was already asked to create the base file and copy
+	     * it into a temp file.  This will complete the process and print
+	     * the "U file" line.
+	     */
+	    if (updated == SERVER_MERGED)
+		buf_output0 (protocol, "Base-merged ");
+	    else
+		buf_output0 (protocol, "Base-entry ");
+	    output_dir (finfo->update_dir, finfo->repository);
+	    buf_output0 (protocol, finfo->file);
+	    buf_output (protocol, "\n", 1);
+	    new_entries_line ();
+	    buf_send_counted (protocol);
+	    return;
 	}
+
+	if (checksum)
+	    server_send_checksum (checksum);
 
 	if (updated == SERVER_UPDATED)
 	{
@@ -5131,98 +5418,10 @@ CVS server internal error: no mode in server_updated");
 
 	new_entries_line ();
 
-	{
-	    char *mode_string;
-
-	    mode_string = mode_to_string (mode);
-	    buf_output0 (protocol, mode_string);
-	    buf_output0 (protocol, "\n");
-	    free (mode_string);
-	}
-
-	list = last = NULL;
-
-	file = NULL;
-	file_allocated = 0;
-	file_used = 0;
-
-	if (size > 0)
-	{
-	    /* Throughout this section we use binary mode to read the
-	       file we are sending.  The client handles any line ending
-	       translation if necessary.  */
-
-	    if (file_gzip_level
-		/*
-		 * For really tiny files, the gzip process startup
-		 * time will outweigh the compression savings.  This
-		 * might be computable somehow; using 100 here is just
-		 * a first approximation.
-		 */
-		&& size > 100)
-	    {
-		/* Basing this routine on read_and_gzip is not a
-		   high-performance approach.  But it seems easier
-		   to code than the alternative (and less
-		   vulnerable to subtle bugs).  Given that this feature
-		   is mainly for compatibility, that is the better
-		   tradeoff.  */
-
-		int fd;
-
-		/* Callers must avoid passing us a buffer if
-		   file_gzip_level is set.  We could handle this case,
-		   but it's not worth it since this case never arises
-		   with a current client and server.  */
-		if (filebuf != NULL)
-		    error (1, 0, "\
-CVS server internal error: unhandled case in server_updated");
-
-		fd = CVS_OPEN (finfo->file, O_RDONLY | OPEN_BINARY, 0);
-		if (fd < 0)
-		    error (1, errno, "reading %s", finfo->fullname);
-		if (read_and_gzip (fd, finfo->fullname, &file,
-				   &file_allocated, &file_used,
-				   file_gzip_level))
-		    error (1, 0, "aborting due to compression error");
-		size = file_used;
-		if (close (fd) < 0)
-		    error (1, errno, "reading %s", finfo->fullname);
-		/* Prepending length with "z" is flag for using gzip here.  */
-		buf_output0 (protocol, "z");
-	    }
-	    else if (filebuf == NULL)
-	    {
-		long status;
-
-		f = CVS_FOPEN (finfo->file, "rb");
-		if (f == NULL)
-		    error (1, errno, "reading %s", finfo->fullname);
-		status = buf_read_file (f, size, &list, &last);
-		if (status == -2)
-		    (*protocol->memory_error) (protocol);
-		else if (status != 0)
-		    error (1, ferror (f) ? errno : 0, "reading %s",
-			   finfo->fullname);
-		if (fclose (f) == EOF)
-		    error (1, errno, "reading %s", finfo->fullname);
-	    }
-	}
-
-	sprintf (size_text, "%lu\n", size);
-	buf_output0 (protocol, size_text);
-
-	if (file != NULL)
-	{
-	    buf_output (protocol, (char *) file, file_used);
-	    free (file);
-	    file = NULL;
-	}
-	else if (filebuf == NULL)
-	    buf_append_data (protocol, list, last);
+	if (filebuf)
+	    server_send_buffer_as_file (filebuf, mode);
 	else
-	    buf_append_buffer (protocol, filebuf);
-	/* Note we only send a newline here if the file ended with one.  */
+	    server_send_file (finfo->file, finfo->fullname, mode);
 
 	/*
 	 * Avoid using up too much disk space for temporary files.
@@ -5291,7 +5490,15 @@ CVS server internal error: unhandled case in server_updated");
 	error (1, 0,
 	       "CVS server internal error: Register *and* Scratch_Entry.\n");
     buf_send_counted (protocol);
-  done:;
+}
+
+
+
+/* Return whether we should send operations on base files.  */
+bool
+server_use_bases (void)
+{
+    return supported_response ("Base-checkout");
 }
 
 
@@ -5612,7 +5819,7 @@ serve_wrapper_sendme_rcs_options (char *arg)
     {
 	buf_output0 (buf_to_net, "Wrapper-rcsOption ");
 	buf_output0 (buf_to_net, wrapper_line);
-	buf_output0 (buf_to_net, "\012");;
+	buf_output0 (buf_to_net, "\012");
 	free (wrapper_line);
     }
 
@@ -5925,6 +6132,8 @@ struct request requests[] =
   REQ_LINE("Kopt", serve_kopt, 0),
   REQ_LINE("Checkin-time", serve_checkin_time, 0),
   REQ_LINE("Modified", serve_modified, RQ_ESSENTIAL),
+  REQ_LINE("Signature", serve_signature, 0),
+  REQ_LINE("Base-diff", serve_noop, 0),
   REQ_LINE("Is-modified", serve_is_modified, 0),
 
   /* The client must send this request to interoperate with CVS 1.5
@@ -5982,6 +6191,7 @@ struct request requests[] =
   REQ_LINE("remove", serve_remove, 0),
   REQ_LINE("update-patches", serve_ignore, 0),
   REQ_LINE("gzip-file-contents", serve_gzip_contents, RQ_ROOTLESS),
+  REQ_LINE("sign", serve_sign, 0),
   REQ_LINE("status", serve_status, 0),
   REQ_LINE("rdiff", serve_rdiff, 0),
   REQ_LINE("tag", serve_tag, 0),
@@ -6289,12 +6499,12 @@ server_cleanup (void)
 	     * than getting lost.
 	     */
 	    struct buffer *buf_to_net_save = buf_to_net;
+	    error_use_protocol = 0;
 	    buf_to_net = NULL;
 
 	    (void) buf_flush (buf_to_net_save, 1);
 	    (void) buf_shutdown (buf_to_net_save);
 	    buf_free (buf_to_net_save);
-	    error_use_protocol = 0;
 	}
 	/* SIG_endCrSect(); */
     }
@@ -8039,6 +8249,324 @@ cvs_output_tagged (const char *tag, const char *text)
 
 
 
+static void
+server_send_signatures (struct file_info *finfo, const char *rev)
+{
+    char *sig;
+    size_t len;
+    int status;
+    struct buffer *inbuf, *outbuf;
+
+    if (!supported_response ("OpenPGP-signature"))
+	return;
+
+    if (!RCS_get_openpgp_signatures (finfo, rev, &sig, &len))
+	error (1, 0,
+	       "Corrupt signature in r%s of `%s' (base64 decode failed).",
+	       rev, finfo->fullname);
+
+    if (!sig)
+	/* No signature data available.  */
+	return;
+
+    /* Copy the sig into an input buffer.  */
+    inbuf = buf_nonio_initialize (NULL);
+    buf_output (inbuf, sig, len);
+    free (sig);
+
+    /* Create an output buffer.  */
+    outbuf = buf_nonio_initialize (NULL);
+
+    /* Read each signature, copying them to the net.  */
+    do
+    {
+	status = next_signature (inbuf, outbuf);
+	if (!status)
+	{
+	    buf_output0 (protocol, "OpenPGP-signature\n");
+	    buf_append_buffer (protocol, outbuf);
+	} else if (status == -2)
+	    xalloc_die ();
+	/* else status == EOF */
+    } while (!status);
+
+    buf_send_counted (protocol);
+}
+
+
+
+/* Try to tell the client about checking out a base REV of FILE, sending the
+ * diff against PREV when possible.  If the client doesn't understand this
+ * response, just ignore it and later code will also avoid the Base-*
+ * responses.
+ *
+ * NOTES
+ *   Processes PREV == NULL, PREV == REV, and PREV == "0", for convenience.
+ */
+static void
+iserver_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
+		       const char *rev, const char *ptag, const char *tag,
+		       const char *poptions, const char *options,
+		       const char *basefile, const char *fullbase, bool istemp)
+{
+    char *tmpfile = NULL;
+    bool senddiff;
+
+    assert (rev);
+
+    TRACE (TRACE_FUNCTION,
+	   "iserver_base_checkout (%s, %s, %s, %s, %s, %s, %s, %s)",
+	   finfo->fullname, prev, rev, ptag, tag, poptions, options,
+	   istemp ? "true" : "false");
+
+    if (!supported_response (istemp ? "Temp-checkout" : "Base-checkout"))
+	return;
+
+    if (/* Not sending a temp file...  */
+	!istemp
+	/* ...and entry rev and new rev are the same...  */
+	&& prev && !strcmp (prev, rev)
+	/* ...and... */
+	&& (   /* ...both option specs are empty...  */
+	    (  (!poptions || !poptions[0]) && (!options || !options[0]))
+	       /* ...or the option specs match...  */
+	    || (poptions && options && !strcmp (poptions, options)))
+	/* ...and... */
+	&& (   /* ...both tag specs are empty...  */
+	    (  (!ptag || !ptag[0]) && (!tag || !tag[0]))
+	       /* ...or the tag specs match.  */
+	    || (ptag && tag && !strcmp (ptag, tag)))
+       )
+	/* PREV & REV are the same, so the client should already have this
+	 * base file.
+	 */
+	return;
+
+    server_send_signatures (finfo, rev);
+
+    /* FIXME: It would be more efficient if diffs could be sent when the
+     * revision numbers haven't changed but the keywords have.
+     */
+    if (prev && strcmp (prev, "0") && strcmp (prev, rev))
+    {
+	/* Compute and send diff.  */
+	int dargc = 0;
+	size_t darg_allocated = 0;
+	char **dargv = NULL;
+	int status;
+	char *pbasefile;
+	bool save_noexec = noexec;
+
+	pbasefile = cvs_temp_name ();
+	noexec = false;
+	status = RCS_checkout (rcs, pbasefile, prev, ptag, poptions,
+			       NULL, NULL, NULL);
+	noexec = save_noexec;
+
+	if (status)
+	    error (1, 0, "Failed to checkout revision %s of `%s'",
+		   prev, finfo->file);
+
+	run_add_arg_p (&dargc, &darg_allocated, &dargv, "-n");
+	tmpfile = cvs_temp_name ();
+	status = diff_exec (pbasefile, basefile, NULL, NULL, dargc, dargv,
+			    tmpfile);
+	run_arg_free_p (dargc, dargv);
+	free (dargv);
+	if (CVS_UNLINK (pbasefile) < 0)
+	    error (0, errno, "cannot remove `%s'", pbasefile);
+	free (pbasefile);
+
+	/* A STATUS of 0 means no differences.  1 means some differences.  */
+	if (status != 0 && status != 1)
+	    senddiff = false;
+	else
+	    senddiff = true;
+    }
+    else senddiff = false;
+
+    if (senddiff)
+    {
+	struct stat bfi, dfi;
+
+	/* Check to make sure the patch is really shorter */
+	if (stat (basefile, &bfi) < 0)
+	    error (1, errno, "could not stat `%s'", basefile);
+	if (stat (tmpfile, &dfi) < 0)
+	    error (1, errno, "could not stat `%s'", tmpfile);
+	if (bfi.st_size <= dfi.st_size)
+	    senddiff = false;
+    }
+
+    buf_output0 (protocol, istemp ? "Temp-checkout " : "Base-checkout ");
+    output_dir (finfo->update_dir, finfo->repository);
+    buf_output0 (protocol, finfo->file);
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, options);
+    buf_output (protocol, "\n", 1);
+
+    /* If we are not sending a diff, don't send PREV, or the client will expect
+     * one.
+     */
+    buf_output0 (protocol, prev && senddiff ? prev : "");
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, rev);
+    buf_output (protocol, "\n", 1);
+
+    if (senddiff)
+	server_send_file (tmpfile, fullbase, -1);
+    else
+	/* The client does not have a previous base revision, so send the whole
+	 * file.
+	 */
+	server_send_file (basefile, fullbase, -1);
+
+    buf_send_counted (protocol);
+
+    if (tmpfile)
+    {
+	if (CVS_UNLINK (tmpfile) < 0)
+	    error (0, errno, "cannot remove `%s'", tmpfile);
+	free (tmpfile);
+    }
+}
+
+
+
+void
+server_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
+		      const char *rev, const char *ptag, const char *tag,
+		      const char *poptions, const char *options)
+{
+    char *basefile;
+    char *fullbase;
+
+    basefile = make_base_file_name (finfo->file, rev);
+    fullbase = Xasprintf ("%s/%s",
+			  *(finfo->update_dir) ? finfo->update_dir : ".",
+			  basefile);
+
+    iserver_base_checkout (rcs, finfo, prev, rev, ptag, tag, poptions, options,
+			   basefile, fullbase, false);
+
+    free (fullbase);
+    free (basefile);
+}
+
+
+
+void
+server_temp_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
+		      const char *rev, const char *ptag, const char *tag,
+		      const char *poptions, const char *options,
+		      const char *tempfile)
+{
+    iserver_base_checkout (rcs, finfo, prev, rev, ptag, tag, poptions, options,
+			   tempfile, tempfile, true);
+}
+
+
+
+void
+server_base_copy (struct file_info *finfo, const char *rev, const char *flags)
+{
+    if (!supported_response ("Base-copy")) return;
+
+    buf_output0 (protocol, "Base-copy ");
+    output_dir (finfo->update_dir, finfo->repository);
+    buf_output0 (protocol, finfo->file);
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, rev);
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, flags);
+    buf_output (protocol, "\n", 1);
+    buf_send_counted (protocol);
+}
+
+
+
+/* Assume CVS/Base/.#FILE.REV1 & CVS/Base/FILE.REV2 exist.  If the client
+ * supports it, ask it to perform a merge using these files.  If not, perform
+ * the merge ourselves.
+ */
+void
+server_base_merge (struct file_info *finfo, const char *rev1, const char *rev2)
+{
+    if (!supported_response ("Base-merge")) return;
+
+    buf_output0 (protocol, "Base-merge ");
+    output_dir (finfo->update_dir, finfo->repository);
+    buf_output0 (protocol, finfo->file);
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, rev1);
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, rev2);
+    buf_output (protocol, "\n", 1);
+    buf_send_counted (protocol);
+    return;
+}
+
+
+
+void
+server_base_signatures (struct file_info *finfo, const char *rev)
+{
+    if (!supported_response ("Base-signatures")
+	|| !supported_response ("Base-clear-signatures"))
+	return;
+
+    if (RCS_has_openpgp_signatures (finfo, rev))
+    {
+	server_send_signatures (finfo, rev);
+	buf_output0 (protocol, "Base-signatures ");
+    }
+    else
+	buf_output0 (protocol, "Base-clear-signatures ");
+
+    output_dir (finfo->update_dir, finfo->repository);
+    buf_output0 (protocol, finfo->file);
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, rev);
+    buf_output (protocol, "\n", 1);
+    buf_send_counted (protocol);
+    return;
+}
+
+
+
+void
+server_base_diff (struct file_info *finfo, const char *f1, const char *rev1,
+		  const char *label1, const char *f2, const char *rev2,
+		  const char *label2)
+{
+    if (!supported_response ("Base-diff"))
+	return;
+
+    buf_output0 (protocol, "Base-diff ");
+    output_dir (finfo->update_dir, finfo->repository);
+    buf_output0 (protocol, finfo->file);
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, strcmp (f1, DEVNULL) ? "TEMP" : "DEVNULL");
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, rev1 ? rev1 : "");
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, label1 ? label1 : "");
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, strcmp (f2, DEVNULL)
+			   ? (rev2 ? "TEMP" : "WORKFILE")
+			   : "DEVNULL");
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, rev2 ? rev2 : "");
+    buf_output (protocol, "\n", 1);
+    buf_output0 (protocol, label2 ? label2 : "");
+    buf_output (protocol, "\n", 1);
+    buf_send_counted (protocol);
+
+    return;
+}
+
+
+
 /*
  * void cvs_trace(int level, const char *fmt, ...)
  *
@@ -8051,15 +8579,20 @@ cvs_trace (int level, const char *fmt, ...)
     if (trace >= level)
     {
 	va_list va;
+	char *buf;
+	int size;
 
 	va_start (va, fmt);
 #ifdef SERVER_SUPPORT
-	fprintf (stderr,"%c -> ",server_active?(isProxyServer()?'P':'S'):' ');
-#else /* ! SERVER_SUPPORT */
-	fprintf (stderr,"  -> ");
+	cvs_outerr (server_active ? (isProxyServer() ? "P" : "S") : " ", 1);
+#else
+	cvs_outerr (" ", 1);
 #endif
-	vfprintf (stderr, fmt, va);
-	fprintf (stderr,"\n");
+	cvs_outerr (" -> ", 4);
+	if ((size = vasprintf (&buf, fmt, va)) < 0)
+	    abort ();
+	cvs_outerr (buf, size);
+	cvs_outerr ("\n", 1);
 	va_end (va);
     }
 }
