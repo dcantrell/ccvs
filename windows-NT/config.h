@@ -69,6 +69,25 @@
 /* Define to 1 if using `alloca.c'. */
 #undef C_ALLOCA
 
+/* Define to a command line template that will write an OpenPGP signature for
+   the file `%s' to its standard out. `%t' is substituted at run time with an
+   option which flags files as text files, when necessary, and the empty
+   string, otherwise. `%a' is substituted with a list of arguments provided by
+   the user. */
+#undef DEFAULT_SIGN_TEMPLATE
+
+/* Define to the option string that the OpenPGP program used in the
+   DEFAULT_SIGN_TEMPLATE would like to see for text files (substituted at run
+   time in place of `%t' in the DEFAULT_SIGN_TEMPLATE). */
+#undef DEFAULT_SIGN_TEXTMODE
+
+/* Define to a command line template that will read an OpenPGP signature from
+   the file `%s' and use it to verify the integrity of the file `%d'. `%t' is
+   substituted at run time with an option which flags files as text files,
+   when necessary, and the empty string, otherwise. `%a' is substituted with a
+   list of arguments provided by the user. */
+#undef DEFAULT_VERIFY_TEMPLATE
+
 /* Define if there is a member named d_ino in the struct describing directory
    headers. */
 #undef D_INO_IN_DIRENT
@@ -558,6 +577,11 @@
 
 /* Define to 1 if you have the `openat' function. */
 #undef HAVE_OPENAT
+
+/* Define if an OpenPGP capable program is available (and, assumedly, usable
+   command line templates are in the DEFAULT_SIGN_TEMPLATE and
+   DEFAULT_VERIFY_TEMPLATE macros). */
+#undef HAVE_OPENPGP
 
 /* Define to 1 if you have the <OS.h> header file. */
 #undef HAVE_OS_H

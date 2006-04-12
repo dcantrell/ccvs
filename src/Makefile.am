@@ -29,6 +29,7 @@ cvs_SOURCES = \
 	add.c \
 	admin.c \
 	annotate.c \
+	base.c base.h \
 	buffer.c \
 	checkin.c \
 	checkout.c \
@@ -38,6 +39,7 @@ cvs_SOURCES = \
 	create_adm.c \
 	cvsrc.c \
 	diff.c \
+	difflib.c difflib.h \
 	edit.c \
 	entries.c \
 	error.c \
@@ -46,6 +48,7 @@ cvs_SOURCES = \
 	fileattr.c \
 	filesubr.c \
 	find_names.c \
+	gpg.c gpg.h \
 	hardlink.c \
 	hash.c \
 	history.c \
@@ -76,11 +79,13 @@ cvs_SOURCES = \
 	run.c \
 	scramble.c \
 	server.c \
+	sign.c sign.h \
 	stack.c stack.h \
 	status.c \
 	subr.c subr.h \
 	tag.c \
 	update.c \
+	verify.c verify.h \
 	version.c \
 	vers_ts.c \
 	watch.c \
@@ -127,19 +132,34 @@ EXTRA_DIST = \
 	build_src.com \
 	sanity.sh
 
-check-local: localcheck remotecheck proxycheck
+check-local: localcheck remotecheck nobaseremotecheck proxycheck
+
+.PHONY: maintainercheck-local
+maintainercheck-local: check-local nobaselocalcheck nobaseproxycheck
 
 .PHONY: localcheck
-localcheck: sanity.config.sh
+localcheck: all sanity.config.sh
 	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs$(EXEEXT)
+
+.PHONY: nobaselocalcheck
+nobaselocalcheck: all sanity.config.sh
+	$(SHELL) $(srcdir)/sanity.sh -B `pwd`/cvs$(EXEEXT)
 
 .PHONY: remotecheck
 remotecheck: all sanity.config.sh
 	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs$(EXEEXT)
 
+.PHONY: nobaseremotecheck
+nobaseremotecheck: all sanity.config.sh
+	$(SHELL) $(srcdir)/sanity.sh -Br `pwd`/cvs$(EXEEXT)
+
 .PHONY: proxycheck
 proxycheck: all sanity.config.sh
 	$(SHELL) $(srcdir)/sanity.sh -p `pwd`/cvs$(EXEEXT)
+
+.PHONY: nobaseproxycheck
+nobaseproxycheck: all sanity.config.sh
+	$(SHELL) $(srcdir)/sanity.sh -Bp `pwd`/cvs$(EXEEXT)
 
 # Our distclean targets
 distclean-local:

@@ -17,7 +17,9 @@
  *
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 /* GNULIB Headers.  */
 #include "closeout.h"
@@ -27,6 +29,11 @@
 
 /* CVS Headers.  */
 #include "command_line_opt.h"
+#include "gpg.h"
+#include "sign.h"
+#include "verify.h"
+
+#include "cvs.h"
 
 
 
@@ -45,7 +52,6 @@ int use_cvsrc = 1;
 int cvswrite = !CVSREAD_DFLT;
 int really_quiet = 0;
 int quiet = 0;
-int trace = 0;
 int noexec = 0;
 int readonlyfs = 0;
 int logoff = 0;
@@ -66,9 +72,8 @@ int gzip_level;
 struct config *config;
 
 
-
+bool suppress_bases = false;
 mode_t cvsumask = UMASK_DFLT;
-
 char *CurDir;
 
 /*
@@ -182,10 +187,12 @@ static const struct cmd
 #ifdef SERVER_SUPPORT
     { "server",   NULL,       NULL,        server,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
 #endif
+    { "sign",   "sig",        NULL,        sign,      0 },
     { "status",   "st",       "stat",      cvsstatus, CVS_CMD_USES_WORK_DIR },
     { "tag",      "ta",       "freeze",    cvstag,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
     { "unedit",   NULL,       NULL,        unedit,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
     { "update",   "up",       "upd",       update,    CVS_CMD_USES_WORK_DIR },
+    { "verify",   "ver",      NULL,        verify,    0 },
     { "version",  "ve",       "ver",       version,   0 },
     { "watch",    NULL,       NULL,        watch,     CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
     { "watchers", NULL,       NULL,        watchers,  CVS_CMD_USES_WORK_DIR },
@@ -307,6 +314,7 @@ static const char *const opt_usage[] =
     "    -d CVS_root  Overrides $CVSROOT as the root of the CVS tree.\n",
     "    -f           Do not use the ~/.cvsrc file.\n",
 #ifdef CLIENT_SUPPORT
+    "    -B           Suppress use of base files.\n",
     "    -z #         Request compression level '#' for net traffic.\n",
 #ifdef ENCRYPTION
     "    -x           Encrypt all net traffic.\n",
@@ -314,6 +322,27 @@ static const char *const opt_usage[] =
     "    -a           Authenticate all net traffic.\n",
 #endif
     "    -s VAR=VAL   Set CVS user variable.\n",
+    "\n",
+    "    -g           Force OpenPGP commit signatures (default autonegotiates).\n",
+    "    --sign[=(on | off | auto)] | --no-sign\n",
+    "                 Force (or forbid) OpenPGP commit signatures\n",
+    "                 (default autonegotiates).\n",
+    "    -G TEMPLATE\n",
+    "    --sign-template TEMPLATE\n",
+    "                 Use TEMPLATE to generate OpenPGP signatures.\n",
+    "    --sign-arg ARG\n",
+    "                 Pass ARG to OpenPGP TEMPLATE when sigining.\n",
+    "    --openpgp-textmode ARG\n",
+    "                 Pass ARG to OpenPGP TEMPLATE when verifying or\n",
+    "                 generating signatures.\n",
+    "    --verify[=(off | warn | fatal)] | --no-verify\n",
+    "                 Force (or forbid) OpenPGP signature verification\n",
+    "                 on checkout (default warns on failure).\n",
+    "    -G TEMPLATE\n",
+    "    --verify-template TEMPLATE\n",
+    "                 Use TEMPLATE to verify OpenPGP signatures.\n",
+    "    --verify-arg ARG\n",
+    "                 Pass ARG to OpenPGP TEMPLATE when verifying.\n",
     "(Specify the --help option for a list of other help options)\n",
     NULL
 };
@@ -525,7 +554,7 @@ main (int argc, char **argv)
     int help = 0;		/* Has the user asked for help?  This
 				   lets us support the `cvs -H cmd'
 				   convention to give help for cmd. */
-    static const char short_options[] = "+QqrwtnRvb:T:e:d:Hfz:s:xa";
+    static const char short_options[] = "+QBqrwtnRvb:T:e:d:Hfz:s:xag::G:";
     static struct option long_options[] =
     {
         {"help", 0, NULL, 'H'},
@@ -533,9 +562,19 @@ main (int argc, char **argv)
 	{"help-commands", 0, NULL, 1},
 	{"help-synonyms", 0, NULL, 2},
 	{"help-options", 0, NULL, 4},
+	{"sign", optional_argument, NULL, 'g'},
+	{"no-sign", 0, NULL, 5},
+	{"sign-template", required_argument, NULL, 'G'},
+	{"sign-arg", required_argument, NULL, 6},
+	{"openpgp-textmode", required_argument, NULL, 7},
+	{"no-openpgp-textmode", 0, NULL, 8},
+	{"verify", optional_argument, NULL, 9},
+	{"no-verify", 0, NULL, 10},
+	{"verify-template", required_argument, NULL, 11},
+	{"verify-arg", required_argument, NULL, 12},
 #ifdef SERVER_SUPPORT
 	{"allow-root", required_argument, NULL, 3},
-	{"timeout", required_argument, NULL, 5},
+	{"timeout", required_argument, NULL, 13},
 #endif /* SERVER_SUPPORT */
         {0, 0, 0, 0}
     };
@@ -562,8 +601,9 @@ main (int argc, char **argv)
 #endif
 
     /*
-     * Just save the last component of the path for error messages
+     * Initialize globals.
      */
+    /* Just save the last component of the path for error messages.  */
     program_path = xstrdup (argv[0]);
 #ifdef ARGV0_NOT_PROGRAM_NAME
     /* On some systems, e.g. VMS, argv[0] is not the name of the command
@@ -572,6 +612,7 @@ main (int argc, char **argv)
 #else
     program_name = last_component (argv[0]);
 #endif
+
 
     /*
      * Query the environment variables up-front, so that
@@ -589,6 +630,53 @@ main (int argc, char **argv)
 	readonlyfs = 1;
 	logoff = 1;
     }
+    if ((cp = getenv (CVS_VERIFY_CHECKOUTS_ENV)))
+    {
+	if (!strcasecmp (cp, "warn"))
+	    set_verify_checkouts (VERIFY_WARN);
+	else if (!strcasecmp (cp, "fatal"))
+	    set_verify_checkouts (VERIFY_FATAL);
+	else
+	{
+	    bool on;
+	    if (readBool ("environment", CVS_VERIFY_CHECKOUTS_ENV, cp, &on))
+	    {
+		if (on)
+		    set_verify_checkouts (VERIFY_FATAL);
+		else
+		    set_verify_checkouts (VERIFY_OFF);
+	    }
+	    else
+		error (1, 0,
+		       "Unrecognized content (`%s') in $%s",
+		       cp, CVS_VERIFY_CHECKOUTS_ENV);
+	}
+    }
+    if ((cp = getenv (CVS_SIGN_COMMITS_ENV)))
+    {
+	if (!strcasecmp (cp, "auto")
+	    || !strcasecmp (cp, "server"))
+	    set_sign_commits (SIGN_DEFAULT);
+	else if (!strcasecmp (cp, ""))
+	    set_sign_commits (SIGN_NEVER);
+	else
+	{
+	    bool on;
+	    if (readBool ("environment", CVS_SIGN_COMMITS_ENV, cp, &on))
+	    {
+		if (on)
+		    set_sign_commits (SIGN_ALWAYS);
+		else
+		    set_sign_commits (SIGN_NEVER);
+	    }
+	    else
+		error (0, 0,
+		       "Unrecognized content (`%s') in $%s ignored",
+		       cp, CVS_SIGN_COMMITS_ENV);
+	}
+    } 
+    if ((cp = getenv (CVS_VERIFY_TEMPLATE_ENV)))
+	set_verify_template (cp);
 
     /* Set this to 0 to force getopt initialization.  getopt() sets
        this to 1 internally.  */
@@ -655,12 +743,85 @@ main (int argc, char **argv)
 		/* --help-options */
 		usage (opt_usage);
 		break;
+	    case 'g':
+		/* --sign */
+		if (optarg)
+		{
+		    if (!strcasecmp (optarg, "auto")
+			|| !strcasecmp (optarg, "server"))
+			set_sign_commits (SIGN_DEFAULT);
+		    else if (!strcasecmp (optarg, "on"))
+			set_sign_commits (SIGN_ALWAYS);
+		    else if (!strcasecmp (optarg, "off"))
+			set_sign_commits (SIGN_NEVER);
+		    else
+			error (1, 0, "Unrecognized argument to --sign (`%s')",
+			       optarg);
+		}
+		else
+		    set_sign_commits (SIGN_ALWAYS);
+		break;
+	    case 5:
+		/* --no-sign */
+		set_sign_commits (SIGN_NEVER);
+		break;
+	    case 'G':
+		/* --sign-template */
+		set_sign_template (optarg);
+		break;
+	    case 6:
+		/* --sign-arg */
+		add_sign_arg (optarg);
+		break;
+	    case 7:
+		/* --openpgp-textmode */
+		set_openpgp_textmode (optarg);
+		break;
+	    case 8:
+		/* --no-openpgp-textmode */
+		set_openpgp_textmode ("");
+		break;
+	    case 9:
+		/* --verify */
+		if (optarg)
+		{
+		    if (!strcasecmp (optarg, "off")
+			|| !strcasecmp (optarg, "never")
+			|| !strcasecmp (optarg, "false"))
+			set_verify_checkouts (VERIFY_OFF);
+		    else if (!strcasecmp (optarg, "warn"))
+			set_verify_checkouts (VERIFY_WARN);
+		    else if (!strcasecmp (optarg, "always")
+			     || !strcasecmp (optarg, "fatal")
+			     || !strcasecmp (optarg, "on")
+			     || !strcasecmp (optarg, "true"))
+			set_verify_checkouts (VERIFY_FATAL);
+		    else
+			error (1, 0,
+			       "Unrecognized argument to --verify (`%s')",
+			       optarg);
+		}
+		else
+		    set_verify_checkouts (VERIFY_FATAL);
+		break;
+	    case 10:
+	        /* --no-verify */
+		set_verify_checkouts (VERIFY_OFF);
+		break;
+	    case 11:
+		/* --verify-template */
+		set_verify_template (optarg);
+		break;
+	    case 12:
+		/* --verify-arg */
+		add_verify_arg (optarg);
+		break;
 #ifdef SERVER_SUPPORT
 	    case 3:
 		/* --allow-root */
 		root_allow_add (optarg, gConfigPath);
 		break;
-	    case 5:
+	    case 13:
 		/* --timeout */
 		connection_timeout = strtol (optarg, &end, 10);
 		if (*end != '\0')
@@ -775,6 +936,9 @@ distribution kit for a complete list of contributors and copyrights.\n",
 		 * one user complained of being bitten by a run of
 		 * `cvs -z -n up' which read -n as the argument to -z without
 		 * complaining.  */
+		break;
+	    case 'B':
+		suppress_bases = true;
 		break;
 	    case 's':
 		variable_set (optarg);
@@ -908,6 +1072,9 @@ cause intermittent sandbox corruption.");
 		error (1, errno, "invalid umask value in %s (%s)",
 		       CVSUMASK_ENV, cp);
 	}
+
+	if (getenv (CVSNOBASES_ENV))
+	    suppress_bases = true;
 
 	/* HOSTNAME & SERVER_HOSTNAME need to be set before they are
 	 * potentially used in gserver_authenticate_connection() (called from

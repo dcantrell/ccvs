@@ -12,12 +12,16 @@
    GNU General Public License for more details.  */
 
 #ifdef HAVE_SYS_WAIT_H
-#include <sys/types.h>		/* For pid_t. */
-#ifdef HAVE_SYS_RESOURCE_H
-#include <sys/resource.h>	/* for rusage */
+# include <sys/types.h>		/* For pid_t. */
+# ifdef HAVE_SYS_RESOURCE_H
+#  include "xtime.h"		/* FreeBSD 4.11, at least, needs struct timeval
+				 * defined before including <sys/resource.h>
+				 */
+#  include <sys/resource.h>	/* for rusage */
+# endif
+# include <sys/wait.h>
 #endif
-#include <sys/wait.h>
-#endif
+
 #ifndef WIFSTOPPED
 #define WIFSTOPPED(w) (((w) & 0xff) == 0x7f)
 #endif

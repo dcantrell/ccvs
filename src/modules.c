@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -26,10 +26,20 @@
  *	command line.
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* GNULIB headers.  */
 #include "save-cwd.h"
 
-
+/* CVS headers.  */
+#include "ignore.h"
+
+#include "cvs.h"
+
+
+
 /* Defines related to the syntax of the modules file.  */
 
 /* Options in modules file.  Note that it is OK to use GNU getopt features;

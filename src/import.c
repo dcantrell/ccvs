@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -21,9 +21,23 @@
  * Additional arguments specify more Vendor Release Tags.
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* GNULIB headers.  */
+#include "base64.h"
 #include "lstat.h"
 #include "save-cwd.h"
+
+/* CVS headers.  */
+#include "ignore.h"
+#include "logmsg.h"
+#include "wrapper.h"
+
+#include "cvs.h"
+
+
 
 static char *get_comment (const char *user);
 static int add_rev (char *message, RCSNode *rcs, char *vfile,
@@ -476,6 +490,12 @@ import_descend (char *message, char *vtag, int targc, char **targv)
 	    if (server_active && strcmp (dp->d_name, CVSADM) == 0)
 		goto one_more_time_boys;
 
+	    /* FIXME: .#filename.sig is where the server currently saves the
+	     * signature data when available.  For now just ignore it.
+	     */
+	    if (server_active && !fnmatch (".#*.sig", dp->d_name, 0))
+		goto one_more_time_boys;
+
 	    if (ign_name (dp->d_name))
 	    {
 		add_log ('I', dp->d_name);
@@ -702,7 +722,7 @@ update_rcs_file (char *message, char *vfile, char *vtag, int targc,
            not NULL?  */
 	expand = (vers->srcfile->expand != NULL
 		  && vers->srcfile->expand[0] == 'b') ? "-kb" : "-ko";
-	different = RCS_cmp_file (vers->srcfile, vers->vn_rcs, NULL,
+	different = RCS_cmp_file (vers->srcfile, vers->tag, vers->vn_rcs, NULL,
 	                          NULL, expand, vfile);
 	if (tocvsPath)
 	    if (unlink_file_dir (tocvsPath) < 0)
@@ -1054,6 +1074,11 @@ get_comment (const char *user)
  * RETURNS
  *   Return value is 0 for success, or nonzero for failure (in which
  *   case an error message will have already been printed).
+ *
+ * FIXME
+ *   I see very few reasons why this shoudn't be merged with RCS_rewrite ()
+ *   or better yet RCS_checkin () and I would guess this would ease
+ *   maintenance.
  */
 int
 add_rcs_file (const char *message, const char *rcs, const char *user,
@@ -1075,6 +1100,10 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
     char *free_opt = NULL;
     mode_t file_type;
     char *dead_revision = NULL;
+
+    TRACE (TRACE_FUNCTION,
+	   "add_rcs_file (`%s', `%s', `%s', `%s', `%s', `%s', `%s')",
+	   rcs, user, add_vhead, key_opt, add_vbranch, vtag, desctext);
 
     if (noexec)
 	return 0;
@@ -1307,6 +1336,30 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 	if (fprintf (fprcs, "commitid        %s;\012", global_session_id) < 0)
 	    goto write_error;
 
+	if (!add_vbranch
+	    && (get_sign_commits (true) || have_sigfile (userfile)))
+	{
+	    char *rawsig;
+	    size_t rawlen;
+	    char *b64sig;
+
+	    TRACE (TRACE_DATA, "add_rcs_file: found signature.");
+
+	    rawsig = get_signature ("", userfile,
+				    key_opt && !strcmp (key_opt, "b"),
+				    &rawlen);
+	    base64_encode_alloc (rawsig, rawlen, &b64sig);
+	    if (!b64sig) xalloc_die ();
+	    free (rawsig);
+
+	    if (fprintf (fprcs, "openpgp-signatures        %s;\012",
+			 b64sig) < 0)
+		goto write_error;
+	    free (b64sig);
+	}
+	else
+	    TRACE (TRACE_DATA, "add_rcs_file: signature not found.");
+
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 	/* Store initial permissions if necessary. */
 	if (config->preserve_perms)
@@ -1317,7 +1370,7 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 	}
 #endif
 
-	if (add_vbranch != NULL)
+	if (add_vbranch)
 	{
 	    if (fprintf (fprcs, "\012%s.1\012", add_vbranch) < 0 ||
 		fprintf (fprcs, "date     %s;  author %s;  state Exp;\012",
@@ -1326,6 +1379,29 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 		fprintf (fprcs, "next     ;\012") < 0 ||
 	        fprintf (fprcs, "commitid        %s;\012", global_session_id) < 0)
 		goto write_error;
+
+	    if (get_sign_commits (true) || have_sigfile (userfile))
+	    {
+		char *rawsig;
+		size_t rawlen;
+		char *b64sig;
+
+		TRACE (TRACE_DATA, "add_rcs_file: found signature.");
+
+		rawsig = get_signature ("", userfile,
+					key_opt && !strcmp (key_opt, "b"),
+					&rawlen);
+		base64_encode_alloc (rawsig, rawlen, &b64sig);
+		if (!b64sig) xalloc_die ();
+		free (rawsig);
+
+		if (fprintf (fprcs, "openpgp-signatures        %s;\012",
+			     b64sig) < 0)
+		    goto write_error;
+		free (b64sig);
+	    }
+	    else
+		TRACE (TRACE_DATA, "add_rcs_file: signature not found.");
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 	    /* Store initial permissions if necessary. */

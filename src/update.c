@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -38,23 +38,42 @@
  * as well.
  */
 
-#include "cvs.h"
-#include <assert.h>
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* GNULIB */
+#include "getline.h"
 #include "save-cwd.h"
+
 #ifdef SERVER_SUPPORT
 # include "md5.h"
 #endif
-#include "watch.h"
-#include "fileattr.h"
-#include "edit.h"
-#include "getline.h"
+
+/* ANSI C headers.  */
+#include <assert.h>
+
+/* CVS headers.  */
+#include "base.h"
 #include "buffer.h"
+#include "classify.h"
+#include "edit.h"
+#include "fileattr.h"
+#include "ignore.h"
+#include "no_diff.h"
+#include "recurse.h"
+#include "repos.h"
+#include "watch.h"
+#include "wrapper.h"
+
+#include "cvs.h"
 #include "hardlink.h"
+
+
 
 static int checkout_file (struct file_info *finfo, Vers_TS *vers_ts,
 				 int adding, int merging, int update_server);
 #ifdef SERVER_SUPPORT
-static void checkout_to_buffer (void *, const char *, size_t);
 static int patch_file (struct file_info *finfo,
                        Vers_TS *vers_ts, 
                        int *docheckout, struct stat *file_info,
@@ -107,8 +126,8 @@ static int update_prune_dirs = 0;
 static int pipeout = 0;
 static int dotemplate = 0;
 #ifdef SERVER_SUPPORT
-static int patches = 0;
-static int rcs_diff_patches = 0;
+static bool bases;
+static bool rcs_diff_patches;
 #endif
 static List *ignlist = NULL;
 static time_t last_register_time;
@@ -233,10 +252,7 @@ update (int argc, char **argv)
 	    case 'u':
 #ifdef SERVER_SUPPORT
 		if (server_active)
-		{
-		    patches = 1;
 		    rcs_diff_patches = server_use_rcs_diff ();
-		}
 		else
 #endif
 		    usage (update_usage);
@@ -472,6 +488,10 @@ do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate,
 	   preload_update_dir ? preload_update_dir : "(null)", xdotemplate,
 	   repository ? repository : "(null)");
 
+    /* Set globals.  */
+    if (server_active && server_use_bases ())
+	bases = true;
+
     /* fill in the statics */
     options = xoptions;
     tag = xtag;
@@ -589,6 +609,8 @@ update_fileproc (void *callerdat, struct file_info *finfo)
     int retval, nb;
     Ctype status;
     Vers_TS *vers;
+
+    TRACE (TRACE_FUNCTION, "update_fileproc (%s)", finfo->fullname);
 
     status = Classify_File (finfo, tag, date, options, force_tag_match,
 			    aflag, &vers, pipeout);
@@ -716,7 +738,7 @@ update_fileproc (void *callerdat, struct file_info *finfo)
 		break;
 	    case T_PATCH:		/* needs patch */
 #ifdef SERVER_SUPPORT
-		if (patches)
+		if (server_active && !bases)
 		{
 		    int docheckout;
 		    struct stat file_info;
@@ -725,9 +747,9 @@ update_fileproc (void *callerdat, struct file_info *finfo)
 		    retval = patch_file (finfo,
 					 vers, &docheckout,
 					 &file_info, checksum);
-		    if (! docheckout)
+		    if (!docheckout)
 		    {
-		        if (server_active && retval == 0)
+		        if (retval == 0)
 			    server_updated (finfo, vers,
 					    (rcs_diff_patches
 					     ? SERVER_RCS_DIFF
@@ -738,9 +760,10 @@ update_fileproc (void *callerdat, struct file_info *finfo)
 		    }
 		}
 #endif
-		/* If we're not running as a server, just check the
-		   file out.  It's simpler and faster than producing
-		   and applying patches.  */
+		/* If we're not running as a server or the client can handle
+		 * base operations, just check the file out.  It's simpler and
+		 * faster than producing and applying patches.
+		 */
 		/* Fall through.  */
 	    case T_CHECKOUT:		/* needs checkout */
 		retval = checkout_file (finfo, vers, 0, 0, 1);
@@ -1187,6 +1210,13 @@ scratch_file (struct file_info *finfo, Vers_TS *vers)
 
 /*
  * Check out a file.
+ *
+ * INPUTS
+ *   finfo		The file to be updated.
+ *   vers_ts		Version information about the file to be updated.
+ *   adding
+ *   merging
+ *   update_server
  */
 static int
 checkout_file (struct file_info *finfo, Vers_TS *vers_ts, int adding,
@@ -1195,11 +1225,11 @@ checkout_file (struct file_info *finfo, Vers_TS *vers_ts, int adding,
     char *backup;
     int set_time, retval = 0;
     int status;
-    int file_is_dead;
-    struct buffer *revbuf;
+    bool file_is_dead;
+
+    TRACE (TRACE_FUNCTION, "checkout_file (%s)", finfo->fullname);
 
     backup = NULL;
-    revbuf = NULL;
 
     /* Don't screw with backup files if we're going to stdout, or if
        we are the server.  */
@@ -1207,7 +1237,7 @@ checkout_file (struct file_info *finfo, Vers_TS *vers_ts, int adding,
     {
 	backup = Xasprintf ("%s/%s%s", CVSADM, CVSPREFIX, finfo->file);
 	if (isfile (finfo->file))
-	    rename_file (finfo->file, backup);
+	    force_copy_file (finfo->file, backup);
 	else /* FIXME: -f/-t has been disabled for so long it should probably
 	      * just be stripped out to reduce clutter.
 	      */
@@ -1249,74 +1279,52 @@ VERS: ", 0);
 		cvs_outerr (vers_ts->vn_rcs, 0);
 		cvs_outerr ("\n***************\n", 0);
 	    }
-	}
 
-#ifdef SERVER_SUPPORT
-	if (update_server
-	    && server_active
-	    && ! pipeout
-	    && ! file_gzip_level
-	    && ! joining ()
-	    && ! wrap_name_has (finfo->file, WRAP_FROMCVS))
-	{
-	    revbuf = buf_nonio_initialize (NULL);
-	    status = RCS_checkout (vers_ts->srcfile, NULL,
-				   vers_ts->vn_rcs, vers_ts->tag,
-				   vers_ts->options, RUN_TTY,
-				   checkout_to_buffer, revbuf);
-	}
-	else
-#endif
 	    status = RCS_checkout (vers_ts->srcfile,
 				   pipeout ? NULL : finfo->file,
 				   vers_ts->vn_rcs, vers_ts->tag,
 				   vers_ts->options, RUN_TTY, NULL, NULL);
+	}
+	else
+	    /* There used to be a special case here to check out to a buffer
+	     * when UPDATE_SERVER && SERVER_ACTIVE && !PIPEOUT
+	     * && !FILE_GZIP_LEVEL && !joining ()
+	     * && !wrap_name_has (finfo->file, WRAP_FROMCVS), but I don't think
+	     * it is important to optimize for old clients which don't support
+	     * bandwidth saving base files and openpgp signatures.
+	     */
+	    status = base_checkout (vers_ts->srcfile, finfo,
+				    vers_ts->vn_user, vers_ts->vn_rcs,
+				    vers_ts->entdata
+				    ? vers_ts->entdata->tag : NULL,
+				    vers_ts->tag,
+				    vers_ts->entdata
+				    ? vers_ts->entdata->options : NULL,
+				    vers_ts->options);
     }
+
     if (file_is_dead || status == 0)
     {
-	mode_t mode;
-
-	mode = (mode_t) -1;
+	mode_t mode = (mode_t) -1;
 
 	if (!pipeout)
 	{
 	    Vers_TS *xvers_ts;
 
-	    if (revbuf != NULL && !noexec)
+	    if (!file_is_dead)
 	    {
-		struct stat sb;
-
-		/* FIXME: We should have RCS_checkout return the mode.
-		   That would also fix the kludge with noexec, above, which
-		   is here only because noexec doesn't write srcfile->path
-		   for us to stat.  */
-		if (stat (vers_ts->srcfile->path, &sb) < 0)
-		{
-#if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
-		    buf_free (revbuf);
-#endif /* defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT) */
-		    error (1, errno, "cannot stat %s",
-			   vers_ts->srcfile->path);
-		}
-		mode = sb.st_mode &~ (S_IWRITE | S_IWGRP | S_IWOTH);
-	    }
-
-	    if (cvswrite
-		&& !file_is_dead
-		&& !fileattr_get (finfo->file, "_watched"))
-	    {
-		if (revbuf == NULL)
-		    xchmod (finfo->file, 1);
+		char flags[3];
+		if (vers_ts->ts_user)
+		    flags[0] = 'y';
 		else
-		{
-		    /* We know that we are the server here, so
-                       although xchmod checks umask, we don't bother.  */
-		    mode |= (((mode & S_IRUSR) ? S_IWUSR : 0)
-			     | ((mode & S_IRGRP) ? S_IWGRP : 0)
-			     | ((mode & S_IROTH) ? S_IWOTH : 0));
-		}
+		    flags[0] = 'n';
+		if (cvswrite && !fileattr_get (finfo->file, "_watched"))
+		    flags[1] = 'y';
+		else
+		    flags[1] = 'n';
+		flags[2] = '\0';
+		base_copy (finfo, vers_ts->vn_rcs, flags);
 	    }
-
 	    {
 		/* A newly checked out file is never under the spell
 		   of "cvs edit".  If we think we were editing it
@@ -1336,8 +1344,8 @@ VERS: ", 0);
 	    /* set the time from the RCS file iff it was unknown before */
 	    set_time =
 		(!noexec
-		 && (vers_ts->vn_user == NULL ||
-		     strncmp (vers_ts->ts_rcs, "Initial", 7) == 0)
+		 && (!vers_ts->vn_user ||
+		     !strncmp (vers_ts->ts_rcs, "Initial", 7))
 		 && !file_is_dead);
 
 	    wrap_fromcvs_process_file (finfo->file);
@@ -1346,27 +1354,6 @@ VERS: ", 0);
 				   force_tag_match, set_time);
 	    if (strcmp (xvers_ts->options, "-V4") == 0)
 		xvers_ts->options[0] = '\0';
-
-	    if (revbuf != NULL)
-	    {
-		/* If we stored the file data into a buffer, then we
-                   didn't create a file at all, so xvers_ts->ts_user
-                   is wrong.  The correct value is to have it be the
-                   same as xvers_ts->ts_rcs, meaning that the working
-                   file is unchanged from the RCS file.
-
-		   FIXME: We should tell Version_TS not to waste time
-		   statting the nonexistent file.
-
-		   FIXME: Actually, I don't think the ts_user value
-		   matters at all here.  The only use I know of is
-		   that it is printed in a trace message by
-		   Server_Register.  */
-
-		if (xvers_ts->ts_user != NULL)
-		    free (xvers_ts->ts_user);
-		xvers_ts->ts_user = xstrdup (xvers_ts->ts_rcs);
-	    }
 
 	    (void) time (&last_register_time);
 
@@ -1403,6 +1390,8 @@ VERS: ", 0);
 	    /* fix up the vers structure, in case it is used by join */
 	    if (join_rev1)
 	    {
+		Node *n;
+
 		/* FIXME: Throwing away the original revision info is almost
 		   certainly wrong -- what if join_rev1 is "BASE"?  */
 		if (vers_ts->vn_user != NULL)
@@ -1411,26 +1400,29 @@ VERS: ", 0);
 		    free (vers_ts->vn_rcs);
 		vers_ts->vn_user = xstrdup (xvers_ts->vn_rcs);
 		vers_ts->vn_rcs = xstrdup (xvers_ts->vn_rcs);
+		n = findnode_fn (finfo->entries, finfo->file);
+		if (n)
+		    vers_ts->entdata = n->data;
+		else
+		    vers_ts->entdata = NULL;
 	    }
 
 	    /* If this is really Update and not Checkout, recode history */
 	    if (strcmp (cvs_cmd_name, "update") == 0)
-		history_write ('U', finfo->update_dir, xvers_ts->vn_rcs, finfo->file,
-			       finfo->repository);
+		history_write ('U', finfo->update_dir, xvers_ts->vn_rcs,
+			       finfo->file, finfo->repository);
 
 	    freevers_ts (&xvers_ts);
 
 	    if (!really_quiet && !file_is_dead)
-	    {
 		write_letter (finfo, 'U');
-	    }
 	}
 
 #ifdef SERVER_SUPPORT
 	if (update_server && server_active)
 	    server_updated (finfo, vers_ts,
 			    merging ? SERVER_MERGED : SERVER_UPDATED,
-			    mode, NULL, revbuf);
+			    mode, NULL, NULL);
 #endif
     }
     else
@@ -1447,7 +1439,7 @@ VERS: ", 0);
 	retval = status;
     }
 
-    if (backup != NULL)
+    if (backup)
     {
 	/* If -f/-t wrappers are being used to wrap up a directory,
 	   then backup might be a directory instead of just a file.  */
@@ -1461,29 +1453,10 @@ VERS: ", 0);
 	free (backup);
     }
 
-#if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
-    if (revbuf != NULL)
-	buf_free (revbuf);
-#endif /* defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT) */
     return retval;
 }
 
 
-
-#ifdef SERVER_SUPPORT
-
-/* This function is used to write data from a file being checked out
-   into a buffer.  */
-
-static void
-checkout_to_buffer (void *callerdat, const char *data, size_t len)
-{
-    struct buffer *buf = (struct buffer *) callerdat;
-
-    buf_output (buf, data, len);
-}
-
-#endif /* SERVER_SUPPORT */
 
 #ifdef SERVER_SUPPORT
 
@@ -1865,19 +1838,25 @@ write_letter (struct file_info *finfo, int letter)
 /* Reregister a file after a merge.  */
 static void
 RegisterMerge (struct file_info *finfo, Vers_TS *vers,
-	       const char *backup, int has_conflicts)
+	       const char *backup, bool has_conflicts, bool force_addition)
 {
     /* This file is the result of a merge, which means that it has
        been modified.  We use a special timestamp string which will
        not compare equal to any actual timestamp.  */
     char *cp = NULL;
 
+    TRACE (TRACE_FUNCTION, "RegisterMerge (%s, %s, %s, %s, %s)",
+	   finfo->fullname, vers->vn_user, backup,
+	   has_conflicts ? "true" : "false",
+	   force_addition ? "true" : "false");
+
     if (has_conflicts)
     {
 	time (&last_register_time);
 	cp = time_stamp (finfo->file);
     }
-    Register (finfo->entries, finfo->file, vers->vn_rcs ? vers->vn_rcs : "0",
+    Register (finfo->entries, finfo->file,
+	      vers->vn_rcs && !force_addition ? vers->vn_rcs : "0",
 	      "Result of merge", vers->options, vers->tag, vers->date, cp);
     if (cp)
 	free (cp);
@@ -1888,8 +1867,9 @@ RegisterMerge (struct file_info *finfo, Vers_TS *vers,
        the message only after the file has safely been written.  */
     if (server_active)
     {
-        server_copy_file (finfo->file, finfo->update_dir, finfo->repository,
-			  backup);
+	if (vers->ts_user)
+	    server_copy_file (finfo->file, finfo->update_dir,
+			      finfo->repository, backup);
 	server_updated (finfo, vers, SERVER_MERGED, (mode_t) -1, NULL, NULL);
     }
 #endif
@@ -1942,8 +1922,11 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 	   thought needs to go into this, and in the meantime it is safe
 	   to treat any such mismatch as an automatic conflict. -twp */
 
-	status = RCS_checkout (finfo->rcs, finfo->file, vers->vn_rcs,
-			       vers->tag, vers->options, NULL, NULL, NULL);
+	status = base_checkout (finfo->rcs, finfo, vers->vn_user, vers->vn_rcs,
+			        vers->entdata->tag, vers->tag,
+				vers->entdata->options, vers->options);
+	base_copy (finfo, vers->vn_rcs, "yy");
+
 	if (status)
 	{
 	    error (0, 0, "failed to check out `%s' file", finfo->fullname);
@@ -1954,9 +1937,7 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 	    goto out;
 	}
 
-	xchmod (finfo->file, 1);
-
-	RegisterMerge (finfo, vers, backup, 1);
+	RegisterMerge (finfo, vers, backup, true, false);
 
 	/* Is there a better term than "nonmergeable file"?  What we
 	   really mean is, not something that CVS cannot or does not
@@ -1974,18 +1955,23 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 	goto out;
     }
 
-    status = RCS_merge (finfo->rcs, vers->srcfile->path, finfo->file,
-		        vers->options, vers->vn_user, vers->vn_rcs);
+    status = base_merge (finfo->rcs, finfo, vers->entdata->tag,
+			 vers->entdata->options, vers->options, vers->vn_user,
+			 vers->vn_user, vers->vn_rcs, false);
+
     if (status != 0 && status != 1)
     {
 	error (0, status == -1 ? errno : 0,
-	       "could not merge revision %s of %s", vers->vn_user, finfo->fullname);
+	       "could not merge revision %s of %s", vers->vn_user,
+	       finfo->fullname);
 	error (status == -1 ? 1 : 0, 0, "restoring %s from backup file %s",
 	       finfo->fullname, backup);
 	rename_file (backup, finfo->file);
 	retval = 1;
+	base_remove (finfo->file, vers->vn_rcs);
 	goto out;
     }
+    base_remove (finfo->file, vers->vn_user);
 
     if (strcmp (vers->options, "-V4") == 0)
 	vers->options[0] = '\0';
@@ -2000,13 +1986,12 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 	vers->vn_user = xstrdup (vers->vn_rcs);
     }
 
-    RegisterMerge (finfo, vers, backup, status);
+    RegisterMerge (finfo, vers, backup, status, false);
 
     if (status == 1)
     {
-	error (0, 0, "conflicts found in %s", finfo->fullname);
-
-	write_letter (finfo, 'C');
+	if (!really_quiet)
+	    write_letter (finfo, 'C');
 
 	history_write ('C', finfo->update_dir, vers->vn_rcs, finfo->file,
 	               finfo->repository);
@@ -2014,25 +1999,37 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
     }
     else /* status == 0 */
     {
+	/* FIXME: When BASES, a zero status might mean the server didn't
+	 * perform the merge.
+	 */
 	history_write ('G', finfo->update_dir, vers->vn_rcs, finfo->file,
 		       finfo->repository);
 
 	/* FIXME: the noexec case is broken.  RCS_merge could be doing the
 	   xcmp on the temporary files without much hassle, I think.  */
-	if (!noexec && !xcmp (backup, finfo->file))
+	if (!noexec && !bases && !xcmp (backup, finfo->file))
 	{
-	    cvs_output (finfo->fullname, 0);
-	    cvs_output (" already contains the differences between ", 0);
-	    cvs_output (vers->vn_user, 0);
-	    cvs_output (" and ", 0);
-	    cvs_output (vers->vn_rcs, 0);
-	    cvs_output ("\n", 1);
+	    if (!quiet)
+	    {
+		/* The client will handle these messages when BASES.  */
+		cvs_output ("`", 1);
+		cvs_output (finfo->fullname, 0);
+		cvs_output ("' already contains the differences between ", 0);
+		cvs_output (vers->vn_user, 0);
+		cvs_output (" and ", 5);
+		cvs_output (vers->vn_rcs, 0);
+		cvs_output ("\n", 1);
+	    }
 
 	    retval = 0;
 	    goto out;
 	}
 
-	write_letter (finfo, 'M');
+	if (!bases)
+	    /* The client may determine this is a conflict rather than
+	     * modified.  Let it write the correct message.
+	     */
+	    write_letter (finfo, 'M');
     }
     retval = 0;
  out:
@@ -2071,8 +2068,9 @@ join_file (struct file_info *finfo, Vers_TS *vers)
     char *jrev2;
     char *jdate1;
     char *jdate2;
+    bool replace_it;
 
-    TRACE (TRACE_FUNCTION, "join_file(%s, %s%s%s%s, %s, %s)",
+    TRACE (TRACE_FUNCTION, "join_file (%s, %s%s%s%s, %s, %s)",
 	   finfo->file,
 	   vers->tag ? vers->tag : "",
 	   vers->tag ? " (" : "",
@@ -2280,7 +2278,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	    server_checked_in (finfo->file, finfo->update_dir,
 			       finfo->repository);
 #endif
-	if (! really_quiet)
+	if (!really_quiet)
 	    error (0, 0, "scheduling `%s' for removal", finfo->fullname);
 
 	return;
@@ -2307,12 +2305,13 @@ join_file (struct file_info *finfo, Vers_TS *vers)
         && strcmp (vers->ts_user, vers->ts_rcs) == 0
         && strcmp (rev2, vers->vn_user) == 0)
     {
-	if (!really_quiet)
+	if (!quiet)
 	{
+	    cvs_output ("`", 1);
 	    cvs_output (finfo->fullname, 0);
-	    cvs_output (" already contains the differences between ", 0);
+	    cvs_output ("' already contains the differences between ", 0);
 	    cvs_output (rev1 ? rev1 : "creation", 0);
-	    cvs_output (" and ", 0);
+	    cvs_output (" and ", 5);
 	    cvs_output (rev2, 0);
 	    cvs_output ("\n", 1);
 	}
@@ -2337,25 +2336,46 @@ join_file (struct file_info *finfo, Vers_TS *vers)
            addition.  */
 	if (vers->vn_user == NULL)
 	{
-	    char *saved_options = options;
 	    Vers_TS *xvers;
+	    char *tempfile;
 
-	    xvers = Version_TS (finfo, vers->options, jrev2, jdate2, 1, 0);
-
-	    /* Reset any keyword expansion option.  Otherwise, when a
+	    /* Use NULL for keyword expansion options.  Otherwise, when a
 	       command like `cvs update -kk -jT1 -jT2' creates a new file
 	       (because a file had the T2 tag, but not T1), the subsequent
 	       commit of that just-added file effectively would set the
 	       admin `-kk' option for that file in the repository.  */
-	    options = NULL;
+	    xvers = Version_TS (finfo, NULL, jrev2, jdate2, 1, 0);
 
-	    /* FIXME: If checkout_file fails, we should arrange to
+	    if (!really_quiet)
+		error (0, 0, "scheduling addition from revision %s of `%s'.",
+		       xvers->vn_rcs, finfo->fullname);
+
+	    TRACE (TRACE_DATA, "Adding with keyword mode `%s'", xvers->options);
+
+	    /* FIXME: If base_checkout fails, we should arrange to
                return a non-zero exit status.  */
-	    status = checkout_file (finfo, xvers, 1, 0, 1);
-	    options = saved_options;
+	    tempfile = temp_checkout (xvers->srcfile, finfo,
+				      NULL, xvers->vn_rcs,
+				      xvers->entdata
+				      ? xvers->entdata->tag : NULL,
+				      xvers->tag,
+				      xvers->entdata
+				      ? xvers->entdata->options : NULL,
+				      xvers->options);
+	    /* Added files are always writable until commit.  */
+	    temp_copy (finfo, "ny", tempfile);
+	    free (tempfile);
+
+	    Register (finfo->entries, finfo->file, "0",
+		      "Result of merge", NULL, vers->tag, vers->date, NULL);
+	    if (server_active)
+		/* No need to create a backup for an addition - if the file
+		 * exists, the client will abort with a warning.
+		 */
+		server_updated (finfo, vers, SERVER_UPDATED, (mode_t) -1,
+				NULL, NULL);
 
 	    freevers_ts (&xvers);
-
 	    return;
 	}
 
@@ -2438,18 +2458,28 @@ join_file (struct file_info *finfo, Vers_TS *vers)
        as such).  In the text file case, this is probably quite
        similar to the RCS_merge, but in the binary file case,
        RCS_merge gives all kinds of trouble.  */
-    if (vers->vn_user != NULL
-	&& strcmp (rev1, vers->vn_user) == 0
+    replace_it =
+	vers->vn_user && !strcmp (rev1, vers->vn_user)
 	/* See comments above about how No_Difference has already been
 	   called.  */
-	&& vers->ts_user != NULL
-	&& strcmp (vers->ts_user, vers->ts_rcs) == 0
+	&& vers->ts_user && !strcmp (vers->ts_user, vers->ts_rcs);
 
-	/* Avoid this in the text file case.  See below for why.
-	 */
-	&& (strcmp (t_options, "-kb") == 0
-	    || wrap_merge_is_copy (finfo->file)))
+    if (!strcmp (vers->options, "-kb")
+	|| special_file_mismatch (finfo, rev1, rev2)
+	|| replace_it)
     {
+	if (!really_quiet)
+	{
+	    /* Is there a better term than "nonmergeable file"?  What we
+	       really mean is, not something that CVS cannot or does not
+	       want to merge (there might be an external manual or
+	       automatic merge process).  */
+	    if (!replace_it)
+		error (0, 0, "Nonmergeable file needs merge.");
+	    error (0, 0, "Replacing `%s' with contents of revision %s.",
+		   finfo->fullname, rev2);
+	}
+
 	/* FIXME: Verify my comment below:
 	 *
 	 * RCS_merge does nothing with keywords.  It merges the changes between
@@ -2466,73 +2496,37 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	 * Also, it is safe to pass in NULL for nametag since we know no
 	 * substitution is happening during the binary mode checkout.
 	 */
-	if (RCS_checkout (finfo->rcs, finfo->file, rev2, NULL, t_options,
-			  RUN_TTY, NULL, NULL) != 0)
-	    status = 2;
-	else
+	if (base_checkout (finfo->rcs, finfo, vers->vn_user, rev2,
+			   vers->entdata->tag, vers->tag,
+			   vers->entdata->options, t_options) != 0)
+	    error (1, 0, "Checkout of revision %s of `%s' failed.",
+		   rev2, finfo->fullname);
+
+	base_copy (finfo, rev2, "yy");
+
+	if (replace_it)
+	{
+	    /* FIXME: It would be more consistent if the client printed this
+	     * message when BASES.
+	     */
+	    if (!really_quiet && bases)
+		write_letter (finfo, 'M');
 	    status = 0;
-
-	/* OK, this is really stupid.  RCS_checkout carefully removes
-	   write permissions, and we carefully put them back.  But
-	   until someone gets around to fixing it, that seems like the
-	   easiest way to get what would seem to be the right mode.
-	   I don't check CVSWRITE or _watched; I haven't thought about
-	   that in great detail, but it seems like a watched file should
-	   be checked out (writable) after a merge.  */
-	xchmod (finfo->file, 1);
-
-	/* Traditionally, the text file case prints a whole bunch of
-	   scary looking and verbose output which fails to tell the user
-	   what is really going on (it gives them rev1 and rev2 but doesn't
-	   indicate in any way that rev1 == vn_user).  I think just a
-	   simple "U foo" is good here; it seems analogous to the case in
-	   which the file was added on the branch in terms of what to
-	   print.  */
-	write_letter (finfo, 'U');
-    }
-    else if (strcmp (t_options, "-kb") == 0
-	     || wrap_merge_is_copy (finfo->file)
-	     || special_file_mismatch (finfo, rev1, rev2))
-    {
-	/* We are dealing with binary files, or files with a
-	   permission/linkage mismatch (this second case only occurs when
-	   PRESERVE_PERMISSIONS_SUPPORT is enabled), and real merging would
-	   need to take place.  This is a conflict.  We give the user
-	   the two files, and let them resolve it.  It is possible
-	   that we should require a "touch foo" or similar step before
-	   we allow a checkin.  */
-	if (RCS_checkout (finfo->rcs, finfo->file, rev2, NULL,
-			  t_options, RUN_TTY, NULL, NULL) != 0)
-	    status = 2;
+	}
 	else
-	    status = 0;
-
-	/* OK, this is really stupid.  RCS_checkout carefully removes
-	   write permissions, and we carefully put them back.  But
-	   until someone gets around to fixing it, that seems like the
-	   easiest way to get what would seem to be the right mode.
-	   I don't check CVSWRITE or _watched; I haven't thought about
-	   that in great detail, but it seems like a watched file should
-	   be checked out (writable) after a merge.  */
-	xchmod (finfo->file, 1);
-
-	/* Hmm.  We don't give them REV1 anywhere.  I guess most people
-	   probably don't have a 3-way merge tool for the file type in
-	   question, and might just get confused if we tried to either
-	   provide them with a copy of the file from REV1, or even just
-	   told them what REV1 is so they can get it themself, but it
-	   might be worth thinking about.  */
-	/* See comment in merge_file about the "nonmergeable file"
-	   terminology.  */
-	error (0, 0, "nonmergeable file needs merge");
-	error (0, 0, "revision %s from repository is now in %s",
-	       rev2, finfo->fullname);
-	error (0, 0, "file from working directory is now in %s", backup);
-	write_letter (finfo, 'C');
+	{
+	    if (!really_quiet)
+	    {
+		error (0, 0, "File from working directory is now in `%s'.",
+		       backup);
+	    }
+	    status = 1;
+	}
     }
     else
-	status = RCS_merge (finfo->rcs, vers->srcfile->path, finfo->file,
-			    t_options, rev1, rev2);
+	status = base_merge (finfo->rcs, finfo, vers->entdata->tag,
+			     vers->entdata->options, t_options,
+			     vers->vn_user, rev1, rev2, true);
 
     if (status != 0)
     {
@@ -2544,28 +2538,54 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 		   finfo->fullname, backup);
 	    rename_file (backup, finfo->file);
 	}
+	else if (!really_quiet)
+	    /* FIXME: It would be more consistent if the client printed
+	     * this message when BASES.
+	     */
+	    write_letter (finfo, 'C');
     }
-    else /* status == 0 */
+    else if (!bases) /* status == 0 */
     {
+	bool unchanged, isbase;
+	char *basefile;
+	/* The client will handle these messages when BASES.  */
+
 	/* FIXME: the noexec case is broken.  RCS_merge could be doing the
 	   xcmp on the temporary files without much hassle, I think.  */
 	if (!noexec && !xcmp (backup, finfo->file))
+	    unchanged = true;
+	else
+	    unchanged = false;
+	basefile = make_base_file_name (finfo->file, vers->vn_user);
+	if (!noexec
+	    && ((isfile (basefile) && !xcmp (basefile, finfo->file))
+		|| (strcmp (vers->vn_user, "0")
+		    && !RCS_cmp_file (finfo->rcs, vers->tag, vers->vn_user,
+				      NULL, NULL, vers->options,
+				      finfo->file))))
+	    isbase = true;
+	else
+	    isbase = false;
+	free (basefile);
+	if (unchanged && !quiet)
 	{
-	    if (!really_quiet)
-	    {
-		cvs_output (finfo->fullname, 0);
-		cvs_output (" already contains the differences between ", 0);
-		cvs_output (rev1, 0);
-		cvs_output (" and ", 0);
-		cvs_output (rev2, 0);
-		cvs_output ("\n", 1);
-	    }
+	    cvs_output ("`", 1);
+	    cvs_output (finfo->fullname, 0);
+	    cvs_output ("' already contains the differences between ", 0);
+	    cvs_output (rev1, 0);
+	    cvs_output (" and ", 5);
+	    cvs_output (rev2, 0);
+	    cvs_output ("\n", 1);
+	}
 
+	if (!isbase && !really_quiet)
+	    write_letter (finfo, 'M');
+
+	if (unchanged)
 	    /* and skip the registering and sending the new file since it
 	     * hasn't been updated.
 	     */
 	    goto out;
-	}
     }
 
     /* The file has changed, but if we just checked it out it may
@@ -2578,7 +2598,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
        RCS_checkout above, and we aren't running as the server.
        However, that is not the normal case, and calling Register
        again won't cost much in that case.  */
-    RegisterMerge (finfo, vers, backup, status);
+    RegisterMerge (finfo, vers, backup, status, false);
 
 out:
     free (rev1);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1994-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1994-2006 The Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -11,6 +11,24 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "history.h"
+
+/* GNULIB headers.  */
+#include "save-cwd.h"
+
+/* CVS headers.  */
+#include "ignore.h"
+#include "repos.h"
+
+#include "cvs.h"
+
+
 
 /* **************** History of Users and Module ****************
  *
@@ -187,9 +205,7 @@
  *
  */
 
-#include "cvs.h"
-#include "history.h"
-#include "save-cwd.h"
+
 
 static struct hrec
 {
