@@ -1,3 +1,7 @@
+2006-04-13  Derek Price  <derek@ximbiot.com>
+
+	* server.h (TRACE_NULL): New macro.
+
 2006-04-12  Derek Price  <derek@ximbiot.com>
 
 	* client.c: Include inttypes.h unconditionally.

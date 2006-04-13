@@ -19,6 +19,9 @@
 #define STDERR_FILENO 2
 #endif
 
+/* For printing strings which may be NULL in printf.  */
+#define TRACE_NULL(str)		((str) ? (str) : "(null)")
+
 
 /*
  * Nonzero if we are using the server.  Used by various places to call
