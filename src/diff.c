@@ -978,7 +978,14 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 	    label2 = make_file_label (DEVNULL, NULL, NULL, NULL);
 	else
 	    label2 = make_file_label (finfo->fullname, use_rev2,
-	                              vers->ts_user, finfo->rcs);
+				      /* FIXME: make_file_label should be able
+				       * to trust vers->ts_user, but
+				       * Version_TS isn't setting it correctly
+				       * when base files are suppressed.
+				       */
+	                              server_active
+				      ? "Is-modified" : vers->ts_user,
+				      finfo->rcs);
 	if (!have_rev1_label)
 	{
 	    if (empty_file == DIFF_ADDED)
