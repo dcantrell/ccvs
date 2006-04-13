@@ -17,7 +17,7 @@ dnl From Derek Price.
 AC_DEFUN([gl_FULL_HEADER_PATH],
 [AC_LANG_PREPROC_REQUIRE()dnl
 AC_REQUIRE([gl_INCLUDE_NEXT])dnl
-if test $gl_cv_include_next = no; then
+if test $gl_cv_have_include_next = no; then
 AC_FOREACH([gl_HEADER_NAME], [$1],
   [AS_VAR_PUSHDEF([gl_full_header_path],
                   [gl_cv_full_path_]m4_quote(m4_defn([gl_HEADER_NAME])))dnl
