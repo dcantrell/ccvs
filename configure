@@ -22901,7 +22901,7 @@ esac
   fi
 
 
-if test $gl_cv_include_next = no; then
+if test $gl_cv_have_include_next = no; then
   echo "$as_me:$LINENO: checking full path to <inttypes.h>" >&5
 echo $ECHO_N "checking full path to <inttypes.h>... $ECHO_C" >&6
 if test "${gl_cv_full_path_inttypes_h+set}" = set; then
