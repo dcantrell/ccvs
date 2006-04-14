@@ -17,7 +17,6 @@
 ## Subdirectories to run make in for the primary targets.
 EXTRA_DIST = \
 	gnulib-filelist.txt \
-	gnulib-modules \
 	gnulib-update \
 	srclist.txt
 

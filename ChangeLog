@@ -1,3 +1,7 @@
+2006-04-14  Derek Price  <derek@ximbiot.com>
+
+	* maint-aux/gnulib-modules: Remove obsolete file.
+
 2006-04-14  Mark D. Baushke  <mdb@gnu.org>
 
 	* maint-aux/gnulib-update: Bug fix for --help test.
