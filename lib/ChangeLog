@@ -1,3 +1,7 @@
+2006-04-14  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.gnulib: Regenerated via gnulib-update.
+
 2006-04-14  Mark D. Baushke  <mdb@gnu.org>
 
 	* regcomp.c, regex.h: Update from GNULIB.
