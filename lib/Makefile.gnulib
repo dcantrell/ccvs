@@ -243,12 +243,6 @@ mostlyclean-local:
 
 ## end   gnulib module sys_socket
 
-## begin gnulib module time_r
-
-libgnu_a_SOURCES += time_r.h
-
-## end   gnulib module time_r
-
 ## begin gnulib module unistd
 
 BUILT_SOURCES += $(UNISTD_H)
