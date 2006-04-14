@@ -29,7 +29,7 @@ GNULIB_DEFAULT=../gnulib
 : ${GNULIB=$GNULIB_DEFAULT}
 GNULIB_TOOL=$GNULIB/gnulib-tool
 
-if test x"$1" == x--help; then
+if test x"$1" = x--help; then
   usage
   cat <<EOF
 
