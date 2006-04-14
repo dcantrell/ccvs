@@ -78,6 +78,8 @@ fi
 if test -f m4/error.m4.save; then
   mv m4/error.m4.save m4/error.m4
 fi
+# Clean up temp files.
+rm -f maint-aux/gnulib-filelist.tmp maint-aux/gnulib-filelist.new
 exit $status' EXIT
 	
 # Prevent lib/Makefile.am from being overwritten.
@@ -102,10 +104,17 @@ else
 fi
 
 # Extract the names of the files we imported.
-$GNULIB_TOOL --extract-filelist |sort |uniq |sed '/^$/d' \
-	>maint-aux/gnulib-filelist.new
+rm -f maint-aux/gnulib-filelist.tmp
+for module in `sed -n '/^gl_MODULES/{s/^gl_MODULES(\[\(.*\)\])$/\1/;p;}' \
+		   <m4/gnulib-cache.m4`; do
+  $GNULIB_TOOL --extract-filelist $module >>maint-aux/gnulib-filelist.tmp
+done
+sort <maint-aux/gnulib-filelist.tmp \
+  |uniq |sed '/^$/d' \
+  >maint-aux/gnulib-filelist.new
+rm maint-aux/gnulib-filelist.tmp
 
-# Warn the user if the filelist has changed.
+# Warn the user if the file list has changed.
 if cmp maint-aux/gnulib-filelist.txt maint-aux/gnulib-filelist.new >/dev/null
 then
   # Avoid munging timestamps when nothing's changed.

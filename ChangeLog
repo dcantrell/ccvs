@@ -1,5 +1,8 @@
 2006-04-14  Derek Price  <derek@ximbiot.com>
 
+	* maint-aux/gnulib-update: Update code to construct file list.
+	* maint-aux/gnulib-filelist.txt: Regenerated via gnulib-update.
+
 	* maint-aux/gnulib-modules: Remove obsolete file.
 
 2006-04-14  Mark D. Baushke  <mdb@gnu.org>
