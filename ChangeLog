@@ -1,3 +1,7 @@
+2006-04-14  Mark D. Baushke  <mdb@gnu.org>
+
+	* maint-aux/gnulib-update: Bug fix for --help test.
+
 2006-04-12  Derek Price  <derek@ximbiot.com>
 
 	* maint-aux/gnulib-update: Allow import of new modules.  Add help text
