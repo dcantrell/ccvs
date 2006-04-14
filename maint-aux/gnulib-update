@@ -79,7 +79,9 @@ if test -f m4/error.m4.save; then
   mv m4/error.m4.save m4/error.m4
 fi
 # Clean up temp files.
-rm -f maint-aux/gnulib-filelist.tmp maint-aux/gnulib-filelist.new
+rm -f maint-aux/gnulib-filelist.tmp maint-aux/gnulib-filelist.new \
+      maint-aux/gnulib-modules.tmp maint-aux/gnulib-modules.new \
+      maint-aux/gnulib-modules.last maint-aux/gnulib-modules.txt
 exit $status' EXIT
 	
 # Prevent lib/Makefile.am from being overwritten.
@@ -104,15 +106,42 @@ else
 fi
 
 # Extract the names of the files we imported.
+sed -n '/^gl_MODULES/{s/^gl_MODULES(\[\(.*\)\])$/\1/;p;}' \
+    <m4/gnulib-cache.m4 >maint-aux/gnulib-modules.txt
+rm -f maint-aux/gnulib-modules.last
+touch maint-aux/gnulib-modules.last
+while :; do
+  rm -f maint-aux/gnulib-modules.tmp
+  touch maint-aux/gnulib-modules.tmp
+  for module in `cat maint-aux/gnulib-modules.txt`; do
+    if grep -w $module maint-aux/gnulib-modules.last >/dev/null; then
+      # Don't check the same module twice.
+      continue
+    fi
+    $GNULIB_TOOL --extract-dependencies $module >>maint-aux/gnulib-modules.tmp
+  done
+  cat maint-aux/gnulib-modules.txt maint-aux/gnulib-modules.tmp \
+    |sort |uniq |sed '/^$/d' \
+    > maint-aux/gnulib-modules.new
+  if cmp maint-aux/gnulib-modules.txt maint-aux/gnulib-modules.new >/dev/null
+  then
+    # If the files are the same then there are no more dependencies.
+    break
+  fi
+  mv maint-aux/gnulib-modules.txt maint-aux/gnulib-modules.last
+  mv maint-aux/gnulib-modules.new maint-aux/gnulib-modules.txt
+done
+rm maint-aux/gnulib-modules.tmp maint-aux/gnulib-modules.new \
+   maint-aux/gnulib-modules.last
+
 rm -f maint-aux/gnulib-filelist.tmp
-for module in `sed -n '/^gl_MODULES/{s/^gl_MODULES(\[\(.*\)\])$/\1/;p;}' \
-		   <m4/gnulib-cache.m4`; do
+for module in `cat maint-aux/gnulib-modules.txt`; do
   $GNULIB_TOOL --extract-filelist $module >>maint-aux/gnulib-filelist.tmp
 done
 sort <maint-aux/gnulib-filelist.tmp \
   |uniq |sed '/^$/d' \
   >maint-aux/gnulib-filelist.new
-rm maint-aux/gnulib-filelist.tmp
+rm maint-aux/gnulib-modules.txt maint-aux/gnulib-filelist.tmp
 
 # Warn the user if the file list has changed.
 if cmp maint-aux/gnulib-filelist.txt maint-aux/gnulib-filelist.new >/dev/null
