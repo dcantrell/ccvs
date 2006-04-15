@@ -1,3 +1,9 @@
+2006-04-15  Larry Jones  <lawrence.jones@ugs.com>
+
+	* history.c (sort_order): Add prototype.
+	* server.c (template_proc): Add prototype and make args const.
+	* update.c (RegisterMerge): Make static to match prototype.
+
 2006-04-07  Derek Price  <derek@ximbiot.com>
 
 	* client.c (strto_file_size): New function which checks for errors when
