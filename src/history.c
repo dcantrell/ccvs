@@ -327,6 +327,9 @@ static const char *const history_usg[] =
    - Always sort timestamp last.
 */
 static int
+sort_order PROTO((const PTR l, const PTR r));
+
+static int
 sort_order (l, r)
     const PTR l;
     const PTR r;

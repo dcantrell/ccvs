@@ -4552,9 +4552,12 @@ struct template_proc_data
 static struct template_proc_data *tpd;
 
 static int
+template_proc PROTO((const char *repository, const char *template));
+
+static int
 template_proc (repository, template)
-    char *repository;
-    char *template;
+    const char *repository;
+    const char *template;
 {
     FILE *fp;
     char buf[1024];
