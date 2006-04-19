@@ -1,3 +1,7 @@
+2006-04-19  Derek Price  <derek@ximbiot.com>
+
+	* inttypes.h: Update from GNULIB.
+
 2006-04-14  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.gnulib: Regenerated via gnulib-update.
