@@ -1,3 +1,7 @@
+2006-04-19  Larry Jones  <lawrence.jones@ugs.com>
+
+	* history.c (sort_order): Back out previous change - not needed.
+
 2006-04-15  Larry Jones  <lawrence.jones@ugs.com>
 
 	* history.c (sort_order): Add prototype.
