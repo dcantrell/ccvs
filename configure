@@ -22930,7 +22930,7 @@ fi
 echo "$as_me:$LINENO: result: $gl_cv_full_path_inttypes_h" >&5
 echo "${ECHO_T}$gl_cv_full_path_inttypes_h" >&6
 cat >>confdefs.h <<_ACEOF
-#define FULL_PATH_INTTYPES_H "$gl_cv_full_path_inttypes_h"
+#define FULL_PATH_INTTYPES_H <$gl_cv_full_path_inttypes_h>
 _ACEOF
 
   fi
