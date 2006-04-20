@@ -1998,7 +1998,7 @@ fd_buffer_output (void *closure, const char *data, size_t have, size_t *wrote)
 		if (!blocking_error (errno))
 		{
 		    status = errno;
-		    break;
+		    goto block_done;
 		}
 		/* else Everything's fine, we just didn't get any data.  */
 	    }
@@ -2084,7 +2084,7 @@ fd_buffer_block (void *closure, bool block)
 	bool isdevnull = false;
 
 	if (devnull_set == -1)
-	    devnull_set = stat ("/dev/null", &devnull);
+	    devnull_set = stat (DEVNULL, &devnull);
 
 	if (devnull_set >= 0)
 	    /* Equivalent to /dev/null ? */
