@@ -1854,6 +1854,7 @@ fd_buffer_input (void *closure, char *data, size_t need, size_t size,
 		if (numfds < 0 && errno != EINTR)
 		{
 		    status = errno;
+		    assert (status);
 		    goto block_done;
 		}
 		else if (numfds == 0)
@@ -1876,13 +1877,13 @@ fd_buffer_input (void *closure, char *data, size_t need, size_t size,
 		     * on the fact that we will read EOF again next time.
 		     */
 		    status = 0;
-		    break;
+		    goto block_done;
 		}
 		else
 		{
 		    /* Return EOF.  */
 		    status = -1;
-		    break;
+		    goto block_done;
 		}
 	    }
 
@@ -1892,7 +1893,8 @@ fd_buffer_input (void *closure, char *data, size_t need, size_t size,
 		if (!blocking_error (errno))
 		{
 		    status = errno;
-		    break;
+		    assert (status);
+		    goto block_done;
 		}
 		/* else Everything's fine, we just didn't get any data.  */
 	    }
@@ -1981,6 +1983,7 @@ fd_buffer_output (void *closure, const char *data, size_t have, size_t *wrote)
 		if (numfds < 0 && errno != EINTR)
 		{
 		    status = errno;
+		    assert (status);
 		    goto block_done;
 		}
 		else if (numfds == 0)
@@ -1998,6 +2001,7 @@ fd_buffer_output (void *closure, const char *data, size_t have, size_t *wrote)
 		if (!blocking_error (errno))
 		{
 		    status = errno;
+		    assert (status);
 		    goto block_done;
 		}
 		/* else Everything's fine, we just didn't get any data.  */
@@ -2005,6 +2009,7 @@ fd_buffer_output (void *closure, const char *data, size_t have, size_t *wrote)
 	    else
 		*wrote += nbytes;
 	} while (*wrote < have);
+	assert (*wrote == have);
 
 block_done:
 	if (status == 0)
