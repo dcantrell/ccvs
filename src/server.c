@@ -3666,7 +3666,7 @@ error  \n");
     dev_null_fd = CVS_OPEN (DEVNULL, O_RDONLY);
     if (dev_null_fd < 0)
     {
-	buf_output0 (buf_to_net, "E open /dev/null failed\n");
+	buf_output0 (buf_to_net, "E open " DEVNULL " failed\n");
 	print_error (errno);
 	goto error_exit;
     }

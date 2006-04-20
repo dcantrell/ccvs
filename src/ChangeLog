@@ -1,3 +1,8 @@
+2006-04-20  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (fd_buffer_block), server.c (do_cvs_command): Use DEVNULL
+	macro in place of string literal.
+
 2006-04-13  Derek Price  <derek@ximbiot.com>
 
 	* server.h (TRACE_NULL): New macro.
