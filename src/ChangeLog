@@ -1,5 +1,8 @@
 2006-04-20  Derek Price  <derek@ximbiot.com>
 
+	* buffer.c (fd_buffer_input, fd_buffer_output): Negative return values
+	from read and write are never byte counts.
+
 	* buffer.c (fd_buffer_block), server.c (do_cvs_command): Use DEVNULL
 	macro in place of string literal.
 

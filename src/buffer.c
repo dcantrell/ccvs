@@ -1896,8 +1896,8 @@ fd_buffer_input (void *closure, char *data, size_t need, size_t size,
 		}
 		/* else Everything's fine, we just didn't get any data.  */
 	    }
-
-	    *got += nbytes;
+	    else
+		*got += nbytes;
 	} while (*got < need);
 
 block_done:
@@ -2002,8 +2002,8 @@ fd_buffer_output (void *closure, const char *data, size_t have, size_t *wrote)
 		}
 		/* else Everything's fine, we just didn't get any data.  */
 	    }
-
-	    *wrote += nbytes;
+	    else
+		*wrote += nbytes;
 	} while (*wrote < have);
 
 block_done:
