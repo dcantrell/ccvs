@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1994-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1994-2006 The Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,6 +13,14 @@
  */
 
 /* Interface between the client and the rest of CVS.  */
+
+#ifndef CLIENT_H
+#define CLIENT_H
+
+#include <sys/types.h>
+#include "root.h"
+
+
 
 /* Stuff shared with the server.  */
 char *mode_to_string (mode_t);
@@ -112,15 +120,15 @@ send_file_names (int argc, char **argv, unsigned int flags);
  * the files to operate on (or empty for everything), not options.
  * local is nonzero if we should not recurse (-l option).
  */
-void
-send_files (int argc, char **argv, int local, int aflag,
-		  unsigned int flags);
+void send_files (int argc, char **argv, int local, int aflag,
+		 unsigned int flags);
 
 /* Flags for send_files.  */
 # define SEND_BUILD_DIRS	(1 << 0)
 # define SEND_FORCE		(1 << 1)
 # define SEND_NO_CONTENTS	(1 << 2)
 # define BACKUP_MODIFIED_FILES	(1 << 3)
+# define FORCE_SIGNATURES	(1 << 4)
 
 /* Send an argument to the remote server.  */
 void
@@ -219,3 +227,5 @@ struct hostent *init_sockaddr (struct sockaddr_in *, char *, unsigned int);
 #endif
 
 #endif /* CLIENT_SUPPORT */
+
+#endif /* CLIENT_H */

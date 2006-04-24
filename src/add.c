@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -30,9 +30,25 @@
  */
 
 #include <assert.h>
-#include "cvs.h"
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* GNULIB headers.  */
 #include "save-cwd.h"
+
+/* CVS headers.  */
+#include "base.h"
 #include "fileattr.h"
+#include "ignore.h"
+#include "logmsg.h"
+#include "repos.h"
+#include "wrapper.h"
+
+#include "cvs.h"
+
+
 
 static int add_directory (struct file_info *finfo);
 static int build_entry (const char *repository, const char *user,
@@ -469,7 +485,7 @@ add (int argc, char **argv)
 			     */
 			    char *prev = previous_rev (vers->srcfile,
 			                               vers->vn_rcs);
-			    int status;
+			    char *tempfile;
 			    if (prev == NULL)
 			    {
 				/* There is no previous revision.  Either:
@@ -493,12 +509,11 @@ add (int argc, char **argv)
 				error (0, 0,
 "Resurrecting file `%s' from revision %s.",
 			               finfo.fullname, prev);
-			    status = RCS_checkout (vers->srcfile, finfo.file,
-						   prev, vers->tag,
-						   vers->options, RUN_TTY,
-			                           NULL, NULL);
-			    xchmod (finfo.file, 1);
-			    if (status != 0)
+			    tempfile = temp_checkout (vers->srcfile, &finfo,
+						      NULL, prev, NULL,
+						      vers->tag,
+						      NULL, vers->options);
+			    if (!tempfile)
 			    {
 				error (0, 0, "Failed to resurrect revision %s",
 				       prev);
@@ -507,11 +522,13 @@ add (int argc, char **argv)
 			    else
 			    {
 				/* I don't actually set vers->ts_user here
-				 * because it would confuse server_update().
+				 * because it would confuse server_update ().
 				 */
+				temp_copy (&finfo, "ny", tempfile);
 				timestamp = time_stamp (finfo.file);
 				if (!really_quiet)
 				    write_letter (&finfo, 'U');
+				free (tempfile);
 			    }
 			    free (prev);
 			}
@@ -601,18 +618,19 @@ add (int argc, char **argv)
 		else
 		{
 		    int status;
+		    char *tmp;
+
 		    /*
 		     * There is an RCS file, so remove the "-" from the
 		     * version number and restore the file
 		     */
-		    char *tmp = xstrdup (vers->vn_user + 1);
-		    (void) strcpy (vers->vn_user, tmp);
-		    free (tmp);
-		    status = RCS_checkout (vers->srcfile, finfo.file,
-					   vers->vn_user, vers->tag,
-					   vers->options, RUN_TTY,
-					   NULL, NULL);
-		    xchmod (finfo.file, cvswrite);
+		    memmove (vers->vn_user, vers->vn_user + 1,
+			     strlen (vers->vn_user));
+		    status = base_checkout (vers->srcfile, &finfo,
+					    vers->vn_user, vers->vn_user,
+					    vers->entdata->tag, vers->tag,
+					    vers->entdata->options,
+					    vers->options);
 		    if (status != 0)
 		    {
 			error (0, 0, "Failed to resurrect revision %s.",
@@ -625,8 +643,11 @@ add (int argc, char **argv)
 			/* I don't actually set vers->ts_user here because it
 			 * would confuse server_update().
 			 */
+			base_copy (&finfo, vers->vn_user,
+				   cvswrite ? "ny" : "nn");
 			tmp = time_stamp (finfo.file);
-			write_letter (&finfo, 'U');
+			if (!really_quiet)
+			    write_letter (&finfo, 'U');
 			if (!quiet)
 			     error (0, 0, "`%s', version %s, resurrected",
 			            finfo.fullname, vers->vn_user);

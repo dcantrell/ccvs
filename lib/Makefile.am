@@ -80,6 +80,12 @@ EXTRA_DIST += allocsa.valgrind
 
 ## end   gnulib module allocsa
 
+## begin gnulib module base64
+
+libcvs_a_SOURCES += base64.h base64.c
+
+## end   gnulib module base64
+
 ## begin gnulib module cycle-check
 
 libcvs_a_SOURCES += cycle-check.c cycle-check.h dev-ino.h

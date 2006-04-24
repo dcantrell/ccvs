@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -17,7 +17,17 @@
  * all the files in the directory (recursive by default).
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* CVS headers.  */
+#include "ignore.h"
+#include "recurse.h"
+
 #include "cvs.h"
+
+
 
 /* Options from the command line.  */
 

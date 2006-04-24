@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -11,9 +11,22 @@
  * specified in the README file that comes with the CVS source distribution.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "logmsg.h"
+
+/* GNULIB Headers.  */
+#include "getline.h"
+
+/* CVS Headers.  */
+#include "repos.h"
 
 #include "cvs.h"
-#include "getline.h"
+
+
 
 static int find_type (Node * p, void *closure);
 static int fmt_proc (Node * p, void *closure);

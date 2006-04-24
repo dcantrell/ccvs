@@ -1,14 +1,25 @@
-/* Interface to "cvs edit", "cvs watch on", and related features
+/*
+ * Copyright (C) 2006 The Free Software Foundation, Inc.
+ *
+ * Interface to "cvs edit", "cvs watch on", and related features
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+#ifndef EDIT_H
+#define EDIT_H
 
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.  */
+#include "hash.h"
+
+
 
 int watch_on (int argc, char **argv);
 int watch_off (int argc, char **argv);
@@ -42,3 +53,5 @@ void editors_output (const char *fullname, const char *them);
 
 void edit_file (void *data, List *ent_list, const char *short_pathname,
 		const char *filename);
+
+#endif /* EDIT_H */

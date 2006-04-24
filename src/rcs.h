@@ -13,6 +13,16 @@
  * RCS source control definitions needed by rcs.c and friends
  */
 
+#ifndef RCS_H
+#define RCS_H
+
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <sys/types.h>
+
+#include "hash.h"
+
 /* Strings which indicate a conflict if they occur at the start of a line.  */
 #define	RCS_MERGE_PAT_1 "<<<<<<< "
 #define	RCS_MERGE_PAT_2 "=======\n"
@@ -126,6 +136,42 @@ struct rcsnode
 
 typedef struct rcsnode RCSNode;
 
+
+
+/* This is the structure that the recursion processor passes to the
+ * fileproc to tell it about a particular file.
+ *
+ * FIXME: This should be in recurse.h.
+ */
+struct file_info
+{
+    /* Name of the file, without any directory component.  */
+    const char *file;
+
+    /* Name of the directory we are in, relative to the directory in
+       which this command was issued.  We have cd'd to this directory
+       (either in the working directory or in the repository, depending
+       on which sort of recursion we are doing).  If we are in the directory
+       in which the command was issued, this is "".  */
+    const char *update_dir;
+
+    /* update_dir and file put together, with a slash between them as
+       necessary.  This is the proper way to refer to the file in user
+       messages.  */
+    const char *fullname;
+
+    /* Name of the directory corresponding to the repository which contains
+       this file.  */
+    const char *repository;
+
+    /* The pre-parsed entries for this directory.  */
+    List *entries;
+
+    RCSNode *rcs;
+};
+
+
+
 struct deltatext {
     char *version;
 
@@ -229,11 +275,17 @@ char *RCS_getexpand (RCSNode *);
 void RCS_setexpand (RCSNode *, const char *);
 int RCS_checkout (RCSNode *, const char *, const char *, const char *,
                   const char *, const char *, RCSCHECKOUTPROC, void *);
+bool RCS_get_openpgp_signatures (struct file_info *finfo, const char *rev,
+				 char **out, size_t *len);
+bool RCS_has_openpgp_signatures (struct file_info *finfo, const char *rev);
+void RCS_add_openpgp_signature (struct file_info *finfo, const char *rev);
+int RCS_delete_openpgp_signatures (struct file_info *finfo, const char *rev,
+				   uint32_t keyid);
 int RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile,
 		 const char *message, const char *rev, time_t citime,
 		 int flags);
-int RCS_cmp_file (RCSNode *, const char *, char **, const char *, const char *,
-		  const char * );
+int RCS_cmp_file (RCSNode *, const char *, const char *, char **, const char *,
+		  const char *, const char *);
 int RCS_settag (RCSNode *, const char *, const char *);
 int RCS_deltag (RCSNode *, const char *);
 int RCS_setbranch (RCSNode *, const char *);
@@ -252,7 +304,7 @@ void RCS_deltas (RCSNode *, FILE *, struct rcsbuffer *, const char *,
 		 char **, size_t *);
 void RCS_setincexc (void **, const char *arg);
 void RCS_setlocalid (const char *, unsigned int, void **, const char *arg);
-char *make_file_label (const char *, const char *, RCSNode *);
+char *make_file_label (const char *, const char *, const char *, RCSNode *);
 
 extern bool preserve_perms;
 extern int annotate_width;
@@ -263,3 +315,9 @@ extern int add_rcs_file (const char *, const char *, const char *,
                          const char *, int, char **, const char *, size_t,
                          FILE *, bool);
 void free_keywords (void *keywords);
+bool contains_keyword (char *buf, size_t len);
+void RCS_output_diff_options (int diff_argc, char * const *diff_argv,
+			      bool devnull, const char *rev1, const char *rev2,
+			      const char *workfile);
+
+#endif /* RCS_H */

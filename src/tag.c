@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -17,8 +17,22 @@
  * the modules database, if necessary.
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* GNULIB headers.  */
 #include "save-cwd.h"
+
+/* CVS headers.  */
+#include "classify.h"
+#include "ignore.h"
+#include "recurse.h"
+#include "repos.h"
+
+#include "cvs.h"
+
+
 
 static int rtag_proc (int argc, char **argv, char *xwhere,
 		      char *mwhere, char *mfile, int shorten,
@@ -240,9 +254,10 @@ cvstag (int argc, char **argv)
 	{
 	    send_files (argc, argv, local, 0,
 
-		    /* I think the -c case is like "cvs status", in
-		       which we really better be correct rather than
-		       being fast; it is just too confusing otherwise.  */
+			/* I think the -c case is like "cvs status", in
+			 * which we really better be correct rather than
+			 * being fast; it is just too confusing otherwise.
+			 */
 			check_uptodate ? 0 : SEND_NO_CONTENTS);
 	    send_file_names (argc, argv, SEND_EXPAND_WILD);
 	    send_to_server ("tag\012", 0);

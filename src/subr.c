@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -13,13 +13,24 @@
  * Various useful functions for the CVS support code.
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
+/* Verify interface.  */
+#include "subr.h"
+
+/* GNULIB headers.  */
 #include "canonicalize.h"
 #include "canon-host.h"
 #include "getline.h"
 #include "vasprintf.h"
 #include "vasnprintf.h"
+
+/* CVS headers.  */
+#include "wrapper.h"
+
+#include "cvs.h"
 
 /* Get wint_t.  */
 #ifdef HAVE_WINT_T
@@ -609,6 +620,31 @@ out:
 
 
 
+bool
+file_contains_keyword (const struct file_info *finfo)
+{
+    FILE *fp;
+    bool result;
+    struct stat st;
+    char *content;
+
+    fp = CVS_FOPEN (finfo->file, "r");
+    if (fp == NULL)
+	error (1, errno, "cannot open %s", finfo->fullname);
+    if (fstat (fileno (fp), &st))
+	error (1, errno, "cannot fstat `%s'", finfo->fullname);
+    content = xmalloc (st.st_size);
+    if (fread (content, sizeof *content, st.st_size, fp) < st.st_size)
+	error (1, errno, "Failed to read from `%s'", finfo->fullname);
+    result = contains_keyword (content, st.st_size);
+    if (fclose (fp) < 0)
+	error (0, errno, "cannot close %s", finfo->fullname);
+    free (content);
+    return result;
+}
+
+
+
 /* Read the entire contents of the file NAME into *BUF.
    If NAME is NULL, read from stdin.  *BUF
    is a pointer returned from malloc (or NULL), pointing to *BUFSIZE
@@ -695,6 +731,44 @@ get_file (const char *name, const char *fullname, const char *mode, char **buf,
     if (nread == *bufsize)
 	expand_string (buf, bufsize, *bufsize + 1);
     (*buf)[nread] = '\0';
+}
+
+
+
+/* Write DATA of length LEN to FILE, ignoring NOEXEC.  */
+void
+force_write_file (const char *file, const char *data, size_t len)
+{
+    FILE *fp;
+
+    TRACE (TRACE_FUNCTION,
+	   "force_write_file (%s, %s, %u)", file, data, (unsigned int)len);
+
+    if (!(fp = fopen (file, "wb")))
+	error (1, errno, "cannot create `%s'", file);
+
+    if (len > 0)
+    {
+	if (fwrite (data, sizeof *data, len, fp) != len)
+	    error (1, errno, "cannot write file `%s'", file);
+    }
+
+    if (fclose (fp) < 0)
+	error (1, errno, "cannot close `%s'", file);
+}
+
+
+
+/* Write DATA of length LEN to FILE, honoring NOEXEC.  */
+void
+write_file (const char *file, const char *data, size_t len)
+{
+    TRACE (TRACE_FUNCTION,
+	   "write_file (%s, %s, %u)", file, data, (unsigned int)len);
+
+    if (noexec) return;
+
+    force_write_file (file, data, len);
 }
 
 
@@ -1689,15 +1763,23 @@ format_cmdline (const char *format, ...)
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 			    /* the *only* case possible without
 			     * SUPPORT_OLD_INFO_FORMAT_STRINGS
-			     * - !onearg */
-			    if (!inquotes)
+			     * - !onearg
+			     */
+			    /* Avoid adding an empty argument for NULL data.
+			     */
+			    if (!inquotes && b->data)
 			    {
 				doff = d - buf;
 				expand_string (&buf, &length, doff + 1);
 				d = buf + doff;
 				*d++ = '"';
 			    }
-			    outstr = cmdlineescape (inquotes ? inquotes : '"', b->data);
+			    if (b->data)
+				outstr = cmdlineescape (inquotes ? inquotes
+								 : '"',
+							b->data);
+			    else
+				outstr = xstrdup ("");
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 			} /* onearg */
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
@@ -1711,7 +1793,7 @@ format_cmdline (const char *format, ...)
 			{
 			    free(outstr);
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-			    if (!inquotes)
+			    if (!inquotes && b->data)
 			    {
 				doff = d - buf;
 				expand_string (&buf, &length, doff + 1);

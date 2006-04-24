@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -11,14 +11,35 @@
  * specified in the README file that comes with the CVS source distribution.
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "parseinfo.h"
+
+/* GNULIB includes.  */
 #include "getline.h"
+
+/* CVS includes.  */
 #include "history.h"
+#include "repos.h"
+
+#include "cvs.h"
 
 
 /* From admin.c.  */
 char *make_UserAdminOptions (const char *infopath, unsigned int ln,
 			     const char *s);
+
+
+
+/***
+ ***
+ ***   CVSROOT/config options
+ ***
+ ***/
+struct config *config;
 
 
 
@@ -529,7 +550,11 @@ parse_config (const char *cvsroot, const char *path)
 
 	/* The first '=' separates keyword from value.  */
 	p = strchr (line, '=');
-	if (!p)
+	if (p)
+	    *p++ = '\0';
+	else if (
+		 /* The following keys have optional arguments.  */
+		 strcmp (line, "VerifyCommits"))
 	{
 	    if (!parse_error (infopath, ln))
 		error (0, 0,
@@ -538,7 +563,6 @@ parse_config (const char *cvsroot, const char *path)
 	    continue;
 	}
 
-	*p++ = '\0';
 
 	if (strcmp (line, "RCSBIN") == 0)
 	{
@@ -703,6 +727,60 @@ parse_config (const char *cvsroot, const char *path)
 	    readSizeT (infopath, "MaxCompressionLevel", p,
 		       &retval->MaxCompressionLevel);
 #endif /* SERVER_SUPPORT */
+	else if (!strcmp (line, "VerifyCommits"))
+	{
+	    if (retval->VerifyCommits != VERIFY_DEFAULT)
+		error (0, 0,
+"%s [%u]: warning: duplicate VerifyCommits entry found.",
+		       infopath, ln);
+
+	    if (!p)
+		retval->VerifyCommits = VERIFY_FATAL;
+	    else if (!strcasecmp (p, "fatal"))
+		retval->VerifyCommits = VERIFY_FATAL;
+	    else if (!strcasecmp (p, "warn"))
+		retval->VerifyCommits = VERIFY_WARN;
+	    else
+	    {
+		bool on;
+		if (readBool (infopath, "VerifyCommits", p, &on))
+		{
+		    if (on) retval->VerifyCommits = VERIFY_FATAL;
+		    else retval->VerifyCommits = VERIFY_OFF;
+		}
+		/* else
+		 *   A warning was already printed.  Don't munge any
+		 *   previous value on error.
+		 */
+	    }
+	}
+	else if (!strcmp (line, "VerifyTemplate"))
+	{
+	    if (retval->VerifyTemplate)
+	    {
+		free (retval->VerifyTemplate);
+		error (0, 0,
+"%s [%u]: warning: duplicate VerifyTemplate entry found.",
+		       infopath, ln);
+	    }
+	    retval->VerifyTemplate = xstrdup (p);
+	}
+	else if (!strcmp (line, "OpenPGPTextmode"))
+	{
+	    if (retval->OpenPGPTextmode)
+	    {
+		free (retval->OpenPGPTextmode);
+		error (0, 0,
+"%s [%u]: warning: duplicate OpenPGPTextmode entry found.",
+		       infopath, ln);
+	    }
+	    retval->OpenPGPTextmode = xstrdup (p);
+	}
+	else if (!strcmp (line, "VerifyArg"))
+	{
+	    if (!retval->VerifyArgs) retval->VerifyArgs = getlist ();
+	    push_string (retval->VerifyArgs, xstrdup (p));
+	}
 	else
 	    /* We may be dealing with a keyword which was added in a
 	       subsequent version of CVS.  In that case it is a good idea

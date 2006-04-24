@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -14,10 +14,25 @@
  *
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "recurse.h"
+
+/* GNULIB headers.  */
 #include "save-cwd.h"
-#include "fileattr.h"
+
+/* CVS headers.  */
 #include "edit.h"
+#include "fileattr.h"
+#include "repos.h"
+#include "wrapper.h"
+
+#include "cvs.h"
+
+
 
 static int do_dir_proc (Node * p, void *closure);
 static int do_file_proc (Node * p, void *closure);

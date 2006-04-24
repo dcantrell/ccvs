@@ -17,28 +17,35 @@
    definitions under operating systems (like, say, Windows NT) with different
    file system semantics.  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "filesubr.h"
+
+/* GNULIB */
 #include "lstat.h"
 #include "save-cwd.h"
 #include "xsize.h"
 
+/* CVS */
+#include "cvs.h"
+
 static int deep_remove_dir (const char *path);
 
+
+
 /*
- * Copies "from" to "to".
+ * Copies FROM to TO.  Ignores NOEXEC.
  */
 void
-copy_file (const char *from, const char *to)
+force_copy_file (const char *from, const char *to)
 {
     struct stat sb;
     struct utimbuf t;
     int fdin, fdout;
     ssize_t rsize;
-
-    TRACE (TRACE_FUNCTION, "copy(%s,%s)", from, to);
-
-    if (noexec)
-	return;
 
     /* If the file to be copied is a link or a device, then just create
        the new link or device appropriately. */
@@ -109,6 +116,19 @@ copy_file (const char *from, const char *to)
 
 
 
+/*
+ * Copies FROM to TO.  Honors NOEXEC.
+ */
+void
+copy_file (const char *from, const char *to)
+{
+    TRACE (TRACE_FUNCTION, "copy (%s, %s)", from, to);
+    if (noexec) return;
+    force_copy_file (from, to);
+}
+
+
+
 /* FIXME-krp: these functions would benefit from caching the char * &
    stat buf.  */
 
@@ -131,6 +151,11 @@ isdir (const char *file)
 /*
  * Returns 0 if the argument file is not a symbolic link.
  * Returns size of the link if it is a symbolic link.
+ *
+ * FIXME: Is there a good reason that the off_t specified by POSIX for st_size
+ *        (http://www.opengroup.org/susv3xbd/sys/stat.h.html) is converted to
+ *        ssize_t here?  rcs.h uses off_t, so it's not because off_t isn't
+ *        portable.
  */
 ssize_t
 islink (const char *file)
@@ -324,6 +349,8 @@ mkdir_if_needed (const char *name)
     return 0;
 }
 
+
+
 /*
  * Change the mode of a file, either adding write permissions, or removing
  * all write permissions.  Either change honors the current umask setting.
@@ -331,8 +358,8 @@ mkdir_if_needed (const char *name)
  * Don't do anything if PreservePermissions is set to `yes'.  This may
  * have unexpected consequences for some uses of xchmod.
  */
-void
-xchmod (const char *fname, int writable)
+static void
+ixchmod (const char *fname, bool writable, bool noexec)
 {
     struct stat sb;
     mode_t mode, oumask;
@@ -351,16 +378,12 @@ xchmod (const char *fname, int writable)
     oumask = umask (0);
     (void) umask (oumask);
     if (writable)
-    {
 	mode = sb.st_mode | (~oumask
 			     & (((sb.st_mode & S_IRUSR) ? S_IWUSR : 0)
 				| ((sb.st_mode & S_IRGRP) ? S_IWGRP : 0)
 				| ((sb.st_mode & S_IROTH) ? S_IWOTH : 0)));
-    }
     else
-    {
 	mode = sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH) & ~oumask;
-    }
 
     TRACE (TRACE_FUNCTION, "chmod(%s,%o)", fname, (unsigned int) mode);
 
@@ -370,6 +393,26 @@ xchmod (const char *fname, int writable)
     if (chmod (fname, mode) < 0)
 	error (0, errno, "cannot change mode of file %s", fname);
 }
+
+
+
+/* See description for ixchmod.  Ignores NOEXEC.  */
+void
+force_xchmod (const char *fname, bool writable)
+{
+    ixchmod (fname, writable, false);
+}
+
+
+
+/* See description for ixchmod.  Honors NOEXEC.  */
+void
+xchmod (const char *fname, bool writable)
+{
+    ixchmod (fname, writable, noexec);
+}
+
+
 
 /*
  * Rename a file and die if it fails
@@ -387,7 +430,8 @@ rename_file (const char *from, const char *to)
 }
 
 /*
- * unlink a file, if possible.
+ * unlink a file, if possible.  Use CVS_UNLINK if you want to ignore the
+ * noexec flag.
  */
 int
 unlink_file (const char *f)
