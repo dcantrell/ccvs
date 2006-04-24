@@ -481,6 +481,105 @@ server will use the closest level allowed by the server administrator to
 compress returned data.  This option only has an effect when passed to
 the \fBcvs\fR client.
 .SP
+.IX "OpenPGP Signatures"
+.IX "Commit Signatures"
+.IP "" 0
+\fB-g\fR
+.IP "" 2
+.IP "" 0
+\fB--sign\fR
+.IP "" 2
+.IP "" 0
+\fB--no-sign\fR
+.IP "" 2
+Force OpenPGP signatures on or off.  \fB-g\fR & \fB--sign\fR will cause the
+commit to abort if the server does not support OpenPGP signatures.  Without one
+of these options, CVS will autonegotiate signing, attempting to sign commits
+when the server supports it.  Overrides the \fBsign\fR and \fBno-sign\fR
+method options.
+.SP
+.IP "" 0
+\fB--sign-template \fItemplate\fB\fR
+.IP "" 2
+Use \fItemplate\fR as the command line template to generate OpenPGP signatures.
+Format strings in this template are substituted before the commit is run:
+.SP
+.IP "" 2
+\fB%t\fR
+.IP "" 4
+Substitute in the textmode flag (defaults to \fB--textmode\fR) when a
+signature is being generated for a text file.
+.SP
+.IP "" 2
+\fB%a\fR
+.IP "" 4
+Substitute in any \fIarg\fRs set via the \fB--sign-arg\fR option or the
+CVSROOT sign-arg method option.
+.SP
+.IP "" 2
+\fB%s\fR
+.IP "" 4
+Substitute the name of the file to generate a signature for.
+.SP
+This template should send the generated signature to its standard output.
+Overrides the \fBsign-template\fR method option and defaults to something like
+\fB/usr/bin/gpg --detach-sign --output - %t %a %s\fR.
+.SP
+.IP "" 0
+\fB--textmode\fR
+.IP "" 2
+The value passed to both in place of %t in both the OpenPGP signature
+and the OpenPGP verification command line templates.  Defaults to
+\fB--textmode\fR.
+.SP
+.IP "" 0
+\fB--verify\fR
+.IP "" 2
+.IP "" 0
+\fB--no-verify\fR
+.IP "" 2
+Force OpenPGP signature verification on checkout off, or set the failure mode.
+With a failure mode of \fBwarn\fR, the user will be warned of invalid
+signatures but the checkout will be allowed.  With a failure mode of
+\fBfatal\fR, the checkout will be aborted when the first corrupt file is
+received.  If the server does not support OpenPGP signatures, a failure mode
+of \fBfatal\fR will disallow the entire checkout.  Overrides the \fBverify\fR
+and \fBno-verify\fR method options (see node `The connection method\(aq in the CVS manual).
+.SP
+.IP "" 0
+\fB--verify-template=\fItemplate\fB\fR
+.IP "" 2
+Use \fItemplate\fR as the command line template to verify OpenPGP signatures.
+Format strings in this template are substituted before the command is run:
+.SP
+.IP "" 2
+\fB%t\fR
+.IP "" 4
+Substitute in the textmode flag (defaults to \fB--textmode\fR) when a
+signature is being verified for a text file.
+.SP
+.IP "" 2
+\fB%a\fR
+.IP "" 4
+Substitute in any \fIarg\fRs set via the \fB--verify-arg\fR option or the
+CVSROOT \fBverify-arg\fR method option.
+.SP
+.IP "" 2
+\fB%S\fR
+.IP "" 4
+Substitute the name of the file containing the signature.
+.SP
+.IP "" 2
+\fB%s\fR
+.IP "" 4
+Substitute the name of the signed file.
+.SP
+This template should exit with an exit code of zero if the signature is valid
+for the signed file and a non-zero exit code otherwise.  Overrides the
+\fBverify-template\fR method option see node `The connection method\(aq in the CVS manual and
+defaults to something like
+\fB/usr/bin/gpg --detach-sign --output - %t %a %S %s\fR.
+.SP
 .SH "Common options"
 .SS "Common command options"
 .IX "Common options"
@@ -1467,8 +1566,8 @@ $ cvs checkout -D yesterday tc
 .IX "commit (subcommand)"
 .SP
 .IP "\(bu" 2
-Synopsis: commit [-lRf] [-m \(aqlog_message\(aq |
--F file] [-r revision] [files\&...]
+Synopsis: commit [-fglnR] [-m \(aqlog_message\(aq | -F file] [-r revision]
+		 [files\&...]
 .IP "\(bu" 2
 Requires: working directory, repository.
 .IP "\(bu" 2

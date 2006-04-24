@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -16,8 +16,22 @@
  * the Entries file.
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Validate API.  */
+#include "entries.h"
+
+/* GNULIB */
 #include "getline.h"
+
+/* CVS */
+#include "base.h"
+
+#include "cvs.h"
+
+
 
 static Node *AddEntryNode (List * list, Entnode *entnode);
 
@@ -40,7 +54,11 @@ Entnode_Create (enum ent_type type, const char *user, const char *vn,
                 const char *date, const char *ts_conflict)
 {
     Entnode *ent;
-    
+ 
+    TRACE (TRACE_FLOW,
+	   "Entnode_Create (%s, %s, %s, %s, %s, %s, %s)",
+	   user, vn, ts, options, tag, date, ts_conflict);
+
     /* Note that timestamp and options must be non-NULL */
     ent = xmalloc (sizeof (Entnode));
     ent->type      = type;
@@ -63,6 +81,8 @@ static void Entnode_Destroy (Entnode *);
 static void
 Entnode_Destroy (Entnode *ent)
 {
+    TRACE (TRACE_FLOW, "Entnode_Destroy ()");
+
     free (ent->user);
     free (ent->version);
     free (ent->timestamp);
@@ -156,6 +176,7 @@ write_entries (List *list)
 
 /*
  * Removes the argument file from the Entries file if necessary.
+ * Deletes the base file, if it existed.
  */
 void
 Scratch_Entry (List *list, const char *fname)
@@ -169,6 +190,9 @@ Scratch_Entry (List *list, const char *fname)
     {
 	if (!noexec)
 	{
+	    Entnode *e = node->data;
+	    base_remove (fname, e->version);
+
 	    entfilename = CVSADM_ENTLOG;
 	    entfile = xfopen (entfilename, "a");
 
@@ -198,11 +222,16 @@ Scratch_Entry (List *list, const char *fname)
  */
 void
 Register (List *list, const char *fname, const char *vn, const char *ts,
-          const char *options, const char *tag, const char *date,
-          const char *ts_conflict)
+	  const char *options, const char *tag, const char *date,
+	  const char *ts_conflict)
 {
     Entnode *entnode;
     Node *node;
+
+    TRACE (TRACE_FUNCTION, "Register(%s, %s, %s%s%s, %s, %s %s)",
+	   fname, vn, ts ? ts : "",
+	   ts_conflict ? "+" : "", ts_conflict ? ts_conflict : "",
+	   options, tag ? tag : "", date ? date : "");
 
 #ifdef SERVER_SUPPORT
     if (server_active)
@@ -210,11 +239,6 @@ Register (List *list, const char *fname, const char *vn, const char *ts,
 	server_register (fname, vn, ts, options, tag, date, ts_conflict);
     }
 #endif
-
-    TRACE (TRACE_FUNCTION, "Register(%s, %s, %s%s%s, %s, %s %s)",
-	   fname, vn, ts ? ts : "",
-	   ts_conflict ? "+" : "", ts_conflict ? ts_conflict : "",
-	   options, tag ? tag : "", date ? date : "");
 
     entnode = Entnode_Create (ENT_FILE, fname, vn, ts, options, tag, date,
 			      ts_conflict);
@@ -441,6 +465,8 @@ Entries_Open (int aflag, char *update_dir)
     FILE *fpin;
     int sawdir;
 
+    TRACE (TRACE_FLOW, "EntriesOpen (%s)", update_dir);
+
     /* get a fresh list... */
     entries = getlist ();
 
@@ -575,6 +601,9 @@ static Node *
 AddEntryNode (List *list, Entnode *entdata)
 {
     Node *p;
+
+    TRACE (TRACE_FLOW, "AddEntryNode (%s, %s)",
+	   entdata->user, entdata->timestamp);
 
     /* was it already there? */
     if ((p  = findnode_fn (list, entdata->user)) != NULL)
@@ -930,204 +959,4 @@ Subdir_Deregister (List *entries, const char *parent, const char *dir)
 	if (p != NULL)
 	    delnode (p);
     }
-}
-
-
-
-/* OK, the following base_* code tracks the revisions of the files in
-   CVS/Base.  We do this in a file CVS/Baserev.  Separate from
-   CVS/Entries because it needs to go in separate data structures
-   anyway (the name in Entries must be unique), so this seemed
-   cleaner.  The business of rewriting the whole file in
-   base_deregister and base_register is the kind of thing we used to
-   do for Entries and which turned out to be slow, which is why there
-   is now the Entries.Log machinery.  So maybe from that point of
-   view it is a mistake to do this separately from Entries, I dunno.  */
-
-enum base_walk
-{
-    /* Set the revision for FILE to *REV.  */
-    BASE_REGISTER,
-    /* Get the revision for FILE and put it in a newly malloc'd string
-       in *REV, or put NULL if not mentioned.  */
-    BASE_GET,
-    /* Remove FILE.  */
-    BASE_DEREGISTER
-};
-
-static void base_walk (enum base_walk, struct file_info *, char **);
-
-/* Read through the lines in CVS/Baserev, taking the actions as documented
-   for CODE.  */
-
-static void
-base_walk (enum base_walk code, struct file_info *finfo, char **rev)
-{
-    FILE *fp;
-    char *line;
-    size_t line_allocated;
-    FILE *newf;
-    char *baserev_fullname;
-    char *baserevtmp_fullname;
-
-    line = NULL;
-    line_allocated = 0;
-    newf = NULL;
-
-    /* First compute the fullnames for the error messages.  This
-       computation probably should be broken out into a separate function,
-       as recurse.c does it too and places like Entries_Open should be
-       doing it.  */
-    if (finfo->update_dir[0] != '\0')
-    {
-	baserev_fullname = Xasprintf ("%s/%s", finfo->update_dir,
-				      CVSADM_BASEREV);
-	baserevtmp_fullname = Xasprintf ("%s/%s", finfo->update_dir,
-					 CVSADM_BASEREVTMP);
-    }
-    else
-    {
-	baserev_fullname = xstrdup (CVSADM_BASEREV);
-	baserevtmp_fullname = xstrdup (CVSADM_BASEREVTMP);
-    }
-
-    fp = CVS_FOPEN (CVSADM_BASEREV, "r");
-    if (fp == NULL)
-    {
-	if (!existence_error (errno))
-	{
-	    error (0, errno, "cannot open %s for reading", baserev_fullname);
-	    goto out;
-	}
-    }
-
-    switch (code)
-    {
-	case BASE_REGISTER:
-	case BASE_DEREGISTER:
-	    newf = CVS_FOPEN (CVSADM_BASEREVTMP, "w");
-	    if (newf == NULL)
-	    {
-		error (0, errno, "cannot open %s for writing",
-		       baserevtmp_fullname);
-		goto out;
-	    }
-	    break;
-	case BASE_GET:
-	    *rev = NULL;
-	    break;
-    }
-
-    if (fp != NULL)
-    {
-	while (getline (&line, &line_allocated, fp) >= 0)
-	{
-	    char *linefile;
-	    char *p;
-	    char *linerev;
-
-	    if (line[0] != 'B')
-		/* Ignore, for future expansion.  */
-		continue;
-
-	    linefile = line + 1;
-	    p = strchr (linefile, '/');
-	    if (p == NULL)
-		/* Syntax error, ignore.  */
-		continue;
-	    linerev = p + 1;
-	    p = strchr (linerev, '/');
-	    if (p == NULL)
-		continue;
-
-	    linerev[-1] = '\0';
-	    if (fncmp (linefile, finfo->file) == 0)
-	    {
-		switch (code)
-		{
-		case BASE_REGISTER:
-		case BASE_DEREGISTER:
-		    /* Don't copy over the old entry, we don't want it.  */
-		    break;
-		case BASE_GET:
-		    *p = '\0';
-		    *rev = xstrdup (linerev);
-		    *p = '/';
-		    goto got_it;
-		}
-	    }
-	    else
-	    {
-		linerev[-1] = '/';
-		switch (code)
-		{
-		case BASE_REGISTER:
-		case BASE_DEREGISTER:
-		    if (fprintf (newf, "%s\n", line) < 0)
-			error (0, errno, "error writing %s",
-			       baserevtmp_fullname);
-		    break;
-		case BASE_GET:
-		    break;
-		}
-	    }
-	}
-	if (ferror (fp))
-	    error (0, errno, "cannot read %s", baserev_fullname);
-    }
- got_it:
-
-    if (code == BASE_REGISTER)
-    {
-	if (fprintf (newf, "B%s/%s/\n", finfo->file, *rev) < 0)
-	    error (0, errno, "error writing %s",
-		   baserevtmp_fullname);
-    }
-
- out:
-
-    if (line != NULL)
-	free (line);
-
-    if (fp != NULL)
-    {
-	if (fclose (fp) < 0)
-	    error (0, errno, "cannot close %s", baserev_fullname);
-    }
-    if (newf != NULL)
-    {
-	if (fclose (newf) < 0)
-	    error (0, errno, "cannot close %s", baserevtmp_fullname);
-	rename_file (CVSADM_BASEREVTMP, CVSADM_BASEREV);
-    }
-
-    free (baserev_fullname);
-    free (baserevtmp_fullname);
-}
-
-/* Return, in a newly malloc'd string, the revision for FILE in CVS/Baserev,
-   or NULL if not listed.  */
-
-char *
-base_get (struct file_info *finfo)
-{
-    char *rev;
-    base_walk (BASE_GET, finfo, &rev);
-    return rev;
-}
-
-/* Set the revision for FILE to REV.  */
-
-void
-base_register (struct file_info *finfo, char *rev)
-{
-    base_walk (BASE_REGISTER, finfo, &rev);
-}
-
-/* Remove FILE.  */
-
-void
-base_deregister (struct file_info *finfo)
-{
-    base_walk (BASE_DEREGISTER, finfo, NULL);
 }

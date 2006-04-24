@@ -18,6 +18,21 @@
 #ifndef SUBR_H
 # define SUBR_H
 
+/* FIXME - This shouldn't be needed here.  Any routine that needs to understand
+ * the underlying structure of an RCSNode should be in rcs*.c.
+ */
+#include "rcs.h"
+
+
+
+#ifdef USE_VMS_FILENAMES
+# define BAKPREFIX	"_$"
+#else /* USE_VMS_FILENAMES */
+# define BAKPREFIX	".#"		/* when rcsmerge'ing */
+#endif /* USE_VMS_FILENAMES */
+
+
+
 void expand_string (char **, size_t *, size_t);
 char *Xreadlink (const char *link, size_t size);
 void xrealloc_and_strcat (char **, size_t *, const char *);
@@ -34,8 +49,11 @@ char *gca (const char *rev1, const char *rev2);
 void check_numeric (const char *, int, char **);
 char *make_message_rcsvalid (const char *message);
 int file_has_markers (const struct file_info *);
+bool file_contains_keyword (const struct file_info *finfo);
 void get_file (const char *, const char *, const char *,
                char **, size_t *, size_t *);
+void force_write_file (const char *file, const char *data, size_t len);
+void write_file (const char *file, const char *data, size_t len);
 void resolve_symlink (char **filename);
 char *backup_file (const char *file, const char *suffix);
 char *shell_escape (char *buf, const char *str);

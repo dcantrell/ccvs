@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -20,15 +20,25 @@
  * Returns non-zero on error.
  */
 
-#include "cvs.h"
-#include "fileattr.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* CVS */
+#include "base.h"
 #include "edit.h"
+#include "fileattr.h"
+#include "wrapper.h"
+
+#include "cvs.h"
+
+
 
 int
 Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 	 char *options, char *message)
 {
-    Vers_TS *vers;
+    Vers_TS *vers, *pvers;
     int set_time;
     char *tocvsPath = NULL;
 
@@ -51,6 +61,7 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
      */
     assert (finfo->rcs != NULL);
 
+    pvers = Version_TS (finfo, NULL, tag, NULL, 1, 0);
     switch (RCS_checkin (finfo->rcs, finfo->update_dir, finfo->file, message,
 			 rev, 0, RCS_FLAGS_KEEPFILE))
     {
@@ -80,24 +91,42 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 #endif /* PRESERVE_PERMISSIONS_SUPPORT */
 		 && options
 		 && (!strcmp (options, "-ko") || !strcmp (options, "-kb")))
-		|| !RCS_cmp_file (finfo->rcs, rev, NULL, NULL,
+		|| !RCS_cmp_file (finfo->rcs, pvers->tag, rev, NULL, NULL,
 	                          options, finfo->file))
-	    {
 		/* The existing file is correct.  We don't have to do
                    anything.  */
 		set_time = 0;
-	    }
 	    else
+		set_time = 1;
+
+	    vers = Version_TS (finfo, NULL, tag, NULL, 1, set_time);
+
+	    if (set_time)
 	    {
 		/* The existing file is incorrect.  We need to check
                    out the correct file contents.  */
-		if (RCS_checkout (finfo->rcs, finfo->file, rev, NULL,
-				  options, RUN_TTY, NULL, NULL) != 0)
+		if (base_checkout (finfo->rcs, finfo, pvers->vn_user,
+				   vers->vn_rcs, pvers->entdata->tag,
+				   vers->tag, pvers->entdata->options,
+				   options))
 		    error (1, 0, "failed when checking out new copy of %s",
 			   finfo->fullname);
-		xchmod (finfo->file, 1);
+		base_copy (finfo, vers->vn_rcs,
+			   cvswrite && !fileattr_get (finfo->file, "_watched")
+			   ? "yy" : "yn");
 		set_time = 1;
 	    }
+	    else if (!suppress_bases)
+	    {
+		/* Still need to update the base file.  */
+		char *basefile;
+		mkdir_if_needed (CVSADM_BASE);
+		basefile = make_base_file_name (finfo->file, vers->vn_rcs);
+		copy_file (finfo->file, basefile);
+		free (basefile);
+	    }
+	    /* Remove the previous base file, in local mode.  */
+	    base_remove (finfo->file, pvers->vn_user);
 
 	    wrap_fromcvs_process_file (finfo->file);
 
@@ -109,7 +138,6 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 		xchmod (finfo->file, 0);
 
 	    /* Re-register with the new data.  */
-	    vers = Version_TS (finfo, NULL, tag, NULL, 1, set_time);
 	    if (strcmp (vers->options, "-V4") == 0)
 		vers->options[0] = '\0';
 	    Register (finfo->entries, finfo->file, vers->vn_rcs, vers->ts_user,

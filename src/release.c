@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1994-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1994-2006 The Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,21 @@
  * delete the local working directory.
  */
 
-#include "cvs.h"
-#include "save-cwd.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* GNULIB headers.  */
 #include "getline.h"
+#include "save-cwd.h"
 #include "yesno.h"
+
+/* CVS headers.  */
+#include "ignore.h"
+
+#include "cvs.h"
+
+
 
 static const char *const release_usage[] =
 {

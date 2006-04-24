@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -14,8 +14,23 @@
  * manipulation
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "rcs.h"
+
+/* GNULIB headers.  */
+#include "base64.h"
+
+/* CVS headers.  */
 #include "edit.h"
+#include "gpg.h"
+#include "repos.h"
+#include "sign.h"
+
+#include "cvs.h"
 #include "hardlink.h"
 
 /* These need to be source after cvs.h or HAVE_MMAP won't be set... */
@@ -428,6 +443,17 @@ l_error:
 
 
 
+/* Return a Node type for a newphrase buffer entry.  */
+static Ntype
+rcsbuf_get_node_type (struct rcsbuffer *rcsbuf)
+{
+    if (rcsbuf_valcmp (rcsbuf)) return RCSCMPFLD;
+    /* else */ if (rcsbuf->at_string) return RCSSTRING;
+    /* else */ return RCSFIELD;
+}
+
+
+
 /* Do the real work of parsing an RCS file.
 
    On error, die with a fatal error; if it returns at all it was successful.
@@ -579,9 +605,10 @@ RCS_reparsercsfile (RCSNode *rdata, FILE **pfp, struct rcsbuffer *rcsbufp)
 	if (rdata->other == NULL)
 	    rdata->other = getlist ();
 	kv = getnode ();
-	kv->type = rcsbuf_valcmp (&rcsbuf) ? RCSCMPFLD : RCSFIELD;
+        kv->type = rcsbuf_get_node_type (&rcsbuf);
 	kv->key = xstrdup (key);
-	kv->data = rcsbuf_valcopy (&rcsbuf, value, kv->type == RCSFIELD, NULL);
+	kv->data = rcsbuf_valcopy (&rcsbuf, value, kv->type != RCSCMPFLD,
+				   &kv->len);
 	if (addnode (rdata->other, kv) != 0)
 	{
 	    error (0, 0, "warning: duplicate key `%s' in RCS file `%s'",
@@ -783,10 +810,10 @@ RCS_fully_parse (RCSNode *rcs)
 		if (vnode->other == NULL)
 		    vnode->other = getlist ();
 		kv = getnode ();
-		kv->type = rcsbuf_valcmp (&rcsbuf) ? RCSCMPFLD : RCSFIELD;
+		kv->type = rcsbuf_get_node_type (&rcsbuf);
 		kv->key = xstrdup (key);
-		kv->data = rcsbuf_valcopy (&rcsbuf, value, kv->type == RCSFIELD,
-					   NULL);
+		kv->data = rcsbuf_valcopy (&rcsbuf, value,
+					   kv->type != RCSCMPFLD, NULL);
 		if (addnode (vnode->other, kv) != 0)
 		{
 		    error (0, 0,
@@ -3625,6 +3652,105 @@ escape_keyword_value (const char *value, int *free_value)
 
 
 
+/* Search for keywords in the *LEN bytes starting at *START.  Return the
+ * struct rcs_keyword describing the keyword found, or NULL when none is found.
+ * On return, *START will point to the first character after the `$'
+ * introductin the keyword, *END will point to the trailing `$', and *LEN
+ * will be decremented by the number of characters *START was incremented by.
+ *
+ * Not sure how to delcare *START and *END as const here.  I keep getting
+ * warnings.
+ */
+static const struct rcs_keyword *
+next_keyword (char **start, size_t *len, char **end)
+{
+    char *srch, *srch_next, *s = NULL;
+    size_t srch_len;
+    const struct rcs_keyword *keywords, *keyword = NULL;
+
+    if (!config->keywords) config->keywords = new_keywords ();
+    keywords = config->keywords;
+
+    srch = *start;
+    srch_len = *len;
+    TRACE (TRACE_DATA, "next_keyword: searching `%s'", srch);
+    while ((srch_next = memchr (srch, '$', srch_len)))
+    {
+	const char *send;
+	size_t slen;
+
+	srch_len -= (srch_next + 1) - srch;
+	srch = srch_next + 1;
+
+	/* Look for the first non alphabetic character after the '$'.  */
+	send = srch + srch_len;
+	for (s = srch; s < send; s++)
+	    if (!isalpha ((unsigned char) *s))
+		break;
+
+	/* If the first non alphabetic character is not '$' or ':',
+           then this is not an RCS keyword.  */
+	if (s == send || (*s != '$' && *s != ':'))
+	    continue;
+
+	/* See if this is one of the keywords.  */
+	slen = s - srch;
+	for (keyword = keywords; keyword->string; keyword++)
+	{
+	    if (keyword->expandit
+		&& keyword->len == slen
+		&& !strncmp (keyword->string, srch, slen))
+	    {
+		break;
+	    }
+	}
+	if (!keyword->string)
+	    continue;
+
+	/* If the keyword ends with a ':', then the old value consists
+           of the characters up to the next '$'.  If there is no '$'
+           before the end of the line, though, then this wasn't an RCS
+           keyword after all.  */
+
+	if (*s == ':')
+	{
+	    for (; s < send; s++)
+		if (*s == '$' || *s == '\n')
+		    break;
+	    if (s == send || *s != '$')
+		/* not resetting this the last time through this loop can cause
+		 * erroneous return codes.
+		 */
+		keyword = NULL;
+	}
+
+	if (keyword)
+	    break;
+    }
+
+    if (keyword && keyword->string)
+    {
+	*start = srch;
+	*end = s;
+	*len = srch_len;
+	TRACE (TRACE_DATA,
+	       "next_keyword: returning keyword `%s' and remainder `%s'",
+	       keyword->string, s);
+	return keyword;
+    }
+    /* else */ return NULL;
+}
+
+
+
+bool contains_keyword (char *buf, size_t len)
+{
+    char *s;
+    return !!next_keyword (&buf, &len, &s);
+}
+
+
+
 /* Expand RCS keywords in the memory buffer BUF of length LEN.  This
    applies to file RCS and version VERS.  If NAME is not NULL, and is
    not a numeric revision, then it is the symbolic tag used for the
@@ -3647,9 +3773,9 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
     struct expand_buffer *ebuf_last = NULL;
     size_t ebuf_len = 0;
     char *locker;
-    char *srch, *srch_next;
+    char *srch, *s;
     size_t srch_len;
-    const struct rcs_keyword *keywords;
+    const struct rcs_keyword *keywords, *keyword;
 
     if (!config /* For `cvs init', config may not be set.  */
 	||expand == KFLAG_O || expand == KFLAG_B)
@@ -3675,59 +3801,15 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
     /* RCS keywords look like $STRING$ or $STRING: VALUE$.  */
     srch = buf;
     srch_len = len;
-    while ((srch_next = memchr (srch, '$', srch_len)) != NULL)
+    while ((keyword = next_keyword (&srch, &srch_len, &s)))
     {
-	char *s, *send;
-	size_t slen;
-	const struct rcs_keyword *keyword;
 	char *value;
 	int free_value;
 	char *sub;
 	size_t sublen;
-
-	srch_len -= (srch_next + 1) - srch;
-	srch = srch_next + 1;
-
-	/* Look for the first non alphabetic character after the '$'.  */
-	send = srch + srch_len;
-	for (s = srch; s < send; s++)
-	    if (! isalpha ((unsigned char) *s))
-		break;
-
-	/* If the first non alphabetic character is not '$' or ':',
-           then this is not an RCS keyword.  */
-	if (s == send || (*s != '$' && *s != ':'))
-	    continue;
-
-	/* See if this is one of the keywords.  */
-	slen = s - srch;
-	for (keyword = keywords; keyword->string != NULL; keyword++)
-	{
-	    if (keyword->expandit
-		&& keyword->len == slen
-		&& strncmp (keyword->string, srch, slen) == 0)
-	    {
-		break;
-	    }
-	}
-	if (keyword->string == NULL)
-	    continue;
-
-	/* If the keyword ends with a ':', then the old value consists
-           of the characters up to the next '$'.  If there is no '$'
-           before the end of the line, though, then this wasn't an RCS
-           keyword after all.  */
-	if (*s == ':')
-	{
-	    for (; s < send; s++)
-		if (*s == '$' || *s == '\n')
-		    break;
-	    if (s == send || *s != '$')
-		continue;
-	}
-
+	
 	/* At this point we must replace the string from SRCH to S
-           with the expansion of the keyword KW.  */
+           with the expansion of the keyword KEYWORD.  */
 
 	/* Get the value to use.  */
 	free_value = 0;
@@ -4699,6 +4781,241 @@ workfile);
 
 
 
+static const char *
+iRCS_get_openpgp_signatures (RCSNode *rcs, const char *rev, size_t *len)
+{
+    RCSVers *vers;
+    Node *n;
+
+    if (rcs->flags & PARTIAL)
+	RCS_reparsercsfile (rcs, NULL, NULL);
+
+    n = findnode (rcs->versions, rev);
+    if (!n)
+	error (1, 0, "internal error: no revision information for r%s of %s",
+	       rev, rcs->print_path);
+    vers = n->data;
+
+    n = findnode (vers->other_delta, "openpgp-signatures");
+    if (!n)
+	return NULL;
+    /* else */
+
+    if (len) *len = n->len;
+    return n->data;
+}
+
+
+
+/* Returns false on error.  It is not an error if the requested revision has
+ * no OpenPGP signatures, but *OUT will be set to NULL.
+ */
+bool
+RCS_get_openpgp_signatures (struct file_info *finfo, const char *rev,
+			    char **out, size_t *len)
+{
+    const char *b64sig;
+    size_t b64len;
+
+    b64sig = iRCS_get_openpgp_signatures (finfo->rcs, rev, &b64len);
+
+    if (!b64sig)
+    {
+	*out = NULL;
+	*len = 0;
+	return true;
+    }
+
+    if (!base64_decode_alloc (b64sig, b64len, out, len))
+    {
+	error (0, 0, "Failed to decode base64 signature for `%s'",
+	       finfo->fullname);
+	return false;
+    }
+    else if (!*out)
+	xalloc_die ();
+
+    return true;
+}
+
+
+
+/* Return true if the specified revision has any OpenPGP signature data
+ * attached.
+ */
+bool
+RCS_has_openpgp_signatures (struct file_info *finfo, const char *rev)
+{
+    return !!iRCS_get_openpgp_signatures (finfo->rcs, rev, NULL);
+}
+
+
+
+void
+RCS_add_openpgp_signature (struct file_info *finfo, const char *rev)
+{
+    RCSVers *vers;
+    Node *n;
+    char *oldsigs;
+    size_t oldlen;
+    char *newsig;
+    size_t newlen;
+
+    TRACE (TRACE_FUNCTION, "RCS_add_openpgp_signature (%s, %s)",
+	   finfo->fullname, rev);
+
+    if (finfo->rcs->flags & PARTIAL)
+	RCS_reparsercsfile (finfo->rcs, NULL, NULL);
+
+    n = findnode (finfo->rcs->versions, rev);
+    if (!n)
+	error (1, 0, "internal error: no revision information for %s", rev);
+    vers = n->data;
+
+    n = findnode (vers->other_delta, "openpgp-signatures");
+    if (!n)
+    {
+	n = getnode();
+	n->type = RCSSTRING;
+	n->key = xstrdup ("openpgp-signatures");
+	oldsigs = NULL;
+	oldlen = 0;
+	addnode (vers->other_delta, n);
+    }
+    else
+    {
+	TRACE (TRACE_DATA,
+	       "RCS_add_openpgp_signature: found oldsigs = %s, len = %u",
+	       (char *)n->data, (unsigned int)n->len);
+	if (!base64_decode_alloc (n->data, n->len, &oldsigs, &oldlen))
+	    error (1, 0, "Invalid binhex data in signature (`%s', rev %s)",
+		   finfo->rcs->print_path, rev);
+	if (!oldsigs)
+	    xalloc_die ();
+	free (n->data);
+    }
+
+    newsig = get_signature (Short_Repository (finfo->repository), finfo->file,
+			    finfo->rcs->expand
+			    && STREQ (finfo->rcs->expand, "b"),
+			    &newlen);
+
+    oldsigs = xrealloc (oldsigs, oldlen + newlen);
+    memcpy (oldsigs + oldlen, newsig, newlen);
+    free (newsig);
+
+    n->len = base64_encode_alloc (oldsigs, oldlen + newlen, (char **)&n->data);
+    free (oldsigs);
+
+    TRACE (TRACE_DATA,
+	   "RCS_add_openpgp_signature: found oldsigs = %s, len = %u",
+	   (char *)n->data, (unsigned int)n->len);
+
+    RCS_rewrite (finfo->rcs, NULL, NULL);
+}
+
+
+
+int
+RCS_delete_openpgp_signatures (struct file_info *finfo, const char *rev,
+			       uint32_t keyid)
+{
+    RCSVers *vers;
+    Node *n;
+    char *oldsigs;
+    size_t oldlen;
+    struct buffer *membuf;
+    struct openpgp_signature sig;
+    char *newsigs = NULL;
+    size_t newlen = 0;
+    bool found = false;
+    int rc;
+
+    TRACE (TRACE_FUNCTION, "RCS_delete_openpgp_signatures (%s, %s, %llx)",
+	   finfo->fullname, rev, (unsigned long long)keyid);
+
+    if (finfo->rcs->flags & PARTIAL)
+	RCS_reparsercsfile (finfo->rcs, NULL, NULL);
+
+    n = findnode (finfo->rcs->versions, rev);
+    if (!n)
+	error (1, 0, "internal error: no revision information for %s", rev);
+    vers = n->data;
+
+    n = findnode (vers->other_delta, "openpgp-signatures");
+    if (!n)
+    {
+	error (0, 0, "No signatures attached to revision %s of `%s'",
+	       rev, finfo->fullname);
+	return 1;
+    }
+
+    TRACE (TRACE_DATA,
+	   "RCS_delete_openpgp_signatures: found oldsigs = %s, len = %u",
+	   (char *)n->data, (unsigned int)n->len);
+
+    if (!base64_decode_alloc (n->data, n->len, &oldsigs, &oldlen))
+	error (1, 0, "Invalid binhex data in signature (`%s', rev %s)",
+	       finfo->rcs->print_path, rev);
+    if (!oldsigs)
+	xalloc_die ();
+    free (n->data);
+
+    membuf = buf_nonio_initialize (NULL);
+    buf_output (membuf, oldsigs, oldlen);
+
+    while (!(rc = parse_signature (membuf, &sig)))
+    {
+	char *hexid1 = Xasprintf ("0x%llx", (unsigned long long) keyid);
+	char *hexid2 = Xasprintf ("0x%llx", (unsigned long long) sig.keyid);
+	if ((sig.keyid & 0xFFFFFFFF) == keyid)
+	{
+	    TRACE (TRACE_DATA, "%s is a match for %s", hexid1, hexid2);
+	    found = true;
+	}
+	else
+	{
+	    TRACE (TRACE_DATA, "%s is not a match for %s", hexid1, hexid2);
+	    newsigs = xrealloc (newsigs, newlen + sig.rawlen);
+	    memcpy (newsigs + newlen, sig.raw, sig.rawlen);
+	    newlen += sig.rawlen;
+	}
+	free (hexid1);
+	free (hexid2);
+	free (sig.raw);
+    }
+
+    if (!found)
+    {
+	char *hexid = Xasprintf ("0x%llx", (unsigned long long) keyid);
+	error (0, 0,
+	       "No signatures with key ID %s found in revision %s of `%s'",
+	       hexid, rev, finfo->fullname);
+	free (hexid);
+	if (newsigs) free (newsigs);
+	return 1;
+    }
+
+    if (newsigs)
+    {
+	n->len = base64_encode_alloc (newsigs, newlen, (char **)&n->data);
+	free (newsigs);
+    }
+    else
+	delnode (n);
+
+
+    TRACE (TRACE_DATA,
+	   "RCS_add_openpgp_signature: found oldsigs = %s, len = %u",
+	   (char *)n->data, (unsigned int)n->len);
+
+    RCS_rewrite (finfo->rcs, NULL, NULL);
+
+    return 0;
+}
+
+
+
 /* Find the delta currently locked by the user.  From the `ci' man page:
 
 	"If rev is omitted, ci tries to  derive  the  new  revision
@@ -5032,6 +5349,9 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
 #endif
     Node *np;
 
+    TRACE (TRACE_FUNCTION, "RCS_checkin (%s, %s, %s, %s, %s)",
+	   rcs->print_path, update_dir, workfile_in, message, rev);
+
     commitpt = NULL;
 
     if (rcs->flags & PARTIAL)
@@ -5109,6 +5429,22 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
     np->data = xstrdup(global_session_id);
     addnode (delta->other_delta, np);
 
+    /* Save the OpenPGP signature.  */
+    if (!delta->dead && (get_sign_commits (true) || have_sigfile (workfile)))
+    {
+	char *rawsig;
+	size_t rawlen;
+
+	np = getnode();
+	np->type = RCSSTRING;
+	np->key = xstrdup ("openpgp-signatures");
+	rawsig = get_signature ("", workfile,
+				rcs->expand && STREQ (rcs->expand, "b"),
+				&rawlen);
+	np->len = base64_encode_alloc (rawsig, rawlen, (char **)&np->data);
+	free (rawsig);
+	addnode (delta->other_delta, np);
+    }
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
     /* If permissions should be preserved on this project, then
@@ -5661,8 +5997,9 @@ struct cmp_file_data
    expansion options.  Return 0 if the contents of the revision are
    the same as the contents of the file, 1 if they are different.  */
 int
-RCS_cmp_file (RCSNode *rcs, const char *rev1, char **rev1_cache,
-              const char *rev2, const char *options, const char *filename)
+RCS_cmp_file (RCSNode *rcs, const char *arg_rev1, const char *rev1,
+	      char **rev1_cache, const char *rev2, const char *options,
+	      const char *filename)
 {
     int binary;
 
@@ -5722,7 +6059,9 @@ RCS_cmp_file (RCSNode *rcs, const char *rev1, char **rev1_cache,
 	{
 	    /* Open & cache rev1 */
 	    tmpfile = cvs_temp_name();
-	    if (RCS_checkout (rcs, NULL, rev1, NULL, options, tmpfile,
+	    if (RCS_checkout (rcs, NULL, rev1,
+			      arg_rev1 && !isdigit (arg_rev1[0])
+			      ? arg_rev1 : NULL, options, tmpfile,
 	                      NULL, NULL))
 		error (1, errno,
 		       "cannot check out revision %s of %s",
@@ -7748,6 +8087,7 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	    vnode->state = xstrdup (RCSDEAD);
 	    continue;
 	}
+
 	/* if we have a new revision number, we're done with this delta */
 	for (cp = key;
 	     (isdigit ((unsigned char) *cp) || *cp == '.') && *cp != '\0';
@@ -7764,9 +8104,10 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	if (vnode->other_delta == NULL)
 	    vnode->other_delta = getlist ();
 	kv = getnode ();
-	kv->type = rcsbuf_valcmp (rcsbuf) ? RCSCMPFLD : RCSFIELD;
+	kv->type = rcsbuf_get_node_type (rcsbuf);
 	kv->key = xstrdup (key);
-	kv->data = rcsbuf_valcopy (rcsbuf, value, kv->type == RCSFIELD, NULL);
+	kv->data = rcsbuf_valcopy (rcsbuf, value, kv->type != RCSCMPFLD,
+				   &kv->len);
 	if (addnode (vnode->other_delta, kv) != 0)
 	{
 	    /* Complaining about duplicate keys in newphrases seems
@@ -7849,9 +8190,10 @@ RCS_getdeltatext (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf)
 	    break;
 
 	p = getnode();
-	p->type = rcsbuf_valcmp (rcsbuf) ? RCSCMPFLD : RCSFIELD;
+	p->type = rcsbuf_get_node_type (rcsbuf);
 	p->key = xstrdup (key);
-	p->data = rcsbuf_valcopy (rcsbuf, value, p->type == RCSFIELD, NULL);
+	p->data = rcsbuf_valcopy (rcsbuf, value, p->type != RCSCMPFLD,
+				  &p->len);
 	if (addnode (d->other, p) < 0)
 	{
 	    error (0, 0, "warning: %s, delta %s: duplicate field `%s'",
@@ -7918,23 +8260,17 @@ putrcsfield_proc (Node *node, void *vfp)
     fprintf (fp, "\n%s\t", node->key);
     if (node->data != NULL)
     {
-	/* If the field's value contains evil characters,
+	/* If the field's value may contain evil characters,
 	   it must be stringified. */
-	/* FIXME: This does not quite get it right.  "7jk8f" is not a valid
-	   value for a value in a newpharse, according to doc/RCSFILES,
-	   because digits are not valid in an "id".  We might do OK by
-	   always writing strings (enclosed in @@).  Would be nice to
-	   explicitly mention this one way or another in doc/RCSFILES.
-	   A case where we are wrong in a much more clear-cut way is that
-	   we let through non-graphic characters such as whitespace and
-	   control characters.  */
-
-	if (node->type == RCSCMPFLD || strpbrk (node->data, "$,.:;@") == NULL)
-	    fputs (node->data, fp);
+	if (node->type != RCSSTRING)
+	    fwrite (node->data, 1, node->len ? node->len : strlen (node->data),
+		    fp);
 	else
 	{
 	    putc ('@', fp);
-	    expand_at_signs (node->data, (off_t) strlen (node->data), fp);
+	    expand_at_signs (node->data,
+			     node->len ? node->len : strlen (node->data),
+			     fp);
 	    putc ('@', fp);
 	}
     }
@@ -8689,7 +9025,8 @@ RCS_abandon (RCSNode *rcs)
  * /dev/null to be parsed by patch properly.
  */
 char *
-make_file_label (const char *path, const char *rev, RCSNode *rcs)
+make_file_label (const char *path, const char *rev, const char *ts_user,
+		 RCSNode *rcs)
 {
     char datebuf[MAXDATELEN + 1];
     char *label;
@@ -8698,33 +9035,33 @@ make_file_label (const char *path, const char *rev, RCSNode *rcs)
     {
 	char date[MAXDATELEN + 1];
 	/* revs cannot be attached to /dev/null ... duh. */
-	assert (strcmp(DEVNULL, path));
+	assert (strcmp (DEVNULL, path));
 	RCS_getrevtime (rcs, rev, datebuf, 0);
 	(void) date_to_internet (date, datebuf);
 	label = Xasprintf ("-L%s\t%s\t%s", path, date, rev);
     }
-    else
+    else if (ts_user)
     {
-	struct stat sb;
-	struct tm *wm;
-
-	if (strcmp(DEVNULL, path))
+	if (strcmp (ts_user, "Is-modified"))
 	{
-	    const char *file = last_component (path);
-	    if (stat (file, &sb) < 0)
-		/* Assume that if the stat fails,then the later read for the
-		 * diff will too.
-		 */
-		error (1, errno, "could not get info for `%s'", path);
-	    wm = gmtime (&sb.st_mtime);
+	    struct timespec t;
+	    struct tm *wm;
+	    assert (get_date (&t, ts_user, NULL));
+	    wm = gmtime (&t.tv_sec);
+	    tm_to_internet (datebuf, wm);
+	    label = Xasprintf ("-L%s\t%s", path, datebuf);
 	}
 	else
-	{
-	    time_t t = 0;
-	    wm = gmtime(&t);
-	}
+	    /* Can't get the user's timestamp from the server.  */
+	    label = Xasprintf ("-L%s", path);
+    }
+    else
+    {
+	time_t t = 0;
+	struct tm *wm = gmtime (&t);
 
-	(void) tm_to_internet (datebuf, wm);
+	assert (!strcmp (DEVNULL, path));
+	tm_to_internet (datebuf, wm);
 	label = Xasprintf ("-L%s\t%s", path, datebuf);
     }
     return label;

@@ -34,12 +34,16 @@ static void time_stamp_server (const char *, Vers_TS *, Entnode *);
  *   set_time		If set, set the last modification time of the user file
  *			specified by FINFO to the checkin time of RET->vn_rcs.
  *
+ * OUTPUTS
+ *   finfo		FINFO->RCS will be updated if it was empty and RCS data
+ *			is found and parsed.
+ *
  * RETURNS
  *   Vers_TS structure for FINFO.
  */
 Vers_TS *
-Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
-            int force_tag_match, int set_time)
+Version_TS (struct file_info *finfo, const char *options, const char *tag,
+	    const char *date, int force_tag_match, int set_time)
 {
     Node *p;
     RCSNode *rcsdata;
@@ -47,6 +51,10 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
     struct stickydirtag *sdtp;
     Entnode *entdata;
     char *rcsexpand = NULL;
+
+    TRACE (TRACE_FUNCTION, "Version_TS (%s, %s, %s, %s, %d, %d)",
+	   finfo->fullname, options ? options : "(null)", tag ? tag : "(null)",
+	   date ? date : "(null)", force_tag_match, set_time);
 
     /* get a new Vers_TS struct */
 
@@ -71,6 +79,7 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
 
     if (p == NULL)
     {
+	TRACE (TRACE_DATA, "Version_TS: No entries data found.");
 	entdata = NULL;
     }
     else
@@ -190,6 +199,11 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
     {
 	/* squirrel away the rcsdata pointer for others */
 	vers_ts->srcfile = rcsdata;
+	if (!finfo->rcs)
+	{
+	    rcsdata->refcount++;
+	    finfo->rcs = rcsdata;
+	}
 
 	if (vers_ts->tag && strcmp (vers_ts->tag, TAG_BASE) == 0)
 	{
@@ -271,7 +285,7 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
 	    vers_ts->ts_user = time_stamp (finfo->file);
     }
 
-    return (vers_ts);
+    return vers_ts;
 }
 
 
@@ -318,9 +332,9 @@ time_stamp_server (const char *file, Vers_TS *vers_ts, Entnode *entdata)
 	else if (entdata->conflict
 		 && entdata->conflict[0] == '=')
 	{
-	    /* These just need matching content.  Might as well minimize it.  */
-	    vers_ts->ts_user = xstrdup ("");
-	    vers_ts->ts_conflict = xstrdup ("");
+	    /* These need matching content that doesn't match ->ts_rcs.  */
+	    vers_ts->ts_user = xstrdup ("Is-modified");
+	    vers_ts->ts_conflict = xstrdup ("Is-modified");
 	}
 	else if (entdata->timestamp
 		 && (entdata->timestamp[0] == 'M'

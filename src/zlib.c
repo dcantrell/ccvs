@@ -500,14 +500,18 @@ compress_buffer_shutdown_output (struct buffer *buf)
    it is an error we can't recover from.  */
 
 int
-gunzip_and_write (int fd, const char *fullname, unsigned char *buf,
-		  size_t size)
+gunzip_in_mem (const char *fullname, unsigned char *buf, size_t *size_in,
+	       char **retval)
 {
     size_t pos;
     z_stream zstr;
     int zstatus;
     unsigned char outbuf[32768];
     unsigned long crc;
+    size_t size = *size_in;
+
+    *retval = NULL;
+    *size_in = 0;
 
     if (size < 10)
     {
@@ -609,13 +613,13 @@ gunzip_and_write (int fd, const char *fullname, unsigned char *buf,
 	if (zstatus != Z_STREAM_END && zstatus != Z_OK)
 	{
 	    compress_error (0, zstatus, &zstr, fullname);
+	    if (*retval) free (*retval);
 	    return 1;
 	}
-	if (write (fd, outbuf, sizeof (outbuf) - zstr.avail_out) < 0)
-	{
-	    error (0, errno, "writing decompressed file %s", fullname);
-	    return 1;
-	}
+	*retval = xrealloc (*retval,
+			   *size_in + sizeof (outbuf) - zstr.avail_out);
+	memcpy (*retval + *size_in, outbuf, sizeof (outbuf) - zstr.avail_out);
+	*size_in += sizeof (outbuf) - zstr.avail_out;
 	crc = crc32 (crc, outbuf, sizeof (outbuf) - zstr.avail_out);
     } while (zstatus != Z_STREAM_END);
     zstatus = inflateEnd (&zstr);
@@ -629,6 +633,7 @@ gunzip_and_write (int fd, const char *fullname, unsigned char *buf,
     if (size - pos != 8)
     {
 	error (0, 0, "gzip data incomplete for %s (no trailer)", fullname);
+	if (*retval) free (*retval);
 	return 1;
     }
 
@@ -638,6 +643,7 @@ gunzip_and_write (int fd, const char *fullname, unsigned char *buf,
 		+ ((unsigned long)buf[pos + 3] << 24)))
     {
 	error (0, 0, "CRC error uncompressing %s", fullname);
+	if (*retval) free (*retval);
 	return 1;
     }
 
@@ -647,11 +653,35 @@ gunzip_and_write (int fd, const char *fullname, unsigned char *buf,
 			   + ((unsigned long)buf[pos + 7] << 24)))
     {
 	error (0, 0, "invalid length uncompressing %s", fullname);
+	if (*retval) free (*retval);
 	return 1;
     }
 
     return 0;
 }
+
+
+
+int
+gunzip_and_write (int fd, const char *fullname, unsigned char *buf,
+		  size_t size)
+{
+    char *dbuf;
+
+    if (gunzip_in_mem (fullname, buf, &size, &dbuf)) return 1;
+
+    if (write (fd, dbuf, size) < 0)
+    {
+	error (0, errno, "writing decompressed file %s", fullname);
+	free (dbuf);
+	return 1;
+    }
+
+    free (dbuf);
+    return 0;
+}
+
+
 
 /* Read all of FD and put the gzipped data (RFC1952/RFC1951) into *BUF,
    replacing previous contents of *BUF.  *BUF is xmalloc'd and *SIZE is

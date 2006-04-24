@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -38,7 +38,19 @@
  * edited by the user, if necessary (when the repository is moved, e.g.)
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* CVS headers.  */
+#include "ignore.h"
+#include "recurse.h"
+#include "repos.h"
+#include "wrapper.h"
+
 #include "cvs.h"
+
+
 
 static char *findslash (char *start, char *p);
 static int checkout_proc (int argc, char **argv, char *where,

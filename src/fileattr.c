@@ -1,18 +1,35 @@
-/* Implementation for file attribute munging features.
+/*
+ * Copyright (C) 2006 The Free Software Foundation, Inc.
+ *
+ * Implementation for file attribute munging features.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.  */
+/* Verify interface.  */
+#include "fileattr.h"
+
+/* GNULIB headers.  */
+#include "getline.h"
+
+/* CVS headers.  */
+#include "repos.h"
 
 #include "cvs.h"
-#include "getline.h"
-#include "fileattr.h"
+
+
 
 static void fileattr_read (void);
 static int writeattr_proc (Node *, void *);

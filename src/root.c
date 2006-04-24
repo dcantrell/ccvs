@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -14,9 +14,26 @@
  * Determine the path to the CVSROOT and set "Root" accordingly.
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* Verify interface.  */
+#include "root.h"
+
+/* ANSI C headers.  */
 #include <assert.h>
+
+/* GNULIB headers.  */
 #include "getline.h"
+
+/* CVS headers.  */
+#include "repos.h"
+#include "stack.h"
+
+#include "cvs.h"
+
+
 
 /* Printable names for things in the current_parsed_root->method enum variable.
    Watch out if the enum is changed in cvs.h! */
@@ -392,6 +409,13 @@ new_cvsroot_t (void)
     newroot->directory = NULL;
     newroot->method = null_method;
     newroot->isremote = false;
+    newroot->sign = SIGN_DEFAULT;
+    newroot->sign_template = NULL;
+    newroot->openpgp_textmode = NULL;
+    newroot->sign_args = getlist ();
+    newroot->verify = VERIFY_DEFAULT;
+    newroot->verify_template = NULL;
+    newroot->verify_args = getlist ();
 #if defined CLIENT_SUPPORT || defined SERVER_SUPPORT
     newroot->username = NULL;
     newroot->password = NULL;
@@ -423,6 +447,14 @@ free_cvsroot_t (cvsroot_t *root)
 	free (root->original);
     if (root->directory != NULL)
 	free (root->directory);
+    if (root->sign_template)
+	free (root->sign_template);
+    if (root->openpgp_textmode)
+	free (root->openpgp_textmode);
+    dellist (&root->sign_args);
+    if (root->verify_template)
+	free (root->verify_template);
+    dellist (&root->verify_args);
 #ifdef CLIENT_SUPPORT
     if (root->username != NULL)
 	free (root->username);
@@ -571,7 +603,7 @@ parse_cvsroot (const char *root_in)
 	while ((p = strtok (NULL, ";")))
 	{
 	    char *q = strchr (p, '=');
-	    if (q == NULL)
+	    if (!q && (strcasecmp (p, "sign") || strcasecmp (p, "no-sign")))
 	    {
 	        error (0, 0, "Option (`%s') has no argument in CVSROOT.",
                        p);
@@ -603,6 +635,72 @@ parse_cvsroot (const char *root_in)
 "CVSROOT may only specify a positive, non-zero, integer proxy port (not `%s').",
 			   q);
 	    }
+	    else if (!strcasecmp (p, "sign"))
+	    {
+		if (!q)
+		    newroot->sign = SIGN_ALWAYS;
+		else if (!strcasecmp (q, "auto") || !strcasecmp (q, "server"))
+		    newroot->sign = SIGN_DEFAULT;
+		else
+		{
+		    bool on;
+		    if (readBool ("CVSROOT", "sign", q, &on))
+		    {
+			if (on)
+			    newroot->sign = SIGN_ALWAYS;
+			else
+			    newroot->sign = SIGN_NEVER;
+		    }
+		    else
+			goto error_exit;
+		}
+	    }
+	    else if (!strcasecmp (p, "no-sign"))
+		newroot->sign = SIGN_NEVER;
+	    else if (!strcasecmp (p, "sign-template"))
+		newroot->sign_template = xstrdup (q);
+	    else if (!strcasecmp (p, "openpgp-textmode"))
+	    {
+		if (newroot->openpgp_textmode)
+		    free (newroot->openpgp_textmode);
+		newroot->openpgp_textmode = xstrdup (q);
+	    }
+	    else if (!strcasecmp (p, "no-openpgp-textmode"))
+	    {
+		if (newroot->openpgp_textmode)
+		    free (newroot->openpgp_textmode);
+		newroot->openpgp_textmode = xstrdup ("");
+	    }
+	    else if (!strcasecmp (p, "sign-arg"))
+		push_string (newroot->sign_args, q);
+	    else if (!strcasecmp (p, "no-verify"))
+		newroot->verify = VERIFY_OFF;
+	    else if (!strcasecmp (p, "verify"))
+	    {
+		if (!q)
+		    newroot->verify = VERIFY_FATAL;
+		else if (!strcasecmp (q, "fatal"))
+		    newroot->verify = VERIFY_FATAL;
+		else if (!strcasecmp (q, "warn"))
+		    newroot->verify = VERIFY_WARN;
+		else
+		{
+		    bool on;
+		    if (readBool ("CVSROOT", "verify", q, &on))
+		    {
+			if (on)
+			    newroot->verify = VERIFY_FATAL;
+			else
+			    newroot->verify = VERIFY_OFF;
+		    }
+		    else
+			goto error_exit;
+		}
+	    }
+	    else if (!strcasecmp (p, "verify-template"))
+		newroot->verify_template = xstrdup (q);
+	    else if (!strcasecmp (p, "verify-arg"))
+		push_string (newroot->verify_args, q);
 	    else if (!strcasecmp (p, "CVS_RSH"))
 	    {
 		/* override CVS_RSH environment variable */

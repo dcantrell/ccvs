@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
  *                                  and others.
@@ -17,8 +17,20 @@
  * release as either a date or a revision number.
  */
 
-#include "cvs.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+/* GNULIB headers.  */
 #include "getline.h"
+
+/* CVS headers.  */
+#include "ignore.h"
+#include "recurse.h"
+
+#include "cvs.h"
+
+
 
 static RETSIGTYPE patch_cleanup (int);
 static Dtype patch_dirproc (void *callerdat, const char *dir,

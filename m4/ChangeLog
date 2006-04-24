@@ -1,3 +1,7 @@
+2005-10-27  Derek Price  <derek@ximbiot.com>
+
+	* base64.m4: New file from GNULIB.
+
 2006-04-19  Derek Price  <derek@ximbiot.com>
 
 	* full-header-path.m4, longdouble.m4: Update from GNULIB.
