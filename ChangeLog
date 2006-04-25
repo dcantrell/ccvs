@@ -1,5 +1,7 @@
 2006-04-25  Derek Price  <derek@ximbiot.com>
 
+	* maint-aux/gnulib-filelist.txt: Updated by gnulib-update.
+
 	* maint-aux/gnulib-update: Do cleanup on CTRL-C.
 
 2006-04-12  Derek Price  <derek@ximbiot.com>
