@@ -1,3 +1,7 @@
+2006-04-25  Derek Price  <derek@ximbiot.com>
+
+	* maint-aux/gnulib-update: Do cleanup on CTRL-C.
+
 2006-04-12  Derek Price  <derek@ximbiot.com>
 
 	* m4/error.m4, m4/time_r.m4: Update from GNULIB.
