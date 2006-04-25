@@ -33720,6 +33720,12 @@ fi
 
 
 
+# Avoid using GCC function attributes when they are not available.
+
+
+
+
+
 # Check for function existance.
 
 
