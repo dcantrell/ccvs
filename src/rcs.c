@@ -4916,6 +4916,9 @@ RCS_add_openpgp_signature (struct file_info *finfo, const char *rev)
 
 
 
+/* Delete OpenPGP signature(s) identified by KEYID from revision REV in the RCS
+ * archive attached to FINFO.
+ */
 int
 RCS_delete_openpgp_signatures (struct file_info *finfo, const char *rev,
 			       uint32_t keyid)
@@ -4937,11 +4940,13 @@ RCS_delete_openpgp_signatures (struct file_info *finfo, const char *rev,
     if (finfo->rcs->flags & PARTIAL)
 	RCS_reparsercsfile (finfo->rcs, NULL, NULL);
 
+    /* Find the revision.  */
     n = findnode (finfo->rcs->versions, rev);
     if (!n)
 	error (1, 0, "internal error: no revision information for %s", rev);
     vers = n->data;
 
+    /* Find the OpenPGP signatures data.  */
     n = findnode (vers->other_delta, "openpgp-signatures");
     if (!n)
     {
@@ -4954,16 +4959,20 @@ RCS_delete_openpgp_signatures (struct file_info *finfo, const char *rev,
 	   "RCS_delete_openpgp_signatures: found oldsigs = %s, len = %u",
 	   (char *)n->data, (unsigned int)n->len);
 
+    /* Decode the base64 encoded signature(s).  */
     if (!base64_decode_alloc (n->data, n->len, &oldsigs, &oldlen))
 	error (1, 0, "Invalid binhex data in signature (`%s', rev %s)",
 	       finfo->rcs->print_path, rev);
     if (!oldsigs)
 	xalloc_die ();
-    free (n->data);
 
+    /* Store the signature(s) in a memory buffer for the parsing routines.  */
     membuf = buf_nonio_initialize (NULL);
     buf_output (membuf, oldsigs, oldlen);
 
+    /* Find the signature(s), copying signatures that *do not* match to a new
+     * string.
+     */
     while (!(rc = parse_signature (membuf, &sig)))
     {
 	char *hexid1 = Xasprintf ("0x%llx", (unsigned long long) keyid);
@@ -4998,17 +5007,25 @@ RCS_delete_openpgp_signatures (struct file_info *finfo, const char *rev,
 
     if (newsigs)
     {
+	/* Replace the old signature data with the new.  */
+	free (n->data);
 	n->len = base64_encode_alloc (newsigs, newlen, (char **)&n->data);
 	free (newsigs);
+
+	TRACE (TRACE_DATA,
+	       "RCS_add_openpgp_signature: wrote newsigs = %s, len = %u",
+	       (char *)n->data, (unsigned int)n->len);
     }
     else
+    {
+	/* No signatures left.  Delete the OpenPGP node.  */
 	delnode (n);
 
+	TRACE (TRACE_DATA,
+	       "RCS_add_openpgp_signature: deleted all signature data");
+    }
 
-    TRACE (TRACE_DATA,
-	   "RCS_add_openpgp_signature: found oldsigs = %s, len = %u",
-	   (char *)n->data, (unsigned int)n->len);
-
+    /* Rewrite the RCS file.  */
     RCS_rewrite (finfo->rcs, NULL, NULL);
 
     return 0;
