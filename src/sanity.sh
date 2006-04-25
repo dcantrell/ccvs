@@ -441,12 +441,12 @@ if $bases; then
   unset CVS_VERIFY_CHECKOUTS
 else
   # Force the client to not report base support to the server.
-  export CVSNOBASES=:
+  CVSNOBASES=:; export CVSNOBASES
   if $remote; then
     # CVS doesn't support OpenPGP signatures without Base-* requests in
     # client/server mode.  Stop the client from trying.
-    export CVS_VERIFY_CHECKOUTS=off
-    export CVS_SIGN_COMMITS=off
+    CVS_VERIFY_CHECKOUTS=off; export CVS_VERIFY_CHECKOUTS
+    CVS_SIGN_COMMITS=off; export CVS_SIGN_COMMITS
     # This fools this script into believing configure couldn't find a working
     # gpg.
     GPG=gpg
