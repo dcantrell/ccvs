@@ -20666,7 +20666,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 #define BUF_SLOP 20
 
 int
-main (void)
+main ()
 {
 #ifndef PATH_MAX
   /* The Hurd doesn't define this, so getcwd can't exhibit the bug --
@@ -22129,6 +22129,10 @@ done
 
 
 
+  :
+
+
+
 
 
 
@@ -22522,12 +22526,28 @@ esac
 
 
 
+  :
 
 
 
 
 
 
+  :
+
+
+
+
+
+
+  :
+
+
+
+
+
+
+  :
 
 
 
@@ -24544,7 +24564,7 @@ cat >>conftest.$ac_ext <<_ACEOF
       struct timespec ts_sleep, ts_remaining;
       ts_sleep.tv_sec = 0;
       ts_sleep.tv_nsec = 1;
-      exit (nanosleep (&ts_sleep, &ts_remaining) == 0 ? 0 : 1);
+      return nanosleep (&ts_sleep, &ts_remaining) != 0;
     }
 
 _ACEOF
@@ -25611,6 +25631,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 
 #       include <stdio.h>
+#       include <stdlib.h>
         int
         main ()
         {
@@ -30679,36 +30700,84 @@ _ACEOF
 
 
 
+  :
 
 
 
 
 
 
+  :
 
 
 
 
 
 
+  :
 
 
 
 
 
 
+  :
 
 
 
 
 
 
+  :
 
 
 
 
 
 
+  :
+
+
+
+
+
+
+  :
+
+
+
+
+
+
+  :
+
+
+
+
+
+
+  :
+
+
+
+
+
+
+  :
+
+
+
+
+
+
+  :
+
+
+
+
+
+
+  :
 
 
 
