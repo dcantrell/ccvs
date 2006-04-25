@@ -21,29 +21,6 @@
 # include <config.h>		/* this is stuff found via autoconf */
 #endif /* CONFIG_H */
 
-/* Add GNU attribute suppport.  */
-#ifndef __attribute__
-/* This feature is available in gcc versions 2.5 and later.  */
-# if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 5) || __STRICT_ANSI__
-#  define __attribute__(Spec) /* empty */
-# else
-#   if __GNUC__ == 2 && __GNUC_MINOR__ < 96
-#    define __pure__	/* empty */
-#   endif
-#   if __GNUC__ < 3
-#    define __malloc__	/* empty */
-#   endif
-# endif
-/* The __-protected variants of `format' and `printf' attributes
-   are accepted by gcc versions 2.6.4 (effectively 2.7) and later.  */
-# if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 7)
-#  define __const__	const
-#  define __format__	format
-#  define __noreturn__	noreturn
-#  define __printf__	printf
-# endif
-#endif /* __attribute__ */
-
 /* Some GNULIB headers require that we include system headers first.  */
 #include "system.h"
 

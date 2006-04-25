@@ -1,5 +1,8 @@
 2006-04-25  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h: Move GNU function attribute protection to <config.h>.
+	(Report from Mark D. Baushke  <mdb@gnu.org>.)
+
 	* sanity.sh: Test for inablility to suppress GPG warnings which cause
 	tests to fail.  Supress warnings for bases.
 	(Report from Mark D. Baushke  <mdb@gnu.org>.)
