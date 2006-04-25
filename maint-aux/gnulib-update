@@ -68,6 +68,7 @@ if test -r $GNULIB && test -d $GNULIB \
   exit 1
 fi
 
+# Do cleanup.
 trap \
 'status=$?
 # Restore lib/Makefile.am.
@@ -83,6 +84,9 @@ rm -f maint-aux/gnulib-filelist.tmp maint-aux/gnulib-filelist.new \
       maint-aux/gnulib-modules.tmp maint-aux/gnulib-modules.new \
       maint-aux/gnulib-modules.last maint-aux/gnulib-modules.txt
 exit $status' EXIT
+
+# Do cleanup on CTRL-C.
+trap 'exit $?' SIGINT
 	
 # Prevent lib/Makefile.am from being overwritten.
 mv lib/Makefile.am lib/Makefile.am.save
