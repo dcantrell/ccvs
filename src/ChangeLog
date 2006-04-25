@@ -1,5 +1,9 @@
 2006-04-25  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Test for inablility to suppress GPG warnings which cause
+	tests to fail.  Supress warnings for bases.
+	(Report from Mark D. Baushke  <mdb@gnu.org>.)
+
 	* rcs.c (RCS_delete_openpgp_signatures): Avoid double-free.  Add
 	comments.  Clarify traces.
 	(Report from Mark D. Baushke  <mdb@gnu.org>.)

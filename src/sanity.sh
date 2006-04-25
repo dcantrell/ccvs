@@ -434,22 +434,32 @@ else
   testcvs_server_support=false
 fi
 
+# Initialize $gpg based on whether configure found a gpg in the path.
+unset CVS_SIGN_COMMITS
+unset CVS_VERIFY_CHECKOUTS
+if test x"$GPG" = xgpg; then
+  echo "WARNING: No working GPG was found.  This test suite will run, but" >&2
+  echo "OpenPGP commit signatures will not be tested." >&2
+  # No need to set CVS_VERIFY_CHECKOUTS=off & CVS_SIGN_COMMITS=off since
+  # configure will have set this as the default already.
+  gpg=false
+else
+  gpg=:
+fi
+
 if $bases; then
   unset CVSNOBASES
-  # Accept the default GPG mode.
-  unset CVS_SIGN_COMMITS
-  unset CVS_VERIFY_CHECKOUTS
 else
   # Force the client to not report base support to the server.
   CVSNOBASES=:; export CVSNOBASES
-  if $remote; then
+  if $remote && $gpg; then
     # CVS doesn't support OpenPGP signatures without Base-* requests in
-    # client/server mode.  Stop the client from trying.
-    CVS_VERIFY_CHECKOUTS=off; export CVS_VERIFY_CHECKOUTS
+    # client/server mode.  Stop the client from trying.  Don't warn the user
+    # on the assumption that they knew what the implications of passing the
+    # nobases argument to this script.
     CVS_SIGN_COMMITS=off; export CVS_SIGN_COMMITS
-    # This fools this script into believing configure couldn't find a working
-    # gpg.
-    GPG=gpg
+    CVS_VERIFY_CHECKOUTS=off; export CVS_VERIFY_CHECKOUTS
+    gpg=false
   fi
 fi
 
@@ -1766,17 +1776,40 @@ getrlogdate () {
 mkdir home
 HOME=$TESTDIR/home; export HOME
 
-# If $GPG is set, create a key for these tests.
-OPENPGP_PHRASE=
-log_keyid=
-if test x"$GPG" != xgpg; then
+# Verify that GPG is working as we expect.
+if $gpg; then
   # This works around a problem in at least a GnuPG 1.2.6 on an AMD64 running
   # a Linux 2.6.9.
   mkdir $HOME/.gnupg; chmod 0700 $HOME/.gnupg
 
   # Output some status info to the log and create the key files.
-  $GPG --list-keys >>$LOGFILE 2>&1
+  $GPG --list-keys >$TESTDIR/gpg.tmp 2>&1
+  cat $TESTDIR/gpg.tmp >>$LOGFILE 2>&1
 
+  # Output a warning to the user if GPG is installed incorrectly.
+  if grep 'insecure memory' gpg.tmp >/dev/null; then
+    # If the warning can't be suppressed with --quiet, then skip GPG testing.
+    if $GPG --list-keys --quiet 2>&1 |grep 'insecure memory' >/dev/null; then
+      echo "WARNING: GPG is installed incorrectly (\`$GPG' needs set" >&2
+      echo "setuid root to avoid using insecure memory).  This test suite" >&2
+      echo "will run, but OpenPGP commit signatures will not be tested." >&2
+      rm -r $HOME/.gnupg
+      CVS_SIGN_COMMITS=off; export CVS_SIGN_COMMITS
+      CVS_VERIFY_CHECKOUTS=off; export CVS_VERIFY_CHECKOUTS
+      gpg=false
+    else
+      echo "WARNING: GPG is installed incorrectly.  This will not" >&2
+      echo "interfere with testing, but you may want to set \`$GPG' to" >&2
+      echo "setuid root to avoid using insecure memory." >&2
+    fi
+  fi
+  rm $TESTDIR/gpg.tmp
+fi
+
+# If $GPG is set, create a key for these tests.
+OPENPGP_PHRASE=
+log_keyid=
+if $gpg; then
   # Import the test keys.
   $GPG --import - <<EOF >>$LOGFILE 2>&1
 -----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -1857,15 +1890,11 @@ EOF
 '
   log_keyid="OpenPGP signature using key ID 0x[0-9a-f]*;
 "
-  gpg=:
   CVS_VERIFY_TEMPLATE="`echo $DEFAULT_VERIFY_TEMPLATE \
 			|sed 's/ -- / --quiet -- /'` 2>/dev/null"
   export CVS_VERIFY_TEMPLATE
-else # GPG not set
-  echo "No working GPG was found.  This test suite will run, but OpenPGP" >&2
-  echo "commit signatures will not be tested." >&2
-  gpg=false
-fi # GPG set
+fi
+
 
 
 # Make sure this variable is not defined to anything that would
