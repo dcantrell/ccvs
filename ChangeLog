@@ -1,5 +1,8 @@
 2006-04-25  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Move GNU function attribute protection from src/cvs.h.
+	(Report from Mark D. Baushke <mdb@gnu.org>.)
+
 	* maint-aux/gnulib-filelist.txt: Updated by gnulib-update.
 
 	* maint-aux/gnulib-update: Do cleanup on CTRL-C.
