@@ -1,15 +1,13 @@
 2006-04-25  Derek Price  <derek@ximbiot.com>
 
+	* import.c (add_rcs_file): Don't trace NULL strings directly for
+	Solaris.
 	* cvs.h: Move GNU function attribute protection to <config.h>.
-	(Report from Mark D. Baushke  <mdb@gnu.org>.)
-
 	* sanity.sh: Test for inablility to suppress GPG warnings which cause
 	tests to fail.  Supress warnings for bases.
-	(Report from Mark D. Baushke  <mdb@gnu.org>.)
-
 	* rcs.c (RCS_delete_openpgp_signatures): Avoid double-free.  Add
 	comments.  Clarify traces.
-	(Report from Mark D. Baushke  <mdb@gnu.org>.)
+	(Reports from Mark D. Baushke <mdb@gnu.org>.)
 
 2006-04-24  Mark D. Baushke  <mdb@gnu.org>
 

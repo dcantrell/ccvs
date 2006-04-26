@@ -1103,7 +1103,8 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 
     TRACE (TRACE_FUNCTION,
 	   "add_rcs_file (`%s', `%s', `%s', `%s', `%s', `%s', `%s')",
-	   rcs, user, add_vhead, key_opt, add_vbranch, vtag, desctext);
+	   rcs, user, add_vhead, TRACE_NULL (key_opt),
+	   TRACE_NULL (add_vbranch), TRACE_NULL (vtag), TRACE_NULL (desctext));
 
     if (noexec)
 	return 0;
