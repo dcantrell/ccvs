@@ -1,3 +1,8 @@
+2006-04-26  Derek Price  <derek@ximbiot.com>
+	    Mark D. Baushke  <mdb@gnu.org>
+
+	* sanity.sh: Use --no-secmem-warning to suppress GPG warnings.
+
 2006-04-25  Derek Price  <derek@ximbiot.com>
 
 	* import.c (add_rcs_file): Don't trace NULL strings directly for

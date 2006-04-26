@@ -1788,8 +1788,17 @@ if $gpg; then
 
   # Output a warning to the user if GPG is installed incorrectly.
   if grep 'insecure memory' gpg.tmp >/dev/null; then
-    # If the warning can't be suppressed with --quiet, then skip GPG testing.
-    if $GPG --list-keys --quiet 2>&1 |grep 'insecure memory' >/dev/null; then
+    echo Adding 'no-secmem-warning' to $HOME/.gnupg/options >>$LOGFILE 2>&1
+    echo no-secmem-warning >$HOME/.gnupg/options
+    $GPG --list-keys >$TESTDIR/gpg.tmp 2>&1
+    cat $TESTDIR/gpg.tmp >>$LOGFILE 2>&1
+    if grep 'invalid option' gpg.tmp >/dev/null; then
+      echo Removing $HOME/.gnupg/options as it did not help. >>$LOGFILE 2>&1
+      rm $HOME/.gnupg/options
+    fi
+    # If the warning can't be suppressed with no-secmem-warning, then skip GPG
+    # testing.
+    if $GPG --list-keys 2>&1 |grep 'insecure memory' >/dev/null; then
       echo "WARNING: GPG is installed incorrectly (\`$GPG' needs set" >&2
       echo "setuid root to avoid using insecure memory).  This test suite" >&2
       echo "will run, but OpenPGP commit signatures will not be tested." >&2
@@ -1890,6 +1899,8 @@ EOF
 '
   log_keyid="OpenPGP signature using key ID 0x[0-9a-f]*;
 "
+  # It might be cleaner to do this in the options file, but then some tests
+  # that turn GPG's chattiness back up would need to be rewritten.
   CVS_VERIFY_TEMPLATE="`echo $DEFAULT_VERIFY_TEMPLATE \
 			|sed 's/ -- / --quiet -- /'` 2>/dev/null"
   export CVS_VERIFY_TEMPLATE
