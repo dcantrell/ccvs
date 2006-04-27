@@ -434,6 +434,10 @@ else
   testcvs_server_support=false
 fi
 
+# Set a default for $GPG.  This should only matter when sanity.config.sh cannot
+# be found.
+: ${GPG=gpg}
+
 # Initialize $gpg based on whether configure found a gpg in the path.
 unset CVS_SIGN_COMMITS
 unset CVS_VERIFY_CHECKOUTS
