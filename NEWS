@@ -17,6 +17,8 @@ NEW FEATURES
 
 BUG FIXES
 
+* The GSSAPI server should now build under HP-UX.
+
 * `cvs rtag' now correctly tags files that have been removed from the trunk.
 
 * Code efficiency has been improved slightly.
