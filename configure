@@ -43208,11 +43208,16 @@ fi
 
 
   #
+  # gss			This may be the only lib needed under HP-UX, so find it
+  #			first.
+  #
   # gssapi_krb5		Only lib needed with MIT K5 v1.2.1, so find it first in
   #			order to prefer MIT Kerberos.  If both MIT & Heimdal
   #			Kerberos are installed and in the path, this will leave
   #			some of the libraries above in LIBS unnecessarily, but
   #			noone would ever do that, right?
+  #
+  # gss			HP-UX			???
   #
   # gssapi_krb5		MIT K5 v1.2.2-beta1	-lkrb5
   #
@@ -43278,7 +43283,7 @@ fi
 rm -f conftest.err conftest.$ac_objext \
       conftest$ac_exeext conftest.$ac_ext
 if test "$ac_cv_search_gss_import_name" = no; then
-  for ac_lib in gssapi_krb5 gssapi; do
+  for ac_lib in gss gssapi_krb5 gssapi; do
     LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
     cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
