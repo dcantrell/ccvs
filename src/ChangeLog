@@ -1,3 +1,9 @@
+2006-04-27  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Some versions of GPG don't like --allow-import-secret-key
+	option.  Deal with that.
+	(Report from Larry Jones <lawrence.jones@ugs.com>.)
+
 2006-04-26  Derek Price  <derek@ximbiot.com>
 	    Mark D. Baushke  <mdb@gnu.org>
 
