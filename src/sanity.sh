@@ -1889,6 +1889,10 @@ B2xyFA1/6G+hv7k=
 -----END PGP PRIVATE KEY BLOCK-----
 EOF
   if $GPG --import - <$TESTDIR/seckey >>$LOGFILE 2>&1; then :; else
+    # 1.0.3 didn't support --allow-secret-key-import and sometime before
+    # 1.4.2.2, the GPG man page marked it as obsolete.  Judging from the
+    # absence of mention on the online man page, it may have since been dropped
+    # entirely, but, presumably, some versions of GPG required it.
     if $GPG --allow-secret-key-import --import - <$TESTDIR/seckey \
 	    >>$LOGFILE 2>&1; then :; else
       echo "WARNING: Unable to import private keys into GPG.  This test" >&2
