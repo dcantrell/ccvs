@@ -1,5 +1,8 @@
 2006-04-27  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Set a default for $GPG for when sanity.config.sh cannot be
+	found.
+
 	* sanity.sh: Some versions of GPG don't like --allow-secret-key-import
 	option.  Deal with that.  Comment thoroughly.
 	(Report from Larry Jones <lawrence.jones@ugs.com>.)
