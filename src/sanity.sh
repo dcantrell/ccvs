@@ -1853,7 +1853,7 @@ B0RRhW3h2s/P7BCMAKDKqifj54oz/mJotQABGP13nW/gOA==
 =7ufq
 -----END PGP PUBLIC KEY BLOCK-----
 EOF
-  $GPG --allow-secret-key-import --import - <<EOF >>$LOGFILE 2>&1
+  cat >$TESTDIR/seckey <<EOF 2>>$LOGFILE
 -----BEGIN PGP PRIVATE KEY BLOCK-----
 Version: GnuPG v1.4.2 (GNU/Linux)
 
@@ -1888,6 +1888,22 @@ B2xyFA1/6G+hv7k=
 =k49u
 -----END PGP PRIVATE KEY BLOCK-----
 EOF
+  if $GPG --import - <$TESTDIR/seckey >>$LOGFILE 2>&1; then :; else
+    if $GPG --allow-secret-key-import --import - <$TESTDIR/seckey \
+	    >>$LOGFILE 2>&1; then :; else
+      echo "WARNING: Unable to import private keys into GPG.  This test" >&2
+      echo "suite will run, but OpenPGP commit signatures will not be" >&2
+      echo "tested." >&2
+      rm -r $HOME/.gnupg
+      CVS_SIGN_COMMITS=off; export CVS_SIGN_COMMITS
+      CVS_VERIFY_CHECKOUTS=off; export CVS_VERIFY_CHECKOUTS
+      gpg=false
+    fi
+  fi
+  rm $TESTDIR/seckey
+fi
+
+if $gpg; then
   $GPG --import-ownertrust <<EOF >>$LOGFILE 2>&1
 F1D6D5842814BC3A264BE7068E0C2C7EF133BDE9:6:
 EOF
