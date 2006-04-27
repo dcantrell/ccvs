@@ -1,3 +1,9 @@
+2006-04-27  Derek Price  <derek@ximbiot.com>
+
+	* acinclude.m4 (ACX_WITH_GSSAPI): Detect libgss for HP-UX.
+	* NEWS: Note that GSSAPI builds under HP-UX.
+	(Report from Larry Jones <lawrence.jones@ugs.com>.)
+
 2006-03-07  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note rtag fixes.
