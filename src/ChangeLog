@@ -1,3 +1,7 @@
+2006-04-28  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Handle GPG secret key import errors.
+
 2006-04-27  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: Set a default for $GPG for when sanity.config.sh cannot be
