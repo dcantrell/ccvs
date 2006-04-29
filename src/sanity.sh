@@ -1892,7 +1892,11 @@ B2xyFA1/6G+hv7k=
 =k49u
 -----END PGP PRIVATE KEY BLOCK-----
 EOF
-  if $GPG --import - <$TESTDIR/seckey >>$LOGFILE 2>&1; then :; else
+  # For some silly reason, at least GPG 1.0.6 doesn't retrun an error when it
+  # fails to import the secret key.
+  $GPG --import - <$TESTDIR/seckey >>$TESTDIR/gpg.tmp 2>&1
+  cat $TESTDIR/gpg.tmp >>$LOGFILE 2>&1
+  if grep 'allow-secret-key-import' $TESTDIR/gpg.tmp; then
     # 1.0.3 didn't support --allow-secret-key-import and sometime before
     # 1.4.2.2, the GPG man page marked it as obsolete.  Judging from the
     # absence of mention on the online man page, it may have since been dropped
@@ -1908,6 +1912,7 @@ EOF
       gpg=false
     fi
   fi
+  rm $TESTDIR/gpg.tmp
   rm $TESTDIR/seckey
 fi
 
