@@ -1780,7 +1780,7 @@ getrlogdate () {
 mkdir home
 HOME=$TESTDIR/home; export HOME
 
-# Verify that GPG works as we expect.
+# Verify that GPG works as expected.
 if $gpg; then
   # This works around a problem in at least a GnuPG 1.2.6 on an AMD64 running
   # a Linux 2.6.9.
