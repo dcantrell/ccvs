@@ -1,5 +1,7 @@
 2006-05-01  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Remove first-person from content.
+
 	* sanity.sh: Clean up GPG tests using GPGs --dump-options command.
 	(Suggestion from Mark D. Baushke <mdb@gnu.org>.)
 
