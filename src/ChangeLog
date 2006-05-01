@@ -1,6 +1,9 @@
 2006-05-01  Derek Price  <derek@ximbiot.com>
 
-	* sanitys.sh: Change some "Notice:" headers and all "Warning:" headers
+	* sanity.sh: Clean up GPG tests using GPGs --dump-options command.
+	(Suggestion from Mark D. Baushke <mdb@gnu.org>.)
+
+	* sanity.sh: Change some "Notice:" headers and all "Warning:" headers
 	to "WARNING:" for consistency.
 
 2006-04-28  Derek Price  <derek@ximbiot.com>

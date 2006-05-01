@@ -1780,48 +1780,47 @@ getrlogdate () {
 mkdir home
 HOME=$TESTDIR/home; export HOME
 
-# Verify that GPG is working as we expect.
+# Verify that GPG works as we expect.
 if $gpg; then
   # This works around a problem in at least a GnuPG 1.2.6 on an AMD64 running
   # a Linux 2.6.9.
   mkdir $HOME/.gnupg; chmod 0700 $HOME/.gnupg
 
+  # Get the supported GPG options into a space-separated list.
+  gpgopts=`$GPG --dump-options`
+  gpgopts=`echo $gpgopts`
+
   # Output some status info to the log and create the key files.
   $GPG --list-keys >$TESTDIR/gpg.tmp 2>&1
   cat $TESTDIR/gpg.tmp >>$LOGFILE 2>&1
 
-  # Output a warning to the user if GPG is installed incorrectly.
-  if grep 'insecure memory' gpg.tmp >/dev/null; then
-    echo Adding 'no-secmem-warning' to $HOME/.gnupg/options >>$LOGFILE 2>&1
-    echo no-secmem-warning >$HOME/.gnupg/options
-    $GPG --list-keys >$TESTDIR/gpg.tmp 2>&1
-    cat $TESTDIR/gpg.tmp >>$LOGFILE 2>&1
-    if grep 'invalid option' gpg.tmp >/dev/null; then
-      echo Removing $HOME/.gnupg/options as it did not help. >>$LOGFILE 2>&1
-      rm $HOME/.gnupg/options
-    fi
-    # If the warning can't be suppressed with no-secmem-warning, then skip GPG
-    # testing.
-    if $GPG --list-keys 2>&1 |grep 'insecure memory' >/dev/null; then
-      echo "WARNING: GPG is installed incorrectly (\`$GPG' needs set" >&2
-      echo "setuid root to avoid using insecure memory).  This test suite" >&2
-      echo "will run, but OpenPGP commit signatures will not be tested." >&2
-      rm -r $HOME/.gnupg
-      CVS_SIGN_COMMITS=off; export CVS_SIGN_COMMITS
-      CVS_VERIFY_CHECKOUTS=off; export CVS_VERIFY_CHECKOUTS
-      gpg=false
-    else
-      echo "WARNING: GPG is installed incorrectly.  This will not" >&2
-      echo "interfere with testing, but you may want to set \`$GPG' to" >&2
-      echo "setuid root to avoid using insecure memory." >&2
-    fi
+  if grep 'insecure memory' $TESTDIR/gpg.tmp >>/dev/null 2>&1; then
+    case " $gpgopts " in
+      *" --no-secmem-warning "*)
+	echo "WARNING: GPG is installed incorrectly.  This will not" >&2
+	echo "interfere with testing, but you may want to set \`$GPG' to" >&2
+	echo "setuid root to avoid using insecure memory." >&2
+	echo Adding 'no-secmem-warning' to $HOME/.gnupg/options >>$LOGFILE
+	echo no-secmem-warning >$HOME/.gnupg/options
+	;;
+
+      *)
+	echo "WARNING: GPG is installed incorrectly (\`$GPG' needs set" >&2
+	echo "setuid root to avoid using insecure memory, or upgraded to a" >&2
+	echo "more recent version that allows the insecure memory warning" >&2
+	echo "to be silenced for testing).  This test suite will run, but" >&2
+	echo "OpenPGP commit signatures will not be tested." >&2
+	rm -r $HOME/.gnupg
+	CVS_SIGN_COMMITS=off; export CVS_SIGN_COMMITS
+	CVS_VERIFY_CHECKOUTS=off; export CVS_VERIFY_CHECKOUTS
+	gpg=false
+	;;
+    esac
   fi
   rm $TESTDIR/gpg.tmp
 fi
 
-# If $GPG is set, create a key for these tests.
-OPENPGP_PHRASE=
-log_keyid=
+# If $GPG is set, create keys for these tests.
 if $gpg; then
   # Import the test keys.
   $GPG --import - <<EOF >>$LOGFILE 2>&1
@@ -1857,7 +1856,21 @@ B0RRhW3h2s/P7BCMAKDKqifj54oz/mJotQABGP13nW/gOA==
 =7ufq
 -----END PGP PUBLIC KEY BLOCK-----
 EOF
-  cat >$TESTDIR/seckey <<EOF 2>>$LOGFILE
+
+  # 1.0.3 didn't support --allow-secret-key-import and sometime before
+  # 1.4.2.2, the GPG man page marked it as obsolete.  Judging from the
+  # absence of mention on the online man page, it may have since been dropped
+  # entirely, but, presumably, some versions of GPG required it.
+  case " $gpgopts " in
+    *" --allow-secret-key-import "*)
+      gpg_seckey_import_opt=--allow-secret-key-import
+      ;;
+    *)
+      gpg_seckey_import_opt=
+      ;;
+  esac
+
+  if $GPG $gpg_seckey_import_opt --import - <<EOF >>$LOGFILE 2>&1
 -----BEGIN PGP PRIVATE KEY BLOCK-----
 Version: GnuPG v1.4.2 (GNU/Linux)
 
@@ -1892,30 +1905,21 @@ B2xyFA1/6G+hv7k=
 =k49u
 -----END PGP PRIVATE KEY BLOCK-----
 EOF
-  # For some silly reason, at least GPG 1.0.6 doesn't retrun an error when it
-  # fails to import the secret key.
-  $GPG --import - <$TESTDIR/seckey >>$TESTDIR/gpg.tmp 2>&1
-  cat $TESTDIR/gpg.tmp >>$LOGFILE 2>&1
-  if grep 'allow-secret-key-import' $TESTDIR/gpg.tmp; then
-    # 1.0.3 didn't support --allow-secret-key-import and sometime before
-    # 1.4.2.2, the GPG man page marked it as obsolete.  Judging from the
-    # absence of mention on the online man page, it may have since been dropped
-    # entirely, but, presumably, some versions of GPG required it.
-    if $GPG --allow-secret-key-import --import - <$TESTDIR/seckey \
-	    >>$LOGFILE 2>&1; then :; else
-      echo "WARNING: Unable to import private keys into GPG.  This test" >&2
-      echo "suite will run, but OpenPGP commit signatures will not be" >&2
-      echo "tested." >&2
-      rm -r $HOME/.gnupg
-      CVS_SIGN_COMMITS=off; export CVS_SIGN_COMMITS
-      CVS_VERIFY_CHECKOUTS=off; export CVS_VERIFY_CHECKOUTS
-      gpg=false
-    fi
+  then :; else
+    echo "WARNING: Unable to import private keys into GPG.  This test" >&2
+    echo "suite will run, but OpenPGP commit signatures will not be" >&2
+    echo "tested." >&2
+    rm -r $HOME/.gnupg
+    CVS_SIGN_COMMITS=off; export CVS_SIGN_COMMITS
+    CVS_VERIFY_CHECKOUTS=off; export CVS_VERIFY_CHECKOUTS
+    gpg=false
   fi
-  rm $TESTDIR/gpg.tmp
-  rm $TESTDIR/seckey
 fi
 
+# Set up the ownertrust for the imported public key and set some variables
+# used for OpenPGP testing.
+OPENPGP_PHRASE=
+log_keyid=
 if $gpg; then
   $GPG --import-ownertrust <<EOF >>$LOGFILE 2>&1
 F1D6D5842814BC3A264BE7068E0C2C7EF133BDE9:6:
