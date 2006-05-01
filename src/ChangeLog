@@ -1,3 +1,8 @@
+2006-05-01  Derek Price  <derek@ximbiot.com>
+
+	* sanitys.sh: Change some "Notice:" headers and all "Warning:" headers
+	to "WARNING:" for consistency.
+
 2006-04-28  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: Handle GPG secret key import errors.

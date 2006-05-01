@@ -876,9 +876,9 @@ find_tool ()
     fi
   done
   if test -n "$TOOL"; then
-    echo "Notice: The default version of $dTn (\`$default_TOOL')" >>$LOGFILE
+    echo "WARNING: The default version of $dTn (\`$default_TOOL')" >>$LOGFILE
     echo "is defective.  Using \`$TOOL' and hoping for the best." >>$LOGFILE
-    echo "Notice: The default version of $dTn (\`$default_TOOL')" >&2
+    echo "WARNING: The default version of $dTn (\`$default_TOOL')" >&2
     echo "is defective.  Using \`$TOOL' and hoping for the best." >&2
     echo $TOOL
   else
@@ -1009,7 +1009,7 @@ expr=$1
 if $expr 'a
 b' : 'a
 c' >/dev/null; then
-  echo 'Warning: you are using a version of expr that does not correctly'
+  echo 'WARNING: you are using a version of expr that does not correctly'
   echo 'match multi-line patterns.  Some tests may spuriously pass or fail.'
   echo 'You may wish to make sure GNU expr is in your path.'
   return 1
@@ -1035,13 +1035,13 @@ test ! -f ${TESTDIR}/bar && expr_create_bar
 if $expr "`cat ${TESTDIR}/bar`" : "`cat ${TESTDIR}/bar`" >/dev/null; then
   : good, it works
 else
-  echo 'Warning: you are using a version of expr that does not correctly'
+  echo 'WARNING: you are using a version of expr that does not correctly'
   echo 'match large patterns.  Some tests may spuriously pass or fail.'
   echo 'You may wish to make sure GNU expr is in your path.'
   return 1
 fi
 if $expr "`cat ${TESTDIR}/bar`x" : "`cat ${TESTDIR}/bar`y" >/dev/null; then
-  echo 'Warning: you are using a version of expr that does not correctly'
+  echo 'WARNING: you are using a version of expr that does not correctly'
   echo 'match large patterns.  Some tests may spuriously pass or fail.'
   echo 'You may wish to make sure GNU expr is in your path.'
   return 1
@@ -1104,7 +1104,7 @@ if $expr "`cat ${TESTDIR}/bar`" : "${DOTSTAR}xyzABC${DOTSTAR}$" >/dev/null; then
   # good, it works
   return 0
 else
-  echo 'Warning: you are using a version of expr that does not correctly'
+  echo 'WARNING: you are using a version of expr that does not correctly'
   echo 'match large patterns.  Some tests may spuriously pass or fail.'
   echo 'You may wish to make sure GNU expr is in your path.'
   return 77
@@ -1193,7 +1193,7 @@ tr_tooltest1 ()
 {
 tr=$1
 if $EXPR `echo "123" | $tr '2' '\0'` : "123" >/dev/null 2>&1; then
-  echo 'Warning: you are using a version of tr which does not correctly'
+  echo 'WARNING: you are using a version of tr which does not correctly'
   echo 'handle NUL bytes.  Some tests may spuriously pass or fail.'
   echo 'You may wish to make sure GNU tr is in your path.'
   return 77
@@ -1217,7 +1217,7 @@ if test -d $TESTDIR/ls-test; then
     rm -rf $TESTDIR/ls-test
 fi
 if $ls $TESTDIR/ls-test >/dev/null 2>&1; then
-  echo "Notice: \`$ls' is defective."
+  echo "WARNING: \`$ls' is defective."
   echo 'This is a version of ls which does not correctly'
   echo 'return false for files that do not exist. Some tests may'
   echo 'spuriously pass or fail.'
@@ -1247,7 +1247,7 @@ six'; then
   return 0
 else
   rm abc
-  echo "Notice: awk BEGIN clause or printf is not be working properly."
+  echo "WARNING: awk BEGIN clause or printf is not be working properly."
   return 1
 fi
 }
@@ -1261,7 +1261,7 @@ $awk 'BEGIN { printf "%c%c%c", 2, 3, 4 }' </dev/null \
 if $EXPR "`cat abc`" : "123" ; then
   : good, found it
 else
-  echo "Notice: awk format %c string may not be working properly."
+  echo "WARNING: awk format %c string may not be working properly."
   rm abc
   return 77
 fi
