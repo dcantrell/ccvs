@@ -357,7 +357,10 @@ commit (int argc, char **argv)
     int c;
     int err = 0;
     int local = 0;
+
+#ifdef CLIENT_SUPPORT
     int flags;
+#endif
 
 #ifdef SERVER_SUPPORT
     /* See below for documentation of the `-n' option.  */
