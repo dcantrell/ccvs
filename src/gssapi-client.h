@@ -46,15 +46,17 @@ extern gss_ctx_id_t gcontext;
 
 /* We can't declare the arguments without including gssapi.h, and I
    don't want to do that in every file.  */
-struct buffer* cvs_gssapi_wrap_buffer_initialize( struct buffer *buf,
-						  int input,
-						   gss_ctx_id_t gcontext,
-						   void (*memory) (struct buffer *) );
+struct buffer*
+cvs_gssapi_wrap_buffer_initialize(struct buffer *buf, int input,
+				  gss_ctx_id_t gcontext,
+				  void (*memory) (struct buffer *));
 
+# ifdef CLIENT_SUPPORT
 int connect_to_gserver (cvsroot_t *, int, struct hostent *);
 
 extern void initialize_gssapi_buffers (struct buffer **to_server_p,
-					     struct buffer **from_server_p);
+				       struct buffer **from_server_p);
+# endif
 
 #endif /* HAVE_GSSAPI */
 
