@@ -1,5 +1,7 @@
 2006-05-04  Derek Price  <derek@ximbiot.com>
 
+	* client.c (send_file_names): Suppress compiler warning.
+
 	[bug #16450]  Compile with --disable-case-sensitivity.
 	* client.c: #include "save-cwd.h".
 

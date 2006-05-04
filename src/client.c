@@ -5833,7 +5833,7 @@ send_file_names (int argc, char **argv, unsigned int flags)
 
 	    /* Normalize the path into outstr. */
 	    save_cwd (&sdir);
-	    while (q = pop (stack))
+	    while ((q = pop (stack)))
 	    {
 		Node *node = NULL;
 	        if (isdir (CVSADM))
@@ -5881,7 +5881,7 @@ send_file_names (int argc, char **argv, unsigned int flags)
 	    free_cwd (&sdir);
 
 	    /* Now put everything we didn't find entries for back on. */
-	    while (q = pop (stack))
+	    while ((q = pop (stack)))
 	    {
 		if (line_len)
 		    xrealloc_and_strcat (&line, &line_len, "/");
