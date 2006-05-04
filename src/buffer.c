@@ -1667,6 +1667,11 @@ packetizing_buffer_output (void *closure, const char *data, size_t have,
 	buf_output (pb->buf, outbuf, translated + 2);
     else
     {
+	/* if ((have + PACKET_SLOP + 4) > BUFFER_DATA_SIZE), then
+	   outdata may be NULL. */
+	if (outdata == NULL)
+	    abort ();
+
 	outdata->size = translated + 2;
 	buf_append_data (pb->buf, outdata, outdata);
     }

@@ -653,7 +653,8 @@ commit (int argc, char **argv)
 
 	    fp = cvs_temp_file (&fname);
 	    if (fp == NULL)
-		error (1, 0, "cannot create temporary file %s", fname);
+		error (1, 0, "cannot create temporary file %s",
+		       fname ? fname : "(null)");
 	    if (fwrite (saved_message, 1, strlen (saved_message), fp)
 		!= strlen (saved_message))
 		error (1, errno, "cannot write temporary file %s", fname);
