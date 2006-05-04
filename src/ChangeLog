@@ -1,5 +1,19 @@
 2006-05-04  Mark D. Baushke  <mdb@gnu.org>
 
+	* filesubr.c (cvs_temp_file): Avoid keeping pointers to free()'d
+	storage laying around.
+	* commit.c (commit): Handle possible NULL filename values
+	returned from cvs_temp_file().
+	* filesubr.c (cvs_temp_name): Ditto.
+	* import.c (import): Ditto.
+	* login.c (password_entry_operation): Ditto.
+	* logmsg.c (do_verify): Ditto.
+	* patch.c (patch_fileproc): Ditto.
+	[Fixes NetBSD coverity cid-2545.]
+
+	* buffer.c (packetizing_buffer_output): Initialize outdata.
+	[Fixes NetBSD coverity cid-2474.]
+
 	* server.c (server_updated): Check for NULL return from
 	findnode_fn(). [Fixes NetBSD coverity cid-1352.]
 
