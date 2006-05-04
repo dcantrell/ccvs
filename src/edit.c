@@ -143,6 +143,7 @@ watch_off (int argc, char **argv)
 
 
 
+#ifdef CLIENT_SUPPORT
 static int
 dummy_fileproc (void *callerdat, struct file_info *finfo)
 {
@@ -151,6 +152,7 @@ dummy_fileproc (void *callerdat, struct file_info *finfo)
        pass NULL for fileproc.  */
     return 0;
 }
+#endif
 
 
 

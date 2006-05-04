@@ -1,5 +1,8 @@
 2006-05-04  Derek Price  <derek@ximbiot.com>
 
+	* commit.c (commit), edit.c (watch_off): Suppress warnings with
+	--disable-client.
+
 	* gssapi-client.h: Reformat.
 
 	[bug #15573]  Eliminate warnings with --disable-client.
