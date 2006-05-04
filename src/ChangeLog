@@ -1,5 +1,7 @@
 2006-05-04  Derek Price  <derek@ximbiot.com>
 
+	* buffer.c: Add comments before #includes.
+
 	* commit.c (commit), edit.c (watch_off): Suppress warnings with
 	--disable-client.
 
