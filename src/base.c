@@ -277,9 +277,11 @@ base_checkout (RCSNode *rcs, struct file_info *finfo,
 
     /* FIXME: Verify the signature in local mode.  */
 
+#ifdef SERVER_SUPPORT
     if (server_active && strcmp (cvs_cmd_name, "export"))
 	server_base_checkout (rcs, finfo, prev, rev, ptag, tag,
 			      poptions, options);
+#endif
 
     return status;
 }
@@ -313,9 +315,12 @@ temp_checkout (RCSNode *rcs, struct file_info *finfo,
     noexec = save_noexec;
 
     assert (strcmp (cvs_cmd_name, "export"));
+
+#ifdef SERVER_SUPPORT
     if (server_active)
 	server_temp_checkout (rcs, finfo, prev, rev, ptag, tag,
 			      poptions, options, tempfile);
+#endif
 
     return tempfile;
 }
@@ -438,8 +443,10 @@ ibase_copy (struct file_info *finfo, const char *rev, const char *flags,
     if (flags[1] == 'y')
 	xchmod (finfo->file, true);
 
+#ifdef SERVER_ACTIVE
     if (server_active && strcmp (cvs_cmd_name, "export"))
 	server_base_copy (finfo, rev ? rev : "", flags);
+#endif
 
     if (suppress_bases || tempfile)
     {
@@ -558,8 +565,10 @@ base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
     else
 	retval = 0;
 
+#ifdef SERVER_SUPPORT
     if (server_active)
 	server_base_merge (finfo, rev1, rev2);
+#endif
 
     if (CVS_UNLINK (f1) < 0)
 	error (0, errno, "unable to remove `%s'", f1);
@@ -594,13 +603,16 @@ base_diff (struct file_info *finfo, int diff_argc, char *const *diff_argv,
 {
     int status, err;
 
+#ifdef SERVER_SUPPORT
     if (server_use_bases ())
     {
 	server_base_diff (finfo, f1, use_rev1, label1, f2, use_rev2, label2);
 
 	err = 0;
     }
-    else if (xcmp (f1, f2))
+    else
+#endif
+    if (xcmp (f1, f2))
     {
 	RCS_output_diff_options (diff_argc, diff_argv, empty_files,
 				 use_rev1, use_rev2, finfo->fullname);

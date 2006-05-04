@@ -5496,15 +5496,6 @@ server_updated (
 
 
 
-/* Return whether we should send operations on base files.  */
-bool
-server_use_bases (void)
-{
-    return supported_response ("Base-checkout");
-}
-
-
-
 /* Return whether we should send patches in RCS format.  */
 int
 server_use_rcs_diff (void)
@@ -8251,6 +8242,20 @@ cvs_output_tagged (const char *tag, const char *text)
 
 
 
+/* Return whether we should send operations on base files.  */
+bool
+server_use_bases (void)
+{
+#ifdef SERVER_SUPPORT
+    return supported_response ("Base-checkout");
+#else /* !SERVER_SUPPORT */
+    return 0;
+#endif
+}
+
+
+
+#ifdef SERVER_SUPPORT
 static void
 server_send_signatures (struct file_info *finfo, const char *rev)
 {
@@ -8566,6 +8571,7 @@ server_base_diff (struct file_info *finfo, const char *f1, const char *rev1,
 
     return;
 }
+#endif /* SERVER_SUPPORT */
 
 
 

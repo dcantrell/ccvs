@@ -125,8 +125,8 @@ static int update_build_dirs = 0;
 static int update_prune_dirs = 0;
 static int pipeout = 0;
 static int dotemplate = 0;
-#ifdef SERVER_SUPPORT
 static bool bases;
+#ifdef SERVER_SUPPORT
 static bool rcs_diff_patches;
 #endif
 static List *ignlist = NULL;
@@ -1305,7 +1305,9 @@ VERS: ", 0);
 
     if (file_is_dead || status == 0)
     {
+#ifdef SERVER_SUPPORT
 	mode_t mode = (mode_t) -1;
+#endif
 
 	if (!pipeout)
 	{
@@ -2368,12 +2370,14 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 
 	    Register (finfo->entries, finfo->file, "0",
 		      "Result of merge", NULL, vers->tag, vers->date, NULL);
+#ifdef SERVER_SUPPORT
 	    if (server_active)
 		/* No need to create a backup for an addition - if the file
 		 * exists, the client will abort with a warning.
 		 */
 		server_updated (finfo, vers, SERVER_UPDATED, (mode_t) -1,
 				NULL, NULL);
+#endif /* SERVER_SUPPORT */
 
 	    freevers_ts (&xvers);
 	    return;
