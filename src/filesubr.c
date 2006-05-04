@@ -783,7 +783,10 @@ cvs_temp_file (char **filename)
     }
 
     if (fp == NULL)
+    {
 	free (fn);
+	fn = NULL;
+    }
 
     /* mkstemp is defined to open mode 0600 using glibc 2.0.7+.  There used
      * to be a complicated #ifdef checking the library versions here and then
@@ -800,6 +803,11 @@ cvs_temp_file (char **filename)
      */
 
     *filename = fn;
+    if (fn == NULL && fp != NULL)
+    {
+	fclose (fp);
+	fp = NULL;
+    }
     return fp;
 }
 
