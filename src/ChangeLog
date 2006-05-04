@@ -1,7 +1,7 @@
 2006-05-04  Mark D. Baushke  <mdb@gnu.org>
 
 	* server.c (server_updated): Check for NULL return from
-	findnode_fn(). [Fixes Fix NetBSD coverity cid-1352.]
+	findnode_fn(). [Fixes NetBSD coverity cid-1352.]
 
 2006-04-19  Larry Jones  <lawrence.jones@ugs.com>
 
