@@ -448,8 +448,10 @@ sign_fileproc (void *callerdat, struct file_info *finfo)
 					     vers->vn_rcs
 					     ? vers->vn_rcs : vers->vn_user,
 					     args->keyid);
+#ifdef SERVER_SUPPORT
 	if (server_active)
 	    server_base_signatures (finfo, vers->vn_user);
+#endif
 	return err;
     }
 
@@ -502,8 +504,10 @@ sign_fileproc (void *callerdat, struct file_info *finfo)
 	    }
 
 	    RCS_add_openpgp_signature (finfo, vers->vn_user);
+#ifdef SERVER_SUPPORT
 	    if (server_active)
 		server_base_signatures (finfo, vers->vn_user);
+#endif
 	    break;
 	default:			/* can't ever happen :-) */
 	    error (0, 0,

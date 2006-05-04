@@ -1,5 +1,10 @@
 2006-05-04  Derek Price  <derek@ximbiot.com>
 
+	[bug #16449]  Compile with --disable-server.
+	* server.c: Don't compile server-only functions without server support.
+	* base.c, sign.c, update.c: Don't call server-only functions without
+	server support.
+
 	* client.c (send_file_names): Suppress compiler warning.
 
 	[bug #16450]  Compile with --disable-case-sensitivity.
