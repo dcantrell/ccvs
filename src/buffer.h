@@ -17,11 +17,13 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+/* ANSI headers.  */
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <sys/types.h>
 
+/* CVS headers.  */
 #include "root.h"
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
