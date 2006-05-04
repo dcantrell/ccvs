@@ -1,5 +1,8 @@
 2006-05-04  Derek Price  <derek@ximbiot.com>
 
+	* buffer.h, buffer.c: Enable the generic functions and memory buffers
+	even when client and server support is disabled.
+
 	* buffer.c: Add comments before #includes.
 
 	* commit.c (commit), edit.c (watch_off): Suppress warnings with

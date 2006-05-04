@@ -23,12 +23,13 @@
 #include <stdio.h>
 #include <sys/types.h>
 
+/* GNULIB headers.  */
+#include "getpagesize.h"
+
 /* CVS headers.  */
 #include "root.h"
 
-#if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 
-# include "getpagesize.h"
 
 /*
  * We must read data from a child process and send it across the
@@ -149,13 +150,10 @@ struct buffer *buf_initialize (type_buf_input,
 				type_buf_memory_error,
 				void *);
 void buf_free (struct buffer *);
+
+/* Memory buffer.  */
 struct buffer *buf_nonio_initialize (void (*) (struct buffer *));
-struct buffer *compress_buffer_initialize (struct buffer *, int, int,
-					   void (*) (struct buffer *));
-struct buffer *packetizing_buffer_initialize
-	(struct buffer *, int (*) (void *, const char *, char *, size_t),
-	 int (*) (void *, const char *, char *, size_t, size_t *), void *,
-	 void (*) (struct buffer *));
+
 int buf_empty (struct buffer *);
 int buf_empty_p (struct buffer *);
 void buf_output (struct buffer *, const char *, size_t);
@@ -194,6 +192,14 @@ void buf_free_data (struct buffer *);
 int buf_count_mem (struct buffer *);
 #endif /* SERVER_FLOWCONTROL */
 
+#if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
+
+struct buffer *compress_buffer_initialize (struct buffer *, int, int,
+					   void (*) (struct buffer *));
+struct buffer *packetizing_buffer_initialize
+	(struct buffer *, int (*) (void *, const char *, char *, size_t),
+	 int (*) (void *, const char *, char *, size_t, size_t *), void *,
+	 void (*) (struct buffer *));
 struct buffer *
 fd_buffer_initialize (int fd, pid_t child_pid, cvsroot_t *root, bool input,
                       long timeout, void (*memory) (struct buffer *));
