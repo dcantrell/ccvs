@@ -26,16 +26,6 @@
 
 
 
-#if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
-
-# include <sys/socket.h>
-
-/* OS/2 doesn't have EIO.  FIXME: this whole notion of turning
-   a different error into EIO strikes me as pretty dubious.  */
-# if !defined( EIO )
-#   define EIO EBADPOS
-# endif
-
 /* Local functions.  */
 static void buf_default_memory_error (struct buffer *);
 static struct buffer_data *get_buffer_data (void);
@@ -148,7 +138,7 @@ buf_empty_p (struct buffer *buf)
 
 
 
-# if defined (SERVER_FLOWCONTROL) || defined (PROXY_SUPPORT)
+#if defined (SERVER_FLOWCONTROL) || defined (PROXY_SUPPORT)
 /*
  * Count how much data is stored in the buffer..
  * Note that each buffer is a xmalloc'ed chunk BUFFER_DATA_SIZE.
@@ -164,7 +154,7 @@ buf_count_mem (struct buffer *buf)
 
     return mem;
 }
-# endif /* SERVER_FLOWCONTROL || PROXY_SUPPORT */
+#endif /* SERVER_FLOWCONTROL || PROXY_SUPPORT */
 
 
 
@@ -501,7 +491,7 @@ buf_append_data (struct buffer *buf, struct buffer_data *data,
 
 
 
-# ifdef PROXY_SUPPORT
+#ifdef PROXY_SUPPORT
 /* Copy data structures and append them to a buffer.
  *
  * ERRORS
@@ -536,7 +526,7 @@ buf_copy_data (struct buffer *buf, struct buffer_data *data,
 
     buf_append_data (buf, first, new);
 }
-# endif /* PROXY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
 
 
@@ -1271,6 +1261,18 @@ buf_shutdown (struct buffer *buf)
     if (buf->shutdown) return (*buf->shutdown) (buf);
     return 0;
 }
+
+
+
+#if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
+
+# include <sys/socket.h>
+
+/* OS/2 doesn't have EIO.  FIXME: this whole notion of turning
+   a different error into EIO strikes me as pretty dubious.  */
+# if !defined (EIO)
+#   define EIO EBADPOS
+# endif
 
 
 
