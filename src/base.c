@@ -443,7 +443,7 @@ ibase_copy (struct file_info *finfo, const char *rev, const char *flags,
     if (flags[1] == 'y')
 	xchmod (finfo->file, true);
 
-#ifdef SERVER_ACTIVE
+#ifdef SERVER_SUPPORT
     if (server_active && strcmp (cvs_cmd_name, "export"))
 	server_base_copy (finfo, rev ? rev : "", flags);
 #endif
