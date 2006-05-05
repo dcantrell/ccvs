@@ -1,3 +1,8 @@
+2006-05-05  Derek Price  <derek@ximbiot.com>
+
+	* base.c: SERVER_ACTIVE isn't a macro, but SERVER_SUPPORT is.
+	(Thanks to report from Mark D. Baushke <mdb@gnu.org>.)
+
 2006-05-04  Derek Price  <derek@ximbiot.com>
 
 	* buffer.h, buffer.c: Enable the generic functions and memory buffers
