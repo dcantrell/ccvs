@@ -1,3 +1,19 @@
+2006-05-08  Derek Price  <derek@ximbiot.com>
+
+	* commit_prep.pl: Option -T added to support multiple log_accum hooks.
+	Deprecated misleading -u option.  Used 'use strict' and added
+	compatibility for 'perl -T' switch.  Documented some more.  Removed
+	$cvs_user in the temporary filename.
+	* log_accum.pl: -T added again to support multiple log_accum hooks.
+	Used 'use strict' and added compatibility for 'perl -T' switch.
+	Removed ghost variable.  Documented some more.  Fixed a bug in
+	processing -u in log_accum.  Cleaned-up the temporary filenames.  Fixed
+	support for UseNewInfoFmtStrings.  Test if files are empty, so they are
+	not reported as binary.
+	(Patch from Sylvain Beucler <beuc@beuc.net>.)
+
+	* log_accum.pl (process_argv): Untaint filenames, oldrevs, and newrevs.
+
 2006-04-18  Mark D. Baushke  <mdb@gnu.org>
 
 	* cvslog.sh: Bourne Shell variation of log.pl functionality.
