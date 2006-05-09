@@ -2339,11 +2339,11 @@ Use @var{template} as the command line template to generate OpenPGP signatures.
 Format strings in this template are substituted before the command is run:
 
 @table @code
-@item %t
+@item %M
 Substitute in the textmode flag (defaults to @samp{--textmode}) when a
 signature is being generated for a text file.
 
-@item %a
+@item %@@
 Substitute in any @var{arg}s set via the @samp{--sign-arg} option or the
 CVSROOT sign-arg method option.
 
@@ -2354,10 +2354,10 @@ Substitute the name of the file to generate a signature for.
 This template should send the generated signature to its standard output.
 IS overridden by the @samp{--sign-template} global command line option
 @pxref{Global options} and defaults to
-@samp{/usr/bin/gpg --detach-sign --output - %t %a %s}.
+@samp{/usr/bin/gpg --detach-sign --output - Mt %@@ %s}.
 
 @item textmode
-The value passed to both in place of %t in both the OpenPGP signature
+The value passed to both in place of @samp{%M} in both the OpenPGP signature
 and the OpenPGP verification command line templates.  Defaults to
 @samp{--textmode}.
 
@@ -2376,11 +2376,11 @@ Use @var{template} as the command line template to verify OpenPGP signatures.
 Format strings in this template are substituted before the command is run:
 
 @table @code
-@item %t
+@item %M
 Substitute in the textmode flag (defaults to @samp{--textmode}) when a
 signature is being verified for a text file.
 
-@item %a
+@item %@@
 Substitute in any @var{arg}s set via the @samp{--verify-arg} option or the
 CVSROOT verify-arg method option.
 
@@ -2395,7 +2395,7 @@ This template should exit with an exit code of zero if the signature is valid
 for the signed file and a non-zero exit code otherwise.  This method option is
 overridden by the @samp{--verify-template} global command line option
 @pxref{Global options} and defaults to something like
-@samp{/usr/bin/gpg --detach-sign --output - %t %a %S %s}.
+@samp{/usr/bin/gpg --detach-sign --output - %M %@@ %S %s}.
 @end table
 
 As a further example, to combine both the @code{CVS_RSH} and @code{CVS_SERVER}
@@ -8613,11 +8613,11 @@ Use @var{template} as the command line template to generate OpenPGP signatures.
 Format strings in this template are substituted before the commit is run:
 
 @table @code
-@item %t
+@item %M
 Substitute in the textmode flag (defaults to @samp{--textmode}) when a
 signature is being generated for a text file.
 
-@item %a
+@item %@@
 Substitute in any @var{arg}s set via the @samp{--sign-arg} option or the
 CVSROOT sign-arg method option.
 
@@ -8627,10 +8627,10 @@ Substitute the name of the file to generate a signature for.
 
 This template should send the generated signature to its standard output.
 Overrides the @samp{sign-template} method option and defaults to something like
-@samp{/usr/bin/gpg --detach-sign --output - %t %a %s}.
+@samp{/usr/bin/gpg --detach-sign --output - %M %@@ %s}.
 
 @item --textmode
-The value passed to both in place of %t in both the OpenPGP signature
+The value passed to both in place of @samp{%M} in both the OpenPGP signature
 and the OpenPGP verification command line templates.  Defaults to
 @samp{--textmode}.
 
@@ -8649,11 +8649,11 @@ Use @var{template} as the command line template to verify OpenPGP signatures.
 Format strings in this template are substituted before the command is run:
 
 @table @code
-@item %t
+@item %M
 Substitute in the textmode flag (defaults to @samp{--textmode}) when a
 signature is being verified for a text file.
 
-@item %a
+@item %@@
 Substitute in any @var{arg}s set via the @samp{--verify-arg} option or the
 CVSROOT @samp{verify-arg} method option.
 
@@ -8668,7 +8668,7 @@ This template should exit with an exit code of zero if the signature is valid
 for the signed file and a non-zero exit code otherwise.  Overrides the
 @samp{verify-template} method option @pxref{The connection method} and
 defaults to something like
-@samp{/usr/bin/gpg --detach-sign --output - %t %a %S %s}.
+@samp{/usr/bin/gpg --detach-sign --output - %M %@@ %S %s}.
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -13493,18 +13493,18 @@ special characters.
 The format strings available to all script hooks are:
 
 @table @t
-@item c
+@item %c
 The canonical name of the command being executed.  For instance, in the case of
 a hook run from @code{cvs up}, @sc{cvs} would replace @samp{%c} with the string
 @samp{update} and, in the case of a hook run from @code{cvs ci}, @sc{cvs} would
 replace @samp{%c} with the string @samp{commit}.
-@item n
+@item %n
 The null, or empty, string.
-@item p
+@item %p
 The name of the directory being operated on within the repository.
-@item r
+@item %r
 The name of the repository (the path portion of @code{$CVSROOT}).
-@item R
+@item %R
 On a server, the name of the referrer, if any.  The referrer is the CVSROOT the
 client reports it used to contact a server which then referred it to this
 server.  Should usually be set on a primary server with a write proxy setup.
@@ -13736,7 +13736,7 @@ In addition to the common format strings (@pxref{syntax}),
 @file{commitinfo} supports:
 
 @table @t
-@item @{s@}
+@item %@{s@}
 a list of the names of files to be committed
 @end table
 
@@ -13820,14 +13820,14 @@ In addition to the common format strings (@pxref{syntax}),
 @file{verifymsg} supports:
 
 @table @t
-@item l
+@item %l
 the full path to the file containing the log message to be verified
-@item @{sV@}
+@item %@{sV@}
 File attributes, where:
 @table @t
-@item s
+@item %s
 file name
-@item V
+@item %V
 old version number (pre-checkin)
 @end table
 @end table
@@ -14006,17 +14006,17 @@ In addition to the common format strings (@pxref{syntax}),
 @file{loginfo} supports:
 
 @table @t
-@item @{stVv@}
+@item %@{stVv@}
 File attributes, where:
 @table @t
-@item s
+@item %s
 file name
-@item T
+@item %T
 tag name of destination, or the empty string when there is no associated
 tag name (this usually means the trunk)
-@item V
+@item %V
 old version number (pre-checkin)
-@item v
+@item %v
 new version number (post-checkin)
 @end table
 @end table
@@ -14179,25 +14179,25 @@ In addition to the common format strings (@pxref{syntax}),
 @file{taginfo} supports:
 
 @table @t
-@item b
+@item %b
 tag type (@code{T} for branch, @code{N} for not-branch, or @code{?} for
 unknown, as during delete operations)
-@item o
+@item %o
 operation (@code{add} for @code{tag}, @code{mov} for @code{tag -F}, or
 @code{del} for @code{tag -d})
-@item t
+@item %t
 new tag name
-@item @{sTVv@}
+@item %@{sTVv@}
 file attributes, where:
 @table @t
-@item s
+@item %s
 file name
-@item T
+@item %T
 tag name of destination, or the empty string when there is no associated
 tag name (this usually means the trunk)
-@item V
+@item %V
 old version number (for a move or delete operation)
-@item v
+@item %v
 new version number (for an add or move operation)
 @end table
 @end table
@@ -14308,7 +14308,7 @@ In addition to the common format strings, the @file{preproxy} file supports the
 following format string:
 
 @table @t
-@item P
+@item %P
 the CVSROOT string which specifies the primary server
 @end table
 
@@ -14346,7 +14346,7 @@ In addition to the common format strings, the @file{postproxy} file supports
 the following format string:
 
 @table @t
-@item P
+@item %P
 the CVSROOT string which specifies the primary server
 @end table
 

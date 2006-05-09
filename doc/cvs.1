@@ -505,33 +505,34 @@ Use \fItemplate\fR as the command line template to generate OpenPGP signatures.
 Format strings in this template are substituted before the commit is run:
 .SP
 .IP "" 2
-\fB%t\fR
+\fB%M\fR
 .IP "" 4
 Substitute in the textmode flag (defaults to \fB--textmode\fR) when a
 signature is being generated for a text file.
 .SP
+.SP
+.SP
+.SP
+.SP
+.SP
 .IP "" 2
-\fB%a\fR
+\fB%@\fR
 .IP "" 4
 Substitute in any \fIarg\fRs set via the \fB--sign-arg\fR option or the
 CVSROOT sign-arg method option.
-.SP
 .IP "" 2
 \fB%s\fR
 .IP "" 4
 Substitute the name of the file to generate a signature for.
-.SP
 This template should send the generated signature to its standard output.
 Overrides the \fBsign-template\fR method option and defaults to something like
-\fB/usr/bin/gpg --detach-sign --output - %t %a %s\fR.
-.SP
+\fB/usr/bin/gpg --detach-sign --output - %M %@ %s\fR.
 .IP "" 0
 \fB--textmode\fR
 .IP "" 2
-The value passed to both in place of %t in both the OpenPGP signature
+The value passed to both in place of \fB%M\fR in both the OpenPGP signature
 and the OpenPGP verification command line templates.  Defaults to
 \fB--textmode\fR.
-.SP
 .IP "" 0
 \fB--verify\fR
 .IP "" 2
@@ -545,7 +546,6 @@ signatures but the checkout will be allowed.  With a failure mode of
 received.  If the server does not support OpenPGP signatures, a failure mode
 of \fBfatal\fR will disallow the entire checkout.  Overrides the \fBverify\fR
 and \fBno-verify\fR method options (see node `The connection method\(aq in the CVS manual).
-.SP
 .IP "" 0
 \fB--verify-template=\fItemplate\fB\fR
 .IP "" 2
@@ -553,38 +553,39 @@ Use \fItemplate\fR as the command line template to verify OpenPGP signatures.
 Format strings in this template are substituted before the command is run:
 .SP
 .IP "" 2
-\fB%t\fR
+\fB%M\fR
 .IP "" 4
 Substitute in the textmode flag (defaults to \fB--textmode\fR) when a
 signature is being verified for a text file.
 .SP
+.SP
+.SP
+.SP
+.SP
+.SP
+.SP
 .IP "" 2
-\fB%a\fR
+\fB%@\fR
 .IP "" 4
 Substitute in any \fIarg\fRs set via the \fB--verify-arg\fR option or the
 CVSROOT \fBverify-arg\fR method option.
-.SP
 .IP "" 2
 \fB%S\fR
 .IP "" 4
 Substitute the name of the file containing the signature.
-.SP
 .IP "" 2
 \fB%s\fR
 .IP "" 4
 Substitute the name of the signed file.
-.SP
 This template should exit with an exit code of zero if the signature is valid
 for the signed file and a non-zero exit code otherwise.  Overrides the
 \fBverify-template\fR method option see node `The connection method\(aq in the CVS manual and
 defaults to something like
-\fB/usr/bin/gpg --detach-sign --output - %t %a %S %s\fR.
-.SP
+\fB/usr/bin/gpg --detach-sign --output - %M %@ %S %s\fR.
 .SH "Common options"
 .SS "Common command options"
 .IX "Common options"
 .IX "Right-hand options"
-.SP
 This section describes the \fBcommand_options\fR that
 are available across several \fBcvs\fR commands.  These
 options are always given to the right of
@@ -596,7 +597,6 @@ can almost always count on the same behavior of the
 option as in other commands.  (Other command options,
 which are listed with the individual commands, may have
 different behavior from one \fBcvs\fR command to the other).
-.SP
 \fBThe \fBhistory\fB command is an exception; it supports
 many options that conflict even with these standard options.\fR
 .SP
