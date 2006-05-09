@@ -2557,7 +2557,7 @@ RCS_magicrev (rcs, rev)
     rev_num = findnextmagicrev (rcs, rev, 2);
     
     /* only look at even numbered branches */
-    for (; ; rev_num += 2)
+    for ( ; ; rev_num += 2)
     {
 	/* see if the physical branch exists */
 	(void) sprintf (xrev, "%s.%d", rev, rev_num);
