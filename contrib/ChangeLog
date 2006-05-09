@@ -1,5 +1,14 @@
 2006-05-09  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.pl: Handle file names with spaces.
+	($CVSWEB_URI): Remove trailing /.
+	(@path): Delete global.
+	(change_summary): Accept module argument.  Avoid unneeded variable
+	indirections.
+	(derive_subject_from_changes_file, mail_notification): Accept module
+	argument.
+	(process_argv): Return module instead of file list.
+
 	* commit_prep.pl: Update copyright year.
 	* log_accum.pl: Update copyright year.  Restore taint checks and add
 	some additional untainting code.  Update doc.

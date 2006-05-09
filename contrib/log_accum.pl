@@ -91,7 +91,7 @@ my $rcsidinfo = 2;
 my $CVSWEB_SCHEME = "http";
 my $CVSWEB_DOMAIN = "cvs.sv.gnu.org";
 my $CVSWEB_PORT = "80";
-my $CVSWEB_URI = "viewcvs/";
+my $CVSWEB_URI = "viewcvs";
 my $SEND_URL = "true";
 
 my $SEND_DIFF = "false";
@@ -146,9 +146,10 @@ my $hook_identifier = '';	# Unique identifier to support multiple hooks
 
 my $id = getpgrp();
 my $cvs_user = $ENV{'USER'} || getlogin || (getpwuid($<))[0] || sprintf("uid#%d",$<);
-my @path;
 my %oldrev;
 my %newrev;
+
+my @files;
 
 # Temporary filenames
 my $ADDED_FILE;
@@ -289,8 +290,8 @@ sub read_logfile {
 # do an 'cvs -Qn status' on each file in the arguments, and extract info.
 #
 sub change_summary {
-    my ($out, @filenames) = @_;
-    my ($file, $rcsfile, $line, $vhost, $cvsweb_base);
+    my ($out, $module, @filenames) = @_;
+    my ($file, $rcsfile, $line, $vhost);
 
     while (@filenames) {
         $file = shift @filenames;
@@ -316,21 +317,17 @@ sub change_summary {
         }
 
         my $diff = "\n\n";
-        # I never saw this kind of setup, let's use 'cvsroot=' instead
-        #$vhost = $path[0]; 
-	my $cvsweb_root=$path[0];
-        #if ($CVSWEB_PORT eq "80") {
-        #  $cvsweb_base = "$CVSWEB_SCHEME://$vhost.$CVSWEB_DOMAIN/$CVSWEB_URI";
-        #}
-        #else {
-        #  $cvsweb_base = "$CVSWEB_SCHEME://$vhost.$CVSWEB_DOMAIN:$CVSWEB_PORT/$CVSWEB_URI";
-        #}
-	$cvsweb_base = "$CVSWEB_SCHEME://$CVSWEB_DOMAIN";
-	$cvsweb_base .= ":$CVSWEB_PORT" if ($CVSWEB_PORT ne "80");
-	$cvsweb_base .= "/$CVSWEB_URI";
-	
-        if ($SEND_URL eq "true") {
-          $diff .= $cvsweb_base . join("/", @path) . "/$file?cvsroot=${cvsweb_root}";
+
+	if ($SEND_URL eq "true")
+        {
+	    # FIXME: Store this in a separate list.
+
+	    die "internal error - module empty" unless $module =~ m#^([^/]+)#;
+	    my $project = $1;
+
+	    $diff = "$CVSWEB_SCHEME://$CVSWEB_DOMAIN";
+	    $diff .= ":$CVSWEB_PORT" unless $CVSWEB_PORT eq "80";
+	    $diff .= "/$CVSWEB_URI/$project/$module/$file";
         }
 
         #
@@ -339,18 +336,13 @@ sub change_summary {
         # Perl's 'is this binary' algorithm; it's pretty good.  But not
         # perfect.
         #
-        if (($file =~ /\.(?:pdf|gif|jpg|mpg)$/i) || (-B $file) || (-z $file)) {
-          if ($SEND_URL eq "true") {
+        if ($file =~ /\.(?:pdf|gif|jpg|mpg)$/i or -B $file) {
+          if ($SEND_URL eq "true")
+	  {
             $diff .= "&pathrev=" . $newrev{$file};
 	    $diff .= "&content-type=application/octet-stream\n\n";
           }
-          if ($SEND_DIFF eq "true") {
-	      if (-z $file) {
-		  $diff .= "\t[Empty file]\n\n";
-	      } else {
-		  $diff .= "\t[Binary file]\n\n";
-	      }
-          }
+	  $diff .= "\t[Binary file]\n\n" if $SEND_DIFF eq "true";
         }
         else {
             #
@@ -409,6 +401,7 @@ sub build_header {
 
 sub derive_subject_from_changes_file ()
 {
+  my ($module) = @_;
   my $subj = "";
 
   my $i;
@@ -472,8 +465,7 @@ sub derive_subject_from_changes_file ()
     
       ## NPM: DEFAULT: DIRECTORY CREATION (c.f. "Check for a new directory first" in main mody)
       if ($subj eq "") {
-          my $subject = join("/", @path);
-          $subj = "NEW: $subject"; 
+          $subj = "NEW: $module"; 
       }    
   }
 
@@ -488,10 +480,10 @@ sub derive_subject_from_changes_file ()
 
 sub mail_notification
 {
-    my ($addr_list, @text) = @_;
+    my ($addr_list, $module, @text) = @_;
     my ($mail_to, $mail_from);
 
-    my $subj = &derive_subject_from_changes_file ();
+    my $subj = &derive_subject_from_changes_file ($module);
 
     if ($EMULATE_LOCAL_MAIL_USER) {
 	$mail_from = "$cvs_user\@$EMULATE_LOCAL_MAIL_USER";
@@ -553,7 +545,8 @@ sub mail_notification
 sub process_argv
 {
     my (@argv) = @_;
-    my (@files, $arg, $donefiles);
+    my ($arg, $donefiles);
+    my $module;
 
     while (@argv) {
 	$arg = shift @argv;
@@ -597,9 +590,18 @@ sub process_argv
 	    } elsif ($arg eq '- Imported sources') {
 		$imported_sources = 1;
 	    } elsif ($UseNewInfoFmtStrings) {
-		push @files, $arg; # current directory
+		$module = $arg; # current directory
 		while (@argv) {
 		    my $filename = shift @argv;
+		    if ($filename =~ m#^([^/]+)$#)
+		    {
+			$filename = $1;
+		    }
+		    else
+		    {
+			die "path in file name `$filename'";
+		    }
+			
 		    push @files, $filename;
 		    $oldrev{$filename} = shift @argv
 			or die "No previous revision given for $filename";
@@ -629,6 +631,7 @@ sub process_argv
 		    }
 		}
 	    } else {
+		my @files;
 		push @files, split (' ', $arg);
 		for (@files)
 		{
@@ -646,8 +649,9 @@ sub process_argv
     # Sanity checks.
     die "No email destination specified.\n" unless @mailto;
 
-    return @files;
+    return $module;
 }
+
 
 
 #############################################################
@@ -667,7 +671,7 @@ delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
 # Initialize basic variables
 #
 print join(' ', @ARGV); print "\n"; #debug
-my @files = process_argv @ARGV;
+my $module = process_argv @ARGV;
 
 my $state = $STATE_NONE;
 my @branch_lines;
@@ -694,18 +698,9 @@ die "Could not determine update dir" unless $update_dir;
 push @diffargs, "-ub" unless @diffargs;
 
 
-@path = split '/', $files[0];
-my $dir;
-if ($#path == 0) {
-    $dir = ".";
-} else {
-    $dir = join '/', @path[1..$#path];
-}
-
 
 #print("ARGV  - ", join(":", @ARGV), "\n");
-#print("files - ", join(":", @files), "\n");
-#print("path  - ", join(":", @path), "\n");
+print("files - ", join(":", @files), "\n");
 #print("dir   - ", $dir, "\n");
 #print("id    - ", $id, "\n");
 
@@ -717,11 +712,11 @@ if ($#path == 0) {
 #
 if ($new_directory) {
     $header = &build_header;
-    my @text = ();
-    push(@text, $header);
-    push(@text, "");
-    push(@text, "  ".$files[0]." - New directory");
-    &mail_notification ([@mailto], @text);
+    my @text;
+    push @text, $header;
+    push @text, "";
+    push @text, "  $module - New directory";
+    &mail_notification ([@mailto], $module, @text);
     exit 0;
 }
 
@@ -729,6 +724,7 @@ if ($new_directory) {
 # Iterate over the body of the message collecting information.
 #
 while (<STDIN>) {
+    print $_;
     chomp;                      # Drop the newline
     if (/^\s*(Tag|Revision\/Branch):\s*(\w+)/) {
 	$branch = $2;
@@ -741,18 +737,42 @@ while (<STDIN>) {
     if (/^Added Files/)    { $state = $STATE_ADDED;   next; }
     if (/^Removed Files/)  { $state = $STATE_REMOVED; next; }
     if (/^Log Message/)    { $state = $STATE_LOG;     last; }
-    s/[ \t\n]+$//;              # delete trailing space
 
     next if $state == $STATE_NONE || $state == $STATE_LOG;
+    next if /^\s*$/;              # ignore empty lines
 
-    # Untaint.
-    my @tmp_list = map {die "dir in $_" if !m#^([^/]+)$#; $1;} split;
-    #print "map: {", join (", ", @tmp_list), "}\n";
+    # Sort the file list.  This algorithm is a little cumbersome, but it
+    # handles file names with spaces.
+    my @matched;
+    while (!/^\s*$/)
+    {
+	my $m;
+	for (my $i = 0; $i <= $#files; $i++)
+	{
+	    if (/^\t\Q$files[$i]\E /)
+	    {
+		print "matched $files[$i]\n";
+		$m = $i if !defined $m or length $files[$m] < length $files[$i];
+	    }
+	}
+	last if !defined $m;
+
+	s/^\t\Q$files[$m]\E /\t/;
+	push @matched, $files[$m];
+	splice @files, $m, 1;
+    }
+
+    # Assertions.
+    die "unrecognized file specification: `$_'" unless @matched;
+    die "unrecognized file(s): `$_'" unless /^\s*$/;
 
     # Store.
-    push (@changed_files, @tmp_list) if ($state == $STATE_CHANGED);
-    push (@added_files,   @tmp_list) if ($state == $STATE_ADDED);
-    push (@removed_files, @tmp_list) if ($state == $STATE_REMOVED);
+    push @changed_files, @matched and next if $state == $STATE_CHANGED;
+    push @added_files, @matched and next if $state == $STATE_ADDED;
+    push @removed_files, @matched and next if $state == $STATE_REMOVED;
+
+    # Assertion.
+    die "unknown file state $state";
 }
 
 # Process the /Log Message/ section now, if it exists.
@@ -762,15 +782,12 @@ if (!eof(STDIN)) {
     while (<STDIN>) {
         next unless ($state == $STATE_LOG); # eat all STDIN
 
-        if ($state == $STATE_LOG) {
-            if (/^PR:$/i ||
-                /^Reviewed by:$/i ||
-                /^Submitted by:$/i ||
-                /^Obtained from:$/i) {
-                next;
-            }
-            push (@log_lines, $_);
-        }
+        if (/^\s*\[(bug|pr|task) #(\d+)\]/)
+        {
+	    # FIXME: Set the bug/patch ID to "$1 #$2" so that the issue
+	    # database may be updated.
+	}
+        push (@log_lines, $_);
     }
 }
 
@@ -781,14 +798,14 @@ if (!eof(STDIN)) {
 # (Note, this only does the mail and changes log, not the rcs log).
 #
 while ($#log_lines > -1) {
-    last if ($log_lines[0] ne "");
-    shift(@log_lines);
+    last unless $log_lines[0] eq "";
+    shift @log_lines;
 }
 while ($#log_lines > -1) {
-    last if ($log_lines[$#log_lines] ne "");
-    pop(@log_lines);
+    last unless $log_lines[$#log_lines] eq "";
+    pop @log_lines;
 }
-for (my $i = $#log_lines; $i > 0; $i--) {
+for (my $i = $#log_lines - 1; $i > 0; $i--) {
     if (($log_lines[$i - 1] eq "") && ($log_lines[$i] eq "")) {
         splice(@log_lines, $i, 1);
     }
@@ -809,12 +826,12 @@ for ($i = 0; ; $i++) {
 # Spit out the information gathered in this pass.
 #
 &write_logfile("$LOG_FILE.$i", @log_lines);
-&append_to_file("$BRANCH_FILE.$i",  $dir, @branch_lines);
-&append_to_file("$ADDED_FILE.$i",   $dir, @added_files);
-&append_to_file("$CHANGED_FILE.$i", $dir, @changed_files);
-&append_to_file("$REMOVED_FILE.$i", $dir, @removed_files);
+&append_to_file("$BRANCH_FILE.$i",  $module, @branch_lines);
+&append_to_file("$ADDED_FILE.$i",   $module, @added_files);
+&append_to_file("$CHANGED_FILE.$i", $module, @changed_files);
+&append_to_file("$REMOVED_FILE.$i", $module, @removed_files);
 if ($rcsidinfo) {
-  &change_summary ("$SUMMARY_FILE.$i",
+  &change_summary ("$SUMMARY_FILE.$i", $module,
 		   (@changed_files, @added_files, @removed_files));
 }
 
@@ -823,7 +840,7 @@ if ($rcsidinfo) {
 #
 if (-e "$LAST_FILE") {
    $_ = &read_line("$LAST_FILE");
-   my $tmpfiles = $files[0];
+   my $tmpfiles = $module;
    # Characters escape for use in regexp:
    $tmpfiles =~ s,([^a-zA-Z0-9_/]),\\$1,g;
    if (! grep(/$tmpfiles$/, $_)) {
@@ -888,7 +905,7 @@ if ($rcsidinfo == 1) {
 # Mail out the notification.
 #
 if (!$have_r_opt || $onlytag eq $branch) {
-    &mail_notification ([@mailto], @text);
+    &mail_notification ([@mailto], $module, @text);
 }
 &cleanup_tmpfiles;
 exit 0;
