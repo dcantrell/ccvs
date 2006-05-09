@@ -1,7 +1,7 @@
-#! @PERL@
+#! @PERL@ -T
 # -*-Perl-*-
 
-# Copyright (C) 1994-2005 The Free Software Foundation, Inc.
+# Copyright (C) 1994-2006 The Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -57,6 +57,8 @@
 # content type; diff URLs are also more compatible with viewcvs
 # (removed '.diff')
 # - do not perform a diff if a file is added or removed
+# Derek Price (2006-05-08):
+# - Perform the diff if added or removed unless -E is specified.
 
 use strict;
 
@@ -303,7 +305,7 @@ sub change_summary {
         if ($oldrev{$file}) {
             open(RCS, "-|") || exec "$CVSBIN/cvs", '-Qn', 'log',
 				    "-r$newrev{$file}",
-				    '--', $file;
+				    "--", $file;
             while (<RCS>) {
                 if (/^date:.*lines:([^;]+);.*/) {
                     $delta = $1;
@@ -541,6 +543,7 @@ sub mail_notification
 #		  (though first invocation always removes the default `-ub').
 #		  Implies `-D'.
 #   -E		- Suppress diffs against added and removed (empty) files.
+#		  Implies `-D'.
 #   -m EMAIL	- Set mailto address.
 #   -p PROJECT	- Set full repository path.
 #   -r TAG	- operate only on changes with tag TAG
@@ -561,6 +564,7 @@ sub process_argv
 	    $SEND_DIFF = "true";
 	} elsif ($arg eq '-E') {
 	    $SUPPRESS_DIFFS_AGAINST_EMPTIES = "true";
+	    $SEND_DIFF = "true";
 	} elsif ($arg eq '-m') {
 	    push @mailto, split (/[ ,]+/, shift @argv);
 	} elsif ($arg eq '-p') {
@@ -607,14 +611,6 @@ sub process_argv
 		    $newrev{$filename} = 0 if $newrev{$filename} eq "NONE";
 
 		    # Untaint.
-		    if ($filename =~ m#^([^/]+)$#)
-		    {
-			$filename = $1;
-		    }
-		    else
-		    {
-			die "invalid characters in $filename";
-		    }
 		    if ($oldrev{$filename} =~ /^([0-9.]+)$/)
 		    {
 			$oldrev{$filename} = $1;
@@ -746,12 +742,20 @@ while (<STDIN>) {
     if (/^Removed Files/)  { $state = $STATE_REMOVED; next; }
     if (/^Log Message/)    { $state = $STATE_LOG;     last; }
     s/[ \t\n]+$//;              # delete trailing space
-    
-    push (@changed_files, split) if ($state == $STATE_CHANGED);
-    push (@added_files,   split) if ($state == $STATE_ADDED);
-    push (@removed_files, split) if ($state == $STATE_REMOVED);
+
+    next if $state == $STATE_NONE || $state == $STATE_LOG;
+
+    # Untaint.
+    my @tmp_list = map {die "dir in $_" if !m#^([^/]+)$#; $1;} split;
+    #print "map: {", join (", ", @tmp_list), "}\n";
+
+    # Store.
+    push (@changed_files, @tmp_list) if ($state == $STATE_CHANGED);
+    push (@added_files,   @tmp_list) if ($state == $STATE_ADDED);
+    push (@removed_files, @tmp_list) if ($state == $STATE_REMOVED);
 }
-# Proces the /Log Message/ section now, if it exists.
+
+# Process the /Log Message/ section now, if it exists.
 # Do this here rather than above to deal with Log messages
 # that include lines that confuse the state machine.
 if (!eof(STDIN)) {
