@@ -700,7 +700,7 @@ push @diffargs, "-ub" unless @diffargs;
 
 
 #print("ARGV  - ", join(":", @ARGV), "\n");
-print("files - ", join(":", @files), "\n");
+#print("files - ", join(":", @files), "\n");
 #print("dir   - ", $dir, "\n");
 #print("id    - ", $id, "\n");
 
@@ -724,7 +724,7 @@ if ($new_directory) {
 # Iterate over the body of the message collecting information.
 #
 while (<STDIN>) {
-    print $_;
+    #print $_;
     chomp;                      # Drop the newline
     if (/^\s*(Tag|Revision\/Branch):\s*(\w+)/) {
 	$branch = $2;
@@ -751,7 +751,7 @@ while (<STDIN>) {
 	{
 	    if (/^\t\Q$files[$i]\E /)
 	    {
-		print "matched $files[$i]\n";
+		#print "matched $files[$i]\n";
 		$m = $i if !defined $m or length $files[$m] < length $files[$i];
 	    }
 	}

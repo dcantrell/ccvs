@@ -1,5 +1,7 @@
 2006-05-09  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.pl: Comment out debug prints.
+
 	* log_accum.pl: Handle file names with spaces.
 	($CVSWEB_URI): Remove trailing /.
 	(@path): Delete global.
