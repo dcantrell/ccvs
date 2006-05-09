@@ -133,6 +133,8 @@ static void putdeltatext PROTO ((FILE *, Deltatext *));
 static FILE *rcs_internal_lockfile PROTO ((char *));
 static void rcs_internal_unlockfile PROTO ((FILE *, char *));
 static char *rcs_lockfilename PROTO ((const char *));
+static int findnextmagicrev PROTO ((RCSNode *rcs, char *rev, int default_rv));
+static int findhighestmagicrev_proc PROTO((Node *p, void *closure));
 
 /* The RCS file reading functions are called a lot, and they do some
    string comparisons.  This macro speeds things up a bit by skipping
@@ -2549,8 +2551,13 @@ RCS_magicrev (rcs, rev)
     xrev = xmalloc (strlen (rev) + 14); /* enough for .0.number */
     check_rev = xrev;
 
+    /* prime the pump by finding the next unused magic rev,
+     * if none are found, it should return 2.
+     */
+    rev_num = findnextmagicrev (rcs, rev, 2);
+    
     /* only look at even numbered branches */
-    for (rev_num = 2; ; rev_num += 2)
+    for (; ; rev_num += 2)
     {
 	/* see if the physical branch exists */
 	(void) sprintf (xrev, "%s.%d", rev, rev_num);
@@ -8821,4 +8828,67 @@ make_file_label (path, rev, rcs)
 	(void) sprintf (label, "-L%s\t%s", path, datebuf);
     }
     return label;
+}
+
+/*
+ * Go through the symbolic tag list, find the next unused magic
+ * branch revision.
+ *
+ * Returns 2 if it can't figure anything out, then the caller
+ * will end up doing a linear search.
+ */
+static int findnextmagicrev_dots;
+static int
+findnextmagicrev (rcs, rev, defaultrv)
+    RCSNode *rcs;
+    char *rev;
+    int defaultrv;
+{
+    int rv = defaultrv;
+
+    /* Tell the walklist proc how many dots we're looking for,
+     * which is the number of dots in the existing rev, plus
+     * 2.  one for RCS_MAGIC_BRANCH and one for the new rev number.
+     */
+    findnextmagicrev_dots = numdots (rev) + 2;
+  
+    /* walk the symbols list to find the highest revision. */
+    (void) walklist (RCS_symbols (rcs), findhighestmagicrev_proc, &rv);
+
+    /* adjust to next even number if we found something */
+    if (rv != defaultrv)
+    {
+	if ((rv % 2) != 0)
+	    rv++;
+	else
+	    rv += 2;
+    }
+
+    return rv;
+}
+
+/*
+ * walklist proc to find the highest magic rev with
+ * the required number of dots.
+ */
+static int
+findhighestmagicrev_proc (p, closure)
+    Node *p;
+    void *closure;
+{
+    int *rev = (int *)closure;
+
+    if (numdots (p->data) == findnextmagicrev_dots) {
+	/* if the last term of the rev is greater than the current
+	   max, update */
+	char *cp;
+	cp = strrchr (p->data, '.');
+	if ((cp != NULL) && (cp[1] != 0))
+	{
+	    int new_rev = atoi (cp + 1);
+	    if (new_rev > *rev)
+		*rev = new_rev;
+	}
+    }
+    return 1;
 }
