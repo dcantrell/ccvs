@@ -1,3 +1,14 @@
+2006-05-09  Mark D. Baushke  <mdb@gnu.org>
+
+	* rcs.c (findhighestmagicrev_proc): New function to find the
+	highest magic rev with the required number of dots.
+	(findnextmagicrev): New function to walk the symbolic tag list
+	calling findhighestmagicrev_proc() to find the next unused magic
+	branch revision.
+	(RCS_magicrev): Use findnextmagicrev().
+	(Patch suggested by "Kelly F. Hickel" <kfh@mqsoftware.com> based
+	on advice from Larry Jones <lawrence.jones@ugs.com>.)
+
 2006-05-08  Derek Price  <derek@ximbiot.com>
 
 	* sign.c (gen_signature), verify.c (verify_signature): s/%a/%@/ &
