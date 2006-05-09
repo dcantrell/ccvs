@@ -8876,13 +8876,13 @@ findhighestmagicrev_proc (p, closure)
     Node *p;
     void *closure;
 {
-    int *rev = (int *)closure;
+    int *rev = (int *) closure;
 
-    if (numdots (p->data) == findnextmagicrev_dots) {
+    if (numdots (p->data) == findnextmagicrev_dots)
+    {
 	/* if the last term of the rev is greater than the current
 	   max, update */
-	char *cp;
-	cp = strrchr (p->data, '.');
+	char *cp = strrchr (p->data, '.');
 	if ((cp != NULL) && (cp[1] != 0))
 	{
 	    int new_rev = atoi (cp + 1);
