@@ -5811,7 +5811,7 @@ _ACEOF
 fi
 
 cat >>confdefs.h <<_ACEOF
-#define DEFAULT_SIGN_TEMPLATE "$GPG --detach-sign --output - %t %a -- %s"
+#define DEFAULT_SIGN_TEMPLATE "$GPG --detach-sign --output - %M %@ -- %s"
 _ACEOF
 
 
@@ -5819,7 +5819,7 @@ cat >>confdefs.h <<\_ACEOF
 #define DEFAULT_SIGN_TEXTMODE "--textmode"
 _ACEOF
 
-DEFAULT_VERIFY_TEMPLATE="$GPG --verify %t %a -- %S %s"
+DEFAULT_VERIFY_TEMPLATE="$GPG --verify %M %@ -- %S %s"
 
 
 cat >>confdefs.h <<_ACEOF
