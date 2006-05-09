@@ -1,4 +1,4 @@
-#! @PERL@ -T
+#! @PERL@
 # -*-Perl-*-
 
 # Copyright (C) 1994-2005 The Free Software Foundation, Inc.
@@ -46,12 +46,17 @@
 # Changes by Sylvain Beucler <beuc@beuc.net> (2006-05-08):
 # - option -T added again to support multiple log_accum hooks
 # - used 'use strict' and added compatibility for 'perl -T' switch
-#   (and found a ghost variable!)
+# (and found a ghost variable!)
 # - documented some more
 # - fixed a bug in processing -u in log_accum
 # - cleaned-up the temporary filenames
 # - fixed support for UseNewInfoFmtStrings
 # - test if files are empty, so they are not reported as binary
+# - -r now also accepts 'HEAD' as argument (clearer than '')
+# - viewcvs URL's for binary files now use application/octet-stream
+# content type; diff URLs are also more compatible with viewcvs
+# (removed '.diff')
+# - do not perform a diff if a file is added or removed
 
 use strict;
 
@@ -85,9 +90,10 @@ my $CVSWEB_SCHEME = "http";
 my $CVSWEB_DOMAIN = "cvs.sv.gnu.org";
 my $CVSWEB_PORT = "80";
 my $CVSWEB_URI = "viewcvs/";
-my $SEND_URL = "false";
+my $SEND_URL = "true";
 
 my $SEND_DIFF = "false";
+my $SUPPRESS_DIFFS_AGAINST_EMPTIES = "false";
 
 
 # Set this to a domain to have CVS pretend that all users who make
@@ -113,7 +119,9 @@ my $FILE_PREFIX   = '#cvs.';
 my $CVSBIN = "/usr/bin";
 my $MAIL_CMD      = "| /usr/lib/sendmail -i -t";
 #$MAIL_CMD      = "| /var/qmail/bin/qmail-inject";
-my $SUBJECT_PRE   = 'CVS update:';
+
+my $SUBJECT_PRE   = '';
+#my $SUBJECT_PRE   = 'CVS update:';
 
 
 ############################################################
@@ -306,15 +314,21 @@ sub change_summary {
         }
 
         my $diff = "\n\n";
-        $vhost = $path[0];
-        if ($CVSWEB_PORT eq "80") {
-          $cvsweb_base = "$CVSWEB_SCHEME://$vhost.$CVSWEB_DOMAIN/$CVSWEB_URI";
-        }
-        else {
-          $cvsweb_base = "$CVSWEB_SCHEME://$vhost.$CVSWEB_DOMAIN:$CVSWEB_PORT/$CVSWEB_URI";
-        }
+        # I never saw this kind of setup, let's use 'cvsroot=' instead
+        #$vhost = $path[0]; 
+	my $cvsweb_root=$path[0];
+        #if ($CVSWEB_PORT eq "80") {
+        #  $cvsweb_base = "$CVSWEB_SCHEME://$vhost.$CVSWEB_DOMAIN/$CVSWEB_URI";
+        #}
+        #else {
+        #  $cvsweb_base = "$CVSWEB_SCHEME://$vhost.$CVSWEB_DOMAIN:$CVSWEB_PORT/$CVSWEB_URI";
+        #}
+	$cvsweb_base = "$CVSWEB_SCHEME://$CVSWEB_DOMAIN";
+	$cvsweb_base .= ":$CVSWEB_PORT" if ($CVSWEB_PORT ne "80");
+	$cvsweb_base .= "/$CVSWEB_URI";
+	
         if ($SEND_URL eq "true") {
-          $diff .= $cvsweb_base . join("/", @path) . "/$file";
+          $diff .= $cvsweb_base . join("/", @path) . "/$file?cvsroot=${cvsweb_root}";
         }
 
         #
@@ -325,14 +339,14 @@ sub change_summary {
         #
         if (($file =~ /\.(?:pdf|gif|jpg|mpg)$/i) || (-B $file) || (-z $file)) {
           if ($SEND_URL eq "true") {
-            $diff .= "?rev=" . $newrev{$file};
-	    $diff .= "&content-type=text/x-cvsweb-markup\n\n";
+            $diff .= "&pathrev=" . $newrev{$file};
+	    $diff .= "&content-type=application/octet-stream\n\n";
           }
           if ($SEND_DIFF eq "true") {
 	      if (-z $file) {
-		  $diff .= "\t<<Empty file>>\n\n";
+		  $diff .= "\t[Empty file]\n\n";
 	      } else {
-		  $diff .= "\t<<Binary file>>\n\n";
+		  $diff .= "\t[Binary file]\n\n";
 	      }
           }
         }
@@ -344,16 +358,19 @@ sub change_summary {
             #
             if ($SEND_URL eq "true") {
               if (!$oldrev{$file} || !$newrev{$file}) {
-                $diff .= "?rev=" . $oldrev{$file};
+                $diff .= "&rev=" . $oldrev{$file};
 		$diff .= "&content-type=text/x-cvsweb-markup\n\n";
               } else {
-                $diff .= ".diff?r1=$oldrev{$file}&r2=$newrev{$file}\n\n";
+                $diff .= "&r1=$oldrev{$file}&r2=$newrev{$file}\n\n";
               }
 	    }
 
-            if ($SEND_DIFF eq "true") {
-              $diff .= "(In the diff below, changes in quantity "
-                    . "of whitespace are not shown.)\n\n";
+            if ($SEND_DIFF eq "true"
+		and ($SUPPRESS_DIFFS_AGAINST_EMPTIES eq "false"
+		     or ($oldrev{$file} and $newrev{$file}))) {
+	      # Depends on user options, so let's remove that:
+              #$diff .= "(In the diff below, changes in quantity "
+              #      . "of whitespace are not shown.)\n\n";
               open(DIFF, "-|")
                 || exec "$CVSBIN/cvs", '-Qn', 'diff', '-N', @diffargs,
                 "-r$oldrev{$file}", "-r$newrev{$file}", '--', $file;
@@ -523,11 +540,12 @@ sub mail_notification
 #		  to `-ub'.  Multiple invocations will pass all DIFF_ARGS
 #		  (though first invocation always removes the default `-ub').
 #		  Implies `-D'.
+#   -E		- Suppress diffs against added and removed (empty) files.
 #   -m EMAIL	- Set mailto address.
 #   -p PROJECT	- Set full repository path.
 #   -r TAG	- operate only on changes with tag TAG
 #   -r BRANCH	- operate only on changes in branch TAG
-#		  Use -r "" for only changes to HEAD.
+#		  Use -r "" or -r "HEAD " for only changes to HEAD.
 #   -u USER	- Set CVS username to USER.
 sub process_argv
 {
@@ -541,6 +559,8 @@ sub process_argv
 	} elsif ($arg eq '-D') {
 	    push @diffargs, shift @argv;
 	    $SEND_DIFF = "true";
+	} elsif ($arg eq '-E') {
+	    $SUPPRESS_DIFFS_AGAINST_EMPTIES = "true";
 	} elsif ($arg eq '-m') {
 	    push @mailto, split (/[ ,]+/, shift @argv);
 	} elsif ($arg eq '-p') {
@@ -548,6 +568,10 @@ sub process_argv
 	} elsif ($arg eq '-r') {
 	    $have_r_opt = 1;
 	    $onlytag = shift @argv;
+	    # Empty branch means HEAD
+	    if ($onlytag eq 'HEAD') {
+		$onlytag = '';
+	    }
 	} elsif ($arg eq '-u') {
 	    my $param = shift @argv;
 	    if (!defined($cvs_user)) {
@@ -579,16 +603,34 @@ sub process_argv
 			or die "No new revision given for $filename";
 
 		    # Simplify diffs.
-		    $oldrev{$filename} = 0 if $oldrev{$arg} eq "NONE";
-		    $newrev{$filename} = 0 if $newrev{$arg} eq "NONE";
+		    $oldrev{$filename} = 0 if $oldrev{$filename} eq "NONE";
+		    $newrev{$filename} = 0 if $newrev{$filename} eq "NONE";
 
 		    # Untaint.
-		    die "invalid characters in $filename"
-			if $filename =~ s#/+##g;
-		    die "invalid old revision $oldrev{$filename}"
-			if $oldrev{$filename} =~ s/[^0-9.]+//g;
-		    die "invalid new revision $newrev{$filename}"
-			if $newrev{$filename} =~ s/[^0-9.]+//g;
+		    if ($filename =~ m#^([^/]+)$#)
+		    {
+			$filename = $1;
+		    }
+		    else
+		    {
+			die "invalid characters in $filename";
+		    }
+		    if ($oldrev{$filename} =~ /^([0-9.]+)$/)
+		    {
+			$oldrev{$filename} = $1;
+		    }
+		    else
+		    {
+			die "invalid old revision $oldrev{$filename}";
+		    }
+		    if ($newrev{$filename} =~ /^([0-9.]+)$/)
+		    {
+			$newrev{$filename} = $1;
+		    }
+		    else
+		    {
+			die "invalid new revision $newrev{$filename}";
+		    }
 		}
 	    } else {
 		push @files, split (' ', $arg);
@@ -628,8 +670,7 @@ delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
 #
 # Initialize basic variables
 #
-print join(' ', @ARGV);
-print "\n";
+print join(' ', @ARGV); print "\n"; #debug
 my @files = process_argv @ARGV;
 
 my $state = $STATE_NONE;
@@ -782,7 +823,7 @@ if (-e "$LAST_FILE") {
    # Characters escape for use in regexp:
    $tmpfiles =~ s,([^a-zA-Z0-9_/]),\\$1,g;
    if (! grep(/$tmpfiles$/, $_)) {
-        print "More commits to come... - files[0]=$tmpfiles - lastdir=$_)\n";
+        # print "More commits to come...\n";
         exit 0
    }
 }
