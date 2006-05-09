@@ -1,5 +1,12 @@
 2006-05-08  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.pl: -r now also accepts 'HEAD' as argument (clearer than
+	'').  Viewcvs URL's for binary files now use application/octet-stream
+	content type; diff URLs are also more compatible with viewcvs (removed
+	'.diff').  Add -E option to avoid the diff if a file is added or
+	removed.
+	(Original patch from Sylvain Beucler <beuc@beuc.net>.)
+
 	* commit_prep.pl: Option -T added to support multiple log_accum hooks.
 	Deprecated misleading -u option.  Used 'use strict' and added
 	compatibility for 'perl -T' switch.  Documented some more.  Removed
