@@ -8834,7 +8834,7 @@ make_file_label (path, rev, rcs)
  * Go through the symbolic tag list, find the next unused magic
  * branch revision.
  *
- * Returns 2 if it can't figure anything out, then the caller
+ * Returns defaultrv if it can't figure anything out, then the caller
  * will end up doing a linear search.
  */
 static int findnextmagicrev_dots;
