@@ -1,3 +1,9 @@
+2006-05-09  Derek Price  <derek@ximbiot.com>
+
+	* commit_prep.pl: Update copyright year.
+	* log_accum.pl: Update copyright year.  Restore taint checks and add
+	some additional untainting code.  Update doc.
+
 2006-05-08  Derek Price  <derek@ximbiot.com>
 
 	* log_accum.pl: -r now also accepts 'HEAD' as argument (clearer than
