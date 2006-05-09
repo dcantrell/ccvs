@@ -386,8 +386,8 @@ verify_signature (const char *srepos, const char *sig, size_t siglen,
     /*
      * %p = shortrepos
      * %r = repository
-     * %{a} = user defined sign args
-     * %t = textmode flag
+     * %{@} = user defined sign args
+     * %M = textmode flag
      * %s = signature file name
      * %d = signed (data) file name
      */
@@ -401,11 +401,11 @@ verify_signature (const char *srepos, const char *sig, size_t siglen,
 	                      false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	                      get_verify_template (),
-	                      "a", ",", get_verify_args (),
+	                      "@", ",", get_verify_args (),
 			      verify_args_list_to_args_proc, (void *) NULL,
 	                      "r", "s", current_parsed_root->directory,
 	                      "p", "s", srepos,
-	                      "t", "s", bin ? NULL : get_openpgp_textmode (),
+	                      "M", "s", bin ? NULL : get_openpgp_textmode (),
 	                      "S", "s", sigfile,
 	                      "s", "s", filename,
 	                      (char *) NULL);

@@ -267,8 +267,8 @@ gen_signature (const char *srepos, const char *filename, bool bin, size_t *len)
     /*
      * %p = shortrepos
      * %r = repository
-     * %{a} = user defined sign args
-     * %t = textmode flag
+     * %{@} = user defined sign args
+     * %M = textmode flag
      * %s = file name
      */
     /*
@@ -281,11 +281,11 @@ gen_signature (const char *srepos, const char *filename, bool bin, size_t *len)
 	                      false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	                      get_sign_template (),
-	                      "a", ",", get_sign_args (),
+	                      "@", ",", get_sign_args (),
 			      sign_args_list_to_args_proc, (void *) NULL,
 	                      "r", "s", current_parsed_root->directory,
 	                      "p", "s", srepos,
-	                      "t", "s", bin ? NULL : get_openpgp_textmode (),
+	                      "M", "s", bin ? NULL : get_openpgp_textmode (),
 	                      "s", "s", filename,
 	                      (char *) NULL);
 
