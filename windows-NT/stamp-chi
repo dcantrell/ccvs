@@ -63,21 +63,21 @@
 #undef C_ALLOCA
 
 /* Define to a command line template that will write an OpenPGP signature for
-   the file `%s' to its standard out. `%t' is substituted at run time with an
+   the file `%s' to its standard out. `%M' is substituted at run time with an
    option which flags files as text files, when necessary, and the empty
-   string, otherwise. `%a' is substituted with a list of arguments provided by
+   string, otherwise. `%@' is substituted with a list of arguments provided by
    the user. */
 #undef DEFAULT_SIGN_TEMPLATE
 
 /* Define to the option string that the OpenPGP program used in the
    DEFAULT_SIGN_TEMPLATE would like to see for text files (substituted at run
-   time in place of `%t' in the DEFAULT_SIGN_TEMPLATE). */
+   time in place of `%M' in the DEFAULT_SIGN_TEMPLATE). */
 #undef DEFAULT_SIGN_TEXTMODE
 
 /* Define to a command line template that will read an OpenPGP signature from
-   the file `%s' and use it to verify the integrity of the file `%d'. `%t' is
+   the file `%s' and use it to verify the integrity of the file `%d'. `%M' is
    substituted at run time with an option which flags files as text files,
-   when necessary, and the empty string, otherwise. `%a' is substituted with a
+   when necessary, and the empty string, otherwise. `%@' is substituted with a
    list of arguments provided by the user. */
 #undef DEFAULT_VERIFY_TEMPLATE
 
