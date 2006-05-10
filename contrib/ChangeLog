@@ -1,5 +1,8 @@
 2006-05-09  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.pl: First pass at organizing and eliminating globals.  Does
+	not alter functionality.
+
 	* log_accum.pl: Comment out debug prints.
 
 	* log_accum.pl: Handle file names with spaces.

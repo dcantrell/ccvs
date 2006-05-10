@@ -144,12 +144,7 @@ my $new_directory = 0;          # Is this a 'cvs add directory' command?
 my $imported_sources = 0;       # Is this a 'cvs import' command?
 my $hook_identifier = '';	# Unique identifier to support multiple hooks
 
-my $id = getpgrp();
 my $cvs_user = $ENV{'USER'} || getlogin || (getpwuid($<))[0] || sprintf("uid#%d",$<);
-my %oldrev;
-my %newrev;
-
-my @files;
 
 # Temporary filenames
 my $ADDED_FILE;
@@ -178,16 +173,23 @@ sub format_names {
     @lines;
 }
 
-sub cleanup_tmpfiles {
-    my (@files);
 
-    opendir(DIR, $TMPDIR);
-    push(@files, grep(/^${FILE_PREFIX}${hook_identifier}.${id}.*\.$/, readdir(DIR)));
-    closedir(DIR);
-    foreach (@files) {
+
+sub cleanup_tmpfiles {
+    my ($id) = @_;
+    my @files;
+
+    opendir DIR, $TMPDIR;
+    push @files, grep /^$FILE_PREFIX$hook_identifier\.$id.*\.$/,
+		      readdir DIR;
+    closedir DIR;
+    foreach (@files)
+    {
         unlink "$TMPDIR/$_";
     }
 }
+
+
 
 sub write_logfile {
     my ($filename, @lines) = @_;
@@ -290,7 +292,7 @@ sub read_logfile {
 # do an 'cvs -Qn status' on each file in the arguments, and extract info.
 #
 sub change_summary {
-    my ($out, $module, @filenames) = @_;
+    my ($out, $module, $oldrev, $newrev, @filenames) = @_;
     my ($file, $rcsfile, $line, $vhost);
 
     while (@filenames) {
@@ -303,9 +305,9 @@ sub change_summary {
         my $delta = "";
         $rcsfile = "$update_dir/$file";
 
-        if ($oldrev{$file}) {
+        if ($oldrev->{$file}) {
             open(RCS, "-|") || exec "$CVSBIN/cvs", '-Qn', 'log',
-				    "-r$newrev{$file}",
+				    "-r" . $newrev->{$file},
 				    "--", $file;
             while (<RCS>) {
                 if (/^date:.*lines:([^;]+);.*/) {
@@ -339,7 +341,7 @@ sub change_summary {
         if ($file =~ /\.(?:pdf|gif|jpg|mpg)$/i or -B $file) {
           if ($SEND_URL eq "true")
 	  {
-            $diff .= "&pathrev=" . $newrev{$file};
+            $diff .= "&pathrev=" . $newrev->{$file};
 	    $diff .= "&content-type=application/octet-stream\n\n";
           }
 	  $diff .= "\t[Binary file]\n\n" if $SEND_DIFF eq "true";
@@ -351,23 +353,24 @@ sub change_summary {
             # new branches always end in '.n.1'.
             #
             if ($SEND_URL eq "true") {
-              if (!$oldrev{$file} || !$newrev{$file}) {
-                $diff .= "&rev=" . $oldrev{$file};
+              if (!$oldrev->{$file} || !$newrev->{$file}) {
+                $diff .= "&rev=" . $oldrev->{$file};
 		$diff .= "&content-type=text/x-cvsweb-markup\n\n";
               } else {
-                $diff .= "&r1=$oldrev{$file}&r2=$newrev{$file}\n\n";
+                $diff .= "&r1=" . $oldrev->{$file};
+		$diff .= "&r2=" . $newrev->{$file}. "\n\n";
               }
 	    }
 
             if ($SEND_DIFF eq "true"
 		and ($SUPPRESS_DIFFS_AGAINST_EMPTIES eq "false"
-		     or ($oldrev{$file} and $newrev{$file}))) {
+		     or ($oldrev->{$file} and $newrev->{$file}))) {
 	      # Depends on user options, so let's remove that:
               #$diff .= "(In the diff below, changes in quantity "
               #      . "of whitespace are not shown.)\n\n";
               open(DIFF, "-|")
                 || exec "$CVSBIN/cvs", '-Qn', 'diff', '-N', @diffargs,
-                "-r$oldrev{$file}", "-r$newrev{$file}", '--', $file;
+                "-r" . $oldrev->{$file}, "-r" . $newrev->{$file}, '--', $file;
 
               while (<DIFF>) {
                 $diff .= $_;
@@ -379,7 +382,7 @@ sub change_summary {
         }
 
         &append_line($out, sprintf("%-9s%-12s%s%s",
-				   $newrev{$file} ? $newrev{$file} : "dead",
+				   $newrev->{$file} ? $newrev->{$file} : "dead",
 				   $delta, $rcsfile, $diff));
     }
 }
@@ -546,7 +549,7 @@ sub process_argv
 {
     my (@argv) = @_;
     my ($arg, $donefiles);
-    my $module;
+    my ($module, @files, %oldrev, %newrev);
 
     while (@argv) {
 	$arg = shift @argv;
@@ -649,7 +652,111 @@ sub process_argv
     # Sanity checks.
     die "No email destination specified.\n" unless @mailto;
 
-    return $module;
+    return $module, \@files, \%oldrev, \%newrev;
+}
+
+
+
+# Turn the log input on STDIN into useful data structures.
+sub process_stdin
+{
+    my ($module, @files) = @_;
+    my $state = $STATE_NONE;
+    my (@branch_lines, @changed_files, @added_files,
+	@removed_files, @log_lines);
+
+    #
+    # Iterate over the body of the message collecting information.
+    #
+    while (<STDIN>) {
+	chomp;                      # Drop the newline
+	if (/^\s*(Tag|Revision\/Branch):\s*(\w+)/)
+	{
+	    $branch = $2;
+	    # Is there really a good reason to keep track of this?
+	    push @branch_lines, $2;
+	    next;
+	}
+	if (/^Modified Files/) { $state = $STATE_CHANGED; next; }
+	if (/^Added Files/)    { $state = $STATE_ADDED;   next; }
+	if (/^Removed Files/)  { $state = $STATE_REMOVED; next; }
+	if (/^Log Message/)    { $state = $STATE_LOG;     last; }
+
+	next if $state == $STATE_NONE || $state == $STATE_LOG;
+	next if /^\s*$/;              # ignore empty lines
+
+	# Sort the file list.  This algorithm is a little cumbersome, but it
+	# handles file names with spaces.
+	my @matched;
+	while (!/^\s*$/)
+	{
+	    my $m;
+	    for (my $i = 0; $i <= $#files; $i++)
+	    {
+		if (/^\t\Q$files[$i]\E /)
+		{
+		    #print "matched $files[$i]\n";
+		    $m = $i if !defined $m or length $files[$m] < length $files[$i];
+		}
+	    }
+	    last if !defined $m;
+
+	    s/^\t\Q$files[$m]\E /\t/;
+	    push @matched, $files[$m];
+	    splice @files, $m, 1;
+	}
+
+	# Assertions.
+	die "unrecognized file specification: `$_'" unless @matched;
+	die "unrecognized file(s): `$_'" unless /^\s*$/;
+
+	# Store.
+	push @changed_files, @matched and next if $state == $STATE_CHANGED;
+	push @added_files, @matched and next if $state == $STATE_ADDED;
+	push @removed_files, @matched and next if $state == $STATE_REMOVED;
+
+	# Assertion.
+	die "unknown file state $state";
+    }
+
+    # Process the /Log Message/ section now, if it exists.
+    # Do this here rather than above to deal with Log messages
+    # that include lines that confuse the state machine.
+    if (!eof(STDIN)) {
+	while (<STDIN>) {
+	    next unless ($state == $STATE_LOG); # eat all STDIN
+
+	    if (/^\s*\[(bug|pr|task) #(\d+)\]/)
+	    {
+		# FIXME: Set the bug/patch ID to "$1 #$2" so that the issue
+		# database may be updated.
+	    }
+	    push (@log_lines, $_);
+	}
+    }
+
+    #
+    # Strip leading and trailing blank lines from the log message.  Also
+    # compress multiple blank lines in the body of the message down to a
+    # single blank line.
+    # (Note, this only does the mail and changes log, not the rcs log).
+    #
+    while ($#log_lines > -1) {
+	last unless $log_lines[0] eq "";
+	shift @log_lines;
+    }
+    while ($#log_lines > -1) {
+	last unless $log_lines[$#log_lines] eq "";
+	pop @log_lines;
+    }
+    for (my $i = $#log_lines - 1; $i > 0; $i--) {
+	if (($log_lines[$i - 1] eq "") && ($log_lines[$i] eq "")) {
+	    splice(@log_lines, $i, 1);
+	}
+    }
+
+    return \@branch_lines, \@changed_files, \@added_files,
+	   \@removed_files, \@log_lines;
 }
 
 
@@ -659,253 +766,161 @@ sub process_argv
 # Main Body
 #
 ############################################################
-#
-# Setup and clean up environment
-#
-umask (002);
-$ENV{"PATH"} = "/bin";
-delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
- 
+sub main
+{
+    #
+    # Setup and clean up environment
+    #
+    umask (002);
+    $ENV{"PATH"} = "/bin";
+    delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
 
-#
-# Initialize basic variables
-#
-print join(' ', @ARGV); print "\n"; #debug
-my $module = process_argv @ARGV;
+    #
+    # Initialize basic variables
+    #
+    my ($module, $files, $oldrev, $newrev) = process_argv @_;
 
-my $state = $STATE_NONE;
-my @branch_lines;
-my @changed_files;
-my @added_files;
-my @removed_files;
-my @log_lines;
-my $header;
+    my $header;
+    my $id = getpgrp();
 
-my $LAST_FILE     = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.lastdir";  # Created by commit_prep!
-my $LOG_FILE      = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.log";
-my $SUMMARY_FILE  = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.summary";
-$ADDED_FILE    = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.added";
-$CHANGED_FILE  = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.changed";
-$REMOVED_FILE  = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.removed";
-$BRANCH_FILE   = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.branch";
+    # Created by commit_prep!
+    my $LAST_FILE     = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.lastdir";
+
+    # This script will create or append.
+    my $LOG_FILE      = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.log";
+    my $SUMMARY_FILE  = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.summary";
+    $ADDED_FILE    = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.added";
+    $CHANGED_FILE  = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.changed";
+    $REMOVED_FILE  = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.removed";
+    $BRANCH_FILE   = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.branch";
 
 
-# Set defaults that could have been overridden on the command line.
-$update_dir = `/bin/cat CVS/Repository` unless $update_dir;
-chomp $update_dir;
-die "Could not determine update dir" unless $update_dir;
+    # Set defaults that could have been overridden on the command line.
+    $update_dir = $module unless $update_dir;
+    push @diffargs, "-ub" unless @diffargs;
 
-push @diffargs, "-ub" unless @diffargs;
-
-
-
-#print("ARGV  - ", join(":", @ARGV), "\n");
-#print("files - ", join(":", @files), "\n");
-#print("dir   - ", $dir, "\n");
-#print("id    - ", $id, "\n");
+    #print("ARGV  - ", join(":", @ARGV), "\n");
+    #print("files - ", join(":", @files), "\n");
+    #print("dir   - ", $dir, "\n");
+    #print("id    - ", $id, "\n");
 
 
-##########################
-#
-# Check for a new directory first.  This will always appear as a
-# single item in the argument list, and an empty log message.
-#
-if ($new_directory) {
-    $header = &build_header;
-    my @text;
-    push @text, $header;
-    push @text, "";
-    push @text, "  $module - New directory";
-    &mail_notification ([@mailto], $module, @text);
-    exit 0;
-}
-
-#
-# Iterate over the body of the message collecting information.
-#
-while (<STDIN>) {
-    #print $_;
-    chomp;                      # Drop the newline
-    if (/^\s*(Tag|Revision\/Branch):\s*(\w+)/) {
-	$branch = $2;
-	# Is there really a good reason to keep track of this?
-        push (@branch_lines, $2);
-        next;
+    ##########################
+    #
+    # Check for a new directory first.  This will always appear as a
+    # single item in the argument list, and an empty log message.
+    #
+    if ($new_directory) {
+	$header = &build_header;
+	my @text;
+	push @text, $header;
+	push @text, "";
+	push @text, "  $module - New directory";
+	&mail_notification ([@mailto], $module, @text);
+	exit 0;
     }
-#    next if (/^[ \t]+Tag:/ && $state != $STATE_LOG);
-    if (/^Modified Files/) { $state = $STATE_CHANGED; next; }
-    if (/^Added Files/)    { $state = $STATE_ADDED;   next; }
-    if (/^Removed Files/)  { $state = $STATE_REMOVED; next; }
-    if (/^Log Message/)    { $state = $STATE_LOG;     last; }
 
-    next if $state == $STATE_NONE || $state == $STATE_LOG;
-    next if /^\s*$/;              # ignore empty lines
+    my ($branch_lines, $changed_files, $added_files,
+	$removed_files, $log_lines) = process_stdin $module, @$files;
 
-    # Sort the file list.  This algorithm is a little cumbersome, but it
-    # handles file names with spaces.
-    my @matched;
-    while (!/^\s*$/)
-    {
-	my $m;
-	for (my $i = 0; $i <= $#files; $i++)
-	{
-	    if (/^\t\Q$files[$i]\E /)
-	    {
-		#print "matched $files[$i]\n";
-		$m = $i if !defined $m or length $files[$m] < length $files[$i];
+    #
+    # Find the log file that matches this log message
+    #
+    my $i;
+    for ($i = 0; ; $i++) {
+	last if (! -e "$LOG_FILE.$i");
+	my @text = &read_logfile("$LOG_FILE.$i", "");
+	last if ($#text == -1);
+	last if (join(" ", @$log_lines) eq join(" ", @text));
+    }
+
+    #
+    # Spit out the information gathered in this pass.
+    #
+    &write_logfile("$LOG_FILE.$i", @$log_lines);
+    &append_to_file("$BRANCH_FILE.$i",  $module, @$branch_lines);
+    &append_to_file("$ADDED_FILE.$i",   $module, @$added_files);
+    &append_to_file("$CHANGED_FILE.$i", $module, @$changed_files);
+    &append_to_file("$REMOVED_FILE.$i", $module, @$removed_files);
+    if ($rcsidinfo) {
+      &change_summary ("$SUMMARY_FILE.$i", $module, $oldrev, $newrev,
+		       (@$changed_files, @$added_files, @$removed_files));
+    }
+
+    #
+    # Check whether this is the last directory.  If not, quit.
+    #
+    if (-e "$LAST_FILE") {
+       $_ = &read_line("$LAST_FILE");
+       my $tmpfiles = $module;
+       # Characters escape for use in regexp:
+       $tmpfiles =~ s,([^a-zA-Z0-9_/]),\\$1,g;
+       if (! grep(/$tmpfiles$/, $_)) {
+	    # print "More commits to come...\n";
+	    exit 0
+       }
+    }
+
+    #
+    # This is it.  The commits are all finished.  Lump everything together
+    # into a single message, fire a copy off to the mailing list, and drop
+    # it on the end of the Changes file.
+    #
+    $header = &build_header;
+
+    #
+    # Produce the final compilation of the log messages
+    #
+    my @text = ();
+    push(@text, $header);
+    push(@text, "");
+    for (my $i = 0; ; $i++) {
+	last if (! -e "$LOG_FILE.$i");
+	push(@text, &read_file("$BRANCH_FILE.$i", "Branch:"));
+	push(@text, &read_file("$CHANGED_FILE.$i", "Modified:"));
+	push(@text, &read_file("$ADDED_FILE.$i", "Added:"));
+	push(@text, &read_file("$REMOVED_FILE.$i", "Removed:"));
+	push(@text, "  Log:");
+	push(@text, &read_logfile("$LOG_FILE.$i", "  "));
+	if ($rcsidinfo == 2) {
+	    if (-e "$SUMMARY_FILE.$i") {
+		push(@text, "  ");
+		push(@text, "  Revision  Changes    Path");
+		push(@text, &read_logfile("$SUMMARY_FILE.$i", "  "));
 	    }
 	}
-	last if !defined $m;
-
-	s/^\t\Q$files[$m]\E /\t/;
-	push @matched, $files[$m];
-	splice @files, $m, 1;
+	push(@text, "");
     }
 
-    # Assertions.
-    die "unrecognized file specification: `$_'" unless @matched;
-    die "unrecognized file(s): `$_'" unless /^\s*$/;
-
-    # Store.
-    push @changed_files, @matched and next if $state == $STATE_CHANGED;
-    push @added_files, @matched and next if $state == $STATE_ADDED;
-    push @removed_files, @matched and next if $state == $STATE_REMOVED;
-
-    # Assertion.
-    die "unknown file state $state";
-}
-
-# Process the /Log Message/ section now, if it exists.
-# Do this here rather than above to deal with Log messages
-# that include lines that confuse the state machine.
-if (!eof(STDIN)) {
-    while (<STDIN>) {
-        next unless ($state == $STATE_LOG); # eat all STDIN
-
-        if (/^\s*\[(bug|pr|task) #(\d+)\]/)
-        {
-	    # FIXME: Set the bug/patch ID to "$1 #$2" so that the issue
-	    # database may be updated.
+    #
+    # Now generate the extra info for the mail message..
+    #
+    if ($rcsidinfo == 1) {
+	my $revhdr = 0;
+	for (my $i = 0; ; $i++) {
+	    last if (! -e "$LOG_FILE.$i");
+	    if (-e "$SUMMARY_FILE.$i") {
+		if (!$revhdr++) {
+		    push(@text, "Revision  Changes    Path");
+		}
+		push(@text, &read_logfile("$SUMMARY_FILE.$i", ""));
+	    }
 	}
-        push (@log_lines, $_);
+	if ($revhdr) {
+	    push(@text, "");        # consistancy...
+	}
     }
-}
 
-#
-# Strip leading and trailing blank lines from the log message.  Also
-# compress multiple blank lines in the body of the message down to a
-# single blank line.
-# (Note, this only does the mail and changes log, not the rcs log).
-#
-while ($#log_lines > -1) {
-    last unless $log_lines[0] eq "";
-    shift @log_lines;
-}
-while ($#log_lines > -1) {
-    last unless $log_lines[$#log_lines] eq "";
-    pop @log_lines;
-}
-for (my $i = $#log_lines - 1; $i > 0; $i--) {
-    if (($log_lines[$i - 1] eq "") && ($log_lines[$i] eq "")) {
-        splice(@log_lines, $i, 1);
+
+
+    #
+    # Mail out the notification.
+    #
+    if (!$have_r_opt || $onlytag eq $branch) {
+	&mail_notification ([@mailto], $module, @text);
     }
+    &cleanup_tmpfiles ($id);
+    return 0;
 }
 
-#
-# Find the log file that matches this log message
-#
-my $i;
-for ($i = 0; ; $i++) {
-    last if (! -e "$LOG_FILE.$i");
-    my @text = &read_logfile("$LOG_FILE.$i", "");
-    last if ($#text == -1);
-    last if (join(" ", @log_lines) eq join(" ", @text));
-}
-
-#
-# Spit out the information gathered in this pass.
-#
-&write_logfile("$LOG_FILE.$i", @log_lines);
-&append_to_file("$BRANCH_FILE.$i",  $module, @branch_lines);
-&append_to_file("$ADDED_FILE.$i",   $module, @added_files);
-&append_to_file("$CHANGED_FILE.$i", $module, @changed_files);
-&append_to_file("$REMOVED_FILE.$i", $module, @removed_files);
-if ($rcsidinfo) {
-  &change_summary ("$SUMMARY_FILE.$i", $module,
-		   (@changed_files, @added_files, @removed_files));
-}
-
-#
-# Check whether this is the last directory.  If not, quit.
-#
-if (-e "$LAST_FILE") {
-   $_ = &read_line("$LAST_FILE");
-   my $tmpfiles = $module;
-   # Characters escape for use in regexp:
-   $tmpfiles =~ s,([^a-zA-Z0-9_/]),\\$1,g;
-   if (! grep(/$tmpfiles$/, $_)) {
-        # print "More commits to come...\n";
-        exit 0
-   }
-}
-
-#
-# This is it.  The commits are all finished.  Lump everything together
-# into a single message, fire a copy off to the mailing list, and drop
-# it on the end of the Changes file.
-#
-$header = &build_header;
-
-#
-# Produce the final compilation of the log messages
-#
-my @text = ();
-push(@text, $header);
-push(@text, "");
-for (my $i = 0; ; $i++) {
-    last if (! -e "$LOG_FILE.$i");
-    push(@text, &read_file("$BRANCH_FILE.$i", "Branch:"));
-    push(@text, &read_file("$CHANGED_FILE.$i", "Modified:"));
-    push(@text, &read_file("$ADDED_FILE.$i", "Added:"));
-    push(@text, &read_file("$REMOVED_FILE.$i", "Removed:"));
-    push(@text, "  Log:");
-    push(@text, &read_logfile("$LOG_FILE.$i", "  "));
-    if ($rcsidinfo == 2) {
-        if (-e "$SUMMARY_FILE.$i") {
-            push(@text, "  ");
-            push(@text, "  Revision  Changes    Path");
-            push(@text, &read_logfile("$SUMMARY_FILE.$i", "  "));
-        }
-    }
-    push(@text, "");
-}
-
-#
-# Now generate the extra info for the mail message..
-#
-if ($rcsidinfo == 1) {
-    my $revhdr = 0;
-    for (my $i = 0; ; $i++) {
-        last if (! -e "$LOG_FILE.$i");
-        if (-e "$SUMMARY_FILE.$i") {
-            if (!$revhdr++) {
-                push(@text, "Revision  Changes    Path");
-            }
-            push(@text, &read_logfile("$SUMMARY_FILE.$i", ""));
-        }
-    }
-    if ($revhdr) {
-        push(@text, "");        # consistancy...
-    }
-}
-
-
-
-#
-# Mail out the notification.
-#
-if (!$have_r_opt || $onlytag eq $branch) {
-    &mail_notification ([@mailto], $module, @text);
-}
-&cleanup_tmpfiles;
-exit 0;
+exit main @ARGV;
