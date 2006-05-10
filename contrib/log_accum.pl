@@ -84,29 +84,54 @@ my $UseNewInfoFmtStrings = 1;
 #
 my $rcsidinfo = 2;
 
-#if you are using CVS web then set this to some value... if not set it to ""
-#
-# When set properly, this will cause links to aspects of the project to
-# print in the commit emails.
+# If you are using CVS web or ViewCVS, then set these.  When set properly, this
+# will cause links to aspects of the commit to print in the commit emails.
 my $CVSWEB_SCHEME = "http";
 my $CVSWEB_DOMAIN = "cvs.sv.gnu.org";
-my $CVSWEB_PORT = "80";
-my $CVSWEB_URI = "viewcvs";
-my $SEND_URL = "true";
+my $CVSWEB_PORT   = "80";
+my $CVSWEB_URI    = "viewcvs";
+my $SEND_URL      = "true";
 
-my $SEND_DIFF = "false";
-my $SUPPRESS_DIFFS_AGAINST_EMPTIES = "false";
-
+# Paths.
+my $CVSBIN        = "/usr/bin";
+my $TMPDIR        = "/tmp";
 
 # Set this to a domain to have CVS pretend that all users who make
 # commits have mail accounts within that domain.
 # my $EMULATE_LOCAL_MAIL_USER="nongnu.org"; 
 my $EMULATE_LOCAL_MAIL_USER=''; 
+my @MAIL_CMD      = ("/usr/lib/sendmail", "-i", "-t");
+my $MAIL_CMD_NEEDS_ADDRS;
+#my @MAIL_CMD      = ("/bin/socketmail", $ENVELOP_SENDER);
+#my $MAIL_CMD_NEEDS_ADDRS = 1;
+#my $MAIL_CMD         = ("/var/qmail/bin/qmail-inject");
+
 
 
 ############################################################
 #
-# Constants
+# Defaults that may be changed via command line options.
+#
+############################################################
+
+# Temp file name prefix (will always be preceded by `#'.
+my $temp_name   = 'cvs';
+
+# Diff options.
+my $SEND_DIFF = "false";
+my $SUPPRESS_DIFFS_AGAINST_EMPTIES = "false";
+my @diffargs = ();		# Options to pass to diff.
+
+# Print debug statements.
+my $debug = 0;
+
+# Email addresses to send mail to.
+my @mailto = ();
+
+
+############################################################
+#
+# Constants - DO NOT CHANGE THESE.
 #
 ############################################################
 my $STATE_NONE    = 0;
@@ -115,15 +140,6 @@ my $STATE_ADDED   = 2;
 my $STATE_REMOVED = 3;
 my $STATE_LOG     = 4;
 
-my $TMPDIR        = '/tmp';
-my $FILE_PREFIX   = '#cvs.';
-
-my $CVSBIN = "/usr/bin";
-my $MAIL_CMD      = "| /usr/lib/sendmail -i -t";
-#$MAIL_CMD      = "| /var/qmail/bin/qmail-inject";
-
-my $SUBJECT_PRE   = '';
-#my $SUBJECT_PRE   = 'CVS update:';
 
 
 ############################################################
@@ -132,25 +148,12 @@ my $SUBJECT_PRE   = '';
 #
 ############################################################
 
-my $update_dir = "";		# The relative directory in the repo the
-				# sandbox is rooted in.
-my @diffargs = ();		# Diff options.
-my $branch = "";		# The branch being processed.
 my $have_r_opt = 0;		# Whether -r was seen on the command line.
 my $onlytag = "";		# With $have_r_opt, only send mail for changes
 				# on this branch.
-my @mailto = ();		# Email addresses to send mail to.
 my $new_directory = 0;          # Is this a 'cvs add directory' command?
 my $imported_sources = 0;       # Is this a 'cvs import' command?
-my $hook_identifier = '';	# Unique identifier to support multiple hooks
 
-my $cvs_user = $ENV{'USER'} || getlogin || (getpwuid($<))[0] || sprintf("uid#%d",$<);
-
-# Temporary filenames
-my $ADDED_FILE;
-my $CHANGED_FILE;
-my $REMOVED_FILE;
-my $BRANCH_FILE;
 
 
 ############################################################
@@ -176,16 +179,18 @@ sub format_names {
 
 
 sub cleanup_tmpfiles {
-    my ($id) = @_;
+    my ($tmpdir, $prefix, $id) = @_;
     my @files;
 
-    opendir DIR, $TMPDIR;
-    push @files, grep /^$FILE_PREFIX$hook_identifier\.$id.*\.$/,
-		      readdir DIR;
+    die "$tmpdir does not exist" unless -d $tmpdir;
+    opendir DIR, $tmpdir or die "Can't read $tmpdir";
+
+    push @files, grep /^#\Q$prefix\E\.$id.*\.$/, readdir DIR;
     closedir DIR;
+
     foreach (@files)
     {
-        unlink "$TMPDIR/$_";
+        unlink "$tmpdir/$_";
     }
 }
 
@@ -202,11 +207,12 @@ sub write_logfile {
 sub append_to_file {
     my ($filename, $dir, @files) = @_;
 
-    if (@files) {
-        my (@lines) = &format_names($dir, @files);
-        open(FILE, ">>$filename") || die ("Cannot open file $filename: $!\n");
-        print(FILE join("\n", @lines), "\n");
-        close(FILE);
+    if (@files)
+    {
+        my @lines = format_names $dir, @files;
+        open FILE, ">>$filename" or die "Cannot open file $filename: $!\n";
+        print FILE join ("\n", @lines), "\n";
+        close FILE;
     }
 }
 
@@ -288,245 +294,182 @@ sub read_logfile {
     @text;
 }
 
+# FIXME: Temporarily disabled.
 #
 # do an 'cvs -Qn status' on each file in the arguments, and extract info.
 #
-sub change_summary {
-    my ($out, $module, $oldrev, $newrev, @filenames) = @_;
-    my ($file, $rcsfile, $line, $vhost);
-
-    while (@filenames) {
-        $file = shift @filenames;
-
-        if ("$file" eq "") {
-            next;
-        }
-
-        my $delta = "";
-        $rcsfile = "$update_dir/$file";
-
-        if ($oldrev->{$file}) {
-            open(RCS, "-|") || exec "$CVSBIN/cvs", '-Qn', 'log',
-				    "-r" . $newrev->{$file},
-				    "--", $file;
-            while (<RCS>) {
-                if (/^date:.*lines:([^;]+);.*/) {
-                    $delta = $1;
-                    last;
-                }
-            }
-            close(RCS);
-        }
-
-        my $diff = "\n\n";
-
-	if ($SEND_URL eq "true")
-        {
-	    # FIXME: Store this in a separate list.
-
-	    die "internal error - module empty" unless $module =~ m#^([^/]+)#;
-	    my $project = $1;
-
-	    $diff = "$CVSWEB_SCHEME://$CVSWEB_DOMAIN";
-	    $diff .= ":$CVSWEB_PORT" unless $CVSWEB_PORT eq "80";
-	    $diff .= "/$CVSWEB_URI/$project/$module/$file";
-        }
-
-        #
-        # If this is a binary file, don't try to report a diff; not only is
-        # it meaningless, but it also screws up some mailers.  We rely on
-        # Perl's 'is this binary' algorithm; it's pretty good.  But not
-        # perfect.
-        #
-        if ($file =~ /\.(?:pdf|gif|jpg|mpg)$/i or -B $file) {
-          if ($SEND_URL eq "true")
-	  {
-            $diff .= "&pathrev=" . $newrev->{$file};
-	    $diff .= "&content-type=application/octet-stream\n\n";
-          }
-	  $diff .= "\t[Binary file]\n\n" if $SEND_DIFF eq "true";
-        }
-        else {
-            #
-            # Get the differences between this and the previous revision,
-            # being aware that new files always have revision '1.1' and
-            # new branches always end in '.n.1'.
-            #
-            if ($SEND_URL eq "true") {
-              if (!$oldrev->{$file} || !$newrev->{$file}) {
-                $diff .= "&rev=" . $oldrev->{$file};
-		$diff .= "&content-type=text/x-cvsweb-markup\n\n";
-              } else {
-                $diff .= "&r1=" . $oldrev->{$file};
-		$diff .= "&r2=" . $newrev->{$file}. "\n\n";
-              }
-	    }
-
-            if ($SEND_DIFF eq "true"
-		and ($SUPPRESS_DIFFS_AGAINST_EMPTIES eq "false"
-		     or ($oldrev->{$file} and $newrev->{$file}))) {
-	      # Depends on user options, so let's remove that:
-              #$diff .= "(In the diff below, changes in quantity "
-              #      . "of whitespace are not shown.)\n\n";
-              open(DIFF, "-|")
-                || exec "$CVSBIN/cvs", '-Qn', 'diff', '-N', @diffargs,
-                "-r" . $oldrev->{$file}, "-r" . $newrev->{$file}, '--', $file;
-
-              while (<DIFF>) {
-                $diff .= $_;
-              }
-              close(DIFF);
-
-              $diff .= "\n\n";
-           }
-        }
-
-        &append_line($out, sprintf("%-9s%-12s%s%s",
-				   $newrev->{$file} ? $newrev->{$file} : "dead",
-				   $delta, $rcsfile, $diff));
-    }
-}
+#sub change_summary {
+#    my ($out, $toplevel, $module, $oldrev, $newrev, @filenames) = @_;
+#    my ($file, $rcsfile, $line, $vhost);
+#
+#    while (@filenames) {
+#        $file = shift @filenames;
+#
+#        if ("$file" eq "") {
+#            next;
+#        }
+#
+#        my $delta = "";
+#        $rcsfile = "$module/$file";
+#
+#        if ($oldrev->{$file}) {
+#            open(RCS, "-|") || exec "$CVSBIN/cvs", '-Qn', 'log',
+#				    "-r" . $newrev->{$file},
+#				    "--", $file;
+#            while (<RCS>) {
+#                if (/^date:.*lines:([^;]+);.*/) {
+#                    $delta = $1;
+#                    last;
+#                }
+#            }
+#            close(RCS);
+#        }
+#
+#        my $diff = "\n\n";
+#
+#	if ($SEND_URL eq "true")
+#        {
+#	    # FIXME: Store this in a separate list.
+#
+#	    $diff = "$CVSWEB_SCHEME://$CVSWEB_DOMAIN";
+#	    $diff .= ":$CVSWEB_PORT" unless $CVSWEB_PORT eq "80";
+#	    $diff .= "/$CVSWEB_URI/$toplevel/$module/$file";
+#        }
+#
+#        #
+#        # If this is a binary file, don't try to report a diff; not only is
+#        # it meaningless, but it also screws up some mailers.  We rely on
+#        # Perl's 'is this binary' algorithm; it's pretty good.  But not
+#        # perfect.
+#        #
+#        if ($file =~ /\.(?:pdf|gif|jpg|mpg)$/i or -B $file) {
+#          if ($SEND_URL eq "true")
+#	  {
+#            $diff .= "&pathrev=" . $newrev->{$file};
+#	    $diff .= "&content-type=application/octet-stream\n\n";
+#          }
+#	  $diff .= "\t[Binary file]\n\n" if $SEND_DIFF eq "true";
+#        }
+#        else {
+#            #
+#            # Get the differences between this and the previous revision,
+#            # being aware that new files always have revision '1.1' and
+#            # new branches always end in '.n.1'.
+#            #
+#            if ($SEND_URL eq "true") {
+#              if (!$oldrev->{$file} || !$newrev->{$file}) {
+#                $diff .= "&rev=" . $oldrev->{$file};
+#		$diff .= "&content-type=text/x-cvsweb-markup\n\n";
+#              } else {
+#                $diff .= "&r1=" . $oldrev->{$file};
+#		$diff .= "&r2=" . $newrev->{$file}. "\n\n";
+#              }
+#	    }
+#
+#            if ($SEND_DIFF eq "true"
+#		and ($SUPPRESS_DIFFS_AGAINST_EMPTIES eq "false"
+#		     or ($oldrev->{$file} and $newrev->{$file}))) {
+#	      # Depends on user options, so let's remove that:
+#              #$diff .= "(In the diff below, changes in quantity "
+#              #      . "of whitespace are not shown.)\n\n";
+#              open(DIFF, "-|")
+#                || exec "$CVSBIN/cvs", '-Qn', 'diff', '-N', @diffargs,
+#                "-r" . $oldrev->{$file}, "-r" . $newrev->{$file}, '--', $file;
+#
+#              while (<DIFF>) {
+#                $diff .= $_;
+#              }
+#              close(DIFF);
+#
+#              $diff .= "\n\n";
+#           }
+#        }
+#
+#        append_line $out, sprintf "%-9s%-12s%s%s",
+#				  $newrev->{$file} ? $newrev->{$file} : "dead",
+#				  $delta, $rcsfile, $diff;
+#    }
+#}
 
 
-sub build_header {
-    my ($header);
-    delete $ENV{'TZ'};
-    my ($sec,$min,$hour,$mday,$mon,$year) = localtime(time);
 
-    $header = sprintf("  User: %-8s\n  Date: %02d/%02d/%02d %02d:%02d:%02d",
-                       $cvs_user, $year%100, $mon+1, $mday,
-                       $hour, $min, $sec);
-#    $header = sprintf("%-8s    %02d/%02d/%02d %02d:%02d:%02d",
-#                       $login, $year%100, $mon+1, $mday,
-#                       $hour, $min, $sec);
-}
-
-
-sub derive_subject_from_changes_file ()
+sub derive_subject_from_changes_file
 {
-  my ($module) = @_;
-  my $subj = "";
+    my ($BRANCH_FILE, $CHANGED_FILE, $ADDED_FILE, $REMOVED_FILE, $module) = @_;
+    my $subj = "";
 
-  my $i;
-  for ($i = 0; ; $i++)
-  {
-    open (CH, "<$CHANGED_FILE.$i") or last;
-
-    while (my $change = <CH>)
+    my $i;
+    for ($i = 0; ; $i++)
     {
-      # A changes file looks like this:
-      #
-      #  src      foo.c newfile.html
-      #  www      index.html project_nav.html
-      #
-      # Each line is " Dir File1 File2 ..."
-      # We only care about Dir, since the subject line should
-      # summarize. 
-      
-      $change =~ s/^[ \t]*//;
-      $change =~ /^([^ \t]+)[ \t]*/;
-      my $dir = $1;
-      # Fold to rightmost directory component
-      $dir =~ /([^\/]+)$/;
-      $dir = $1;
-      if ($subj eq "") {
-        $subj = $dir;
-      } else {
-        $subj .= ", $dir"; 
-      }
-    }
-    close (CH);
-  }
+	open CH, "<$CHANGED_FILE.$i" or last;
 
-  if ($subj ne "") {
+	while (<CH>)
+	{
+	    # A changes file looks like this:
+	    #
+	    #  src      foo.c newfile.html
+	    #  www      index.html project_nav.html
+	    #
+	    # Each line is " Dir File1 File2 ..."
+	    # We only care about Dir, since the subject line should
+	    # summarize. 
+
+	    s/^[ \t]*//;
+	    /^([^ \t]+)[ \t]*/;
+	    my $dir = $1;
+	    # Fold to rightmost directory component
+	    $dir =~ /([^\/]+)$/;
+	    $dir = $1;
+	    if ($subj eq "")
+	    {
+		$subj = $dir;
+	    }
+	    else
+	    {
+		$subj .= ", $dir"; 
+	    }
+	}
+    close CH;
+    }
+
+    if ($subj ne "")
+    {
       $subj = "MODIFIED: $subj ..."; 
-  }
-  else {
-      # NPM: See if there's any file-addition notifications.
-      my $added = &read_line_nodie("$ADDED_FILE.$i");
-      if ($added ne "") {
-          $subj .= "ADDED: $added "; 
-      }
-    
-#    print "derive_subject_from_changes_file().. added== $added \n";
-    
-       ## NPM: See if there's any file-removal notications.
-      my $removed = &read_line_nodie("$REMOVED_FILE.$i");
-      if ($removed ne "") {
-          $subj .= "REMOVED: $removed "; 
-      }
-    
-#    print "derive_subject_from_changes_file().. removed== $removed \n";
-    
-      ## NPM: See if there's any branch notifications.
-      my $branched = &read_line_nodie("$BRANCH_FILE.$i");
-      if ($branched ne "") {
-          $subj .= "BRANCHED: $branched"; 
-      }
-    
-#    print "derive_subject_from_changes_file().. branched== $branched \n";
-    
-      ## NPM: DEFAULT: DIRECTORY CREATION (c.f. "Check for a new directory first" in main mody)
-      if ($subj eq "") {
-          $subj = "NEW: $module"; 
-      }    
-  }
+    }
+    else
+    {
+	# NPM: See if there's any file-addition notifications.
+	my $added = read_line_nodie "$ADDED_FILE.$i";
+	$subj .= "ADDED: $added " if $added ne "";
 
-  if ($branch)
-  {
-    $subj = "[$branch] $subj"
-  }
+	#    print "derive_subject_from_changes_file().. added== $added \n";
 
+	## NPM: See if there's any file-removal notications.
+	my $removed = read_line_nodie "$REMOVED_FILE.$i";
+	$subj .= "REMOVED: $removed " if $removed ne "";
 
-  return $subj;
-}
+	#    print "derive_subject_from_changes_file().. removed== $removed \n";
 
-sub mail_notification
-{
-    my ($addr_list, $module, @text) = @_;
-    my ($mail_to, $mail_from);
-
-    my $subj = &derive_subject_from_changes_file ($module);
-
-    if ($EMULATE_LOCAL_MAIL_USER) {
-	$mail_from = "$cvs_user\@$EMULATE_LOCAL_MAIL_USER";
+	## NPM: DEFAULT: DIRECTORY CREATION (c.f. "Check for a new directory first" in main mody)
+	$subj = "NEW: $module" if $subj eq "";
     }
 
-    $mail_to = join(", ", @{$addr_list});
+    my $branch = read_line_nodie "$BRANCH_FILE.$i";
+    $subj = "$subj [$branch]" if $branch;
 
-    print "Mailing the commit message to $mail_to (from "
-	. ($mail_from ? $mail_from : $cvs_user) . ")\n";
-
-    $ENV{'MAILUSER'} = $mail_from;
-    # Commented out on hocus, so comment it out here.  -kff
-    # $ENV{'QMAILINJECT'} = 'f';
-
-    if ($mail_from) {
-	open(MAIL, "$MAIL_CMD -f$mail_from");
-	print MAIL "From: $mail_from\n";
-    } else {
-	# Let the system determine (correctly) how to send mail
-	open(MAIL, "$MAIL_CMD");
-    }
-
-    print MAIL "To: $mail_to\n";
-    print MAIL "Subject: $SUBJECT_PRE $subj\n\n";
-    print(MAIL join("\n", @text));
-    close(MAIL);
-
-#    print "Mailing the commit message to $MAIL_TO...\n";
-#
-#    #added by jrobbins@collab.net 1999/12/15
-#    # attempt to get rid of anonymous
-#    $ENV{'MAILUSER'} = 'commitlogger';
-#    $ENV{'QMAILINJECT'} = 'f';
-#
-#    open(MAIL, "| /var/qmail/bin/qmail-inject");
-#    print(MAIL "To: $MAIL_TO\n"); 
-#    print(MAIL "Subject: cvs commit: $ARGV[0]\n"); 
-#    print(MAIL join("\n", @text));
-#    close(MAIL);
+    return $subj;
 }
+
+
+
+
+
+
+#######              ######
+#######   REVIEWED   ######
+#######              ######
+
+
 
 ## process the command line arguments sent to this script
 ## it returns an array of files, %s, sent from the loginfo
@@ -551,50 +494,70 @@ sub process_argv
     my ($arg, $donefiles);
     my ($module, @files, %oldrev, %newrev);
 
-    while (@argv) {
+    while (@argv)
+    {
 	$arg = shift @argv;
-	if ($arg eq '-d') {
+	if ($arg eq '-v')
+	{
+	    $debug = 1;
+	}
+	elsif ($arg eq '-d')
+	{
 	    $SEND_DIFF = "true";
-	} elsif ($arg eq '-D') {
+	}
+	elsif ($arg eq '-D')
+	{
 	    push @diffargs, shift @argv;
 	    $SEND_DIFF = "true";
-	} elsif ($arg eq '-E') {
+	}
+	elsif ($arg eq '-E')
+	{
 	    $SUPPRESS_DIFFS_AGAINST_EMPTIES = "true";
 	    $SEND_DIFF = "true";
-	} elsif ($arg eq '-m') {
+	}
+	elsif ($arg eq '-m')
+	{
 	    push @mailto, split (/[ ,]+/, shift @argv);
-	} elsif ($arg eq '-p') {
-	    $update_dir = shift @argv;
-	} elsif ($arg eq '-r') {
+	}
+	elsif ($arg eq '-r')
+	{
 	    $have_r_opt = 1;
 	    $onlytag = shift @argv;
 	    # Empty branch means HEAD
-	    if ($onlytag eq 'HEAD') {
-		$onlytag = '';
-	    }
-	} elsif ($arg eq '-u') {
+	    $onlytag = '' if $onlytag eq "HEAD";
+	}
+	elsif ($arg eq '-T' || $arg eq '-u')
+	{
+	    warn "Using deprecated -u option. Use -T instead." if $arg eq '-u';
+
 	    my $param = shift @argv;
-	    if (!defined($cvs_user)) {
-		$cvs_user = $param;
+	    if ($param =~ /^([a-zA-Z0-9_.-]+)$/)
+	    {
+		$temp_name = $1;
 	    }
-	} elsif ($arg eq '-T') {
-	    my $param = shift @argv;
-	    if ($param =~ /^([a-zA-Z0-9_.-]+)$/) {
-		$hook_identifier = $1;
-	    } else {
-		die "Invalid identifier passed to option -T: $param";
+	    else
+	    {
+		die "Invalid identifier passed to option $arg: $param";
 	    }
-	} else {
-	    ($donefiles) && die "Too many arguments!\n";
+	}
+	else
+	{
+	    $donefiles and die "Too many arguments!\n";
 	    $donefiles = !$UseNewInfoFmtStrings;
 
-	    if ($arg eq '- New directory') {
+	    if ($arg eq '- New directory')
+	    {
 		$new_directory = 1;
-	    } elsif ($arg eq '- Imported sources') {
+	    }
+	    elsif ($arg eq '- Imported sources')
+	    {
 		$imported_sources = 1;
-	    } elsif ($UseNewInfoFmtStrings) {
-		$module = $arg; # current directory
-		while (@argv) {
+	    }
+	    elsif ($UseNewInfoFmtStrings)
+	    {
+		$module = $arg;
+		while (@argv)
+		{
 		    my $filename = shift @argv;
 		    if ($filename =~ m#^([^/]+)$#)
 		    {
@@ -633,7 +596,9 @@ sub process_argv
 			die "invalid new revision $newrev{$filename}";
 		    }
 		}
-	    } else {
+	    }
+	    else
+	    {
 		my @files;
 		push @files, split (' ', $arg);
 		for (@files)
@@ -672,8 +637,6 @@ sub process_stdin
 	chomp;                      # Drop the newline
 	if (/^\s*(Tag|Revision\/Branch):\s*(\w+)/)
 	{
-	    $branch = $2;
-	    # Is there really a good reason to keep track of this?
 	    push @branch_lines, $2;
 	    next;
 	}
@@ -696,7 +659,8 @@ sub process_stdin
 		if (/^\t\Q$files[$i]\E /)
 		{
 		    #print "matched $files[$i]\n";
-		    $m = $i if !defined $m or length $files[$m] < length $files[$i];
+		    $m = $i if !defined $m
+			       or length $files[$m] < length $files[$i];
 		}
 	    }
 	    last if !defined $m;
@@ -742,21 +706,151 @@ sub process_stdin
     # (Note, this only does the mail and changes log, not the rcs log).
     #
     while ($#log_lines > -1) {
-	last unless $log_lines[0] eq "";
+	last unless $log_lines[0] =~ /^\s*$/;
 	shift @log_lines;
     }
     while ($#log_lines > -1) {
-	last unless $log_lines[$#log_lines] eq "";
+	last unless $log_lines[$#log_lines] =~ /^\s*$/;
 	pop @log_lines;
     }
-    for (my $i = $#log_lines - 1; $i > 0; $i--) {
-	if (($log_lines[$i - 1] eq "") && ($log_lines[$i] eq "")) {
-	    splice(@log_lines, $i, 1);
-	}
+    for (my $i = $#log_lines - 1; $i > 0; $i--)
+    {
+	splice @log_lines, $i, 1
+	    if $log_lines[$i - 1] =~ /^\s*$/ && $log_lines[$i] =~ /^\s*$/;
     }
 
     return \@branch_lines, \@changed_files, \@added_files,
 	   \@removed_files, \@log_lines;
+}
+
+
+
+sub build_header {
+    my ($toplevel, $branch, $username, $fullname, $mailname) = @_;
+    my $header;
+    delete $ENV{'TZ'};
+    my ($sec, $min, $hour, $mday, $mon, $year) = localtime time;
+
+    $header = "CVSROOT:\t$ENV{CVSROOT}\n";
+    $header .= "Module name:\t$toplevel\n";
+    $header .= "Branch:\t\t$branch\n" if $branch;
+
+    $header .= sprintf "Changes by:\t%s%s<%s>\t%02d/%02d/%02d %02d:%02d:%02d",
+                       $fullname, $fullname ? " " : "",
+		       $mailname ? $mailname : $username,
+		       $year%100, $mon+1, $mday, $hour, $min, $sec;
+}
+
+
+
+# Return username, fullname, and email for the change's author, when
+# available.
+sub getuserdata
+{
+    my ($username, $fullname, $mailname);
+
+    if ($ENV{'CVS_USER'})
+    {
+	# Only set via pserver access.
+
+	$username = $ENV{'CVS_USER'};
+
+	# FIXME: Should look up an email address in the CVSROOT/users file
+	# used by `cvs watch'.  For now, let the mailer determine an address
+	# itself.
+    }
+    elsif (my @pwent = getpwuid $<)
+    {
+	if (@pwent)
+	{
+	    $username = $pwent[0];
+
+	    if ($pwent[6] =~ /^([^<]*)\s+<(\S+@\S+)>/)
+	    {
+		$fullname = $1;
+		$mailname = $2;
+	    }
+	    else
+	    {
+		$fullname = $pwent[6];
+		$fullname =~ s/,.*$//;
+
+		# Don't set $mailname - let the mailer determine one itself if
+		# an explicit one cannot be found.
+	    }
+	}
+    }
+    else
+    {
+	$username = sprintf "uid#%d", $<;
+
+	# Don't set $mailname - let the mailer come up with one itself if an
+	# explicit one cannot be found.
+    }
+
+    # Replace the mail name when requested.
+    $mailname = "$username\@$EMULATE_LOCAL_MAIL_USER"
+	if $EMULATE_LOCAL_MAIL_USER;
+
+    return $username, $fullname, $mailname;
+}
+
+
+
+sub mail_notification
+{
+    my ($BRANCH_FILE, $CHANGED_FILE, $ADDED_FILE, $REMOVED_FILE,
+	$addr_list, $module, $username, $fullname, $mailfrom, @text) = @_;
+
+    my $subj = derive_subject_from_changes_file ($BRANCH_FILE, $CHANGED_FILE,
+						 $ADDED_FILE, $REMOVED_FILE,
+						 $module);
+    my $mail_to = join ", ", @$addr_list;
+
+    my @mailcmd;
+
+    print STDERR "Mailing the commit message to $mail_to (from "
+		 . ($mailfrom ? $mailfrom : $username) . ")\n" if $debug;
+
+    $ENV{'MAILUSER'} = $mailfrom if $mailfrom;
+ 
+    push @mailcmd, @MAIL_CMD;
+    push @mailcmd, @$addr_list if $MAIL_CMD_NEEDS_ADDRS;
+    push @mailcmd, "-f$mailfrom" if $mailfrom;
+    # else let the system determine how to send mail.
+
+    open MAIL, "|-" or exec @mailcmd;
+
+    # Parent.
+    $SIG{'PIPE'} = sub {die "whoops, pipe broke."};
+
+    print MAIL "To: $mail_to\n";
+    # $fullname may be empty, but the extra spaces won't hurt.
+    print MAIL "From: $fullname <$mailfrom>\n" if $mailfrom;
+    print MAIL "Subject: $subj\n";
+    print MAIL "\n";
+    print MAIL join "\n", @text;
+
+    close MAIL or warn "child exited $?";
+}
+
+
+
+# Return an array containing file names:
+# (LAST_FILE, LOG_FILE, BRANCH_FILE, ADDED_FILE, CHANGED_FILE,
+#  REMOVED_FILE, URL_FILE)
+sub get_temp_files
+{
+    my ($tmpdir, $temp_name, $id) = @_;
+
+    # Created by commit_prep!
+    return "$tmpdir/#$temp_name.$id.lastdir",
+	   "$tmpdir/#$temp_name.$id.log",
+	   "$tmpdir/#$temp_name.$id.branch",
+	   "$tmpdir/#$temp_name.$id.added",
+	   "$tmpdir/#$temp_name.$id.changed",
+	   "$tmpdir/#$temp_name.$id.removed",
+	   "$tmpdir/#$temp_name.$id.urls";
 }
 
 
@@ -778,25 +872,18 @@ sub main
     #
     # Initialize basic variables
     #
+    my $id = getpgrp();  # NOTE: You *must* use a shell which does setpgrp().
+    my ($username, $fullname, $mailname) = getuserdata;
+
     my ($module, $files, $oldrev, $newrev) = process_argv @_;
 
-    my $header;
-    my $id = getpgrp();
+    $module =~ m#^([^/]*)#;
+    my $toplevel = $1;
 
-    # Created by commit_prep!
-    my $LAST_FILE     = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.lastdir";
-
-    # This script will create or append.
-    my $LOG_FILE      = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.log";
-    my $SUMMARY_FILE  = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.summary";
-    $ADDED_FILE    = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.added";
-    $CHANGED_FILE  = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.changed";
-    $REMOVED_FILE  = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.removed";
-    $BRANCH_FILE   = "$TMPDIR/${FILE_PREFIX}${hook_identifier}.$id.branch";
-
+    my ($LAST_FILE, $LOG_FILE, $BRANCH_FILE, $ADDED_FILE, $CHANGED_FILE,
+	$REMOVED_FILE, $URL_FILE) = get_temp_files $TMPDIR, $temp_name, $id;
 
     # Set defaults that could have been overridden on the command line.
-    $update_dir = $module unless $update_dir;
     push @diffargs, "-ub" unless @diffargs;
 
     #print("ARGV  - ", join(":", @ARGV), "\n");
@@ -811,12 +898,15 @@ sub main
     # single item in the argument list, and an empty log message.
     #
     if ($new_directory) {
-	$header = &build_header;
+	my $header = build_header $toplevel, "",
+				  $username, $fullname, $mailname;
 	my @text;
 	push @text, $header;
 	push @text, "";
 	push @text, "  $module - New directory";
-	&mail_notification ([@mailto], $module, @text);
+	mail_notification $BRANCH_FILE, $CHANGED_FILE, $ADDED_FILE,
+			  $REMOVED_FILE, \@mailto, $module, $username,
+			  $fullname, $mailname, @text;
 	exit 0;
     }
 
@@ -829,7 +919,7 @@ sub main
     my $i;
     for ($i = 0; ; $i++) {
 	last if (! -e "$LOG_FILE.$i");
-	my @text = &read_logfile("$LOG_FILE.$i", "");
+	my @text = read_logfile "$LOG_FILE.$i", "";
 	last if ($#text == -1);
 	last if (join(" ", @$log_lines) eq join(" ", @text));
     }
@@ -837,28 +927,28 @@ sub main
     #
     # Spit out the information gathered in this pass.
     #
-    &write_logfile("$LOG_FILE.$i", @$log_lines);
-    &append_to_file("$BRANCH_FILE.$i",  $module, @$branch_lines);
-    &append_to_file("$ADDED_FILE.$i",   $module, @$added_files);
-    &append_to_file("$CHANGED_FILE.$i", $module, @$changed_files);
-    &append_to_file("$REMOVED_FILE.$i", $module, @$removed_files);
-    if ($rcsidinfo) {
-      &change_summary ("$SUMMARY_FILE.$i", $module, $oldrev, $newrev,
-		       (@$changed_files, @$added_files, @$removed_files));
-    }
+    write_logfile "$LOG_FILE.$i", @$log_lines;
+    append_to_file "$BRANCH_FILE.$i",  $module, @$branch_lines;
+    append_to_file "$ADDED_FILE.$i",   $module, @$added_files;
+    append_to_file "$CHANGED_FILE.$i", $module, @$changed_files;
+    append_to_file "$REMOVED_FILE.$i", $module, @$removed_files;
+#    change_summary "$SUMMARY_FILE.$i", $toplevel, $oldrev, $newrev,
+#		   (@$changed_files, @$added_files, @$removed_files)
+#	if $rcsidinfo;
 
     #
     # Check whether this is the last directory.  If not, quit.
     #
-    if (-e "$LAST_FILE") {
-       $_ = &read_line("$LAST_FILE");
-       my $tmpfiles = $module;
-       # Characters escape for use in regexp:
-       $tmpfiles =~ s,([^a-zA-Z0-9_/]),\\$1,g;
-       if (! grep(/$tmpfiles$/, $_)) {
-	    # print "More commits to come...\n";
-	    exit 0
-       }
+    if (-e $LAST_FILE)
+    {
+	my $dir = read_line "$LAST_FILE";
+	print STDERR "checking last dir: $dir\n" if $debug;
+
+	if (!grep /\Q$module\E$/, $dir)
+	{
+	    print STDERR "More commits to come...\n" if $debug;
+	    exit 0;
+	}
     }
 
     #
@@ -866,60 +956,64 @@ sub main
     # into a single message, fire a copy off to the mailing list, and drop
     # it on the end of the Changes file.
     #
-    $header = &build_header;
+    my $header = build_header $toplevel, $branch_lines->[0],
+			      $username, $fullname, $mailname;
 
     #
     # Produce the final compilation of the log messages
     #
     my @text = ();
-    push(@text, $header);
-    push(@text, "");
-    for (my $i = 0; ; $i++) {
-	last if (! -e "$LOG_FILE.$i");
-	push(@text, &read_file("$BRANCH_FILE.$i", "Branch:"));
-	push(@text, &read_file("$CHANGED_FILE.$i", "Modified:"));
-	push(@text, &read_file("$ADDED_FILE.$i", "Added:"));
-	push(@text, &read_file("$REMOVED_FILE.$i", "Removed:"));
-	push(@text, "  Log:");
-	push(@text, &read_logfile("$LOG_FILE.$i", "  "));
-	if ($rcsidinfo == 2) {
-	    if (-e "$SUMMARY_FILE.$i") {
-		push(@text, "  ");
-		push(@text, "  Revision  Changes    Path");
-		push(@text, &read_logfile("$SUMMARY_FILE.$i", "  "));
-	    }
-	}
-	push(@text, "");
+    push @text, $header;
+    push @text, "";
+    for (my $i = 0; ; $i++)
+    {
+	last if !-e "$LOG_FILE.$i";
+	push @text, read_file "$BRANCH_FILE.$i", "Branch:";
+	push @text, read_file "$CHANGED_FILE.$i", "Modified:";
+	push @text, read_file "$ADDED_FILE.$i", "Added:";
+	push @text, read_file "$REMOVED_FILE.$i", "Removed:";
+	push @text, "  Log:";
+	push @text, read_logfile "$LOG_FILE.$i", "  ";
+#	if ($rcsidinfo == 2)
+#	{
+#	    if (-e "$SUMMARY_FILE.$i")
+#	    {
+#		push @text, "  ";
+#		push @text, "  Revision  Changes    Path");
+#		push @text, read_logfile "$SUMMARY_FILE.$i", "  ";
+#	    }
+#	}
+	push @text, "";
     }
 
     #
     # Now generate the extra info for the mail message..
     #
-    if ($rcsidinfo == 1) {
+    if ($rcsidinfo == 1)
+    {
 	my $revhdr = 0;
-	for (my $i = 0; ; $i++) {
-	    last if (! -e "$LOG_FILE.$i");
-	    if (-e "$SUMMARY_FILE.$i") {
-		if (!$revhdr++) {
-		    push(@text, "Revision  Changes    Path");
-		}
-		push(@text, &read_logfile("$SUMMARY_FILE.$i", ""));
-	    }
+	for (my $i = 0; ; $i++)
+	{
+	    last if !-e "$LOG_FILE.$i";
+#	    if (-e "$SUMMARY_FILE.$i")
+#	    {
+#		push @text, "Revision  Changes    Path" if !$revhdr++;
+#		push @text, read_logfile "$SUMMARY_FILE.$i", "";
+#	    }
 	}
-	if ($revhdr) {
-	    push(@text, "");        # consistancy...
-	}
+	# consistency...
+	push @text, "" if $revhdr;
     }
-
 
 
     #
     # Mail out the notification.
     #
-    if (!$have_r_opt || $onlytag eq $branch) {
-	&mail_notification ([@mailto], $module, @text);
-    }
-    &cleanup_tmpfiles ($id);
+    mail_notification $BRANCH_FILE, $CHANGED_FILE, $ADDED_FILE, $REMOVED_FILE,
+		      \@mailto, $module, $username, $fullname, $mailname, @text
+	if !$have_r_opt || $onlytag eq $branch_lines->[0];
+
+    cleanup_tmpfiles $TMPDIR, $temp_name, $id;
     return 0;
 }
 
