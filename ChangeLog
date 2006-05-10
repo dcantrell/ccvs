@@ -1,3 +1,7 @@
+2006-05-10  Derek Price  <derek@ximbiot.com>
+
+	* BUGS: Note temporary hobling of log_accum.pl.
+
 2006-05-08  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: s/%a/%@/ & s/%t/%M/ for sign/verify templates.
