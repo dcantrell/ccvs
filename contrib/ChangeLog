@@ -1,3 +1,8 @@
+2006-05-10  Derek Price  <derek@ximbiot.com>
+
+	* commit_prep.pl, log_accum.pl: More simplification and cleanup.  Diff
+	and URL functionality temporarily disabled.
+
 2006-05-09  Derek Price  <derek@ximbiot.com>
 
 	* log_accum.pl: First pass at organizing and eliminating globals.  Does
