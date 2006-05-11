@@ -648,7 +648,7 @@ sub mail_notification
 
 
 # Return an array containing file names and file name roots:
-# (LAST_FILE, LOG_BASE, BRANCH_FILE, ADDED_BASE, CHANGED_BASE,
+# (LAST_FILE, LOG_BASE, BRANCH_BASE, ADDED_BASE, CHANGED_BASE,
 #  REMOVED_BASE, URL_BASE)
 sub get_temp_files
 {
@@ -671,9 +671,8 @@ sub format_names
     my ($toplevel, $dir, @files) = @_;
     my @lines;
 
-    $dir =~ s#^(\./)*\Q$toplevel\E(?=/|$)#.#;
-    $dir =~ s#^(\./)*##;
-    $dir =~ s#/*$##;
+    $dir =~ s#^\Q$toplevel\E/##;
+    $dir =~ s#/$##;
     $dir = "." if $dir eq "";
 
     my $format = "\t%-";
@@ -844,7 +843,13 @@ sub append_to_file
     if (@files)
     {
 	open FILE, ">>$filename" or die "Cannot open file $filename: $!";
+
+	# Normalize $dir, removing ./ indirections and condensing consecutive
+	# slashes.
+	$dir =~ s#(^|/)(\./)+#$1#g;
+	$dir =~ s#//+#/#g;
 	print FILE $dir, "/\n";
+
 	print FILE join ("\n", @files), "\n";
 	close FILE;
     }
@@ -948,7 +953,7 @@ sub main
     $module =~ m#^([^/]*)#;
     my $toplevel = $1;
 
-    my ($LAST_FILE, $LOG_BASE, $BRANCH_FILE, $ADDED_BASE, $CHANGED_BASE,
+    my ($LAST_FILE, $LOG_BASE, $BRANCH_BASE, $ADDED_BASE, $CHANGED_BASE,
 	$REMOVED_BASE, $URL_BASE) = get_temp_files $TMPDIR, $temp_name, $id;
 
     # Set defaults that could have been overridden on the command line.
@@ -995,7 +1000,7 @@ sub main
     #
     write_logfile "$LOG_BASE.$i", @$log_lines
 	if !-e "$LOG_BASE.$i" or !@text;
-    append_to_file "$BRANCH_FILE.$i",  $module, @$branch_lines;
+    append_to_file "$BRANCH_BASE.$i",  $module, @$branch_lines;
     append_to_file "$ADDED_BASE.$i",   $module, @$added_files;
     append_to_file "$CHANGED_BASE.$i", $module, @$changed_files;
     append_to_file "$REMOVED_BASE.$i", $module, @$removed_files;
