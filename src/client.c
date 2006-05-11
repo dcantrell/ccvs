@@ -3918,7 +3918,7 @@ handle_mt (char *args, size_t len)
 			cvs_output ("\n", 1);
 			free (updated_fname);
 		    }
-		    updated_fname = xstrdup (text);
+		    updated_fname = text ? xstrdup (text) : NULL;
 		}
 		/* Swallow all other tags.  Either they are extraneous
 		   or they reflect future extensions that we can
@@ -3928,17 +3928,17 @@ handle_mt (char *args, size_t len)
 	    {
 		if (!strcmp (tag, "conflicts"))
 		{
-		    if (!strcmp (text, "No"))
+		    if (text == NULL || !strcmp (text, "No"))
 			importmergecmd.conflicts = -1;
 		    else
 			importmergecmd.conflicts = atoi (text);
 		}
 		else if (!strcmp (tag, "mergetag1"))
-		    importmergecmd.mergetag1 = xstrdup (text);
+		    importmergecmd.mergetag1 = text ? xstrdup (text) : NULL;
 		else if (!strcmp (tag, "mergetag2"))
-		    importmergecmd.mergetag2 = xstrdup (text);
+		    importmergecmd.mergetag2 = text ? xstrdup (text) : NULL;
 		else if (!strcmp (tag, "repository"))
-		    importmergecmd.repository = xstrdup (text);
+		    importmergecmd.repository = text ? xstrdup (text) : NULL;
 		/* Swallow all other tags.  Either they are text for
                    which we are going to print our own version when we
                    see -importmergecmd, or they are future extensions
@@ -3948,9 +3948,12 @@ handle_mt (char *args, size_t len)
 		printf ("\n");
 	    else if (!strcmp (tag, "date"))
 	    {
-		char *date = format_date_alloc (text);
-		printf ("%s", date);
-		free (date);
+		if (text)
+		{
+		    char *date = format_date_alloc (text);
+		    printf ("%s", date);
+		    free (date);
+		}
 	    }
 	    else if (text)
 		printf ("%s", text);
