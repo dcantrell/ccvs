@@ -76,14 +76,6 @@ use strict;
 # 1 = new-style %s format. Note: allows spaces in filenames.
 my $UseNewInfoFmtStrings = 1;
 
-#
-# <s>Where do you want the RCS ID and delta info?</s> What additional info do you want in your mail?
-# 0 = none,
-# 1 = <s>in mail only,</s> summaries
-# 2 = <s>in both mail and logs.</s> summaries twice??
-#
-my $rcsidinfo = 2;
-
 # If you are using CVS web or ViewCVS, then set these.  When set properly, this
 # will cause links to aspects of the commit to print in the commit emails.
 my $CVSWEB_SCHEME = "http";
@@ -120,6 +112,7 @@ my $temp_name   = 'cvs';
 # Diff options.
 my $SEND_DIFF = "false";
 my $SUPPRESS_DIFFS_AGAINST_EMPTIES = "false";
+my $SEPARATE_DIFF_EMAILS = "false";
 my @diffargs = ();		# Options to pass to diff.
 
 # Print debug statements.
@@ -127,6 +120,11 @@ my $debug = 0;
 
 # Email addresses to send mail to.
 my @mailto = ();
+
+# Only send mail for changes on branch $onlytag.
+my $use_onlytag = 0;
+my $onlytag = "";
+
 
 
 ############################################################
@@ -148,9 +146,6 @@ my $STATE_LOG     = 4;
 #
 ############################################################
 
-my $have_r_opt = 0;		# Whether -r was seen on the command line.
-my $onlytag = "";		# With $have_r_opt, only send mail for changes
-				# on this branch.
 my $new_directory = 0;          # Is this a 'cvs add directory' command?
 my $imported_sources = 0;       # Is this a 'cvs import' command?
 
@@ -161,22 +156,6 @@ my $imported_sources = 0;       # Is this a 'cvs import' command?
 # Subroutines
 #
 ############################################################
-
-sub format_names {
-    my ($dir, @files) = @_;
-    my (@lines);
-
-    $lines[0] = sprintf(" %-08s", $dir);
-    foreach my $file (@files) {
-        if (length($lines[$#lines]) + length($file) > 60) {
-            $lines[++$#lines] = sprintf(" %8s", " ");
-        }
-        $lines[$#lines] .= " ".$file;
-    }
-    @lines;
-}
-
-
 
 sub cleanup_tmpfiles {
     my ($tmpdir, $prefix, $id) = @_;
@@ -191,28 +170,6 @@ sub cleanup_tmpfiles {
     foreach (@files)
     {
         unlink "$tmpdir/$_";
-    }
-}
-
-
-
-sub write_logfile {
-    my ($filename, @lines) = @_;
-
-    open(FILE, ">$filename") || die ("Cannot open log file $filename: $!\n");
-    print(FILE join("\n", @lines), "\n");
-    close(FILE);
-}
-
-sub append_to_file {
-    my ($filename, $dir, @files) = @_;
-
-    if (@files)
-    {
-        my @lines = format_names $dir, @files;
-        open FILE, ">>$filename" or die "Cannot open file $filename: $!\n";
-        print FILE join ("\n", @lines), "\n";
-        close FILE;
     }
 }
 
@@ -276,19 +233,6 @@ sub read_file {
         chomp;
         push(@text, sprintf("  %-10s  %s", $leader, $_));
         $leader = "";
-    }
-    close(FILE);
-    @text;
-}
-
-sub read_logfile {
-    my ($filename, $leader) = @_;
-    my (@text) = ();
-
-    open(FILE, "<$filename") || die ("Cannot open log file $filename: $!\n");
-    while (<FILE>) {
-        chomp;
-        push(@text, $leader.$_);
     }
     close(FILE);
     @text;
@@ -395,13 +339,13 @@ sub read_logfile {
 
 sub derive_subject_from_changes_file
 {
-    my ($BRANCH_FILE, $CHANGED_FILE, $ADDED_FILE, $REMOVED_FILE, $module) = @_;
+    my ($BRANCH_FILE, $CHANGED_BASE, $ADDED_BASE, $REMOVED_BASE, $module) = @_;
     my $subj = "";
 
     my $i;
     for ($i = 0; ; $i++)
     {
-	open CH, "<$CHANGED_FILE.$i" or last;
+	open CH, "<$CHANGED_BASE.$i" or last;
 
 	while (<CH>)
 	{
@@ -439,13 +383,13 @@ sub derive_subject_from_changes_file
     else
     {
 	# NPM: See if there's any file-addition notifications.
-	my $added = read_line_nodie "$ADDED_FILE.$i";
+	my $added = read_line_nodie "$ADDED_BASE.$i";
 	$subj .= "ADDED: $added " if $added ne "";
 
 	#    print "derive_subject_from_changes_file().. added== $added \n";
 
 	## NPM: See if there's any file-removal notications.
-	my $removed = read_line_nodie "$REMOVED_FILE.$i";
+	my $removed = read_line_nodie "$REMOVED_BASE.$i";
 	$subj .= "REMOVED: $removed " if $removed ne "";
 
 	#    print "derive_subject_from_changes_file().. removed== $removed \n";
@@ -475,6 +419,25 @@ sub derive_subject_from_changes_file
 ## it returns an array of files, %s, sent from the loginfo
 ## command
 #
+# Required:
+#   -m EMAIL	- Add mailto address.
+#
+# Optional features:
+#   -r TAG	- operate only on changes with tag TAG
+#   -r BRANCH	- operate only on changes in branch TAG
+#		  Use -r "", -rHEAD, or -rTRUNK for only changes to TRUNK.
+#   -T TEXT	- use TEXT in temporary file names.
+#   -u USER	- Set CVS username to USER (deprecated).
+#
+# Optional output:
+# * -f LOGFILE	- Output copy of commit messages to LOGFILE.
+# * -G DB	- Interface to Gnats.
+#
+# cvsweb URL support:
+# * -C PATH	- Generate cvsweb URLs in email.
+# * -U URL	- Base URL for cvsweb, with -C.
+#
+# Diff support:
 #   -d		- Send diffs in emails.
 #   -D DIFF_ARG - Pass DIFF_ARG to `cvs diff' when generating diffs.  Defaults
 #		  to `-ub'.  Multiple invocations will pass all DIFF_ARGS
@@ -482,12 +445,8 @@ sub derive_subject_from_changes_file
 #		  Implies `-D'.
 #   -E		- Suppress diffs against added and removed (empty) files.
 #		  Implies `-D'.
-#   -m EMAIL	- Set mailto address.
-#   -p PROJECT	- Set full repository path.
-#   -r TAG	- operate only on changes with tag TAG
-#   -r BRANCH	- operate only on changes in branch TAG
-#		  Use -r "" or -r "HEAD " for only changes to HEAD.
-#   -u USER	- Set CVS username to USER.
+# * -S		- Separate diff emails.
+#
 sub process_argv
 {
     my (@argv) = @_;
@@ -521,7 +480,7 @@ sub process_argv
 	}
 	elsif ($arg eq '-r')
 	{
-	    $have_r_opt = 1;
+	    $use_onlytag = 1;
 	    $onlytag = shift @argv;
 	    # Empty branch means HEAD
 	    $onlytag = '' if $onlytag eq "HEAD";
@@ -633,7 +592,8 @@ sub process_stdin
     #
     # Iterate over the body of the message collecting information.
     #
-    while (<STDIN>) {
+    while (<STDIN>)
+    {
 	chomp;                      # Drop the newline
 	if (/^\s*(Tag|Revision\/Branch):\s*(\w+)/)
 	{
@@ -688,14 +648,15 @@ sub process_stdin
     # that include lines that confuse the state machine.
     if (!eof(STDIN)) {
 	while (<STDIN>) {
-	    next unless ($state == $STATE_LOG); # eat all STDIN
+	    next unless $state == $STATE_LOG; # eat all STDIN
 
 	    if (/^\s*\[(bug|pr|task) #(\d+)\]/)
 	    {
 		# FIXME: Set the bug/patch ID to "$1 #$2" so that the issue
 		# database may be updated.
 	    }
-	    push (@log_lines, $_);
+	    chomp;
+	    push @log_lines, $_;
 	}
     }
 
@@ -725,20 +686,26 @@ sub process_stdin
 
 
 
-sub build_header {
+sub build_header
+{
     my ($toplevel, $branch, $username, $fullname, $mailname) = @_;
-    my $header;
+    my @header;
     delete $ENV{'TZ'};
     my ($sec, $min, $hour, $mday, $mon, $year) = localtime time;
 
-    $header = "CVSROOT:\t$ENV{CVSROOT}\n";
-    $header .= "Module name:\t$toplevel\n";
-    $header .= "Branch:\t\t$branch\n" if $branch;
+    push @header, "CVSROOT:\t$ENV{CVSROOT}";
+    push @header, "Module name:\t$toplevel";
+    push @header, "Branch:\t\t$branch" if $branch;
 
-    $header .= sprintf "Changes by:\t%s%s<%s>\t%02d/%02d/%02d %02d:%02d:%02d",
-                       $fullname, $fullname ? " " : "",
-		       $mailname ? $mailname : $username,
-		       $year%100, $mon+1, $mday, $hour, $min, $sec;
+    push @header,
+	 sprintf "Changes by:\t%s%s<%s>\t%02d/%02d/%02d %02d:%02d:%02d",
+                 $fullname, $fullname ? " " : "",
+		 $mailname ? $mailname : $username,
+		 $year%100, $mon+1, $mday, $hour, $min, $sec;
+
+    push @header, "";
+
+    return @header;
 }
 
 
@@ -799,11 +766,11 @@ sub getuserdata
 
 sub mail_notification
 {
-    my ($BRANCH_FILE, $CHANGED_FILE, $ADDED_FILE, $REMOVED_FILE,
+    my ($BRANCH_FILE, $CHANGED_BASE, $ADDED_BASE, $REMOVED_BASE,
 	$addr_list, $module, $username, $fullname, $mailfrom, @text) = @_;
 
-    my $subj = derive_subject_from_changes_file ($BRANCH_FILE, $CHANGED_FILE,
-						 $ADDED_FILE, $REMOVED_FILE,
+    my $subj = derive_subject_from_changes_file ($BRANCH_FILE, $CHANGED_BASE,
+						 $ADDED_BASE, $REMOVED_BASE,
 						 $module);
     my $mail_to = join ", ", @$addr_list;
 
@@ -836,9 +803,9 @@ sub mail_notification
 
 
 
-# Return an array containing file names:
-# (LAST_FILE, LOG_FILE, BRANCH_FILE, ADDED_FILE, CHANGED_FILE,
-#  REMOVED_FILE, URL_FILE)
+# Return an array containing file names and file name roots:
+# (LAST_FILE, LOG_BASE, BRANCH_FILE, ADDED_BASE, CHANGED_BASE,
+#  REMOVED_BASE, URL_BASE)
 sub get_temp_files
 {
     my ($tmpdir, $temp_name, $id) = @_;
@@ -851,6 +818,180 @@ sub get_temp_files
 	   "$tmpdir/#$temp_name.$id.changed",
 	   "$tmpdir/#$temp_name.$id.removed",
 	   "$tmpdir/#$temp_name.$id.urls";
+}
+
+
+
+sub format_names
+{
+    my ($toplevel, $dir, @files) = @_;
+    my @lines;
+
+    $dir =~ s#^(\./)*\Q$toplevel\E(?=/|$)#.#;
+    $dir =~ s#^(\./)*##;
+    $dir =~ s#/*$##;
+    $dir = "." if $dir eq "";
+
+    my $format = "\t%-";
+    $format .= sprintf "%d", length ($dir) > 15 ? length ($dir) : 15;
+    $format .= "s%s ";
+
+    $lines[0] = sprintf $format, $dir, ":";
+
+    print STDERR "format_names(): dir = ", $dir, "; files = ",
+		 join (":", @files), ".\n"
+	if $debug;
+
+    foreach (@files)
+    {
+	s/^.*\s.*$/`$&'/;
+	$lines[++$#lines] = sprintf $format, " ", " "
+	    if length ($lines[$#lines]) + length ($_) > 65;
+	$lines[$#lines] .= $_ . " ";
+    }
+
+    @lines;
+}
+
+
+
+sub format_lists
+{
+    my ($toplevel, @lines) = @_;
+    my (@text, @files, $dir);
+
+    print STDERR "format_lists(): ", join (":", @lines), "\n" if $debug;
+
+    $dir = shift @lines;	# first thing is always a directory
+    die "Damn, $dir doesn't look like a directory!" if $dir !~ m#.*/$#;
+
+    foreach my $line (@lines)
+    {
+	if ($line =~ m#.*/$#)
+	{
+	    push @text, format_names $toplevel, $dir, @files;
+	    $dir = $line;
+	    die "Damn, $dir doesn't look like a directory!" if $dir !~ m#.*/$#;
+	    @files = ();
+	}
+	else
+	{
+	    push @files, $line;
+	}
+    }
+
+    push @text, format_names $toplevel, $dir, @files;
+
+    return @text;
+}
+
+
+
+sub accum_subject
+{
+    my @lines = @_;
+    my (@files, $dir);
+
+    $dir = shift @lines;	# first thing is always a directory
+    die "Damn, $dir doesn't look like a directory!\n" if $dir !~ m#.*/$#;
+
+    @files = ($dir);
+    foreach my $line (@lines)
+    {
+	if ($line =~ m#.*/$#)
+	{
+	    $dir = $line;
+	    push @files, $line;
+	}
+	else
+	{
+	    push @files, $dir . $line;
+	}
+    }
+
+    return @files;
+}
+
+
+
+sub read_logfile
+{
+    my ($filename) = @_;
+    my @text;
+
+    open FILE, "<$filename" or die "Cannot open log file $filename: $!\n";
+    while (<FILE>)
+    {
+        chomp;
+        push @text, $_;
+    }
+    close FILE;
+    return @text;
+}
+
+
+sub push_formatted_lists
+{
+    my ($text, $subject_files, $toplevel, $section, $filename) = @_;
+
+    print STDERR "push_formatted_lists(): $section $filename\n" if $debug;
+
+    my @lines = read_logfile $filename;
+    if (@lines)
+    {
+	push @$text, $section;
+	push @$text, format_lists $toplevel, @lines;
+	push @$subject_files, accum_subject @lines if $subject_files;;
+    }
+}
+
+
+
+sub append_to_file
+{
+    my ($filename, $dir, @files) = @_;
+
+    if (@files)
+    {
+	open FILE, ">>$filename" or die "Cannot open file $filename: $!\n";
+	print FILE $dir, "/\n";
+	print FILE join ("\n", @files), "\n";
+	close FILE;
+    }
+}
+
+
+
+sub build_message_body
+{
+    my ($toplevel, $changed_file, $added_file, $removed_file, $log_file) = @_;
+    my (@body, @subject_files, @log_text);
+
+    push_formatted_lists \@body, \@subject_files, $toplevel,
+			 "Modified files:", $changed_file;
+    push_formatted_lists \@body, \@subject_files, $toplevel,
+			 "Added files:", $added_file;
+    push_formatted_lists \@body, \@subject_files, $toplevel,
+			 "Removed files:", $removed_file;
+    push @body, "";
+
+    @log_text = read_logfile $log_file;
+    push @body, "Log message:";
+    push @body, @log_text;
+    push @body, "";
+
+    return \@body, \@subject_files, \@log_text;
+}
+
+
+
+sub write_logfile
+{
+    my ($filename, @lines) = @_;
+
+    open FILE, ">$filename" or die "Cannot open log file $filename: $!\n";
+    print FILE join ("\n", @lines), "\n";
+    close FILE;
 }
 
 
@@ -880,16 +1021,11 @@ sub main
     $module =~ m#^([^/]*)#;
     my $toplevel = $1;
 
-    my ($LAST_FILE, $LOG_FILE, $BRANCH_FILE, $ADDED_FILE, $CHANGED_FILE,
-	$REMOVED_FILE, $URL_FILE) = get_temp_files $TMPDIR, $temp_name, $id;
+    my ($LAST_FILE, $LOG_BASE, $BRANCH_FILE, $ADDED_BASE, $CHANGED_BASE,
+	$REMOVED_BASE, $URL_BASE) = get_temp_files $TMPDIR, $temp_name, $id;
 
     # Set defaults that could have been overridden on the command line.
     push @diffargs, "-ub" unless @diffargs;
-
-    #print("ARGV  - ", join(":", @ARGV), "\n");
-    #print("files - ", join(":", @files), "\n");
-    #print("dir   - ", $dir, "\n");
-    #print("id    - ", $id, "\n");
 
 
     ##########################
@@ -898,15 +1034,13 @@ sub main
     # single item in the argument list, and an empty log message.
     #
     if ($new_directory) {
-	my $header = build_header $toplevel, "",
+	my @header = build_header $toplevel, "",
 				  $username, $fullname, $mailname;
 	my @text;
-	push @text, $header;
-	push @text, "";
 	push @text, "  $module - New directory";
-	mail_notification $BRANCH_FILE, $CHANGED_FILE, $ADDED_FILE,
-			  $REMOVED_FILE, \@mailto, $module, $username,
-			  $fullname, $mailname, @text;
+	mail_notification $BRANCH_FILE, $CHANGED_BASE, $ADDED_BASE,
+			  $REMOVED_BASE, \@mailto, $module, $username,
+			  $fullname, $mailname, @header, @text;
 	exit 0;
     }
 
@@ -917,101 +1051,75 @@ sub main
     # Find the log file that matches this log message
     #
     my $i;
-    for ($i = 0; ; $i++) {
-	last if (! -e "$LOG_FILE.$i");
-	my @text = read_logfile "$LOG_FILE.$i", "";
-	last if ($#text == -1);
-	last if (join(" ", @$log_lines) eq join(" ", @text));
+    my @text;
+    for ($i = 0; ; $i++)
+    {
+	last if !-e "$LOG_BASE.$i";
+	@text = read_logfile "$LOG_BASE.$i";
+	last if !@text;
+	print STDERR "comparing: {", join (" ", @$log_lines), "} and {",
+		     join (" ", @text), "}\n"
+	    if $debug;
+	last if join (" ", @$log_lines) eq join (" ", @text);
     }
 
     #
     # Spit out the information gathered in this pass.
     #
-    write_logfile "$LOG_FILE.$i", @$log_lines;
+    write_logfile "$LOG_BASE.$i", @$log_lines
+	if !-e "$LOG_BASE.$i" or !@text;
     append_to_file "$BRANCH_FILE.$i",  $module, @$branch_lines;
-    append_to_file "$ADDED_FILE.$i",   $module, @$added_files;
-    append_to_file "$CHANGED_FILE.$i", $module, @$changed_files;
-    append_to_file "$REMOVED_FILE.$i", $module, @$removed_files;
-#    change_summary "$SUMMARY_FILE.$i", $toplevel, $oldrev, $newrev,
-#		   (@$changed_files, @$added_files, @$removed_files)
-#	if $rcsidinfo;
+    append_to_file "$ADDED_BASE.$i",   $module, @$added_files;
+    append_to_file "$CHANGED_BASE.$i", $module, @$changed_files;
+    append_to_file "$REMOVED_BASE.$i", $module, @$removed_files;
 
     #
     # Check whether this is the last directory.  If not, quit.
     #
     if (-e $LAST_FILE)
     {
-	my $dir = read_line "$LAST_FILE";
+	my $dir = read_line $LAST_FILE;
 	print STDERR "checking last dir: $dir\n" if $debug;
 
-	if (!grep /\Q$module\E$/, $dir)
+	if ($module ne $dir)
 	{
 	    print STDERR "More commits to come...\n" if $debug;
-	    exit 0;
+	    return 0;
 	}
     }
+
+    ###
+    ### End of Commits!
+    ###
 
     #
     # This is it.  The commits are all finished.  Lump everything together
     # into a single message, fire a copy off to the mailing list, and drop
     # it on the end of the Changes file.
     #
-    my $header = build_header $toplevel, $branch_lines->[0],
-			      $username, $fullname, $mailname;
 
     #
     # Produce the final compilation of the log messages
     #
-    my @text = ();
-    push @text, $header;
-    push @text, "";
+    my @header = build_header $toplevel, $branch_lines->[0],
+			      $username, $fullname, $mailname;
+
     for (my $i = 0; ; $i++)
     {
-	last if !-e "$LOG_FILE.$i";
-	push @text, read_file "$BRANCH_FILE.$i", "Branch:";
-	push @text, read_file "$CHANGED_FILE.$i", "Modified:";
-	push @text, read_file "$ADDED_FILE.$i", "Added:";
-	push @text, read_file "$REMOVED_FILE.$i", "Removed:";
-	push @text, "  Log:";
-	push @text, read_logfile "$LOG_FILE.$i", "  ";
-#	if ($rcsidinfo == 2)
-#	{
-#	    if (-e "$SUMMARY_FILE.$i")
-#	    {
-#		push @text, "  ";
-#		push @text, "  Revision  Changes    Path");
-#		push @text, read_logfile "$SUMMARY_FILE.$i", "  ";
-#	    }
-#	}
-	push @text, "";
+	last if !-e "$LOG_BASE.$i";
+
+	my ($body, $subject_files, $log_text) =
+	    build_message_body $toplevel, "$CHANGED_BASE.$i", "$ADDED_BASE.$i",
+			       "$REMOVED_BASE.$i", "$LOG_BASE.$i";
+
+	#
+	# Mail out the notification.
+	#
+	mail_notification $BRANCH_FILE, $CHANGED_BASE, $ADDED_BASE,
+			  $REMOVED_BASE, \@mailto, $module, $username,
+			  $fullname, $mailname, @header, @$body
+	    if !$use_onlytag || $onlytag eq $branch_lines->[0];
     }
-
-    #
-    # Now generate the extra info for the mail message..
-    #
-    if ($rcsidinfo == 1)
-    {
-	my $revhdr = 0;
-	for (my $i = 0; ; $i++)
-	{
-	    last if !-e "$LOG_FILE.$i";
-#	    if (-e "$SUMMARY_FILE.$i")
-#	    {
-#		push @text, "Revision  Changes    Path" if !$revhdr++;
-#		push @text, read_logfile "$SUMMARY_FILE.$i", "";
-#	    }
-	}
-	# consistency...
-	push @text, "" if $revhdr;
-    }
-
-
-    #
-    # Mail out the notification.
-    #
-    mail_notification $BRANCH_FILE, $CHANGED_FILE, $ADDED_FILE, $REMOVED_FILE,
-		      \@mailto, $module, $username, $fullname, $mailname, @text
-	if !$have_r_opt || $onlytag eq $branch_lines->[0];
 
     cleanup_tmpfiles $TMPDIR, $temp_name, $id;
     return 0;

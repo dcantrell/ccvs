@@ -1,3 +1,7 @@
+2006-05-11  Derek Price  <derek@ximbiot.com>
+
+	* log_accum.pl: Gradually restoring functionality.
+
 2006-05-10  Derek Price  <derek@ximbiot.com>
 
 	* commit_prep.pl, log_accum.pl: More simplification and cleanup.  Diff
