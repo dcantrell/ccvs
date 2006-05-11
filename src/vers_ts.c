@@ -53,8 +53,8 @@ Version_TS (struct file_info *finfo, const char *options, const char *tag,
     char *rcsexpand = NULL;
 
     TRACE (TRACE_FUNCTION, "Version_TS (%s, %s, %s, %s, %d, %d)",
-	   finfo->fullname, options ? options : "(null)", tag ? tag : "(null)",
-	   date ? date : "(null)", force_tag_match, set_time);
+	   finfo->fullname, TRACE_NULL (options), TRACE_NULL (tag),
+	   TRACE_NULL (date), force_tag_match, set_time);
 
     /* get a new Vers_TS struct */
 
@@ -170,8 +170,8 @@ Version_TS (struct file_info *finfo, const char *options, const char *tag,
      */
     if (tag || date)
     {
-	vers_ts->tag = xstrdup (tag);
-	vers_ts->date = xstrdup (date);
+	vers_ts->tag = tag ? xstrdup (tag) : NULL;
+	vers_ts->date = date ? xstrdup (date) : NULL;
     }
     else if (!vers_ts->entdata && (sdtp && sdtp->aflag == 0))
     {
@@ -220,7 +220,7 @@ Version_TS (struct file_info *finfo, const char *options, const char *tag,
 	    if (vers_ts->vn_rcs == NULL)
 		vers_ts->vn_tag = NULL;
 	    else if (simple)
-		vers_ts->vn_tag = xstrdup (vers_ts->tag);
+		vers_ts->vn_tag = vers_ts->tag ? xstrdup (vers_ts->tag) : NULL;
 	    else
 		vers_ts->vn_tag = xstrdup (vers_ts->vn_rcs);
 	}

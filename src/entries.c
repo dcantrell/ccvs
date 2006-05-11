@@ -57,7 +57,8 @@ Entnode_Create (enum ent_type type, const char *user, const char *vn,
  
     TRACE (TRACE_FLOW,
 	   "Entnode_Create (%s, %s, %s, %s, %s, %s, %s)",
-	   user, vn, ts, options, tag, date, ts_conflict);
+	   user, vn, ts, options, TRACE_NULL (tag), TRACE_NULL (date),
+	   TRACE_NULL (ts_conflict));
 
     /* Note that timestamp and options must be non-NULL */
     ent = xmalloc (sizeof (Entnode));
@@ -66,9 +67,9 @@ Entnode_Create (enum ent_type type, const char *user, const char *vn,
     ent->version   = xstrdup (vn);
     ent->timestamp = xstrdup (ts ? ts : "");
     ent->options   = xstrdup (options ? options : "");
-    ent->tag       = xstrdup (tag);
-    ent->date      = xstrdup (date);
-    ent->conflict  = xstrdup (ts_conflict);
+    ent->tag       = tag ? xstrdup (tag) : NULL;
+    ent->date      = date ? xstrdup (date) : NULL;
+    ent->conflict  = ts_conflict ? xstrdup (ts_conflict) : NULL;
 
     return ent;
 }
@@ -480,8 +481,8 @@ Entries_Open (int aflag, char *update_dir)
 	sdtp = xmalloc (sizeof (*sdtp));
 	memset (sdtp, 0, sizeof (*sdtp));
 	sdtp->aflag = aflag;
-	sdtp->tag = xstrdup (dirtag);
-	sdtp->date = xstrdup (dirdate);
+	sdtp->tag = dirtag ? xstrdup (dirtag) : NULL;
+	sdtp->date = dirdate ? xstrdup (dirdate) : NULL;
 	sdtp->nonbranch = dirnonbranch;
 
 	/* feed it into the list-private area */

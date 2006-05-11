@@ -168,7 +168,7 @@ fmt_proc (Node *p, void *closure)
 
 	    if (tag != NULL)
 	        free (tag);
-	    tag = xstrdup (li->tag);
+	    tag = li->tag ? xstrdup (li->tag) : NULL;
 
 	    /* Force a new line.  */
 	    col = 70;
