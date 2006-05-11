@@ -157,87 +157,6 @@ my $imported_sources = 0;       # Is this a 'cvs import' command?
 #
 ############################################################
 
-sub cleanup_tmpfiles {
-    my ($tmpdir, $prefix, $id) = @_;
-    my @files;
-
-    die "$tmpdir does not exist" unless -d $tmpdir;
-    opendir DIR, $tmpdir or die "Can't read $tmpdir";
-
-    push @files, grep /^#\Q$prefix\E\.$id.*\.$/, readdir DIR;
-    closedir DIR;
-
-    foreach (@files)
-    {
-        unlink "$tmpdir/$_";
-    }
-}
-
-sub write_line {
-    my ($filename, $line) = @_;
-
-    open(FILE, ">$filename") || die("Cannot open file $filename: $!\n");
-    print(FILE $line, "\n");
-    close(FILE);
-}
-
-sub append_line {
-    my ($filename, $line) = @_;
-
-    open(FILE, ">>$filename") || die("Cannot open file $filename: $!\n");
-    print(FILE $line, "\n");
-    close(FILE);
-}
-
-sub read_line {
-    my ($filename) = @_;
-    my ($line);
-
-    open(FILE, "<$filename") || die("Cannot open file $filename: $!\n");
-    $line = <FILE>;
-    close(FILE);
-    chomp($line);
-    $line;
-}
-
-sub read_line_nodie {
-    my ($filename) = @_;
-    my ($line);
-    open(FILE, "<$filename") || return ("");
-
-    $line = <FILE>;
-    close(FILE);
-    chomp($line);
-    $line;
-}
-
-sub read_file_lines {
-    my ($filename) = @_;
-    my (@text) = ();
-
-    open(FILE, "<$filename") || return ();
-    while (<FILE>) {
-        chomp;
-        push(@text, $_);
-    }
-    close(FILE);
-    @text;
-}
-
-sub read_file {
-    my ($filename, $leader) = @_;
-    my (@text) = ();
-
-    open(FILE, "<$filename") || return ();
-    while (<FILE>) {
-        chomp;
-        push(@text, sprintf("  %-10s  %s", $leader, $_));
-        $leader = "";
-    }
-    close(FILE);
-    @text;
-}
-
 # FIXME: Temporarily disabled.
 #
 # do an 'cvs -Qn status' on each file in the arguments, and extract info.
@@ -334,78 +253,6 @@ sub read_file {
 #				  $delta, $rcsfile, $diff;
 #    }
 #}
-
-
-
-sub derive_subject_from_changes_file
-{
-    my ($BRANCH_FILE, $CHANGED_BASE, $ADDED_BASE, $REMOVED_BASE, $module) = @_;
-    my $subj = "";
-
-    my $i;
-    for ($i = 0; ; $i++)
-    {
-	open CH, "<$CHANGED_BASE.$i" or last;
-
-	while (<CH>)
-	{
-	    # A changes file looks like this:
-	    #
-	    #  src      foo.c newfile.html
-	    #  www      index.html project_nav.html
-	    #
-	    # Each line is " Dir File1 File2 ..."
-	    # We only care about Dir, since the subject line should
-	    # summarize. 
-
-	    s/^[ \t]*//;
-	    /^([^ \t]+)[ \t]*/;
-	    my $dir = $1;
-	    # Fold to rightmost directory component
-	    $dir =~ /([^\/]+)$/;
-	    $dir = $1;
-	    if ($subj eq "")
-	    {
-		$subj = $dir;
-	    }
-	    else
-	    {
-		$subj .= ", $dir"; 
-	    }
-	}
-    close CH;
-    }
-
-    if ($subj ne "")
-    {
-      $subj = "MODIFIED: $subj ..."; 
-    }
-    else
-    {
-	# NPM: See if there's any file-addition notifications.
-	my $added = read_line_nodie "$ADDED_BASE.$i";
-	$subj .= "ADDED: $added " if $added ne "";
-
-	#    print "derive_subject_from_changes_file().. added== $added \n";
-
-	## NPM: See if there's any file-removal notications.
-	my $removed = read_line_nodie "$REMOVED_BASE.$i";
-	$subj .= "REMOVED: $removed " if $removed ne "";
-
-	#    print "derive_subject_from_changes_file().. removed== $removed \n";
-
-	## NPM: DEFAULT: DIRECTORY CREATION (c.f. "Check for a new directory first" in main mody)
-	$subj = "NEW: $module" if $subj eq "";
-    }
-
-    my $branch = read_line_nodie "$BRANCH_FILE.$i";
-    $subj = "$subj [$branch]" if $branch;
-
-    return $subj;
-}
-
-
-
 
 
 
@@ -766,12 +613,9 @@ sub getuserdata
 
 sub mail_notification
 {
-    my ($BRANCH_FILE, $CHANGED_BASE, $ADDED_BASE, $REMOVED_BASE,
-	$addr_list, $module, $username, $fullname, $mailfrom, @text) = @_;
+    my ($addr_list, $module, $username, $fullname, $mailfrom,
+	$subject, @text) = @_;
 
-    my $subj = derive_subject_from_changes_file ($BRANCH_FILE, $CHANGED_BASE,
-						 $ADDED_BASE, $REMOVED_BASE,
-						 $module);
     my $mail_to = join ", ", @$addr_list;
 
     my @mailcmd;
@@ -794,7 +638,7 @@ sub mail_notification
     print MAIL "To: $mail_to\n";
     # $fullname may be empty, but the extra spaces won't hurt.
     print MAIL "From: $fullname <$mailfrom>\n" if $mailfrom;
-    print MAIL "Subject: $subj\n";
+    print MAIL "Subject: $subject\n";
     print MAIL "\n";
     print MAIL join "\n", @text;
 
@@ -887,29 +731,75 @@ sub format_lists
 
 
 
-sub accum_subject
+sub compile_subject
 {
-    my @lines = @_;
-    my (@files, $dir);
+    my ($branch, @list) = @_;
+    my $text;
 
-    $dir = shift @lines;	# first thing is always a directory
-    die "Damn, $dir doesn't look like a directory!\n" if $dir !~ m#.*/$#;
+    # This uses the simplifying assumptions that no dir is equal to `' or `.'
+    # and that all directories have been normalized,  This is okay because
+    # commit_prep rejects the toplevel project as input and all the directory
+    # names were normalized before being written to the change files.
 
-    @files = ($dir);
-    foreach my $line (@lines)
+    print STDERR "compile_subject(): ", $branch ? "[$branch] " : "",
+		 join (":", @list), "\n"
+	if $debug;
+
+    # Find the highest common directory.
+    my @dirs = grep m#/$#, @list;
+    map s#/$##, @dirs;
+    my @topsplit = split m#/#, $dirs[0];
+    for (my $i = 1; $i <= $#dirs; $i++)
     {
-	if ($line =~ m#.*/$#)
+	my @dirsplit = split m#/#, $dirs[$i];
+	for (my $j = 0; $j <= $#topsplit and $j <= $#dirsplit; $j++)
 	{
-	    $dir = $line;
-	    push @files, $line;
+	    if ($topsplit[$j] ne $dirsplit[$j])
+	    {
+		splice @topsplit, $j;
+		last;
+	    }
 	}
-	else
-	{
-	    push @files, $dir . $line;
-	}
+	last unless @topsplit;
     }
 
-    return @files;
+    my $topdir = join "/", @topsplit;
+    # $topdir may be empty.
+
+    # strip out directories and the common prefix $topdir.
+    my $offset = length $topdir;
+    $offset++ if $offset > 0;
+
+    my @out;
+    push @out, $topdir if $topdir;
+
+    
+    my $dir = shift @list;
+    die "Darn, $dir doesn't look like a directory!" unless $dir =~ s#/$##;
+    $dir = substr $dir, $offset;
+
+    # Build the list of files with directories prepended.
+    foreach (@list)
+    {
+	if (m#/$#)
+	{
+	    $dir = $_;
+	    $dir = substr $dir, $offset;
+	    next;
+	}
+
+	my $file = "$dir$_";
+	$file = "`$file'" if $file =~ /\s/;
+	push @out, $file;
+    }
+
+    # put it together and limit the length.
+    $text = join " ", @out;
+    substr $text, 47, length ($text), "..." if length ($text) > 50;
+
+    $text .= " [$branch]" if $branch;
+
+    return $text;
 }
 
 
@@ -919,7 +809,7 @@ sub read_logfile
     my ($filename) = @_;
     my @text;
 
-    open FILE, "<$filename" or die "Cannot open log file $filename: $!\n";
+    open FILE, "<$filename" or die "Cannot open log file $filename: $!";
     while (<FILE>)
     {
         chomp;
@@ -941,7 +831,7 @@ sub push_formatted_lists
     {
 	push @$text, $section;
 	push @$text, format_lists $toplevel, @lines;
-	push @$subject_files, accum_subject @lines if $subject_files;;
+	push @$subject_files, @lines if $subject_files;
     }
 }
 
@@ -953,7 +843,7 @@ sub append_to_file
 
     if (@files)
     {
-	open FILE, ">>$filename" or die "Cannot open file $filename: $!\n";
+	open FILE, ">>$filename" or die "Cannot open file $filename: $!";
 	print FILE $dir, "/\n";
 	print FILE join ("\n", @files), "\n";
 	close FILE;
@@ -964,8 +854,10 @@ sub append_to_file
 
 sub build_message_body
 {
-    my ($toplevel, $changed_file, $added_file, $removed_file, $log_file) = @_;
-    my (@body, @subject_files, @log_text);
+    my ($toplevel, $branch,
+	$changed_file, $added_file, $removed_file, $log_file) = @_;
+    my ($subject, @body, @log_text);
+    my @subject_files;
 
     push_formatted_lists \@body, \@subject_files, $toplevel,
 			 "Modified files:", $changed_file;
@@ -980,7 +872,9 @@ sub build_message_body
     push @body, @log_text;
     push @body, "";
 
-    return \@body, \@subject_files, \@log_text;
+    $subject = compile_subject $branch, @subject_files;
+
+    return $subject, \@body, \@log_text;
 }
 
 
@@ -989,9 +883,42 @@ sub write_logfile
 {
     my ($filename, @lines) = @_;
 
-    open FILE, ">$filename" or die "Cannot open log file $filename: $!\n";
+    open FILE, ">$filename" or die "Cannot open log file $filename: $!";
     print FILE join ("\n", @lines), "\n";
     close FILE;
+}
+
+
+
+sub cleanup_tmpfiles
+{
+    my ($tmpdir, $prefix, $id) = @_;
+    my @files;
+
+    die "$tmpdir does not exist" unless -d $tmpdir;
+    opendir DIR, $tmpdir or die "Can't read $tmpdir: $!";
+
+    push @files, grep /^#\Q$prefix\E\.$id.*\.$/, readdir DIR;
+    closedir DIR;
+
+    foreach (@files)
+    {
+        unlink "$tmpdir/$_";
+    }
+}
+
+
+
+sub read_line
+{
+    my ($filename) = @_;
+    my $line;
+
+    open FILE, "<$filename" or die "Cannot open file $filename: $!";
+    $line = <FILE>;
+    close FILE;
+    chomp $line;
+    return $line;
 }
 
 
@@ -1033,14 +960,14 @@ sub main
     # Check for a new directory first.  This will always appear as a
     # single item in the argument list, and an empty log message.
     #
-    if ($new_directory) {
+    if ($new_directory)
+    {
 	my @header = build_header $toplevel, "",
 				  $username, $fullname, $mailname;
-	my @text;
-	push @text, "  $module - New directory";
-	mail_notification $BRANCH_FILE, $CHANGED_BASE, $ADDED_BASE,
-			  $REMOVED_BASE, \@mailto, $module, $username,
-			  $fullname, $mailname, @header, @text;
+	my @body;
+	push @body, "  $module - New directory";
+	mail_notification \@mailto, $module, $username, $fullname, $mailname,
+			  $module, @header, @body;
 	exit 0;
     }
 
@@ -1104,20 +1031,20 @@ sub main
     my @header = build_header $toplevel, $branch_lines->[0],
 			      $username, $fullname, $mailname;
 
-    for (my $i = 0; ; $i++)
+    for ($i = 0; ; $i++)
     {
 	last if !-e "$LOG_BASE.$i";
 
-	my ($body, $subject_files, $log_text) =
-	    build_message_body $toplevel, "$CHANGED_BASE.$i", "$ADDED_BASE.$i",
+	my ($subject, $body, $log_text) =
+	    build_message_body $toplevel, $branch_lines->[0],
+			       "$CHANGED_BASE.$i", "$ADDED_BASE.$i",
 			       "$REMOVED_BASE.$i", "$LOG_BASE.$i";
 
 	#
 	# Mail out the notification.
 	#
-	mail_notification $BRANCH_FILE, $CHANGED_BASE, $ADDED_BASE,
-			  $REMOVED_BASE, \@mailto, $module, $username,
-			  $fullname, $mailname, @header, @$body
+	mail_notification \@mailto, $module, $username, $fullname, $mailname,
+			  $subject, @header, @$body
 	    if !$use_onlytag || $onlytag eq $branch_lines->[0];
     }
 
