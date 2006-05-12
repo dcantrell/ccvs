@@ -275,6 +275,7 @@ my $imported_sources = 0;       # Is this a 'cvs import' command?
 #		  Use -r "", -rHEAD, or -rTRUNK for only changes to TRUNK.
 #   -T TEXT	- use TEXT in temporary file names.
 #   -u USER	- Set CVS username to USER (deprecated).
+#   -v		- Output debugging information.
 #
 # Optional output:
 # * -f LOGFILE	- Output copy of commit messages to LOGFILE.
@@ -351,15 +352,7 @@ sub process_argv
 	    $donefiles and die "Too many arguments!\n";
 	    $donefiles = !$UseNewInfoFmtStrings;
 
-	    if ($arg eq '- New directory')
-	    {
-		$new_directory = 1;
-	    }
-	    elsif ($arg eq '- Imported sources')
-	    {
-		$imported_sources = 1;
-	    }
-	    elsif ($UseNewInfoFmtStrings)
+	    if ($UseNewInfoFmtStrings)
 	    {
 		$module = $arg;
 		while (@argv)
@@ -953,8 +946,13 @@ sub main
     $module =~ m#^([^/]*)#;
     my $toplevel = $1;
 
-    my ($LAST_FILE, $LOG_BASE, $BRANCH_BASE, $ADDED_BASE, $CHANGED_BASE,
-	$REMOVED_BASE, $URL_BASE) = get_temp_files $TMPDIR, $temp_name, $id;
+    if ($debug)
+    {
+	print STDERR "module -", $toplevel, "\n";
+	print STDERR "dir -", $module, "\n";
+	print STDERR "files -", join (":", @$files), "\n";
+	print STDERR "id -", $id, "\n";
+    }
 
     # Set defaults that could have been overridden on the command line.
     push @diffargs, "-ub" unless @diffargs;
@@ -965,25 +963,59 @@ sub main
     # Check for a new directory first.  This will always appear as a
     # single item in the argument list, and an empty log message.
     #
-    if ($new_directory)
+    if (($UseNewInfoFmtStrings ? $files->[0] : join " ", @$files)
+	eq "- New directory")
+    {
+	my @header = build_header $toplevel, "",
+				  $username, $fullname, $mailname;
+	my $sdir = $module;
+	$sdir =~ s#^\Q$toplevel\E/##;
+
+	my @body;
+	push @body, "New directory:";
+	push @body, "\t$sdir";
+
+	mail_notification \@mailto, $module, $username, $fullname, $mailname,
+			  $module, @header, @body;
+
+	while (<STDIN>)
+	{
+	    # Read the rest of the input to avoid sending broken pipe errors
+	    # to our parent.
+	}
+
+	exit 0;
+    }
+
+    # The import email may need a log message, so process stdin.
+    my ($branch_lines, $changed_files, $added_files,
+	$removed_files, $log_lines) = process_stdin $module, @$files;
+
+    # Check for imported sources.
+    if (($UseNewInfoFmtStrings ? $files->[0] : join " ", @$files)
+	eq "- Imported sources")
     {
 	my @header = build_header $toplevel, "",
 				  $username, $fullname, $mailname;
 	my @body;
-	push @body, "  $module - New directory";
+	push @body, $module;
+	push @body, "";
+	push @body, "Log message:";
+	push @body, @$log_lines;
+
 	mail_notification \@mailto, $module, $username, $fullname, $mailname,
-			  $module, @header, @body;
+			  "Import $module", @header, @body;
 	exit 0;
     }
-
-    my ($branch_lines, $changed_files, $added_files,
-	$removed_files, $log_lines) = process_stdin $module, @$files;
 
     #
     # Find the log file that matches this log message
     #
-    my $i;
+    my ($LAST_FILE, $LOG_BASE, $BRANCH_BASE, $ADDED_BASE, $CHANGED_BASE,
+	$REMOVED_BASE, $URL_BASE) = get_temp_files $TMPDIR, $temp_name, $id;
+
     my @text;
+    my $i;
     for ($i = 0; ; $i++)
     {
 	last if !-e "$LOG_BASE.$i";
