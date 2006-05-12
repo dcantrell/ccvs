@@ -1,5 +1,7 @@
 2006-05-12  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.pl: Restore URL creation.
+
 	* log_accum.pl: Handle config files.
 	(new_config, parse_config): New functions.
 
