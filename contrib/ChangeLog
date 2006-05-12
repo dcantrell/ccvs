@@ -1,5 +1,8 @@
 2006-05-12  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.pl: Handle config files.
+	(new_config, parse_config): New functions.
+
 	* log_accum.pl: Move argument parsing to Getopt::Long, eliminating
 	more globals.
 	(set_defaults): New function.

@@ -251,7 +251,17 @@ my $debug;
 #	file-text	Text to include in temp file names.
 sub set_defaults
 {
-    my ($config) = @_;
+    my ($config, $configs) = @_;
+
+    # Condense the configs.
+    while (@$configs)
+    {
+	my $c = pop @$configs;
+	foreach (keys %$c)
+	{
+	    $config->{$_} = $c->{$_} unless exists $config->{$_};
+	}
+    }
 
     # Anything not set will default to false in Perl.
 
@@ -285,6 +295,111 @@ sub set_defaults
 	    print STDERR "config{$_} => ", join (":", @{$config->{$_}}), "\n";
 	}
     }
+}
+
+
+
+sub new_config
+{
+    my %config;
+
+    # Set up the option processing functions.
+    $config{'only-tags'} =
+	sub
+	{
+	    $_[1] = '' if $_[1] eq "HEAD" || $_[1] eq "TRUNK";
+	    push @{$config{'tag'}}, $_[1];
+	};
+    $config{'quiet'} =
+	sub
+	{
+	    $config{'verbose'} = !$_[1];
+	};
+    $config{'file-prefix'} =
+	sub
+	{
+	    die "Invalid identifier passed to option $_[0]: $_[1]"
+		unless $_[1] =~ /^([a-zA-Z0-9_.-]+)$/;
+	    $config{'file-text'} = $1;
+	};
+    $config{'user'} =
+	sub
+	{
+	    warn "Using deprecated -u option. Use -T instead.";
+	    &{$config{'file-text'}} (@_);
+	};
+    $config{'suppress-diffs-against-empties'} =
+	sub
+	{
+	    $config{'empty-diffs'} = !$_[1];
+	};
+
+    return \%config;
+}
+
+
+
+# This is global for convenience.  It is used in parse_config & process_argv.
+my @option_spec = ("config|c=s@",
+		   "mail-to|m=s@",
+		   "tag|only-tag|r=s@",
+		   "file-prefix|file-text|T=s", "user|u=s",
+		   "debug|verbose|v!",
+		   "quiet|q!",
+		   "commit-log|f=s",
+		   "url|cvsweb|U=s",
+		   "cvsroot|C=s",
+		   "send-diff|diff|d!",
+		   "diff-arg|D=s@",
+		   "suppress-diffs-against-empties|E!",
+		   "empty-diffs|e!",
+		   "separate-diffs|S!");
+
+sub parse_config
+{
+    my ($parsed_configs, $files) = @_;
+    my ($config, @configs);
+
+    foreach my $file (@$files)
+    {
+	local @ARGV = ();
+
+	warn "config loop detected" && next if $parsed_configs->{$file};
+	$parsed_configs->{$file} = 1;
+
+	print STDERR "parse_config: parsing $file\n" if $debug;
+	open CONFIG, "<$file" or die "can't open $file: $!";
+
+	while (<CONFIG>)
+	{
+	    # Skip comments and lines with nothing but blanks.
+	    next if /^\s*(#.*)?$/;
+
+	    # Split it.
+	    chomp;
+	    /^(\S*)(\s+(.*))?$/;
+
+	    # Save the option.
+	    push @ARGV, "--$1";
+
+	    # There is a difference between no argument and an empty string
+	    # argument.
+	    push @ARGV, $3 if $2;
+	}
+	close CONFIG;
+
+	# Get the options from the config file.
+	$config = new_config;
+	die "argument parsing failed"
+	    unless GetOptions $config, @option_spec;
+
+	push @configs, parse_config ($parsed_configs, $config->{'config'})
+	    if exists $config->{'config'};
+
+	push @configs, $config;
+    }
+
+    return @configs;
 }
 
 
@@ -352,92 +467,17 @@ sub set_defaults
 sub process_argv
 {
     my ($arg, $donefiles);
-    my (%config, $module, @files, %oldrev, %newrev);
-
-    my @option_spec = ("config|c=s",
-		       "mail-to|m=s@",
-		       "tag|only-tag|r=s@",
-		       "file-prefix|file-text|T=s", "user|u=s",
-		       "debug|verbose|v!",
-		       "quiet|q!",
-		       "commit-log|f=s",
-		       "url|cvsweb|U=s",
-		       "cvsroot|C=s",
-		       "send-diff|diff|d!",
-		       "diff-arg|D=s@",
-		       "suppress-diffs-against-empties|E!",
-		       "empty-diffs|e!",
-		       "separate-diffs|S!");
-
-    # Set up the option processing functions.
-    $config{'only-tags'} =
-	sub
-	{
-	    $_[1] = '' if $_[1] eq "HEAD" || $_[1] eq "TRUNK";
-	    push @{$config{'tag'}}, $_[1];
-	};
-    $config{'quiet'} =
-	sub
-	{
-	    $config{'verbose'} = !$_[1];
-	};
-    $config{'file-prefix'} =
-	sub
-	{
-	    die "Invalid identifier passed to option $_[0]: $_[1]"
-		unless $_[1] =~ /^([a-zA-Z0-9_.-]+)$/;
-	    $config{'file-text'} = $1;
-	};
-    $config{'user'} =
-	sub
-	{
-	    warn "Using deprecated -u option. Use -T instead.";
-	    &{$config{'file-text'}} (@_);
-	};
-    $config{'suppress-diffs-against-empties'} =
-	sub
-	{
-	    $config{'empty-diffs'} = !$_[1];
-	};
-	
-    # Copy @ARGV to reuse it.
-    my @args = @ARGV;
+    my ($config, $module, @files, %oldrev, %newrev);
+    my @configs;
 
     # Get the options.
+    $config = new_config;
     die "argument parsing failed"
-	unless GetOptions (\%config, @option_spec);
+	unless GetOptions ($config, @option_spec);
 
-    if (exists $config{'config'})
-    {
-	@ARGV = ();
-	open CONFIG, "<" . $config{'config'}
-	    or die "can't open ", $config{'config'}, ": $!";
-	while (<CONFIG>)
-	{
-	    # Skip comments and lines with nothing but blanks.
-	    next if /^\s*(#.*)?$/;
-
-	    # Split it.
-	    chomp;
-	    /^(\S*)(\s+(.*))?$/;
-
-	    # Save the option.
-	    push @ARGV, "--$1";
-
-	    # There is a difference between no argument and an empty string
-	    # argument.
-	    push @ARGV, $3 if $2;
-	}
-
-	# Get the options from the config file.
-	die "argument parsing failed"
-	    unless GetOptions (\%config, @option_spec);
-
-	# Reparse the command line options so they may overide the config file.
-	@ARGV = @args;
-	die "argument parsing failed"
-	    unless GetOptions (\%config, @option_spec);
-    }
+    my %parsed_files;
+    push @configs, parse_config \%parsed_files, $config->{'config'}
+	if exists $config->{'config'};
 
     # Get the path and the file list.
     $module = shift @ARGV;
@@ -489,9 +529,10 @@ sub process_argv
 	die "Too many arguments." if @ARGV;
     }
 
-    set_defaults \%config;
+    # Condense the configs.
+    set_defaults $config, \@configs;
 
-    return \%config, $module, \@files, \%oldrev, \%newrev;
+    return $config, $module, \@files, \%oldrev, \%newrev;
 }
 
 
