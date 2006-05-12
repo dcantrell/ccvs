@@ -858,7 +858,7 @@ add_directory (struct file_info *finfo)
 	p->key = xstrdup ("- New directory");
 	li = xmalloc (sizeof (struct logfile_info));
 	li->type = T_TITLE;
-	li->tag = tag ? xstrdup (tag) : NULL;
+	li->tag = xstrdup (tag);
 	li->rev_old = li->rev_new = NULL;
 	p->data = li;
 	(void) addnode (ulist, p);

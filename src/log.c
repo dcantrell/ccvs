@@ -327,39 +327,33 @@ cvslog (int argc, char **argv)
 	{
 	    p = log_data.datelist;
 	    log_data.datelist = p->next;
-	    if (p->start && p->end)
-	    {
-		send_to_server ("Argument -d\012", 0);
-		send_to_server ("Argument ", 0);
-		date_to_internet (datetmp, p->start);
-		send_to_server (datetmp, 0);
-		if (p->inclusive)
-		    send_to_server ("<=", 0);
-		else
-		    send_to_server ("<", 0);
-		date_to_internet (datetmp, p->end);
-		send_to_server (datetmp, 0);
-		send_to_server ("\012", 0);
-	    }
-	    if (p->start)
-		free (p->start);
-	    if (p->end)
-		free (p->end);
+	    assert (p->start && p->end);
+	    send_to_server ("Argument -d\012", 0);
+	    send_to_server ("Argument ", 0);
+	    date_to_internet (datetmp, p->start);
+	    send_to_server (datetmp, 0);
+	    if (p->inclusive)
+		send_to_server ("<=", 0);
+	    else
+		send_to_server ("<", 0);
+	    date_to_internet (datetmp, p->end);
+	    send_to_server (datetmp, 0);
+	    send_to_server ("\012", 0);
+	    free (p->start);
+	    free (p->end);
 	    free (p);
 	}
 	while (log_data.singledatelist != NULL)
 	{
 	    p = log_data.singledatelist;
 	    log_data.singledatelist = p->next;
-	    if (p->end)
-	    {
-		send_to_server ("Argument -d\012", 0);
-		send_to_server ("Argument ", 0);
-		date_to_internet (datetmp, p->end);
-		send_to_server (datetmp, 0);
-		send_to_server ("\012", 0);
-		free (p->end);
-	    }
+	    assert (p->end);
+	    send_to_server ("Argument -d\012", 0);
+	    send_to_server ("Argument ", 0);
+	    date_to_internet (datetmp, p->end);
+	    send_to_server (datetmp, 0);
+	    send_to_server ("\012", 0);
+	    free (p->end);
 	    free (p);
 	}
 	    

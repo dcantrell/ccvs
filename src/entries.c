@@ -67,9 +67,9 @@ Entnode_Create (enum ent_type type, const char *user, const char *vn,
     ent->version   = xstrdup (vn);
     ent->timestamp = xstrdup (ts ? ts : "");
     ent->options   = xstrdup (options ? options : "");
-    ent->tag       = tag ? xstrdup (tag) : NULL;
-    ent->date      = date ? xstrdup (date) : NULL;
-    ent->conflict  = ts_conflict ? xstrdup (ts_conflict) : NULL;
+    ent->tag       = xstrdup (tag);
+    ent->date      = xstrdup (date);
+    ent->conflict  = xstrdup (ts_conflict);
 
     return ent;
 }
@@ -481,8 +481,8 @@ Entries_Open (int aflag, char *update_dir)
 	sdtp = xmalloc (sizeof (*sdtp));
 	memset (sdtp, 0, sizeof (*sdtp));
 	sdtp->aflag = aflag;
-	sdtp->tag = dirtag ? xstrdup (dirtag) : NULL;
-	sdtp->date = dirdate ? xstrdup (dirdate) : NULL;
+	sdtp->tag = xstrdup (dirtag);
+	sdtp->date = xstrdup (dirdate);
 	sdtp->nonbranch = dirnonbranch;
 
 	/* feed it into the list-private area */
