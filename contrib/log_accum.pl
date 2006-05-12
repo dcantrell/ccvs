@@ -78,14 +78,6 @@ use Getopt::Long qw(:config gnu_getopt require_order);
 # 1 = new-style %s format. Note: allows spaces in filenames.
 my $UseNewInfoFmtStrings = 1;
 
-# If you are using CVS web or ViewCVS, then set these.  When set properly, this
-# will cause links to aspects of the commit to print in the commit emails.
-my $CVSWEB_SCHEME = "http";
-my $CVSWEB_DOMAIN = "cvs.sv.gnu.org";
-my $CVSWEB_PORT   = "80";
-my $CVSWEB_URI    = "viewcvs";
-my $SEND_URL      = "true";
-
 # Paths.
 my $CVSBIN        = "/usr/bin";
 my $TMPDIR        = "/tmp";
@@ -275,6 +267,7 @@ sub set_defaults
 	       || exists $config->{'diff-arg'});
 
     # Set defaults.
+    $config->{'cvsroot'} = $ENV{'CVSROOT'} if !exists $config->{'cvsroot'};
     $config->{'send-diff'} = 1 if !exists $config->{'send-diff'};
     $config->{'empty-diffs'} = 1 if !exists $config->{'empty-diffs'};
     $config->{'diff-arg'} = ["-ub"] if !exists $config->{'diff-arg'};
@@ -473,7 +466,7 @@ sub process_argv
     # Get the options.
     $config = new_config;
     die "argument parsing failed"
-	unless GetOptions ($config, @option_spec);
+	unless GetOptions $config, @option_spec;
 
     my %parsed_files;
     push @configs, parse_config \%parsed_files, $config->{'config'}
@@ -968,10 +961,56 @@ sub append_to_file
 
 
 
+sub urlencode
+{
+    $_[0] =~ s#[^\w:/.-]#"%" . ord $&#ge;
+    return $_[0];
+}
+
+
+
+sub build_cvsweb_urls
+{
+    my ($url, $cvsroot, $branch, $oldrev, $newrev, $module, @list) = @_;
+    my @urls;
+
+    my $args = "?cvsroot=" . urlencode $cvsroot;
+    $args .= "&only_with_tag=$branch" if $branch;
+
+    # Import and new directories only send a single dir.  Special case it.
+    return urlencode ("$url/$module") . "/$args" unless @list;
+
+    my $baseurl = urlencode "$url/$module";
+    foreach (@list)
+    {
+	my $out = "$baseurl/" . urlencode ($_);
+
+        if ($_ =~ /\.(?:pdf|gif|jpg|mpg)$/i or -B $_ || !$oldrev->{$_})
+	{
+	    # if binary or new, link directly
+	    $args .= "&rev=" . $newrev->{$_};
+	}
+	else
+	{
+	    # otherwise link to the diff
+	    $args .= "&tr1=" . $oldrev->{$_};
+	    $args .= "&tr2=" . $newrev->{$_};
+	    $args .= "&r1=text&r2=text";
+	}
+
+	$out .= $args;
+	push @urls, $out;
+    }
+
+    return @urls;
+}
+
+
+
 sub build_message_body
 {
-    my ($toplevel, $branch,
-	$changed_file, $added_file, $removed_file, $log_file) = @_;
+    my ($config, $toplevel, $branch,
+	$changed_file, $added_file, $removed_file, $log_file, $url_file) = @_;
     my ($subject, @body, @log_text);
     my @subject_files;
 
@@ -989,6 +1028,14 @@ sub build_message_body
     push @body, "";
 
     $subject = compile_subject $branch, @subject_files;
+
+    my @urls = read_logfile $url_file;
+    if (@urls)
+    {
+	push @body, "CVSWeb URLs:";
+	push @body, @urls;
+	push @body, "";
+    }
 
     return $subject, \@body, \@log_text;
 }
@@ -1101,6 +1148,15 @@ sub main
 	push @body, "New directory:";
 	push @body, "\t$sdir";
 
+	if ($config->{'url'})
+	{
+	    push @body, "";
+	    push @body, "CVSWeb URLs:";
+	    push @body, build_cvsweb_urls $config->{'url'},
+					  $config->{'cvsroot'}, "",
+					  undef, undef, $module;
+	}
+
 	mail_notification $config->{'mail-to'}, $module, $username, $fullname,
 			  $mailname, $module, @header, @body;
 
@@ -1136,6 +1192,15 @@ sub main
 	push @body, "";
 	push @body, "Log message:";
 	push @body, @$log_lines;
+
+	if ($config->{'url'})
+	{
+	    push @body, "";
+	    push @body, build_cvsweb_urls $config->{'url'},
+					  $config->{'cvsroot'},
+					  $branch_lines->[0], undef, undef,
+					  $module;
+	}
 
 	mail_notification $config->{'mail-tp'}, $module, $username, $fullname,
 			  $mailname, "Import $module", @header, @body;
@@ -1176,6 +1241,13 @@ sub main
     append_to_file "$ADDED_BASE.$i",   $module, @$added_files;
     append_to_file "$CHANGED_BASE.$i", $module, @$changed_files;
     append_to_file "$REMOVED_BASE.$i", $module, @$removed_files;
+    append_file "$URL_BASE.$i", build_cvsweb_urls $config->{'url'},
+						  $config->{'cvsroot'},
+						  $branch_lines->[0],
+						  $oldrev, $newrev, $module,
+						  @$added_files,
+						  @$changed_files,
+						  @$removed_files;
 
     #
     # Check whether this is the last directory.  If not, quit.
@@ -1213,9 +1285,10 @@ sub main
 	last if !-e "$LOG_BASE.$i";
 
 	my ($subject, $body, $log_text) =
-	    build_message_body $toplevel, $branch_lines->[0],
+	    build_message_body $config, $toplevel, $branch_lines->[0],
 			       "$CHANGED_BASE.$i", "$ADDED_BASE.$i",
-			       "$REMOVED_BASE.$i", "$LOG_BASE.$i";
+			       "$REMOVED_BASE.$i", "$LOG_BASE.$i",
+			       "$URL_BASE.$i";
 
 	#
 	# Mail out the notification.
