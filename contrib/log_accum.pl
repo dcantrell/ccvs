@@ -62,6 +62,8 @@
 
 use strict;
 
+use Getopt::Long qw(:config gnu_compat require_order);
+
 ############################################################
 #
 # Configurable options
@@ -102,33 +104,6 @@ my $MAIL_CMD_NEEDS_ADDRS;
 
 ############################################################
 #
-# Defaults that may be changed via command line options.
-#
-############################################################
-
-# Temp file name prefix (will always be preceded by `#'.
-my $temp_name   = 'cvs';
-
-# Diff options.
-my $SEND_DIFF = "false";
-my $SUPPRESS_DIFFS_AGAINST_EMPTIES = "false";
-my $SEPARATE_DIFF_EMAILS = "false";
-my @diffargs = ();		# Options to pass to diff.
-
-# Print debug statements.
-my $debug = 0;
-
-# Email addresses to send mail to.
-my @mailto = ();
-
-# Only send mail for changes on branch $onlytag.
-my $use_onlytag = 0;
-my $onlytag = "";
-
-
-
-############################################################
-#
 # Constants - DO NOT CHANGE THESE.
 #
 ############################################################
@@ -145,9 +120,7 @@ my $STATE_LOG     = 4;
 # Global variables
 #
 ############################################################
-
-my $new_directory = 0;          # Is this a 'cvs add directory' command?
-my $imported_sources = 0;       # Is this a 'cvs import' command?
+my $debug;
 
 
 
@@ -262,20 +235,65 @@ my $imported_sources = 0;       # Is this a 'cvs import' command?
 
 
 
+# Set the default configuration values.  This should be called after
+# process_argv since it assumes that undefined values in config mean that
+# the option was not specified on the command line.
+#
+# Config hash values:
+#	mail-to		Reference to array of email destinations.
+#	debug		Print debugging information.
+#	tag		Reference to array of tags to send email for.
+#	send-diff	Send diffs in email.
+#	diff-arg	Reference to array of diff arguments.
+#	empty-diffs 	Send diffs from new files or to removed files.
+#	file-prefix	Text to include in temp file names.
+sub set_defaults
+{
+    my ($config) = @_;
+
+    # Anything not set will default to false in Perl.
+
+    # Sanity checks.
+    die "No email destination specified." unless @{$config->{'mail-to'}};
+    die "--send-diff must be set for --diff-arg or -E to be meaningful."
+	if exists $config->{'send-diff'} && !$config->{'send-diff'}
+	   && (exists $config->{'empty-diffs'}
+	       || exists $config->{'diff-arg'});
+
+    # Set defaults.
+    $config->{'send-diff'} = 1 if !exists $config->{'send-diff'};
+    $config->{'empty-diffs'} = 1 if !exists $config->{'empty-diffs'};
+    $config->{'diff-arg'} = ["-ub"] if !exists $config->{'diff-arg'};
+    $config->{'file-prefix'} = "cvs" if !exists $config->{'file-prefix'};
+
+   # Just set $debug in a global.  It's easier.
+   $debug = $config->{'debug'};
+}
+
+
+
 ## process the command line arguments sent to this script
 ## it returns an array of files, %s, sent from the loginfo
 ## command
 #
 # Required:
-#   -m EMAIL	- Add mailto address.
+#   -m EMAIL
+#   --mail-to EMAIL
+#		- Add mailto address.
 #
 # Optional features:
-#   -r TAG	- operate only on changes with tag TAG
-#   -r BRANCH	- operate only on changes in branch TAG
+#   -r TAG
+#   --only-tag TAG
+#   --tag TAG	- operate only on changes in tag/branch TAG
 #		  Use -r "", -rHEAD, or -rTRUNK for only changes to TRUNK.
-#   -T TEXT	- use TEXT in temporary file names.
+#   -T TEXT
+#   --file-text TEXT
+#   --file-prefix TEXT
+#		- use TEXT in temporary file names.
 #   -u USER	- Set CVS username to USER (deprecated).
-#   -v		- Output debugging information.
+#   -v		
+#   --verbose
+#   --debug	- Output debugging information.
 #
 # Optional output:
 # * -f LOGFILE	- Output copy of commit messages to LOGFILE.
@@ -286,137 +304,115 @@ my $imported_sources = 0;       # Is this a 'cvs import' command?
 # * -U URL	- Base URL for cvsweb, with -C.
 #
 # Diff support:
-#   -d		- Send diffs in emails.
-#   -D DIFF_ARG - Pass DIFF_ARG to `cvs diff' when generating diffs.  Defaults
+# * -d
+#   --diff
+#   --send-diff	- (defult) Send diffs in emails.
+# * -D DIFF_ARG
+#   --diff-arg DIFF_ARG
+#		- Pass DIFF_ARG to `cvs diff' when generating diffs.  Defaults
 #		  to `-ub'.  Multiple invocations will pass all DIFF_ARGS
 #		  (though first invocation always removes the default `-ub').
-#		  Implies `-D'.
-#   -E		- Suppress diffs against added and removed (empty) files.
-#		  Implies `-D'.
-# * -S		- Separate diff emails.
+#		  Implies `-d'.
+# * -E
+#   --suppress-diffs-against-empties
+#		- Suppress diffs from added files and to removed files.
+#		  Implies `-d'.
+#   -e
+#   --empty-diffs
+#		- (default) Negates -E.  Implies `-d'.
+# * -S		- Separate diff emails.  Implies `-d'.
 #
 sub process_argv
 {
-    my (@argv) = @_;
     my ($arg, $donefiles);
-    my ($module, @files, %oldrev, %newrev);
+    my (%config, $module, @files, %oldrev, %newrev);
 
-    while (@argv)
+    # Set up the option processing functions.
+    $config{'suppress-diffs-against-empties'} =
+	sub
+	{
+	    $config{'empty-diffs'} = !$_[1];
+	};
+    $config{'only-tags'} =
+	sub
+	{
+	    $_[1] = '' if $_[1] eq "HEAD" || $_[1] eq "TRUNK";
+	    push @{$config{'tags'}}, $_[1];
+	};
+    $config{'file-text'} =
+	sub
+	{
+	    die "Invalid identifier passed to option $_[0]: $_[1]"
+		unless $_[1] =~ /^([a-zA-Z0-9_.-]+)$/;
+	    $config{'file-prefix'} = $1;
+	};
+    $config{'user'} =
+	sub
+	{
+	    warn "Using deprecated -u option. Use -T instead.";
+	    &{$config{'file-text'}} (@_);
+	};
+
+    # Get the options.
+    die "argument parsing failed"
+	unless GetOptions (\%config,
+			   "mail-to|m=s@",
+			   "file-text|file-prefix|T=s", "user|u=s",
+			   "debug|verbose|v!", "send-diff|diff|d!",
+			   "diff-arg|D=s@",
+			   "suppress-diffs-against-empties|E!",
+			   "empty-diffs|e!",
+			   "separate-diffs|S!");
+
+    # Get the path and the file list.
+    if ($UseNewInfoFmtStrings)
     {
-	$arg = shift @argv;
-	if ($arg eq '-v')
+	$module = shift @ARGV;
+	while (@ARGV)
 	{
-	    $debug = 1;
-	}
-	elsif ($arg eq '-d')
-	{
-	    $SEND_DIFF = "true";
-	}
-	elsif ($arg eq '-D')
-	{
-	    push @diffargs, shift @argv;
-	    $SEND_DIFF = "true";
-	}
-	elsif ($arg eq '-E')
-	{
-	    $SUPPRESS_DIFFS_AGAINST_EMPTIES = "true";
-	    $SEND_DIFF = "true";
-	}
-	elsif ($arg eq '-m')
-	{
-	    push @mailto, split (/[ ,]+/, shift @argv);
-	}
-	elsif ($arg eq '-r')
-	{
-	    $use_onlytag = 1;
-	    $onlytag = shift @argv;
-	    # Empty branch means HEAD
-	    $onlytag = '' if $onlytag eq "HEAD";
-	}
-	elsif ($arg eq '-T' || $arg eq '-u')
-	{
-	    warn "Using deprecated -u option. Use -T instead." if $arg eq '-u';
+	    my $filename = shift @ARGV;
+	    die "path in file name `$filename'"
+		unless $filename =~ m#^([^/]+)$#;
+	    $filename = $1;
+	    push @files, $filename;
 
-	    my $param = shift @argv;
-	    if ($param =~ /^([a-zA-Z0-9_.-]+)$/)
-	    {
-		$temp_name = $1;
-	    }
-	    else
-	    {
-		die "Invalid identifier passed to option $arg: $param";
-	    }
-	}
-	else
-	{
-	    $donefiles and die "Too many arguments!\n";
-	    $donefiles = !$UseNewInfoFmtStrings;
+	    $oldrev{$filename} = shift @ARGV
+		or die "No previous revision given for $filename";
+	    $newrev{$filename} = shift @ARGV
+		or die "No new revision given for $filename";
 
-	    if ($UseNewInfoFmtStrings)
-	    {
-		$module = $arg;
-		while (@argv)
-		{
-		    my $filename = shift @argv;
-		    if ($filename =~ m#^([^/]+)$#)
-		    {
-			$filename = $1;
-		    }
-		    else
-		    {
-			die "path in file name `$filename'";
-		    }
-			
-		    push @files, $filename;
-		    $oldrev{$filename} = shift @argv
-			or die "No previous revision given for $filename";
-		    $newrev{$filename} = shift @argv
-			or die "No new revision given for $filename";
+	    # Simplify diffs.
+	    $oldrev{$filename} = 0 if $oldrev{$filename} eq "NONE";
+	    $newrev{$filename} = 0 if $newrev{$filename} eq "NONE";
 
-		    # Simplify diffs.
-		    $oldrev{$filename} = 0 if $oldrev{$filename} eq "NONE";
-		    $newrev{$filename} = 0 if $newrev{$filename} eq "NONE";
-
-		    # Untaint.
-		    if ($oldrev{$filename} =~ /^([0-9.]+)$/)
-		    {
-			$oldrev{$filename} = $1;
-		    }
-		    else
-		    {
-			die "invalid old revision $oldrev{$filename}";
-		    }
-		    if ($newrev{$filename} =~ /^([0-9.]+)$/)
-		    {
-			$newrev{$filename} = $1;
-		    }
-		    else
-		    {
-			die "invalid new revision $newrev{$filename}";
-		    }
-		}
-	    }
-	    else
-	    {
-		my @files;
-		push @files, split (' ', $arg);
-		for (@files)
-		{
-		    s/,([^,]+),([^,]+)$//
-			or die "Not enough modifiers for $_";
-		    $oldrev{$_} = $1;
-		    $newrev{$_} = $2;
-		    $oldrev{$_} = 0 if $oldrev{$_} eq "NONE";
-		    $newrev{$_} = 0 if $newrev{$_} eq "NONE";
-		}
-	    }
+	    # Untaint.
+	    die "invalid old revision $oldrev{$filename}"
+		unless $oldrev{$filename} =~ /^([0-9.]+)$/;
+	    $oldrev{$filename} = $1;
+	    die "invalid new revision $newrev{$filename}"
+		unless $newrev{$filename} =~ /^([0-9.]+)$/;
+	    $newrev{$filename} = $1;
 	}
     }
+    else
+    {
+	my @files;
+	push @files, split ' ', shift @ARGV;
+	for (@files)
+	{
+	    s/,([^,]+),([^,]+)$//
+		or die "Not enough modifiers for $_";
+	    $oldrev{$_} = $1;
+	    $newrev{$_} = $2;
+	    $oldrev{$_} = 0 if $oldrev{$_} eq "NONE";
+	    $newrev{$_} = 0 if $newrev{$_} eq "NONE";
+	}
+	die "Too many arguments." if @ARGV;
+    }
 
-    # Sanity checks.
-    die "No email destination specified.\n" unless @mailto;
+    set_defaults \%config;
 
-    return $module, \@files, \%oldrev, \%newrev;
+    return \%config, $module, \@files, \%oldrev, \%newrev;
 }
 
 
@@ -941,7 +937,7 @@ sub main
     my $id = getpgrp();  # NOTE: You *must* use a shell which does setpgrp().
     my ($username, $fullname, $mailname) = getuserdata;
 
-    my ($module, $files, $oldrev, $newrev) = process_argv @_;
+    my ($config, $module, $files, $oldrev, $newrev) = process_argv;
 
     $module =~ m#^([^/]*)#;
     my $toplevel = $1;
@@ -953,9 +949,6 @@ sub main
 	print STDERR "files -", join (":", @$files), "\n";
 	print STDERR "id -", $id, "\n";
     }
-
-    # Set defaults that could have been overridden on the command line.
-    push @diffargs, "-ub" unless @diffargs;
 
 
     ##########################
@@ -975,8 +968,8 @@ sub main
 	push @body, "New directory:";
 	push @body, "\t$sdir";
 
-	mail_notification \@mailto, $module, $username, $fullname, $mailname,
-			  $module, @header, @body;
+	mail_notification $config->{'mail-to'}, $module, $username, $fullname,
+			  $mailname, $module, @header, @body;
 
 	while (<STDIN>)
 	{
@@ -1003,8 +996,8 @@ sub main
 	push @body, "Log message:";
 	push @body, @$log_lines;
 
-	mail_notification \@mailto, $module, $username, $fullname, $mailname,
-			  "Import $module", @header, @body;
+	mail_notification $config->{'mail-tp'}, $module, $username, $fullname,
+			  $mailname, "Import $module", @header, @body;
 	exit 0;
     }
 
@@ -1012,7 +1005,9 @@ sub main
     # Find the log file that matches this log message
     #
     my ($LAST_FILE, $LOG_BASE, $BRANCH_BASE, $ADDED_BASE, $CHANGED_BASE,
-	$REMOVED_BASE, $URL_BASE) = get_temp_files $TMPDIR, $temp_name, $id;
+	$REMOVED_BASE, $URL_BASE) = get_temp_files $TMPDIR,
+						   $config->{'file-text'},
+						   $id;
 
     my @text;
     my $i;
@@ -1080,12 +1075,13 @@ sub main
 	#
 	# Mail out the notification.
 	#
-	mail_notification \@mailto, $module, $username, $fullname, $mailname,
-			  $subject, @header, @$body
-	    if !$use_onlytag || $onlytag eq $branch_lines->[0];
+	mail_notification $config->{'mail-to'}, $module, $username, $fullname,
+			  $mailname, $subject, @header, @$body
+	    if !exists $config->{'tag'}
+	       || grep /^\Q$branch_lines->[0]\E$/, @{$config->{'tag'}};
     }
 
-    cleanup_tmpfiles $TMPDIR, $temp_name, $id;
+    cleanup_tmpfiles $TMPDIR, $config->{'file-text'}, $id;
     return 0;
 }
 
