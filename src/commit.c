@@ -2230,7 +2230,7 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	    rcs = RCS_parse (file, repository);
 	    if (rcs == NULL)
 	    {
-		error (0, 0, "could not read %s", rcs->path);
+		error (0, 0, "could not read %s in %s", file, repository);
 		goto out;
 	    }
 	    *rcsnode = rcs;

@@ -3452,6 +3452,8 @@ RCS_isdead (RCSNode *rcs, const char *tag)
     Node *p;
     RCSVers *version;
 
+    assert (rcs != NULL);
+
     if (rcs->flags & PARTIAL)
 	RCS_reparsercsfile (rcs, NULL, NULL);
 
