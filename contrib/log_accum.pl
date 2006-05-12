@@ -62,7 +62,7 @@
 
 use strict;
 
-use Getopt::Long qw(:config gnu_compat require_order);
+use Getopt::Long qw(:config gnu_getopt require_order);
 
 ############################################################
 #
@@ -243,10 +243,12 @@ my $debug;
 #	mail-to		Reference to array of email destinations.
 #	debug		Print debugging information.
 #	tag		Reference to array of tags to send email for.
+#	url		Base URL for cvsweb.
+#	cvsroot		CVSROOT for use with cvsweb.
 #	send-diff	Send diffs in email.
 #	diff-arg	Reference to array of diff arguments.
 #	empty-diffs 	Send diffs from new files or to removed files.
-#	file-prefix	Text to include in temp file names.
+#	file-text	Text to include in temp file names.
 sub set_defaults
 {
     my ($config) = @_;
@@ -254,7 +256,9 @@ sub set_defaults
     # Anything not set will default to false in Perl.
 
     # Sanity checks.
-    die "No email destination specified." unless @{$config->{'mail-to'}};
+    die "No email destination specified." unless exists $config->{'mail-to'};
+    die "cvsweb CVSROOT specified without --url."
+	if exists $config->{'cvsroot'} && !exists $config->{'url'};
     die "--send-diff must be set for --diff-arg or -E to be meaningful."
 	if exists $config->{'send-diff'} && !$config->{'send-diff'}
 	   && (exists $config->{'empty-diffs'}
@@ -264,10 +268,23 @@ sub set_defaults
     $config->{'send-diff'} = 1 if !exists $config->{'send-diff'};
     $config->{'empty-diffs'} = 1 if !exists $config->{'empty-diffs'};
     $config->{'diff-arg'} = ["-ub"] if !exists $config->{'diff-arg'};
-    $config->{'file-prefix'} = "cvs" if !exists $config->{'file-prefix'};
+    $config->{'file-text'} = "cvs" if !exists $config->{'file-text'};
 
-   # Just set $debug in a global.  It's easier.
-   $debug = $config->{'debug'};
+    # Just set $debug in a global.  It's easier.
+    $debug = $config->{'debug'};
+
+    if ($debug)
+    {
+	for ("debug", "tag", "url", "cvsroot", "send-diff",
+	     "empty-diffs", "file-text")
+	{
+	    print STDERR "config{$_} => ", $config->{$_}, "\n";
+	}
+	for ("mail-to", "diff-arg")
+	{
+	    print STDERR "config{$_} => ", join (":", @{$config->{$_}}), "\n";
+	}
+    }
 }
 
 
@@ -282,6 +299,10 @@ sub set_defaults
 #		- Add mailto address.
 #
 # Optional features:
+#   -c CONFIG
+#   --config CONFIG
+#		- Read configuration from CONFIG.  Command line options will
+#		  always override values in CONFIG.
 #   -r TAG
 #   --only-tag TAG
 #   --tag TAG	- operate only on changes in tag/branch TAG
@@ -296,12 +317,18 @@ sub set_defaults
 #   --debug	- Output debugging information.
 #
 # Optional output:
-# * -f LOGFILE	- Output copy of commit messages to LOGFILE.
+#   -f LOGFILE
+#   --commit-log LOGFILE
+#		- Output copy of commit emails to LOGFILE.
 # * -G DB	- Interface to Gnats.
 #
 # cvsweb URL support:
-# * -C PATH	- Generate cvsweb URLs in email.
-# * -U URL	- Base URL for cvsweb, with -C.
+# * -U URL
+#   --cvsweb URL
+#   --url URL	- Send URLs to diffs in email, using base URL for cvsweb.
+# * -C CVSROOT
+#   --cvsroot CVSROOT
+#		- Use CVSROOT in cvsweb URLs instead of $CVSROOT.
 #
 # Diff support:
 # * -d
@@ -327,24 +354,39 @@ sub process_argv
     my ($arg, $donefiles);
     my (%config, $module, @files, %oldrev, %newrev);
 
+    my @option_spec = ("config|c=s",
+		       "mail-to|m=s@",
+		       "tag|only-tag|r=s@",
+		       "file-prefix|file-text|T=s", "user|u=s",
+		       "debug|verbose|v!",
+		       "quiet|q!",
+		       "commit-log|f=s",
+		       "url|cvsweb|U=s",
+		       "cvsroot|C=s",
+		       "send-diff|diff|d!",
+		       "diff-arg|D=s@",
+		       "suppress-diffs-against-empties|E!",
+		       "empty-diffs|e!",
+		       "separate-diffs|S!");
+
     # Set up the option processing functions.
-    $config{'suppress-diffs-against-empties'} =
-	sub
-	{
-	    $config{'empty-diffs'} = !$_[1];
-	};
     $config{'only-tags'} =
 	sub
 	{
 	    $_[1] = '' if $_[1] eq "HEAD" || $_[1] eq "TRUNK";
-	    push @{$config{'tags'}}, $_[1];
+	    push @{$config{'tag'}}, $_[1];
 	};
-    $config{'file-text'} =
+    $config{'quiet'} =
+	sub
+	{
+	    $config{'verbose'} = !$_[1];
+	};
+    $config{'file-prefix'} =
 	sub
 	{
 	    die "Invalid identifier passed to option $_[0]: $_[1]"
 		unless $_[1] =~ /^([a-zA-Z0-9_.-]+)$/;
-	    $config{'file-prefix'} = $1;
+	    $config{'file-text'} = $1;
 	};
     $config{'user'} =
 	sub
@@ -352,22 +394,55 @@ sub process_argv
 	    warn "Using deprecated -u option. Use -T instead.";
 	    &{$config{'file-text'}} (@_);
 	};
+    $config{'suppress-diffs-against-empties'} =
+	sub
+	{
+	    $config{'empty-diffs'} = !$_[1];
+	};
+	
+    # Copy @ARGV to reuse it.
+    my @args = @ARGV;
 
     # Get the options.
     die "argument parsing failed"
-	unless GetOptions (\%config,
-			   "mail-to|m=s@",
-			   "file-text|file-prefix|T=s", "user|u=s",
-			   "debug|verbose|v!", "send-diff|diff|d!",
-			   "diff-arg|D=s@",
-			   "suppress-diffs-against-empties|E!",
-			   "empty-diffs|e!",
-			   "separate-diffs|S!");
+	unless GetOptions (\%config, @option_spec);
+
+    if (exists $config{'config'})
+    {
+	@ARGV = ();
+	open CONFIG, "<" . $config{'config'}
+	    or die "can't open ", $config{'config'}, ": $!";
+	while (<CONFIG>)
+	{
+	    # Skip comments and lines with nothing but blanks.
+	    next if /^\s*(#.*)?$/;
+
+	    # Split it.
+	    chomp;
+	    /^(\S*)(\s+(.*))?$/;
+
+	    # Save the option.
+	    push @ARGV, "--$1";
+
+	    # There is a difference between no argument and an empty string
+	    # argument.
+	    push @ARGV, $3 if $2;
+	}
+
+	# Get the options from the config file.
+	die "argument parsing failed"
+	    unless GetOptions (\%config, @option_spec);
+
+	# Reparse the command line options so they may overide the config file.
+	@ARGV = @args;
+	die "argument parsing failed"
+	    unless GetOptions (\%config, @option_spec);
+    }
 
     # Get the path and the file list.
+    $module = shift @ARGV;
     if ($UseNewInfoFmtStrings)
     {
-	$module = shift @ARGV;
 	while (@ARGV)
 	{
 	    my $filename = shift @ARGV;
@@ -396,6 +471,9 @@ sub process_argv
     }
     else
     {
+	# Old style info strings preficed the module path with $CVSROOT.
+	my $module =~ s/^\Q$ENV{'CVSROOT'}\E//;
+
 	my @files;
 	push @files, split ' ', shift @ARGV;
 	for (@files)
@@ -407,6 +485,7 @@ sub process_argv
 	    $oldrev{$_} = 0 if $oldrev{$_} eq "NONE";
 	    $newrev{$_} = 0 if $newrev{$_} eq "NONE";
 	}
+
 	die "Too many arguments." if @ARGV;
     }
 
@@ -643,6 +722,8 @@ sub get_temp_files
 {
     my ($tmpdir, $temp_name, $id) = @_;
 
+    print STDERR "get_temp_files: $tmpdir, $temp_name, $id\n" if $debug;
+
     # Created by commit_prep!
     return "$tmpdir/#$temp_name.$id.lastdir",
 	   "$tmpdir/#$temp_name.$id.log",
@@ -873,11 +954,22 @@ sub build_message_body
 
 
 
-sub write_logfile
+sub write_file
 {
     my ($filename, @lines) = @_;
 
-    open FILE, ">$filename" or die "Cannot open log file $filename: $!";
+    open FILE, ">$filename" or die "Cannot open file $filename: $!";
+    print FILE join ("\n", @lines), "\n";
+    close FILE;
+}
+
+
+
+sub append_file
+{
+    my ($filename, @lines) = @_;
+
+    open FILE, ">>$filename" or die "Cannot open file $filename: $!";
     print FILE join ("\n", @lines), "\n";
     close FILE;
 }
@@ -971,18 +1063,26 @@ sub main
 	mail_notification $config->{'mail-to'}, $module, $username, $fullname,
 			  $mailname, $module, @header, @body;
 
+	write_file $config->{'commit-log'}, @header, @body,
+	    if $config->{'commit-log'};
+
 	while (<STDIN>)
 	{
 	    # Read the rest of the input to avoid sending broken pipe errors
 	    # to our parent.
 	}
 
-	exit 0;
+	cleanup_tmpfiles $TMPDIR, $config->{'file-text'}, $id;
+	return 0;
     }
 
     # The import email may need a log message, so process stdin.
     my ($branch_lines, $changed_files, $added_files,
 	$removed_files, $log_lines) = process_stdin $module, @$files;
+
+    # Exit if specific tag information was requested and this isn't it.
+    return 0 if exists $config->{'tag'}
+		&& grep /^\Q$branch_lines->[0]\E$/, @{$config->{'tag'}};
 
     # Check for imported sources.
     if (($UseNewInfoFmtStrings ? $files->[0] : join " ", @$files)
@@ -998,7 +1098,12 @@ sub main
 
 	mail_notification $config->{'mail-tp'}, $module, $username, $fullname,
 			  $mailname, "Import $module", @header, @body;
-	exit 0;
+
+	write_file $config->{'commit-log'}, @header, @body
+	    if $config->{'commit-log'};
+
+	cleanup_tmpfiles $TMPDIR, $config->{'file-text'}, $id;
+	return 0;
     }
 
     #
@@ -1025,8 +1130,7 @@ sub main
     #
     # Spit out the information gathered in this pass.
     #
-    write_logfile "$LOG_BASE.$i", @$log_lines
-	if !-e "$LOG_BASE.$i" or !@text;
+    write_file "$LOG_BASE.$i", @$log_lines if !-e "$LOG_BASE.$i" or !@text;
     append_to_file "$BRANCH_BASE.$i",  $module, @$branch_lines;
     append_to_file "$ADDED_BASE.$i",   $module, @$added_files;
     append_to_file "$CHANGED_BASE.$i", $module, @$changed_files;
@@ -1076,13 +1180,14 @@ sub main
 	# Mail out the notification.
 	#
 	mail_notification $config->{'mail-to'}, $module, $username, $fullname,
-			  $mailname, $subject, @header, @$body
-	    if !exists $config->{'tag'}
-	       || grep /^\Q$branch_lines->[0]\E$/, @{$config->{'tag'}};
+			  $mailname, $subject, @header, @$body;
+
+	write_file $config->{'commit-log'}, @header, @$body
+	    if $config->{'commit-log'};
     }
 
     cleanup_tmpfiles $TMPDIR, $config->{'file-text'}, $id;
     return 0;
 }
 
-exit main @ARGV;
+exit main;
