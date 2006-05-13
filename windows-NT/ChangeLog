@@ -1,3 +1,9 @@
+2006-05-13  Mark D. Baushke  <mdb@gnu.org>
+
+	* config.h.in.footer: Add #define OK_TO_USE_1S_CLOCK to restore
+	the ability to compile gettime.c.
+	* config.h.in, config.h: Ditto.
+	
 2006-03-30  Mark D. Baushke  <mdb@gnu.org>
 
 	* stdint.h: Regenerated.
