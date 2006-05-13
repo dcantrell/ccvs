@@ -1,11 +1,20 @@
 2006-05-12  Mark D. Baushke  <mdb@gnu.org>
 
+	* log.c (log_expand_revlist): Add assert (r->first). It should
+	only be possible for both r->first == NULL && r->last == NULL
+	which would have been handled.
+	[Fixes NetBSD coverity cid-1063.]
+
+	* server.c (do_cvs_command): Protect close (dev_null_fd) against
+	invalid fd value in error_exit.
+	[Fixes NetBSD coverity cid-1307.]
+	
 	* rcs.c (RCS_isdead): Assert that the first argument is not NULL.
-	[Fixes NetBSD cid-1058.]
+	[Fixes NetBSD coverity cid-1058.]
 
 	* commit.c (checkaddfile): Do not dereference NULL on call to
 	error().
-	[Fixes NetBSD cid-1061.]
+	[Fixes NetBSD coverity cid-1061.]
 
 	* log.c (cvslog): Assert p->start && p->end instead of masking the
 	problem.
