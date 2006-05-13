@@ -4045,6 +4045,7 @@ error  \n");
 	{
 	    buf_output0 (buf_to_net, "E close failed\n");
 	    print_error (errno);
+	    dev_null_fd = -1;	/* Do not try to close it again. */
 	    goto error_exit;
 	}
 	dev_null_fd = -1;
@@ -4382,7 +4383,8 @@ E CVS locks may need cleaning up.\n");
 	    command_pid = -1;
     }
 
-    close (dev_null_fd);
+    if (dev_null_fd >= 0)
+	close (dev_null_fd);
     close (protocol_pipe[0]);
     close (protocol_pipe[1]);
     close (stderr_pipe[0]);
