@@ -1,5 +1,10 @@
 2006-05-13  Mark D. Baushke  <mdb@gnu.org>
 
+	* config.h.in.in: Add defines for missing symbols: HAVE_WINSOCK2_H
+	and HAVE_WS2TCPIP_H. Add #undef statements and comments for other
+	missing tokens found in the ../config.h.in file.
+	* config.h.in, config.h, stamp-chi: Regenerated.
+	
 	* stamp-chi, stdint.h: Regenerated.
 
 	* config.h.in.footer: Add #define OK_TO_USE_1S_CLOCK to restore

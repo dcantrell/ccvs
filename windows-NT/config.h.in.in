@@ -53,6 +53,25 @@
 /* Define to 1 if using `alloca.c'. */
 #undef C_ALLOCA
 
+/* Define to a command line template that will write an OpenPGP signature for
+   the file `%s' to its standard out. `%M' is substituted at run time with an
+   option which flags files as text files, when necessary, and the empty
+   string, otherwise. `%@' is substituted with a list of arguments provided by
+   the user. */
+#undef DEFAULT_SIGN_TEMPLATE
+
+/* Define to the option string that the OpenPGP program used in the
+   DEFAULT_SIGN_TEMPLATE would like to see for text files (substituted at run
+   time in place of `%M' in the DEFAULT_SIGN_TEMPLATE). */
+#undef DEFAULT_SIGN_TEXTMODE
+
+/* Define to a command line template that will read an OpenPGP signature from
+   the file `%s' and use it to verify the integrity of the file `%d'. `%M' is
+   substituted at run time with an option which flags files as text files,
+   when necessary, and the empty string, otherwise. `%@' is substituted with a
+   list of arguments provided by the user. */
+#undef DEFAULT_VERIFY_TEMPLATE
+
 /* Define if there is a member named d_ino in the struct describing directory
    headers. */
 #undef D_INO_IN_DIRENT
@@ -96,6 +115,9 @@
    message with -m or -F. Enabling FORCE_USE_EDITOR will cause the -m or -F
    message to be appended to the temp file when the editor is started. */
 #undef FORCE_USE_EDITOR
+
+/* Define this to the full path to <inttypes.h>. */
+#undef FULL_PATH_INTTYPES_H
 
 /* Define to an alternative value if GSS_C_NT_HOSTBASED_SERVICE isn't defined
    in the gssapi.h header file. MIT Kerberos 1.2.1 requires this. Only
@@ -158,10 +180,6 @@
 /* Define to 1 if you have the declaration of `clearerr_unlocked', and to 0 if
    you don't. */
 #undef HAVE_DECL_CLEARERR_UNLOCKED
-
-/* Define to 1 if you have the declaration of `__fpending', and to 0 if you
-   don't. */
-#define HAVE_DECL___FPENDING 0
 
 /* Define to 1 if you have the declaration of `feof_unlocked', and to 0 if you
    don't. */
@@ -275,6 +293,26 @@
    don't. */
 #undef HAVE_DECL_STRERROR_R
 
+/* Define to 1 if you have the declaration of `strtoimax', and to 0 if you
+   don't. */
+#undef HAVE_DECL_STRTOIMAX
+
+/* Define to 1 if you have the declaration of `strtoll', and to 0 if you
+   don't. */
+#undef HAVE_DECL_STRTOLL
+
+/* Define to 1 if you have the declaration of `strtoull', and to 0 if you
+   don't. */
+#undef HAVE_DECL_STRTOULL
+
+/* Define to 1 if you have the declaration of `strtoumax', and to 0 if you
+   don't. */
+#undef HAVE_DECL_STRTOUMAX
+
+/* Define to 1 if you have the declaration of `__fpending', and to 0 if you
+   don't. */
+#define HAVE_DECL___FPENDING 0
+
 /* Define to 1 if you have the <direct.h> header file. */
 /* Windows has <direct.h> but some functions aren't POSIX compliant */
 #undef HAVE_DIRECT_H
@@ -384,6 +422,9 @@
 
 /* Define if you have the iconv() function. */
 #undef HAVE_ICONV
+
+/* Define if your compiler supports the #include_next directive. */
+#undef HAVE_INCLUDE_NEXT
 
 /* Define to 1 if you have the `initgroups' function. */
 #undef HAVE_INITGROUPS
@@ -520,11 +561,20 @@
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #define HAVE_NDIR_H 1
 
+/* Define to 1 if you have the <netdb.h> header file. */
+/* Use winsock.h as an alternative on Windows. It defines struct hostent. */
+#undef HAVE_NETDB_H
+
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #undef HAVE_NETINET_IN_H
 
 /* Define to 1 if you have the `openat' function. */
 #undef HAVE_OPENAT
+
+/* Define if an OpenPGP capable program is available (and, assumedly, usable
+   command line templates are in the DEFAULT_SIGN_TEMPLATE and
+   DEFAULT_VERIFY_TEMPLATE macros). */
+#undef HAVE_OPENPGP
 
 /* Define to 1 if you have the <OS.h> header file. */
 #undef HAVE_OS_H
@@ -654,11 +704,23 @@
 /* Define to 1 if you have the `strncasecmp' function. */
 #undef HAVE_STRNCASECMP
 
+/* Define to 1 if you have the `strtoimax' function. */
+#undef HAVE_STRTOIMAX
+
 /* Define to 1 if you have the `strtol' function. */
 #define HAVE_STRTOL 1
 
+/* Define to 1 if you have the `strtoll' function. */
+#undef HAVE_STRTOLL
+
 /* Define to 1 if you have the `strtoul' function. */
 #define HAVE_STRTOUL 1
+
+/* Define to 1 if you have the `strtoull' function. */
+#undef HAVE_STRTOULL
+
+/* Define to 1 if you have the `strtoumax' function. */
+#undef HAVE_STRTOUMAX
 
 /* Define to 1 if the system has the type `struct addrinfo'. */
 #undef HAVE_STRUCT_ADDRINFO
@@ -681,6 +743,9 @@
 
 /* Define to 1 if you have the <syslog.h> header file. */
 #undef HAVE_SYSLOG_H
+
+/* Define to 1 if you have the <sys/bitypes.h> header file. */
+#undef HAVE_SYS_BITYPES_H
 
 /* Define to 1 if you have the <sys/bsdtypes.h> header file. */
 #undef HAVE_SYS_BSDTYPES_H
@@ -710,6 +775,9 @@
 
 /* Define to 1 if you have the <sys/select.h> header file. */
 #undef HAVE_SYS_SELECT_H
+
+/* Define to 1 if you have the <sys/socket.h> header file. */
+#undef HAVE_SYS_SOCKET_H
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
@@ -816,6 +884,9 @@
 /* Define to 1 if you have the <wctype.h> header file. */
 #define HAVE_WCTYPE_H 1
 
+/* Define to 1 if you have the <winsock2.h> header file. */
+#define HAVE_WINSOCK2_H 1
+
 /* Define if you have the 'wint_t' type. */
 #define HAVE_WINT_T 1
 
@@ -833,6 +904,9 @@
 
 /* Define to 1 if `vfork' works. */
 #undef HAVE_WORKING_VFORK
+
+/* Define to 1 if you have the <ws2tcpip.h> header file. */
+#define HAVE_WS2TCPIP_H 1
 
 /* Define to 1 if you have the <zlib.h> header file. */
 #undef HAVE_ZLIB_H
@@ -1188,7 +1262,7 @@
 #define inline __inline
 #endif
 
-/* Define to long or long long if <inttypes.h> and <stdint.h> don't define. */
+/* Define to long or long long if <stdint.h> and <inttypes.h> don't define. */
 #undef intmax_t
 
 /* Define to rpl_localtime if the replacement function should be used. */
