@@ -23003,7 +23003,7 @@ esac
 
 
 if test $gl_cv_have_include_next = no; then
-  echo "$as_me:$LINENO: checking full path to <inttypes.h>" >&5
+    echo "$as_me:$LINENO: checking full path to <inttypes.h>" >&5
 echo $ECHO_N "checking full path to <inttypes.h>... $ECHO_C" >&6
 if test "${gl_cv_full_path_inttypes_h+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -23034,8 +23034,8 @@ cat >>confdefs.h <<_ACEOF
 #define FULL_PATH_INTTYPES_H <$gl_cv_full_path_inttypes_h>
 _ACEOF
 
-  fi
 
+fi
 
   :
 

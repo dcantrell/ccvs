@@ -1,5 +1,7 @@
 2006-05-13  Mark D. Baushke  <mdb@gnu.org>
 
+	* stamp-chi, stdint.h: Regenerated.
+
 	* config.h.in.footer: Add #define OK_TO_USE_1S_CLOCK to restore
 	the ability to compile gettime.c.
 	* config.h.in, config.h: Ditto.
