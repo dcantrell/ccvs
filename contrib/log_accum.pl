@@ -267,7 +267,11 @@ sub set_defaults
 	       || exists $config->{'diff-arg'});
 
     # Set defaults.
-    $config->{'cvsroot'} = $ENV{'CVSROOT'} if !exists $config->{'cvsroot'};
+    if (!exists $config->{'cvsroot'})
+    {
+	$config->{'cvsroot'} = $ENV{'CVSROOT'};
+	$config->{'cvsroot'} =~ s#^.*/([^/]*)$#$1#;
+    }
     $config->{'send-diff'} = 1 if !exists $config->{'send-diff'};
     $config->{'empty-diffs'} = 1 if !exists $config->{'empty-diffs'};
     $config->{'diff-arg'} = ["-ub"] if !exists $config->{'diff-arg'};
