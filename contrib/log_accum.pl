@@ -354,6 +354,17 @@ my @option_spec = ("config|c=s@",
 		   "empty-diffs|e!",
 		   "separate-diffs|S!");
 
+# Parse a config file.  Any long command line option is valid in the config
+# file, one option/argument pair per line.  Lines /^\s*#/, empty lines,
+# and lines containing only white space are ignored.  For example:
+#
+#     # This is a sample log_accum config file.
+#     config /etc/log_accum_defaults.conf
+#     mail-to cvs-cvs@nongnu.org
+#     send-diff
+#
+# Nested configs are priortized in the order you'd expect, with parent options
+# overriding any options from included files.
 sub parse_config
 {
     my ($parsed_configs, $files) = @_;
@@ -437,10 +448,10 @@ sub parse_config
 # * -G DB	- Interface to Gnats.
 #
 # cvsweb URL support:
-# * -U URL
+#   -U URL
 #   --cvsweb URL
 #   --url URL	- Send URLs to diffs in email, using base URL for cvsweb.
-# * -C CVSROOT
+#   -C CVSROOT
 #   --cvsroot CVSROOT
 #		- Use CVSROOT in cvsweb URLs instead of $CVSROOT.
 #
@@ -1015,7 +1026,7 @@ sub build_cvsweb_urls
 
 sub build_message_body
 {
-    my ($config, $toplevel, $branch,
+    my ($toplevel, $branch,
 	$changed_file, $added_file, $removed_file, $log_file, $url_file) = @_;
     my ($subject, @body, @log_text);
     my @subject_files;
@@ -1294,7 +1305,7 @@ sub main
 	last if !-e "$LOG_BASE.$i";
 
 	my ($subject, $body, $log_text) =
-	    build_message_body $config, $toplevel, $branch_lines->[0],
+	    build_message_body $toplevel, $branch_lines->[0],
 			       "$CHANGED_BASE.$i", "$ADDED_BASE.$i",
 			       "$REMOVED_BASE.$i", "$LOG_BASE.$i",
 			       "$URL_BASE.$i";

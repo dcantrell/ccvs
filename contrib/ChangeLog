@@ -1,3 +1,10 @@
+2006-05-14  Derek Price  <derek@ximbiot.com>
+
+	* log_accum.pl (parse_config): Add header comment block.
+	(process_argv): Remove TODO asterisks in header comment block.
+	(build_message_body): Don't require $config.
+	(main): Don't pass $config to build_message_body.
+
 2006-05-13  Derek Price  <derek@ximbiot.com>
 
 	* commit_prep.pl: Sync comments with recent changes.
