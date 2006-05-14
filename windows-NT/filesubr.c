@@ -159,21 +159,21 @@ push_env_temp_dir (void)
  * Returns non-zero if the argument file is a directory, or is a symbolic
  * link which points to a directory.
  */
-int
+bool
 isdir (file)
     const char *file;
 {
     struct stat sb;
 
     if (stat (file, &sb) < 0)
-	return (0);
-    return (S_ISDIR (sb.st_mode));
+	return false;
+    return S_ISDIR (sb.st_mode);
 }
 
 /*
  * Returns non-zero if the argument file is a symbolic link.
  */
-int
+bool
 islink (file)
     const char *file;
 {
@@ -181,10 +181,10 @@ islink (file)
     struct stat sb;
 
     if (lstat (file, &sb) < 0)
-	return (0);
-    return (S_ISLNK (sb.st_mode));
+	return false;
+    return S_ISLNK (sb.st_mode);
 #else
-    return (0);
+    return false;
 #endif
 }
 
@@ -201,7 +201,7 @@ isfile (file)
 /*
  * Returns non-zero if the argument file is readable.
  */
-int
+bool
 isreadable (file)
     const char *file;
 {
@@ -223,7 +223,7 @@ iswritable (file)
  * mode.  If compiled with SETXID_SUPPORT also works if cvs has setxid
  * bits set.
  */
-int
+bool
 isaccessible (file, mode)
     const char *file;
     const int mode;
@@ -236,9 +236,9 @@ isaccessible (file, mode)
     int uid;
     
     if (stat(file, &sb) == -1)
-	return 0;
+	return false;
     if (mode == F_OK)
-	return 1;
+	return true;
 
     uid = geteuid();
     if (uid == 0)		/* superuser */
@@ -246,7 +246,7 @@ isaccessible (file, mode)
 	if (mode & X_OK)
 	    return sb.st_mode & (S_IXUSR|S_IXGRP|S_IXOTH);
 	else
-	    return 1;
+	    return true;
     }
 	
     if (mode & R_OK)
@@ -361,7 +361,7 @@ mkdir_if_needed (name)
 void
 xchmod (fname, writable)
     const char *fname;
-    int writable;
+    bool writable;
 {
     struct stat sb;
     mode_t mode, oumask;
