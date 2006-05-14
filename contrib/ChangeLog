@@ -1,3 +1,8 @@
+2006-05-13  Derek Price  <derek@ximbiot.com>
+
+	* log_accum.pl: Use only the last dir from CVSROOT in cvsweb URLs by
+	default.
+
 2006-05-12  Derek Price  <derek@ximbiot.com>
 
 	* log_accum.pl: Restore URL creation.
