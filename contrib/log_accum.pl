@@ -23,7 +23,7 @@
 #
 # IMPORTANT: what the above means is, this script interacts with
 # commit_prep, in that they have to agree on the tmpfile name to use.
-# See $LAST_FILE below. 
+# See option -T / --file-prefix below. 
 #
 # How this works: CVS triggers this script once for each directory
 # involved in the commit -- in other words, a single commit can invoke
@@ -38,7 +38,9 @@
 # combines that with what it found out on this pass, and sends a
 # commit message to the appropriate mailing list.
 #
-# (Ask Karl Fogel <kfogel@collab.net> if questions.)
+# You usually call log_accum from CVSROOT/loginfo, for example:
+# ALL /usr/local/bin/log_accum -T ccvs_1 --config /etc/log_accum.config --mail-to cvs-cvs@nongnu.org --send-diff %p %{sVv}
+# ^prog1\(/\|$\) /usr/local/bin/log_accum -T ccvs_2 --config /etc/log_accum.config -m experimental@me.net %p %{sVv}
 #
 # Contributed by David Hampton <hampton@cisco.com>
 # Roy Fielding removed useless code and added log/mail of new files
@@ -445,7 +447,7 @@ sub parse_config
 # Diff support:
 # * -d
 #   --diff
-#   --send-diff	- (defult) Send diffs in emails.
+#   --send-diff	- (default) Send diffs in emails.
 # * -D DIFF_ARG
 #   --diff-arg DIFF_ARG
 #		- Pass DIFF_ARG to `cvs diff' when generating diffs.  Defaults
@@ -762,8 +764,7 @@ sub get_temp_files
 
     print STDERR "get_temp_files: $tmpdir, $temp_name, $id\n" if $debug;
 
-    # Created by commit_prep!
-    return "$tmpdir/#$temp_name.$id.lastdir",
+    return "$tmpdir/#$temp_name.$id.lastdir", # Created by commit_prep!
 	   "$tmpdir/#$temp_name.$id.log",
 	   "$tmpdir/#$temp_name.$id.branch",
 	   "$tmpdir/#$temp_name.$id.added",
@@ -795,7 +796,7 @@ sub format_names
 
     foreach (@files)
     {
-	s/^.*\s.*$/`$&'/;
+	s/^.*\s.*$/`$&'/; #` (help Emacs syntax highlighting)
 	$lines[++$#lines] = sprintf $format, " ", " "
 	    if length ($lines[$#lines]) + length ($_) > 65;
 	$lines[$#lines] .= $_ . " ";
@@ -916,7 +917,7 @@ sub read_logfile
     my ($filename) = @_;
     my @text;
 
-    open FILE, "<$filename" or die "Cannot open log file $filename: $!";
+    open FILE, "<$filename" or return ();
     while (<FILE>)
     {
         chomp;
@@ -989,6 +990,7 @@ sub build_cvsweb_urls
     {
 	my $out = "$baseurl/" . urlencode ($_);
 
+	# FIXME: if file is -kb, consider binary
         if ($_ =~ /\.(?:pdf|gif|jpg|mpg)$/i or -B $_ || !$oldrev->{$_})
 	{
 	    # if binary or new, link directly
@@ -1028,7 +1030,7 @@ sub build_message_body
 
     @log_text = read_logfile $log_file;
     push @body, "Log message:";
-    push @body, @log_text;
+    push @body, map { "\t$_" } @log_text;
     push @body, "";
 
     $subject = compile_subject $branch, @subject_files;
@@ -1245,14 +1247,17 @@ sub main
     append_to_file "$ADDED_BASE.$i",   $module, @$added_files;
     append_to_file "$CHANGED_BASE.$i", $module, @$changed_files;
     append_to_file "$REMOVED_BASE.$i", $module, @$removed_files;
-    append_file "$URL_BASE.$i", build_cvsweb_urls $config->{'url'},
-						  $config->{'cvsroot'},
-						  $branch_lines->[0],
-						  $oldrev, $newrev, $module,
-						  @$added_files,
-						  @$changed_files,
-						  @$removed_files;
-
+    if ($config->{'url'})
+    {
+	append_file "$URL_BASE.$i", build_cvsweb_urls ($config->{'url'},
+						       $config->{'cvsroot'},
+						       $branch_lines->[0],
+						       $oldrev, $newrev, $module,
+						       @$added_files,
+						       @$changed_files,
+						       @$removed_files);
+    }
+	
     #
     # Check whether this is the last directory.  If not, quit.
     #
