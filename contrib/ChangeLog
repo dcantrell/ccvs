@@ -1,5 +1,12 @@
 2006-05-13  Derek Price  <derek@ximbiot.com>
 
+	* commit_prep.pl: Sync comments with recent changes.
+	* log_accum.pl: Ditto.
+	(read_logfile): Ignore missing log files.
+	(build_message_body): Indent log text.
+	(main): Don't build cvsweb URLs unless requested.
+	(Patch from Sylvain Beucler <beuc@beuc.net>.)
+
 	* log_accum.pl: Use only the last dir from CVSROOT in cvsweb URLs by
 	default.
 

@@ -27,8 +27,8 @@
 # name to use.  See $LAST_FILE below.
 #
 # Sample CVSROOT/commitinfo:
-# ALL /usr/local/bin/commit_prep -T ccvs_1 %r/%p
-# ^prog1\(/\|$\) /usr/local/bin/commit_prep -T ccvs_2 %r/%p
+# ALL /usr/local/bin/commit_prep -T ccvs_1 %p
+# ^prog1\(/\|$\) /usr/local/bin/commit_prep -T ccvs_2 %p
 #
 # Contributed by David Hampton <hampton@cisco.com>
 # Stripped to minimum by Roy Fielding
@@ -76,11 +76,12 @@ while (@ARGV)
     }
     else
     {
-	# The non-option argument is the complete path to the current
-	# commit directory.  It is written in a file and read by log_accum
-	# after being character-escaped.  No security issues here.  We still
-	# check for '..' and ensure this is a full path.
-	if ($arg !~ m#(^|/)\.\.(/|\$)# && $arg =~ m#^([^/].*)$#)
+	# The non-option argument is a relative path to the current
+	# commit directory.  It is written in a file and read by
+	# log_accum after being character-escaped.  No security issues
+	# here. We still check for '..' and ensure this is not a full
+	# path.
+	if ($arg !~ m#(^|/)\.\.(/|\$)# and $arg =~ m#^([^/].*)$#)
 	{
 	    $full_directory_path = $1;
 	}
