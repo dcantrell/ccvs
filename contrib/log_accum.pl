@@ -263,10 +263,18 @@ sub set_defaults
     die "No email destination specified." unless exists $config->{'mail-to'};
     die "cvsweb CVSROOT specified without --url."
 	if exists $config->{'cvsroot'} && !exists $config->{'url'};
-    die "--send-diff must be set for --diff-arg or -E to be meaningful."
+    die "--send-diff must be set for --diff-arg, -E, or -S to be meaningful."
 	if exists $config->{'send-diff'} && !$config->{'send-diff'}
-	   && (exists $config->{'empty-diffs'}
-	       || exists $config->{'diff-arg'});
+	   && (exists $config->{'diff-arg'}
+	       || exists $config->{'empty-diffs'}
+	       || exists $config->{'separate-diffs'});
+
+    # Doc says that --send-diff is implied by -D, -E, -e, & -S.
+    $config->{'send-diff'} = 1
+	if !exists $config->{'send-diff'}
+           && (exists $config->{'diff-arg'}
+	       || exists $config->{'empty-diffs'}
+               || exists $config->{'separate-diffs'});
 
     # Set defaults.
     if (!exists $config->{'cvsroot'})
@@ -445,7 +453,9 @@ sub parse_config
 #   -f LOGFILE
 #   --commit-log LOGFILE
 #		- Output copy of commit emails to LOGFILE.
-# * -G DB	- Interface to Gnats.
+# * -G DB
+#   --gnats-email DB
+#		- Interface to Gnats.
 #
 # cvsweb URL support:
 #   -U URL
@@ -456,23 +466,23 @@ sub parse_config
 #		- Use CVSROOT in cvsweb URLs instead of $CVSROOT.
 #
 # Diff support:
-# * -d
+#   -d
 #   --diff
 #   --send-diff	- (default) Send diffs in emails.
-# * -D DIFF_ARG
+#   -D DIFF_ARG
 #   --diff-arg DIFF_ARG
 #		- Pass DIFF_ARG to `cvs diff' when generating diffs.  Defaults
 #		  to `-ub'.  Multiple invocations will pass all DIFF_ARGS
 #		  (though first invocation always removes the default `-ub').
 #		  Implies `-d'.
-# * -E
+#   -E
 #   --suppress-diffs-against-empties
 #		- Suppress diffs from added files and to removed files.
 #		  Implies `-d'.
 #   -e
 #   --empty-diffs
-#		- (default) Negates -E.  Implies `-d'.
-# * -S		- Separate diff emails.  Implies `-d'.
+#		- (default) Negates `-E'.  Implies `-d'.
+#   -S		- Separate diff emails.  Implies `-d'.
 #
 sub process_argv
 {
@@ -521,7 +531,7 @@ sub process_argv
     }
     else
     {
-	# Old style info strings preficed the module path with $CVSROOT.
+	# Old style info strings prefaced the module path with $CVSROOT.
 	my $module =~ s/^\Q$ENV{'CVSROOT'}\E//;
 
 	my @files;
@@ -612,15 +622,12 @@ sub process_stdin
     # Process the /Log Message/ section now, if it exists.
     # Do this here rather than above to deal with Log messages
     # that include lines that confuse the state machine.
-    if (!eof(STDIN)) {
-	while (<STDIN>) {
+    if (!eof STDIN)
+    {
+	while (<STDIN>)
+	{
 	    next unless $state == $STATE_LOG; # eat all STDIN
 
-	    if (/^\s*\[(bug|pr|task) #(\d+)\]/)
-	    {
-		# FIXME: Set the bug/patch ID to "$1 #$2" so that the issue
-		# database may be updated.
-	    }
 	    chomp;
 	    push @log_lines, $_;
 	}
@@ -632,11 +639,13 @@ sub process_stdin
     # single blank line.
     # (Note, this only does the mail and changes log, not the rcs log).
     #
-    while ($#log_lines > -1) {
+    while ($#log_lines > -1)
+    {
 	last unless $log_lines[0] =~ /^\s*$/;
 	shift @log_lines;
     }
-    while ($#log_lines > -1) {
+    while ($#log_lines > -1)
+    {
 	last unless $log_lines[$#log_lines] =~ /^\s*$/;
 	pop @log_lines;
     }
@@ -766,9 +775,40 @@ sub mail_notification
 
 
 
+sub mail_separate_diffs
+{
+    my ($mail_to, $module, $branch, $username, $fullname, $mailname,
+	$header, @diffs) = @_;
+    my ($subject, @onediff);
+
+    foreach (@diffs)
+    {
+	chomp;
+	if (/^Index: /)
+	{
+	    if (@onediff)
+	    {
+		mail_notification $mail_to, $module, $username, $fullname,
+				  $mailname, $subject, @$header, @onediff;
+	    }
+	    undef @onediff;
+	}
+	elsif (/^RCS file: (.*)$/)
+	{
+	    $subject = $1;
+	    $subject =~ s/^\Q$ENV{'CVSROOT'}\E//;
+	    $subject = "Changes to $subject";
+	    $subject .= " [$branch]" if $branch;
+	}
+	push @onediff, $_;
+    }
+}
+
+
+
 # Return an array containing file names and file name roots:
-# (LAST_FILE, LOG_BASE, BRANCH_BASE, ADDED_BASE, CHANGED_BASE,
-#  REMOVED_BASE, URL_BASE)
+# (LAST_FILE, LOG_BASE, BRANCH_BASE, ADDED_BASE, CHANGED_BASE, REMOVED_BASE,
+#  URL_BASE, CHANGED_REV_BASE, ADDED_REV_BASE, REMOVED_REV_BASE)
 sub get_temp_files
 {
     my ($tmpdir, $temp_name, $id) = @_;
@@ -781,7 +821,10 @@ sub get_temp_files
 	   "$tmpdir/#$temp_name.$id.added",
 	   "$tmpdir/#$temp_name.$id.changed",
 	   "$tmpdir/#$temp_name.$id.removed",
-	   "$tmpdir/#$temp_name.$id.urls";
+	   "$tmpdir/#$temp_name.$id.urls",
+	   "$tmpdir/#$temp_name.$id.crevs",
+	   "$tmpdir/#$temp_name.$id.arevs",
+	   "$tmpdir/#$temp_name.$id.rrevs";
 }
 
 
@@ -850,19 +893,10 @@ sub format_lists
 
 
 
-sub compile_subject
+# Get the common directory prefix from a list of files.
+sub get_topdir
 {
-    my ($branch, @list) = @_;
-    my $text;
-
-    # This uses the simplifying assumptions that no dir is equal to `' or `.'
-    # and that all directories have been normalized,  This is okay because
-    # commit_prep rejects the toplevel project as input and all the directory
-    # names were normalized before being written to the change files.
-
-    print STDERR "compile_subject(): ", $branch ? "[$branch] " : "",
-		 join (":", @list), "\n"
-	if $debug;
+    my @list = @_;
 
     # Find the highest common directory.
     my @dirs = grep m#/$#, @list;
@@ -882,7 +916,30 @@ sub compile_subject
 	last unless @topsplit;
     }
 
-    my $topdir = join "/", @topsplit;
+    print STDERR "get_topdir: Returning ", join ("/", @topsplit), "\n"
+	if $debug;
+
+    return join "/", @topsplit;
+    # $topdir may be empty.
+}
+
+
+
+sub compile_subject
+{
+    my ($branch, @list) = @_;
+    my $text;
+
+    # This uses the simplifying assumptions that no dir is equal to `' or `.'
+    # and that all directories have been normalized,  This is okay because
+    # commit_prep rejects the toplevel project as input and all the directory
+    # names were normalized before being written to the change files.
+
+    print STDERR "compile_subject(): ", $branch ? "[$branch] " : "",
+		 join (":", @list), "\n"
+	if $debug;
+
+    my $topdir = get_topdir @list;
     # $topdir may be empty.
 
     # strip out directories and the common prefix $topdir.
@@ -979,8 +1036,9 @@ sub append_to_file
 
 sub urlencode
 {
-    $_[0] =~ s#[^\w:/.-]#"%" . ord $&#ge;
-    return $_[0];
+    my ($out) = @_;
+    $out =~ s#[^\w:/.-]#"%" . ord $&#ge;
+    return $out;
 }
 
 
@@ -1024,37 +1082,78 @@ sub build_cvsweb_urls
 
 
 
-sub build_message_body
+sub build_diffs
 {
-    my ($toplevel, $branch,
-	$changed_file, $added_file, $removed_file, $log_file, $url_file) = @_;
-    my ($subject, @body, @log_text);
-    my @subject_files;
+    my ($config, $changed_rev_file, $added_rev_file, $removed_rev_file,
+        $module, @list) = @_;
+    my @diff;
+    my @revs;
 
-    push_formatted_lists \@body, \@subject_files, $toplevel,
-			 "Modified files:", $changed_file;
-    push_formatted_lists \@body, \@subject_files, $toplevel,
-			 "Added files:", $added_file;
-    push_formatted_lists \@body, \@subject_files, $toplevel,
-			 "Removed files:", $removed_file;
-    push @body, "";
+    push @revs, read_logfile $changed_rev_file;
+    push @revs, read_logfile $added_rev_file;
+    push @revs, read_logfile $removed_rev_file;
 
-    @log_text = read_logfile $log_file;
-    push @body, "Log message:";
-    push @body, map { "\t$_" } @log_text;
-    push @body, "";
-
-    $subject = compile_subject $branch, @subject_files;
-
-    my @urls = read_logfile $url_file;
-    if (@urls)
+    # Find the "top" level of the server workspace and CD there.
+    my $topdir = get_topdir @list;
+    my $offset = length $topdir;
+    $offset++ if $offset;
+    my $sdir = substr $module, $offset;
+    my @dirs = split m#/#, $sdir;
+    foreach (@dirs)
     {
-	push @body, "CVSWeb URLs:";
-	push @body, @urls;
-	push @body, "";
+	chdir "..";
     }
 
-    return $subject, \@body, \@log_text;
+    my $dir = shift @list;
+    die "Darn, $dir doesn't look like a directory!" unless $dir =~ m#/$#;
+    $dir = substr $dir, $offset;
+    # untaint without security checks, since we know we wrote this.
+    $dir =~ /^(.*)$/;
+    $dir = $1;
+
+    foreach my $file (@list)
+    {
+	if ($file =~ m#/$#)
+	{
+	    $dir = substr $file, $offset;
+	    # untaint without security checks, since we know we wrote this.
+	    $dir =~ /^(.*)$/;
+	    $dir = $1;
+	    next;
+	}
+
+	# untaint
+	die "`$file' contains dir" unless $file =~ m#^([^/]*)$#;
+	$file = $1;
+
+	my $oldrev = shift @revs;
+	my $newrev = shift @revs;
+
+	# untaint
+	die "old rev doesn't look like a revision"
+	    unless $oldrev =~ /^([0-9.]*)$/;
+	$oldrev = $1;
+	die "new rev doesn't look like a revision"
+	    unless $newrev =~ /^([0-9.]*)$/;
+	$newrev = $1;
+
+	next unless $oldrev && $newrev || $config->{'empty-diffs'};
+
+	open DIFF, "-|"
+	    or exec "$CVSBIN/cvs", '-Qn', 'diff', '-N',
+		    @{$config->{'diff-arg'}},
+		    "-r$oldrev", "-r$newrev", '--', "$dir$file";
+
+	while (<DIFF>)
+	{
+	    chomp;
+	    push @diff, $_;
+	}
+	close DIFF;
+	push @diff, "";
+    }
+
+    return @diff;
 }
 
 
@@ -1077,6 +1176,53 @@ sub append_file
     open FILE, ">>$filename" or die "Cannot open file $filename: $!";
     print FILE join ("\n", @lines), "\n";
     close FILE;
+}
+
+
+
+sub build_message_body
+{
+    my ($config, $toplevel, $module, $branch, $changed_file, $added_file,
+	$removed_file, $log_file, $url_file, $changed_rev_file,
+	$added_rev_file, $removed_rev_file, $diff_file) = @_;
+    my ($subject, @body, @log_text, @diff);
+    my (@modified_files, @added_files, @removed_files);
+
+    print STDERR "build_message_body\n" if $debug;
+
+    push_formatted_lists \@body, \@modified_files, $toplevel,
+			 "Modified files:", $changed_file;
+    push_formatted_lists \@body, \@added_files, $toplevel,
+			 "Added files:", $added_file;
+    push_formatted_lists \@body, \@removed_files, $toplevel,
+			 "Removed files:", $removed_file;
+    push @body, "";
+
+    @log_text = read_logfile $log_file;
+    push @body, "Log message:";
+    push @body, map { "\t$_" } @log_text;
+
+    $subject = compile_subject $branch, @modified_files, @added_files,
+			       @removed_files;
+
+    my @urls = read_logfile $url_file;
+    if (@urls)
+    {
+	push @body, "";
+	push @body, "CVSWeb URLs:";
+	push @body, @urls;
+    }
+
+    if ($config->{'send-diff'})
+    {
+	push @diff, build_diffs $config, $changed_rev_file,
+				$added_rev_file, $removed_rev_file,
+				$module, @modified_files, @added_files,
+				@removed_files;
+    }
+
+
+    return $subject, \@body, \@log_text, \@diff;
 }
 
 
@@ -1233,9 +1379,9 @@ sub main
     # Find the log file that matches this log message
     #
     my ($LAST_FILE, $LOG_BASE, $BRANCH_BASE, $ADDED_BASE, $CHANGED_BASE,
-	$REMOVED_BASE, $URL_BASE) = get_temp_files $TMPDIR,
-						   $config->{'file-text'},
-						   $id;
+	$REMOVED_BASE, $URL_BASE, $CHANGED_REV_BASE, $ADDED_REV_BASE,
+	$REMOVED_REV_BASE) = get_temp_files $TMPDIR, $config->{'file-text'},
+					    $id;
 
     my @text;
     my $i;
@@ -1250,25 +1396,68 @@ sub main
 	last if join (" ", @$log_lines) eq join (" ", @text);
     }
 
+
     #
     # Spit out the information gathered in this pass.
     #
     write_file "$LOG_BASE.$i", @$log_lines if !-e "$LOG_BASE.$i" or !@text;
     append_to_file "$BRANCH_BASE.$i",  $module, @$branch_lines;
-    append_to_file "$ADDED_BASE.$i",   $module, @$added_files;
     append_to_file "$CHANGED_BASE.$i", $module, @$changed_files;
+    append_to_file "$ADDED_BASE.$i",   $module, @$added_files;
     append_to_file "$REMOVED_BASE.$i", $module, @$removed_files;
+
+    if ($config->{'url'} || $config->{'send-diff'})
+    {
+	# Old revisions aren't needed for added files and they
+	# confuse the cvsweb and diff algorithms.
+	foreach (@$added_files)
+	{
+	    $oldrev->{$_} = 0;
+	}
+    }
+
     if ($config->{'url'})
     {
-	append_file "$URL_BASE.$i", build_cvsweb_urls ($config->{'url'},
-						       $config->{'cvsroot'},
-						       $branch_lines->[0],
-						       $oldrev, $newrev, $module,
-						       @$added_files,
-						       @$changed_files,
-						       @$removed_files);
+	append_file "$URL_BASE.$i",
+		    build_cvsweb_urls ($config->{'url'}, $config->{'cvsroot'},
+				       $branch_lines->[0], $oldrev, $newrev,
+				       $module, @$changed_files, @$added_files,
+				       @$removed_files);
     }
-	
+
+    if ($config->{'send-diff'})
+    {
+	my @revs;
+
+	# Diffs need to be delayed until all the directories are known in order
+	# to make something that can be piped to patch, so just save the
+	# revisions for later.
+	foreach (@$changed_files)
+	{
+	    push @revs, $oldrev->{$_};
+	    push @revs, $newrev->{$_};
+	}
+	append_file "$CHANGED_REV_BASE.$i", @revs;
+
+	undef @revs;
+	foreach (@$added_files)
+	{
+	    push @revs, $oldrev->{$_};
+	    push @revs, $newrev->{$_};
+	}
+	append_file "$ADDED_REV_BASE.$i", @revs;
+
+	undef @revs;
+	foreach (@$removed_files)
+	{
+	    # New revisions for removed files confuse the diff algorithm.
+	    push @revs, $oldrev->{$_};
+	    push @revs, 0;
+	}
+	append_file "$REMOVED_REV_BASE.$i", @revs;
+    }
+
+
     #
     # Check whether this is the last directory.  If not, quit.
     #
@@ -1300,23 +1489,45 @@ sub main
     my @header = build_header $toplevel, $branch_lines->[0],
 			      $username, $fullname, $mailname;
 
-    for ($i = 0; ; $i++)
+    for (my $i = 0; ; $i++)
     {
 	last if !-e "$LOG_BASE.$i";
 
-	my ($subject, $body, $log_text) =
-	    build_message_body $toplevel, $branch_lines->[0],
+	my ($subject, $body, $log_text, $diff) =
+	    build_message_body $config, $toplevel, $module, $branch_lines->[0],
 			       "$CHANGED_BASE.$i", "$ADDED_BASE.$i",
 			       "$REMOVED_BASE.$i", "$LOG_BASE.$i",
-			       "$URL_BASE.$i";
+			       "$URL_BASE.$i", "$CHANGED_REV_BASE.$i",
+			       "$ADDED_REV_BASE.$i", "$REMOVED_REV_BASE.$i";
+
+	my @body_diff;
+	if (!$config->{'separate-diffs'} && @$diff)
+	{
+	    push @body_diff, "";
+	    push @body_diff, "Patches:";
+	    push @body_diff, @$diff;
+	}
 
 	#
-	# Mail out the notification.
+	# Mail out the main notification.
 	#
 	mail_notification $config->{'mail-to'}, $module, $username, $fullname,
-			  $mailname, $subject, @header, @$body;
+			  $mailname, $subject, @header, @$body, @body_diff;
 
-	write_file $config->{'commit-log'}, @header, @$body
+	# Mail out the separate diffs when requested.
+	mail_separate_diffs $config->{'mail-to'}, $module, $branch_lines->[0],
+			    $username, $fullname, $mailname, \@header, @$diff
+	    if $config->{'separate-diffs'};
+
+	#if ($config->{'gnats-email'}
+	#    && grep /^\s*\[(bug|pr|sr|task) #(\d+)\]/, @log_text)
+	#{
+	#    my $pr = $1;
+	#    mail_notification $config->{'gnats-email'}, $module, $username,
+	#		      $fullname, $mailname, $subject, @header, @$body;
+	#}
+
+	write_file $config->{'commit-log'}, @header, @$body, @body_diff
 	    if $config->{'commit-log'};
     }
 

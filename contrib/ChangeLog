@@ -1,3 +1,13 @@
+2006-05-15  Derek Price  <derek@ximbiot.com>
+
+	* log_accum.pl (set_defaults): Set diff defaults.
+	(mail_separate_diffs, build_diffs): New functions.
+	(get_temp_files): Add olf/new revision number storage.
+	(get_topdir): New function factored from...
+	(compile_subject): ...here.
+	(urlencode): Don't write input values directly.
+	(build_message_body): Build and return diff text as needed.
+
 2006-05-14  Derek Price  <derek@ximbiot.com>
 
 	* log_accum.pl: Simplify and fix ViewCVS URLs.
