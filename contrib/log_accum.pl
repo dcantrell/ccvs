@@ -990,16 +990,17 @@ sub build_cvsweb_urls
     my ($url, $cvsroot, $branch, $oldrev, $newrev, $module, @list) = @_;
     my @urls;
 
-    my $args = "?cvsroot=" . urlencode $cvsroot;
-    $args .= "&only_with_tag=$branch" if $branch;
+    my $baseurl = urlencode "$url/$module";
+    my $baseargs = "?cvsroot=" . urlencode $cvsroot;
+       $baseargs .= "&only_with_tag=$branch" if $branch;
 
     # Import and new directories only send a single dir.  Special case it.
-    return urlencode ("$url/$module") . "/$args" unless @list;
+    return "$baseurl/$baseargs" unless @list;
 
-    my $baseurl = urlencode "$url/$module";
     foreach (@list)
     {
 	my $out = "$baseurl/" . urlencode ($_);
+	my $args = $baseargs;
 
 	# FIXME: if file is -kb, consider binary
         if ($_ =~ /\.(?:pdf|gif|jpg|mpg)$/i or -B $_ || !$oldrev->{$_})
@@ -1010,9 +1011,8 @@ sub build_cvsweb_urls
 	else
 	{
 	    # otherwise link to the diff
-	    $args .= "&tr1=" . $oldrev->{$_};
-	    $args .= "&tr2=" . $newrev->{$_};
-	    $args .= "&r1=text&r2=text";
+	    $args .= "&r1=" . $oldrev->{$_};
+	    $args .= "&r2=" . $newrev->{$_};
 	}
 
 	$out .= $args;
