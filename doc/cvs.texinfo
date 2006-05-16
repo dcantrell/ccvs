@@ -13740,8 +13740,14 @@ In addition to the common format strings (@pxref{syntax}),
 @file{commitinfo} supports:
 
 @table @t
-@item %@{s@}
-a list of the names of files to be committed
+@item %@{sa@}
+File attributes, where:
+@table @t
+@item %s
+file name
+@item %a
+file action (status)
+@end table
 @end table
 
 @cindex commitinfo (admin file), updating legacy repositories
@@ -14010,11 +14016,13 @@ In addition to the common format strings (@pxref{syntax}),
 @file{loginfo} supports:
 
 @table @t
-@item %@{stVv@}
+@item %@{satVv@}
 File attributes, where:
 @table @t
 @item %s
 file name
+@item %a
+file action (status)
 @item %T
 tag name of destination, or the empty string when there is no associated
 tag name (this usually means the trunk)
@@ -14026,7 +14034,7 @@ new version number (post-checkin)
 @end table
 
 For example, some valid format strings are @samp{%%},
-@samp{%s}, @samp{%@{s@}}, and @samp{%@{stVv@}}.
+@samp{%s}, @samp{%@{s@}}, and @samp{%@{satVv@}}.
 
 @cindex loginfo (admin file), updating legacy repositories
 @cindex compatibility notes, loginfo admin file

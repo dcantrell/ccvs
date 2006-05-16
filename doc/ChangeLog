@@ -1,3 +1,9 @@
+2006-05-16  Mark D. Baushke  <mdb@gnu.org>
+
+	* cvs.texinfo (commitinfo, loginfo): Document new %a format
+	character.
+	(CVS patch #5099 from Michael K. Sanders <msanders@confusion.net>.)
+
 2006-05-16  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Getting Notified): Note new watch remove -e/-u options.

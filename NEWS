@@ -15,6 +15,12 @@ NEW FEATURES
 * New admin options (--execute/--no-execute) have been added to modify
   the execute bits of files in the repository.  (CVS patch #4446.)
 
+* A new %a format character has been added to the commitinfo and loginfo
+  triggers which provides the file action (status). (CVS patch #5099.)
+
+* When UseNewInfoFmtStrings is enabled, the %{vV} formats will now
+  expose the real version instead of NONE for added and removed files.
+
 BUG FIXES
 
 * The GSSAPI server should now build under HP-UX.
