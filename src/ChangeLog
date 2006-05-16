@@ -1,3 +1,7 @@
+2006-05-16  Derek Price  <derek@ximbiot.com>
+
+	* main.c: Update copyright for 2006.
+
 2006-05-12  Mark D. Baushke  <mdb@gnu.org>
 
 	* log.c (log_expand_revlist): Add assert (r->first). It should
