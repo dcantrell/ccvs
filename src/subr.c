@@ -20,6 +20,11 @@
 /* Verify interface.  */
 #include "subr.h"
 
+/* ANSI headers.  */
+#ifdef HAVE_CVS_ADMIN_GROUP
+# include <grp.h>
+#endif
+
 /* GNULIB headers.  */
 #include "canonicalize.h"
 #include "canon-host.h"
@@ -2083,3 +2088,66 @@ isSamePath (const char *path1_in, const char *path2_in)
     free (p2);
     return same;
 }
+
+
+
+#ifdef HAVE_CVS_ADMIN_GROUP
+/* Return true if the current user should be allowed to run CVS admin commands,
+ * false otherwise.
+ */
+bool
+is_admin (void)
+{
+    struct group *grp;
+    struct group *getgrnam();
+
+    /* If the CVS_ADMIN_GROUP doesn't exist, assume that all users may run
+     * CVS admin commands.
+     */
+    errno = 0;
+    if (!(grp = getgrnam (CVS_ADMIN_GROUP)))
+    {
+	if (errno)
+	    error (1, errno, "Failed to get group information for %s.",
+		   CVS_ADMIN_GROUP);
+	return true;
+    }
+
+# ifdef HAVE_GETGROUPS
+    {
+	gid_t *grps;
+	int n, i;
+	size_t size;
+
+	/* get number of auxiliary groups */
+	n = getgroups (0, NULL);
+	if (n < 0)
+	    error (1, errno, "unable to get number of auxiliary groups");
+	size = xtimes (xsum (n, 1), sizeof *grps);
+	grps = size_in_bounds_p (size) ? xmalloc (size) : NULL;
+	if (!grps) error (1, EOVERFLOW, "too many groups");
+	n = getgroups (n, grps);
+	if (n < 0)
+	    error (1, errno, "unable to get list of auxiliary groups");
+	grps[n] = getgid();
+	for (i = 0; i <= n; i++)
+	    if (grps[i] == grp->gr_gid) break;
+	free (grps);
+	if (i > n)
+	    return false;
+    }
+# else /* !HAVE_GETGROUPS */
+    {
+	char *me = getcaller();
+	char **grnam;
+	
+	for (grnam = grp->gr_mem; *grnam; grnam++)
+	    if (strcmp (*grnam, me) == 0) break;
+	if (!*grnam && getgid() != grp->gr_gid)
+	    return false;
+    }
+# endif /* HAVE_GETGROUPS */
+
+    return true;
+}
+#endif /* HAVE_CVS_ADMIN_GROUP */

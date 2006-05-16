@@ -107,4 +107,14 @@ FILE *xfopen (const char *, const char *);
 char *xcanonicalize_file_name (const char *path);
 bool isThisHost (const char *otherhost);
 bool isSamePath (const char *path1_in, const char *path2_in);
+
+# ifdef HAVE_CVS_ADMIN_GROUP
+bool is_admin (void);
+# else
+/* If the CVS_ADMIN_GROUP is not being used, then anyone may run admin
+ * commands.
+ */
+#   define is_admin()	true;
+# endif
+
 #endif /* !SUBR_H */

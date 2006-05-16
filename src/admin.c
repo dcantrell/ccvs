@@ -18,11 +18,6 @@
 # include <config.h>
 #endif
 
-/* ANSI C headers.  */
-#ifdef CVS_ADMIN_GROUP
-# include <grp.h>
-#endif
-
 /* CVS headers.  */
 #include "ignore.h"
 #include "recurse.h"
@@ -341,10 +336,6 @@ int
 admin (int argc, char **argv)
 {
     int err;
-#ifdef CVS_ADMIN_GROUP
-    struct group *grp;
-    struct group *getgrnam (const char *);
-#endif
     struct admin_data admin_data;
     int c;
     int i;
@@ -577,7 +568,6 @@ admin (int argc, char **argv)
     argc -= optind;
     argv += optind;
 
-#ifdef CVS_ADMIN_GROUP
     /* The use of `cvs admin -k' is unrestricted.  However, any other
        option is restricted if the group CVS_ADMIN_GROUP exists on the
        server.  */
@@ -587,39 +577,9 @@ admin (int argc, char **argv)
      * (server_active) rather than when not on the client.
      */
     if (!current_parsed_root->isremote && !only_allowed_options &&
-	(grp = getgrnam(CVS_ADMIN_GROUP)) != NULL)
-    {
-#ifdef HAVE_GETGROUPS
-	gid_t *grps;
-	int n;
-
-	/* get number of auxiliary groups */
-	n = getgroups (0, NULL);
-	if (n < 0)
-	    error (1, errno, "unable to get number of auxiliary groups");
-	grps = xnmalloc (n + 1, sizeof *grps);
-	n = getgroups (n, grps);
-	if (n < 0)
-	    error (1, errno, "unable to get list of auxiliary groups");
-	grps[n] = getgid ();
-	for (i = 0; i <= n; i++)
-	    if (grps[i] == grp->gr_gid) break;
-	free (grps);
-	if (i > n)
-	    error (1, 0, "usage is restricted to members of the group `%s'",
-		   CVS_ADMIN_GROUP);
-#else
-	char *me = getcaller ();
-	char **grnam;
-	
-	for (grnam = grp->gr_mem; *grnam; grnam++)
-	    if (strcmp (*grnam, me) == 0) break;
-	if (!*grnam && getgid () != grp->gr_gid)
-	    error (1, 0, "usage is restricted to members of the group %s",
-		   CVS_ADMIN_GROUP);
-#endif
-    }
-#endif /* defined CVS_ADMIN_GROUP */
+ 	!is_admin ())
+ 	error (1, 0, "usage is restricted to members of the group %s",
+ 	       CVS_ADMIN_GROUP);
 
     for (i = 0; i < admin_data.ac; ++i)
     {

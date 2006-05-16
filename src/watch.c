@@ -33,13 +33,18 @@
 
 const char *const watch_usage[] =
 {
-    "Usage: %s %s {on|off|add|remove} [-lR] [-a <action>]... [<path>]...\n",
-    "on/off: Turn on/off read-only checkouts of files.\n",
-    "add/remove: Add or remove notification on actions.\n",
-    "-l (on/off/add/remove): Local directory only, not recursive.\n",
-    "-R (on/off/add/remove): Process directories recursively (default).\n",
-    "-a (add/remove): Specify what actions, one of: `edit', `unedit',\n",
-    "                 `commit', `all', or `none' (defaults to `all').\n",
+    "Usage: %s %s {on|off|add|remove} [-lR] [-a action]... [-u user]\n",
+    "                 [<path>]...\n",
+    "on/off\t\tTurn on/off read-only checkouts of files.\n",
+    "add/remove\tAdd or remove notification on actions.\n",
+    "\t-l\tLocal directory only, not recursive (on/off/add/remove).\n",
+    "\t-R\tProcess directories recursively (default, on/off/add/remove).\n",
+    "\t-a action\n",
+    "\t\tSpecify what actions, one of: `edit', `unedit', `commit',\n",
+    "\t\t`all', or `none' (defaults to `all', add/remove).\n",
+    "\t-e\tWith remove, remove temporary watches (aquired via `cvs edit')\n",
+    "\t-u user\tApply selection to user's watches (defaults to current\n",
+    "\t\tuser, only cvs administrators may affect other users, add/remove)\n",
     "(Specify the --help global option for a list of other help options.)\n",
     NULL
 };
@@ -53,7 +58,7 @@ watch_modify_watchers (const char *file, struct addremove_args *what)
     char *p;
     char *pend;
     char *nextp;
-    char *who;
+    const char *who;
     int who_len;
     char *mycurattr;
     char *mynewattr;
@@ -71,7 +76,14 @@ watch_modify_watchers (const char *file, struct addremove_args *what)
 
     TRACE( TRACE_FUNCTION, "modify_watchers ( %s )", file );
 
-    who = getcaller ();
+    if (the_args.user && strcmp (getcaller (), the_args.user) && !is_admin ())
+    {
+	error (1, 0,
+	       "Editing other user's watches is restricted to the %s group.",
+	       CVS_ADMIN_GROUP);
+    }
+
+    who = the_args.user ? the_args.user : getcaller ();
     who_len = strlen (who);
 
     /* Look for current watcher types for this user.  */
@@ -279,9 +291,10 @@ watch_addremove (int argc, char **argv)
     the_args.num_dirs = 0;
     the_args.dirs = NULL;
     the_args.local = 0;
+    the_args.user = NULL;
 
     optind = 0;
-    while ((c = getopt (argc, argv, "+lRa:")) != -1)
+    while ((c = getopt (argc, argv, "+lRa:eu:")) != -1)
     {
 	switch (c)
 	{
@@ -313,6 +326,18 @@ watch_addremove (int argc, char **argv)
 		}
 		else
 		    usage (watch_usage);
+		break;
+	    case 'e':
+		if (the_args.adding)
+		{
+		    error (0, 0, "-e is only valid with remove.");
+		    usage (watch_usage);
+		}
+		the_args.remove_temp = 1;
+		break;
+	    case 'u':
+		if (the_args.user) free ((char *)the_args.user);
+		the_args.user = xstrdup (optarg);
 		break;
 	    case '?':
 	    default:
@@ -367,6 +392,10 @@ watch_addremove (int argc, char **argv)
 	    option_with_arg ("-a", "commit");
 	if (!the_args.edit && !the_args.unedit && !the_args.commit)
 	    option_with_arg ("-a", "none");
+	if (the_args.remove_temp)
+	    send_arg ("-e");
+	if (the_args.user)
+	    option_with_arg ("-u", the_args.user);
 	send_arg ("--");
 	send_files (argc, argv, the_args.local, 0, SEND_NO_CONTENTS);
 	send_file_names (argc, argv, SEND_EXPAND_WILD);

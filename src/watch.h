@@ -21,6 +21,7 @@ struct addremove_args {
     int edit;
     int unedit;
     int commit;
+    const char *user;
 
     /* Are we adding or removing (non-temporary) edit,unedit,and/or commit
        watches?  */
