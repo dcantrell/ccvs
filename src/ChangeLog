@@ -1,5 +1,7 @@
 2006-05-16  Derek Price  <derek@ximbiot.com>
 
+	* main.c: Update copyright for 2006.
+
 	* admin.c (admin): Factor CVS_ADMIN_GROUP check to...
 	* subr.c (is_admin): ...this new function.
 	* subr.h (is_admin): Add proto/macro.
