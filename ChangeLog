@@ -1,3 +1,8 @@
+2006-05-16  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Correct wording of previous entry since commits of added files
+	have passed the correct old revision for some time.
+
 2006-05-16  Mark D. Baushke  <mdb@gnu.org>
 
 	* NEWS: Note new %a format character and new behavior of %{vV}
