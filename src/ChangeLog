@@ -1,3 +1,13 @@
+2006-05-16  Derek Price  <derek@ximbiot.com>
+
+	* admin.c (admin): Factor CVS_ADMIN_GROUP check to...
+	* subr.c (is_admin): ...this new function.
+	* subr.h (is_admin): Add proto/macro.
+	* watch.c (watch_usage): Reformat and add -e/-u info.
+	(watch_modify_watchers): Accept <user>.
+	(watch_addremove): Process new args.
+	(addremove_args): Add user.
+
 2006-05-12  Mark D. Baushke  <mdb@gnu.org>
 
 	* log.c (log_expand_revlist): Add assert (r->first). It should
