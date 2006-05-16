@@ -4,14 +4,15 @@
 @macro copyleftnotice
 @noindent
 Copyright @copyright{} 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
-                       2001, 2002, 2003, 2004, 2005
+                       2001, 2002, 2003, 2004, 2005, 2006
                        Free Software Foundation, Inc.
 
 @multitable @columnfractions .12 .88
 @item Portions
-@item @tab Copyright @copyright{} 1999, 2000, 2001, 2002, 2003, 2004, 2005
+@item @tab Copyright @copyright{} 1999, 2000, 2001, 2002, 2003, 2004, 2005,
+                                  2006
                                   Derek R. Price,
-@item @tab Copyright @copyright{} 2002, 2003, 2004, 2005
+@item @tab Copyright @copyright{} 2002, 2003, 2004, 2005, 2006
                                   Ximbiot @url{http://ximbiot.com},
 @item @tab Copyright @copyright{} 1992, 1993, 1999 Signum Support AB,
 @item @tab and Copyright @copyright{} others.
@@ -6852,11 +6853,14 @@ The @var{files} and options are processed as for
 
 
 @cindex watch remove (subcommand)
-@deffn Command {cvs watch remove} [@code{-lR}] [@code{-a} @var{action}]@dots{} [@var{files}]@dots{}
+@deffn Command {cvs watch remove} [@code{-lRe}] [@code{-a} @var{action}]@dots{} [-u @var{user}] [@var{files}]@dots{}
 
 Remove a notification request established using @code{cvs watch add};
 the arguments are the same.  If the @code{-a} option is present, only
-watches for the specified actions are removed.
+watches for the specified actions are removed.  If @code{-e} is present,
+Remove temporary watches.  If the @code{-u} option is present and the user
+is in the @code{cvsadmin} group (@pxref{admin}), remove watches for
+@var{user}.
 
 @end deffn
 
