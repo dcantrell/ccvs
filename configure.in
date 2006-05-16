@@ -953,16 +953,22 @@ if test yes = "$with_cvs_admin_group"; then
 fi
 if test no != "$with_cvs_admin_group"; then
   dnl FIXME We should warn if the group doesn't exist
-  AC_DEFINE_UNQUOTED(
-    [CVS_ADMIN_GROUP], ["$with_cvs_admin_group"],
-    [The CVS admin command is restricted to the members of the group
-     CVS_ADMIN_GROUP.  If this group does not exist, all users are
-     allowed to run CVS admin.  To disable the CVS admin command for
-     all users, create an empty CVS_ADMIN_GROUP by running configure
-     with the --with-cvs-admin-group= option.  To disable access control
-     for CVS admin, run configure with the --without-cvs-admin-group
-     option in order to comment out the define below.])
+  AC_DEFINE([HAVE_CVS_ADMIN_GROUP], 1,
+	    [Define if CVS_ADMIN_GROUP should be used.])
 fi
+
+dnl Define this regardless to avoid #ifdefs in most of the code (error messages
+dnl that will be optimized away can still use CVS_ADMIN_GROUP without causing
+dnl build errors).
+AC_DEFINE_UNQUOTED(
+  [CVS_ADMIN_GROUP], ["$with_cvs_admin_group"],
+  [The CVS admin command is restricted to the members of the group
+   CVS_ADMIN_GROUP.  If this group does not exist, all users are
+   allowed to run CVS admin.  To disable the CVS admin command for
+   all users, create an empty CVS_ADMIN_GROUP by running configure
+   with the --with-cvs-admin-group= option.  To disable access control
+   for CVS admin, run configure with the --without-cvs-admin-group
+   option in order to comment out the define below.])
 
 dnl
 dnl Done setting CVS Administrator Group
