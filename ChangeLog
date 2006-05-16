@@ -1,3 +1,8 @@
+2006-05-16  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Always set CVS_ADMIN_GROUP and set HAVE_CVS_ADMIN_GROUP
+	when it will be useful.
+
 2006-05-15  Mark D. Baushke  <mdb@gnu.org>
 
 	* configure: Regenerate.

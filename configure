@@ -44084,11 +44084,17 @@ if test yes = "$with_cvs_admin_group"; then
 fi
 if test no != "$with_cvs_admin_group"; then
 
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_CVS_ADMIN_GROUP 1
+_ACEOF
+
+fi
+
+
 cat >>confdefs.h <<_ACEOF
 #define CVS_ADMIN_GROUP "$with_cvs_admin_group"
 _ACEOF
 
-fi
 
 
 # Check whether --enable-cvs-ndbm or --disable-cvs-ndbm was given.
