@@ -1,3 +1,9 @@
+2006-05-16  Derek Price  <derek@ximbiot.com>
+
+	* commit.c (precommit_list_to_args_proc), logmsg.c
+	(logmsg_list_to_args_proc): Provide default case to suppress -Wall
+	warning.
+
 2006-05-16  Mark D. Baushke  <mdb@gnu.org>
 
 	* commit.c (check_fileproc): Set rev_old to "0" instead of NULL
@@ -11,7 +17,7 @@
 	* sanity.sh (info): Update and expand tests for new %a format and
 	real version when UseNewInfoFmtStrings. 
 	(CVS patch #5099 from Michael K. Sanders <msanders@confusion.net>.)
-	
+
 2006-05-16  Derek Price  <derek@ximbiot.com>
 
 	* main.c: Update copyright for 2006.

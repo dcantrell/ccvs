@@ -1240,6 +1240,9 @@ precommit_list_to_args_proc (p, closure)
                     case T_TITLE:
                         arg = "imported";
                         break;
+		    default:
+			error (1, 0, "Unexpected action type.");
+                        break;
                 }
                 break;
 	    default:
