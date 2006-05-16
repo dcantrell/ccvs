@@ -644,6 +644,24 @@ logmsg_list_to_args_proc (Node *p, void *closure)
 	    case 's':
 		arg = p->key;
 		break;
+            case 'a':
+                li = p->data;
+                switch (li->type)
+                {
+                    case T_ADDED:
+                        arg = "added";
+                        break;
+                    case T_MODIFIED:
+                        arg = "modified";
+                        break;
+                    case T_REMOVED:
+                        arg = "removed";
+                        break;
+                    case T_TITLE:
+                        arg = "imported";
+                        break;
+                }
+                break;
 	    case 'T':
 		li = p->data;
 		arg = li->tag ? li->tag : "";
@@ -768,6 +786,7 @@ logfile_write (const char *repository, const char *filter, const char *message,
        `}' as separators.  The format characters are:
 
          s = file name
+         a = file action (status)
 	 V = old version number (pre-checkin)
 	 v = new version number (post-checkin)
 
@@ -800,7 +819,8 @@ logfile_write (const char *repository, const char *filter, const char *message,
     /* %c = cvs_cmd_name
      * %p = shortrepos
      * %r = repository
-     * %{sVv} = file name, old revision (precommit), new revision (postcommit)
+     * %{saVv} = file name, file action (status)
+                 old revision (precommit), new revision (postcommit)
      */
     /*
      * Cast any NULL arguments as appropriate pointers as this is an
@@ -818,7 +838,7 @@ logfile_write (const char *repository, const char *filter, const char *message,
 #endif /* SERVER_SUPPORT */
 	                      "p", "s", srepos,
 	                      "r", "s", current_parsed_root->directory,
-	                      "sTVv", ",", changes,
+	                      "saTVv", ",", changes,
 			      logmsg_list_to_args_proc, (void *) NULL,
 	                      (char *) NULL);
     if (!cmdline || !strlen (cmdline))

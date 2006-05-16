@@ -3091,7 +3091,7 @@ EOF
 PrimaryServer=$PRIMARY_CVSROOT
 EOF
     cat >>loginfo <<EOF
-ALL $TESTDIR/sync-secondary loginfo %c %p %{sVv}
+ALL $TESTDIR/sync-secondary loginfo %c %p %{saVv}
 EOF
     cat >>postadmin <<EOF
 ALL $TESTDIR/sync-secondary postadmin %c %p
@@ -19067,7 +19067,8 @@ C aa"
           echo "ALL echo %{} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %x >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo % >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
-          echo "ALL echo %{sxVv} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %{saxVv} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %{a} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %{v} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %s %s >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %{V}AX >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
@@ -19151,6 +19152,33 @@ all info files after each .%. which doesn.t represent a literal percent)
 and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
 individual command lines and scripts to handle the new format at your
 leisure\."
+          rm file1
+	  dotest info-8 "${testcvs} -q rm -f file1" \
+"${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
+	  dotest_sort info-8a "${testcvs} -q ci -m remove-it" \
+"$TESTDIR/cvsroot/first-dir/file1,v  <--  file1
+all info files after each .%. which doesn.t represent a literal percent)
+and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
+compatibility with the new info file format strings (add a temporary .1. in
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}
+$SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
+individual command lines and scripts to handle the new format at your
+leisure\.
+new revision: delete; previous revision: 1\.3"
+          echo "resurrected file1" >file1
+	  dotest info-8b "$testcvs add file1" \
+"$SPROG add: Re-adding file \`file1' after dead revision 1\.4\.
+$SPROG add: use \`$SPROG commit' to add this file permanently"
+	  dotest_sort info-8c "${testcvs} -q ci -m add-it" \
+"$TESTDIR/cvsroot/first-dir/file1,v  <--  file1
+all info files after each .%. which doesn.t represent a literal percent)
+and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
+compatibility with the new info file format strings (add a temporary .1. in
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}
+$SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
+individual command lines and scripts to handle the new format at your
+leisure\.
+new revision: 1.5; previous revision: 1\.4"
 
 	  cd ..
 	  dotest info-9 "cat $TESTDIR/testlog" \
@@ -19159,7 +19187,8 @@ leisure\."
 'first-dir
 first-dir
 first-dir
-first-dir file1,,NONE,1.1
+first-dir file1,added,,NONE,1.1
+first-dir added
 first-dir 1.1
 first-dir file1 %s
 first-dir NONEAX
@@ -19167,7 +19196,8 @@ first-dir file1ux
 first-dir
 first-dir
 first-dir
-first-dir file1,,1.1,1.2
+first-dir file1,modified,,1.1,1.2
+first-dir modified
 first-dir 1.2
 first-dir file1 %s
 first-dir 1.1AX
@@ -19175,10 +19205,29 @@ first-dir file1ux
 first-dir
 first-dir
 first-dir
-first-dir file1,,1.2,1.3
+first-dir file1,modified,,1.2,1.3
+first-dir modified
 first-dir 1.3
 first-dir file1 %s
 first-dir 1.2AX
+first-dir file1ux
+first-dir
+first-dir
+first-dir
+first-dir file1,removed,,1.3,NONE
+first-dir removed
+first-dir NONE
+first-dir file1 %s
+first-dir 1.3AX
+first-dir file1ux
+first-dir
+first-dir
+first-dir
+first-dir file1,added,,1.4,1.5
+first-dir added
+first-dir 1.5
+first-dir file1 %s
+first-dir 1.4AX
 first-dir file1ux'
 
 	  # and make sure adding a '1' in the format strings really does ensure
@@ -19196,7 +19245,8 @@ first-dir file1ux'
           echo "ALL echo %1{} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %1x >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %1 >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
-          echo "ALL echo %1{sxVv} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %1{saxVv} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %1{a} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %1{v} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %1s %%s >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %1{V}AX >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
@@ -19248,12 +19298,16 @@ the new argument format and remove '1's from your info file format strings\.
 ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
 the new argument format and remove '1's from your info file format strings\.
 ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
 the new argument format and remove '1's from your info file format strings\."
 	  echo line0 >>file1
 	  dotest info-intfmt-6c "${testcvs} -q -sOTHER=foo ci -m mod-it" \
 "${TESTDIR}/cvsroot/third-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
 ${SPROG} commit: loginfo:[0-9]*: no such user variable \${=ZEE}
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
 ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
 the new argument format and remove '1's from your info file format strings\.
 ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
@@ -19289,6 +19343,59 @@ the new argument format and remove '1's from your info file format strings\.
 ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
 the new argument format and remove '1's from your info file format strings\.
 ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\."
+          rm file1
+	  dotest info-intfmt-8 "${testcvs} -q rm -f file1" \
+"${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
+	  dotest info-intfmt-8a "${testcvs} -q ci -m remove-it" \
+"$TESTDIR/cvsroot/third-dir/file1,v  <--  file1
+new revision: delete; previous revision: 1\.3
+${SPROG} commit: loginfo:[0-9]*: no such user variable \${=ZEE}
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\."
+          echo "resurrected file1" >file1
+	  dotest info-8b "$testcvs add file1" \
+"$SPROG add: Re-adding file \`file1' after dead revision 1\.4\.
+$SPROG add: use \`$SPROG commit' to add this file permanently"
+	  dotest info-8c "${testcvs} -q ci -m add-it" \
+"$TESTDIR/cvsroot/third-dir/file1,v  <--  file1
+new revision: 1.5; previous revision: 1\.4
+${SPROG} commit: loginfo:[0-9]*: no such user variable \${=ZEE}
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
 the new argument format and remove '1's from your info file format strings\."
 
 	  cd ..
@@ -19297,15 +19404,17 @@ the new argument format and remove '1's from your info file format strings\."
 'third-dir
 third-dir
 third-dir
-third-dir file1,,NONE,1.1
+third-dir file1,added,,0,1.1
+third-dir added
 third-dir 1.1
 third-dir file1 %s
-third-dir NONEAX
+third-dir 0AX
 third-dir file1ux
 third-dir
 third-dir
 third-dir
-third-dir file1,,1.1,1.2
+third-dir file1,modified,,1.1,1.2
+third-dir modified
 third-dir 1.2
 third-dir file1 %s
 third-dir 1.1AX
@@ -19313,10 +19422,29 @@ third-dir file1ux
 third-dir
 third-dir
 third-dir
-third-dir file1,,1.2,1.3
+third-dir file1,modified,,1.2,1.3
+third-dir modified
 third-dir 1.3
 third-dir file1 %s
 third-dir 1.2AX
+third-dir file1ux
+third-dir
+third-dir
+third-dir
+third-dir file1,removed,,1.3,1.4
+third-dir removed
+third-dir 1.4
+third-dir file1 %s
+third-dir 1.3AX
+third-dir file1ux
+third-dir
+third-dir
+third-dir
+third-dir file1,added,,1.4,1.5
+third-dir added
+third-dir 1.5
+third-dir file1 %s
+third-dir 1.4AX
 third-dir file1ux'
 
 	  rm ${TESTDIR}/testlog ${TESTDIR}/testlog2
@@ -19326,7 +19454,8 @@ third-dir file1ux'
 	  dotest info-setup-newfmt-1 "$testcvs -q up -prinfo-start loginfo >loginfo"
 	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\" %{sVv}" >> loginfo
           # The following cases test the format string substitution
-          echo "ALL echo %p \"%{sTVv}\" >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %p \"%{saTVv}\" >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %a >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %T >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %{v} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %s >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
@@ -19363,26 +19492,56 @@ $SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
 	  dotest info-newfmt-5 "${testcvs} -q -s OTHER=value -s ZEE=z ci -m mod-it" \
 "${TESTDIR}/cvsroot/fourth-dir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2"
+          rm file1
+          dotest info-newfmt-5a "${testcvs} -q rm -f file1" \
+"${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
+          dotest info-newfmt-5b "${testcvs} -q  ci -m remove-it" \
+"$TESTDIR/cvsroot/fourth-dir/file1,v  <--  file1
+new revision: delete; previous revision: 1\.3
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
+          echo "resurrected file1" >file1
+          dotest info-newfmt-5c "$testcvs add file1" \
+"$SPROG add: Re-adding file \`file1' after dead revision 1\.4\.
+$SPROG add: use \`$SPROG commit' to add this file permanently"
+          dotest info-newfmt-5d "${testcvs} -q ci -m add-it" \
+"$TESTDIR/cvsroot/fourth-dir/file1,v  <--  file1
+new revision: 1.5; previous revision: 1\.4
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
 
 	  cd ..
 	  dotest info-newfmt-6 "cat $TESTDIR/testlog" \
 "xenv-valueyz=${username}=${TESTDIR}/cvsroot="
           dotest info-newfmt-7 "cat $TESTDIR/testlog2" \
-'fourth-dir file1  NONE 1\.1
+'fourth-dir file1 added  0 1\.1
+added
 
 1\.1
 file1
-NONEAX
-fourth-dir file1  1\.1 1\.2
+0AX
+fourth-dir file1 modified  1\.1 1\.2
+modified
 
 1\.2
 file1
 1\.1AX
-fourth-dir file1  1\.2 1\.3
+fourth-dir file1 modified  1\.2 1\.3
+modified
 
 1\.3
 file1
-1\.2AX'
+1\.2AX
+fourth-dir file1 removed  1\.3 1\.4
+removed
+
+1\.4
+file1
+1\.3AX
+fourth-dir file1 added  1\.4 1\.5
+added
+
+1\.5
+file1
+1\.4AX'
 
 	  # clean up after newfmt tests
 	  cd CVSROOT
@@ -19444,7 +19603,7 @@ $SPROG commit: Rebuilding administrative file database"
 	  cd ../first-dir
 	  echo line2 >>file1
 	  dotest_fail info-v2 "${testcvs} -q ci -m bogus" \
-"vscript $tempname file1 1\.3
+"vscript $tempname file1 1\.5
 No BugId found\.
 ${SPROG} \[commit aborted\]: Message verification failed"
 
@@ -19453,9 +19612,9 @@ BugId: 42
 and many more lines after it
 EOF
 	  dotest info-v3 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
-"vscript $tempname file1 1\.3
+"vscript $tempname file1 1\.5
 $CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-new revision: 1\.4; previous revision: 1\.3"
+new revision: 1\.6; previous revision: 1\.5"
 	  rm ${TESTDIR}/comment.tmp
 
 	  cd ..
@@ -19539,10 +19698,10 @@ BugId: new
 See what happens next.
 EOF
 	  dotest info-reread-2 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
-"vscript $tempname file1 1\.4
+"vscript $tempname file1 1\.6
 $CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-new revision: 1\.5; previous revision: 1\.4"
-	  dotest info-reread-3 "${testcvs} -q log -N -r1.5 file1" "
+new revision: 1\.7; previous revision: 1\.6"
+	  dotest info-reread-3 "${testcvs} -q log -N -r1.7 file1" "
 .*
 BugId: new
 See what happens next.
@@ -19565,10 +19724,10 @@ BugId: new
 See what happens next with stat.
 EOF
 	  dotest info-reread-5 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
-"vscript $tempname file1 1\.5
+"vscript $tempname file1 1\.7
 $CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-new revision: 1\.6; previous revision: 1\.5"
-	  dotest info-reread-6 "${testcvs} -q log -N -r1.6 file1" "
+new revision: 1\.8; previous revision: 1\.7"
+	  dotest info-reread-6 "${testcvs} -q log -N -r1.8 file1" "
 .*
 BugId: new
 See what happens next with stat.
@@ -19591,10 +19750,10 @@ BugId: new
 See what happens next.
 EOF
 	  dotest info-reread-8 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
-"vscript $tempname file1 1\.6
+"vscript $tempname file1 1\.8
 $CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-new revision: 1\.7; previous revision: 1\.6"
-	  dotest info-reread-6 "${testcvs} -q log -N -r1.7 file1" "
+new revision: 1\.9; previous revision: 1\.8"
+	  dotest info-reread-6 "${testcvs} -q log -N -r1.9 file1" "
 .*
 BugId: new
 See what happens next.

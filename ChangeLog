@@ -1,3 +1,9 @@
+2006-05-16  Mark D. Baushke  <mdb@gnu.org>
+
+	* NEWS: Note new %a format character and new behavior of %{vV}
+	when UseNewInfoFmtStrings is enabled.
+	(CVS patch #5099 from Michael K. Sanders <msanders@confusion.net>.)
+
 2006-05-16  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Always set CVS_ADMIN_GROUP and set HAVE_CVS_ADMIN_GROUP

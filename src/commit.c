@@ -1092,6 +1092,8 @@ warning: file `%s' seems to still contain conflict indicators",
 
 	    li->tag = xstrdup (vers->tag);
 	    li->rev_old = xstrdup (vers->vn_rcs);
+            if (li->rev_old == NULL && config->UseNewInfoFmtStrings)
+                li->rev_old = xstrdup ("0");
 	    li->rev_new = NULL;
 	    p->data = li;
 	    (void) addnode (ulist, p);
@@ -1222,6 +1224,24 @@ precommit_list_to_args_proc (p, closure)
 		    arg = p->key;
 		}
 		break;
+            case 'a':
+                li = p->data;
+                switch (li->type)
+                {
+                    case T_ADDED:
+                        arg = "added";
+                        break;
+                    case T_MODIFIED:
+                        arg = "modified";
+                        break;
+                    case T_REMOVED:
+                        arg = "removed";
+                        break;
+                    case T_TITLE:
+                        arg = "imported";
+                        break;
+                }
+                break;
 	    default:
 		error (1, 0,
 		       "Unknown format character or not a list attribute: %c",
@@ -1300,7 +1320,7 @@ precommit_proc (const char *repository, const char *filter, void *closure)
 #endif /* SERVER_SUPPORT */
 			      "p", "s", srepos,
 			      "r", "s", current_parsed_root->directory,
-			      "s", ",", ulist, precommit_list_to_args_proc,
+			      "sa", ",", ulist, precommit_list_to_args_proc,
 			      (void *) NULL,
 			      (char *) NULL);
 
@@ -1558,9 +1578,11 @@ out:
            will return the version number of a file even after it has
            been removed from the archive, which is not the behavior we
            want for our commitlog messages; we want the old version
-           number and then "NONE." */
-
-	if (ci->status != T_REMOVED)
+           number and then "NONE, unless UseNewInfoFmtStrings has
+           been specified in the config.  Expose the real version in that
+           case and allow the trigger scripts to decide how to use it.  */
+            
+        if (ci->status != T_REMOVED || config->UseNewInfoFmtStrings)
 	{
 	    p = findnode (ulist, finfo->file);
 	    if (p)
