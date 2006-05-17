@@ -1,5 +1,8 @@
 2006-05-17  Derek Price  <derek@ximbiot.com>
 
+	* main.c (cmd_usage): Add sign & verify synopsis.
+	* sign.c (sign_usage): Reformat.
+
 	* commit.c (checkaddfile): Prefer TAG_HEAD macro to the literal string.
 
 2006-05-16  Derek Price  <derek@ximbiot.com>
