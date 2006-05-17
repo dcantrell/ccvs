@@ -1,5 +1,9 @@
 2006-05-17  Derek Price  <derek@ximbiot.com>
 
+	* sign.c (sign_usage): Correct -rTAG synopsis.
+	* verify.c: Correct some header comment blocks.
+	(iget_verify_checkouts): Return VERIFY_OFF, not false.
+
 	* main.c (cmd_usage): Add sign & verify synopsis.
 	* sign.c (sign_usage): Reformat.
 
