@@ -529,7 +529,7 @@ static const char *const sign_usage[] =
     "\t-R\tProcess directories recursively.\n",
     "\t-d KEYID\n",
     "\t\tDelete signatures with key ID KEYID from revision.\n",
-    "\t-r TAG\tDelete signatures from revision designated by TAG.\n",
+    "\t-r TAG\tDelete signatures from or sign revision designated by TAG.\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
 };

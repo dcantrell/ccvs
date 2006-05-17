@@ -113,8 +113,10 @@ add_verify_arg (const char *arg)
  * cvsroot, and compiled default.
  *
  * INPUTS
- *   server_active	Whether the server is active.
  *   server_support	Whether the server supports signed files.
+ *
+ * GLOBALS
+ *   server_active	Whether the server is active.
  *
  * ERRORS
  *   This function exits with a fatal error when the server does not support
@@ -129,7 +131,7 @@ iget_verify_checkouts (bool server_support)
     verify_state tmp;
 
     /* Only verify checkouts from the client (and in local mode).  */
-    if (server_active) return false;
+    if (server_active) return VERIFY_OFF;
 
     tmp = verify_checkouts;
 
@@ -149,8 +151,10 @@ iget_verify_checkouts (bool server_support)
 
 /* Return true if the client should attempt to verify files sent by the server.
  *
- * INPUTS
+ * GLOBALS
  *   server_active	Whether the server is active.
+ *
+ * INPUTS
  *   server_support	Whether the server supports signed files.
  *
  * ERRORS
@@ -170,9 +174,6 @@ get_verify_checkouts (bool server_support)
  * GLOBALS
  *   server_active	Whether the server is active (via
  *   			iget_verify_checkouts).
- *
- * INPUTS
- *   server_support	Whether the server supports signed files.
  */
 bool
 get_verify_checkouts_fatal (void)
