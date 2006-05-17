@@ -985,11 +985,12 @@ sub read_logfile
     my ($filename) = @_;
     my @text;
 
-    open FILE, "<$filename" or return ();
+    open FILE, "<$filename" or return;
     while (<FILE>)
     {
-        chomp;
-        push @text, $_;
+	chomp;
+	print STDERR "read_logfile: read $_\n" if $debug;
+	push @text, $_;
     }
     close FILE;
     return @text;
@@ -1092,6 +1093,11 @@ sub build_diffs
     push @revs, read_logfile $changed_rev_file;
     push @revs, read_logfile $added_rev_file;
     push @revs, read_logfile $removed_rev_file;
+    print STDERR "build_diffs: files = ", join (":", @list), "\n" if $debug;
+    print STDERR "build_diffs: revs = ", join (":", @revs), "\n" if $debug;
+
+    # Assertion.
+    die "not enough revs for files" unless grep (m#[^/]$#, @list) == (@revs/2);
 
     # Find the "top" level of the server workspace and CD there.
     my $topdir = get_topdir @list;
@@ -1162,6 +1168,8 @@ sub write_file
 {
     my ($filename, @lines) = @_;
 
+    return unless @lines;
+
     open FILE, ">$filename" or die "Cannot open file $filename: $!";
     print FILE join ("\n", @lines), "\n";
     close FILE;
@@ -1172,6 +1180,8 @@ sub write_file
 sub append_file
 {
     my ($filename, @lines) = @_;
+
+    return unless @lines;
 
     open FILE, ">>$filename" or die "Cannot open file $filename: $!";
     print FILE join ("\n", @lines), "\n";
