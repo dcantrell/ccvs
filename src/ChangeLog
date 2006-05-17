@@ -1,5 +1,8 @@
 2006-05-17  Derek Price  <derek@ximbiot.com>
 
+	* update.c (join_rev1, join_date1, join_rev2, join_date2): Make const.
+	(join_file): Make jrev1, jdate1, jrev2, & jdate2 const.
+
 	* sign.c (sign_usage): Correct -rTAG synopsis.
 	* verify.c: Correct some header comment blocks.
 	(iget_verify_checkouts): Return VERIFY_OFF, not false.
