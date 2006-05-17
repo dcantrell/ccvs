@@ -282,10 +282,12 @@ static const char *const cmd_usage[] =
 #ifdef SERVER_SUPPORT
     "        server       Server mode\n",
 #endif
+    "        sign         Add an OpenPGP signature to one or more revisions\n",
     "        status       Display status information on checked out files\n",
     "        tag          Add a symbolic tag to checked out version of files\n",
     "        unedit       Undo an edit command\n",
     "        update       Bring work tree in sync with repository\n",
+    "        verify       Verify OpenPGP signature(s)\n",
     "        version      Show current CVS version(s)\n",
     "        watch        Set watches\n",
     "        watchers     See who is watching a file\n",
