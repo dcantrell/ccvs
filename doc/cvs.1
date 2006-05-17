@@ -495,8 +495,9 @@ the \fBcvs\fR client.
 Force OpenPGP signatures on or off.  \fB-g\fR & \fB--sign\fR will cause the
 commit to abort if the server does not support OpenPGP signatures.  Without one
 of these options, CVS will autonegotiate signing, attempting to sign commits
-when the server supports it.  Overrides the \fBsign\fR and \fBno-sign\fR
-method options.
+when the server supports it.  Overrides the \fB$CVS_SIGN_COMMITS\fR
+environment variable (see node `Environment variables\(aq in the CVS manual) and the \fBsign\fR and
+\fBno-sign\fR method options (see node `The connection method\(aq in the CVS manual).
 .SP
 .IP "" 0
 \fB--sign-template \fItemplate\fB\fR
@@ -544,8 +545,10 @@ With a failure mode of \fBwarn\fR, the user will be warned of invalid
 signatures but the checkout will be allowed.  With a failure mode of
 \fBfatal\fR, the checkout will be aborted when the first corrupt file is
 received.  If the server does not support OpenPGP signatures, a failure mode
-of \fBfatal\fR will disallow the entire checkout.  Overrides the \fBverify\fR
-and \fBno-verify\fR method options (see node `The connection method\(aq in the CVS manual).
+of \fBfatal\fR will disallow the entire checkout.  Overrides the
+\fB$CVS_VERIFY_CHECKOUTS\fR environment variable (see node `Environment
+variables\(aq in the CVS manual) and the \fBverify\fR and \fBno-verify\fR method options
+(see node `The connection method\(aq in the CVS manual).
 .IP "" 0
 \fB--verify-template=\fItemplate\fB\fR
 .IP "" 2
@@ -579,8 +582,9 @@ Substitute the name of the file containing the signature.
 Substitute the name of the signed file.
 This template should exit with an exit code of zero if the signature is valid
 for the signed file and a non-zero exit code otherwise.  Overrides the
-\fBverify-template\fR method option see node `The connection method\(aq in the CVS manual and
-defaults to something like
+\fB$CVS_VERIFY_TEMPLATE\fR environment variable (see node `Environment
+variables\(aq in the CVS manual) and the \fBverify-template\fR method option (see node `The connection
+method\(aq in the CVS manual and defaults to something like
 \fB/usr/bin/gpg --detach-sign --output - %M %@ %S %s\fR.
 .SH "Common options"
 .SS "Common command options"
@@ -3809,6 +3813,44 @@ Load configuration from \fIpath\fR rather than the default location
 \fB/etc/cvs.conf\fR or prefixed by \fB/etc/cvs/\fR.  This option is
 supported beginning with \fBcvs\fR release 1.12.13.
 .SP
+.SH "sign"
+.SS "--Attach new OpenPGP revision signature"
+.IX "sign (subcommand)"
+.SP
+The \fBsign\fR command may be used to attach new OpenPGP signatures to
+any revision of a file.  Existing signatures are not removed when new
+ones are added.  \fBsign\fR may also be used to delete signatures from a
+revision.
+.SP
+These standard options are available with \fBsign\fR
+(see node `Common options\(aq in the CVS manual, for a complete description of
+them):
+.SP
+.IP "" 0
+\fB-l\fR
+.IP "" 2
+Local; run only in current working directory.  see node `Recursive behavior\(aq in the CVS manual.
+.SP
+.IP "" 0
+\fB-R\fR
+.IP "" 2
+Sign all files recursively (default).  see node `Recursive behavior\(aq in the CVS manual.
+.SP
+.IP "" 0
+\fB-r \fItag\fB[:\fIdate\fB]\fR
+.IP "" 2
+Sign the revisions specified by \fItag\fR or, when \fIdate\fR is specified
+and \fItag\fR is a branch tag, the version from the branch \fItag\fR as it
+existed on \fIdate\fR.  With \fB-d\fR, delete keys from the specified
+revision.  See also, see node `Common options\(aq in the CVS manual.
+.SP
+This special option is also available with \fBsign\fR.
+.SP
+.IP "" 0
+\fB-d \fIkeyid\fB\fR
+.IP "" 2
+Delete the signature(s) with key ID \fIkeyid\fR.
+.SP
 .SH "update"
 .SS "Bring work tree in sync with repository"
 .IX "update (subcommand)"
@@ -4057,6 +4099,50 @@ correspond to anything in the source repository, and is
 not in the list of files for \fBcvs\fR to ignore (see the
 description of the \fB-I\fR option, and
 see node `cvsignore\(aq in the CVS manual).
+.SP
+.SH "verify"
+.SS "--Verify OpenPGP revision signatures"
+.IX "verify (subcommand)"
+.SP
+The \fBverify\fR command may be used to verify the OpenPGP signatures for
+specific revisions of a file.  Note that when the verify mode is
+set to \fBwarn\fR or \fBfatal\fR, via the environment
+(see node `Environment variables\(aq in the CVS manual), the command line (see node `Global options\(aq in the CVS manual),
+or as a CVSROOT method option (see node `The connection method\(aq in the CVS manual), \fBcvs\fR
+verifies all revisions before operating on them.
+.SP
+These standard options are available with \fBverify\fR
+(see node `Common options\(aq in the CVS manual, for a complete description of
+them):
+.SP
+.IP "" 0
+\fB-l\fR
+.IP "" 2
+Local; run only in current working directory.  see node `Recursive behavior\(aq in the CVS manual.
+.SP
+.IP "" 0
+\fB-p\fR
+.IP "" 2
+Pipe signatures to the standard output, instead of verifying.
+.SP
+.IP "" 0
+\fB-R\fR
+.IP "" 2
+Sign all files recursively (default).  see node `Recursive behavior\(aq in the CVS manual.
+.SP
+.IP "" 0
+\fB-r \fItag\fB[:\fIdate\fB]\fR
+.IP "" 2
+Verify the revisions specified by \fItag\fR or, when \fIdate\fR is specified
+and \fItag\fR is a branch tag, the version from the branch \fItag\fR as it
+existed on \fIdate\fR.  See also, see node `Common options\(aq in the CVS manual.
+.SP
+.SH "version"
+.SS "--Print client and server version strings"
+.IX "version (subcommand)"
+.SP
+\fBversion\fR outputs a version string for both the \fBcvs\fR client and
+a \fBcvs\fR server, when a server can be contacted.  Also, see node `Global options\(aq in the CVS manual.
 .SH "AUTHORS"
 .TP
 Dick Grune
