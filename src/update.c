@@ -116,8 +116,8 @@ static int warned;
    the setting.  See update_dirent_proc.  */
 static char *tag_update_dir;
 
-static char *join_rev1, *join_date1;
-static char *join_rev2, *join_date2;
+static const char *join_rev1, *join_date1;
+static const char *join_rev2, *join_date2;
 static int aflag = 0;
 static int toss_local_changes = 0;
 static int force_tag_match = 1;
@@ -2066,10 +2066,10 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 
     char *rev1;
     char *rev2;
-    char *jrev1;
-    char *jrev2;
-    char *jdate1;
-    char *jdate2;
+    const char *jrev1;
+    const char *jrev2;
+    const char *jdate1;
+    const char *jdate2;
     bool replace_it;
 
     TRACE (TRACE_FUNCTION, "join_file (%s, %s%s%s%s, %s, %s)",
