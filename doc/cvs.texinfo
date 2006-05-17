@@ -2332,8 +2332,9 @@ as a modifcation to the @code{ext} connection method.
 Force OpenPGP signatures on or off.  @samp{sign} will cause the commit to abort
 if the server does not support OpenPGP signatures.  Without one of these
 options, CVS will autonegotiate signing, attempting to sign commits when the
-server supports it.  May be overridden by the @samp{--sign} and @samp{--no-sign}
-global options (@pxref{Global options}).
+server supports it.  Overrides the @code{$CVS_SIGN_COMMITS} environment
+variable (@pxref{Environment variables}) and may be overridden by the
+@samp{--sign} and @samp{--no-sign} global options (@pxref{Global options}).
 
 @item sign-template=@var{template}
 Use @var{template} as the command line template to generate OpenPGP signatures.
@@ -2369,8 +2370,10 @@ With a failure mode of @samp{warn}, the user will be warned of invalid
 signatures but the checkout will be allowed.  With a failure mode of
 @samp{fatal}, the checkout will be aborted when the first corrupt file is
 received.  If the server does not support OpenPGP signatures, a failure mode
-of @samp{fatal} will disallow the entire checkout.  May be overridden by the
-@samp{--verify} and @samp{--no-verify} global options (@pxref{Global options}).
+of @samp{fatal} will disallow the entire checkout.  Overrides the
+@code{$CVS_VERIFY_CHECKOUTS} environment variable (@pxref{Environment
+variables}) and may be overridden by the @samp{--verify} and @samp{--no-verify}
+global options (@pxref{Global options}).
 
 @item verify-template=@var{template}
 Use @var{template} as the command line template to verify OpenPGP signatures.
@@ -2393,9 +2396,11 @@ Substitute the name of the signed file.
 @end table
 
 This template should exit with an exit code of zero if the signature is valid
-for the signed file and a non-zero exit code otherwise.  This method option is
-overridden by the @samp{--verify-template} global command line option
-@pxref{Global options} and defaults to something like
+for the signed file and a non-zero exit code otherwise.  This method option
+overrides the @code{$CVS_VERIFY_TEMPLATE} environment variable
+(@pxref{Environment variables}) and is overridden by the
+@samp{--verify-template} global command line option @pxref{Global options} and
+defaults to something like
 @samp{/usr/bin/gpg --detach-sign --output - %M %@@ %S %s}.
 @end table
 
@@ -8223,7 +8228,10 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * rdiff::                       'patch' format diffs between releases
 * release::                     Indicate that a directory is no longer in use
 * server & pserver::            Act as a server for a client on stdin/stdout
+* sign::                        Attach new OpenPGP revision signature
 * update::                      Bring work tree in sync with repository
+* verify::                      Verify OpenPGP revision signatures
+* version::                     Print client and server version strings
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -8609,8 +8617,9 @@ the @sc{cvs} client.
 Force OpenPGP signatures on or off.  @samp{-g} & @samp{--sign} will cause the
 commit to abort if the server does not support OpenPGP signatures.  Without one
 of these options, CVS will autonegotiate signing, attempting to sign commits
-when the server supports it.  Overrides the @samp{sign} and @samp{no-sign}
-method options.
+when the server supports it.  Overrides the @code{$CVS_SIGN_COMMITS}
+environment variable (@pxref{Environment variables}) and the @samp{sign} and
+@samp{no-sign} method options (@pxref{The connection method}).
 
 @item --sign-template @var{template}
 Use @var{template} as the command line template to generate OpenPGP signatures.
@@ -8645,8 +8654,10 @@ With a failure mode of @samp{warn}, the user will be warned of invalid
 signatures but the checkout will be allowed.  With a failure mode of
 @samp{fatal}, the checkout will be aborted when the first corrupt file is
 received.  If the server does not support OpenPGP signatures, a failure mode
-of @samp{fatal} will disallow the entire checkout.  Overrides the @samp{verify}
-and @samp{no-verify} method options (@pxref{The connection method}).
+of @samp{fatal} will disallow the entire checkout.  Overrides the
+@code{$CVS_VERIFY_CHECKOUTS} environment variable (@pxref{Environment
+variables}) and the @samp{verify} and @samp{no-verify} method options
+(@pxref{The connection method}).
 
 @item --verify-template=@var{template}
 Use @var{template} as the command line template to verify OpenPGP signatures.
@@ -8670,8 +8681,9 @@ Substitute the name of the signed file.
 
 This template should exit with an exit code of zero if the signature is valid
 for the signed file and a non-zero exit code otherwise.  Overrides the
-@samp{verify-template} method option @pxref{The connection method} and
-defaults to something like
+@code{$CVS_VERIFY_TEMPLATE} environment variable (@pxref{Environment
+variables}) and the @samp{verify-template} method option (@pxref{The connection
+method} and defaults to something like
 @samp{/usr/bin/gpg --detach-sign --output - %M %@@ %S %s}.
 @end table
 
@@ -11603,6 +11615,42 @@ supported beginning with @sc{cvs} release 1.12.13.
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node sign
+@appendixsec sign--Attach new OpenPGP revision signature
+@cindex sign (subcommand)
+
+The @code{sign} command may be used to attach new OpenPGP signatures to
+any revision of a file.  Existing signatures are not removed when new
+ones are added.  @code{sign} may also be used to delete signatures from a
+revision.
+
+These standard options are available with @code{sign}
+(@pxref{Common options}, for a complete description of
+them):
+
+@table @code
+@item -l
+Local; run only in current working directory.  @xref{Recursive behavior}.
+
+@item -R
+Sign all files recursively (default).  @xref{Recursive behavior}.
+
+@item -r @var{tag}[:@var{date}]
+Sign the revisions specified by @var{tag} or, when @var{date} is specified
+and @var{tag} is a branch tag, the version from the branch @var{tag} as it
+existed on @var{date}.  With @code{-d}, delete keys from the specified
+revision.  See also, @ref{Common options}.
+@end table
+
+@need 800
+This special option is also available with @code{sign}.
+
+@table @code
+@item -d @var{keyid}
+Delete the signature(s) with key ID @var{keyid}.
+@end table
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node update
 @appendixsec update---Bring work tree in sync with repository
 @cindex update (subcommand)
@@ -11836,6 +11884,46 @@ not in the list of files for @sc{cvs} to ignore (see the
 description of the @samp{-I} option, and
 @pxref{cvsignore}).
 @end table
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node verify
+@appendixsec verify--Verify OpenPGP revision signatures
+@cindex verify (subcommand)
+
+The @code{verify} command may be used to verify the OpenPGP signatures for
+specific revisions of a file.  Note that when the verify mode is
+set to @samp{warn} or @samp{fatal}, via the environment
+(@pxref{Environment variables}), the command line (@pxref{Global options}),
+or as a CVSROOT method option (@pxref{The connection method}), @sc{cvs}
+verifies all revisions before operating on them.
+
+These standard options are available with @code{verify}
+(@pxref{Common options}, for a complete description of
+them):
+
+@table @code
+@item -l
+Local; run only in current working directory.  @xref{Recursive behavior}.
+
+@item -p
+Pipe signatures to the standard output, instead of verifying.
+
+@item -R
+Sign all files recursively (default).  @xref{Recursive behavior}.
+
+@item -r @var{tag}[:@var{date}]
+Verify the revisions specified by @var{tag} or, when @var{date} is specified
+and @var{tag} is a branch tag, the version from the branch @var{tag} as it
+existed on @var{date}.  See also, @ref{Common options}.
+@end table
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node version
+@appendixsec version--Print client and server version strings
+@cindex version (subcommand)
+
+@code{version} outputs a version string for both the @sc{cvs} client and
+a @sc{cvs} server, when a server can be contacted.  Also, @ref{Global options}.
 
 @c ----- END MAN 1 -----
 @c ---------------------------------------------------------------------
@@ -15094,50 +15182,25 @@ that affect @sc{cvs} (Windows users, please bear with this list;
 $VAR is equivalent to %VAR% at the Windows command prompt).
 
 @table @code
-@cindex CVSIGNORE, environment variable
-@item $CVSIGNORE
-A whitespace-separated list of file name patterns that
-@sc{cvs} should ignore. @xref{cvsignore}.
+@cindex COMSPEC, environment variable
+@item $COMSPEC
+Used under OS/2 only.  It specifies the name of the
+command interpreter and defaults to @sc{cmd.exe}.
 
-@cindex CVSWRAPPERS, environment variable
-@item $CVSWRAPPERS
-A whitespace-separated list of file name patterns that
-@sc{cvs} should treat as wrappers. @xref{Wrappers}.
+@cindex CVS_CLIENT_LOG, environment variable
+@item $CVS_CLIENT_LOG
+Used for debugging only in client-server
+mode.  If set, everything sent to the server is logged
+into @file{@code{$CVS_CLIENT_LOG}.in} and everything
+sent from the server is logged into
+@file{@code{$CVS_CLIENT_LOG}.out}.
 
-@cindex CVSREAD, environment variable
-@cindex Read-only files, and CVSREAD
-@item $CVSREAD
-If this is set, @code{checkout} and @code{update} will
-try hard to make the files in your working directory
-read-only.  When this is not set, the default behavior
-is to permit modification of your working files.
-
-@cindex CVSREADONLYFS, environment variable
-@item $CVSREADONLYFS
-Turns on read-only repository mode. This allows one to
-check out from a read-only repository, such as within
-an anoncvs server, or from a @sc{cd-rom} repository.
-
-It has the same effect as if the @samp{-R} command-line
-option is used. This can also allow the use of
-read-only NFS repositories.
-
-@item $CVSUMASK
-Controls permissions of files in the repository.  See
-@ref{File permissions}.
-
-@item $CVSROOT
-Should contain the full pathname to the root of the @sc{cvs}
-source repository (where the @sc{rcs} files are
-kept).  This information must be available to @sc{cvs} for
-most commands to execute; if @code{$CVSROOT} is not set,
-or if you wish to override it for one invocation, you
-can supply it on the command line: @samp{cvs -d cvsroot
-cvs_command@dots{}} Once you have checked out a working
-directory, @sc{cvs} stores the appropriate root (in
-the file @file{CVS/Root}), so normally you only need to
-worry about this when initially checking out a working
-directory.
+@cindex CVS_CLIENT_PORT
+@item $CVS_CLIENT_PORT
+Used in client-server mode to set the port to use when accessing the server
+via Kerberos, GSSAPI, or @sc{cvs}'s password authentication protocol
+if the port is not specified in the CVSROOT.
+@pxref{Remote repositories}
 
 @item $CVSEDITOR
 @cindex CVSEDITOR, environment variable
@@ -15152,82 +15215,10 @@ See @ref{Committing your changes} for more or
 @ref{Global options} for alternative ways of specifying a
 log editor.
 
-@cindex PATH, environment variable
-@item $PATH
-If @code{$RCSBIN} is not set, and no path is compiled
-into @sc{cvs}, it will use @code{$PATH} to try to find all
-programs it uses.
-
-@cindex HOME, environment variable
-@item $HOME
-@cindex HOMEPATH, environment variable
-@item $HOMEPATH
-@cindex HOMEDRIVE, environment variable
-@item $HOMEDRIVE
-Used to locate the directory where the @file{.cvsrc}
-file, and other such files, are searched.  On Unix, @sc{cvs}
-just checks for @code{HOME}.  On Windows NT, the system will
-set @code{HOMEDRIVE}, for example to @samp{d:} and @code{HOMEPATH},
-for example to @file{\joe}.  On Windows 95, you'll
-probably need to set @code{HOMEDRIVE} and @code{HOMEPATH} yourself.
-@c We are being vague about whether HOME works on
-@c Windows; see long comment in windows-NT/filesubr.c.
-
-@cindex CVS_RSH, environment variable
-@item $CVS_RSH
-Specifies the external program which @sc{cvs} connects with,
-when @code{:ext:} access method is specified.
-@pxref{Connecting via rsh}.
-
-@item $CVS_SERVER
-Used in client-server mode when accessing a remote
-repository using @sc{rsh}.  It specifies the name of
-the program to start on the server side (and any
-necessary arguments) when accessing a remote repository
-using the @code{:ext:}, @code{:fork:}, or @code{:server:} access methods.
-The default value for @code{:ext:} and @code{:server:} is @code{cvs};
-the default value for @code{:fork:} is the name used to run the client.
-@pxref{Connecting via rsh}
-
-@item $CVS_PASSFILE
-Used in client-server mode when accessing the @code{cvs
-login server}.  Default value is @file{$HOME/.cvspass}.
-@pxref{Password authentication client}
-
-@cindex CVS_CLIENT_PORT
-@item $CVS_CLIENT_PORT
-Used in client-server mode to set the port to use when accessing the server
-via Kerberos, GSSAPI, or @sc{cvs}'s password authentication protocol
-if the port is not specified in the CVSROOT.
-@pxref{Remote repositories}
-
-@cindex CVS_PROXY_PORT
-@item $CVS_PROXY_PORT
-Used in client-server mode to set the port to use when accessing a server
-via a web proxy, if the port is not specified in the CVSROOT.  Works with
-GSSAPI, and the password authentication protocol.
-@pxref{Remote repositories}
-
-@cindex CVS_RCMD_PORT, environment variable
-@item $CVS_RCMD_PORT
-Used in client-server mode.  If set, specifies the port
-number to be used when accessing the @sc{rcmd} demon on
-the server side. (Currently not used for Unix clients).
-
-@cindex CVS_CLIENT_LOG, environment variable
-@item $CVS_CLIENT_LOG
-Used for debugging only in client-server
-mode.  If set, everything sent to the server is logged
-into @file{@code{$CVS_CLIENT_LOG}.in} and everything
-sent from the server is logged into
-@file{@code{$CVS_CLIENT_LOG}.out}.
-
-@cindex CVS_SERVER_SLEEP, environment variable
-@item $CVS_SERVER_SLEEP
-Used only for debugging the server side in
-client-server mode.  If set, delays the start of the
-server child process the specified amount of
-seconds so that you can attach to it with a debugger.
+@cindex CVSIGNORE, environment variable
+@item $CVSIGNORE
+A whitespace-separated list of file name patterns that
+@sc{cvs} should ignore. @xref{cvsignore}.
 
 @cindex CVS_IGNORE_REMOTE_ROOT, environment variable
 @item $CVS_IGNORE_REMOTE_ROOT
@@ -15248,17 +15239,18 @@ the local repository, the revision numbers will look
 like 1.66.1000.xx. There is almost a dead-set certainty
 that there will be no conflicts with version numbers.
 
-@cindex COMSPEC, environment variable
-@item $COMSPEC
-Used under OS/2 only.  It specifies the name of the
-command interpreter and defaults to @sc{cmd.exe}.
+@cindex CVSNOBASES, environment variable
+@item $CVS_NOBASES
+When set, disables the creation of base files on checkouts.  Mainly intended
+for testing purposes, though this can be used to save disk space if your
+disk space is more valuable than your bandwidth and you don't need any
+OpenPGP revision signature functionality.
 
-@cindex TMPDIR, environment variable
-@cindex temporary file directory, set via environment variable
-@cindex temporary files, location of
-@item $TMPDIR
-Directory in which temporary files are located.
-@xref{Global options}, for more on setting the temporary directory.
+@cindex CVS_PASSFILE, environment variable
+@item $CVS_PASSFILE
+Used in client-server mode when accessing the @code{cvs
+login server}.  Default value is @file{$HOME/.cvspass}.
+@pxref{Password authentication client}
 
 @cindex CVS_PID, environment variable
 @item $CVS_PID
@@ -15267,6 +15259,160 @@ the @sc{cvs} process. It is often useful in the
 programs and/or scripts specified by the
 @file{commitinfo}, @file{verifymsg}, @file{loginfo}
 files.
+
+@cindex CVS_PROXY_PORT
+@item $CVS_PROXY_PORT
+Used in client-server mode to set the port to use when accessing a server
+via a web proxy, if the port is not specified in the CVSROOT.  Works with
+GSSAPI, and the password authentication protocol.
+@pxref{Remote repositories}
+
+@cindex CVS_RCMD_PORT, environment variable
+@item $CVS_RCMD_PORT
+Used in client-server mode.  If set, specifies the port
+number to be used when accessing the @sc{rcmd} demon on
+the server side. (Currently not used for Unix clients).
+
+@cindex CVSREAD, environment variable
+@cindex Read-only files, and CVSREAD
+@item $CVSREAD
+If this is set, @code{checkout} and @code{update} will
+try hard to make the files in your working directory
+read-only.  When this is not set, the default behavior
+is to permit modification of your working files.
+
+@cindex CVSREADONLYFS, environment variable
+@item $CVSREADONLYFS
+Turns on read-only repository mode. This allows one to
+check out from a read-only repository, such as within
+an anoncvs server, or from a @sc{cd-rom} repository.
+
+It has the same effect as if the @samp{-R} command-line
+option is used. This can also allow the use of
+read-only NFS repositories.
+
+@item $CVSROOT
+Should contain the full pathname to the root of the @sc{cvs}
+source repository (where the @sc{rcs} files are
+kept).  This information must be available to @sc{cvs} for
+most commands to execute; if @code{$CVSROOT} is not set,
+or if you wish to override it for one invocation, you
+can supply it on the command line: @samp{cvs -d cvsroot
+cvs_command@dots{}} Once you have checked out a working
+directory, @sc{cvs} stores the appropriate root (in
+the file @file{CVS/Root}), so normally you only need to
+worry about this when initially checking out a working
+directory.
+
+@cindex CVS_RSH, environment variable
+@item $CVS_RSH
+Specifies the external program which @sc{cvs} connects with,
+when @code{:ext:} access method is specified.
+@pxref{Connecting via rsh}.
+
+@item $CVS_SERVER
+Used in client-server mode when accessing a remote
+repository using @sc{rsh}.  It specifies the name of
+the program to start on the server side (and any
+necessary arguments) when accessing a remote repository
+using the @code{:ext:}, @code{:fork:}, or @code{:server:} access methods.
+The default value for @code{:ext:} and @code{:server:} is @code{cvs};
+the default value for @code{:fork:} is the name used to run the client.
+@pxref{Connecting via rsh}
+
+@cindex CVS_SERVER_SLEEP, environment variable
+@item $CVS_SERVER_SLEEP
+Used only for debugging the server side in
+client-server mode.  If set, delays the start of the
+server child process the specified amount of
+seconds so that you can attach to it with a debugger.
+
+@cindex CVS_SIGN_COMMITS, environment variable
+@item $CVS_SIGN_COMMITS
+Force OpenPGP signatures on or off.  Turning on will cause the commit to abort
+if the server does not support OpenPGP signatures.  Without one of these
+options, CVS will autonegotiate signing, attempting to sign commits when the
+server supports it.  May be overridden by the @samp{sign} and @samp{no-sign}
+method options (@pxref{The connection method}) as well as by the
+@samp{--sign} and @samp{--no-sign} global options (@pxref{Global options}).
+
+@cindex CVSUMASK, environment variable
+@item $CVSUMASK
+Controls permissions of files in the repository.  See
+@ref{File permissions}.
+
+@cindex CVS_VERIFY_CHECKOUTS, environment variable
+@item $CVS_VERIFY_CHECKOUTS
+Force OpenPGP signature verification on checkout off, or set the failure mode.
+With a failure mode of @samp{warn}, the user will be warned of invalid
+signatures but the checkout will be allowed.  With a failure mode of
+@samp{fatal}, the checkout will be aborted when the first corrupt file is
+received.  If the server does not support OpenPGP signatures, a failure mode
+of @samp{fatal} will disallow the entire checkout.  May be overridden by the
+@samp{verify} and @samp{no-verify} method options (@pxref{The connection
+method}) and by the @samp{--verify} and @samp{--no-verify} global options
+(@pxref{Global options}).
+
+@cindex CVS_VERIFY_TEMPLATE, environment variable
+@item $CVS_VERIFY_TEMPLATE
+Use @var{template} as the command line template to verify OpenPGP signatures.
+Format strings in this template are substituted before the command is run:
+
+@table @code
+@item %M
+Substitute in the textmode flag (defaults to @samp{--textmode}) when a
+signature is being verified for a text file.
+
+@item %@@
+Substitute in any @var{arg}s set via the @samp{--verify-arg} option or the
+CVSROOT verify-arg method option.
+
+@item %S
+Substitute the name of the file containing the signature.
+
+@item %s
+Substitute the name of the signed file.
+@end table
+
+This template should exit with an exit code of zero if the signature is valid
+for the signed file and a non-zero exit code otherwise.  This method option is
+overridden by the @samp{verify-template} method option
+(@pxref{The connection method}) and the @samp{--verify-template} global command
+line option (@pxref{Global options}) and defaults to something like
+@samp{/usr/bin/gpg --detach-sign --output - %M %@@ %S %s}.
+
+@cindex CVSWRAPPERS, environment variable
+@item $CVSWRAPPERS
+A whitespace-separated list of file name patterns that
+@sc{cvs} should treat as wrappers. @xref{Wrappers}.
+
+@cindex HOME, environment variable
+@item $HOME
+@cindex HOMEPATH, environment variable
+@item $HOMEPATH
+@cindex HOMEDRIVE, environment variable
+@item $HOMEDRIVE
+Used to locate the directory where the @file{.cvsrc}
+file, and other such files, are searched.  On Unix, @sc{cvs}
+just checks for @code{HOME}.  On Windows NT, the system will
+set @code{HOMEDRIVE}, for example to @samp{d:} and @code{HOMEPATH},
+for example to @file{\joe}.  On Windows 95, you'll
+probably need to set @code{HOMEDRIVE} and @code{HOMEPATH} yourself.
+@c We are being vague about whether HOME works on
+@c Windows; see long comment in windows-NT/filesubr.c.
+
+@cindex PATH, environment variable
+@item $PATH
+If @code{$RCSBIN} is not set, and no path is compiled
+into @sc{cvs}, it will use @code{$PATH} to try to find all
+programs it uses.
+
+@cindex TMPDIR, environment variable
+@cindex temporary file directory, set via environment variable
+@cindex temporary files, location of
+@item $TMPDIR
+Directory in which temporary files are located.
+@xref{Global options}, for more on setting the temporary directory.
 @end table
 
 @node Compatibility

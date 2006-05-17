@@ -1,3 +1,13 @@
+2006-05-17  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (The connection method): Mention the OpenPGP env vars.
+	(CVS commands): Add sign, verify, and version.
+	(Global options): Mention the OpenPGP env vars.
+	(sign, verify, versions): New nodes.
+	(Environment variables): Reorganize to some semblance of alphabetical
+	order.  Describe CVSNOBASES, CVS_SIGN_COMMITS, CVS_VERIFY_CHECKOUTS,
+	and CVS_VERIFY_TEMPLATE.
+
 2006-05-16  Mark D. Baushke  <mdb@gnu.org>
 
 	* cvs.texinfo (commitinfo, loginfo): Document new %a format
