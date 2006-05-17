@@ -2200,7 +2200,7 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	if (lock_RCS (file, rcs, rev, repository))
 	{
 	    error (0, 0, "cannot lock revision %s in `%s'.",
-		   rev ? rev : tag ? tag : "HEAD", rcs->path);
+		   rev ? rev : tag ? tag : TAG_HEAD, rcs->path);
 	    if (rev != NULL)
 		free (rev);
 	    goto out;
