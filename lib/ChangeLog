@@ -1,3 +1,9 @@
+2006-05-04  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	Merged changes from 1.12.13a:
+	* libcvs.dsp: Add WINDOWS32 #define for glob.c
+	* libcvs.mak: Regenerated for "libcvs.dsp" changes.
+
 2006-05-13  Mark Baushke  <mdb@gnu.org>
 
 	* inttypes.h, stdint_.h, verify.h: Updated from gnulib.
