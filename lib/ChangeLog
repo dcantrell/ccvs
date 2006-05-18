@@ -1,3 +1,8 @@
+2006-05-04  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	* libcvs.dsp: Add WINDOWS32 #define for glob.c
+	* libcvs.mak: Regenerated for "libcvs.dsp" changes.
+
 2005-09-29  Derek Price  <derek@ximbiot.com>
 
 	* system.h: #define fd_select select when not already defined.
