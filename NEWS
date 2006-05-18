@@ -1,6 +1,12 @@
 Changes since 1.12.12:
 **********************
 
+RELEASE NOTE
+* The original Windows build of 1.12.13 did not properly define a macro used
+  by the GNULIB globbing. Windows version 1.12.13a fixes this problem. No other
+  changes exist between 1.12.13 and 1.12.13a. Thanks to Kelly Hickel 
+  <kfh@mqsoftware.com> for bringing this to our attention.
+
 SECURITY FIXES
 
 * CVS now uses version 1.2.3 of the ZLib compression libraries in order to
