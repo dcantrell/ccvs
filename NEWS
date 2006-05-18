@@ -19,8 +19,7 @@ NEW FEATURES
   triggers which provides the file action (status). (CVS patch #5099.)
 
 * When UseNewInfoFmtStrings is enabled, the %{vV} formats will now
-  expose the real version instead of NONE for removed files.  For added
-  files, 0 is now passed in place of "NONE" on the initial add of a file.
+  expose the real version instead of NONE for removed files.
 
 BUG FIXES
 

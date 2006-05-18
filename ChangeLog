@@ -1,3 +1,8 @@
+2006-05-17  Mark D. Baushke  <mdb@gnu.org>
+
+	* NEWS: Remove wording about backed out change for added files.
+	Use "NONE" instead of "0" again.
+	
 2006-05-16  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Correct wording of previous entry since commits of added files

@@ -1092,8 +1092,6 @@ warning: file `%s' seems to still contain conflict indicators",
 
 	    li->tag = xstrdup (vers->tag);
 	    li->rev_old = xstrdup (vers->vn_rcs);
-            if (li->rev_old == NULL && config->UseNewInfoFmtStrings)
-                li->rev_old = xstrdup ("0");
 	    li->rev_new = NULL;
 	    p->data = li;
 	    (void) addnode (ulist, p);
@@ -1232,6 +1230,7 @@ precommit_list_to_args_proc (p, closure)
                         arg = "added";
                         break;
                     case T_MODIFIED:
+                    case T_CONFLICT:
                         arg = "modified";
                         break;
                     case T_REMOVED:
@@ -1241,7 +1240,7 @@ precommit_list_to_args_proc (p, closure)
                         arg = "imported";
                         break;
 		    default:
-			error (1, 0, "Unexpected action type.");
+			error (1, 0, "Unexpected action type %d.", li->type);
                         break;
                 }
                 break;

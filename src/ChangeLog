@@ -1,3 +1,15 @@
+2006-05-17  Mark D. Baushke  <mdb@gnu.org>
+
+	* logmsg.c (logmsg_list_to_args_proc): Deal with T_CONFLICT
+	action which seems only to happen in the proxycheck files-12r
+	test.
+	* commit.c (precommit_list_to_args_proc): Duplicate logmsg.c code.
+
+	* commit.c (check_fileproc): Backout change for "NONE"->"0" in
+	added files.
+	* sanity.sh (info-intfmt-10,info-newfmt-7): Update tests for above
+	change.
+
 2006-05-17  Derek Price  <derek@ximbiot.com>
 
 	* update.c (join_rev1, join_date1, join_rev2, join_date2): Make const.

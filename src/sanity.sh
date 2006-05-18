@@ -19404,11 +19404,11 @@ the new argument format and remove '1's from your info file format strings\."
 'third-dir
 third-dir
 third-dir
-third-dir file1,added,,0,1.1
+third-dir file1,added,,NONE,1.1
 third-dir added
 third-dir 1.1
 third-dir file1 %s
-third-dir 0AX
+third-dir NONEAX
 third-dir file1ux
 third-dir
 third-dir
@@ -19512,12 +19512,12 @@ $SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
 	  dotest info-newfmt-6 "cat $TESTDIR/testlog" \
 "xenv-valueyz=${username}=${TESTDIR}/cvsroot="
           dotest info-newfmt-7 "cat $TESTDIR/testlog2" \
-'fourth-dir file1 added  0 1\.1
+'fourth-dir file1 added  NONE 1\.1
 added
 
 1\.1
 file1
-0AX
+NONEAX
 fourth-dir file1 modified  1\.1 1\.2
 modified
 
