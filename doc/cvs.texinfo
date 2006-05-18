@@ -3403,7 +3403,7 @@ be done in a couple of different ways.
 @c -- The contributed scripts
 @menu
 * From files::                  This method is useful with old projects
-                                where files already exists.
+                                where files already exist.
 * From other version control systems::  Old projects where you want to
                                         preserve history from another system.
 * From scratch::                Creating a directory tree from scratch.
