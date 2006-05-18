@@ -652,6 +652,7 @@ logmsg_list_to_args_proc (Node *p, void *closure)
                         arg = "added";
                         break;
                     case T_MODIFIED:
+                    case T_CONFLICT:
                         arg = "modified";
                         break;
                     case T_REMOVED:
@@ -661,7 +662,7 @@ logmsg_list_to_args_proc (Node *p, void *closure)
                         arg = "imported";
                         break;
 		    default:
-			error (1, 0, "Unexpected action type.");
+			error (1, 0, "Unexpected action type %d.", li->type);
                         break;
                 }
                 break;
