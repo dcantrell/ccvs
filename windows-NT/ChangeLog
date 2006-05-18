@@ -1,3 +1,11 @@
+2006-05-18  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	* Manually changed config.h (I know I'm supposed to change
+	  config.h.in.in but mkconfig.pl doesn't seem to work properly
+	  for me)
+	  Appended an 'a' to the version number, to indicate new build
+	  for fixed .DSP file.
+
 2005-09-30  Conrad T. Pino  <Conrad@Pino.com>
 
 	* woe32.c woe32.h: Add "woe32_fd_select" function.
