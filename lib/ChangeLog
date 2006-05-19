@@ -1,3 +1,7 @@
+2006-05-19  Mark D. Baushke  <mdb@juniper.net>
+
+	* stdint_.h: Update from gnulib.
+
 2006-05-04  Jim Hyslop <jhyslop@dreampossible.ca>
 
 	Merged changes from 1.12.13a:

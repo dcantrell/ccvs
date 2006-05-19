@@ -48,7 +48,7 @@
    option. To disable access control for CVS admin, run configure with the
    --without-cvs-admin-group option in order to comment out the define below.
    */
-#undef CVS_ADMIN_GROUP
+#define CVS_ADMIN_GROUP "none"
 
 /* When committing a permanent change, CVS and RCS make a log entry of who
    committed the change. If you are committing the change logged in as "root"
