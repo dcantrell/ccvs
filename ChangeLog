@@ -1,3 +1,7 @@
+2006-05-19  Mark D. Baushke  <mdb@gnu.org>
+
+	* build-aux/config.rpath: Update via gnulib-update.
+
 2006-05-17  Mark D. Baushke  <mdb@gnu.org>
 
 	* NEWS: Remove wording about backed out change for added files.
