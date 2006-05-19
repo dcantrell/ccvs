@@ -5726,7 +5726,7 @@ Whenever you commit a file you specify a log message.
 @c greatly shrink the "log" node.
 To look through the log messages which have been
 specified for every revision which has been committed,
-use the @code{cvs log} command (@pxref{log}).
+use the @code{cvs log} command (@pxref{log & rlog}).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node history database
@@ -8216,19 +8216,20 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * Common options::              Options you give to the right of cvs_command
 * Date input formats::		Acceptable formats for date specifications
 * admin::                       Administration
-* annotate::                    What revision modified each line of a file?
+* annotate & rannotate::        What revision modified each line of a file?
 * checkout::                    Checkout sources for editing
 * commit::                      Check files into the repository
 * diff::                        Show differences between revisions
 * export::                      Export sources from CVS, similar to checkout
 * history::                     Show status of files and users
 * import::                      Import sources into CVS, using vendor branches
-* log::                         Show log messages for files
+* log & rlog::                  Show log messages for files
 * ls & rls::                    List files in the repository
 * rdiff::                       'patch' format diffs between releases
 * release::                     Indicate that a directory is no longer in use
 * server & pserver::            Act as a server for a client on stdin/stdout
 * sign::                        Attach new OpenPGP revision signature
+* tag & rtag::                  Attach new OpenPGP revision signature
 * update::                      Bring work tree in sync with repository
 * verify::                      Verify OpenPGP revision signatures
 * version::                     Print client and server version strings
@@ -9265,7 +9266,7 @@ acceptable for @var{state}.  A useful set of states is
 stable), and @samp{Rel} (for released).  By default,
 the state of a new revision is set to @samp{Exp} when
 it is created.  The state is visible in the output from
-@var{cvs log} (@pxref{log}), and in the
+@var{cvs log} (@pxref{log & rlog}), and in the
 @samp{$@splitrcskeyword{Log}$} and @samp{$@splitrcskeyword{State}$} keywords
 (@pxref{Keyword substitution}).  Note that @sc{cvs}
 uses the @code{dead} state for its own purposes (@pxref{Attic}); to
@@ -9278,7 +9279,7 @@ Useful with @sc{cvs}.  Write descriptive text from the
 contents of the named @var{file} into the RCS file,
 deleting the existing text.  The @var{file} pathname
 may not begin with @samp{-}.  The descriptive text can be seen in the
-output from @samp{cvs log} (@pxref{log}).
+output from @samp{cvs log} (@pxref{log & rlog}).
 There can be no space between @samp{-t} and its argument.
 
 If @var{file} is omitted,
@@ -9354,8 +9355,8 @@ avoid those files from being executable on subsequent checkouts.
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node annotate
-@appendixsec annotate---What revision modified each line of a file?
+@node annotate & rannotate
+@appendixsec annotate & rannotate---What revision modified each line of a file?
 @cindex annotate (subcommand)
 
 @itemize @bullet
@@ -9413,6 +9414,8 @@ The specified @var{width} must be greater than 0 and less than 80.
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node annotate example
 @appendixsubsec annotate example
+@cindex annotate (subcommand)
+@cindex rannotate (subcommand)
 
 For example:
 
@@ -9682,6 +9685,7 @@ $ cvs checkout -D yesterday tc
 @node commit
 @appendixsec commit---Check files into the repository
 @cindex commit (subcommand)
+@cindex ci (subcommand)
 
 @itemize @bullet
 @item
@@ -9723,7 +9727,7 @@ enter a log message that will be written to one or more
 logging programs (@pxref{modules}, and @pxref{loginfo})
 and placed in the @sc{rcs} file inside the
 repository.  This log message can be retrieved with the
-@code{log} command; see @ref{log}.  You can specify the
+@code{log} command; see @ref{log & rlog}.  You can specify the
 log message on the command line with the @samp{-m
 @var{message}} option, and thus avoid the editor invocation,
 or use the @samp{-F @var{file}} option to specify
@@ -9732,7 +9736,7 @@ that the argument file contains the log message.
 At @code{commit}, a unique commitid is placed in the @sc{rcs}
 file inside the repository. All files committed at once
 get the same commitid. The commitid can be retrieved with
-the @code{log} and @code{status} command; see @ref{log},
+the @code{log} and @code{status} command; see @ref{log & rlog},
 @ref{File status}.
 
 @menu
@@ -11003,9 +11007,10 @@ to recreate symbolic links on checkout, update, etc.;
 See @ref{Tracking sources}, and @ref{From files}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node log
-@appendixsec log---Print out log information for files
+@node log & rlog
+@appendixsec log & rlog---Print out log information for files
 @cindex log (subcommand)
+@cindex rlog (subcommand)
 
 @itemize @bullet
 @item
@@ -11651,13 +11656,141 @@ Delete the signature(s) with key ID @var{keyid}.
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node tag & rtag
+@appendixsec tag & rtag---Mark a snapshot of workspace for later retrieval.
+@cindex tag (subcommand)
+@cindex freeze (subcommand)
+@cindex rtag (subcommand)
+@cindex rfreeze (subcommand)
+
+@itemize @bullet
+@item
+tag [-bBcdFflR] [-r tag] [-D date] new_tag [files@dots{}]
+@item
+Requires: working directory, repository.
+@item
+Changes: repository.
+@item
+Synonym: ta, freeze
+@end itemize
+
+@itemize @bullet
+@item
+rtag [-abBdFflnR] (-r tag | -D date) new_tag module@dots{}
+@item
+Requires: repository.
+@item
+Changes: repository.
+@item
+Synonym: rt, rfreeze
+@end itemize
+
+Use @code{tag} to assign symbolic tags to the revisions of files
+checked out into your sandbox.  The tags are applied immediately
+to the repository, with the revision numbers to attach the tag
+to supplied implicitly by the @sc{cvs} records of your working files.
+
+@code{rtag} works similarly, but does not need a sandbox to operate
+in, requiring an explicitly supplied tag or date instead.  @sc{cvs}
+uses this preexisting tag or date to determine which revisions of
+files in the repository to attach the new tag to.
+
+The symbolic tags are meant to permanently record which
+revisions of which files were used for some purpose.  The @code{checkout}
+and @code{update} commands allow you to extract an exact
+copy of a tagged release at any time in the future,
+regardless of whether files have been changed, added,
+or removed on the trunk or other branches since the release was tagged.
+For more, see @xref{Branching and merging}.
+
+These commands may also be used to delete a symbolic tag,
+or to create a branch.  See the options section below.
+
+If you attempt to create a tag that already exists,
+CVS will complain and not overwrite that tag.  Use
+the @samp{-F} option to move the tag to a new set of
+revisions.
+
+These standard options are supported by @code{tag} or @code{rtag}
+(@pxref{Common options}, for a complete description of them):
+
+@table @code
+@item -D @var{date}
+Tag the most recent revision no later than @var{date}.  This option is
+not valid when deleting tags (see @samp{-d} option, below).
+
+@item -l
+Local; run only in current working directory.  @xref{Recursive behavior}.
+
+@item -R
+Update directories recursively (default).  @xref{Recursive
+behavior}.
+
+@item -r @var{tag}[:@var{date}]
+Tag the revisions specified by @var{tag} or, when @var{date} is specified
+and @var{tag} is a branch tag, the version from the branch @var{tag} as it
+existed on @var{date}.  This option is not valid when deleting tags
+(see @samp{-d} option, below).
+@end table
+
+Several tag specific options are also available.  When an option is only
+available with one of @code{tag} or @code{rtag}, it is noted below:
+
+@table @code
+@item -a
+Clear @var{new_tag} from removed files that would not otherwise be tagged
+(@code{rtag} only).
+
+@item -B
+Allows @code{-d} or @code{-F} to delete or move branch tags.
+
+@strong{WARNING: Recovering the information stored by branch tags is
+a very hard problem, more so than regular tags.  Be absolutely sure you
+understand what you are doing before using this option.}
+
+@item -b
+The @code{-b} option makes the new tag a branch tag (@pxref{Branching and
+merging}), allowing concurrent, isolated development.  This is commonly used
+to create patches to a previously released software distribution.
+
+@item -c
+Abort if any tagged files are locally modified (@code{tag} only).
+
+@item -d
+Delete @var{new_tag}, instead of creating it.
+
+@strong{WARNING: Be very certain of your ground before you delete a tag; doing
+this permanently discards some historical information, which could later turn
+out to be valuable.}
+
+@item -F
+When a tag already exists, move it to the new revision.  When the tag
+does not exist, create it as normal.  This option is new in @sc{cvs} 1.4.
+The pre-1.4 behavior is identical to @samp{cvs tag -F}.
+
+@strong{WARNING: Be very certain of your ground before you delete a tag; doing
+this permanently discards some historical information, which could later turn
+out to be valuable.}
+
+@item -f
+With @code{-r @var{tag}} or @code{-d @var{date}}, force a head revision match
+if @var{tag} and @var{date} are not found (in other words, attach @var{new_tag}
+to the most recent trunk revision when @var{tag} and @var{date} do not
+resolve to an existing revision).
+
+@item -n
+Do not execute the tag program specified in the @file{modules} file.
+@code{rtag} only.  See @xref{modules}, for more.
+@end table
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node update
 @appendixsec update---Bring work tree in sync with repository
 @cindex update (subcommand)
 
 @itemize @bullet
 @item
-update [-ACdflPpR] [-I name] [-j rev [-j rev]] [-k kflag] [-r tag[:date] | -D date] [-W spec] files@dots{}
+update [-ACdflPpR] [-I name] [-j rev [-j rev]] [-k kflag] [-r tag[:date] | -D date] [-W spec] [files@dots{}]
 @item
 Requires: repository, working directory.
 @item
@@ -12132,7 +12265,7 @@ See @ref{admin options} for more information.
 @c ------------------------------------------------------------
 @item annotate [@var{options}] [@var{files}@dots{}]
 Show last revision where each line was modified.  See
-@ref{annotate}.
+@ref{annotate & rannotate}.
 
 @table @code
 @item -D @var{date}
@@ -12489,7 +12622,7 @@ See @ref{Kerberos authenticated}.
 
 @c ------------------------------------------------------------
 @item log [@var{options}] [@var{files}@dots{}]
-Print out history information for files.  See @ref{log}.
+Print out history information for files.  See @ref{log & rlog}.
 
 @table @code
 @item -b
@@ -12543,7 +12676,7 @@ See @ref{Password authentication server}.
 @c ------------------------------------------------------------
 @item rannotate [@var{options}] [@var{modules}@dots{}]
 Show last revision where each line was modified.  See
-@ref{annotate}.
+@ref{annotate & rannotate}.
 
 @table @code
 @item -D @var{date}
@@ -12644,7 +12777,7 @@ behavior}.
 
 @c ------------------------------------------------------------
 @item rlog [@var{options}] [@var{files}@dots{}]
-Print out history information for modules.  See @ref{log}.
+Print out history information for modules.  See @ref{log & rlog}.
 
 @table @code
 @item -b
