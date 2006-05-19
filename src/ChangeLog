@@ -1,3 +1,7 @@
+2006-05-19  Derek Price  <derek@ximbiot.com>
+
+	* tag.c (tag_usage, rtag_usage): Clarify & correct usage.
+
 2006-05-17  Mark D. Baushke  <mdb@gnu.org>
 
 	* logmsg.c (logmsg_list_to_args_proc): Deal with T_CONFLICT

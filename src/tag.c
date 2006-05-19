@@ -86,10 +86,10 @@ static List *mtlist;
 static const char rtag_opts[] = "+aBbdFflnQqRr:D:";
 static const char *const rtag_usage[] =
 {
-    "Usage: %s %s [-abdFflnR] [-r rev|-D date] tag modules...\n",
+    "Usage: %s %s [-aBbdFflnR] (-r rev|-D date) tag modules...\n",
     "\t-a\tClear tag from removed files that would not otherwise be tagged.\n",
-    "\t-b\tMake the tag a \"branch\" tag, allowing concurrent development.\n",
     "\t-B\tAllows -F and -d to disturb branch tags.  Use with extreme care.\n",
+    "\t-b\tMake the tag a \"branch\" tag, allowing concurrent development.\n",
     "\t-d\tDelete the given tag.\n",
     "\t-F\tMove tag if it already exists.\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
@@ -106,8 +106,8 @@ static const char tag_opts[] = "+BbcdFflQqRr:D:";
 static const char *const tag_usage[] =
 {
     "Usage: %s %s [-bcdFflR] [-r rev|-D date] tag [files...]\n",
-    "\t-b\tMake the tag a \"branch\" tag, allowing concurrent development.\n",
     "\t-B\tAllows -F and -d to disturb branch tags.  Use with extreme care.\n",
+    "\t-b\tMake the tag a \"branch\" tag, allowing concurrent development.\n",
     "\t-c\tCheck that working files are unmodified.\n",
     "\t-d\tDelete the given tag.\n",
     "\t-F\tMove tag if it already exists.\n",
