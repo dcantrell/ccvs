@@ -86,7 +86,7 @@ static List *mtlist;
 static const char rtag_opts[] = "+aBbdFflnQqRr:D:";
 static const char *const rtag_usage[] =
 {
-    "Usage: %s %s [-aBbdFflnR] (-r rev|-D date) tag modules...\n",
+    "Usage: %s %s [-aBbdFflnR] {-r rev|-D date} tag modules...\n",
     "\t-a\tClear tag from removed files that would not otherwise be tagged.\n",
     "\t-B\tAllows -F and -d to disturb branch tags.  Use with extreme care.\n",
     "\t-b\tMake the tag a \"branch\" tag, allowing concurrent development.\n",
