@@ -1,3 +1,11 @@
+2006-05-20  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (CVS commands): Correct tag & rtag description.
+	(rdiff): Use {} for required alternates instead of ().  Clarify.
+	(rdiff options): Remove reference to -V.
+	(tag & rtag): Rev/date argument to rtag isn't required.  Other minor
+	updates.
+
 2006-05-19  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (log): Rename to...

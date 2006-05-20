@@ -8229,7 +8229,7 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * release::                     Indicate that a directory is no longer in use
 * server & pserver::            Act as a server for a client on stdin/stdout
 * sign::                        Attach new OpenPGP revision signature
-* tag & rtag::                  Attach new OpenPGP revision signature
+* tag & rtag::                  Mark project snapshot for later retrieval
 * update::                      Bring work tree in sync with repository
 * verify::                      Verify OpenPGP revision signatures
 * version::                     Print client and server version strings
@@ -11335,7 +11335,7 @@ verifymsg
 
 @itemize @bullet
 @item
-rdiff [-flags] [-V vn] (-r tag1[:date1] | -D date1) [-r tag2[:date2] | -D date2] modules@dots{}
+rdiff [options] @{-r tag1[:date1] | -D date1@} [-r tag2[:date2] | -D date2] modules@dots{}
 @item
 Requires: repository.
 @item
@@ -11347,10 +11347,7 @@ Synonym: patch
 Builds a Larry Wall format patch(1) file between two
 releases, that can be fed directly into the @code{patch}
 program to bring an old release up-to-date with the new
-release.  (This is one of the few @sc{cvs} commands that
-operates directly from the repository, and doesn't
-require a prior checkout.) The diff output is sent to
-the standard output device.
+release.  The diff output is sent to the standard output device.
 
 You can specify (using the standard @samp{-r} and
 @samp{-D} options) any combination of one or two
@@ -11359,11 +11356,11 @@ specified, the patch file reflects differences between
 that revision or date and the current head revisions in
 the @sc{rcs} file.
 
-Note that if the software release affected is contained
-in more than one directory, then it may be necessary to
-specify the @samp{-p} option to the @code{patch} command when
-patching the old sources, so that @code{patch} is able to find
-the files that are located in other directories.
+Note that if the patch created by rdiff spans multiple directories,
+then it may be necessary to specify the @samp{-p} option when feeding
+the patch back to the @code{patch} command, so that @code{patch} is able
+to update files that are located in directories other than the one
+patch is run in.
 
 @menu
 * rdiff options::               rdiff options
@@ -11427,13 +11424,6 @@ Remember that old versions
 of the @code{patch} program can't handle the unidiff
 format, so if you plan to post this patch to the net
 you should probably not use @samp{-u}.
-
-@item -V @var{vn}
-Expand keywords according to the rules current in
-@sc{rcs} version @var{vn} (the expansion format changed with
-@sc{rcs} version 5).  Note that this option is no
-longer accepted.  @sc{cvs} will always expand keywords the
-way that @sc{rcs} version 5 does.
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -11657,7 +11647,7 @@ Delete the signature(s) with key ID @var{keyid}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node tag & rtag
-@appendixsec tag & rtag---Mark a snapshot of workspace for later retrieval.
+@appendixsec tag & rtag---Mark project snapshot for later retrieval.
 @cindex tag (subcommand)
 @cindex freeze (subcommand)
 @cindex rtag (subcommand)
@@ -11674,9 +11664,12 @@ Changes: repository.
 Synonym: ta, freeze
 @end itemize
 
+@noindent
+and
+
 @itemize @bullet
 @item
-rtag [-abBdFflnR] (-r tag | -D date) new_tag module@dots{}
+rtag [-abBdFflnR] [-r tag | -D date] new_tag module@dots{}
 @item
 Requires: repository.
 @item
@@ -11691,9 +11684,10 @@ to the repository, with the revision numbers to attach the tag
 to supplied implicitly by the @sc{cvs} records of your working files.
 
 @code{rtag} works similarly, but does not need a sandbox to operate
-in, requiring an explicitly supplied tag or date instead.  @sc{cvs}
+in, requiring an explicitly supplied tag or date instead (or assuming
+the tip of the trunk when one is not supplied explicitly).  @sc{cvs}
 uses this preexisting tag or date to determine which revisions of
-files in the repository to attach the new tag to.
+files in the repository to attach the new symbolic tag to.
 
 The symbolic tags are meant to permanently record which
 revisions of which files were used for some purpose.  The @code{checkout}
@@ -11701,7 +11695,7 @@ and @code{update} commands allow you to extract an exact
 copy of a tagged release at any time in the future,
 regardless of whether files have been changed, added,
 or removed on the trunk or other branches since the release was tagged.
-For more, see @xref{Branching and merging}.
+For more, @xref{Branching and merging}.
 
 These commands may also be used to delete a symbolic tag,
 or to create a branch.  See the options section below.
@@ -11779,8 +11773,8 @@ to the most recent trunk revision when @var{tag} and @var{date} do not
 resolve to an existing revision).
 
 @item -n
-Do not execute the tag program specified in the @file{modules} file.
-@code{rtag} only.  See @xref{modules}, for more.
+Do not execute the tag program specified in the @file{modules} file
+(@code{rtag} only).  @xref{modules}, for more.
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
