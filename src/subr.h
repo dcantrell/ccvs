@@ -114,7 +114,7 @@ bool is_admin (void);
 /* If the CVS_ADMIN_GROUP is not being used, then anyone may run admin
  * commands.
  */
-#   define is_admin()	true;
+#   define is_admin()	true
 # endif
 
 #endif /* !SUBR_H */
