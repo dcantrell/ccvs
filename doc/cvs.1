@@ -3513,7 +3513,7 @@ verifymsg
 .IX "rdiff (subcommand)"
 .SP
 .IP "\(bu" 2
-rdiff [-flags] [-V vn] (-r tag1[:date1] | -D date1) [-r tag2[:date2] | -D date2] modules\&...
+rdiff [options] {-r tag1[:date1] | -D date1} [-r tag2[:date2] | -D date2] modules\&...
 .IP "\(bu" 2
 Requires: repository.
 .IP "\(bu" 2
@@ -3524,10 +3524,7 @@ Synonym: patch
 Builds a Larry Wall format patch(1) file between two
 releases, that can be fed directly into the \fBpatch\fR
 program to bring an old release up-to-date with the new
-release.  (This is one of the few \fBcvs\fR commands that
-operates directly from the repository, and doesn\(aqt
-require a prior checkout.) The diff output is sent to
-the standard output device.
+release.  The diff output is sent to the standard output device.
 .SP
 You can specify (using the standard \fB-r\fR and
 \fB-D\fR options) any combination of one or two
@@ -3536,11 +3533,11 @@ specified, the patch file reflects differences between
 that revision or date and the current head revisions in
 the \fBrcs\fR file.
 .SP
-Note that if the software release affected is contained
-in more than one directory, then it may be necessary to
-specify the \fB-p\fR option to the \fBpatch\fR command when
-patching the old sources, so that \fBpatch\fR is able to find
-the files that are located in other directories.
+Note that if the patch created by rdiff spans multiple directories,
+then it may be necessary to specify the \fB-p\fR option when feeding
+the patch back to the \fBpatch\fR command, so that \fBpatch\fR is able
+to update files that are located in directories other than the one
+patch is run in.
 .SP
 .SH "rdiff options"
 .SP
@@ -3614,15 +3611,6 @@ Remember that old versions
 of the \fBpatch\fR program can\(aqt handle the unidiff
 format, so if you plan to post this patch to the net
 you should probably not use \fB-u\fR.
-.SP
-.IP "" 0
-\fB-V \fIvn\fB\fR
-.IP "" 2
-Expand keywords according to the rules current in
-\fBrcs\fR version \fIvn\fR (the expansion format changed with
-\fBrcs\fR version 5).  Note that this option is no
-longer accepted.  \fBcvs\fR will always expand keywords the
-way that \fBrcs\fR version 5 does.
 .SP
 .SH "rdiff examples"
 .SP
@@ -3856,7 +3844,7 @@ This special option is also available with \fBsign\fR.
 Delete the signature(s) with key ID \fIkeyid\fR.
 .SP
 .SH "tag & rtag"
-.SS "Mark a snapshot of workspace for later retrieval."
+.SS "Mark project snapshot for later retrieval."
 .IX "tag (subcommand)"
 .IX "freeze (subcommand)"
 .IX "rtag (subcommand)"
@@ -3871,8 +3859,10 @@ Changes: repository.
 .IP "\(bu" 2
 Synonym: ta, freeze
 .SP
+and
+.SP
 .IP "\(bu" 2
-rtag [-abBdFflnR] (-r tag | -D date) new_tag module\&...
+rtag [-abBdFflnR] [-r tag | -D date] new_tag module\&...
 .IP "\(bu" 2
 Requires: repository.
 .IP "\(bu" 2
@@ -3886,9 +3876,10 @@ to the repository, with the revision numbers to attach the tag
 to supplied implicitly by the \fBcvs\fR records of your working files.
 .SP
 \fBrtag\fR works similarly, but does not need a sandbox to operate
-in, requiring an explicitly supplied tag or date instead.  \fBcvs\fR
+in, requiring an explicitly supplied tag or date instead (or assuming
+the tip of the trunk when one is not supplied explicitly).  \fBcvs\fR
 uses this preexisting tag or date to determine which revisions of
-files in the repository to attach the new tag to.
+files in the repository to attach the new symbolic tag to.
 .SP
 The symbolic tags are meant to permanently record which
 revisions of which files were used for some purpose.  The \fBcheckout\fR
@@ -3896,7 +3887,7 @@ and \fBupdate\fR commands allow you to extract an exact
 copy of a tagged release at any time in the future,
 regardless of whether files have been changed, added,
 or removed on the trunk or other branches since the release was tagged.
-For more, see see node `Branching and merging\(aq in the CVS manual.
+For more, see node `Branching and merging\(aq in the CVS manual.
 .SP
 These commands may also be used to delete a symbolic tag,
 or to create a branch.  See the options section below.
@@ -3995,8 +3986,8 @@ resolve to an existing revision).
 .IP "" 0
 \fB-n\fR
 .IP "" 2
-Do not execute the tag program specified in the \fBmodules\fR file.
-\fBrtag\fR only.  See see node `modules\(aq in the CVS manual, for more.
+Do not execute the tag program specified in the \fBmodules\fR file
+(\fBrtag\fR only).  see node `modules\(aq in the CVS manual, for more.
 .SP
 .SH "update"
 .SS "Bring work tree in sync with repository"
