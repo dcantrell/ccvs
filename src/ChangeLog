@@ -1,3 +1,8 @@
+2006-05-20  Derek Price  <derek@ximbiot.com>
+
+	* patch.c (rdiff_usage): Use {} around required argument.
+	* tag.c (rtag_usage): tag/date is not actually a required argument.
+
 2006-05-20  Mark D. Baushke  <mdb@gnu.org>
 
 	* subr.h (is_admin): is_admin() is used in expressions, so default
