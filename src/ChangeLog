@@ -1,3 +1,9 @@
+2006-05-20  Mark D. Baushke  <mdb@gnu.org>
+
+	* subr.h (is_admin): is_admin() is used in expressions, so default
+	to 'true' rather than 'true;' for the
+	!defined(HAVE_CVS_ADMIN_GROUP) case.
+
 2006-05-20  Lawrence Jones  <lawrence.jones@ugs.com>
 
 	* tag.c (rtag_usage): Required alternatives should use {}, not ().
