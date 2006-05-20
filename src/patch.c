@@ -59,7 +59,7 @@ static int unidiff = 0;
 static const char *const patch_usage[] =
 {
     "Usage: %s %s [-flR] [-c|-u] [-s|-t] [-V %%d] [-k kopt]\n",
-    "    -r rev|-D date [-r rev2 | -D date2] modules...\n",
+    "                 {-r rev | -D date} [-r rev2 | -D date2] modules...\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, not recursive\n",
     "\t-R\tProcess directories recursively.\n",
