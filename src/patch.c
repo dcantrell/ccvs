@@ -58,7 +58,7 @@ static int unidiff = 0;
 
 static const char *const patch_usage[] =
 {
-    "Usage: %s %s [-flR] [-c|-u] [-s|-t] [-V %%d] [-k kopt]\n",
+    "Usage: %s %s [-flR] [-c|-u] [-s|-t] [-k kopt]\n",
     "                 {-r rev | -D date} [-r rev2 | -D date2] modules...\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, not recursive\n",
@@ -67,7 +67,6 @@ static const char *const patch_usage[] =
     "\t-u\tUnidiff format.\n",
     "\t-s\tShort patch - one liner per file.\n",
     "\t-t\tTop two diffs - last change made to the file.\n",
-    "\t-V vers\tUse RCS Version \"vers\" for keyword expansion.\n",
     "\t-k kopt\tSpecify keyword expansion mode.\n",
     "\t-D date\tDate.\n",
     "\t-r rev\tRevision - symbolic or numeric.\n",
@@ -140,25 +139,6 @@ patch (int argc, char **argv)
 		if (options)
 		    free (options);
 		options = RCS_check_kflag (optarg);
-		break;
-	    case 'V':
-		/* This option is pretty seriously broken:
-		   1.  It is not clear what it does (does it change keyword
-		   expansion behavior?  If so, how?  Or does it have
-		   something to do with what version of RCS we are using?
-		   Or the format we write RCS files in?).
-		   2.  Because both it and -k use the options variable,
-		   specifying both -V and -k doesn't work.
-		   3.  At least as of CVS 1.9, it doesn't work (failed
-		   assertion in RCS_checkout where it asserts that options
-		   starts with -k).  Few people seem to be complaining.
-		   In the future (perhaps the near future), I have in mind
-		   removing it entirely, and updating NEWS and cvs.texinfo,
-		   but in case it is a good idea to give people more time
-		   to complain if they would miss it, I'll just add this
-		   quick and dirty error message for now.  */
-		error (1, 0,
-		       "the -V option is obsolete and should not be used");
 		break;
 	    case 'u':
 		unidiff = 1;		/* Unidiff */
