@@ -1,5 +1,7 @@
 2006-05-22  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.pl: Drop unnecessary parentheses.
+
 	* log_accum.pl (set_defaults): Clone --mail-to for empty
 	--separate-diffs.
 	(%option_spec): Make --separate-diffs accept an optional list of
