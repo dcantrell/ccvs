@@ -1493,6 +1493,7 @@ gl_header_list="$gl_header_list wctype.h"
 gl_func_list="$gl_func_list mbsinit"
 gl_func_list="$gl_func_list alarm"
 gl_func_list="$gl_func_list siginterrupt"
+gl_header_list="$gl_header_list sys/select.h"
 gl_func_list="$gl_func_list posix_memalign"
 gl_func_list="$gl_func_list iswprint"
 gl_header_list="$gl_header_list locale.h"
@@ -14852,6 +14853,12 @@ fi
 
 
 
+
+
+
+
+
+
   # Check for mmap()
 
 
@@ -24388,6 +24395,17 @@ _ACEOF
 
 
 
+
+
+
+
+  :
+
+
+
+
+
+
  nanosleep_save_libs=$LIBS
 
  # Solaris 2.5.1 needs -lposix4 to get the nanosleep function.
@@ -24521,26 +24539,13 @@ fi
 
 
 
- echo "$as_me:$LINENO: checking whether nanosleep works" >&5
-echo $ECHO_N "checking whether nanosleep works... $ECHO_C" >&6
-if test "${jm_cv_func_nanosleep_works+set}" = set; then
+ echo "$as_me:$LINENO: checking for nanosleep" >&5
+echo $ECHO_N "checking for nanosleep... $ECHO_C" >&6
+if test "${gl_cv_func_nanosleep+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
 
-
-
-
-
-  :
-
-
-
-
-
-   if test "$cross_compiling" = yes; then
-  	 jm_cv_func_nanosleep_works=no
-else
-  cat >conftest.$ac_ext <<_ACEOF
+   cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
@@ -24564,37 +24569,46 @@ cat >>conftest.$ac_ext <<_ACEOF
       struct timespec ts_sleep, ts_remaining;
       ts_sleep.tv_sec = 0;
       ts_sleep.tv_nsec = 1;
-      return nanosleep (&ts_sleep, &ts_remaining) != 0;
+      return nanosleep (&ts_sleep, &ts_remaining) < 0;
     }
 
 _ACEOF
-rm -f conftest$ac_exeext
+rm -f conftest.$ac_objext conftest$ac_exeext
 if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-  jm_cv_func_nanosleep_works=yes
+  gl_cv_func_nanosleep=yes
 else
-  echo "$as_me: program exited with status $ac_status" >&5
-echo "$as_me: failed program was:" >&5
+  echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-( exit $ac_status )
-jm_cv_func_nanosleep_works=no
+gl_cv_func_nanosleep=no
 fi
-rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
-fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
 
 fi
-echo "$as_me:$LINENO: result: $jm_cv_func_nanosleep_works" >&5
-echo "${ECHO_T}$jm_cv_func_nanosleep_works" >&6
-  if test $jm_cv_func_nanosleep_works = no; then
+echo "$as_me:$LINENO: result: $gl_cv_func_nanosleep" >&5
+echo "${ECHO_T}$gl_cv_func_nanosleep" >&6
+  if test $gl_cv_func_nanosleep = no; then
     case $LIBOBJS in
     "nanosleep.$ac_objext"   | \
   *" nanosleep.$ac_objext"   | \
@@ -24607,6 +24621,13 @@ esac
 cat >>confdefs.h <<\_ACEOF
 #define nanosleep rpl_nanosleep
 _ACEOF
+
+
+
+  :
+
+
+
 
 
 

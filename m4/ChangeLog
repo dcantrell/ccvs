@@ -1,3 +1,7 @@
+2006-05-22  Mark D. Baushke  <mdb@gnu.org>
+
+	* nanosleep.m4: Update from gnulib.
+
 2006-05-15  Mark D. Baushke  <mdb@gnu.org>
 
 	* stdbool.m4: Update from gnulib.

@@ -1,4 +1,8 @@
-2006-05-19  Mark D. Baushke  <mdb@juniper.net>
+2006-05-22  Mark D. Baushke  <mdb@gnu.org>
+
+	* nanosleep.c: Update from gnulib.
+
+2006-05-19  Mark D. Baushke  <mdb@gnu.org>
 
 	* stdint_.h: Update from gnulib.
 
