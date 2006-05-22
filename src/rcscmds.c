@@ -196,12 +196,9 @@ RCS_output_diff_options (int diff_argc, char * const *diff_argv,
 	cvs_output (rev2, 0);
     }
 
-    if (!rev1 || !rev2)
-    {
-	assert (workfile);
-	cvs_output (" ", 1);
-	cvs_output (workfile, 0);
-    }
+    assert (workfile);
+    cvs_output (" ", 1);
+    cvs_output (workfile, 0);
 
     cvs_output ("\n", 1);
 }
