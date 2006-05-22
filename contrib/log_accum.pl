@@ -1,4 +1,4 @@
-#! @PERL@ -T
+#! /usr/bin/perl -T
 # -*-Perl-*-
 
 # Copyright (C) 1994-2006 The Free Software Foundation, Inc.
@@ -779,28 +779,44 @@ sub mail_separate_diffs
 {
     my ($mail_to, $module, $branch, $username, $fullname, $mailname,
 	$header, @diffs) = @_;
-    my ($subject, @onediff);
 
-    foreach (@diffs)
+    # Sample diff:
+# Index: subdir/subfile3
+# ===================================================================
+# RCS file: /sources/testyeight/testyeight/subdir/subfile3,v
+# retrieving revision 1.18
+# retrieving revision 1.19
+# diff -u -b -r1.18 -r1.19
+# --- subdir/subfile3     20 May 2006 11:35:55 -0000      1.18
+# +++ subdir/subfile3     20 May 2006 11:37:01 -0000      1.19
+# @@ -1 +1 @@
+# -$Id$
+# +$Id$
+      
+    while (@diffs)
     {
-	chomp;
-	if (/^Index: /)
+	my ($subject, @onediff);
+
+	do
 	{
-	    if (@onediff)
+	    # Set the subject when the path to the RCS archive is found.
+	    if ($diffs[0] =~ /^RCS file: (.*)$/)
 	    {
-		mail_notification $mail_to, $module, $username, $fullname,
-				  $mailname, $subject, @$header, @onediff;
+		$subject = $1;
+		$subject =~ s/^\Q$ENV{'CVSROOT'}\E\///;
+		$subject = "Changes to $subject";
+		$subject .= " [$branch]" if $branch;
 	    }
-	    undef @onediff;
-	}
-	elsif (/^RCS file: (.*)$/)
-	{
-	    $subject = $1;
-	    $subject =~ s/^\Q$ENV{'CVSROOT'}\E//;
-	    $subject = "Changes to $subject";
-	    $subject .= " [$branch]" if $branch;
-	}
-	push @onediff, $_;
+
+	    # The current line is always part of the unsent diff.
+	    push @onediff, shift @diffs;
+
+	# /^Index: / starts another diff...
+	} while @diffs and $diffs[0] !~ /^Index: /;
+
+	# Send the curent diff.
+	mail_notification $mail_to, $module, $username, $fullname,
+			  $mailname, $subject, @$header, @onediff;
     }
 }
 
