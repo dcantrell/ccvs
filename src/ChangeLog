@@ -1,3 +1,8 @@
+2006-05-22  Mark D. Baushke  <mdb@gnu.org>
+
+	* commit.c (commit_fileproc): Protect UseNewInfoFmtStrings with
+	SUPPORT_OLD_INFO_FMT_STRINGS conditional.
+
 2006-05-20  Derek Price  <derek@ximbiot.com>
 
 	* patch.c (rdiff_usage): Remove obsolete -V argument.

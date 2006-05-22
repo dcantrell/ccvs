@@ -1584,7 +1584,11 @@ out:
            been specified in the config.  Expose the real version in that
            case and allow the trigger scripts to decide how to use it.  */
             
-        if (ci->status != T_REMOVED || config->UseNewInfoFmtStrings)
+        if (ci->status != T_REMOVED
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+	    || config->UseNewInfoFmtStrings
+#endif
+	    )
 	{
 	    p = findnode (ulist, finfo->file);
 	    if (p)
