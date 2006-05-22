@@ -6517,7 +6517,7 @@ ${SPROG} diff: No comparison available\.  Pass .-N. to .${SPROG} diff.${QUESTION
 ${SPROG} diff: No comparison available\.  Pass .-N. to .${SPROG} diff.${QUESTION}"
 	  dotest_fail death2-diff-4 \
 "${testcvs} -q diff -r1.1 -rbranch -N -c file1" \
-"diff -c -N -r1\.1 -r1\.1\.2\.1
+"diff -c -N -r1\.1 -r1\.1\.2\.1 file1
 \*\*\* file1	${RFCDATE}	[0-9.]*
 --- /dev/null	${RFCDATE_EPOCH}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6527,7 +6527,7 @@ ${SPROG} diff: No comparison available\.  Pass .-N. to .${SPROG} diff.${QUESTION
 	  # and in reverse
 	  dotest_fail death2-diff-4a \
 "${testcvs} -q diff -rbranch -r1.1 -N -c file1" \
-"diff -c -N -r1\.1\.2\.1 -r1\.1
+"diff -c -N -r1\.1\.2\.1 -r1\.1 file1
 \*\*\* /dev/null	${RFCDATE_EPOCH}
 --- file1	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6654,7 +6654,7 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 ${PLUS} first revision"
 
 	  dotest_fail death2-diff-11 "${testcvs} -q diff -rtag -c ." \
-"diff -c -r1\.1 -r1\.1\.2\.2
+"diff -c -r1\.1 -r1\.1\.2\.2 file1
 \*\*\* file1	${RFCDATE}	[0-9.]*
 --- file1	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6667,7 +6667,7 @@ ${SPROG} diff: tag tag is not in file file3
 ${SPROG} diff: file4 no longer exists, no comparison available"
 
 	  dotest_fail death2-diff-12 "${testcvs} -q diff -rtag -c -N ." \
-"diff -c -N -r1\.1 -r1\.1\.2\.2
+"diff -c -N -r1\.1 -r1\.1\.2\.2 file1
 \*\*\* file1	${RFCDATE}	[0-9.]*
 --- file1	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -6712,7 +6712,7 @@ U file4"
 ${SPROG} diff: No comparison available\.  Pass .-N. to .${SPROG} diff.${QUESTION}"
 
 	  dotest_fail death2-diff-14 "${testcvs} -q diff -r rdiff-tag -c -N" \
-"diff -c -N -r1\.1\.2\.1 -r1\.1
+"diff -c -N -r1\.1\.2\.1 -r1\.1 file1
 \*\*\* /dev/null	${RFCDATE_EPOCH}
 --- file1	${RFCDATE}	[0-9.]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -7627,7 +7627,7 @@ ${log_keyid}modify
 ============================================================================="
 	  dotest_fail branches-14.4 \
 	    "${testcvs} diff -c -r 1.1 -r 1.3 file4" \
-"diff -c -r1\.1 -r1\.3
+"diff -c -r1\.1 -r1\.3 file4
 \*\*\* file4	${RFCDATE}	1\.1
 --- file4	${RFCDATE}	1\.3
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -7637,7 +7637,7 @@ ${log_keyid}modify
 ! 4:trunk-3"
 	  dotest_fail branches-14.5 \
 	    "${testcvs} diff -c -r 1.1 -r 1.2.2.1 file4" \
-"diff -c -r1\.1 -r1\.2\.2\.1
+"diff -c -r1\.1 -r1\.2\.2\.1 file4
 \*\*\* file4	${RFCDATE}	1\.1
 --- file4	${RFCDATE}	1\.2\.2\.1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -8830,7 +8830,7 @@ I am the second foo, and my name is \$""Name: second \$\."
 
 	dotest_fail rcslib-diff9 "${testcvs} diff -r first -r second" \
 "${SPROG} diff: Diffing \.
-diff -r1\.1 -r1\.2
+diff -r1\.1 -r1\.2 foo.c
 1c1
 < I am the first foo, and my name is \$""Name: first \$\.
 ---
@@ -25803,7 +25803,7 @@ add a line on trunk after trunktag"
 	  # and diff thinks so too.  Case (a) from the comment in
 	  # cvs.texinfo (Common options).
 	  dotest_fail head-trunk-diff "${testcvs} -q diff -c -r HEAD -r br1" \
-"diff -c -r1\.3 -r1\.3\.2\.2
+"diff -c -r1\.3 -r1\.3\.2\.2 file1
 \*\*\* file1	${RFCDATE}	1\.3
 --- file1	${RFCDATE}	1\.3\.2\.2
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -25851,7 +25851,7 @@ add a line on trunk after trunktag"
 	  # Like head-brtag-diff, there is a non-branch sticky tag.
 	  dotest_fail head-trunktag-diff \
 	    "${testcvs} -q diff -c -r HEAD -r br1" \
-"diff -c -r1\.3 -r1\.3\.2\.2
+"diff -c -r1\.3 -r1\.3\.2\.2 file1
 \*\*\* file1	${RFCDATE}	1\.3
 --- file1	${RFCDATE}	1\.3\.2\.2
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
@@ -25968,7 +25968,7 @@ new revision: 1\.1\.4\.2; previous revision: 1\.1\.4\.1"
 	  # Test diff -r<tag>:<date> with two revisions specified.
 	  dotest_fail tagdate-13b \
 "$testcvs -q diff -u -rbr2:'$date_T3' -rbr2:now file1" \
-"diff -u -r1\.1\.4\.1 -r1\.1\.4\.2
+"diff -u -r1\.1\.4\.1 -r1\.1\.4\.2 file1
 --- file1	$RFCDATE	1\.1\.4\.1
 +++ file1	$RFCDATE	1\.1\.4\.2
 @@ -1 ${PLUS}1 @@
@@ -30534,13 +30534,13 @@ T dir1/sdir/sfile
 T dir1/sdir/ssdir/ssfile"
 	  dotest_fail multiroot2-12 \
 "${testcvs} -q diff -u -r tag1 -r tag2" \
-"diff -u -r1\.1\.1\.1 -r1\.2
+"diff -u -r1\.1\.1\.1 -r1\.2 dir1/file1
 --- dir1/file1	${RFCDATE}	1\.1\.1\.1
 ${PLUS}${PLUS}${PLUS} dir1/file1	${RFCDATE}	1\.2
 @@ -1 ${PLUS}1,2 @@
  file1
 ${PLUS}change it
-diff -u -r1\.1\.1\.1 -r1\.2
+diff -u -r1\.1\.1\.1 -r1\.2 dir1/sdir/sfile
 --- dir1/sdir/sfile	${RFCDATE}	1\.1\.1\.1
 ${PLUS}${PLUS}${PLUS} dir1/sdir/sfile	${RFCDATE}	1\.2
 @@ -1 ${PLUS}1,2 @@

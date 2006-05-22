@@ -1,3 +1,10 @@
+2006-05-22  Derek Price  <derek@ximbiot.com>
+
+	* rcscmds.c (RCS_output_diff_options): Always output the file name on a
+	diff line, even with two -r options, so that the file path is available
+	in a multiple file diff, even without -c or -u.
+	* sanity.sh: Update to compensate.
+
 2006-05-22  Lawrence Jones  <lawrence.jones@ugs.com>
 
 	* subr.c (is_admin): Older systems do not necessarily set errno
