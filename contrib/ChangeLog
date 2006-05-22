@@ -1,5 +1,11 @@
 2006-05-22  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.pl (set_defaults): Clone --mail-to for empty
+	--separate-diffs.
+	(%option_spec): Make --separate-diffs accept an optional list of
+	strings.
+	(main): Pass separate-diffs emails to mail_separate_diffs.
+
 	* log_accum.pl (mail_separate_diffs): Include the last diff.
 	(Original patch from Sylvain Beucler <beuc@beuc.net>.)
 

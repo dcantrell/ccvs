@@ -242,6 +242,8 @@ my $debug;
 #	send-diff	Send diffs in email.
 #	diff-arg	Reference to array of diff arguments.
 #	empty-diffs 	Send diffs from new files or to removed files.
+#	separate-diffs 	Reference to array of email destinations, if array is
+#			empty, references $config->{'mail-to'}.
 #	file-text	Text to include in temp file names.
 sub set_defaults
 {
@@ -283,13 +285,27 @@ sub set_defaults
 	$config->{'cvsroot'} =~ s#^.*/([^/]*)$#$1#;
     }
     $config->{'send-diff'} = 1 if !exists $config->{'send-diff'};
-    $config->{'empty-diffs'} = 1 if !exists $config->{'empty-diffs'};
     $config->{'diff-arg'} = ["-ub"] if !exists $config->{'diff-arg'};
+    $config->{'empty-diffs'} = 1 if !exists $config->{'empty-diffs'};
+    if (exists $config->{'separate-diffs'})
+    {
+	# If --separate-diffs is ever specified without an argument,
+	# Getopt::Long pushes an empty string onto the array, so remove
+	# any empty strings.
+	@{$config->{'separate-diffs'}} = grep /\S/,
+					      @{$config->{'separate-diffs'}};
+
+	# If no email addresses were specified, use the argument(s) to
+	# --mail-to.
+	$config->{'separate-diffs'} = $config->{'mail-to'}
+	    unless @{$config->{'separate-diffs'}};
+    }
     $config->{'file-text'} = "cvs" if !exists $config->{'file-text'};
 
     # Just set $debug in a global.  It's easier.
     $debug = $config->{'debug'};
 
+    # Print some debugging info about the config when requested.
     if ($debug)
     {
 	for ("debug", "tag", "url", "cvsroot", "send-diff",
@@ -297,7 +313,7 @@ sub set_defaults
 	{
 	    print STDERR "config{$_} => ", $config->{$_}, "\n";
 	}
-	for ("mail-to", "diff-arg")
+	for ("mail-to", "diff-arg", "separate-diffs")
 	{
 	    print STDERR "config{$_} => ", join (":", @{$config->{$_}}), "\n";
 	}
@@ -360,7 +376,7 @@ my @option_spec = ("config|c=s@",
 		   "diff-arg|D=s@",
 		   "suppress-diffs-against-empties|E!",
 		   "empty-diffs|e!",
-		   "separate-diffs|S!");
+		   "separate-diffs|S:s@");
 
 # Parse a config file.  Any long command line option is valid in the config
 # file, one option/argument pair per line.  Lines /^\s*#/, empty lines,
@@ -1541,8 +1557,9 @@ sub main
 			  $mailname, $subject, @header, @$body, @body_diff;
 
 	# Mail out the separate diffs when requested.
-	mail_separate_diffs $config->{'mail-to'}, $module, $branch_lines->[0],
-			    $username, $fullname, $mailname, \@header, @$diff
+	mail_separate_diffs $config->{'separate-diffs'}, $module,
+			    $branch_lines->[0], $username, $fullname,
+			    $mailname, \@header, @$diff
 	    if $config->{'separate-diffs'};
 
 	#if ($config->{'gnats-email'}
