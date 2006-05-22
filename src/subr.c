@@ -2104,14 +2104,8 @@ is_admin (void)
     /* If the CVS_ADMIN_GROUP doesn't exist, assume that all users may run
      * CVS admin commands.
      */
-    errno = 0;
     if (!(grp = getgrnam (CVS_ADMIN_GROUP)))
-    {
-	if (errno)
-	    error (1, errno, "Failed to get group information for %s.",
-		   CVS_ADMIN_GROUP);
 	return true;
-    }
 
 # ifdef HAVE_GETGROUPS
     {

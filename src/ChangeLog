@@ -1,3 +1,8 @@
+2006-05-22  Lawrence Jones  <lawrence.jones@ugs.com>
+
+	* subr.c (is_admin): Older systems do not necessarily set errno
+	sensibly in getgrnam, so do not check.
+
 2006-05-22  Mark D. Baushke  <mdb@gnu.org>
 
 	* commit.c (commit_fileproc): Protect UseNewInfoFmtStrings with
