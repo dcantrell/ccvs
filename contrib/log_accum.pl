@@ -1312,7 +1312,7 @@ sub main
     #
     # Setup and clean up environment
     #
-    umask (002);
+    umask 002;
     $ENV{"PATH"} = "/bin";
     delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
 
