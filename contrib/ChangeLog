@@ -1,6 +1,8 @@
 2006-05-22  Derek Price  <derek@ximbiot.com>
 
-	* log_accum.pl: Drop unnecessary parentheses.
+	* log_accum.pl (mail_separate_diffs): Don't use RCS Id key in example.
+
+	* log_accum.pl (main): Drop unnecessary parentheses.
 
 	* log_accum.pl (set_defaults): Clone --mail-to for empty
 	--separate-diffs.
