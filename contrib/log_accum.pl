@@ -806,8 +806,8 @@ sub mail_separate_diffs
 # --- subdir/subfile3     20 May 2006 11:35:55 -0000      1.18
 # +++ subdir/subfile3     20 May 2006 11:37:01 -0000      1.19
 # @@ -1 +1 @@
-# -$Id$
-# +$Id$
+# -original line
+# +new line
       
     while (@diffs)
     {
