@@ -1123,7 +1123,7 @@ if test x"$*" = x; then
 	tests="${tests} serverpatch log log2 logopt ann ann-id"
 	# Repository Storage (RCS file format, CVS lock files, creating
 	# a repository without "cvs init", &c).
-	tests="${tests} crerepos rcs rcs2 rcs3 rcs4 rcs5"
+	tests="${tests} crerepos rcs rcs2 rcs3 rcs4 rcs5 rcs6"
 	tests="$tests lockfiles backuprecover"
 	tests="${tests} sshstdio"
 	# More history browsing, &c.
@@ -20623,6 +20623,76 @@ line5"
 	  cd ..
           rm -r rcs5
           rm -rf $CVSROOT_DIRNAME/rcs5
+	  ;;
+
+
+
+	rcs6)
+	  # Test that CVS notices a specific type of corruption in the RCS
+	  # archive.  In the past, this type of corruption had turned up after
+	  # a user ineptly attempted to delete a revision from an arcvhive 
+	  # manually.
+	  mkdir rcs6; cd rcs6
+
+	  # Make the project.
+	  dotest rcs6-init-1 "$testcvs -Q co -ld top .; cd top"
+	  mkdir rcs6
+	  dotest rcs6-init-2 "$testcvs -Q add rcs6"
+	  cd rcs6
+
+	  # Populate it.
+	  echo some words >afile
+	  dotest rcs6-init-3 "$testcvs -Q add afile"
+	  dotest rcs6-init-4 "$testcvs -Q ci -mnewfile afile" \
+"RCS file: $CVSROOT_DIRNAME/rcs6/afile,v
+done
+Checking in afile;
+$CVSROOT_DIRNAME/rcs6/afile,v  <--  afile
+initial revision: 1\.1
+done"
+	  echo more words >>afile
+	  dotest rcs6-init-5 "$testcvs -Q ci -mrev2 afile" \
+"Checking in afile;
+$CVSROOT_DIRNAME/rcs6/afile,v  <--  afile
+new revision: 1\.2; previous revision: 1\.1
+done"
+
+	  # Corrupt the archive.
+	  sed -e '8,12d' \
+	      -e 's/^head	1\.2/head	1.1/' \
+	      <$CVSROOT_DIRNAME/rcs6/afile,v \
+	      >$CVSROOT_DIRNAME/rcs6/cfile,v
+
+	  # These worked.
+	  dotest rcs6-1 "$testcvs -q up" \
+"U cfile"
+	  dotest rcs6-2 "$testcvs -q tag current" \
+"T afile
+T cfile"
+
+	  # This hosed the archive further without any warnings.
+	  echo even more words >>cfile
+	  dotest rcs6-3 "$testcvs ci -mhose-it cfile" \
+"Checking in cfile;
+$CVSROOT_DIRNAME/rcs6/cfile,v  <--  cfile
+new revision: 1\.2; previous revision: 1\.1
+done"
+
+	  # Can still tag.
+	  dotest rcs6-4 "$testcvs -q tag -F current" "T cfile"
+
+	  # This finally reports the corruption.
+	  dotest_fail rcs6-5 "$testcvs -q up -r1.1 cfile" \
+"$PROG \[update aborted\]: invalid change text in $CVSROOT_DIRNAME/rcs6/cfile,v"
+
+	  if $keep; then
+	    echo Keeping $TESTDIR and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ../../..
+	  rm -r rcs6
+	  rm -rf $CVSROOT_DIRNAME/rcs6
 	  ;;
 
 

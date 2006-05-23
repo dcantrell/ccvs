@@ -1,3 +1,7 @@
+2006-05-22  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (rcs6): New test.
+
 2006-05-16  Derek Price  <derek@ximbiot.com>
 
 	* main.c: Update copyright for 2006.
