@@ -1,5 +1,9 @@
 2006-05-22  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (rcs6): New test.
+
+2006-05-22  Derek Price  <derek@ximbiot.com>
+
 	* rcscmds.c (RCS_output_diff_options): Always output the file name on a
 	diff line, even with two -r options, so that the file path is available
 	in a multiple file diff, even without -c or -u.
