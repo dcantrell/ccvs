@@ -1,3 +1,26 @@
+2006-05-23  Mark D. Baushke  <mdb@gnu.org>
+
+	* filesubr.c: Reformat according to HACKING standards.
+	(isdir, isfile, isreadable, iswritable, isaccessible): Return bool
+	instead of int to match prototypes.
+	(xresolvepath): Remove obsolete funciton.
+	(islink): Use ssize_t instead of int to match prototype and return
+	the sb.st_size if it is a link.
+	(xchmod): Change writable argument to bool to match prototype.
+	(copy_file, rename_file, unlink_file): Use TRACE macro instead
+	of open code.
+	(unlink_file_dir): Fix problem with trace on the server.
+	(isreadable, iswritable): Convert to use isaccessible() instead of
+	access() to be consistent with other filesubr.c implementations.
+	(isaccessible): Add support for SETXID_SUPPORT processing.
+	(copy_file, isdir, islink, isfile, isreadable, iswritable,
+	isaccessible, make_directory, make_directories, mkdir_if_needed,
+	xchmod, rename_file, unlink_file, unlink_file_dir,
+	deep_remove_dir, block_read, xcmp, cvs_temp_name, last_component,
+	get_homedir, expand_wild): Use C89 function declaration.
+	(make_directory): Use sb instead of buf for consistency with other
+	filesubr.c implementations.
+	
 2005-09-01  Derek Price  <derek@ximbiot.com>
 
 	* README: Update bug-cvs email.
