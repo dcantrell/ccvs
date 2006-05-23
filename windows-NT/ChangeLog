@@ -1,3 +1,19 @@
+2006-05-23  Mark D. Baushke  <mdb@gnu.org>
+
+	* filesubr.c: Reformat according to HACKING standards.
+	(isdir, isfile, iswritable): Return bool instead of int to match
+	prototypes.
+	(islink): Use ssize_t instead of int to match prototype and return
+	the sb.st_size if it is a link and zero otherwise.
+	(copy_file, xchmod, rename_file, unlink_file, unlink_file_dir):
+	Use TRACE macro instead of open-coded fprintf()s.
+	(copy_file, isdir, islink, isfile, isreadable, iswritable,
+	isaccessible, make_directory, make_directories, mkdir_if_needed,
+	xchmod, rename_file, unlink_file, unlink_file_dir,
+	deep_remove_dir, block_read, xcmp, cvs_temp_name): Use C89
+	function declarations.
+	(unlink_file_dir): Fix problem with trace on the server.
+	
 2006-05-19  Mark D. Baushke  <mdb@gnu.org>
 
 	* config.h.in.in: Add #define CVS_ADMIN_GROUP and missing #undef
