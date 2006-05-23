@@ -22,27 +22,20 @@
 #include "os2inc.h"
 #include "cvs.h"
 
-static int deep_remove_dir( const char *path );
+static int deep_remove_dir (const char *path);
 
 /*
  * Copies "from" to "to".
  */
 void
-copy_file (from, to)
-    const char *from;
-    const char *to;
+copy_file (const char *from, const char *to)
 {
     struct stat sb;
     struct utimbuf t;
     int fdin, fdout;
 
-    if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> copy(%s,%s)\n",
-			(server_active) ? 'S' : ' ', from, to);
-#else
-	(void) fprintf (stderr, "-> copy(%s,%s)\n", from, to);
-#endif
+    TRACE (TRACE_FUNCTION, "copy (%s, %s)", from, to);
+
     if (noexec)
 	return;
 
@@ -51,16 +44,16 @@ copy_file (from, to)
     if (fstat (fdin, &sb) < 0)
 	error (1, errno, "cannot fstat %s", from);
     if ((fdout = open (to, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY,
-					   (int) sb.st_mode & 07777)) < 0)
+		       (int) sb.st_mode & 07777)) < 0)
 	error (1, errno, "cannot create %s for copying", to);
     if (sb.st_size > 0)
     {
 	char buf[BUFSIZ];
 	int n;
 
-	for (;;) 
+	for (;;)
 	{
-	    n = read (fdin, buf, sizeof(buf));
+	    n = read (fdin, buf, sizeof (buf));
 	    if (n == -1)
 	    {
 #ifdef EINTR
@@ -69,21 +62,21 @@ copy_file (from, to)
 #endif
 		error (1, errno, "cannot read file %s for copying", from);
 	    }
-            else if (n == 0) 
+            else if (n == 0)
 		break;
-  
-	    if (write(fdout, buf, n) != n) {
+
+	    if (write (fdout, buf, n) != n) {
 		error (1, errno, "cannot write file %s for copying", to);
 	    }
 	}
 
 #ifdef HAVE_FSYNC
-	if (fsync (fdout)) 
+	if (fsync (fdout))
 	    error (1, errno, "cannot fsync file %s after copying", to);
 #endif
     }
 
-    if (close (fdin) < 0) 
+    if (close (fdin) < 0)
 	error (0, errno, "cannot close %s", from);
     if (close (fdout) < 0)
 	error (1, errno, "cannot close %s", to);
@@ -92,92 +85,151 @@ copy_file (from, to)
     memset ((char *) &t, 0, sizeof (t));
     t.actime = sb.st_atime;
     t.modtime = sb.st_mtime;
-    (void) utime ((char *)to, &t);
+    (void) utime ((char *) to, &t);
 }
+
+
 
 /* FIXME-krp: these functions would benefit from caching the char * &
    stat buf.  */
 
 /*
- * Returns non-zero if the argument file is a directory, or is a symbolic
+ * Returns true if the argument file is a directory, or is a symbolic
  * link which points to a directory.
  */
-int
-isdir (file)
-    const char *file;
+bool
+isdir (const char *file)
 {
     struct stat sb;
 
     if (stat (file, &sb) < 0)
-	return (0);
-    return (S_ISDIR (sb.st_mode));
+	return false;
+    return S_ISDIR (sb.st_mode);
 }
 
+
+
 /*
- * Returns non-zero if the argument file is a symbolic link.
+ * Returns 0 if the argument file is not a symbolic link.
+ * Returns size of the link if it is a symbolic link.
+ *
+ * FIXME: Is there a good reason that the off_t specified by POSIX for st_size
+ *        (http://www.opengroup.org/susv3xbd/sys/stat.h.html) is converted to
+ *        ssize_t here?  rcs.h uses off_t, so it's not because off_t isn't
+ *        portable.
  */
-int
-islink (file)
-    const char *file;
+ssize_t
+islink (const char *file)
 {
+    ssize_t retsize = 0;
 #ifdef S_ISLNK
     struct stat sb;
 
-    if (lstat (file, &sb) < 0)
-	return (0);
-    return (S_ISLNK (sb.st_mode));
-#else
-    return (0);
+    if ((lstat (file, &sb) >= 0) && S_ISLNK (sb.st_mode))
+	retsize = sb.st_size;
 #endif
+    return retsize;
 }
 
+
+
 /*
- * Returns non-zero if the argument file exists.
+ * Returns true if the argument file exists.
  */
-int
-isfile (file)
-    const char *file;
+bool
+isfile (const char *file)
 {
     struct stat sb;
 
     if (stat (file, &sb) < 0)
-	return (0);
-    return (1);
+	return 0;
+    return 1;
 }
+
+
 
 /*
  * Returns non-zero if the argument file is readable.
- * XXX - must be careful if "cvs" is ever made setuid!
  */
-int
-isreadable (file)
-    const char *file;
+bool
+isreadable (const char *file)
 {
-    return (access (file, R_OK) != -1);
+    return isaccessible (file, R_OK);
 }
 
-/*
- * Returns non-zero if the argument file is writable
- * XXX - muct be careful if "cvs" is ever made setuid!
- */
-int
-iswritable (file)
-    const char *file;
-{
-    return (access (file, W_OK) != -1);
-}
+
 
 /*
- * Returns non-zero if the argument file is accessable according to
+ * Returns true if the argument file is writable.
+ */
+bool
+iswritable (const char *file)
+{
+    return isaccessible (file, W_OK);
+}
+
+
+
+/*
+ * Returns true if the argument file is accessable according to
  * mode.  If compiled with SETXID_SUPPORT also works if cvs has setxid
  * bits set.
  */
-int
-isaccessible (file, mode)
-    const char *file;
-    const int mode;
+bool
+isaccessible (const char *file, const int mode)
 {
+#ifdef SETXID_SUPPORT
+    struct stat sb;
+    int umask = 0;
+    int gmask = 0;
+    int omask = 0;
+    int uid;
+
+    if (stat (file, &sb) == -1)
+	return false;
+    if (mode == F_OK)
+	return true;
+
+    uid = geteuid ();
+    if (uid == 0)		/* superuser */
+    {
+	if (!(mode & X_OK) || (sb.st_mode & (S_IXUSR|S_IXGRP|S_IXOTH)))
+	    return true;
+
+#ifdef EACCES
+	errno = EACCES;
+#endif
+	return false;
+    }
+	
+    if (mode & R_OK)
+    {
+	umask |= S_IRUSR;
+	gmask |= S_IRGRP;
+	omask |= S_IROTH;
+    }
+    if (mode & W_OK)
+    {
+	umask |= S_IWUSR;
+	gmask |= S_IWGRP;
+	omask |= S_IWOTH;
+    }
+    if (mode & X_OK)
+    {
+	umask |= S_IXUSR;
+	gmask |= S_IXGRP;
+	omask |= S_IXOTH;
+    }
+
+    if (sb.st_uid == uid)
+	return (sb.st_mode & umask) == umask;
+    else if (sb.st_gid == getegid ())
+	return (sb.st_mode & gmask) == gmask;
+    else
+	return (sb.st_mode & omask) == omask;
+#else /* !SETXID_SUPPORT */
     return access(file, mode) == 0;
+#endif /* SETXID_SUPPORT */
 }
 
 
@@ -186,12 +238,11 @@ isaccessible (file, mode)
  * Make a directory and die if it fails
  */
 void
-make_directory (name)
-    const char *name;
+make_directory (const char *name)
 {
-    struct stat buf;
+    struct stat sb;
 
-    if (stat (name, &buf) == 0 && (!S_ISDIR (buf.st_mode)))
+    if (stat (name, &sb) == 0 && (!S_ISDIR (sb.st_mode)))
 	    error (0, 0, "%s already exists but is not a directory", name);
     if (!noexec && mkdir ((char *)name) < 0)
 	error (1, errno, "cannot make directory %s", name);
@@ -202,8 +253,7 @@ make_directory (name)
  * goes wrong.
  */
 void
-make_directories (name)
-    const char *name;
+make_directories (const char *name)
 {
     char *cp;
 
@@ -227,12 +277,13 @@ make_directories (name)
     (void) mkdir ((char *)name);
 }
 
+
+
 /* Create directory NAME if it does not already exist; fatal error for
    other errors.  Returns 0 if directory was created; 1 if it already
    existed.  */
 int
-mkdir_if_needed (name)
-    char *name;
+mkdir_if_needed (char *name)
 {
     if (mkdir (name) < 0)
     {
@@ -262,15 +313,15 @@ mkdir_if_needed (name)
     return 0;
 }
 
+
+
 /*
  * Change the mode of a file, either adding write permissions, or removing
  * all write permissions.  Adding write permissions honors the current umask
  * setting.
  */
 void
-xchmod (fname, writable)
-    char *fname;
-    int writable;
+xchmod (char *fname, bool writable)
 {
     char *attrib_cmd;
     char *attrib_option;
@@ -291,7 +342,7 @@ xchmod (fname, writable)
         attrib_option = "-r ";  /* make writeable */
     else
         attrib_option = "+r ";  /* make read-only */
-        
+
     whole_cmd = xmalloc (strlen (attrib_cmd)
                          + strlen (attrib_option)
                          + strlen (fname)
@@ -320,6 +371,7 @@ xchmod (fname, writable)
 }
 
 
+
 /* Read the value of a symbolic link.
    Under OS/2, this function always returns EINVAL.  */
 int
@@ -329,22 +381,18 @@ readlink (char *path, char *buf, int buf_size)
     return -1;
 }
 
+
+
 /*
  * unlink a file, if possible.
  */
 int
-unlink_file (f)
-    const char *f;
+unlink_file (const char *f)
 {
-    if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> unlink(%s)\n",
-			(server_active) ? 'S' : ' ', f);
-#else
-	(void) fprintf (stderr, "-> unlink(%s)\n", f);
-#endif
+    TRACE (TRACE_FUNCTION, "unlink_file(%s)", f);
+
     if (noexec)
-	return (0);
+	return 0;
 
    /* Win32 unlink is stupid - it fails if the file is read-only.
     * OS/2 is similarly stupid.  It does have a remove() function,
@@ -355,8 +403,10 @@ unlink_file (f)
     */
     if (isfile (f))
 	xchmod ((char *)f, 1);
-    return (unlink (f));
+    return unlink (f);
 }
+
+
 
 /*
  * Unlink a file or dir, if possible.  If it is a directory do a deep
@@ -364,18 +414,16 @@ unlink_file (f)
  * (in which case errno is set).
  */
 int
-unlink_file_dir (f)
-    const char *f;
+unlink_file_dir (const char *f)
 {
-    if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> unlink_file_dir(%s)\n",
-			(server_active) ? 'S' : ' ', f);
-#else
-	(void) fprintf (stderr, "-> unlink_file_dir(%s)\n", f);
-#endif
+    /* This is called by the server parent process in contexts where
+       it is not OK to send output (e.g. after we sent "ok" to the
+       client).  */
+    if (!server_active)
+	TRACE (TRACE_FUNCTION, "unlink_file_dir(%s)", f);
+
     if (noexec)
-	return (0);
+	return 0;
 
     if (unlink_file (f) != 0)
     {
@@ -393,13 +441,14 @@ unlink_file_dir (f)
     return 0;
 }
 
+
+
 /* Remove a directory and everything it contains.  Returns 0 for
  * success, -1 for failure (in which case errno is set).
  */
 
 static int
-deep_remove_dir (path)
-    const char *path;
+deep_remove_dir (const char *path)
 {
     DIR		  *dirp;
     struct dirent *dp;
@@ -449,21 +498,15 @@ deep_remove_dir (path)
 }
 
 
+
 /*
  * Rename a file and die if it fails
  */
 void
-rename_file (from, to)
-    const char *from;
-    const char *to;
+rename_file (const char *from, const char *to)
 {
-    if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> rename(%s,%s)\n",
-			(server_active) ? 'S' : ' ', from, to);
-#else
-	(void) fprintf (stderr, "-> rename(%s,%s)\n", from, to);
-#endif
+    TRACE (TRACE_FUNCTION, "rename(%s,%s)", from, to);
+
     if (noexec)
 	return;
 
@@ -473,19 +516,17 @@ rename_file (from, to)
 }
 
 
+
 /* Read NCHARS bytes from descriptor FD into BUF.
    Return the number of characters successfully read.
    The number returned is always NCHARS unless end-of-file or error.  */
 static size_t
-block_read (fd, buf, nchars)
-    int fd;
-    char *buf;
-    size_t nchars;
+block_read (int fd, char *buf, size_t nchars)
 {
     char *bp = buf;
     size_t nread;
 
-    do 
+    do
     {
 	nread = read (fd, bp, nchars);
 	if (nread == (size_t)-1)
@@ -498,23 +539,22 @@ block_read (fd, buf, nchars)
 	}
 
 	if (nread == 0)
-	    break; 
+	    break;
 
 	bp += nread;
 	nchars -= nread;
     } while (nchars != 0);
 
     return bp - buf;
-} 
+}
 
-    
+
+
 /*
  * Compare "file1" to "file2". Return non-zero if they don't compare exactly.
  */
 int
-xcmp (file1, file2)
-    const char *file1;
-    const char *file2;
+xcmp (const char *file1, const char *file2)
 {
     char *buf1, *buf2;
     struct stat sb1, sb2;
@@ -530,7 +570,7 @@ xcmp (file1, file2)
     if (fstat (fd2, &sb2) < 0)
 	error (1, errno, "cannot fstat %s", file2);
 
-    /* A generic file compare routine might compare st_dev & st_ino here 
+    /* A generic file compare routine might compare st_dev & st_ino here
        to see if the two files being compared are actually the same file.
        But that won't happen in CVS, so we won't bother. */
 
@@ -549,7 +589,7 @@ xcmp (file1, file2)
 	buf1 = xmalloc (buf_size);
 	buf2 = xmalloc (buf_size);
 
-	do 
+	do
 	{
 	    read1 = block_read (fd1, buf1, buf_size);
 	    if (read1 == (size_t)-1)
@@ -561,7 +601,7 @@ xcmp (file1, file2)
 
 	    /* assert (read1 == read2); */
 
-	    ret = memcmp(buf1, buf2, read1);
+	    ret = memcmp (buf1, buf2, read1);
 	} while (ret == 0 && read1 == buf_size);
 
 	free (buf1);
@@ -570,7 +610,7 @@ xcmp (file1, file2)
 	
     (void) close (fd1);
     (void) close (fd2);
-    return (ret);
+    return ret;
 }
 
 
@@ -678,7 +718,7 @@ fnfold (char *filename)
    malloc'd string containing the name.  Returns successfully or not at
    all.  */
 char *
-cvs_temp_name ()
+cvs_temp_name (void)
 {
     char value[L_tmpnam + 1];
     char *retval;
@@ -691,45 +731,6 @@ cvs_temp_name ()
 }
 
 
-
-/* char *
- * xresolvepath ( const char *path )
- *
- * Like xreadlink(), but resolve all links in a path.
- *
- * INPUTS
- *  path	The original path.
- *
- * RETURNS
- *  The path with any symbolic links expanded.
- *
- * ERRORS
- *  This function exits with a fatal error if it fails to read the link for
- *  any reason.
- */
-char *
-xresolvepath ( path )
-    const char *path;
-{
-    char *hardpath;
-    char *owd;
-
-    /* assert ( isdir ( path ) ); */
-
-    /* FIXME - If HAVE_READLINK is defined, we should probably walk the path
-     * bit by bit calling xreadlink().
-     */
-
-    owd = xgetwd();
-    if ( CVS_CHDIR ( path ) < 0)
-	error ( 1, errno, "cannot chdir to %s", path );
-    if ( ( hardpath = xgetwd() ) == NULL )
-	error (1, errno, "cannot readlink %s", hardpath);
-    if ( CVS_CHDIR ( owd ) < 0)
-	error ( 1, errno, "cannot chdir to %s", owd );
-    free (owd);
-    return hardpath;
-}
 
 /* Return a pointer into PATH's last component.  */
 char *
@@ -752,18 +753,14 @@ last_component (char *path)
 /* Return the home directory.  Returns a pointer to storage
    managed by this function or its callees (currently getenv).  */
 char *
-get_homedir ()
+get_homedir (void)
 {
     return getenv ("HOME");
 }
 
 /* See cvs.h for description.  */
 void
-expand_wild (argc, argv, pargc, pargv)
-    int argc;
-    char **argv;
-    int *pargc;
-    char ***pargv;
+expand_wild (int argc, char **argv, int *pargc, char ***pargv)
 {
     int i;
     int new_argc;
@@ -826,7 +823,8 @@ expand_wild (argc, argv, pargc, pargv)
 		if (new_argc == max_new_argc)
 		{
 		    max_new_argc *= 2;
-		    new_argv = xrealloc (new_argv, max_new_argc * sizeof (char *));
+		    new_argv = xrealloc (new_argv,
+					 max_new_argc * sizeof (char *));
 		}
 	    }
 	    else
@@ -865,7 +863,8 @@ expand_wild (argc, argv, pargc, pargv)
 		    if (new_argc == max_new_argc)
 		    {
 			max_new_argc *= 2;
-			new_argv = xrealloc (new_argv, max_new_argc * sizeof (char *));
+			new_argv = xrealloc (new_argv,
+					     max_new_argc * sizeof (char *));
 		    }
 		}
 
@@ -888,6 +887,8 @@ expand_wild (argc, argv, pargc, pargv)
     *pargc = new_argc;
     *pargv = new_argv;
 }
+
+
 
 /* Change drive and directory to path DIR.  */
 
@@ -941,6 +942,3 @@ os2_chdir (const char *Dir)
     /* Now we have a path without a drive left. Make it the current dir */
     return chdir (Dir);
 }
-
-
-
