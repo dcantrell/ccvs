@@ -23327,8 +23327,6 @@ line5"
 
 
 	rcs6)
-	  # FIXCVS - The following comment should apply after this is fixed:
-	  #
 	  # Test that CVS notices a specific type of corruption in the RCS
 	  # archive.  In the past, this type of corruption had turned up after
 	  # a user ineptly attempted to delete a revision from an arcvhive 
@@ -23344,19 +23342,9 @@ line5"
 	  # Populate it.
 	  echo some words >afile
 	  dotest rcs6-init-3 "$testcvs -Q add afile"
-	  dotest rcs6-init-4 "$testcvs -Q ci -mnewfile afile" \
-"RCS file: $CVSROOT_DIRNAME/rcs6/afile,v
-done
-Checking in afile;
-$CVSROOT_DIRNAME/rcs6/afile,v  <--  afile
-initial revision: 1\.1
-done"
+	  dotest rcs6-init-4 "$testcvs -Q ci -mnewfile afile"
 	  echo more words >>afile
-	  dotest rcs6-init-5 "$testcvs -Q ci -mrev2 afile" \
-"Checking in afile;
-$CVSROOT_DIRNAME/rcs6/afile,v  <--  afile
-new revision: 1\.2; previous revision: 1\.1
-done"
+	  dotest rcs6-init-5 "$testcvs -Q ci -mrev2 afile"
 
 	  # Corrupt the archive.
 	  sed -e '8,12d' \
@@ -23364,36 +23352,19 @@ done"
 	      <$CVSROOT_DIRNAME/rcs6/afile,v \
 	      >$CVSROOT_DIRNAME/rcs6/cfile,v
 
-	  # These worked.
-	  dotest rcs6-1 "$testcvs -q up" \
-"U cfile"
-	  dotest rcs6-2 "$testcvs -q tag current" \
-"T afile
-T cfile"
+	  # Update used to work.
+	  dotest_fail rcs6-1 "$testcvs -q up" \
+"$SPROG \[update aborted\]: Expected head revision 1\.1, found 1\.2\."
 
-	  # This hosed the archive further without any warnings.
-	  echo even more words >>cfile
-	  dotest rcs6-3 "$testcvs ci -mhose-it cfile" \
-"Checking in cfile;
-$CVSROOT_DIRNAME/rcs6/cfile,v  <--  cfile
-new revision: 1\.2; previous revision: 1\.1
-done"
+	  # Then a commit hosed the archive further without any warnings.
+	  # Updating to an old revision (e.g. 1.1) would have reported the
+	  # corruption.  A second commit would have deleted data from the
+	  # file.
 
-	  # Can still tag.
-	  dotest rcs6-4 "$testcvs -q tag -F current" "T cfile"
-
-	  # This finally reports the corruption.
-	  dotest_fail rcs6-5 "$testcvs -q up -r1.1 cfile" \
-"$SPROG \[update aborted\]: invalid change text in $CVSROOT_DIRNAME/rcs6/cfile,v"
-
-	  if $keep; then
-	    echo Keeping $TESTDIR and exiting due to --keep
-	    exit 0
-	  fi
-
+	  dokeep
 	  cd ../../..
 	  rm -r rcs6
-	  rm -rf $CVSROOT_DIRNAME/rcs6
+	  modify_repo rm -rf $CVSROOT_DIRNAME/rcs6
 	  ;;
 
 

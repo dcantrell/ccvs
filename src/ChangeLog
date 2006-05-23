@@ -1,5 +1,9 @@
 2006-05-22  Derek Price  <derek@ximbiot.com>
 
+	* rcs.c (RCS_reparsercsfile, RCS_fully_parse, RCS_checkout, RCS_deltas,
+	RCS_getdeltatext, RCS_copydeltas): Verify input revision numbers.
+	(rcs6): Update to compensate.
+
 	* sanity.sh (rcs6): New test.
 
 2006-05-22  Derek Price  <derek@ximbiot.com>
