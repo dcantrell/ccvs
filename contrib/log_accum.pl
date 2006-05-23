@@ -61,6 +61,11 @@
 # - do not perform a diff if a file is added or removed
 # Derek Price (2006-05-08):
 # - Perform the diff if added or removed unless -E is specified.
+# - Accept and process config files.
+# - Send one diff per file when requested.
+# - Tidy and perform some performance optimization.
+# - Format output.
+# - Use short cvsweb URLs.
 
 use strict;
 
@@ -123,109 +128,6 @@ my $debug;
 # Subroutines
 #
 ############################################################
-
-# FIXME: Temporarily disabled.
-#
-# do an 'cvs -Qn status' on each file in the arguments, and extract info.
-#
-#sub change_summary {
-#    my ($out, $toplevel, $module, $oldrev, $newrev, @filenames) = @_;
-#    my ($file, $rcsfile, $line, $vhost);
-#
-#    while (@filenames) {
-#        $file = shift @filenames;
-#
-#        if ("$file" eq "") {
-#            next;
-#        }
-#
-#        my $delta = "";
-#        $rcsfile = "$module/$file";
-#
-#        if ($oldrev->{$file}) {
-#            open(RCS, "-|") || exec "$CVSBIN/cvs", '-Qn', 'log',
-#				    "-r" . $newrev->{$file},
-#				    "--", $file;
-#            while (<RCS>) {
-#                if (/^date:.*lines:([^;]+);.*/) {
-#                    $delta = $1;
-#                    last;
-#                }
-#            }
-#            close(RCS);
-#        }
-#
-#        my $diff = "\n\n";
-#
-#	if ($SEND_URL eq "true")
-#        {
-#	    # FIXME: Store this in a separate list.
-#
-#	    $diff = "$CVSWEB_SCHEME://$CVSWEB_DOMAIN";
-#	    $diff .= ":$CVSWEB_PORT" unless $CVSWEB_PORT eq "80";
-#	    $diff .= "/$CVSWEB_URI/$toplevel/$module/$file";
-#        }
-#
-#        #
-#        # If this is a binary file, don't try to report a diff; not only is
-#        # it meaningless, but it also screws up some mailers.  We rely on
-#        # Perl's 'is this binary' algorithm; it's pretty good.  But not
-#        # perfect.
-#        #
-#        if ($file =~ /\.(?:pdf|gif|jpg|mpg)$/i or -B $file) {
-#          if ($SEND_URL eq "true")
-#	  {
-#            $diff .= "&pathrev=" . $newrev->{$file};
-#	    $diff .= "&content-type=application/octet-stream\n\n";
-#          }
-#	  $diff .= "\t[Binary file]\n\n" if $SEND_DIFF eq "true";
-#        }
-#        else {
-#            #
-#            # Get the differences between this and the previous revision,
-#            # being aware that new files always have revision '1.1' and
-#            # new branches always end in '.n.1'.
-#            #
-#            if ($SEND_URL eq "true") {
-#              if (!$oldrev->{$file} || !$newrev->{$file}) {
-#                $diff .= "&rev=" . $oldrev->{$file};
-#		$diff .= "&content-type=text/x-cvsweb-markup\n\n";
-#              } else {
-#                $diff .= "&r1=" . $oldrev->{$file};
-#		$diff .= "&r2=" . $newrev->{$file}. "\n\n";
-#              }
-#	    }
-#
-#            if ($SEND_DIFF eq "true"
-#		and ($SUPPRESS_DIFFS_AGAINST_EMPTIES eq "false"
-#		     or ($oldrev->{$file} and $newrev->{$file}))) {
-#	      # Depends on user options, so let's remove that:
-#              #$diff .= "(In the diff below, changes in quantity "
-#              #      . "of whitespace are not shown.)\n\n";
-#              open(DIFF, "-|")
-#                || exec "$CVSBIN/cvs", '-Qn', 'diff', '-N', @diffargs,
-#                "-r" . $oldrev->{$file}, "-r" . $newrev->{$file}, '--', $file;
-#
-#              while (<DIFF>) {
-#                $diff .= $_;
-#              }
-#              close(DIFF);
-#
-#              $diff .= "\n\n";
-#           }
-#        }
-#
-#        append_line $out, sprintf "%-9s%-12s%s%s",
-#				  $newrev->{$file} ? $newrev->{$file} : "dead",
-#				  $delta, $rcsfile, $diff;
-#    }
-#}
-
-
-
-#######              ######
-#######   REVIEWED   ######
-#######              ######
 
 
 
@@ -1012,6 +914,7 @@ sub compile_subject
 
 
 
+# Blindly read the lines of a file into an array, removing any trailing EOLs.
 sub read_logfile
 {
     my ($filename) = @_;
@@ -1046,7 +949,16 @@ sub push_formatted_lists
 
 
 
-sub append_to_file
+# Append a line to a file, like:
+#
+#    $dir/ $file[0] $file[1] $file[2]...
+#
+# It is assumed that there is no trailing / on $dir, initially.  Otherwise,
+# $dir is normalized before being written (./ indirections are removed and
+# consecutive /s are condensed).
+#
+# Noop if @files is empty.
+sub append_files_to_file
 {
     my ($filename, $dir, @files) = @_;
 
@@ -1196,6 +1108,8 @@ sub build_diffs
 
 
 
+# Blindly dump @lines into a file.  Noop if @lines is empty.  Otherwise,
+# creates the file, overwriting existing files.
 sub write_file
 {
     my ($filename, @lines) = @_;
@@ -1209,6 +1123,8 @@ sub write_file
 
 
 
+# Blindly append @lines into a file.  Noop if @lines is empty.  Otherwise,
+# appends to existing files, creating the file when needed.
 sub append_file
 {
     my ($filename, @lines) = @_;
@@ -1222,6 +1138,10 @@ sub append_file
 
 
 
+# Build a message body describing changes to files.  Returns an appropriate
+# subject, the message body, a reference to the log message, which is also
+# already in the message body, and the diff, which will not already be in the
+# message body.
 sub build_message_body
 {
     my ($config, $toplevel, $module, $branch, $changed_file, $added_file,
@@ -1288,6 +1208,8 @@ sub cleanup_tmpfiles
 
 
 
+# Blindly read the first line from a file, returning it without any trailing
+# EOL.
 sub read_line
 {
     my ($filename) = @_;
@@ -1443,10 +1365,10 @@ sub main
     # Spit out the information gathered in this pass.
     #
     write_file "$LOG_BASE.$i", @$log_lines if !-e "$LOG_BASE.$i" or !@text;
-    append_to_file "$BRANCH_BASE.$i",  $module, @$branch_lines;
-    append_to_file "$CHANGED_BASE.$i", $module, @$changed_files;
-    append_to_file "$ADDED_BASE.$i",   $module, @$added_files;
-    append_to_file "$REMOVED_BASE.$i", $module, @$removed_files;
+    append_files_to_file "$BRANCH_BASE.$i",  $module, @$branch_lines;
+    append_files_to_file "$CHANGED_BASE.$i", $module, @$changed_files;
+    append_files_to_file "$ADDED_BASE.$i",   $module, @$added_files;
+    append_files_to_file "$REMOVED_BASE.$i", $module, @$removed_files;
 
     if ($config->{'url'} || $config->{'send-diff'})
     {
