@@ -80,10 +80,10 @@ force_copy_file (const char *from, const char *to)
 	{
 	    char buf[BUFSIZ];
 	    int n;
-	    
-	    for (;;) 
+
+	    for (;;)
 	    {
-		n = read (fdin, buf, sizeof(buf));
+		n = read (fdin, buf, sizeof (buf));
 		if (n == -1)
 		{
 #ifdef EINTR
@@ -92,16 +92,15 @@ force_copy_file (const char *from, const char *to)
 #endif
 		    error (1, errno, "cannot read file %s for copying", from);
 		}
-		else if (n == 0) 
+		else if (n == 0)
 		    break;
-		
-		if (write(fdout, buf, n) != n) {
+
+		if (write (fdout, buf, n) != n)
 		    error (1, errno, "cannot write file %s for copying", to);
-		}
 	    }
 	}
 
-	if (close (fdin) < 0) 
+	if (close (fdin) < 0)
 	    error (0, errno, "cannot close %s", from);
 	if (close (fdout) < 0)
 	    error (1, errno, "cannot close %s", to);
@@ -123,7 +122,10 @@ void
 copy_file (const char *from, const char *to)
 {
     TRACE (TRACE_FUNCTION, "copy (%s, %s)", from, to);
-    if (noexec) return;
+
+    if (noexec)
+	return;
+
     force_copy_file (from, to);
 }
 
@@ -243,13 +245,13 @@ isaccessible (const char *file, const int mode)
     int gmask = 0;
     int omask = 0;
     int uid, mask;
-    
-    if (stat (file, &sb)== -1)
+
+    if (stat (file, &sb) == -1)
 	return false;
     if (mode == F_OK)
 	return true;
 
-    uid = geteuid();
+    uid = geteuid ();
     if (uid == 0)		/* superuser */
     {
 	if (!(mode & X_OK) || (sb.st_mode & (S_IXUSR|S_IXGRP|S_IXOTH)))
@@ -258,7 +260,7 @@ isaccessible (const char *file, const int mode)
 	errno = EACCES;
 	return false;
     }
-	
+
     if (mode & R_OK)
     {
 	umask |= S_IRUSR;
@@ -278,7 +280,7 @@ isaccessible (const char *file, const int mode)
 	omask |= S_IXOTH;
     }
 
-    mask = sb.st_uid == uid ? umask : sb.st_gid == getegid() ? gmask : omask;
+    mask = sb.st_uid == uid ? umask : sb.st_gid == getegid () ? gmask : omask;
     if ((sb.st_mode & mask) == mask)
 	return true;
     errno = EACCES;
@@ -439,9 +441,9 @@ unlink_file (const char *f)
     TRACE (TRACE_FUNCTION, "unlink_file(%s)", f);
 
     if (noexec)
-	return (0);
+	return 0;
 
-    return (CVS_UNLINK (f));
+    return CVS_UNLINK (f);
 }
 
 
@@ -528,7 +530,7 @@ deep_remove_dir (const char *path)
 		/* See comment in unlink_file_dir explanation of why we use
 		   isdir instead of just calling unlink and checking the
 		   status.  */
-		if (isdir (buf)) 
+		if (isdir (buf))
 		{
 		    if (deep_remove_dir (buf))
 		    {
@@ -579,7 +581,7 @@ block_read (int fd, char *buf, size_t nchars)
     char *bp = buf;
     size_t nread;
 
-    do 
+    do
     {
 	nread = read (fd, bp, nchars);
 	if (nread == (size_t)-1)
@@ -592,7 +594,7 @@ block_read (int fd, char *buf, size_t nchars)
 	}
 
 	if (nread == 0)
-	    break; 
+	    break;
 
 	bp += nread;
 	nchars -= nread;
@@ -601,7 +603,7 @@ block_read (int fd, char *buf, size_t nchars)
     return bp - buf;
 } 
 
-    
+
 /*
  * Compare "file1" to "file2". Return non-zero if they don't compare exactly.
  * If FILE1 and FILE2 are special files, compare their salient characteristics
@@ -659,7 +661,7 @@ xcmp (const char *file1, const char *file2)
     if ((fd2 = open (file2, O_RDONLY)) < 0)
 	error (1, errno, "cannot open file %s for comparing", file2);
 
-    /* A generic file compare routine might compare st_dev & st_ino here 
+    /* A generic file compare routine might compare st_dev & st_ino here
        to see if the two files being compared are actually the same file.
        But that won't happen in CVS, so we won't bother. */
 
@@ -678,7 +680,7 @@ xcmp (const char *file1, const char *file2)
 	buf1 = xmalloc (buf_size);
 	buf2 = xmalloc (buf_size);
 
-	do 
+	do
 	{
 	    read1 = block_read (fd1, buf1, buf_size);
 	    if (read1 == (size_t)-1)
@@ -690,16 +692,16 @@ xcmp (const char *file1, const char *file2)
 
 	    /* assert (read1 == read2); */
 
-	    ret = memcmp(buf1, buf2, read1);
+	    ret = memcmp (buf1, buf2, read1);
 	} while (ret == 0 && read1 == buf_size);
 
 	free (buf1);
 	free (buf2);
     }
-	
+
     (void) close (fd1);
     (void) close (fd2);
-    return (ret);
+    return ret;
 }
 
 /* Generate a unique temporary filename.  Returns a pointer to a newly
@@ -896,7 +898,8 @@ expand_wild (int argc, char **argv, int *pargc, char ***pargv)
 {
     int i;
     assert (argv || !argc);
-    if (size_overflow_p (xtimes (argc, sizeof (char *)))) {
+    if (size_overflow_p (xtimes (argc, sizeof (char *))))
+    {
 	*pargc = 0;
 	*pargv = NULL;
 	error (0, 0, "expand_wild: too many arguments");
