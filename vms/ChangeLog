@@ -1,4 +1,23 @@
-2006-03-19  Mark D. Baushke  <mdb@juniper.net>
+2006-05-23  Mark D. Baushke  <mdb@gnu.org>
+
+	* filesubr.c: Reformat according to HACKING standards.
+	(isdir, isfile, isreadable, iswritable, isaccessible): Return bool
+	instead of int to match prototypes.
+	(xresolvepath): Remove obsolete funciton.
+	(islink): Use ssize_t instead of int to match prototype and return
+	the sb.st_size if it is a link.
+	(xchmod): Change writable argument to bool to match prototype.
+	(copy_file, xchmod, rename_file, unlink_file): Use TRACE macro
+	instead of open code.
+	(copy_file, isdir, islink, isfile, isreadable, iswritable,
+	isaccessible, make_directory, make_directories, mkdir_if_needed,
+	xchmod, rename_file, unlink_file, unlink_file_dir,
+	deep_remove_dir, block_read, xcmp, cvs_temp_name, cvs_temp_file,
+	last_component, get_homedir, strcat_filename_onto_homedir,
+	expand_wild): Use C89 function declaration.
+	(unlink_file_dir): Fix problem with trace on the server.
+
+2006-03-19  Mark D. Baushke  <mdb@gnu.org>
 
 	* Makefile.in: Regeneated.
 
