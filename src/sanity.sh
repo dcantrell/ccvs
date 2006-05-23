@@ -20628,6 +20628,8 @@ line5"
 
 
 	rcs6)
+	  # FIXCVS - The following comment should apply after this is fixed:
+	  #
 	  # Test that CVS notices a specific type of corruption in the RCS
 	  # archive.  In the past, this type of corruption had turned up after
 	  # a user ineptly attempted to delete a revision from an arcvhive 
