@@ -1,3 +1,9 @@
+2006-05-23  Derek Price  <derek@ximbiot.com>
+
+	* log_accum.pl: Remove old FIXME.  Improve commenting.
+	(append_to_file): Rename to...
+	(append_files_to_file): ...this.
+
 2006-05-22  Derek Price  <derek@ximbiot.com>
 
 	* log_accum.pl (mail_separate_diffs): Don't use RCS Id key in example.
