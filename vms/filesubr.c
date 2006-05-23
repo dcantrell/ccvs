@@ -19,15 +19,13 @@
 #include "cvs.h"
 #include <assert.h>
 
-static int deep_remove_dir( const char *path );
+static int deep_remove_dir (const char *path);
 
 /*
  * Copies "from" to "to".
  */
 void
-copy_file (from_file, to_file)
-    const char *from_file;
-    const char *to_file;
+copy_file (const char *from_file, const char *to_file)
 {
     char from[PATH_MAX], to[PATH_MAX];
     struct stat sb;
@@ -37,23 +35,18 @@ copy_file (from_file, to_file)
     /* Prefer local relative paths to files at expense of logical name
        access to files. */
 
-    if (isabsolute(from_file))
-      strcpy(from, from_file);
+    if (isabsolute (from_file))
+      strcpy (from, from_file);
     else
-      sprintf(from, "./%s", from_file);
+      sprintf (from, "./%s", from_file);
 
-    if (isabsolute(to_file))
-      strcpy(to, to_file);
+    if (isabsolute (to_file))
+      strcpy (to, to_file);
     else
-      sprintf(to, "./%s", to_file);
+      sprintf (to, "./%s", to_file);
 
-    if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> copy(%s,%s)\n",
-			(server_active) ? 'S' : ' ', from, to);
-#else
-	(void) fprintf (stderr, "-> copy(%s,%s)\n", from, to);
-#endif
+    TRACE (TRACE_FUNCTION, "copy (%s, %s)", from, to);
+
     if (noexec)
 	return;
 
@@ -68,9 +61,9 @@ copy_file (from_file, to_file)
 	char buf[BUFSIZ];
 	int n;
 
-	for (;;) 
+	for (;;)
 	{
-	    n = read (fdin, buf, sizeof(buf));
+	    n = read (fdin, buf, sizeof (buf));
 	    if (n == -1)
 	    {
 #ifdef EINTR
@@ -79,21 +72,20 @@ copy_file (from_file, to_file)
 #endif
 		error (1, errno, "cannot read file %s for copying", from);
 	    }
-            else if (n == 0) 
+            else if (n == 0)
 		break;
-  
-	    if (write(fdout, buf, n) != n) {
+
+	    if (write (fdout, buf, n) != n)
 		error (1, errno, "cannot write file %s for copying", to);
-	    }
 	}
 
 #ifdef HAVE_FSYNC
-	if (fsync (fdout)) 
+	if (fsync (fdout))
 	    error (1, errno, "cannot fsync file %s after copying", to);
 #endif
     }
 
-    if (close (fdin) < 0) 
+    if (close (fdin) < 0)
 	error (0, errno, "cannot close %s", from);
     if (close (fdout) < 0)
 	error (1, errno, "cannot close %s", to);
@@ -112,74 +104,74 @@ copy_file (from_file, to_file)
  * Returns non-zero if the argument file is a directory, or is a symbolic
  * link which points to a directory.
  */
-int
-isdir (file)
-    const char *file;
+bool
+isdir (const char *file)
 {
     struct stat sb;
 
     if (stat (file, &sb) < 0)
-	return (0);
-    return (S_ISDIR (sb.st_mode));
+	return false;
+    return S_ISDIR (sb.st_mode);
 }
 
 /*
  * Returns non-zero if the argument file is a symbolic link.
  */
-int
-islink (file)
-    const char *file;
+ssize_t
+islink (const char *file)
 {
+    ssize_t retsize = 0;
 #ifdef S_ISLNK
     struct stat sb;
 
-    if (lstat (file, &sb) < 0)
-	return (0);
-    return (S_ISLNK (sb.st_mode));
-#else
-    return (0);
+    if ((lstat (file, &sb) >= 0) && S_ISLNK (sb.st_mode))
+	retsize = sb.st_size;
 #endif
+    return retsize;
 }
 
+
+
 /*
- * Returns non-zero if the argument file exists.
+ * Returns true if the argument file exists.
  */
-int
-isfile (file)
-    const char *file;
+bool
+isfile (const char *file)
 {
-    return isaccessible(file, F_OK);
+    return isaccessible (file, F_OK);
 }
+
+
 
 /*
  * Returns non-zero if the argument file is readable.
  */
-int
-isreadable (file)
-    const char *file;
+bool
+isreadable (const char *file)
 {
-    return isaccessible(file, R_OK);
+    return isaccessible (file, R_OK);
 }
 
+
+
 /*
- * Returns non-zero if the argument file is writable.
+ * Returns true if the argument file is writable.
  */
-int
-iswritable (file)
-    const char *file;
+bool
+iswritable (const char *file)
 {
-    return isaccessible(file, W_OK);
+    return isaccessible (file, W_OK);
 }
 
+
+
 /*
- * Returns non-zero if the argument file is accessable according to
+ * Returns true if the argument file is accessable according to
  * mode.  If compiled with SETXID_SUPPORT also works if cvs has setxid
  * bits set.
  */
-int
-isaccessible (file, mode)
-    const char *file;
-    const int mode;
+bool
+isaccessible (const char *file, const int mode)
 {
 #ifdef SETXID_SUPPORT
     struct stat sb;
@@ -187,21 +179,24 @@ isaccessible (file, mode)
     int gmask = 0;
     int omask = 0;
     int uid;
-    
-    if (stat(file, &sb) == -1)
-	return 0;
-    if (mode == F_OK)
-	return 1;
 
-    uid = geteuid();
+    if (stat (file, &sb) == -1)
+	return false;
+    if (mode == F_OK)
+	return true;
+
+    uid = geteuid ();
     if (uid == 0)		/* superuser */
     {
-	if (mode & X_OK)
-	    return sb.st_mode & (S_IXUSR|S_IXGRP|S_IXOTH);
-	else
-	    return 1;
+	if (!(mode & X_OK) || (sb.st_mode & (S_IXUSR|S_IXGRP|S_IXOTH)))
+	    return true;
+
+#ifdef EACCES
+	errno = EACCES;
+#endif
+	return false;
     }
-	
+
     if (mode & R_OK)
     {
 	umask |= S_IRUSR;
@@ -223,13 +218,13 @@ isaccessible (file, mode)
 
     if (sb.st_uid == uid)
 	return (sb.st_mode & umask) == umask;
-    else if (sb.st_gid == getegid())
+    else if (sb.st_gid == getegid ())
 	return (sb.st_mode & gmask) == gmask;
     else
 	return (sb.st_mode & omask) == omask;
-#else
-    return access(file, mode) == 0;
-#endif
+#else /* !SETXID_SUPPORT */
+    return access (file, mode) == 0;
+#endif /* SETXID_SUPPORT */
 }
 
 
@@ -238,8 +233,7 @@ isaccessible (file, mode)
  * Make a directory and die if it fails
  */
 void
-make_directory (name)
-    const char *name;
+make_directory (const char *name)
 {
     struct stat sb;
 
@@ -254,8 +248,7 @@ make_directory (name)
  * goes wrong.
  */
 void
-make_directories (name)
-    const char *name;
+make_directories (const char *name)
 {
     char *cp;
 
@@ -279,12 +272,13 @@ make_directories (name)
     (void) mkdir (name, 0777);
 }
 
+
+
 /* Create directory NAME if it does not already exist; fatal error for
    other errors.  Returns 0 if directory was created; 1 if it already
    existed.  */
 int
-mkdir_if_needed (name)
-    char *name;
+mkdir_if_needed (char *name)
 {
     if (mkdir (name, 0777) < 0)
     {
@@ -301,14 +295,14 @@ mkdir_if_needed (name)
     return 0;
 }
 
+
+
 /*
  * Change the mode of a file, either adding write permissions, or removing
  * all write permissions.  Either change honors the current umask setting.
  */
 void
-xchmod (fname_file, writable)
-    char *fname_file;
-    int writable;
+xchmod (char *fname_file, bool writable)
 {
     char fname[PATH_MAX];
     struct stat sb;
@@ -317,10 +311,10 @@ xchmod (fname_file, writable)
     /* Prefer local relative paths to files at expense of logical name
        access to files. */
 
-    if (isabsolute(fname_file))
-      strcpy(fname, fname_file);
+    if (isabsolute (fname_file))
+      strcpy (fname, fname_file);
     else
-      sprintf(fname, "./%s", fname_file);
+      sprintf (fname, "./%s", fname_file);
 
     if (stat (fname, &sb) < 0)
     {
@@ -342,13 +336,8 @@ xchmod (fname_file, writable)
 	mode = sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH) & ~oumask;
     }
 
-    if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> chmod(%s,%o)\n",
-			(server_active) ? 'S' : ' ', fname, mode);
-#else
-	(void) fprintf (stderr, "-> chmod(%s,%o)\n", fname, mode);
-#endif
+    TRACE (TRACE_FUNCTION, "chmod(%s,%o)", fname, (unsigned int) mode);
+
     if (noexec)
 	return;
 
@@ -356,36 +345,31 @@ xchmod (fname_file, writable)
 	error (0, errno, "cannot change mode of file %s", fname);
 }
 
+
+
 /*
  * Rename a file and die if it fails
  */
 void
-rename_file (from_file, to_file)
-    const char *from_file;
-    const char *to_file;
+rename_file (const char *from_file, const char *to_file)
 {
     char from[PATH_MAX], to[PATH_MAX];
 
     /* Prefer local relative paths to files at expense of logical name
        access to files. */
 
-    if (isabsolute(from_file))
-      strcpy(from, from_file);
+    if (isabsolute (from_file))
+      strcpy (from, from_file);
     else
-      sprintf(from, "./%s", from_file);
+      sprintf (from, "./%s", from_file);
 
-    if (isabsolute(to_file))
-      strcpy(to, to_file);
+    if (isabsolute (to_file))
+      strcpy (to, to_file);
     else
-      sprintf(to, "./%s", to_file);
+      sprintf (to, "./%s", to_file);
 
-    if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> rename(%s,%s)\n",
-			(server_active) ? 'S' : ' ', from, to);
-#else
-	(void) fprintf (stderr, "-> rename(%s,%s)\n", from, to);
-#endif
+    TRACE (TRACE_FUNCTION, "rename(%s,%s)", from, to);
+
     if (noexec)
 	return;
 
@@ -393,35 +377,33 @@ rename_file (from_file, to_file)
 	error (1, errno, "cannot rename file %s to %s", from, to);
 }
 
+
+
 /*
  * unlink a file, if possible.
  */
 int
-unlink_file (f_file)
-    const char *f_file;
+unlink_file (const char *f_file)
 {
     char f[PATH_MAX];
 
     /* Prefer local relative paths to files at expense of logical name
        access to files. */
 
-    if (isabsolute(f_file))
-      strcpy(f, f_file);
+    if (isabsolute (f_file))
+      strcpy (f, f_file);
     else
-      sprintf(f, "./%s", f_file);
+      sprintf (f, "./%s", f_file);
 
-    if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> unlink(%s)\n",
-			(server_active) ? 'S' : ' ', f);
-#else
-	(void) fprintf (stderr, "-> unlink(%s)\n", f);
-#endif
+    TRACE (TRACE_FUNCTION, "unlink_file(%s)", f);
+
     if (noexec)
 	return (0);
 
-    return (vms_unlink (f));
+    return vms_unlink (f);
 }
+
+
 
 /*
  * Unlink a file or dir, if possible.  If it is a directory do a deep
@@ -429,28 +411,26 @@ unlink_file (f_file)
  * (in which case errno is set).
  */
 int
-unlink_file_dir (f_file)
-    const char *f_file;
+unlink_file_dir (const char *f_file)
 {
     char f[PATH_MAX];
 
     /* Prefer local relative paths to files at expense of logical name
        access to files. */
 
-    if (isabsolute(f_file))
-      strcpy(f, f_file);
+    if (isabsolute (f_file))
+      strcpy (f, f_file);
     else
-      sprintf(f, "./%s", f_file);
+      sprintf (f, "./%s", f_file);
 
-    if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> unlink_file_dir(%s)\n",
-			(server_active) ? 'S' : ' ', f);
-#else
-	(void) fprintf (stderr, "-> unlink_file_dir(%s)\n", f);
-#endif
+    /* This is called by the server parent process in contexts where
+       it is not OK to send output (e.g. after we sent "ok" to the
+       client).  */
+    if (!server_active)
+	TRACE (TRACE_FUNCTION, "unlink_file_dir(%s)", f);
+
     if (noexec)
-	return (0);
+	return 0;
 
     if (vms_unlink (f) != 0)
     {
@@ -476,16 +456,14 @@ unlink_file_dir (f_file)
 /* Remove a directory and everything it contains.  Returns 0 for
  * success, -1 for failure (in which case errno is set).
  */
-
 static int
-deep_remove_dir (path)
-    const char *path;
+deep_remove_dir (const char *path)
 {
     DIR		  *dirp;
     struct dirent *dp;
     char	   buf[PATH_MAX];
 
-    if (rmdir (path) != 0 && (errno == ENOTEMPTY || errno == EEXIST)) 
+    if (rmdir (path) != 0 && (errno == ENOTEMPTY || errno == EEXIST))
     {
 	if ((dirp = CVS_OPENDIR (path)) == NULL)
 	    /* If unable to open the directory return
@@ -533,15 +511,12 @@ deep_remove_dir (path)
    Return the number of characters successfully read.
    The number returned is always NCHARS unless end-of-file or error.  */
 static size_t
-block_read (fd, buf, nchars)
-    int fd;
-    char *buf;
-    size_t nchars;
+block_read (int fd, char *buf, size_t nchars)
 {
     char *bp = buf;
     size_t nread;
 
-    do 
+    do
     {
 	nread = read (fd, bp, nchars);
 	if (nread == (size_t)-1)
@@ -554,23 +529,22 @@ block_read (fd, buf, nchars)
 	}
 
 	if (nread == 0)
-	    break; 
+	    break;
 
 	bp += nread;
 	nchars -= nread;
     } while (nchars != 0);
 
     return bp - buf;
-} 
+}
 
-    
+
+
 /*
  * Compare "file1" to "file2". Return non-zero if they don't compare exactly.
  */
 int
-xcmp (file1_file, file2_file)
-    const char *file1_file;
-    const char *file2_file;
+xcmp (const char *file1_file, const char *file2_file)
 {
     char file1[PATH_MAX], file2[PATH_MAX];
     char *buf1, *buf2;
@@ -581,15 +555,15 @@ xcmp (file1_file, file2_file)
     /* Prefer local relative paths to files at expense of logical name
        access to files. */
 
-    if (isabsolute(file1_file))
-      strcpy(file1, file1_file);
+    if (isabsolute (file1_file))
+      strcpy (file1, file1_file);
     else
-      sprintf(file1, "./%s", file1_file);
+      sprintf (file1, "./%s", file1_file);
 
-    if (isabsolute(file2_file))
-      strcpy(file2, file2_file);
+    if (isabsolute (file2_file))
+      strcpy (file2, file2_file);
     else
-      sprintf(file2, "./%s", file2_file);
+      sprintf (file2, "./%s", file2_file);
 
     if ((fd1 = open (file1, O_RDONLY)) < 0)
 	error (1, errno, "cannot open file %s for comparing", file1);
@@ -600,7 +574,7 @@ xcmp (file1_file, file2_file)
     if (fstat (fd2, &sb2) < 0)
 	error (1, errno, "cannot fstat %s", file2);
 
-    /* A generic file compare routine might compare st_dev & st_ino here 
+    /* A generic file compare routine might compare st_dev & st_ino here
        to see if the two files being compared are actually the same file.
        But that won't happen in CVS, so we won't bother. */
 
@@ -619,7 +593,7 @@ xcmp (file1_file, file2_file)
 	buf1 = xmalloc (buf_size);
 	buf2 = xmalloc (buf_size);
 
-	do 
+	do
 	{
 	    read1 = block_read (fd1, buf1, buf_size);
 	    if (read1 == (size_t)-1)
@@ -631,16 +605,16 @@ xcmp (file1_file, file2_file)
 
 	    assert (read1 == read2);
 
-	    ret = memcmp(buf1, buf2, read1);
+	    ret = memcmp (buf1, buf2, read1);
 	} while (ret == 0 && read1 == buf_size);
 
 	free (buf1);
 	free (buf2);
     }
-	
+
     (void) close (fd1);
     (void) close (fd2);
-    return (ret);
+    return ret;
 }
 
 unsigned char
@@ -733,7 +707,7 @@ fnfold (char *filename)
  * now.
  */
 char *
-cvs_temp_name ()
+cvs_temp_name (void)
 {
     char *fn;
     FILE *fp;
@@ -777,8 +751,8 @@ cvs_temp_name ()
  * NFS locking thing, but until I hear of more problems, I'm not going to
  * bother.
  */
-FILE *cvs_temp_file (filename)
-    char **filename;
+FILE *
+cvs_temp_file (char **filename)
 {
     char *fn;
     FILE *fp;
@@ -805,9 +779,8 @@ FILE *cvs_temp_file (filename)
     if (fd == -1) fp = NULL;
     else if ((fp = CVS_FDOPEN (fd, "w+")) == NULL)
     {
-	/* attempt to close and unlink the file since mkstemp returned sucessfully and
-	 * we believe it's been created and opened
-	 */
+	/* attempt to close and unlink the file since mkstemp returned
+	   sucessfully and we believe it's been created and opened */
  	int save_errno = errno;
 	if (close (fd))
 	    error (0, errno, "Failed to close temporary file %s", fn);
@@ -886,49 +859,9 @@ FILE *cvs_temp_file (filename)
 
 
 
-/* char *
- * xresolvepath ( const char *path )
- *
- * Like xreadlink(), but resolve all links in a path.
- *
- * INPUTS
- *  path	The original path.
- *
- * RETURNS
- *  The path with any symbolic links expanded.
- *
- * ERRORS
- *  This function exits with a fatal error if it fails to read the link for
- *  any reason.
- */
-char *
-xresolvepath ( path )
-    const char *path;
-{
-    char *hardpath;
-    char *owd;
-
-    assert ( isdir ( path ) );
-
-    /* FIXME - If HAVE_READLINK is defined, we should probably walk the path
-     * bit by bit calling xreadlink().
-     */
-
-    owd = xgetwd();
-    if ( CVS_CHDIR ( path ) < 0)
-	error ( 1, errno, "cannot chdir to %s", path );
-    if ( ( hardpath = xgetwd() ) == NULL )
-	error (1, errno, "cannot readlink %s", hardpath);
-    if ( CVS_CHDIR ( owd ) < 0)
-	error ( 1, errno, "cannot chdir to %s", owd );
-    free (owd);
-    return hardpath;
-}
-
 /* Return a pointer into PATH's last component.  */
 const char *
-last_component (path)
-    char *path;
+last_component (char *path)
 {
     char *last = strrchr (path, '/');
 
@@ -938,10 +871,12 @@ last_component (path)
         return path;
 }
 
+
+
 /* Return the home directory.  Returns a pointer to storage
    managed by this function or its callees (currently getenv).  */
 char *
-get_homedir ()
+get_homedir (void)
 {
     return getenv ("HOME");
 }
@@ -958,11 +893,9 @@ get_homedir ()
  * the GPL and the Artistic license - we might be able to use it.
  */
 char *
-strcat_filename_onto_homedir (dir, file)
-    const char *dir;
-    const char *file;
+strcat_filename_onto_homedir (const char *dir, const char *file)
 {
-    char *path = xmalloc (strlen (dir) + strlen(file) + 1);
+    char *path = xmalloc (strlen (dir) + strlen (file) + 1);
     sprintf (path, "%s%s", dir, file);
     return path;
 }
@@ -978,11 +911,7 @@ strcat_filename_onto_homedir (dir, file)
 /* See cvs.h for description.  On VMS this currently does nothing, although
    I think we should be expanding wildcards here.  */
 void
-expand_wild (argc, argv, pargc, pargv)
-    int argc;
-    char **argv;
-    int *pargc;
-    char ***pargv;
+expand_wild (int argc, char **argv, int *pargc, char ***pargv)
 {
     int i;
     *pargc = argc;
@@ -1003,38 +932,44 @@ static char **ArgvList;
 static int  CurArg;
 static int  MaxArgs;
 
-static int ew_no_op (char *fname) {
+static int
+ew_no_op (char *fname)
+{
     (void) fname;   /* Shut the compiler up */
     return 1;       /* Continue */
 }
 
-static int ew_add_file (char *fname) {
+static int
+ew_add_file (char *fname)
+{
     char *lastslash, *firstper;
     int i;
 
-    if (strncmp(fname,CurWorkingDir,strlen(CurWorkingDir)) == 0) {
-        fname += strlen(CurWorkingDir);
-    }
-    lastslash = strrchr(fname,'/');
-    if (!lastslash) {
+    if (strncmp (fname, CurWorkingDir, strlen (CurWorkingDir)) == 0)
+        fname += strlen (CurWorkingDir);
+
+    lastslash = strrchr (fname,'/');
+    if (!lastslash)
         lastslash = fname;
-    }
-    if ((firstper=strchr(lastslash,'.')) != strrchr(lastslash,'.')) {
+
+    if ((firstper=strchr (lastslash,'.')) != strrchr (lastslash,'.'))
+    {
         /* We have two periods -- one is to separate the version off */
-        *strrchr(fname,'.') = '\0';
+        *strrchr (fname,'.') = '\0';
     }
-    if (firstper && firstper[1]=='\0') {
+    if (firstper && firstper[1]=='\0')
         *firstper = '\0';
-    }
+
     /* The following code is to insure that no duplicates appear,
      * because most of the time it will just be a different version
      */
-    for (i=0;  i<CurArg && strcmp(ArgvList[i],fname)!=0;  ++i) {
+    for (i=0; i < CurArg && strcmp (ArgvList[i],fname) != 0; ++i)
+    {
         ;
     }
-    if (i==CurArg && CurArg<MaxArgs) {
-        ArgvList[CurArg++] = xstrdup(fname);
-    }
+    if (i == CurArg && CurArg < MaxArgs)
+        ArgvList[CurArg++] = xstrdup (fname);
+
     return ArgvList[CurArg-1] != 0; /* Stop if we couldn't dup the string */
 }
 
@@ -1044,11 +979,15 @@ static int ew_add_file (char *fname) {
  * currently don't do any multi-threaded programming, so right now these
  * routines are no-ops.
  */
-static void wait_and_protect_globs (void) {
+static void
+wait_and_protect_globs (void)
+{
     return;
 }
 
-static void release_globs (void) {
+static void
+release_globs (void)
+{
     return;
 }
 
@@ -1083,7 +1022,9 @@ static void release_globs (void) {
  *
  *------------------------------------------------------------------------------
  */
-void expand_wild (int argc, char **argv, int *pargc, char ***pargv) {
+void
+expand_wild (int argc, char **argv, int *pargc, char ***pargv)
+{
     int totfiles, filesgotten;
     int i;
     int largc;
@@ -1092,41 +1033,49 @@ void expand_wild (int argc, char **argv, int *pargc, char ***pargv) {
     /* This first loop is to find out AT MOST how big to make the
      * pargv array.
      */
-    for (totfiles=0,i=0;  i<argc;  ++i) {
+    for (totfiles=0, i=0;  i < argc;  ++i)
+    {
         char *arg = argv[i];
 
-        if (arg != 0 && (   strchr(arg,' ') != 0
-                         || strcmp(arg,".") == 0
-                         || strcmp(arg,"..") == 0) ) {
+        if (arg != 0 && (   strchr (arg,' ') != 0
+                         || strcmp (arg,".") == 0
+                         || strcmp (arg,"..") == 0) )
+	{
             ++totfiles;
-        }else if (arg != 0) {
+        }
+	else if (arg != 0)
+	{
             int num;
             char *p = arg;
             /* Handle comma-separated filelists */
-            while ( (p=strchr(p,',')) != 0) {
+            while ((p=strchr (p, ',')) != 0)
+	    {
                 *p = '\0';
                 num = decc$from_vms (arg, ew_no_op, 1);
                 totfiles += num>0 ? num : 1;
                 *p++ = ',';
                 arg = p;
             }
-            if (*arg != '\0') {
+            if (*arg != '\0')
+	    {
                 num = decc$from_vms (arg, ew_no_op, 1);
                 totfiles += num>0 ? num : 1;
             }
         }
     }
     largv = 0;
-    if (totfiles) {
-        largv = xmalloc (sizeof*largv * (totfiles + 1));
+    if (totfiles)
+    {
+        largv = xmalloc (sizeof (*largv) * (totfiles + 1));
     }
     filesgotten = 0;
-    if (largv != 0) {
+    if (largv != 0)
+    {
         int len;
         /* All bits set to zero may not be a NULL ptr */
-        for (i=totfiles;  --i>=0;  ) {
+        for (i=totfiles;  --i>=0;  )
             largv[i] = 0;
-        }
+
         largv[totfiles] = 0;
 
         wait_and_protect_globs ();
@@ -1135,59 +1084,72 @@ void expand_wild (int argc, char **argv, int *pargc, char ***pargv) {
         /*--- get back Unix-style path names ---*/
         (void) getcwd (CurWorkingDir, sizeof CurWorkingDir - 1, 0);
         len = strlen (CurWorkingDir);
-        if (   len > 0 && CurWorkingDir[len-1] != '/') {
+        if (len > 0 && CurWorkingDir[len-1] != '/')
+	{
             (void) strcat (CurWorkingDir, "/");
         }
         CurArg = 0;
         ArgvList = largv;
         MaxArgs = totfiles + 1;
 
-        for (i=0;  i<argc;  ++i) {
+        for (i=0;  i<argc;  ++i)
+	{
             char *arg = argv[i];
 
-            if (arg != 0 && (   strchr(arg,' ') != 0
-                             || strcmp(arg,".") == 0
-                             || strcmp(arg,"..") == 0) ) {
-                if (CurArg < MaxArgs) {
-                    ArgvList[CurArg++] = xstrdup(arg);
+            if (arg != 0 && (   strchr (arg,' ') != 0
+                             || strcmp (arg,".") == 0
+                             || strcmp (arg,"..") == 0) )
+	    {
+                if (CurArg < MaxArgs)
+		{
+                    ArgvList[CurArg++] = xstrdup (arg);
                 }
                 ++filesgotten;
-            }else if (arg != 0) {
+            }
+	    else if (arg != 0)
+	    {
                 char *p = arg;
                 int num;
                 /* Handle comma-separated filelists */
-                while ( (p=strchr(p,',')) != 0) {
+                while ((p = strchr (p, ',')) != 0)
+		{
                     *p = '\0';
                     num = decc$from_vms (arg, ew_add_file, 1);
-                    if (num <= 0 && CurArg < MaxArgs) {
-                        ArgvList[CurArg++] = xstrdup(arg);
+                    if (num <= 0 && CurArg < MaxArgs)
+		    {
+                        ArgvList[CurArg++] = xstrdup (arg);
                     }
                     filesgotten += num>0 ? num : 1;
                     *p++ = ',';
                     arg = p;
                 }
-                if (*arg != '\0') {
+                if (*arg != '\0')
+		{
                     num = decc$from_vms (arg, ew_add_file, 1);
-                    if (num <= 0 && CurArg < MaxArgs) {
-                        ArgvList[CurArg++] = xstrdup(arg);
+                    if (num <= 0 && CurArg < MaxArgs)
+		    {
+                        ArgvList[CurArg++] = xstrdup (arg);
                     }
-                    filesgotten += num>0 ? num : 1;
+                    filesgotten += (num > 0) ? num : 1;
                 }
             }
         }
-        if (filesgotten != totfiles) {
+        if (filesgotten != totfiles)
+	{
             /*--- Files must have been created/deleted here ---*/;
         }
         filesgotten = CurArg;
 
-        release_globs();
+        release_globs ();
     }
-    if (!largv) {
-        (*pargv) = xmalloc (sizeof(char *));
-        if ((*pargv) != 0) {
+    if (!largv)
+    {
+        (*pargv) = xmalloc (sizeof (char *));
+        if ((*pargv) != 0)
             *(*pargv) = 0;
-        }
-    }else {
+    }
+    else
+    {
         (*pargv) = largv;
     }
     (*pargc) = largv ? filesgotten : 0;
