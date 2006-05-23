@@ -85,8 +85,9 @@ rm -f maint-aux/gnulib-filelist.tmp maint-aux/gnulib-filelist.new \
       maint-aux/gnulib-modules.last maint-aux/gnulib-modules.txt
 exit $status' EXIT
 
-# Do cleanup on CTRL-C.
-trap 'exit $?' SIGINT
+# Do cleanup on CTRL-C (SIGINT is signal 2 - Solaris 9 doesn't like the
+# symbolic name).
+trap 'exit $?' 2
 	
 # Prevent lib/Makefile.am from being overwritten.
 mv lib/Makefile.am lib/Makefile.am.save

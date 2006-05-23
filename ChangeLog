@@ -1,3 +1,7 @@
+2006-05-22  Derek Price  <derek@ximbiot.com>
+
+	* maint-aux/gnulib-update: s/SIGINT/2/ for Solaris 9.
+
 2006-05-22  Mark D. Baushke  <mdb@gnu.org>
 
 	* configure: Regenerated.
