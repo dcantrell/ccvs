@@ -46,9 +46,13 @@ int parse_signature (struct buffer *bpin, struct openpgp_signature *spout);
 void set_openpgp_textmode (const char *textmode);
 const char *get_openpgp_textmode (void);
 
+# define gpg_keyid2string(k) \
+	 Xasprintf ("0x%lx", (unsigned long)((k) & 0xFFFFFFFF))
+
 # ifdef HAVE_LONG_LONG
-#   define gpg_keyid2string(k)	Xasprintf ("0x%llx", (unsigned long long)(k))
+#   define gpg_keyid2longstring(k) \
+	   Xasprintf ("0x%llx", (unsigned long long)(k))
 # else
-char *gpg_keyid2string (uint64_t keyid);
+char *gpg_keyid2longstring (uint64_t keyid);
 # endif
 #endif /* GPG_H */

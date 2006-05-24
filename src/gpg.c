@@ -805,7 +805,7 @@ get_openpgp_textmode (void)
 
 #ifndef HAVE_LONG_LONG
 char *
-gpg_keyid2string (uint64_t keyid)
+gpg_keyid2longstring (uint64_t keyid)
 {
     if (!(keyid >> 32))
 	return Xasprintf ("0x%lx", (unsigned long)keyid);

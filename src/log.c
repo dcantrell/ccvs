@@ -1708,9 +1708,9 @@ log_version (struct log_data *log_data, struct revlist *revlist, RCSNode *rcs,
 	{
 	    char *hexsig;
 	    cvs_output_tagged ("openpgp-keyid-header",
-			       "OpenPGP signature using key ID 0x");
+			       "OpenPGP signature using key ID ");
 	    /* GnuPG truncates this too.  */
-	    hexsig = Xasprintf ("%lx", (unsigned long)(sig.keyid & 0xFFFFFFFF));
+	    hexsig = gpg_keyid2string (sig.keyid);
 	    cvs_output_tagged ("openpgp-keyid", hexsig);
 	    free (hexsig);
 	    cvs_output_tagged ("openpgp-keyid-footer", ";");
