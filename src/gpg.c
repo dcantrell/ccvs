@@ -800,3 +800,18 @@ get_openpgp_textmode (void)
     if (tmp && !strlen (tmp)) return NULL;
     /* else */ return tmp;
 }
+
+
+
+#ifndef HAVE_LONG_LONG
+char *
+gpg_keyid2string (uint64_t keyid)
+{
+    if (!(keyid >> 32))
+	return Xasprintf ("0x%lx", (unsigned long)keyid);
+    /* else */
+    return Xasprintf ("0x%lx%lx",
+		      (unsigned long)(keyid >> 32),
+		      (unsigned long)(keyid & 0xFFFFFFFF));
+}
+#endif /* !HAVE_LONG_LONG */

@@ -4936,8 +4936,8 @@ RCS_delete_openpgp_signatures (struct file_info *finfo, const char *rev,
     bool found = false;
     int rc;
 
-    TRACE (TRACE_FUNCTION, "RCS_delete_openpgp_signatures (%s, %s, %llx)",
-	   finfo->fullname, rev, (unsigned long long)keyid);
+    TRACE (TRACE_FUNCTION, "RCS_delete_openpgp_signatures (%s, %s, 0x%lx)",
+	   finfo->fullname, rev, (unsigned long) keyid);
 
     if (finfo->rcs->flags & PARTIAL)
 	RCS_reparsercsfile (finfo->rcs, NULL, NULL);
@@ -4977,8 +4977,13 @@ RCS_delete_openpgp_signatures (struct file_info *finfo, const char *rev,
      */
     while (!(rc = parse_signature (membuf, &sig)))
     {
-	char *hexid1 = Xasprintf ("0x%llx", (unsigned long long) keyid);
-	char *hexid2 = Xasprintf ("0x%llx", (unsigned long long) sig.keyid);
+	char *hexid1;
+	char *hexid2;
+	if (trace >= TRACE_DATA)
+	{
+	    hexid1 = Xasprintf ("0x%lx", (unsigned long) keyid);
+	    hexid2 = gpg_keyid2string (sig.keyid);
+	}
 	if ((sig.keyid & 0xFFFFFFFF) == keyid)
 	{
 	    TRACE (TRACE_DATA, "%s is a match for %s", hexid1, hexid2);
@@ -4991,14 +4996,19 @@ RCS_delete_openpgp_signatures (struct file_info *finfo, const char *rev,
 	    memcpy (newsigs + newlen, sig.raw, sig.rawlen);
 	    newlen += sig.rawlen;
 	}
-	free (hexid1);
-	free (hexid2);
+	if (trace >= TRACE_DATA)
+	{
+	    free (hexid1);
+	    free (hexid2);
+	}
 	free (sig.raw);
     }
 
     if (!found)
     {
-	char *hexid = Xasprintf ("0x%llx", (unsigned long long) keyid);
+	char *hexid = Xasprintf ("0x%lx%lx",
+				 (unsigned long)(keyid >> 32),
+				 (unsigned long)(keyid & 0xFFFFFFFF));
 	error (0, 0,
 	       "No signatures with key ID %s found in revision %s of `%s'",
 	       hexid, rev, finfo->fullname);
