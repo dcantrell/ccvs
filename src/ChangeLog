@@ -1,8 +1,9 @@
 2006-05-24  Derek Price  <derek@ximbiot.com>
 
-	* gpg.c (gpg_keyid2string): New function.
-	* gpg.h (gpg_keyid2string): New macro/function.
-	* log.c (log_version): Avoid long long.
+	* gpg.c (gpg_keyid2longstring): New function.
+	* gpg.h (gpg_keyid2string): New macro.
+	(gpg_keyid2longstring): New macro/function.
+	* log.c (log_version): Avoid long long, using new macros/functions.
 	* rcs.c (RCS_delete_openpgp_signatures): Likewise.
 
 2006-05-23  Mark D. Baushke  <mdb@gnu.org>
