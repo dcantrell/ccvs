@@ -1,3 +1,9 @@
+2006-05-24  Larry Jones  <lawrence.jones@ugs.com>
+
+	* sanity.sh: Remove non-required cipher, digest, and compression
+	methods from GPG key preferences to avoid problems on systems that
+	don't support them.
+
 2006-05-24  Derek Price  <derek@ximbiot.com>
 
 	* gpg.c (gpg_keyid2longstring): New function.
