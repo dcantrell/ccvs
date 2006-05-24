@@ -22,7 +22,7 @@
 usage ()
 {
     echo "Usage: `basename $0` --help"
-    echo "Usage: `basename $0` [-eklr] [-f FROM-TEST] [-h HOSTNAME] CVS-TO-TEST [TESTS-TO-RUN...]"
+    echo "Usage: `basename $0` [-eklrv] [-f FROM-TEST] [-h HOSTNAME] CVS-TO-TEST [TESTS-TO-RUN...]"
 }
 
 exit_usage ()
@@ -35,26 +35,27 @@ exit_help ()
 {
     usage
     echo
-    echo "-H|--help	display this text"
+    echo "-H|--help     Display this text."
     echo "-e|--skipfail Treat tests that would otherwise be nonfatally skipped"
     echo "              for reasons like missing tools as failures, exiting"
     echo "              with an error message.  Also treat warnings as"
-    echo "		failures."
-    echo "-f FROM-TEST	run TESTS-TO-RUN, skipping all tests in the list before"
-    echo "		FROM-TEST"
+    echo "              failures."
+    echo "-f FROM-TEST  Run TESTS-TO-RUN, skipping all tests in the list before"
+    echo "              FROM-TEST."
     echo "-h HOSTNAME   Use :ext:HOSTNAME to run remote tests rather than"
     echo "              :fork:.  Implies --remote and assumes that \$TESTDIR"
     echo "              resolves to the same directory on both the client and"
     echo "              the server."
-    echo "-k|--keep	try to keep directories created by individual tests"
-    echo "		around, exiting after the first test which supports"
-    echo "		--keep"
+    echo "-k|--keep     Try to keep directories created by individual tests"
+    echo "              around, exiting after the first test which supports"
+    echo "              --keep."
     echo "-l|--link-root"
-    echo "		test CVS using a symlink to a real CVSROOT"
-    echo "-r|--remote	test remote instead of local cvs"
+    echo "              Test CVS using a symlink to a real CVSROOT."
+    echo "-r|--remote   Test remote instead of local cvs."
+    echo "-v|--verbose  List test names as they are executed."
     echo
-    echo "CVS-TO-TEST	the path to the CVS executable to be tested"
-    echo "TESTS-TO-RUN	the names of the tests to run (defaults to all tests)"
+    echo "CVS-TO-TEST   The path to the CVS executable to be tested."
+    echo "TESTS-TO-RUN  The names of the tests to run (defaults to all tests)."
     exit 2
 }
 
@@ -97,7 +98,8 @@ keep=false
 linkroot=false
 remote=false
 skipfail=false
-while getopts ef:h:Hklr-: option ; do
+verbose=false
+while getopts ef:h:Hklrv-: option ; do
     # convert the long opts to short opts
     if test x$option = x-;  then
 	case "$OPTARG" in
@@ -119,6 +121,10 @@ while getopts ef:h:Hklr-: option ; do
 		;;
 	    s|sk|ski|skip|skipf|skipfa|skipfai|skipfail)
 		option=e
+		OPTARG=
+		;;
+	    v|ve|ver|verb|verbo|verbos|verbose)
+		option=v
 		OPTARG=
 		;;
 	    *)
@@ -156,6 +162,9 @@ while getopts ef:h:Hklr-: option ; do
 	    ;;
 	r)
 	    remote=:
+	    ;;
+	v)
+	    verbose=:
 	    ;;
 	\?)
 	    exit_usage
@@ -207,7 +216,8 @@ echo 'This test should produce no other output than this message, and a final "O
 echo '(Note that the test can take an hour or more to run and periodically stops'
 echo 'for as long as one minute.  Do not assume there is a problem just because'
 echo 'nothing seems to happen for a long time.  If you cannot live without'
-echo "running status, try the command: \`tail -f check.log' from another window.)"
+echo 'running status, use the -v option or try the command:'
+echo "\`tail -f check.log' from another window.)"
 
 # Regexp to match what CVS will call itself in output that it prints.
 # FIXME: we don't properly quote this--if the name contains . we'll
@@ -2078,6 +2088,11 @@ for what in $tests; do
 		continue
 	    fi
 	fi
+
+	if $verbose; then
+	    echo "$what:"
+	fi
+
 	case $what in
 
 	version)
@@ -15708,7 +15723,7 @@ U first-dir/abc'
 	  # Now do it again, after removing the val-tags file created
 	  # by devcom-t1 to force CVS to search the repository
 	  # containing CVS directories.
-	  rm ${CVSROOT_DIRNAME}/CVSROOT/val-tags
+	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/val-tags
 	  mkdir 3
 	  cd 3
 	  dotest devcom-t3 "${testcvs} -q co -rtag first-dir" \
@@ -20826,7 +20841,7 @@ $PROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/CVSROOT"
 
 	  dotest lockfiles-21 "$testcvs -Q tag newtag first-dir"
 
-	  rm $CVSROOT_DIRNAME/CVSROOT/val-tags
+	  rm -f $CVSROOT_DIRNAME/CVSROOT/val-tags
 	  mkdir "$TESTDIR/locks/CVSROOT/#cvs.val-tags.lock"
 	  (sleep 5; rmdir "$TESTDIR/locks/CVSROOT/#cvs.val-tags.lock")&
 	  dotest lockfiles-22 "$testcvs -q up -r newtag first-dir" \
@@ -29354,9 +29369,8 @@ done"
     fi
 
     # Reset val-tags to a pristine state.
-    if test -s $CVSROOT_DIRNAME/CVSROOT/val-tags; then
-       : > $CVSROOT_DIRNAME/CVSROOT/val-tags
-    fi
+    rm -f $CVSROOT_DIRNAME/CVSROOT/val-tags
+
     verify_tmp_empty "post $what"
 
 done # The big loop
