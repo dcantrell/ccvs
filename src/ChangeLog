@@ -1,3 +1,10 @@
+2006-05-24  Derek Price  <derek@ximbiot.com>
+
+	* gpg.c (gpg_keyid2string): New function.
+	* gpg.h (gpg_keyid2string): New macro/function.
+	* log.c (log_version): Avoid long long.
+	* rcs.c (RCS_delete_openpgp_signatures): Likewise.
+
 2006-05-23  Mark D. Baushke  <mdb@gnu.org>
 
 	* filesubr.c: Reformat according to HACKING standards.

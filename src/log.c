@@ -1706,12 +1706,11 @@ log_version (struct log_data *log_data, struct revlist *revlist, RCSNode *rcs,
 
 	while (!(rc = parse_signature (membuf, &sig)))
 	{
-	    /* GnuPG truncates this too.  */
-	    unsigned long long printablesig = sig.keyid & 0xFFFFFFFF;
 	    char *hexsig;
 	    cvs_output_tagged ("openpgp-keyid-header",
 			       "OpenPGP signature using key ID 0x");
-	    hexsig = Xasprintf ("%llx", printablesig);
+	    /* GnuPG truncates this too.  */
+	    hexsig = Xasprintf ("%lx", (unsigned long)(sig.keyid & 0xFFFFFFFF));
 	    cvs_output_tagged ("openpgp-keyid", hexsig);
 	    free (hexsig);
 	    cvs_output_tagged ("openpgp-keyid-footer", ";");
