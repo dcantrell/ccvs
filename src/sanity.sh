@@ -21,7 +21,7 @@
 usage ()
 {
     echo "Usage: `basename $0` --help"
-    echo "Usage: `basename $0` [--eklr] [-c CONFIG-FILE] [-f FROM-TEST] \\"
+    echo "Usage: `basename $0` [--eklrv] [-c CONFIG-FILE] [-f FROM-TEST] \\"
     echo "                 [-h HOSTNAME] [-s CVS-FOR-CVS-SERVER] CVS-TO-TEST \\"
     echo "                 [TESTS-TO-RUN...]"
 }
@@ -36,50 +36,51 @@ exit_help ()
 {
     usage
     echo
-    echo "-H|--help	display this text"
+    echo "-H|--help     Display this text."
     echo "-q            Reduce verbosity."
     echo "-c CONFIG-FILE"
     echo "--config=CONFIG_FILE"
-    echo "		use an alternate test suite config file (defaults to"
-    echo "		\`sanity.config.sh' in the same directory as"
-    echo "		CVS-TO-TEST is found in)"
+    echo "              Use an alternate test suite config file (defaults to"
+    echo "              \`sanity.config.sh' in the same directory as"
+    echo "              CVS-TO-TEST is found in)."
     echo "-e|--skipfail Treat tests that would otherwise be nonfatally skipped"
     echo "              for reasons like missing tools as failures, exiting"
     echo "              with an error message.  Also treat warnings as"
-    echo "		failures."
+    echo "              failures."
     echo "-f FROM-TEST"
     echo "--from-test=FROM-TEST"
-    echo "		run TESTS-TO-RUN, skipping all tests in the list before"
-    echo "		FROM-TEST"
+    echo "              Run TESTS-TO-RUN, skipping all tests in the list before"
+    echo "              FROM-TEST."
     echo "-h HOSTNAME"
     echo "--hostname HOSTNAME"
     echo "              Use :ext:HOSTNAME to run remote tests rather than"
     echo "              :fork:.  Implies --remote and assumes that \$TESTDIR"
     echo "              resolves to the same directory on both the client and"
     echo "              the server."
-    echo "-k|--keep	try to keep directories created by individual tests"
-    echo "		around, exiting after the first test which supports"
-    echo "		--keep"
+    echo "-k|--keep     Try to keep directories created by individual tests"
+    echo "              around, exiting after the first test which supports"
+    echo "              --keep."
     echo "-l|--link-root"
-    echo "		test CVS using a symlink to a real CVSROOT"
+    echo "              Test CVS using a symlink to a real CVSROOT."
     echo "-n|--no-redirect"
-    echo "              test a secondary/primary CVS server (writeproxy)"
+    echo "              Test a secondary/primary CVS server (writeproxy)"
     echo "              configuration with the Redirect response disabled"
     echo "              (implies --proxy)."
-    echo "-p|--proxy	test a secondary/primary CVS server (writeproxy)"
+    echo "-p|--proxy    Test a secondary/primary CVS server (writeproxy)"
     echo "              configuration (implies --remote)."
-    echo "-r|--remote	test client/server, as opposed to local, CVS"
+    echo "-r|--remote   Test client/server, as opposed to local, CVS."
     echo "-s CVS-FOR-CVS-SERVER"
     echo "--server=CVS-FOR-CVS-SERVER"
-    echo "		use CVS-FOR-CVS-SERVER as the path to the CVS SERVER"
-    echo "		executable to be tested (defaults to CVS-TO-TEST and"
-    echo "		implies --remote)"
-    echo "-B|--no-bases suppress use of Base files."
+    echo "              Use CVS-FOR-CVS-SERVER as the path to the CVS SERVER"
+    echo "              executable to be tested (defaults to CVS-TO-TEST and"
+    echo "              implies --remote)."
+    echo "-v|--verbose  List test names as they are executed."
+    echo "-B|--no-bases Suppress use of Base files."
     echo
-    echo "CVS-TO-TEST	the path to the CVS executable to be tested; used as"
-    echo "		the path to the CVS client when CVS-FOR-CVS-SERVER is"
-    echo "		specified"
-    echo "TESTS-TO-RUN	the names of the tests to run (defaults to all tests)"
+    echo "CVS-TO-TEST   The path to the CVS executable to be tested; used as"
+    echo "              the path to the CVS client when CVS-FOR-CVS-SERVER is"
+    echo "              specified."
+    echo "TESTS-TO-RUN  The names of the tests to run (defaults to all tests)."
     exit 2
 }
 
@@ -139,7 +140,8 @@ quiet=false
 remote=false
 servercvs=false
 skipfail=false
-while getopts BHc:ef:h:klnpqrs:-: option ; do
+verbose=false
+while getopts BHc:ef:h:klnpqrs:v-: option ; do
     # convert the long opts to short opts
     if test x$option = x-;  then
 	# remove any argument
@@ -213,6 +215,10 @@ while getopts BHc:ef:h:klnpqrs:-: option ; do
 		option=e
 		OPTARG=
 		;;
+	    v|ve|ver|verb|verbo|verbos|verbose)
+		option=v
+		OPTARG=
+		;;
 	    *)
 		option=\?
 		OPTARG=
@@ -270,6 +276,9 @@ while getopts BHc:ef:h:klnpqrs:-: option ; do
         s)
 	    servercvs="$OPTARG"
 	    remote=:
+	    ;;
+	v)
+	    verbose=:
 	    ;;
 	\?)
 	    exit_usage
@@ -492,7 +501,8 @@ This test should produce no other output than this message, and a final "OK".
 (Note that the test can take an hour or more to run and periodically stops
 for as long as one minute.  Do not assume there is a problem just because
 nothing seems to happen for a long time.  If you cannot live without
-running status, try the command: \`tail -f check.log' from another window.)
+running status, use the -v option or try the command:
+\`tail -f check.log' from another window.)
 EOF
 fi
 
@@ -1872,7 +1882,7 @@ EOF
 
   if $GPG $gpg_seckey_import_opt --import - <<EOF >>$LOGFILE 2>&1
 -----BEGIN PGP PRIVATE KEY BLOCK-----
-Version: GnuPG v1.4.2 (GNU/Linux)
+Version: GnuPG v1.4.3 (BSD/OS)
 
 lQG7BENKukgRBADJERMkgpE7Uo+ZahIZ8rsgnhyiRtn96SQFumeBuclUcRIbT/XK
 2Qt1vvzd/QtunFP+U/V2sZHpt4e4dkXUNMssmTO8bZZgJJnhHkVTzEtMVY+qIfvC
@@ -3143,6 +3153,11 @@ for what in $tests; do
 		continue
 	    fi
 	fi
+
+	if $verbose; then
+	    echo "$what:"
+	fi
+
 	case $what in
 
 	version)
@@ -16756,7 +16771,7 @@ U first-dir/abc'
 	  # Now do it again, after removing the val-tags file created
 	  # by devcom-t1 to force CVS to search the repository
 	  # containing CVS directories.
-	  rm ${CVSROOT_DIRNAME}/CVSROOT/val-tags
+	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/val-tags
 	  mkdir 3
 	  cd 3
 	  dotest devcom-t3 "${testcvs} -q co -rtag first-dir" \
@@ -23569,7 +23584,7 @@ $SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/CVSROOT"
 
 	  dotest lockfiles-21 "$testcvs -Q tag newtag first-dir"
 
-	  rm $CVSROOT_DIRNAME/CVSROOT/val-tags
+	  rm -f $CVSROOT_DIRNAME/CVSROOT/val-tags
 	  mkdir "$TESTDIR/locks/CVSROOT/#cvs.val-tags.lock"
 	  (sleep 5; rmdir "$TESTDIR/locks/CVSROOT/#cvs.val-tags.lock")&
 	  dotest lockfiles-22 "$testcvs -q up -r newtag first-dir" \
@@ -32340,7 +32355,7 @@ ${SPROG} update: Updating second/otherdir"
 	    dotest template-tag-r-1 "${testcvs} -Q add file1" ''
 	    dotest template-tag-r-2 "${testcvs} -Q commit -madd file1"
             dotest template-tag-r-3 "${testcvs} -q tag tag" 'T file1'
-	    rm ${CVSROOT_DIRNAME}/CVSROOT/val-tags
+	    rm -f ${CVSROOT_DIRNAME}/CVSROOT/val-tags
 	    cd ..
 	    rm -fr second
 	    dotest template-tag-r-4 "${testcvs} -Q co -rtag second" ''
@@ -36330,9 +36345,8 @@ You have \[0\] altered files in this repository\."
     fi
 
     # Reset val-tags to a pristine state.
-    if test -s $CVSROOT_DIRNAME/CVSROOT/val-tags; then
-       modify_repo ":" > $CVSROOT_DIRNAME/CVSROOT/val-tags
-    fi
+    modify_repo rm -f $CVSROOT_DIRNAME/CVSROOT/val-tags
+
     verify_tmp_empty "post $what"
 
 done # The big loop
