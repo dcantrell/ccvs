@@ -1,3 +1,8 @@
+2006-05-25  Derek Price  <derek@ximbiot.com>
+
+	* sign.c: Include <inttypes.h>.
+	(sign): Avoid long long.
+
 2006-05-25  Larry Jones  <lawrence.jones@ugs.com>
 
 	* sanity.sh: Add -v|--verbose option to echo test names.  Clean
