@@ -1532,6 +1532,7 @@ serve_sticky (char *arg)
 	if (alloc_pending (80 + strlen (CVSADM_TAG)))
 	    sprintf (pending_error_text, "E cannot write to %s", CVSADM_TAG);
 	pending_error = save_errno;
+	(void) fclose (f);
 	return;
     }
     if (fclose (f) == EOF)
@@ -3959,9 +3960,10 @@ error  \n");
 
     /* OK, sit around getting all the input from the child.  */
     {
-	struct buffer *stdoutbuf;
-	struct buffer *stderrbuf;
-	struct buffer *protocol_inbuf;
+	struct buffer *stdoutbuf = NULL;
+	struct buffer *stderrbuf = NULL;
+	struct buffer *protocol_inbuf = NULL;
+	int err_exit = 0;
 	/* Number of file descriptors to check in select ().  */
 	int num_to_check;
 	int count_needed = 1;
@@ -4011,7 +4013,8 @@ error  \n");
 	{
 	    buf_output0 (buf_to_net, "E close failed\n");
 	    print_error (errno);
-	    goto error_exit;
+	    err_exit = 1;
+	    goto child_finish;
 	}
 	stdout_pipe[1] = -1;
 
@@ -4019,7 +4022,8 @@ error  \n");
 	{
 	    buf_output0 (buf_to_net, "E close failed\n");
 	    print_error (errno);
-	    goto error_exit;
+	    err_exit = 1;
+	    goto child_finish;
 	}
 	stderr_pipe[1] = -1;
 
@@ -4027,7 +4031,8 @@ error  \n");
 	{
 	    buf_output0 (buf_to_net, "E close failed\n");
 	    print_error (errno);
-	    goto error_exit;
+	    err_exit = 1;
+	    goto child_finish;
 	}
 	protocol_pipe[1] = -1;
 
@@ -4036,7 +4041,8 @@ error  \n");
 	{
 	    buf_output0 (buf_to_net, "E close failed\n");
 	    print_error (errno);
-	    goto error_exit;
+	    err_exit = 1;
+	    goto child_finish;
 	}
 	flowcontrol_pipe[0] = -1;
 # endif /* SERVER_FLOWCONTROL */
@@ -4046,7 +4052,8 @@ error  \n");
 	    buf_output0 (buf_to_net, "E close failed\n");
 	    print_error (errno);
 	    dev_null_fd = -1;	/* Do not try to close it again. */
-	    goto error_exit;
+	    err_exit = 1;
+	    goto child_finish;
 	}
 	dev_null_fd = -1;
 
@@ -4133,7 +4140,8 @@ error  \n");
 		{
 		    buf_output0 (buf_to_net, "E select failed\n");
 		    print_error (errno);
-		    goto error_exit;
+		    err_exit = 1;
+		    goto child_finish;
 		}
 	    } while (numfds < 0);
 
@@ -4166,7 +4174,8 @@ error  \n");
 		{
 		    buf_output0 (buf_to_net, "E buf_input_data failed\n");
 		    print_error (status);
-		    goto error_exit;
+		    err_exit = 1;
+		    goto child_finish;
 		}
 
 		/*
@@ -4240,7 +4249,8 @@ error  \n");
 		{
 		    buf_output0 (buf_to_net, "E buf_input_data failed\n");
 		    print_error (status);
-		    goto error_exit;
+		    err_exit = 1;
+		    goto child_finish;
 		}
 
 		/* What should we do with errors?  syslog() them?  */
@@ -4265,7 +4275,8 @@ error  \n");
 		{
 		    buf_output0 (buf_to_net, "E buf_input_data failed\n");
 		    print_error (status);
-		    goto error_exit;
+		    err_exit = 1;
+		    goto child_finish;
 		}
 
 		/* What should we do with errors?  syslog() them?  */
@@ -4345,21 +4356,33 @@ E CVS locks may need cleaning up.\n");
 		command_pid = -1;
 	}
 
+      child_finish:
 	/*
 	 * OK, we've waited for the child.  By now all CVS locks are free
 	 * and it's OK to block on the network.
 	 */
 	set_block (buf_to_net);
 	buf_flush (buf_to_net, 1);
-	buf_shutdown (protocol_inbuf);
-	buf_free (protocol_inbuf);
-	protocol_inbuf = NULL;
-	buf_shutdown (stderrbuf);
-	buf_free (stderrbuf);
-	stderrbuf = NULL;
-	buf_shutdown (stdoutbuf);
-	buf_free (stdoutbuf);
-	stdoutbuf = NULL;
+	if (protocol_inbuf)
+	{
+	    buf_shutdown (protocol_inbuf);
+	    buf_free (protocol_inbuf);
+	    protocol_inbuf = NULL;
+	}
+	if (stderrbuf)
+	{
+	    buf_shutdown (stderrbuf);
+	    buf_free (stderrbuf);
+	    stderrbuf = NULL;
+	}
+	if (stdoutbuf)
+	{
+	    buf_shutdown (stdoutbuf);
+	    buf_free (stdoutbuf);
+	    stdoutbuf = NULL;
+	}
+	if (err_exit)
+	    goto error_exit;
     }
 
     if (errs)

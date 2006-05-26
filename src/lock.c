@@ -609,6 +609,9 @@ lock_exists (const char *repository, const char *filepat, const char *ignore)
 	   repository, filepat, ignore ? ignore : "(null)");
 
     lockdir = lock_name (repository, "");
+
+    assert (lockdir != NULL);
+
     lockdir[strlen (lockdir) - 1] = '\0';   /* remove trailing slash */
 
     do {

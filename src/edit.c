@@ -50,8 +50,10 @@ static bool setting_tcommit;
 static int
 onoff_fileproc (void *callerdat, struct file_info *finfo)
 {
-    fileattr_get0 (finfo->file, "_watched");
+    char *watched = fileattr_get0 (finfo->file, "_watched");
     fileattr_set (finfo->file, "_watched", turning_on ? "" : NULL);
+    if (watched != NULL)
+	free (watched);
     return 0;
 }
 
@@ -63,8 +65,10 @@ onoff_filesdoneproc (void *callerdat, int err, const char *repository,
 {
     if (setting_default)
     {
-	fileattr_get0 (NULL, "_watched");
+	char *watched = fileattr_get0 (NULL, "_watched");
 	fileattr_set (NULL, "_watched", turning_on ? "" : NULL);
+	if (watched != NULL)
+	    free (watched);
     }
     return err;
 }
