@@ -1,5 +1,8 @@
 2006-05-25  Derek Price  <derek@ximbiot.com>
 
+	* rsh-client.c (start_rsh_server): Remove verbose comment attempting to
+	justify the pre-configure-supplied-default of `rsh'.
+
 	* sign.c: Include <inttypes.h>.
 	(sign): Avoid long long.
 

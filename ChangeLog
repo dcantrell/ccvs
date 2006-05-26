@@ -1,3 +1,8 @@
+2006-05-25  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Prefer `remsh' to `rsh' when autodetecting and comment
+	rationale.
+
 2006-05-22  Derek Price  <derek@ximbiot.com>
 
 	* maint-aux/gnulib-update: s/SIGINT/2/ for Solaris 9.
