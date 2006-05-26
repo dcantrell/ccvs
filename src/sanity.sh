@@ -23365,7 +23365,9 @@ line5"
 	  sed -e '8,12d' \
 	      -e 's/^head	1\.2/head	1.1/' \
 	      <$CVSROOT_DIRNAME/rcs6/afile,v \
-	      >$CVSROOT_DIRNAME/rcs6/cfile,v
+	      >$CVSROOT_DIRNAME/rcs6/tmp,v
+	  modify_repo mv $CVSROOT_DIRNAME/rcs6/tmp,v \
+			 $CVSROOT_DIRNAME/rcs6/cfile,v
 
 	  # Update used to work.
 	  dotest_fail rcs6-1 "$testcvs -q up" \
