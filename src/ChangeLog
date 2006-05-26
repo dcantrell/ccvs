@@ -1,6 +1,7 @@
 2006-05-25  Derek Price  <derek@ximbiot.com>
 
-	* client.c (start_rsh_server): Default rsh client to RSH_DFLT.
+	* client.c (start_rsh_server): Default rsh client to RSH_DFLT.  Remove
+	verbose comment attempting to justify the previous default.
 
 2006-05-24  Larry Jones  <lawrence.jones@ugs.com>
 
