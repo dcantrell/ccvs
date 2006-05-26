@@ -27,6 +27,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <getopt.h>
+#include <inttypes.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -628,20 +629,21 @@ sign (int argc, char **argv)
     if (delkey)
     {
 	char *n;
-	long long tmp;
+	long tmp;
 
-	tmp = strtoull (delkey, &n, 0);
+	tmp = strtoul (delkey, &n, 0);
 	if (n == delkey || *n != '\0' || tmp == 0)
 	{
 	    error (0, 0, "invalid key ID `%s'", delkey);
 	    return 1;
 	}
-	if (tmp > UINT32_MAX)
+	if ((sizeof (tmp) > 4 && tmp > UINT32_MAX) || tmp == ULONG_MAX)
 	{
-	    error (0, 0, "invalid key ID `%s'", delkey);
+	    error (0, ERANGE, "key ID (`%s') should fit in 32 bits",
+		   delkey);
 	    return 1;
 	}
-	args.keyid = (uint32_t) tmp;
+	args.keyid = (uint32_t)(tmp & 0xFFFFFFFF);
     }
     else
 	args.keyid = 0;
