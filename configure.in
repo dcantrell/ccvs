@@ -509,8 +509,12 @@ AC_ARG_WITH(
   AC_HELP_STRING(
     [--with-rsh],
     [The default remote shell CVS will use for :ext: transport
-     (default rsh)]), ,
-  [with_rsh="rsh ssh"])
+     (default autodetects)]), ,
+  dnl `remsh' is only useful on HP-UX, where `rsh' is the `restricted shell'
+  dnl and `remsh' is the remote shell, but look for it first since it
+  dnl probably won't exist on any platform where it shouldn't be preferred
+  dnl to `rsh'.
+  [with_rsh="remsh rsh ssh"])
 
 if test no = "$with_rsh"; then
   AC_MSG_WARN([Failed to find usable remote shell. Using 'rsh'.])

@@ -912,7 +912,7 @@ Optional Packages:
   --with-editor           The default text editor CVS should use for log
                           messages (default autoselects)
   --with-rsh              The default remote shell CVS will use for :ext:
-                          transport (default rsh)
+                          transport (default autodetects)
   --with-tmpdir           The temporary directory CVS should use as a default
                           (default autoselects)
   --with-umask            Set the umask CVS will use by default in the
@@ -12610,7 +12610,7 @@ if test "${with_rsh+set}" = set; then
   withval="$with_rsh"
 
 else
-  with_rsh="rsh ssh"
+          with_rsh="remsh rsh ssh"
 fi;
 
 if test no = "$with_rsh"; then

@@ -1,6 +1,7 @@
 2006-05-25  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Accept --with-rsh argument to set RSH_DFLT in config.h.
+	Prefer `remsh' to `rsh' when autodetecting and comment rationale.
 
 2006-04-27  Derek Price  <derek@ximbiot.com>
 
