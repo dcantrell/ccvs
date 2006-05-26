@@ -3045,6 +3045,8 @@ RCS_getdate (rcs, date, force_tag_match)
 	{
 	    char *date_1_1 = vers->date;
 
+	    assert (p->data != NULL);
+
 	    vers = p->data;
 	    if (RCS_datecmp (vers->date, date_1_1) != 0)
 		return xstrdup ("1.1");
@@ -4750,6 +4752,7 @@ RCS_findlock_or_tip (rcs)
     char *user = getcaller();
     Node *lock, *p;
     List *locklist;
+    char *defaultrev = NULL;
 
     /* Find unique delta locked by caller. This code is very similar
        to the code in RCS_unlock -- perhaps it could be abstracted
@@ -4795,7 +4798,10 @@ RCS_findlock_or_tip (rcs)
        those error checks are to make users lock before a checkin, and we do
        that in other ways if at all anyway (e.g. rcslock.pl).  */
 
-    p = findnode (rcs->versions, RCS_getbranch (rcs, rcs->branch, 0));
+    defaultrev = RCS_getbranch (rcs, rcs->branch, 0);
+    p = findnode (rcs->versions, defaultrev);
+    if (defaultrev != NULL)
+	free (defaultrev);
     if (!p)
     {
 	error (0, 0, "RCS file `%s' does not contain its default revision.",

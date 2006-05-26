@@ -1,3 +1,32 @@
+2006-05-26  Mark D. Baushke  <mdb@gnu.org>
+
+	* add.c (add): Do not leak memory.
+	[Fixes NetBSD coverity cid-2199.]
+
+	* edit.c (onoff_fileproc): Do not leak memory.
+	[Fixes NetBSD coverity cid-2201.]
+
+	* edit.c (onoff_filesdoneproc): Do not leak memory.
+	[Fixes NetBSD coverity cid-2202.]
+
+	* lock.c (readers_exist): Add assert (lockdir).
+	[Fixes NetBSD coverity cid-2411.]
+
+	* rcs.c (RCS_findlock_or_tip): Do not leak memory.
+	[Fixes NetBSD coverity cid-2198.]
+
+	* rcs.c (RCS_getdate): Avoid possible NULL dereference.
+	[Fixes NetBSD coverity cid-2412.]
+
+	* server.c (serve_sticky): Do not leak file descriptors.
+	[Fixes NetBSD coverity cid-2197.]
+
+	* server.c (do_cvs_command): Do not leak memory.
+	[Fixes NetBSD coverity cid-2204.]
+
+	* tag.c (add_to_val_tags): Do not leak memory.
+	[Fixes NetBSD coverity cid-2071.]
+
 2006-05-25  Derek Price  <derek@ximbiot.com>
 
 	* client.c (start_rsh_server): Default rsh client to RSH_DFLT.  Remove
