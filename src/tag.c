@@ -1278,6 +1278,8 @@ add_to_val_tags (name)
     if (is_in_val_tags (&db, name))
     {
 	clear_val_tags_lock ();
+	if (db)
+	    dbm_close (db);
 	return;
     }
 
