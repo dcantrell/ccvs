@@ -5699,6 +5699,7 @@ workfile);
 	if (dots == 0)
 	{
 	    tip = xstrdup (rcs->head);
+	    assert (tip != NULL);
 	    if (atoi (tip) != atoi (branch))
 	    {
 		newrev = xrealloc (newrev, strlen (newrev) + 3);
