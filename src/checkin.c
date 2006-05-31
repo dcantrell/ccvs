@@ -76,7 +76,8 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 	       changes is if the file contains RCS keywords.  So we if
 	       we are not expanding RCS keywords, we are done.  */
 
-	    if (strcmp (options, "-V4") == 0) /* upgrade to V5 now */
+	    if (options != NULL
+		&& strcmp (options, "-V4") == 0) /* upgrade to V5 now */
 		options[0] = '\0';
 
 	    /* FIXME: If PreservePermissions is on, RCS_cmp_file is
