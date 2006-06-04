@@ -1,3 +1,7 @@
+2006-06-04  Mark D. Baushke  <mdb@gnu.org>
+
+	* getpass.c, printf-args.c, tempname.c: Update from gnulib.
+
 2006-05-22  Mark D. Baushke  <mdb@gnu.org>
 
 	* nanosleep.c: Update from gnulib.
