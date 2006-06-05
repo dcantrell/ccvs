@@ -1,6 +1,6 @@
 2006-06-05  Derek Price  <derek@ximbiot.com>
 
-	* log_accum.pl: Restore #! @PERL@ -T line.
+	* log_accum.pl: Restore #! @PERL@ -T line.  Print warm fuzzies.
 
 2006-05-23  Derek Price  <derek@ximbiot.com>
 
