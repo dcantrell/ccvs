@@ -657,7 +657,7 @@ sub getuserdata
 
 
 
-sub mail_notification
+sub send_mail
 {
     my ($addr_list, $module, $username, $fullname, $mailfrom,
 	$subject, @text) = @_;
@@ -688,7 +688,21 @@ sub mail_notification
     print MAIL "\n";
     print MAIL join "\n", @text;
 
-    close MAIL or warn "child exited $?";
+    my $status = close MAIL;
+    warn "child exited $?" unless $status;
+    return $status;
+}
+
+
+
+# Wrapper for send_mail that prints a warm fuzzy message.
+sub mail_notification
+{
+    print "Mailing notification to "
+	  . join (", ", @{$_[0]})
+	  . "... ";
+    print "sent.\n" if send_mail @_;
+    # else "warn" should have printed a message.
 }
 
 
@@ -697,6 +711,8 @@ sub mail_separate_diffs
 {
     my ($mail_to, $module, $branch, $username, $fullname, $mailname,
 	$header, @diffs) = @_;
+    my $count = 0;
+    my $errors;
 
     # Sample diff:
 # Index: subdir/subfile3
@@ -710,7 +726,11 @@ sub mail_separate_diffs
 # @@ -1 +1 @@
 # -original line
 # +new line
-      
+
+    print "Mailing diffs to "
+	  . join (", ", @$mail_to)
+	  . "... ";
+
     while (@diffs)
     {
 	my ($subject, @onediff);
@@ -733,9 +753,16 @@ sub mail_separate_diffs
 	} while @diffs and $diffs[0] !~ /^Index: /;
 
 	# Send the curent diff.
-	mail_notification $mail_to, $module, $username, $fullname,
-			  $mailname, $subject, @$header, @onediff;
+	$count++;
+	$errors++ unless
+	    send_mail $mail_to, $module, $username, $fullname,
+		      $mailname, $subject, @$header, @onediff;
     }
+
+    print "$count sent"
+	  . ($errors ? (" ($errors error" . ($errors == 1 ? "" : "s") . ")")
+		     : "")
+	  . ".\n";
 }
 
 
