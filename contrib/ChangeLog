@@ -1,3 +1,7 @@
+2006-06-05  Derek Price  <derek@ximbiot.com>
+
+	* log_accum.pl: Restore #! @PERL@ -T line.
+
 2006-05-23  Derek Price  <derek@ximbiot.com>
 
 	* log_accum.pl: Remove old FIXME.  Improve commenting.
