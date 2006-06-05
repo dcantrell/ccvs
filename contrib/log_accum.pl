@@ -1,4 +1,4 @@
-#! /usr/bin/perl -T
+#! @PERL@ -T
 # -*-Perl-*-
 
 # Copyright (C) 1994-2006 The Free Software Foundation, Inc.
