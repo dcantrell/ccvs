@@ -107,7 +107,7 @@ and under the debugger.  Informative feedback is welcome.
                           | Experimental |
                           `-------------*/
 
-	     /*-------------------------------------------.
-	     | contrib/log_accum.pl temporarily disabled. |
-	     `-------------------------------------------*/
+                     /*-------------------------.
+                     | Sane for full scale use. |
+                     `-------------------------*/
 

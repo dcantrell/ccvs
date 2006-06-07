@@ -1,3 +1,7 @@
+2006-06-07  Derek Price  <derek@ximbiot.com>
+
+	* BUGS: Remove warning about log_accum.pl.
+
 2006-05-25  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Prefer `remsh' to `rsh' when autodetecting and comment
