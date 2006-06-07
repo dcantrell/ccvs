@@ -1,5 +1,6 @@
 2006-06-07  Derek Price  <derek@ximbiot.com>
 
+	* sign.c: #include <limits.h> for ULONG_MAX.
 	* client.c (strto_file_size): Clarify error messages.
 
 2006-06-07  Mark D. Baushke  <mdb@gnu.org>
