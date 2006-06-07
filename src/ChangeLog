@@ -1,3 +1,7 @@
+2006-06-07  Derek Price  <derek@ximbiot.com>
+
+	* client.c (strto_file_size): Clarify error messages.
+
 2006-06-07  Mark D. Baushke  <mdb@gnu.org>
 
 	* modules.c (my_module): Remove unused variable xvalue.
