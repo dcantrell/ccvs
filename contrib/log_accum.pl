@@ -1333,7 +1333,7 @@ sub main
 
     # Exit if specific tag information was requested and this isn't it.
     return 0 if exists $config->{'tag'}
-		&& grep /^\Q$branch_lines->[0]\E$/, @{$config->{'tag'}};
+		&& !grep /^\Q$branch_lines->[0]\E$/, @{$config->{'tag'}};
 
     # Check for imported sources.
     if (($UseNewInfoFmtStrings ? $files->[0] : join " ", @$files)
