@@ -217,7 +217,8 @@ sub set_defaults
 	}
 	for ("mail-to", "diff-arg", "separate-diffs")
 	{
-	    print STDERR "config{$_} => ", join (":", @{$config->{$_}}), "\n";
+	    my @tmp = @{$config->{$_}} if $config->{$_};
+	    print STDERR "config{$_} => ", join (":", @tmp), "\n";
 	}
     }
 }
@@ -489,8 +490,9 @@ sub process_stdin
     while (<STDIN>)
     {
 	chomp;                      # Drop the newline
-	if (/^\s*(Tag|Revision\/Branch):\s*(\w+)/)
+	if (/^\s*(Tag|Revision\/Branch):\s*([a-zA-Z][a-zA-Z0-9_-]*)$/)
 	{
+	    print STDERR "Read $1 `$2' from `$_'" if $debug;
 	    push @branch_lines, $2;
 	    next;
 	}

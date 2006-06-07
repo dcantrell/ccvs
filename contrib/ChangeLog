@@ -1,6 +1,9 @@
 2006-06-07  Derek Price  <derek@ximbiot.com>
 
-	* log_accum.pl: Fix branch filter.
+	* log_accum.pl (set_defaults): Don't dereference undefined value.
+	(process_stdin): Handle dashes in tag names.
+
+	* log_accum.pl (main): Fix branch filter.
 	(Patch from Sylvain Beucler <beuc@beuc.net>.)
 
 2006-06-05  Derek Price  <derek@ximbiot.com>
