@@ -1149,13 +1149,13 @@ strto_file_size (const char *s)
 
     /* Check for errors.  */
     if (errno || endptr == s)
-	error (1, errno, "Server sent invalid file size `%s'", s);
+	error (1, errno, "Unable to parse file size sent by server, `%s'", s);
     if (*endptr != '\0')
 	error (1, 0,
-	       "Server sent trailing characters in file size `%s'",
+	       "Server sent trailing characters in file size, `%s'",
 	       endptr);
     if (tmp > SIZE_MAX)
-	error (1, 0, "Server sent file size exceeding client max.");
+	error (1, 0, "Server sent file size exceeding client maximum.");
 
     /* Return it.  */
     return (size_t)tmp;
