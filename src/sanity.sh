@@ -329,20 +329,42 @@ if test -n "$remotehost" && test -z "$TESTDIR"; then
     echo "directory on both this client and the CVS server." >&2
 fi
 
-# Read our config file if we can find it.
+# Read our config file if we can find it.  This sources, in order, when they
+# can be found:
 #
-# The config file should always be located in the same directory as the CVS
-# executable, unless we are testing an executable outside of the build
-# directory.  In this case, we echo a warning and attempt to assume the most
-# portable configuration.
-if test -z "$configfile"; then
-	configfile=`dirname $testcvs`/sanity.config.sh
+#   1.  The config file in the same directory as the sanity.sh script being
+#       run.
+#   2.  The config file in the same directory as the CVS executable.
+#   3.  The config file specified on the command line.
+#
+# So, if all three scripts are found, the last script sourced which set a
+# variable will take precedence over the previous config files, whether they
+# set it or not.
+#
+# If a config file is specified on the command line and it cannot be found,
+# this script will exit with an error message.
+#
+# If no config files are found, then this script will issue a warning and
+# attempt to assume the most portable configuration.
+foundaconfig=false
+for dir in `dirname $0` `dirname $testcvs`; do
+	if test -r "$dir/sanity.config.sh"; then
+		. "$dir/sanity.config.sh"
+		foundaconfig=:
+	fi
+done
+if test -n "$configfile"; then
+	if test -r "$configfile"; then
+		. "$configfile"
+		foundaconfig=:
+	else
+		echo "ERROR: config file \`$configfile' does not exist or" >&2
+		echo "      or is not readable." >&2
+		exit 1
+	fi	
 fi
-if test -r "$configfile"; then
-	. "$configfile"
-else
-	echo "WARNING: Failed to locate test suite config file" >&2
-	echo "         \`$configfile'." >&2
+if $foundaconfig; then :; else
+	echo "WARNING: Failed to locate any test suite config files." >&2
 fi
 
 
