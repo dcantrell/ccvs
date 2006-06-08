@@ -1115,7 +1115,7 @@ if test x"$*" = x; then
 	tests="${tests} join join2 join3 join4 join5 join6 join7"
 	tests="${tests} join-readonly-conflict join-admin join-admin-2"
 	tests="${tests} join-rm"
-	tests="${tests} new newb conflicts conflicts2 conflicts3"
+	tests="${tests} new newb conflicts conflicts2 conflicts3 conflicts4"
 	tests="${tests} clean"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
@@ -11328,6 +11328,57 @@ done"
 
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	conflicts4)
+	  mkdir 1; cd 1
+	  dotest conflicts4-1 "$testcvs -q co -l ."
+	  mkdir first-dir
+	  dotest conflicts4-2 "${testcvs} add first-dir" \
+"Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
+	  cd ..
+	  mkdir 2; cd 2
+	  dotest conflicts4-3 "${testcvs} -q co -l first-dir" ''
+	  cd ../1/first-dir
+	  echo baseline >file1
+	  dotest conflicts4-4 "${testcvs} -q add file1" \
+"$PROG add: use .$PROG commit. to add this file permanently"
+	  dotest conflicts4-5 "${testcvs} -q ci -m add-it" \
+"RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
+done
+Checking in file1;
+$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  cd ../../2/first-dir
+	  dotest conflicts4-6 "${testcvs} -q update" "U file1"
+	  # Make a local change
+	  echo wibble2 >> file1
+	  dotest conflicts4-7 "${testcvs} -q ci -m update2" \
+"Checking in file1;
+$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  cd ../../1/first-dir
+	  echo wibble1 >>file1
+	  dotest conflicts4-8 "${testcvs} -Q update" \
+"RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
+retrieving revision 1\.1
+retrieving revision 1\.2
+Merging differences between 1\.1 and 1\.2 into file1
+rcsmerge: warning: conflicts during merge
+cvs update: conflicts found in file1"
+	  dotest_fail conflicts4-9 "${testcvs} -q update" \
+"C file1"
+	  
+	  if $keep; then
+	    echo Keeping $TESTDIR and exiting due to --keep
+            exit 0
+	  fi
+
+	  cd ../..
+	  rm -rf 1 2
+	  rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 	clean)

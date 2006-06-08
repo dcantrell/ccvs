@@ -4863,6 +4863,7 @@ struct request requests[] =
   REQ_LINE("Checkin-time", serve_checkin_time, 0),
   REQ_LINE("Modified", serve_modified, RQ_ESSENTIAL),
   REQ_LINE("Is-modified", serve_is_modified, 0),
+  REQ_LINE("Empty-conflicts", serve_noop, 0),
 
   /* The client must send this request to interoperate with CVS 1.5
      through 1.9 servers.  The server must support it (although it can
