@@ -1,5 +1,10 @@
 2006-06-08  Derek Price  <derek@ximbiot.com>
 
+	* sanity.config.sh.in: Add DEFAULT_SIGN_TEMPLATE &
+	DEFAULT_SIGN_TEXTMODE.
+	* sanity.sh: Test verification of concatenated signatures.
+	(openpgp-5): Skip when only first concatenated signature is reported.
+
 	* sanity.sh: Look for the config file in more places and make it a
 	fatal error if an explicitly specified file is not found.
 
