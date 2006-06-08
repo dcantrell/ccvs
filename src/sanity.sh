@@ -1957,6 +1957,40 @@ if $gpg; then
 F1D6D5842814BC3A264BE7068E0C2C7EF133BDE9:6:
 EOF
 
+  # Very old versions of GPG (1.0.3, at least), only report the first signature
+  # when concatenated signatures are discovered.  Set a var to skip tests that
+  # care.
+  echo whatever >$TESTDIR/signme
+  sign_cmd=`echo $DEFAULT_SIGN_TEMPLATE \
+	    |sed -e "s/%t/$DEFAULT_SIGN_TEXTMODE/" \
+		 -e s/%a// \
+		 -e "s#%s#$TESTDIR/signme#"`
+  $sign_cmd >$TESTDIR/signme.sig 2>>$LOGFILE
+  $sign_cmd >>$TESTDIR/signme.sig 2>>$LOGFILE
+
+  vrfy_cmd=`echo $DEFAULT_VERIFY_TEMPLATE \
+	    |sed -e "s/%t/$DEFAULT_SIGN_TEXTMODE/" \
+		 -e s/%a// \
+		 -e "s#%S#$TESTDIR/signme.sig#" \
+		 -e "s#%s#$TESTDIR/signme#"`
+  $vrfy_cmd >$TESTDIR/gpgtmp 2>&1
+  cat $TESTDIR/gpgtmp >>$LOGFILE 2>&1
+  if expr "`cat $TESTDIR/gpgtmp`" : \
+"$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR
+$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR" >/dev/null 2>&1
+  then
+    gpg_reports_multiple_signatures=:
+  else
+    gpg_reports_multiple_signatures=false
+
+    echo "WARNING: Your OpenPGP implementation ($GPG) is very old.  Its" >&2
+    echo "functionality will be tested inasmuch as possible, but, due to" >&2
+    echo "the sensitive nature of OpenPGP implementations, if you intend" >&2
+    echo "to employ OpenPGP commit signatures as a security precaution," >&2
+    echo "we recommend you upgrade to a more recent version." >&2
+  fi
+  rm $TESTDIR/signme* $TESTDIR/gpgtmp
+
   # Some tests check the content of the RCS file and whether there is a
   # signature phrase or not depends on whether they were being generated.
   # The trailing EOL is important.
@@ -33228,9 +33262,13 @@ EOF
 
 	  dotest openpgp-4 "$testcvs sign file1" \
 "$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
-	  dotest openpgp-5 "$testcvs verify file1" \
+	  if $gpg_reports_multiple_signatures; then
+	    dotest openpgp-5 "$testcvs verify file1" \
 "$DOTSTAR Good signature from \"CVS Test Script $DOTSTAR
 $DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
+	  else
+	    skip openpgp-5 "GPG only reports the first concatenated signature."
+	  fi
 
 	  dotest openpgp-6 "$testcvs sign -d0xF133BDE9 file1"
 	  dotest_fail openpgp-7 "$testcvs verify file1" \
