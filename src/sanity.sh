@@ -1962,15 +1962,15 @@ EOF
   # care.
   echo whatever >$TESTDIR/signme
   sign_cmd=`echo $DEFAULT_SIGN_TEMPLATE \
-	    |sed -e "s/%t/$DEFAULT_SIGN_TEXTMODE/" \
-		 -e s/%a// \
+	    |sed -e "s/%M/$DEFAULT_SIGN_TEXTMODE/" \
+		 -e s/%@// \
 		 -e "s#%s#$TESTDIR/signme#"`
   $sign_cmd >$TESTDIR/signme.sig 2>>$LOGFILE
   $sign_cmd >>$TESTDIR/signme.sig 2>>$LOGFILE
 
   vrfy_cmd=`echo $DEFAULT_VERIFY_TEMPLATE \
-	    |sed -e "s/%t/$DEFAULT_SIGN_TEXTMODE/" \
-		 -e s/%a// \
+	    |sed -e "s/%M/$DEFAULT_SIGN_TEXTMODE/" \
+		 -e s/%@// \
 		 -e "s#%S#$TESTDIR/signme.sig#" \
 		 -e "s#%s#$TESTDIR/signme#"`
   $vrfy_cmd >$TESTDIR/gpgtmp 2>&1
