@@ -77,8 +77,8 @@
 #undef DEFAULT_SIGN_TEMPLATE
 
 /* Define to the option string that the OpenPGP program used in the
-   DEFAULT_SIGN_TEMPLATE would like to see for text files (substituted at run
-   time in place of `%M' in the DEFAULT_SIGN_TEMPLATE). */
+   DEFAULT_SIGN_TEMPLATE & DEFAULT_VERIFY_TEMPLATE would like to see for text
+   files (substituted at run time in place of `%M' in both templates). */
 #undef DEFAULT_SIGN_TEXTMODE
 
 /* Define to a command line template that will read an OpenPGP signature from
