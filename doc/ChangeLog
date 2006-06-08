@@ -1,3 +1,7 @@
+2006-06-08  Derek Price  <derek@ximbiot.com>
+
+	* cvsclient.texi (Requests): Add Empty-conflicts.
+
 2006-03-20  Mark D. Baushke  <mdb@gnu.org>
 
 	[patch #4965]

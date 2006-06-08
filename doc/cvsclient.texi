@@ -872,6 +872,12 @@ in this document, servers must support this request (although it need
 not do anything) and clients must issue it.
 The @code{Root} request need not have been previously sent.
 
+@item Empty-conflicts \n
+Response expected: no.  This is a placeholder response intended to alert the
+client that the server does not require the contents of unmodified files with
+conflicts for operations other than diff.  It was a bug in pre 1.11.22 &
+pre 1.12.14 servers that this was required to notice conflicts.
+
 @item Notify @var{filename} \n
 Response expected: no.
 Tell the server that an @code{edit} or @code{unedit} command has taken
