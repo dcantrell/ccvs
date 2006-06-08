@@ -121,18 +121,23 @@ fi
 dnl These are defined by configure so that if the above is ever expanded to
 dnl look for OpenPGP capable programs other than `gpg', the default templates
 dnl can also be detected and substituted here.
+DEFAULT_SIGN_TEMPLATE="$GPG --detach-sign --output - %M %@ -- %s"
+AC_SUBST([DEFAULT_SIGN_TEMPLATE])
 AC_DEFINE_UNQUOTED([DEFAULT_SIGN_TEMPLATE],
-		   ["$GPG --detach-sign --output - %M %@ -- %s"],
+		   ["$DEFAULT_SIGN_TEMPLATE"],
 		   [Define to a command line template that will write an
 		    OpenPGP signature for the file `%s' to its standard out.
 		    `%M' is substituted at run time with an option which flags
 		    files as text files, when necessary, and the empty string,
 		    otherwise.  `%@' is substituted with a list of arguments
 		    provided by the user.])
-AC_DEFINE([DEFAULT_SIGN_TEXTMODE], ["--textmode"],
-	  [Define to the option string that the OpenPGP program used in the
-	   DEFAULT_SIGN_TEMPLATE would like to see for text files (substituted
-	   at run time in place of `%M' in the DEFAULT_SIGN_TEMPLATE).])
+DEFAULT_SIGN_TEXTMODE=--textmode
+AC_SUBST([DEFAULT_SIGN_TEXTMODE])
+AC_DEFINE_UNQUOTED([DEFAULT_SIGN_TEXTMODE], ["$DEFAULT_SIGN_TEXTMODE"],
+		   [Define to the option string that the OpenPGP program used
+		    in the DEFAULT_SIGN_TEMPLATE & DEFAULT_VERIFY_TEMPLATE
+		    would like to see for text files (substituted at run time
+		    in place of `%M' in both templates).])
 DEFAULT_VERIFY_TEMPLATE="$GPG --verify %M %@ -- %S %s"
 AC_SUBST([DEFAULT_VERIFY_TEMPLATE])
 AC_DEFINE_UNQUOTED([DEFAULT_VERIFY_TEMPLATE],
