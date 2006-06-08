@@ -1,3 +1,7 @@
+2006-06-08  Derek Price  <derek@ximbiot.com>
+
+	* cvsclient.texi (Requests): Add Empty-conflicts.
+
 2006-05-20  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (CVS commands): Correct tag & rtag description.

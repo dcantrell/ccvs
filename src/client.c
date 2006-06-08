@@ -5547,6 +5547,7 @@ warning: ignoring -k options due to server limitations");
     else if (!vers->ts_rcs || args->force)
 	may_be_modified = true;
     else if (strcmp (vers->ts_conflict
+		     && supported_request ("Empty-conflicts")
 		     ? vers->ts_conflict : vers->ts_rcs, vers->ts_user)
 	     || (vers->ts_conflict && !strcmp (cvs_cmd_name, "diff")))
     {
