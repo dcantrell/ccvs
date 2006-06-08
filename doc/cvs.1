@@ -499,6 +499,9 @@ when the server supports it.  Overrides the \fB$CVS_SIGN_COMMITS\fR
 environment variable (see node `Environment variables\(aq in the CVS manual) and the \fBsign\fR and
 \fBno-sign\fR method options (see node `The connection method\(aq in the CVS manual).
 .SP
+\fBWARNING: see node `OpenPGP Signed Commits\(aq in the CVS manual for more on using OpenPGP
+signatures securely.\fR
+.SP
 .IP "" 0
 \fB--sign-template \fItemplate\fB\fR
 .IP "" 2
@@ -510,8 +513,6 @@ Format strings in this template are substituted before the commit is run:
 .IP "" 4
 Substitute in the textmode flag (defaults to \fB--textmode\fR) when a
 signature is being generated for a text file.
-.SP
-.SP
 .SP
 .SP
 .SP
@@ -528,12 +529,19 @@ Substitute the name of the file to generate a signature for.
 This template should send the generated signature to its standard output.
 Overrides the \fBsign-template\fR method option and defaults to something like
 \fB/usr/bin/gpg --detach-sign --output - %M %@ %s\fR.
+\fBWARNING: see node `OpenPGP Signed Commits\(aq in the CVS manual for more on using OpenPGP
+signatures securely.\fR
+.SP
 .IP "" 0
 \fB--textmode\fR
 .IP "" 2
 The value passed to both in place of \fB%M\fR in both the OpenPGP signature
 and the OpenPGP verification command line templates.  Defaults to
 \fB--textmode\fR.
+.SP
+\fBWARNING: see node `OpenPGP Signed Commits\(aq in the CVS manual for more on using OpenPGP
+signatures securely.\fR
+.SP
 .IP "" 0
 \fB--verify\fR
 .IP "" 2
@@ -549,6 +557,10 @@ of \fBfatal\fR will disallow the entire checkout.  Overrides the
 \fB$CVS_VERIFY_CHECKOUTS\fR environment variable (see node `Environment
 variables\(aq in the CVS manual) and the \fBverify\fR and \fBno-verify\fR method options
 (see node `The connection method\(aq in the CVS manual).
+.SP
+\fBWARNING: see node `OpenPGP Signed Commits\(aq in the CVS manual for more on using OpenPGP
+signatures securely.\fR
+.SP
 .IP "" 0
 \fB--verify-template=\fItemplate\fB\fR
 .IP "" 2
@@ -560,8 +572,6 @@ Format strings in this template are substituted before the command is run:
 .IP "" 4
 Substitute in the textmode flag (defaults to \fB--textmode\fR) when a
 signature is being verified for a text file.
-.SP
-.SP
 .SP
 .SP
 .SP
@@ -586,10 +596,14 @@ for the signed file and a non-zero exit code otherwise.  Overrides the
 variables\(aq in the CVS manual) and the \fBverify-template\fR method option (see node `The connection
 method\(aq in the CVS manual and defaults to something like
 \fB/usr/bin/gpg --detach-sign --output - %M %@ %S %s\fR.
+\fBWARNING: see node `OpenPGP Signed Commits\(aq in the CVS manual for more on using OpenPGP
+signatures securely.\fR
+.SP
 .SH "Common options"
 .SS "Common command options"
 .IX "Common options"
 .IX "Right-hand options"
+.SP
 This section describes the \fBcommand_options\fR that
 are available across several \fBcvs\fR commands.  These
 options are always given to the right of
@@ -601,6 +615,7 @@ can almost always count on the same behavior of the
 option as in other commands.  (Other command options,
 which are listed with the individual commands, may have
 different behavior from one \fBcvs\fR command to the other).
+.SP
 \fBThe \fBhistory\fB command is an exception; it supports
 many options that conflict even with these standard options.\fR
 .SP

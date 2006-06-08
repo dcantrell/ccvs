@@ -1,5 +1,10 @@
 2006-06-08  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (OpenPGP Signed Commits): New node.
+	(Global options, The connection method): Reference new node.
+
+2006-06-08  Derek Price  <derek@ximbiot.com>
+
 	* cvsclient.texi (Requests): Add Empty-conflicts.
 
 2006-05-20  Derek Price  <derek@ximbiot.com>
