@@ -1,3 +1,8 @@
+2006-06-08  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Substitute DEFAULT_SIGN_TEMPLATE and
+	DEFAULT_SIGN_TEXTMODE in addition to #defining.
+
 2006-06-07  Derek Price  <derek@ximbiot.com>
 
 	* BUGS: Remove warning about log_accum.pl.
