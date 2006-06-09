@@ -1,10 +1,11 @@
-Changes since 1.11.22:
+Changes since 1.11.21:
 **********************
 
-Changes from 1.11.21 to 1.11.22:
-********************************
-
 BUG FIXES
+
+* The CVS client again correctly reports files with conflicts when using
+  servers running CVS 1.11.20/1.12.12, or earlier (and maybe 3rd party
+  servers).
 
 * The GSSAPI server should now build under HP-UX.
 
