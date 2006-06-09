@@ -11,6 +11,8 @@
 	* server.c (requests): Add "Empty-conflicts" marker.
 	* client.c (send_fileproc): Send contents of all files with conflicts
 	unless the server can handle the conflict marker in the Entry.
+	* sanity.sh (writeproxy, writeproxy-noredirect): Compensate for the new
+	Empty-conflicts request.
 
 	* sanity.sh (conflicts4): New tests.
 	(Original patch from Mark D. Baushke <mdb@gnu.org>.)
