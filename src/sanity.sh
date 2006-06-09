@@ -12346,6 +12346,7 @@ new revision: delete; previous revision: 1\.1"
 
 
 	conflicts4)
+	  mkdir conflicts4; cd conflicts4
 	  mkdir 1; cd 1
 	  dotest conflicts4-1 "$testcvs -q co -l ."
 	  mkdir first-dir
@@ -12377,10 +12378,82 @@ C file1"
 	  dotest_fail conflicts4-9 "$testcvs -q update" \
 "C file1"
 	  
+	  if $remote; then
+	    cat >$TESTDIR/conflicts4/serveme <<EOF
+#!$TESTSHELL
+# This is admittedly a bit cheezy, in the sense that we make lots
+# of assumptions about what the client is going to send us.
+# We don't mention Repository, because current clients don't require it.
+# Sending these at our own pace, rather than waiting for the client to
+# make the requests, is bogus, but hopefully we can get away with it.
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update Global_option"
+echo "ok"
+echo "MT text C "
+echo "MT fname file1"
+echo "MT newline"
+echo "error  "
+cat >$TESTDIR/conflicts4/client.out
+EOF
+	    # Cygwin.  Pthffffffffft!
+	    if test -n "$remotehost"; then
+	      $CVS_RSH $remotehost "chmod +x $TESTDIR/conflicts4/serveme"
+	    else
+	      chmod +x $TESTDIR/conflicts4/serveme
+	    fi
+	    save_CVS_SERVER=$CVS_SERVER
+	    CVS_SERVER=$TESTDIR/conflicts4/serveme; export CVS_SERVER
+	    dotest_fail conflicts4-10r "$testcvs -q up" "C file1"
+	    dotest conflicts4-11r "cat $TESTDIR/conflicts4/client.out" \
+"$DOTSTAR
+Argument --
+Directory .
+/tmp/cvs-sanity/cvsroot/first-dir
+Entry /file1/1.2/+=//
+Modified file1
+u=rw,g=rw,o=r
+59
+baseline
+""<<<<<<< file1
+wibble1
+""=======
+wibble2
+"">>>>>>> 1.2
+update"
+
+	    cat >$TESTDIR/conflicts4/serveme <<EOF
+#!$TESTSHELL
+# This is admittedly a bit cheezy, in the sense that we make lots
+# of assumptions about what the client is going to send us.
+# We don't mention Repository, because current clients don't require it.
+# Sending these at our own pace, rather than waiting for the client to
+# make the requests, is bogus, but hopefully we can get away with it.
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update Global_option Empty-conflicts"
+echo "ok"
+echo "MT text C "
+echo "MT fname file1"
+echo "MT newline"
+echo "error  "
+cat >$TESTDIR/conflicts4/client.out
+EOF
+
+	    dotest_fail conflicts4-12r "$testcvs -q up" "C file1"
+	    dotest conflicts4-13r "cat $TESTDIR/conflicts4/client.out" \
+"$DOTSTAR
+Argument --
+Directory .
+/tmp/cvs-sanity/cvsroot/first-dir
+Entry /file1/1.2/+=//
+Unchanged file1
+update"
+
+	    CVS_SERVER=$save_CVS_SERVER; export CVS_SERVER
+	  fi
+
 	  dokeep
-	  cd ../..
-	  rm -rf 1 2
+	  cd ../../..
+	  rm -rf conflicts4
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+
 	  ;;
 
 

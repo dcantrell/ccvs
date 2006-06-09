@@ -1,5 +1,7 @@
 2006-06-08  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (conflicts4): Test that the client honors Empty-conflicts.
+
 	* sanity.config.sh.in: Add DEFAULT_SIGN_TEMPLATE &
 	DEFAULT_SIGN_TEXTMODE.
 	* sanity.sh: Test verification of concatenated signatures.
