@@ -12407,7 +12407,7 @@ EOF
 "$DOTSTAR
 Argument --
 Directory .
-/tmp/cvs-sanity/cvsroot/first-dir
+$DOTSTAR/first-dir
 Entry /file1/1.2/+=//
 Modified file1
 u=rw,g=rw,o=r
@@ -12441,7 +12441,7 @@ EOF
 "$DOTSTAR
 Argument --
 Directory .
-/tmp/cvs-sanity/cvsroot/first-dir
+$DOTSTAR/first-dir
 Entry /file1/1.2/+=//
 Unchanged file1
 update"
@@ -24279,27 +24279,31 @@ M339dc339|kingdon|~/work/*0|ccvs/src|1.231|sanity.sh
 W33a6eada|anonymous|<remote>*4|ccvs/emx||Makefile.in
 C3b235f50|kingdon|<remote>|ccvs/emx|1.3|README
 M3b23af50|kingdon|~/work/*0|ccvs/doc|1.281|cvs.texinfo
+X4486a391|mdb|~/work/*0|ccvs|admin --execute aa|aa
 EOF
 
 	  dotest history-1 "${testcvs} history -e -a" \
 "O 1997-06-04 19:48 ${PLUS}0000 anonymous ccvs     =ccvs= <remote>/\*
 O 1997-06-05 14:00 ${PLUS}0000 anonymous ccvs     =src=  <remote>/\*
-M 1997-06-10 01:38 ${PLUS}0000 anonymous 1\.23  Makefile    ccvs/src == <remote>
-W 1997-06-17 19:51 ${PLUS}0000 anonymous       Makefile\.in ccvs/emx == <remote>/emx
+M 1997-06-10 01:38 ${PLUS}0000 anonymous 1\.23               Makefile    ccvs/src == <remote>
+W 1997-06-17 19:51 ${PLUS}0000 anonymous                    Makefile\.in ccvs/emx == <remote>/emx
 O 1997-06-06 08:12 ${PLUS}0000 kingdon   ccvs     =ccvs= <remote>/\*
-M 1997-06-10 21:12 ${PLUS}0000 kingdon   1\.231 sanity\.sh   ccvs/src == ~/work/ccvs/src
-C 2001-06-10 11:51 ${PLUS}0000 kingdon   1\.3   README      ccvs/emx == <remote>
-M 2001-06-10 17:33 ${PLUS}0000 kingdon   1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc
-M 1997-06-10 01:36 ${PLUS}0000 nk        1\.229 sanity\.sh   ccvs/src == <remote>"
+M 1997-06-10 21:12 ${PLUS}0000 kingdon   1\.231              sanity\.sh   ccvs/src == ~/work/ccvs/src
+C 2001-06-10 11:51 ${PLUS}0000 kingdon   1\.3                README      ccvs/emx == <remote>
+M 2001-06-10 17:33 ${PLUS}0000 kingdon   1\.281              cvs\.texinfo ccvs/doc == ~/work/ccvs/doc
+X 2006-06-07 09:59 +0000 mdb       admin --execute aa aa          ccvs     == ~/work/ccvs
+M 1997-06-10 01:36 ${PLUS}0000 nk        1\.229              sanity\.sh   ccvs/src == <remote>"
 
 	  dotest history-2 "${testcvs} history -e -a -D '10 Jun 1997 13:00 UT'" \
-"W 1997-06-17 19:51 ${PLUS}0000 anonymous       Makefile\.in ccvs/emx == <remote>/emx
-M 1997-06-10 21:12 ${PLUS}0000 kingdon   1\.231 sanity\.sh   ccvs/src == ~/work/ccvs/src
-C 2001-06-10 11:51 ${PLUS}0000 kingdon   1\.3   README      ccvs/emx == <remote>
-M 2001-06-10 17:33 ${PLUS}0000 kingdon   1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc"
+"W 1997-06-17 19:51 ${PLUS}0000 anonymous                    Makefile\.in ccvs/emx == <remote>/emx
+M 1997-06-10 21:12 ${PLUS}0000 kingdon   1\.231              sanity\.sh   ccvs/src == ~/work/ccvs/src
+C 2001-06-10 11:51 ${PLUS}0000 kingdon   1\.3                README      ccvs/emx == <remote>
+M 2001-06-10 17:33 ${PLUS}0000 kingdon   1\.281              cvs\.texinfo ccvs/doc == ~/work/ccvs/doc
+X 2006-06-07 09:59 +0000 mdb       admin --execute aa aa          ccvs     == ~/work/ccvs"
 
 	  dotest history-3 "${testcvs} history -e -a -D '10 Jun 2001 13:00 UT'" \
-"M 2001-06-10 17:33 ${PLUS}0000 kingdon 1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc"
+ "M 2001-06-10 17:33 ${PLUS}0000 kingdon 1\.281              cvs\.texinfo ccvs/doc == ~/work/ccvs/doc
+X 2006-06-07 09:59 +0000 mdb     admin --execute aa aa          ccvs     == ~/work/ccvs"
 
 	  dotest history-4 "${testcvs} history -ac sanity.sh" \
 "M 1997-06-10 21:12 ${PLUS}0000 kingdon 1\.231 sanity\.sh ccvs/src == ~/work/ccvs/src
@@ -24424,6 +24428,10 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # is running the tests doesn't have CVSUMASK set.
 	  #export -n CVSUMASK # if unset, defaults to 002
 
+	  # First empty the history file
+	  modify_repo rm -rf $CVSROOT_DIRNAME/CVSROOT/history
+	  modify_repo touch $CVSROOT_DIRNAME/CVSROOT/history
+
 	  save_umask=`umask`
 	  umask 077
 	  mkdir 1; cd 1
@@ -24499,6 +24507,11 @@ new revision: 1\.3; previous revision: 1\.2"
 	  dotest modes-execute-1 "${testcvs} admin --execute aa" \
 "RCS file: $CVSROOT_DIRNAME/first-dir/aa,v
 done"
+
+	  dotest modes-execute-1h "${testcvs} history -x X" \
+"X ${ISODATE} ${username} admin --execute aa ${DOTSTAR}aa first-dir == ${TESTDIR}/1/first-dir" \
+"X ${ISODATE} ${username} admin --execute -- aa ${DOTSTAR}aa first-dir == <remote>"
+
 	  # Cygwin.
 	  if test -n "$remotehost"; then
 	    dotest modes-execute-2r \

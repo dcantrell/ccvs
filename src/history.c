@@ -54,6 +54,7 @@
  *		M	"Commit" cmd - "Modified" file.
  *		A	"Commit" cmd - "Added" file.
  *		R	"Commit" cmd - "Removed" file.
+ *		X	"Admin"  cmd.
  *
  *  date	is a fixed length 8-char hex representation of a Unix time_t.
  *		[Starting here, variable fields are delimited by '|' chars.]
@@ -88,7 +89,7 @@
  *
  *   Extract list of record types
  *
- *	-e, -x [TOEFWUPGCMAR]
+ *	-e, -x [TOEFWUPGCMARX]
  *
  *		Extracted records are simply printed, No analysis is performed.
  *		All "field" modifiers apply.  -e chooses all types.
@@ -1632,6 +1633,7 @@ report_hrecs (void)
 	    case 'M':
 	    case 'A':
 	    case 'R':
+	    case 'X':
 		(void) printf (" %-*s %-*s %-*s =%s= %s", rev_len, lr->rev,
 			       file_len, lr->file, repos_len, repos,
 			       lr->mod ? lr->mod : "", workdir);

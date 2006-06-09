@@ -122,6 +122,10 @@ struct admin_data
     int ac;
     char **av;
     int av_alloc;
+
+    /* This contains a printable version of the command line used
+       for logging. */
+    char *cmdline;
 };
 
 /* Add an argument.  OPT is the option letter, e.g. 'a'.  ARG is the
@@ -332,6 +336,75 @@ make_UserAdminOptions (const char *infopath, unsigned int ln, const char *s)
 
 
 
+static size_t
+wescape(char *dst, const char *src)
+{
+    const unsigned char *s = src;
+    char *d = dst;
+    for (; *s; s++) {
+	if (!isprint (*s) || isspace (*s) || *s == '|') {
+	    /* These next four statements are the same as:
+	     *   d += sprintf(d, "\\%03o", *s);
+	     * but do not make assumptions that sprintf does the right
+	     * thing with regard to the integer it returns.
+	     */
+	    /* Convert special characters to octal */
+	    *d++ = '\\';
+	    *d++ = ((*s >> 6) & 3) + '0';
+	    *d++ = ((*s >> 3) & 7) + '0';
+	    *d++ = ((*s >> 0) & 7) + '0';
+	} else  {
+	    *d++ = *s;
+	}
+    }
+    *d = '\0';
+    return d - dst;
+}
+
+
+
+static char *
+makecmdline (int argc, char **argv)
+{
+    size_t clen = 1024, wlen = 1024, len, cpos = 0, i;
+    char *cmd = xmalloc (clen);
+    char *word = xmalloc (wlen);
+
+    for (i = 0; i < argc; i++) {
+	char *arg = argv[i];
+	if (i == 0)
+	{
+	    if (strncmp (argv[i], "cvs server", 10) == 0)
+		arg = "admin";
+	    else if (strncmp (argv[i], "cvs ", 4) == 0)
+		arg = argv[i] + 4;
+	}
+
+	len = strlen (arg);
+	if (len * 4 < wlen) {
+	    wlen += len * 4;
+	    word = xrealloc (word, wlen);
+	}
+	len = wescape (word, arg);
+	if (clen - cpos < len + 2) {
+	    clen += len + 2;
+	    cmd = xrealloc (cmd, clen);
+	}
+	memcpy (&cmd[cpos], word, len);
+	cpos += len;
+	cmd[cpos++] = ' ';
+    }
+    if (cpos != 0)
+	cmd[cpos - 1] = '\0';
+    else
+	cmd[cpos] = '\0';
+    free (word);
+
+    return cmd;
+}
+
+
+
 int
 admin (int argc, char **argv)
 {
@@ -347,6 +420,7 @@ admin (int argc, char **argv)
     wrap_setup ();
 
     memset (&admin_data, 0, sizeof admin_data);
+    admin_data.cmdline = makecmdline (argc, argv);
 
     /* TODO: get rid of `-' switch notation in admin_data.  For
        example, admin_data->branch should be not `-bfoo' but simply `foo'. */
@@ -734,6 +808,9 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 	status = 1;
 	goto exitfunc;
     }
+
+    history_write ('X', finfo->update_dir, admin_data->cmdline, finfo->file,
+		   finfo->repository);
 
     rcs = vers->srcfile;
     if (rcs == NULL)

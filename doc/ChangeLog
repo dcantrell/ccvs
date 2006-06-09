@@ -1,3 +1,10 @@
+2006-06-09  Mark D. Baushke  <mdb@gnu.org>
+
+	* cvs.texinfo (config): Add the new 'X' record type for the
+	LogHistory option.
+	(history options): Descripe the 'X' record type.
+	* version.texi: Regenerated.
+
 2006-06-08  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (OpenPGP Signed Commits): New node.

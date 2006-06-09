@@ -1,3 +1,15 @@
+2006-06-09  Mark D. Baushke  <mdb@gnu.org>
+
+	* admin.c (admin_fileproc): Used by NetBSD, add 'X' to the
+	pantheon of history record types to keep "cvs admin" command
+	information.
+	* history.c: Document addition of the 'X' history record type.
+	(report_hrecs): Add support for printing the 'X' record type.
+	* history.h (ALL_HISTORY_REC_TYPES): Add 'X' to the list.
+	* sanity.sh (history, modes): Add tests for 'X' record types.
+	(conflicts4-11r, conflicts4-13r): Fix expectations for remote and
+	proxy where $TESTDIR may not be default.
+	
 2006-06-08  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (conflicts4): Test that the client honors Empty-conflicts.
