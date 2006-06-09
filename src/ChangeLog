@@ -1,5 +1,7 @@
 2006-06-08  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (conflicts4): Test that the client honors Empty-conflicts.
+
 	* server.c (requests): Add "Empty-conflicts" marker.
 	* client.c (send_fileproc): Send contents of all files with conflicts
 	unless the server can handle the conflict marker in the Entry.
