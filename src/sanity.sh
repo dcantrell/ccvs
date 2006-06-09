@@ -11401,17 +11401,17 @@ EOF
 "$DOTSTAR
 Argument --
 Directory .
-/tmp/cvs-sanity/cvsroot/first-dir
+$CVSROOT_DIRNAME/first-dir
 Entry /file1/1.2/+=//
 Modified file1
 u=rw,g=rw,o=r
 59
 baseline
-<<<<<<< file1
+""<<<<<<< file1
 wibble1
-=======
+""=======
 wibble2
->>>>>>> 1.2
+"">>>>>>> 1.2
 update"
 
 	    cat >$TESTDIR/conflicts4/serveme <<EOF
@@ -11435,7 +11435,7 @@ EOF
 "$DOTSTAR
 Argument --
 Directory .
-/tmp/cvs-sanity/cvsroot/first-dir
+$CVSROOT_DIRNAME/first-dir
 Entry /file1/1.2/+=//
 Unchanged file1
 update"
