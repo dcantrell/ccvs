@@ -873,10 +873,13 @@ not do anything) and clients must issue it.
 The @code{Root} request need not have been previously sent.
 
 @item Empty-conflicts \n
-Response expected: no.  This is a placeholder response intended to alert the
-client that the server does not require the contents of unmodified files with
-conflicts for operations other than diff.  It was a bug in pre 1.11.22 &
-pre 1.12.14 servers that this was required to notice conflicts.
+Response expected: yes.  This request is an alias for @code{noop}.  Its
+presence in the list of @code{valid-requests} is intended to be used as a
+placeholder to alert the client that the server does not require the contents
+of files with conflicts that have not been modified since the merge, for
+operations other than diff.  It was a bug in pre 1.11.22 & pre 1.12.14 servers
+that the contents of files with conflicts was required for the server to
+acknowledge the existence of the conflicts.
 
 @item Notify @var{filename} \n
 Response expected: no.
