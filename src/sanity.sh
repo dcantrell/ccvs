@@ -12407,10 +12407,10 @@ EOF
 "$DOTSTAR
 Argument --
 Directory .
-$DOTSTAR/first-dir
-Entry /file1/1.2/+=//
+$CVSROOT_DIRNAME/first-dir
+Entry /file1/1.2/$PLUS=//
 Modified file1
-u=rw,g=rw,o=r
+u=.*,g=.*,o=.*
 59
 baseline
 ""<<<<<<< file1
@@ -12441,8 +12441,8 @@ EOF
 "$DOTSTAR
 Argument --
 Directory .
-$DOTSTAR/first-dir
-Entry /file1/1.2/+=//
+$CVSROOT_DIRNAME/first-dir
+Entry /file1/1.2/$PLUS=//
 Unchanged file1
 update"
 

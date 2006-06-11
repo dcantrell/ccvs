@@ -1,3 +1,8 @@
+2006-06-10  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (conflicts4): Don't expect specific file permissions.  Use
+	$PLUS.
+
 2006-06-09  Mark D. Baushke  <mdb@gnu.org>
 
 	* admin.c (admin_fileproc): Used by NetBSD, add 'X' to the
