@@ -254,7 +254,12 @@ void server_base_signatures (struct file_info *finfo, const char *rev);
 void server_base_diff (struct file_info *finfo, const char *f1,
 		       const char *rev1, const char *label1, const char *f2,
 		       const char *rev2, const char *label2);
+
+#ifdef SERVER_SUPPORT
 bool server_use_bases (void);
+#else
+#define server_use_bases() false
+#endif
 
 void cvs_output (const char *, size_t);
 void cvs_output_binary (char *, size_t);
