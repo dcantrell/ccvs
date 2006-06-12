@@ -1,4 +1,4 @@
-#! perl -w
+#! /usr/bin/perl -w
 
 # This file constructs the Windows config.h.in file, from the parent
 # config.h.in file and some source files in the windows-NT directory.  Run it
