@@ -488,11 +488,10 @@ do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate,
 	   preload_update_dir ? preload_update_dir : "(null)", xdotemplate,
 	   repository ? repository : "(null)");
 
-#ifdef SERVER_SUPPORT
     /* Set globals.  */
     if (server_active && server_use_bases ())
 	bases = true;
-#endif /* SERVER_SUPPORT */
+
     /* fill in the statics */
     options = xoptions;
     tag = xtag;
@@ -2010,11 +2009,7 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 
 	/* FIXME: the noexec case is broken.  RCS_merge could be doing the
 	   xcmp on the temporary files without much hassle, I think.  */
-	if (!noexec && 
-#ifdef SERVER_SUPPORT
-		!bases && 
-#endif /* SERVER_SUPPORT */
-		!xcmp (backup, finfo->file))
+	if (!noexec && !bases && !xcmp (backup, finfo->file))
 	{
 	    if (!quiet)
 	    {
@@ -2032,13 +2027,11 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 	    goto out;
 	}
 
-#ifdef SERVER_SUPPORT
 	if (!bases)
 	    /* The client may determine this is a conflict rather than
 	     * modified.  Let it write the correct message.
 	     */
 	    write_letter (finfo, 'M');
-#endif /* SERVER_SUPPORT */
     }
     retval = 0;
  out:
@@ -2385,6 +2378,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 		server_updated (finfo, vers, SERVER_UPDATED, (mode_t) -1,
 				NULL, NULL);
 #endif /* SERVER_SUPPORT */
+
 	    freevers_ts (&xvers);
 	    return;
 	}
@@ -2519,11 +2513,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	    /* FIXME: It would be more consistent if the client printed this
 	     * message when BASES.
 	     */
-	    if (!really_quiet
-#ifdef SERVER_SUPPORT
-			&& bases
-#endif
-			)
+	    if (!really_quiet && bases)
 		write_letter (finfo, 'M');
 	    status = 0;
 	}
@@ -2558,7 +2548,6 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	     */
 	    write_letter (finfo, 'C');
     }
-#ifdef SERVER_SUPPORT
     else if (!bases) /* status == 0 */
     {
 	bool unchanged, isbase;
@@ -2602,7 +2591,6 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	     */
 	    goto out;
     }
-#endif /* SERVER_SUPPORT */
 
     /* The file has changed, but if we just checked it out it may
        still have the same timestamp it did when it was first
@@ -2616,9 +2604,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
        again won't cost much in that case.  */
     RegisterMerge (finfo, vers, backup, status, false);
 
-#ifdef SERVER_SUPPORT
 out:
-#endif /* SERVER_SUPPORT */
     free (rev1);
     free (rev2);
     free (backup);
