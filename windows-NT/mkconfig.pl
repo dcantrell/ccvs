@@ -164,7 +164,7 @@ sub make_config_h
     my %build_macros;
     while (<FINP>)
     {
-	if (/^#\s*define\s*(\w+)(\s+(.+))?$/)
+	if (/^#\s*define\s+(\w+)(\s+(.*?))?$/)
 	{
 	    if (exists $build_macros{$1})
 	    {
