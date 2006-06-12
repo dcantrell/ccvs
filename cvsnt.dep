@@ -15,28 +15,43 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
+	".\src\base.h"\
+	".\src\classify.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
 	".\src\fileattr.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
+	".\src\logmsg.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -55,27 +70,40 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -94,27 +122,88 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
+	".\src\hash.h"\
+	".\src\ignore.h"\
+	".\src\myndbm.h"\
+	".\src\parseinfo.h"\
+	".\src\rcs.h"\
+	".\src\recurse.h"\
+	".\src\root.h"\
+	".\src\run.h"\
+	".\src\server.h"\
+	".\src\sign.h"\
+	".\src\stack.h"\
+	".\src\subr.h"\
+	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
+	".\windows-NT\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
+	".\windows-NT\pwd.h"\
+	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
+	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
+	
+
+.\src\base.c : \
+	".\lib\dirname.h"\
+	".\lib\exit.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getdate.h"\
+	".\lib\getopt.h"\
+	".\lib\gettext.h"\
+	".\lib\pathmax.h"\
+	".\lib\regex.h"\
+	".\lib\stat-macros.h"\
+	".\lib\strcase.h"\
+	".\lib\system.h"\
+	".\lib\timespec.h"\
+	".\lib\unlocked-io.h"\
+	".\lib\xalloc.h"\
+	".\lib\xgetcwd.h"\
+	".\lib\xreadlink.h"\
+	".\lib\xsize.h"\
+	".\src\base.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\difflib.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -127,7 +216,6 @@
 	".\lib\getopt.h"\
 	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
-	".\lib\pagealign_alloc.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\stat-macros.h"\
@@ -135,27 +223,36 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -174,29 +271,40 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
+	".\src\base.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
+	".\src\entries.h"\
 	".\src\fileattr.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -215,27 +323,40 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -254,27 +375,38 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
+	".\src\classify.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
+	".\src\no_diff.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -288,6 +420,7 @@
 	".\lib\getopt.h"\
 	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
+	".\lib\inttypes.h"\
 	".\lib\md5.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -297,31 +430,49 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
+	".\src\base.h"\
 	".\src\client.h"\
+	".\src\command_line_opt.h"\
 	".\src\cvs.h"\
+	".\src\diff.h"\
+	".\src\difflib.h"\
 	".\src\edit.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
+	".\src\gpg.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\log-buffer.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
 	".\src\rsh-client.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\socket-client.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -341,30 +492,45 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
+	".\src\classify.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
+	".\src\entries.h"\
 	".\src\fileattr.h"\
+	".\src\filesubr.h"\
 	".\src\hardlink.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
+	".\src\logmsg.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -383,27 +549,37 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -423,27 +599,36 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -462,22 +647,63 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
+	".\src\base.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\diff.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
+	".\windows-NT\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
+	".\windows-NT\pwd.h"\
+	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
+	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
+	
+
+.\src\difflib.c : \
+	".\diff\diffrun.h"\
+	".\lib\fnmatch.h"\
+	".\lib\getopt.h"\
+	".\lib\gettext.h"\
+	".\lib\system.h"\
+	".\lib\timespec.h"\
+	".\src\difflib.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
+	".\src\hash.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\run.h"\
+	".\src\server.h"\
+	".\src\sign.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
@@ -502,31 +728,44 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\lib\yesno.h"\
+	".\src\base.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
+	".\src\entries.h"\
 	".\src\fileattr.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
 	".\src\watch.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -546,27 +785,37 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
+	".\src\base.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -586,27 +835,36 @@
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\vasnprintf.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -625,27 +883,36 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -664,27 +931,36 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -704,28 +980,38 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
 	".\src\fileattr.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -739,33 +1025,43 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\setenv.h"\
 	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\JmgStat.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -786,25 +1082,52 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
+	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
+	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
+	
+
+.\src\gpg.c : \
+	".\lib\getpagesize.h"\
+	".\lib\timespec.h"\
+	".\lib\xalloc.h"\
+	".\src\gpg.h"\
+	".\src\hash.h"\
+	".\src\parseinfo.h"\
+	".\src\root.h"\
+	".\src\sign.h"\
+	".\src\verify.h"\
+	".\windows-NT\config.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
@@ -825,27 +1148,36 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -865,28 +1197,39 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\history.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -907,32 +1250,44 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
 
 .\src\import.c : \
+	".\lib\base64.h"\
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
@@ -948,27 +1303,40 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
+	".\src\classify.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
+	".\src\logmsg.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -992,27 +1360,38 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1032,37 +1411,48 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
 
 .\src\log.c : \
+	".\lib\base64.h"\
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getopt.h"\
+	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1071,27 +1461,40 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
+	".\src\gpg.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1112,27 +1515,36 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1152,27 +1564,39 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
+	".\src\classify.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\logmsg.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1191,27 +1615,39 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1223,6 +1659,7 @@
 	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getopt.h"\
+	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1233,28 +1670,39 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xgethostname.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
+	".\src\command_line_opt.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
+	".\src\gpg.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1273,27 +1721,36 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1314,28 +1771,38 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\history.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1355,27 +1822,37 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1396,27 +1873,36 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1427,35 +1913,22 @@
 	
 
 .\src\no_diff.c : \
-	".\lib\dirname.h"\
-	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
-	".\lib\getdate.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
-	".\lib\regex.h"\
-	".\lib\stat-macros.h"\
-	".\lib\strcase.h"\
 	".\lib\system.h"\
 	".\lib\timespec.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\lib\xgetcwd.h"\
-	".\lib\xreadlink.h"\
-	".\lib\xsize.h"\
-	".\src\client.h"\
-	".\src\cvs.h"\
+	".\src\entries.h"\
 	".\src\hash.h"\
-	".\src\myndbm.h"\
-	".\src\parseinfo.h"\
+	".\src\no_diff.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
 	".\src\server.h"\
-	".\src\stack.h"\
-	".\src\subr.h"\
-	".\src\update.h"\
+	".\src\sign.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
@@ -1480,28 +1953,38 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\history.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1521,27 +2004,38 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1568,38 +2062,49 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\rcmd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
 
 .\src\rcs.c : \
+	".\lib\base64.h"\
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
 	".\lib\getdate.h"\
 	".\lib\getopt.h"\
+	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
@@ -1608,7 +2113,6 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
@@ -1616,27 +2120,38 @@
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
+	".\src\gpg.h"\
 	".\src\hardlink.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
 
 .\src\rcscmds.c : \
-	".\diff\diffrun.h"\
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
@@ -1651,27 +2166,37 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\difflib.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1691,7 +2216,6 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
@@ -1699,21 +2223,34 @@
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
+	".\src\entries.h"\
 	".\src\fileattr.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1734,7 +2271,6 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
@@ -1742,20 +2278,31 @@
 	".\lib\yesno.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1774,27 +2321,39 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1814,27 +2373,37 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1854,27 +2423,37 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1894,28 +2473,37 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
 	".\src\rsh-client.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1934,27 +2522,36 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -1973,27 +2570,36 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -2010,6 +2616,7 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
+	".\lib\setenv.h"\
 	".\lib\stat-macros.h"\
 	".\lib\strcase.h"\
 	".\lib\system.h"\
@@ -2020,32 +2627,85 @@
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
+	".\src\base.h"\
 	".\src\client.h"\
+	".\src\command_line_opt.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
+	".\src\entries.h"\
 	".\src\fileattr.h"\
+	".\src\filesubr.h"\
+	".\src\gpg.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\log-buffer.h"\
 	".\src\ms-buffer.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
 	".\src\watch.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
+	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
+	
+
+.\src\sign.c : \
+	".\lib\getopt.h"\
+	".\lib\getpagesize.h"\
+	".\lib\inttypes.h"\
+	".\lib\timespec.h"\
+	".\lib\wait.h"\
+	".\lib\xalloc.h"\
+	".\src\base.h"\
+	".\src\classify.h"\
+	".\src\client.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
+	".\src\gpg.h"\
+	".\src\hash.h"\
+	".\src\ignore.h"\
+	".\src\rcs.h"\
+	".\src\recurse.h"\
+	".\src\root.h"\
+	".\src\run.h"\
+	".\src\server.h"\
+	".\src\sign.h"\
+	".\src\stack.h"\
+	".\src\subr.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
+	".\windows-NT\config.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
+	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
 
 ".\windows-NT\sockerror.c" : \
+	".\windows-NT\sys\socket.h"\
 	
 
 ".\src\socket-client.c" : \
@@ -2063,28 +2723,37 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\socket-client.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -2103,27 +2772,36 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -2142,28 +2820,37 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\rcmd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -2182,27 +2869,40 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
+	".\src\classify.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -2226,27 +2926,37 @@
 	".\lib\unlocked-io.h"\
 	".\lib\vasnprintf.h"\
 	".\lib\vasprintf.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -2266,32 +2976,46 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
+	".\src\classify.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
 
 ".\windows-NT\unistd.c" : \
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -2312,26 +3036,77 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
+	".\src\base.h"\
+	".\src\classify.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
+	".\src\entries.h"\
 	".\src\fileattr.h"\
+	".\src\filesubr.h"\
 	".\src\hardlink.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
+	".\src\no_diff.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
+	".\src\repos.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
 	".\src\watch.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
+	".\windows-NT\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
+	".\windows-NT\pwd.h"\
+	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
+	".\windows-NT\unistd.h"\
+	".\windows-NT\woe32.h"\
+	
+
+.\src\verify.c : \
+	".\lib\fnmatch.h"\
+	".\lib\getopt.h"\
+	".\lib\getpagesize.h"\
+	".\lib\gettext.h"\
+	".\lib\system.h"\
+	".\lib\timespec.h"\
+	".\lib\wait.h"\
+	".\lib\xalloc.h"\
+	".\src\base.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
+	".\src\gpg.h"\
+	".\src\hash.h"\
+	".\src\parseinfo.h"\
+	".\src\rcs.h"\
+	".\src\recurse.h"\
+	".\src\repos.h"\
+	".\src\root.h"\
+	".\src\run.h"\
+	".\src\server.h"\
+	".\src\sign.h"\
+	".\src\stack.h"\
+	".\src\subr.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
@@ -2356,27 +3131,36 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -2395,27 +3179,36 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -2440,7 +3233,6 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
@@ -2448,22 +3240,34 @@
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
+	".\src\entries.h"\
 	".\src\fileattr.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
+	".\src\ignore.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
+	".\src\recurse.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
 	".\src\watch.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -2472,6 +3276,7 @@
 	".\lib\timespec.h"\
 	".\lib\xalloc.h"\
 	".\windows-NT\config.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -2491,27 +3296,37 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\src\wrapper.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	
@@ -2524,7 +3339,6 @@
 	".\lib\getopt.h"\
 	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
-	".\lib\pagealign_alloc.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\stat-macros.h"\
@@ -2532,27 +3346,36 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
+	".\src\entries.h"\
+	".\src\filesubr.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\parseinfo.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
+	".\src\run.h"\
 	".\src\server.h"\
+	".\src\sign.h"\
 	".\src\stack.h"\
 	".\src\subr.h"\
 	".\src\update.h"\
+	".\src\verify.h"\
+	".\src\vers_ts.h"\
+	".\windows-nt\arpa\inet.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
+	".\windows-NT\netdb.h"\
+	".\windows-nt\netinet\in.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
 	".\windows-NT\stdint.h"\
+	".\windows-NT\sys\socket.h"\
 	".\windows-NT\unistd.h"\
 	".\windows-NT\woe32.h"\
 	".\zlib\zconf.h"\

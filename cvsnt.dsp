@@ -66,6 +66,7 @@ LINK32=link.exe
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /D "_DEBUG" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /YX /FD /c
 # SUBTRACT BASE CPP /Fr
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /D "_DEBUG" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /YX /FD /c
+# SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -97,6 +98,10 @@ SOURCE=.\src\admin.c
 # Begin Source File
 
 SOURCE=.\src\annotate.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\base.c
 # End Source File
 # Begin Source File
 
@@ -136,6 +141,10 @@ SOURCE=.\src\diff.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\difflib.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\edit.c
 # End Source File
 # Begin Source File
@@ -165,6 +174,10 @@ SOURCE=".\windows-NT\filesubr.c"
 # Begin Source File
 
 SOURCE=.\src\find_names.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\gpg.c
 # End Source File
 # Begin Source File
 
@@ -300,6 +313,10 @@ SOURCE=.\src\server.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\sign.c
+# End Source File
+# Begin Source File
+
 SOURCE=".\windows-NT\sockerror.c"
 # End Source File
 # Begin Source File
@@ -333,6 +350,10 @@ SOURCE=".\windows-NT\unistd.c"
 # Begin Source File
 
 SOURCE=.\src\update.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\verify.c
 # End Source File
 # Begin Source File
 
@@ -404,6 +425,10 @@ SOURCE=.\zlib\deflate.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\difflib.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\diff\diffrun.h
 # End Source File
 # Begin Source File
@@ -469,6 +494,10 @@ SOURCE=".\lib\glob-libc.h"
 # Begin Source File
 
 SOURCE=.\lib\glob.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\gpg.h
 # End Source File
 # Begin Source File
 
@@ -653,6 +682,10 @@ SOURCE=.\lib\vasnprintf.h
 # Begin Source File
 
 SOURCE=.\lib\vasprintf.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\verify.h
 # End Source File
 # Begin Source File
 
