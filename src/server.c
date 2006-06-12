@@ -8267,22 +8267,15 @@ cvs_output_tagged (const char *tag, const char *text)
     }
 }
 
-
-
+#ifdef SERVER_SUPPORT
 /* Return whether we should send operations on base files.  */
 bool
 server_use_bases (void)
 {
-#ifdef SERVER_SUPPORT
     return supported_response ("Base-checkout");
-#else /* !SERVER_SUPPORT */
-    return 0;
-#endif
 }
 
 
-
-#ifdef SERVER_SUPPORT
 static void
 server_send_signatures (struct file_info *finfo, const char *rev)
 {

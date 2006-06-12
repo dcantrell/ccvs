@@ -1,3 +1,8 @@
+2006-06-11  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	* server.h, server.c, update.c: wrap various server-related functions
+	in #ifdef SERVER_SUPPORT directives, to allow clients to compile.
+
 2006-06-10  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (conflicts4): Don't expect specific file permissions.  Use
