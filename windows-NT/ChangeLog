@@ -1,3 +1,18 @@
+2006-06-11  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	* .cvsignore: Ignore the WinDebug and WinRel directories, which hold
+	the *.obj files
+	* config.h.in.in: add spaces after '#define X' macros (as opposed to
+	'#define X Y' macros) to work around Cygwin/perl bug (or possible bug
+	in mkconfig.pl) (affects CLIENT_SUPPORT, HAVE_CONNECT, LOCK_COMPATIBILITY,
+	MY_NDBM, UTIME_EXPECTS_WRITABLE and restrict)
+	* config.h.in.in: modified definitions of DEFAULT_SIGN_TEMPLATE,
+	DEFAULT_SIGN_TEXTMODE, 	DEFAULT_VERIFY_TEMPLATE, HAVE_DECL_STRTOLL, 
+	HAVE_DECL_STRTOULL to allow Visual Studio to compile
+	* config.h.in, config.h, stamp-chi: regenerated
+	* filesubr.c: added force_copy_file, force_xchmod functions (similar to
+	src/filesubr.c functions)
+
 2006-06-11  Derek Price  <derek@ximbiot.com>
 
 	* mkconfig.pl: Add a script comment block.
