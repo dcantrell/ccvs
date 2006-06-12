@@ -65,7 +65,6 @@ LIB32=link.exe -lib
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
 # ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "..\windows-NT" /I "." /D "_DEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /D "WINDOWS32" /YX /FD /GZ /c
-# SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -91,6 +90,10 @@ SOURCE=.\__fpending.c
 # Begin Source File
 
 SOURCE=.\asnprintf.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\base64.c
 # End Source File
 # Begin Source File
 
@@ -270,6 +273,14 @@ SOURCE=.\strnlen1.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\strtoimax.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\strtoumax.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\tempname.c
 # End Source File
 # Begin Source File
@@ -354,6 +365,10 @@ InputPath=.\alloca_.h
 # Begin Source File
 
 SOURCE=.\allocsa.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\base64.h
 # End Source File
 # Begin Source File
 
@@ -539,6 +554,10 @@ InputPath=.\glob_.h
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=.\inttypes.h
 # End Source File
 # Begin Source File
 

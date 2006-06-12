@@ -42,6 +42,7 @@ ALL : ".\glob.h" ".\getopt.h" ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
 CLEAN :
 	-@erase "$(INTDIR)\__fpending.obj"
 	-@erase "$(INTDIR)\asnprintf.obj"
+	-@erase "$(INTDIR)\base64.obj"
 	-@erase "$(INTDIR)\basename.obj"
 	-@erase "$(INTDIR)\canon-host.obj"
 	-@erase "$(INTDIR)\canonicalize.obj"
@@ -86,6 +87,8 @@ CLEAN :
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
 	-@erase "$(INTDIR)\strnlen1.obj"
+	-@erase "$(INTDIR)\strtoimax.obj"
+	-@erase "$(INTDIR)\strtoumax.obj"
 	-@erase "$(INTDIR)\tempname.obj"
 	-@erase "$(INTDIR)\time_r.obj"
 	-@erase "$(INTDIR)\unsetenv.obj"
@@ -117,6 +120,7 @@ LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libcvs.lib"
 LIB32_OBJS= \
 	"$(INTDIR)\__fpending.obj" \
 	"$(INTDIR)\asnprintf.obj" \
+	"$(INTDIR)\base64.obj" \
 	"$(INTDIR)\basename.obj" \
 	"$(INTDIR)\canon-host.obj" \
 	"$(INTDIR)\canonicalize.obj" \
@@ -161,6 +165,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\strftime.obj" \
 	"$(INTDIR)\stripslash.obj" \
 	"$(INTDIR)\strnlen1.obj" \
+	"$(INTDIR)\strtoimax.obj" \
 	"$(INTDIR)\tempname.obj" \
 	"$(INTDIR)\time_r.obj" \
 	"$(INTDIR)\unsetenv.obj" \
@@ -171,7 +176,8 @@ LIB32_OBJS= \
 	"$(INTDIR)\xgethostname.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xreadlink.obj" \
-	"$(INTDIR)\yesno.obj"
+	"$(INTDIR)\yesno.obj" \
+	"$(INTDIR)\strtoumax.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -186,12 +192,13 @@ INTDIR=.\WinDebug
 OutDir=.\WinDebug
 # End Custom Macros
 
-ALL : ".\glob.h" ".\getopt.h" ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
+ALL : "$(OUTDIR)\libcvs.lib"
 
 
 CLEAN :
 	-@erase "$(INTDIR)\__fpending.obj"
 	-@erase "$(INTDIR)\asnprintf.obj"
+	-@erase "$(INTDIR)\base64.obj"
 	-@erase "$(INTDIR)\basename.obj"
 	-@erase "$(INTDIR)\canon-host.obj"
 	-@erase "$(INTDIR)\canonicalize.obj"
@@ -236,6 +243,8 @@ CLEAN :
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
 	-@erase "$(INTDIR)\strnlen1.obj"
+	-@erase "$(INTDIR)\strtoimax.obj"
+	-@erase "$(INTDIR)\strtoumax.obj"
 	-@erase "$(INTDIR)\tempname.obj"
 	-@erase "$(INTDIR)\time_r.obj"
 	-@erase "$(INTDIR)\unsetenv.obj"
@@ -250,10 +259,6 @@ CLEAN :
 	-@erase "$(INTDIR)\xreadlink.obj"
 	-@erase "$(INTDIR)\yesno.obj"
 	-@erase "$(OUTDIR)\libcvs.lib"
-	-@erase ".\alloca.h"
-	-@erase ".\fnmatch.h"
-	-@erase ".\getopt.h"
-	-@erase ".\glob.h"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -268,6 +273,7 @@ LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libcvs.lib"
 LIB32_OBJS= \
 	"$(INTDIR)\__fpending.obj" \
 	"$(INTDIR)\asnprintf.obj" \
+	"$(INTDIR)\base64.obj" \
 	"$(INTDIR)\basename.obj" \
 	"$(INTDIR)\canon-host.obj" \
 	"$(INTDIR)\canonicalize.obj" \
@@ -312,6 +318,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\strftime.obj" \
 	"$(INTDIR)\stripslash.obj" \
 	"$(INTDIR)\strnlen1.obj" \
+	"$(INTDIR)\strtoimax.obj" \
 	"$(INTDIR)\tempname.obj" \
 	"$(INTDIR)\time_r.obj" \
 	"$(INTDIR)\unsetenv.obj" \
@@ -322,7 +329,8 @@ LIB32_OBJS= \
 	"$(INTDIR)\xgethostname.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xreadlink.obj" \
-	"$(INTDIR)\yesno.obj"
+	"$(INTDIR)\yesno.obj" \
+	"$(INTDIR)\strtoumax.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -380,6 +388,11 @@ SOURCE=.\__fpending.c
 SOURCE=.\asnprintf.c
 
 "$(INTDIR)\asnprintf.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\base64.c
+
+"$(INTDIR)\base64.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\basename.c
@@ -600,6 +613,16 @@ SOURCE=.\stripslash.c
 SOURCE=.\strnlen1.c
 
 "$(INTDIR)\strnlen1.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\strtoimax.c
+
+"$(INTDIR)\strtoimax.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\strtoumax.c
+
+"$(INTDIR)\strtoumax.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\tempname.c
