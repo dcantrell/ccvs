@@ -14,6 +14,14 @@
 	".\vasnprintf.h"\
 	
 
+.\base64.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\woe32.h"\
+	".\base64.h"\
+	".\timespec.h"\
+	
+
 .\basename.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
@@ -24,7 +32,6 @@
 
 ".\canon-host.c" : \
 	"..\windows-NT\config.h"\
-	"..\windows-NT\netdb.h"\
 	"..\windows-NT\sys\socket.h"\
 	"..\windows-NT\woe32.h"\
 	".\canon-host.h"\
@@ -146,7 +153,6 @@
 
 .\gai_strerror.c : \
 	"..\windows-NT\config.h"\
-	"..\windows-NT\netdb.h"\
 	"..\windows-NT\sys\socket.h"\
 	"..\windows-NT\woe32.h"\
 	".\getaddrinfo.h"\
@@ -156,7 +162,6 @@
 
 .\getaddrinfo.c : \
 	"..\windows-NT\config.h"\
-	"..\windows-NT\netdb.h"\
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\sys\socket.h"\
 	"..\windows-NT\woe32.h"\
@@ -255,7 +260,6 @@
 	"..\windows-NT\woe32.h"\
 	".\stat-macros.h"\
 	".\timespec.h"\
-	".\xalloc.h"\
 	
 
 .\mbchar.c : \
@@ -339,6 +343,7 @@
 .\regex.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\stdint.h"\
 	"..\windows-NT\woe32.h"\
 	".\alloca.h"\
 	".\regcomp.c"\
@@ -346,6 +351,7 @@
 	".\regex_internal.c"\
 	".\regex_internal.h"\
 	".\regexec.c"\
+	".\strcase.h"\
 	".\timespec.h"\
 	
 
@@ -361,9 +367,10 @@
 	"..\windows-NT\unistd.h"\
 	"..\windows-NT\woe32.h"\
 	".\chdir-long.h"\
+	".\fcntl--.h"\
+	".\fcntl-safer.h"\
 	".\save-cwd.h"\
 	".\timespec.h"\
-	".\unistd-safer.h"\
 	".\xgetcwd.h"\
 	
 
@@ -423,6 +430,25 @@
 	"..\windows-NT\woe32.h"\
 	".\strnlen1.h"\
 	".\timespec.h"\
+	
+
+.\strtoimax.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\stdint.h"\
+	"..\windows-NT\woe32.h"\
+	".\inttypes.h"\
+	".\timespec.h"\
+	".\verify.h"\
+	
+
+.\strtoumax.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\stdint.h"\
+	"..\windows-NT\woe32.h"\
+	".\inttypes.h"\
+	".\strtoimax.c"\
+	".\timespec.h"\
+	".\verify.h"\
 	
 
 .\tempname.c : \
