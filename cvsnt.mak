@@ -28,6 +28,9 @@ NULL=
 NULL=nul
 !ENDIF 
 
+CPP=cl.exe
+RSC=rc.exe
+
 !IF  "$(CFG)" == "cvsnt - Win32 Release"
 
 OUTDIR=.\WinRel
@@ -54,6 +57,7 @@ CLEAN :
 	-@erase "$(INTDIR)\add.obj"
 	-@erase "$(INTDIR)\admin.obj"
 	-@erase "$(INTDIR)\annotate.obj"
+	-@erase "$(INTDIR)\base.obj"
 	-@erase "$(INTDIR)\buffer.obj"
 	-@erase "$(INTDIR)\checkin.obj"
 	-@erase "$(INTDIR)\checkout.obj"
@@ -63,6 +67,7 @@ CLEAN :
 	-@erase "$(INTDIR)\create_adm.obj"
 	-@erase "$(INTDIR)\cvsrc.obj"
 	-@erase "$(INTDIR)\diff.obj"
+	-@erase "$(INTDIR)\difflib.obj"
 	-@erase "$(INTDIR)\edit.obj"
 	-@erase "$(INTDIR)\entries.obj"
 	-@erase "$(INTDIR)\error.obj"
@@ -71,6 +76,7 @@ CLEAN :
 	-@erase "$(INTDIR)\fileattr.obj"
 	-@erase "$(INTDIR)\filesubr.obj"
 	-@erase "$(INTDIR)\find_names.obj"
+	-@erase "$(INTDIR)\gpg.obj"
 	-@erase "$(INTDIR)\hash.obj"
 	-@erase "$(INTDIR)\history.obj"
 	-@erase "$(INTDIR)\ignore.obj"
@@ -104,6 +110,7 @@ CLEAN :
 	-@erase "$(INTDIR)\run.obj"
 	-@erase "$(INTDIR)\scramble.obj"
 	-@erase "$(INTDIR)\server.obj"
+	-@erase "$(INTDIR)\sign.obj"
 	-@erase "$(INTDIR)\sockerror.obj"
 	-@erase "$(INTDIR)\socket-client.obj"
 	-@erase "$(INTDIR)\stack.obj"
@@ -114,6 +121,7 @@ CLEAN :
 	-@erase "$(INTDIR)\unistd.obj"
 	-@erase "$(INTDIR)\update.obj"
 	-@erase "$(INTDIR)\vc60.idb"
+	-@erase "$(INTDIR)\verify.obj"
 	-@erase "$(INTDIR)\vers_ts.obj"
 	-@erase "$(INTDIR)\version.obj"
 	-@erase "$(INTDIR)\waitpid.obj"
@@ -126,40 +134,7 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
 CPP_PROJ=/nologo /ML /W3 /GX /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /I ".\WinDebug" /D "NDEBUG" /D "WANT_WIN_COMPILER_VERSION" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /Fp"$(INTDIR)\cvsnt.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\cvsnt.bsc" 
 BSC32_SBRS= \
@@ -170,6 +145,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\add.obj" \
 	"$(INTDIR)\admin.obj" \
 	"$(INTDIR)\annotate.obj" \
+	"$(INTDIR)\base.obj" \
 	"$(INTDIR)\buffer.obj" \
 	"$(INTDIR)\checkin.obj" \
 	"$(INTDIR)\checkout.obj" \
@@ -179,6 +155,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\create_adm.obj" \
 	"$(INTDIR)\cvsrc.obj" \
 	"$(INTDIR)\diff.obj" \
+	"$(INTDIR)\difflib.obj" \
 	"$(INTDIR)\edit.obj" \
 	"$(INTDIR)\entries.obj" \
 	"$(INTDIR)\error.obj" \
@@ -187,6 +164,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\fileattr.obj" \
 	"$(INTDIR)\filesubr.obj" \
 	"$(INTDIR)\find_names.obj" \
+	"$(INTDIR)\gpg.obj" \
 	"$(INTDIR)\hash.obj" \
 	"$(INTDIR)\history.obj" \
 	"$(INTDIR)\ignore.obj" \
@@ -220,6 +198,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\run.obj" \
 	"$(INTDIR)\scramble.obj" \
 	"$(INTDIR)\server.obj" \
+	"$(INTDIR)\sign.obj" \
 	"$(INTDIR)\sockerror.obj" \
 	"$(INTDIR)\socket-client.obj" \
 	"$(INTDIR)\stack.obj" \
@@ -229,6 +208,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\tag.obj" \
 	"$(INTDIR)\unistd.obj" \
 	"$(INTDIR)\update.obj" \
+	"$(INTDIR)\verify.obj" \
 	"$(INTDIR)\vers_ts.obj" \
 	"$(INTDIR)\version.obj" \
 	"$(INTDIR)\waitpid.obj" \
@@ -271,6 +251,7 @@ CLEAN :
 	-@erase "$(INTDIR)\add.obj"
 	-@erase "$(INTDIR)\admin.obj"
 	-@erase "$(INTDIR)\annotate.obj"
+	-@erase "$(INTDIR)\base.obj"
 	-@erase "$(INTDIR)\buffer.obj"
 	-@erase "$(INTDIR)\checkin.obj"
 	-@erase "$(INTDIR)\checkout.obj"
@@ -280,6 +261,7 @@ CLEAN :
 	-@erase "$(INTDIR)\create_adm.obj"
 	-@erase "$(INTDIR)\cvsrc.obj"
 	-@erase "$(INTDIR)\diff.obj"
+	-@erase "$(INTDIR)\difflib.obj"
 	-@erase "$(INTDIR)\edit.obj"
 	-@erase "$(INTDIR)\entries.obj"
 	-@erase "$(INTDIR)\error.obj"
@@ -288,6 +270,7 @@ CLEAN :
 	-@erase "$(INTDIR)\fileattr.obj"
 	-@erase "$(INTDIR)\filesubr.obj"
 	-@erase "$(INTDIR)\find_names.obj"
+	-@erase "$(INTDIR)\gpg.obj"
 	-@erase "$(INTDIR)\hash.obj"
 	-@erase "$(INTDIR)\history.obj"
 	-@erase "$(INTDIR)\ignore.obj"
@@ -321,6 +304,7 @@ CLEAN :
 	-@erase "$(INTDIR)\run.obj"
 	-@erase "$(INTDIR)\scramble.obj"
 	-@erase "$(INTDIR)\server.obj"
+	-@erase "$(INTDIR)\sign.obj"
 	-@erase "$(INTDIR)\sockerror.obj"
 	-@erase "$(INTDIR)\socket-client.obj"
 	-@erase "$(INTDIR)\stack.obj"
@@ -332,6 +316,7 @@ CLEAN :
 	-@erase "$(INTDIR)\update.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vc60.pdb"
+	-@erase "$(INTDIR)\verify.obj"
 	-@erase "$(INTDIR)\vers_ts.obj"
 	-@erase "$(INTDIR)\version.obj"
 	-@erase "$(INTDIR)\waitpid.obj"
@@ -346,40 +331,7 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /D "_DEBUG" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /Fp"$(INTDIR)\cvsnt.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\cvsnt.bsc" 
 BSC32_SBRS= \
@@ -390,6 +342,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\add.obj" \
 	"$(INTDIR)\admin.obj" \
 	"$(INTDIR)\annotate.obj" \
+	"$(INTDIR)\base.obj" \
 	"$(INTDIR)\buffer.obj" \
 	"$(INTDIR)\checkin.obj" \
 	"$(INTDIR)\checkout.obj" \
@@ -399,6 +352,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\create_adm.obj" \
 	"$(INTDIR)\cvsrc.obj" \
 	"$(INTDIR)\diff.obj" \
+	"$(INTDIR)\difflib.obj" \
 	"$(INTDIR)\edit.obj" \
 	"$(INTDIR)\entries.obj" \
 	"$(INTDIR)\error.obj" \
@@ -407,6 +361,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\fileattr.obj" \
 	"$(INTDIR)\filesubr.obj" \
 	"$(INTDIR)\find_names.obj" \
+	"$(INTDIR)\gpg.obj" \
 	"$(INTDIR)\hash.obj" \
 	"$(INTDIR)\history.obj" \
 	"$(INTDIR)\ignore.obj" \
@@ -440,6 +395,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\run.obj" \
 	"$(INTDIR)\scramble.obj" \
 	"$(INTDIR)\server.obj" \
+	"$(INTDIR)\sign.obj" \
 	"$(INTDIR)\sockerror.obj" \
 	"$(INTDIR)\socket-client.obj" \
 	"$(INTDIR)\stack.obj" \
@@ -449,6 +405,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\tag.obj" \
 	"$(INTDIR)\unistd.obj" \
 	"$(INTDIR)\update.obj" \
+	"$(INTDIR)\verify.obj" \
 	"$(INTDIR)\vers_ts.obj" \
 	"$(INTDIR)\version.obj" \
 	"$(INTDIR)\waitpid.obj" \
@@ -466,6 +423,36 @@ LINK32_OBJS= \
 <<
 
 !ENDIF 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
@@ -493,6 +480,12 @@ SOURCE=.\src\admin.c
 SOURCE=.\src\annotate.c
 
 "$(INTDIR)\annotate.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\base.c
+
+"$(INTDIR)\base.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -550,6 +543,12 @@ SOURCE=.\src\diff.c
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+SOURCE=.\src\difflib.c
+
+"$(INTDIR)\difflib.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
 SOURCE=.\src\edit.c
 
 "$(INTDIR)\edit.obj" : $(SOURCE) "$(INTDIR)"
@@ -595,6 +594,12 @@ SOURCE=".\windows-NT\filesubr.c"
 SOURCE=.\src\find_names.c
 
 "$(INTDIR)\find_names.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\gpg.c
+
+"$(INTDIR)\gpg.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -796,6 +801,12 @@ SOURCE=.\src\server.c
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+SOURCE=.\src\sign.c
+
+"$(INTDIR)\sign.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
 SOURCE=".\windows-NT\sockerror.c"
 
 "$(INTDIR)\sockerror.obj" : $(SOURCE) "$(INTDIR)"
@@ -847,6 +858,12 @@ SOURCE=".\windows-NT\unistd.c"
 SOURCE=.\src\update.c
 
 "$(INTDIR)\update.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=.\src\verify.c
+
+"$(INTDIR)\verify.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
