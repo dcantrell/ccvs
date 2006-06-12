@@ -19,7 +19,7 @@
 #undef AUTH_SERVER_SUPPORT
 
 /* Define if you want CVS to be able to be a remote repository client. */
-#define CLIENT_SUPPORT 
+#define CLIENT_SUPPORT
 
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 #undef CLOSEDIR_VOID
@@ -168,7 +168,7 @@
 #undef HAVE_COMPOUND_LITERALS
 
 /* Define if you have the connect function. */
-#define HAVE_CONNECT 
+#define HAVE_CONNECT
 
 /* Define if you have the crypt function. */
 #undef HAVE_CRYPT
@@ -938,7 +938,7 @@
    like this code disabled, you can disable it by passing the
    "--disable-lock-compatibility" option to configure or by commenting out the
    lines below. */
-#define LOCK_COMPATIBILITY 
+#define LOCK_COMPATIBILITY
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
@@ -954,7 +954,7 @@
    (MY_NDBM enables this). Turning off MY_NDBM causes CVS to look for a
    system-supplied ndbm database library and use it instead. That may speed
    things up, but the default setting generally works fine too. */
-#define MY_NDBM 
+#define MY_NDBM
 
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 #undef NO_MINUS_C_MINUS_O
@@ -1167,7 +1167,7 @@
 
 /* Define if utime requires write access to the file (true on Windows, but not
    Unix). */
-#define UTIME_EXPECTS_WRITABLE 
+#define UTIME_EXPECTS_WRITABLE
 
 /* Define if unsetenv() returns void, not int. */
 #undef VOID_UNSETENV
@@ -1351,7 +1351,7 @@
 
 /* Define to equivalent of C99 restrict keyword, or to nothing if this is not
    supported. Do not define if restrict is supported directly. */
-#define restrict 
+#define restrict
 
 /* Define to rpl_select if the replacement function should be used. */
 #undef select
