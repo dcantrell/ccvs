@@ -1,4 +1,6 @@
 Makefile
+WinDebug
+WinRel
 check.log
 check.plog
 stamp-ch

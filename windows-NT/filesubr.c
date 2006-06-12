@@ -30,6 +30,9 @@
 
 static int deep_remove_dir (const char *path);
 
+/*
+ * Copies FROM to TO.  Ignores NOEXEC.
+ */
 /* Copies "from" to "to".  Note that the functionality here is similar
    to the win32 function CopyFile, but (1) we copy LastAccessTime and
    CopyFile doesn't, (2) we set file attributes to the default set by
@@ -38,7 +41,7 @@ static int deep_remove_dir (const char *path);
    is some reason they should be changed (this would need more
    investigation).  */
 void
-copy_file (const char *from, const char *to)
+force_copy_file (const char *from, const char *to )
 {
     struct stat sb;
     struct utimbuf t;
@@ -96,6 +99,17 @@ copy_file (const char *from, const char *to)
     t.actime = sb.st_atime;
     t.modtime = sb.st_mtime;
     (void) utime (to, &t);
+}
+
+/*
+ * Copies FROM to TO.  Honors NOEXEC.
+ */
+void
+copy_file (const char *from, const char *to)
+{
+    TRACE (TRACE_FUNCTION, "copy (%s, %s)", from, to);
+    if (noexec) return;
+    force_copy_file (from, to);
 }
 
 
@@ -354,14 +368,15 @@ mkdir_if_needed (const char *name)
     }
     return 0;
 }
-
 /*
  * Change the mode of a file, either adding write permissions, or removing
  * all write permissions.  Adding write permissions honors the current umask
  * setting.
  */
-void
-xchmod (const char *fname, bool writable)
+static void
+ixchmod (fname, writable)
+    const char *fname;
+    bool writable;
 {
     struct stat sb;
     mode_t mode, oumask;
@@ -394,6 +409,17 @@ xchmod (const char *fname, bool writable)
 	error (0, errno, "cannot change mode of file %s", fname);
 }
 
+/* See description for ixchmod.  Ignores NOEXEC.  */
+void
+force_xchmod (const char *fname, bool writable)
+{
+    ixchmod (fname, writable, false);
+}
+
+void xchmod(const char *fname, bool writable)
+{
+	ixchmod(fname, writable, noexec);
+}
 
 /* Rename for NT which works for read only files.  Apparently if we are
    accessing FROM and TO via a Novell network, this is an issue.  */
