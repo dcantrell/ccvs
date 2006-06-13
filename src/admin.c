@@ -339,7 +339,7 @@ make_UserAdminOptions (const char *infopath, unsigned int ln, const char *s)
 static size_t
 wescape(char *dst, const char *src)
 {
-    const unsigned char *s = src;
+    const char *s = src;
     char *d = dst;
     for (; *s; s++) {
 	if (!isprint (*s) || isspace (*s) || *s == '|') {
