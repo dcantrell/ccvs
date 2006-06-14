@@ -1,3 +1,9 @@
+2006-06-14  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	* libcvs.dsp: Removed canonicalize.c, will use Windows-specific
+	version in ../windows-NT/
+	* libcvs.mak, libcvs.dep: regenerated for libcvs.dsp changes
+
 2006-06-11  Jim Hyslop <jhyslop@dreampossible.ca>
 
 	* libcvs.dsp: added new files to the lib

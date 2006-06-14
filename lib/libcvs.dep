@@ -40,24 +40,6 @@
 	".\timespec.h"\
 	
 
-.\canonicalize.c : \
-	"..\windows-NT\config.h"\
-	"..\windows-NT\stdbool.h"\
-	"..\windows-NT\stdint.h"\
-	"..\windows-NT\unistd.h"\
-	"..\windows-NT\woe32.h"\
-	".\canonicalize.h"\
-	".\cycle-check.h"\
-	".\dev-ino.h"\
-	".\filenamecat.h"\
-	".\pathmax.h"\
-	".\stat-macros.h"\
-	".\timespec.h"\
-	".\xalloc.h"\
-	".\xgetcwd.h"\
-	".\xreadlink.h"\
-	
-
 .\closeout.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\

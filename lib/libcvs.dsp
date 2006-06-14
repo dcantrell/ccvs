@@ -105,10 +105,6 @@ SOURCE=".\canon-host.c"
 # End Source File
 # Begin Source File
 
-SOURCE=.\canonicalize.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\closeout.c
 # End Source File
 # Begin Source File

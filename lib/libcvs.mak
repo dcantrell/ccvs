@@ -45,7 +45,6 @@ CLEAN :
 	-@erase "$(INTDIR)\base64.obj"
 	-@erase "$(INTDIR)\basename.obj"
 	-@erase "$(INTDIR)\canon-host.obj"
-	-@erase "$(INTDIR)\canonicalize.obj"
 	-@erase "$(INTDIR)\closeout.obj"
 	-@erase "$(INTDIR)\cycle-check.obj"
 	-@erase "$(INTDIR)\dirname.obj"
@@ -123,7 +122,6 @@ LIB32_OBJS= \
 	"$(INTDIR)\base64.obj" \
 	"$(INTDIR)\basename.obj" \
 	"$(INTDIR)\canon-host.obj" \
-	"$(INTDIR)\canonicalize.obj" \
 	"$(INTDIR)\closeout.obj" \
 	"$(INTDIR)\cycle-check.obj" \
 	"$(INTDIR)\dirname.obj" \
@@ -166,6 +164,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\stripslash.obj" \
 	"$(INTDIR)\strnlen1.obj" \
 	"$(INTDIR)\strtoimax.obj" \
+	"$(INTDIR)\strtoumax.obj" \
 	"$(INTDIR)\tempname.obj" \
 	"$(INTDIR)\time_r.obj" \
 	"$(INTDIR)\unsetenv.obj" \
@@ -176,8 +175,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\xgethostname.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xreadlink.obj" \
-	"$(INTDIR)\yesno.obj" \
-	"$(INTDIR)\strtoumax.obj"
+	"$(INTDIR)\yesno.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -201,7 +199,6 @@ CLEAN :
 	-@erase "$(INTDIR)\base64.obj"
 	-@erase "$(INTDIR)\basename.obj"
 	-@erase "$(INTDIR)\canon-host.obj"
-	-@erase "$(INTDIR)\canonicalize.obj"
 	-@erase "$(INTDIR)\closeout.obj"
 	-@erase "$(INTDIR)\cycle-check.obj"
 	-@erase "$(INTDIR)\dirname.obj"
@@ -276,7 +273,6 @@ LIB32_OBJS= \
 	"$(INTDIR)\base64.obj" \
 	"$(INTDIR)\basename.obj" \
 	"$(INTDIR)\canon-host.obj" \
-	"$(INTDIR)\canonicalize.obj" \
 	"$(INTDIR)\closeout.obj" \
 	"$(INTDIR)\cycle-check.obj" \
 	"$(INTDIR)\dirname.obj" \
@@ -319,6 +315,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\stripslash.obj" \
 	"$(INTDIR)\strnlen1.obj" \
 	"$(INTDIR)\strtoimax.obj" \
+	"$(INTDIR)\strtoumax.obj" \
 	"$(INTDIR)\tempname.obj" \
 	"$(INTDIR)\time_r.obj" \
 	"$(INTDIR)\unsetenv.obj" \
@@ -329,8 +326,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\xgethostname.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xreadlink.obj" \
-	"$(INTDIR)\yesno.obj" \
-	"$(INTDIR)\strtoumax.obj"
+	"$(INTDIR)\yesno.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -403,11 +399,6 @@ SOURCE=.\basename.c
 SOURCE=".\canon-host.c"
 
 "$(INTDIR)\canon-host.obj" : $(SOURCE) "$(INTDIR)"
-
-
-SOURCE=.\canonicalize.c
-
-"$(INTDIR)\canonicalize.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\closeout.c
