@@ -257,6 +257,15 @@
 	".\windows-NT\woe32.h"\
 	
 
+".\windows-NT\canonicalize.c" : \
+	".\lib\canonicalize.h"\
+	".\lib\timespec.h"\
+	".\lib\xalloc.h"\
+	".\lib\xgetcwd.h"\
+	".\windows-NT\config.h"\
+	".\windows-NT\woe32.h"\
+	
+
 .\src\checkin.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
