@@ -59,6 +59,7 @@ CLEAN :
 	-@erase "$(INTDIR)\annotate.obj"
 	-@erase "$(INTDIR)\base.obj"
 	-@erase "$(INTDIR)\buffer.obj"
+	-@erase "$(INTDIR)\canonicalize.obj"
 	-@erase "$(INTDIR)\checkin.obj"
 	-@erase "$(INTDIR)\checkout.obj"
 	-@erase "$(INTDIR)\classify.obj"
@@ -140,7 +141,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\cvsnt.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=diff\WinRel\libdiff.lib lib\WinRel\libcvs.lib zlib\WinRel\libz.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /incremental:no /pdb:"$(OUTDIR)\cvs.pdb" /machine:I386 /out:"$(OUTDIR)\cvs.exe" 
+LINK32_FLAGS=diff\WinRel\libdiff.lib lib\WinRel\libcvs.lib zlib\WinRel\libz.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib shlwapi.lib /nologo /subsystem:console /incremental:no /pdb:"$(OUTDIR)\cvs.pdb" /machine:I386 /out:"$(OUTDIR)\cvs.exe" 
 LINK32_OBJS= \
 	"$(INTDIR)\add.obj" \
 	"$(INTDIR)\admin.obj" \
@@ -216,6 +217,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\woe32.obj" \
 	"$(INTDIR)\wrapper.obj" \
 	"$(INTDIR)\zlib.obj" \
+	"$(INTDIR)\canonicalize.obj" \
 	".\diff\WinRel\libdiff.lib" \
 	".\zlib\WinRel\libz.lib" \
 	".\lib\WinRel\libcvs.lib"
@@ -253,6 +255,7 @@ CLEAN :
 	-@erase "$(INTDIR)\annotate.obj"
 	-@erase "$(INTDIR)\base.obj"
 	-@erase "$(INTDIR)\buffer.obj"
+	-@erase "$(INTDIR)\canonicalize.obj"
 	-@erase "$(INTDIR)\checkin.obj"
 	-@erase "$(INTDIR)\checkout.obj"
 	-@erase "$(INTDIR)\classify.obj"
@@ -337,7 +340,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\cvsnt.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=diff\WinDebug\libdiff.lib lib\WinDebug\libcvs.lib zlib\WinDebug\libz.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\cvs.pdb" /debug /machine:I386 /out:"$(OUTDIR)\cvs.exe" 
+LINK32_FLAGS=diff\WinDebug\libdiff.lib lib\WinDebug\libcvs.lib zlib\WinDebug\libz.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib shlwapi.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\cvs.pdb" /debug /machine:I386 /out:"$(OUTDIR)\cvs.exe" 
 LINK32_OBJS= \
 	"$(INTDIR)\add.obj" \
 	"$(INTDIR)\admin.obj" \
@@ -413,6 +416,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\woe32.obj" \
 	"$(INTDIR)\wrapper.obj" \
 	"$(INTDIR)\zlib.obj" \
+	"$(INTDIR)\canonicalize.obj" \
 	".\diff\WinDebug\libdiff.lib" \
 	".\zlib\WinDebug\libz.lib" \
 	".\lib\WinDebug\libcvs.lib"
@@ -492,6 +496,12 @@ SOURCE=.\src\base.c
 SOURCE=.\src\buffer.c
 
 "$(INTDIR)\buffer.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=".\windows-NT\canonicalize.c"
+
+"$(INTDIR)\canonicalize.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
