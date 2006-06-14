@@ -1,3 +1,8 @@
+2006-06-14  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	* canonicalize.c: new file, with Windows-specific implementation
+	of function canonicalize_filename_mode()
+
 2006-06-12  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in: Undo trailing space addition from previous change
@@ -8,6 +13,7 @@
 
 	* .cvsignore: Ignore the WinDebug and WinRel directories, which hold
 	the *.obj files
+	* mkconfig.pl, fix-msvc-mak.pl: change the #! to use an absolute path
 	* config.h.in.in: add spaces after '#define X' macros (as opposed to
 	'#define X Y' macros) to work around Cygwin/perl bug (or possible bug
 	in mkconfig.pl) (affects CLIENT_SUPPORT, HAVE_CONNECT, LOCK_COMPATIBILITY,
