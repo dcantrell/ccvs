@@ -1,3 +1,13 @@
+2006-06-15  Mark D. Baushke  <mdb@gnu.org>
+
+	* sanity.sh (conflicts4): Use $SECONDARY_CVSROOT_DIRNAME where
+	needed for $proxy testing.
+
+	* sanity.sh: Determine if the expr to be used will be confused
+	by 'expr "-rw-rw-r--" : "-rw-rw-r--"' and if so, try the POSIX
+	mechanism of a '--' argument to terminate argument processing
+	by using 'expr -- "-rw-rw-r--" : "-rw-rw-r--"' as a workaround.
+
 2006-06-13  Derek Price  <derek@ximbiot.com>
 
 	* admin.c (wescape): Suppress compiler warning.

@@ -1143,6 +1143,32 @@ else
 fi
 }
 
+# FreeBSD 5.2 and 6.1 support 'expr [-e] expression' 
+# They get confused unless '--' is used before the expressions
+# when those expressions begin with a '-' character, such as the
+# output of an ls -l command. The EXPR_COMPAT environment variable may
+# be used to go back to the non-POSIX behavior as an alternative.
+# (GNU expr appears to accept the '--' argument and work correctly or
+# not have it and still get the results we want.)
+exprDASHDASH='false'
+expr_set_DASHDASH ()
+{
+expr=$1
+exprDASHDASH='false'
+if $expr $exprDASHDASH "-rw-rw-r--" : "-rw-rw-r--" >/dev/null 2>&1; then
+  # good, it works
+  return 0
+else
+  if $expr -- "-rw-rw-r--" : "-rw-rw-r--" >/dev/null 2>&1; then
+    exprDASHDASH=':'
+    return 0
+  else
+    return 77
+  fi
+fi
+}
+
+
 EXPR=`find_tool expr ${EXPR}:gexpr \
   version_test expr_tooltest1 expr_tooltest2 expr_tooltest3 \
 expr_set_ENDANCHOR expr_set_DOTSTAR expr_tooltest_DOTSTAR`
@@ -1150,6 +1176,10 @@ expr_set_ENDANCHOR expr_set_DOTSTAR expr_tooltest_DOTSTAR`
 # Set the ENDANCHOR and DOTSTAR for the chosen expr version.
 expr_set_ENDANCHOR ${EXPR} >/dev/null
 expr_tooltest_DOTSTAR ${EXPR} >/dev/null
+
+# Set the exprDASHDASH for the chosen expr version
+expr_set_DASHDASH ${EXPR}
+[ $exprDASHDASH ] && EXPR="$EXPR --"
 
 echo "Using EXPR=$EXPR" >>$LOGFILE
 echo "Using ENDANCHOR=$ENDANCHOR" >>$LOGFILE
@@ -12403,7 +12433,41 @@ EOF
 	    save_CVS_SERVER=$CVS_SERVER
 	    CVS_SERVER=$TESTDIR/conflicts4/serveme; export CVS_SERVER
 	    dotest_fail conflicts4-10r "$testcvs -q up" "C file1"
-	    dotest conflicts4-11r "cat $TESTDIR/conflicts4/client.out" \
+	    if $proxy; then
+	     dotest conflicts4-11p "cat $TESTDIR/conflicts4/client.out" \
+"$DOTSTAR
+Argument --
+Directory .
+$SECONDARY_CVSROOT_DIRNAME/first-dir
+Entry /file1/1.2/$PLUS=//
+Modified file1
+u=.*,g=.*,o=.*
+59
+baseline
+""<<<<<<< file1
+wibble1
+""=======
+wibble2
+"">>>>>>> 1.2
+update"
+
+	    cat >$TESTDIR/conflicts4/serveme <<EOF
+#!$TESTSHELL
+# This is admittedly a bit cheezy, in the sense that we make lots
+# of assumptions about what the client is going to send us.
+# We don't mention Repository, because current clients don't require it.
+# Sending these at our own pace, rather than waiting for the client to
+# make the requests, is bogus, but hopefully we can get away with it.
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update Global_option Empty-conflicts"
+echo "ok"
+echo "MT text C "
+echo "MT fname file1"
+echo "MT newline"
+echo "error  "
+cat >$TESTDIR/conflicts4/client.out
+EOF
+	    else
+	     dotest conflicts4-11r "cat $TESTDIR/conflicts4/client.out" \
 "$DOTSTAR
 Argument --
 Directory .
@@ -12435,9 +12499,20 @@ echo "MT newline"
 echo "error  "
 cat >$TESTDIR/conflicts4/client.out
 EOF
+	    fi
 
 	    dotest_fail conflicts4-12r "$testcvs -q up" "C file1"
-	    dotest conflicts4-13r "cat $TESTDIR/conflicts4/client.out" \
+	    if $proxy; then
+	      dotest conflicts4-13p "cat $TESTDIR/conflicts4/client.out" \
+"$DOTSTAR
+Argument --
+Directory .
+$SECONDARY_CVSROOT_DIRNAME/first-dir
+Entry /file1/1.2/$PLUS=//
+Unchanged file1
+update"
+	    else
+	      dotest conflicts4-13r "cat $TESTDIR/conflicts4/client.out" \
 "$DOTSTAR
 Argument --
 Directory .
@@ -12445,6 +12520,7 @@ $CVSROOT_DIRNAME/first-dir
 Entry /file1/1.2/$PLUS=//
 Unchanged file1
 update"
+	    fi
 
 	    CVS_SERVER=$save_CVS_SERVER; export CVS_SERVER
 	  fi
