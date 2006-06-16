@@ -1155,14 +1155,21 @@ expr_set_DASHDASH ()
 {
 expr=$1
 exprDASHDASH='false'
-if $expr $exprDASHDASH "-rw-rw-r--" : "-rw-rw-r--" >/dev/null 2>&1; then
+# Not POSIX, but works on a lot of expr versions.
+if $expr "-rw-rw-r--" : "-rw-rw-r--" >/dev/null 2>&1; then
   # good, it works
   return 0
 else
+  # Do things in the POSIX manner.
   if $expr -- "-rw-rw-r--" : "-rw-rw-r--" >/dev/null 2>&1; then
     exprDASHDASH=':'
     return 0
   else
+    echo 'WARNING: Your $expr does not correctly handle'
+    echo 'leading "-" characters in regular expressions to'
+    echo 'be matched. You may wish to see if there is an'
+    echo 'environment variable or other setting to allow'
+    echo 'POSIX functionality to be enabled.'
     return 77
   fi
 fi
@@ -1177,9 +1184,10 @@ expr_set_ENDANCHOR expr_set_DOTSTAR expr_tooltest_DOTSTAR`
 expr_set_ENDANCHOR ${EXPR} >/dev/null
 expr_tooltest_DOTSTAR ${EXPR} >/dev/null
 
-# Set the exprDASHDASH for the chosen expr version
+# Is $EXPR a POSIX or non-POSIX implementation
+# with regard to command-line arguments?
 expr_set_DASHDASH ${EXPR}
-[ $exprDASHDASH ] && EXPR="$EXPR --"
+$exprDASHDASH && EXPR="$EXPR --"
 
 echo "Using EXPR=$EXPR" >>$LOGFILE
 echo "Using ENDANCHOR=$ENDANCHOR" >>$LOGFILE
