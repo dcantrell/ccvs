@@ -4879,6 +4879,9 @@ RCS_add_openpgp_signature (struct file_info *finfo, const char *rev)
     n = findnode (vers->other_delta, "openpgp-signatures");
     if (!n)
     {
+	if (vers->other_delta == NULL)
+	    vers->other_delta = getlist ();
+
 	n = getnode();
 	n->type = RCSSTRING;
 	n->key = xstrdup ("openpgp-signatures");
