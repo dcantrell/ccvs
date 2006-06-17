@@ -33444,6 +33444,40 @@ $DOTSTAR Good signature from \"CVS Test Script $DOTSTAR"
 	  dotest_fail openpgp-7 "$testcvs verify file1" \
 "$SPROG verify: No signature available for \`file1'"
 
+	  # Sign a really old style revision before commitid existed
+	  cat >hello,v <<EOF
+head     1.1;
+access   ;
+symbols  ;
+locks    ; strict;
+comment  @# @;
+
+
+1.1
+date     2006.06.17.09.17.54;  author mdb;  state Exp;
+branches;
+next     ;
+
+desc
+@@
+
+
+
+1.1
+log
+@initial checkin@
+text
+@Hello World.
+@
+EOF
+	  chmod a=r hello,v
+	  modify_repo cp hello,v $CVSROOT_DIRNAME/openpgp/hello,v
+	  dotest openpgp-7 "CVS_VERIFY_CHECKOUTS=no $testcvs -Q update hello"
+	  dotest openpgp-8 "$testcvs sign hello" \
+"$DOTSTAR Signature made $DOTSTAR using DSA key ID F133BDE9
+$DOTSTAR Good signature from .CVS Test Script .This secret key is public and used for testing signed commits with CVS\.. <bug-cvs@nongnu\.org>."
+
+
 	  dokeep
 	  cd ../..
 	  restore_adm

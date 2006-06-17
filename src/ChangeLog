@@ -1,3 +1,9 @@
+2006-06-17  Mark D. Baushke  <mdb@gnu.org>
+
+	* rcs.c (RCS_add_openpgp_signature): Fix signatures on deltas that
+	do not have any other_delta records.
+	* sanity.sh (openpgp): Test that it works.
+	
 2006-06-16  Mark D. Baushke  <mdb@gnu.org>
 
 	* sanity.sh (expr_set_DASHDASH): Fix for non-POSIX expr
