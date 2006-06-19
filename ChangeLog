@@ -1,3 +1,7 @@
+2006-06-19  Derek Price  <derek@ximbiot.com>
+
+	* BUGS: Note abort of `cvs log' under Alpha Linux 2.2.20.
+
 2006-06-14  Jim Hyslop <jhyslop@dreampossible.ca>
 
 	* cvsnt.dsp: Add Windows-specific version of canonicalize.c

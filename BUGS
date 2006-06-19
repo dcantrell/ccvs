@@ -97,6 +97,9 @@ and under the debugger.  Informative feedback is welcome.
 * UNICOS 9.0 on Cray currently fails testing in both client/server and
   writeproxy modes.
 
+* Some CVS log commands are aborting under Alpha Linux 2.2.20.  The stack is
+  hosed and the problem is not reproducible in the debugger.  The (perhaps
+  first) failing test is basica-o7.
 
 * Status
 
@@ -107,7 +110,7 @@ and under the debugger.  Informative feedback is welcome.
                           | Experimental |
                           `-------------*/
 
-                     /*-------------------------.
-                     | Sane for full scale use. |
-                     `-------------------------*/
+            /*-------------------------------------------.
+            | `cvs log' aborts under Alpha Linux 2.2.20. |
+            `-------------------------------------------*/
 
