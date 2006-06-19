@@ -1,3 +1,11 @@
+2006-06-19  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.am: Update for stdint.h generation.
+	* config.h.in.in: Manual hacks to attempt to add missing
+	definitions for stdint.h generation.
+	* Makefile.in, config.h, config.h.in, stamp-chi, stdint.h:
+	Regenerated.
+	
 2006-06-14  Jim Hyslop <jhyslop@dreampossible.ca>
 
 	* canonicalize.c: new file, with Windows-specific implementation
