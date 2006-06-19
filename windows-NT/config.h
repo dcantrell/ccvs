@@ -34,6 +34,114 @@
 /* Define if you want to use the password authenticated server. */
 #undef AUTH_SERVER_SUPPORT
 
+/* Define to the number of bits in type 'int16_t'. */
+#define BITSIZEOF_INT16_T 16
+
+/* Define to the number of bits in type 'int32_t'. */
+#define BITSIZEOF_INT32_T 32
+
+/* Define to the number of bits in type 'int64_t'. */
+#define BITSIZEOF_INT64_T 64
+
+/* Define to the number of bits in type 'int8_t'. */
+#define BITSIZEOF_INT8_T 8
+
+/* Define to the number of bits in type 'intmax_t'. */
+#define BITSIZEOF_INTMAX_T 64
+
+/* Define to the number of bits in type 'intptr_t'. */
+#define BITSIZEOF_INTPTR_T 32
+
+/* Define to the number of bits in type 'int_fast16_t'. */
+#define BITSIZEOF_INT_FAST16_T 32
+
+/* Define to the number of bits in type 'int_fast32_t'. */
+#define BITSIZEOF_INT_FAST32_T 32
+
+/* Define to the number of bits in type 'int_fast64_t'. */
+#define BITSIZEOF_INT_FAST64_T 64
+
+/* Define to the number of bits in type 'int_fast8_t'. */
+#define BITSIZEOF_INT_FAST8_T 32
+
+/* Define to the number of bits in type 'int_least16_t'. */
+#define BITSIZEOF_INT_LEAST16_T 16
+
+/* Define to the number of bits in type 'int_least32_t'. */
+#define BITSIZEOF_INT_LEAST32_T 32
+
+/* Define to the number of bits in type 'int_least64_t'. */
+#define BITSIZEOF_INT_LEAST64_T 64
+
+/* Define to the number of bits in type 'int_least8_t'. */
+#define BITSIZEOF_INT_LEAST8_T 8
+
+/* Define to the number of bits in type 'long'. */
+#define BITSIZEOF_LONG 32
+
+/* Define to the number of bits in type 'ptrdiff_t'. */
+#define BITSIZEOF_PTRDIFF_T 32
+
+/* Define to the number of bits in type 'sig_atomic_t'. */
+#define BITSIZEOF_SIG_ATOMIC_T 32
+
+/* Define to the number of bits in type 'size_t'. */
+#define BITSIZEOF_SIZE_T 32
+
+/* Define to the number of bits in type 'uint16_t'. */
+#define BITSIZEOF_UINT16_T 16
+
+/* Define to the number of bits in type 'uint32_t'. */
+#define BITSIZEOF_UINT32_T 32
+
+/* Define to the number of bits in type 'uint64_t'. */
+#define BITSIZEOF_UINT64_T 64
+
+/* Define to the number of bits in type 'uint8_t'. */
+#define BITSIZEOF_UINT8_T 8
+
+/* Define to the number of bits in type 'uintmax_t'. */
+#define BITSIZEOF_UINTMAX_T 64
+
+/* Define to the number of bits in type 'uintptr_t'. */
+#define BITSIZEOF_UINTPTR_T 32
+
+/* Define to the number of bits in type 'uint_fast16_t'. */
+#define BITSIZEOF_UINT_FAST16_T 32
+
+/* Define to the number of bits in type 'uint_fast32_t'. */
+#define BITSIZEOF_UINT_FAST32_T 32
+
+/* Define to the number of bits in type 'uint_fast64_t'. */
+#define BITSIZEOF_UINT_FAST64_T 64
+
+/* Define to the number of bits in type 'uint_fast8_t'. */
+#define BITSIZEOF_UINT_FAST8_T 32
+
+/* Define to the number of bits in type 'uint_least16_t'. */
+#define BITSIZEOF_UINT_LEAST16_T 16
+
+/* Define to the number of bits in type 'uint_least32_t'. */
+#define BITSIZEOF_UINT_LEAST32_T 32
+
+/* Define to the number of bits in type 'uint_least64_t'. */
+#define BITSIZEOF_UINT_LEAST64_T 64
+
+/* Define to the number of bits in type 'uint_least8_t'. */
+#define BITSIZEOF_UINT_LEAST8_T 8
+
+/* Define to the number of bits in type 'unsigned_int'. */
+#define BITSIZEOF_UNSIGNED_INT 32
+
+/* Define to the number of bits in type 'unsigned_long'. */
+#define BITSIZEOF_UNSIGNED_LONG 32
+
+/* Define to the number of bits in type 'wchar_t'. */
+#define BITSIZEOF_WCHAR_T 32
+
+/* Define to the number of bits in type 'wint_t'. */
+#define BITSIZEOF_WINT_T 32
+
 /* Define if you want CVS to be able to be a remote repository client. */
 #define CLIENT_SUPPORT 
 
@@ -141,6 +249,9 @@
 
 /* Define this to the full path to <inttypes.h>. */
 #undef FULL_PATH_INTTYPES_H
+
+/* Define this to the full path to <stdint.h>. */
+#undef FULL_PATH_STDINT_H
 
 /* Define to an alternative value if GSS_C_NT_HOSTBASED_SERVICE isn't defined
    in the gssapi.h header file. MIT Kerberos 1.2.1 requires this. Only
@@ -454,8 +565,26 @@
 /* Define to 1 if you have the `initgroups' function. */
 #undef HAVE_INITGROUPS
 
+/* Define to 1 if the type 'int16_t' is already defined. */
+#undef HAVE_INT16_T
+
+/* Define to 1 if the type 'int32_t' is already defined. */
+#undef HAVE_INT32_T
+
+/* Define to 1 if the type 'int64_t' is already defined. */
+#undef HAVE_INT64_T
+
+/* Define to 1 if the type 'int64_t' is already definedin <stdint.h>. */
+#undef HAVE_INT64_T_IN_STDINT_H
+
+/* Define to 1 if the type 'int8_t' is already defined. */
+#undef HAVE_INT8_T
+
 /* Define if you have the 'intmax_t' type in <stdint.h> or <inttypes.h>. */
 #undef HAVE_INTMAX_T
+
+/* Define to 1 if the type 'intptr_t' is already defined. */
+#undef HAVE_INTPTR_T
 
 /* Define if <inttypes.h> exists and doesn't clash with <sys/types.h>. */
 #undef HAVE_INTTYPES_H
@@ -463,6 +592,36 @@
 /* Define if <inttypes.h> exists, doesn't clash with <sys/types.h>, and
    declares uintmax_t. */
 #undef HAVE_INTTYPES_H_WITH_UINTMAX
+
+/* Define to 1 if the type 'int_fast16_t' is already defined. */
+#undef HAVE_INT_FAST16_T
+
+/* Define to 1 if the type 'int_fast32_t' is already defined. */
+#undef HAVE_INT_FAST32_T
+
+/* Define to 1 if the type 'int_fast64_t' is already defined. */
+#undef HAVE_INT_FAST64_T
+
+/* Define to 1 if the type 'int_fast64_t' is already definedin <stdint.h>. */
+#undef HAVE_INT_FAST64_T_IN_STDINT_H
+
+/* Define to 1 if the type 'int_fast8_t' is already defined. */
+#undef HAVE_INT_FAST8_T
+
+/* Define to 1 if the type 'int_least16_t' is already defined. */
+#undef HAVE_INT_LEAST16_T
+
+/* Define to 1 if the type 'int_least32_t' is already defined. */
+#undef HAVE_INT_LEAST32_T
+
+/* Define to 1 if the type 'int_least64_t' is already defined. */
+#undef HAVE_INT_LEAST64_T
+
+/* Define to 1 if the type 'int_least64_t' is already definedin <stdint.h>. */
+#undef HAVE_INT_LEAST64_T_IN_STDINT_H
+
+/* Define to 1 if the type 'int_least8_t' is already defined. */
+#undef HAVE_INT_LEAST8_T
 
 /* Define to 1 if you have the <io.h> header file. */
 #define HAVE_IO_H 1
@@ -676,6 +835,15 @@
 /* Define to 1 if you have the `siginterrupt' function. */
 #undef HAVE_SIGINTERRUPT
 
+/* Define to 1 if 'sig_atomic_t' is a signed integer type. */
+#undef HAVE_SIGNED_SIG_ATOMIC_T
+
+/* Define to 1 if 'wchar_t' is a signed integer type. */
+#undef HAVE_SIGNED_WCHAR_T
+
+/* Define to 1 if 'wint_t' is a signed integer type. */
+#undef HAVE_SIGNED_WINT_T
+
 /* Define to 1 if you have the `sigprocmask' function. */
 #undef HAVE_SIGPROCMASK
 
@@ -685,6 +853,9 @@
 /* Define to 1 if you have the `sigvec' function. */
 #undef HAVE_SIGVEC
 
+/* Define to 1 if the system has the type `sig_atomic_t'. */
+#undef HAVE_SIG_ATOMIC_T
+
 /* Define to 1 if you have the `snprintf' function. */
 #undef HAVE_SNPRINTF
 
@@ -692,7 +863,7 @@
 #undef HAVE_STDBOOL_H
 
 /* Define to 1 if you have the <stdint.h> header file. */
-#define HAVE_STDINT_H 1
+#undef HAVE_STDINT_H
 
 /* Define if <stdint.h> exists, doesn't clash with <sys/types.h>, and declares
    uintmax_t. */
@@ -848,8 +1019,57 @@
 /* Define to 1 if you have the `tzset' function. */
 #define HAVE_TZSET 1
 
+/* Define to 1 if the type 'uint16_t' is already defined. */
+#define HAVE_UINT16_T 1
+
+/* Define to 1 if the type 'uint32_t' is already defined. */
+#define HAVE_UINT32_T 1
+
+/* Define to 1 if the type 'uint64_t' is already defined. */
+#define HAVE_UINT64_T 1
+
+/* Define to 1 if the type 'uint64_t' is already definedin <stdint.h>. */
+#undef HAVE_UINT64_T_IN_STDINT_H
+
+/* Define to 1 if the type 'uint8_t' is already defined. */
+#define HAVE_UINT8_T 1
+
 /* Define if you have the 'uintmax_t' type in <stdint.h> or <inttypes.h>. */
 #undef HAVE_UINTMAX_T
+
+/* Define to 1 if the type 'uintptr_t' is already defined. */
+#undef HAVE_UINTPTR_T
+
+/* Define to 1 if the type 'uint_fast16_t' is already defined. */
+#undef HAVE_UINT_FAST16_T
+
+/* Define to 1 if the type 'uint_fast32_t' is already defined. */
+#undef HAVE_UINT_FAST32_T
+
+/* Define to 1 if the type 'uint_fast64_t' is already defined. */
+#undef HAVE_UINT_FAST64_T
+
+/* Define to 1 if the type 'uint_fast64_t' is already definedin <stdint.h>. */
+#undef HAVE_UINT_FAST64_T_IN_STDINT_H
+
+/* Define to 1 if the type 'uint_fast8_t' is already defined. */
+#undef HAVE_UINT_FAST8_T
+
+/* Define to 1 if the type 'uint_least16_t' is already defined. */
+#undef HAVE_UINT_LEAST16_T
+
+/* Define to 1 if the type 'uint_least32_t' is already defined. */
+#undef HAVE_UINT_LEAST32_T
+
+/* Define to 1 if the type 'uint_least64_t' is already defined. */
+#undef HAVE_UINT_LEAST64_T
+
+/* Define to 1 if the type 'uint_least64_t' is already definedin <stdint.h>.
+   */
+#undef HAVE_UINT_LEAST64_T_IN_STDINT_H
+
+/* Define to 1 if the type 'uint_least8_t' is already defined. */
+#undef HAVE_UINT_LEAST8_T
 
 /* Define to 1 if you have the `uname' function. */
 #undef HAVE_UNAME
@@ -947,6 +1167,90 @@
 /* Define to 1 if you have the `__secure_getenv' function. */
 #undef HAVE___SECURE_GETENV
 
+/* Define if <stdint.h> doesn't define it. */
+#undef INT16_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT16_MIN
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT32_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT32_MIN
+
+/* Define if <stdint.h> doesn't define it but has the int64_t type. */
+#undef INT64_MAX
+
+/* Define if <stdint.h> doesn't define it but has the int64_t type. */
+#undef INT64_MIN
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT8_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT8_MIN
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INTMAX_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INTMAX_MIN
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INTPTR_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INTPTR_MIN
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT_FAST16_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT_FAST16_MIN
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT_FAST32_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT_FAST32_MIN
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT_FAST64_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT_FAST64_MIN
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT_FAST8_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT_FAST8_MIN
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT_LEAST16_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT_LEAST16_MIN
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT_LEAST32_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT_LEAST32_MIN
+
+/* Define if <stdint.h> doesn't define it but has the int_least64_t type. */
+#undef INT_LEAST64_MAX
+
+/* Define if <stdint.h> doesn't define it but has the int_least64_t type. */
+#undef INT_LEAST64_MIN
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT_LEAST8_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef INT_LEAST8_MIN
+
 #if FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR
 # define ISSLASH(C) ((C) == '/' || (C) == '\\')
 #else
@@ -1018,6 +1322,12 @@
 /* Path to the pr utility */
 #undef PR_PROGRAM
 
+/* Define if <stdint.h> doesn't define it. */
+#undef PTRDIFF_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef PTRDIFF_MIN
+
 /* Define to force lib/regex.c to use malloc instead of alloca. */
 #define REGEX_MALLOC 1
 
@@ -1054,6 +1364,12 @@
 /* Define if you want CVS to be able to serve repositories to remote clients.
    */
 #undef SERVER_SUPPORT
+
+/* Define if <stdint.h> doesn't define it. */
+#undef SIG_ATOMIC_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef SIG_ATOMIC_MIN
 
 /* The size of a `char', as computed by sizeof. */
 #define SIZEOF_CHAR 1
@@ -1134,6 +1450,48 @@
 /* Define if tzset clobbers localtime's static buffer. */
 #undef TZSET_CLOBBERS_LOCALTIME_BUFFER
 
+/* Define if <stdint.h> doesn't define it. */
+#undef UINT16_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef UINT32_MAX
+
+/* Define if <stdint.h> doesn't define it but has the uint64_t type. */
+#undef UINT64_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef UINT8_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef UINTMAX_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef UINTPTR_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef UINT_FAST16_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef UINT_FAST32_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef UINT_FAST64_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef UINT_FAST8_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef UINT_LEAST16_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef UINT_LEAST32_MAX
+
+/* Define if <stdint.h> doesn't define it but has the uint_least64_t type. */
+#undef UINT_LEAST64_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef UINT_LEAST8_MAX
+
 /* The default umask to use when creating or otherwise setting file or
    directory permissions in the repository. Must be a value in the range of 0
    through 0777. For example, a value of 002 allows group rwx access and world
@@ -1194,6 +1552,12 @@
 
 /* Define if unsetenv() returns void, not int. */
 #undef VOID_UNSETENV
+
+/* Define if <stdint.h> doesn't define it. */
+#undef WINT_MAX
+
+/* Define if <stdint.h> doesn't define it. */
+#undef WINT_MIN
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */

@@ -1,3 +1,10 @@
+2006-06-19  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.gnulib, alloca_.h, getdate.y, size_max.h, stdint_.h,
+	strtol.c, unsetenv.c: Update from gnulib.
+	* Makefile.am: Update based on Makefile.gnulib changes.
+	* Makefile.in, getdate.c: Regenerated.
+	
 2006-06-14  Jim Hyslop <jhyslop@dreampossible.ca>
 
 	* libcvs.dsp: Removed canonicalize.c, will use Windows-specific
