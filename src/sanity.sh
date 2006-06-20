@@ -1452,7 +1452,7 @@ require_rsync ()
 require_rsh ()
 {
   host=${remotehost-"`hostname`"}
-  result=`$1 $host 'echo test'`
+  result=`$1 $host 'echo test' 2>&1`
   rc=$?
   if test $? != 0 || test "x$result" != "xtest"; then
     skipreason="\`$1 $host' failed rc=$rc result=$result"
