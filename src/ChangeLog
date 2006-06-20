@@ -1,3 +1,7 @@
+2006-06-20  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (require_rsh): Process STDERR output from remote shell.
+
 2006-06-17  Mark D. Baushke  <mdb@gnu.org>
 
 	* rcs.c (RCS_add_openpgp_signature): Fix signatures on deltas that
