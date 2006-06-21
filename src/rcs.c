@@ -3774,7 +3774,7 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
     char *locker;
     char *srch, *s;
     size_t srch_len;
-    const struct rcs_keyword *keywords, *keyword;
+    const struct rcs_keyword *keyword;
 
     if (!config /* For `cvs init', config may not be set.  */
 	||expand == KFLAG_O || expand == KFLAG_B)
@@ -3785,7 +3785,6 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
     }
 
     if (!config->keywords) config->keywords = new_keywords ();
-    keywords = config->keywords;
 
     /* If we are using -kkvl, dig out the locker information if any.  */
     locker = NULL;
@@ -4939,7 +4938,6 @@ RCS_delete_openpgp_signatures (struct file_info *finfo, const char *rev,
     char *newsigs = NULL;
     size_t newlen = 0;
     bool found = false;
-    int rc;
 
     TRACE (TRACE_FUNCTION, "RCS_delete_openpgp_signatures (%s, %s, %s)",
 	   finfo->fullname, rev, gpg_keyid2string (keyid));
@@ -4980,7 +4978,7 @@ RCS_delete_openpgp_signatures (struct file_info *finfo, const char *rev,
     /* Find the signature(s), copying signatures that *do not* match to a new
      * string.
      */
-    while (!(rc = parse_signature (membuf, &sig)))
+    while (!parse_signature (membuf, &sig))
     {
 	char *hexid1 = NULL;
 	char *hexid2 = NULL;

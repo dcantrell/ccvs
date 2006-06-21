@@ -217,7 +217,7 @@ iget_verify_commits (void)
     verify_state tmp;
 
     /* Only verify checkouts from the server (and in local mode).  */
-    if (current_parsed_root->isremote) return false;
+    if (current_parsed_root->isremote) return VERIFY_OFF;
 
     tmp = verify_commits;
 
@@ -504,7 +504,7 @@ verify_fileproc (void *callerdat, struct file_info *finfo)
     bool errors = false;
     char *basefn, *basesigfn;
     char *tmpfn = NULL, *tmpsigfn = NULL;
-    const char *signedfn = NULL, *sigfn = NULL;
+    const char *signedfn = NULL;
     char *sigdata = NULL;
     size_t buflen;
     size_t siglen;
@@ -548,7 +548,6 @@ verify_fileproc (void *callerdat, struct file_info *finfo)
 	    else
 	    {
 		signedfn = basefn;
-		sigfn = basesigfn;
 	    }
 	}
 
@@ -607,7 +606,7 @@ verify_fileproc (void *callerdat, struct file_info *finfo)
 		errors = true;
 	    else
 	    {
-		sigfn = tmpsigfn = Xasprintf ("%s.sig", tmpfn);
+		tmpsigfn = Xasprintf ("%s.sig", tmpfn);
 		force_write_file (tmpsigfn, sigdata, siglen);
 	    }
 	}

@@ -71,7 +71,6 @@
  */
 static bool last_merge;
 static bool last_merge_conflict;
-static bool last_merge_no_change;
 static bool last_merge_made_base;
 static char *base_merge_rev1;
 static char *base_merge_rev2;
@@ -2082,7 +2081,6 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	last_merge = false;
 	last_merge_conflict = false;
 	last_merge_made_base = false;
-	last_merge_no_change = false;
 
 	if (file_timestamp)
 	    free (file_timestamp);
@@ -2728,7 +2726,6 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
 		cvs_output (base_merge_rev2, 0);
 		cvs_output ("\n", 1);
 	    }
-	    last_merge_no_change = true;
 	}
 
 	/* This next is a separate case because a join could restore the file
@@ -5341,7 +5338,7 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
 	  sprintf (tmp, "%lu\n", (unsigned long) newsize);
 	  send_to_server (tmp, 0);
 
-          send_to_server (buf, newsize);
+          send_to_server ((char *) buf, newsize);
         }
     }
     else
@@ -5394,7 +5391,7 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
 	 * one.
 	 */
 	if (newsize > 0)
-	    send_to_server (buf, newsize);
+	    send_to_server ((char *) buf, newsize);
     }
     free (buf);
     free (mode_string);
