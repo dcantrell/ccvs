@@ -1,3 +1,13 @@
+2006-06-21  Larry Jones  <lawrence.jones@ugs.com>
+
+	* client.c: Remove unused global variable last_merge_no_change.
+	(send_modified): Cast first arg of send_to_server() to correct type.
+	* rcs.c (expand_keywords, RCS_delete_openpgp_signatures): Remove
+	unused variables.
+	* server.c (do_cvs_command): Remove unused variables.
+	* verify.c (iget_verify_commits): Return a valid value in client mode.
+	(verify_fileproc): Remove unused variables.
+
 2006-06-20  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (require_rsh): Process STDERR output from remote shell.
