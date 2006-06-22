@@ -2916,6 +2916,18 @@
 	".\windows-NT\woe32.h"\
 	
 
+".\windows-NT\strtoimax.c" : \
+	".\lib\timespec.h"\
+	".\windows-NT\config.h"\
+	".\windows-NT\woe32.h"\
+	
+
+".\windows-NT\strtoumax.c" : \
+	".\lib\timespec.h"\
+	".\windows-NT\config.h"\
+	".\windows-NT\woe32.h"\
+	
+
 .\src\subr.c : \
 	".\lib\canon-host.h"\
 	".\lib\canonicalize.h"\
