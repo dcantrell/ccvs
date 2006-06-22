@@ -1,3 +1,8 @@
+2006-06-22  Larry Jones  <lawrence.jones@ugs.com>
+
+	* cvs.texinfo (user-defined logging, Informing others): Remove
+	references to the obsolete -i module option.
+
 2006-06-08  Derek Price  <derek@ximbiot.com>
 
 	* cvsclient.texi (Requests): Add Empty-conflicts.
