@@ -414,25 +414,6 @@
 	".\timespec.h"\
 	
 
-.\strtoimax.c : \
-	"..\windows-NT\config.h"\
-	"..\windows-NT\stdint.h"\
-	"..\windows-NT\woe32.h"\
-	".\inttypes.h"\
-	".\timespec.h"\
-	".\verify.h"\
-	
-
-.\strtoumax.c : \
-	"..\windows-NT\config.h"\
-	"..\windows-NT\stdint.h"\
-	"..\windows-NT\woe32.h"\
-	".\inttypes.h"\
-	".\strtoimax.c"\
-	".\timespec.h"\
-	".\verify.h"\
-	
-
 .\tempname.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdint.h"\

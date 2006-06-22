@@ -269,14 +269,6 @@ SOURCE=.\strnlen1.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\strtoimax.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\strtoumax.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\tempname.c
 # End Source File
 # Begin Source File
