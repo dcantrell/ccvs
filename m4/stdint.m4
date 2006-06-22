@@ -102,11 +102,13 @@ typedef int array [2 * (POW63 != 0 && POW64 == 0) - 1];
 #if defined(__sun) && HAVE_SYS_INTTYPES_H
 # include <sys/inttypes.h>
 #endif
-#if (defined(__hpux) || defined(_AIX)) && HAVE_INTTYPES_H
+#if (defined(__hpux) || defined(_AIX) || defined(__sgi)) && HAVE_INTTYPES_H
 # include FULL_PATH_INTTYPES_H
 #endif
 #if HAVE_STDINT_H
-# include FULL_PATH_STDINT_H
+# if !defined(__sgi) || !HAVE_INTTYPES_H
+#  include FULL_PATH_STDINT_H
+# endif
 #endif
 '
   gl_STDINT_CHECK_TYPES(
