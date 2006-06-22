@@ -25,9 +25,6 @@ NULL=
 NULL=nul
 !ENDIF 
 
-CPP=cl.exe
-RSC=rc.exe
-
 !IF  "$(CFG)" == "libcvs - Win32 Release"
 
 OUTDIR=.\WinRel
@@ -86,8 +83,6 @@ CLEAN :
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
 	-@erase "$(INTDIR)\strnlen1.obj"
-	-@erase "$(INTDIR)\strtoimax.obj"
-	-@erase "$(INTDIR)\strtoumax.obj"
 	-@erase "$(INTDIR)\tempname.obj"
 	-@erase "$(INTDIR)\time_r.obj"
 	-@erase "$(INTDIR)\unsetenv.obj"
@@ -109,7 +104,40 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
+CPP=cl.exe
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\windows-NT" /I "." /D "NDEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /D "WINDOWS32" /Fp"$(INTDIR)\libcvs.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
 BSC32_SBRS= \
@@ -163,8 +191,6 @@ LIB32_OBJS= \
 	"$(INTDIR)\strftime.obj" \
 	"$(INTDIR)\stripslash.obj" \
 	"$(INTDIR)\strnlen1.obj" \
-	"$(INTDIR)\strtoimax.obj" \
-	"$(INTDIR)\strtoumax.obj" \
 	"$(INTDIR)\tempname.obj" \
 	"$(INTDIR)\time_r.obj" \
 	"$(INTDIR)\unsetenv.obj" \
@@ -240,8 +266,6 @@ CLEAN :
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
 	-@erase "$(INTDIR)\strnlen1.obj"
-	-@erase "$(INTDIR)\strtoimax.obj"
-	-@erase "$(INTDIR)\strtoumax.obj"
 	-@erase "$(INTDIR)\tempname.obj"
 	-@erase "$(INTDIR)\time_r.obj"
 	-@erase "$(INTDIR)\unsetenv.obj"
@@ -260,7 +284,40 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
+CPP=cl.exe
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /I "..\windows-NT" /I "." /D "_DEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /D "WINDOWS32" /Fp"$(INTDIR)\libcvs.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
 BSC32_SBRS= \
@@ -314,8 +371,6 @@ LIB32_OBJS= \
 	"$(INTDIR)\strftime.obj" \
 	"$(INTDIR)\stripslash.obj" \
 	"$(INTDIR)\strnlen1.obj" \
-	"$(INTDIR)\strtoimax.obj" \
-	"$(INTDIR)\strtoumax.obj" \
 	"$(INTDIR)\tempname.obj" \
 	"$(INTDIR)\time_r.obj" \
 	"$(INTDIR)\unsetenv.obj" \
@@ -334,36 +389,6 @@ LIB32_OBJS= \
 <<
 
 !ENDIF 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
@@ -604,16 +629,6 @@ SOURCE=.\stripslash.c
 SOURCE=.\strnlen1.c
 
 "$(INTDIR)\strnlen1.obj" : $(SOURCE) "$(INTDIR)"
-
-
-SOURCE=.\strtoimax.c
-
-"$(INTDIR)\strtoimax.obj" : $(SOURCE) "$(INTDIR)"
-
-
-SOURCE=.\strtoumax.c
-
-"$(INTDIR)\strtoumax.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\tempname.c

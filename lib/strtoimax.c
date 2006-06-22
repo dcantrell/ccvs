@@ -69,7 +69,7 @@ strtoimax (char const *ptr, char **endptr, int base)
   if (sizeof (INT) != sizeof (long int))
     return strtoll (ptr, endptr, base);
 #else
-  verify (sizeof (INT) >= sizeof (long int));
+  verify (sizeof (INT) == sizeof (long int));
 #endif
 
   return strtol (ptr, endptr, base);
