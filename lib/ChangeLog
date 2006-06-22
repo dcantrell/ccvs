@@ -1,3 +1,9 @@
+2006-06-22  Mark D. Baushke  <mdb@gnu.org>
+
+	* glob.c (collated_compare): Fork from gnulib. Patch from Larry Jones.
+	* stdint_.h: Fork from gnulib. Based on tests with SGI.
+	* getaddrinfo.c, openat.c, socket_.h: Update from gnulib.
+
 2006-06-22  Jim Hyslop <jhyslop@dreampossible.ca>
 
 	* libcvs.dsp: removed strto?max.c (moved to Windows-specific

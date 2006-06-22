@@ -1469,6 +1469,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 gl_header_list="$gl_header_list sys/socket.h"
 gl_header_list="$gl_header_list netinet/in.h"
+gl_header_list="$gl_header_list winsock2.h"
 gl_header_list="$gl_header_list netdb.h"
 gl_func_list="$gl_func_list fdopendir"
 gl_func_list="$gl_func_list fchdir"
@@ -8974,135 +8975,6 @@ _ACEOF
  esac
 
 
-  echo "$as_me:$LINENO: checking for IPv4 sockets" >&5
-echo $ECHO_N "checking for IPv4 sockets... $ECHO_C" >&6
-  if test "${gl_cv_socket_ipv4+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-int
-main ()
-{
-int x = AF_INET; struct in_addr y; struct sockaddr_in z;
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  gl_cv_socket_ipv4=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-gl_cv_socket_ipv4=no
-fi
-rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-
-  echo "$as_me:$LINENO: result: $gl_cv_socket_ipv4" >&5
-echo "${ECHO_T}$gl_cv_socket_ipv4" >&6
-  if test $gl_cv_socket_ipv4 = yes; then
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_IPV4 1
-_ACEOF
-
-  fi
-
-  echo "$as_me:$LINENO: checking for IPv6 sockets" >&5
-echo $ECHO_N "checking for IPv6 sockets... $ECHO_C" >&6
-  if test "${gl_cv_socket_ipv6+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-int
-main ()
-{
-int x = AF_INET6; struct in6_addr y; struct sockaddr_in6 z;
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  gl_cv_socket_ipv6=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-gl_cv_socket_ipv6=no
-fi
-rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-
-  echo "$as_me:$LINENO: result: $gl_cv_socket_ipv6" >&5
-echo "${ECHO_T}$gl_cv_socket_ipv6" >&6
-  if test $gl_cv_socket_ipv6 = yes; then
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_IPV6 1
-_ACEOF
-
-  fi
-
-
 
 
 
@@ -9260,6 +9132,175 @@ done
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  :
+
+
+
+
+
+
+
+
+
+
+
+
+  echo "$as_me:$LINENO: checking for IPv4 sockets" >&5
+echo $ECHO_N "checking for IPv4 sockets... $ECHO_C" >&6
+  if test "${gl_cv_socket_ipv4+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <sys/types.h>
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif
+#ifdef HAVE_WINSOCK2_H
+#include <winsock2.h>
+#endif
+int
+main ()
+{
+int x = AF_INET; struct in_addr y; struct sockaddr_in z;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  gl_cv_socket_ipv4=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+gl_cv_socket_ipv4=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+
+  echo "$as_me:$LINENO: result: $gl_cv_socket_ipv4" >&5
+echo "${ECHO_T}$gl_cv_socket_ipv4" >&6
+  if test $gl_cv_socket_ipv4 = yes; then
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_IPV4 1
+_ACEOF
+
+  fi
+
+  echo "$as_me:$LINENO: checking for IPv6 sockets" >&5
+echo $ECHO_N "checking for IPv6 sockets... $ECHO_C" >&6
+  if test "${gl_cv_socket_ipv6+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <sys/types.h>
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif
+#ifdef HAVE_WINSOCK2_H
+#include <winsock2.h>
+#endif
+int
+main ()
+{
+int x = AF_INET6; struct in6_addr y; struct sockaddr_in6 z;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  gl_cv_socket_ipv6=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+gl_cv_socket_ipv6=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+
+  echo "$as_me:$LINENO: result: $gl_cv_socket_ipv6" >&5
+echo "${ECHO_T}$gl_cv_socket_ipv6" >&6
+  if test $gl_cv_socket_ipv6 = yes; then
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_IPV6 1
+_ACEOF
+
+  fi
 
 
 
@@ -9425,12 +9466,6 @@ done
 
     SYS_SOCKET_H='sys/socket.h'
   fi
-
-
-
-
-
-
 
 
 
@@ -9687,7 +9722,6 @@ cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 
 #ifdef HAVE_WS2TCPIP_H
-#define WINVER 0x0501
 #include <ws2tcpip.h>
 #endif
 
@@ -10116,6 +10150,176 @@ if test "$ac_cv_search_getservbyname" != no; then
 fi
 
 
+for ac_func in gethostbyname
+do
+as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
+echo "$as_me:$LINENO: checking for $ac_func" >&5
+echo $ECHO_N "checking for $ac_func... $ECHO_C" >&6
+if eval "test \"\${$as_ac_var+set}\" = set"; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+/* Define $ac_func to an innocuous variant, in case <limits.h> declares $ac_func.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define $ac_func innocuous_$ac_func
+
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char $ac_func (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef $ac_func
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char $ac_func ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined (__stub_$ac_func) || defined (__stub___$ac_func)
+choke me
+#else
+char (*f) () = $ac_func;
+#endif
+#ifdef __cplusplus
+}
+#endif
+
+int
+main ()
+{
+return f != $ac_func;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  eval "$as_ac_var=yes"
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+eval "$as_ac_var=no"
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_var'}'`" >&5
+echo "${ECHO_T}`eval echo '${'$as_ac_var'}'`" >&6
+if test `eval echo '${'$as_ac_var'}'` = yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+else
+
+    echo "$as_me:$LINENO: checking for gethostbyname in winsock2.h and -lws2_32" >&5
+echo $ECHO_N "checking for gethostbyname in winsock2.h and -lws2_32... $ECHO_C" >&6
+if test "${gl_cv_w32_gethostbyname+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+
+      gl_cv_w32_gethostbyname=no
+      am_save_LIBS="$LIBS"
+      LIBS="$LIBS -lws2_32"
+      cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+#ifdef HAVE_WINSOCK2_H
+#include <winsock2.h>
+#endif
+
+int
+main ()
+{
+gethostbyname(0);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  gl_cv_w32_gethostbyname=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+    LIBS="$am_save_LIBS"
+fi
+echo "$as_me:$LINENO: result: $gl_cv_w32_gethostbyname" >&5
+echo "${ECHO_T}$gl_cv_w32_gethostbyname" >&6
+    if test "$gl_cv_w32_gethostbyname" = "yes"; then
+      LIBS="$LIBS -lws2_32"
+    fi
+
+fi
+done
+
+
 
 
 
@@ -10153,7 +10357,6 @@ cat >>conftest.$ac_ext <<_ACEOF
 #include <netdb.h>
 #endif
 #ifdef HAVE_WS2TCPIP_H
-#define WINVER 0x0501
 #include <ws2tcpip.h>
 #endif
 
@@ -10239,7 +10442,6 @@ cat >>conftest.$ac_ext <<_ACEOF
 #include <netdb.h>
 #endif
 #ifdef HAVE_WS2TCPIP_H
-#define WINVER 0x0501
 #include <ws2tcpip.h>
 #endif
 
@@ -10325,7 +10527,6 @@ cat >>conftest.$ac_ext <<_ACEOF
 #include <netdb.h>
 #endif
 #ifdef HAVE_WS2TCPIP_H
-#define WINVER 0x0501
 #include <ws2tcpip.h>
 #endif
 
@@ -10410,7 +10611,6 @@ cat >>conftest.$ac_ext <<_ACEOF
 #include <netdb.h>
 #endif
 #ifdef HAVE_WS2TCPIP_H
-#define WINVER 0x0501
 #include <ws2tcpip.h>
 #endif
 
@@ -19770,7 +19970,6 @@ cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 
 #ifdef HAVE_WS2TCPIP_H
-#define WINVER 0x0501
 #include <ws2tcpip.h>
 #endif
 
@@ -20199,6 +20398,176 @@ if test "$ac_cv_search_getservbyname" != no; then
 fi
 
 
+for ac_func in gethostbyname
+do
+as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
+echo "$as_me:$LINENO: checking for $ac_func" >&5
+echo $ECHO_N "checking for $ac_func... $ECHO_C" >&6
+if eval "test \"\${$as_ac_var+set}\" = set"; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+/* Define $ac_func to an innocuous variant, in case <limits.h> declares $ac_func.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define $ac_func innocuous_$ac_func
+
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char $ac_func (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef $ac_func
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char $ac_func ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined (__stub_$ac_func) || defined (__stub___$ac_func)
+choke me
+#else
+char (*f) () = $ac_func;
+#endif
+#ifdef __cplusplus
+}
+#endif
+
+int
+main ()
+{
+return f != $ac_func;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  eval "$as_ac_var=yes"
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+eval "$as_ac_var=no"
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_var'}'`" >&5
+echo "${ECHO_T}`eval echo '${'$as_ac_var'}'`" >&6
+if test `eval echo '${'$as_ac_var'}'` = yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+else
+
+    echo "$as_me:$LINENO: checking for gethostbyname in winsock2.h and -lws2_32" >&5
+echo $ECHO_N "checking for gethostbyname in winsock2.h and -lws2_32... $ECHO_C" >&6
+if test "${gl_cv_w32_gethostbyname+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+
+      gl_cv_w32_gethostbyname=no
+      am_save_LIBS="$LIBS"
+      LIBS="$LIBS -lws2_32"
+      cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+#ifdef HAVE_WINSOCK2_H
+#include <winsock2.h>
+#endif
+
+int
+main ()
+{
+gethostbyname(0);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  gl_cv_w32_gethostbyname=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+    LIBS="$am_save_LIBS"
+fi
+echo "$as_me:$LINENO: result: $gl_cv_w32_gethostbyname" >&5
+echo "${ECHO_T}$gl_cv_w32_gethostbyname" >&6
+    if test "$gl_cv_w32_gethostbyname" = "yes"; then
+      LIBS="$LIBS -lws2_32"
+    fi
+
+fi
+done
+
+
 
 
 
@@ -20236,7 +20605,6 @@ cat >>conftest.$ac_ext <<_ACEOF
 #include <netdb.h>
 #endif
 #ifdef HAVE_WS2TCPIP_H
-#define WINVER 0x0501
 #include <ws2tcpip.h>
 #endif
 
@@ -20322,7 +20690,6 @@ cat >>conftest.$ac_ext <<_ACEOF
 #include <netdb.h>
 #endif
 #ifdef HAVE_WS2TCPIP_H
-#define WINVER 0x0501
 #include <ws2tcpip.h>
 #endif
 
@@ -20408,7 +20775,6 @@ cat >>conftest.$ac_ext <<_ACEOF
 #include <netdb.h>
 #endif
 #ifdef HAVE_WS2TCPIP_H
-#define WINVER 0x0501
 #include <ws2tcpip.h>
 #endif
 
@@ -20493,7 +20859,6 @@ cat >>conftest.$ac_ext <<_ACEOF
 #include <netdb.h>
 #endif
 #ifdef HAVE_WS2TCPIP_H
-#define WINVER 0x0501
 #include <ws2tcpip.h>
 #endif
 
@@ -28264,11 +28629,13 @@ echo "${ECHO_T}$gl_cv_longlong_bitsize_64" >&6
 #if defined(__sun) && HAVE_SYS_INTTYPES_H
 # include <sys/inttypes.h>
 #endif
-#if (defined(__hpux) || defined(_AIX)) && HAVE_INTTYPES_H
+#if (defined(__hpux) || defined(_AIX) || defined(__sgi)) && HAVE_INTTYPES_H
 # include FULL_PATH_INTTYPES_H
 #endif
 #if HAVE_STDINT_H
-# include FULL_PATH_STDINT_H
+# if !defined(__sgi) || !HAVE_INTTYPES_H
+#  include FULL_PATH_STDINT_H
+# endif
 #endif
 '
 

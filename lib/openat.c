@@ -1,5 +1,5 @@
 /* provide a replacement openat function
-   Copyright (C) 2004, 2005 Free Software Foundation, Inc.
+   Copyright (C) 2004, 2005, 2006 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,12 +52,11 @@ openat (int fd, char const *file, int flags, ...)
       va_start (arg, flags);
 
       /* If mode_t is narrower than int, use the promoted type (int),
-         not mode_t.  Use sizeof to guess whether mode_t is nerrower;
+         not mode_t.  Use sizeof to guess whether mode_t is narrower;
          we don't know of any practical counterexamples.  */
-      if (sizeof (mode_t) < sizeof (int))
-	mode = va_arg (arg, int);
-      else
-	mode = va_arg (arg, mode_t);
+      mode = (sizeof (mode_t) < sizeof (int)
+	      ? va_arg (arg, int)
+	      : va_arg (arg, mode_t));
 
       va_end (arg);
     }

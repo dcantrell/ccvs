@@ -1,3 +1,10 @@
+2006-06-22  Mark D. Baushke  <mdb@gnu.org>
+
+	* config.h.in.in (HAVE_GETHOSTBYNAME): Add #undef to match
+	../config.h.in this should be defined if gethostbyname() exists on
+	windows.
+	* config.h, config.h.in, stamp-chi, stdint.h: Regenerated.
+
 2006-06-22  Jim Hyslop <jhyslop@dreampossible.ca>
 
 	* strtoimax.c, strtoumax.c: new files to implement the strtoimax

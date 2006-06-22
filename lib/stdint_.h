@@ -55,7 +55,7 @@
      But note that <sys/int_types.h> contains only the type definitions!  */
 # include <sys/inttypes.h>
 #endif
-#if (defined(__hpux) || defined(_AIX)) && @HAVE_INTTYPES_H@
+#if (defined(__hpux) || defined(_AIX) || defined(__sgi)) && @HAVE_INTTYPES_H@
   /* HP-UX 10 <inttypes.h> has nearly everything, except UINT_LEAST8_MAX,
      UINT_FAST8_MAX, PTRDIFF_MIN, PTRDIFF_MAX.  */
   /* AIX 4 <inttypes.h> has nearly everything, except INTPTR_MIN, INTPTR_MAX,
@@ -64,7 +64,9 @@
 #endif
 #if @HAVE_STDINT_H@
   /* Other systems may have an incomplete <stdint.h>.  */
-# include @FULL_PATH_STDINT_H@
+# if !defined(__sgi) || !@HAVE_INTTYPES_H@
+#  include @FULL_PATH_STDINT_H@
+# endif
 #endif
 
 /* 7.18.1.1. Exact-width integer types */

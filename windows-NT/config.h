@@ -463,9 +463,6 @@
 /* Define if you have the declaration of environ. */
 #define HAVE_ENVIRON_DECL 1
 
-/* Define if you have the declaration of errno. */
-#define HAVE_ERRNO_DECL 1
-
 /* Define to 1 if you have the `fchdir' function. */
 #undef HAVE_FCHDIR
 
@@ -513,6 +510,9 @@
 
 /* Define to 1 if you have the `getgroups' function. */
 #undef HAVE_GETGROUPS
+
+/* Define to 1 if you have the `gethostbyname' function. */
+#undef HAVE_GETHOSTBYNAME
 
 /* Define to 1 if you have the `gethostname' function. */
 #define HAVE_GETHOSTNAME 1
@@ -863,7 +863,7 @@
 #undef HAVE_STDBOOL_H
 
 /* Define to 1 if you have the <stdint.h> header file. */
-#undef HAVE_STDINT_H
+#define HAVE_STDINT_H 1
 
 /* Define if <stdint.h> exists, doesn't clash with <sys/types.h>, and declares
    uintmax_t. */
