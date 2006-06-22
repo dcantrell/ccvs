@@ -261,7 +261,6 @@ static const char *const modules_contents[] = {
     "#	key [options] directory files...\n",
     "#\n",
     "# Where \"options\" are composed of:\n",
-    "#	-i prog		Run \"prog\" on \"cvs commit\" from top-level of module.\n",
     "#	-o prog		Run \"prog\" on \"cvs checkout\" of module.\n",
     "#	-e prog		Run \"prog\" on \"cvs export\" of module.\n",
     "#	-t prog		Run \"prog\" on \"cvs rtag\" of module.\n",
