@@ -1,3 +1,8 @@
+2006-06-22  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	* strtoimax.c, strtoumax.c: new files to implement the strtoimax
+	and strtoumax functions. Based on ggc's strto(u)l functions.
+
 2006-06-19  Mark D. Baushke  <mdb@gnu.org>
 
 	* Makefile.am: Update for stdint.h generation.
