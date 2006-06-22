@@ -1,3 +1,7 @@
+2006-06-22  Larry Jones  <lawrence.jones@ugs.com>
+
+	* mkmodules.c (modules_contents): Remove defunct -i option.
+
 2006-06-10  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (conflicts4): Don't expect specific file permissions.  Use
