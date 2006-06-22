@@ -5842,8 +5842,8 @@ to log tagging operations, use the @file{taginfo} file
 @c FIXME: What is difference between doing it in the
 @c modules file and using loginfo/taginfo?  Why should
 @c user use one or the other?
-To log commits, checkouts, exports, and tags,
-respectively, you can also use the @samp{-i},
+To log checkouts, exports, and tags,
+respectively, you can also use the
 @samp{-o}, @samp{-e}, and @samp{-t} options in the
 modules file.  For a more flexible way of giving
 notifications to various users, which requires less in
@@ -6607,8 +6607,7 @@ See the documentation for pcl-cvs.
 @cindex Mail, automatic mail on commit
 
 It is often useful to inform others when you commit a
-new revision of a file.  The @samp{-i} option of the
-@file{modules} file, or the @file{loginfo} file, can be
+new revision of a file.  The @file{loginfo} file can be
 used to automate this process.  @xref{modules}.
 @xref{loginfo}.  You can use these features of @sc{cvs}
 to, for instance, instruct @sc{cvs} to mail a
