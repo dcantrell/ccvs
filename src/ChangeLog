@@ -1,3 +1,7 @@
+2006-06-22  Larry Jones  <lawrence.jones@ugs.com>
+
+	* mkmodules.c (modules_contents): Remove defunct -i option.
+
 2006-06-21  Larry Jones  <lawrence.jones@ugs.com>
 
 	* client.c: Remove unused global variable last_merge_no_change.
