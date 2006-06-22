@@ -1,3 +1,9 @@
+2006-06-22  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	* cvsnt.dsp: Add Windows-specific implementation of strtoimax()
+	and strtoumax()
+	* cvsnt.dep, cvsnt.mak: regenerated from cvsnt.dsp changes
+
 2006-06-19  Mark D. Baushke  <mdb@gnu.org>
 
 	* Makefile.in, aclocal.m4, config.h.in, configure: Regenerated.

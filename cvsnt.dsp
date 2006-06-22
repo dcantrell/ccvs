@@ -66,7 +66,6 @@ LINK32=link.exe
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /D "_DEBUG" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /YX /FD /c
 # SUBTRACT BASE CPP /Fr
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /D "_DEBUG" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /YX /FD /c
-# SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -338,6 +337,14 @@ SOURCE=".\windows-NT\startserver.c"
 # Begin Source File
 
 SOURCE=.\src\status.c
+# End Source File
+# Begin Source File
+
+SOURCE=".\windows-NT\strtoimax.c"
+# End Source File
+# Begin Source File
+
+SOURCE=".\windows-NT\strtoumax.c"
 # End Source File
 # Begin Source File
 

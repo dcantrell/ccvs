@@ -28,9 +28,6 @@ NULL=
 NULL=nul
 !ENDIF 
 
-CPP=cl.exe
-RSC=rc.exe
-
 !IF  "$(CFG)" == "cvsnt - Win32 Release"
 
 OUTDIR=.\WinRel
@@ -117,6 +114,8 @@ CLEAN :
 	-@erase "$(INTDIR)\stack.obj"
 	-@erase "$(INTDIR)\startserver.obj"
 	-@erase "$(INTDIR)\status.obj"
+	-@erase "$(INTDIR)\strtoimax.obj"
+	-@erase "$(INTDIR)\strtoumax.obj"
 	-@erase "$(INTDIR)\subr.obj"
 	-@erase "$(INTDIR)\tag.obj"
 	-@erase "$(INTDIR)\unistd.obj"
@@ -135,7 +134,40 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
+CPP=cl.exe
 CPP_PROJ=/nologo /ML /W3 /GX /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /I ".\WinDebug" /D "NDEBUG" /D "WANT_WIN_COMPILER_VERSION" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /Fp"$(INTDIR)\cvsnt.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\cvsnt.bsc" 
 BSC32_SBRS= \
@@ -148,6 +180,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\annotate.obj" \
 	"$(INTDIR)\base.obj" \
 	"$(INTDIR)\buffer.obj" \
+	"$(INTDIR)\canonicalize.obj" \
 	"$(INTDIR)\checkin.obj" \
 	"$(INTDIR)\checkout.obj" \
 	"$(INTDIR)\classify.obj" \
@@ -205,6 +238,8 @@ LINK32_OBJS= \
 	"$(INTDIR)\stack.obj" \
 	"$(INTDIR)\startserver.obj" \
 	"$(INTDIR)\status.obj" \
+	"$(INTDIR)\strtoimax.obj" \
+	"$(INTDIR)\strtoumax.obj" \
 	"$(INTDIR)\subr.obj" \
 	"$(INTDIR)\tag.obj" \
 	"$(INTDIR)\unistd.obj" \
@@ -217,7 +252,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\woe32.obj" \
 	"$(INTDIR)\wrapper.obj" \
 	"$(INTDIR)\zlib.obj" \
-	"$(INTDIR)\canonicalize.obj" \
 	".\diff\WinRel\libdiff.lib" \
 	".\zlib\WinRel\libz.lib" \
 	".\lib\WinRel\libcvs.lib"
@@ -313,6 +347,8 @@ CLEAN :
 	-@erase "$(INTDIR)\stack.obj"
 	-@erase "$(INTDIR)\startserver.obj"
 	-@erase "$(INTDIR)\status.obj"
+	-@erase "$(INTDIR)\strtoimax.obj"
+	-@erase "$(INTDIR)\strtoumax.obj"
 	-@erase "$(INTDIR)\subr.obj"
 	-@erase "$(INTDIR)\tag.obj"
 	-@erase "$(INTDIR)\unistd.obj"
@@ -334,7 +370,40 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
+CPP=cl.exe
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /D "_DEBUG" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /Fp"$(INTDIR)\cvsnt.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\cvsnt.bsc" 
 BSC32_SBRS= \
@@ -347,6 +416,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\annotate.obj" \
 	"$(INTDIR)\base.obj" \
 	"$(INTDIR)\buffer.obj" \
+	"$(INTDIR)\canonicalize.obj" \
 	"$(INTDIR)\checkin.obj" \
 	"$(INTDIR)\checkout.obj" \
 	"$(INTDIR)\classify.obj" \
@@ -404,6 +474,8 @@ LINK32_OBJS= \
 	"$(INTDIR)\stack.obj" \
 	"$(INTDIR)\startserver.obj" \
 	"$(INTDIR)\status.obj" \
+	"$(INTDIR)\strtoimax.obj" \
+	"$(INTDIR)\strtoumax.obj" \
 	"$(INTDIR)\subr.obj" \
 	"$(INTDIR)\tag.obj" \
 	"$(INTDIR)\unistd.obj" \
@@ -416,7 +488,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\woe32.obj" \
 	"$(INTDIR)\wrapper.obj" \
 	"$(INTDIR)\zlib.obj" \
-	"$(INTDIR)\canonicalize.obj" \
 	".\diff\WinDebug\libdiff.lib" \
 	".\zlib\WinDebug\libz.lib" \
 	".\lib\WinDebug\libcvs.lib"
@@ -427,36 +498,6 @@ LINK32_OBJS= \
 <<
 
 !ENDIF 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
@@ -844,6 +885,18 @@ SOURCE=".\windows-NT\startserver.c"
 SOURCE=.\src\status.c
 
 "$(INTDIR)\status.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=".\windows-NT\strtoimax.c"
+
+"$(INTDIR)\strtoimax.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=".\windows-NT\strtoumax.c"
+
+"$(INTDIR)\strtoumax.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
