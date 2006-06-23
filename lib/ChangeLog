@@ -1,3 +1,9 @@
+2006-06-23  Larry Jones  <lawrence.jones@ugs.com>
+
+	* stdint_.h: Try harder to find a definition of WCHAR_MIN/MAX.
+	Combine BSD/OS stuff with OpenBSD/SGI and use the correct
+	preprocessor symbol.
+
 2006-06-23  Mark D. Baushke  <mdb@gnu.org>
 
 	* glob.c (collated_compare): Update from gnulib.
