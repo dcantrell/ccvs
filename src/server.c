@@ -2953,9 +2953,8 @@ error  \n");
 #ifdef SERVER_FLOWCONTROL
 	{
 	    char junk;
-	    ssize_t status;
 	    set_block_fd (flowcontrol_pipe[0]);
-	    while ((status = read (flowcontrol_pipe[0], &junk, 1)) > 0);
+	    while (read (flowcontrol_pipe[0], &junk, 1) > 0);
 	}
 	/* FIXME: No point in printing an error message with error(),
 	 * as STDERR is already closed, but perhaps this could be syslogged?
