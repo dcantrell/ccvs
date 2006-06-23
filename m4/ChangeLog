@@ -1,3 +1,8 @@
+2006-06-23  Mark D. Baushke  <mdb@juniper.net>
+
+	* stdint.m4: Both BSD/OS 4.2 and SGI-cc IRIX 5.3 seem to also need
+	<sys/types.h> included.
+
 2006-06-22  Mark D. Baushke  <mdb@gnu.org>
 
 	* stdint.m4: Fork from gnulib based on tests with SGI.
