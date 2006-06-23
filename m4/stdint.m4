@@ -90,10 +90,7 @@ typedef int array [2 * (POW63 != 0 && POW64 == 0) - 1];
 #if defined(__FreeBSD__) && (__FreeBSD__ >= 3) && (__FreeBSD__ <= 4)
 # include <sys/inttypes.h>
 #endif
-#if defined(__bsdos__)
-# include <sys/types.h>
-#endif
-#if defined(__OpenBSD__) || defined(__sgi)
+#if defined(__OpenBSD__) || defined(__bsdi__) || defined(__sgi)
 # include <sys/types.h>
 # if HAVE_INTTYPES_H
 #  include FULL_PATH_INTTYPES_H
