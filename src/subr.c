@@ -633,7 +633,7 @@ file_contains_keyword (const struct file_info *finfo)
     struct stat st;
     char *content;
 
-    fp = CVS_FOPEN (finfo->file, "r");
+    fp = CVS_FOPEN (finfo->file, "rb");
     if (fp == NULL)
 	error (1, errno, "cannot open %s", finfo->fullname);
     if (fstat (fileno (fp), &st))

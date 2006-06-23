@@ -295,7 +295,7 @@ gen_signature (const char *srepos, const char *filename, bool bin, size_t *len)
 	error (1, 0, "sign template resolved to the empty string!");
 
     noexec = false;
-    if (!(pipefp = run_popen (cmdline, "r")))
+    if (!(pipefp = run_popen (cmdline, "rb")))
 	error (1, errno, "failed to execute signature generator");
     noexec = save_noexec;
 

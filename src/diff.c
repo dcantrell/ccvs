@@ -1002,13 +1002,13 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 out:
     if (empty_file != DIFF_ADDED && !rev1_cache && f1)
     {
-	if (CVS_UNLINK (f1) < 0)
+	if (unlink_file (f1) < 0)
 	    error (0, errno, "Failed to remove temp file `%s'", f1);
 	free ((char *)f1);
     }
     if (empty_file != DIFF_REMOVED && use_rev2 && f2)
     {
-	if (CVS_UNLINK (f2) < 0)
+	if (unlink_file (f2) < 0)
 	    error (0, errno, "Failed to remove temp file `%s'", f2);
 	free ((char *)f2);
     }
