@@ -1,3 +1,7 @@
+2006-06-23  Mark D. Baushke  <mdb@gnu.org>
+
+	* stdint.h: Regenerated.
+
 2006-06-22  Mark D. Baushke  <mdb@gnu.org>
 
 	* config.h.in.in (HAVE_GETHOSTBYNAME): Add #undef to match

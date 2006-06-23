@@ -33,11 +33,17 @@
 #if defined(__FreeBSD__) && (__FreeBSD__ >= 3) && (__FreeBSD__ <= 4)
 # include <sys/inttypes.h>
 #endif
-#if defined(__OpenBSD__)
+#if defined(__bsdos__)
+  /* In BSD/OS 4.2, <sys/types.h> includes some of the needed typedefs
+     that would otherwise conflict with types in a generated <stdint.h>. */
+# include <sys/types.h>
+#endif
+#if defined(__OpenBSD__) || defined(__sgi)
   /* In OpenBSD 3.8, <sys/types.h> includes <machine/types.h>, which defines
      int{8,16,32,64}_t, uint{8,16,32,64}_t and __BIT_TYPES_DEFINED__.
      <inttypes.h> includes <machine/types.h> and also defines intptr_t and
      uintptr_t.  */
+  /* SGI-cc IRIX 5.3 needs some of the <sys/types.h> types too. */
 # include <sys/types.h>
 # if @HAVE_INTTYPES_H@
 #  include @FULL_PATH_INTTYPES_H@
@@ -55,7 +61,7 @@
      But note that <sys/int_types.h> contains only the type definitions!  */
 # include <sys/inttypes.h>
 #endif
-#if (defined(__hpux) || defined(_AIX) || defined(__sgi)) && @HAVE_INTTYPES_H@
+#if (defined(__hpux) || defined(_AIX)) && @HAVE_INTTYPES_H@
   /* HP-UX 10 <inttypes.h> has nearly everything, except UINT_LEAST8_MAX,
      UINT_FAST8_MAX, PTRDIFF_MIN, PTRDIFF_MAX.  */
   /* AIX 4 <inttypes.h> has nearly everything, except INTPTR_MIN, INTPTR_MAX,

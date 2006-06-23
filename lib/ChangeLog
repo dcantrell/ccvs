@@ -1,3 +1,12 @@
+2006-06-23  Mark D. Baushke  <mdb@gnu.org>
+
+	* glob.c (collated_compare): Update from gnulib.
+	* stdint_.h: Both BSD/OS 4.2 and SGI-cc IRIX 5.3 seem to also need
+	<sys/types.h> included.
+	* base64.c (B64): Fork from gnulib for IBM C V6 AIX. For reasons
+	unclear, traditional CPP rather than C89 semantics are used in
+	macro substitution inside of a string.
+
 2006-06-22  Mark D. Baushke  <mdb@gnu.org>
 
 	* glob.c (collated_compare): Fork from gnulib. Patch from Larry Jones.

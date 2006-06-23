@@ -1,3 +1,7 @@
+2006-06-23  Mark D. Baushke  <mdb@gnu.org>
+
+	* configure: Regenerated.
+
 2006-06-22  Mark D. Baushke  <mdb@gnu.org>
 
 	* config.h.in: Update from gnulib.
