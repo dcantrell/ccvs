@@ -33,6 +33,9 @@
 
 /* Get wchar_t, WCHAR_MIN, WCHAR_MAX.  */
 #include <stddef.h>
+#if !defined(WCHAR_MIN) && defined(HAVE_WCHAR_H)
+# include <wchar.h>
+#endif
 /* Get LONG_MIN, LONG_MAX, ULONG_MAX.  */
 #include <limits.h>
 
@@ -40,16 +43,12 @@
 #if defined(__FreeBSD__) && (__FreeBSD__ >= 3) && (__FreeBSD__ <= 4)
 # include <sys/inttypes.h>
 #endif
-#if defined(__bsdos__)
-  /* In BSD/OS 4.2, <sys/types.h> includes some of the needed typedefs
-     that would otherwise conflict with types in a generated <stdint.h>. */
-# include <sys/types.h>
-#endif
-#if defined(__OpenBSD__) || defined(__sgi)
+#if defined(__OpenBSD__) || defined(__bsdi__) || defined(__sgi)
   /* In OpenBSD 3.8, <sys/types.h> includes <machine/types.h>, which defines
      int{8,16,32,64}_t, uint{8,16,32,64}_t and __BIT_TYPES_DEFINED__.
      <inttypes.h> includes <machine/types.h> and also defines intptr_t and
      uintptr_t.  */
+  /* BSD/OS 4.2 is similar, but doesn't have <inttypes.h> */
   /* SGI-cc IRIX 5.3 needs some of the <sys/types.h> types too. */
 # include <sys/types.h>
 # if 0
