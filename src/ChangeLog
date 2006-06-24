@@ -1,7 +1,11 @@
 2006-06-24  Jim Hyslop <jhyslop@dreampossible.ca>
 
+	* sign.c, verify.c: back out "b" changes made earlier today - not
+	supported by popen on other platforms.
+
 	* diff.c: use unlink_file instead of CVS_UNLINK (which resolves to
 	unlink) because on Windows, unlink doesn't remove read-only files.
+
 	* sign.c, subr.c, verify.c: add "b" (binary) flag to open the files
 	and pipes in binary mode (on Windows, CRLF translation really confuses
 	gpg).
