@@ -3373,30 +3373,23 @@ RCS_check_kflag (const char *arg)
 
 
 /*
- * Do some consistency checks on the symbolic tag... These should equate
- * pretty close to what RCS checks, though I don't know for certain.
+ * Do some consistency checks on the symbolic tag... This is much stricter
+ * to what RCS checks: we allow letters, underscores, dashes and numbers.
+ * RCS allows a lot more characters.
  */
 void
 RCS_check_tag (const char *tag)
 {
-    char *invalid = "$,.:;@";		/* invalid RCS tag characters */
     const char *cp;
 
-    /*
-     * The first character must be an alphabetic letter. The remaining
-     * characters cannot be non-visible graphic characters, and must not be
-     * in the set of "invalid" RCS identifier characters.
-     */
+    /* The first character must be an alphabetic letter. */
     if (isalpha ((unsigned char) *tag))
     {
 	for (cp = tag; *cp; cp++)
 	{
-	    if (!isgraph ((unsigned char) *cp))
-		error (1, 0, "tag `%s' has non-visible graphic characters",
-		       tag);
-	    if (strchr (invalid, *cp))
-		error (1, 0, "tag `%s' must not contain the characters `%s'",
-		       tag, invalid);
+	    if (!isalnum ((unsigned char) *cp) && *cp != '_' && *cp != '-' )
+		error (1, 0, "tag `%s' may contain only letters, numbers, "
+			"_ and -", tag);
 	}
     }
     else

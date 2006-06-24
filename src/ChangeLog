@@ -1,5 +1,8 @@
 2006-06-24  Jim Hyslop <jhyslop@dreampossible.ca>
 
+	* rcs.c: Tighten up error checking on valid tag identifiers.
+	* sanity.sh: added test to exercise tag error checking.
+
 	* sign.c, verify.c: back out "b" changes made earlier today - not
 	supported by popen on other platforms.
 
