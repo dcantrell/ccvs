@@ -23,6 +23,10 @@ NEW FEATURES
 
 BUG FIXES
 
+* Thanks to a report from Alan Harder <alan.harder@sun.com>, 'cvs [r]tag'
+  now tests for valid characters in the tag, instead of just a select few
+  invalid ones.
+
 * The GSSAPI server should now build under HP-UX.
 
 * `cvs rtag' now correctly tags files that have been removed from the trunk.
