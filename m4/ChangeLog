@@ -1,3 +1,7 @@
+2006-06-24  Mark D. Baushke  <mdb@gnu.org>
+
+	* stdint.m4: Update from gnulib.
+
 2006-06-23  Larry Jones  <lawrence.jones@ugs.com>
 
 	* stdint.m4: Combine BSD/OS stuff with OpenBSD/SGI and use the

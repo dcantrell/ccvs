@@ -438,6 +438,7 @@ MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t \
 	getdate-expected getdate-got getdate.diff getopt.h getopt.h-t \
 	glob.h glob.h-t stdbool.h stdbool.h-t stdint.h stdint.h-t \
 	sys/socket.h sys/socket.h-t unistd.h
+MOSTLYCLEANDIRS = sys
 DISTCLEANFILES = getdate.log
 MAINTAINERCLEANFILES = getdate.c
 
@@ -1058,13 +1059,18 @@ sys/socket.h: socket_.h
 	cp $(srcdir)/socket_.h $@-t
 	mv $@-t $@
 
-mostlyclean-local:
-	-rmdir sys 2>/dev/null
-
 # We need the following in order to create an empty placeholder for
 # <unistd.h> when the system doesn't have one.
 unistd.h:
 	echo '/* Empty placeholder for $@.  */' >$@
+
+mostlyclean-local:
+	@test -z "$(MOSTLYCLEANDIRS)" || \
+	  for dir in $(MOSTLYCLEANDIRS); do \
+	    if test -d $$dir; then \
+	      echo "rmdir $$dir"; rmdir $$dir; \
+	    fi; \
+	  done
 
 # Until Automake gets its act together
 distclean-local:

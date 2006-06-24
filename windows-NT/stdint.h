@@ -49,7 +49,8 @@
      <inttypes.h> includes <machine/types.h> and also defines intptr_t and
      uintptr_t.  */
   /* BSD/OS 4.2 is similar, but doesn't have <inttypes.h> */
-  /* SGI-cc IRIX 5.3 needs some of the <sys/types.h> types too. */
+  /* IRIX 6.5 has <inttypes.h>, and <sys/types.h> defines some of these
+     types as well.  */
 # include <sys/types.h>
 # if 0
 #  include 
@@ -938,21 +939,46 @@ typedef uint32_t uintmax_t;
 #if !defined(__cplusplus) || defined(__STDC_CONSTANT_MACROS)
 
 /* 7.18.4.1. Macros for minimum-width integer constants */
+/* According to ISO C 99 Technical Corrigendum 1 */
 
 #undef INT8_C
 #undef UINT8_C
 #define INT8_C(x) x
-#define UINT8_C(x) x##U
+#if 0
+# if 8 < 32
+#  define UINT8_C(x) x
+# else
+#  define UINT8_C(x) x##U
+# endif
+#else
+# define UINT8_C(x) x
+#endif
 
 #undef INT16_C
 #undef UINT16_C
 #define INT16_C(x) x
-#define UINT16_C(x) x##U
+#if 0
+# if 16 < 32
+#  define UINT16_C(x) x
+# else
+#  define UINT16_C(x) x##U
+# endif
+#else
+# define UINT16_C(x) x
+#endif
 
 #undef INT32_C
 #undef UINT32_C
 #define INT32_C(x) x
-#define UINT32_C(x) x##U
+#if 0
+# if 32 < 32
+#  define UINT32_C(x) x
+# else
+#  define UINT32_C(x) x##U
+# endif
+#else
+# define UINT32_C(x) x
+#endif
 
 #undef INT64_C
 #undef UINT64_C
