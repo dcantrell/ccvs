@@ -38,6 +38,7 @@ libcvs_a_LIBADD = \
 ## Zero some variables so Automake will allow us to use += on them.
 BUILT_SOURCES =
 MOSTLYCLEANFILES =
+MOSTLYCLEANDIRS =
 DISTCLEANFILES =
 MAINTAINERCLEANFILES =
 
@@ -400,9 +401,7 @@ sys/socket.h: socket_.h
 	cp $(srcdir)/socket_.h $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += sys/socket.h sys/socket.h-t
-
-mostlyclean-local:
-	-rmdir sys 2>/dev/null
+MOSTLYCLEANDIRS += sys
 
 ## end   gnulib module sys_socket
 
@@ -453,6 +452,15 @@ libcvs_a_SOURCES += xgethostname.h xgethostname.c
 libcvs_a_SOURCES += xsize.h
 
 ## end   gnulib module xsize
+
+
+mostlyclean-local:
+	@test -z "$(MOSTLYCLEANDIRS)" || \
+	  for dir in $(MOSTLYCLEANDIRS); do \
+	    if test -d $$dir; then \
+	      echo "rmdir $$dir"; rmdir $$dir; \
+	    fi; \
+	  done
 
 # Until Automake gets its act together
 distclean-local:
