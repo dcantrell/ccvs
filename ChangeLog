@@ -1,3 +1,8 @@
+2006-06-24  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	* NEWS: Added note about bug fix to test for invalid characters in
+	tags.
+
 2006-06-23  Larry Jones  <lawrence.jones@ugs.com>
 
 	* configure: Regenerated.
