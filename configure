@@ -8123,6 +8123,17 @@ _ACEOF
 
 
 #
+# This gets defined on Windows.  It's possible it would also be useful on VMS
+# and any other platforms with odd EOL representations.  For now just assume
+# it isn't necessary, but it can be autodetected if it ever needs to be.
+#
+
+cat >>confdefs.h <<\_ACEOF
+#define POPEN_BINARY_FLAG
+_ACEOF
+
+
+#
 # Begin GNULIB stuff.
 #
 
