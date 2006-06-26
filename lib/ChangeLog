@@ -1,5 +1,7 @@
 2006-06-26  Mark D. Baushke  <mdb@gnu.org>
 
+	* base64.c: Update from gnulib. This file is no longer forked.
+
 	* Makefile.gnulib, stdint_.h: Update from gnulib.
 	* Makefile.am: Update from Makefile.gnulib.
 	* Makefile.in: Regenerated.
