@@ -1,3 +1,7 @@
+2006-06-26  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.in [POPEN_BINARY_FLAG]: Define this.
+
 2006-06-24  Mark D. Baushke  <mdb@gnu.org>
 
 	* stdint.h: Regenerated.
