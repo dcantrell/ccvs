@@ -1307,6 +1307,9 @@
 /* the number of pending output bytes on stream `fp' */
 #define PENDING_OUTPUT_N_BYTES ( fp ? fp->_ptr - fp->_base : 0 )
 
+/* Define this to an appropriate value if popen supports a binary flag. */
+#define POPEN_BINARY_FLAG "b"
+
 /* Define if you want CVS to be able to serve as a transparent proxy for write
    operations. Disabling this may produce a slight performance gain on some
    systems, at the expense of write proxy support. */
