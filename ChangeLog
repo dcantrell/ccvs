@@ -1,3 +1,7 @@
+2006-06-26  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Define POPEN_BINARY_FLAG.
+
 2006-06-24  Jim Hyslop <jhyslop@dreampossible.ca>
 
 	* NEWS: Added note about bug fix to test for invalid characters in

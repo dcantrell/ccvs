@@ -243,6 +243,14 @@ AC_REPLACE_FUNCS(\
 ccvs_FUNC_SELECT
 
 #
+# This gets defined on Windows.  It's possible it would also be useful on VMS
+# and any other platforms with odd EOL representations.  For now just assume
+# it isn't necessary, but it can be autodetected if it ever needs to be.
+#
+AC_DEFINE([POPEN_BINARY_FLAG], [],
+[Define this to an appropriate value if popen supports a binary flag.])
+
+#
 # Begin GNULIB stuff.
 #
 
