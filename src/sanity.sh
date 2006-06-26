@@ -2068,7 +2068,7 @@ if test x"$*" = x; then
 	tests="${tests} rdiff2 diff diffnl death death2 death-rtag"
 	tests="${tests} rm-update-message rmadd rmadd2 rmadd3 resurrection"
 	tests="${tests} dirs dirs2 branches branches2 branches3"
-	tests="${tests} branches4 tagc tagf tag-space tag-valid"
+	tests="${tests} branches4 tagc tagf tag-space"
 	tests="${tests} rcslib multibranch import importb importc importX"
 	tests="$tests importX2 import-CVS import-quirks"
 	tests="${tests} update-p import-after-initial branch-after-import"
@@ -8900,74 +8900,6 @@ EOF
 	  ;;
 
 
-	# Test for valid characters in tags
-	tag-valid)
-	  # Setup; check in first-dir/file1
-	  mkdir 1; cd 1
-	  dotest tag-valid-init-1 "$testcvs -q co -l ."
-	  mkdir first-dir
-	  $testcvs add first-dir 1>/dev/null 2>/dev/null
-	  cd first-dir
-	  touch file1
-	  $testcvs add file1 1>/dev/null 2>/dev/null
-	  $testcvs -Q ci -m add 1>/dev/null
-	  dotest tag-valid-1 "$testcvs -Q tag abcdefghijklmnopqrstuvwxyz"
-	  dotest tag-valid-2 "$testcvs -Q tag ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	  dotest tag-valid-3 "$testcvs -Q tag a0123456789-_"
-
-	  dotest_fail tag-valid-4 "$testcvs -Q tag _a" \
-"${SPROG} \[tag aborted\]: tag \`_a' must start with a letter"
-
-      dotest_fail tag-valid-5 "$testcvs -Q tag a$" \
-"$SPROG \[tag aborted\]: tag \`a$' may contain only letters, numbers, _ and -"
-
-      dotest_fail tag-valid-6 "$testcvs -Q tag a." \
-"$SPROG \[tag aborted\]: tag \`a\.' may contain only letters, numbers, _ and -"
-
-      dotest_fail tag-valid-7 "$testcvs -Q tag a:" \
-"$SPROG \[tag aborted\]: tag \`a:' may contain only letters, numbers, _ and -"
-
-      dotest_fail tag-valid-8 "$testcvs -Q tag a," \
-"$SPROG \[tag aborted\]: tag \`a,' may contain only letters, numbers, _ and -"
-
-      dotest_fail tag-valid-9 "$testcvs -Q tag a\;" \
-"$SPROG \[tag aborted\]: tag \`a;' may contain only letters, numbers, _ and -"
-
-      dotest_fail tag-valid-10 "$testcvs -Q tag a@" \
-"$SPROG \[tag aborted\]: tag \`a@' may contain only letters, numbers, _ and -"
-
-      dotest_fail tag-valid-12 "$testcvs -Q tag a/" \
-"$SPROG \[tag aborted\]: tag \`a/' may contain only letters, numbers, _ and -"
-
-      dotest_fail tag-valid-13 "$testcvs -Q tag a!" \
-"$SPROG \[tag aborted\]: tag \`a!' may contain only letters, numbers, _ and -"
-
-      dotest_fail tag-valid-14 "$testcvs -Q tag a#" \
-"$SPROG \[tag aborted\]: tag \`a#' may contain only letters, numbers, _ and -"
-
-      dotest_fail tag-valid-15 "$testcvs -Q tag a%" \
-"$SPROG \[tag aborted\]: tag \`a%' may contain only letters, numbers, _ and -"
-
-      dotest_fail tag-valid-16 "$testcvs -Q tag a^" \
-"$SPROG \[tag aborted\]: tag \`a^' may contain only letters, numbers, _ and -"
-
-      dotest_fail tag-valid-17 "$testcvs -Q tag a\(" \
-"$SPROG \[tag aborted\]: tag \`a(' may contain only letters, numbers, _ and -"
-
-      dotest_fail tag-valid-18 "$testcvs -Q tag a\)" \
-"$SPROG \[tag aborted\]: tag \`a)' may contain only letters, numbers, _ and -"
-
-      if $keep; then
-        echo Keeping $TESTDIR and exiting due to --keep
-        exit 0
-      fi
-
-      cd ../..
-      rm -r 1
-      modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
-
-
-      ;;
 
 	rcslib)
 	  # Test librarification of RCS.
