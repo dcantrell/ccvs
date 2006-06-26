@@ -6608,7 +6608,7 @@ See the documentation for pcl-cvs.
 
 It is often useful to inform others when you commit a
 new revision of a file.  The @file{loginfo} file can be
-used to automate this process.  @xref{modules}.
+used to automate this process.
 @xref{loginfo}.  You can use these features of @sc{cvs}
 to, for instance, instruct @sc{cvs} to mail a
 message to all developers, or post a message to a local
