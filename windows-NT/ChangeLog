@@ -1,3 +1,8 @@
+2006-06-26  Mark D. Baushke  <mdb@juniper.net>
+
+	* Makefile.am: Update from gnulib.
+	* Makefile.in, stdint.h: Regenerated.
+
 2006-06-26  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in [POPEN_BINARY_FLAG]: Define this.
