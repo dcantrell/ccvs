@@ -1,5 +1,9 @@
 2006-06-26  Mark D. Baushke  <mdb@gnu.org>
 
+	* Makefile.in, configure: Regenerated.
+
+2006-06-26  Mark D. Baushke  <mdb@gnu.org>
+
 	* NEWS: Revert last change about valid characters in tag testing.
 
 2006-06-26  Derek Price  <derek@ximbiot.com>

@@ -33,9 +33,11 @@
 
 /* Get wchar_t, WCHAR_MIN, WCHAR_MAX.  */
 #include <stddef.h>
-#if !defined(WCHAR_MIN) && defined(HAVE_WCHAR_H)
+/* Some systems define WCHAR_MIN, WCHAR_MAX in <wchar.h>, not <stddef.h>.  */
+#if !(defined(WCHAR_MIN) && defined(WCHAR_MAX)) && 1
 # include <wchar.h>
 #endif
+
 /* Get LONG_MIN, LONG_MAX, ULONG_MAX.  */
 #include <limits.h>
 
@@ -77,7 +79,15 @@
 #endif
 #if 0
   /* Other systems may have an incomplete <stdint.h>.  */
-# if !defined(__sgi) || !0
+  /* On some versions of IRIX, the SGI C compiler comes with an <stdint.h>,
+     but
+       - in c99 mode, <inttypes.h> includes <stdint.h>,
+       - in c89 mode, <stdint.h> spews warnings and defines nothing.
+         <inttypes.h> defines only a subset of the types and macros that
+         <stdint.h> would define in c99 mode.
+     So we rely only on <inttypes.h> (included above).  It means that in
+     c89 mode, we shadow the contents of warning-spewing <stdint.h>.  */
+# if !(defined(__sgi) && 0 && !defined(__c99))
 #  include 
 # endif
 #endif

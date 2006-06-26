@@ -1,4 +1,4 @@
-# stdint.m4 serial 8
+# stdint.m4 serial 10
 dnl Copyright (C) 2001-2002, 2004-2006 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
@@ -9,6 +9,15 @@ dnl Test whether <stdint.h> is supported or must be substituted.
 
 AC_DEFUN([gl_STDINT_H],
 [
+  dnl Check for <wchar.h>.
+  AC_CHECK_HEADERS_ONCE([wchar.h])
+  if test $ac_cv_header_wchar_h = yes; then
+    HAVE_WCHAR_H=1
+  else
+    HAVE_WCHAR_H=0
+  fi
+  AC_SUBST([HAVE_WCHAR_H])
+
   dnl Check for <stdint.h> that doesn't clash with <sys/types.h>.
   gl_HEADER_STDINT_H
   if test $gl_cv_header_stdint_h = yes; then
@@ -105,10 +114,8 @@ typedef int array [2 * (POW63 != 0 && POW64 == 0) - 1];
 #if (defined(__hpux) || defined(_AIX)) && HAVE_INTTYPES_H
 # include FULL_PATH_INTTYPES_H
 #endif
-#if HAVE_STDINT_H
-# if !defined(__sgi) || !HAVE_INTTYPES_H
-#  include FULL_PATH_STDINT_H
-# endif
+#if HAVE_STDINT_H && !(defined(__sgi) && HAVE_INTTYPES_H && !defined(__c99))
+# include FULL_PATH_STDINT_H
 #endif
 '
   gl_STDINT_CHECK_TYPES(
@@ -281,7 +288,7 @@ msvc compiler
     gl_STDINT_MISSING_BOUNDS2([SIG_ATOMIC_MIN SIG_ATOMIC_MAX],
       [#include <signal.h>])
     dnl Don't bother defining WCHAR_MIN and WCHAR_MAX, since they should
-    dnl already be defined in <stddef.h>.
+    dnl already be defined in <stddef.h> or <wchar.h>.
     dnl For wint_t we need <wchar.h>.
     dnl Tru64 with Desktop Toolkit C has a bug: <stdio.h> must be included
     dnl before <wchar.h>.

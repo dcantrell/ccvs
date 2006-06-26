@@ -1,3 +1,9 @@
+2006-06-26  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.gnulib, stdint_.h: Update from gnulib.
+	* Makefile.am: Update from Makefile.gnulib.
+	* Makefile.in: Regenerated.
+
 2006-06-24  Mark D. Baushke  <mdb@gnu.org>
 
 	* Makefile.gnulib, stdint_.h: Update from gnulib.

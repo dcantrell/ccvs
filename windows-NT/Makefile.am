@@ -140,7 +140,8 @@ stamp-sh2: $(top_srcdir)/lib/stdint_.h
 	@echo " *" >>stdint.tmp
 	@echo " * Edit ../lib/stdint_.h instead." >>stdint.tmp
 	@echo " */" >>stdint.tmp
-	sed -e 's/@''HAVE_STDINT_H''@/0/g' \
+	sed -e 's/@''HAVE_WCHAR_H''@/1/g' \
+	    -e 's/@''HAVE_STDINT_H''@/0/g' \
 	    -e 's|@''FULL_PATH_STDINT_H''@||g' \
 	    -e 's/@''HAVE_INTTYPES_H''@/0/g' \
 	    -e 's|@''FULL_PATH_INTTYPES_H''@||g' \
