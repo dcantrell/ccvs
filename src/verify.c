@@ -420,7 +420,7 @@ verify_signature (const char *srepos, const char *sig, size_t siglen,
     }
 
     noexec = false;
-    if (!(pipefp = run_popen (cmdline, "w")))
+    if (!(pipefp = run_popen (cmdline, "w" POPEN_BINARY_FLAG)))
     {
 	error (fatal, errno, "failed to execute signature verifier");
 	retval = false;
