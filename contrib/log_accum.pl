@@ -893,7 +893,7 @@ sub compile_subject
 
     
     my $dir = shift @list;
-    die "Darn, $dir doesn't look like a directory!" unless $dir =~ s#/$##;
+    die "Darn, $dir doesn't look like a directory!" unless $dir =~ m#/$#;
     $dir = substr $dir, $offset;
 
     # Build the list of files with directories prepended.
