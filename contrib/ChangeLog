@@ -1,5 +1,7 @@
 2006-06-26  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.pl (compile_subject): Keep slashes in paths.
+
 	* log_accum.pl: Shrink attributions, referring reader to ChangeLog.
 	(write_file): Create empty files.
 	(cleanup_tmpfiles): Fix regexp & untaint result before deleting.
