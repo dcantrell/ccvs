@@ -1,3 +1,7 @@
+2006-06-27  Mark D. Baushke  <mdb@gnu.org>
+
+	* stdint_.h: Update from gnulib.
+
 2006-06-26  Mark D. Baushke  <mdb@gnu.org>
 
 	* base64.c: Update from gnulib. This file is no longer forked.

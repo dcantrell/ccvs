@@ -32045,13 +32045,15 @@ fi
 echo "$as_me:$LINENO: result: `eval echo '${'gl_cv_bitsizeof_${gltype}'}'`" >&5
 echo "${ECHO_T}`eval echo '${'gl_cv_bitsizeof_${gltype}'}'`" >&6
       eval result=\$gl_cv_bitsizeof_${gltype}
-      GLTYPE=`echo "$gltype" | tr 'abcdefghijklmnopqrstuvwxyz ' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'`
-      cat >>confdefs.h <<_ACEOF
+    else
+                                                result=0
+    fi
+    GLTYPE=`echo "$gltype" | tr 'abcdefghijklmnopqrstuvwxyz ' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'`
+    cat >>confdefs.h <<_ACEOF
 #define BITSIZEOF_${GLTYPE} $result
 _ACEOF
 
-      eval BITSIZEOF_${GLTYPE}=\$result
-    fi
+    eval BITSIZEOF_${GLTYPE}=\$result
   done
 
 
@@ -32417,13 +32419,15 @@ fi
 echo "$as_me:$LINENO: result: `eval echo '${'gl_cv_bitsizeof_${gltype}'}'`" >&5
 echo "${ECHO_T}`eval echo '${'gl_cv_bitsizeof_${gltype}'}'`" >&6
       eval result=\$gl_cv_bitsizeof_${gltype}
-      GLTYPE=`echo "$gltype" | tr 'abcdefghijklmnopqrstuvwxyz ' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'`
-      cat >>confdefs.h <<_ACEOF
+    else
+                                                result=0
+    fi
+    GLTYPE=`echo "$gltype" | tr 'abcdefghijklmnopqrstuvwxyz ' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'`
+    cat >>confdefs.h <<_ACEOF
 #define BITSIZEOF_${GLTYPE} $result
 _ACEOF
 
-      eval BITSIZEOF_${GLTYPE}=\$result
-    fi
+    eval BITSIZEOF_${GLTYPE}=\$result
   done
 
 
@@ -32847,13 +32851,15 @@ fi
 echo "$as_me:$LINENO: result: `eval echo '${'gl_cv_bitsizeof_${gltype}'}'`" >&5
 echo "${ECHO_T}`eval echo '${'gl_cv_bitsizeof_${gltype}'}'`" >&6
       eval result=\$gl_cv_bitsizeof_${gltype}
-      GLTYPE=`echo "$gltype" | tr 'abcdefghijklmnopqrstuvwxyz ' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'`
-      cat >>confdefs.h <<_ACEOF
+    else
+                                                result=0
+    fi
+    GLTYPE=`echo "$gltype" | tr 'abcdefghijklmnopqrstuvwxyz ' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'`
+    cat >>confdefs.h <<_ACEOF
 #define BITSIZEOF_${GLTYPE} $result
 _ACEOF
 
-      eval BITSIZEOF_${GLTYPE}=\$result
-    fi
+    eval BITSIZEOF_${GLTYPE}=\$result
   done
 
 
@@ -33375,13 +33381,15 @@ fi
 echo "$as_me:$LINENO: result: `eval echo '${'gl_cv_bitsizeof_${gltype}'}'`" >&5
 echo "${ECHO_T}`eval echo '${'gl_cv_bitsizeof_${gltype}'}'`" >&6
       eval result=\$gl_cv_bitsizeof_${gltype}
-      GLTYPE=`echo "$gltype" | tr 'abcdefghijklmnopqrstuvwxyz ' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'`
-      cat >>confdefs.h <<_ACEOF
+    else
+                                                result=0
+    fi
+    GLTYPE=`echo "$gltype" | tr 'abcdefghijklmnopqrstuvwxyz ' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'`
+    cat >>confdefs.h <<_ACEOF
 #define BITSIZEOF_${GLTYPE} $result
 _ACEOF
 
-      eval BITSIZEOF_${GLTYPE}=\$result
-    fi
+    eval BITSIZEOF_${GLTYPE}=\$result
   done
 
 
@@ -33916,13 +33924,15 @@ fi
 echo "$as_me:$LINENO: result: `eval echo '${'gl_cv_bitsizeof_${gltype}'}'`" >&5
 echo "${ECHO_T}`eval echo '${'gl_cv_bitsizeof_${gltype}'}'`" >&6
       eval result=\$gl_cv_bitsizeof_${gltype}
-      GLTYPE=`echo "$gltype" | tr 'abcdefghijklmnopqrstuvwxyz ' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'`
-      cat >>confdefs.h <<_ACEOF
+    else
+                                                result=0
+    fi
+    GLTYPE=`echo "$gltype" | tr 'abcdefghijklmnopqrstuvwxyz ' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'`
+    cat >>confdefs.h <<_ACEOF
 #define BITSIZEOF_${GLTYPE} $result
 _ACEOF
 
-      eval BITSIZEOF_${GLTYPE}=\$result
-    fi
+    eval BITSIZEOF_${GLTYPE}=\$result
   done
 
 
@@ -34543,13 +34553,15 @@ fi
 echo "$as_me:$LINENO: result: `eval echo '${'gl_cv_bitsizeof_${gltype}'}'`" >&5
 echo "${ECHO_T}`eval echo '${'gl_cv_bitsizeof_${gltype}'}'`" >&6
       eval result=\$gl_cv_bitsizeof_${gltype}
-      GLTYPE=`echo "$gltype" | tr 'abcdefghijklmnopqrstuvwxyz ' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'`
-      cat >>confdefs.h <<_ACEOF
+    else
+                                                result=0
+    fi
+    GLTYPE=`echo "$gltype" | tr 'abcdefghijklmnopqrstuvwxyz ' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'`
+    cat >>confdefs.h <<_ACEOF
 #define BITSIZEOF_${GLTYPE} $result
 _ACEOF
 
-      eval BITSIZEOF_${GLTYPE}=\$result
-    fi
+    eval BITSIZEOF_${GLTYPE}=\$result
   done
 
 
