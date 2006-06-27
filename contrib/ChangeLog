@@ -1,3 +1,11 @@
+2006-06-26  Derek Price  <derek@ximbiot.com>
+
+	* log_accum.pl: Shrink attributions, referring reader to ChangeLog.
+	(write_file): Create empty files.
+	(cleanup_tmpfiles): Fix regexp & untaint result before deleting.
+	(main): Don't worry about empty log files.
+	(Original patch from Sylvain Beucler <beuc@beuc.net>.)
+
 2006-06-07  Derek Price  <derek@ximbiot.com>
 
 	* log_accum.pl (set_defaults): Don't dereference undefined value.
