@@ -41,31 +41,10 @@
 # You usually call log_accum from CVSROOT/loginfo, for example:
 # ALL /usr/local/bin/log_accum -T ccvs_1 --config /etc/log_accum.config --mail-to cvs-cvs@nongnu.org --send-diff %p %{sVv}
 # ^prog1\(/\|$\) /usr/local/bin/log_accum -T ccvs_2 --config /etc/log_accum.config -m experimental@me.net %p %{sVv}
-#
-# Contributed by David Hampton <hampton@cisco.com>
-# Roy Fielding removed useless code and added log/mail of new files
-# Ken Coar added special processing (i.e., no diffs) for binary files
-# Changes by Sylvain Beucler <beuc@beuc.net> (2006-05-08):
-# - option -T added again to support multiple log_accum hooks
-# - used 'use strict' and added compatibility for 'perl -T' switch
-# (and found a ghost variable!)
-# - documented some more
-# - fixed a bug in processing -u in log_accum
-# - cleaned-up the temporary filenames
-# - fixed support for UseNewInfoFmtStrings
-# - test if files are empty, so they are not reported as binary
-# - -r now also accepts 'HEAD' as argument (clearer than '')
-# - viewcvs URL's for binary files now use application/octet-stream
-# content type; diff URLs are also more compatible with viewcvs
-# (removed '.diff')
-# - do not perform a diff if a file is added or removed
-# Derek Price (2006-05-08):
-# - Perform the diff if added or removed unless -E is specified.
-# - Accept and process config files.
-# - Send one diff per file when requested.
-# - Tidy and perform some performance optimization.
-# - Format output.
-# - Use short cvsweb URLs.
+# 
+# Brought to you by David Hampton <hampton@cisco.com>, Roy Fielding,
+# Ken Coar, Sylvain Beucler <beuc@beuc.net> and Derek Price -- check
+# ChangeLog for precise credits.
 
 use strict;
 
@@ -1137,13 +1116,11 @@ sub build_diffs
 
 
 
-# Blindly dump @lines into a file.  Noop if @lines is empty.  Otherwise,
-# creates the file, overwriting existing files.
+# Blindly dump @lines into a file.  Creates the file, overwriting existing
+# files.
 sub write_file
 {
     my ($filename, @lines) = @_;
-
-    return unless @lines;
 
     open FILE, ">$filename" or die "Cannot open file $filename: $!";
     print FILE join ("\n", @lines), "\n";
@@ -1226,13 +1203,16 @@ sub cleanup_tmpfiles
     die "$tmpdir does not exist" unless -d $tmpdir;
     opendir DIR, $tmpdir or die "Can't read $tmpdir: $!";
 
-    push @files, grep /^#\Q$prefix\E\.$id.*\.$/, readdir DIR;
+    while (readdir DIR)
+    {
+	# Matching a subpattern of a regexp untaints the file names...
+	/^(#\Q$prefix\E\.$id\..*)$/;
+	push @files, $1;
+    }
     closedir DIR;
 
-    foreach (@files)
-    {
-        unlink "$tmpdir/$_";
-    }
+    # Delete the files.
+    map { unlink "$tmpdir/$_" } @files;
 }
 
 
@@ -1376,13 +1356,11 @@ sub main
 	$REMOVED_REV_BASE) = get_temp_files $TMPDIR, $config->{'file-text'},
 					    $id;
 
-    my @text;
     my $i;
     for ($i = 0; ; $i++)
     {
 	last if !-e "$LOG_BASE.$i";
-	@text = read_logfile "$LOG_BASE.$i";
-	last if !@text;
+	my @text = read_logfile "$LOG_BASE.$i";
 	print STDERR "comparing: {", join (" ", @$log_lines), "} and {",
 		     join (" ", @text), "}\n"
 	    if $debug;
@@ -1393,7 +1371,7 @@ sub main
     #
     # Spit out the information gathered in this pass.
     #
-    write_file "$LOG_BASE.$i", @$log_lines if !-e "$LOG_BASE.$i" or !@text;
+    write_file "$LOG_BASE.$i", @$log_lines if !-e "$LOG_BASE.$i";
     append_files_to_file "$BRANCH_BASE.$i",  $module, @$branch_lines;
     append_files_to_file "$CHANGED_BASE.$i", $module, @$changed_files;
     append_files_to_file "$ADDED_BASE.$i",   $module, @$added_files;
