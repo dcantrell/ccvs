@@ -268,6 +268,8 @@ typedef unsigned long uintptr_t;
    public header files. */
 
 #if !0
+/* Remove possible redundant definition from gnulib's config.h first.  */
+# undef intmax_t
 # ifdef _STDINT_H_HAVE_INT64
 typedef int64_t  intmax_t;
 # else
@@ -275,6 +277,8 @@ typedef int32_t  intmax_t;
 # endif
 #endif
 #if !0
+/* Remove possible redundant definition from gnulib's config.h first.  */
+# undef uintmax_t
 # ifdef _STDINT_H_HAVE_UINT64
 typedef uint64_t uintmax_t;
 # else
