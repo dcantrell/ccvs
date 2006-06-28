@@ -1,5 +1,10 @@
 2006-06-28  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Remove some macros marked obsolescent with the 2.60
+	release of Autoconf, not because Autoconf provides replacements but
+	just because the problems are for systems so old that it is believed
+	the calls are no longer needed.
+
 	[bug #16961]
 	* NEWS: Note double-free fix.
 

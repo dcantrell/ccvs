@@ -197,9 +197,6 @@ AM_CONDITIONAL(MAKE_TARGETS_IN_VPATH, \
 		test $ccvs_cv_bsd_make_vpath_bug = no \
 		|| test $srcdir = .)
 
-AC_HEADER_DIRENT
-AC_HEADER_STDC
-AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(\
 	direct.h \
 	fcntl.h \
@@ -215,9 +212,7 @@ AC_CHECK_HEADERS(\
 	sys/select.h \
 	utime.h\
 )
-AC_HEADER_STAT
 
-AC_C_CONST
 AC_TYPE_UID_T
 AC_TYPE_MODE_T
 AC_TYPE_PID_T
@@ -574,7 +569,6 @@ dnl some other signal) at the wrong time, as main_cleanup will try to use
 dnl stdout/stderr.  So maybe we are stuck with AC_FUNC_FORK([]).
 dnl
 AC_FUNC_FORK([])
-AC_FUNC_CLOSEDIR_VOID
 
 dnl
 dnl Check for shadow password support.
@@ -585,7 +579,6 @@ dnl so we can go back to a simple check.
 AC_SEARCH_LIBS(getspnam, sec gen, AC_DEFINE(HAVE_GETSPNAM, 1,
 [Define if you have the getspnam function.]))
 
-AC_FUNC_UTIME_NULL
 AC_SYS_LONG_FILE_NAMES
 
 dnl for debugging code
