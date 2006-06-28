@@ -50,6 +50,12 @@ BUG FIXES
 
 * Misc documentation updates and minor bug fixes.
 
+DEVELOPER ISSUES
+
+* We've standardized on Autoconf version 2.60 to get a bug fix that notes
+  that the AIX C compiler's default mode isn't quite C89 and sets the
+  correct mode instead.
+
 Changes from 1.12.12 to 1.12.13:
 ********************************
 

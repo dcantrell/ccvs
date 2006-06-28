@@ -1,3 +1,9 @@
+2006-06-28  Larry Jones  <lawrence.jones@ugs.com>
+
+	* HACKING, NEWS: Note new Autoconf version.
+	* configure.in (AC_PREREQ): Require Autoconf 2.60.
+	* config.h.in, configure, **/Makefile.in: Regenerated.
+
 2006-06-28  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Remove some macros marked obsolescent with the 2.60
