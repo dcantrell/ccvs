@@ -578,9 +578,10 @@ login (argc, argv)
 
 
 
-/* Returns the _scrambled_ password.  The server must descramble
-   before hashing and comparing.  If password file not found, or
-   password not found in the file, just return NULL. */
+/* Returns the _scrambled_ password in freshly allocated memory.  The server
+ * must descramble before hashing and comparing.  If password file not found,
+ * or password not found in the file, just return NULL.
+ */
 char *
 get_cvs_password ()
 {
@@ -591,7 +592,7 @@ get_cvs_password ()
        context, then assume they have supplied the correct, scrambled
        password. */
     if (cvs_password)
-	return cvs_password;
+	return xstrdup (cvs_password);
 
     if (getenv ("CVS_PASSWORD") != NULL)
     {
