@@ -23,6 +23,13 @@ NEW FEATURES
 
 BUG FIXES
 
+* Thanks to a report and patch from <mbarabas@redhat.com>, potential stack
+  corruption during pserver login is avoided (bug #16961).
+
+* The CVS client again correctly reports files with conflicts when using
+  servers running CVS 1.11.20/1.12.12, or earlier (and maybe 3rd party
+  servers).
+
 * The GSSAPI server should now build under HP-UX.
 
 * `cvs rtag' now correctly tags files that have been removed from the trunk.
