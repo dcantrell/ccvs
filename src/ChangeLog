@@ -1,3 +1,9 @@
+2006-06-28  Derek Price  <derek@ximbiot.com>
+
+	[bug #16961]
+	* login.c (get_cvs_password): Return copy of global variable.
+	(Patch from <mbarabas@redhat.com>.)
+
 2006-06-24  Mark D. Baushke  <mdb@gnu.org>
 
 	* rcs.c (RCS_check_tag): Revert last change.
