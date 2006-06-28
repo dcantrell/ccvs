@@ -1,3 +1,7 @@
+2006-06-28  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.in [HAVE_UTIME_NULL]: Remove to sync with configure.in.
+
 2006-06-27  Mark D. Baushke  <mdb@gnu.org>
 
 	* stdint.h: Regenerated.
