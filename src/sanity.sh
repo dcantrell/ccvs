@@ -15976,18 +15976,10 @@ RCS file: $CVSROOT_DIRNAME/CVSROOT$DOTSTAR"
 	  dotest trailingslashes-1 "$testcvs -q up CVSROOT"
 	  dotest_fail trailingslashes-1a "test -f topfile"
 
-	  # FIXCVS:
-	  # Now the one that fails in remote mode.
-	  # This highlights one of the failure cases mentioned in TODO item
-	  # #205.
-	  if $remote; then
-		  dotest trailingslashes-2 "$testcvs -q up CVSROOT/" \
-"U topfile"
-		  dotest trailingslashes-2a "test -f topfile"
-	  else
-		  dotest trailingslashes-2 "$testcvs -q up CVSROOT/"
-		  dotest_fail trailingslashes-2a "test -f topfile"
-	  fi
+	  # Now the one that used to fail in remote mode prior to 1.11.24
+	  # & 1.12.14.  Formerly TODO item #205.
+	  dotest trailingslashes-2 "$testcvs -q up CVSROOT/"
+	  dotest_fail trailingslashes-2a "test -f topfile"
 
 	  dokeep
 	  cd ../..

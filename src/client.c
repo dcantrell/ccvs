@@ -128,21 +128,30 @@ static cvsroot_t *client_referrer;
    server.  This list, along with the current CVSROOT, will help us
    decide which command-line arguments to send.  */
 List *dirs_sent_to_server;
+
+/* walklist() callback for determining if a D is a dir name already sent to the
+ * server or the parent of one.
+ */
 static int
 is_arg_a_parent_or_listed_dir (Node *n, void *d)
 {
-    char *directory = n->key;	/* name of the dir sent to server */
-    char *this_argv_elem = d;	/* this argv element */
+    char *directory = n->key;		/* name of the dir sent to server */
+    char *this_argv_elem = xstrdup (d);	/* this argv element */
+    int retval;
 
     /* Say we should send this argument if the argument matches the
        beginning of a directory name sent to the server.  This way,
        the server will know to start at the top of that directory
        hierarchy and descend. */
 
+    strip_trailing_slashes (this_argv_elem);
     if (!strncmp (directory, this_argv_elem, strlen (this_argv_elem)))
-	return 1;
+	retval = 1;
+    else
+	retval = 0;
 
-    return 0;
+    free (this_argv_elem);
+    return retval;
 }
 
 
