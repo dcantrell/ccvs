@@ -1303,6 +1303,9 @@
    things up, but the default setting generally works fine too. */
 #define MY_NDBM 
 
+/* Define to 1 if assertions should be disabled. */
+#undef NDEBUG
+
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 #undef NO_MINUS_C_MINUS_O
 
