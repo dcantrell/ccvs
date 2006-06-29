@@ -1,3 +1,9 @@
+2006-06-29  Derek Price  <derek@ximbiot.com>
+
+	* client.c (is_arg_a_parent_or_listed_dir): Strip trailing slashes from
+	dir name defore searching for it.  Partially addresses TODO #205.
+	* sanity.sh (trailingslashes): Update to compensate.
+
 2006-06-28  Larry Jones  <lawrence.jones@ugs.com>
 
 	* error.c (error): Downgrade syslog message priority from
