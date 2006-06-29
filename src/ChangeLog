@@ -1,3 +1,10 @@
+2006-06-28  Larry Jones  <lawrence.jones@ugs.com>
+
+	* error.c (error): Downgrade syslog message priority from
+	LOG_EMERG (which is frequently broadcast to all logged in users,
+	most of whom are unlikely to understand or be able to do anything
+	about the problem) to LOG_CRIT.
+
 2006-06-28  Derek Price  <derek@ximbiot.com>
 
 	[bug #16961]
