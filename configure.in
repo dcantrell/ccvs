@@ -2,7 +2,7 @@ dnl configure.in for cvs
 
 AC_COPYRIGHT(
 [Copyright (C) 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995,
-              1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005
+              1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006
               Free Software Foundation, Inc.
 
 This program is free software; you can redistribute it and/or modify
@@ -32,52 +32,6 @@ gl_EARLY
 
 AC_PROG_CC
 AM_PROG_CC_C_O
-
-# Find the posix library needed on INTERACTIVE UNIX (ISC)
-dnl
-dnl From the Autoconf 2.53 manual (AC_ISC_POSIX):
-dnl
-dnl  For INTERACTIVE UNIX (ISC), add `-lcposix' to output variable
-dnl  `LIBS' if necessary for POSIX facilities.  Call this after
-dnl  `AC_PROG_CC' and before any other macros that use POSIX
-dnl  interfaces.  INTERACTIVE UNIX is no longer sold, and Sun says that
-dnl  they will drop support for it on 2006-07-23, so this macro is
-dnl  becoming obsolescent.
-dnl
-AC_SEARCH_LIBS([strerror], [cposix])
-
-dnl
-dnl Autoconf stopped setting $ISC sometime before 2.53
-dnl
-dnl If this is still important, someone should come up with a generic test
-dnl for whether _SYSV3 needs to be defined.  Removed code below:
-dnl
-dnl if test "$ISC" = yes; then
-dnl CFLAGS="$CFLAGS -D_SYSV3"
-dnl # And I don't like this...  In theory it should be found later if server is
-dnl # enabled, but maybe something on INTERACTIVE UNIX (ISC) we didn't ask to
-dnl # link with crypt tries?  Anyhow, the autoconf manual says we can delete
-dnl # this ISC stuff on or after 2006-07-23 when Sun discontinues support and
-dnl # ISC becomes obsolescent, but I suppose that is probably a matter of
-dnl # opinion.
-dnl #
-dnl # N.B.  The reason for doing this is that some moron decided to put a stub
-dnl # for crypt in libc that always returns NULL.  Without this here, the later
-dnl # check will find the stub instead of the real thing, resulting in a server
-dnl # that can't process crypted passwords correctly.
-dnl
-dnl # again, if we have to try and reenable this for ISC, someone should come
-dnl # up with a generic test that figures out whether crypt is good or not -
-dnl # Is it always returning NULL?
-dnl LIBS="-lcrypt $LIBS"
-dnl fi
-dnl
-dnl FIXME - This has been broken for at least a few months anyhow, so I'm
-dnl removing the crypt lib define above, but the correct fix would be to
-dnl provide a CRYPT_WORKS macro or the like that gets called sometime after
-dnl the AC_SEARCH_LIBS call that normally finds crypt, and if crypt doesn't
-dnl work, the macro should be retried with LIBS="-lcrypt $LIBS" forced.
-dnl
 
 AC_PROG_RANLIB
 AC_PROG_LN_S
