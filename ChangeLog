@@ -1,7 +1,7 @@
 2006-06-29  Derek Price  <derek@ximbiot.com>
 
 	* configure.in:  Remove support for Interactive Unix (ISC) that
-	Autoconf 2.60 reports as obsolescent.
+	Autoconf 2.60 reports as obsolescent.  Try to force C99, then C89.
 
 2006-06-28  Larry Jones  <lawrence.jones@ugs.com>
 

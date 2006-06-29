@@ -30,7 +30,7 @@ dnl This needs to be called to enable certain system extensions before calling
 dnl a C compiler.
 gl_EARLY
 
-AC_PROG_CC
+AC_PROG_CC_STDC
 AM_PROG_CC_C_O
 
 AC_PROG_RANLIB
