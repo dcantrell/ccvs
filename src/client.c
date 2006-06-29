@@ -160,17 +160,22 @@ is_arg_a_parent_or_listed_dir (n, d)
     void *d;
 {
     char *directory = n->key;	/* name of the dir sent to server */
-    char *this_argv_elem = (char *) d;	/* this argv element */
+    char *this_argv_elem = xstrdup (d);	/* this argv element */
+    int retval;
 
     /* Say we should send this argument if the argument matches the
        beginning of a directory name sent to the server.  This way,
        the server will know to start at the top of that directory
        hierarchy and descend. */
 
+    strip_trailing_slashes (this_argv_elem);
     if (strncmp (directory, this_argv_elem, strlen (this_argv_elem)) == 0)
-	return 1;
+	retval = 1;
+    else
+	retval = 0;
 
-    return 0;
+    free (this_argv_elem);
+    return retval;
 }
 
 static int arg_should_not_be_sent_to_server PROTO((char *));
