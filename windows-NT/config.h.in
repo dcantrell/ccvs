@@ -259,6 +259,9 @@
    includes <alloca.h> only if HAVE_ALLOCA_H is defined. */
 #define HAVE_ALLOCA_H 1
 
+/* Define to 1 if you have the <arpa/inet.h> header file. */
+#undef HAVE_ARPA_INET_H
+
 /* Define to 1 if you have the `atexit' function. */
 #define HAVE_ATEXIT 1
 
@@ -392,9 +395,17 @@
    don't. */
 #undef HAVE_DECL_GETLOGIN_R
 
+/* Define to 1 if you have the declaration of `getnameinfo', and to 0 if you
+   don't. */
+#undef HAVE_DECL_GETNAMEINFO
+
 /* Define to 1 if you have the declaration of `getpass', and to 0 if you
    don't. */
 #define HAVE_DECL_GETPASS 1
+
+/* Define to 1 if you have the declaration of `inet_ntop', and to 0 if you
+   don't. */
+#undef HAVE_DECL_INET_NTOP
 
 /* Define to 1 if you have the declaration of `memrchr', and to 0 if you
    don't. */
@@ -439,6 +450,10 @@
 /* Define to 1 if you have the declaration of `tzname', and to 0 if you don't.
    */
 #undef HAVE_DECL_TZNAME
+
+/* Define to 1 if you have the declaration of wcwidth(), and to 0 otherwise.
+   */
+#undef HAVE_DECL_WCWIDTH
 
 /* Define to 1 if you have the declaration of `__fpending', and to 0 if you
    don't. */
@@ -555,6 +570,9 @@
 
 /* Define if your compiler supports the #include_next directive. */
 #undef HAVE_INCLUDE_NEXT
+
+/* Define to 1 if you have the `inet_ntop' function. */
+#undef HAVE_INET_NTOP
 
 /* Define to 1 if you have the `initgroups' function. */
 #undef HAVE_INITGROUPS
@@ -1116,6 +1134,9 @@
 /* Define to 1 if you have the <wctype.h> header file. */
 #define HAVE_WCTYPE_H 1
 
+/* Define to 1 if you have the `wcwidth' function. */
+#undef HAVE_WCWIDTH
+
 /* Define to 1 if you have the <winsock2.h> header file. */
 #define HAVE_WINSOCK2_H 1
 
@@ -1629,9 +1650,6 @@
 #   define __printf__	printf
 # endif
 #endif /* __attribute__ */
-
-/* Define to empty if `const' does not conform to ANSI C. */
-#undef const
 
 /* Define to a replacement function name for fnmatch(). */
 #undef fnmatch
