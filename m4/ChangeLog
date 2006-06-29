@@ -1,3 +1,9 @@
+2006-06-29  Derek Price  <derek@ximbiot.com>
+
+	* inet_ntop.m4, wcwidth.m4: New files from GNULIB.
+	* fnmatch.m4, getaddrinfo.m4, gnulib-comp.m4, mbiter.m4, strftime.m4:
+	Update from GNULIB.
+
 2006-06-27  Mark D. Baushke  <mdb@gnu.org>
 
 	* stdint.m4: Update from gnulib.
