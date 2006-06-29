@@ -1,3 +1,8 @@
+2006-06-29  Derek Price  <derek@ximbiot.com>
+
+	* configure.in:  Remove support for Interactive Unix (ISC) that
+	Autoconf 2.60 reports as obsolescent.
+
 2006-06-28  Larry Jones  <lawrence.jones@ugs.com>
 
 	* HACKING, NEWS: Note new Autoconf version.
