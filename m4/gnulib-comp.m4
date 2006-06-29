@@ -65,6 +65,7 @@ AC_DEFUN([gl_INIT],
   gl_GETTIME
   AC_FUNC_GETTIMEOFDAY_CLOBBER
   gl_GLOB
+  gl_INET_NTOP
   gl_INTTYPES_H
   gl_FUNC_LSTAT
   AC_FUNC_MALLOC
@@ -118,6 +119,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_GLIBC_UNLOCKED_IO
   gl_FUNC_VASNPRINTF
   gl_FUNC_VASPRINTF
+  gl_FUNC_WCWIDTH
   gl_XALLOC
   gl_XGETCWD
   gl_XREADLINK
@@ -204,6 +206,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/glob-libc.h
   lib/glob.c
   lib/glob_.h
+  lib/inet_ntop.c
+  lib/inet_ntop.h
   lib/intprops.h
   lib/inttypes.h
   lib/lstat.c
@@ -292,6 +296,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/vasprintf.c
   lib/vasprintf.h
   lib/verify.h
+  lib/wcwidth.h
   lib/xalloc-die.c
   lib/xalloc.h
   lib/xgetcwd.c
@@ -353,6 +358,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/glob.m4
   m4/iconv.m4
   m4/include_next.m4
+  m4/inet_ntop.m4
   m4/intdiv0.m4
   m4/intmax.m4
   m4/intmax_t.m4
@@ -432,6 +438,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/vasnprintf.m4
   m4/vasprintf.m4
   m4/wchar_t.m4
+  m4/wcwidth.m4
   m4/wint_t.m4
   m4/xalloc.m4
   m4/xgetcwd.m4
