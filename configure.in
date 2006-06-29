@@ -25,6 +25,7 @@ AC_PREREQ(2.60)
 AC_PREFIX_PROGRAM(cvs)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
+AC_HEADER_ASSERT
 
 dnl This needs to be called to enable certain system extensions before calling
 dnl a C compiler.

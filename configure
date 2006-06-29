@@ -1444,6 +1444,7 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-maintainer-mode  enable make rules and dependencies not useful
 			  (and sometimes confusing) to the casual installer
+  --disable-assert        turn off assertions
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
   --disable-largefile     omit support for large files
@@ -2649,6 +2650,24 @@ else
 fi
 
   MAINT=$MAINTAINER_MODE_TRUE
+
+
+
+  { echo "$as_me:$LINENO: checking whether to enable assertions" >&5
+echo $ECHO_N "checking whether to enable assertions... $ECHO_C" >&6; }
+  # Check whether --enable-assert was given.
+if test "${enable_assert+set}" = set; then
+  enableval=$enable_assert; { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+
+cat >>confdefs.h <<\_ACEOF
+#define NDEBUG 1
+_ACEOF
+
+else
+  { echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
+fi
 
 
 
