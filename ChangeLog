@@ -1,3 +1,7 @@
+2006-06-29  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note trailing slash fix.
+
 2006-06-28  Larry Jones  <lawrence.jones@ugs.com>
 
 	* HACKING, NEWS: Note new Autoconf version.
