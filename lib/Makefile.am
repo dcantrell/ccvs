@@ -223,6 +223,12 @@ MOSTLYCLEANFILES += glob.h glob.h-t
 
 ## end   gnulib module glob
 
+## begin gnulib module inet_ntop
+
+libcvs_a_SOURCES += inet_ntop.h
+
+## end   gnulib module inet_ntop
+
 ## begin gnulib module intprops
 
 EXTRA_DIST += intprops.h
@@ -435,6 +441,12 @@ libcvs_a_SOURCES += vasprintf.h
 libcvs_a_SOURCES += verify.h
 
 ## end   gnulib module verify
+
+## begin gnulib module wcwidth
+
+libcvs_a_SOURCES += wcwidth.h
+
+## end   gnulib module wcwidth
 
 ## begin gnulib module xalloc-die
 

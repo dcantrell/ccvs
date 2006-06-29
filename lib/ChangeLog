@@ -1,3 +1,10 @@
+2006-06-29  Derek Price  <derek@ximbiot.com>
+
+	* inet_ntop.c, inet_ntop.h, wcwidth.h: New files from GNULIB.
+	* getaddrinfo.c, getaddrinfo.h, mbchar.h, Makefile.gnulib: Update from
+	GNULIB.
+	* Makefile.am: Update to match Makefile.gnulib.
+
 2006-06-27  Mark D. Baushke  <mdb@gnu.org>
 
 	* stdint_.h: Update from gnulib.
