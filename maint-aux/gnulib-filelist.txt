@@ -129,6 +129,7 @@ lib/setenv.c
 lib/setenv.h
 lib/size_max.h
 lib/socket_.h
+lib/stat_.h
 lib/stat-macros.h
 lib/stdbool_.h
 lib/stdint_.h
@@ -294,6 +295,7 @@ m4/strtoull.m4
 m4/strtoul.m4
 m4/strtoumax.m4
 m4/sys_socket_h.m4
+m4/sys_stat_h.m4
 m4/time_r.m4
 m4/timespec.m4
 m4/tm_gmtoff.m4

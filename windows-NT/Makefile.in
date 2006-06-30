@@ -123,7 +123,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/_inttypes_h.m4 \
 	$(top_srcdir)/m4/strtoul.m4 $(top_srcdir)/m4/strtoull.m4 \
 	$(top_srcdir)/m4/strtoumax.m4 \
 	$(top_srcdir)/m4/sunos57-select.m4 \
-	$(top_srcdir)/m4/sys_socket_h.m4 $(top_srcdir)/m4/time_r.m4 \
+	$(top_srcdir)/m4/sys_socket_h.m4 \
+	$(top_srcdir)/m4/sys_stat_h.m4 $(top_srcdir)/m4/time_r.m4 \
 	$(top_srcdir)/m4/timespec.m4 $(top_srcdir)/m4/tm_gmtoff.m4 \
 	$(top_srcdir)/m4/tzset.m4 $(top_srcdir)/m4/uintmax_t.m4 \
 	$(top_srcdir)/m4/ulonglong.m4 $(top_srcdir)/m4/unistd-safer.m4 \
@@ -219,6 +220,7 @@ EXEEXT = @EXEEXT@
 FNMATCH_H = @FNMATCH_H@
 FULL_PATH_INTTYPES_H = @FULL_PATH_INTTYPES_H@
 FULL_PATH_STDINT_H = @FULL_PATH_STDINT_H@
+FULL_PATH_SYS_STAT_H = @FULL_PATH_SYS_STAT_H@
 GETOPT_H = @GETOPT_H@
 GLOB_H = @GLOB_H@
 GL_COND_LIBTOOL_FALSE = @GL_COND_LIBTOOL_FALSE@
@@ -329,6 +331,7 @@ STDBOOL_H = @STDBOOL_H@
 STDINT_H = @STDINT_H@
 STRIP = @STRIP@
 SYS_SOCKET_H = @SYS_SOCKET_H@
+SYS_STAT_H = @SYS_STAT_H@
 TEXI2DVI = @TEXI2DVI@
 UNISTD_H = @UNISTD_H@
 USE_NLS = @USE_NLS@
