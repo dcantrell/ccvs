@@ -1,3 +1,7 @@
+2006-06-30  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	* getaddrinfo.c: fixed typo
+
 2006-06-29  Derek Price  <derek@ximbiot.com>
 
 	* .cvsignore: Add stat.h.
