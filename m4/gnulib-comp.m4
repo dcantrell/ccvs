@@ -111,6 +111,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_STRTOULL
   gl_FUNC_STRTOUMAX
   gl_HEADER_SYS_SOCKET
+  gl_HEADER_SYS_STAT_H
   gl_TIME_R
   gl_TIMESPEC
   gl_FUNC_TZSET_CLOBBER
@@ -262,6 +263,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/size_max.h
   lib/socket_.h
   lib/stat-macros.h
+  lib/stat_.h
   lib/stdbool_.h
   lib/stdint_.h
   lib/strcase.h
@@ -426,6 +428,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strtoull.m4
   m4/strtoumax.m4
   m4/sys_socket_h.m4
+  m4/sys_stat_h.m4
   m4/time_r.m4
   m4/timespec.m4
   m4/tm_gmtoff.m4
