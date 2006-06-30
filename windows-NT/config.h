@@ -250,6 +250,9 @@
 /* Define this to the full path to <stdint.h>. */
 #undef FULL_PATH_STDINT_H
 
+/* Define this to the full path to <sys/stat.h>. */
+#undef FULL_PATH_SYS_STAT_H
+
 /* Define to an alternative value if GSS_C_NT_HOSTBASED_SERVICE isn't defined
    in the gssapi.h header file. MIT Kerberos 1.2.1 requires this. Only
    relevant when using GSSAPI. */
@@ -417,6 +420,10 @@
 /* Define to 1 if you have the declaration of `memrchr', and to 0 if you
    don't. */
 #undef HAVE_DECL_MEMRCHR
+
+/* Define to 1 if you have the declaration of `mkdir', and to 0 if you don't.
+   */
+#undef HAVE_DECL_MKDIR
 
 /* Define to 1 if you have the declaration of `nanosleep', and to 0 if you
    don't. */
@@ -699,6 +706,9 @@
 /* Define if you have the 'long long' type. */
 #undef HAVE_LONG_LONG
 
+/* Define to 1 if you have the `lstat' function. */
+#undef HAVE_LSTAT
+
 /* Define to 1 if your system has a GNU libc compatible `malloc' function, and
    to 0 otherwise. */
 #define HAVE_MALLOC 1
@@ -905,9 +915,6 @@
 
 /* Define to 1 if you have the `strerror_r' function. */
 #undef HAVE_STRERROR_R
-
-/* Define to 1 if you have the `strftime' function. */
-#define HAVE_STRFTIME 1
 
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
