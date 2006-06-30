@@ -147,7 +147,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/_inttypes_h.m4 \
 	$(top_srcdir)/m4/strtoul.m4 $(top_srcdir)/m4/strtoull.m4 \
 	$(top_srcdir)/m4/strtoumax.m4 \
 	$(top_srcdir)/m4/sunos57-select.m4 \
-	$(top_srcdir)/m4/sys_socket_h.m4 $(top_srcdir)/m4/time_r.m4 \
+	$(top_srcdir)/m4/sys_socket_h.m4 \
+	$(top_srcdir)/m4/sys_stat_h.m4 $(top_srcdir)/m4/time_r.m4 \
 	$(top_srcdir)/m4/timespec.m4 $(top_srcdir)/m4/tm_gmtoff.m4 \
 	$(top_srcdir)/m4/tzset.m4 $(top_srcdir)/m4/uintmax_t.m4 \
 	$(top_srcdir)/m4/ulonglong.m4 $(top_srcdir)/m4/unistd-safer.m4 \
@@ -262,6 +263,7 @@ EXEEXT = @EXEEXT@
 FNMATCH_H = @FNMATCH_H@
 FULL_PATH_INTTYPES_H = @FULL_PATH_INTTYPES_H@
 FULL_PATH_STDINT_H = @FULL_PATH_STDINT_H@
+FULL_PATH_SYS_STAT_H = @FULL_PATH_SYS_STAT_H@
 GETOPT_H = @GETOPT_H@
 GLOB_H = @GLOB_H@
 GL_COND_LIBTOOL_FALSE = @GL_COND_LIBTOOL_FALSE@
@@ -372,6 +374,7 @@ STDBOOL_H = @STDBOOL_H@
 STDINT_H = @STDINT_H@
 STRIP = @STRIP@
 SYS_SOCKET_H = @SYS_SOCKET_H@
+SYS_STAT_H = @SYS_STAT_H@
 TEXI2DVI = @TEXI2DVI@
 UNISTD_H = @UNISTD_H@
 USE_NLS = @USE_NLS@
@@ -443,12 +446,13 @@ libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	xgethostname.h xgethostname.c xsize.h
 libcvs_a_LIBADD = @LIBOBJS@ @ALLOCA@
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) getdate.c $(GETOPT_H) \
-	$(GLOB_H) $(STDBOOL_H) $(STDINT_H) $(SYS_SOCKET_H) $(UNISTD_H)
+	$(GLOB_H) $(STDBOOL_H) $(STDINT_H) $(SYS_SOCKET_H) \
+	$(SYS_STAT_H) $(UNISTD_H)
 MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t \
 	getdate-expected getdate-got getdate.diff getopt.h getopt.h-t \
 	glob.h glob.h-t stdbool.h stdbool.h-t stdint.h stdint.h-t \
-	sys/socket.h sys/socket.h-t unistd.h
-MOSTLYCLEANDIRS = sys
+	sys/socket.h sys/socket.h-t sys/stat.h sys/stat.h-t unistd.h
+MOSTLYCLEANDIRS = sys sys
 DISTCLEANFILES = getdate.log
 MAINTAINERCLEANFILES = getdate.c
 
@@ -466,7 +470,7 @@ EXTRA_DIST = .cvsignore ChangeLog.fsf Makefile.gnulib build_lib.com \
 	libcvs.dep libcvs.dsp libcvs.mak test-getdate.sh alloca_.h \
 	allocsa.valgrind fnmatch_.h fnmatch_loop.c getdate.c \
 	getndelim2.h getndelim2.c getopt_.h getopt_int.h intprops.h \
-	stdbool_.h stdint_.h socket_.h
+	stdbool_.h stdint_.h socket_.h stat_.h
 getdate_SOURCES = error.c getdate.y progname.c
 getdate_CPPFLAGS = -DTEST
 getdate_LDADD = \
@@ -1069,6 +1073,14 @@ stdint.h: stdint_.h
 sys/socket.h: socket_.h
 	test -d sys || mkdir sys
 	cp $(srcdir)/socket_.h $@-t
+	mv $@-t $@
+
+# We need the following in order to create <sys/stat.h> when the system
+# has one that is incomplete.
+sys/stat.h: stat_.h
+	test -d sys || mkdir sys
+	sed -e 's|@''FULL_PATH_SYS_STAT_H''@|$(FULL_PATH_SYS_STAT_H)|g' \
+	    < $(srcdir)/stat_.h > $@-t
 	mv $@-t $@
 
 # We need the following in order to create an empty placeholder for
