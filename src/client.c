@@ -145,7 +145,10 @@ is_arg_a_parent_or_listed_dir (Node *n, void *d)
        hierarchy and descend. */
 
     strip_trailing_slashes (this_argv_elem);
-    if (!strncmp (directory, this_argv_elem, strlen (this_argv_elem)))
+    if (strlen (directory) >= strlen (this_argv_elem)
+	&& !strncmp (directory, this_argv_elem, strlen (this_argv_elem))
+	&& (strlen (directory) == strlen (this_argv_elem)
+	    || ISSLASH (directory[strlen (this_argv_elem)])))
 	retval = 1;
     else
 	retval = 0;
