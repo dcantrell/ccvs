@@ -1,3 +1,7 @@
+2006-07-01  Derek Price  <derek@ximbiot.com>
+
+	* stat_.h: Update from GNULIB.
+
 2006-06-30  Jim Hyslop <jhyslop@dreampossible.ca>
 
 	* getaddrinfo.c: fixed typo
