@@ -650,26 +650,24 @@ file_contains_keyword (const struct file_info *finfo)
 
 
 
-/* Read the entire contents of the file NAME into *BUF.
-   If NAME is NULL, read from stdin.  *BUF
-   is a pointer returned from malloc (or NULL), pointing to *BUFSIZE
-   bytes of space.  The actual size is returned in *LEN.  On error,
-   give a fatal error.  The name of the file to use in error messages
-   (typically will include a directory if we have changed directory)
-   is FULLNAME.  MODE is "r" for text or "rb" for binary.  */
+/* Read the entire contents of the file pointer IN into *BUF.  *BUF
+ * is a pointer returned from malloc (or NULL), pointing to *BUFSIZE
+ * bytes of space.  The actual size is returned in *LEN.  On error,
+ * give a fatal error.  The name of the file to use in error messages
+ * (typically will include a directory if we have changed directory)
+ * is FULLNAME.  MODE is "r" for text or "rb" for binary.
+ */
 void
-get_file (const char *name, const char *fullname, const char *mode, char **buf,
-	  size_t *bufsize, size_t *len)
+get_stream (FILE *in, const char *fullname, char **buf, size_t *bufsize,
+	    size_t *len)
 {
     struct stat s;
-    size_t nread;
-    char *tobuf;
-    FILE *e;
+    size_t off;
     size_t filesize;
 
-    if (name == NULL)
+    if (in == stdin)
     {
-	e = stdin;
+	fullname = "stdin";
 	filesize = 100;	/* force allocation of minimum buffer */
     }
     else
@@ -680,62 +678,67 @@ get_file (const char *name, const char *fullname, const char *mode, char **buf,
 	   be of arbitrary size, so I think we better do all that
 	   extra allocation.  */
 
-	if (stat (name, &s) < 0)
-	    error (1, errno, "can't stat %s", fullname);
+	if (fstat (fileno (in), &s) < 0)
+	    error (1, errno, "can't stat `%s'", fullname);
 
 	/* Convert from signed to unsigned.  */
 	filesize = s.st_size;
 
-	e = xfopen (name, mode);
+	/* Don't assume the file is positioned at the start.  */
+	rewind (in);
     }
 
-    if (*buf == NULL || *bufsize <= filesize)
-    {
-	*bufsize = filesize + 1;
-	*buf = xrealloc (*buf, *bufsize);
-    }
+    if (*bufsize < filesize)
+	*bufsize = filesize;
 
-    tobuf = *buf;
-    nread = 0;
-    while (1)
+    off = 0;
+    while (true)
     {
 	size_t got;
 
-	got = fread (tobuf, 1, *bufsize - (tobuf - *buf), e);
-	if (ferror (e))
-	    error (1, errno, "can't read %s", fullname);
-	nread += got;
-	tobuf += got;
+	/* Allocates *more* than *BUFSIZE and updates *BUFSIZE.  */
+	*buf = x2realloc (*buf, bufsize);
 
-	if (feof (e))
+	if (feof (in))
 	    break;
 
-	/* Allocate more space if needed.  */
-	if (tobuf == *buf + *bufsize)
-	{
-	    int c;
-	    long off;
-
-	    c = getc (e);
-	    if (c == EOF)
-		break;
-	    off = tobuf - *buf;
-	    expand_string (buf, bufsize, *bufsize + 100);
-	    tobuf = *buf + off;
-	    *tobuf++ = c;
-	    ++nread;
-	}
+	got = fread (*buf + off, 1, *bufsize - off, in);
+	if (ferror (in))
+	    error (1, errno, "can't read `%s'", fullname);
+	off += got;
     }
 
-    if (e != stdin && fclose (e) < 0)
-	error (0, errno, "cannot close %s", fullname);
-
-    *len = nread;
+    *len = off;
 
     /* Force *BUF to be large enough to hold a null terminator. */
-    if (nread == *bufsize)
-	expand_string (buf, bufsize, *bufsize + 1);
-    (*buf)[nread] = '\0';
+    if (off == *bufsize)
+	*buf = x2realloc (*buf, bufsize);
+    (*buf)[off] = '\0';
+}
+
+
+
+/* Read the entire contents of the file NAME into *BUF.  If NAME is NULL, read
+ * from stdin.  *BUF is a pointer returned from malloc (or NULL), pointing to
+ * *BUFSIZE bytes of space.  The actual size is returned in *LEN.  On error,
+ * give a fatal error.  The name of the file to use in error messages
+ * (typically will include a directory if we have changed directory)
+ * is FULLNAME.  MODE is "r" for text or "rb" for binary.
+ */
+void
+get_file (const char *name, const char *fullname, const char *mode, char **buf,
+	  size_t *bufsize, size_t *len)
+{
+    FILE *in;
+
+    if (name)
+	in = xfopen (name, mode);
+    else
+	in = stdin;
+
+    get_stream (in, fullname, buf, bufsize, len);
+    if (in != stdin && fclose (in) < 0)
+	error (0, errno, "cannot close `%s'", fullname);
 }
 
 

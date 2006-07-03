@@ -1,5 +1,12 @@
 2006-06-29  Derek Price  <derek@ximbiot.com>
 
+	* subr.c (get_file): Factor out...
+	(get_stream): ...this function.  Simplify.
+	* subr.h (get_stream): New proto.
+	* sanity.sh: Update to compensate.
+
+2006-06-29  Derek Price  <derek@ximbiot.com>
+
 	* client.c (is_arg_a_parent_or_listed_dir): Strip trailing slashes from
 	dir name defore searching for it.  Partially addresses TODO #205.
 	Avoid false positives.
