@@ -1,3 +1,7 @@
+2006-07-03  Mark D. Baushke  <mdb@gnu.org>
+
+	* stdint_.h: Fork stdint_.h to work on MacOS X 10.4.x.
+
 2006-07-02  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.gnulib, stdint_.h: Update from GNULIB.
