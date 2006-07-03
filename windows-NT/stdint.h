@@ -6,7 +6,7 @@
  * Edit ../lib/stdint_.h instead.
  */
 /* Copyright (C) 2001-2002, 2004-2006 Free Software Foundation, Inc.
-   Written by Bruno Haible, Sam Steingold, Peter Burwood.
+   Written by Paul Eggert, Bruno Haible, Sam Steingold, Peter Burwood.
    This file is part of gnulib.
 
    This program is free software; you can redistribute it and/or modify
@@ -23,132 +23,129 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#ifndef _STDINT_H
-#define _STDINT_H
+#ifndef _GL_STDINT_H
+#define _GL_STDINT_H
 
 /*
  * ISO C 99 <stdint.h> for platforms that lack it.
  * <http://www.opengroup.org/susv3xbd/stdint.h.html>
  */
 
-/* Get wchar_t, WCHAR_MIN, WCHAR_MAX.  */
-#include <stddef.h>
-/* BSD/OS 4.2 defines WCHAR_MIN, WCHAR_MAX in <wchar.h>, not <stddef.h>.  */
-#if !(defined(WCHAR_MIN) && defined(WCHAR_MAX)) && 1
-# include <wchar.h>
+/* Get those types that are already defined in other system include
+   files, so that we can "#define int8_t signed char" below without
+   worrying about a later system include file containing a "typedef
+   signed char int8_t;" that will get messed up by our macro.  Our
+   macros should all be consistent with the system versions, except
+   for the "fast" types and macros, which we recommend against using
+   in public interfaces due to compiler differences.  */
+
+/* <sys/types.h> defines some of the stdint.h types as well, on glibc,
+   IRIX 6.5, and OpenBSD 3.8 (via <machine/types.h>).  */
+#if @HAVE_SYS_TYPES_H@
+# include <sys/types.h>
 #endif
 
 /* Get LONG_MIN, LONG_MAX, ULONG_MAX.  */
 #include <limits.h>
 
-/* Get those types that are already defined in other system include files.  */
-#if defined(__FreeBSD__) && (__FreeBSD__ >= 3) && (__FreeBSD__ <= 4)
-# include <sys/inttypes.h>
-#endif
-#if defined(__OpenBSD__) || defined(__bsdi__) || defined(__sgi)
-  /* In OpenBSD 3.8, <sys/types.h> includes <machine/types.h>, which defines
-     int{8,16,32,64}_t, uint{8,16,32,64}_t and __BIT_TYPES_DEFINED__.
-     <inttypes.h> includes <machine/types.h> and also defines intptr_t and
-     uintptr_t.  */
-  /* BSD/OS 4.2 is similar, but doesn't have <inttypes.h> */
-  /* IRIX 6.5 has <inttypes.h>, and <sys/types.h> defines some of these
-     types as well.  */
-# include <sys/types.h>
-# if 0
-#  include 
+#if 0
+# if defined __sgi && ! defined __c99
+   /* Bypass IRIX's <stdint.h> if in C89 mode, since it merely annoys users
+      with "This header file is to be used only for c99 mode compilations"
+      diagnostics.  */
+#  define __STDINT_H__
 # endif
+  /* Other systems may have an incomplete or buggy <stdint.h>.
+     Include it before <inttypes.h>, since any "#include <stdint.h>"
+     in <inttypes.h> would reinclude us, skipping our contents because
+     _GL_STDINT_H is defined.  */
+# include 
 #endif
-#if defined(__linux__) && 0
+
+#if 0
+  /* In OpenBSD 3.8, <inttypes.h> includes <machine/types.h>, which defines
+     int{8,16,32,64}_t, uint{8,16,32,64}_t and __BIT_TYPES_DEFINED__.
+     <inttypes.h> also defines intptr_t and uintptr_t.  */
+# include <inttypes.h>
+#endif
+
+#if 0 && ! defined __BIT_TYPES_DEFINED__
   /* Linux libc4 >= 4.6.7 and libc5 have a <sys/bitypes.h> that defines
      int{8,16,32,64}_t and __BIT_TYPES_DEFINED__.  In libc5 >= 5.2.2 it is
      included by <sys/types.h>.  */
 # include <sys/bitypes.h>
 #endif
-#if defined(__sun) && 0
+
+#if 0 && !0
   /* Solaris 7 <sys/inttypes.h> has the types except the *_fast*_t types, and
      the macros except for *_FAST*_*, INTPTR_MIN, PTRDIFF_MIN, PTRDIFF_MAX.
      But note that <sys/int_types.h> contains only the type definitions!  */
 # include <sys/inttypes.h>
 #endif
-#if (defined(__hpux) || defined(_AIX)) && 0
-  /* HP-UX 10 <inttypes.h> has nearly everything, except UINT_LEAST8_MAX,
-     UINT_FAST8_MAX, PTRDIFF_MIN, PTRDIFF_MAX.  */
-  /* AIX 4 <inttypes.h> has nearly everything, except INTPTR_MIN, INTPTR_MAX,
-     UINTPTR_MAX, PTRDIFF_MIN, PTRDIFF_MAX.  */
-# include 
-#endif
-#if 0
-  /* Other systems may have an incomplete <stdint.h>.  */
-  /* On some versions of IRIX, the SGI C compiler comes with an <stdint.h>,
-     but
-       - in c99 mode, <inttypes.h> includes <stdint.h>,
-       - in c89 mode, <stdint.h> spews warnings and defines nothing.
-         <inttypes.h> defines only a subset of the types and macros that
-         <stdint.h> would define in c99 mode.
-     So we rely only on <inttypes.h> (included above).  It means that in
-     c89 mode, we shadow the contents of warning-spewing <stdint.h>.  */
-# if !(defined(__sgi) && 0 && !defined(__c99))
-#  include 
+
+#if ! defined __cplusplus || defined __STDC_CONSTANT_MACROS
+
+/* Get WCHAR_MIN, WCHAR_MAX.  */
+# if 1 && ! (defined WCHAR_MIN && defined WCHAR_MAX)
+   /* BSD/OS 4.1 has a bug: <stdio.h> and <time.h> must be included before
+      <wchar.h>.  */
+#  include <stdio.h>
+#  include <time.h>
+#  include <wchar.h>
 # endif
+
 #endif
+
+/* Minimum and maximum values for a integer type under the usual assumption.
+   Return an unspecified value if BITS == 0, adding a check to pacify
+   picky compilers.  */
+
+#define _STDINT_MIN(signed, bits, zero) \
+  ((signed) ? (- ((zero) + 1) << ((bits) ? (bits) - 1 : 0)) : (zero))
+
+#define _STDINT_MAX(signed, bits, zero) \
+  ((signed) \
+   ? ~ _STDINT_MIN (signed, bits, zero) \
+   : ((((zero) + 1) << ((bits) ? (bits) - 1 : 0)) - 1) * 2 + 1)
 
 /* 7.18.1.1. Exact-width integer types */
 
 /* Here we assume a standard architecture where the hardware integer
    types have 8, 16, 32, optionally 64 bits.  */
 
-#if !0
-typedef signed char    int8_t;
-#endif
-#if !0
-typedef unsigned char  uint8_t;
-# define _UINT8_T /* avoid collision with Solaris 2.5.1 <pthread.h> */
+#undef int8_t
+#undef uint8_t
+#define int8_t signed char
+#define uint8_t unsigned char
+
+#undef int16_t
+#undef uint16_t
+#define int16_t short int
+#define uint16_t unsigned short int
+
+#undef int32_t
+#undef uint32_t
+#define int32_t int
+#define uint32_t unsigned int
+
+#undef int64_t
+#undef uint64_t
+#if LONG_MAX >> 31 >> 31 == 1
+# define int64_t long int
+# define uint64_t unsigned long int
+#elif defined _MSC_VER
+# define int64_t __int64
+# define uint64_t unsigned __int64
+#elif @HAVE_LONG_LONG_INT@
+# define int64_t long long int
+# define uint64_t unsigned long long int
 #endif
 
-#if !0
-typedef short          int16_t;
-#endif
-#if !0
-typedef unsigned short uint16_t;
-#endif
+/* Avoid collision with Solaris 2.5.1 <pthread.h> etc.  */
+#define _UINT8_T
+#define _UINT32_T
+#define _UINT64_T
 
-#if !0
-typedef int            int32_t;
-#endif
-#if !0
-typedef unsigned int   uint32_t;
-# define _UINT32_T /* avoid collision with Solaris 2.5.1 <pthread.h> */
-#endif
-
-#if 0
-# define _STDINT_H_HAVE_INT64 1
-#else
-# if 0
-typedef long           int64_t;
-#  define _STDINT_H_HAVE_INT64 1
-# elif 0
-typedef long long      int64_t;
-#  define _STDINT_H_HAVE_INT64 1
-# elif defined _MSC_VER
-typedef __int64        int64_t;
-#  define _STDINT_H_HAVE_INT64 1
-# endif
-#endif
-#if 0
-# define _STDINT_H_HAVE_UINT64 1
-#else
-# if 0
-typedef unsigned long      uint64_t;
-#  define _STDINT_H_HAVE_UINT64 1
-# elif 0
-typedef unsigned long long uint64_t;
-#  define _UINT64_T /* avoid collision with Solaris 2.5.1 <pthread.h> */
-#  define _STDINT_H_HAVE_UINT64 1
-# elif defined _MSC_VER
-typedef unsigned __int64   uint64_t;
-#  define _STDINT_H_HAVE_UINT64 1
-# endif
-#endif
 
 /* 7.18.1.2. Minimum-width integer types */
 
@@ -156,32 +153,23 @@ typedef unsigned __int64   uint64_t;
    types have 8, 16, 32, optionally 64 bits. Therefore the leastN_t types
    are the same as the corresponding N_t types.  */
 
-#if !0
-typedef int8_t   int_least8_t;
-#endif
-#if !0
-typedef uint8_t  uint_least8_t;
-#endif
-
-#if !0
-typedef int16_t  int_least16_t;
-#endif
-#if !0
-typedef uint16_t uint_least16_t;
-#endif
-
-#if !0
-typedef int32_t  int_least32_t;
-#endif
-#if !0
-typedef uint32_t uint_least32_t;
-#endif
-
-#if !0 && _STDINT_H_HAVE_INT64
-typedef int64_t  int_least64_t;
-#endif
-#if !0 && _STDINT_H_HAVE_UINT64
-typedef uint64_t uint_least64_t;
+#undef int_least8_t
+#undef uint_least8_t
+#undef int_least16_t
+#undef uint_least16_t
+#undef int_least32_t
+#undef uint_least32_t
+#undef int_least64_t
+#undef uint_least64_t
+#define int_least8_t int8_t
+#define uint_least8_t uint8_t
+#define int_least16_t int16_t
+#define uint_least16_t uint16_t
+#define int_least32_t int32_t
+#define uint_least32_t uint32_t
+#ifdef int64_t
+# define int_least64_t int64_t
+# define uint_least64_t uint64_t
 #endif
 
 /* 7.18.1.3. Fastest minimum-width integer types */
@@ -191,244 +179,90 @@ typedef uint64_t uint_least64_t;
 
 /* Here we assume a standard architecture where the hardware integer
    types have 8, 16, 32, optionally 64 bits. Therefore the fastN_t types
-   are taken from the same list of types.  */
+   are taken from the same list of types.  Assume that 'long int'
+   is fast enough for all narrower integers.  */
 
-/* On alpha processors, int32_t variables are slower than int64_t variables,
-   due to the necessary zap instructions.  */
-#if defined __alpha
-# define _STDINT_H_INT64_FASTER_THAN_INT32 1
-#endif
-
-#if !0
-# if _STDINT_H_INT64_FASTER_THAN_INT32
-typedef int64_t  int_fast8_t;
-# else
-typedef int32_t  int_fast8_t;
-# endif
-#endif
-#if !0
-# if _STDINT_H_INT64_FASTER_THAN_INT32
-typedef uint64_t uint_fast8_t;
-# else
-typedef uint32_t uint_fast8_t;
-# endif
-#endif
-
-#if !0
-# if _STDINT_H_INT64_FASTER_THAN_INT32
-typedef int64_t  int_fast16_t;
-# else
-typedef int32_t  int_fast16_t;
-# endif
-#endif
-#if !0
-# if _STDINT_H_INT64_FASTER_THAN_INT32
-typedef uint64_t uint_fast16_t;
-# else
-typedef uint32_t uint_fast16_t;
-# endif
-#endif
-
-#if !0
-# if _STDINT_H_INT64_FASTER_THAN_INT32
-typedef int64_t  int_fast32_t;
-# else
-typedef int32_t  int_fast32_t;
-# endif
-#endif
-#if !0
-# if _STDINT_H_INT64_FASTER_THAN_INT32
-typedef uint64_t uint_fast32_t;
-# else
-typedef uint32_t uint_fast32_t;
-# endif
-#endif
-
-#if !0 && _STDINT_H_HAVE_INT64
-typedef int64_t  int_fast64_t;
-#endif
-#if !0 && _STDINT_H_HAVE_UINT64
-typedef uint64_t uint_fast64_t;
+#undef int_fast8_t
+#undef uint_fast8_t
+#undef int_fast16_t
+#undef uint_fast16_t
+#undef int_fast32_t
+#undef uint_fast32_t
+#undef int_fast64_t
+#undef uint_fast64_t
+#define int_fast8_t long int
+#define uint_fast8_t unsigned int_fast8_t
+#define int_fast16_t long int
+#define uint_fast16_t unsigned int_fast16_t
+#define int_fast32_t long int
+#define uint_fast32_t unsigned int_fast32_t
+#ifdef int64_t
+# define int_fast64_t int64_t
+# define uint_fast64_t uint64_t
 #endif
 
 /* 7.18.1.4. Integer types capable of holding object pointers */
 
-/* On some platforms (like IRIX6 MIPS with -n32) sizeof(void*) < sizeof(long),
-   but this doesn't matter here.  */
-#if !0
-typedef long          intptr_t;
-#endif
-#if !0
-typedef unsigned long uintptr_t;
-#endif
+#undef intptr_t
+#undef uintptr_t
+#define intptr_t long int
+#define uintptr_t unsigned long int
 
 /* 7.18.1.5. Greatest-width integer types */
 
 /* Note: These types are compiler dependent. It may be unwise to use them in
    public header files. */
 
-#if !0
-/* Remove possible redundant definition from gnulib's config.h first.  */
-# undef intmax_t
-# ifdef _STDINT_H_HAVE_INT64
-typedef int64_t  intmax_t;
-# else
-typedef int32_t  intmax_t;
-# endif
-#endif
-#if !0
-/* Remove possible redundant definition from gnulib's config.h first.  */
-# undef uintmax_t
-# ifdef _STDINT_H_HAVE_UINT64
-typedef uint64_t uintmax_t;
-# else
-typedef uint32_t uintmax_t;
-# endif
+#undef intmax_t
+#undef uintmax_t
+#if @HAVE_LONG_LONG_INT@ && LONG_MAX >> 30 == 1
+# define intmax_t long long int
+# define uintmax_t unsigned long long int
+#elif defined int64_t
+# define intmax_t int64_t
+# define uintmax_t uint64_t
+#else
+# define intmax_t long int
+# define uintmax_t unsigned long int
 #endif
 
 /* 7.18.2. Limits of specified-width integer types */
 
-#if !defined(__cplusplus) || defined(__STDC_LIMIT_MACROS)
+#if ! defined __cplusplus || defined __STDC_LIMIT_MACROS
 
 /* 7.18.2.1. Limits of exact-width integer types */
 
 /* Here we assume a standard architecture where the hardware integer
    types have 8, 16, 32, optionally 64 bits.  */
 
-#if 0
-# ifndef INT8_MIN
-#  define INT8_MIN  (-1 << (8 - 1))
-# endif
-#else
-# define INT8_MIN  -128
-#endif
-#if 0
-# ifndef INT8_MAX
-#  define INT8_MAX  (~ (-1 << (8 - 1)))
-# endif
-#else
-# define INT8_MAX  127
-#endif
-#if 0
-# ifndef UINT8_MAX
-#  if 8 < 32
-#   define UINT8_MAX  (((1 << (8 - 1)) - 1) * 2 + 1)
-#  else
-#   define UINT8_MAX  (((1U << (8 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#else
-# define UINT8_MAX  255
-#endif
+#undef INT8_MIN
+#undef INT8_MAX
+#undef UINT8_MAX
+#define INT8_MIN  (~ INT8_MAX)
+#define INT8_MAX  127
+#define UINT8_MAX  255
 
-#if 0
-# ifndef INT16_MIN
-#  define INT16_MIN  (-1 << (16 - 1))
-# endif
-#else
-# define INT16_MIN  -32768
-#endif
-#if 0
-# ifndef INT16_MAX
-#  define INT16_MAX  (~ (-1 << (16 - 1)))
-# endif
-#else
-# define INT16_MAX  32767
-#endif
-#if 0
-# ifndef UINT16_MAX
-#  if 16 < 32
-#   define UINT16_MAX  (((1 << (16 - 1)) - 1) * 2 + 1)
-#  else
-#   define UINT16_MAX  (((1U << (16 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#else
-# define UINT16_MAX  65535
-#endif
+#undef INT16_MIN
+#undef INT16_MAX
+#undef UINT16_MAX
+#define INT16_MIN  (~ INT16_MAX)
+#define INT16_MAX  32767
+#define UINT16_MAX  65535
 
-#if 0
-# ifndef INT32_MIN
-#  define INT32_MIN  (-1 << (32 - 1))
-# endif
-#else
-# define INT32_MIN  (~INT32_MAX)
-#endif
-#if 0
-# ifndef INT32_MAX
-#  define INT32_MAX  (~ (-1 << (32 - 1)))
-# endif
-#else
-# define INT32_MAX  2147483647
-#endif
-#if 0
-# ifndef UINT32_MAX
-#  if 32 < 32
-#   define UINT32_MAX  (((1 << (32 - 1)) - 1) * 2 + 1)
-#  else
-#   define UINT32_MAX  (((1U << (32 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#else
-# define UINT32_MAX  4294967295U
-#endif
+#undef INT32_MIN
+#undef INT32_MAX
+#undef UINT32_MAX
+#define INT32_MIN  (~ INT32_MAX)
+#define INT32_MAX  2147483647
+#define UINT32_MAX  4294967295U
 
-#if 0
-# ifndef INT64_MIN
-#  if 0
-#   define INT64_MIN  (-1L << (64 - 1))
-#  elif 0
-#   define INT64_MIN  (-1LL << (64 - 1))
-#  elif defined _MSC_VER
-#   define INT64_MIN  (-1i64 << (64 - 1))
-#  endif
-# endif
-#else
-# ifdef _STDINT_H_HAVE_INT64
-#  define INT64_MIN  (~INT64_MAX)
-# endif
-#endif
-#if 0
-# ifndef INT64_MAX
-#  if 0
-#   define INT64_MAX  (~ (-1L << (64 - 1)))
-#  elif 0
-#   define INT64_MAX  (~ (-1LL << (64 - 1)))
-#  elif defined _MSC_VER
-#   define INT64_MAX  (~ (-1i64 << (64 - 1)))
-#  endif
-# endif
-#else
-# ifdef _STDINT_H_HAVE_INT64
-#  if 0
-#   define INT64_MAX  9223372036854775807L
-#  elif 0
-#   define INT64_MAX  9223372036854775807LL
-#  elif defined _MSC_VER
-#   define INT64_MAX  9223372036854775807i64
-#  endif
-# endif
-#endif
-#if 0
-# ifndef UINT64_MAX
-#  if 0
-#   define UINT64_MAX  (((1UL << (64 - 1)) - 1) * 2 + 1)
-#  elif 0
-#   define UINT64_MAX  (((1ULL << (64 - 1)) - 1) * 2 + 1)
-#  elif defined _MSC_VER
-#   define UINT64_MAX  (((1ui64 << (64 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#else
-# ifdef _STDINT_H_HAVE_UINT64
-#  if 0
-#   define UINT64_MAX 18446744073709551615UL
-#  elif 0
-#   define UINT64_MAX 18446744073709551615ULL
-#  elif defined _MSC_VER
-#   define UINT64_MAX 18446744073709551615ui64
-#  endif
-# endif
+#undef INT64_MIN
+#undef INT64_MAX
+#undef UINT64_MAX
+#ifdef int64_t
+# define INT64_MIN  (~ INT64_MAX)
+# define INT64_MAX  INTMAX_C (9223372036854775807)
+# define UINT64_MAX  UINTMAX_C (18446744073709551615)
 #endif
 
 /* 7.18.2.2. Limits of minimum-width integer types */
@@ -437,128 +271,34 @@ typedef uint32_t uintmax_t;
    types have 8, 16, 32, optionally 64 bits. Therefore the leastN_t types
    are the same as the corresponding N_t types.  */
 
-#if 0
-# ifndef INT_LEAST8_MIN
-#  define INT_LEAST8_MIN  (-1 << (8 - 1))
-# endif
-#else
-# define INT_LEAST8_MIN  INT8_MIN
-#endif
-#if 0
-# ifndef INT_LEAST8_MAX
-#  define INT_LEAST8_MAX  (~ (-1 << (8 - 1)))
-# endif
-#else
-# define INT_LEAST8_MAX  INT8_MAX
-#endif
-#if 0
-# ifndef UINT_LEAST8_MAX
-#  if 8 < 32
-#   define UINT_LEAST8_MAX  (((1 << (8 - 1)) - 1) * 2 + 1)
-#  else
-#   define UINT_LEAST8_MAX  (((1U << (8 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#else
-# define UINT_LEAST8_MAX  UINT8_MAX
-#endif
+#undef INT_LEAST8_MIN
+#undef INT_LEAST8_MAX
+#undef UINT_LEAST8_MAX
+#define INT_LEAST8_MIN  INT8_MIN
+#define INT_LEAST8_MAX  INT8_MAX
+#define UINT_LEAST8_MAX  UINT8_MAX
 
-#if 0
-# ifndef INT_LEAST16_MIN
-#  define INT_LEAST16_MIN  (-1 << (16 - 1))
-# endif
-#else
-# define INT_LEAST16_MIN  INT16_MIN
-#endif
-#if 0
-# ifndef INT_LEAST16_MAX
-#  define INT_LEAST16_MAX  (~ (-1 << (16 - 1)))
-# endif
-#else
-# define INT_LEAST16_MAX  INT16_MAX
-#endif
-#if 0
-# ifndef UINT_LEAST16_MAX
-#  if 16 < 32
-#   define UINT_LEAST16_MAX  (((1 << (16 - 1)) - 1) * 2 + 1)
-#  else
-#   define UINT_LEAST16_MAX  (((1U << (16 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#else
-# define UINT_LEAST16_MAX  UINT16_MAX
-#endif
+#undef INT_LEAST16_MIN
+#undef INT_LEAST16_MAX
+#undef UINT_LEAST16_MAX
+#define INT_LEAST16_MIN  INT16_MIN
+#define INT_LEAST16_MAX  INT16_MAX
+#define UINT_LEAST16_MAX  UINT16_MAX
 
-#if 0
-# ifndef INT_LEAST32_MIN
-#  define INT_LEAST32_MIN  (-1 << (32 - 1))
-# endif
-#else
-# define INT_LEAST32_MIN  INT32_MIN
-#endif
-#if 0
-# ifndef INT_LEAST32_MAX
-#  define INT_LEAST32_MAX  (~ (-1 << (32 - 1)))
-# endif
-#else
-# define INT_LEAST32_MAX  INT32_MAX
-#endif
-#if 0
-# ifndef UINT_LEAST32_MAX
-#  if 32 < 32
-#   define UINT_LEAST32_MAX  (((1 << (32 - 1)) - 1) * 2 + 1)
-#  else
-#   define UINT_LEAST32_MAX  (((1U << (32 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#else
-# define UINT_LEAST32_MAX  UINT32_MAX
-#endif
+#undef INT_LEAST32_MIN
+#undef INT_LEAST32_MAX
+#undef UINT_LEAST32_MAX
+#define INT_LEAST32_MIN  INT32_MIN
+#define INT_LEAST32_MAX  INT32_MAX
+#define UINT_LEAST32_MAX  UINT32_MAX
 
-#if 0
-# ifndef INT_LEAST64_MIN
-#  if 0
-#   define INT_LEAST64_MIN  (-1L << (64 - 1))
-#  elif 0
-#   define INT_LEAST64_MIN  (-1LL << (64 - 1))
-#  elif defined _MSC_VER
-#   define INT_LEAST64_MIN  (-1i64 << (64 - 1))
-#  endif
-# endif
-#else
-# ifdef _STDINT_H_HAVE_INT64
-#  define INT_LEAST64_MIN  INT64_MIN
-# endif
-#endif
-#if 0
-# ifndef INT_LEAST64_MAX
-#  if 0
-#   define INT_LEAST64_MAX  (~ (-1L << (64 - 1)))
-#  elif 0
-#   define INT_LEAST64_MAX  (~ (-1LL << (64 - 1)))
-#  elif defined _MSC_VER
-#   define INT_LEAST64_MAX  (~ (-1i64 << (64 - 1)))
-#  endif
-# endif
-#else
-# ifdef _STDINT_H_HAVE_INT64
-#  define INT_LEAST64_MAX  INT64_MAX
-# endif
-#endif
-#if 0
-# ifndef UINT_LEAST64_MAX
-#  if 0
-#   define UINT_LEAST64_MAX  (((1UL << (64 - 1)) - 1) * 2 + 1)
-#  elif 0
-#   define UINT_LEAST64_MAX  (((1ULL << (64 - 1)) - 1) * 2 + 1)
-#  elif defined _MSC_VER
-#   define UINT_LEAST64_MAX  (((1ui64 << (64 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#else
-# ifdef _STDINT_H_HAVE_UINT64
-#  define UINT_LEAST64_MAX  UINT64_MAX
-# endif
+#undef INT_LEAST64_MIN
+#undef INT_LEAST64_MAX
+#undef UINT_LEAST64_MAX
+#ifdef int64_t
+# define INT_LEAST64_MIN  INT64_MIN
+# define INT_LEAST64_MAX  INT64_MAX
+# define UINT_LEAST64_MAX  UINT64_MAX
 #endif
 
 /* 7.18.2.3. Limits of fastest minimum-width integer types */
@@ -567,464 +307,151 @@ typedef uint32_t uintmax_t;
    types have 8, 16, 32, optionally 64 bits. Therefore the fastN_t types
    are taken from the same list of types.  */
 
-#if 0
-# ifndef INT_FAST8_MIN
-#  define INT_FAST8_MIN  (-1L << (32 - 1))
-# endif
-#else
-# if _STDINT_H_INT64_FASTER_THAN_INT32
-#  define INT_FAST8_MIN  INT64_MIN
-# else
-#  define INT_FAST8_MIN  INT32_MIN
-# endif
-#endif
-#if 0
-# ifndef INT_FAST8_MAX
-#  define INT_FAST8_MAX  (~ (-1L << (32 - 1)))
-# endif
-#else
-# if _STDINT_H_INT64_FASTER_THAN_INT32
-#  define INT_FAST8_MAX  INT64_MAX
-# else
-#  define INT_FAST8_MAX  INT32_MAX
-# endif
-#endif
-#if 0
-# ifndef UINT_FAST8_MAX
-#  if 32 < 32
-#   define UINT_FAST8_MAX  (((1 << (32 - 1)) - 1) * 2 + 1)
-#  else
-#   define UINT_FAST8_MAX  (((1UL << (32 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#else
-# if _STDINT_H_INT64_FASTER_THAN_INT32
-#  define UINT_FAST8_MAX  UINT64_MAX
-# else
-#  define UINT_FAST8_MAX  UINT32_MAX
-# endif
-#endif
+#undef INT_FAST8_MIN
+#undef INT_FAST8_MAX
+#undef UINT_FAST8_MAX
+#define INT_FAST8_MIN  LONG_MIN
+#define INT_FAST8_MAX  LONG_MAX
+#define UINT_FAST8_MAX  ULONG_MAX
 
-#if 0
-# ifndef INT_FAST16_MIN
-#  define INT_FAST16_MIN  (-1L << (32 - 1))
-# endif
-#else
-# if _STDINT_H_INT64_FASTER_THAN_INT32
-#  define INT_FAST16_MIN  INT64_MIN
-# else
-#  define INT_FAST16_MIN  INT32_MIN
-# endif
-#endif
-#if 0
-# ifndef INT_FAST16_MAX
-#  define INT_FAST16_MAX  (~ (-1L << (32 - 1)))
-# endif
-#else
-# if _STDINT_H_INT64_FASTER_THAN_INT32
-#  define INT_FAST16_MAX  INT64_MAX
-# else
-#  define INT_FAST16_MAX  INT32_MAX
-# endif
-#endif
-#if 0
-# ifndef UINT_FAST16_MAX
-#  if 32 < 32
-#   define UINT_FAST16_MAX  (((1 << (32 - 1)) - 1) * 2 + 1)
-#  else
-#   define UINT_FAST16_MAX  (((1UL << (32 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#else
-# if _STDINT_H_INT64_FASTER_THAN_INT32
-#  define UINT_FAST16_MAX  UINT64_MAX
-# else
-#  define UINT_FAST16_MAX  UINT32_MAX
-# endif
-#endif
+#undef INT_FAST16_MIN
+#undef INT_FAST16_MAX
+#undef UINT_FAST16_MAX
+#define INT_FAST16_MIN  LONG_MIN
+#define INT_FAST16_MAX  LONG_MAX
+#define UINT_FAST16_MAX  ULONG_MAX
 
-#if 0
-# ifndef INT_FAST32_MIN
-#  define INT_FAST32_MIN  (-1L << (32 - 1))
-# endif
-#else
-# if _STDINT_H_INT64_FASTER_THAN_INT32
-#  define INT_FAST32_MIN  INT64_MIN
-# else
-#  define INT_FAST32_MIN  INT32_MIN
-# endif
-#endif
-#if 0
-# ifndef INT_FAST32_MAX
-#  define INT_FAST32_MAX  (~ (-1L << (32 - 1)))
-# endif
-#else
-# if _STDINT_H_INT64_FASTER_THAN_INT32
-#  define INT_FAST32_MAX  INT64_MAX
-# else
-#  define INT_FAST32_MAX  INT32_MAX
-# endif
-#endif
-#if 0
-# ifndef UINT_FAST32_MAX
-#  if 32 < 32
-#   define UINT_FAST32_MAX  (((1 << (32 - 1)) - 1) * 2 + 1)
-#  else
-#   define UINT_FAST32_MAX  (((1UL << (32 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#else
-# if _STDINT_H_INT64_FASTER_THAN_INT32
-#  define UINT_FAST32_MAX  UINT64_MAX
-# else
-#  define UINT_FAST32_MAX  UINT32_MAX
-# endif
-#endif
+#undef INT_FAST32_MIN
+#undef INT_FAST32_MAX
+#undef UINT_FAST32_MAX
+#define INT_FAST32_MIN  LONG_MIN
+#define INT_FAST32_MAX  LONG_MAX
+#define UINT_FAST32_MAX  ULONG_MAX
 
-#if 0
-# ifndef INT_FAST64_MIN
-#  if 0
-#   define INT_FAST64_MIN  (-1L << (64 - 1))
-#  elif 0
-#   define INT_FAST64_MIN  (-1LL << (64 - 1))
-#  elif defined _MSC_VER
-#   define INT_FAST64_MIN  (-1i64 << (64 - 1))
-#  endif
-# endif
-#else
-# ifdef _STDINT_H_HAVE_INT64
-#  define INT_FAST64_MIN  INT64_MIN
-# endif
-#endif
-#if 0
-# ifndef INT_FAST64_MAX
-#  if 0
-#   define INT_FAST64_MAX  (~ (-1L << (64 - 1)))
-#  elif 0
-#   define INT_FAST64_MAX  (~ (-1LL << (64 - 1)))
-#  elif defined _MSC_VER
-#   define INT_FAST64_MAX  (~ (-1i64 << (64 - 1)))
-#  endif
-# endif
-#else
-# ifdef _STDINT_H_HAVE_INT64
-#  define INT_FAST64_MAX  INT64_MAX
-# endif
-#endif
-#if 0
-# ifndef UINT_FAST64_MAX
-#  if 0
-#   define UINT_FAST64_MAX  (((1UL << (64 - 1)) - 1) * 2 + 1)
-#  elif 0
-#   define UINT_FAST64_MAX  (((1ULL << (64 - 1)) - 1) * 2 + 1)
-#  elif defined _MSC_VER
-#   define UINT_FAST64_MAX  (((1ui64 << (64 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#else
-# ifdef _STDINT_H_HAVE_UINT64
-#  define UINT_FAST64_MAX  UINT64_MAX
-# endif
+#undef INT_FAST64_MIN
+#undef INT_FAST64_MAX
+#undef UINT_FAST64_MAX
+#ifdef int64_t
+# define INT_FAST64_MIN  INT64_MIN
+# define INT_FAST64_MAX  INT64_MAX
+# define UINT_FAST64_MAX  UINT64_MAX
 #endif
 
 /* 7.18.2.4. Limits of integer types capable of holding object pointers */
 
-#if 0
-# ifndef INTPTR_MIN
-#  if 32 > 32
-#   define INTPTR_MIN  (-1LL << (32 - 1))
-#  else
-#   define INTPTR_MIN  (-1L << (32 - 1))
-#  endif
-# endif
-#else
-# define INTPTR_MIN  LONG_MIN
-#endif
-#if 0
-# ifndef INTPTR_MAX
-#  if 32 > 32
-#   define INTPTR_MAX  (~ (-1LL << (32 - 1)))
-#  else
-#   define INTPTR_MAX  (~ (-1L << (32 - 1)))
-#  endif
-# endif
-#else
-# define INTPTR_MAX  LONG_MAX
-#endif
-#if 0
-# ifndef UINTPTR_MAX
-#  if 32 > 32
-#   define UINTPTR_MAX  (((1ULL << (32 - 1)) - 1) * 2 + 1)
-#  else
-#   define UINTPTR_MAX  (((1UL << (32 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#else
-# define UINTPTR_MAX  ULONG_MAX
-#endif
+#undef INTPTR_MIN
+#undef INTPTR_MAX
+#undef UINTPTR_MAX
+#define INTPTR_MIN  LONG_MIN
+#define INTPTR_MAX  LONG_MAX
+#define UINTPTR_MAX  ULONG_MAX
 
 /* 7.18.2.5. Limits of greatest-width integer types */
 
-#if 0
-# ifndef INTMAX_MIN
-#  if 64 > 32
-#   define INTMAX_MIN  (-1LL << (64 - 1))
-#  else
-#   define INTMAX_MIN  (-1L << (64 - 1))
-#  endif
-# endif
+#undef INTMAX_MIN
+#undef INTMAX_MAX
+#undef UINTMAX_MAX
+#define INTMAX_MIN  (~ INTMAX_MAX)
+#ifdef INT64_MAX
+# define INTMAX_MAX  INT64_MAX
+# define UINTMAX_MAX  UINT64_MAX
 #else
-# ifdef _STDINT_H_HAVE_INT64
-#  define INTMAX_MIN  INT64_MIN
-# else
-#  define INTMAX_MIN  INT32_MIN
-# endif
-#endif
-#if 0
-# ifndef INTMAX_MAX
-#  if 64 > 32
-#   define INTMAX_MAX  (~ (-1LL << (64 - 1)))
-#  else
-#   define INTMAX_MAX  (~ (-1L << (64 - 1)))
-#  endif
-# endif
-#else
-# ifdef _STDINT_H_HAVE_INT64
-#  define INTMAX_MAX  INT64_MAX
-# else
-#  define INTMAX_MAX  INT32_MAX
-# endif
-#endif
-#if 0
-# ifndef UINTMAX_MAX
-#  if 64 > 32
-#   define UINTMAX_MAX  (((1ULL << (64 - 1)) - 1) * 2 + 1)
-#  else
-#   define UINTMAX_MAX  (((1UL << (64 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#else
-# ifdef _STDINT_H_HAVE_INT64
-#  define UINTMAX_MAX  UINT64_MAX
-# else
-#  define UINTMAX_MAX  UINT32_MAX
-# endif
+# define INTMAX_MAX  INT32_MAX
+# define UINTMAX_MAX  UINT32_MAX
 #endif
 
 /* 7.18.3. Limits of other integer types */
 
 /* ptrdiff_t limits */
-#ifndef PTRDIFF_MIN
-# if 32 > 32 || 0
-#  define PTRDIFF_MIN  (-1L << (32 - 1))
-# else
-#  define PTRDIFF_MIN  (-1 << (32 - 1))
-# endif
-#endif
-#ifndef PTRDIFF_MAX
-# if 32 > 32 || 0
-#  define PTRDIFF_MAX  (~ (-1L << (32 - 1)))
-# else
-#  define PTRDIFF_MAX  (~ (-1 << (32 - 1)))
-# endif
-#endif
+#undef PTRDIFF_MIN
+#undef PTRDIFF_MAX
+#define PTRDIFF_MIN  \
+   _STDINT_MIN (1, 32, 0@PTRDIFF_T_SUFFIX@)
+#define PTRDIFF_MAX  \
+   _STDINT_MAX (1, 32, 0@PTRDIFF_T_SUFFIX@)
 
 /* sig_atomic_t limits */
-#ifndef SIG_ATOMIC_MIN
-# if 32
-#  if 32 > 32 || 0
-#   define SIG_ATOMIC_MIN  (-1L << (32 - 1))
-#  else
-#   define SIG_ATOMIC_MIN  (-1 << (32 - 1))
-#  endif
-# else
-#  if 32 > 32 || 0
-#   define SIG_ATOMIC_MIN  0UL
-#  elif 32 >= 32
-#   define SIG_ATOMIC_MIN  0U
-#  else
-#   define SIG_ATOMIC_MIN  0
-#  endif
-# endif
-#endif
-#ifndef SIG_ATOMIC_MAX
-# if 32
-#  if 32 > 32 || 0
-#   define SIG_ATOMIC_MAX  (~ (-1L << (32 - 1)))
-#  else
-#   define SIG_ATOMIC_MAX  (~ (-1 << (32 - 1)))
-#  endif
-# else
-#  if 32 > 32 || 0
-#   define SIG_ATOMIC_MAX  (((1UL << (32 - 1)) - 1) * 2 + 1)
-#  elif 32 >= 32
-#   define SIG_ATOMIC_MAX  (((1U << (32 - 1)) - 1) * 2 + 1)
-#  else
-#   define SIG_ATOMIC_MAX  (((1 << (32 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#endif
+#undef SIG_ATOMIC_MIN
+#undef SIG_ATOMIC_MAX
+#define SIG_ATOMIC_MIN  \
+   _STDINT_MIN (32, 32, \
+		0@SIG_ATOMIC_T_SUFFIX@)
+#define SIG_ATOMIC_MAX  \
+   _STDINT_MAX (32, 32, \
+		0@SIG_ATOMIC_T_SUFFIX@)
+
 
 /* size_t limit */
-#ifndef SIZE_MAX /* SIZE_MAX may also be defined in config.h. */
-# if 32 > 32 || 0
-#  define SIZE_MAX  (((1UL << (32 - 1)) - 1) * 2 + 1)
-# else
-#  define SIZE_MAX  (((1U << (32 - 1)) - 1) * 2 + 1)
-# endif
-#endif
+#undef SIZE_MAX
+#define SIZE_MAX  _STDINT_MAX (0, 32, 0@SIZE_T_SUFFIX@)
 
-/* wchar_t limits may already be defined in <stddef.h>.  */
-#ifndef WCHAR_MIN
-# if 0
-#  if 32 > 32 || 0
-#   define WCHAR_MIN  (-1L << (32 - 1))
-#  else
-#   define WCHAR_MIN  (-1 << (32 - 1))
-#  endif
-# else
-#  if 32 > 32 || 1
-#   define WCHAR_MIN  0UL
-#  elif 32 >= 32
-#   define WCHAR_MIN  0U
-#  else
-#   define WCHAR_MIN  0
-#  endif
-# endif
-#endif
-#ifndef WCHAR_MAX
-# if 0
-#  if 32 > 32 || 0
-#   define WCHAR_MAX  (~ (-1L << (32 - 1)))
-#  else
-#   define WCHAR_MAX  (~ (-1 << (32 - 1)))
-#  endif
-# else
-#  if 32 > 32 || 1
-#   define WCHAR_MAX  (((1UL << (32 - 1)) - 1) * 2 + 1)
-#  elif 32 >= 32
-#   define WCHAR_MAX  (((1U << (32 - 1)) - 1) * 2 + 1)
-#  else
-#   define WCHAR_MAX  (((1 << (32 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#endif
+/* wchar_t limits */
+#undef WCHAR_MIN
+#undef WCHAR_MAX
+#define WCHAR_MIN  \
+   _STDINT_MIN (0, 32, 0@WCHAR_T_SUFFIX@)
+#define WCHAR_MAX  \
+   _STDINT_MAX (0, 32, 0@WCHAR_T_SUFFIX@)
 
 /* wint_t limits */
-#ifndef WINT_MIN
-# if 0
-#  if 32 > 32 || 0
-#   define WINT_MIN  (-1L << (32 - 1))
-#  else
-#   define WINT_MIN  (-1 << (32 - 1))
-#  endif
-# else
-#  if 32 > 32 || 1
-#   define WINT_MIN  0UL
-#  elif 32 >= 32
-#   define WINT_MIN  0U
-#  else
-#   define WINT_MIN  0
-#  endif
-# endif
-#endif
-#ifndef WINT_MAX
-# if 0
-#  if 32 > 32 || 0
-#   define WINT_MAX  (~ (-1L << (32 - 1)))
-#  else
-#   define WINT_MAX  (~ (-1 << (32 - 1)))
-#  endif
-# else
-#  if 32 > 32 || 1
-#   define WINT_MAX  (((1UL << (32 - 1)) - 1) * 2 + 1)
-#  elif 32 >= 32
-#   define WINT_MAX  (((1U << (32 - 1)) - 1) * 2 + 1)
-#  else
-#   define WINT_MAX  (((1 << (32 - 1)) - 1) * 2 + 1)
-#  endif
-# endif
-#endif
-
-#endif
+#undef WINT_MIN
+#undef WINT_MAX
+#define WINT_MIN  \
+   _STDINT_MIN (0, 32, 0@WINT_T_SUFFIX@)
+#define WINT_MAX  \
+   _STDINT_MAX (0, 32, 0@WINT_T_SUFFIX@)
 
 /* 7.18.4. Macros for integer constants */
-
-#if !defined(__cplusplus) || defined(__STDC_CONSTANT_MACROS)
 
 /* 7.18.4.1. Macros for minimum-width integer constants */
 /* According to ISO C 99 Technical Corrigendum 1 */
 
+/* Here we assume a standard architecture where the hardware integer
+   types have 8, 16, 32, optionally 64 bits, and int is 32 bits.  */
+
 #undef INT8_C
 #undef UINT8_C
 #define INT8_C(x) x
-#if 0
-# if 8 < 32
-#  define UINT8_C(x) x
-# else
-#  define UINT8_C(x) x##U
-# endif
-#else
-# define UINT8_C(x) x
-#endif
+#define UINT8_C(x) x
 
 #undef INT16_C
 #undef UINT16_C
 #define INT16_C(x) x
-#if 0
-# if 16 < 32
-#  define UINT16_C(x) x
-# else
-#  define UINT16_C(x) x##U
-# endif
-#else
-# define UINT16_C(x) x
-#endif
+#define UINT16_C(x) x
 
 #undef INT32_C
 #undef UINT32_C
 #define INT32_C(x) x
-#if 0
-# if 32 < 32
-#  define UINT32_C(x) x
-# else
-#  define UINT32_C(x) x##U
-# endif
-#else
-# define UINT32_C(x) x
-#endif
+#define UINT32_C(x) x ## U
 
 #undef INT64_C
 #undef UINT64_C
-#if 0
+#if LONG_MAX >> 31 >> 31 == 1
 # define INT64_C(x) x##L
 # define UINT64_C(x) x##UL
-#elif 0
-# define INT64_C(x) x##LL
-# define UINT64_C(x) x##ULL
-#elif defined(_MSC_VER)
+#elif defined _MSC_VER
 # define INT64_C(x) x##i64
 # define UINT64_C(x) x##ui64
+#elif @HAVE_LONG_LONG_INT@
+# define INT64_C(x) x##LL
+# define UINT64_C(x) x##ULL
 #endif
 
 /* 7.18.4.2. Macros for greatest-width integer constants */
 
 #undef INTMAX_C
 #undef UINTMAX_C
-#if 0
-# define INTMAX_C(x) x##L
-# define UINTMAX_C(x) x##UL
-#elif 0
-# define INTMAX_C(x) x##LL
-# define UINTMAX_C(x) x##ULL
-#elif defined(_MSC_VER)
-# define INTMAX_C(x) x##i64
-# define UINTMAX_C(x) x##ui64
+#if @HAVE_LONG_LONG_INT@ && LONG_MAX >> 30 == 1
+# define INTMAX_C(x)   x##LL
+# define UINTMAX_C(x)  x##ULL
+#elif defined int64_t
+# define INTMAX_C(x)   INT64_C(x)
+# define UINTMAX_C(x)  UINT64_C(x)
 #else
-# define INTMAX_C(x) x
-# define UINTMAX_C(x) x##U
+# define INTMAX_C(x)   x##L
+# define UINTMAX_C(x)  x##UL
 #endif
 
-#endif
+#endif /* !defined __cplusplus || defined __STDC_CONSTANT_MACROS */
 
-#endif /* _STDINT_H */
+#endif /* _GL_STDINT_H */
