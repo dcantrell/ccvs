@@ -35,6 +35,11 @@
 /* <sys/types.h> defines some of the stdint.h types as well, on glibc,
    IRIX 6.5, and OpenBSD 3.8 (via <machine/types.h>).  */
 #if @HAVE_SYS_TYPES_H@
+/* <sys/types.h> on MacOS X 10.4.6 includes <stdint.h> and needs the
+   real one rather than the generated version. */
+#if __APPLE__ && @HAVE_STDINT_H@
+# include @FULL_PATH_STDINT_H@
+#endif
 # include <sys/types.h>
 #endif
 
