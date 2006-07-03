@@ -29239,7 +29239,7 @@ ${log_keyid}recase
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0;  commitid: ${commitid};
-${log_keyid}rm
+rm
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
@@ -29275,7 +29275,7 @@ ${log_keyid}recase
 ----------------------------
 revision 1\.2
 date: ${ISO8601DATE};  author: $username;  state: dead;  lines: +0 -0;  commitid: ${commitid};
-${log_keyid}rm
+rm
 ----------------------------
 revision 1\.1
 date: ${ISO8601DATE};  author: $username;  state: Exp;  commitid: ${commitid};
