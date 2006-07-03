@@ -1,3 +1,8 @@
+2006-07-02  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.gnulib, stdint_.h: Update from GNULIB.
+	* Makefile.am: Update to match Makefile.gnulib.
+
 2006-07-01  Derek Price  <derek@ximbiot.com>
 
 	* stat_.h: Update from GNULIB.
