@@ -22242,7 +22242,7 @@ ${log_keyid}1
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 done"
 	  dotest_fail log2-7a "${testcvs} admin -t${TESTDIR}/nonexist file1" \
-"${CPROG} \[admin aborted\]: can't stat ${TESTDIR}/nonexist: No such file or directory"
+"${CPROG} \[admin aborted\]: cannot open ${TESTDIR}/nonexist: No such file or directory"
 	  dotest log2-8 "${testcvs} log -N file1" "
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 Working file: file1
