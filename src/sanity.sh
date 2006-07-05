@@ -15566,15 +15566,15 @@ initial revision: 1.1"
 	  
 	  # Try checking out the module in a local directory
 	  if $remote; then
-	    dotest_fail abspath-2a "${testcvs} co -d ${TESTDIR}/1 mod1" \
-"${SPROG} \[checkout aborted\]: absolute pathnames invalid for server (specified .${TESTDIR}/1.)"
-	    dotest abspath-2a-try2 "${testcvs} co -d 1 mod1" \
-"${SPROG} checkout: Updating 1
+	    dotest_fail abspath-2ar "$testcvs co -d $TESTDIR/1 mod1" \
+"$SPROG \[checkout aborted\]: absolute pathnames invalid for server (specified \`$TESTDIR/1')"
+	    dotest abspath-2ar-try2 "$testcvs co -d 1 mod1" \
+"$SPROG checkout: Updating 1
 U 1/file1"
 	  else
-	    dotest abspath-2a "${testcvs} co -d ${TESTDIR}/1 mod1" \
-"${SPROG} checkout: Updating ${TESTDIR}/1
-U ${TESTDIR}/1/file1"
+	    dotest abspath-2a "$testcvs co -d $TESTDIR/1 mod1" \
+"$SPROG checkout: Updating $TESTDIR/1
+U $TESTDIR/1/file1"
 	  fi # remote workaround
 
 	  dotest abspath-2b "cat ${TESTDIR}/1/CVS/Repository" "mod1"

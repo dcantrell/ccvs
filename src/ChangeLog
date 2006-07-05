@@ -1,5 +1,8 @@
 2006-07-05  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (abspath-2a.*): Insert `r' to remote test name variants.
+	Misc cleanup.
+
 	* subr.c (get_stream): Be slightly more conservative about memory
 	allocation.  Comment more fully.
 
