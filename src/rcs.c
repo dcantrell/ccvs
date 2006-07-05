@@ -5884,8 +5884,7 @@ workfile);
 	   change text as a text file, then reading it as a text file.
 	   This should cause no harm, but doesn't strike me as
 	   immensely clean.  */
-	get_file (changefile, changefile,
-		  rcs->expand != NULL && STREQ (rcs->expand, "b") ? "rb" : "r",
+	get_file (changefile, changefile, "r",
 		  &commitpt->text->text, &bufsize, &commitpt->text->len);
 
 	/* If COMMITPT->TEXT->TEXT is NULL, it means that CHANGEFILE
@@ -5922,10 +5921,8 @@ workfile);
 	}
 	/* See the comment above, at the other get_file invocation,
 	   regarding binary vs. text.  */
-	get_file (changefile, changefile, 
-		  rcs->expand != NULL && STREQ (rcs->expand, "b") ? "rb" : "r",
-		  &dtext->text, &bufsize,
-		  &dtext->len);
+	get_file (changefile, changefile, "r",
+		  &dtext->text, &bufsize, &dtext->len);
 	if (dtext->text == NULL)
 	{
 	    dtext->text = xstrdup ("");
