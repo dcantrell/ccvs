@@ -1,8 +1,13 @@
+2006-07-05  Derek Price  <derek@ximbiot.com>
+
+	* subr.c (get_stream): Be slightly more conservative about memory
+	allocation.  Comment more fully.
+
 2006-07-03  Mark D. Baushke  <mdb@gnu.org>
 
 	* sanity.sh (recase-5si, recase-7si): Fix cases for MacOS X.
 
-2006-06-29  Derek Price  <derek@ximbiot.com>
+2006-07-03  Derek Price  <derek@ximbiot.com>
 
 	* subr.c (get_file): Factor out...
 	(get_stream): ...this function.  Simplify.

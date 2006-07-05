@@ -673,11 +673,11 @@ get_stream (FILE *in, const char *fullname, char **buf, size_t *bufsize,
     else
     {
 	/* Although it would be cleaner in some ways to just read
-	   until end of file, reallocating the buffer, this function
-	   does get called on files in the working directory which can
-	   be of arbitrary size, so I think we better do all that
-	   extra allocation.  */
-
+	 * until end of file, reallocating the buffer, this function
+	 * does get called on files in the working directory which can
+	 * be of arbitrary size, so it makes some sense to just size
+	 * the buffer right the first time.
+	 */
 	if (fstat (fileno (in), &s) < 0)
 	    error (1, errno, "can't stat `%s'", fullname);
 
@@ -688,16 +688,16 @@ get_stream (FILE *in, const char *fullname, char **buf, size_t *bufsize,
 	rewind (in);
     }
 
-    if (*bufsize < filesize)
-	*bufsize = filesize;
+    if (!*buf || *bufsize < filesize + 1)
+    {
+	*buf = xrealloc (*buf, filesize + 1);
+	*bufsize = filesize + 1;
+    }
 
     off = 0;
     while (true)
     {
 	size_t got;
-
-	/* Allocates *more* than *BUFSIZE and updates *BUFSIZE.  */
-	*buf = x2realloc (*buf, bufsize);
 
 	if (feof (in))
 	    break;
@@ -706,12 +706,20 @@ get_stream (FILE *in, const char *fullname, char **buf, size_t *bufsize,
 	if (ferror (in))
 	    error (1, errno, "can't read `%s'", fullname);
 	off += got;
+
+	/* Should only ever test positive reading from stdin.  */
+	if (off == *bufsize)
+	    /* Allocates *more* than *BUFSIZE and updates *BUFSIZE.  */
+	    *buf = x2realloc (*buf, bufsize);
     }
 
     *len = off;
 
-    /* Force *BUF to be large enough to hold a null terminator. */
+    /* Force *BUF to be large enough to hold a null terminator.
+     * Should only ever test positive reading from stdin.
+     */
     if (off == *bufsize)
+	/* Allocates *more* than *BUFSIZE and updates *BUFSIZE.  */
 	*buf = x2realloc (*buf, bufsize);
     (*buf)[off] = '\0';
 }
