@@ -815,21 +815,6 @@ cvs_temp_file (char **filename)
 
 
 
-/* Return a pointer into PATH's last component.  */
-const char *
-last_component (const char *path)
-{
-    const char *last = strrchr (path, '/');
-
-    assert (path);
-    if (last && (last != path))
-        return last + 1;
-    else
-        return path;
-}
-
-
-
 /* Return the home directory.  Returns a pointer to storage
    managed by this function or its callees (currently getenv).
    This function will return the same thing every time it is

@@ -399,19 +399,25 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 	     * string.
 	     */
 	    dir = xstrdup (argv[i]);
-	    /* It's okay to cast out last_component's const below since we know
-	     * we just allocated dir here and have control of it.
-	     */
-	    comp = (char *)last_component (dir);
+	    comp = last_component (dir);
 	    if (comp == dir)
 	    {
 		/* no dir component.  What we have is an implied "./" */
-		dir = xstrdup(".");
+		dir = xstrdup (".");
 	    }
-	    else
+	    else if (*comp)
 	    {
 		comp[-1] = '\0';
 		comp = xstrdup (comp);
+	    }
+	    else
+	    {
+		/* A root directory would have existed under UNIX and a missing
+		 * one specified on the command line (for instance,
+		 * `cvs up F:\' without drive F: mounted) is a fatal error
+		 * under Windows.
+		 */
+		error (1, ENOENT, "cannot process root directory `%s'", dir);
 	    }
 
 	    /* if this argument exists as a file in the current
