@@ -316,7 +316,7 @@ int getnameinfo(const struct sockaddr *restrict sa, socklen_t salen,
 		char *restrict service, socklen_t servicelen,
 		int flags)
 {
-#if WIN32_NATIVE
+#ifdef WIN32_NATIVE
   if (use_win32_p ())
     return getnameinfo_ptr (sa, salen, node, nodelen,
 			    service, servicelen, flags);
