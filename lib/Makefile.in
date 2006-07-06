@@ -77,14 +77,15 @@ DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	regex_internal.c regex_internal.h regexec.c rename.c rpmatch.c \
 	save-cwd.c save-cwd.h setenv.c stat-macros.h strcasecmp.c \
 	strdup.c strdup.h strerror.c strftime.c strftime.h \
-	strncasecmp.c strstr.c strtoimax.c strtol.c strtoll.c \
-	strtoul.c strtoull.c strtoumax.c sunos57-select.c tempname.c \
-	time_r.c time_r.h timespec.h unistd--.h unistd-safer.h \
-	unlocked-io.h unsetenv.c vasnprintf.c vasprintf.c waitpid.c \
-	xalloc.h xgetcwd.c xgetcwd.h xmalloc.c xreadlink.c xreadlink.h \
-	yesno.c yesno.h
+	strncasecmp.c strndup.c strndup.h strnlen.c strnlen.h strstr.c \
+	strtoimax.c strtol.c strtoll.c strtoul.c strtoull.c \
+	strtoumax.c sunos57-select.c tempname.c time_r.c time_r.h \
+	timespec.h unistd--.h unistd-safer.h unlocked-io.h unsetenv.c \
+	vasnprintf.c vasprintf.c waitpid.c xalloc.h xgetcwd.c \
+	xgetcwd.h xmalloc.c xreadlink.c xreadlink.h yesno.c yesno.h
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/_inttypes_h.m4 \
+	$(top_srcdir)/m4/absolute-header.m4 \
 	$(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/acx_with_external_zlib.m4 \
 	$(top_srcdir)/m4/acx_with_gssapi.m4 $(top_srcdir)/m4/alloca.m4 \
@@ -98,14 +99,14 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/_inttypes_h.m4 \
 	$(top_srcdir)/m4/cvs_func_printf_ptr.m4 \
 	$(top_srcdir)/m4/d-ino.m4 $(top_srcdir)/m4/d-type.m4 \
 	$(top_srcdir)/m4/dirname.m4 $(top_srcdir)/m4/dos.m4 \
-	$(top_srcdir)/m4/dup2.m4 $(top_srcdir)/m4/eealloc.m4 \
-	$(top_srcdir)/m4/eoverflow.m4 $(top_srcdir)/m4/error.m4 \
-	$(top_srcdir)/m4/exitfail.m4 $(top_srcdir)/m4/extensions.m4 \
-	$(top_srcdir)/m4/fcntl-safer.m4 \
+	$(top_srcdir)/m4/double-slash-root.m4 $(top_srcdir)/m4/dup2.m4 \
+	$(top_srcdir)/m4/eealloc.m4 $(top_srcdir)/m4/eoverflow.m4 \
+	$(top_srcdir)/m4/error.m4 $(top_srcdir)/m4/exitfail.m4 \
+	$(top_srcdir)/m4/extensions.m4 $(top_srcdir)/m4/fcntl-safer.m4 \
 	$(top_srcdir)/m4/filenamecat.m4 $(top_srcdir)/m4/fnmatch.m4 \
 	$(top_srcdir)/m4/fpending.m4 $(top_srcdir)/m4/ftruncate.m4 \
-	$(top_srcdir)/m4/full-header-path.m4 \
 	$(top_srcdir)/m4/getaddrinfo.m4 \
+	$(top_srcdir)/m4/getcwd-abort-bug.m4 \
 	$(top_srcdir)/m4/getcwd-path-max.m4 $(top_srcdir)/m4/getcwd.m4 \
 	$(top_srcdir)/m4/getdate.m4 $(top_srcdir)/m4/getdelim.m4 \
 	$(top_srcdir)/m4/gethostname.m4 $(top_srcdir)/m4/getline.m4 \
@@ -142,6 +143,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/_inttypes_h.m4 \
 	$(top_srcdir)/m4/stdint.m4 $(top_srcdir)/m4/stdint_h.m4 \
 	$(top_srcdir)/m4/strcase.m4 $(top_srcdir)/m4/strdup.m4 \
 	$(top_srcdir)/m4/strerror.m4 $(top_srcdir)/m4/strftime.m4 \
+	$(top_srcdir)/m4/strndup.m4 $(top_srcdir)/m4/strnlen.m4 \
 	$(top_srcdir)/m4/strstr.m4 $(top_srcdir)/m4/strtoimax.m4 \
 	$(top_srcdir)/m4/strtol.m4 $(top_srcdir)/m4/strtoll.m4 \
 	$(top_srcdir)/m4/strtoul.m4 $(top_srcdir)/m4/strtoull.m4 \
@@ -157,8 +159,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/_inttypes_h.m4 \
 	$(top_srcdir)/m4/wchar_t.m4 $(top_srcdir)/m4/wcwidth.m4 \
 	$(top_srcdir)/m4/wint_t.m4 $(top_srcdir)/m4/xalloc.m4 \
 	$(top_srcdir)/m4/xgetcwd.m4 $(top_srcdir)/m4/xreadlink.m4 \
-	$(top_srcdir)/m4/xsize.m4 $(top_srcdir)/m4/yesno.m4 \
-	$(top_srcdir)/configure.in
+	$(top_srcdir)/m4/xsize.m4 $(top_srcdir)/m4/xstrndup.m4 \
+	$(top_srcdir)/m4/yesno.m4 $(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -172,7 +174,7 @@ libcvs_a_DEPENDENCIES = @LIBOBJS@ @ALLOCA@
 am_libcvs_a_OBJECTS = sighandle.$(OBJEXT) allocsa.$(OBJEXT) \
 	base64.$(OBJEXT) cycle-check.$(OBJEXT) basename.$(OBJEXT) \
 	stripslash.$(OBJEXT) getnline.$(OBJEXT) strnlen1.$(OBJEXT) \
-	xalloc-die.$(OBJEXT) xgethostname.$(OBJEXT)
+	xalloc-die.$(OBJEXT) xgethostname.$(OBJEXT) xstrndup.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 am_getdate_OBJECTS = getdate-error.$(OBJEXT) getdate-getdate.$(OBJEXT) \
 	getdate-progname.$(OBJEXT)
@@ -195,6 +197,8 @@ DIST_SOURCES = $(libcvs_a_SOURCES) $(getdate_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+ABSOLUTE_STDINT_H = @ABSOLUTE_STDINT_H@
+ABSOLUTE_SYS_STAT_H = @ABSOLUTE_SYS_STAT_H@
 ACLOCAL = @ACLOCAL@
 ALLOCA = @ALLOCA@
 ALLOCA_H = @ALLOCA_H@
@@ -230,8 +234,6 @@ EGREP = @EGREP@
 EOVERFLOW = @EOVERFLOW@
 EXEEXT = @EXEEXT@
 FNMATCH_H = @FNMATCH_H@
-FULL_PATH_STDINT_H = @FULL_PATH_STDINT_H@
-FULL_PATH_SYS_STAT_H = @FULL_PATH_SYS_STAT_H@
 GETOPT_H = @GETOPT_H@
 GLOB_H = @GLOB_H@
 GL_COND_LIBTOOL_FALSE = @GL_COND_LIBTOOL_FALSE@
@@ -369,12 +371,13 @@ noinst_LIBRARIES = libcvs.a
 # matching?)
 libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	allocsa.h allocsa.c base64.h base64.c cycle-check.c \
-	cycle-check.h dev-ino.h basename.c stripslash.c error.h exit.h \
-	getaddrinfo.h getnline.h getnline.c gettext.h inet_ntop.h \
-	mbchar.h mbuiter.h minmax.h setenv.h size_max.h strcase.h \
-	strnlen1.h strnlen1.c strstr.h printf-args.h printf-parse.h \
-	vasnprintf.h vasprintf.h verify.h wcwidth.h xalloc-die.c \
-	xgethostname.h xgethostname.c xsize.h
+	cycle-check.h dev-ino.h same-inode.h basename.c stripslash.c \
+	error.h exit.h getaddrinfo.h getnline.h getnline.c gettext.h \
+	inet_ntop.h mbchar.h mbuiter.h minmax.h setenv.h size_max.h \
+	strcase.h strnlen1.h strnlen1.c strstr.h printf-args.h \
+	printf-parse.h vasnprintf.h vasprintf.h verify.h wcwidth.h \
+	xalloc-die.c xgethostname.h xgethostname.c xsize.h xstrndup.h \
+	xstrndup.c
 libcvs_a_LIBADD = @LIBOBJS@ @ALLOCA@
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) getdate.c $(GETOPT_H) \
 	$(GLOB_H) $(STDBOOL_H) $(STDINT_H) $(SYS_SOCKET_H) \
@@ -537,6 +540,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strerror.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strftime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strncasecmp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strndup.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strnlen.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strstr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strtoimax.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strtol.Po@am__quote@
@@ -568,6 +573,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strnlen1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xalloc-die.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgethostname.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xstrndup.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -915,7 +921,7 @@ stdint.h: stdint_.h
 	sed -e 's/@''HAVE_WCHAR_H''@/$(HAVE_WCHAR_H)/g' \
 	    -e 's/@''HAVE_STDINT_H''@/$(HAVE_STDINT_H)/g' \
 	    -e 's/@''HAVE_SYS_TYPES_H''@/$(HAVE_SYS_TYPES_H)/g' \
-	    -e 's|@''FULL_PATH_STDINT_H''@|$(FULL_PATH_STDINT_H)|g' \
+	    -e 's|@''ABSOLUTE_STDINT_H''@|$(ABSOLUTE_STDINT_H)|g' \
 	    -e 's/@''HAVE_INTTYPES_H''@/$(HAVE_INTTYPES_H)/g' \
 	    -e 's/@''HAVE_SYS_INTTYPES_H''@/$(HAVE_SYS_INTTYPES_H)/g' \
 	    -e 's/@''HAVE_SYS_BITYPES_H''@/$(HAVE_SYS_BITYPES_H)/g' \
@@ -947,7 +953,7 @@ sys/socket.h: socket_.h
 # has one that is incomplete.
 sys/stat.h: stat_.h
 	test -d sys || mkdir sys
-	sed -e 's|@''FULL_PATH_SYS_STAT_H''@|$(FULL_PATH_SYS_STAT_H)|g' \
+	sed -e 's|@''ABSOLUTE_SYS_STAT_H''@|$(ABSOLUTE_SYS_STAT_H)|g' \
 	    < $(srcdir)/stat_.h > $@-t
 	mv $@-t $@
 

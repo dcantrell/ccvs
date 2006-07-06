@@ -92,7 +92,7 @@ libcvs_a_SOURCES += base64.h base64.c
 
 ## begin gnulib module cycle-check
 
-libcvs_a_SOURCES += cycle-check.c cycle-check.h dev-ino.h
+libcvs_a_SOURCES += cycle-check.c cycle-check.h dev-ino.h same-inode.h
 
 ## end   gnulib module cycle-check
 
@@ -291,7 +291,7 @@ stdint.h: stdint_.h
 	sed -e 's/@''HAVE_WCHAR_H''@/$(HAVE_WCHAR_H)/g' \
 	    -e 's/@''HAVE_STDINT_H''@/$(HAVE_STDINT_H)/g' \
 	    -e 's/@''HAVE_SYS_TYPES_H''@/$(HAVE_SYS_TYPES_H)/g' \
-	    -e 's|@''FULL_PATH_STDINT_H''@|$(FULL_PATH_STDINT_H)|g' \
+	    -e 's|@''ABSOLUTE_STDINT_H''@|$(ABSOLUTE_STDINT_H)|g' \
 	    -e 's/@''HAVE_INTTYPES_H''@/$(HAVE_INTTYPES_H)/g' \
 	    -e 's/@''HAVE_SYS_INTTYPES_H''@/$(HAVE_SYS_INTTYPES_H)/g' \
 	    -e 's/@''HAVE_SYS_BITYPES_H''@/$(HAVE_SYS_BITYPES_H)/g' \
@@ -358,7 +358,7 @@ EXTRA_DIST += stat_.h
 # has one that is incomplete.
 sys/stat.h: stat_.h
 	test -d sys || mkdir sys
-	sed -e 's|@''FULL_PATH_SYS_STAT_H''@|$(FULL_PATH_SYS_STAT_H)|g' \
+	sed -e 's|@''ABSOLUTE_SYS_STAT_H''@|$(ABSOLUTE_SYS_STAT_H)|g' \
 	    < $(srcdir)/stat_.h > $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += sys/stat.h sys/stat.h-t
@@ -419,6 +419,12 @@ libcvs_a_SOURCES += xgethostname.h xgethostname.c
 libcvs_a_SOURCES += xsize.h
 
 ## end   gnulib module xsize
+
+## begin gnulib module xstrndup
+
+libcvs_a_SOURCES += xstrndup.h xstrndup.c
+
+## end   gnulib module xstrndup
 
 
 mostlyclean-local:
