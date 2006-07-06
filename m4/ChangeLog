@@ -1,3 +1,12 @@
+2006-07-05  Derek Price  <derek@ximbiot.com>
+
+	* absolute-header.m4, double-slash-root.m4, getcwd-abort-bug.m4,
+	strndup.m4, strnlen.m4, xstrndup.m4: New files from GNULIB.
+	* full-header-path.m4: Remove file.
+	* _inttypes_h.m4, dirname.m4, dos.m4, ftruncate.m4, getcwd-path-max.m4,
+	getcwd.m4, gnulib-comp.m4, onceonly_2_57.m4, stdint.m4, sys_stat_h.m4:
+	Update from GNULIB.
+
 2006-07-02  Derek Price  <derek@ximbiot.com>
 
 	* longlong.m4, stdint.m4, ulonglong.m4, wcwidth.m4: Update from GNULIB.

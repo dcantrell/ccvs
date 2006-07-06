@@ -103,6 +103,8 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_STRDUP
   gl_FUNC_STRERROR
   gl_FUNC_GNU_STRFTIME
+  gl_FUNC_STRNDUP
+  gl_FUNC_STRNLEN
   gl_FUNC_STRSTR
   gl_FUNC_STRTOIMAX
   gl_FUNC_STRTOL
@@ -125,6 +127,7 @@ AC_DEFUN([gl_INIT],
   gl_XGETCWD
   gl_XREADLINK
   gl_XSIZE
+  gl_XSTRNDUP
   gl_YESNO
 ])
 
@@ -256,6 +259,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/regexec.c
   lib/rename.c
   lib/rpmatch.c
+  lib/same-inode.h
   lib/save-cwd.c
   lib/save-cwd.h
   lib/setenv.c
@@ -275,6 +279,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strftime.h
   lib/stripslash.c
   lib/strncasecmp.c
+  lib/strndup.c
+  lib/strndup.h
+  lib/strnlen.c
+  lib/strnlen.h
   lib/strnlen1.c
   lib/strnlen1.h
   lib/strstr.c
@@ -309,9 +317,12 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xreadlink.c
   lib/xreadlink.h
   lib/xsize.h
+  lib/xstrndup.c
+  lib/xstrndup.h
   lib/yesno.c
   lib/yesno.h
   m4/_inttypes_h.m4
+  m4/absolute-header.m4
   m4/alloca.m4
   m4/allocsa.m4
   m4/atexit.m4
@@ -327,6 +338,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/d-type.m4
   m4/dirname.m4
   m4/dos.m4
+  m4/double-slash-root.m4
   m4/dup2.m4
   m4/eealloc.m4
   m4/eoverflow.m4
@@ -338,8 +350,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fnmatch.m4
   m4/fpending.m4
   m4/ftruncate.m4
-  m4/full-header-path.m4
   m4/getaddrinfo.m4
+  m4/getcwd-abort-bug.m4
   m4/getcwd-path-max.m4
   m4/getcwd.m4
   m4/getdate.m4
@@ -420,6 +432,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strerror.m4
   m4/strerror_r.m4
   m4/strftime.m4
+  m4/strndup.m4
+  m4/strnlen.m4
   m4/strstr.m4
   m4/strtoimax.m4
   m4/strtol.m4
@@ -447,5 +461,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/xgetcwd.m4
   m4/xreadlink.m4
   m4/xsize.m4
+  m4/xstrndup.m4
   m4/yesno.m4
 ])
