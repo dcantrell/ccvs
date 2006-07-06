@@ -1,3 +1,13 @@
+2006-07-05  Derek Price  <derek@ximbiot.com>
+
+	* same-inode.h, strndup.c, strndup.h, strnlen.c, strnlen.h, xstrndup.c,
+	xstrndup.h: New file from GNULIB.
+	* Makefile.am: Move changes from...
+	* Makefile.gnulib: ...this regenerated file.
+	* basename.c, cycle-check.c, cycle-check.h, dirname.c, dirname.h,
+	filenamecat.c, getcwd.c, inttypes.h, stat-macros.h, stat_.h, stdint_.h,
+	stripslash.c: Update from GNULIB.
+
 2006-07-03  Mark D. Baushke  <mdb@gnu.org>
 
 	* stdint_.h: Fork stdint_.h to work on MacOS X 10.4.x.
