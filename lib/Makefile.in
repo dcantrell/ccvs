@@ -75,14 +75,15 @@ DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	pipe-safer.c printf-args.c printf-parse.c quotearg.c \
 	quotearg.h readlink.c realloc.c regcomp.c regex.c regex.h \
 	regex_internal.c regex_internal.h regexec.c rename.c rpmatch.c \
-	save-cwd.c save-cwd.h setenv.c stat-macros.h strcasecmp.c \
-	strdup.c strdup.h strerror.c strftime.c strftime.h \
-	strncasecmp.c strndup.c strndup.h strnlen.c strnlen.h strstr.c \
-	strtoimax.c strtol.c strtoll.c strtoul.c strtoull.c \
-	strtoumax.c sunos57-select.c tempname.c time_r.c time_r.h \
-	timespec.h unistd--.h unistd-safer.h unlocked-io.h unsetenv.c \
-	vasnprintf.c vasprintf.c waitpid.c xalloc.h xgetcwd.c \
-	xgetcwd.h xmalloc.c xreadlink.c xreadlink.h yesno.c yesno.h
+	save-cwd.c save-cwd.h setenv.c snprintf.c stat-macros.h \
+	strcasecmp.c strdup.c strdup.h strerror.c strftime.c \
+	strftime.h strncasecmp.c strndup.c strndup.h strnlen.c \
+	strnlen.h strstr.c strtoimax.c strtol.c strtoll.c strtoul.c \
+	strtoull.c strtoumax.c sunos57-select.c tempname.c time_r.c \
+	time_r.h timespec.h unistd--.h unistd-safer.h unlocked-io.h \
+	unsetenv.c vasnprintf.c vasprintf.c waitpid.c xalloc.h \
+	xgetcwd.c xgetcwd.h xmalloc.c xreadlink.c xreadlink.h yesno.c \
+	yesno.h
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/_inttypes_h.m4 \
 	$(top_srcdir)/m4/absolute-header.m4 \
@@ -137,17 +138,17 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/_inttypes_h.m4 \
 	$(top_srcdir)/m4/rename.m4 $(top_srcdir)/m4/restrict.m4 \
 	$(top_srcdir)/m4/rpmatch.m4 $(top_srcdir)/m4/save-cwd.m4 \
 	$(top_srcdir)/m4/setenv.m4 $(top_srcdir)/m4/signed.m4 \
-	$(top_srcdir)/m4/size_max.m4 $(top_srcdir)/m4/socklen.m4 \
-	$(top_srcdir)/m4/sockpfaf.m4 $(top_srcdir)/m4/ssize_t.m4 \
-	$(top_srcdir)/m4/stat-macros.m4 $(top_srcdir)/m4/stdbool.m4 \
-	$(top_srcdir)/m4/stdint.m4 $(top_srcdir)/m4/stdint_h.m4 \
-	$(top_srcdir)/m4/strcase.m4 $(top_srcdir)/m4/strdup.m4 \
-	$(top_srcdir)/m4/strerror.m4 $(top_srcdir)/m4/strftime.m4 \
-	$(top_srcdir)/m4/strndup.m4 $(top_srcdir)/m4/strnlen.m4 \
-	$(top_srcdir)/m4/strstr.m4 $(top_srcdir)/m4/strtoimax.m4 \
-	$(top_srcdir)/m4/strtol.m4 $(top_srcdir)/m4/strtoll.m4 \
-	$(top_srcdir)/m4/strtoul.m4 $(top_srcdir)/m4/strtoull.m4 \
-	$(top_srcdir)/m4/strtoumax.m4 \
+	$(top_srcdir)/m4/size_max.m4 $(top_srcdir)/m4/snprintf.m4 \
+	$(top_srcdir)/m4/socklen.m4 $(top_srcdir)/m4/sockpfaf.m4 \
+	$(top_srcdir)/m4/ssize_t.m4 $(top_srcdir)/m4/stat-macros.m4 \
+	$(top_srcdir)/m4/stdbool.m4 $(top_srcdir)/m4/stdint.m4 \
+	$(top_srcdir)/m4/stdint_h.m4 $(top_srcdir)/m4/strcase.m4 \
+	$(top_srcdir)/m4/strdup.m4 $(top_srcdir)/m4/strerror.m4 \
+	$(top_srcdir)/m4/strftime.m4 $(top_srcdir)/m4/strndup.m4 \
+	$(top_srcdir)/m4/strnlen.m4 $(top_srcdir)/m4/strstr.m4 \
+	$(top_srcdir)/m4/strtoimax.m4 $(top_srcdir)/m4/strtol.m4 \
+	$(top_srcdir)/m4/strtoll.m4 $(top_srcdir)/m4/strtoul.m4 \
+	$(top_srcdir)/m4/strtoull.m4 $(top_srcdir)/m4/strtoumax.m4 \
 	$(top_srcdir)/m4/sunos57-select.m4 \
 	$(top_srcdir)/m4/sys_socket_h.m4 \
 	$(top_srcdir)/m4/sys_stat_h.m4 $(top_srcdir)/m4/time_r.m4 \
@@ -374,10 +375,10 @@ libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	cycle-check.h dev-ino.h same-inode.h basename.c stripslash.c \
 	error.h exit.h getaddrinfo.h getnline.h getnline.c gettext.h \
 	inet_ntop.h mbchar.h mbuiter.h minmax.h setenv.h size_max.h \
-	strcase.h strnlen1.h strnlen1.c strstr.h printf-args.h \
-	printf-parse.h vasnprintf.h vasprintf.h verify.h wcwidth.h \
-	xalloc-die.c xgethostname.h xgethostname.c xsize.h xstrndup.h \
-	xstrndup.c
+	snprintf.h strcase.h strnlen1.h strnlen1.c strstr.h \
+	printf-args.h printf-parse.h vasnprintf.h vasprintf.h verify.h \
+	wcwidth.h xalloc-die.c xgethostname.h xgethostname.c xsize.h \
+	xstrndup.h xstrndup.c
 libcvs_a_LIBADD = @LIBOBJS@ @ALLOCA@
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) getdate.c $(GETOPT_H) \
 	$(GLOB_H) $(STDBOOL_H) $(STDINT_H) $(SYS_SOCKET_H) \
@@ -535,6 +536,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/rpmatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/save-cwd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/setenv.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/snprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strcasecmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strdup.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strerror.Po@am__quote@
