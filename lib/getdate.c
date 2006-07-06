@@ -173,15 +173,6 @@
 #include "setenv.h"
 #include "xalloc.h"
 
-#if STDC_HEADERS || (! defined isascii && ! HAVE_ISASCII)
-# define IN_CTYPE_DOMAIN(c) 1
-#else
-# define IN_CTYPE_DOMAIN(c) isascii (c)
-#endif
-
-#define ISSPACE(c) (IN_CTYPE_DOMAIN (c) && isspace (c))
-#define ISALPHA(c) (IN_CTYPE_DOMAIN (c) && isalpha (c))
-#define ISLOWER(c) (IN_CTYPE_DOMAIN (c) && islower (c))
 
 /* ISDIGIT differs from isdigit, as follows:
    - Its arg may be any int or unsigned int; it need not be an unsigned char.
@@ -335,7 +326,7 @@ static long int time_zone_hhmm (textint, long int);
 #endif
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 224 "getdate.y"
+#line 215 "getdate.y"
 typedef union YYSTYPE {
   long int intval;
   textint textintval;
@@ -343,7 +334,7 @@ typedef union YYSTYPE {
   relative_time rel;
 } YYSTYPE;
 /* Line 196 of yacc.c.  */
-#line 347 "getdate.c"
+#line 338 "getdate.c"
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
@@ -355,7 +346,7 @@ typedef union YYSTYPE {
 
 
 /* Line 219 of yacc.c.  */
-#line 359 "getdate.c"
+#line 350 "getdate.c"
 
 #if ! defined (YYSIZE_T) && defined (__SIZE_TYPE__)
 # define YYSIZE_T __SIZE_TYPE__
@@ -603,14 +594,14 @@ static const yysigned_char yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned short int yyrline[] =
 {
-       0,   250,   250,   251,   255,   262,   264,   268,   270,   272,
-     274,   276,   278,   280,   284,   292,   300,   310,   317,   329,
-     334,   342,   344,   354,   356,   358,   363,   368,   373,   378,
-     386,   391,   411,   418,   426,   434,   439,   445,   450,   459,
-     469,   482,   484,   486,   488,   490,   492,   494,   496,   498,
-     500,   502,   504,   506,   508,   510,   512,   514,   516,   518,
-     520,   522,   526,   528,   530,   532,   534,   536,   540,   540,
-     543,   544,   549,   550,   555,   593,   594,   600,   601
+       0,   241,   241,   242,   246,   253,   255,   259,   261,   263,
+     265,   267,   269,   271,   275,   283,   291,   301,   308,   320,
+     325,   333,   335,   345,   347,   349,   354,   359,   364,   369,
+     377,   382,   402,   409,   417,   425,   430,   436,   441,   450,
+     460,   473,   475,   477,   479,   481,   483,   485,   487,   489,
+     491,   493,   495,   497,   499,   501,   503,   505,   507,   509,
+     511,   513,   517,   519,   521,   523,   525,   527,   531,   531,
+     534,   535,   540,   541,   546,   584,   585,   591,   592
 };
 #endif
 
@@ -1431,7 +1422,7 @@ yyreduce:
   switch (yyn)
     {
         case 4:
-#line 256 "getdate.y"
+#line 247 "getdate.y"
     {
 	pc->seconds = (yyvsp[0].timespec);
 	pc->timespec_seen = true;
@@ -1439,37 +1430,37 @@ yyreduce:
     break;
 
   case 7:
-#line 269 "getdate.y"
+#line 260 "getdate.y"
     { pc->times_seen++; }
     break;
 
   case 8:
-#line 271 "getdate.y"
+#line 262 "getdate.y"
     { pc->local_zones_seen++; }
     break;
 
   case 9:
-#line 273 "getdate.y"
+#line 264 "getdate.y"
     { pc->zones_seen++; }
     break;
 
   case 10:
-#line 275 "getdate.y"
+#line 266 "getdate.y"
     { pc->dates_seen++; }
     break;
 
   case 11:
-#line 277 "getdate.y"
+#line 268 "getdate.y"
     { pc->days_seen++; }
     break;
 
   case 12:
-#line 279 "getdate.y"
+#line 270 "getdate.y"
     { pc->rels_seen = true; }
     break;
 
   case 14:
-#line 285 "getdate.y"
+#line 276 "getdate.y"
     {
 	pc->hour = (yyvsp[-1].textintval).value;
 	pc->minutes = 0;
@@ -1480,7 +1471,7 @@ yyreduce:
     break;
 
   case 15:
-#line 293 "getdate.y"
+#line 284 "getdate.y"
     {
 	pc->hour = (yyvsp[-3].textintval).value;
 	pc->minutes = (yyvsp[-1].textintval).value;
@@ -1491,7 +1482,7 @@ yyreduce:
     break;
 
   case 16:
-#line 301 "getdate.y"
+#line 292 "getdate.y"
     {
 	pc->hour = (yyvsp[-4].textintval).value;
 	pc->minutes = (yyvsp[-2].textintval).value;
@@ -1504,7 +1495,7 @@ yyreduce:
     break;
 
   case 17:
-#line 311 "getdate.y"
+#line 302 "getdate.y"
     {
 	pc->hour = (yyvsp[-5].textintval).value;
 	pc->minutes = (yyvsp[-3].textintval).value;
@@ -1514,7 +1505,7 @@ yyreduce:
     break;
 
   case 18:
-#line 318 "getdate.y"
+#line 309 "getdate.y"
     {
 	pc->hour = (yyvsp[-6].textintval).value;
 	pc->minutes = (yyvsp[-4].textintval).value;
@@ -1526,7 +1517,7 @@ yyreduce:
     break;
 
   case 19:
-#line 330 "getdate.y"
+#line 321 "getdate.y"
     {
 	pc->local_isdst = (yyvsp[0].intval);
 	pc->dsts_seen += (0 < (yyvsp[0].intval));
@@ -1534,7 +1525,7 @@ yyreduce:
     break;
 
   case 20:
-#line 335 "getdate.y"
+#line 326 "getdate.y"
     {
 	pc->local_isdst = 1;
 	pc->dsts_seen += (0 < (yyvsp[-1].intval)) + 1;
@@ -1542,12 +1533,12 @@ yyreduce:
     break;
 
   case 21:
-#line 343 "getdate.y"
+#line 334 "getdate.y"
     { pc->time_zone = (yyvsp[0].intval); }
     break;
 
   case 22:
-#line 345 "getdate.y"
+#line 336 "getdate.y"
     { pc->time_zone = (yyvsp[-1].intval);
 	pc->rel.ns += (yyvsp[0].rel).ns;
 	pc->rel.seconds += (yyvsp[0].rel).seconds;
@@ -1560,22 +1551,22 @@ yyreduce:
     break;
 
   case 23:
-#line 355 "getdate.y"
+#line 346 "getdate.y"
     { pc->time_zone = (yyvsp[-2].intval) + time_zone_hhmm ((yyvsp[-1].textintval), (yyvsp[0].intval)); }
     break;
 
   case 24:
-#line 357 "getdate.y"
+#line 348 "getdate.y"
     { pc->time_zone = (yyvsp[0].intval) + 60; }
     break;
 
   case 25:
-#line 359 "getdate.y"
+#line 350 "getdate.y"
     { pc->time_zone = (yyvsp[-1].intval) + 60; }
     break;
 
   case 26:
-#line 364 "getdate.y"
+#line 355 "getdate.y"
     {
 	pc->day_ordinal = 1;
 	pc->day_number = (yyvsp[0].intval);
@@ -1583,7 +1574,7 @@ yyreduce:
     break;
 
   case 27:
-#line 369 "getdate.y"
+#line 360 "getdate.y"
     {
 	pc->day_ordinal = 1;
 	pc->day_number = (yyvsp[-1].intval);
@@ -1591,7 +1582,7 @@ yyreduce:
     break;
 
   case 28:
-#line 374 "getdate.y"
+#line 365 "getdate.y"
     {
 	pc->day_ordinal = (yyvsp[-1].intval);
 	pc->day_number = (yyvsp[0].intval);
@@ -1599,7 +1590,7 @@ yyreduce:
     break;
 
   case 29:
-#line 379 "getdate.y"
+#line 370 "getdate.y"
     {
 	pc->day_ordinal = (yyvsp[-1].textintval).value;
 	pc->day_number = (yyvsp[0].intval);
@@ -1607,7 +1598,7 @@ yyreduce:
     break;
 
   case 30:
-#line 387 "getdate.y"
+#line 378 "getdate.y"
     {
 	pc->month = (yyvsp[-2].textintval).value;
 	pc->day = (yyvsp[0].textintval).value;
@@ -1615,7 +1606,7 @@ yyreduce:
     break;
 
   case 31:
-#line 392 "getdate.y"
+#line 383 "getdate.y"
     {
 	/* Interpret as YYYY/MM/DD if the first value has 4 or more digits,
 	   otherwise as MM/DD/YY.
@@ -1638,7 +1629,7 @@ yyreduce:
     break;
 
   case 32:
-#line 412 "getdate.y"
+#line 403 "getdate.y"
     {
 	/* ISO 8601 format.  YYYY-MM-DD.  */
 	pc->year = (yyvsp[-2].textintval);
@@ -1648,7 +1639,7 @@ yyreduce:
     break;
 
   case 33:
-#line 419 "getdate.y"
+#line 410 "getdate.y"
     {
 	/* e.g. 17-JUN-1992.  */
 	pc->day = (yyvsp[-2].textintval).value;
@@ -1659,7 +1650,7 @@ yyreduce:
     break;
 
   case 34:
-#line 427 "getdate.y"
+#line 418 "getdate.y"
     {
 	/* e.g. JUN-17-1992.  */
 	pc->month = (yyvsp[-2].intval);
@@ -1670,7 +1661,7 @@ yyreduce:
     break;
 
   case 35:
-#line 435 "getdate.y"
+#line 426 "getdate.y"
     {
 	pc->month = (yyvsp[-1].intval);
 	pc->day = (yyvsp[0].textintval).value;
@@ -1678,7 +1669,7 @@ yyreduce:
     break;
 
   case 36:
-#line 440 "getdate.y"
+#line 431 "getdate.y"
     {
 	pc->month = (yyvsp[-3].intval);
 	pc->day = (yyvsp[-2].textintval).value;
@@ -1687,7 +1678,7 @@ yyreduce:
     break;
 
   case 37:
-#line 446 "getdate.y"
+#line 437 "getdate.y"
     {
 	pc->day = (yyvsp[-1].textintval).value;
 	pc->month = (yyvsp[0].intval);
@@ -1695,7 +1686,7 @@ yyreduce:
     break;
 
   case 38:
-#line 451 "getdate.y"
+#line 442 "getdate.y"
     {
 	pc->day = (yyvsp[-2].textintval).value;
 	pc->month = (yyvsp[-1].intval);
@@ -1704,7 +1695,7 @@ yyreduce:
     break;
 
   case 39:
-#line 460 "getdate.y"
+#line 451 "getdate.y"
     {
 	pc->rel.ns -= (yyvsp[-1].rel).ns;
 	pc->rel.seconds -= (yyvsp[-1].rel).seconds;
@@ -1717,7 +1708,7 @@ yyreduce:
     break;
 
   case 40:
-#line 470 "getdate.y"
+#line 461 "getdate.y"
     {
 	pc->rel.ns += (yyvsp[0].rel).ns;
 	pc->rel.seconds += (yyvsp[0].rel).seconds;
@@ -1730,147 +1721,147 @@ yyreduce:
     break;
 
   case 41:
-#line 483 "getdate.y"
+#line 474 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = (yyvsp[-1].intval); }
     break;
 
   case 42:
-#line 485 "getdate.y"
+#line 476 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = (yyvsp[-1].textintval).value; }
     break;
 
   case 43:
-#line 487 "getdate.y"
+#line 478 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = 1; }
     break;
 
   case 44:
-#line 489 "getdate.y"
+#line 480 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = (yyvsp[-1].intval); }
     break;
 
   case 45:
-#line 491 "getdate.y"
+#line 482 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = (yyvsp[-1].textintval).value; }
     break;
 
   case 46:
-#line 493 "getdate.y"
+#line 484 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = 1; }
     break;
 
   case 47:
-#line 495 "getdate.y"
+#line 486 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[-1].intval) * (yyvsp[0].intval); }
     break;
 
   case 48:
-#line 497 "getdate.y"
+#line 488 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[-1].textintval).value * (yyvsp[0].intval); }
     break;
 
   case 49:
-#line 499 "getdate.y"
+#line 490 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[0].intval); }
     break;
 
   case 50:
-#line 501 "getdate.y"
+#line 492 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = (yyvsp[-1].intval); }
     break;
 
   case 51:
-#line 503 "getdate.y"
+#line 494 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = (yyvsp[-1].textintval).value; }
     break;
 
   case 52:
-#line 505 "getdate.y"
+#line 496 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = 1; }
     break;
 
   case 53:
-#line 507 "getdate.y"
+#line 498 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = (yyvsp[-1].intval); }
     break;
 
   case 54:
-#line 509 "getdate.y"
+#line 500 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = (yyvsp[-1].textintval).value; }
     break;
 
   case 55:
-#line 511 "getdate.y"
+#line 502 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = 1; }
     break;
 
   case 56:
-#line 513 "getdate.y"
+#line 504 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].intval); }
     break;
 
   case 57:
-#line 515 "getdate.y"
+#line 506 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].textintval).value; }
     break;
 
   case 58:
-#line 517 "getdate.y"
+#line 508 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].timespec).tv_sec; (yyval.rel).ns = (yyvsp[-1].timespec).tv_nsec; }
     break;
 
   case 59:
-#line 519 "getdate.y"
+#line 510 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].timespec).tv_sec; (yyval.rel).ns = (yyvsp[-1].timespec).tv_nsec; }
     break;
 
   case 60:
-#line 521 "getdate.y"
+#line 512 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = 1; }
     break;
 
   case 62:
-#line 527 "getdate.y"
+#line 518 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = (yyvsp[-1].textintval).value; }
     break;
 
   case 63:
-#line 529 "getdate.y"
+#line 520 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = (yyvsp[-1].textintval).value; }
     break;
 
   case 64:
-#line 531 "getdate.y"
+#line 522 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[-1].textintval).value * (yyvsp[0].intval); }
     break;
 
   case 65:
-#line 533 "getdate.y"
+#line 524 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = (yyvsp[-1].textintval).value; }
     break;
 
   case 66:
-#line 535 "getdate.y"
+#line 526 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = (yyvsp[-1].textintval).value; }
     break;
 
   case 67:
-#line 537 "getdate.y"
+#line 528 "getdate.y"
     { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].textintval).value; }
     break;
 
   case 71:
-#line 545 "getdate.y"
+#line 536 "getdate.y"
     { (yyval.timespec).tv_sec = (yyvsp[0].textintval).value; (yyval.timespec).tv_nsec = 0; }
     break;
 
   case 73:
-#line 551 "getdate.y"
+#line 542 "getdate.y"
     { (yyval.timespec).tv_sec = (yyvsp[0].textintval).value; (yyval.timespec).tv_nsec = 0; }
     break;
 
   case 74:
-#line 556 "getdate.y"
+#line 547 "getdate.y"
     {
 	if (pc->dates_seen && ! pc->year.digits
 	    && ! pc->rels_seen && (pc->times_seen || 2 < (yyvsp[0].textintval).digits))
@@ -1907,22 +1898,22 @@ yyreduce:
     break;
 
   case 75:
-#line 593 "getdate.y"
+#line 584 "getdate.y"
     { (yyval.intval) = -1; }
     break;
 
   case 76:
-#line 595 "getdate.y"
+#line 586 "getdate.y"
     { (yyval.intval) = (yyvsp[0].textintval).value; }
     break;
 
   case 77:
-#line 600 "getdate.y"
+#line 591 "getdate.y"
     { (yyval.intval) = MER24; }
     break;
 
   case 78:
-#line 602 "getdate.y"
+#line 593 "getdate.y"
     { (yyval.intval) = (yyvsp[0].intval); }
     break;
 
@@ -1931,7 +1922,7 @@ yyreduce:
     }
 
 /* Line 1126 of yacc.c.  */
-#line 1935 "getdate.c"
+#line 1926 "getdate.c"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -2199,7 +2190,7 @@ yyreturn:
 }
 
 
-#line 605 "getdate.y"
+#line 596 "getdate.y"
 
 
 static table const meridian_table[] =
@@ -2494,7 +2485,7 @@ lookup_word (parser_control const *pc, char *word)
   for (p = word; *p; p++)
     {
       unsigned char ch = *p;
-      if (ISLOWER (ch))
+      if (islower (ch))
 	*p = toupper (ch);
     }
 
@@ -2560,7 +2551,7 @@ yylex (YYSTYPE *lvalp, parser_control *pc)
 
   for (;;)
     {
-      while (c = *pc->input, ISSPACE (c))
+      while (c = *pc->input, isspace (c))
 	pc->input++;
 
       if (ISDIGIT (c) || c == '-' || c == '+')
@@ -2571,7 +2562,7 @@ yylex (YYSTYPE *lvalp, parser_control *pc)
 	  if (c == '-' || c == '+')
 	    {
 	      sign = c == '-' ? -1 : 1;
-	      while (c = *++pc->input, ISSPACE (c))
+	      while (c = *++pc->input, isspace (c))
 		continue;
 	      if (! ISDIGIT (c))
 		/* skip the '-' sign */
@@ -2675,7 +2666,7 @@ yylex (YYSTYPE *lvalp, parser_control *pc)
 	    }
 	}
 
-      if (ISALPHA (c))
+      if (isalpha (c))
 	{
 	  char buff[20];
 	  char *p = buff;
@@ -2687,7 +2678,7 @@ yylex (YYSTYPE *lvalp, parser_control *pc)
 		*p++ = c;
 	      c = *++pc->input;
 	    }
-	  while (ISALPHA (c) || c == '.');
+	  while (isalpha (c) || c == '.');
 
 	  *p = '\0';
 	  tp = lookup_word (pc, buff);
@@ -2799,7 +2790,7 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
   if (! tmp)
     return false;
 
-  while (c = *p, ISSPACE (c))
+  while (c = *p, isspace (c))
     p++;
 
   if (strncmp (p, "TZ=\"", 4) == 0)

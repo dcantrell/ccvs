@@ -265,6 +265,12 @@ libcvs_a_SOURCES += size_max.h
 
 ## end   gnulib module size_max
 
+## begin gnulib module snprintf
+
+libcvs_a_SOURCES += snprintf.h
+
+## end   gnulib module snprintf
+
 ## begin gnulib module stdbool
 
 BUILT_SOURCES += $(STDBOOL_H)
