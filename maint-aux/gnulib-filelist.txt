@@ -129,6 +129,8 @@ lib/save-cwd.h
 lib/setenv.c
 lib/setenv.h
 lib/size_max.h
+lib/snprintf.c
+lib/snprintf.h
 lib/socket_.h
 lib/stat_.h
 lib/stat-macros.h
@@ -284,6 +286,7 @@ m4/save-cwd.m4
 m4/setenv.m4
 m4/signed.m4
 m4/size_max.m4
+m4/snprintf.m4
 m4/socklen.m4
 m4/sockpfaf.m4
 m4/ssize_t.m4
