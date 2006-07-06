@@ -483,20 +483,12 @@ safe_location (char *where)
 	    }
 	    else if (errno == ENOENT)
 	    {
-		/* where_this_pass - last_component (where_this_pass) */
-		char *parent;
-
-		/* It's okay to cast out the const below since we know we
-		 * allocated where_this_pass and have control of it.
+		/* walk up the tree by setting
+		 * WHERE_THIS_PASS = WHERE_THIS_PASS
+	         *                   - last_component (WHERE_THIS_PASS)
 		 */
-		if ((parent = (char *)last_component (where_this_pass))
-		        != where_this_pass)
-		{
-		    /* strip the last_component */
-		    parent[-1] = '\0';
-		    /* continue */
-		}
-		else
+		char *parent = last_component (where_this_pass);
+		if (parent == where_this_pass)
 		{
 		    /* ERRNO == ENOENT
 		     *   && last_component (where_this_pass) == where_this_pass
@@ -506,6 +498,22 @@ safe_location (char *where)
 		     */
 		    free (where_this_pass);
 		    break;
+		}
+		else if (!*parent)
+		{
+		    /* Under UNIX, it shouldn't be possible for cd'ing to a
+		     * root directory to return ENOENT, but under Windows, it
+		     * might (e.g. `chdir ("F:\\")', with F: unmounted).
+		     */
+		    error (1, errno, "\
+could not change directory to requested checkout directory `%s'",
+			   where_this_pass);
+		}
+		else
+		{
+		    /* strip the last_component */
+		    parent[-1] = '\0';
+		    /* continue */
 		}
 	    }
 	    else
@@ -1193,14 +1201,22 @@ build_dirs_and_chdir (struct dir_to_build *dirs, int sticky)
     while (dirs != NULL)
     {
 	const char *dir = last_component (dirs->dirpath);
-	int made_dir = 0;
+	bool made_dir = false;
 
-	made_dir = !mkdir_if_needed (dir);
-	if (made_dir) Subdir_Register (NULL, NULL, dir);
+	if (*dir)
+	{
+	    made_dir = !mkdir_if_needed (dir);
+	    if (made_dir) Subdir_Register (NULL, NULL, dir);
+	}
+	else
+	    /* Assume the (or a, under Windows) root directory need not be
+	     * created.
+	     */
+	    dir = dirs->dirpath;
 
 	if (CVS_CHDIR (dir) < 0)
 	{
-	    error (0, errno, "cannot chdir to %s", dir);
+	    error (0, errno, "cannot chdir to `%s'", dir);
 	    retval = 1;
 	    goto out;
 	}

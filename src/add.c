@@ -229,13 +229,17 @@ add (int argc, char **argv)
 		    error (1, errno, "Failed to save current directory.");
 
 		filedir = xstrdup (argv[j]);
-                /* Deliberately discard the const below since we know we just
-                 * allocated filedir and can do what we like with it.
-                 */
-		p = (char *)last_component (filedir);
+		p = last_component (filedir);
 		if (p == filedir)
 		{
 		    update_dir = "";
+		}
+		else if (!*p)
+		{
+		    error (1, 0, "Cannot add root directory `%s': no parent",
+			   filedir);
+		    /* The above exits, but placate gcc -Wall: */
+		    update_dir = NULL;
 		}
 		else
 		{
@@ -320,14 +324,16 @@ add (int argc, char **argv)
 
 	finfo.fullname = xstrdup (argv[i]);
 	filename = xstrdup (argv[i]);
-	/* We know we can discard the const below since we just allocated
-	 * filename and can do as we like with it.
-         */
-	p = (char *)last_component (filename);
+	p = last_component (filename);
 	if (p == filename)
 	{
 	    finfo.update_dir = "";
 	    finfo.file = p;
+	}
+	else if (!*p)
+	{
+	    error (1, 0, "Cannot add root directory `%s': no parent",
+		   filename);
 	}
 	else
 	{
