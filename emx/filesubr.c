@@ -632,23 +632,6 @@ cvs_temp_name (void)
 
 
 
-/* Return a pointer into PATH's last component.  */
-char *
-last_component (char *path)
-{
-    char *last;
-
-    /* We can't be sure here if 'path' is already slashified. */
-    _fnslashify (path);
-
-    last = strrchr (path, '/');
-
-    if (last && (last != path))
-        return last + 1;
-    else
-        return path;
-}
-
 /* Return the home directory.  Returns a pointer to storage
    managed by this function or its callees (currently getenv).
    This function will return the same thing every time it is

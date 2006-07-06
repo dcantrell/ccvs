@@ -783,24 +783,6 @@ FILE *cvs_temp_file (char ** filename)
 
 
 
-/* Return a pointer into PATH's last component.  */
-const char *
-last_component (const char *path)
-{
-    const char *scan;
-    const char *last = 0;
-
-    for (scan = path; *scan; scan++)
-        if (ISSLASH (*scan))
-	    last = scan;
-
-    if (last && (last != path))
-        return last + 1;
-    else
-        return path;
-}
-
-
 /* NT has two evironment variables, HOMEPATH and HOMEDRIVE, which,
    when combined as ${HOMEDRIVE}${HOMEPATH}, give the unix equivalent
    of HOME.  Some NT users are just too unixy, though, and set the
