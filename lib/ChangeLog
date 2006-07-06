@@ -1,3 +1,8 @@
+2006-07-06  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	* getaddrinfo.c: changed '#if WIN32_NATIVE' to '#ifdef' to allow it
+	to compile in MSVC
+
 2006-07-06  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am: Import changes from...
