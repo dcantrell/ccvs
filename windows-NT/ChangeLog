@@ -1,3 +1,8 @@
+2006-07-06  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c (last_component): Remove, in favor of GNULIB version from
+	lib/basename.c.
+
 2006-06-28  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in [HAVE_UTIME_NULL]: Remove to sync with configure.in.

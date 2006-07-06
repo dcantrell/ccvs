@@ -732,24 +732,6 @@ cvs_temp_name (void)
 
 
 
-/* Return a pointer into PATH's last component.  */
-char *
-last_component (char *path)
-{
-    char *scan;
-    char *last = 0;
-
-    for (scan = path; *scan; scan++)
-        if (ISDIRSEP (*scan))
-	    last = scan;
-
-    if (last && (last != path))
-        return last + 1;
-    else
-        return path;
-}
-
-
 /* Return the home directory.  Returns a pointer to storage
    managed by this function or its callees (currently getenv).  */
 char *
