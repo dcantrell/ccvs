@@ -94,6 +94,7 @@ AC_DEFUN([gl_INIT],
   gl_SAVE_CWD
   gt_FUNC_SETENV
   gl_SIZE_MAX
+  gl_FUNC_SNPRINTF
   gl_TYPE_SOCKLEN_T
   gt_TYPE_SSIZE_T
   gl_STAT_MACROS
@@ -265,6 +266,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/setenv.c
   lib/setenv.h
   lib/size_max.h
+  lib/snprintf.c
+  lib/snprintf.h
   lib/socket_.h
   lib/stat-macros.h
   lib/stat_.h
@@ -420,6 +423,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/setenv.m4
   m4/signed.m4
   m4/size_max.m4
+  m4/snprintf.m4
   m4/socklen.m4
   m4/sockpfaf.m4
   m4/ssize_t.m4

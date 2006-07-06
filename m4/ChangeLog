@@ -1,3 +1,9 @@
+2006-07-06  Derek Price  <derek@ximbiot.com>
+
+	* ftruncate.m4, getdate.m4, gnulib-comp.m4, sockpfaf.m4, strtol.m4,
+	strtoul.m4: Update from GNULIB.
+	* snprintf.m4: New file from GNULIB.
+
 2006-07-05  Derek Price  <derek@ximbiot.com>
 
 	* absolute-header.m4, double-slash-root.m4, getcwd-abort-bug.m4,
