@@ -344,6 +344,10 @@
    don't. */
 #undef HAVE_DECL_PUTC_UNLOCKED
 
+/* Define to 1 if you have the declaration of `snprintf', and to 0 if you
+   don't. */
+#undef HAVE_DECL_SNPRINTF
+
 /* Define to 1 if you have the declaration of `strdup', and to 0 if you don't.
    */
 #define HAVE_DECL_STRDUP 1
@@ -524,9 +528,6 @@
 
 /* Define to 1 if <sys/socket.h> defines AF_INET6. */
 #undef HAVE_IPV6
-
-/* Define to 1 if you have the `isascii' function. */
-#define HAVE_ISASCII 1
 
 /* Define to 1 if you have the `isblank' function. */
 #undef HAVE_ISBLANK
