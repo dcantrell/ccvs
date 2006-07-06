@@ -123,6 +123,7 @@ lib/regex_internal.c
 lib/regex_internal.h
 lib/rename.c
 lib/rpmatch.c
+lib/same-inode.h
 lib/save-cwd.c
 lib/save-cwd.h
 lib/setenv.c
@@ -142,8 +143,12 @@ lib/strftime.c
 lib/strftime.h
 lib/stripslash.c
 lib/strncasecmp.c
+lib/strndup.c
+lib/strndup.h
 lib/strnlen1.c
 lib/strnlen1.h
+lib/strnlen.c
+lib/strnlen.h
 lib/strstr.c
 lib/strstr.h
 lib/strtoimax.c
@@ -176,8 +181,11 @@ lib/xmalloc.c
 lib/xreadlink.c
 lib/xreadlink.h
 lib/xsize.h
+lib/xstrndup.c
+lib/xstrndup.h
 lib/yesno.c
 lib/yesno.h
+m4/absolute-header.m4
 m4/alloca.m4
 m4/allocsa.m4
 m4/atexit.m4
@@ -192,6 +200,7 @@ m4/codeset.m4
 m4/d-ino.m4
 m4/dirname.m4
 m4/dos.m4
+m4/double-slash-root.m4
 m4/d-type.m4
 m4/dup2.m4
 m4/eealloc.m4
@@ -204,8 +213,8 @@ m4/filenamecat.m4
 m4/fnmatch.m4
 m4/fpending.m4
 m4/ftruncate.m4
-m4/full-header-path.m4
 m4/getaddrinfo.m4
+m4/getcwd-abort-bug.m4
 m4/getcwd.m4
 m4/getcwd-path-max.m4
 m4/getdate.m4
@@ -287,6 +296,8 @@ m4/strdup.m4
 m4/strerror.m4
 m4/strerror_r.m4
 m4/strftime.m4
+m4/strndup.m4
+m4/strnlen.m4
 m4/strstr.m4
 m4/strtoimax.m4
 m4/strtoll.m4
@@ -314,4 +325,5 @@ m4/xalloc.m4
 m4/xgetcwd.m4
 m4/xreadlink.m4
 m4/xsize.m4
+m4/xstrndup.m4
 m4/yesno.m4

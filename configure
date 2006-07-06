@@ -721,6 +721,14 @@ ALLOCA_H
 SYS_SOCKET_H
 STDBOOL_H
 HAVE__BOOL
+build
+build_cpu
+build_vendor
+build_os
+host
+host_cpu
+host_vendor
+host_os
 FNMATCH_H
 YACC
 YFLAGS
@@ -732,7 +740,7 @@ HAVE_LONG_LONG_INT
 HAVE_WCHAR_H
 HAVE_INTTYPES_H
 HAVE_SYS_TYPES_H
-FULL_PATH_STDINT_H
+ABSOLUTE_STDINT_H
 HAVE_STDINT_H
 HAVE_SYS_INTTYPES_H
 HAVE_SYS_BITYPES_H
@@ -750,7 +758,7 @@ SIZE_T_SUFFIX
 WCHAR_T_SUFFIX
 WINT_T_SUFFIX
 STDINT_H
-FULL_PATH_SYS_STAT_H
+ABSOLUTE_SYS_STAT_H
 SYS_STAT_H
 UNISTD_H
 EOVERFLOW
@@ -760,14 +768,6 @@ MSGFMT
 GMSGFMT
 XGETTEXT
 MSGMERGE
-build
-build_cpu
-build_vendor
-build_os
-host
-host_cpu
-host_vendor
-host_os
 INTL_MACOSX_LIBS
 LIBICONV
 LTLIBICONV
@@ -11320,7 +11320,7 @@ if test "${ac_cv_win_or_dos+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
 
-        cat >conftest.$ac_ext <<_ACEOF
+	cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
@@ -11388,13 +11388,86 @@ echo "${ECHO_T}$ac_cv_win_or_dos" >&6; }
     if test x"$ac_cv_win_or_dos" = xyes; then
       ac_fs_accepts_drive_letter_prefix=1
       ac_fs_backslash_is_file_name_separator=1
+      { echo "$as_me:$LINENO: checking whether drive letter can start relative path" >&5
+echo $ECHO_N "checking whether drive letter can start relative path... $ECHO_C" >&6; }
+if test "${ac_cv_drive_letter_can_be_relative+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+
+	  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+int
+main ()
+{
+#if defined __CYGWIN__
+drive letters are always absolute
+#endif
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag" || test ! -s conftest.err'
+  { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_drive_letter_can_be_relative=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_drive_letter_can_be_relative=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_drive_letter_can_be_relative" >&5
+echo "${ECHO_T}$ac_cv_drive_letter_can_be_relative" >&6; }
+      if test x"$ac_cv_drive_letter_can_be_relative" = xyes; then
+	ac_fs_drive_letter_can_be_relative=1
+      else
+	ac_fs_drive_letter_can_be_relative=0
+      fi
     else
       ac_fs_accepts_drive_letter_prefix=0
       ac_fs_backslash_is_file_name_separator=0
+      ac_fs_drive_letter_can_be_relative=0
     fi
-
-
-
 
 
 cat >>confdefs.h <<_ACEOF
@@ -11408,6 +11481,140 @@ _ACEOF
 
 cat >>confdefs.h <<_ACEOF
 #define FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR $ac_fs_backslash_is_file_name_separator
+_ACEOF
+
+
+
+cat >>confdefs.h <<_ACEOF
+#define FILE_SYSTEM_DRIVE_PREFIX_CAN_BE_RELATIVE $ac_fs_drive_letter_can_be_relative
+_ACEOF
+
+
+# Make sure we can run config.sub.
+$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
+  { { echo "$as_me:$LINENO: error: cannot run $SHELL $ac_aux_dir/config.sub" >&5
+echo "$as_me: error: cannot run $SHELL $ac_aux_dir/config.sub" >&2;}
+   { (exit 1); exit 1; }; }
+
+{ echo "$as_me:$LINENO: checking build system type" >&5
+echo $ECHO_N "checking build system type... $ECHO_C" >&6; }
+if test "${ac_cv_build+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_build_alias=$build_alias
+test "x$ac_build_alias" = x &&
+  ac_build_alias=`$SHELL "$ac_aux_dir/config.guess"`
+test "x$ac_build_alias" = x &&
+  { { echo "$as_me:$LINENO: error: cannot guess build type; you must specify one" >&5
+echo "$as_me: error: cannot guess build type; you must specify one" >&2;}
+   { (exit 1); exit 1; }; }
+ac_cv_build=`$SHELL "$ac_aux_dir/config.sub" $ac_build_alias` ||
+  { { echo "$as_me:$LINENO: error: $SHELL $ac_aux_dir/config.sub $ac_build_alias failed" >&5
+echo "$as_me: error: $SHELL $ac_aux_dir/config.sub $ac_build_alias failed" >&2;}
+   { (exit 1); exit 1; }; }
+
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_build" >&5
+echo "${ECHO_T}$ac_cv_build" >&6; }
+case $ac_cv_build in
+*-*-*) ;;
+*) { { echo "$as_me:$LINENO: error: invalid value of canonical build" >&5
+echo "$as_me: error: invalid value of canonical build" >&2;}
+   { (exit 1); exit 1; }; };;
+esac
+build=$ac_cv_build
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_build
+shift
+build_cpu=$1
+build_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+build_os=$*
+IFS=$ac_save_IFS
+case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
+
+
+{ echo "$as_me:$LINENO: checking host system type" >&5
+echo $ECHO_N "checking host system type... $ECHO_C" >&6; }
+if test "${ac_cv_host+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if test "x$host_alias" = x; then
+  ac_cv_host=$ac_cv_build
+else
+  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
+    { { echo "$as_me:$LINENO: error: $SHELL $ac_aux_dir/config.sub $host_alias failed" >&5
+echo "$as_me: error: $SHELL $ac_aux_dir/config.sub $host_alias failed" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_host" >&5
+echo "${ECHO_T}$ac_cv_host" >&6; }
+case $ac_cv_host in
+*-*-*) ;;
+*) { { echo "$as_me:$LINENO: error: invalid value of canonical host" >&5
+echo "$as_me: error: invalid value of canonical host" >&2;}
+   { (exit 1); exit 1; }; };;
+esac
+host=$ac_cv_host
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_host
+shift
+host_cpu=$1
+host_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+host_os=$*
+IFS=$ac_save_IFS
+case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
+
+
+
+
+  { echo "$as_me:$LINENO: checking whether // is distinct from /" >&5
+echo $ECHO_N "checking whether // is distinct from /... $ECHO_C" >&6; }
+if test "${ac_cv_double_slash_root+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+   if test x"$cross_compiling" = xyes ; then
+	# When cross-compiling, there is no way to tell whether // is special
+	# short of a list of hosts.  However, the only known hosts to date
+	# that have a distinct // are Apollo DomainOS (too old to port to)
+	# and Cygwin.  If anyone knows of another system for which // has
+	# special semantics and is distinct from /, please report it to
+	# <bug-coreutils@gnu.org>.
+	case $host in
+	  *-cygwin)
+	    ac_cv_double_slash_root=yes ;;
+	  *)
+	    # Be optimistic and assume that / and // are the same when we
+	    # don't know.
+	    ac_cv_double_slash_root='unknown, assuming no' ;;
+	esac
+      else
+	set x `ls -di / //`
+	if test $2 = $4; then
+	  ac_cv_double_slash_root=no
+	else
+	  ac_cv_double_slash_root=yes
+	fi
+      fi
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_double_slash_root" >&5
+echo "${ECHO_T}$ac_cv_double_slash_root" >&6; }
+  if test x"$ac_cv_double_slash_root" = xyes; then
+    ac_double_slash_root=1
+  else
+    ac_double_slash_root=0
+  fi
+
+
+cat >>confdefs.h <<_ACEOF
+#define DOUBLE_SLASH_IS_DISTINCT_ROOT $ac_double_slash_root
 _ACEOF
 
 
@@ -17089,6 +17296,182 @@ _ACEOF
 
 
 
+      { echo "$as_me:$LINENO: checking whether strndup is declared" >&5
+echo $ECHO_N "checking whether strndup is declared... $ECHO_C" >&6; }
+if test "${ac_cv_have_decl_strndup+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+int
+main ()
+{
+#ifndef strndup
+  char *p = (char *) strndup;
+  return !p;
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag" || test ! -s conftest.err'
+  { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_have_decl_strndup=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_have_decl_strndup=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_have_decl_strndup" >&5
+echo "${ECHO_T}$ac_cv_have_decl_strndup" >&6; }
+if test $ac_cv_have_decl_strndup = yes; then
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_STRNDUP 1
+_ACEOF
+
+
+else
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_STRNDUP 0
+_ACEOF
+
+
+fi
+
+
+
+
+      { echo "$as_me:$LINENO: checking whether strnlen is declared" >&5
+echo $ECHO_N "checking whether strnlen is declared... $ECHO_C" >&6; }
+if test "${ac_cv_have_decl_strnlen+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+int
+main ()
+{
+#ifndef strnlen
+  char *p = (char *) strnlen;
+  return !p;
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag" || test ! -s conftest.err'
+  { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_have_decl_strnlen=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_have_decl_strnlen=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_have_decl_strnlen" >&5
+echo "${ECHO_T}$ac_cv_have_decl_strnlen" >&6; }
+if test $ac_cv_have_decl_strnlen = yes; then
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_STRNLEN 1
+_ACEOF
+
+
+else
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_STRNLEN 0
+_ACEOF
+
+
+fi
+
+
+
+
 
 
 
@@ -19891,6 +20274,7 @@ esac
 
 
 
+
 for ac_func in dup2
 do
 as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
@@ -21260,6 +21644,23 @@ fi
 done
 
 
+    # If someone lacks ftruncate, make configure fail, and request
+    # a bug report to inform us about it.
+    if test x"$SKIP_FTRUNCATE_CHECK" != xyes; then
+      { { echo "$as_me:$LINENO: error: Your system lacks the ftruncate function.
+	  Please report this, along with the output of \"uname -a\", to the
+	  bug-coreutils@gnu.org mailing list.  To continue past this point,
+	  rerun configure with SKIP_FTRUNCATE_CHECK=yes set in the environment.
+	  E.g., env SKIP_FTRUNCATE_CHECK=yes ./configure
+See \`config.log' for more details." >&5
+echo "$as_me: error: Your system lacks the ftruncate function.
+	  Please report this, along with the output of \"uname -a\", to the
+	  bug-coreutils@gnu.org mailing list.  To continue past this point,
+	  rerun configure with SKIP_FTRUNCATE_CHECK=yes set in the environment.
+	  E.g., env SKIP_FTRUNCATE_CHECK=yes ./configure
+See \`config.log' for more details." >&2;}
+   { (exit 1); exit 1; }; }
+    fi
   fi
 
 
@@ -22583,8 +22984,10 @@ fi
 
 
 
+  gl_abort_bug=no
   case $gl_cv_func_getcwd_null in
   yes)
+
 
   :
 
@@ -22743,8 +23146,8 @@ main ()
   {
     size_t i;
 
-    /* Unlink first, in case the chdir failed.  */
-    unlink (DIR_NAME);
+    /* Try rmdir first, in case the chdir failed.  */
+    rmdir (DIR_NAME);
     for (i = 0; i <= n_chdirs; i++)
       {
 	if (chdir ("..") < 0)
@@ -22806,11 +23209,265 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 ;;
   esac
+
+
+
+  :
+
+
+
+
+
+
+for ac_func in getpagesize
+do
+as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
+{ echo "$as_me:$LINENO: checking for $ac_func" >&5
+echo $ECHO_N "checking for $ac_func... $ECHO_C" >&6; }
+if { as_var=$as_ac_var; eval "test \"\${$as_var+set}\" = set"; }; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+/* Define $ac_func to an innocuous variant, in case <limits.h> declares $ac_func.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define $ac_func innocuous_$ac_func
+
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char $ac_func (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef $ac_func
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char $ac_func ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined __stub_$ac_func || defined __stub___$ac_func
+choke me
+#endif
+
+int
+main ()
+{
+return $ac_func ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag" || test ! -s conftest.err'
+  { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  eval "$as_ac_var=yes"
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	eval "$as_ac_var=no"
+fi
+
+rm -f core conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+ac_res=`eval echo '${'$as_ac_var'}'`
+	       { echo "$as_me:$LINENO: result: $ac_res" >&5
+echo "${ECHO_T}$ac_res" >&6; }
+if test `eval echo '${'$as_ac_var'}'` = yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+  { echo "$as_me:$LINENO: checking whether getcwd aborts when 4k < cwd_length < 16k" >&5
+echo $ECHO_N "checking whether getcwd aborts when 4k < cwd_length < 16k... $ECHO_C" >&6; }
+if test "${gl_cv_func_getcwd_abort_bug+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  # Remove any remnants of a previous test.
+     rm -rf confdir-14B---
+     # Arrange for deletion of the temporary directory this test creates.
+     ac_clean_files="$ac_clean_files confdir-14B---"
+     if test "$cross_compiling" = yes; then
+  gl_cv_func_getcwd_abort_bug=yes
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+#include <stdlib.h>
+#include <unistd.h>
+#include <limits.h>
+#include <string.h>
+#include <sys/stat.h>
+
+/* Don't get link errors because mkdir is redefined to rpl_mkdir.  */
+#undef mkdir
+
+#ifndef S_IRWXU
+# define S_IRWXU 0700
+#endif
+
+/* FIXME: skip the run-test altogether on systems without getpagesize.  */
+#if ! HAVE_GETPAGESIZE
+# define getpagesize() 0
+#endif
+
+/* This size is chosen to be larger than PATH_MAX (4k), yet smaller than
+   the 16kB pagesize on ia64 linux.  Those conditions make the code below
+   trigger a bug in glibc's getcwd implementation before 2.4.90-10.  */
+#define TARGET_LEN (5 * 1024)
+
+int
+main ()
+{
+  char const *dir_name = "confdir-14B---";
+  char *cwd;
+  size_t initial_cwd_len;
+  int fail = 0;
+  size_t desired_depth;
+  size_t d;
+
+  /* The bug is triggered when PATH_MAX < getpagesize (), so skip
+     this relative expensive and invasive test if that's not true.  */
+  if (getpagesize () <= PATH_MAX)
+    return 0;
+
+  cwd = getcwd (NULL, 0);
+  if (cwd == NULL)
+    return 0;
+
+  initial_cwd_len = strlen (cwd);
+  free (cwd);
+  desired_depth = ((TARGET_LEN - 1 - initial_cwd_len)
+		   / (1 + strlen (dir_name)));
+  for (d = 0; d < desired_depth; d++)
+    {
+      if (mkdir (dir_name, S_IRWXU) < 0 || chdir (dir_name) < 0)
+	{
+	  fail = 3; /* Unable to construct deep hierarchy.  */
+	  break;
+	}
+    }
+
+  /* If libc has the bug in question, this invocation of getcwd
+     results in a failed assertion.  */
+  cwd = getcwd (NULL, 0);
+  if (cwd == NULL)
+    fail = 4; /* getcwd failed.  This is ok, and expected.  */
+  free (cwd);
+
+  /* Call rmdir first, in case the above chdir failed.  */
+  rmdir (dir_name);
+  while (0 < d--)
+    {
+      if (chdir ("..") < 0)
+	break;
+      rmdir (dir_name);
+    }
+
+  return 0;
+}
+
+_ACEOF
+rm -f conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+  { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  gl_cv_func_getcwd_abort_bug=no
+else
+  echo "$as_me: program exited with status $ac_status" >&5
+echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+( exit $ac_status )
+gl_cv_func_getcwd_abort_bug=yes
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+fi
+
+
+
+fi
+{ echo "$as_me:$LINENO: result: $gl_cv_func_getcwd_abort_bug" >&5
+echo "${ECHO_T}$gl_cv_func_getcwd_abort_bug" >&6; }
+  if test $gl_cv_func_getcwd_abort_bug = yes; then
+  gl_abort_bug=yes
+fi
+
 ;;
   esac
 
-  case $gl_cv_func_getcwd_null,$gl_cv_func_getcwd_path_max in
-  yes,yes) ;;
+  case $gl_cv_func_getcwd_null,$gl_cv_func_getcwd_path_max,$gl_abort_bug in
+  yes,yes,no) ;;
   *)
     case " $LIBOBJS " in
   *" getcwd.$ac_objext "* ) ;;
@@ -25477,9 +26134,9 @@ fi
 
 
 if test $gl_cv_have_include_next = no; then
-    { echo "$as_me:$LINENO: checking full path to <inttypes.h>" >&5
-echo $ECHO_N "checking full path to <inttypes.h>... $ECHO_C" >&6; }
-if test "${gl_cv_full_path_inttypes_h+set}" = set; then
+    { echo "$as_me:$LINENO: checking absolute name of <inttypes.h>" >&5
+echo $ECHO_N "checking absolute name of <inttypes.h>... $ECHO_C" >&6; }
+if test "${gl_cv_absolute_inttypes_h+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
 
@@ -25497,15 +26154,15 @@ cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 #include <inttypes.h>
 _ACEOF
-      gl_cv_full_path_inttypes_h=`(eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-sed -n '\#/inttypes.h#{s#.*"\(.*/inttypes.h\)".*#\1#;p;q;}'`
+      gl_cv_absolute_inttypes_h=`(eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+sed -n '\#/inttypes.h#{s#.*"\(.*/inttypes.h\)".*#\1#;s#^/[^/]#//&#;p;q;}'`
     fi
 
 fi
-{ echo "$as_me:$LINENO: result: $gl_cv_full_path_inttypes_h" >&5
-echo "${ECHO_T}$gl_cv_full_path_inttypes_h" >&6; }
+{ echo "$as_me:$LINENO: result: $gl_cv_absolute_inttypes_h" >&5
+echo "${ECHO_T}$gl_cv_absolute_inttypes_h" >&6; }
 cat >>confdefs.h <<_ACEOF
-#define FULL_PATH_INTTYPES_H <$gl_cv_full_path_inttypes_h>
+#define ABSOLUTE_INTTYPES_H <$gl_cv_absolute_inttypes_h>
 _ACEOF
 
 
@@ -30593,9 +31250,9 @@ _ACEOF
 
 
     if test $ac_cv_header_stdint_h = yes; then
-      { echo "$as_me:$LINENO: checking full path to <stdint.h>" >&5
-echo $ECHO_N "checking full path to <stdint.h>... $ECHO_C" >&6; }
-if test "${gl_cv_full_path_stdint_h+set}" = set; then
+      { echo "$as_me:$LINENO: checking absolute name of <stdint.h>" >&5
+echo $ECHO_N "checking absolute name of <stdint.h>... $ECHO_C" >&6; }
+if test "${gl_cv_absolute_stdint_h+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
 
@@ -30613,19 +31270,19 @@ cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 #include <stdint.h>
 _ACEOF
-      gl_cv_full_path_stdint_h=`(eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-sed -n '\#/stdint.h#{s#.*"\(.*/stdint.h\)".*#\1#;p;q;}'`
+      gl_cv_absolute_stdint_h=`(eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+sed -n '\#/stdint.h#{s#.*"\(.*/stdint.h\)".*#\1#;s#^/[^/]#//&#;p;q;}'`
     fi
 
 fi
-{ echo "$as_me:$LINENO: result: $gl_cv_full_path_stdint_h" >&5
-echo "${ECHO_T}$gl_cv_full_path_stdint_h" >&6; }
+{ echo "$as_me:$LINENO: result: $gl_cv_absolute_stdint_h" >&5
+echo "${ECHO_T}$gl_cv_absolute_stdint_h" >&6; }
 cat >>confdefs.h <<_ACEOF
-#define FULL_PATH_STDINT_H <$gl_cv_full_path_stdint_h>
+#define ABSOLUTE_STDINT_H <$gl_cv_absolute_stdint_h>
 _ACEOF
 
 
-    FULL_PATH_STDINT_H="<$gl_cv_full_path_stdint_h>"
+    ABSOLUTE_STDINT_H="<$gl_cv_absolute_stdint_h>"
 
     HAVE_STDINT_H=1
   else
@@ -30650,7 +31307,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 
 #include <stddef.h>
 #define __STDC_LIMIT_MACROS 1 /* to make it work also in C++ mode */
-#include FULL_PATH_STDINT_H
+#include ABSOLUTE_STDINT_H
 #ifdef INT8_MAX
 int8_t a1 = INT8_MAX;
 #endif
@@ -32099,6 +32756,337 @@ done
 
 
 
+
+
+
+
+
+  :
+
+
+
+
+
+
+  # AIX 4.3.3, AIX 5.1 have a function that fails to add the terminating '\0'.
+  { echo "$as_me:$LINENO: checking for working strndup" >&5
+echo $ECHO_N "checking for working strndup... $ECHO_C" >&6; }
+if test "${gl_cv_func_strndup+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if test "$cross_compiling" = yes; then
+  { echo "$as_me:$LINENO: checking for strndup" >&5
+echo $ECHO_N "checking for strndup... $ECHO_C" >&6; }
+if test "${ac_cv_func_strndup+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+/* Define strndup to an innocuous variant, in case <limits.h> declares strndup.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define strndup innocuous_strndup
+
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char strndup (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef strndup
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char strndup ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined __stub_strndup || defined __stub___strndup
+choke me
+#endif
+
+int
+main ()
+{
+return strndup ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag" || test ! -s conftest.err'
+  { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_func_strndup=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_func_strndup=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_func_strndup" >&5
+echo "${ECHO_T}$ac_cv_func_strndup" >&6; }
+if test $ac_cv_func_strndup = yes; then
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+#ifdef _AIX
+               too risky
+#endif
+
+_ACEOF
+if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+  $EGREP "too risky" >/dev/null 2>&1; then
+  gl_cv_func_strndup=no
+else
+  gl_cv_func_strndup=yes
+fi
+rm -f conftest*
+
+else
+  gl_cv_func_strndup=no
+fi
+
+else
+  cat >conftest.$ac_ext <<_ACEOF
+
+       /* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <string.h>
+int
+main ()
+{
+
+#ifndef HAVE_DECL_STRNDUP
+  extern char *strndup (const char *, size_t);
+#endif
+  char *s;
+  s = strndup ("some longer string", 15);
+  free (s);
+  s = strndup ("shorter string", 13);
+  return s[13] != '\0';
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+  { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  gl_cv_func_strndup=yes
+else
+  echo "$as_me: program exited with status $ac_status" >&5
+echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+( exit $ac_status )
+gl_cv_func_strndup=no
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+fi
+
+
+fi
+{ echo "$as_me:$LINENO: result: $gl_cv_func_strndup" >&5
+echo "${ECHO_T}$gl_cv_func_strndup" >&6; }
+  if test $gl_cv_func_strndup = yes; then
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_STRNDUP 1
+_ACEOF
+
+  else
+    case " $LIBOBJS " in
+  *" strndup.$ac_objext "* ) ;;
+  *) LIBOBJS="$LIBOBJS strndup.$ac_objext"
+ ;;
+esac
+
+
+cat >>confdefs.h <<\_ACEOF
+#define strndup rpl_strndup
+_ACEOF
+
+    :
+  fi
+
+
+
+
+
+
+  { echo "$as_me:$LINENO: checking for working strnlen" >&5
+echo $ECHO_N "checking for working strnlen... $ECHO_C" >&6; }
+if test "${ac_cv_func_strnlen_working+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if test "$cross_compiling" = yes; then
+  ac_cv_func_strnlen_working=no
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+int
+main ()
+{
+
+#define S "foobar"
+#define S_LEN (sizeof S - 1)
+
+  /* At least one implementation is buggy: that of AIX 4.3 would
+     give strnlen (S, 1) == 3.  */
+
+  int i;
+  for (i = 0; i < S_LEN + 1; ++i)
+    {
+      int expected = i <= S_LEN ? i : S_LEN;
+      if (strnlen (S, i) != expected)
+	return 1;
+    }
+  return 0;
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+  { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_func_strnlen_working=yes
+else
+  echo "$as_me: program exited with status $ac_status" >&5
+echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+( exit $ac_status )
+ac_cv_func_strnlen_working=no
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+fi
+
+
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_func_strnlen_working" >&5
+echo "${ECHO_T}$ac_cv_func_strnlen_working" >&6; }
+test $ac_cv_func_strnlen_working = no && case " $LIBOBJS " in
+  *" strnlen.$ac_objext "* ) ;;
+  *) LIBOBJS="$LIBOBJS strnlen.$ac_objext"
+ ;;
+esac
+
+
+  if test $ac_cv_func_strnlen_working = no; then
+    # This is necessary because automake-1.6.1 doens't understand
+    # that the above use of AC_FUNC_STRNLEN means we may have to use
+    # lib/strnlen.c.
+    #AC_LIBOBJ(strnlen)
+
+cat >>confdefs.h <<\_ACEOF
+#define strnlen rpl_strnlen
+_ACEOF
+
+
+
+  :
+
+
+
+
+
+
+  fi
+
+
       case " $LIBOBJS " in
   *" strstr.$ac_objext "* ) ;;
   *) LIBOBJS="$LIBOBJS strstr.$ac_objext"
@@ -33446,9 +34434,9 @@ fi
 
   SYS_STAT_H=
   if test $ac_cv_func_lstat:$ac_cv_have_decl_mkdir != yes:yes ; then
-      { echo "$as_me:$LINENO: checking full path to <sys/stat.h>" >&5
-echo $ECHO_N "checking full path to <sys/stat.h>... $ECHO_C" >&6; }
-if test "${gl_cv_full_path_sys_stat_h+set}" = set; then
+      { echo "$as_me:$LINENO: checking absolute name of <sys/stat.h>" >&5
+echo $ECHO_N "checking absolute name of <sys/stat.h>... $ECHO_C" >&6; }
+if test "${gl_cv_absolute_sys_stat_h+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
 
@@ -33466,19 +34454,19 @@ cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 #include <sys/stat.h>
 _ACEOF
-      gl_cv_full_path_sys_stat_h=`(eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-sed -n '\#/sys/stat.h#{s#.*"\(.*/sys/stat.h\)".*#\1#;p;q;}'`
+      gl_cv_absolute_sys_stat_h=`(eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+sed -n '\#/sys/stat.h#{s#.*"\(.*/sys/stat.h\)".*#\1#;s#^/[^/]#//&#;p;q;}'`
     fi
 
 fi
-{ echo "$as_me:$LINENO: result: $gl_cv_full_path_sys_stat_h" >&5
-echo "${ECHO_T}$gl_cv_full_path_sys_stat_h" >&6; }
+{ echo "$as_me:$LINENO: result: $gl_cv_absolute_sys_stat_h" >&5
+echo "${ECHO_T}$gl_cv_absolute_sys_stat_h" >&6; }
 cat >>confdefs.h <<_ACEOF
-#define FULL_PATH_SYS_STAT_H <$gl_cv_full_path_sys_stat_h>
+#define ABSOLUTE_SYS_STAT_H <$gl_cv_absolute_sys_stat_h>
 _ACEOF
 
 
-    FULL_PATH_SYS_STAT_H='<'$gl_cv_full_path_sys_stat_h'>'
+    ABSOLUTE_SYS_STAT_H="<$gl_cv_absolute_sys_stat_h>"
 
 for ac_header in io.h
 do
@@ -35196,6 +36184,11 @@ done
 
 
 
+  :
+
+
+
+
   case " $LIBOBJS " in
   *" yesno.$ac_objext "* ) ;;
   *) LIBOBJS="$LIBOBJS yesno.$ac_objext"
@@ -35533,89 +36526,6 @@ echo "${ECHO_T}found xgettext program is not GNU xgettext; ignore it" >&6; }
   prefix="$acl_final_prefix"
   eval acl_final_exec_prefix=\"$acl_final_exec_prefix\"
   prefix="$acl_save_prefix"
-
-# Make sure we can run config.sub.
-$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
-  { { echo "$as_me:$LINENO: error: cannot run $SHELL $ac_aux_dir/config.sub" >&5
-echo "$as_me: error: cannot run $SHELL $ac_aux_dir/config.sub" >&2;}
-   { (exit 1); exit 1; }; }
-
-{ echo "$as_me:$LINENO: checking build system type" >&5
-echo $ECHO_N "checking build system type... $ECHO_C" >&6; }
-if test "${ac_cv_build+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_build_alias=$build_alias
-test "x$ac_build_alias" = x &&
-  ac_build_alias=`$SHELL "$ac_aux_dir/config.guess"`
-test "x$ac_build_alias" = x &&
-  { { echo "$as_me:$LINENO: error: cannot guess build type; you must specify one" >&5
-echo "$as_me: error: cannot guess build type; you must specify one" >&2;}
-   { (exit 1); exit 1; }; }
-ac_cv_build=`$SHELL "$ac_aux_dir/config.sub" $ac_build_alias` ||
-  { { echo "$as_me:$LINENO: error: $SHELL $ac_aux_dir/config.sub $ac_build_alias failed" >&5
-echo "$as_me: error: $SHELL $ac_aux_dir/config.sub $ac_build_alias failed" >&2;}
-   { (exit 1); exit 1; }; }
-
-fi
-{ echo "$as_me:$LINENO: result: $ac_cv_build" >&5
-echo "${ECHO_T}$ac_cv_build" >&6; }
-case $ac_cv_build in
-*-*-*) ;;
-*) { { echo "$as_me:$LINENO: error: invalid value of canonical build" >&5
-echo "$as_me: error: invalid value of canonical build" >&2;}
-   { (exit 1); exit 1; }; };;
-esac
-build=$ac_cv_build
-ac_save_IFS=$IFS; IFS='-'
-set x $ac_cv_build
-shift
-build_cpu=$1
-build_vendor=$2
-shift; shift
-# Remember, the first character of IFS is used to create $*,
-# except with old shells:
-build_os=$*
-IFS=$ac_save_IFS
-case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
-
-
-{ echo "$as_me:$LINENO: checking host system type" >&5
-echo $ECHO_N "checking host system type... $ECHO_C" >&6; }
-if test "${ac_cv_host+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  if test "x$host_alias" = x; then
-  ac_cv_host=$ac_cv_build
-else
-  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
-    { { echo "$as_me:$LINENO: error: $SHELL $ac_aux_dir/config.sub $host_alias failed" >&5
-echo "$as_me: error: $SHELL $ac_aux_dir/config.sub $host_alias failed" >&2;}
-   { (exit 1); exit 1; }; }
-fi
-
-fi
-{ echo "$as_me:$LINENO: result: $ac_cv_host" >&5
-echo "${ECHO_T}$ac_cv_host" >&6; }
-case $ac_cv_host in
-*-*-*) ;;
-*) { { echo "$as_me:$LINENO: error: invalid value of canonical host" >&5
-echo "$as_me: error: invalid value of canonical host" >&2;}
-   { (exit 1); exit 1; }; };;
-esac
-host=$ac_cv_host
-ac_save_IFS=$IFS; IFS='-'
-set x $ac_cv_host
-shift
-host_cpu=$1
-host_vendor=$2
-shift; shift
-# Remember, the first character of IFS is used to create $*,
-# except with old shells:
-host_os=$*
-IFS=$ac_save_IFS
-case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
-
 
 
 # Check whether --with-gnu-ld was given.
@@ -50760,6 +51670,14 @@ ALLOCA_H!$ALLOCA_H$ac_delim
 SYS_SOCKET_H!$SYS_SOCKET_H$ac_delim
 STDBOOL_H!$STDBOOL_H$ac_delim
 HAVE__BOOL!$HAVE__BOOL$ac_delim
+build!$build$ac_delim
+build_cpu!$build_cpu$ac_delim
+build_vendor!$build_vendor$ac_delim
+build_os!$build_os$ac_delim
+host!$host$ac_delim
+host_cpu!$host_cpu$ac_delim
+host_vendor!$host_vendor$ac_delim
+host_os!$host_os$ac_delim
 FNMATCH_H!$FNMATCH_H$ac_delim
 YACC!$YACC$ac_delim
 YFLAGS!$YFLAGS$ac_delim
@@ -50771,7 +51689,7 @@ HAVE_LONG_LONG_INT!$HAVE_LONG_LONG_INT$ac_delim
 HAVE_WCHAR_H!$HAVE_WCHAR_H$ac_delim
 HAVE_INTTYPES_H!$HAVE_INTTYPES_H$ac_delim
 HAVE_SYS_TYPES_H!$HAVE_SYS_TYPES_H$ac_delim
-FULL_PATH_STDINT_H!$FULL_PATH_STDINT_H$ac_delim
+ABSOLUTE_STDINT_H!$ABSOLUTE_STDINT_H$ac_delim
 HAVE_STDINT_H!$HAVE_STDINT_H$ac_delim
 HAVE_SYS_INTTYPES_H!$HAVE_SYS_INTTYPES_H$ac_delim
 HAVE_SYS_BITYPES_H!$HAVE_SYS_BITYPES_H$ac_delim
@@ -50789,7 +51707,7 @@ SIZE_T_SUFFIX!$SIZE_T_SUFFIX$ac_delim
 WCHAR_T_SUFFIX!$WCHAR_T_SUFFIX$ac_delim
 WINT_T_SUFFIX!$WINT_T_SUFFIX$ac_delim
 STDINT_H!$STDINT_H$ac_delim
-FULL_PATH_SYS_STAT_H!$FULL_PATH_SYS_STAT_H$ac_delim
+ABSOLUTE_SYS_STAT_H!$ABSOLUTE_SYS_STAT_H$ac_delim
 SYS_STAT_H!$SYS_STAT_H$ac_delim
 UNISTD_H!$UNISTD_H$ac_delim
 EOVERFLOW!$EOVERFLOW$ac_delim
@@ -50799,14 +51717,6 @@ MSGFMT!$MSGFMT$ac_delim
 GMSGFMT!$GMSGFMT$ac_delim
 XGETTEXT!$XGETTEXT$ac_delim
 MSGMERGE!$MSGMERGE$ac_delim
-build!$build$ac_delim
-build_cpu!$build_cpu$ac_delim
-build_vendor!$build_vendor$ac_delim
-build_os!$build_os$ac_delim
-host!$host$ac_delim
-host_cpu!$host_cpu$ac_delim
-host_vendor!$host_vendor$ac_delim
-host_os!$host_os$ac_delim
 INTL_MACOSX_LIBS!$INTL_MACOSX_LIBS$ac_delim
 LIBICONV!$LIBICONV$ac_delim
 LTLIBICONV!$LTLIBICONV$ac_delim
