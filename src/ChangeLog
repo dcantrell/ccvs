@@ -1,4 +1,5 @@
 2006-07-05  Derek Price  <derek@ximbiot.com>
+	    Mark D. Baushke  <mdb@gnu.org>
 
 	* add.c, checkout.c, client.c, recurse.c: Use new last_component() API.
 	* filesubr.c, filesubr.h: Remove original last_component().
