@@ -363,50 +363,51 @@ cvs_SOURCES = \
 	buffer.c \
 	checkin.c \
 	checkout.c \
-	classify.c \
+	classify.c classify.h \
 	client.c \
+	command_line_opt.h \
 	commit.c \
 	create_adm.c \
 	cvsrc.c \
-	diff.c \
+	diff.c diff.h \
 	difflib.c difflib.h \
 	edit.c \
-	entries.c \
+	entries.c entries.h \
 	error.c \
 	exithandle.c \
 	expand_path.c \
 	fileattr.c \
-	filesubr.c \
+	filesubr.c filesubr.h \
 	find_names.c \
 	gpg.c gpg.h \
 	hardlink.c \
 	hash.c \
 	history.c \
-	ignore.c \
+	ignore.c ignore.h \
 	import.c \
 	lock.c \
 	log.c \
 	log-buffer.c log-buffer.h \
 	login.c \
-	logmsg.c \
+	logmsg.c logmsg.h \
 	ls.c \
 	main.c \
 	mkmodules.c \
 	modules.c \
 	ms-buffer.c ms-buffer.h \
 	myndbm.c \
-	no_diff.c \
+	no_diff.c no_diff.h \
 	parseinfo.c parseinfo.h \
 	patch.c \
 	rcs.c \
 	rcscmds.c \
-	recurse.c \
+	recurse.c recurse.h \
 	release.c \
 	remove.c \
-	repos.c \
+	repos.c repos.h \
 	root.c \
 	rsh-client.c rsh-client.h \
-	run.c \
+	run.c run.h \
 	scramble.c \
 	server.c \
 	sign.c sign.h \
@@ -417,9 +418,9 @@ cvs_SOURCES = \
 	update.c \
 	verify.c verify.h \
 	version.c \
-	vers_ts.c \
+	vers_ts.c vers_ts.h \
 	watch.c \
-	wrapper.c \
+	wrapper.c wrapper.h \
 	zlib.c \
 	buffer.h \
 	client.h \
