@@ -39,20 +39,6 @@
    for the "fast" types and macros, which we recommend against using
    in public interfaces due to compiler differences.  */
 
-/* <sys/types.h> defines some of the stdint.h types as well, on glibc,
-   IRIX 6.5, and OpenBSD 3.8 (via <machine/types.h>).  */
-#if @HAVE_SYS_TYPES_H@
-/* <sys/types.h> on MacOS X 10.4.6 includes <stdint.h> and needs the
-   real one rather than the generated version. */
-#if __APPLE__ && 0
-# include 
-#endif
-# include <sys/types.h>
-#endif
-
-/* Get LONG_MIN, LONG_MAX, ULONG_MAX.  */
-#include <limits.h>
-
 #if 0
 # if defined __sgi && ! defined __c99
    /* Bypass IRIX's <stdint.h> if in C89 mode, since it merely annoys users
@@ -64,14 +50,30 @@
      Include it before <inttypes.h>, since any "#include <stdint.h>"
      in <inttypes.h> would reinclude us, skipping our contents because
      _GL_STDINT_H is defined.  */
-# include 
+# include @ABSOLUTE_STDINT_H@
 #endif
+
+/* <sys/types.h> defines some of the stdint.h types as well, on glibc,
+   IRIX 6.5, and OpenBSD 3.8 (via <machine/types.h>).
+   MacOS X 10.4.6 <sys/types.h> includes <stdint.h> (which is us), but
+   relies on the system <stdint.h> definitions, so include
+   <sys/types.h> after @ABSOLUTE_STDINT_H@.  */
+#if @HAVE_SYS_TYPES_H@
+# include <sys/types.h>
+#endif
+
+/* Get LONG_MIN, LONG_MAX, ULONG_MAX.  */
+#include <limits.h>
 
 #if 0
   /* In OpenBSD 3.8, <inttypes.h> includes <machine/types.h>, which defines
      int{8,16,32,64}_t, uint{8,16,32,64}_t and __BIT_TYPES_DEFINED__.
      <inttypes.h> also defines intptr_t and uintptr_t.  */
 # include <inttypes.h>
+#elif 0
+  /* Solaris 7 <sys/inttypes.h> has the types except the *_fast*_t types, and
+     the macros except for *_FAST*_*, INTPTR_MIN, PTRDIFF_MIN, PTRDIFF_MAX.  */
+# include <sys/inttypes.h>
 #endif
 
 #if 0 && ! defined __BIT_TYPES_DEFINED__
@@ -79,13 +81,6 @@
      int{8,16,32,64}_t and __BIT_TYPES_DEFINED__.  In libc5 >= 5.2.2 it is
      included by <sys/types.h>.  */
 # include <sys/bitypes.h>
-#endif
-
-#if 0 && !0
-  /* Solaris 7 <sys/inttypes.h> has the types except the *_fast*_t types, and
-     the macros except for *_FAST*_*, INTPTR_MIN, PTRDIFF_MIN, PTRDIFF_MAX.
-     But note that <sys/int_types.h> contains only the type definitions!  */
-# include <sys/inttypes.h>
 #endif
 
 #if ! defined __cplusplus || defined __STDC_CONSTANT_MACROS

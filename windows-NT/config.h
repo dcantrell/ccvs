@@ -22,6 +22,15 @@
 
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
+/* Define this to an absolute name of <inttypes.h>. */
+#undef ABSOLUTE_INTTYPES_H
+
+/* Define this to an absolute name of <stdint.h>. */
+#undef ABSOLUTE_STDINT_H
+
+/* Define this to an absolute name of <sys/stat.h>. */
+#undef ABSOLUTE_SYS_STAT_H
+
 /* Define this to a NULL terminated list of allowed path prefixes (for
    directories) and paths to files the CVS server will allow configuration to
    be read from when specified from the command line. */
@@ -100,6 +109,9 @@
    list of arguments provided by the user. */
 #define DEFAULT_VERIFY_TEMPLATE ""
 
+/* Define to 1 if // is a file system root distinct from /. */
+#undef DOUBLE_SLASH_IS_DISTINCT_ROOT
+
 /* Define if there is a member named d_ino in the struct describing directory
    headers. */
 #undef D_INO_IN_DIRENT
@@ -135,12 +147,9 @@
    separator. */
 #define FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR 1
 
-#if FILE_SYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX
-# define FILE_SYSTEM_PREFIX_LEN(Filename) \
-  ((Filename)[0] && (Filename)[1] == ':' ? 2 : 0)
-#else
-# define FILE_SYSTEM_PREFIX_LEN(Filename) 0
-#endif
+/* Define if a drive letter prefix denotes a relative path if it is not
+   followed by a file name component separator. */
+#undef FILE_SYSTEM_DRIVE_PREFIX_CAN_BE_RELATIVE
 
 /* When committing or importing files, you must enter a log message. Normally,
    you can do this either via the -m flag on the command line, the -F flag on
@@ -150,15 +159,6 @@
    message with -m or -F. Enabling FORCE_USE_EDITOR will cause the -m or -F
    message to be appended to the temp file when the editor is started. */
 #undef FORCE_USE_EDITOR
-
-/* Define this to the full path to <inttypes.h>. */
-#undef FULL_PATH_INTTYPES_H
-
-/* Define this to the full path to <stdint.h>. */
-#undef FULL_PATH_STDINT_H
-
-/* Define this to the full path to <sys/stat.h>. */
-#undef FULL_PATH_SYS_STAT_H
 
 /* Define to an alternative value if GSS_C_NT_HOSTBASED_SERVICE isn't defined
    in the gssapi.h header file. MIT Kerberos 1.2.1 requires this. Only
@@ -351,6 +351,14 @@
 /* Define to 1 if you have the declaration of `strerror_r', and to 0 if you
    don't. */
 #undef HAVE_DECL_STRERROR_R
+
+/* Define to 1 if you have the declaration of `strndup', and to 0 if you
+   don't. */
+#undef HAVE_DECL_STRNDUP
+
+/* Define to 1 if you have the declaration of `strnlen', and to 0 if you
+   don't. */
+#undef HAVE_DECL_STRNLEN
 
 /* Define to 1 if you have the declaration of `strtoimax', and to 0 if you
    don't. */
@@ -783,6 +791,9 @@
 
 /* Define to 1 if you have the `strncasecmp' function. */
 #undef HAVE_STRNCASECMP
+
+/* Define if you have the strndup() function and it works. */
+#undef HAVE_STRNDUP
 
 /* Define to 1 if you have the `strtoimax' function. */
 #undef HAVE_STRTOIMAX
@@ -1486,6 +1497,12 @@
 
 /* Define to rpl_strcasecmp always. */
 #define strcasecmp rpl_strcasecmp
+
+/* Define to rpl_strndup if the replacement function should be used, */
+#undef strndup
+
+/* Define to rpl_strnlen if the replacement function should be used. */
+#undef strnlen
 
 /* Define to rpl_tzset if the wrapper function should be used. */
 #undef tzset
