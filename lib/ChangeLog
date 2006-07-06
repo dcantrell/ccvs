@@ -3,6 +3,11 @@
 	* getaddrinfo.c: changed '#if WIN32_NATIVE' to '#ifdef' to allow it
 	to compile in MSVC
 
+	* getaddrinfo.c:
+	  - Fixed a second compile problem: moved WSAAPI macro
+	    inside brackets.
+	  - Minor changes to suppress some compiler warnings.
+
 2006-07-06  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am: Import changes from...
