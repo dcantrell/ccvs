@@ -1,3 +1,7 @@
+2006-07-06  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	* config.h.in: restored HAVE_NDIR_H (it's required for Windows builds).
+
 2006-06-29  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note trailing slash fix.
