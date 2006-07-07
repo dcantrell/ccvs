@@ -379,7 +379,7 @@
 
 /* Define to 1 if you have the declaration of `wcwidth', and to 0 if you
    don't. */
-#undef HAVE_DECL_WCWIDTH
+#define HAVE_DECL_WCWIDTH 0
 
 /* Define to 1 if you have the declaration of `__fpending', and to 0 if you
    don't. */
@@ -967,7 +967,7 @@
 #define HAVE_WCTYPE_H 1
 
 /* Define to 1 if you have the `wcwidth' function. */
-#undef HAVE_WCWIDTH
+#define HAVE_WCWIDTH 0
 
 /* Define to 1 if you have the <winsock2.h> header file. */
 #define HAVE_WINSOCK2_H 1

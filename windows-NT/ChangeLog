@@ -1,3 +1,11 @@
+2006-07-06  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	* config.h.in.in: added HAVE_DECL_SNPRINTF and removed HAVE_ISASCII
+	to conform to ../config.h.in;
+	updated declarations of HAVE_DECL_WCWIDTH, HAVE_WCWIDTH to compile
+	properly.
+	* config.h.in, config.h: regenerated.
+
 2006-07-06  Mark D. Baushke  <mdb@gnu.org>
 
 	* Makefile.am (stamp-sh2): Update sed commands used to create
