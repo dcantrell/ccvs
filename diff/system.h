@@ -155,15 +155,7 @@ GNU General Public License for more details.
 #else
 # define dirent direct
 # define NAMLEN(dirent) ((dirent)->d_namlen)
-# if HAVE_SYS_NDIR_H
-#  include <sys/ndir.h>
-# endif
-# if HAVE_SYS_DIR_H
-#  include <sys/dir.h>
-# endif
-# if HAVE_NDIR_H
-#  include <ndir.h>
-# endif
+# include <ndir.h>
 #endif
 
 #if HAVE_VFORK_H
