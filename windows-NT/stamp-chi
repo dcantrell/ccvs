@@ -142,7 +142,7 @@
 
 /* Define if a drive letter prefix denotes a relative path if it is not
    followed by a file name component separator. */
-#undef FILE_SYSTEM_DRIVE_PREFIX_CAN_BE_RELATIVE
+#define FILE_SYSTEM_DRIVE_PREFIX_CAN_BE_RELATIVE 1
 
 /* When committing or importing files, you must enter a log message. Normally,
    you can do this either via the -m flag on the command line, the -F flag on
@@ -317,6 +317,10 @@
    don't. */
 #undef HAVE_DECL_INET_NTOP
 
+/* Define to 1 if you have the declaration of `isblank', and to 0 if you
+   don't. */
+#undef HAVE_DECL_ISBLANK
+
 /* Define to 1 if you have the declaration of `memrchr', and to 0 if you
    don't. */
 #undef HAVE_DECL_MEMRCHR
@@ -379,7 +383,7 @@
 
 /* Define to 1 if you have the declaration of `wcwidth', and to 0 if you
    don't. */
-#undef HAVE_DECL_WCWIDTH
+#define HAVE_DECL_WCWIDTH 0
 
 /* Define to 1 if you have the declaration of `__fpending', and to 0 if you
    don't. */
@@ -388,8 +392,7 @@
 /* Define to 1 if you have the <direct.h> header file. */
 #undef HAVE_DIRECT_H
 
-/* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
-   */
+/* Define to 1 if you have the <dirent.h> header file. */
 #undef HAVE_DIRENT_H
 
 /* Define to 1 if you have the `dup2' function. */
@@ -522,9 +525,6 @@
 /* Define to 1 if <sys/socket.h> defines AF_INET6. */
 #undef HAVE_IPV6
 
-/* Define to 1 if you have the `isblank' function. */
-#undef HAVE_ISBLANK
-
 /* Define to 1 if you have the `iswprint' function. */
 #define HAVE_ISWPRINT 1
 
@@ -634,9 +634,6 @@
 
 /* Define to 1 if you have the <ndbm.h> header file. */
 #undef HAVE_NDBM_H
-
-/* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
-#define HAVE_NDIR_H 1
 
 /* Define to 1 if you have the <netdb.h> header file. */
 #undef HAVE_NETDB_H
@@ -838,19 +835,11 @@
 /* Define to 1 if you have the <sys/cdefs.h> header file. */
 #undef HAVE_SYS_CDEFS_H
 
-/* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
-   */
-#undef HAVE_SYS_DIR_H
-
 /* Define to 1 if you have the <sys/file.h> header file. */
 #undef HAVE_SYS_FILE_H
 
 /* Define to 1 if you have the <sys/inttypes.h> header file. */
 #undef HAVE_SYS_INTTYPES_H
-
-/* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
-   */
-#undef HAVE_SYS_NDIR_H
 
 /* Define to 1 if you have the <sys/param.h> header file. */
 #undef HAVE_SYS_PARAM_H
@@ -967,7 +956,7 @@
 #define HAVE_WCTYPE_H 1
 
 /* Define to 1 if you have the `wcwidth' function. */
-#undef HAVE_WCWIDTH
+#define HAVE_WCWIDTH 0
 
 /* Define to 1 if you have the <winsock2.h> header file. */
 #define HAVE_WINSOCK2_H 1
