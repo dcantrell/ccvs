@@ -8,6 +8,8 @@
 	    inside brackets.
 	  - Minor changes to suppress some compiler warnings.
 
+	* fnmatch.c: if ISUPPER isn't defined, then define it.
+
 2006-07-06  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am: Import changes from...

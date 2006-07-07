@@ -155,6 +155,9 @@ static int posixly_correct;
 # ifdef _LIBC
 #  define FOLD(c) ((flags & FNM_CASEFOLD) ? tolower (c) : (c))
 # else
+#  ifndef ISUPPER
+#   define ISUPPER(Ch) isupper(Ch)
+#  endif
 #  define FOLD(c) ((flags & FNM_CASEFOLD) && ISUPPER (c) ? tolower (c) : (c))
 # endif
 # define CHAR	char
