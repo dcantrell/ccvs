@@ -1,5 +1,8 @@
 2006-07-06  Derek Price  <derek@ximbiot.com>
 
+	* _inttypes_h.m4, d-ino.m4, d-type.m4, fnmatch.m4, getcwd.m4,
+	getpass.m4, glob.m4, mkstemp.m4, regex.m4: Update from GNULIB.
+
 	* ftruncate.m4, getdate.m4, gnulib-comp.m4, sockpfaf.m4, strtol.m4,
 	strtoul.m4: Update from GNULIB.
 	* snprintf.m4: New file from GNULIB.
