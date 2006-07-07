@@ -1,3 +1,7 @@
+2006-07-07  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.in [HAVE_NDIR_H]: Remove this definition.
+
 2006-07-06  Jim Hyslop <jhyslop@dreampossible.ca>
 
 	* config.h.in.in: added HAVE_DECL_SNPRINTF and removed HAVE_ISASCII
