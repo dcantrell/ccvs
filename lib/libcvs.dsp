@@ -189,6 +189,10 @@ SOURCE=.\glob.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\inet_ntop.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\lstat.c
 # End Source File
 # Begin Source File
@@ -253,6 +257,10 @@ SOURCE=.\sighandle.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\snprintf.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\strcasecmp.c
 # End Source File
 # Begin Source File
@@ -262,6 +270,14 @@ SOURCE=.\strftime.c
 # Begin Source File
 
 SOURCE=.\stripslash.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\strndup.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\strnlen.c
 # End Source File
 # Begin Source File
 
@@ -306,6 +322,10 @@ SOURCE=.\xmalloc.c
 # Begin Source File
 
 SOURCE=.\xreadlink.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\xstrndup.c
 # End Source File
 # Begin Source File
 
@@ -545,6 +565,10 @@ InputPath=.\glob_.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\inet_ntop.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\inttypes.h
 # End Source File
 # Begin Source File
@@ -617,6 +641,10 @@ SOURCE=.\setenv.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\snprintf.h
+# End Source File
+# Begin Source File
+
 SOURCE="..\windows-NT\sys\socket.h"
 # End Source File
 # Begin Source File
@@ -638,6 +666,14 @@ SOURCE=.\strcase.h
 # Begin Source File
 
 SOURCE=.\strdup.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\strndup.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\strnlen.h
 # End Source File
 # Begin Source File
 
@@ -698,6 +734,10 @@ SOURCE=.\xreadlink.h
 # Begin Source File
 
 SOURCE=.\xsize.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\xstrndup.h
 # End Source File
 # Begin Source File
 

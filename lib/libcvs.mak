@@ -25,6 +25,9 @@ NULL=
 NULL=nul
 !ENDIF 
 
+CPP=cl.exe
+RSC=rc.exe
+
 !IF  "$(CFG)" == "libcvs - Win32 Release"
 
 OUTDIR=.\WinRel
@@ -63,6 +66,7 @@ CLEAN :
 	-@erase "$(INTDIR)\getopt1.obj"
 	-@erase "$(INTDIR)\gettime.obj"
 	-@erase "$(INTDIR)\glob.obj"
+	-@erase "$(INTDIR)\inet_ntop.obj"
 	-@erase "$(INTDIR)\lstat.obj"
 	-@erase "$(INTDIR)\mbchar.obj"
 	-@erase "$(INTDIR)\md5.obj"
@@ -79,9 +83,12 @@ CLEAN :
 	-@erase "$(INTDIR)\save-cwd.obj"
 	-@erase "$(INTDIR)\setenv.obj"
 	-@erase "$(INTDIR)\sighandle.obj"
+	-@erase "$(INTDIR)\snprintf.obj"
 	-@erase "$(INTDIR)\strcasecmp.obj"
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
+	-@erase "$(INTDIR)\strndup.obj"
+	-@erase "$(INTDIR)\strnlen.obj"
 	-@erase "$(INTDIR)\strnlen1.obj"
 	-@erase "$(INTDIR)\tempname.obj"
 	-@erase "$(INTDIR)\time_r.obj"
@@ -94,6 +101,7 @@ CLEAN :
 	-@erase "$(INTDIR)\xgethostname.obj"
 	-@erase "$(INTDIR)\xmalloc.obj"
 	-@erase "$(INTDIR)\xreadlink.obj"
+	-@erase "$(INTDIR)\xstrndup.obj"
 	-@erase "$(INTDIR)\yesno.obj"
 	-@erase "$(OUTDIR)\libcvs.lib"
 	-@erase ".\alloca.h"
@@ -104,40 +112,7 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\windows-NT" /I "." /D "NDEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /D "WINDOWS32" /Fp"$(INTDIR)\libcvs.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
 BSC32_SBRS= \
@@ -171,6 +146,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\getopt1.obj" \
 	"$(INTDIR)\gettime.obj" \
 	"$(INTDIR)\glob.obj" \
+	"$(INTDIR)\inet_ntop.obj" \
 	"$(INTDIR)\lstat.obj" \
 	"$(INTDIR)\mbchar.obj" \
 	"$(INTDIR)\md5.obj" \
@@ -187,9 +163,12 @@ LIB32_OBJS= \
 	"$(INTDIR)\save-cwd.obj" \
 	"$(INTDIR)\setenv.obj" \
 	"$(INTDIR)\sighandle.obj" \
+	"$(INTDIR)\snprintf.obj" \
 	"$(INTDIR)\strcasecmp.obj" \
 	"$(INTDIR)\strftime.obj" \
 	"$(INTDIR)\stripslash.obj" \
+	"$(INTDIR)\strndup.obj" \
+	"$(INTDIR)\strnlen.obj" \
 	"$(INTDIR)\strnlen1.obj" \
 	"$(INTDIR)\tempname.obj" \
 	"$(INTDIR)\time_r.obj" \
@@ -201,6 +180,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\xgethostname.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xreadlink.obj" \
+	"$(INTDIR)\xstrndup.obj" \
 	"$(INTDIR)\yesno.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
@@ -246,6 +226,7 @@ CLEAN :
 	-@erase "$(INTDIR)\getopt1.obj"
 	-@erase "$(INTDIR)\gettime.obj"
 	-@erase "$(INTDIR)\glob.obj"
+	-@erase "$(INTDIR)\inet_ntop.obj"
 	-@erase "$(INTDIR)\lstat.obj"
 	-@erase "$(INTDIR)\mbchar.obj"
 	-@erase "$(INTDIR)\md5.obj"
@@ -262,9 +243,12 @@ CLEAN :
 	-@erase "$(INTDIR)\save-cwd.obj"
 	-@erase "$(INTDIR)\setenv.obj"
 	-@erase "$(INTDIR)\sighandle.obj"
+	-@erase "$(INTDIR)\snprintf.obj"
 	-@erase "$(INTDIR)\strcasecmp.obj"
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
+	-@erase "$(INTDIR)\strndup.obj"
+	-@erase "$(INTDIR)\strnlen.obj"
 	-@erase "$(INTDIR)\strnlen1.obj"
 	-@erase "$(INTDIR)\tempname.obj"
 	-@erase "$(INTDIR)\time_r.obj"
@@ -278,46 +262,14 @@ CLEAN :
 	-@erase "$(INTDIR)\xgethostname.obj"
 	-@erase "$(INTDIR)\xmalloc.obj"
 	-@erase "$(INTDIR)\xreadlink.obj"
+	-@erase "$(INTDIR)\xstrndup.obj"
 	-@erase "$(INTDIR)\yesno.obj"
 	-@erase "$(OUTDIR)\libcvs.lib"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /I "..\windows-NT" /I "." /D "_DEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /D "WINDOWS32" /Fp"$(INTDIR)\libcvs.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
 BSC32_SBRS= \
@@ -351,6 +303,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\getopt1.obj" \
 	"$(INTDIR)\gettime.obj" \
 	"$(INTDIR)\glob.obj" \
+	"$(INTDIR)\inet_ntop.obj" \
 	"$(INTDIR)\lstat.obj" \
 	"$(INTDIR)\mbchar.obj" \
 	"$(INTDIR)\md5.obj" \
@@ -367,9 +320,12 @@ LIB32_OBJS= \
 	"$(INTDIR)\save-cwd.obj" \
 	"$(INTDIR)\setenv.obj" \
 	"$(INTDIR)\sighandle.obj" \
+	"$(INTDIR)\snprintf.obj" \
 	"$(INTDIR)\strcasecmp.obj" \
 	"$(INTDIR)\strftime.obj" \
 	"$(INTDIR)\stripslash.obj" \
+	"$(INTDIR)\strndup.obj" \
+	"$(INTDIR)\strnlen.obj" \
 	"$(INTDIR)\strnlen1.obj" \
 	"$(INTDIR)\tempname.obj" \
 	"$(INTDIR)\time_r.obj" \
@@ -381,6 +337,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\xgethostname.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xreadlink.obj" \
+	"$(INTDIR)\xstrndup.obj" \
 	"$(INTDIR)\yesno.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
@@ -389,6 +346,36 @@ LIB32_OBJS= \
 <<
 
 !ENDIF 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
@@ -531,6 +518,11 @@ SOURCE=.\glob.c
 "$(INTDIR)\glob.obj" : $(SOURCE) "$(INTDIR)"
 
 
+SOURCE=.\inet_ntop.c
+
+"$(INTDIR)\inet_ntop.obj" : $(SOURCE) "$(INTDIR)"
+
+
 SOURCE=.\lstat.c
 
 "$(INTDIR)\lstat.obj" : $(SOURCE) "$(INTDIR)"
@@ -611,6 +603,11 @@ SOURCE=.\sighandle.c
 "$(INTDIR)\sighandle.obj" : $(SOURCE) "$(INTDIR)"
 
 
+SOURCE=.\snprintf.c
+
+"$(INTDIR)\snprintf.obj" : $(SOURCE) "$(INTDIR)"
+
+
 SOURCE=.\strcasecmp.c
 
 "$(INTDIR)\strcasecmp.obj" : $(SOURCE) "$(INTDIR)"
@@ -624,6 +621,16 @@ SOURCE=.\strftime.c
 SOURCE=.\stripslash.c
 
 "$(INTDIR)\stripslash.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\strndup.c
+
+"$(INTDIR)\strndup.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\strnlen.c
+
+"$(INTDIR)\strnlen.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\strnlen1.c
@@ -679,6 +686,11 @@ SOURCE=.\xmalloc.c
 SOURCE=.\xreadlink.c
 
 "$(INTDIR)\xreadlink.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\xstrndup.c
+
+"$(INTDIR)\xstrndup.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\yesno.c

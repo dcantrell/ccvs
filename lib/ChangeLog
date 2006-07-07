@@ -10,6 +10,10 @@
 
 	* fnmatch.c: if ISUPPER isn't defined, then define it.
 
+	* libcvs.dsp: Added new files (inet_ntop.*, snprintf.*, strndup.*,
+	strnlen.*, xstrndup.*)
+	* libcvs.dep, libcvs.mak: regenerated
+
 2006-07-06  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am: Import changes from...

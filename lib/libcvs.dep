@@ -28,9 +28,12 @@
 	"..\windows-NT\woe32.h"\
 	".\dirname.h"\
 	".\timespec.h"\
+	".\xalloc.h"\
+	".\xstrndup.h"\
 	
 
 ".\canon-host.c" : \
+	"..\..\..\..\..\..\..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\sys\socket.h"\
 	"..\windows-NT\woe32.h"\
@@ -60,6 +63,7 @@
 	"..\windows-NT\woe32.h"\
 	".\cycle-check.h"\
 	".\dev-ino.h"\
+	".\same-inode.h"\
 	".\timespec.h"\
 	
 
@@ -134,6 +138,7 @@
 	
 
 .\gai_strerror.c : \
+	"..\..\..\..\..\..\..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\sys\socket.h"\
 	"..\windows-NT\woe32.h"\
@@ -143,12 +148,15 @@
 	
 
 .\getaddrinfo.c : \
+	"..\..\..\..\..\..\..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\sys\socket.h"\
 	"..\windows-NT\woe32.h"\
 	".\getaddrinfo.h"\
 	".\gettext.h"\
+	".\inet_ntop.h"\
+	".\snprintf.h"\
 	".\strdup.h"\
 	".\timespec.h"\
 	
@@ -237,6 +245,15 @@
 	".\timespec.h"\
 	
 
+.\inet_ntop.c : \
+	"..\..\..\..\..\..\..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	"..\windows-NT\config.h"\
+	"..\windows-NT\sys\socket.h"\
+	"..\windows-NT\woe32.h"\
+	".\inet_ntop.h"\
+	".\timespec.h"\
+	
+
 .\lstat.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\woe32.h"\
@@ -250,6 +267,7 @@
 	"..\windows-NT\woe32.h"\
 	".\mbchar.h"\
 	".\timespec.h"\
+	".\wcwidth.h"\
 	
 
 .\md5.c : \
@@ -380,6 +398,15 @@
 	".\timespec.h"\
 	
 
+.\snprintf.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\minmax.h"\
+	".\snprintf.h"\
+	".\timespec.h"\
+	".\vasnprintf.h"\
+	
+
 .\strcasecmp.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
@@ -389,6 +416,7 @@
 	".\strcase.h"\
 	".\strnlen1.h"\
 	".\timespec.h"\
+	".\wcwidth.h"\
 	
 
 .\strftime.c : \
@@ -404,6 +432,21 @@
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\woe32.h"\
 	".\dirname.h"\
+	".\timespec.h"\
+	
+
+.\strndup.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\strndup.h"\
+	".\strnlen.h"\
+	".\timespec.h"\
+	
+
+.\strnlen.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\strnlen.h"\
 	".\timespec.h"\
 	
 
@@ -500,6 +543,15 @@
 	".\timespec.h"\
 	".\xalloc.h"\
 	".\xreadlink.h"\
+	
+
+.\xstrndup.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\woe32.h"\
+	".\strndup.h"\
+	".\timespec.h"\
+	".\xalloc.h"\
+	".\xstrndup.h"\
 	
 
 .\yesno.c : \
