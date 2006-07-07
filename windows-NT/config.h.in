@@ -142,7 +142,7 @@
 
 /* Define if a drive letter prefix denotes a relative path if it is not
    followed by a file name component separator. */
-#undef FILE_SYSTEM_DRIVE_PREFIX_CAN_BE_RELATIVE
+#define FILE_SYSTEM_DRIVE_PREFIX_CAN_BE_RELATIVE 1
 
 /* When committing or importing files, you must enter a log message. Normally,
    you can do this either via the -m flag on the command line, the -F flag on

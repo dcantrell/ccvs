@@ -1,3 +1,10 @@
+2006-07-06  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.am (stamp-sh2): Update sed commands used to create
+	stdint.h based on lib/Makefile.am.
+	* config.h.in.in: Merge changes from ../config.h.in
+	* Makefile.in, config.h, config.h.in, stdint.h: Regenerated
+	
 2006-07-06  Derek Price  <derek@ximbiot.com>
 
 	* filesubr.c (last_component): Remove, in favor of GNULIB version from

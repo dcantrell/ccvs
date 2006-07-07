@@ -740,88 +740,25 @@ stamp-sh2: $(top_srcdir)/lib/stdint_.h
 	@echo " */" >>stdint.tmp
 	sed -e 's/@''HAVE_WCHAR_H''@/1/g' \
 	    -e 's/@''HAVE_STDINT_H''@/0/g' \
-	    -e 's|@''FULL_PATH_STDINT_H''@||g' \
+	    -e 's/@''HAVE_SYS_TYPES_H''@/1/g' \
+	    -e 's|@''ABSOLUTE_STDINT_H''@||g' \
 	    -e 's/@''HAVE_INTTYPES_H''@/0/g' \
-	    -e 's|@''FULL_PATH_INTTYPES_H''@||g' \
 	    -e 's/@''HAVE_SYS_INTTYPES_H''@/0/g' \
 	    -e 's/@''HAVE_SYS_BITYPES_H''@/0/g' \
-	    -e 's/@''HAVE_LONG_64BIT''@/0/g' \
-	    -e 's/@''HAVE_LONG_LONG_64BIT''@/0/g' \
-	    -e 's/@''HAVE_INT8_T''@/0/g' \
-	    -e 's/@''HAVE_INT16_T''@/0/g' \
-	    -e 's/@''HAVE_INT32_T''@/0/g' \
-	    -e 's/@''HAVE_INT64_T''@/0/g' \
-	    -e 's/@''HAVE_UINT8_T''@/0/g' \
-	    -e 's/@''HAVE_UINT16_T''@/0/g' \
-	    -e 's/@''HAVE_UINT32_T''@/0/g' \
-	    -e 's/@''HAVE_UINT64_T''@/0/g' \
-	    -e 's/@''HAVE_INT_LEAST8_T''@/0/g' \
-	    -e 's/@''HAVE_INT_LEAST16_T''@/0/g' \
-	    -e 's/@''HAVE_INT_LEAST32_T''@/0/g' \
-	    -e 's/@''HAVE_INT_LEAST64_T''@/0/g' \
-	    -e 's/@''HAVE_UINT_LEAST8_T''@/0/g' \
-	    -e 's/@''HAVE_UINT_LEAST16_T''@/0/g' \
-	    -e 's/@''HAVE_UINT_LEAST32_T''@/0/g' \
-	    -e 's/@''HAVE_UINT_LEAST64_T''@/0/g' \
-	    -e 's/@''HAVE_INT_FAST8_T''@/0/g' \
-	    -e 's/@''HAVE_INT_FAST16_T''@/0/g' \
-	    -e 's/@''HAVE_INT_FAST32_T''@/0/g' \
-	    -e 's/@''HAVE_INT_FAST64_T''@/0/g' \
-	    -e 's/@''HAVE_UINT_FAST8_T''@/0/g' \
-	    -e 's/@''HAVE_UINT_FAST16_T''@/0/g' \
-	    -e 's/@''HAVE_UINT_FAST32_T''@/0/g' \
-	    -e 's/@''HAVE_UINT_FAST64_T''@/0/g' \
-	    -e 's/@''HAVE_INTPTR_T''@/0/g' \
-	    -e 's/@''HAVE_UINTPTR_T''@/0/g' \
-	    -e 's/@''HAVE_INTMAX_T''@/0/g' \
-	    -e 's/@''HAVE_UINTMAX_T''@/0/g' \
-	    -e 's/@''BITSIZEOF_UNSIGNED_INT''@/32/g' \
-	    -e 's/@''BITSIZEOF_LONG''@/32/g' \
-	    -e 's/@''BITSIZEOF_UNSIGNED_LONG''@/32/g' \
-	    -e 's/@''BITSIZEOF_INT8_T''@/8/g' \
-	    -e 's/@''BITSIZEOF_INT16_T''@/16/g' \
-	    -e 's/@''BITSIZEOF_INT32_T''@/32/g' \
-	    -e 's/@''BITSIZEOF_INT64_T''@/64/g' \
-	    -e 's/@''BITSIZEOF_UINT8_T''@/8/g' \
-	    -e 's/@''BITSIZEOF_UINT16_T''@/16/g' \
-	    -e 's/@''BITSIZEOF_UINT32_T''@/32/g' \
-	    -e 's/@''BITSIZEOF_UINT64_T''@/64/g' \
-	    -e 's/@''BITSIZEOF_INT_LEAST8_T''@/8/g' \
-	    -e 's/@''BITSIZEOF_INT_LEAST16_T''@/16/g' \
-	    -e 's/@''BITSIZEOF_INT_LEAST32_T''@/32/g' \
-	    -e 's/@''BITSIZEOF_INT_LEAST64_T''@/64/g' \
-	    -e 's/@''BITSIZEOF_UINT_LEAST8_T''@/8/g' \
-	    -e 's/@''BITSIZEOF_UINT_LEAST16_T''@/16/g' \
-	    -e 's/@''BITSIZEOF_UINT_LEAST32_T''@/32/g' \
-	    -e 's/@''BITSIZEOF_UINT_LEAST64_T''@/64/g' \
-	    -e 's/@''BITSIZEOF_INT_FAST8_T''@/32/g' \
-	    -e 's/@''BITSIZEOF_INT_FAST16_T''@/32/g' \
-	    -e 's/@''BITSIZEOF_INT_FAST32_T''@/32/g' \
-	    -e 's/@''BITSIZEOF_INT_FAST64_T''@/64/g' \
-	    -e 's/@''BITSIZEOF_UINT_FAST8_T''@/32/g' \
-	    -e 's/@''BITSIZEOF_UINT_FAST16_T''@/32/g' \
-	    -e 's/@''BITSIZEOF_UINT_FAST32_T''@/32/g' \
-	    -e 's/@''BITSIZEOF_UINT_FAST64_T''@/64/g' \
-	    -e 's/@''BITSIZEOF_INTPTR_T''@/32/g' \
-	    -e 's/@''BITSIZEOF_UINTPTR_T''@/32/g' \
-	    -e 's/@''BITSIZEOF_INTMAX_T''@/64/g' \
-	    -e 's/@''BITSIZEOF_UINTMAX_T''@/64/g' \
+	    -e 's/@''HAVE_LONG_LONG_INT''@/0/g' \
 	    -e 's/@''BITSIZEOF_PTRDIFF_T''@/32/g' \
-	    -e 's/@''SAME_TYPE_PTRDIFF_T_LONG''@/0/g' \
+	    -e 's/@''PTRDIFF_T_SUFFIX''@//g' \
 	    -e 's/@''BITSIZEOF_SIG_ATOMIC_T''@/32/g' \
-	    -e 's/@''HAVE_SIGNED_SIG_ATOMIC_T''@/32/g' \
-	    -e 's/@''SAME_TYPE_SIG_ATOMIC_T_LONG''@/0/g' \
-	    -e 's/@''SAME_TYPE_SIG_ATOMIC_T_UNSIGNED_LONG''@/0/g' \
+	    -e 's/@''HAVE_SIGNED_SIG_ATOMIC_T''@/0/g' \
+	    -e 's/@''SIG_ATOMIC_T_SUFFIX''@//g' \
 	    -e 's/@''BITSIZEOF_SIZE_T''@/32/g' \
-	    -e 's/@''SAME_TYPE_SIZE_T_UNSIGNED_LONG''@/0/g' \
+	    -e 's/@''SIZE_T_SUFFIX''@//g' \
 	    -e 's/@''BITSIZEOF_WCHAR_T''@/32/g' \
 	    -e 's/@''HAVE_SIGNED_WCHAR_T''@/0/g' \
-	    -e 's/@''SAME_TYPE_WCHAR_T_LONG''@/0/g' \
-	    -e 's/@''SAME_TYPE_WCHAR_T_UNSIGNED_LONG''@/1/g' \
+	    -e 's/@''WCHAR_T_SUFFIX''@//g' \
 	    -e 's/@''BITSIZEOF_WINT_T''@/32/g' \
 	    -e 's/@''HAVE_SIGNED_WINT_T''@/0/g' \
-	    -e 's/@''SAME_TYPE_WINT_T_LONG''@/0/g' \
-	    -e 's/@''SAME_TYPE_WINT_T_UNSIGNED_LONG''@/1/g' \
+	    -e 's/@''WINT_T_SUFFIX''@//g' \
 	  <$(top_srcdir)/lib/stdint_.h >>stdint.tmp
 	@cmp -s stdint.tmp $(srcdir)/stdint.h \
 	  || (echo "Updating stdint.h"; \
