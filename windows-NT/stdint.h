@@ -50,15 +50,15 @@
      Include it before <inttypes.h>, since any "#include <stdint.h>"
      in <inttypes.h> would reinclude us, skipping our contents because
      _GL_STDINT_H is defined.  */
-# include @ABSOLUTE_STDINT_H@
+# include 
 #endif
 
 /* <sys/types.h> defines some of the stdint.h types as well, on glibc,
    IRIX 6.5, and OpenBSD 3.8 (via <machine/types.h>).
    MacOS X 10.4.6 <sys/types.h> includes <stdint.h> (which is us), but
    relies on the system <stdint.h> definitions, so include
-   <sys/types.h> after @ABSOLUTE_STDINT_H@.  */
-#if @HAVE_SYS_TYPES_H@
+   <sys/types.h> after .  */
+#if 1
 # include <sys/types.h>
 #endif
 
@@ -136,7 +136,7 @@
 #elif defined _MSC_VER
 # define int64_t __int64
 # define uint64_t unsigned __int64
-#elif @HAVE_LONG_LONG_INT@
+#elif 0
 # define int64_t long long int
 # define uint64_t unsigned long long int
 #endif
@@ -215,7 +215,7 @@
 
 #undef intmax_t
 #undef uintmax_t
-#if @HAVE_LONG_LONG_INT@ && LONG_MAX >> 30 == 1
+#if 0 && LONG_MAX >> 30 == 1
 # define intmax_t long long int
 # define uintmax_t unsigned long long int
 #elif defined int64_t
@@ -366,40 +366,40 @@
 #undef PTRDIFF_MIN
 #undef PTRDIFF_MAX
 #define PTRDIFF_MIN  \
-   _STDINT_MIN (1, 32, 0@PTRDIFF_T_SUFFIX@)
+   _STDINT_MIN (1, 32, 0)
 #define PTRDIFF_MAX  \
-   _STDINT_MAX (1, 32, 0@PTRDIFF_T_SUFFIX@)
+   _STDINT_MAX (1, 32, 0)
 
 /* sig_atomic_t limits */
 #undef SIG_ATOMIC_MIN
 #undef SIG_ATOMIC_MAX
 #define SIG_ATOMIC_MIN  \
-   _STDINT_MIN (32, 32, \
-		0@SIG_ATOMIC_T_SUFFIX@)
+   _STDINT_MIN (0, 32, \
+		0)
 #define SIG_ATOMIC_MAX  \
-   _STDINT_MAX (32, 32, \
-		0@SIG_ATOMIC_T_SUFFIX@)
+   _STDINT_MAX (0, 32, \
+		0)
 
 
 /* size_t limit */
 #undef SIZE_MAX
-#define SIZE_MAX  _STDINT_MAX (0, 32, 0@SIZE_T_SUFFIX@)
+#define SIZE_MAX  _STDINT_MAX (0, 32, 0)
 
 /* wchar_t limits */
 #undef WCHAR_MIN
 #undef WCHAR_MAX
 #define WCHAR_MIN  \
-   _STDINT_MIN (0, 32, 0@WCHAR_T_SUFFIX@)
+   _STDINT_MIN (0, 32, 0)
 #define WCHAR_MAX  \
-   _STDINT_MAX (0, 32, 0@WCHAR_T_SUFFIX@)
+   _STDINT_MAX (0, 32, 0)
 
 /* wint_t limits */
 #undef WINT_MIN
 #undef WINT_MAX
 #define WINT_MIN  \
-   _STDINT_MIN (0, 32, 0@WINT_T_SUFFIX@)
+   _STDINT_MIN (0, 32, 0)
 #define WINT_MAX  \
-   _STDINT_MAX (0, 32, 0@WINT_T_SUFFIX@)
+   _STDINT_MAX (0, 32, 0)
 
 /* 7.18.4. Macros for integer constants */
 
@@ -432,7 +432,7 @@
 #elif defined _MSC_VER
 # define INT64_C(x) x##i64
 # define UINT64_C(x) x##ui64
-#elif @HAVE_LONG_LONG_INT@
+#elif 0
 # define INT64_C(x) x##LL
 # define UINT64_C(x) x##ULL
 #endif
@@ -441,7 +441,7 @@
 
 #undef INTMAX_C
 #undef UINTMAX_C
-#if @HAVE_LONG_LONG_INT@ && LONG_MAX >> 30 == 1
+#if 0 && LONG_MAX >> 30 == 1
 # define INTMAX_C(x)   x##LL
 # define UINTMAX_C(x)  x##ULL
 #elif defined int64_t
