@@ -1,6 +1,6 @@
 2006-07-07  Derek Price  <derek@ximbiot.com>
 
-	* system.h [!HAVE_DIRENT_H && HAVE_NDIR_H]: Ignore this obsolescent
+	* system.h [!HAVE_DIRENT_H && !HAVE_NDIR_H]: Ignore this obsolescent
 	case.
 
 2006-07-06  Derek Price  <derek@ximbiot.com>
