@@ -1,3 +1,10 @@
+2006-07-07  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in [HAVE_DIRENT_H]: Define - this is correct on OpenVMS.
+	[HAVE_NDIR_H]: Remove definition.
+	* ndir.h: Remove this obsolescent file.
+	* vms.h: Don't include "ndir.h" here.
+
 2006-07-06  Derek Price  <derek@ximbiot.com>
 
 	* filesubr.c (last_component): Remove, in favor of GNULIB version from

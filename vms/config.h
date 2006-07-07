@@ -41,8 +41,8 @@
 /* Define to empty if the keyword does not work.  */
 /* #undef const */
 
-/* Define if you have <dirent.h>.  */
-/* #undef DIRENT */
+/* Define to 1 if you have the <dirent.h> header file. */
+#define HAVE_DIRENT_H 1
 
 /* Define if you have <sys/param.h> */
 /* #undef HAVE_SYS_PARAM_H */
@@ -71,9 +71,6 @@
 
 /* Define to `int' if <sys/types.h> doesn't define.  */
 /* #undef mode_t */
-
-/* Define if you don't have <dirent.h>, but have <ndir.h>.  */
-#define HAVE_NDIR_H 1
 
 /* Define to `int' if <sys/types.h> doesn't define.  */
 /* #undef pid_t */
