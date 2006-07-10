@@ -1,3 +1,14 @@
+2006-07-10  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	Commit Derek Price's patch to eliminate obsolete ndir.h, with some
+	trivial fine-tuning:
+	* ndir.c, ndir.h: Move to...
+	* dirent.c, dirent.h: ...here, and modify to meet POSIX dirent.h API
+	* Makefile.am (EXTRA_DIST): Rename ndir.(c,h) to dirent.(c,h).
+	* config.h.in.in [HAVE_SYS_DIR_H, HAVE_SYS_NDIR_H]: Remove
+	obsolete macros.
+	[HAVE_DIRENT_H]: Define
+
 2006-07-07  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in [HAVE_NDIR_H]: Remove this definition.

@@ -31,14 +31,13 @@ EXTRA_DIST = \
 	stamp-chi \
 	mkconfig.pl \
 	fix-msvc-mak.pl \
-	ndir.h \
+	dirent.c dirent.h \
 	pwd.h \
 	rcmd.h \
 	stdbool.h \
 	stdint.h \
 	filesubr.c \
 	mkdir.c \
-	ndir.c \
 	netdb.h \
 	pwd.c \
 	rcmd.c \

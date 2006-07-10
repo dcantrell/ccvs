@@ -1,5 +1,6 @@
-/*  msd_dir.c - portable directory routines
+/*  dirent.c - portable directory routines
     Copyright (C) 1990 by Thorsten Ohl, td12@ddagsi3.bitnet
+    Copyright (C) 2006 The Free Software Foundation, Inc.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,17 +17,22 @@
    for MS-DOS.  Written by Michael Rendell ({uunet,utai}michael@garfield),
    August 1897 */
 
-
+/* Minor adaptations made in 2006 by Derek R. Price <derek@ximbiot.com> to
+ * appear to be <dirent.c> as opposed to its former incarnation as <ndir.c>.
+ */
+
+
+/* Validate API.  */
+#include <sys/types.h>
+#include <dirent.h>
+
 #include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 
 #include <dos.h>
-
-#include <ndir.h>
 #include "xalloc.h"
 
 static void free_dircontents (struct _dircontents *);
@@ -108,30 +114,48 @@ opendir (const char *name)
 }
 
 
-void
+int
 closedir (DIR *dirp)
 {
   free_dircontents (dirp->dd_contents);
   free (dirp);
+  return 0;
 }
 
 
-struct direct *
+
+int
+readdir_r (DIR *dirp, struct dirent * restrict dp,
+	   struct dirent ** restrict result)
+{
+  if (!dirp->dd_cp)
+    *result = NULL;
+  else
+    {
+      strcpy (dp->d_name, dirp->dd_cp->_d_entry);
+      dp->d_ino = 0;
+      dirp->dd_cp = dirp->dd_cp->_d_next;
+      dirp->dd_loc++;
+      *result = dp;
+    }
+
+  return 0;
+}
+
+
+
+struct dirent *
 readdir (DIR *dirp)
 {
-  static struct direct dp;
-
-  if (!dirp->dd_cp) return NULL;
-  dp.d_namlen = dp.d_reclen =
-    strlen (strcpy (dp.d_name, dirp->dd_cp->_d_entry));
-#if 0 /* JB */
-  strlwr (dp.d_name);		/* JF */
-#endif
-  dp.d_ino = 0;
-  dirp->dd_cp = dirp->dd_cp->_d_next;
-  dirp->dd_loc++;
-
-  return &dp;
+  static struct dirent dp;
+  static struct dirent *retval;
+  int err = readdir_r (dirp, &dp, &retval);
+  if (err)
+    {
+      errno = err;
+      retval = NULL;
+    }
+  return retval;
 }
 
 
@@ -182,7 +206,7 @@ void
 main (int argc, char *argv[])
 {
   static DIR *directory;
-  struct direct *entry = NULL;
+  struct dirent *entry = NULL;
 
   char *name = "";
 
@@ -204,11 +228,3 @@ main (int argc, char *argv[])
 }
 
 #endif /* TEST */
-
-/* 
- * Local Variables:
- * mode:C
- * ChangeLog:ChangeLog
- * compile-command:make
- * End:
- */
