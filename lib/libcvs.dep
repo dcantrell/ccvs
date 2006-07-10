@@ -33,7 +33,6 @@
 	
 
 ".\canon-host.c" : \
-	"..\..\..\..\..\..\..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\sys\socket.h"\
 	"..\windows-NT\woe32.h"\
@@ -138,7 +137,6 @@
 	
 
 .\gai_strerror.c : \
-	"..\..\..\..\..\..\..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\sys\socket.h"\
 	"..\windows-NT\woe32.h"\
@@ -148,7 +146,6 @@
 	
 
 .\getaddrinfo.c : \
-	"..\..\..\..\..\..\..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\sys\socket.h"\
@@ -246,7 +243,6 @@
 	
 
 .\inet_ntop.c : \
-	"..\..\..\..\..\..\..\..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\sys\socket.h"\
 	"..\windows-NT\woe32.h"\

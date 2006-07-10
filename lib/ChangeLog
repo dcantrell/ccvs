@@ -1,3 +1,7 @@
+2006-07-10  Jim Hyslop <jhyslop@dreampossible.ca>
+
+	* libcvs.dep: Fixed relative directories in file
+
 2006-07-07  Derek Price  <derek@ximbiot.com>
 
 	* system.h [!HAVE_DIRENT_H && !HAVE_NDIR_H]: Ignore this obsolescent
