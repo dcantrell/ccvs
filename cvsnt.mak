@@ -66,6 +66,7 @@ CLEAN :
 	-@erase "$(INTDIR)\cvsrc.obj"
 	-@erase "$(INTDIR)\diff.obj"
 	-@erase "$(INTDIR)\difflib.obj"
+	-@erase "$(INTDIR)\dirent.obj"
 	-@erase "$(INTDIR)\edit.obj"
 	-@erase "$(INTDIR)\entries.obj"
 	-@erase "$(INTDIR)\error.obj"
@@ -91,7 +92,6 @@ CLEAN :
 	-@erase "$(INTDIR)\mkmodules.obj"
 	-@erase "$(INTDIR)\modules.obj"
 	-@erase "$(INTDIR)\myndbm.obj"
-	-@erase "$(INTDIR)\ndir.obj"
 	-@erase "$(INTDIR)\no_diff.obj"
 	-@erase "$(INTDIR)\parseinfo.obj"
 	-@erase "$(INTDIR)\patch.obj"
@@ -190,6 +190,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\cvsrc.obj" \
 	"$(INTDIR)\diff.obj" \
 	"$(INTDIR)\difflib.obj" \
+	"$(INTDIR)\dirent.obj" \
 	"$(INTDIR)\edit.obj" \
 	"$(INTDIR)\entries.obj" \
 	"$(INTDIR)\error.obj" \
@@ -215,7 +216,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\mkmodules.obj" \
 	"$(INTDIR)\modules.obj" \
 	"$(INTDIR)\myndbm.obj" \
-	"$(INTDIR)\ndir.obj" \
 	"$(INTDIR)\no_diff.obj" \
 	"$(INTDIR)\parseinfo.obj" \
 	"$(INTDIR)\patch.obj" \
@@ -299,6 +299,7 @@ CLEAN :
 	-@erase "$(INTDIR)\cvsrc.obj"
 	-@erase "$(INTDIR)\diff.obj"
 	-@erase "$(INTDIR)\difflib.obj"
+	-@erase "$(INTDIR)\dirent.obj"
 	-@erase "$(INTDIR)\edit.obj"
 	-@erase "$(INTDIR)\entries.obj"
 	-@erase "$(INTDIR)\error.obj"
@@ -324,7 +325,6 @@ CLEAN :
 	-@erase "$(INTDIR)\mkmodules.obj"
 	-@erase "$(INTDIR)\modules.obj"
 	-@erase "$(INTDIR)\myndbm.obj"
-	-@erase "$(INTDIR)\ndir.obj"
 	-@erase "$(INTDIR)\no_diff.obj"
 	-@erase "$(INTDIR)\parseinfo.obj"
 	-@erase "$(INTDIR)\patch.obj"
@@ -426,6 +426,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\cvsrc.obj" \
 	"$(INTDIR)\diff.obj" \
 	"$(INTDIR)\difflib.obj" \
+	"$(INTDIR)\dirent.obj" \
 	"$(INTDIR)\edit.obj" \
 	"$(INTDIR)\entries.obj" \
 	"$(INTDIR)\error.obj" \
@@ -451,7 +452,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\mkmodules.obj" \
 	"$(INTDIR)\modules.obj" \
 	"$(INTDIR)\myndbm.obj" \
-	"$(INTDIR)\ndir.obj" \
 	"$(INTDIR)\no_diff.obj" \
 	"$(INTDIR)\parseinfo.obj" \
 	"$(INTDIR)\patch.obj" \
@@ -597,6 +597,12 @@ SOURCE=.\src\diff.c
 SOURCE=.\src\difflib.c
 
 "$(INTDIR)\difflib.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=".\windows-NT\dirent.c"
+
+"$(INTDIR)\dirent.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -747,12 +753,6 @@ SOURCE=.\src\modules.c
 SOURCE=.\src\myndbm.c
 
 "$(INTDIR)\myndbm.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=".\windows-NT\ndir.c"
-
-"$(INTDIR)\ndir.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 

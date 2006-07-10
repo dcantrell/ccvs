@@ -400,7 +400,7 @@
 #undef HAVE_DIRECT_H
 
 /* Define to 1 if you have the <dirent.h> header file. */
-#undef HAVE_DIRENT_H
+#define HAVE_DIRENT_H 1
 
 /* Define to 1 if you have the `dup2' function. */
 #define HAVE_DUP2 1

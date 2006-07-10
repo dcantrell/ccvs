@@ -148,6 +148,10 @@ SOURCE=.\src\difflib.c
 # End Source File
 # Begin Source File
 
+SOURCE=".\windows-NT\dirent.c"
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\edit.c
 # End Source File
 # Begin Source File
@@ -245,10 +249,6 @@ SOURCE=.\src\modules.c
 # Begin Source File
 
 SOURCE=.\src\myndbm.c
-# End Source File
-# Begin Source File
-
-SOURCE=".\windows-NT\ndir.c"
 # End Source File
 # Begin Source File
 
@@ -444,6 +444,10 @@ SOURCE=.\diff\diffrun.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\windows-NT\dirent.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\dirname.h
 # End Source File
 # Begin Source File
@@ -565,10 +569,6 @@ SOURCE=".\src\ms-buffer.h"
 # Begin Source File
 
 SOURCE=.\src\myndbm.h
-# End Source File
-# Begin Source File
-
-SOURCE=".\windows-NT\ndir.h"
 # End Source File
 # Begin Source File
 

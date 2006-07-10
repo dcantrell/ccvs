@@ -1,5 +1,6 @@
-/*  ndir.c - portable directory routines
+/*  dirent.h - portable directory routines
     Copyright (C) 1990 by Thorsten Ohl, td12@ddagsi3.bitnet
+    Copyright (C) 2006 The Free Software Foundation, Inc.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,20 +17,27 @@
    for MS-DOS.  Written by Michael Rendell ({uunet,utai}michael@garfield),
    August 1897 */
 
-#include <sys/types.h>	/* ino_t definition */
+/* Minor adaptations made in 2006 by Derek R. Price <derek@ximbiot.com> to
+ * appear to be <dirent.h> as opposed to its former incarnation as <ndir.h>.
+ */
 
-#define	rewinddir(dirp)	seekdir(dirp, 0L)
+#ifndef WINDOWSNT_DIRENT_H_INCLUDED
+#define WINDOWSNT_DIRENT_H_INCLUDED
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#define	rewinddir(dirp)	seekdir (dirp, 0L)
 
 /* 255 is said to be big enough for Windows NT.  The more elegant
    solution would be declaring d_name as one byte long and allocating
    it to the actual size needed.  */
 #define	MAXNAMLEN	255
 
-struct direct
+struct dirent
 {
   ino_t d_ino;			/* a bit of a farce */
-  int d_reclen;			/* more farce */
-  int d_namlen;			/* length of d_name */
   char d_name[MAXNAMLEN + 1];	/* garentee null termination */
 };
 
@@ -47,16 +55,11 @@ typedef struct _dirdesc
   struct _dircontents *dd_cp;	/* pointer to current position */
 } DIR;
 
+int closedir (DIR *);
+DIR *opendir (const char *);
+struct dirent *readdir (DIR *);
+int readdir_r (DIR *, struct dirent *restrict, struct dirent **restrict);
 void seekdir (DIR *, long);
 long telldir (DIR *);
-DIR *opendir (const char *);
-void closedir (DIR *);
-struct direct *readdir (DIR *);
-
-/* 
- * Local Variables:
- * mode:C
- * ChangeLog:ChangeLog
- * compile-command:make
- * End:
- */
+
+#endif /* WINDOWSNT_DIRENT_H_INCLUDED */
