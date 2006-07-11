@@ -374,12 +374,6 @@
    don't. */
 #undef HAVE_DECL___FPENDING
 
-/* Define to 1 if you have the <direct.h> header file. */
-#undef HAVE_DIRECT_H
-
-/* Define to 1 if you have the <dirent.h> header file. */
-#undef HAVE_DIRENT_H
-
 /* Define to 1 if you have the `dup2' function. */
 #undef HAVE_DUP2
 
