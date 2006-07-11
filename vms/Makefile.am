@@ -36,8 +36,6 @@ EXTRA_DIST = \
 	getwd.c \
 	misc.c \
 	misc.h \
-	ndir.c \
-	ndir.h \
 	pathnames.h \
 	pc.c \
 	pipe.c \
