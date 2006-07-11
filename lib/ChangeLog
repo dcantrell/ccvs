@@ -1,5 +1,7 @@
 2006-07-11  Derek Price  <derek@ximbiot.com>
 
+	* getcwd.c, getndelim2.h, glob.c, glob_.h: Update from GNULIB.
+
 	* system.h: Ignore obsolescent !HAVE_DIRENT_H and HAVE_DIRECT_H cases.
 
 2006-07-10  Jim Hyslop <jhyslop@dreampossible.ca>
