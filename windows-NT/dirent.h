@@ -1,25 +1,19 @@
 /*  dirent.h - portable directory routines
-    Copyright (C) 1990 by Thorsten Ohl, td12@ddagsi3.bitnet
-    Copyright (C) 2006 The Free Software Foundation, Inc.
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 1, or (at your option)
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.  */
-
-/* Everything non trivial in this code is taken from: @(#)msd_dir.c 1.4
-   87/11/06.  A public domain implementation of BSD directory routines
-   for MS-DOS.  Written by Michael Rendell ({uunet,utai}michael@garfield),
-   August 1897 */
-
-/* Minor adaptations made in 2006 by Derek R. Price <derek@ximbiot.com> to
- * comply with the POSIX.1 <dirent.h> specification, as opposed to its former
- * incarnation as <ndir.h>.
+ *
+ * This file is in the public domain.
+ *
+ * Everything non trivial in this code came originally from: @(#)msd_dir.c 1.4
+ * 87/11/06, a public domain implementation of BSD directory routines for
+ * MS-DOS, written by Michael Rendell ({uunet,utai}michael@garfield),
+ * August 1987.
+ *
+ * Converted to CVS's "windows-NT/ndir.c" in 1990 by Thorsten Ohl
+ * <td12@ddagsi3.bitnet>.
+ *
+ * Minor adaptations made in 2006 by Derek R. Price <derek@ximbiot.com>, with
+ * Windows API oversight by Jim Hyslop <jhyslop@dreampossible.ca>, to meet the
+ * POSIX.1 <dirent.h> API with some GNU extensions (as opposed to its
+ * intermediate incarnation as CVS's "windows-NT/ndir.h").
  */
 
 #ifndef WINDOWSNT_DIRENT_H_INCLUDED

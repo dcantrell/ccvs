@@ -1,24 +1,19 @@
 /*  dirent.c - portable directory routines
-    Copyright (C) 1990 by Thorsten Ohl, td12@ddagsi3.bitnet
-    Copyright (C) 2006 The Free Software Foundation, Inc.
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 1, or (at your option)
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.  */
-
-/* Everything non trivial in this code is from: @(#)msd_dir.c 1.4
-   87/11/06.  A public domain implementation of BSD directory routines
-   for MS-DOS.  Written by Michael Rendell ({uunet,utai}michael@garfield),
-   August 1897 */
-
-/* Minor adaptations made in 2006 by Derek R. Price <derek@ximbiot.com> to
- * appear to be <dirent.c> as opposed to its former incarnation as <ndir.c>.
+ *
+ * This file is in the public domain.
+ *
+ * Everything non trivial in this code came originally from: @(#)msd_dir.c 1.4
+ * 87/11/06, a public domain implementation of BSD directory routines for
+ * MS-DOS, written by Michael Rendell ({uunet,utai}michael@garfield),
+ * August 1987.
+ *
+ * Converted to CVS's "windows-NT/ndir.c" in 1990 by Thorsten Ohl
+ * <td12@ddagsi3.bitnet>.
+ *
+ * Minor adaptations made in 2006 by Derek R. Price <derek@ximbiot.com>, with
+ * Windows API oversight by Jim Hyslop <jhyslop@dreampossible.ca>, to meet the
+ * POSIX.1 <dirent.h> API with some GNU extensions (as opposed to its
+ * intermediate incarnation as CVS's "windows-NT/ndir.c").
  */
 
 #ifdef HAVE_CONFIG_H
@@ -29,19 +24,16 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+/* System (WOE32) Includes.  */
+#include <dos.h>
 #include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 
-#include <dos.h>
+/* GNULIB Includes.  */
 #include "xalloc.h"
-
-static void free_dircontents (struct _dircontents *);
-
-/* find ALL files! */
-#define ATTRIBUTES	(_A_RDONLY | _A_HIDDEN | _A_SYSTEM | _A_SUBDIR)
 
 
 
@@ -67,11 +59,9 @@ opendir (const char *name)
 	slash = "/";	/* save to insert slash between path and "*.*" */
     }
 
-  strcat (strcat (strcpy (name_buf, name), slash), "*.*");
+  sprintf (name_buf, "%s%s%s", name, slash, "*.*");
 
-  dirp = xmalloc (sizeof (DIR));
-  if (!dirp) return NULL;
-
+  dirp = xmalloc (sizeof DIR);
   dirp->dd_loc = 0;
   dirp->dd_contents = dirp->dd_cp = NULL;
 
@@ -83,7 +73,7 @@ opendir (const char *name)
 
   do
     {
-      dp = xmalloc (sizeof (struct _dircontents));
+      dp = xmalloc (sizeof struct _dircontents);
       dp->_d_length = strlen (find_buf.name);
       dp->_d_entry = xmalloc (dp->_d_length + 1);
       memcpy (dp->_d_entry, find_buf.name, dp->_d_length + 1);
@@ -103,6 +93,24 @@ opendir (const char *name)
 
   return dirp;
 }
+
+
+
+/* Garbage collection */
+static void
+free_dircontents (struct _dircontents *dp)
+{
+  struct _dircontents *odp;
+
+  while (dp)
+    {
+      if (dp->_d_entry)
+	free (dp->_d_entry);
+      dp = (odp = dp)->_d_next;
+      free (odp);
+    }
+}
+
 
 
 int
@@ -151,6 +159,7 @@ readdir (DIR *dirp)
 }
 
 
+
 void
 seekdir (DIR *dirp, long off)
 {
@@ -166,6 +175,7 @@ seekdir (DIR *dirp, long off)
 }
 
 
+
 long
 telldir (DIR *dirp)
 {
@@ -173,27 +183,8 @@ telldir (DIR *dirp)
 }
 
 
-/* Garbage collection */
-
-static void
-free_dircontents (struct _dircontents *dp)
-{
-  struct _dircontents *odp;
-
-  while (dp)
-    {
-      if (dp->_d_entry)
-	free (dp->_d_entry);
-      dp = (odp = dp)->_d_next;
-      free (odp);
-    }
-}
-
 
 #ifdef TEST
-
-void main (int argc, char *argv[]);
-
 void
 main (int argc, char *argv[])
 {
@@ -218,5 +209,4 @@ main (int argc, char *argv[])
 
   printf ("done.\n");
 }
-
 #endif /* TEST */

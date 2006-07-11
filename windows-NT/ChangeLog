@@ -1,5 +1,8 @@
 2006-07-11  Derek Price  <derek@ximbiot.com>
 
+	* dirent.h: Mark clearly as public domain.
+	* dirent.c: Likewise, plus some cleanup.
+
 	* dirent.h: Remove #include <config.h>.
 	(struct dirent): Remove unimplemented d_ino since POSIX declares it an
 	extension.  Add d_namlen.
