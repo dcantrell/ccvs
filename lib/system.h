@@ -86,10 +86,6 @@
 #include <io.h>
 #endif
 
-#ifdef HAVE_DIRECT_H
-#include <direct.h>
-#endif
-
 /* The NeXT (without _POSIX_SOURCE, which we don't want) has a utime.h
    which doesn't define anything.  It would be cleaner to have configure
    check for struct utimbuf, but for now I'm checking NeXT here (so I don't
