@@ -3696,7 +3696,7 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 
     int dev_null_fd = -1;
 
-    int errs;
+    int errs = 0;
 
     TRACE (TRACE_FUNCTION, "do_cvs_command (%s)", cmd_name);
 
@@ -4306,8 +4306,6 @@ error  \n");
 	close (flowcontrol_pipe[1]);
 	flowcontrol_pipe[1] = -1;
 # endif /* SERVER_FLOWCONTROL */
-
-	errs = 0;
 
 	while (command_pid > 0)
 	{
