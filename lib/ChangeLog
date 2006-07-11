@@ -1,3 +1,7 @@
+2006-07-11  Derek Price  <derek@ximbiot.com>
+
+	* system.h: Ignore obsolescent !HAVE_DIRENT_H case.
+
 2006-07-10  Jim Hyslop <jhyslop@dreampossible.ca>
 
 	* libcvs.dep: Fixed relative directories in file

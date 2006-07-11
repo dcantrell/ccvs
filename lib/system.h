@@ -177,14 +177,7 @@ int utime ();
 # define R_OK 4
 #endif
 
-#if HAVE_DIRENT_H
-# include <dirent.h>
-# define NAMLEN(dirent) strlen((dirent)->d_name)
-#else
-# define dirent direct
-# define NAMLEN(dirent) (dirent)->d_namlen
-# include <ndir.h>
-#endif
+#include <dirent.h>
 
 /* Convert B 512-byte blocks to kilobytes if K is nonzero,
    otherwise return it unchanged. */
