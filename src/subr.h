@@ -108,6 +108,7 @@ FILE *xfopen (const char *, const char *);
 char *xcanonicalize_file_name (const char *path);
 bool isThisHost (const char *otherhost);
 bool isSamePath (const char *path1_in, const char *path2_in);
+bool isParentPath (const char *maybe_parent, const char *maybe_child);
 
 # ifdef HAVE_CVS_ADMIN_GROUP
 bool is_admin (void);

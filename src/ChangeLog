@@ -1,5 +1,9 @@
 2006-07-11  Derek Price  <derek@ximbiot.com>
 
+	* subr.c (isParentPath): New function.
+	* subr.h (isParentPath): New proto.
+	* client.c (is_arg_a_parent_or_listed_dir): Use new function.
+
 	* server.c (do_cvs_command): Initialize var to suppress warning.
 
 2006-07-11  Larry Jones  <lawrence.jones@ugs.com>
