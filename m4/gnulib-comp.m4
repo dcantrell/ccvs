@@ -406,7 +406,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mmap-anon.m4
   m4/nanosleep.m4
   m4/nls.m4
-  m4/onceonly_2_57.m4
   m4/openat.m4
   m4/pagealign_alloc.m4
   m4/pathmax.m4
