@@ -3,7 +3,7 @@
 	* dirent.h: Remove #include <config.h>.
 	(struct dirent): Remove unimplemented d_ino since POSIX declares it an
 	extension.  Add d_namlen.
-	(struct direcontents): Add length field.
+	(struct dircontents): Add length field.
 	[_D_EXACT_NAMLEN]: Define.
 	[MAXNAMLEN]: Replace with...
 	[NAME_MAX]: ...this macro, for POSIX.
