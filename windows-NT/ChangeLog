@@ -1,3 +1,16 @@
+2006-07-11  Derek Price  <derek@ximbiot.com>
+
+	* dirent.h: Remove #include <config.h>.
+	(struct dirent): Remove unimplemented d_ino since POSIX declares it an
+	extension.  Add d_namlen.
+	(struct direcontents): Add length field.
+	[_D_EXACT_NAMLEN]: Define.
+	[MAXNAMLEN]: Replace with...
+	[NAME_MAX]: ...this macro, for POSIX.
+	* dirent.c: #include <config.h>.
+	(opendir): Don't check return from xmalloc.  Store length of dir name.
+	(readdir_r): Remove d_ino.  Store d_namlen.
+
 2006-07-10  Jim Hyslop <jhyslop@dreampossible.ca>
 
 	Commit Derek Price's patch to eliminate obsolete ndir.h, with some
