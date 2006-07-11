@@ -21,6 +21,9 @@
  * appear to be <dirent.c> as opposed to its former incarnation as <ndir.c>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 /* Validate API.  */
 #include <sys/types.h>
@@ -81,26 +84,14 @@ opendir (const char *name)
   do
     {
       dp = xmalloc (sizeof (struct _dircontents));
-      if (!dp)
-	{
-	  free_dircontents (dirp->dd_contents);
-	  return NULL;
-	}
-
-      dp->_d_entry = xmalloc (strlen (find_buf.name) + 1);
-      if (!dp->_d_entry)
-	{
-	  free (dp);
-	  free_dircontents (dirp->dd_contents);
-	  return NULL;
-	}
+      dp->_d_length = strlen (find_buf.name);
+      dp->_d_entry = xmalloc (dp->_d_length + 1);
+      memcpy (dp->_d_entry, find_buf.name, dp->_d_length + 1);
 
       if (dirp->dd_contents)
 	dirp->dd_cp = dirp->dd_cp->_d_next = dp;
       else
 	dirp->dd_contents = dirp->dd_cp = dp;
-
-      strcpy (dp->_d_entry, find_buf.name);
 
       dp->_d_next = NULL;
 
@@ -132,8 +123,9 @@ readdir_r (DIR *dirp, struct dirent * restrict dp,
     *result = NULL;
   else
     {
-      strcpy (dp->d_name, dirp->dd_cp->_d_entry);
-      dp->d_ino = 0;
+      dp->d_namlen = dirp->dd_cp->_d_length;
+      memcpy (dp->d_name, dirp->dd_cp->_d_entry, dp->d_namlen + 1);
+
       dirp->dd_cp = dirp->dd_cp->_d_next;
       dirp->dd_loc++;
       *result = dp;

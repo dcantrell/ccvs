@@ -18,31 +18,31 @@
    August 1897 */
 
 /* Minor adaptations made in 2006 by Derek R. Price <derek@ximbiot.com> to
- * appear to be <dirent.h> as opposed to its former incarnation as <ndir.h>.
+ * comply with the POSIX.1 <dirent.h> specification, as opposed to its former
+ * incarnation as <ndir.h>.
  */
 
 #ifndef WINDOWSNT_DIRENT_H_INCLUDED
 #define WINDOWSNT_DIRENT_H_INCLUDED
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #define	rewinddir(dirp)	seekdir (dirp, 0L)
 
 /* 255 is said to be big enough for Windows NT.  The more elegant
-   solution would be declaring d_name as one byte long and allocating
-   it to the actual size needed.  */
-#define	MAXNAMLEN	255
-
+ * solution would be declaring d_name as one byte long and allocating
+ * it to the actual size needed.
+ */
+#ifndef NAME_MAX
+# define NAME_MAX 255
+#endif
 struct dirent
 {
-  ino_t d_ino;			/* a bit of a farce */
-  char d_name[MAXNAMLEN + 1];	/* garentee null termination */
+  size_t d_namlen;		/* GNU extension.  */
+  char d_name[NAME_MAX + 1];	/* guarantee null termination */
 };
 
 struct _dircontents
 {
+  size_t _d_length;
   char *_d_entry;
   struct _dircontents *_d_next;
 };
@@ -61,5 +61,7 @@ struct dirent *readdir (DIR *);
 int readdir_r (DIR *, struct dirent *restrict, struct dirent **restrict);
 void seekdir (DIR *, long);
 long telldir (DIR *);
+
+#define _D_EXACT_NAMLEN(dp) (dp)->d_namlen
 
 #endif /* WINDOWSNT_DIRENT_H_INCLUDED */
