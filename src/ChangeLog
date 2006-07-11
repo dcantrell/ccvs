@@ -1,3 +1,7 @@
+2006-07-11  Derek Price  <derek@ximbiot.com>
+
+	* server.c (do_cvs_command): Initialize var to suppress warning.
+
 2006-07-11  Larry Jones  <lawrence.jones@ugs.com>
 
 	* log.c (log_usage): Fix misleading description of -b (it selects
