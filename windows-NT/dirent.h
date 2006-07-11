@@ -62,6 +62,7 @@ int readdir_r (DIR *, struct dirent *restrict, struct dirent **restrict);
 void seekdir (DIR *, long);
 long telldir (DIR *);
 
+/* GNU extension.  */
 #define _D_EXACT_NAMLEN(dp) (dp)->d_namlen
 
 #endif /* WINDOWSNT_DIRENT_H_INCLUDED */
