@@ -2102,6 +2102,41 @@ isSamePath (const char *path1_in, const char *path2_in)
 
 
 
+bool
+isParentPath (const char *maybe_parent, const char *maybe_child)
+{
+    char *p1, *p2;
+    bool isparent;
+
+    if (strlen (maybe_parent) <= strlen (maybe_child)
+	&& !strncmp (maybe_parent, maybe_child, strlen (maybe_parent))
+	&& (maybe_child[strlen (maybe_parent)] == '\0'
+	    || ISSLASH (maybe_child[strlen (maybe_parent)])))
+	return true;
+
+    /* Path didn't match, but try to resolve any links that may be
+     * present.
+     */
+    if (!isdir (maybe_parent) || !isfile (maybe_child))
+	/* To be resolvable, paths must exist on this server.  */
+	return false;
+
+    p1 = xcanonicalize_file_name (maybe_parent);
+    p2 = xcanonicalize_file_name (maybe_child);
+    if (strlen (p1) <= strlen (p2)
+	&& !strncmp (p1, p2, strlen (p1))
+	&& (p2[strlen (p1)] == '\0' || ISSLASH (p2[strlen (p1)])))
+	isparent = true;
+    else
+	isparent = false;
+
+    free (p1);
+    free (p2);
+    return isparent;
+}
+
+
+
 #ifdef HAVE_CVS_ADMIN_GROUP
 /* Return true if the current user should be allowed to run CVS admin commands,
  * false otherwise.
