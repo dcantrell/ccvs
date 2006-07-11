@@ -1,3 +1,9 @@
+2006-07-11  Larry Jones  <lawrence.jones@ugs.com>
+
+	* log.c (log_usage): Fix misleading description of -b (it selects
+	revisions on the default branch *in addition to* revisions selected
+	with -r).
+
 2006-07-06  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (cvs_SOURCES): Add missing header files.
