@@ -149,14 +149,11 @@ GNU General Public License for more details.
 #endif
 #endif
 
-#if HAVE_DIRENT_H
-# include <dirent.h>
-# define NAMLEN(dirent) strlen((dirent)->d_name)
-#else
-# define dirent direct
-# define NAMLEN(dirent) ((dirent)->d_namlen)
-# include <ndir.h>
+#include <dirent.h>
+#ifndef _D_EXACT_NAMLEN
+# define _D_EXACT_NAMLEN	strlen ((dirent)->d_name)
 #endif
+#define NAMLEN(dirent)	_D_EXACT_NAMLEN (dirent)
 
 #if HAVE_VFORK_H
 #include <vfork.h>
