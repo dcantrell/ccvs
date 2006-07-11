@@ -153,7 +153,6 @@ AM_CONDITIONAL(MAKE_TARGETS_IN_VPATH, \
 		|| test $srcdir = .)
 
 AC_CHECK_HEADERS(\
-	direct.h \
 	fcntl.h \
 	io.h \
 	memory.h \

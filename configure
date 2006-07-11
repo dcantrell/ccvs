@@ -614,8 +614,8 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-gl_header_list=
-gl_func_list=
+ac_header_list=
+ac_func_list=
 ac_subst_vars='SHELL
 PATH_SEPARATOR
 PACKAGE_NAME
@@ -1889,47 +1889,46 @@ echo "$as_me: creating cache $cache_file" >&6;}
   >$cache_file
 fi
 
-gl_header_list="$gl_header_list sys/socket.h"
-gl_header_list="$gl_header_list netinet/in.h"
-gl_header_list="$gl_header_list netdb.h"
-gl_func_list="$gl_func_list fdopendir"
-gl_func_list="$gl_func_list fchdir"
-gl_func_list="$gl_func_list mempcpy"
-gl_header_list="$gl_header_list dirent.h"
-gl_header_list="$gl_header_list sys/time.h"
-gl_header_list="$gl_header_list unistd.h"
-gl_header_list="$gl_header_list sys/param.h"
-gl_header_list="$gl_header_list stdio_ext.h"
-gl_header_list="$gl_header_list termios.h"
-gl_func_list="$gl_func_list __fsetlocking"
-gl_func_list="$gl_func_list tcgetattr"
-gl_func_list="$gl_func_list tcsetattr"
-gl_func_list="$gl_func_list gettimeofday"
-gl_func_list="$gl_func_list nanotime"
-gl_header_list="$gl_header_list sys/cdefs.h"
-gl_func_list="$gl_func_list getlogin_r"
-gl_func_list="$gl_func_list getpwnam_r"
-gl_header_list="$gl_header_list arpa/inet.h"
-gl_header_list="$gl_header_list inttypes.h"
-gl_header_list="$gl_header_list wchar.h"
-gl_header_list="$gl_header_list wctype.h"
-gl_func_list="$gl_func_list alarm"
-gl_func_list="$gl_func_list siginterrupt"
-gl_header_list="$gl_header_list sys/select.h"
-gl_func_list="$gl_func_list posix_memalign"
-gl_func_list="$gl_func_list iswprint"
-gl_func_list="$gl_func_list mbsinit"
-gl_header_list="$gl_header_list locale.h"
-gl_func_list="$gl_func_list mbrtowc"
-gl_func_list="$gl_func_list wcrtomb"
-gl_func_list="$gl_func_list wcscoll"
-gl_header_list="$gl_header_list stdint.h"
-gl_func_list="$gl_func_list mblen"
-gl_func_list="$gl_func_list mbrlen"
-gl_func_list="$gl_func_list tzset"
-gl_func_list="$gl_func_list lstat"
-gl_header_list="$gl_header_list sys/stat.h"
-gl_func_list="$gl_func_list wcwidth"
+ac_header_list="$ac_header_list sys/socket.h"
+ac_header_list="$ac_header_list netinet/in.h"
+ac_header_list="$ac_header_list netdb.h"
+ac_func_list="$ac_func_list fdopendir"
+ac_func_list="$ac_func_list fchdir"
+ac_func_list="$ac_func_list mempcpy"
+ac_header_list="$ac_header_list sys/time.h"
+ac_header_list="$ac_header_list unistd.h"
+ac_header_list="$ac_header_list sys/param.h"
+ac_header_list="$ac_header_list stdio_ext.h"
+ac_header_list="$ac_header_list termios.h"
+ac_func_list="$ac_func_list __fsetlocking"
+ac_func_list="$ac_func_list tcgetattr"
+ac_func_list="$ac_func_list tcsetattr"
+ac_func_list="$ac_func_list gettimeofday"
+ac_func_list="$ac_func_list nanotime"
+ac_header_list="$ac_header_list sys/cdefs.h"
+ac_func_list="$ac_func_list getlogin_r"
+ac_func_list="$ac_func_list getpwnam_r"
+ac_header_list="$ac_header_list arpa/inet.h"
+ac_header_list="$ac_header_list inttypes.h"
+ac_header_list="$ac_header_list wchar.h"
+ac_header_list="$ac_header_list wctype.h"
+ac_func_list="$ac_func_list alarm"
+ac_func_list="$ac_func_list siginterrupt"
+ac_header_list="$ac_header_list sys/select.h"
+ac_func_list="$ac_func_list posix_memalign"
+ac_func_list="$ac_func_list iswprint"
+ac_func_list="$ac_func_list mbsinit"
+ac_header_list="$ac_header_list locale.h"
+ac_func_list="$ac_func_list mbrtowc"
+ac_func_list="$ac_func_list wcrtomb"
+ac_func_list="$ac_func_list wcscoll"
+ac_header_list="$ac_header_list stdint.h"
+ac_func_list="$ac_func_list mblen"
+ac_func_list="$ac_func_list mbrlen"
+ac_func_list="$ac_func_list tzset"
+ac_func_list="$ac_func_list lstat"
+ac_header_list="$ac_header_list sys/stat.h"
+ac_func_list="$ac_func_list wcwidth"
 # Check that the precious variables saved in the cache have kept the same
 # value.
 ac_cache_corrupted=false
@@ -6445,9 +6444,7 @@ fi
 
 
 
-
 for ac_header in \
-	direct.h \
 	fcntl.h \
 	io.h \
 	memory.h \
@@ -8985,8 +8982,7 @@ _ACEOF
 
 
 
-
-for ac_header in $gl_header_list
+for ac_header in $ac_header_list
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
@@ -9158,10 +9154,6 @@ done
 
 
 
-
-
-
-  :
 
 
 
@@ -9353,11 +9345,6 @@ done
 
 
 
-  :
-
-
-
-
 
 
   { echo "$as_me:$LINENO: checking for IPv4 sockets" >&5
@@ -9527,10 +9514,6 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
   fi
-
-
-
-
 
 
 
@@ -10352,8 +10335,6 @@ done
 
 
 
-  :
-
 
 
 
@@ -11075,8 +11056,7 @@ _ACEOF
 
 
 
-
-for ac_func in $gl_func_list
+for ac_func in $ac_func_list
 do
 as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
 { echo "$as_me:$LINENO: checking for $ac_func" >&5
@@ -11191,13 +11171,6 @@ done
 
 
 
-
-
-
-
-
-
-
   case " $LIBOBJS " in
   *" save-cwd.$ac_objext "* ) ;;
   *) LIBOBJS="$LIBOBJS save-cwd.$ac_objext"
@@ -11205,15 +11178,13 @@ done
 esac
 
 
-  :
 
 
 
 
 
 
-
-      { echo "$as_me:$LINENO: checking whether memrchr is declared" >&5
+{ echo "$as_me:$LINENO: checking whether memrchr is declared" >&5
 echo $ECHO_N "checking whether memrchr is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_memrchr+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -11297,7 +11268,6 @@ _ACEOF
 
 
 fi
-
 
 
 
@@ -11946,10 +11916,6 @@ fi
 
 
 
-
-
-
-
 { echo "$as_me:$LINENO: checking for mbstate_t" >&5
 echo $ECHO_N "checking for mbstate_t... $ECHO_C" >&6; }
 if test "${ac_cv_type_mbstate_t+set}" = set; then
@@ -12102,8 +12068,7 @@ fi
 { echo "$as_me:$LINENO: result: $gl_cv_func_getcwd_null" >&5
 echo "${ECHO_T}$gl_cv_func_getcwd_null" >&6; }
 
-
-      { echo "$as_me:$LINENO: checking whether getcwd is declared" >&5
+{ echo "$as_me:$LINENO: checking whether getcwd is declared" >&5
 echo $ECHO_N "checking whether getcwd is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_getcwd+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -12189,20 +12154,7 @@ _ACEOF
 fi
 
 
-
-
-
-
-
-
-
-
-  :
-
-
-
-
-   { echo "$as_me:$LINENO: checking for d_ino member in directory struct" >&5
+{ echo "$as_me:$LINENO: checking for d_ino member in directory struct" >&5
 echo $ECHO_N "checking for d_ino member in directory struct... $ECHO_C" >&6; }
 if test "${jm_cv_struct_dirent_d_ino+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -12215,12 +12167,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 
 #include <sys/types.h>
-#ifdef HAVE_DIRENT_H
-# include <dirent.h>
-#else
-# define dirent direct
-# include <ndir.h>
-#endif
+#include <dirent.h>
 
 int
 main ()
@@ -12378,18 +12325,12 @@ fi
 
 
 
-  :
 
 
 
 
 
 
-
-
-
-
-  :
 
 
 
@@ -13093,8 +13034,7 @@ _ACEOF
 fi
 
 
-
-      { echo "$as_me:$LINENO: checking whether getdelim is declared" >&5
+{ echo "$as_me:$LINENO: checking whether getdelim is declared" >&5
 echo $ECHO_N "checking whether getdelim is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_getdelim+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -13182,13 +13122,7 @@ fi
 
 
 
-
-
-
-
-
-
-      { echo "$as_me:$LINENO: checking whether getlogin is declared" >&5
+{ echo "$as_me:$LINENO: checking whether getlogin is declared" >&5
 echo $ECHO_N "checking whether getlogin is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_getlogin+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -13274,9 +13208,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether getlogin_r is declared" >&5
+{ echo "$as_me:$LINENO: checking whether getlogin_r is declared" >&5
 echo $ECHO_N "checking whether getlogin_r is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_getlogin_r+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -13360,7 +13292,6 @@ _ACEOF
 
 
 fi
-
 
 
 
@@ -13954,8 +13885,7 @@ echo "${ECHO_T}$gl_cv_func_gnu_getopt" >&6; }
     fi
   fi
 
-
-      { echo "$as_me:$LINENO: checking whether getenv is declared" >&5
+{ echo "$as_me:$LINENO: checking whether getenv is declared" >&5
 echo $ECHO_N "checking whether getenv is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_getenv+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -14043,13 +13973,7 @@ fi
 
 
 
-
-
-
-
-
-
-      { echo "$as_me:$LINENO: checking whether getpass is declared" >&5
+{ echo "$as_me:$LINENO: checking whether getpass is declared" >&5
 echo $ECHO_N "checking whether getpass is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_getpass+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -14145,29 +14069,7 @@ fi
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      { echo "$as_me:$LINENO: checking whether fflush_unlocked is declared" >&5
+{ echo "$as_me:$LINENO: checking whether fflush_unlocked is declared" >&5
 echo $ECHO_N "checking whether fflush_unlocked is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_fflush_unlocked+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -14253,9 +14155,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether flockfile is declared" >&5
+{ echo "$as_me:$LINENO: checking whether flockfile is declared" >&5
 echo $ECHO_N "checking whether flockfile is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_flockfile+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -14341,9 +14241,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether fputs_unlocked is declared" >&5
+{ echo "$as_me:$LINENO: checking whether fputs_unlocked is declared" >&5
 echo $ECHO_N "checking whether fputs_unlocked is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_fputs_unlocked+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -14429,9 +14327,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether funlockfile is declared" >&5
+{ echo "$as_me:$LINENO: checking whether funlockfile is declared" >&5
 echo $ECHO_N "checking whether funlockfile is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_funlockfile+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -14517,9 +14413,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether putc_unlocked is declared" >&5
+{ echo "$as_me:$LINENO: checking whether putc_unlocked is declared" >&5
 echo $ECHO_N "checking whether putc_unlocked is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_putc_unlocked+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -14609,22 +14503,7 @@ fi
 
 
 
-
-
-
-
-
-
-
-
-
-
-  :
-
-
-
-
-   { echo "$as_me:$LINENO: checking for d_type member in directory struct" >&5
+{ echo "$as_me:$LINENO: checking for d_type member in directory struct" >&5
 echo $ECHO_N "checking for d_type member in directory struct... $ECHO_C" >&6; }
 if test "${jm_cv_struct_dirent_d_type+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -14637,12 +14516,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 
 #include <sys/types.h>
-#ifdef HAVE_DIRENT_H
-# include <dirent.h>
-#else
-# define dirent direct
-# include <ndir.h>
-#endif
+#include <dirent.h>
 
 int
 main ()
@@ -14718,22 +14592,6 @@ _ACEOF
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 { echo "$as_me:$LINENO: checking whether the preprocessor supports include_next" >&5
 echo $ECHO_N "checking whether the preprocessor supports include_next... $ECHO_C" >&6; }
 if test "${gl_cv_have_include_next+set}" = set; then
@@ -14787,12 +14645,7 @@ fi
 
 
 
-
-
-
-
-
-      { echo "$as_me:$LINENO: checking whether strtoimax is declared" >&5
+{ echo "$as_me:$LINENO: checking whether strtoimax is declared" >&5
 echo $ECHO_N "checking whether strtoimax is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_strtoimax+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -14878,9 +14731,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether strtoumax is declared" >&5
+{ echo "$as_me:$LINENO: checking whether strtoumax is declared" >&5
 echo $ECHO_N "checking whether strtoumax is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_strtoumax+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -14964,7 +14815,6 @@ _ACEOF
 
 
 fi
-
 
 
 { echo "$as_me:$LINENO: checking whether lstat dereferences a symlink specified with a trailing slash" >&5
@@ -15056,14 +14906,6 @@ if test $ac_cv_func_lstat_dereferences_slashed_symlink = no; then
 esac
 
 fi
-
-
-
-
-
-
-
-
 
 
 
@@ -15869,14 +15711,8 @@ _ACEOF
 
 
 
-  :
 
 
-
-
-
-
-  :
 
 
 
@@ -16096,14 +15932,6 @@ if test $ac_cv_func_working_mktime = no; then
 esac
 
 fi
-
-
-
-
-
-
-
-
 
 
 
@@ -16651,18 +16479,6 @@ _ACEOF
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
   { echo "$as_me:$LINENO: checking for nl_langinfo and CODESET" >&5
 echo $ECHO_N "checking for nl_langinfo and CODESET... $ECHO_C" >&6; }
 if test "${am_cv_langinfo_codeset+set}" = set; then
@@ -16747,24 +16563,7 @@ _ACEOF
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      { echo "$as_me:$LINENO: checking whether snprintf is declared" >&5
+{ echo "$as_me:$LINENO: checking whether snprintf is declared" >&5
 echo $ECHO_N "checking whether snprintf is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_snprintf+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -16850,7 +16649,6 @@ _ACEOF
 fi
 
 
-
 { echo "$as_me:$LINENO: checking whether stat file-mode macros are broken" >&5
 echo $ECHO_N "checking whether stat file-mode macros are broken... $ECHO_C" >&6; }
 if test "${ac_cv_header_stat_broken+set}" = set; then
@@ -16911,12 +16709,7 @@ fi
 
 
 
-
-
-
-
-
-      { echo "$as_me:$LINENO: checking whether strdup is declared" >&5
+{ echo "$as_me:$LINENO: checking whether strdup is declared" >&5
 echo $ECHO_N "checking whether strdup is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_strdup+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -17010,19 +16803,6 @@ fi
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
  case " $LIBOBJS " in
   *" strftime.$ac_objext "* ) ;;
   *) LIBOBJS="$LIBOBJS strftime.$ac_objext"
@@ -17038,7 +16818,6 @@ esac
 
 
 
-  :
 
 
 
@@ -17050,11 +16829,6 @@ esac
 
 
 
-
-
-
-
-  :
 
 
 
@@ -17070,8 +16844,7 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 
-
-      { echo "$as_me:$LINENO: checking whether strndup is declared" >&5
+{ echo "$as_me:$LINENO: checking whether strndup is declared" >&5
 echo $ECHO_N "checking whether strndup is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_strndup+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -17157,9 +16930,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether strnlen is declared" >&5
+{ echo "$as_me:$LINENO: checking whether strnlen is declared" >&5
 echo $ECHO_N "checking whether strnlen is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_strnlen+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -17249,17 +17020,7 @@ fi
 
 
 
-
-
-
-
-
-
-
-
-
-
-      { echo "$as_me:$LINENO: checking whether clearerr_unlocked is declared" >&5
+{ echo "$as_me:$LINENO: checking whether clearerr_unlocked is declared" >&5
 echo $ECHO_N "checking whether clearerr_unlocked is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_clearerr_unlocked+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -17345,9 +17106,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether feof_unlocked is declared" >&5
+{ echo "$as_me:$LINENO: checking whether feof_unlocked is declared" >&5
 echo $ECHO_N "checking whether feof_unlocked is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_feof_unlocked+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -17433,9 +17192,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether ferror_unlocked is declared" >&5
+{ echo "$as_me:$LINENO: checking whether ferror_unlocked is declared" >&5
 echo $ECHO_N "checking whether ferror_unlocked is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_ferror_unlocked+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -17521,9 +17278,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether fgets_unlocked is declared" >&5
+{ echo "$as_me:$LINENO: checking whether fgets_unlocked is declared" >&5
 echo $ECHO_N "checking whether fgets_unlocked is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_fgets_unlocked+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -17609,9 +17364,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether fputc_unlocked is declared" >&5
+{ echo "$as_me:$LINENO: checking whether fputc_unlocked is declared" >&5
 echo $ECHO_N "checking whether fputc_unlocked is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_fputc_unlocked+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -17697,9 +17450,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether fread_unlocked is declared" >&5
+{ echo "$as_me:$LINENO: checking whether fread_unlocked is declared" >&5
 echo $ECHO_N "checking whether fread_unlocked is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_fread_unlocked+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -17785,9 +17536,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether fwrite_unlocked is declared" >&5
+{ echo "$as_me:$LINENO: checking whether fwrite_unlocked is declared" >&5
 echo $ECHO_N "checking whether fwrite_unlocked is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_fwrite_unlocked+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -17873,9 +17622,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether getc_unlocked is declared" >&5
+{ echo "$as_me:$LINENO: checking whether getc_unlocked is declared" >&5
 echo $ECHO_N "checking whether getc_unlocked is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_getc_unlocked+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -17961,9 +17708,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether getchar_unlocked is declared" >&5
+{ echo "$as_me:$LINENO: checking whether getchar_unlocked is declared" >&5
 echo $ECHO_N "checking whether getchar_unlocked is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_getchar_unlocked+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -18049,9 +17794,7 @@ _ACEOF
 fi
 
 
-
-
-      { echo "$as_me:$LINENO: checking whether putchar_unlocked is declared" >&5
+{ echo "$as_me:$LINENO: checking whether putchar_unlocked is declared" >&5
 echo $ECHO_N "checking whether putchar_unlocked is declared... $ECHO_C" >&6; }
 if test "${ac_cv_have_decl_putchar_unlocked+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -18135,7 +17878,6 @@ _ACEOF
 
 
 fi
-
 
 
 
@@ -19043,10 +18785,6 @@ _ACEOF
 
 
 
-
-
-
-
 if false; then
   GL_COND_LIBTOOL_TRUE=
   GL_COND_LIBTOOL_FALSE='#'
@@ -19749,7 +19487,6 @@ esac
 
 
 
-  :
 
 
 
@@ -19890,9 +19627,6 @@ _ACEOF
 
 
 
-
-
-  :
 
 
 
@@ -20210,7 +19944,6 @@ esac
 
 
 
-  :
 
 
 
@@ -22257,8 +21990,6 @@ done
 
 
 
-  :
-
 
 
 
@@ -22765,9 +22496,6 @@ fi
   yes)
 
 
-  :
-
-
 
 
 
@@ -22986,9 +22714,6 @@ _ACEOF
 ;;
   esac
 
-
-
-  :
 
 
 
@@ -23255,12 +22980,6 @@ esac
 cat >>confdefs.h <<\_ACEOF
 #define __GETCWD_PREFIX rpl_
 _ACEOF
-
-
-
-
-  :
-
 
 
 
@@ -23724,9 +23443,6 @@ esac
 fi
 done
 
-
-
-  :
 
 
 
@@ -24488,9 +24204,6 @@ done
 
 
 
-  :
-
-
 
 
 
@@ -24737,21 +24450,14 @@ done
 
 
 
-  :
 
 
 
 
 
 
-  :
 
 
-
-
-
-
-  :
 
 
 
@@ -24816,9 +24522,6 @@ _ACEOF
 
 
 
-  :
-
-
 
 
 
@@ -24831,7 +24534,6 @@ fi
 
 
 
-  :
 
 
 
@@ -25121,9 +24823,6 @@ done
 
 
 
-  :
-
-
 
 
 
@@ -25135,17 +24834,6 @@ esac
 
 
 
-  :
-
-
-
-
-
-
-
-
-
-  :
 
 
 
@@ -25158,35 +24846,26 @@ esac
 
 
 
-  :
 
 
 
 
 
 
-  :
 
 
 
 
 
 
-  :
 
 
 
 
 
 
-  :
 
 
-
-
-
-
-  :
 
 
 
@@ -25212,8 +24891,6 @@ esac
 
 
 
-
-  :
 
 
 
@@ -25658,22 +25335,12 @@ echo "${ECHO_T}$gl_cv_glob_lists_symlinks" >&6; }
   if test -n "$GLOB_H"; then
 
 
-  :
-
-
-
-
-
-  :
 
 
 
 
 
 
-
-
-  :
 
 
 
@@ -25816,7 +25483,6 @@ done
 
 
 
-  :
 
 
 
@@ -25920,7 +25586,6 @@ if test "${gl_cv_absolute_inttypes_h+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
 
-  :
 
 
 
@@ -25942,19 +25607,13 @@ fi
 { echo "$as_me:$LINENO: result: $gl_cv_absolute_inttypes_h" >&5
 echo "${ECHO_T}$gl_cv_absolute_inttypes_h" >&6; }
 cat >>confdefs.h <<_ACEOF
-#define ABSOLUTE_INTTYPES_H <$gl_cv_absolute_inttypes_h>
+#define ABSOLUTE_INTTYPES_H "$gl_cv_absolute_inttypes_h"
 _ACEOF
 
 
 fi
 
-  :
 
-
-
-
-
-  :
 
 
 
@@ -26227,8 +25886,6 @@ fi
 
 
 
-
-  :
 
 
 
@@ -26816,9 +26473,6 @@ done
 
 
 
-  :
-
-
 
 
 
@@ -27250,7 +26904,6 @@ _ACEOF
 
 
 
-  :
 
 
 
@@ -27389,7 +27042,6 @@ _ACEOF
 
 
 
-  :
 
 
 
@@ -27598,14 +27250,12 @@ _ACEOF
 
 
 
-  :
 
 
 
 
 
 
-  :
 
 
 
@@ -27637,7 +27287,6 @@ esac
 
 
 
-  :
 
 
 
@@ -27788,14 +27437,6 @@ esac
 
 
 
-  :
-
-
-
-
-
-
-  :
 
 
 
@@ -27807,7 +27448,12 @@ esac
 
 
 
-  :
+
+
+
+
+
+
 
 
 
@@ -27824,7 +27470,6 @@ esac
 
 
 
-  :
 
 
 
@@ -27832,9 +27477,6 @@ esac
 
 
 
-
-
-  :
 
 
 
@@ -28400,7 +28042,7 @@ fi
   yes|no) ac_use_included_regex=$with_included_regex
 	;;
   '')
-    # If the system regex support is good enough that it passes the the
+    # If the system regex support is good enough that it passes the
     # following run test, then default to *not* using the included regex.c.
     # If cross compiling, assume the test would fail and use the included
     # regex.c.  The first failing regular expression is from `Spencer ere
@@ -28636,7 +28278,6 @@ esac
 
 
 
-  :
 
 
 
@@ -28644,12 +28285,6 @@ esac
 
 
 
-
-
-
-
-
-  :
 
 
 
@@ -29054,7 +28689,6 @@ done
 esac
 
 
-  :
 
 
 
@@ -29185,7 +28819,6 @@ done
 
 
 
-  :
 
 
 
@@ -29554,7 +29187,6 @@ _ACEOF
   if test $ac_cv_func_unsetenv = no; then
 
 
-  :
 
 
 
@@ -30919,9 +30551,6 @@ done
 
 
 
-  :
-
-
 
 
 
@@ -31210,7 +30839,6 @@ _ACEOF
 
 
 
-  :
 
 
 
@@ -31244,7 +30872,6 @@ if test "${gl_cv_absolute_stdint_h+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
 
-  :
 
 
 
@@ -31266,16 +30893,17 @@ fi
 { echo "$as_me:$LINENO: result: $gl_cv_absolute_stdint_h" >&5
 echo "${ECHO_T}$gl_cv_absolute_stdint_h" >&6; }
 cat >>confdefs.h <<_ACEOF
-#define ABSOLUTE_STDINT_H <$gl_cv_absolute_stdint_h>
+#define ABSOLUTE_STDINT_H "$gl_cv_absolute_stdint_h"
 _ACEOF
 
 
-    ABSOLUTE_STDINT_H="<$gl_cv_absolute_stdint_h>"
-
+    ABSOLUTE_STDINT_H=\"$gl_cv_absolute_stdint_h\"
     HAVE_STDINT_H=1
   else
+    ABSOLUTE_STDINT_H=\"no/such/file/stdint.h\"
     HAVE_STDINT_H=0
   fi
+
 
 
           if test $ac_cv_header_stdint_h = yes; then
@@ -32609,9 +32237,6 @@ done
 
 
 
-  :
-
-
 
 
 
@@ -32747,9 +32372,6 @@ done
 
 
 
-
-
-  :
 
 
 
@@ -33063,9 +32685,6 @@ cat >>confdefs.h <<\_ACEOF
 #define strnlen rpl_strnlen
 _ACEOF
 
-
-
-  :
 
 
 
@@ -34114,7 +33733,6 @@ fi
 
 
 
-  :
 
 
 
@@ -34299,7 +33917,6 @@ done
 
 
 
-  :
 
 
 
@@ -34402,7 +34019,6 @@ if test "${gl_cv_absolute_sys_stat_h+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
 
-  :
 
 
 
@@ -34424,11 +34040,11 @@ fi
 { echo "$as_me:$LINENO: result: $gl_cv_absolute_sys_stat_h" >&5
 echo "${ECHO_T}$gl_cv_absolute_sys_stat_h" >&6; }
 cat >>confdefs.h <<_ACEOF
-#define ABSOLUTE_SYS_STAT_H <$gl_cv_absolute_sys_stat_h>
+#define ABSOLUTE_SYS_STAT_H "$gl_cv_absolute_sys_stat_h"
 _ACEOF
 
 
-    ABSOLUTE_SYS_STAT_H="<$gl_cv_absolute_sys_stat_h>"
+    ABSOLUTE_SYS_STAT_H=\"$gl_cv_absolute_sys_stat_h\"
 
 for ac_header in io.h
 do
@@ -34599,9 +34215,11 @@ fi
 done
 
 
-
     SYS_STAT_H='sys/stat.h'
+  else
+    ABSOLUTE_SYS_STAT_H=\"no/such/file/sys/stat.h\"
   fi
+
 
 
 
@@ -34702,7 +34320,6 @@ esac
 
 
 
-  :
 
 
 
@@ -34713,7 +34330,6 @@ esac
 
 
 
-  :
 
 
 
@@ -35232,91 +34848,52 @@ _ACEOF
 
 
 
-  :
 
 
 
 
 
 
-  :
 
 
 
 
 
 
-  :
 
 
 
 
 
 
-  :
 
 
 
 
 
 
-  :
 
 
 
 
 
 
-  :
 
 
 
 
 
 
-  :
 
 
 
 
 
 
-  :
 
 
 
 
-
-
-  :
-
-
-
-
-
-
-  :
-
-
-
-
-
-
-  :
-
-
-
-
-
-
-  :
-
-
-
-
-
-
-  :
 
 
 
@@ -35817,7 +35394,6 @@ esac
 
 
 
-  :
 
 
 
@@ -35825,9 +35401,6 @@ esac
 
 
 
-
-
-  :
 
 
 
