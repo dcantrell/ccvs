@@ -1,3 +1,10 @@
+2006-07-11  Derek Price  <derek@ximbiot.com>
+
+	* absolute-header.m4, d-ino.m4, d-type.m4, getcwd.m4, getopt.m4,
+	glob.m4, gnulib-comp.m4, regex.m4, stdint.m4, sys_stat_h.m4: Update
+	from GNULIB.
+	* onceonly_2_57.m4: Remove this file (per GNULIB update).
+
 2006-07-06  Derek Price  <derek@ximbiot.com>
 
 	* _inttypes_h.m4, d-ino.m4, d-type.m4, fnmatch.m4, getcwd.m4,
