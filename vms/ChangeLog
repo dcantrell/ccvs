@@ -1,3 +1,8 @@
+2006-07-10  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (EXTRA_DIST): Remove ndir.[ch].
+	* ndir.c: Remove obsolescent file.
+
 2006-07-07  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in [HAVE_DIRENT_H]: Define - this is correct on OpenVMS.
