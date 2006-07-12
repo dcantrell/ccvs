@@ -1,20 +1,32 @@
-/*  dirent.c - portable directory routines
- *
- * This file is in the public domain.
- *
- * Everything non trivial in this code came originally from: @(#)msd_dir.c 1.4
- * 87/11/06, a public domain implementation of BSD directory routines for
- * MS-DOS, written by Michael Rendell ({uunet,utai}michael@garfield),
- * August 1987.
- *
- * Converted to CVS's "windows-NT/ndir.c" in 1990 by Thorsten Ohl
- * <td12@ddagsi3.bitnet>.
- *
- * Minor adaptations made in 2006 by Derek R. Price <derek@ximbiot.com>, with
- * Windows API oversight by Jim Hyslop <jhyslop@dreampossible.ca>, to meet the
- * POSIX.1 <dirent.h> API with some GNU extensions (as opposed to its
- * intermediate incarnation as CVS's "windows-NT/ndir.c").
- */
+/* dirent.c - portable directory routines
+   Copyright (C) 2006 Free Software Foundation, Inc.
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+
+/* Everything non trivial in this code came originally from: @(#)msd_dir.c 1.4
+   87/11/06, a public domain implementation of BSD directory routines for
+   MS-DOS, written by Michael Rendell ({uunet,utai}michael@garfield),
+   August 1987.
+
+   Converted to CVS's "windows-NT/ndir.c" in 1990 by Thorsten Ohl
+   <td12@ddagsi3.bitnet>.
+
+   Minor adaptations made in 2006 by Derek R. Price <derek@ximbiot.com>, with
+   Windows API oversight by Jim Hyslop <jhyslop@dreampossible.ca>, to meet the
+   POSIX.1 <dirent.h> API with some GNU extensions (as opposed to its
+   intermediate incarnation as CVS's "windows-NT/ndir.c").  */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>

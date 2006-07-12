@@ -1,3 +1,7 @@
+2006-07-12  Derek Price  <derek@ximbiot.com>
+
+	* dirent.h, dirent.c: Restore GPL license.
+
 2006-07-11  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in [HAVE_DIRECT_H, HAVE_DIRENT_H]: Remove obsolescent
