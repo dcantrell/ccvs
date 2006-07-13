@@ -31,6 +31,8 @@
 #ifndef WINDOWSNT_DIRENT_H_INCLUDED
 #define WINDOWSNT_DIRENT_H_INCLUDED
 
+#include <stddef.h>
+
 #define	rewinddir(dirp)	seekdir (dirp, 0L)
 
 /* 255 is said to be big enough for Windows NT.  The more elegant
