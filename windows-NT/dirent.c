@@ -33,7 +33,6 @@
 #endif
 
 /* Validate API.  */
-#include <sys/types.h>
 #include <dirent.h>
 
 /* System (WOE32) Includes.  */
