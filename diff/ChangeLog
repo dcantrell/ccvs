@@ -1,3 +1,8 @@
+2006-07-14  Mark D. Baushke  <mdb@gnu.org>
+
+	* system.h (_D_EXACT_NAMLEN): Add missing macro function
+	parameter.
+
 2006-07-07  Derek Price  <derek@ximbiot.com>
 
 	* system.h [!HAVE_DIRENT_H && !HAVE_NDIR_H]: Ignore this obsolescent
