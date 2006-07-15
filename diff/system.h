@@ -151,7 +151,7 @@ GNU General Public License for more details.
 
 #include <dirent.h>
 #ifndef _D_EXACT_NAMLEN
-# define _D_EXACT_NAMLEN	strlen ((dirent)->d_name)
+# define _D_EXACT_NAMLEN(dirent)	strlen ((dirent)->d_name)
 #endif
 #define NAMLEN(dirent)	_D_EXACT_NAMLEN (dirent)
 
