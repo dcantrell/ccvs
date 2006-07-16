@@ -1,3 +1,7 @@
+2006-07-16  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (File permissions): Correct punctuation.
+
 2006-07-11  Larry Jones  <lawrence.jones@ugs.com>
 
 	* cvs.texinfo (log options): -b is a revision selection option, not
