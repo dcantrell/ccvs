@@ -1062,7 +1062,7 @@ for new directories that are added inside the tree, but
 you must fix the permissions manually when a new
 directory should have different permissions than its
 parent directory.  If you set the @code{CVSUMASK}
-environment variable that will control the file
+environment variable, that will control the file
 permissions which @sc{cvs} uses in creating directories
 and/or files in the repository.  @code{CVSUMASK} does
 not affect the file permissions in the working
