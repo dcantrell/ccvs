@@ -2,7 +2,7 @@ How to write code for CVS
 
 * License of CVS
 
-    CVS is Copyright (C) 1989-2005 The Free Software Foundation, Inc.
+    CVS is Copyright (C) 1986-2006 The Free Software Foundation, Inc.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,8 +23,10 @@ How to write code for CVS
 
 Patches against the development version of CVS are most likely to be accepted:
 
-	$ export CVS_RSH="ssh"
-	$ cvs -z3 -d:ext:anoncvs@savannah.nongnu.org:/cvsroot/cvs co ccvs
+	$ cvs -z3 -d:pserver:anonymous@cvs.sv.nongnu.org:/sources/cvs co ccvs
+
+See the Savannah sources page <http://savannah.nongnu.org/cvs/?group=cvs> for
+more information.
 
 * Compiler options
 
