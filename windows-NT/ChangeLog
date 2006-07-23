@@ -1,3 +1,8 @@
+2006-07-23  Mark D. Baushke  <mdb@gnu.org>
+
+	* dirent.c (opendir): Conform to C89 needs to have parenthesis
+	around the type for a sizeof operator.
+
 2006-07-13  Derek Price  <derek@ximbiot.com>
 
 	* dirent.h, dirent.c: Tweak to more modern POSIX spec.

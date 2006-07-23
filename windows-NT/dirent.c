@@ -72,7 +72,7 @@ opendir (const char *name)
 
   sprintf (name_buf, "%s%s%s", name, slash, "*.*");
 
-  dirp = xmalloc (sizeof DIR);
+  dirp = xmalloc (sizeof (DIR));
   dirp->dd_loc = 0;
   dirp->dd_contents = dirp->dd_cp = NULL;
 
@@ -84,7 +84,7 @@ opendir (const char *name)
 
   do
     {
-      dp = xmalloc (sizeof struct _dircontents);
+      dp = xmalloc (sizeof (struct _dircontents));
       dp->_d_length = strlen (find_buf.name);
       dp->_d_entry = xmalloc (dp->_d_length + 1);
       memcpy (dp->_d_entry, find_buf.name, dp->_d_length + 1);
