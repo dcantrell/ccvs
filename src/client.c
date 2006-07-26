@@ -4652,9 +4652,8 @@ auth_server (cvsroot_t *root, struct buffer *to_server,
 	send_to_server_via(to_server, end, 0);
 	send_to_server_via(to_server, "\012", 1);
 
-        /* Paranoia. */
-        memset (password, 0, strlen (password));
-	free (password);
+	free_cvs_password (password);
+	password = NULL;
 # else /* ! AUTH_CLIENT_SUPPORT */
 	error (1, 0, "INTERNAL ERROR: This client does not support pserver authentication");
 # endif /* AUTH_CLIENT_SUPPORT */

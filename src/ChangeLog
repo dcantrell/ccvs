@@ -1,3 +1,12 @@
+2006-07-25  Mark D. Baushke  <mdb@gnu.org>
+
+	* login.c (free_cvs_password): New function to control freeing of
+	the static get_cvs_passwd() returned storage.
+	(login): Call it.
+	* cvs.h (free_cvs_password): Add prototype for it.
+	* client.c (auth_server): Call it.
+	[Alter the previous NetBSD coverity cid-3404 patch.]
+	
 2006-07-11  Derek Price  <derek@ximbiot.com>
 
 	* subr.c (isParentPath): New function.
