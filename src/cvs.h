@@ -588,6 +588,7 @@ char *descramble (char *str);
 
 #ifdef AUTH_CLIENT_SUPPORT
 char *get_cvs_password (void);
+void free_cvs_password (char *str);
 /* get_cvs_port_number() is not pure since the /etc/services file could change
  * between calls.  */
 int get_cvs_port_number (const cvsroot_t *root);
