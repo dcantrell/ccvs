@@ -1,3 +1,7 @@
+2006-08-02  Derek Price  <derek@ximbiot.com>
+
+	* log_accum.pl (get_topdir): Quote file name in debug output.
+
 2006-07-24  Derek Price  <derek@ximbiot.com>
 
 	* log_accum.pl: Actually remove temporary files.  Sanity check that
