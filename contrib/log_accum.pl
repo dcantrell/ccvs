@@ -130,7 +130,7 @@ sub debug
 # Config hash values:
 #	mail-to		Reference to array of email destinations.
 #	debug		Whether to print debug information.
-#	debug_file	File name to print debugging information to.
+#	debug-log	File name to print debugging information to.
 #	tag		Reference to array of tags to send email for.
 #	url		Base URL for cvsweb.
 #	cvsroot		CVSROOT for use with cvsweb.
@@ -198,9 +198,9 @@ sub set_defaults
     $config->{'file-text'} = "cvs" if !exists $config->{'file-text'};
 
     # Just set @debug in a global.  It's easier.
-    $config->{debug_file} = [] unless exists $config->{debug_file};
-    push @{$config->{debug_file}}, '&STDERR' if $config->{debug};
-    foreach (@{$config->{debug_file}})
+    $config->{'debug-log'} = [] unless exists $config->{'debug-log'};
+    push @{$config->{'debug-log'}}, '&STDERR' if $config->{debug};
+    foreach (@{$config->{'debug-log'}})
     {
 	my $debug;
 	if (open $debug, ">>$_")
@@ -221,7 +221,7 @@ sub set_defaults
 	{
 	    debug "config{$_} => ", $config->{$_}, "\n";
 	}
-	for ("debug_file", "mail-to", "diff-arg", "separate-diffs")
+	for ("debug-log", "mail-to", "diff-arg", "separate-diffs")
 	{
 	    my @tmp = @{$config->{$_}} if $config->{$_};
 	    debug "config{$_} => ", join (":", @tmp), "\n";
@@ -277,7 +277,7 @@ my @option_spec = ("config|c=s@",
 		   "tag|only-tag|r=s@",
 		   "file-prefix|file-text|T=s", "user|u=s",
 		   "debug|verbose|v!",
-		   "debug_file|log=s@",
+		   "debug-log|debug-file=s@",
 		   "quiet|q!",
 		   "commit-log|f=s",
 		   "url|cvsweb|U=s",
