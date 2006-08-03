@@ -1,5 +1,8 @@
 2006-08-03  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.pl (get_topdir): Don't assume the directory list will be
+	ordered by increasing path length.
+
 	* log_accum.pl (debug): New function.
 	(option_spec): Parse debug log names.
 	(set_defaults): Open debug log files.
