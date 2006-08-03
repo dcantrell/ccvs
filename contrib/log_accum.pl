@@ -201,9 +201,7 @@ sub set_defaults
     foreach (@{$config->{debug_file}})
     {
 	my $debug;
-	my $fs = $_;
-	$fs =~ s/^[^&]/ /;
-	if (open $debug, ">>$fs")
+	if (open $debug, ">>$_")
 	{
 	    push @debug, $debug;
 	}
