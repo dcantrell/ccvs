@@ -858,7 +858,7 @@ sub get_topdir
 	last unless @topsplit;
     }
 
-    print STDERR "get_topdir: Returning ", join ("/", @topsplit), "\n"
+    print STDERR "get_topdir: Returning `", join ("/", @topsplit), "'\n"
 	if $debug;
 
     return join "/", @topsplit;
