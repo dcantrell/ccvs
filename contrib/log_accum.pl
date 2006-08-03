@@ -98,7 +98,7 @@ my $STATE_LOG     = 4;
 # Global variables
 #
 ############################################################
-my $debug;
+my @debug;
 
 
 
@@ -110,13 +110,25 @@ my $debug;
 
 
 
+# Print debugging information to any logs.
+sub debug
+{
+    foreach (@debug)
+    {
+	print $_ @_;
+    }
+}
+
+
+
 # Set the default configuration values.  This should be called after
 # process_argv since it assumes that undefined values in config mean that
 # the option was not specified on the command line.
 #
 # Config hash values:
 #	mail-to		Reference to array of email destinations.
-#	debug		Print debugging information.
+#	debug		Whether to print debug information.
+#	debug_file	File name to print debugging information to.
 #	tag		Reference to array of tags to send email for.
 #	url		Base URL for cvsweb.
 #	cvsroot		CVSROOT for use with cvsweb.
@@ -183,21 +195,36 @@ sub set_defaults
     }
     $config->{'file-text'} = "cvs" if !exists $config->{'file-text'};
 
-    # Just set $debug in a global.  It's easier.
-    $debug = $config->{'debug'};
+    # Just set @debug in a global.  It's easier.
+    $config->{debug_file} = [] unless exists $config->{debug_file};
+    push @{$config->{debug_file}}, '&STDERR' if $config->{debug};
+    foreach (@{$config->{debug_file}})
+    {
+	my $debug;
+	my $fs = $_;
+	$fs =~ s/^[^&]/ /;
+	if (open $debug, ">>$fs")
+	{
+	    push @debug, $debug;
+	}
+	else
+	{
+	    warn "failed to open debug log `$_': $!";
+	}
+    }
 
     # Print some debugging info about the config when requested.
-    if ($debug)
+    if (@debug)
     {
 	for ("debug", "tag", "url", "cvsroot", "send-diff",
 	     "empty-diffs", "file-text")
 	{
-	    print STDERR "config{$_} => ", $config->{$_}, "\n";
+	    debug "config{$_} => ", $config->{$_}, "\n";
 	}
-	for ("mail-to", "diff-arg", "separate-diffs")
+	for ("debug_file", "mail-to", "diff-arg", "separate-diffs")
 	{
 	    my @tmp = @{$config->{$_}} if $config->{$_};
-	    print STDERR "config{$_} => ", join (":", @tmp), "\n";
+	    debug "config{$_} => ", join (":", @tmp), "\n";
 	}
     }
 }
@@ -250,6 +277,7 @@ my @option_spec = ("config|c=s@",
 		   "tag|only-tag|r=s@",
 		   "file-prefix|file-text|T=s", "user|u=s",
 		   "debug|verbose|v!",
+		   "debug_file|log=s@",
 		   "quiet|q!",
 		   "commit-log|f=s",
 		   "url|cvsweb|U=s",
@@ -283,7 +311,7 @@ sub parse_config
 	warn "config loop detected" && next if $parsed_configs->{$file};
 	$parsed_configs->{$file} = 1;
 
-	print STDERR "parse_config: parsing $file\n" if $debug;
+	debug "parse_config: parsing $file\n" if @debug;
 	open CONFIG, "<$file" or die "can't open $file: $!";
 
 	while (<CONFIG>)
@@ -471,7 +499,7 @@ sub process_stdin
 	chomp;                      # Drop the newline
 	if (/^\s*(Tag|Revision\/Branch):\s*([a-zA-Z][a-zA-Z0-9_-]*)$/)
 	{
-	    print STDERR "Read $1 `$2' from `$_'" if $debug;
+	    debug "Read $1 `$2' from `$_'" if @debug;
 	    push @branch_lines, $2;
 	    next;
 	}
@@ -647,8 +675,8 @@ sub send_mail
 
     my @mailcmd;
 
-    print STDERR "Mailing the commit message to $mail_to (from "
-		 . ($mailfrom ? $mailfrom : $username) . ")\n" if $debug;
+    debug "Mailing the commit message to $mail_to (from "
+	  . ($mailfrom ? $mailfrom : $username) . ")\n" if @debug;
 
     $ENV{'MAILUSER'} = $mailfrom if $mailfrom;
  
@@ -755,7 +783,7 @@ sub get_temp_files
 {
     my ($tmpdir, $temp_name, $id) = @_;
 
-    print STDERR "get_temp_files: $tmpdir, $temp_name, $id\n" if $debug;
+    debug "get_temp_files: $tmpdir, $temp_name, $id\n" if @debug;
 
     return "$tmpdir/#$temp_name.$id.lastdir", # Created by commit_prep!
 	   "$tmpdir/#$temp_name.$id.log",
@@ -786,9 +814,8 @@ sub format_names
 
     $lines[0] = sprintf $format, $dir, ":";
 
-    print STDERR "format_names(): dir = ", $dir, "; files = ",
-		 join (":", @files), ".\n"
-	if $debug;
+    debug "format_names(): dir = ", $dir, "; files = ",
+	  join (":", @files), ".\n" if @debug;
 
     foreach (@files)
     {
@@ -808,7 +835,7 @@ sub format_lists
     my ($toplevel, @lines) = @_;
     my (@text, @files, $dir);
 
-    print STDERR "format_lists(): ", join (":", @lines), "\n" if $debug;
+    debug "format_lists(): ", join (":", @lines), "\n" if @debug;
 
     $dir = shift @lines;	# first thing is always a directory
     die "Damn, $dir doesn't look like a directory!" if $dir !~ m#.*/$#;
@@ -858,8 +885,8 @@ sub get_topdir
 	last unless @topsplit;
     }
 
-    print STDERR "get_topdir: Returning `", join ("/", @topsplit), "'\n"
-	if $debug;
+    debug "get_topdir: Returning `", join ("/", @topsplit), "'\n"
+	if @debug;
 
     return join "/", @topsplit;
     # $topdir may be empty.
@@ -877,9 +904,9 @@ sub compile_subject
     # commit_prep rejects the toplevel project as input and all the directory
     # names were normalized before being written to the change files.
 
-    print STDERR "compile_subject(): ", $branch ? "[$branch] " : "",
+    debug "compile_subject(): ", $branch ? "[$branch] " : "",
 		 join (":", @list), "\n"
-	if $debug;
+	if @debug;
 
     my $topdir = get_topdir @list;
     # $topdir may be empty.
@@ -932,7 +959,7 @@ sub read_logfile
     while (<FILE>)
     {
 	chomp;
-	print STDERR "read_logfile: read $_\n" if $debug;
+	debug "read_logfile: read $_\n" if @debug;
 	push @text, $_;
     }
     close FILE;
@@ -944,7 +971,7 @@ sub push_formatted_lists
 {
     my ($text, $subject_files, $toplevel, $section, $filename) = @_;
 
-    print STDERR "push_formatted_lists(): $section $filename\n" if $debug;
+    debug "push_formatted_lists(): $section $filename\n" if @debug;
 
     my @lines = read_logfile $filename;
     if (@lines)
@@ -1045,8 +1072,8 @@ sub build_diffs
     push @revs, read_logfile $changed_rev_file;
     push @revs, read_logfile $added_rev_file;
     push @revs, read_logfile $removed_rev_file;
-    print STDERR "build_diffs: files = ", join (":", @list), "\n" if $debug;
-    print STDERR "build_diffs: revs = ", join (":", @revs), "\n" if $debug;
+    debug "build_diffs: files = ", join (":", @list), "\n" if @debug;
+    debug "build_diffs: revs = ", join (":", @revs), "\n" if @debug;
 
     # Assertion.
     die "not enough revs for files" unless grep (m#[^/]$#, @list) == (@revs/2);
@@ -1156,7 +1183,7 @@ sub build_message_body
     my ($subject, @body, @log_text, @diff);
     my (@modified_files, @added_files, @removed_files);
 
-    print STDERR "build_message_body\n" if $debug;
+    debug "build_message_body\n" if @debug;
 
     push_formatted_lists \@body, \@modified_files, $toplevel,
 			 "Modified files:", $changed_file;
@@ -1213,7 +1240,7 @@ sub cleanup_tmpfiles
     closedir DIR;
 
     # Delete the files.
-    print STDERR 'Removing ' . join(', ', @files) if $debug;
+    debug 'Removing ' . join(', ', @files) if @debug;
     map { unlink "$tmpdir/$_" } @files;
 }
 
@@ -1260,12 +1287,12 @@ sub main
     $module =~ m#^([^/]*)#;
     my $toplevel = $1;
 
-    if ($debug)
+    if (@debug)
     {
-	print STDERR "module -", $toplevel, "\n";
-	print STDERR "dir -", $module, "\n";
-	print STDERR "files -", join (":", @$files), "\n";
-	print STDERR "id -", $id, "\n";
+	debug "module -", $toplevel, "\n";
+	debug "dir -", $module, "\n";
+	debug "files -", join (":", @$files), "\n";
+	debug "id -", $id, "\n";
     }
 
 
@@ -1363,9 +1390,9 @@ sub main
     {
 	last if !-e "$LOG_BASE.$i";
 	my @text = read_logfile "$LOG_BASE.$i";
-	print STDERR "comparing: {", join (" ", @$log_lines), "} and {",
-		     join (" ", @text), "}\n"
-	    if $debug;
+	debug "comparing: {", join (" ", @$log_lines), "} and {",
+	      join (" ", @text), "}\n"
+	    if @debug;
 	last if join (" ", @$log_lines) eq join (" ", @text);
     }
 
@@ -1437,11 +1464,11 @@ sub main
     if (-e $LAST_FILE)
     {
 	my $dir = read_line $LAST_FILE;
-	print STDERR "checking last dir: $dir\n" if $debug;
+	debug "checking last dir: $dir\n" if @debug;
 
 	if ($module ne $dir)
 	{
-	    print STDERR "More commits to come...\n" if $debug;
+	    debug "More commits to come...\n" if @debug;
 	    return 0;
 	}
     } else {
