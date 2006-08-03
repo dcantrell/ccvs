@@ -868,14 +868,19 @@ sub get_topdir
     # Find the highest common directory.
     my @dirs = grep m#/$#, @list;
     map s#/$##, @dirs;
+    # The first dir in the list may be the top.
     my @topsplit = split m#/#, $dirs[0];
-    for (my $i = 1; $i <= $#dirs; $i++)
+    for (my $i = 1; $i < @dirs; $i++)
     {
 	my @dirsplit = split m#/#, $dirs[$i];
-	for (my $j = 0; $j <= $#topsplit and $j <= $#dirsplit; $j++)
+	# If the current dir has fewer elements than @topsplit, later elements
+	# in @topsplit are obviously not part of the topdir specification.
+	splice @topsplit, @dirsplit if @dirsplit < @topsplit;
+	for (my $j = 0; $j < @topsplit; $j++)
 	{
 	    if ($topsplit[$j] ne $dirsplit[$j])
 	    {
+		# Elements at index $j and later do not specify the same dir.
 		splice @topsplit, $j;
 		last;
 	    }
