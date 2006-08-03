@@ -82,14 +82,16 @@ my $MAIL_CMD_NEEDS_ADDRS;
 
 ############################################################
 #
-# Constants - DO NOT CHANGE THESE.
+# Constants
 #
 ############################################################
-my $STATE_NONE    = 0;
-my $STATE_CHANGED = 1;
-my $STATE_ADDED   = 2;
-my $STATE_REMOVED = 3;
-my $STATE_LOG     = 4;
+use constant {
+	STATE_NONE    => 0,
+	STATE_CHANGED => 1,
+	STATE_ADDED   => 2,
+	STATE_REMOVED => 3,
+	STATE_LOG     => 4
+};
 
 
 
@@ -485,7 +487,7 @@ sub process_argv
 sub process_stdin
 {
     my ($module, @files) = @_;
-    my $state = $STATE_NONE;
+    my $state = STATE_NONE;
     my (@branch_lines, @changed_files, @added_files,
 	@removed_files, @log_lines);
 
@@ -501,12 +503,12 @@ sub process_stdin
 	    push @branch_lines, $2;
 	    next;
 	}
-	if (/^Modified Files/) { $state = $STATE_CHANGED; next; }
-	if (/^Added Files/)    { $state = $STATE_ADDED;   next; }
-	if (/^Removed Files/)  { $state = $STATE_REMOVED; next; }
-	if (/^Log Message/)    { $state = $STATE_LOG;     last; }
+	if (/^Modified Files/) { $state = STATE_CHANGED; next; }
+	if (/^Added Files/)    { $state = STATE_ADDED;   next; }
+	if (/^Removed Files/)  { $state = STATE_REMOVED; next; }
+	if (/^Log Message/)    { $state = STATE_LOG;     last; }
 
-	next if $state == $STATE_NONE || $state == $STATE_LOG;
+	next if $state == STATE_NONE || $state == STATE_LOG;
 	next if /^\s*$/;              # ignore empty lines
 
 	# Sort the file list.  This algorithm is a little cumbersome, but it
@@ -536,9 +538,9 @@ sub process_stdin
 	die "unrecognized file(s): `$_'" unless /^\s*$/;
 
 	# Store.
-	push @changed_files, @matched and next if $state == $STATE_CHANGED;
-	push @added_files, @matched and next if $state == $STATE_ADDED;
-	push @removed_files, @matched and next if $state == $STATE_REMOVED;
+	push @changed_files, @matched and next if $state == STATE_CHANGED;
+	push @added_files, @matched and next if $state == STATE_ADDED;
+	push @removed_files, @matched and next if $state == STATE_REMOVED;
 
 	# Assertion.
 	die "unknown file state $state";
@@ -551,7 +553,7 @@ sub process_stdin
     {
 	while (<STDIN>)
 	{
-	    next unless $state == $STATE_LOG; # eat all STDIN
+	    next unless $state == STATE_LOG; # eat all STDIN
 
 	    chomp;
 	    push @log_lines, $_;
