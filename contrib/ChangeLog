@@ -1,5 +1,7 @@
 2006-08-03  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.pl: Use proper Perl constants.
+
 	* log_accum.pl (get_topdir): Don't assume the directory list will be
 	ordered by increasing path length.
 
