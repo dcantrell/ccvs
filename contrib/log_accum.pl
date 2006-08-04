@@ -85,13 +85,12 @@ my $MAIL_CMD_NEEDS_ADDRS;
 # Constants
 #
 ############################################################
-use constant {
-	STATE_NONE    => 0,
-	STATE_CHANGED => 1,
-	STATE_ADDED   => 2,
-	STATE_REMOVED => 3,
-	STATE_LOG     => 4
-};
+# The constant pragma wasn't introduced until Perl 5.8.
+sub STATE_NONE    { 0 }
+sub STATE_CHANGED { 1 }
+sub STATE_ADDED   { 2 }
+sub STATE_REMOVED { 3 }
+sub STATE_LOG     { 4 }
 
 
 
