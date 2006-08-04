@@ -1,5 +1,8 @@
 2006-08-03  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.pl: Avoid `use constant' - it requires Perl 5.8.
+	(Suggested by Mark D. Baushke <mdb@gnu.org>.)
+
 	* log_accum.pl: Change --debug_file to --debug-log or --debug-file, for
 	readability and consistency.
 
