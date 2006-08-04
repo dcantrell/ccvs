@@ -46,6 +46,7 @@
 # Ken Coar, Sylvain Beucler <beuc@beuc.net> and Derek Price -- check
 # ChangeLog for precise credits.
 
+require 5.002;    # Subroutine prototypes.
 use strict;
 
 use Getopt::Long qw(:config gnu_getopt require_order);
@@ -86,11 +87,11 @@ my $MAIL_CMD_NEEDS_ADDRS;
 #
 ############################################################
 # The constant pragma wasn't introduced until Perl 5.8.
-sub STATE_NONE    { 0 }
-sub STATE_CHANGED { 1 }
-sub STATE_ADDED   { 2 }
-sub STATE_REMOVED { 3 }
-sub STATE_LOG     { 4 }
+sub STATE_NONE    () { 0 }
+sub STATE_CHANGED () { 1 }
+sub STATE_ADDED   () { 2 }
+sub STATE_REMOVED () { 3 }
+sub STATE_LOG     () { 4 }
 
 
 
