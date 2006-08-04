@@ -1,3 +1,7 @@
+2006-08-04  Derek Price  <derek@ximbiot.com>
+
+	* log_accum.pl: Use function prototypes for constants.  Require 5.002.
+
 2006-08-03  Derek Price  <derek@ximbiot.com>
 
 	* log_accum.pl: Avoid `use constant' - it requires Perl 5.8.
