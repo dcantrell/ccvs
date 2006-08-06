@@ -23,8 +23,14 @@ Words and expressions hard to translate:
   I think that 'efetivar' is good. But people don't like. And some
   people are using commitar (argh!)
 
+- default
+  'padrão'
+
 - default branch
   ramo padrão
+
+- disclaimer
+  ???
 
 - head revision
   'revisão no topo'.
@@ -40,17 +46,26 @@ Words and expressions hard to translate:
 - keyword expansion
   'expansão de palavra-chave'
 
+- keyword substitution
+  'substituição de palavra-chave'
+
 - line ending
   'terminação de linha'
 
 - lock
   'travar', 'trava'.
 
+- locking
+  ???
+
 - log (verb)
   'registrar'
 
 - log (noun)
   'registro'
+
+- magic branch
+  'ramo mágico'
 
 - marker
   'marcador'
