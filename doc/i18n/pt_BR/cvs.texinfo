@@ -6664,10 +6664,10 @@ mudanças não aparecem no tronco principal ou em outros ramos.
 @c <en>copy the changes onto another branch.
 Mais tarde você pode mover as mudanças de um ramo para
 outro (ou para o tronco principal) com uma
-@dfn{mesclagem}.  Mesclar é primeiro rodar um @code{cvs
-update -j}, para mesclar as mudanças no seu diretório
-de trabalho.  Depois efetivar (commit) esta revisão, e
-finalmente fazer a efetiva destas mudanças de um ramo
+@dfn{mesclagem}.  A mesclagem baseia-se em primeiro rodar um
+@code{cvs update -j}, para mesclar as mudanças no seu diretório
+de trabalho.  Depois você pode efetivar (commit) esta revisão,
+fazendo efetivamente as mudanças de um ramo
 para outro.
 
 @menu
@@ -6721,14 +6721,14 @@ para outro.
 @c <en>of the sources are in a state of flux and are not expected to be stable
 @c <en>for at least another month.  There is no way to make a
 @c <en>bugfix release based on the newest sources.
-Suponha que a release 1.0 de tc está pronta.  Você está
+Suponha que a release 1.0 de tc está pronta.  Você
 continua desenvolvendo tc, e planeja lançar a release
 1.1 em alguns meses.  Depois de um tempo seus
 consumidores começam a reclamar de um erro fatal.  Você
 baixa a release 1.0 (@pxref{Etiquetas}) e encontra o
 erro (que tem um conserto fácil).  Entretanto, a
 revisão atual dos fontes está num estado do fluxo de
-desenvolvimento que você não espera que estaja estável
+desenvolvimento que você não espera que esteja estável
 em pelo menos um mês.  Não tem jeito de lançar uma
 release baseada nos fontes mais novos.
 
@@ -6743,7 +6743,7 @@ um @dfn{ramo} na árvore de revisões para todos os
 arquivos que integram a release 1.0 de tc.  Você pode
 então fazer modificações no ramo sem perturbar o tronco
 principal.  Quando as modificações terminarem você pode
-decidir se incorporam elas ao tronco ou deixa elas no ramo.
+decidir se incorpora elas ao tronco ou deixa elas no ramo.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Creating a branch
@@ -6919,7 +6919,7 @@ ocorrerem.
 @c <en>copy will add new revisions on that branch, while
 @c <en>leaving the main trunk and other branches unaffected.
 Uma vez que você tenha uma cópia de trabalho referente
-a um dado, ela continua no ramo até que se diga o
+a um dado ramo, ela continua no ramo até que se diga o
 contrário.  Isto significa que mudanças inseridas a
 partir da cópia de trabalho vão adicionar novas
 revisões naquele ramo, enquanto que não afeta o tronco
@@ -7234,7 +7234,7 @@ Você pode mesclar mudanças feitas num ramo em seu
 diretório de trabalho passando a opção @samp{-j
 @var{nome_do_ramo}} para o subcomando @code{update}.
 Com uma opção @samp{-j @var{nome_do_ramo}} ele mescla
-as mudançãs feitas entre o maior ancestral comum
+as mudanças feitas entre o maior ancestral comum
 (greatest common ancestor - GCA) do ramo e a revisão de
 destino (no caso mais simples abaixo, o GCA é o ponto
 onde o ramo bifurcou) e a nova revisão neste ramo na
@@ -7540,7 +7540,7 @@ Observe que ao se usar uma única etiqueta estática
 dinâmica (@samp{-j @var{branchname}}) para mesclar
 mudanças a partir de um ramo normalmente não vai
 remover arquivos que foram removidos do ramo, já que o
-@sc{cvs} não adiona etiquetas estáticas a revisões
+@sc{cvs} não adiciona etiquetas estáticas a revisões
 mortas.  A exceção a esta regra ocorre quando uma
 etiqueta estática foi colocada numa revisão morta
 manualmente.  Use a etiqueta do ramo para mesclar todas
@@ -12976,6 +12976,8 @@ faz com que o @sc{cvs} use compressão de nível 6.
 @c <en>@cindex Left-hand options
 @cindex Left-hand options
 
+@c <en>As @samp{cvs_options} disponíveis (as que são dadas à
+@c <en>esquerda do @samp{comando_cvs}) são:
 As @samp{cvs_options} disponíveis (as que são dadas à
 esquerda do @samp{comando_cvs}) são:
 
@@ -13278,6 +13280,18 @@ compressão (o padrão). Tem efeito apenas no cliente @sc{cvs}.
 @c <en>@cindex Right-hand options
 @cindex Right-hand options
 
+@c <en>Esta seção descreve as @samp{opções_de_comando} que
+@c <en>estão disponíveis em vários comandos do @sc{cvs}.
+@c <en>Estas opções são sempre fornecidas à esquerda do
+@c <en>@samp{comando_cvs}.  Nem todos os comandos
+@c <en>suportam todas estas opções; cada uma das opções é
+@c <en>suportada apenas pelos comandos nos quais ela faz
+@c <en>sentido. Entretanto, quando um comando tem uma destas
+@c <en>opções você pode quase sempre esperar o mesmo
+@c <en>comportamento da opção em outros comandos.  (Outras
+@c <en>opções de comando, que são listadas com os comandos
+@c <en>individualmente, podem ter comportamento diferente
+@c <en>entre um comando do @sc{cvs} e outro).
 Esta seção descreve as @samp{opções_de_comando} que
 estão disponíveis em vários comandos do @sc{cvs}.
 Estas opções são sempre fornecidas à esquerda do
@@ -13291,6 +13305,9 @@ opções de comando, que são listadas com os comandos
 individualmente, podem ter comportamento diferente
 entre um comando do @sc{cvs} e outro).
 
+@c <en>@strong{Obs.: o comando @samp{history} é uma exceção;
+@c <en>ele suporta muitas opções que conflitam até mesmo com
+@c <en>essas opções padrão.}
 @strong{Obs.: o comando @samp{history} é uma exceção;
 ele suporta muitas opções que conflitam até mesmo com
 essas opções padrão.}
@@ -13813,11 +13830,11 @@ comandos: @code{import} e @code{update}.
 
 @itemize @bullet
 @item
-Requires: repository, working directory.
+Precisa de: repositório, diretório de trabalho.
 @item
-Changes: repository.
+Altera: repositório.
 @item
-Synonym: rcs
+Synônimo: rcs
 @end itemize
 
 Esta é a interface do @sc{cvs} para agrupar
@@ -13876,10 +13893,10 @@ todos os usuários podem rodar o @code{cvs admin}.
 @c <en>@sc{cvs} but exist for historical purposes.  Some even
 @c <en>make it impossible to use @sc{cvs} until you undo the
 @c <en>effect!
-Some of these options have questionable usefulness for
-@sc{cvs} but exist for historical purposes.  Some even
-make it impossible to use @sc{cvs} until you undo the
-effect!
+A utilidade para o @sc{cvs} de algumas destas opções é questionável,
+mas elas existem por questões históricas.  Algumas
+podem até mesmo impossibilitar o uso do @sc{cvs} até
+que você reverta seus efeitos!
 
 @table @code
 @c <en>@item -A@var{oldfile}
@@ -13887,18 +13904,18 @@ effect!
 @c <en>access list of @var{oldfile} to the access list of the
 @c <en>@sc{rcs} file.
 @item -A@var{oldfile}
-Might not work together with @sc{cvs}.  Append the
-access list of @var{oldfile} to the access list of the
-@sc{rcs} file.
+Pode não funcionar com o @sc{cvs}.  Acrescenta a lista
+de acesso de @var{oldfile} à lista de acesso do arquivo
+@sc{rcs}.
 
 @c <en>@item -a@var{logins}
 @c <en>Might not work together with @sc{cvs}.  Append the
 @c <en>login names appearing in the comma-separated list
 @c <en>@var{logins} to the access list of the @sc{rcs} file.
 @item -a@var{logins}
-Might not work together with @sc{cvs}.  Append the
-login names appearing in the comma-separated list
-@var{logins} to the access list of the @sc{rcs} file.
+Pode não funcionar com o @sc{cvs}.  Acrescenta os nomes
+de login que aparecem na lista (com vírgulas como separadores)
+@var{logins} à lista de acesso do arquivo @sc{rcs}.
 
 @c <en>@item -b[@var{rev}]
 @item -b[@var{rev}]
@@ -13910,13 +13927,14 @@ login names appearing in the comma-separated list
 @c <en>version when using vendor branches (@pxref{Reverting
 @c <en>local changes}).
 @c <en>There can be no space between @samp{-b} and its argument.
-Set the default branch to @var{rev}.  In @sc{cvs}, you
-normally do not manipulate default branches; sticky
-tags (@pxref{Etiquetas adesivas}) are a better way to decide
-which branch you want to work on.  There is one reason
-to run @code{cvs admin -b}: to revert to the vendor's
-version when using vendor branches (@pxref{Desfazendo mudanças locais}).
-There can be no space between @samp{-b} and its argument.
+Torna @var{rev} o ramo padrão.  No @sc{cvs}, você
+normalmente não manipula ramos padrão; Etiquetas
+adesivas (@pxref{Etiquetas adesivas}) são uma forma
+melhor de decidir em que ramo você quer trabalhar.
+Existe uma razão para rodar o @code{cvs admin -b}: para
+voltar à versão do fornecedor quando se está usando
+ramos de fornecedor (@pxref{Desfazendo mudanças locais}).
+Não ponha espaços entre o @samp{-b} e o argumento.
 @c Hmm, we don't document the usage where rev is
 @c omitted.  Maybe that usage can/should be deprecated
 @c (and replaced with -bHEAD or something?) (so we can toss
@@ -13932,10 +13950,11 @@ There can be no space between @samp{-b} and its argument.
 @c <en>leader is not used by current versions of @sc{cvs} or
 @c <en>@sc{rcs} 5.7.  Therefore, you can almost surely not
 @c <en>worry about it.  @xref{Keyword substitution}.
-Sets the comment leader to @var{string}.  The comment
-leader is not used by current versions of @sc{cvs} or
-@sc{rcs} 5.7.  Therefore, you can almost surely not
-worry about it.  @xref{Substituição de palavra-chave}.
+Ajusta o ???comment leader??? para @var{string}.  O ???comment
+leader??? não é usado pelas versões atuais do @sc{cvs}
+ou pelo @sc{rcs} 5.7.  Portanto é quase certo que você
+não precise se preocupar com isto.  @xref{Substituição
+de palavra-chave}.
 
 @c <en>@item -e[@var{logins}]
 @item -e[@var{logins}]
@@ -13944,11 +13963,11 @@ worry about it.  @xref{Substituição de palavra-chave}.
 @c <en>@var{logins} from the access list of the RCS file.  If
 @c <en>@var{logins} is omitted, erase the entire access list.
 @c <en>There can be no space between @samp{-e} and its argument.
-Might not work together with @sc{cvs}.  Erase the login
-names appearing in the comma-separated list
-@var{logins} from the access list of the RCS file.  If
-@var{logins} is omitted, erase the entire access list.
-There can be no space between @samp{-e} and its argument.
+Pode não funcionar com o @sc{cvs}.  Apaga os nomes de
+login que aparecem na lista (com vírgulas como separadores) 
+@var{logins} da lista de acesso do arquivo RCS.  Se
+@var{logins} é omitido, apaga a lista de acesso
+toda. Não ponha espaços entre o @samp{-e} e o argumento.
 
 @c <en>@item -I
 @item -I
@@ -13956,19 +13975,20 @@ There can be no space between @samp{-e} and its argument.
 @c <en>terminal.  This option does not work with the
 @c <en>client/server @sc{cvs} and is likely to disappear in
 @c <en>a future release of @sc{cvs}.
-Run interactively, even if the standard input is not a
-terminal.  This option does not work with the
-client/server @sc{cvs} and is likely to disappear in
-a future release of @sc{cvs}.
+Roda interativamente, mesmo se a entrada padrão não é
+um terminal.  Esta opção não funciona com o @sc{cvs}
+cliente/servidor e vai desaparecer numa ???release??? futura
+do @sc{cvs}.
 
 @item -i
 @c <en>Useless with @sc{cvs}.  This creates and initializes a
 @c <en>new @sc{rcs} file, without depositing a revision.  With
 @c <en>@sc{cvs}, add files with the @code{cvs add} command
 @c <en>(@pxref{Adding files}).
-Useless with @sc{cvs}.  This creates and initializes a
-new @sc{rcs} file, without depositing a revision.  With
-@sc{cvs}, add files with the @code{cvs add} command
+Sem utilidade com o @sc{cvs}.  Esta opção cria e
+inicializa um novo arquivo @sc{rcs}, sem
+???depositing??? uma revisão.  No @sc{cvs}, adicione
+arquivos com o comando @code{cvs add}
 (@pxref{Adicionando arquivos}).
 
 @c <en>@item -k@var{subst}
@@ -13978,11 +13998,11 @@ new @sc{rcs} file, without depositing a revision.  With
 @c <en>substitution}.  Giving an explicit @samp{-k} option to
 @c <en>@code{cvs update}, @code{cvs export}, or @code{cvs
 @c <en>checkout} overrides this default.
-Set the default keyword
-substitution to @var{subst}.
-@xref{Substituição de palavra-chave}.  Giving an explicit @samp{-k} option to
-@code{cvs update}, @code{cvs export}, or @code{cvs
-checkout} overrides this default.
+Configura a substituição de palavra-chave padrão para @var{subst}.
+@xref{Substituição de palavra-chave}.  Passar a opção
+@samp{-k} explicitamente para @code{cvs update},
+@code{cvs export} ou @code{cvs checkout} sobrepõe esta
+configuração.
 
 @c <en>@item -l[@var{rev}]
 @item -l[@var{rev}]
@@ -13991,11 +14011,11 @@ checkout} overrides this default.
 @c <en>@var{rev} is omitted, lock the latest revision on the
 @c <en>default branch.  There can be no space between
 @c <en>@samp{-l} and its argument.
-Lock the revision with number @var{rev}.  If a branch
-is given, lock the latest revision on that branch.  If
-@var{rev} is omitted, lock the latest revision on the
-default branch.  There can be no space between
-@samp{-l} and its argument.
+Trava a revisão com o número @var{rev}.  Se um ramo é
+dado, trava a última revisão daquele ramo.  Se
+@var{rev} é omitido, trava a última revisão no ramo
+padrão.  Não ponha espaços entre o @samp{-l} e seu
+argumento.
 
 @c <en>This can be used in conjunction with the
 @c <en>@file{rcslock.pl} script in the @file{contrib}
@@ -14006,15 +14026,16 @@ default branch.  There can be no space between
 @c <en>in that directory for disclaimers about the unsupported
 @c <en>nature of contrib).  According to comments in that
 @c <en>file, locking must set to strict (which is the default).
-This can be used in conjunction with the
-@file{rcslock.pl} script in the @file{contrib}
-directory of the @sc{cvs} source distribution to
-provide reserved checkouts (where only one user can be
-editing a given file at a time).  See the comments in
-that file for details (and see the @file{README} file
-in that directory for disclaimers about the unsupported
-nature of contrib).  According to comments in that
-file, locking must set to strict (which is the default).
+Isto pode ser usado juntamente com o script @file{rcslock.pl}
+no diretório @file{contrib} da distribuição dos fontes
+do @sc{cvs} para fornecer checkouts reservados (onde
+apenas um usuário pode editar um arquivo por vez).
+Veja os comentários naquele arquivo para detalhes (e
+veja o arquivo @file{README} naquele diretório para
+???disclaimers??? sobre a característica de ausência de
+suporte do contrib).  De acordo com comentários naquele
+arquivo, ???locking??? deve ser configurado para strict
+(que é o padrão).
 
 @c <en>@item -L
 @item -L
@@ -14022,39 +14043,39 @@ file, locking must set to strict (which is the default).
 @c <en>owner of an RCS file is not exempt from locking for
 @c <en>checkin.  For use with @sc{cvs}, strict locking must be
 @c <en>set; see the discussion under the @samp{-l} option above.
-Set locking to strict.  Strict locking means that the
-owner of an RCS file is not exempt from locking for
-checkin.  For use with @sc{cvs}, strict locking must be
-set; see the discussion under the @samp{-l} option above.
+Ajusta o ???locking??? para strict.  ???Strict locking???
+significa que o dono do arquivo RCS não é dispensado de
+travar para fazer ???checkin???.  Para usar com o
+@sc{cvs}, ???strict locking??? deve estar ligado; veja
+a discussão no texto da opção @samp{-l} acima.
 
 @c <en>@cindex Changing a log message
-@cindex Changing a log message
+@cindex Mudando uma mensagem de ???log???
 @c <en>@cindex Replacing a log message
-@cindex Replacing a log message
+@cindex Substituindo uma mensagem de ???log???
 @c <en>@cindex Correcting a log message
-@cindex Correcting a log message
 @c <en>@cindex Fixing a log message
-@cindex Fixing a log message
+@cindex Corrigindo uma mensagem de ???log???
 @c <en>@cindex Log message, correcting
-@cindex Log message, correcting
+@cindex Mensagem de ???log???, corrigindo
 @c <en>@item -m@var{rev}:@var{msg}
 @item -m@var{rev}:@var{msg}
 @c <en>Replace the log message of revision @var{rev} with
 @c <en>@var{msg}.
-Replace the log message of revision @var{rev} with
+Substituir a mensagem de ???log??? da revisão @var{rev} por
 @var{msg}.
 
 @c The rcs -M option, to suppress sending mail, has never been
 @c documented as a cvs admin option.
 
 @c <en>@item -N@var{name}[:[@var{rev}]]
-@item -N@var{name}[:[@var{rev}]]
+@item -N@var{nome}[:[@var{rev}]]
 @c <en>Act like @samp{-n}, except override any previous
 @c <en>assignment of @var{name}.  For use with magic branches,
 @c <en>see @ref{Magic branch numbers}.
-Act like @samp{-n}, except override any previous
-assignment of @var{name}.  For use with magic branches,
-see @ref{Números de ramos mágicos}.
+Age como @samp{-n}, exceto que ???override??? qualquer
+atribuição prévia de @var{nome}.  Para usar com ramos
+mágicos, veja em @ref{Números de ramos mágicos}.
 
 @c <en>@item -n@var{name}[:[@var{rev}]]
 @item -n@var{name}[:[@var{rev}]]
@@ -14462,12 +14483,23 @@ Changes: working directory.
 Synonyms: co, get
 @end itemize
 
+@c <en>Create or update a working directory containing copies of the
+@c <en>source files specified by @var{modules}.  You must execute
+@c <en>@code{checkout} before using most of the other @sc{cvs}
+@c <en>commands, since most of them operate on your working
+@c <en>directory.
 Create or update a working directory containing copies of the
 source files specified by @var{modules}.  You must execute
 @code{checkout} before using most of the other @sc{cvs}
 commands, since most of them operate on your working
 directory.
 
+@c <en>The @var{modules} are either
+@c <en>symbolic names for some
+@c <en>collection of source directories and files, or paths to
+@c <en>directories or files in the repository.  The symbolic
+@c <en>names are defined in the @samp{modules} file.
+@c <en>@xref{modules}.
 The @var{modules} are either
 symbolic names for some
 collection of source directories and files, or paths to
@@ -14481,6 +14513,14 @@ names are defined in the @samp{modules} file.
 @c people to how CVS works.  The bit about unreserved
 @c checkouts is also misleading as it depends on how
 @c things are set up.
+@c <en>Depending on the modules you specify, @code{checkout} may
+@c <en>recursively create directories and populate them with
+@c <en>the appropriate source files.  You can then edit these
+@c <en>source files at any time (regardless of whether other
+@c <en>software developers are editing their own copies of the
+@c <en>sources); update them to include new changes applied by
+@c <en>others to the source repository; or commit your work as
+@c <en>a permanent change to the source repository.
 Depending on the modules you specify, @code{checkout} may
 recursively create directories and populate them with
 the appropriate source files.  You can then edit these
@@ -14490,6 +14530,16 @@ sources); update them to include new changes applied by
 others to the source repository; or commit your work as
 a permanent change to the source repository.
 
+@c <en>Note that @code{checkout} is used to create
+@c <en>directories.  The top-level directory created is always
+@c <en>added to the directory where @code{checkout} is
+@c <en>invoked, and usually has the same name as the specified
+@c <en>module.  In the case of a module alias, the created
+@c <en>sub-directory may have a different name, but you can be
+@c <en>sure that it will be a sub-directory, and that
+@c <en>@code{checkout} will show the relative path leading to
+@c <en>each file as it is extracted into your private work
+@c <en>area (unless you specify the @samp{-Q} global option).
 Note that @code{checkout} is used to create
 directories.  The top-level directory created is always
 added to the directory where @code{checkout} is
@@ -14514,6 +14564,20 @@ read-write, unless the @samp{-r} option to @sc{cvs}
 (@pxref{Variáveis de ambiente}), or a watch is in
 effect for that file (@pxref{???Watches???}).
 
+@c <en>Note that running @code{checkout} on a directory that was already
+@c <en>built by a prior @code{checkout} is also permitted.
+@c <en>This is similar to specifying the @samp{-d} option
+@c <en>to the @code{update} command in the sense that new
+@c <en>directories that have been created in the repository
+@c <en>will appear in your work area.
+@c <en>However, @code{checkout} takes a module name whereas
+@c <en>@code{update} takes a directory name.  Also
+@c <en>to use @code{checkout} this way it must be run from the
+@c <en>top level directory (where you originally ran
+@c <en>@code{checkout} from), so before you run
+@c <en>@code{checkout} to update an existing directory, don't
+@c <en>forget to change your directory to the top level
+@c <en>directory.
 Note that running @code{checkout} on a directory that was already
 built by a prior @code{checkout} is also permitted.
 This is similar to specifying the @samp{-d} option
@@ -14529,16 +14593,22 @@ top level directory (where you originally ran
 forget to change your directory to the top level
 directory.
 
+@c <en>For the output produced by the @code{checkout} command
+@c <en>see @ref{update output}.
 For the output produced by the @code{checkout} command
 see @ref{update output}.
 
 @menu
+@c <en>* checkout options::            checkout options
 * checkout options::            checkout options
+@c <en>* checkout examples::           checkout examples
 * checkout examples::           checkout examples
 @end menu
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@c <en>@node checkout options
 @node checkout options
+@c <en>@appendixsubsec checkout options
 @appendixsubsec checkout options
 
 @c <en>These standard options are supported by @code{checkout}
@@ -14565,6 +14635,10 @@ This option is sticky, and implies @samp{-P}.  See
 @ref{Etiquetas adesivas}, for more information on sticky tags/dates.
 
 @item -f
+@c <en>Only useful with the @samp{-D @var{date}} or @samp{-r
+@c <en>@var{tag}} flags.  If no matching revision is found,
+@c <en>retrieve the most recent revision (instead of ignoring
+@c <en>the file).
 Only useful with the @samp{-D @var{date}} or @samp{-r
 @var{tag}} flags.  If no matching revision is found,
 retrieve the most recent revision (instead of ignoring
@@ -14588,9 +14662,13 @@ to see the sticky options.  See @ref{Chamando o CVS}, for
 more information on the @code{status} command.
 
 @item -l
+@c <en>Local; run only in current working directory.
 Local; run only in current working directory.
 
 @item -n
+@c <en>Do not run any checkout program (as specified
+@c <en>with the @samp{-o} option in the modules file;
+@c <en>@pxref{modules}).
 Do not run any checkout program (as specified
 with the @samp{-o} option in the modules file;
 @pxref{modules}).
@@ -14600,9 +14678,11 @@ with the @samp{-o} option in the modules file;
 Prune empty directories.  See @ref{Movendo diretórios}.
 
 @item -p
+@c <en>Pipe files to the standard output.
 Pipe files to the standard output.
 
 @item -R
+@c <en>Checkout directories recursively.  This option is on by default.
 Checkout directories recursively.  This option is on by default.
 
 @c <en>@item -r @var{tag}
@@ -14613,6 +14693,8 @@ Use revision @var{tag}.  This option is sticky, and implies @samp{-P}.
 See @ref{Etiquetas adesivas}, for more information on sticky tags/dates.
 @end table
 
+@c <en>In addition to those, you can use these special command
+@c <en>options with @code{checkout}:
 In addition to those, you can use these special command
 options with @code{checkout}:
 
@@ -14625,17 +14707,31 @@ Reset any sticky tags, dates, or @samp{-k} options.
 See @ref{Etiquetas adesivas}, for more information on sticky tags/dates.
 
 @item -c
+@c <en>Copy the module file, sorted, to the standard output,
+@c <en>instead of creating or modifying any files or
+@c <en>directories in your working directory.
 Copy the module file, sorted, to the standard output,
 instead of creating or modifying any files or
 directories in your working directory.
 
 @item -d @var{dir}
+@c <en>Create a directory called @var{dir} for the working
+@c <en>files, instead of using the module name.  In general,
+@c <en>using this flag is equivalent to using @samp{mkdir
+@c <en>@var{dir}; cd @var{dir}} followed by the checkout
+@c <en>command without the @samp{-d} flag.
 Create a directory called @var{dir} for the working
 files, instead of using the module name.  In general,
 using this flag is equivalent to using @samp{mkdir
 @var{dir}; cd @var{dir}} followed by the checkout
 command without the @samp{-d} flag.
 
+@c <en>There is an important exception, however.  It is very
+@c <en>convenient when checking out a single item to have the
+@c <en>output appear in a directory that doesn't contain empty
+@c <en>intermediate directories.  In this case @emph{only},
+@c <en>@sc{cvs} tries to ``shorten'' pathnames to avoid those empty
+@c <en>directories.
 There is an important exception, however.  It is very
 convenient when checking out a single item to have the
 output appear in a directory that doesn't contain empty
@@ -14643,6 +14739,14 @@ intermediate directories.  In this case @emph{only},
 @sc{cvs} tries to ``shorten'' pathnames to avoid those empty
 directories.
 
+@c <en>For example, given a module @samp{foo} that contains
+@c <en>the file @samp{bar.c}, the command @samp{cvs co -d dir
+@c <en>foo} will create directory @samp{dir} and place
+@c <en>@samp{bar.c} inside.  Similarly, given a module
+@c <en>@samp{bar} which has subdirectory @samp{baz} wherein
+@c <en>there is a file @samp{quux.c}, the command @samp{cvs co
+@c <en>-d dir bar/baz} will create directory @samp{dir} and
+@c <en>place @samp{quux.c} inside.
 For example, given a module @samp{foo} that contains
 the file @samp{bar.c}, the command @samp{cvs co -d dir
 foo} will create directory @samp{dir} and place
@@ -14652,6 +14756,12 @@ there is a file @samp{quux.c}, the command @samp{cvs co
 -d dir bar/baz} will create directory @samp{dir} and
 place @samp{quux.c} inside.
 
+@c <en>Using the @samp{-N} flag will defeat this behavior.
+@c <en>Given the same module definitions above, @samp{cvs co
+@c <en>-N -d dir foo} will create directories @samp{dir/foo}
+@c <en>and place @samp{bar.c} inside, while @samp{cvs co -N -d
+@c <en>dir bar/baz} will create directories @samp{dir/bar/baz}
+@c <en>and place @samp{quux.c} inside.
 Using the @samp{-N} flag will defeat this behavior.
 Given the same module definitions above, @samp{cvs co
 -N -d dir foo} will create directories @samp{dir/foo}
@@ -14660,11 +14770,21 @@ dir bar/baz} will create directories @samp{dir/bar/baz}
 and place @samp{quux.c} inside.
 
 @item -j @var{tag}
+@c <en>With two @samp{-j} options, merge changes from the
+@c <en>revision specified with the first @samp{-j} option to
+@c <en>the revision specified with the second @samp{j} option,
+@c <en>into the working directory.
 With two @samp{-j} options, merge changes from the
 revision specified with the first @samp{-j} option to
 the revision specified with the second @samp{j} option,
 into the working directory.
 
+@c <en>With one @samp{-j} option, merge changes from the
+@c <en>ancestor revision to the revision specified with the
+@c <en>@samp{-j} option, into the working directory.  The
+@c <en>ancestor revision is the common ancestor of the
+@c <en>revision which the working directory is based on, and
+@c <en>the revision specified in the @samp{-j} option.
 With one @samp{-j} option, merge changes from the
 ancestor revision to the revision specified with the
 @samp{-j} option, into the working directory.  The
@@ -14672,6 +14792,12 @@ ancestor revision is the common ancestor of the
 revision which the working directory is based on, and
 the revision specified in the @samp{-j} option.
 
+@c <en>In addition, each -j option can contain an optional
+@c <en>date specification which, when used with branches, can
+@c <en>limit the chosen revision to one within a specific
+@c <en>date.  An optional date is specified by adding a colon
+@c <en>(:) to the tag:
+@c <en>@samp{-j@var{Symbolic_Tag}:@var{Date_Specifier}}.
 In addition, each -j option can contain an optional
 date specification which, when used with branches, can
 limit the chosen revision to one within a specific
@@ -14683,6 +14809,11 @@ date.  An optional date is specified by adding a colon
 @xref{Ramificando e mesclando}.
 
 @item -N
+@c <en>Only useful together with @samp{-d @var{dir}}.  With
+@c <en>this option, @sc{cvs} will not ``shorten'' module paths
+@c <en>in your working directory when you check out a single
+@c <en>module.  See the @samp{-d} flag for examples and a
+@c <en>discussion.
 Only useful together with @samp{-d @var{dir}}.  With
 this option, @sc{cvs} will not ``shorten'' module paths
 in your working directory when you check out a single
@@ -14690,6 +14821,10 @@ module.  See the @samp{-d} flag for examples and a
 discussion.
 
 @item -s
+@c <en>Like @samp{-c}, but include the status of all modules,
+@c <en>and sort it by the status string.  @xref{modules}, for
+@c <en>info about the @samp{-s} option that is used inside the
+@c <en>modules file to set the module status.
 Like @samp{-c}, but include the status of all modules,
 and sort it by the status string.  @xref{modules}, for
 info about the @samp{-s} option that is used inside the
@@ -14697,15 +14832,20 @@ modules file to set the module status.
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@c <en>@node checkout examples
 @node checkout examples
+@c <en>@appendixsubsec checkout examples
 @appendixsubsec checkout examples
 
+@c <en>Get a copy of the module @samp{tc}:
 Get a copy of the module @samp{tc}:
 
 @example
 $ cvs checkout tc
 @end example
 
+@c <en>Get a copy of the module @samp{tc} as it looked one day
+@c <en>ago:
 Get a copy of the module @samp{tc} as it looked one day
 ago:
 
@@ -14714,26 +14854,46 @@ $ cvs checkout -D yesterday tc
 @end example
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@c <en>@node commit
 @node commit
+@c <en>@appendixsec commit---Check files into the repository
 @appendixsec commit---Check files into the repository
+@c <en>@cindex commit (subcommand)
 @cindex commit (subcommand)
 
 @itemize @bullet
 @item
+@c <en>Synopsis: commit [-lnRf] [-m 'log_message' |
+@c <en>-F file] [-r revision] [files@dots{}]
 Synopsis: commit [-lnRf] [-m 'log_message' |
 -F file] [-r revision] [files@dots{}]
 @item
+@c <en>Requires: working directory, repository.
 Requires: working directory, repository.
 @item
+@c <en>Changes: repository.
 Changes: repository.
 @item
+@c <en>Synonym: ci
 Synonym: ci
 @end itemize
 
+@c <en>Use @code{commit} when you want to incorporate changes
+@c <en>from your working source files into the source
+@c <en>repository.
 Use @code{commit} when you want to incorporate changes
 from your working source files into the source
 repository.
 
+@c <en>If you don't specify particular files to commit, all of
+@c <en>the files in your working current directory are
+@c <en>examined.  @code{commit} is careful to change in the
+@c <en>repository only those files that you have really
+@c <en>changed.  By default (or if you explicitly specify the
+@c <en>@samp{-R} option), files in subdirectories are also
+@c <en>examined and committed if they have changed; you can
+@c <en>use the @samp{-l} option to limit @code{commit} to the
+@c <en>current directory only.
 If you don't specify particular files to commit, all of
 the files in your working current directory are
 examined.  @code{commit} is careful to change in the
@@ -14744,6 +14904,14 @@ examined and committed if they have changed; you can
 use the @samp{-l} option to limit @code{commit} to the
 current directory only.
 
+@c <en>@code{commit} verifies that the selected files are up
+@c <en>to date with the current revisions in the source
+@c <en>repository; it will notify you, and exit without
+@c <en>committing, if any of the specified files must be made
+@c <en>current first with @code{update} (@pxref{update}).
+@c <en>@code{commit} does not call the @code{update} command
+@c <en>for you, but rather leaves that for you to do when the
+@c <en>time is right.
 @code{commit} verifies that the selected files are up
 to date with the current revisions in the source
 repository; it will notify you, and exit without
@@ -14753,6 +14921,16 @@ current first with @code{update} (@pxref{update}).
 for you, but rather leaves that for you to do when the
 time is right.
 
+@c <en>When all is well, an editor is invoked to allow you to
+@c <en>enter a log message that will be written to one or more
+@c <en>logging programs (@pxref{modules}, and @pxref{loginfo})
+@c <en>and placed in the @sc{rcs} file inside the
+@c <en>repository.  This log message can be retrieved with the
+@c <en>@code{log} command; see @ref{log}.  You can specify the
+@c <en>log message on the command line with the @samp{-m
+@c <en>@var{message}} option, and thus avoid the editor invocation,
+@c <en>or use the @samp{-F @var{file}} option to specify
+@c <en>that the argument file contains the log message.
 When all is well, an editor is invoked to allow you to
 enter a log message that will be written to one or more
 logging programs (@pxref{modules}, and @pxref{loginfo})
@@ -14765,12 +14943,16 @@ or use the @samp{-F @var{file}} option to specify
 that the argument file contains the log message.
 
 @menu
+@c <en>* commit options::              commit options
 * commit options::              commit options
+@c <en>* commit examples::             commit examples
 * commit examples::             commit examples
 @end menu
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@c <en>@node commit options
 @node commit options
+@c <en>@appendixsubsec commit options
 @appendixsubsec commit options
 
 @c <en>These standard options are supported by @code{commit}
@@ -14782,9 +14964,11 @@ them):
 
 @table @code
 @item -l
+@c <en>Local; run only in current working directory.
 Local; run only in current working directory.
 
 @item -R
+@c <en>Commit directories recursively.  This is on by default.
 Commit directories recursively.  This is on by default.
 
 @c <en>@item -r @var{revision}
@@ -14802,10 +14986,14 @@ cannot commit to a specific revision on a branch.
 @c FIXME: Need xref for branch case.
 @end table
 
+@c <en>@code{commit} also supports these options:
 @code{commit} also supports these options:
 
 @table @code
+@c <en>@item -F @var{file}
 @item -F @var{file}
+@c <en>Read the log message from @var{file}, instead
+@c <en>of invoking an editor.
 Read the log message from @var{file}, instead
 of invoking an editor.
 
@@ -14816,6 +15004,10 @@ of invoking an editor.
 Note that this is not the standard behavior of
 the @samp{-f} option as defined in @ref{Opções comuns}.
 
+@c <en>Force @sc{cvs} to commit a new revision even if you haven't
+@c <en>made any changes to the file.  If the current revision
+@c <en>of @var{file} is 1.7, then the following two commands
+@c <en>are equivalent:
 Force @sc{cvs} to commit a new revision even if you haven't
 made any changes to the file.  If the current revision
 of @var{file} is 1.7, then the following two commands
@@ -14828,24 +15020,34 @@ $ cvs commit -r 1.8 @var{file}
 
 @c This is odd, but it's how CVS has worked for some
 @c time.
+@c <en>The @samp{-f} option disables recursion (i.e., it
+@c <en>implies @samp{-l}).  To force @sc{cvs} to commit a new
+@c <en>revision for all files in all subdirectories, you must
+@c <en>use @samp{-f -R}.
 The @samp{-f} option disables recursion (i.e., it
 implies @samp{-l}).  To force @sc{cvs} to commit a new
 revision for all files in all subdirectories, you must
 use @samp{-f -R}.
 
+@c <en>@item -m @var{message}
 @item -m @var{message}
+@c <en>Use @var{message} as the log message, instead of
+@c <en>invoking an editor.
 Use @var{message} as the log message, instead of
 invoking an editor.
 @end table
 
 @need 2000
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@c <en>@node commit examples
 @node commit examples
+@c <en>@appendixsubsec commit examples
 @appendixsubsec commit examples
 
 @c FIXME: this material wants to be somewhere
 @c in "Branching and merging".
 
+@c <en>@appendixsubsubsec Committing to a branch
 @appendixsubsubsec Committing to a branch
 
 @c <en>You can commit to a branch revision (one that has an
@@ -14884,11 +15086,23 @@ $ cvs commit
 @end example
 
 @noindent
+@c <en>This works automatically since the @samp{-r} option is
+@c <en>sticky.
 This works automatically since the @samp{-r} option is
 sticky.
 
+@c <en>@appendixsubsubsec Creating the branch after editing
 @appendixsubsubsec Creating the branch after editing
 
+@c <en>Say you have been working on some extremely
+@c <en>experimental software, based on whatever revision you
+@c <en>happened to checkout last week.  If others in your
+@c <en>group would like to work on this software with you, but
+@c <en>without disturbing main-line development, you could
+@c <en>commit your change to a new branch.  Others can then
+@c <en>checkout your experimental stuff and utilize the full
+@c <en>benefit of @sc{cvs} conflict resolution.  The scenario might
+@c <en>look like:
 Say you have been working on some extremely
 experimental software, based on whatever revision you
 happened to checkout last week.  If others in your
@@ -14907,6 +15121,12 @@ $ cvs update -r EXPR1
 $ cvs commit
 @end example
 
+@c <en>The @code{update} command will make the @samp{-r
+@c <en>EXPR1} option sticky on all files.  Note that your
+@c <en>changes to the files will never be removed by the
+@c <en>@code{update} command.  The @code{commit} will
+@c <en>automatically commit to the correct branch, because the
+@c <en>@samp{-r} is sticky.  You could also do like this:
 The @code{update} command will make the @samp{-r
 EXPR1} option sticky on all files.  Note that your
 changes to the files will never be removed by the
@@ -14922,12 +15142,19 @@ $ cvs commit -r EXPR1
 @end example
 
 @noindent
+@c <en>but then, only those files that were changed by you
+@c <en>will have the @samp{-r EXPR1} sticky flag.  If you hack
+@c <en>away, and commit without specifying the @samp{-r EXPR1}
+@c <en>flag, some files may accidentally end up on the main
+@c <en>trunk.
 but then, only those files that were changed by you
 will have the @samp{-r EXPR1} sticky flag.  If you hack
 away, and commit without specifying the @samp{-r EXPR1}
 flag, some files may accidentally end up on the main
 trunk.
 
+@c <en>To work with you on the experimental change, others
+@c <en>would simply do
 To work with you on the experimental change, others
 would simply do
 
@@ -14936,24 +15163,40 @@ $ cvs checkout -r EXPR1 whatever_module
 @end example
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@c <en>@node diff
 @node diff
+@c <en>@appendixsec diff---Show differences between revisions
 @appendixsec diff---Show differences between revisions
+@c <en>@cindex diff (subcommand)
 @cindex diff (subcommand)
 
 @itemize @bullet
+@c <en>@item
+@c <en>Synopsis: diff [-lR] [-k kflag] [format_options] [[-r rev1 | -D date1] [-r rev2 |  -D date2]] [files@dots{}]
 @item
 Synopsis: diff [-lR] [-k kflag] [format_options] [[-r rev1 | -D date1] [-r rev2 |  -D date2]] [files@dots{}]
+@c <en>@item
+@c <en>Requires: working directory, repository.
 @item
 Requires: working directory, repository.
+@c <en>@item
+@c <en>Changes: nothing.
 @item
 Changes: nothing.
 @end itemize
 
+@c <en>The @code{diff} command is used to compare different
+@c <en>revisions of files.  The default action is to compare
+@c <en>your working files with the revisions they were based
+@c <en>on, and report any differences that are found.
 The @code{diff} command is used to compare different
 revisions of files.  The default action is to compare
 your working files with the revisions they were based
 on, and report any differences that are found.
 
+@c <en>If any file names are given, only those files are
+@c <en>compared.  If any directories are given, all files
+@c <en>under them will be compared.
 If any file names are given, only those files are
 compared.  If any directories are given, all files
 under them will be compared.
