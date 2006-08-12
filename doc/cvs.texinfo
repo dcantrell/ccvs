@@ -340,7 +340,7 @@ not address the issues involved.
 
 Of course, you should place the tools created to
 support such a build system (scripts, @file{Makefile}s,
-etc) under @sc{cvs}.
+etc.) under @sc{cvs}.
 
 Figuring out what files need to be rebuilt when
 something changes is, again, something to be handled
@@ -376,7 +376,7 @@ within a single file, or across a whole collection of
 files, will logically conflict with one another.  Its
 concept of a @dfn{conflict} is purely textual, arising
 when two changes to the same base file are near enough
-to spook the merge (i.e. @code{diff3}) command.
+to spook the merge (i.e., @code{diff3}) command.
 
 @sc{cvs} does not claim to help at all in figuring out
 non-textual or distributed conflicts in program logic.
@@ -396,7 +396,7 @@ peers.
 Change control refers to a number of things.  First of
 all it can mean @dfn{bug-tracking}, that is being able
 to keep a database of reported bugs and the status of
-each one (is it fixed?  in what release?  has the bug
+each one (Is it fixed?  In what release?  Has the bug
 submitter agreed that it is fixed?).  For interfacing
 @sc{cvs} to an external bug-tracking system, see the
 @file{rcsinfo} and @file{verifymsg} files
@@ -2263,7 +2263,7 @@ upcoming sections on password authentication, @code{gserver}, and
 @var{method} portion of the repository name.}
 
 These options first appeared in @sc{cvs} version 1.12.7 and are valid as
-modifcations to the @code{gserver} and @code{pserver} connection methods.
+modifications to the @code{gserver} and @code{pserver} connection methods.
 
 @cindex CVS_RSH method option
 @item CVS_RSH=@var{path}
@@ -2280,7 +2280,7 @@ example, to connect to a @sc{cvs} server via the local
 @end example
 
 This method option first appeared in @sc{cvs} version 1.12.11 and is valid only
-as a modifcation to the @code{ext} connection method.
+as a modification to the @code{ext} connection method.
 
 @cindex CVS_SERVER method option
 @item CVS_SERVER=@var{path}
@@ -2305,7 +2305,7 @@ or, to select an executable named @samp{cvs-1.12.11}, assuming it is in your
 @end example
 
 This method option first appeared in @sc{cvs} version 1.12.11 and is valid
-as a modifcation to both the @code{ext} and @code{fork} connection methods.
+as a modification to both the @code{ext} and @code{fork} connection methods.
 
 @cindex Redirect, method option
 @item Redirect=@var{boolean-state}
@@ -2324,7 +2324,7 @@ server.  For more on write proxies and secondary servers, please see
 @ref{Write proxies}.
 
 This method option first appeared in @sc{cvs} version 1.12.11 and is valid only
-as a modifcation to the @code{ext} connection method.
+as a modification to the @code{ext} connection method.
 
 @cindex OpenPGP Signatures
 @cindex Commit Signatures
@@ -2794,7 +2794,7 @@ cvs	account	    required	pam_unix.so
 cvs	session	    required	pam_unix.so
 @end example
 
-The the equivalent @file{/etc/pam.d/cvs} would contain
+The equivalent @file{/etc/pam.d/cvs} would contain
 
 @example
 auth	    required	pam_unix.so
@@ -3236,14 +3236,14 @@ Configure remote access to the secondary(ies) as you would configure access
 to any other CVS server (@pxref{Remote repositories}).
 @item
 Ensuring that @code{--allow-root=@var{secondary-cvsroot}} is passed to
-@strong{all} incovations of the secondary server if the path to the @sc{cvs}
+@strong{all} invocations of the secondary server if the path to the @sc{cvs}
 repository directory is different on the two servers and you wish to support
-clients that do not handle the @samp{Redirect} resopnse (CVS 1.12.9 and earlier
+clients that do not handle the @samp{Redirect} response (CVS 1.12.9 and earlier
 clients do not handle the @samp{Redirect} response).
 
-Please note, again, that writethrough proxy suport requires
+Please note, again, that writethrough proxy support requires
 @code{--allow-root=@var{secondary-cvsroot}} to be specified for @strong{all}
-incovations of the secondary server, not just @samp{pserver} invocations.
+invocations of the secondary server, not just @samp{pserver} invocations.
 This may require a wrapper script for the @sc{cvs} executable
 on your server machine.
 @end enumerate
@@ -3963,7 +3963,7 @@ tags; see @ref{Sticky tags}.
 
 When you tag more than one file with the same tag you
 can think about the tag as "a curve drawn through a
-matrix of filename vs. revision number."  Say we have 5
+matrix of filename vs.@: revision number."  Say we have 5
 files with the following revisions:
 
 @example
@@ -6079,7 +6079,7 @@ effect of reserved checkouts is to enable advisory locks.  To enable advisory
 locks, have all developers put "edit -c", "commit -c" in their
 .cvsrc file, and turn on watches in the repository.  This
 prevents them from doing a @code{cvs edit} if anyone is
-already editting the file.  It also may
+already editing the file.  It also may
 be possible to use plain watches together with suitable
 procedures (not enforced by software), to avoid having
 two people edit at the same time.
@@ -6740,8 +6740,8 @@ enable advisory locks.  To enable advisory locks, have all developers
 put "edit -c" and "commit -c" into all .cvsrc files,
 and make files default to read only by turning on watches
 or putting "cvs -r" into all .cvsrc files.
-This prevents multiple people from editting a file at
-the same time (unless explicitly overriden with @samp{-f}).
+This prevents multiple people from editing a file at
+the same time (unless explicitly overridden with @samp{-f}).
 
 @c I'm a little dissatisfied with this presentation,
 @c because "watch on"/"edit"/"editors" are one set of
@@ -6988,9 +6988,9 @@ watch} commands.
 There are two additional options that @code{cvs edit} understands as of
 @sc{cvs} client and server versions 1.12.10 but @code{cvs watch} does not.
 The first is @code{-c}, which causes @code{cvs edit} to fail if anyone else
-is editting the file.  This is probably only useful when @samp{edit -c} and
+is editing the file.  This is probably only useful when @samp{edit -c} and
 @samp{commit -c} are specified in all developers' @file{.cvsrc} files.  This
-behavior may be overriden this via the @code{-f} option, which overrides
+behavior may be overridden this via the @code{-f} option, which overrides
 @code{-c} and allows multiple edits to succeed.
 
 @ignore
@@ -9823,7 +9823,7 @@ cannot commit to a specific revision on a branch.
 Refuse to commit files unless the user has registered a valid edit on the
 file via @code{cvs edit}.  This is most useful when @samp{commit -c}
 and @samp{edit -c} have been placed in all @file{.cvsrc} files.
-A commit can be forced anyways by either regestering an edit retroactively
+A commit can be forced anyways by either registering an edit retroactively
 via @code{cvs edit} (no changes to the file will be lost) or using the
 @code{-f} option to commit.  Support for @code{commit -c} requires both
 client and a server versions 1.12.10 or greater.
@@ -11336,7 +11336,7 @@ These standard options are supported by @code{ls} & @code{rls}:
 Show dead revisions (with tag when specified).
 
 @item -e
-Display in CVS/Entries format.  This format is meant to remain easily parsable
+Display in CVS/Entries format.  This format is meant to remain easily parseable
 by automation.
 
 @item -l
@@ -12501,7 +12501,7 @@ Specify actions for temporary watch, where
 @ref{Editing files}.
 
 @item -c
-Check edits: Edit fails if someone else is already editting the file.
+Check edits: Edit fails if someone else is already editing the file.
 Requires a @sc{cvs} client and server both of version 1.12.10 or greater.
 
 @item -f
@@ -13436,7 +13436,7 @@ If using remote access methods (pserver, ext, etc.),
 @sc{cvs} will execute this program on the server from a temporary
 directory. The path is searched for this program.
 
-If using ``local access'' (on a local or remote NFS file system, i.e.
+If using ``local access'' (on a local or remote NFS file system, i.e.,
 repository set just to a path),
 the program will be executed from the newly checked-out tree, if
 found there, or alternatively searched for in the path if not.
@@ -13964,7 +13964,7 @@ the format strings.
 
 Since the new format separates each individual item and passes it into the
 script as a separate argument (for a good reason - arguments containing commas
-and/or white space are now parsable), to remove the deprecated @samp{1} from
+and/or white space are now parseable), to remove the deprecated @samp{1} from
 your @file{loginfo} command line templates, you will most likely have to
 rewrite any scripts called by the hook to handle the new argument format.
 
@@ -15174,8 +15174,8 @@ completely, use @samp{LogHistory=}.
 @cindex Log keyword, configuring substitution behavior
 @item MaxCommentLeaderLength=@var{length}
 Set to some length, in bytes, where a trailing @samp{k}, @samp{M}, @samp{G},
-or @samp{T} causes the preceding nubmer to be interpreted as kilobytes,
-megabytes, gigabytes, or terrabytes, respectively, will cause
+or @samp{T} causes the preceding number to be interpreted as kilobytes,
+megabytes, gigabytes, or terabytes, respectively, will cause
 @code{$@splitrcskeyword{Log}$} keywords (@pxref{Keyword substitution}), with
 more than @var{length} bytes preceding it on a line to be ignored (or to fall
 back on the comment leader set in the RCS archive file - see
@@ -15194,7 +15194,7 @@ between 0 and 9.  @var{value}s 1 through 9 are the same @sc{zlib} compression
 levels accepted by the @samp{-z} option (@pxref{Global options}), and 0 means
 no compression.  When one or both of these keys are set and a client requests a
 level outside the specified range, the server will simply use the closest
-permissable level.  Clients will continue compressing at the level requested by
+permissible level.  Clients will continue compressing at the level requested by
 the user.
 
 The exception is when level 0 (no compression) is not available and the client
@@ -15972,7 +15972,7 @@ set to a non-empty value and re-create the RCS file.
 @item cvs [checkout aborted]: no such tag @var{tag}
 This message means that @sc{cvs} isn't familiar with
 the tag @var{tag}.  Usually the root cause is that you have
-mistyped a tag name.  Ocassionally this can also occur because the
+mistyped a tag name.  Occasionally this can also occur because the
 users creating tags do not have permissions to write to the
 @file{CVSROOT/val-tags} file (@pxref{File permissions}, for more).
 
@@ -15982,7 +15982,7 @@ file in the repository but @sc{cvs} would require the user to
 @c Search sanity.sh for "no such tag" to see some of
 @c the relatively obscure cases.
 try a few other @sc{cvs} commands involving that tag
-until one was found whch caused @sc{cvs} to update
+until one was found which caused @sc{cvs} to update
 @cindex CVSROOT/val-tags file, forcing tags into
 @cindex val-tags file, forcing tags into
 the @file{val-tags} file, at which point the originally failing command

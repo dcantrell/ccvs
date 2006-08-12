@@ -1,3 +1,8 @@
+2006-08-11  Mark D. Baushke  <mdb@gnu.org>
+
+	* doc/cvs.texinfo, doc/cvsclient.texi: Fix some typos.
+	(patch from Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>)
+
 2006-07-16  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (File permissions): Correct punctuation.

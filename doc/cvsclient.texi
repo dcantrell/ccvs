@@ -205,7 +205,7 @@ this response, which is generic, or a more specific response using
 @samp{E} and/or @samp{error}.
 
 @item E @var{text}
-Provide a message for the user.  After this reponse, the authentication
+Provide a message for the user.  After this response, the authentication
 protocol continues with another response.  Typically the server will
 provide a series of @samp{E} responses followed by @samp{error}.
 Compatibility note: @sc{cvs} 1.9.10 and older clients will print
@@ -245,7 +245,7 @@ version or the other.
 The procedure here is to start with @samp{BEGIN
 GSSAPI REQUEST}.  GSSAPI authentication information is then exchanged
 between the client and the server.  Each packet of information consists
-of a two byte big endian length, followed by that many bytes of data.
+of a two byte big-endian length, followed by that many bytes of data.
 After the GSSAPI authentication is complete, the server continues with
 the responses described above (@samp{I LOVE YOU}, etc.).
 
@@ -563,7 +563,7 @@ The @code{Root} request need not have been previously sent.
 Response expected: yes.
 Notify the server of the command that we are leading up to.  Intended to allow
 the server to send a redirect for write operations.  Requires either an
-@code{ok} or @code{Redirect} respnose.
+@code{ok} or @code{Redirect} response.
 
 @item Referrer @var{CVSROOT} \n
 Response expected: no.
@@ -593,7 +593,7 @@ also for @code{ci} and the other commands; normal usage is to send
 @code{Entry} or @code{Modified}, and then a final @code{Directory}
 for the original directory, then the command.
 The @var{local-directory} is relative to
-the top level at which the command is occurring (i.e. the last
+the top level at which the command is occurring (i.e., the last
 @code{Directory} which is sent before the command);
 to indicate that top level, @samp{.} should be sent for
 @var{local-directory}.
@@ -988,7 +988,7 @@ there are some situations it cannot handle (ignore patterns, or
 situations where the user specifies a filename and the client does not
 know about that file).
 
-Though this request will be supported into the forseeable future, it has been
+Though this request will be supported into the foreseeable future, it has been
 the source of numerous bug reports in the past due to the complexity of testing
 this functionality via the test suite and client developers are encouraged not
 to use it.  Instead, please consider munging conflicting names and maintaining
@@ -1266,7 +1266,7 @@ of the operation - unlike most commands, the repository field of each
 @code{Directory} request is ignored (it merely must point somewhere
 within the root).  The files to be imported are sent in @code{Modified}
 requests (files which the client knows should be ignored are not sent;
-the server must still process the CVSROOT/cvsignore file unless -I ! is
+the server must still process the CVSROOT/cvsignore file unless -I !@: is
 sent).  A log message must have been specified with a @code{-m}
 argument.
 
@@ -1383,7 +1383,7 @@ Response expected: yes.  Note that a @code{cvs release} command has
 taken place and update the history file accordingly.
 
 @item global-list-quiet \n
-Response expected: yes.  This request is a synonym for noop, but its existance
+Response expected: yes.  This request is a synonym for noop, but its existence
 notifies the client that a @code{-q} option to @code{list} and @code{rlist}
 will be rejected.  This, in a reverse-logic sort of way, is here so that when
 it @emph{isn't} received, as for instance from CVSNT, the client will know that
@@ -1459,7 +1459,7 @@ indicates that the response is over.
 @c lame terms (mostly because they are so awkward).  Any better ideas?
 The responses @code{Checked-in}, @code{New-entry}, @code{Updated},
 @code{Created}, @code{Update-existing}, @code{Merged}, and
-@code{Patched} are refered to as @dfn{file updating} responses, because
+@code{Patched} are referred to as @dfn{file updating} responses, because
 they change the status of a file in the working directory in some way.
 The responses @code{Mode}, @code{Mod-time}, and @code{Checksum} are
 referred to as @dfn{file update modifying} responses because they modify
@@ -1478,7 +1478,7 @@ Many of the responses contain something called @var{pathname}.
 @c end in "/.".
 The name is somewhat misleading; it actually indicates a pair of
 pathnames.  First, a local directory name
-relative to the directory in which the command was given (i.e. the last
+relative to the directory in which the command was given (i.e., the last
 @code{Directory} before the command).  Then a linefeed and a repository
 name.  Then a slash and the filename (without a @samp{,v} ending).
 
@@ -1557,7 +1557,7 @@ minimizing race conditions on subsequent updates from the same client.
 
 @item Checked-in @var{pathname} \n
 Additional data: New Entries line, \n.  This means a file @var{pathname}
-has been successfully operated on (checked in, added, etc.).  name in
+has been successfully operated on (checked in, added, etc.).  The name in
 the Entries line is the same as the last component of @var{pathname}.
 
 @item New-entry @var{pathname} \n
@@ -1928,7 +1928,7 @@ file specified by @var{pathname}.  @var{flags} is two characters.  The
 first, for error checking purposes, is @samp{y} if @var{pathname} is expected
 to exist, @samp{n} if @var{pathname} is not expected to exist, and
 @samp{m} if @var{pathname} might exist.  The second character must be @samp{y}
-if the new @var{pathanme} should be writable and @samp{n}, otherwise.  When
+if the new @var{pathname} should be writable and @samp{n}, otherwise.  When
 a temp file is used, it may be deleted and forgotten afterwards.
 
 @item Base-merge @var{pathname} \n
@@ -2040,7 +2040,7 @@ and requests would be longer.
 @c line breaks.  Any better solutions?
 @c Other than that, this exchange is taken verbatim from the data
 @c exchanged by CVS (as of Nov 1996).  That is why some of the requests and
-@c reponses are not quite what you would pick for pedagogical purposes.
+@c responses are not quite what you would pick for pedagogical purposes.
 
 @example
 C: Root /u/cvsroot
@@ -2212,7 +2212,7 @@ Similarly, the @url{http://www.nongnu.org/cvs/} site, in particular the
 
 @itemize @bullet
 @item
-The @code{Modified} request could be speeded up by sending diffs rather
+The @code{Modified} request could be sped up by sending diffs rather
 than entire files.  The client would need some way to keep the version
 of the file which was originally checked out; probably requiring the use
 of "cvs edit" in this case is the most sensible course (the "cvs edit"
