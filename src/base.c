@@ -27,6 +27,7 @@
 #include <assert.h>
 
 /* GNULIB headers.  */
+#include "getline.h"
 
 /* CVS headers.  */
 #include "difflib.h"

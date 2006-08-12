@@ -29,8 +29,6 @@
  * file to be resurrected.
  */
 
-#include <assert.h>
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -48,6 +46,9 @@
 
 #include "cvs.h"
 
+
+/* System include files come last */
+#include <assert.h>
 
 
 static int add_directory (struct file_info *finfo);

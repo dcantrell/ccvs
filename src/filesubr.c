@@ -27,6 +27,7 @@
 /* GNULIB */
 #include "lstat.h"
 #include "save-cwd.h"
+#include "setenv.h"
 #include "xsize.h"
 
 /* CVS */

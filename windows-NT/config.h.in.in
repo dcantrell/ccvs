@@ -311,6 +311,10 @@
    don't. */
 #undef HAVE_DECL_INET_NTOP
 
+/* Define to 1 if you have the declaration of `isblank', and to 0 if you
+   don't. */
+#undef HAVE_DECL_ISBLANK
+
 /* Define to 1 if you have the declaration of `memrchr', and to 0 if you
    don't. */
 #undef HAVE_DECL_MEMRCHR
