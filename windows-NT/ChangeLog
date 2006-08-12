@@ -1,3 +1,7 @@
+2006-08-12  Mark D. Baushke  <mdb@gnu.org>
+
+	* config.h, config.h.in, config.h.in.in, stamp-chi: Regenerated.
+
 2006-07-23  Mark D. Baushke  <mdb@gnu.org>
 
 	* dirent.c (opendir): Conform to C89 needs to have parenthesis

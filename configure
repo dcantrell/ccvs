@@ -6444,6 +6444,7 @@ fi
 
 
 
+
 for ac_header in \
 	fcntl.h \
 	io.h \
@@ -6456,6 +6457,7 @@ for ac_header in \
 	sys/param.h \
 	sys/resource.h \
 	sys/select.h \
+	sys/wait.h \
 	utime.h\
 
 do

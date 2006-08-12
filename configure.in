@@ -164,6 +164,7 @@ AC_CHECK_HEADERS(\
 	sys/param.h \
 	sys/resource.h \
 	sys/select.h \
+	sys/wait.h \
 	utime.h\
 )
 
