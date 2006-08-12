@@ -338,7 +338,7 @@ not address the issues involved.
 
 Of course, you should place the tools created to
 support such a build system (scripts, @file{Makefile}s,
-etc) under @sc{cvs}.
+etc.) under @sc{cvs}.
 
 Figuring out what files need to be rebuilt when
 something changes is, again, something to be handled
@@ -374,7 +374,7 @@ within a single file, or across a whole collection of
 files, will logically conflict with one another.  Its
 concept of a @dfn{conflict} is purely textual, arising
 when two changes to the same base file are near enough
-to spook the merge (i.e. @code{diff3}) command.
+to spook the merge (i.e., @code{diff3}) command.
 
 @sc{cvs} does not claim to help at all in figuring out
 non-textual or distributed conflicts in program logic.
@@ -394,7 +394,7 @@ peers.
 Change control refers to a number of things.  First of
 all it can mean @dfn{bug-tracking}, that is being able
 to keep a database of reported bugs and the status of
-each one (is it fixed?  in what release?  has the bug
+each one (Is it fixed?  In what release?  Has the bug
 submitter agreed that it is fixed?).  For interfacing
 @sc{cvs} to an external bug-tracking system, see the
 @file{rcsinfo} and @file{verifymsg} files
@@ -3541,7 +3541,7 @@ tags; see @ref{Sticky tags}.
 
 When you tag more than one file with the same tag you
 can think about the tag as "a curve drawn through a
-matrix of filename vs. revision number."  Say we have 5
+matrix of filename vs.@: revision number."  Say we have 5
 files with the following revisions:
 
 @example
@@ -12242,7 +12242,7 @@ If using remote access methods (pserver, ext, etc.),
 @sc{cvs} will execute this program on the server from a temporary
 directory. The path is searched for this program.
 
-If using ``local access'' (on a local or remote NFS file system, i.e.
+If using ``local access'' (on a local or remote NFS file system, i.e.,
 repository set just to a path),
 the program will be executed from the newly checked-out tree, if
 found there, or alternatively searched for in the path if not.
