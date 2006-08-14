@@ -14287,7 +14287,7 @@ In addition to the common format strings (@pxref{syntax}),
 @file{loginfo} supports:
 
 @table @t
-@item %@{satVv@}
+@item %@{saTVv@}
 File attributes, where:
 @table @t
 @item %s

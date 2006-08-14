@@ -1,3 +1,7 @@
+2006-08-14  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (loginfo): s/%t/%T/, in summary (desc text was correct).
+
 2006-08-12  Mark D. Baushke  <mdb@gnu.org>
 
 	* stamp-1, stamp-vti, version-client.texi, version.texi:
