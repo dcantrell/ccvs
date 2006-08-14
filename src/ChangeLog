@@ -1,3 +1,7 @@
+2006-08-14  Derek Price  <derek@ximbiot.com>
+
+	* mkmodules.c (loginfo_contents): Add %a & %T.
+
 2006-08-12  Mark D. Baushke  <mdb@gnu.org>
 
 	* add.c: Move include of <assert.h> after cvs.h for fputs rename.
