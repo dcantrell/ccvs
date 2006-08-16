@@ -1,3 +1,16 @@
+2006-08-16  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.am: Import changes from...
+	* Makefile.gnulib: ...this regenerated file.
+	* allocsa.h, closeout.c, error.c, error.h, exitfail.c,
+	getaddrinfo.c, getaddrinfo.h, gettext.h, inet_ntop.h, mbchar.h,
+	pipe-safer.c, , printf-args.c, readlink.c, regex.h,
+	regex_internal.c, regex_internal.h, setenv.c, snprintf.c,
+	stdint_.h, strnlen1.c, strnlen1.h, vasprintf.h, wcwidth.h: Update
+	from GNULIB.
+	* close-stream.c, close-stream.h: New from GNULIB.
+	* Makefile.in: Regenerated.
+
 2006-07-11  Derek Price  <derek@ximbiot.com>
 
 	* getcwd.c, getndelim2.h, glob.c, glob_.h: Update from GNULIB.

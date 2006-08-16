@@ -19,9 +19,12 @@
 # any checks for libraries, header files, types and library functions.
 AC_DEFUN([gl_EARLY],
 [
+  m4_pattern_forbid([^gl_[A-Z]])dnl the gnulib macro namespace
+  m4_pattern_allow([^gl_ES$])dnl a valid locale name
   AC_REQUIRE([AC_PROG_RANLIB])
   AC_REQUIRE([AC_GNU_SOURCE])
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
+  AC_REQUIRE([gl_LOCK])
 ])
 
 # This macro should be invoked from ./configure.in, in the section
@@ -31,12 +34,16 @@ AC_DEFUN([gl_INIT],
   AM_CONDITIONAL([GL_COND_LIBTOOL], [false])
   gl_FUNC_ALLOCA
   gl_ALLOCSA
+  gl_HEADER_ARPA_INET
   gl_FUNC_ATEXIT
   gl_FUNC_BASE64
   gl_CANON_HOST
   AC_FUNC_CANONICALIZE_FILE_NAME
   gl_FUNC_CHDIR_LONG
+  gl_CLOSE_STREAM
   gl_CLOSEOUT
+  gl_CYCLE_CHECK
+  gl_STRUCT_DEV_INO
   gl_DIRNAME
   gl_FUNC_DUP2
   gl_ERROR
@@ -61,7 +68,7 @@ AC_DEFUN([gl_INIT],
   gl_GETPAGESIZE
   gl_FUNC_GETPASS_GNU
   dnl you must add AM_GNU_GETTEXT([external]) or similar to configure.ac.
-  AM_GNU_GETTEXT_VERSION([0.14.5])
+  AM_GNU_GETTEXT_VERSION([0.15])
   gl_GETTIME
   AC_FUNC_GETTIMEOFDAY_CLOBBER
   gl_GLOB
@@ -81,6 +88,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_MKSTEMP
   gl_FUNC_MKTIME
   gl_FUNC_NANOSLEEP
+  gl_HEADER_NETINET_IN
   gl_FUNC_OPENAT
   gl_PAGEALIGN_ALLOC
   gl_PATHMAX
@@ -89,8 +97,8 @@ AC_DEFUN([gl_INIT],
   AC_FUNC_REALLOC
   gl_REGEX
   vb_FUNC_RENAME
-  gl_C_RESTRICT
   gl_FUNC_RPMATCH
+  gl_SAME_INODE
   gl_SAVE_CWD
   gt_FUNC_SETENV
   gl_SIZE_MAX
@@ -156,6 +164,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/canonicalize.h
   lib/chdir-long.c
   lib/chdir-long.h
+  lib/close-stream.c
+  lib/close-stream.h
   lib/closeout.c
   lib/closeout.h
   lib/creat-safer.c
@@ -328,6 +338,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/absolute-header.m4
   m4/alloca.m4
   m4/allocsa.m4
+  m4/arpa_inet_h.m4
   m4/atexit.m4
   m4/base64.m4
   m4/bison.m4
@@ -335,10 +346,13 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/canonicalize.m4
   m4/chdir-long.m4
   m4/clock_time.m4
+  m4/close-stream.m4
   m4/closeout.m4
   m4/codeset.m4
+  m4/cycle-check.m4
   m4/d-ino.m4
   m4/d-type.m4
+  m4/dev-ino.m4
   m4/dirname.m4
   m4/dos.m4
   m4/double-slash-root.m4
@@ -379,14 +393,14 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/intdiv0.m4
   m4/intmax.m4
   m4/intmax_t.m4
+  m4/inttypes-h.m4
   m4/inttypes-pri.m4
-  m4/inttypes.m4
   m4/inttypes_h.m4
-  m4/isc-posix.m4
   m4/lcmessage.m4
   m4/lib-ld.m4
   m4/lib-link.m4
   m4/lib-prefix.m4
+  m4/lock.m4
   m4/longdouble.m4
   m4/longlong.m4
   m4/lstat.m4
@@ -405,6 +419,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mktime.m4
   m4/mmap-anon.m4
   m4/nanosleep.m4
+  m4/netinet_in_h.m4
   m4/nls.m4
   m4/openat.m4
   m4/pagealign_alloc.m4
@@ -416,8 +431,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/readlink.m4
   m4/regex.m4
   m4/rename.m4
-  m4/restrict.m4
   m4/rpmatch.m4
+  m4/same-inode.m4
   m4/save-cwd.m4
   m4/setenv.m4
   m4/signed.m4
@@ -457,6 +472,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/unlocked-io.m4
   m4/vasnprintf.m4
   m4/vasprintf.m4
+  m4/visibility.m4
   m4/wchar_t.m4
   m4/wcwidth.m4
   m4/wint_t.m4

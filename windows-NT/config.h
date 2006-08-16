@@ -526,6 +526,9 @@
 /* Define to 1 if <sys/socket.h> defines AF_INET6. */
 #undef HAVE_IPV6
 
+/* Define to 1 if you have the `iswcntrl' function. */
+#undef HAVE_ISWCNTRL
+
 /* Define to 1 if you have the `iswprint' function. */
 #define HAVE_ISWPRINT 1
 
@@ -667,12 +670,21 @@
    */
 #undef HAVE_PARTLY_WORKING_GETCWD
 
+/* Define to 1 if you have the `pipe' function. */
+#undef HAVE_PIPE
+
 /* Define to 1 if you have the `posix_memalign' function. */
 #undef HAVE_POSIX_MEMALIGN
 
 /* Define to 1 if the `printf' function supports the %p format for printing
    pointers. */
 #define HAVE_PRINTF_PTR 1
+
+/* Define if the <pthread.h> defines PTHREAD_MUTEX_RECURSIVE. */
+#undef HAVE_PTHREAD_MUTEX_RECURSIVE
+
+/* Define if the POSIX multithreading library has read/write locks. */
+#undef HAVE_PTHREAD_RWLOCK
 
 /* Define to 1 if the system has the type `ptrdiff_t'. */
 #define HAVE_PTRDIFF_T 1
@@ -1078,6 +1090,9 @@
 /* Path to the pr utility */
 #undef PR_PROGRAM
 
+/* Define if the pthread_in_use() detection is hard. */
+#undef PTHREAD_IN_USE_DETECTION_HARD
+
 /* Define to l, ll, u, ul, ull, etc., as suitable for constants of type
    'ptrdiff_t'. */
 #undef PTRDIFF_T_SUFFIX
@@ -1252,13 +1267,37 @@
 /* Define if wint_t is the first integer type detected with its size. */
 #undef UNIQUE_INT_TYPE_WINT_T
 
+/* Define if the POSIX multithreading library can be used. */
+#undef USE_POSIX_THREADS
+
+/* Define if references to the POSIX multithreading library should be made
+   weak. */
+#undef USE_POSIX_THREADS_WEAK
+
+/* Define if the GNU Pth multithreading library can be used. */
+#undef USE_PTH_THREADS
+
+/* Define if references to the GNU Pth multithreading library should be made
+   weak. */
+#undef USE_PTH_THREADS_WEAK
+
 /* Define if setmode is required when writing binary data to stdout. */
 #define USE_SETMODE_STDOUT 1
+
+/* Define if the old Solaris multithreading library can be used. */
+#undef USE_SOLARIS_THREADS
+
+/* Define if references to the old Solaris multithreading library should be
+   made weak. */
+#undef USE_SOLARIS_THREADS_WEAK
 
 /* Define to 1 if you want getc etc. to use unlocked I/O if available.
    Unlocked I/O can improve performance in unithreaded apps, but it is not
    safe for multithreaded apps. */
 #undef USE_UNLOCKED_IO
+
+/* Define if the Win32 multithreading API can be used. */
+#undef USE_WIN32_THREADS
 
 /* Define if utime requires write access to the file (true on Windows, but not
    Unix). */

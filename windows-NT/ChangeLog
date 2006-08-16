@@ -1,3 +1,8 @@
+2006-08-16  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.in, config.h, config.h.in, stamp-chi, stdint.h:
+	Regenerated.
+
 2006-08-12  Mark D. Baushke  <mdb@gnu.org>
 
 	* config.h, config.h.in, config.h.in.in, stamp-chi: Regenerated.
