@@ -84,17 +84,26 @@ EXTRA_DIST += allocsa.valgrind
 
 ## end   gnulib module allocsa
 
+## begin gnulib module arpa_inet
+
+BUILT_SOURCES += $(ARPA_INET_H)
+
+# We need the following in order to create <arpa/inet.h> when the system
+# doesn't have one.
+arpa/inet.h:
+	test -d arpa || mkdir arpa
+	echo '#include <sys/socket.h>' >$@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += arpa/inet.h arpa/inet.h-t
+MOSTLYCLEANDIRS += arpa
+
+## end   gnulib module arpa_inet
+
 ## begin gnulib module base64
 
 libcvs_a_SOURCES += base64.h base64.c
 
 ## end   gnulib module base64
-
-## begin gnulib module cycle-check
-
-libcvs_a_SOURCES += cycle-check.c cycle-check.h dev-ino.h same-inode.h
-
-## end   gnulib module cycle-check
 
 ## begin gnulib module dirname
 
@@ -252,6 +261,21 @@ libcvs_a_SOURCES += mbuiter.h
 libcvs_a_SOURCES += minmax.h
 
 ## end   gnulib module minmax
+
+## begin gnulib module netinet_in
+
+BUILT_SOURCES += $(NETINET_IN_H)
+
+# We need the following in order to create <netinet/in.h> when the system
+# doesn't have one.
+netinet/in.h:
+	test -d netinet || mkdir netinet
+	echo '#include <sys/socket.h>' >$@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += netinet/in.h netinet/in.h-t
+MOSTLYCLEANDIRS += netinet
+
+## end   gnulib module netinet_in
 
 ## begin gnulib module setenv
 

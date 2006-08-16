@@ -1,3 +1,7 @@
+2006-08-16  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.in, pam/Makefile.in: Regenerated.
+
 2006-08-04  Derek Price  <derek@ximbiot.com>
 
 	* log_accum.pl: Use function prototypes for constants.  Require 5.002.

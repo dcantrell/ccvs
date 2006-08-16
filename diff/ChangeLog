@@ -1,3 +1,7 @@
+2006-08-16  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.in: Regenerated.
+
 2006-07-14  Mark D. Baushke  <mdb@gnu.org>
 
 	* system.h (_D_EXACT_NAMLEN): Add missing macro function
