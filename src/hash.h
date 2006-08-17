@@ -32,27 +32,27 @@ enum ntype
 };
 typedef enum ntype Ntype;
 
-struct node
+struct hashnode
 {
     Ntype type;
-    struct node *next;
-    struct node *prev;
-    struct node *hashnext;
-    struct node *hashprev;
+    struct hashnode *next;
+    struct hashnode *prev;
+    struct hashnode *hashnext;
+    struct hashnode *hashprev;
     char *key;
     void *data;
     size_t len;			/* Length of DATA.  */
     void (*delproc) (struct node *);
 };
-typedef struct node Node;
+typedef struct hashnode Node;
 
-struct list
+struct hashlist
 {
     Node *list;
     Node *hasharray[HASHSIZE];
-    struct list *next;
+    struct hashlist *next;
 };
-typedef struct list List;
+typedef struct hashlist List;
 
 List *getlist (void);
 Node *findnode (List *list, const char *key);
