@@ -16774,7 +16774,8 @@ initial revision: 1\.1"
 	    # since closeout.c can produce both.
 	    dotest_fail close-stdout-3 \
 		"${testcvs} -Q update -p closeout/file > /dev/full" \
-		"${CPROG} \[update aborted\]: write error.*"
+		"${CPROG} \[update aborted\]: write error.*" \
+		"${CPROG} update: write error.*"
 
 	    dokeep
 	    cd ..
