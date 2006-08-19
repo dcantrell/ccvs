@@ -42,7 +42,7 @@ struct hashnode
     char *key;
     void *data;
     size_t len;			/* Length of DATA.  */
-    void (*delproc) (struct node *);
+    void (*delproc) (struct hashnode *);
 };
 typedef struct hashnode Node;
 

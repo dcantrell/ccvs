@@ -1,3 +1,8 @@
+2006-08-19  Mark D. Baushke  <mdb@gnu.org>
+
+	* hash.h (struct hashnode): Use struct hashnode * as the prototype
+	argument for the delproc function.
+
 2006-08-17  Larry Jones  <lawrence.jones@ugs.com>
 
 	* hash.h: Rename structs node and list to hashnode and hashlist
