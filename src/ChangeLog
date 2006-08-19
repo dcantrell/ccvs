@@ -1,5 +1,9 @@
 2006-08-19  Mark D. Baushke  <mdb@gnu.org>
 
+	* sanity.sh (close-stdout): An error from lib/closeout.c will
+	generate "cvs update: write error" rather than an [update aborted]
+	indication.
+
 	* hash.h (struct hashnode): Use struct hashnode * as the prototype
 	argument for the delproc function.
 
