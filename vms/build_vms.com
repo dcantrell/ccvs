@@ -6,7 +6,6 @@ $ CC filutils.c
 $ CC getpass.c
 $ CC getwd.c
 $ CC misc.c
-$ CC ndir.c
 $ CC pipe.c
 $ CC piped_child.c
 $ CC pwd.c
@@ -20,7 +19,7 @@ $ CC utime.c
 $ CC /NOSTANDARD vmsmunch.c
 $ CC waitpid.c
 $ library/create openvmslib.olb filesubr.obj,-
-filutils.obj,getpass.obj,getwd.obj,misc.obj,ndir.obj,pipe.obj,-
+filutils.obj,getpass.obj,getwd.obj,misc.obj,pipe.obj,-
 pwd.obj,rcmd.obj,readlink.obj,rmdir.obj,stat.obj,startserver.obj,-
 unlink.obj,utime.obj,vmsmunch.obj,waitpid.obj
 $ set noverify

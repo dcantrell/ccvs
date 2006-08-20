@@ -1,3 +1,7 @@
+2006-08-20  Mark D. Baushke  <mdb@gnu.org>
+
+	* build_vms.com: Remove references to ndir.c
+
 2006-07-10  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (EXTRA_DIST): Remove ndir.[ch].

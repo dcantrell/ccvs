@@ -66,6 +66,13 @@
 	".\timespec.h"\
 	
 
+.\dirent.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\dirent.h"\
+	"..\windows-NT\woe32.h"\
+	".\xalloc.h"\
+	
+
 .\dirname.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
@@ -101,7 +108,7 @@
 
 .\fncase.c : \
 	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
+	"..\windows-NT\dirent.h"\
 	"..\windows-NT\pwd.h"\
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\stdint.h"\
@@ -226,7 +233,7 @@
 
 .\glob.c : \
 	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
+	"..\windows-NT\dirent.h"\
 	"..\windows-NT\pwd.h"\
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\unistd.h"\
@@ -381,7 +388,7 @@
 
 .\sighandle.c : \
 	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
+	"..\windows-NT\dirent.h"\
 	"..\windows-NT\pwd.h"\
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\stdint.h"\
