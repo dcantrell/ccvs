@@ -4,7 +4,7 @@
 	"..\lib\regex.h"\
 	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
+	"..\windows-NT\dirent.h"\
 	"..\windows-NT\unistd.h"\
 	"..\windows-NT\woe32.h"\
 	".\cmpbuf.h"\
@@ -16,7 +16,7 @@
 .\cmpbuf.c : \
 	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
+	"..\windows-NT\dirent.h"\
 	"..\windows-NT\unistd.h"\
 	"..\windows-NT\woe32.h"\
 	".\cmpbuf.h"\
@@ -27,7 +27,7 @@
 	"..\lib\regex.h"\
 	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
+	"..\windows-NT\dirent.h"\
 	"..\windows-NT\unistd.h"\
 	"..\windows-NT\woe32.h"\
 	".\diff.h"\
@@ -41,7 +41,7 @@
 	"..\lib\regex.h"\
 	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
+	"..\windows-NT\dirent.h"\
 	"..\windows-NT\unistd.h"\
 	"..\windows-NT\woe32.h"\
 	".\diff.h"\
@@ -53,7 +53,7 @@
 	"..\lib\getopt.h"\
 	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
+	"..\windows-NT\dirent.h"\
 	"..\windows-NT\unistd.h"\
 	"..\windows-NT\woe32.h"\
 	".\diffrun.h"\
@@ -64,7 +64,7 @@
 	"..\lib\regex.h"\
 	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
+	"..\windows-NT\dirent.h"\
 	"..\windows-NT\unistd.h"\
 	"..\windows-NT\woe32.h"\
 	".\diff.h"\
@@ -76,7 +76,7 @@
 	"..\lib\regex.h"\
 	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
+	"..\windows-NT\dirent.h"\
 	"..\windows-NT\unistd.h"\
 	"..\windows-NT\woe32.h"\
 	".\diff.h"\
@@ -88,7 +88,7 @@
 	"..\lib\regex.h"\
 	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
+	"..\windows-NT\dirent.h"\
 	"..\windows-NT\unistd.h"\
 	"..\windows-NT\woe32.h"\
 	".\diff.h"\
@@ -100,7 +100,7 @@
 	"..\lib\regex.h"\
 	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
+	"..\windows-NT\dirent.h"\
 	"..\windows-NT\unistd.h"\
 	"..\windows-NT\woe32.h"\
 	".\diff.h"\
@@ -112,7 +112,7 @@
 	"..\lib\regex.h"\
 	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
+	"..\windows-NT\dirent.h"\
 	"..\windows-NT\unistd.h"\
 	"..\windows-NT\woe32.h"\
 	".\diff.h"\
@@ -124,7 +124,7 @@
 	"..\lib\regex.h"\
 	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
+	"..\windows-NT\dirent.h"\
 	"..\windows-NT\unistd.h"\
 	"..\windows-NT\woe32.h"\
 	".\diff.h"\
@@ -136,7 +136,7 @@
 	"..\lib\regex.h"\
 	"..\lib\timespec.h"\
 	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
+	"..\windows-NT\dirent.h"\
 	"..\windows-NT\unistd.h"\
 	"..\windows-NT\woe32.h"\
 	".\diff.h"\

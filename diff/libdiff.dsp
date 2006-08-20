@@ -165,7 +165,7 @@ SOURCE=..\lib\getopt.h
 # End Source File
 # Begin Source File
 
-SOURCE="..\windows-NT\ndir.h"
+SOURCE="..\windows-NT\dirent.h"
 # End Source File
 # Begin Source File
 
