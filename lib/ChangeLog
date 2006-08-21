@@ -1,3 +1,8 @@
+2006-08-21  Mark D. Baushke  <mdb@gnu.org>
+
+	* libcvs.dsp (SOURCE): Add a close-stream.c entry.
+	* libcvs.dep: Ditto.
+
 2006-08-20  Mark D. Baushke  <mdb@gnu.org>
 
 	* libcvs.dep: Rename ndir.h as dirent.h

@@ -109,6 +109,10 @@ SOURCE=.\closeout.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\close-stream.c
+# End Source File
+# Begin Source File
+
 SOURCE=".\cycle-check.c"
 # End Source File
 # Begin Source File
