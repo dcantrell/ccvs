@@ -236,7 +236,7 @@ left of \fBcvs_command\fR) are:
 .IP "" 2
 May be invoked multiple times to specify one legal \fBcvsroot\fR directory with
 each invocation.  Also causes CVS to preparse the configuration file for each
-specified root, which can be useful when configuring write proxies,  See
+specified root, which can be useful when configuring write proxies.  See
 `Password authentication server\(aq in the CVS manual & `Write proxies\(aq in the CVS manual.
 .SP
 .IX "Authentication, stream"
@@ -304,7 +304,7 @@ vice versa.
 .IP "" 2
 Use \fIcvs_root_directory\fR as the root directory
 pathname of the repository.  Overrides the setting of
-the \fB$CVSROOT\fR environment variable.  see node `Repository\(aq in the CVS manual.
+the \fB$CVSROOT\fR environment variable.  See `Repository\(aq in the CVS manual.
 .SP
 .IX "EDITOR, overriding"
 .IX "Overriding EDITOR"
@@ -499,7 +499,7 @@ when the server supports it.  Overrides the \fB$CVS_SIGN_COMMITS\fR
 environment variable (see node `Environment variables\(aq in the CVS manual) and the \fBsign\fR and
 \fBno-sign\fR method options (see node `The connection method\(aq in the CVS manual).
 .SP
-\fBWARNING: `OpenPGP Signed Commits\(aq in the CVS manual for more on using OpenPGP
+\fBWARNING:  See `OpenPGP Signed Commits\(aq in the CVS manual for more on using OpenPGP
 signatures securely.\fR
 .SP
 .IP "" 0
@@ -529,7 +529,7 @@ Substitute the name of the file to generate a signature for.
 This template should send the generated signature to its standard output.
 Overrides the \fBsign-template\fR method option and defaults to something like
 \fB/usr/bin/gpg --detach-sign --output - %M %@ %s\fR.
-\fBWARNING: `OpenPGP Signed Commits\(aq in the CVS manual for more on using OpenPGP
+\fBWARNING:  See `OpenPGP Signed Commits\(aq in the CVS manual for more on using OpenPGP
 signatures securely.\fR
 .SP
 .IP "" 0
@@ -539,7 +539,7 @@ The value passed to both in place of \fB%M\fR in both the OpenPGP signature
 and the OpenPGP verification command line templates.  Defaults to
 \fB--textmode\fR.
 .SP
-\fBWARNING: `OpenPGP Signed Commits\(aq in the CVS manual for more on using OpenPGP
+\fBWARNING:  See `OpenPGP Signed Commits\(aq in the CVS manual for more on using OpenPGP
 signatures securely.\fR
 .SP
 .IP "" 0
@@ -558,7 +558,7 @@ of \fBfatal\fR will disallow the entire checkout.  Overrides the
 variables\(aq in the CVS manual) and the \fBverify\fR and \fBno-verify\fR method options
 (see node `The connection method\(aq in the CVS manual).
 .SP
-\fBWARNING: `OpenPGP Signed Commits\(aq in the CVS manual for more on using OpenPGP
+\fBWARNING:  See `OpenPGP Signed Commits\(aq in the CVS manual for more on using OpenPGP
 signatures securely.\fR
 .SP
 .IP "" 0
@@ -594,9 +594,9 @@ This template should exit with an exit code of zero if the signature is valid
 for the signed file and a non-zero exit code otherwise.  Overrides the
 \fB$CVS_VERIFY_TEMPLATE\fR environment variable (see node `Environment
 variables\(aq in the CVS manual) and the \fBverify-template\fR method option (see node `The connection
-method\(aq in the CVS manual and defaults to something like
+method\(aq in the CVS manual) and defaults to something like
 \fB/usr/bin/gpg --detach-sign --output - %M %@ %S %s\fR.
-\fBWARNING: `OpenPGP Signed Commits\(aq in the CVS manual for more on using OpenPGP
+\fBWARNING:  See `OpenPGP Signed Commits\(aq in the CVS manual for more on using OpenPGP
 signatures securely.\fR
 .SP
 .SH "Common options"
@@ -642,7 +642,7 @@ further updates in the same directory will use the same date
 slightly different way; see node `history options\(aq in the CVS manual).
 .SP
 For a complete description of the date formats accepted by \fBcvs\fR,
-`Date input formats\(aq in the CVS manual.
+see node `Date input formats\(aq in the CVS manual.
 .SP
 Remember to quote the argument to the \fB-D\fR
 flag so that your shell doesn\(aqt interpret spaces as
@@ -687,7 +687,7 @@ those commands.  See `commit options\(aq in the CVS manual, and
 \fB-k \fIkflag\fB\fR
 .IP "" 2
 Override the default processing of RCS keywords other than
-\fB-kb\fR.  see node `Keyword substitution\(aq in the CVS manual, for the meaning of
+\fB-kb\fR.  See `Keyword substitution\(aq in the CVS manual, for the meaning of
 \fIkflag\fR.  Used with the \fBcheckout\fR and \fBupdate\fR
 commands, your \fIkflag\fR specification is
 \fIsticky\fR; that is, when you use this option
@@ -700,9 +700,9 @@ The \fB-k\fR option is available with the \fBadd\fR,
 \fBcheckout\fR, \fBdiff\fR, \fBexport\fR, \fBimport\fR,
 \fBrdiff\fR, and \fBupdate\fR commands.
 .SP
-\fBWARNING: Prior to CVS version 1.12.2, the \fB-k\fB flag
+\fBWARNING:  Prior to CVS version 1.12.2, the \fB-k\fB flag
 overrode the \fB-kb\fB indication for a binary file.  This could
-sometimes corrupt binary files.  see node `Merging and keywords\(aq in the CVS manual, for
+sometimes corrupt binary files.  See `Merging and keywords\(aq in the CVS manual, for
 more.\fR
 .SP
 .IP "" 0
@@ -823,6 +823,111 @@ Available with the following commands: \fBimport\fR,
 and \fBupdate\fR.
 .SP
 .SP
+.SH "add"
+.SS "Add files and directories to the repository"
+.IX "add (subcommand)"
+.SP
+.IP "\(bu" 2
+Synopsis: add [-k rcs-kflag] [-m message] files...
+.IP "\(bu" 2
+Requires: repository, working directory.
+.IP "\(bu" 2
+Changes: repository, working directory.
+.SP
+The \fBadd\fR command is used to present new files
+and directories for addition into the \fBcvs\fR
+repository.  When \fBadd\fR is used on a directory,
+a new directory is created in the repository
+immediately.  When used on a file, only the working
+directory is updated.  Changes to the repository are
+not made until the \fBcommit\fR command is used on
+the newly added file. 
+.SP
+The \fBadd\fR command also resurrects files that
+have been previously removed.  This can be done
+before or after the \fBcommit\fR command is used
+to finalize the removal of files.  Resurrected files
+are restored into the working directory at the time
+the \fBadd\fR command is executed.
+.SP
+.SH "add options"
+.SP
+These standard options are supported by \fBadd\fR
+(see node `Common options\(aq in the CVS manual, for a complete description of
+them):
+.SP
+.IP "" 0
+\fB-k \fIkflag\fB\fR
+.IP "" 2
+Process keywords according to \fIkflag\fR.  See
+`Keyword substitution\(aq in the CVS manual.
+This option is sticky; future updates of
+this file in this working directory will use the same
+\fIkflag\fR.  The \fBstatus\fR command can be viewed
+to see the sticky options.  For more information on
+the \fBstatus\fR command, see node `Invoking CVS\(aq in the CVS manual.
+.SP
+.IP "" 0
+\fB-m \fImessage\fB\fR
+.IP "" 2
+Use \fImessage\fR as the log message, instead of
+invoking an editor.
+.SP
+.SH "add examples"
+.SP
+.SS "Adding a directory"
+.SP
+.PD 0
+.SP
+.IP "" 2
+$ mkdir doc
+.IP "" 2
+$ cvs add doc
+.IP "" 2
+Directory /path/to/repository/doc added to the repository
+
+.PD
+.IP "" 0
+.SP
+.SS "Adding a file"
+.SP
+.PD 0
+.SP
+.SP
+.IP "" 2
+$ >TODO
+.IP "" 2
+$ cvs add TODO
+.IP "" 2
+cvs add: scheduling file \`TODO\(aq for addition
+.IP "" 2
+cvs add: use \(aqcvs commit\(aq to add this file permanently
+
+.PD
+.IP "" 0
+.SP
+.SS "Undoing a \fBremove\fR command"
+.SP
+.PD 0
+.SP
+.IP "" 2
+$ rm -f makefile
+.IP "" 2
+$ cvs remove makefile
+.IP "" 2
+cvs remove: scheduling \`makefile\(aq for removal
+.IP "" 2
+cvs remove: use \(aqcvs commit\(aq to remove this file permanently
+.IP "" 2
+$ cvs add makefile
+.IP "" 2
+U makefile
+.IP "" 2
+cvs add: makefile, version 1.2, resurrected
+
+.PD
+.IP "" 0
+.SP
 .SH "admin"
 .SS "Administration"
 .IX "Admin (subcommand)"
@@ -899,7 +1004,7 @@ There can be no space between \fB-b\fR and its argument.
 Sets the comment leader to \fIstring\fR.  The comment
 leader is not used by current versions of \fBcvs\fR or
 \fBrcs\fR 5.7.  Therefore, you can almost surely not
-worry about it.  see node `Keyword substitution\(aq in the CVS manual.
+worry about it.  See `Keyword substitution\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-e[\fIlogins\fB]\fR
@@ -930,7 +1035,7 @@ new \fBrcs\fR file, without depositing a revision.  With
 \fB-k\fIsubst\fB\fR
 .IP "" 2
 Set the default keyword
-substitution to \fIsubst\fR.  see node `Keyword
+substitution to \fIsubst\fR.  See `Keyword
 substitution\(aq in the CVS manual.  Giving an explicit \fB-k\fR option to
 \fBcvs update\fR, \fBcvs export\fR, or \fBcvs
 checkout\fR overrides this default.
@@ -1115,7 +1220,7 @@ change to be like the \fB::\fR case.
 .SP
 Due to the way \fBcvs\fR handles branches \fIrev\fR
 cannot be specified symbolically if it is a branch.
-see node `Magic branch numbers\(aq in the CVS manual, for an explanation.
+See `Magic branch numbers\(aq in the CVS manual for an explanation.
 .SP
 Make sure that no-one has checked out a copy of the
 revision you outdate.  Strange things will happen if he
@@ -1254,7 +1359,7 @@ modification for each line.
 .SH "annotate options"
 .SP
 These standard options are supported by \fBannotate\fR
-(see node `Common options\(aq in the CVS manual, for a complete description of
+(see node `Common options\(aq in the CVS manual for a complete description of
 them):
 .SP
 .IP "" 0
@@ -1356,7 +1461,7 @@ symbolic names for some
 collection of source directories and files, or paths to
 directories or files in the repository.  The symbolic
 names are defined in the \fBmodules\fR file.
-see node `modules\(aq in the CVS manual.
+See `modules\(aq in the CVS manual.
 .SP
 Depending on the modules you specify, \fBcheckout\fR may
 recursively create directories and populate them with
@@ -1400,13 +1505,13 @@ top level directory (where you originally ran
 forget to change your directory to the top level
 directory.
 .SP
-For the output produced by the \fBcheckout\fR command
-see `update output\(aq in the CVS manual.
+For the output produced by the \fBcheckout\fR command,
+see node `update output\(aq in the CVS manual.
 .SP
 .SH "checkout options"
 .SP
 These standard options are supported by \fBcheckout\fR
-(see node `Common options\(aq in the CVS manual, for a complete description of
+(see node `Common options\(aq in the CVS manual for a complete description of
 them):
 .SP
 .IP "" 0
@@ -1414,7 +1519,7 @@ them):
 .IP "" 2
 Use the most recent revision no later than \fIdate\fR.
 This option is sticky, and implies \fB-P\fR.  See
-`Sticky tags\(aq in the CVS manual, for more information on sticky tags/dates.
+`Sticky tags\(aq in the CVS manual for more information on sticky tags/dates.
 .SP
 .IP "" 0
 \fB-f\fR
@@ -1430,7 +1535,7 @@ Process keywords according to \fIkflag\fR.  See
 This option is sticky; future updates of
 this file in this working directory will use the same
 \fIkflag\fR.  The \fBstatus\fR command can be viewed
-to see the sticky options.  See `Invoking CVS\(aq in the CVS manual, for
+to see the sticky options.  See `Invoking CVS\(aq in the CVS manual for
 more information on the \fBstatus\fR command.
 .SP
 .IP "" 0
@@ -1477,7 +1582,7 @@ options with \fBcheckout\fR:
 .IP "" 2
 Reset any sticky tags, dates, or \fB-k\fR options.
 Does not reset sticky \fB-k\fR options on modified files.
-See `Sticky tags\(aq in the CVS manual, for more information on sticky tags/dates.
+See `Sticky tags\(aq in the CVS manual for more information on sticky tags/dates.
 .SP
 .IP "" 0
 \fB-c\fR
@@ -1540,7 +1645,7 @@ date.  An optional date is specified by adding a colon
 (:) to the tag:
 \fB-j\fISymbolic_Tag\fB:\fIDate_Specifier\fB\fR.
 .SP
-see node `Branching and merging\(aq in the CVS manual.
+See `Branching and merging\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-N\fR
@@ -1555,7 +1660,7 @@ discussion.
 \fB-s\fR
 .IP "" 2
 Like \fB-c\fR, but include the status of all modules,
-and sort it by the status string.  see node `modules\(aq in the CVS manual, for
+and sort it by the status string.  See `modules\(aq in the CVS manual, for
 info about the \fB-s\fR option that is used inside the
 modules file to set the module status.
 .SP
@@ -1625,7 +1730,7 @@ enter a log message that will be written to one or more
 logging programs (see node `modules\(aq in the CVS manual, and see node `loginfo\(aq in the CVS manual)
 and placed in the \fBrcs\fR file inside the
 repository.  This log message can be retrieved with the
-\fBlog\fR command; see `log & rlog\(aq in the CVS manual.  You can specify the
+\fBlog\fR command (see node `log & rlog\(aq in the CVS manual).  You can specify the
 log message on the command line with the \fB-m
 \fImessage\fB\fR option, and thus avoid the editor invocation,
 or use the \fB-F \fIfile\fB\fR option to specify
@@ -1633,14 +1738,14 @@ that the argument file contains the log message.
 .SP
 At \fBcommit\fR, a unique commitid is placed in the \fBrcs\fR
 file inside the repository. All files committed at once
-get the same commitid. The commitid can be retrieved with
+get the same commitid.  The commitid can be retrieved with
 the \fBlog\fR and \fBstatus\fR command; see `log & rlog\(aq in the CVS manual,
-`File status\(aq in the CVS manual.
+and `File status\(aq in the CVS manual.
 .SP
 .SH "commit options"
 .SP
 These standard options are supported by \fBcommit\fR
-(see node `Common options\(aq in the CVS manual, for a complete description of
+(see node `Common options\(aq in the CVS manual for a complete description of
 them):
 .SP
 .IP "" 0
@@ -1834,12 +1939,12 @@ compared.  If any directories are given, all files
 under them will be compared.
 .SP
 The exit status for diff is different than for other
-\fBcvs\fR commands; for details `Exit status\(aq in the CVS manual.
+\fBcvs\fR commands; for details see node `Exit status\(aq in the CVS manual.
 .SP
 .SH "diff options"
 .SP
 These standard options are supported by \fBdiff\fR
-(see node `Common options\(aq in the CVS manual, for a complete description of
+(see node `Common options\(aq in the CVS manual for a complete description of
 them):
 .SP
 .IP "" 0
@@ -1944,7 +2049,7 @@ context.
 \fB--changed-group-format=\fIformat\fB\fR
 .IP "" 2
 Use \fIformat\fR to output a line group containing differing lines from
-both files in if-then-else format.  see node `Line group formats\(aq in the CVS manual.
+both files in if-then-else format.  See `Line group formats\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-d\fR
@@ -2066,7 +2171,7 @@ Print only the left column of two common lines in side by side format.
 \fB--line-format=\fIformat\fB\fR
 .IP "" 2
 Use \fIformat\fR to output all input lines in if-then-else format.
-see node `Line formats\(aq in the CVS manual.
+See `Line formats\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB--minimal\fR
@@ -2093,25 +2198,25 @@ treat it as present but empty in the other directory.
 \fB--new-group-format=\fIformat\fB\fR
 .IP "" 2
 Use \fIformat\fR to output a group of lines taken from just the second
-file in if-then-else format.  see node `Line group formats\(aq in the CVS manual.
+file in if-then-else format.  See `Line group formats\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB--new-line-format=\fIformat\fB\fR
 .IP "" 2
 Use \fIformat\fR to output a line taken from just the second file in
-if-then-else format.  see node `Line formats\(aq in the CVS manual.
+if-then-else format.  See `Line formats\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB--old-group-format=\fIformat\fB\fR
 .IP "" 2
 Use \fIformat\fR to output a group of lines taken from just the first
-file in if-then-else format.  see node `Line group formats\(aq in the CVS manual.
+file in if-then-else format.  See `Line group formats\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB--old-line-format=\fIformat\fB\fR
 .IP "" 2
 Use \fIformat\fR to output a line taken from just the first file in
-if-then-else format.  see node `Line formats\(aq in the CVS manual.
+if-then-else format.  See `Line formats\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-p\fR
@@ -2744,7 +2849,7 @@ In addition, these options (that are common to
 .IP "" 2
 Create a directory called \fIdir\fR for the working
 files, instead of using the module name.
-see node `checkout options\(aq in the CVS manual, for complete details on how
+See `checkout options\(aq in the CVS manual for complete details on how
 \fBcvs\fR handles this flag.
 .SP
 .IP "" 0
@@ -2756,7 +2861,7 @@ Set keyword expansion mode (see node `Substitution modes\(aq in the CVS manual).
 \fB-N\fR
 .IP "" 2
 Only useful together with \fB-d \fIdir\fB\fR.
-see node `checkout options\(aq in the CVS manual, for complete details on how
+See `checkout options\(aq in the CVS manual for complete details on how
 \fBcvs\fR handles this flag.
 .SP
 .SH "history"
@@ -3003,7 +3108,7 @@ distribution from an outside source (e.g., a source
 vendor) into your source repository directory.  You can
 use this command both for initial creation of a
 repository, and for wholesale updates to the module
-from the outside source.  see node `Tracking sources\(aq in the CVS manual, for
+from the outside source.  See `Tracking sources\(aq in the CVS manual for
 a discussion on this subject.
 .SP
 The \fIrepository\fR argument gives a directory name
@@ -3020,14 +3125,14 @@ you to do.
 .SP
 If \fBcvs\fR decides a file should be ignored
 (see node `cvsignore\(aq in the CVS manual), it does not import it and prints
-\fBI \fR followed by the filename (see node `import output\(aq in the CVS manual, for a
+\fBI \fR followed by the filename (see node `import output\(aq in the CVS manual for a
 complete description of the output).
 .SP
 If the file \fB$CVSROOT/CVSROOT/cvswrappers\fR exists,
 any file whose names match the specifications in that
 file will be treated as packages and the appropriate
 filtering will be performed on the file/directory
-before being imported.  see node `Wrappers\(aq in the CVS manual.
+before being imported.  See `Wrappers\(aq in the CVS manual.
 .SP
 The outside source is saved in a first-level
 branch, by default 1.1.1.  Updates are leaves of this
@@ -3055,7 +3160,7 @@ directory (see node `Getting the source\(aq in the CVS manual).
 .SH "import options"
 .SP
 This standard option is supported by \fBimport\fR
-(see node `Common options\(aq in the CVS manual, for a complete description):
+(see node `Common options\(aq in the CVS manual for a complete description):
 .SP
 .IP "" 0
 \fB-m \fImessage\fB\fR
@@ -3076,7 +3181,7 @@ See `Multiple vendor branches\(aq in the CVS manual.
 Indicate the keyword expansion mode desired.  This
 setting will apply to all files created during the
 import, but not to any files that previously existed in
-the repository.  See `Substitution modes\(aq in the CVS manual, for a
+the repository.  See `Substitution modes\(aq in the CVS manual for a
 list of valid \fB-k\fR settings.
 .SP
 .IP "" 0
@@ -3089,7 +3194,7 @@ default), specify \`-I !\(aq.
 .SP
 \fIname\fR can be a file name pattern of the same type
 that you can specify in the \fB.cvsignore\fR file.
-see node `cvsignore\(aq in the CVS manual.
+See `cvsignore\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-W \fIspec\fB\fR
@@ -3099,7 +3204,7 @@ import.  You can use this option repeatedly.
 .SP
 \fIspec\fR can be a file name pattern of the same type
 that you can specify in the \fB.cvswrappers\fR
-file. see node `Wrappers\(aq in the CVS manual.
+file.  See `Wrappers\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-X\fR
@@ -3112,7 +3217,7 @@ if they were deleted on the main trunk, by taking the following
 steps for each file in addition to those normally taken on import:
 creating a new revision on the main trunk indicating that
 the new file is \fBdead\fR, resetting the new file\(aqs default branch,
-and placing the file in the Attic (see node `Attic\(aq in the CVS manual) directory.
+and placing the file in the Attic directory (see node `Attic\(aq in the CVS manual).
 .SP
 Use of this option can be forced on a repository-wide basis
 by setting the \fBImportNewFilesToVendorBranchOnly\fR option in
@@ -3564,7 +3669,7 @@ patch is run in.
 .SH "rdiff options"
 .SP
 These standard options are supported by \fBrdiff\fR
-(see node `Common options\(aq in the CVS manual, for a complete description of
+(see node `Common options\(aq in the CVS manual for a complete description of
 them):
 .SP
 .IP "" 0
@@ -3646,7 +3751,7 @@ easily be fixed with a command such as this:
 .IP "" 2
 $ cvs rdiff -c -r FOO1_2 -r FOO1_4 tc | \\
 .IP "" 2
-$$ Mail -s \(aqThe patches you asked for\(aq foo@example.net
+> Mail -s \(aqThe patches you asked for\(aq foo@example.net
 
 .PD
 .IP "" 0
@@ -3719,9 +3824,9 @@ remain in your working directory.
 \fBWARNING:  The \fBrelease\fB command deletes
 all directories and files recursively.  This
 has the very serious side-effect that any directory
-that you have created inside your checked-out sources,
-and not added to the repository (using the \fBadd\fB
-command; see node `Adding files\(aq in the CVS manual) will be silently deleted\(emeven
+created inside checked-out sources, and not added to
+the repository (using the \fBadd\fB command;
+see node `Adding files\(aq in the CVS manual) will be silently deleted\(emeven
 if it is non-empty!\fR
 .SP
 .SH "release output"
@@ -3751,7 +3856,7 @@ this file will be lost.
 The file has been removed from your private copy of the
 sources, but has not yet been removed from the
 repository, since you have not yet committed the
-removal.  see node `commit\(aq in the CVS manual.
+removal.  See `commit\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fBM \fIfile\fB\fR
@@ -3788,6 +3893,131 @@ You have [0] altered files in this repository.
 Are you sure you want to release (and delete) directory \`tc\(aq: y
 .IP "" 2
 $
+
+.PD
+.IP "" 0
+.SP
+.SH "remove"
+.SS "Remove files from active use"
+.IX "remove (subcommand)"
+.SP
+.IP "\(bu" 2
+Synopsis: remove [-flR] [files...]
+.IP "\(bu" 2
+Requires: repository, working directory.
+.IP "\(bu" 2
+Changes: working directory.
+.SP
+The \fBremove\fR command is used to remove unwanted
+files from active use.  The user normally deletes the
+files from the working directory prior to invocation
+of the \fBremove\fR command.  Only the working
+directory is updated.  Changes to the repository are
+not made until the \fBcommit\fR command is run.
+.SP
+The \fBremove\fR command does not delete files from
+from the repository.  \fBcvs\fR keeps all historical
+data in the repository so that it is possible to
+reconstruct previous states of the projects under
+revision control.
+.SP
+To undo \fBcvs\fR \fBremove\fR or to resurrect files
+that were previously removed, see node `add\(aq in the CVS manual.
+.SP
+.SH "remove options"
+.SP
+These standard options are supported by \fBremove\fR
+(see node `Common options\(aq in the CVS manual for a complete description of
+them):
+.SP
+.IP "" 0
+\fB-l\fR
+.IP "" 2
+Local; run only in current working directory.  See `Recursive behavior\(aq in the CVS manual.
+.SP
+.IP "" 0
+\fB-R\fR
+.IP "" 2
+Process directories recursively.  See `Recursive behavior\(aq in the CVS manual.
+.SP
+.SP
+In addition, these options are also supported:
+.SP
+.IP "" 0
+\fB-f\fR
+.IP "" 2
+Note that this is not the standard behavior of
+the \fB-f\fR option as defined in `Common options\(aq in the CVS manual.
+.SP
+Delete files before removing them.
+.SP
+Entire directory hierarchies are easily removed
+using \fB-f\fR, but take note that it is not as
+easy to resurrect directory hierarchies as it is
+to remove them.
+.SP
+.SP
+.SH "remove examples"
+.SP
+.SS "Removing a file"
+.SP
+.PD 0
+.SP
+.IP "" 2
+$ cvs remove remove.me
+.IP "" 2
+cvs remove: file \`remove.me\(aq still in working directory
+.IP "" 2
+cvs remove: 1 file exists; remove it first
+.IP "" 2
+$ rm -f remove.me
+.IP "" 2
+$ cvs remove remove.me
+.IP "" 2
+cvs remove: scheduling \`remove.me\(aq for removal
+.IP "" 2
+cvs remove: use \(aqcvs commit\(aq to remove this file permanently
+.SP
+.IP "" 2
+$ ls remove.it
+.IP "" 2
+remove.it
+.IP "" 2
+$ cvs remove -f remove.it
+.IP "" 2
+cvs remove: scheduling \`remove.it\(aq for removal
+.IP "" 2
+cvs remove: use \(aqcvs commit\(aq to remove this file permanently
+
+.PD
+.IP "" 0
+.SP
+.SS "Removing entire directories"
+.SP
+.PD 0
+.IP "" 2
+$ tree -d a
+.IP "" 2
+a
+.IP "" 2
+|-- CVS
+.IP "" 2
+\`-- b
+.IP "" 2
+    \`-- CVS
+.SP
+.IP "" 2
+3 directories
+.IP "" 2
+$ cvs remove -f a
+.IP "" 2
+cvs remove: Removing a
+.IP "" 2
+cvs remove: Removing a/b
+.IP "" 2
+cvs remove: scheduling \`a/b/c\(aq for removal
+.IP "" 2
+cvs remove: use \(aqcvs commit\(aq to remove this file permanently
 
 .PD
 .IP "" 0
@@ -3837,18 +4067,18 @@ ones are added.  \fBsign\fR may also be used to delete signatures from a
 revision.
 .SP
 These standard options are available with \fBsign\fR
-(see node `Common options\(aq in the CVS manual, for a complete description of
+(see node `Common options\(aq in the CVS manual for a complete description of
 them):
 .SP
 .IP "" 0
 \fB-l\fR
 .IP "" 2
-Local; run only in current working directory.  see node `Recursive behavior\(aq in the CVS manual.
+Local; run only in current working directory.  See `Recursive behavior\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-R\fR
 .IP "" 2
-Sign all files recursively (default).  see node `Recursive behavior\(aq in the CVS manual.
+Sign all files recursively (default).  See `Recursive behavior\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-r \fItag\fB[:\fIdate\fB]\fR
@@ -3856,7 +4086,7 @@ Sign all files recursively (default).  see node `Recursive behavior\(aq in the C
 Sign the revisions specified by \fItag\fR or, when \fIdate\fR is specified
 and \fItag\fR is a branch tag, the version from the branch \fItag\fR as it
 existed on \fIdate\fR.  With \fB-d\fR, delete keys from the specified
-revision.  See also, `Common options\(aq in the CVS manual.
+revision.  See also:  `Common options\(aq in the CVS manual.
 .SP
 This special option is also available with \fBsign\fR.
 .SP
@@ -3920,7 +4150,7 @@ the \fB-F\fR option to move the tag to a new set of
 revisions.
 .SP
 These standard options are supported by \fBtag\fR or \fBrtag\fR
-(see node `Common options\(aq in the CVS manual, for a complete description of them):
+(see node `Common options\(aq in the CVS manual for a complete description of them):
 .SP
 .IP "" 0
 \fB-D \fIdate\fB\fR
@@ -3931,12 +4161,12 @@ not valid when deleting tags (see \fB-d\fR option, below).
 .IP "" 0
 \fB-l\fR
 .IP "" 2
-Local; run only in current working directory.  see node `Recursive behavior\(aq in the CVS manual.
+Local; run only in current working directory.  See `Recursive behavior\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-R\fR
 .IP "" 2
-Update directories recursively (default).  see node `Recursive
+Update directories recursively (default).  See `Recursive
 behavior\(aq in the CVS manual.
 .SP
 .IP "" 0
@@ -3961,7 +4191,7 @@ Clear \fInew_tag\fR from removed files that would not otherwise be tagged
 .IP "" 2
 Allows \fB-d\fR or \fB-F\fR to delete or move branch tags.
 .SP
-\fBWARNING: Recovering the information stored by branch tags is
+\fBWARNING:  Recovering the information stored by branch tags is
 a very hard problem, more so than regular tags.  Be absolutely sure you
 understand what you are doing before using this option.\fR
 .SP
@@ -3982,7 +4212,7 @@ Abort if any tagged files are locally modified (\fBtag\fR only).
 .IP "" 2
 Delete \fInew_tag\fR, instead of creating it.
 .SP
-\fBWARNING: Be very certain of your ground before you delete a tag; doing
+\fBWARNING:  Be very certain of your ground before you delete a tag; doing
 this permanently discards some historical information, which could later turn
 out to be valuable.\fR
 .SP
@@ -3993,7 +4223,7 @@ When a tag already exists, move it to the new revision.  When the tag
 does not exist, create it as normal.  This option is new in \fBcvs\fR 1.4.
 The pre-1.4 behavior is identical to \fBcvs tag -F\fR.
 .SP
-\fBWARNING: Be very certain of your ground before you delete a tag; doing
+\fBWARNING:  Be very certain of your ground before you delete a tag; doing
 this permanently discards some historical information, which could later turn
 out to be valuable.\fR
 .SP
@@ -4009,7 +4239,7 @@ resolve to an existing revision).
 \fB-n\fR
 .IP "" 2
 Do not execute the tag program specified in the \fBmodules\fR file
-(\fBrtag\fR only).  see node `modules\(aq in the CVS manual, for more.
+(\fBrtag\fR only).  See `modules\(aq in the CVS manual for more information.
 .SP
 .SH "update"
 .SS "Bring work tree in sync with repository"
@@ -4038,7 +4268,7 @@ into any destination revisions specified with \fB-r\fR,
 .SH "update options"
 .SP
 These standard options are available with \fBupdate\fR
-(see node `Common options\(aq in the CVS manual, for a complete description of
+(see node `Common options\(aq in the CVS manual for a complete description of
 them):
 .SP
 .IP "" 0
@@ -4046,7 +4276,7 @@ them):
 .IP "" 2
 Use the most recent revision no later than \fIdate\fR.
 This option is sticky, and implies \fB-P\fR.
-See `Sticky tags\(aq in the CVS manual, for more information on sticky tags/dates.
+See `Sticky tags\(aq in the CVS manual for more information on sticky tags/dates.
 .SP
 .IP "" 0
 \fB-f\fR
@@ -4062,13 +4292,13 @@ Process keywords according to \fIkflag\fR.  See
 This option is sticky; future updates of
 this file in this working directory will use the same
 \fIkflag\fR.  The \fBstatus\fR command can be viewed
-to see the sticky options.  See `Invoking CVS\(aq in the CVS manual, for
+to see the sticky options.  See `Invoking CVS\(aq in the CVS manual for
 more information on the \fBstatus\fR command.
 .SP
 .IP "" 0
 \fB-l\fR
 .IP "" 2
-Local; run only in current working directory.  see node `Recursive behavior\(aq in the CVS manual.
+Local; run only in current working directory.  See `Recursive behavior\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-P\fR
@@ -4083,7 +4313,7 @@ Pipe files to the standard output.
 .IP "" 0
 \fB-R\fR
 .IP "" 2
-Update directories recursively (default).  see node `Recursive
+Update directories recursively (default).  See `Recursive
 behavior\(aq in the CVS manual.
 .SP
 .IP "" 0
@@ -4092,8 +4322,8 @@ behavior\(aq in the CVS manual.
 Retrieve the revisions specified by \fItag\fR or, when \fIdate\fR is specified
 and \fItag\fR is a branch tag, the version from the branch \fItag\fR as it
 existed on \fIdate\fR.  This option is sticky, and implies \fB-P\fR.
-See `Sticky tags\(aq in the CVS manual, for more information on sticky tags/dates. Also
-see `Common options\(aq in the CVS manual.
+See `Sticky tags\(aq in the CVS manual for more information on sticky tags/dates.  Also
+see node `Common options\(aq in the CVS manual.
 .SP
 These special options are also available with
 \fBupdate\fR.
@@ -4103,7 +4333,7 @@ These special options are also available with
 .IP "" 2
 Reset any sticky tags, dates, or \fB-k\fR options.
 Does not reset sticky \fB-k\fR options on modified files.
-See `Sticky tags\(aq in the CVS manual, for more information on sticky tags/dates.
+See `Sticky tags\(aq in the CVS manual for more information on sticky tags/dates.
 .SP
 .IP "" 0
 \fB-C\fR
@@ -4137,7 +4367,7 @@ Ignore files whose names match \fIname\fR (in your
 working directory) during the update.  You can specify
 \fB-I\fR more than once on the command line to specify
 several files to ignore.  Use \fB-I !\fR to avoid
-ignoring any files at all.  see node `cvsignore\(aq in the CVS manual, for other
+ignoring any files at all.  See `cvsignore\(aq in the CVS manual for other
 ways to make \fBcvs\fR ignore some files.
 .SP
 .IP "" 0
@@ -4148,7 +4378,7 @@ update.  You can use this option repeatedly.
 .SP
 \fIspec\fR can be a file name pattern of the same type
 that you can specify in the \fB.cvswrappers\fR
-file. see node `Wrappers\(aq in the CVS manual.
+file.  See `Wrappers\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-j\fIrevision\fB\fR
@@ -4168,7 +4398,7 @@ the revision specified in the \fB-j\fR option.
 Note that using a single \fB-j \fItagname\fB\fR option rather than
 \fB-j \fIbranchname\fB\fR to merge changes from a branch will
 often not remove files which were removed on the branch.
-see node `Merging adds and removals\(aq in the CVS manual, for more.
+See `Merging adds and removals\(aq in the CVS manual for more information.
 .SP
 In addition, each \fB-j\fR option can contain an optional
 date specification which, when used with branches, can
@@ -4177,7 +4407,7 @@ date.  An optional date is specified by adding a colon
 (:) to the tag:
 \fB-j\fISymbolic_Tag\fB:\fIDate_Specifier\fB\fR.
 .SP
-see node `Branching and merging\(aq in the CVS manual.
+See `Branching and merging\(aq in the CVS manual.
 .SP
 .SP
 .SH "update output"
@@ -4272,13 +4502,13 @@ or as a CVSROOT method option (see node `The connection method\(aq in the CVS ma
 verifies all revisions before operating on them.
 .SP
 These standard options are available with \fBverify\fR
-(see node `Common options\(aq in the CVS manual, for a complete description of
+(see node `Common options\(aq in the CVS manual for a complete description of
 them):
 .SP
 .IP "" 0
 \fB-l\fR
 .IP "" 2
-Local; run only in current working directory.  see node `Recursive behavior\(aq in the CVS manual.
+Local; run only in current working directory.  See `Recursive behavior\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-p\fR
@@ -4288,21 +4518,21 @@ Pipe signatures to the standard output, instead of verifying.
 .IP "" 0
 \fB-R\fR
 .IP "" 2
-Sign all files recursively (default).  see node `Recursive behavior\(aq in the CVS manual.
+Sign all files recursively (default).  See `Recursive behavior\(aq in the CVS manual.
 .SP
 .IP "" 0
 \fB-r \fItag\fB[:\fIdate\fB]\fR
 .IP "" 2
 Verify the revisions specified by \fItag\fR or, when \fIdate\fR is specified
 and \fItag\fR is a branch tag, the version from the branch \fItag\fR as it
-existed on \fIdate\fR.  See also, `Common options\(aq in the CVS manual.
+existed on \fIdate\fR.  See also:  `Common options\(aq in the CVS manual.
 .SP
 .SH "version"
 .SS "--Print client and server version strings"
 .IX "version (subcommand)"
 .SP
 \fBversion\fR outputs a version string for both the \fBcvs\fR client and
-a \fBcvs\fR server, when a server can be contacted.  Also, `Global options\(aq in the CVS manual.
+a \fBcvs\fR server, when a server can be contacted.  Also, see node `Global options\(aq in the CVS manual.
 .SH "AUTHORS"
 .TP
 Dick Grune
