@@ -2337,7 +2337,7 @@ server supports it.  Overrides the @code{$CVS_SIGN_COMMITS} environment
 variable (@pxref{Environment variables}) and may be overridden by the
 @samp{--sign} and @samp{--no-sign} global options (@pxref{Global options}).
 
-@strong{WARNING: @ref{OpenPGP Signed Commits} for more on using OpenPGP
+@strong{WARNING:  See @ref{OpenPGP Signed Commits} for more on using OpenPGP
 signatures securely.}
 
 @item sign-template=@var{template}
@@ -2362,7 +2362,7 @@ IS overridden by the @samp{--sign-template} global command line option
 @pxref{Global options} and defaults to
 @samp{/usr/bin/gpg --detach-sign --output - Mt %@@ %s}.
 
-@strong{WARNING: @ref{OpenPGP Signed Commits} for more on using OpenPGP
+@strong{WARNING:  See @ref{OpenPGP Signed Commits} for more on using OpenPGP
 signatures securely.}
 
 @item textmode
@@ -2370,7 +2370,7 @@ The value passed to both in place of @samp{%M} in both the OpenPGP signature
 and the OpenPGP verification command line templates.  Defaults to
 @samp{--textmode}.
 
-@strong{WARNING: @ref{OpenPGP Signed Commits} for more on using OpenPGP
+@strong{WARNING:  See @ref{OpenPGP Signed Commits} for more on using OpenPGP
 signatures securely.}
 
 @item verify
@@ -2385,7 +2385,7 @@ of @samp{fatal} will disallow the entire checkout.  Overrides the
 variables}) and may be overridden by the @samp{--verify} and @samp{--no-verify}
 global options (@pxref{Global options}).
 
-@strong{WARNING: @ref{OpenPGP Signed Commits} for more on using OpenPGP
+@strong{WARNING:  See @ref{OpenPGP Signed Commits} for more on using OpenPGP
 signatures securely.}
 
 @item verify-template=@var{template}
@@ -2416,7 +2416,7 @@ overrides the @code{$CVS_VERIFY_TEMPLATE} environment variable
 defaults to something like
 @samp{/usr/bin/gpg --detach-sign --output - %M %@@ %S %s}.
 
-@strong{WARNING: @ref{OpenPGP Signed Commits} for more on using OpenPGP
+@strong{WARNING:  See @ref{OpenPGP Signed Commits} for more on using OpenPGP
 signatures securely.}
 @end table
 
@@ -2778,7 +2778,7 @@ encouraged.  Please send a mail to one of the @sc{cvs} mailing lists
 (@code{info-cvs@@nongnu.org} or @code{bug-cvs@@nongnu.org}) if you use the 
 @sc{cvs} PAM support.
 
-@strong{WARNING: Using PAM gives the system administrator much more 
+@strong{WARNING:  Using PAM gives the system administrator much more 
 flexibility about how @sc{cvs} users are authenticated but 
 no more security than other methods.  See below for more.} 
 
@@ -4097,7 +4097,7 @@ place.  Therefore, one might delete, move, or rename a
 tag.
 
 @noindent
-@strong{WARNING: the commands in this section are
+@strong{WARNING:  The commands in this section are
 dangerous; they permanently discard historical
 information and it can be difficult or impossible to
 recover from errors.  If you are a @sc{cvs}
@@ -4127,7 +4127,7 @@ of branch tags.  In that case, any non-branch tags encountered will
 trigger warnings and will not be deleted.
 
 @noindent
-@strong{WARNING: Moving branch tags is very dangerous!  If you think
+@strong{WARNING:  Moving branch tags is very dangerous!  If you think
 you need the @code{-B} option, think again and ask your @sc{cvs}
 administrator about it (if that isn't you).  There is almost certainly
 another way to accomplish what you want to accomplish.}
@@ -4158,7 +4158,7 @@ In that case, non-branch tags encountered with the given
 name are ignored with a warning message.
 
 @noindent
-@strong{WARNING: Moving branch tags is very dangerous!  If you think you
+@strong{WARNING:  Moving branch tags is very dangerous!  If you think you
 need the @code{-B} option, think again and ask your @sc{cvs}
 administrator about it (if that isn't you).  There is almost certainly
 another way to accomplish what you want to accomplish.}
@@ -5008,7 +5008,7 @@ merging the changes between them into the working
 directory need not change anything.  Therefore, there
 is no conflict.
 
-@strong{WARNING: In versions of @sc{cvs} prior to 1.12.2, there was a
+@strong{WARNING:  In versions of @sc{cvs} prior to 1.12.2, there was a
 major problem with using @samp{-kk} on merges.  Namely, @samp{-kk}
 overrode any default keyword expansion mode set in the archive file in
 the repository.  This could, unfortunately for some users, cause data
@@ -7855,7 +7855,7 @@ $ cd wdiff-0.05
 $ cvs import -m "Import of FSF v. 0.05" fsf/wdiff FSF_DIST WDIFF_0_05
 @end example
 
-@strong{WARNING: If you use a release tag that already exists in one of the
+@strong{WARNING:  If you use a release tag that already exists in one of the
 repository archives, files removed by an import may not be detected.}
 
 For files that have not been modified locally, the newly created
@@ -8211,7 +8211,7 @@ of the revision being checked out is trusted.
 
 See @ref{Global options} and @ref{The connection method} for more.
 
-@strong{WARNING: Due to the sensitive nature of OpenPGP implementations, if you
+@strong{WARNING:  Due to the sensitive nature of OpenPGP implementations, if you
 intend to employ CVS commit signatures as a security precaution, it is
 recommended that you make sure you are using an OpenPGP implementation with all
 the available security fixes.  Check with the vendor of your OpenPGP
@@ -8248,6 +8248,7 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * Global options::              Options you give to the left of cvs_command
 * Common options::              Options you give to the right of cvs_command
 * Date input formats::		Acceptable formats for date specifications
+* add::                         Add files and directories to the repository
 * admin::                       Administration
 * annotate & rannotate::        What revision modified each line of a file?
 * checkout::                    Checkout sources for editing
@@ -8260,6 +8261,7 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * ls & rls::                    List files in the repository
 * rdiff::                       'patch' format diffs between releases
 * release::                     Indicate that a directory is no longer in use
+* remove::                      Remove files from active development
 * server & pserver::            Act as a server for a client on stdin/stdout
 * sign::                        Attach new OpenPGP revision signature
 * tag & rtag::                  Mark project snapshot for later retrieval
@@ -8428,7 +8430,7 @@ left of @samp{cvs_command}) are:
 @item --allow-root=@var{rootdir}
 May be invoked multiple times to specify one legal @sc{cvsroot} directory with
 each invocation.  Also causes CVS to preparse the configuration file for each
-specified root, which can be useful when configuring write proxies,  See
+specified root, which can be useful when configuring write proxies.  See
 @ref{Password authentication server} & @ref{Write proxies}.
 
 @cindex Authentication, stream
@@ -8490,7 +8492,7 @@ vice versa.
 @item -d @var{cvs_root_directory}
 Use @var{cvs_root_directory} as the root directory
 pathname of the repository.  Overrides the setting of
-the @code{$CVSROOT} environment variable.  @xref{Repository}.
+the @code{$CVSROOT} environment variable.  See @ref{Repository}.
 
 @cindex EDITOR, overriding
 @cindex Overriding EDITOR
@@ -8655,7 +8657,7 @@ when the server supports it.  Overrides the @code{$CVS_SIGN_COMMITS}
 environment variable (@pxref{Environment variables}) and the @samp{sign} and
 @samp{no-sign} method options (@pxref{The connection method}).
 
-@strong{WARNING: @ref{OpenPGP Signed Commits} for more on using OpenPGP
+@strong{WARNING:  See @ref{OpenPGP Signed Commits} for more on using OpenPGP
 signatures securely.}
 
 @item --sign-template @var{template}
@@ -8679,7 +8681,7 @@ This template should send the generated signature to its standard output.
 Overrides the @samp{sign-template} method option and defaults to something like
 @samp{/usr/bin/gpg --detach-sign --output - %M %@@ %s}.
 
-@strong{WARNING: @ref{OpenPGP Signed Commits} for more on using OpenPGP
+@strong{WARNING:  See @ref{OpenPGP Signed Commits} for more on using OpenPGP
 signatures securely.}
 
 @item --textmode
@@ -8687,7 +8689,7 @@ The value passed to both in place of @samp{%M} in both the OpenPGP signature
 and the OpenPGP verification command line templates.  Defaults to
 @samp{--textmode}.
 
-@strong{WARNING: @ref{OpenPGP Signed Commits} for more on using OpenPGP
+@strong{WARNING:  See @ref{OpenPGP Signed Commits} for more on using OpenPGP
 signatures securely.}
 
 @item --verify
@@ -8702,7 +8704,7 @@ of @samp{fatal} will disallow the entire checkout.  Overrides the
 variables}) and the @samp{verify} and @samp{no-verify} method options
 (@pxref{The connection method}).
 
-@strong{WARNING: @ref{OpenPGP Signed Commits} for more on using OpenPGP
+@strong{WARNING:  See @ref{OpenPGP Signed Commits} for more on using OpenPGP
 signatures securely.}
 
 @item --verify-template=@var{template}
@@ -8729,10 +8731,11 @@ This template should exit with an exit code of zero if the signature is valid
 for the signed file and a non-zero exit code otherwise.  Overrides the
 @code{$CVS_VERIFY_TEMPLATE} environment variable (@pxref{Environment
 variables}) and the @samp{verify-template} method option (@pxref{The connection
-method} and defaults to something like
+method}) and defaults to something like
 @samp{/usr/bin/gpg --detach-sign --output - %M %@@ %S %s}.
 
-@strong{WARNING: @ref{OpenPGP Signed Commits} for more on using OpenPGP
+
+@strong{WARNING:  See @ref{OpenPGP Signed Commits} for more on using OpenPGP
 signatures securely.}
 @end table
 
@@ -8779,7 +8782,7 @@ further updates in the same directory will use the same date
 slightly different way; @pxref{history options}).
 
 For a complete description of the date formats accepted by @sc{cvs},
-@ref{Date input formats}.
+@xref{Date input formats}.
 @c What other formats should we accept?  I don't want
 @c to start accepting a whole mess of non-standard
 @c new formats (there are a lot which are in wide use in
@@ -8874,7 +8877,7 @@ those commands.  See @ref{commit options}, and
 
 @item -k @var{kflag}
 Override the default processing of RCS keywords other than
-@samp{-kb}.  @xref{Keyword substitution}, for the meaning of
+@samp{-kb}.  See @ref{Keyword substitution}, for the meaning of
 @var{kflag}.  Used with the @code{checkout} and @code{update}
 commands, your @var{kflag} specification is
 @dfn{sticky}; that is, when you use this option
@@ -8887,9 +8890,9 @@ The @samp{-k} option is available with the @code{add},
 @code{checkout}, @code{diff}, @code{export}, @code{import},
 @code{rdiff}, and @code{update} commands.
 
-@strong{WARNING: Prior to CVS version 1.12.2, the @samp{-k} flag
+@strong{WARNING:  Prior to CVS version 1.12.2, the @samp{-k} flag
 overrode the @samp{-kb} indication for a binary file.  This could
-sometimes corrupt binary files.  @xref{Merging and keywords}, for
+sometimes corrupt binary files.  See @ref{Merging and keywords}, for
 more.}
 
 @item -l
@@ -9020,6 +9023,98 @@ and @code{update}.
 @include getdate-cvs.texi
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node add
+@appendixsec add---Add files and directories to the repository
+@cindex add (subcommand)
+
+@itemize @bullet
+@item
+Synopsis: add [-k rcs-kflag] [-m message] files...
+@item
+Requires: repository, working directory.
+@item
+Changes: repository, working directory.
+@end itemize
+
+The @code{add} command is used to present new files
+and directories for addition into the @sc{cvs}
+repository.  When @code{add} is used on a directory,
+a new directory is created in the repository
+immediately.  When used on a file, only the working
+directory is updated.  Changes to the repository are
+not made until the @code{commit} command is used on
+the newly added file. 
+
+The @code{add} command also resurrects files that
+have been previously removed.  This can be done
+before or after the @code{commit} command is used
+to finalize the removal of files.  Resurrected files
+are restored into the working directory at the time
+the @code{add} command is executed.
+
+@menu
+* add options::             add options
+* add examples::            add examples
+@end menu
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node add options
+@appendixsubsec add options
+
+These standard options are supported by @code{add}
+(@pxref{Common options}, for a complete description of
+them):
+
+@table @code
+@item -k @var{kflag}
+Process keywords according to @var{kflag}.  See
+@ref{Keyword substitution}.
+This option is sticky; future updates of
+this file in this working directory will use the same
+@var{kflag}.  The @code{status} command can be viewed
+to see the sticky options.  For more information on
+the @code{status} command, @xref{Invoking CVS}.
+
+@item -m @var{message}
+Use @var{message} as the log message, instead of
+invoking an editor.
+@end table
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node add examples
+@appendixsubsec add examples
+
+@appendixsubsubsec Adding a directory
+
+@example
+$ mkdir doc
+$ cvs add doc
+Directory /path/to/repository/doc added to the repository
+@end example
+
+@appendixsubsubsec Adding a file
+
+@example
+
+$ >TODO
+$ cvs add TODO
+cvs add: scheduling file `TODO' for addition
+cvs add: use 'cvs commit' to add this file permanently
+@end example
+
+@appendixsubsubsec Undoing a @code{remove} command
+
+@example
+$ rm -f makefile
+$ cvs remove makefile
+cvs remove: scheduling `makefile' for removal
+cvs remove: use 'cvs commit' to remove this file permanently
+$ cvs add makefile
+U makefile
+cvs add: makefile, version 1.2, resurrected
+@end example
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node admin
 @appendixsec admin---Administration
 @cindex Admin (subcommand)
@@ -9103,7 +9198,7 @@ There can be no space between @samp{-b} and its argument.
 Sets the comment leader to @var{string}.  The comment
 leader is not used by current versions of @sc{cvs} or
 @sc{rcs} 5.7.  Therefore, you can almost surely not
-worry about it.  @xref{Keyword substitution}.
+worry about it.  See @ref{Keyword substitution}.
 
 @item -e[@var{logins}]
 Might not work together with @sc{cvs}.  Erase the login
@@ -9126,7 +9221,7 @@ new @sc{rcs} file, without depositing a revision.  With
 
 @item -k@var{subst}
 Set the default keyword
-substitution to @var{subst}.  @xref{Keyword
+substitution to @var{subst}.  See @ref{Keyword
 substitution}.  Giving an explicit @samp{-k} option to
 @code{cvs update}, @code{cvs export}, or @code{cvs
 checkout} overrides this default.
@@ -9290,7 +9385,7 @@ change to be like the @samp{::} case.
 
 Due to the way @sc{cvs} handles branches @var{rev}
 cannot be specified symbolically if it is a branch.
-@xref{Magic branch numbers}, for an explanation.
+See @ref{Magic branch numbers} for an explanation.
 @c FIXME: is this still true?  I suspect not.
 
 Make sure that no-one has checked out a copy of the
@@ -9430,7 +9525,7 @@ modification for each line.
 @appendixsubsec annotate options
 
 These standard options are supported by @code{annotate}
-(@pxref{Common options}, for a complete description of
+(@pxref{Common options} for a complete description of
 them):
 
 @table @code
@@ -9522,7 +9617,7 @@ symbolic names for some
 collection of source directories and files, or paths to
 directories or files in the repository.  The symbolic
 names are defined in the @samp{modules} file.
-@xref{modules}.
+See @ref{modules}.
 @c Needs an example, particularly of the non-"modules"
 @c case but probably of both.
 
@@ -9572,8 +9667,8 @@ top level directory (where you originally ran
 forget to change your directory to the top level
 directory.
 
-For the output produced by the @code{checkout} command
-see @ref{update output}.
+For the output produced by the @code{checkout} command,
+@xref{update output}.
 
 @menu
 * checkout options::            checkout options
@@ -9585,14 +9680,14 @@ see @ref{update output}.
 @appendixsubsec checkout options
 
 These standard options are supported by @code{checkout}
-(@pxref{Common options}, for a complete description of
+(@pxref{Common options} for a complete description of
 them):
 
 @table @code
 @item -D @var{date}
 Use the most recent revision no later than @var{date}.
 This option is sticky, and implies @samp{-P}.  See
-@ref{Sticky tags}, for more information on sticky tags/dates.
+@ref{Sticky tags} for more information on sticky tags/dates.
 
 @item -f
 Only useful with the @samp{-D} or @samp{-r} flags.  If no matching revision is
@@ -9604,7 +9699,7 @@ Process keywords according to @var{kflag}.  See
 This option is sticky; future updates of
 this file in this working directory will use the same
 @var{kflag}.  The @code{status} command can be viewed
-to see the sticky options.  See @ref{Invoking CVS}, for
+to see the sticky options.  See @ref{Invoking CVS} for
 more information on the @code{status} command.
 
 @item -l
@@ -9639,7 +9734,7 @@ options with @code{checkout}:
 @item -A
 Reset any sticky tags, dates, or @samp{-k} options.
 Does not reset sticky @samp{-k} options on modified files.
-See @ref{Sticky tags}, for more information on sticky tags/dates.
+See @ref{Sticky tags} for more information on sticky tags/dates.
 
 @item -c
 Copy the module file, sorted, to the standard output,
@@ -9696,7 +9791,7 @@ date.  An optional date is specified by adding a colon
 (:) to the tag:
 @samp{-j@var{Symbolic_Tag}:@var{Date_Specifier}}.
 
-@xref{Branching and merging}.
+See @ref{Branching and merging}.
 
 @item -N
 Only useful together with @samp{-d @var{dir}}.  With
@@ -9707,7 +9802,7 @@ discussion.
 
 @item -s
 Like @samp{-c}, but include the status of all modules,
-and sort it by the status string.  @xref{modules}, for
+and sort it by the status string.  See @ref{modules}, for
 info about the @samp{-s} option that is used inside the
 modules file to set the module status.
 @end table
@@ -9775,7 +9870,7 @@ enter a log message that will be written to one or more
 logging programs (@pxref{modules}, and @pxref{loginfo})
 and placed in the @sc{rcs} file inside the
 repository.  This log message can be retrieved with the
-@code{log} command; see @ref{log & rlog}.  You can specify the
+@code{log} command (@pxref{log & rlog}).  You can specify the
 log message on the command line with the @samp{-m
 @var{message}} option, and thus avoid the editor invocation,
 or use the @samp{-F @var{file}} option to specify
@@ -9783,9 +9878,9 @@ that the argument file contains the log message.
 
 At @code{commit}, a unique commitid is placed in the @sc{rcs}
 file inside the repository. All files committed at once
-get the same commitid. The commitid can be retrieved with
+get the same commitid.  The commitid can be retrieved with
 the @code{log} and @code{status} command; see @ref{log & rlog},
-@ref{File status}.
+and @ref{File status}.
 
 @menu
 * commit options::              commit options
@@ -9797,7 +9892,7 @@ the @code{log} and @code{status} command; see @ref{log & rlog},
 @appendixsubsec commit options
 
 These standard options are supported by @code{commit}
-(@pxref{Common options}, for a complete description of
+(@pxref{Common options} for a complete description of
 them):
 
 @table @code
@@ -9967,7 +10062,7 @@ compared.  If any directories are given, all files
 under them will be compared.
 
 The exit status for diff is different than for other
-@sc{cvs} commands; for details @ref{Exit status}.
+@sc{cvs} commands; for details @xref{Exit status}.
 
 @menu
 * diff options::                diff options
@@ -9979,7 +10074,7 @@ The exit status for diff is different than for other
 @appendixsubsec diff options
 
 These standard options are supported by @code{diff}
-(@pxref{Common options}, for a complete description of
+(@pxref{Common options} for a complete description of
 them):
 
 @table @code
@@ -10076,7 +10171,7 @@ context.
 
 @item --changed-group-format=@var{format}
 Use @var{format} to output a line group containing differing lines from
-both files in if-then-else format.  @xref{Line group formats}.
+both files in if-then-else format.  See @ref{Line group formats}.
 
 @item -d
 Change the algorithm to perhaps find a smaller set of changes.  This makes
@@ -10154,7 +10249,7 @@ Print only the left column of two common lines in side by side format.
 
 @item --line-format=@var{format}
 Use @var{format} to output all input lines in if-then-else format.
-@xref{Line formats}.
+See @ref{Line formats}.
 
 @item --minimal
 Change the algorithm to perhaps find a smaller set of changes.  This
@@ -10171,19 +10266,19 @@ treat it as present but empty in the other directory.
 
 @item --new-group-format=@var{format}
 Use @var{format} to output a group of lines taken from just the second
-file in if-then-else format.  @xref{Line group formats}.
+file in if-then-else format.  See @ref{Line group formats}.
 
 @item --new-line-format=@var{format}
 Use @var{format} to output a line taken from just the second file in
-if-then-else format.  @xref{Line formats}.
+if-then-else format.  See @ref{Line formats}.
 
 @item --old-group-format=@var{format}
 Use @var{format} to output a group of lines taken from just the first
-file in if-then-else format.  @xref{Line group formats}.
+file in if-then-else format.  See @ref{Line group formats}.
 
 @item --old-line-format=@var{format}
 Use @var{format} to output a line taken from just the first file in
-if-then-else format.  @xref{Line formats}.
+if-then-else format.  See @ref{Line formats}.
 
 @item -p
 Show which C function each change is in.
@@ -10653,7 +10748,7 @@ In addition, these options (that are common to
 @item -d @var{dir}
 Create a directory called @var{dir} for the working
 files, instead of using the module name.
-@xref{checkout options}, for complete details on how
+See @ref{checkout options} for complete details on how
 @sc{cvs} handles this flag.
 
 @item -k @var{subst}
@@ -10661,7 +10756,7 @@ Set keyword expansion mode (@pxref{Substitution modes}).
 
 @item -N
 Only useful together with @samp{-d @var{dir}}.
-@xref{checkout options}, for complete details on how
+See @ref{checkout options} for complete details on how
 @sc{cvs} handles this flag.
 @end table
 
@@ -10896,7 +10991,7 @@ distribution from an outside source (e.g., a source
 vendor) into your source repository directory.  You can
 use this command both for initial creation of a
 repository, and for wholesale updates to the module
-from the outside source.  @xref{Tracking sources}, for
+from the outside source.  See @ref{Tracking sources} for
 a discussion on this subject.
 
 The @var{repository} argument gives a directory name
@@ -10913,14 +11008,14 @@ you to do.
 
 If @sc{cvs} decides a file should be ignored
 (@pxref{cvsignore}), it does not import it and prints
-@samp{I } followed by the filename (@pxref{import output}, for a
+@samp{I } followed by the filename (@pxref{import output} for a
 complete description of the output).
 
 If the file @file{$CVSROOT/CVSROOT/cvswrappers} exists,
 any file whose names match the specifications in that
 file will be treated as packages and the appropriate
 filtering will be performed on the file/directory
-before being imported.  @xref{Wrappers}.
+before being imported.  See @ref{Wrappers}.
 
 The outside source is saved in a first-level
 branch, by default 1.1.1.  Updates are leaves of this
@@ -10959,7 +11054,7 @@ directory (@pxref{Getting the source}).
 @appendixsubsec import options
 
 This standard option is supported by @code{import}
-(@pxref{Common options}, for a complete description):
+(@pxref{Common options} for a complete description):
 
 @table @code
 @item -m @var{message}
@@ -10977,7 +11072,7 @@ See @ref{Multiple vendor branches}.
 Indicate the keyword expansion mode desired.  This
 setting will apply to all files created during the
 import, but not to any files that previously existed in
-the repository.  See @ref{Substitution modes}, for a
+the repository.  See @ref{Substitution modes} for a
 list of valid @samp{-k} settings.
 
 @item -I @var{name}
@@ -10988,7 +11083,7 @@ default), specify `-I !'.
 
 @var{name} can be a file name pattern of the same type
 that you can specify in the @file{.cvsignore} file.
-@xref{cvsignore}.
+See @ref{cvsignore}.
 @c -- Is this really true?
 
 @item -W @var{spec}
@@ -10997,7 +11092,7 @@ import.  You can use this option repeatedly.
 
 @var{spec} can be a file name pattern of the same type
 that you can specify in the @file{.cvswrappers}
-file. @xref{Wrappers}.
+file.  See @ref{Wrappers}.
 
 @item -X
 Modify the algorithm used by @sc{cvs} when importing new files
@@ -11008,7 +11103,7 @@ if they were deleted on the main trunk, by taking the following
 steps for each file in addition to those normally taken on import:
 creating a new revision on the main trunk indicating that
 the new file is @code{dead}, resetting the new file's default branch,
-and placing the file in the Attic (@pxref{Attic}) directory.
+and placing the file in the Attic directory (@pxref{Attic}).
 
 Use of this option can be forced on a repository-wide basis
 by setting the @samp{ImportNewFilesToVendorBranchOnly} option in
@@ -11428,7 +11523,7 @@ patch is run in.
 @appendixsubsec rdiff options
 
 These standard options are supported by @code{rdiff}
-(@pxref{Common options}, for a complete description of
+(@pxref{Common options} for a complete description of
 them):
 
 @table @code
@@ -11493,7 +11588,7 @@ easily be fixed with a command such as this:
 
 @example
 $ cvs rdiff -c -r FOO1_2 -r FOO1_4 tc | \
-$$ Mail -s 'The patches you asked for' foo@@example.net
+> Mail -s 'The patches you asked for' foo@@example.net
 @end example
 
 Suppose you have made release 1.3, and forked a branch
@@ -11566,9 +11661,9 @@ remain in your working directory.
 @strong{WARNING:  The @code{release} command deletes
 all directories and files recursively.  This
 has the very serious side-effect that any directory
-that you have created inside your checked-out sources,
-and not added to the repository (using the @code{add}
-command; @pxref{Adding files}) will be silently deleted---even
+created inside checked-out sources, and not added to
+the repository (using the @code{add} command;
+@pxref{Adding files}) will be silently deleted---even
 if it is non-empty!}
 @end table
 
@@ -11596,7 +11691,7 @@ this file will be lost.
 The file has been removed from your private copy of the
 sources, but has not yet been removed from the
 repository, since you have not yet committed the
-removal.  @xref{commit}.
+removal.  See @ref{commit}.
 
 @item M @var{file}
 The file is modified in your working directory.  There
@@ -11625,6 +11720,112 @@ $ cvs release -d tc
 You have [0] altered files in this repository.
 Are you sure you want to release (and delete) directory `tc': y
 $
+@end example
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node remove
+@appendixsec remove---Remove files from active use
+@cindex remove (subcommand)
+
+@itemize @bullet
+@item
+Synopsis: remove [-flR] [files...]
+@item
+Requires: repository, working directory.
+@item
+Changes: working directory.
+@end itemize
+
+The @code{remove} command is used to remove unwanted
+files from active use.  The user normally deletes the
+files from the working directory prior to invocation
+of the @code{remove} command.  Only the working
+directory is updated.  Changes to the repository are
+not made until the @code{commit} command is run.
+
+The @code{remove} command does not delete files from
+from the repository.  @sc{cvs} keeps all historical
+data in the repository so that it is possible to
+reconstruct previous states of the projects under
+revision control.
+
+To undo @sc{cvs} @code{remove} or to resurrect files
+that were previously removed, @xref{add}.
+
+@menu
+* remove options::             remove options
+* remove examples::            remove examples
+@end menu
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node remove options
+@appendixsubsec remove options
+
+These standard options are supported by @code{remove}
+(@pxref{Common options} for a complete description of
+them):
+
+@table @code
+@item -l
+Local; run only in current working directory.  See @ref{Recursive behavior}.
+
+@item -R
+Process directories recursively.  See @ref{Recursive behavior}.
+
+@end table
+
+In addition, these options are also supported:
+
+@table @code
+@item -f
+Note that this is not the standard behavior of
+the @samp{-f} option as defined in @ref{Common options}.
+
+Delete files before removing them.
+
+Entire directory hierarchies are easily removed
+using @samp{-f}, but take note that it is not as
+easy to resurrect directory hierarchies as it is
+to remove them.
+
+@end table
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node remove examples
+@appendixsubsec remove examples
+
+@appendixsubsubsec Removing a file
+
+@example
+$ cvs remove remove.me
+cvs remove: file `remove.me' still in working directory
+cvs remove: 1 file exists; remove it first
+$ rm -f remove.me
+$ cvs remove remove.me
+cvs remove: scheduling `remove.me' for removal
+cvs remove: use 'cvs commit' to remove this file permanently
+
+$ ls remove.it
+remove.it
+$ cvs remove -f remove.it
+cvs remove: scheduling `remove.it' for removal
+cvs remove: use 'cvs commit' to remove this file permanently
+@end example
+
+@appendixsubsubsec Removing entire directories
+@example
+$ tree -d a
+a
+|-- CVS
+`-- b
+    `-- CVS
+
+3 directories
+$ cvs remove -f a
+cvs remove: Removing a
+cvs remove: Removing a/b
+cvs remove: scheduling `a/b/c' for removal
+cvs remove: use 'cvs commit' to remove this file permanently
 @end example
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -11676,21 +11877,21 @@ ones are added.  @code{sign} may also be used to delete signatures from a
 revision.
 
 These standard options are available with @code{sign}
-(@pxref{Common options}, for a complete description of
+(@pxref{Common options} for a complete description of
 them):
 
 @table @code
 @item -l
-Local; run only in current working directory.  @xref{Recursive behavior}.
+Local; run only in current working directory.  See @ref{Recursive behavior}.
 
 @item -R
-Sign all files recursively (default).  @xref{Recursive behavior}.
+Sign all files recursively (default).  See @ref{Recursive behavior}.
 
 @item -r @var{tag}[:@var{date}]
 Sign the revisions specified by @var{tag} or, when @var{date} is specified
 and @var{tag} is a branch tag, the version from the branch @var{tag} as it
 existed on @var{date}.  With @code{-d}, delete keys from the specified
-revision.  See also, @ref{Common options}.
+revision.  See also:  @ref{Common options}.
 @end table
 
 @need 800
@@ -11762,7 +11963,7 @@ the @samp{-F} option to move the tag to a new set of
 revisions.
 
 These standard options are supported by @code{tag} or @code{rtag}
-(@pxref{Common options}, for a complete description of them):
+(@pxref{Common options} for a complete description of them):
 
 @table @code
 @item -D @var{date}
@@ -11770,10 +11971,10 @@ Tag the most recent revision no later than @var{date}.  This option is
 not valid when deleting tags (see @samp{-d} option, below).
 
 @item -l
-Local; run only in current working directory.  @xref{Recursive behavior}.
+Local; run only in current working directory.  See @ref{Recursive behavior}.
 
 @item -R
-Update directories recursively (default).  @xref{Recursive
+Update directories recursively (default).  See @ref{Recursive
 behavior}.
 
 @item -r @var{tag}[:@var{date}]
@@ -11794,7 +11995,7 @@ Clear @var{new_tag} from removed files that would not otherwise be tagged
 @item -B
 Allows @code{-d} or @code{-F} to delete or move branch tags.
 
-@strong{WARNING: Recovering the information stored by branch tags is
+@strong{WARNING:  Recovering the information stored by branch tags is
 a very hard problem, more so than regular tags.  Be absolutely sure you
 understand what you are doing before using this option.}
 
@@ -11809,7 +12010,7 @@ Abort if any tagged files are locally modified (@code{tag} only).
 @item -d
 Delete @var{new_tag}, instead of creating it.
 
-@strong{WARNING: Be very certain of your ground before you delete a tag; doing
+@strong{WARNING:  Be very certain of your ground before you delete a tag; doing
 this permanently discards some historical information, which could later turn
 out to be valuable.}
 
@@ -11818,7 +12019,7 @@ When a tag already exists, move it to the new revision.  When the tag
 does not exist, create it as normal.  This option is new in @sc{cvs} 1.4.
 The pre-1.4 behavior is identical to @samp{cvs tag -F}.
 
-@strong{WARNING: Be very certain of your ground before you delete a tag; doing
+@strong{WARNING:  Be very certain of your ground before you delete a tag; doing
 this permanently discards some historical information, which could later turn
 out to be valuable.}
 
@@ -11830,7 +12031,7 @@ resolve to an existing revision).
 
 @item -n
 Do not execute the tag program specified in the @file{modules} file
-(@code{rtag} only).  @xref{modules}, for more.
+(@code{rtag} only).  See @ref{modules} for more information.
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -11870,14 +12071,14 @@ into any destination revisions specified with @code{-r},
 @appendixsubsec update options
 
 These standard options are available with @code{update}
-(@pxref{Common options}, for a complete description of
+(@pxref{Common options} for a complete description of
 them):
 
 @table @code
 @item -D date
 Use the most recent revision no later than @var{date}.
 This option is sticky, and implies @samp{-P}.
-See @ref{Sticky tags}, for more information on sticky tags/dates.
+See @ref{Sticky tags} for more information on sticky tags/dates.
 
 @item -f
 Only useful with the @samp{-D} or @samp{-r} flags.  If no matching revision
@@ -11889,11 +12090,11 @@ Process keywords according to @var{kflag}.  See
 This option is sticky; future updates of
 this file in this working directory will use the same
 @var{kflag}.  The @code{status} command can be viewed
-to see the sticky options.  See @ref{Invoking CVS}, for
+to see the sticky options.  See @ref{Invoking CVS} for
 more information on the @code{status} command.
 
 @item -l
-Local; run only in current working directory.  @xref{Recursive behavior}.
+Local; run only in current working directory.  See @ref{Recursive behavior}.
 
 @item -P
 Prune empty directories.  See @ref{Moving directories}.
@@ -11902,15 +12103,15 @@ Prune empty directories.  See @ref{Moving directories}.
 Pipe files to the standard output.
 
 @item -R
-Update directories recursively (default).  @xref{Recursive
+Update directories recursively (default).  See @ref{Recursive
 behavior}.
 
 @item -r @var{tag}[:@var{date}]
 Retrieve the revisions specified by @var{tag} or, when @var{date} is specified
 and @var{tag} is a branch tag, the version from the branch @var{tag} as it
 existed on @var{date}.  This option is sticky, and implies @samp{-P}.
-See @ref{Sticky tags}, for more information on sticky tags/dates. Also
-see @ref{Common options}.
+See @ref{Sticky tags} for more information on sticky tags/dates.  Also
+@xref{Common options}.
 @end table
 
 @need 800
@@ -11921,7 +12122,7 @@ These special options are also available with
 @item -A
 Reset any sticky tags, dates, or @samp{-k} options.
 Does not reset sticky @samp{-k} options on modified files.
-See @ref{Sticky tags}, for more information on sticky tags/dates.
+See @ref{Sticky tags} for more information on sticky tags/dates.
 
 @item -C
 Overwrite locally modified files with clean copies from
@@ -11949,7 +12150,7 @@ Ignore files whose names match @var{name} (in your
 working directory) during the update.  You can specify
 @samp{-I} more than once on the command line to specify
 several files to ignore.  Use @samp{-I !} to avoid
-ignoring any files at all.  @xref{cvsignore}, for other
+ignoring any files at all.  See @ref{cvsignore} for other
 ways to make @sc{cvs} ignore some files.
 
 @item -W@var{spec}
@@ -11958,7 +12159,7 @@ update.  You can use this option repeatedly.
 
 @var{spec} can be a file name pattern of the same type
 that you can specify in the @file{.cvswrappers}
-file. @xref{Wrappers}.
+file.  See @ref{Wrappers}.
 
 @item -j@var{revision}
 With two @samp{-j} options, merge changes from the
@@ -11976,7 +12177,7 @@ the revision specified in the @samp{-j} option.
 Note that using a single @samp{-j @var{tagname}} option rather than
 @samp{-j @var{branchname}} to merge changes from a branch will
 often not remove files which were removed on the branch.
-@xref{Merging adds and removals}, for more.
+See @ref{Merging adds and removals} for more information.
 
 In addition, each @samp{-j} option can contain an optional
 date specification which, when used with branches, can
@@ -11985,7 +12186,7 @@ date.  An optional date is specified by adding a colon
 (:) to the tag:
 @samp{-j@var{Symbolic_Tag}:@var{Date_Specifier}}.
 
-@xref{Branching and merging}.
+See @ref{Branching and merging}.
 
 @end table
 
@@ -12081,23 +12282,23 @@ or as a CVSROOT method option (@pxref{The connection method}), @sc{cvs}
 verifies all revisions before operating on them.
 
 These standard options are available with @code{verify}
-(@pxref{Common options}, for a complete description of
+(@pxref{Common options} for a complete description of
 them):
 
 @table @code
 @item -l
-Local; run only in current working directory.  @xref{Recursive behavior}.
+Local; run only in current working directory.  See @ref{Recursive behavior}.
 
 @item -p
 Pipe signatures to the standard output, instead of verifying.
 
 @item -R
-Sign all files recursively (default).  @xref{Recursive behavior}.
+Sign all files recursively (default).  See @ref{Recursive behavior}.
 
 @item -r @var{tag}[:@var{date}]
 Verify the revisions specified by @var{tag} or, when @var{date} is specified
 and @var{tag} is a branch tag, the version from the branch @var{tag} as it
-existed on @var{date}.  See also, @ref{Common options}.
+existed on @var{date}.  See also:  @ref{Common options}.
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -12106,7 +12307,7 @@ existed on @var{date}.  See also, @ref{Common options}.
 @cindex version (subcommand)
 
 @code{version} outputs a version string for both the @sc{cvs} client and
-a @sc{cvs} server, when a server can be contacted.  Also, @ref{Global options}.
+a @sc{cvs} server, when a server can be contacted.  Also, @xref{Global options}.
 
 @c ----- END MAN 1 -----
 @c ---------------------------------------------------------------------
@@ -13477,7 +13678,7 @@ two versions of the files, and require the user using
 mechanisms outside @sc{cvs}, to insert any necessary
 changes.
 
-@strong{WARNING: do not use @code{COPY} with
+@strong{WARNING:  Do not use @code{COPY} with
 @sc{cvs} 1.9 or earlier - such versions of @sc{cvs} will
 copy one version of your file over the other, wiping
 out the previous contents.}
