@@ -1,3 +1,9 @@
+2006-08-21  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.in, aclocal.m4, config.h.in, configure,
+	maint-aux/Makefile.in: Regenerated.
+	* maint-aux/gnulib-filelist.txt: Update from GNULIB.
+
 2006-08-16  Mark D. Baushke  <mdb@gnu.org>
 
 	* Makefile.in, aclocal.m4, config.h.in, configure,

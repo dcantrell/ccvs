@@ -1,3 +1,10 @@
+2006-08-21  Mark D. Baushke  <mdb@gnu.org>
+
+	* cycle-check.m4, gnulib-comp.m4, mkstemp.m4, openat.m4,
+	strtoimax.m4, strtoll.m4, strtoull.m4, strtoumax.m4: Update from
+	GNULIB.
+	* strerror_r.m4: Remove this file (per GNULIB update).
+
 2006-08-16  Mark D. Baushke  <mdb@gnu.org>
 
 	* absolute-header.m4, base64.m4, getaddrinfo.m4, getline.m4,

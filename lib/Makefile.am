@@ -105,6 +105,12 @@ libcvs_a_SOURCES += base64.h base64.c
 
 ## end   gnulib module base64
 
+## begin gnulib module cycle-check
+
+libcvs_a_SOURCES += cycle-check.h
+
+## end   gnulib module cycle-check
+
 ## begin gnulib module dirname
 
 libcvs_a_SOURCES += basename.c stripslash.c

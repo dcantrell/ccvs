@@ -1,5 +1,15 @@
 2006-08-21  Mark D. Baushke  <mdb@gnu.org>
 
+	* Makefile.am: Import changes from...
+	* Makefile.gnulib: ...this regenerated file.
+	* __fpending.h, cycle-check.h, getndelim2.c, mkdirat.c,
+	openat-priv.h, openat.c, openat.h, regex_internal.h, stat_.h,
+	trtoimax.c, tempname.c: Update from GNULIB.
+	* at-func.c, fchmodat.c: New from GNULIB.
+	* stdint_.h: Local patch for VC6 compiler.
+
+2006-08-21  Mark D. Baushke  <mdb@gnu.org>
+
 	* libcvs.dsp (SOURCE): Add a close-stream.c entry.
 	* libcvs.dep: Ditto.
 

@@ -544,6 +544,9 @@
 /* Define if you have <langinfo.h> and nl_langinfo(CODESET). */
 #undef HAVE_LANGINFO_CODESET
 
+/* Define to 1 if you have the `lchmod' function. */
+#undef HAVE_LCHMOD
+
 /* Define to 1 if you have the `krb' library (-lkrb). */
 #undef HAVE_LIBKRB
 
@@ -911,9 +914,6 @@
 /* Define to 1 if you have the `tzset' function. */
 #define HAVE_TZSET 1
 
-/* Define if you have the 'uintmax_t' type in <stdint.h> or <inttypes.h>. */
-#undef HAVE_UINTMAX_T
-
 /* Define to 1 if you have the `uname' function. */
 #undef HAVE_UNAME
 
@@ -922,9 +922,6 @@
 
 /* Define to 1 if you have the `unsetenv' function. */
 #undef HAVE_UNSETENV
-
-/* Define if you have the 'unsigned long long' type. */
-#undef HAVE_UNSIGNED_LONG_LONG
 
 /* Define to 1 if the system has the type `unsigned long long int'. */
 #undef HAVE_UNSIGNED_LONG_LONG_INT
@@ -1297,11 +1294,11 @@
 #undef USE_UNLOCKED_IO
 
 /* Define if the Win32 multithreading API can be used. */
-#undef USE_WIN32_THREADS
+#define USE_WIN32_THREADS 1
 
 /* Define if utime requires write access to the file (true on Windows, but not
    Unix). */
-#define UTIME_EXPECTS_WRITABLE 
+#define UTIME_EXPECTS_WRITABLE 1
 
 /* Define if unsetenv() returns void, not int. */
 #undef VOID_UNSETENV
@@ -1418,7 +1415,7 @@
 #define inline __inline
 #endif
 
-/* Define to long or long long if <stdint.h> and <inttypes.h> don't define. */
+/* Define to long or long long if <inttypes.h> and <stdint.h> don't define. */
 #undef intmax_t
 
 /* Define to rpl_localtime if the replacement function should be used. */
@@ -1535,10 +1532,6 @@
 
 /* Define to `int' if <sys/types.h> doesn't define. */
 #undef uid_t
-
-/* Define to unsigned long or unsigned long long if <stdint.h> and
-   <inttypes.h> don't define. */
-#undef uintmax_t
 
 /* Define as `fork' if `vfork' does not work. */
 #undef vfork
