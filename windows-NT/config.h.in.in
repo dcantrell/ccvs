@@ -513,6 +513,9 @@
 /* Define to 1 if <sys/socket.h> defines AF_INET6. */
 #undef HAVE_IPV6
 
+/* Define to 1 if you have the `iswcntrl' function. */
+#undef HAVE_ISWCNTRL
+
 /* Define to 1 if you have the `isblank' function. */
 #undef HAVE_ISBLANK
 
@@ -530,6 +533,9 @@
 
 /* Define if you have <langinfo.h> and nl_langinfo(CODESET). */
 #undef HAVE_LANGINFO_CODESET
+
+/* Define to 1 if you have the `lchmod' function. */
+#undef HAVE_LCHMOD
 
 /* Define to 1 if you have the `krb' library (-lkrb). */
 #undef HAVE_LIBKRB
@@ -658,12 +664,21 @@
    */
 #undef HAVE_PARTLY_WORKING_GETCWD
 
+/* Define to 1 if you have the `pipe' function. */
+#undef HAVE_PIPE
+
 /* Define to 1 if you have the `posix_memalign' function. */
 #undef HAVE_POSIX_MEMALIGN
 
 /* Define to 1 if the `printf' function supports the %p format for printing
    pointers. */
 #define HAVE_PRINTF_PTR 1
+
+/* Define if the <pthread.h> defines PTHREAD_MUTEX_RECURSIVE. */
+#undef HAVE_PTHREAD_MUTEX_RECURSIVE
+
+/* Define if the POSIX multithreading library has read/write locks. */
+#undef HAVE_PTHREAD_RWLOCK
 
 /* Define to 1 if the system has the type `ptrdiff_t'. */
 #define HAVE_PTRDIFF_T 1
@@ -734,9 +749,6 @@
 
 /* Define to 1 if you have the `sigvec' function. */
 #undef HAVE_SIGVEC
-
-/* Define to 1 if the system has the type `sig_atomic_t'. */
-#undef HAVE_SIG_ATOMIC_T
 
 /* Define to 1 if you have the `snprintf' function. */
 #undef HAVE_SNPRINTF
@@ -857,7 +869,7 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
 
-/* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
+/* Define to 1 if you have the <sys/wait.h> header file. */
 #undef HAVE_SYS_WAIT_H
 
 /* Define to 1 if you have the `tcgetattr' function. */
@@ -893,22 +905,6 @@
 /* Define to 1 if you have the `tzset' function. */
 #define HAVE_TZSET 1
 
-/* Define to 1 if the type 'uint64_t' is already definedin <stdint.h>. */
-#undef HAVE_UINT64_T_IN_STDINT_H
-
-/* Define if you have the 'uintmax_t' type in <stdint.h> or <inttypes.h>. */
-#undef HAVE_UINTMAX_T
-
-/* Define to 1 if the type 'uintptr_t' is already defined. */
-#undef HAVE_UINTPTR_T
-
-/* Define to 1 if the type 'uint_fast64_t' is already definedin <stdint.h>. */
-#undef HAVE_UINT_FAST64_T_IN_STDINT_H
-
-/* Define to 1 if the type 'uint_least64_t' is already definedin <stdint.h>.
-   */
-#undef HAVE_UINT_LEAST64_T_IN_STDINT_H
-
 /* Define to 1 if you have the `uname' function. */
 #undef HAVE_UNAME
 
@@ -917,9 +913,6 @@
 
 /* Define to 1 if you have the `unsetenv' function. */
 #undef HAVE_UNSETENV
-
-/* Define if you have the 'unsigned long long' type. */
-#undef HAVE_UNSIGNED_LONG_LONG
 
 /* Define to 1 if the system has the type `unsigned long long int'. */
 #undef HAVE_UNSIGNED_LONG_LONG_INT
@@ -1008,90 +1001,6 @@
 /* Define to 1 if you have the `__secure_getenv' function. */
 #undef HAVE___SECURE_GETENV
 
-/* Define if <stdint.h> doesn't define it. */
-#undef INT16_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT16_MIN
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT32_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT32_MIN
-
-/* Define if <stdint.h> doesn't define it but has the int64_t type. */
-#undef INT64_MAX
-
-/* Define if <stdint.h> doesn't define it but has the int64_t type. */
-#undef INT64_MIN
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT8_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT8_MIN
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INTMAX_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INTMAX_MIN
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INTPTR_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INTPTR_MIN
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT_FAST16_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT_FAST16_MIN
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT_FAST32_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT_FAST32_MIN
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT_FAST64_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT_FAST64_MIN
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT_FAST8_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT_FAST8_MIN
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT_LEAST16_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT_LEAST16_MIN
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT_LEAST32_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT_LEAST32_MIN
-
-/* Define if <stdint.h> doesn't define it but has the int_least64_t type. */
-#undef INT_LEAST64_MAX
-
-/* Define if <stdint.h> doesn't define it but has the int_least64_t type. */
-#undef INT_LEAST64_MIN
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT_LEAST8_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef INT_LEAST8_MIN
-
 /* Define to include locking code which prevents versions of CVS earlier than
    1.12.4 directly accessing the same repositiory as this executable from
    ignoring this executable's promotable read locks. If only CVS versions
@@ -1163,6 +1072,9 @@
 /* Path to the pr utility */
 #undef PR_PROGRAM
 
+/* Define if the pthread_in_use() detection is hard. */
+#undef PTHREAD_IN_USE_DETECTION_HARD
+
 /* Define to l, ll, u, ul, ull, etc., as suitable for constants of type
    'ptrdiff_t'. */
 #undef PTRDIFF_T_SUFFIX
@@ -1170,8 +1082,8 @@
 /* Define to force lib/regex.c to use malloc instead of alloca. */
 #define REGEX_MALLOC 1
 
-/* Define if rename does not work for source paths with a trailing slash, like
-   the one from SunOS 4.1.1_U1. */
+/* Define if rename does not work for source file names with a trailing slash,
+   like the one from SunOS 4.1.1_U1. */
 #undef RENAME_TRAILING_SLASH_BUG
 
 /* Define as the return type of signal handlers (`int' or `void'). */
@@ -1254,7 +1166,7 @@
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
-   automatically deduced at run-time.
+   automatically deduced at runtime.
 	STACK_DIRECTION > 0 => grows toward higher addresses
 	STACK_DIRECTION < 0 => grows toward lower addresses
 	STACK_DIRECTION = 0 => direction of growth unknown */
@@ -1290,48 +1202,6 @@
 
 /* Define if tzset clobbers localtime's static buffer. */
 #undef TZSET_CLOBBERS_LOCALTIME_BUFFER
-
-/* Define if <stdint.h> doesn't define it. */
-#undef UINT16_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef UINT32_MAX
-
-/* Define if <stdint.h> doesn't define it but has the uint64_t type. */
-#undef UINT64_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef UINT8_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef UINTMAX_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef UINTPTR_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef UINT_FAST16_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef UINT_FAST32_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef UINT_FAST64_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef UINT_FAST8_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef UINT_LEAST16_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef UINT_LEAST32_MAX
-
-/* Define if <stdint.h> doesn't define it but has the uint_least64_t type. */
-#undef UINT_LEAST64_MAX
-
-/* Define if <stdint.h> doesn't define it. */
-#undef UINT_LEAST8_MAX
 
 /* The default umask to use when creating or otherwise setting file or
    directory permissions in the repository. Must be a value in the range of 0
@@ -1379,17 +1249,41 @@
 /* Define if wint_t is the first integer type detected with its size. */
 #undef UNIQUE_INT_TYPE_WINT_T
 
+/* Define if the POSIX multithreading library can be used. */
+#undef USE_POSIX_THREADS
+
+/* Define if references to the POSIX multithreading library should be made
+   weak. */
+#undef USE_POSIX_THREADS_WEAK
+
+/* Define if the GNU Pth multithreading library can be used. */
+#undef USE_PTH_THREADS
+
+/* Define if references to the GNU Pth multithreading library should be made
+   weak. */
+#undef USE_PTH_THREADS_WEAK
+
 /* Define if setmode is required when writing binary data to stdout. */
 #define USE_SETMODE_STDOUT 1
+
+/* Define if the old Solaris multithreading library can be used. */
+#undef USE_SOLARIS_THREADS
+
+/* Define if references to the old Solaris multithreading library should be
+   made weak. */
+#undef USE_SOLARIS_THREADS_WEAK
 
 /* Define to 1 if you want getc etc. to use unlocked I/O if available.
    Unlocked I/O can improve performance in unithreaded apps, but it is not
    safe for multithreaded apps. */
 #undef USE_UNLOCKED_IO
 
+/* Define if the Win32 multithreading API can be used. */
+#define USE_WIN32_THREADS 1
+
 /* Define if utime requires write access to the file (true on Windows, but not
    Unix). */
-#define UTIME_EXPECTS_WRITABLE
+#define UTIME_EXPECTS_WRITABLE 1
 
 /* Define if unsetenv() returns void, not int. */
 #undef VOID_UNSETENV
@@ -1490,7 +1384,7 @@
 #define inline __inline
 #endif
 
-/* Define to long or long long if <stdint.h> and <inttypes.h> don't define. */
+/* Define to long or long long if <inttypes.h> and <stdint.h> don't define. */
 #undef intmax_t
 
 /* Define to rpl_localtime if the replacement function should be used. */
@@ -1607,14 +1501,6 @@
 
 /* Define to `int' if <sys/types.h> doesn't define. */
 #undef uid_t
-
-/* Define to the type of a unsigned integer type of width exactly 32 bits if
-   such a type exists and the standard includes do not define it. */
-#undef uint32_t
-
-/* Define to unsigned long or unsigned long long if <stdint.h> and
-   <inttypes.h> don't define. */
-#undef uintmax_t
 
 /* Define as `fork' if `vfork' does not work. */
 #undef vfork

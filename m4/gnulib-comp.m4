@@ -43,6 +43,8 @@ AC_DEFUN([gl_INIT],
   gl_CLOSE_STREAM
   gl_CLOSEOUT
   gl_CYCLE_CHECK
+  gl_CHECK_TYPE_STRUCT_DIRENT_D_INO
+  gl_CHECK_TYPE_STRUCT_DIRENT_D_TYPE
   gl_STRUCT_DEV_INO
   gl_DIRNAME
   gl_FUNC_DUP2
@@ -154,6 +156,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/allocsa.valgrind
   lib/asnprintf.c
   lib/asprintf.c
+  lib/at-func.c
   lib/atexit.c
   lib/base64.c
   lib/base64.h
@@ -181,6 +184,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/exit.h
   lib/exitfail.c
   lib/exitfail.h
+  lib/fchmodat.c
   lib/fcntl--.h
   lib/fcntl-safer.h
   lib/fd-safer.c
@@ -448,7 +452,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strcase.m4
   m4/strdup.m4
   m4/strerror.m4
-  m4/strerror_r.m4
   m4/strftime.m4
   m4/strndup.m4
   m4/strnlen.m4

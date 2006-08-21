@@ -130,12 +130,12 @@
 
 #undef int64_t
 #undef uint64_t
-#if LONG_MAX >> 31 >> 31 == 1
-# define int64_t long int
-# define uint64_t unsigned long int
-#elif defined _MSC_VER
+#if defined _MSC_VER
 # define int64_t __int64
 # define uint64_t unsigned __int64
+#elif LONG_MAX >> 31 >> 31 == 1
+# define int64_t long int
+# define uint64_t unsigned long int
 #elif 0
 # define int64_t long long int
 # define uint64_t unsigned long long int
@@ -430,12 +430,12 @@
 
 #undef INT64_C
 #undef UINT64_C
-#if LONG_MAX >> 31 >> 31 == 1
-# define INT64_C(x) x##L
-# define UINT64_C(x) x##UL
-#elif defined _MSC_VER
+#if defined _MSC_VER
 # define INT64_C(x) x##i64
 # define UINT64_C(x) x##ui64
+#elif LONG_MAX >> 31 >> 31 == 1
+# define INT64_C(x) x##L
+# define UINT64_C(x) x##UL
 #elif 0
 # define INT64_C(x) x##LL
 # define UINT64_C(x) x##ULL

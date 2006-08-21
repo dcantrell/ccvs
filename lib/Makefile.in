@@ -57,11 +57,11 @@ check_PROGRAMS = getdate$(EXEEXT)
 subdir = lib
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	ChangeLog __fpending.c __fpending.h alloca.c asnprintf.c \
-	asprintf.c atexit.c canon-host.c canon-host.h canonicalize.c \
-	canonicalize.h chdir-long.c chdir-long.h close-stream.c \
-	close-stream.h closeout.c closeout.h creat-safer.c \
-	cycle-check.c cycle-check.h dev-ino.h dirname.c dirname.h \
-	dup-safer.c dup2.c exitfail.c exitfail.h fcntl--.h \
+	asprintf.c at-func.c atexit.c canon-host.c canon-host.h \
+	canonicalize.c canonicalize.h chdir-long.c chdir-long.h \
+	close-stream.c close-stream.h closeout.c closeout.h \
+	creat-safer.c cycle-check.c dev-ino.h dirname.c dirname.h \
+	dup-safer.c dup2.c exitfail.c exitfail.h fchmodat.c fcntl--.h \
 	fcntl-safer.h fd-safer.c filenamecat.c filenamecat.h fncase.c \
 	fnmatch.c fseeko.c ftello.c ftruncate.c gai_strerror.c \
 	getaddrinfo.c getcwd.c getcwd.h getdate.c getdate.h getdate.y \
@@ -156,15 +156,15 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/_inttypes_h.m4 \
 	$(top_srcdir)/m4/sys_socket_h.m4 \
 	$(top_srcdir)/m4/sys_stat_h.m4 $(top_srcdir)/m4/time_r.m4 \
 	$(top_srcdir)/m4/timespec.m4 $(top_srcdir)/m4/tm_gmtoff.m4 \
-	$(top_srcdir)/m4/tzset.m4 $(top_srcdir)/m4/uintmax_t.m4 \
-	$(top_srcdir)/m4/ulonglong.m4 $(top_srcdir)/m4/unistd-safer.m4 \
-	$(top_srcdir)/m4/unistd_h.m4 $(top_srcdir)/m4/unlocked-io.m4 \
-	$(top_srcdir)/m4/vasnprintf.m4 $(top_srcdir)/m4/vasprintf.m4 \
-	$(top_srcdir)/m4/wchar_t.m4 $(top_srcdir)/m4/wcwidth.m4 \
-	$(top_srcdir)/m4/wint_t.m4 $(top_srcdir)/m4/xalloc.m4 \
-	$(top_srcdir)/m4/xgetcwd.m4 $(top_srcdir)/m4/xreadlink.m4 \
-	$(top_srcdir)/m4/xsize.m4 $(top_srcdir)/m4/xstrndup.m4 \
-	$(top_srcdir)/m4/yesno.m4 $(top_srcdir)/configure.in
+	$(top_srcdir)/m4/tzset.m4 $(top_srcdir)/m4/ulonglong.m4 \
+	$(top_srcdir)/m4/unistd-safer.m4 $(top_srcdir)/m4/unistd_h.m4 \
+	$(top_srcdir)/m4/unlocked-io.m4 $(top_srcdir)/m4/vasnprintf.m4 \
+	$(top_srcdir)/m4/vasprintf.m4 $(top_srcdir)/m4/wchar_t.m4 \
+	$(top_srcdir)/m4/wcwidth.m4 $(top_srcdir)/m4/wint_t.m4 \
+	$(top_srcdir)/m4/xalloc.m4 $(top_srcdir)/m4/xgetcwd.m4 \
+	$(top_srcdir)/m4/xreadlink.m4 $(top_srcdir)/m4/xsize.m4 \
+	$(top_srcdir)/m4/xstrndup.m4 $(top_srcdir)/m4/yesno.m4 \
+	$(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -384,13 +384,13 @@ noinst_LIBRARIES = libcvs.a
 # with the diff library (perhaps to have the caller, CVS, do the
 # matching?)
 libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
-	allocsa.h allocsa.c base64.h base64.c basename.c stripslash.c \
-	error.h exit.h getaddrinfo.h getnline.h getnline.c gettext.h \
-	inet_ntop.h mbchar.h mbuiter.h minmax.h setenv.h size_max.h \
-	snprintf.h strcase.h strnlen1.h strnlen1.c strstr.h \
-	printf-args.h printf-parse.h vasnprintf.h vasprintf.h verify.h \
-	wcwidth.h xalloc-die.c xgethostname.h xgethostname.c xsize.h \
-	xstrndup.h xstrndup.c
+	allocsa.h allocsa.c base64.h base64.c cycle-check.h basename.c \
+	stripslash.c error.h exit.h getaddrinfo.h getnline.h \
+	getnline.c gettext.h inet_ntop.h mbchar.h mbuiter.h minmax.h \
+	setenv.h size_max.h snprintf.h strcase.h strnlen1.h strnlen1.c \
+	strstr.h printf-args.h printf-parse.h vasnprintf.h vasprintf.h \
+	verify.h wcwidth.h xalloc-die.c xgethostname.h xgethostname.c \
+	xsize.h xstrndup.h xstrndup.c
 libcvs_a_LIBADD = @LIBOBJS@ @ALLOCA@
 BUILT_SOURCES = $(ALLOCA_H) $(ARPA_INET_H) $(FNMATCH_H) getdate.c \
 	$(GETOPT_H) $(GLOB_H) $(NETINET_IN_H) $(STDBOOL_H) $(STDINT_H) \
@@ -484,6 +484,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/alloca.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/asnprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/asprintf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/at-func.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/atexit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/canon-host.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/canonicalize.Po@am__quote@
@@ -496,6 +497,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/dup-safer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/dup2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/exitfail.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fchmodat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fd-safer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/filenamecat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fncase.Po@am__quote@
