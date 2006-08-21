@@ -55,6 +55,15 @@
 	".\timespec.h"\
 	
 
+.\close-stream.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\woe32.h"\
+	".\__fpending.h"\
+	".\close-stream.h"\
+	".\error.h"\
+	
+
 ".\cycle-check.c" : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
