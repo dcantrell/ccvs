@@ -1,3 +1,8 @@
+2006-08-21  Derek Price  <derek@ximbiot.com>
+
+	* mkman.pl (do_keyword): Process ref and p?xref differently.
+	(Original patch from Kevin R. Bulgrien <kbulgrien@att.net>.)
+
 2006-08-11  Mark D. Baushke  <mdb@gnu.org>
 
 	* cvs.texinfo, cvsclient.texi: Fix some typos.
