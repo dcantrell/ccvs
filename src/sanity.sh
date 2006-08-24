@@ -25441,10 +25441,11 @@ U file1"
 
 	  dotest keyword-22 "cat file1" '\$'"Name: tag1 "'\$'
 
-	  dotest keyword-23 "$testcvs update -A file1" "U file1" \
-"$CPROG update: checksum failure after patch to \`file1'; will refetch
-$CPROG client: refetching unpatchable files
-U file1"
+	  # The update used to fail the first time with a checksum failure
+	  # here, then the server would send the whole file.  This was fixed
+	  # in 1.11.23 & 1.12.14.
+	  dotest keyword-23 "$testcvs update -A file1" "U file1"
+
 	  dotest keyword-24 "cat file1" '\$'"Name:  "'\$'"
 change"
 
