@@ -22556,17 +22556,10 @@ U file1"
 
 	  dotest keyword-22 "cat file1" '\$'"Name: tag1 "'\$'
 
-	  if $remote; then
-	    # Like serverpatch-8.  Not sure there is anything much we
-	    # can or should do about this.
-	    dotest keyword-23r "${testcvs} update -A file1" "P file1
-${PROG} update: checksum failure after patch to \./file1; will refetch
-${PROG} client: refetching unpatchable files
-${PROG} update: warning: file1 was lost
-U file1"
-	  else
-	    dotest keyword-23 "${testcvs} update -A file1" "[UP] file1"
-	  fi
+	  # The update used to fail the first time with a checksum failure
+	  # here, then the server would send the whole failure.  This was fixed
+	  # in 1.11.23.
+	  dotest keyword-23 "$testcvs update -A file1" "U file1"
 	  dotest keyword-24 "cat file1" '\$'"Name:  "'\$'"
 change"
 
