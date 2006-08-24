@@ -1645,21 +1645,11 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
     data.final_nl = 0;
     data.compute_checksum = 0;
 
-    /* FIXME - Passing vers_ts->tag here is wrong in the least number
-     * of cases.  Since we don't know whether vn_user was checked out
-     * using a tag, we pass vers_ts->tag, which, assuming the user did
-     * not specify a new TAG to -r, will be the branch we are on.
-     *
-     * The only thing it is used for is to substitute in for the Name
-     * RCS keyword, so in the error case, the patch fails to apply on
-     * the client end and we end up resending the whole file.
-     *
-     * At least, if we are keeping track of the tag vn_user came from,
-     * I don't know where yet. -DRP
+    /* Duplicating the client working file, so use the original sticky options.
      */
     retcode = RCS_checkout (vers_ts->srcfile, (char *) NULL,
-			    vers_ts->vn_user, vers_ts->tag,
-			    vers_ts->options, RUN_TTY,
+			    vers_ts->vn_user, vers_ts->entdata->tag,
+			    vers_ts->entdata->options, RUN_TTY,
 			    patch_file_write, (void *) &data);
 
     if (fclose (e) < 0)

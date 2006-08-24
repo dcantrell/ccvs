@@ -1,3 +1,10 @@
+2006-08-24  Derek Price  <derek@ximbiot.com>
+
+	[bug #17032]
+	* update.c (patch_file): Correctly recreate client working files
+	containing the RCS `Name' keyword before generating patches.
+	* sanity.sh (keyword-23r): Merge with local case to compensate.
+
 2006-08-17  Larry Jones  <lawrence.jones@ugs.com>
 
 	* hash.h: Rename structs node and list to hashnode and hashlist
