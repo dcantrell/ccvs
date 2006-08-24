@@ -3,6 +3,10 @@ Changes since 1.11.22:
 
 BUG FIXES
 
+* Thanks to a report from Peter Toft <pto@linuxbog.dk>, CVS server now sends
+  correct patch files more often when the RCS `Name' keyword is present in
+  a working file (bug #17302).
+
 * Thanks to a report from Dan Peterson <dbpete@aol.com>, clients now send the
   right set of commands to the server when asked to update directories with
   trailing slashes on their name.
