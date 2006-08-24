@@ -1,3 +1,9 @@
+2006-08-23  Mark D. Baushke  <mdb@gnu.org>
+
+	* config.h.in.in: Updated based on ../config.h.in changes.
+	* Makefile.in, config.h, config.h.in, stamp-chi, stdint.h:
+	Regenerated.
+
 2006-08-16  Mark D. Baushke  <mdb@gnu.org>
 
 	* config.h.in.in: Updated based on ../config.h.in changes.

@@ -105,15 +105,51 @@ libcvs_a_SOURCES += base64.h base64.c
 
 ## end   gnulib module base64
 
+## begin gnulib module canon-host
+
+EXTRA_DIST += canon-host.h
+
+## end   gnulib module canon-host
+
+## begin gnulib module canonicalize
+
+EXTRA_DIST += canonicalize.h
+
+## end   gnulib module canonicalize
+
+## begin gnulib module chdir-long
+
+EXTRA_DIST += chdir-long.h
+
+## end   gnulib module chdir-long
+
+## begin gnulib module close-stream
+
+EXTRA_DIST += close-stream.h
+
+## end   gnulib module close-stream
+
+## begin gnulib module closeout
+
+EXTRA_DIST += closeout.h
+
+## end   gnulib module closeout
+
 ## begin gnulib module cycle-check
 
-libcvs_a_SOURCES += cycle-check.h
+EXTRA_DIST += cycle-check.h
 
 ## end   gnulib module cycle-check
 
+## begin gnulib module dev-ino
+
+EXTRA_DIST += dev-ino.h
+
+## end   gnulib module dev-ino
+
 ## begin gnulib module dirname
 
-libcvs_a_SOURCES += basename.c stripslash.c
+EXTRA_DIST += dirname.h
 
 ## end   gnulib module dirname
 
@@ -131,6 +167,24 @@ libcvs_a_SOURCES += exit.h
 
 ## end   gnulib module exit
 
+## begin gnulib module exitfail
+
+EXTRA_DIST += exitfail.h
+
+## end   gnulib module exitfail
+
+## begin gnulib module fcntl-safer
+
+EXTRA_DIST += fcntl-safer.h fcntl--.h
+
+## end   gnulib module fcntl-safer
+
+## begin gnulib module filenamecat
+
+EXTRA_DIST += filenamecat.h
+
+## end   gnulib module filenamecat
+
 ## begin gnulib module fnmatch
 
 BUILT_SOURCES += $(FNMATCH_H)
@@ -145,11 +199,23 @@ MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
 
 ## end   gnulib module fnmatch
 
+## begin gnulib module fpending
+
+EXTRA_DIST += __fpending.h
+
+## end   gnulib module fpending
+
 ## begin gnulib module getaddrinfo
 
 libcvs_a_SOURCES += getaddrinfo.h
 
 ## end   gnulib module getaddrinfo
+
+## begin gnulib module getcwd
+
+EXTRA_DIST += getcwd.h
+
+## end   gnulib module getcwd
 
 ## begin gnulib module getdate
 
@@ -174,9 +240,27 @@ getdate_LDADD = \
 
 BUILT_SOURCES += getdate.c
 MAINTAINERCLEANFILES += getdate.c
-EXTRA_DIST += getdate.c
+EXTRA_DIST += getdate.c getdate.h
 
 ## end   gnulib module getdate
+
+## begin gnulib module getdelim
+
+EXTRA_DIST += getdelim.h
+
+## end   gnulib module getdelim
+
+## begin gnulib module getline
+
+EXTRA_DIST += getline.h
+
+## end   gnulib module getline
+
+## begin gnulib module getlogin_r
+
+EXTRA_DIST += getlogin_r.h
+
+## end   gnulib module getlogin_r
 
 ## begin gnulib module getndelim2
 
@@ -204,6 +288,18 @@ MOSTLYCLEANFILES += getopt.h getopt.h-t
 
 ## end   gnulib module getopt
 
+## begin gnulib module getpagesize
+
+EXTRA_DIST += getpagesize.h
+
+## end   gnulib module getpagesize
+
+## begin gnulib module getpass-gnu
+
+EXTRA_DIST += getpass.h
+
+## end   gnulib module getpass-gnu
+
 ## begin gnulib module gettext
 
 # This is for those projects which use "gettextize --intl" to put a source-code
@@ -227,6 +323,7 @@ libcvs_a_SOURCES += gettext.h
 ## begin gnulib module glob
 
 BUILT_SOURCES += $(GLOB_H)
+EXTRA_DIST += glob_.h glob-libc.h
 
 # We need the following in order to create <glob.h> when the system
 # doesn't have one that works with the given compiler.
@@ -250,6 +347,24 @@ EXTRA_DIST += intprops.h
 
 ## end   gnulib module intprops
 
+## begin gnulib module inttypes
+
+EXTRA_DIST += inttypes.h
+
+## end   gnulib module inttypes
+
+## begin gnulib module lchown
+
+EXTRA_DIST += lchown.h
+
+## end   gnulib module lchown
+
+## begin gnulib module lstat
+
+EXTRA_DIST += lstat.h
+
+## end   gnulib module lstat
+
 ## begin gnulib module mbchar
 
 libcvs_a_SOURCES += mbchar.h
@@ -261,6 +376,24 @@ libcvs_a_SOURCES += mbchar.h
 libcvs_a_SOURCES += mbuiter.h
 
 ## end   gnulib module mbuiter
+
+## begin gnulib module md5
+
+libcvs_a_SOURCES += md5.h
+
+## end   gnulib module md5
+
+## begin gnulib module mempcpy
+
+EXTRA_DIST += mempcpy.h
+
+## end   gnulib module mempcpy
+
+## begin gnulib module memrchr
+
+EXTRA_DIST += memrchr.h
+
+## end   gnulib module memrchr
 
 ## begin gnulib module minmax
 
@@ -283,6 +416,48 @@ MOSTLYCLEANDIRS += netinet
 
 ## end   gnulib module netinet_in
 
+## begin gnulib module openat
+
+EXTRA_DIST += at-func.c openat.h openat-priv.h
+
+## end   gnulib module openat
+
+## begin gnulib module pagealign_alloc
+
+EXTRA_DIST += pagealign_alloc.h
+
+## end   gnulib module pagealign_alloc
+
+## begin gnulib module pathmax
+
+EXTRA_DIST += pathmax.h
+
+## end   gnulib module pathmax
+
+## begin gnulib module quotearg
+
+EXTRA_DIST += quotearg.h
+
+## end   gnulib module quotearg
+
+## begin gnulib module regex
+
+EXTRA_DIST += regcomp.c regex.h regex_internal.c regex_internal.h regexec.c
+
+## end   gnulib module regex
+
+## begin gnulib module same-inode
+
+EXTRA_DIST += same-inode.h
+
+## end   gnulib module same-inode
+
+## begin gnulib module save-cwd
+
+EXTRA_DIST += save-cwd.h
+
+## end   gnulib module save-cwd
+
 ## begin gnulib module setenv
 
 libcvs_a_SOURCES += setenv.h
@@ -300,6 +475,12 @@ libcvs_a_SOURCES += size_max.h
 libcvs_a_SOURCES += snprintf.h
 
 ## end   gnulib module snprintf
+
+## begin gnulib module stat-macros
+
+EXTRA_DIST += stat-macros.h
+
+## end   gnulib module stat-macros
 
 ## begin gnulib module stdbool
 
@@ -357,6 +538,30 @@ libcvs_a_SOURCES += strcase.h
 
 ## end   gnulib module strcase
 
+## begin gnulib module strdup
+
+EXTRA_DIST += strdup.h
+
+## end   gnulib module strdup
+
+## begin gnulib module strftime
+
+EXTRA_DIST += strftime.h
+
+## end   gnulib module strftime
+
+## begin gnulib module strndup
+
+EXTRA_DIST += strndup.h
+
+## end   gnulib module strndup
+
+## begin gnulib module strnlen
+
+EXTRA_DIST += strnlen.h
+
+## end   gnulib module strnlen
+
 ## begin gnulib module strnlen1
 
 libcvs_a_SOURCES += strnlen1.h strnlen1.c
@@ -402,6 +607,18 @@ MOSTLYCLEANDIRS += sys
 
 ## end   gnulib module sys_stat
 
+## begin gnulib module time_r
+
+EXTRA_DIST += time_r.h
+
+## end   gnulib module time_r
+
+## begin gnulib module timespec
+
+EXTRA_DIST += timespec.h
+
+## end   gnulib module timespec
+
 ## begin gnulib module unistd
 
 BUILT_SOURCES += $(UNISTD_H)
@@ -413,6 +630,18 @@ unistd.h:
 MOSTLYCLEANFILES += unistd.h
 
 ## end   gnulib module unistd
+
+## begin gnulib module unistd-safer
+
+EXTRA_DIST += unistd-safer.h unistd--.h
+
+## end   gnulib module unistd-safer
+
+## begin gnulib module unlocked-io
+
+EXTRA_DIST += unlocked-io.h
+
+## end   gnulib module unlocked-io
 
 ## begin gnulib module vasnprintf
 
@@ -438,17 +667,35 @@ libcvs_a_SOURCES += wcwidth.h
 
 ## end   gnulib module wcwidth
 
+## begin gnulib module xalloc
+
+EXTRA_DIST += xalloc.h
+
+## end   gnulib module xalloc
+
 ## begin gnulib module xalloc-die
 
 libcvs_a_SOURCES += xalloc-die.c
 
 ## end   gnulib module xalloc-die
 
+## begin gnulib module xgetcwd
+
+EXTRA_DIST += xgetcwd.h
+
+## end   gnulib module xgetcwd
+
 ## begin gnulib module xgethostname
 
 libcvs_a_SOURCES += xgethostname.h xgethostname.c
 
 ## end   gnulib module xgethostname
+
+## begin gnulib module xreadlink
+
+EXTRA_DIST += xreadlink.h
+
+## end   gnulib module xreadlink
 
 ## begin gnulib module xsize
 
@@ -461,6 +708,12 @@ libcvs_a_SOURCES += xsize.h
 libcvs_a_SOURCES += xstrndup.h xstrndup.c
 
 ## end   gnulib module xstrndup
+
+## begin gnulib module yesno
+
+EXTRA_DIST += yesno.h
+
+## end   gnulib module yesno
 
 
 mostlyclean-local:

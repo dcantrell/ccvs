@@ -24,7 +24,7 @@ AC_DEFUN([gl_EARLY],
   AC_REQUIRE([AC_PROG_RANLIB])
   AC_REQUIRE([AC_GNU_SOURCE])
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
-  AC_REQUIRE([gl_LOCK])
+  AC_REQUIRE([gl_LOCK_EARLY])
 ])
 
 # This macro should be invoked from ./configure.in, in the section
@@ -40,12 +40,12 @@ AC_DEFUN([gl_INIT],
   gl_CANON_HOST
   AC_FUNC_CANONICALIZE_FILE_NAME
   gl_FUNC_CHDIR_LONG
+  gl_FUNC_CHOWN
   gl_CLOSE_STREAM
   gl_CLOSEOUT
   gl_CYCLE_CHECK
   gl_CHECK_TYPE_STRUCT_DIRENT_D_INO
   gl_CHECK_TYPE_STRUCT_DIRENT_D_TYPE
-  gl_STRUCT_DEV_INO
   gl_DIRNAME
   gl_FUNC_DUP2
   gl_ERROR
@@ -76,6 +76,7 @@ AC_DEFUN([gl_INIT],
   gl_GLOB
   gl_INET_NTOP
   gl_INTTYPES_H
+  gl_FUNC_LCHOWN
   gl_FUNC_LSTAT
   AC_FUNC_MALLOC
   gl_MBCHAR
@@ -100,7 +101,6 @@ AC_DEFUN([gl_INIT],
   gl_REGEX
   vb_FUNC_RENAME
   gl_FUNC_RPMATCH
-  gl_SAME_INODE
   gl_SAVE_CWD
   gt_FUNC_SETENV
   gl_SIZE_MAX
@@ -167,6 +167,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/canonicalize.h
   lib/chdir-long.c
   lib/chdir-long.h
+  lib/chown.c
   lib/close-stream.c
   lib/close-stream.h
   lib/closeout.c
@@ -185,6 +186,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/exitfail.c
   lib/exitfail.h
   lib/fchmodat.c
+  lib/fchown-stub.c
   lib/fcntl--.h
   lib/fcntl-safer.h
   lib/fd-safer.c
@@ -229,6 +231,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/inet_ntop.h
   lib/intprops.h
   lib/inttypes.h
+  lib/lchown.c
+  lib/lchown.h
   lib/lstat.c
   lib/lstat.h
   lib/malloc.c
@@ -349,6 +353,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/canon-host.m4
   m4/canonicalize.m4
   m4/chdir-long.m4
+  m4/chown.m4
   m4/clock_time.m4
   m4/close-stream.m4
   m4/closeout.m4
@@ -356,7 +361,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/cycle-check.m4
   m4/d-ino.m4
   m4/d-type.m4
-  m4/dev-ino.m4
   m4/dirname.m4
   m4/dos.m4
   m4/double-slash-root.m4
@@ -400,6 +404,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/inttypes-h.m4
   m4/inttypes-pri.m4
   m4/inttypes_h.m4
+  m4/lchown.m4
   m4/lcmessage.m4
   m4/lib-ld.m4
   m4/lib-link.m4
@@ -436,7 +441,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/regex.m4
   m4/rename.m4
   m4/rpmatch.m4
-  m4/same-inode.m4
   m4/save-cwd.m4
   m4/setenv.m4
   m4/signed.m4

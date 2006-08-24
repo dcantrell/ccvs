@@ -1,3 +1,10 @@
+2006-08-23  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.am: Import changes from...
+	* Makefile.gnulib: ...this regenerated file.
+	* Makefile.in: Regenerated.
+	* mbchar.h: Update from GNULIB.
+
 2006-08-21  Mark D. Baushke  <mdb@gnu.org>
 
 	* Makefile.am: Import changes from...

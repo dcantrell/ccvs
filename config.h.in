@@ -36,6 +36,12 @@
 /* Define to the number of bits in type 'wint_t'. */
 #undef BITSIZEOF_WINT_T
 
+/* Define if chown is not POSIX compliant regarding IDs of -1. */
+#undef CHOWN_FAILS_TO_HONOR_ID_OF_NEGATIVE_ONE
+
+/* Define if chown modifies symlinks. */
+#undef CHOWN_MODIFIES_SYMLINK
+
 /* Define if you want CVS to be able to be a remote repository client. */
 #undef CLIENT_SUPPORT
 
@@ -176,6 +182,9 @@
 /* Define to 1 if you have the MacOS X function CFPreferencesCopyAppValue in
    the CoreFoundation framework. */
 #undef HAVE_CFPREFERENCESCOPYAPPVALUE
+
+/* Define to 1 if your system has a working `chown' function. */
+#undef HAVE_CHOWN
 
 /* Define to 1 if you have the `chsize' function. */
 #undef HAVE_CHSIZE
@@ -524,6 +533,9 @@
 
 /* Define to 1 if you have the `lchmod' function. */
 #undef HAVE_LCHMOD
+
+/* Define to 1 if you have the `lchown' function. */
+#undef HAVE_LCHOWN
 
 /* Define to 1 if you have the `krb' library (-lkrb). */
 #undef HAVE_LIBKRB
@@ -1368,6 +1380,9 @@
 #   define __printf__	printf
 # endif
 #endif /* __attribute__ */
+
+/* Define to rpl_chown if the replacement function should be used. */
+#undef chown
 
 /* Define to a replacement function name for fnmatch(). */
 #undef fnmatch
