@@ -1,3 +1,8 @@
+2006-08-24  Derek Price  <derek@ximbiot.com>
+
+	[bug #17032]
+	* NEWS: Note patch w/Name keyword fix.
+
 2006-08-23  Mark D. Baushke  <mdb@gnu.org>
 
 	* Makefile.in, aclocal.m4, config.h.in, configure: Regenerated.
