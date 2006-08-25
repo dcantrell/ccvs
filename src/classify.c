@@ -366,29 +366,14 @@ Classify_File (finfo, tag, date, options, force_tag_match, aflag, versp,
 		ret = T_CHECKOUT;
 	    }
 	    else if (strcmp (vers->ts_user, vers->ts_rcs) == 0)
-	    {
 
 		/*
 		 * The user file is still unmodified, so just get it as well
 		 */
-		if (strcmp (vers->entdata->options ?
-			    vers->entdata->options : "", vers->options) != 0
-		    || (vers->srcfile != NULL
-			&& (vers->srcfile->flags & INATTIC) != 0))
-		    ret = T_CHECKOUT;
-		else
-		    ret = T_PATCH;
-	    }
+		ret = T_PATCH;
 	    else if (No_Difference (finfo, vers))
 		/* really modified, needs to merge */
 		ret = T_NEEDS_MERGE;
-	    else if ((strcmp (vers->entdata->options ?
-			      vers->entdata->options : "", vers->options)
-		      != 0)
-		     || (vers->srcfile != NULL
-		         && (vers->srcfile->flags & INATTIC) != 0))
-		/* not really modified, check it out */
-		ret = T_CHECKOUT;
 	    else
 		ret = T_PATCH;
 	}
