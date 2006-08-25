@@ -758,18 +758,6 @@ each time it sends a @code{Directory} request for a given directory.
 However, the server is not obliged to remember them beyond the context
 of a single command.
 
-@item Checkin-prog @var{program} \n
-Response expected: no.  Tell the server that the directory most recently
-specified with @code{Directory} has a checkin program @var{program}.
-Such a program would have been previously set with the
-@code{Set-checkin-prog} response.
-
-@item Update-prog @var{program} \n
-Response expected: no.  Tell the server that the directory most recently
-specified with @code{Directory} has an update program @var{program}.
-Such a program would have been previously set with the
-@code{Set-update-prog} response.
-
 @item Entry @var{entry-line} \n
 Response expected: no.  Tell the server what version of a file is on the
 local machine.  The name in @var{entry-line} is a name relative to the
@@ -1635,16 +1623,6 @@ are not supported).  @var{pathname} ends in a slash; its purpose is to
 specify a directory, not a file within a directory.  Tell the client to
 store the file transmission as the template log message, and then use
 that template in the future when prompting the user for a log message.
-
-@item Set-checkin-prog @var{dir} \n
-Additional data: @var{prog} \n.  Tell the client to set a checkin
-program, which should be supplied with the @code{Checkin-prog} request
-for future operations.
-
-@item Set-update-prog @var{dir} \n
-Additional data: @var{prog} \n.  Tell the client to set an update
-program, which should be supplied with the @code{Update-prog} request
-for future operations.
 
 @item Notified @var{pathname} \n
 Indicate to the client that the notification for @var{pathname} has been
