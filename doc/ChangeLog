@@ -1,3 +1,8 @@
+2006-08-25  Derek Price  <derek@ximbiot.com>
+
+	* cvsclient.texi (Requests, Responses): Remove reference to the
+	obsolete checkin & update programs.
+
 2006-08-21  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (man page nodes): Tweak grammar, especially refs.
