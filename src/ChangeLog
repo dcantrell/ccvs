@@ -1,5 +1,7 @@
 2006-08-25  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (ls-d-init-11): Verify output of CVS run.
+
 	* classify.c (Classify_File): Remove hacks which worked around checksum
 	failures from bug #17032.
 
