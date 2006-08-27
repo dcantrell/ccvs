@@ -5276,7 +5276,7 @@ living"
 	  #    + -d present or absent
 
 	  # Working directory on trunk
-	  $testcvs -Q up -A
+	  dotest ls-d-init-11 "$testcvs -Q up -A"
 
 	  ## ls
 	  dotest ls-d-1 "$testcvs ls" "$output_living"
