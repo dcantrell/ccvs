@@ -29436,10 +29436,15 @@ No conflicts created by this import"
 ${PROG} [a-z]*: Updating module1/dir2
 U module1/dir2/file1"
 
-	    if $keep; then
-	      echo Keeping ${TESTDIR} and exiting due to --keep
-	      exit 0
-	    fi
+	  # This also triggered the assertion failure above prior to 1.11.23.
+	  dotest dottedroot-3 \
+"$testcvs -q co -prINITIAL module1/./dir2/file1" \
+'version1'
+
+	  if $keep; then
+	    echo Keeping $TESTDIR and exiting due to --keep
+	    exit 0
+	  fi
 
 	  rm -rf ${CVSROOT_DIRNAME}
 	  rm -r dir1 module1

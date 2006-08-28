@@ -662,7 +662,6 @@ do_recursion (frame)
     {
 	repository = frame->repository;
 	assert (repository != NULL);
-	assert (strstr (repository, "/./") == NULL);
     }
 
     fileattr_startdir (repository);
