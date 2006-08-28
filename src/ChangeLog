@@ -1,3 +1,10 @@
+2006-08-28  Derek Price  <derek@ximbiot.com>
+
+	* classify.c (Classify_File): Use T_PATCH for changed keywords instead
+	of T_CHECKOUT to conserver bandwidth.  Don't sticky check when marking
+	files for update anyhow.
+	* sanity.sh: Update to compensate (s/^U /[UP] /).
+
 2006-08-25  Derek Price  <derek@ximbiot.com>
 
 	[bug #17168]

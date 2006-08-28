@@ -5442,8 +5442,8 @@ T file4'
 
 	  # Switch over to the branch.
 	  dotest death2-6 "$testcvs -q update -r branch" \
-'U file1
-U file4'
+'[UP] file1
+[UP] file4'
 
 	  # Delete the file on the branch.
 	  rm file1
@@ -5744,9 +5744,9 @@ ${PLUS} first revision"
 
 	  # now back to the trunk
 	  dotest death2-21 "$testcvs -q update -A" \
-'U file1
+'[UP] file1
 U file2
-[UP] file4'
+U file4'
 
 	  # test merging with a dead file
 	  dotest death2-22 "${testcvs} -q co first-dir" \
@@ -6009,7 +6009,7 @@ ${PROG} add: use .${PROG} commit. to add this file permanently"
 "${testcvs} -q ci -r mynonbranch -m add file4" \
 "${PROG} \[commit aborted\]: no such tag mynonbranch"
 	  # Now make CVS write val-tags for real.
-	  dotest rmadd-20 "$testcvs -q update -r mynonbranch file1" 'U file1'
+	  dotest rmadd-20 "$testcvs -q update -r mynonbranch file1" '[UP] file1'
 	  # Oops - CVS isn't distinguishing between a branch tag and
 	  # a non-branch tag.
 	  dotest rmadd-21 \
@@ -6094,7 +6094,7 @@ done"
 
 	  # lose the branch
 	  dotest rmadd-29 "$testcvs -q up -A" \
-"U file1
+"[UP] file1
 $PROG update: file3 is no longer in the repository
 $PROG update: file4 is no longer in the repository"
 
@@ -6669,9 +6669,9 @@ T file4'
 	  dotest branches-5 "$testcvs update -r br1" \
 "$PROG update: Updating \.
 M file1
-U file2
-U file3
-U file4"
+[UP] file2
+[UP] file3
+[UP] file4"
 	  echo 2:br1 >file2
 	  echo 4:br1 >file4
 	  dotest branches-6 "${testcvs} -q ci -m modify" \
@@ -6692,10 +6692,10 @@ T file2
 T file3
 T file4'
 	  dotest branches-8 "$testcvs -q update -r brbr" \
-'U file1
-U file2
-U file3
-U file4'
+'[UP] file1
+[UP] file2
+[UP] file3
+[UP] file4'
 	  echo 1:brbr >file1
 	  echo 4:brbr >file4
 	  dotest branches-9 "${testcvs} -q ci -m modify" \
@@ -6713,8 +6713,8 @@ done"
 4:brbr'
 	  dotest branches-11 "$testcvs -q update -r br1" \
 'U file1
-U file2
-U file3
+[UP] file2
+[UP] file3
 U file4'
 	  dotest branches-12 "cat file1 file2 file3 file4" '1:br1
 2:br1
@@ -6729,7 +6729,7 @@ done"
 	  dotest branches-13 "${testcvs} -q update -A" \
 'U file1
 U file2
-U file3
+[UP] file3
 U file4'
 	  dotest branches-14 "cat file1 file2 file3 file4" '1:ancest
 2:ancest
@@ -7266,7 +7266,7 @@ v1"
 	  dotest update-p-undead-0 "$testcvs update -A" \
 "$PROG update: Updating \.
 $PROG update: warning: new-born $file has disappeared
-U unused-file"
+[UP] unused-file"
 	  dotest update-p-undead-1 "$testcvs update" \
 "${PROG} update: Updating \.
 U $file"
@@ -8087,7 +8087,7 @@ T file1"
 	  dotest multibranch-5 "${testcvs} tag -b br2" \
 "${PROG} tag: Tagging \.
 T file1"
-	  dotest multibranch-6 "$testcvs -q update -r br1" 'U file1'
+	  dotest multibranch-6 "$testcvs -q update -r br1" '[UP] file1'
 	  echo on-br1 >file1
 	  dotest multibranch-7 "${testcvs} -q ci -m modify-on-br1" \
 "Checking in file1;
@@ -8263,8 +8263,8 @@ first-import
 "$PROG update: Updating .
 U imported-f1
 [UP] imported-f2
-U imported-f3
-U imported-f4"
+[UP] imported-f3
+[UP] imported-f4"
 
 		# remove file4 on the vendor branch
 		rm imported-f4
@@ -8284,7 +8284,7 @@ done"
 		dotest import-105 "$testcvs -q update -A" \
 "$PROG update: imported-f1 is no longer in the repository
 [UP] imported-f2
-U imported-f3"
+[UP] imported-f3"
 
 		# second import - file4 deliberately unchanged
 		cd ../import-dir
@@ -8332,8 +8332,8 @@ Use the following command to help the merge:"
 		dotest import-110 "$testcvs -q update -rvendor-branch" \
 'U imported-f1
 [UP] imported-f2
-U imported-f3
-U imported-f4'
+[UP] imported-f3
+[UP] imported-f4'
 
 		dotest import-111 "test -f imported-f4" ''
 
@@ -8341,8 +8341,8 @@ U imported-f4'
 		dotest import-112 "$testcvs -q update -A" \
 "$PROG update: imported-f1 is no longer in the repository
 [UP] imported-f2
-U imported-f3
-U imported-f4"
+[UP] imported-f3
+[UP] imported-f4"
 
 		cd ..
 
@@ -8813,7 +8813,7 @@ U first-dir/file2'
 'T file1'
 	  dotest branch-after-import-4 \
 "$testcvs -q update -r TESTTOTRON" \
-"U file1
+"[UP] file1
 $PROG update: file2 is no longer in the repository"
 
 	  cp ../imp-dir/file2 .
@@ -9276,10 +9276,10 @@ T file3
 T file4
 T file7"
 	  dotest join-27 "$testcvs -q update -r br2" \
-'U file2
-U file3
-U file4
-U file7'
+'[UP] file2
+[UP] file3
+[UP] file4
+[UP] file7'
 	  # The handling of file8 and file9 here look fishy to me.  I don't
 	  # see why it should be different from the case where we merge to
 	  # the trunk (e.g. join-23).
@@ -9426,7 +9426,7 @@ ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 done"
 	  dotest join2-5 "${testcvs} -q tag -b br1" "T file1"
-	  dotest join2-6 "$testcvs -q update -r br1" 'U file1'
+	  dotest join2-6 "$testcvs -q update -r br1" '[UP] file1'
 	  echo 'modify on branch' >>file1
 	  touch bradd
 	  dotest join2-6a "${testcvs} add bradd" \
@@ -9543,7 +9543,7 @@ ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 done"
 	  dotest join3-5 "${testcvs} -q tag -b br1" "T file1"
-	  dotest join3-6 "$testcvs -q update -r br1" 'U file1'
+	  dotest join3-6 "$testcvs -q update -r br1" '[UP] file1'
 	  echo 'br1:line1' >>file1
 	  dotest join3-7 "${testcvs} -q ci -m modify" \
 "Checking in file1;
@@ -10216,7 +10216,7 @@ done"
 
 	  dotest join-readonly-conflict-4 "$testcvs tag -b B $file" "T $file"
 	  dotest join-readonly-conflict-5 "$testcvs -q update -rB $file" \
-"U $file"
+"[UP] $file"
 	  echo branch B > $file
 	  dotest join-readonly-conflict-6 "$testcvs -q ci -m . $file" \
 "Checking in $file;
@@ -16646,7 +16646,7 @@ $CVSROOT_DIRNAME/ignore-on-branch/file2,v  <--  file2
 new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done"
 	  dotest ignore-on-branch-6 "$testcvs -q up -rbranch2" \
-"U file1
+"[UP] file1
 $PROG update: file2 is no longer in the repository"
 	  dotest ignore-on-branch-7 "$testcvs -q up -jbranch" 'U file2'
 
@@ -18252,7 +18252,7 @@ initial revision: 1\.1
 done"
 	  dotest taginfo-6 "${testcvs} -q tag tag1" "T file1"
 	  dotest taginfo-7 "${testcvs} -q tag -b br" "T file1"
-	  dotest taginfo-8 "$testcvs -q update -r br" 'U file1'
+	  dotest taginfo-8 "$testcvs -q update -r br" '[UP] file1'
 	  echo add text on branch >>file1
 	  dotest taginfo-9 "${testcvs} -q ci -m modify-on-br" \
 "Checking in file1;
@@ -21017,7 +21017,7 @@ $PROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/CVSROOT"
 	  dotest lockfiles-22 "$testcvs -q up -r newtag first-dir" \
 "$PROG update: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/CVSROOT
 $PROG update: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/CVSROOT
-U first-dir/sdir/ssdir/file1"
+[UP] first-dir/sdir/ssdir/file1"
 
 	  cd CVSROOT
 	  echo "# nobody here but us comments" >config
@@ -21737,7 +21737,7 @@ done"
 	  dotest modes-11 "${testcvs} -q tag -b br" 'T aa
 T ab'
 	  dotest modes-12 "$testcvs -q update -r br" \
-'U aa
+'[UP] aa
 U ab'
 	  touch ac
 	  dotest modes-13 "${testcvs} add ac" \
@@ -22487,7 +22487,7 @@ xx"
 1\.1 locked
 done"
 
-	  dotest keyword-7 "$testcvs update -kkv file1" 'U file1'
+	  dotest keyword-7 "$testcvs update -kkv file1" '[UP] file1'
 	  dotest keyword-8 "cat file1" \
 '\$'"Author: ${username} "'\$'"
 "'\$'"Date: [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9] "'\$'"
@@ -23109,7 +23109,7 @@ done"
 T file1"
 	  dotest keyword2-18 "$testcvs -q update -r branch2" \
 'U binfile\.dat
-U file1'
+[UP] file1'
 
 	  ${AWK} 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
 	    </dev/null | ${TR} '@' '\000' >>binfile.dat
@@ -23177,8 +23177,8 @@ done"
 	  dotest head-6 "${testcvs} -q tag -b br1" "T file1
 T file2"
 	  dotest head-7 "$testcvs -q update -r br1" \
-'U file1
-U file2'
+'[UP] file1
+[UP] file2'
 	  echo 'modify on branch' >>file1
 	  dotest head-8 "${testcvs} -q ci -m modify" \
 "Checking in file1;
@@ -23196,7 +23196,7 @@ done"
 	  # With no sticky tags, HEAD is the head of the trunk.
 	  dotest head-trunk-setup "$testcvs -q update -A" \
 '[UP] file1
-U file2'
+[UP] file2'
 	  dotest head-trunk-update "${testcvs} -q update -r HEAD -p file1" \
 "imported contents
 add a line on trunk
@@ -23224,7 +23224,7 @@ ${PLUS} modify on branch after brtag"
 	  # With a branch sticky tag, HEAD is the head of the trunk.
 	  dotest head-br1-setup "$testcvs -q update -r br1" \
 '[UP] file1
-U file2'
+[UP] file2'
 	  dotest head-br1-update "${testcvs} -q update -r HEAD -p file1" \
 "imported contents
 add a line on trunk
@@ -23237,7 +23237,7 @@ add a line on trunk after trunktag"
 	  # HEAD is the head of the trunk
 	  dotest head-brtag-setup "$testcvs -q update -r brtag" \
 '[UP] file1
-U file2'
+[UP] file2'
 	  dotest head-brtag-update "${testcvs} -q update -r HEAD -p file1" \
 "imported contents
 add a line on trunk
@@ -23252,7 +23252,7 @@ add a line on trunk after trunktag"
 	  # of the trunk, I think.
 	  dotest head-trunktag-setup "$testcvs -q update -r trunktag" \
 '[UP] file1
-U file2'
+[UP] file2'
 	  dotest head-trunktag-check "cat file1" "imported contents
 add a line on trunk"
 	  dotest head-trunktag-update "${testcvs} -q update -r HEAD -p file1" \
@@ -23810,8 +23810,8 @@ T file2"
 T file2"
 
 	  dotest multibranch2-7 "$testcvs -q update -r B" \
-'U file1
-U file2'
+'[UP] file1
+[UP] file2'
 	  echo branch-B >file1
 	  echo branch-B >file2
 	  dotest multibranch2-8 "${testcvs} -q ci -m modify-on-B" \
@@ -25177,7 +25177,7 @@ done"
 "mv a-lock,v ${CVSROOT_DIRNAME}/first-dir/a-lock,v" ""
 	  chmod 444 ${CVSROOT_DIRNAME}/first-dir/a-lock,v
 	  dotest reserved-17 "${testcvs} -q tag -b br a-lock" "T a-lock"
-	  dotest reserved-18 "$testcvs -q update -r br a-lock" 'U a-lock'
+	  dotest reserved-18 "$testcvs -q update -r br a-lock" '[UP] a-lock'
 	  echo edit it >>a-lock
 	  dotest reserved-19 "${testcvs} -q ci -m modify a-lock" \
 "Checking in a-lock;

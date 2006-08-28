@@ -342,12 +342,14 @@ Classify_File (finfo, tag, date, options, force_tag_match, aflag, versp,
 		/* TODO: decide whether we need to check file permissions
 		   for a mismatch, and return T_CONFLICT if so. */
 		if (keywords_may_change (aflag, vers))
-		    ret = T_CHECKOUT;
+		    ret = T_PATCH;
 		else if (vers->ts_conflict)
 		    ret = T_CONFLICT;
 		else
+		{
 		    ret = T_UPTODATE;
-		sticky_ck (finfo, aflag, vers);
+		    sticky_ck (finfo, aflag, vers);
+		}
 	    }
 	    else if (No_Difference (finfo, vers))
 	    {
