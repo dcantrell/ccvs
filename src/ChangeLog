@@ -2,6 +2,13 @@
 
 	* sanity.sh (ls-d-init-11): Verify output of CVS run.
 
+	[bug #17168]
+	* classify.c (Classify_file): Mark files with potential keyword
+	substitution changes as needing update.
+	* sanity.sh: Update to compensate.
+	(keyword, keywordname, serverpatch): Update to compensate, removing
+	the last few "checksum failed" tests.
+
 	* classify.c (Classify_File): Remove hacks which worked around checksum
 	failures from bug #17032.
 

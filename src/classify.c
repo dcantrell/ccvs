@@ -27,6 +27,47 @@
 static void sticky_ck (struct file_info *finfo, int aflag,
 			      Vers_TS * vers);
 
+
+
+static inline bool
+keywords_may_change (int aflag, Vers_TS *vers)
+{
+    bool retval;
+
+    if (/* Options are different...  */
+	strcmp (vers->entdata->options, vers->options)
+	/* ...or...  */
+	|| (/* ...clearing stickies...  */
+	    aflag
+	    /* ...and...  */
+	    && (/* ...there used to be a tag which subs in Name keys...  */
+		(vers->entdata->tag && !isdigit (vers->entdata->tag[0]))
+		/* ...or there used to be a keyword mode which may be
+		 * changed by -A...
+		 */
+		|| (strlen (vers->entdata->options)
+		    && strcmp (vers->entdata->options, "-kkv")
+		    && strcmp (vers->entdata->options, "-kb"))))
+	/* ...or...  */
+	|| (/* ...this is not commit...  */
+	    strcmp (cvs_cmd_name, "commit")
+	    /* ...and...  */
+	    && (/* ...the tag is changing in a way that affects Name keys...  */
+		(vers->entdata->tag && vers->tag
+		 && strcmp (vers->entdata->tag, vers->tag)
+		 && !(isdigit (vers->entdata->tag[0])
+		      && isdigit (vers->entdata->tag[0])))
+		|| (!vers->entdata->tag && vers->tag
+		    && !isdigit (vers->tag[0])))))
+	retval = true;
+    else
+	retval = false;
+
+    return retval;
+}
+
+
+
 /*
  * Classify the state of a file.
  *
@@ -311,15 +352,14 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		 */
 		/* TODO: decide whether we need to check file permissions
 		   for a mismatch, and return T_CONFLICT if so. */
-		if (vers->entdata->options &&
-		    strcmp (vers->entdata->options, vers->options) != 0)
-		    ret = T_CHECKOUT;
+		if (keywords_may_change (aflag, vers))
+		    ret = T_PATCH;
 		else if (vers->ts_conflict)
 		    ret = T_CONFLICT;
 		else
 		{
-		    sticky_ck (finfo, aflag, vers);
 		    ret = T_UPTODATE;
+		    sticky_ck (finfo, aflag, vers);
 		}
 	    }
 	    else if (No_Difference (finfo, vers))
