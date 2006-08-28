@@ -23,6 +23,10 @@ NEW FEATURES
 
 BUG FIXES
 
+* Thanks to report from Paul Eggert <eggert@CS.UCLA.EDU>, an assertion failure
+  that could occur when "." was in the path (e.g. `cvs co /cvsroot/./module')
+  has been removed.
+
 * Thanks to a report from Peter Toft <pto@linuxbog.dk>, CVS server now sends
   correct patch files more often when the RCS `Name' keyword is present in
   a working file (bug #17302).
