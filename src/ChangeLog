@@ -1,5 +1,6 @@
 2006-08-28  Derek Price  <derek@ximbiot.com>
 
+	[bug #17168]
 	* classify.c (Classify_File): Use T_PATCH for changed keywords instead
 	of T_CHECKOUT to conserver bandwidth.  Don't sticky check when marking
 	files for update anyhow.
