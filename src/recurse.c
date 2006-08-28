@@ -767,7 +767,6 @@ do_recursion (struct recursion_frame *frame)
     {
 	repository = frame->repository;
 	assert (repository != NULL);
-	assert (strstr (repository, "/./") == NULL);
     }
 
     fileattr_startdir (repository);

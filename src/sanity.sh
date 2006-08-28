@@ -32511,6 +32511,12 @@ No conflicts created by this import"
 ${SPROG} checkout: Updating module1/dir2
 U module1/dir2/file1"
 
+	  # This also triggered the assertion failure above prior to 1.11.23 &
+	  # 1.12.14.
+	  dotest dottedroot-3 \
+"$testcvs -q co -prINITIAL module1/./dir2/file1" \
+'version1'
+
 	  dokeep
 
 	  rm -rf ${CVSROOT_DIRNAME}

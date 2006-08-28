@@ -1,3 +1,15 @@
+2006-08-28  Derek Price  <derek@ximbiot.com>
+
+	* recurse.c (do_recursion): Remove misguided assertion.
+	* sanity.sh (dottedroot-3): Add test for the above.
+	(Thanks to report from Paul Eggert <eggert@CS.UCLA.EDU>.)
+
+	[bug #17168]
+	* classify.c (Classify_File): Use T_PATCH for changed keywords instead
+	of T_CHECKOUT to conserver bandwidth.  Don't sticky check when marking
+	files for update anyhow.
+	* sanity.sh: Update to compensate (s/^U /[UP] /).
+
 2006-08-25  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (ls-d-init-11): Verify output of CVS run.
