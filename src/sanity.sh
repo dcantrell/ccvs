@@ -7069,9 +7069,10 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	    dotest_fail rmadd-19 \
 "$testcvs -q ci -r mynonbranch -m add file4" \
 "$SPROG \[commit aborted\]: no such tag \`mynonbranch'"
-	    # Now make CVS write val-tags for real.
-	    dotest rmadd-20 "$testcvs -q update -r mynonbranch file1" 'U file1'
 	  fi # !$proxy
+
+	  # Now make CVS write val-tags for real.
+	  dotest rmadd-20 "$testcvs -q update -r mynonbranch file1" 'U file1'
 
 	  # Oops - CVS isn't distinguishing between a branch tag and
 	  # a non-branch tag.

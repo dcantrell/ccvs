@@ -1,3 +1,8 @@
+2006-08-29  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (rmadd-20): Execute in proxy mode so the sticky tag still
+	changes for the rest of the tests.
+
 2006-08-28  Derek Price  <derek@ximbiot.com>
 
 	* recurse.c (do_recursion): Remove misguided assertion.
