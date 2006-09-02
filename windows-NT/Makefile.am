@@ -103,7 +103,7 @@ config.h.in: @MAINTAINER_MODE_TRUE@ stamp-chi
 # unchanged.
 stamp-chi: $(srcdir)/mkconfig.pl $(top_srcdir)/config.h.in \
 	   $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
-	@$(PERL) mkconfig.pl -q $(top_srcdir)/config.h.in \
+	@$(PERL) $(srcdir)/mkconfig.pl -q $(top_srcdir)/config.h.in \
 	                        $(srcdir)/config.h.in \
 	                        $(srcdir)/config.h.in.in \
 	                        $(srcdir)/config.h.in.footer
@@ -141,8 +141,8 @@ stamp-sh2: $(top_srcdir)/lib/stdint_.h
 	@echo " */" >>stdint.tmp
 	sed -e 's/@''HAVE_WCHAR_H''@/1/g' \
 	    -e 's/@''HAVE_STDINT_H''@/0/g' \
-	    -e 's/@''HAVE_SYS_TYPES_H''@/1/g' \
 	    -e 's|@''ABSOLUTE_STDINT_H''@||g' \
+	    -e 's/@''HAVE_SYS_TYPES_H''@/1/g' \
 	    -e 's/@''HAVE_INTTYPES_H''@/0/g' \
 	    -e 's/@''HAVE_SYS_INTTYPES_H''@/0/g' \
 	    -e 's/@''HAVE_SYS_BITYPES_H''@/0/g' \

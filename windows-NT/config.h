@@ -22,6 +22,9 @@
 
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
+/* Define this to an absolute name of <fcntl.h>. */
+#undef ABSOLUTE_FCNTL_H
+
 /* Define this to an absolute name of <inttypes.h>. */
 #undef ABSOLUTE_INTTYPES_H
 
@@ -194,6 +197,9 @@
 /* Define to 1 if you have the `btowc' function. */
 #undef HAVE_BTOWC
 
+/* Define to 1 if nanosleep mishandle large arguments. */
+#undef HAVE_BUG_BIG_NANOSLEEP
+
 /* Define to 1 if you have the `canonicalize_file_name' function. */
 #undef HAVE_CANONICALIZE_FILE_NAME
 
@@ -328,6 +334,14 @@
 /* Define to 1 if you have the declaration of `getpass', and to 0 if you
    don't. */
 #define HAVE_DECL_GETPASS 1
+
+/* Define to 1 if you have the declaration of `imaxabs', and to 0 if you
+   don't. */
+#undef HAVE_DECL_IMAXABS
+
+/* Define to 1 if you have the declaration of `imaxdiv', and to 0 if you
+   don't. */
+#undef HAVE_DECL_IMAXDIV
 
 /* Define to 1 if you have the declaration of `inet_ntop', and to 0 if you
    don't. */
@@ -506,9 +520,6 @@
 
 /* Define if you have the iconv() function. */
 #undef HAVE_ICONV
-
-/* Define if your compiler supports the #include_next directive. */
-#undef HAVE_INCLUDE_NEXT
 
 /* Define to 1 if you have the `inet_ntop' function. */
 #undef HAVE_INET_NTOP
@@ -1064,6 +1075,9 @@
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 #undef NO_MINUS_C_MINUS_O
 
+/* Define to 1 if O_NOFOLLOW is ineffective. */
+#undef O_NOFOLLOW_IS_INEFFECTIVE
+
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "bug-cvs@nongnu.org"
 
@@ -1090,6 +1104,9 @@
 
 /* Define this to an appropriate value if popen supports a binary flag. */
 #define POPEN_BINARY_FLAG "b"
+
+/* Define if <inttypes.h> exists and defines unusable PRI* macros. */
+#undef PRI_MACROS_BROKEN
 
 /* Define if you want CVS to be able to serve as a transparent proxy for write
    operations. Disabling this may produce a slight performance gain on some

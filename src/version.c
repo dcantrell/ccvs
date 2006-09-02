@@ -14,6 +14,10 @@
  * version.c - the CVS version number
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "cvs.h"
 
 #ifdef CLIENT_SUPPORT

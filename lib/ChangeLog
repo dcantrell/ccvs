@@ -1,3 +1,14 @@
+2006-09-02  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.am: Import changes from...
+	* Makefile.gnulib: ...this regenerated file.
+	* Makefile.in: Regenerated.
+	* chdir-long.c, error.c, getaddrinfo.c, nanosleep.c, stdint_.h,
+	vasnprintf.c, vasprintf.c: Update from GNULIB.
+	* fcntl_.h, inttypes_.h: New from GNULIB.
+	* inttypes.h: Remove per GNULIB update.
+	* libcvs.dsp: .\inttypes.h becomes "..\windows-NT\inttypes.h"
+	
 2006-08-23  Mark D. Baushke  <mdb@gnu.org>
 
 	* Makefile.am: Import changes from...

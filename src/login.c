@@ -12,6 +12,10 @@
  * Allow user to log in for an authenticating server.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "cvs.h"
 #include "getline.h"
 

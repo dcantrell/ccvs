@@ -8,6 +8,10 @@
  * This is a convenience wrapper for some of the functions in lib/sighandle.c.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "cvs.h"
 
 /*

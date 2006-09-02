@@ -19,6 +19,10 @@
  * size, and this code works fine.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "cvs.h"
 
 #include "getdelim.h"

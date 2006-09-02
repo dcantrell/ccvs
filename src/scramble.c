@@ -15,6 +15,10 @@
  * we're not trying to provide real security anyway.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 /* Set this to test as a standalone program. */
 /* #define DIAGNOSTIC */
 

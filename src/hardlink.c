@@ -10,6 +10,10 @@
 
 /* Collect and manage hardlink info associated with a particular file.  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "cvs.h"
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT

@@ -1,3 +1,12 @@
+2006-09-02  Mark D. Baushke  <mdb@gnu.org>
+
+	* cvs.h: Remove unprotected config.h include to avoid SIZE_MAX
+	redefinition warning.
+	* cvsrc.c, error.c, exithandle.c, expand_path.c, hardlink.c,
+	login.c, myndbm.c, scramble.c, stack.c, vers_ts.c, version.c,
+	zlib.c: Include <config.h> now that cvs.h is no longer doing it.
+	* Makefile.in: Regenerated.
+
 2006-08-29  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (rmadd-20): Execute in proxy mode so the sticky tag still

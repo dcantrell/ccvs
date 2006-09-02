@@ -14,6 +14,10 @@
  */
 
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "cvs.h"
 #include "getline.h"
 

@@ -51,6 +51,7 @@ AC_DEFUN([gl_INIT],
   gl_ERROR
   gl_EXITFAIL
   dnl gl_USE_SYSTEM_EXTENSIONS must be added quite early to configure.ac.
+  gl_FCNTL_H
   gl_FCNTL_SAFER
   gl_FILE_NAME_CONCAT
   # No macro. You should also use one of fnmatch-posix or fnmatch-gnu.
@@ -189,6 +190,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fchown-stub.c
   lib/fcntl--.h
   lib/fcntl-safer.h
+  lib/fcntl_.h
   lib/fd-safer.c
   lib/filenamecat.c
   lib/filenamecat.h
@@ -230,7 +232,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/inet_ntop.c
   lib/inet_ntop.h
   lib/intprops.h
-  lib/inttypes.h
+  lib/inttypes_.h
   lib/lchown.c
   lib/lchown.h
   lib/lstat.c
@@ -342,7 +344,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xstrndup.h
   lib/yesno.c
   lib/yesno.h
-  m4/_inttypes_h.m4
   m4/absolute-header.m4
   m4/alloca.m4
   m4/allocsa.m4
@@ -371,6 +372,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/exitfail.m4
   m4/extensions.m4
   m4/fcntl-safer.m4
+  m4/fcntl_h.m4
   m4/filenamecat.m4
   m4/fnmatch.m4
   m4/fpending.m4
@@ -396,13 +398,13 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/glibc21.m4
   m4/glob.m4
   m4/iconv.m4
-  m4/include_next.m4
   m4/inet_ntop.m4
   m4/intdiv0.m4
   m4/intmax.m4
   m4/intmax_t.m4
   m4/inttypes-h.m4
   m4/inttypes-pri.m4
+  m4/inttypes.m4
   m4/inttypes_h.m4
   m4/lchown.m4
   m4/lcmessage.m4
