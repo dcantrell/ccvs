@@ -573,10 +573,6 @@ SOURCE=.\inet_ntop.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\inttypes.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\mbchar.h
 # End Source File
 # Begin Source File
@@ -590,6 +586,10 @@ SOURCE=.\md5.h
 # Begin Source File
 
 SOURCE=.\mempcpy.h
+# End Source File
+# Begin Source File
+
+SOURCE="..\windows-NT\inttypes.h"
 # End Source File
 # Begin Source File
 

@@ -173,6 +173,21 @@ EXTRA_DIST += exitfail.h
 
 ## end   gnulib module exitfail
 
+## begin gnulib module fcntl
+
+BUILT_SOURCES += $(FCNTL_H)
+EXTRA_DIST += fcntl_.h
+
+# We need the following in order to create <fcntl.h> when the system
+# doesn't have one that works with the given compiler.
+fcntl.h: fcntl_.h
+	sed -e 's|@''ABSOLUTE_FCNTL_H''@|$(ABSOLUTE_FCNTL_H)|g' \
+	    < $(srcdir)/fcntl_.h > $@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += fcntl.h fcntl.h-t
+
+## end   gnulib module fcntl
+
 ## begin gnulib module fcntl-safer
 
 EXTRA_DIST += fcntl-safer.h fcntl--.h
@@ -349,7 +364,24 @@ EXTRA_DIST += intprops.h
 
 ## begin gnulib module inttypes
 
-EXTRA_DIST += inttypes.h
+BUILT_SOURCES += $(INTTYPES_H)
+EXTRA_DIST += inttypes_.h
+
+# We need the following in order to create <inttypes.h> when the system
+# doesn't have one that works with the given compiler.
+inttypes.h: inttypes_.h
+	sed -e 's/@''HAVE_INTTYPES_H''@/$(HAVE_INTTYPES_H)/g' \
+	    -e 's|@''ABSOLUTE_INTTYPES_H''@|$(ABSOLUTE_INTTYPES_H)|g' \
+	    -e 's/@''PRI_MACROS_BROKEN''@/$(PRI_MACROS_BROKEN)/g' \
+	    -e 's/@''HAVE_LONG_LONG_INT''@/$(HAVE_LONG_LONG_INT)/g' \
+	    -e 's/@''PRIPTR_PREFIX''@/$(PRIPTR_PREFIX)/g' \
+	    -e 's/@''HAVE_DECL_IMAXABS''@/$(HAVE_DECL_IMAXABS)/g' \
+	    -e 's/@''HAVE_DECL_IMAXDIV''@/$(HAVE_DECL_IMAXDIV)/g' \
+	    -e 's/@''HAVE_DECL_STRTOIMAX''@/$(HAVE_DECL_STRTOIMAX)/g' \
+	    -e 's/@''HAVE_DECL_STRTOUMAX''@/$(HAVE_DECL_STRTOUMAX)/g' \
+	    < $(srcdir)/inttypes_.h > $@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += inttypes.h inttypes.h-t
 
 ## end   gnulib module inttypes
 
@@ -507,8 +539,8 @@ EXTRA_DIST += stdint_.h
 stdint.h: stdint_.h
 	sed -e 's/@''HAVE_WCHAR_H''@/$(HAVE_WCHAR_H)/g' \
 	    -e 's/@''HAVE_STDINT_H''@/$(HAVE_STDINT_H)/g' \
-	    -e 's/@''HAVE_SYS_TYPES_H''@/$(HAVE_SYS_TYPES_H)/g' \
 	    -e 's|@''ABSOLUTE_STDINT_H''@|$(ABSOLUTE_STDINT_H)|g' \
+	    -e 's/@''HAVE_SYS_TYPES_H''@/$(HAVE_SYS_TYPES_H)/g' \
 	    -e 's/@''HAVE_INTTYPES_H''@/$(HAVE_INTTYPES_H)/g' \
 	    -e 's/@''HAVE_SYS_INTTYPES_H''@/$(HAVE_SYS_INTTYPES_H)/g' \
 	    -e 's/@''HAVE_SYS_BITYPES_H''@/$(HAVE_SYS_BITYPES_H)/g' \

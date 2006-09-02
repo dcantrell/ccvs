@@ -10,6 +10,10 @@
  * This module uses the hash.c module to implement a stack.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "cvs.h"
 #include <assert.h>
 

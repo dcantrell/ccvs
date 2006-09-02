@@ -1,3 +1,10 @@
+2006-09-02  Mark D. Baushke  <mdb@gnu.org>
+
+	* codeset.m4, fnmatch.m4, gnulib-cache.m4, gnulib-comp.m4,
+	inttypes-pri.m4, nanosleep.m4: Update from GNULIB.
+	* fcntl_h.m4, inttypes.m4: New from GNULIB.
+	* _inttypes_h.m4, include_next.m4: Remove per GNULIB update.
+
 2006-08-23  Mark D. Baushke  <mdb@gnu.org>
 
 	* _inttypes_h.m4, canon-host.m4, canonicalize.m4, chdir-long.m4,

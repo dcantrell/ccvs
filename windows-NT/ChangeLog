@@ -1,3 +1,15 @@
+2006-09-02  Mark D. Baushke  <mdb@gnu.org>
+
+	* inttypes.h: Provide a windows wrapper for inttypes.h based on
+	the previous version which is now generated from lib/inttypes_.h.
+	* Makefile.am: Updated based on ../lib/Makefile.am
+	(stamp-chi): Use $(srcdir)/mkconfig.pl in rule.
+	* config.h.in.in: Updated based on ../config.h.in changes.
+	* Makefile.in, config.h, config.h.in, stamp-chi, stdint.h:
+	Regenerated.
+	Note: This patch may break the windows platform build if it needs
+	any of the hacks provided in lib/fcntl_.h
+
 2006-08-23  Mark D. Baushke  <mdb@gnu.org>
 
 	* config.h.in.in: Updated based on ../config.h.in changes.

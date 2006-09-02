@@ -17,10 +17,6 @@
  */
 
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>		/* this is stuff found via autoconf */
-#endif /* CONFIG_H */
-
 /* Some GNULIB headers require that we include system headers first.  */
 #include "system.h"
 

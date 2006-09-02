@@ -24,6 +24,10 @@
  *     $var_name     (var_name ends w/ non-alphanumeric char other than '_')
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "cvs.h"
 #include <sys/types.h>
 

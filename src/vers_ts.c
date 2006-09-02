@@ -11,6 +11,10 @@
  * specified in the README file that comes with the CVS source distribution.
  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "cvs.h"
 #include "lstat.h"
 

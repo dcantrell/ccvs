@@ -76,8 +76,7 @@ DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	sunos57-select.c tempname.c time_r.c unsetenv.c vasnprintf.c \
 	vasprintf.c waitpid.c xgetcwd.c xmalloc.c xreadlink.c yesno.c
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/_inttypes_h.m4 \
-	$(top_srcdir)/m4/absolute-header.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/m4/absolute-header.m4 \
 	$(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/acx_with_external_zlib.m4 \
 	$(top_srcdir)/m4/acx_with_gssapi.m4 $(top_srcdir)/m4/alloca.m4 \
@@ -97,7 +96,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/_inttypes_h.m4 \
 	$(top_srcdir)/m4/dup2.m4 $(top_srcdir)/m4/eealloc.m4 \
 	$(top_srcdir)/m4/eoverflow.m4 $(top_srcdir)/m4/error.m4 \
 	$(top_srcdir)/m4/exitfail.m4 $(top_srcdir)/m4/extensions.m4 \
-	$(top_srcdir)/m4/fcntl-safer.m4 \
+	$(top_srcdir)/m4/fcntl-safer.m4 $(top_srcdir)/m4/fcntl_h.m4 \
 	$(top_srcdir)/m4/filenamecat.m4 $(top_srcdir)/m4/fnmatch.m4 \
 	$(top_srcdir)/m4/fpending.m4 $(top_srcdir)/m4/ftruncate.m4 \
 	$(top_srcdir)/m4/getaddrinfo.m4 \
@@ -111,22 +110,23 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/_inttypes_h.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gettime.m4 \
 	$(top_srcdir)/m4/gettimeofday.m4 $(top_srcdir)/m4/glob.m4 \
 	$(top_srcdir)/m4/gnulib-comp.m4 $(top_srcdir)/m4/iconv.m4 \
-	$(top_srcdir)/m4/include_next.m4 $(top_srcdir)/m4/inet_ntop.m4 \
-	$(top_srcdir)/m4/intmax_t.m4 $(top_srcdir)/m4/inttypes_h.m4 \
-	$(top_srcdir)/m4/lchown.m4 $(top_srcdir)/m4/lib-ld.m4 \
-	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
-	$(top_srcdir)/m4/lock.m4 $(top_srcdir)/m4/longdouble.m4 \
-	$(top_srcdir)/m4/longlong.m4 $(top_srcdir)/m4/lstat.m4 \
-	$(top_srcdir)/m4/mbchar.m4 $(top_srcdir)/m4/mbiter.m4 \
-	$(top_srcdir)/m4/mbrtowc.m4 $(top_srcdir)/m4/mbstate_t.m4 \
-	$(top_srcdir)/m4/md5.m4 $(top_srcdir)/m4/memchr.m4 \
-	$(top_srcdir)/m4/memmove.m4 $(top_srcdir)/m4/mempcpy.m4 \
-	$(top_srcdir)/m4/memrchr.m4 $(top_srcdir)/m4/minmax.m4 \
-	$(top_srcdir)/m4/mkdir-slash.m4 $(top_srcdir)/m4/mkstemp.m4 \
-	$(top_srcdir)/m4/mktime.m4 $(top_srcdir)/m4/mmap-anon.m4 \
-	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/netinet_in_h.m4 \
-	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/openat.m4 \
-	$(top_srcdir)/m4/pagealign_alloc.m4 \
+	$(top_srcdir)/m4/inet_ntop.m4 $(top_srcdir)/m4/intmax_t.m4 \
+	$(top_srcdir)/m4/inttypes-h.m4 \
+	$(top_srcdir)/m4/inttypes-pri.m4 $(top_srcdir)/m4/inttypes.m4 \
+	$(top_srcdir)/m4/inttypes_h.m4 $(top_srcdir)/m4/lchown.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/lock.m4 \
+	$(top_srcdir)/m4/longdouble.m4 $(top_srcdir)/m4/longlong.m4 \
+	$(top_srcdir)/m4/lstat.m4 $(top_srcdir)/m4/mbchar.m4 \
+	$(top_srcdir)/m4/mbiter.m4 $(top_srcdir)/m4/mbrtowc.m4 \
+	$(top_srcdir)/m4/mbstate_t.m4 $(top_srcdir)/m4/md5.m4 \
+	$(top_srcdir)/m4/memchr.m4 $(top_srcdir)/m4/memmove.m4 \
+	$(top_srcdir)/m4/mempcpy.m4 $(top_srcdir)/m4/memrchr.m4 \
+	$(top_srcdir)/m4/minmax.m4 $(top_srcdir)/m4/mkdir-slash.m4 \
+	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
+	$(top_srcdir)/m4/mmap-anon.m4 $(top_srcdir)/m4/nanosleep.m4 \
+	$(top_srcdir)/m4/netinet_in_h.m4 $(top_srcdir)/m4/nls.m4 \
+	$(top_srcdir)/m4/openat.m4 $(top_srcdir)/m4/pagealign_alloc.m4 \
 	$(top_srcdir)/m4/pathmax.m4 $(top_srcdir)/m4/po.m4 \
 	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/quotearg.m4 \
 	$(top_srcdir)/m4/readlink.m4 $(top_srcdir)/m4/regex.m4 \
@@ -191,6 +191,8 @@ DIST_SOURCES = $(libcvs_a_SOURCES) $(getdate_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+ABSOLUTE_FCNTL_H = @ABSOLUTE_FCNTL_H@
+ABSOLUTE_INTTYPES_H = @ABSOLUTE_INTTYPES_H@
 ABSOLUTE_STDINT_H = @ABSOLUTE_STDINT_H@
 ABSOLUTE_SYS_STAT_H = @ABSOLUTE_SYS_STAT_H@
 ACLOCAL = @ACLOCAL@
@@ -228,6 +230,7 @@ EDITOR = @EDITOR@
 EGREP = @EGREP@
 EOVERFLOW = @EOVERFLOW@
 EXEEXT = @EXEEXT@
+FCNTL_H = @FCNTL_H@
 FNMATCH_H = @FNMATCH_H@
 GETOPT_H = @GETOPT_H@
 GLOB_H = @GLOB_H@
@@ -237,6 +240,10 @@ GMSGFMT = @GMSGFMT@
 GMSGFMT_015 = @GMSGFMT_015@
 GPG = @GPG@
 GREP = @GREP@
+HAVE_DECL_IMAXABS = @HAVE_DECL_IMAXABS@
+HAVE_DECL_IMAXDIV = @HAVE_DECL_IMAXDIV@
+HAVE_DECL_STRTOIMAX = @HAVE_DECL_STRTOIMAX@
+HAVE_DECL_STRTOUMAX = @HAVE_DECL_STRTOUMAX@
 HAVE_INTTYPES_H = @HAVE_INTTYPES_H@
 HAVE_LONG_LONG_INT = @HAVE_LONG_LONG_INT@
 HAVE_SIGNED_SIG_ATOMIC_T = @HAVE_SIGNED_SIG_ATOMIC_T@
@@ -254,6 +261,7 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
 INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
+INTTYPES_H = @INTTYPES_H@
 KRB4 = @KRB4@
 LDFLAGS = @LDFLAGS@
 LIBICONV = @LIBICONV@
@@ -294,6 +302,8 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
 POSUB = @POSUB@
 PR = @PR@
+PRIPTR_PREFIX = @PRIPTR_PREFIX@
+PRI_MACROS_BROKEN = @PRI_MACROS_BROKEN@
 PS2PDF = @PS2PDF@
 PTRDIFF_T_SUFFIX = @PTRDIFF_T_SUFFIX@
 RANLIB = @RANLIB@
@@ -382,14 +392,16 @@ libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	wcwidth.h xalloc-die.c xgethostname.h xgethostname.c xsize.h \
 	xstrndup.h xstrndup.c
 libcvs_a_LIBADD = @LIBOBJS@ @ALLOCA@
-BUILT_SOURCES = $(ALLOCA_H) $(ARPA_INET_H) $(FNMATCH_H) getdate.c \
-	$(GETOPT_H) $(GLOB_H) $(NETINET_IN_H) $(STDBOOL_H) $(STDINT_H) \
-	$(SYS_SOCKET_H) $(SYS_STAT_H) $(UNISTD_H)
+BUILT_SOURCES = $(ALLOCA_H) $(ARPA_INET_H) $(FCNTL_H) $(FNMATCH_H) \
+	getdate.c $(GETOPT_H) $(GLOB_H) $(INTTYPES_H) $(NETINET_IN_H) \
+	$(STDBOOL_H) $(STDINT_H) $(SYS_SOCKET_H) $(SYS_STAT_H) \
+	$(UNISTD_H)
 MOSTLYCLEANFILES = alloca.h alloca.h-t arpa/inet.h arpa/inet.h-t \
-	fnmatch.h fnmatch.h-t getdate-expected getdate-got \
-	getdate.diff getopt.h getopt.h-t glob.h glob.h-t netinet/in.h \
-	netinet/in.h-t stdbool.h stdbool.h-t stdint.h stdint.h-t \
-	sys/socket.h sys/socket.h-t sys/stat.h sys/stat.h-t unistd.h
+	fcntl.h fcntl.h-t fnmatch.h fnmatch.h-t getdate-expected \
+	getdate-got getdate.diff getopt.h getopt.h-t glob.h glob.h-t \
+	inttypes.h inttypes.h-t netinet/in.h netinet/in.h-t stdbool.h \
+	stdbool.h-t stdint.h stdint.h-t sys/socket.h sys/socket.h-t \
+	sys/stat.h sys/stat.h-t unistd.h
 MOSTLYCLEANDIRS = arpa netinet sys sys
 DISTCLEANFILES = getdate.log
 MAINTAINERCLEANFILES = getdate.c
@@ -408,18 +420,18 @@ EXTRA_DIST = .cvsignore ChangeLog.fsf Makefile.gnulib build_lib.com \
 	libcvs.dep libcvs.dsp libcvs.mak test-getdate.sh alloca_.h \
 	allocsa.valgrind canon-host.h canonicalize.h chdir-long.h \
 	close-stream.h closeout.h cycle-check.h dev-ino.h dirname.h \
-	exitfail.h fcntl-safer.h fcntl--.h filenamecat.h fnmatch_.h \
-	fnmatch_loop.c __fpending.h getcwd.h getdate.c getdate.h \
-	getdelim.h getline.h getlogin_r.h getndelim2.h getndelim2.c \
-	getopt_.h getopt_int.h getpagesize.h getpass.h glob_.h \
-	glob-libc.h intprops.h inttypes.h lchown.h lstat.h mempcpy.h \
-	memrchr.h at-func.c openat.h openat-priv.h pagealign_alloc.h \
-	pathmax.h quotearg.h regcomp.c regex.h regex_internal.c \
-	regex_internal.h regexec.c same-inode.h save-cwd.h \
-	stat-macros.h stdbool_.h stdint_.h strdup.h strftime.h \
-	strndup.h strnlen.h socket_.h stat_.h time_r.h timespec.h \
-	unistd-safer.h unistd--.h unlocked-io.h xalloc.h xgetcwd.h \
-	xreadlink.h yesno.h
+	exitfail.h fcntl_.h fcntl-safer.h fcntl--.h filenamecat.h \
+	fnmatch_.h fnmatch_loop.c __fpending.h getcwd.h getdate.c \
+	getdate.h getdelim.h getline.h getlogin_r.h getndelim2.h \
+	getndelim2.c getopt_.h getopt_int.h getpagesize.h getpass.h \
+	glob_.h glob-libc.h intprops.h inttypes_.h lchown.h lstat.h \
+	mempcpy.h memrchr.h at-func.c openat.h openat-priv.h \
+	pagealign_alloc.h pathmax.h quotearg.h regcomp.c regex.h \
+	regex_internal.c regex_internal.h regexec.c same-inode.h \
+	save-cwd.h stat-macros.h stdbool_.h stdint_.h strdup.h \
+	strftime.h strndup.h strnlen.h socket_.h stat_.h time_r.h \
+	timespec.h unistd-safer.h unistd--.h unlocked-io.h xalloc.h \
+	xgetcwd.h xreadlink.h yesno.h
 getdate_SOURCES = error.c getdate.y progname.c
 getdate_CPPFLAGS = -DTEST
 getdate_LDADD = \
@@ -931,6 +943,13 @@ arpa/inet.h:
 	echo '#include <sys/socket.h>' >$@-t
 	mv $@-t $@
 
+# We need the following in order to create <fcntl.h> when the system
+# doesn't have one that works with the given compiler.
+fcntl.h: fcntl_.h
+	sed -e 's|@''ABSOLUTE_FCNTL_H''@|$(ABSOLUTE_FCNTL_H)|g' \
+	    < $(srcdir)/fcntl_.h > $@-t
+	mv $@-t $@
+
 # We need the following in order to create <fnmatch.h> when the system
 # doesn't have one that supports the required API.
 fnmatch.h: fnmatch_.h
@@ -948,6 +967,21 @@ getopt.h: getopt_.h
 all-local $(libcvs_a_OBJECTS): $(GLOB_H)
 glob.h: glob_.h
 	cp $(srcdir)/glob_.h $@-t
+	mv $@-t $@
+
+# We need the following in order to create <inttypes.h> when the system
+# doesn't have one that works with the given compiler.
+inttypes.h: inttypes_.h
+	sed -e 's/@''HAVE_INTTYPES_H''@/$(HAVE_INTTYPES_H)/g' \
+	    -e 's|@''ABSOLUTE_INTTYPES_H''@|$(ABSOLUTE_INTTYPES_H)|g' \
+	    -e 's/@''PRI_MACROS_BROKEN''@/$(PRI_MACROS_BROKEN)/g' \
+	    -e 's/@''HAVE_LONG_LONG_INT''@/$(HAVE_LONG_LONG_INT)/g' \
+	    -e 's/@''PRIPTR_PREFIX''@/$(PRIPTR_PREFIX)/g' \
+	    -e 's/@''HAVE_DECL_IMAXABS''@/$(HAVE_DECL_IMAXABS)/g' \
+	    -e 's/@''HAVE_DECL_IMAXDIV''@/$(HAVE_DECL_IMAXDIV)/g' \
+	    -e 's/@''HAVE_DECL_STRTOIMAX''@/$(HAVE_DECL_STRTOIMAX)/g' \
+	    -e 's/@''HAVE_DECL_STRTOUMAX''@/$(HAVE_DECL_STRTOUMAX)/g' \
+	    < $(srcdir)/inttypes_.h > $@-t
 	mv $@-t $@
 
 # We need the following in order to create <netinet/in.h> when the system
@@ -969,8 +1003,8 @@ stdbool.h: stdbool_.h
 stdint.h: stdint_.h
 	sed -e 's/@''HAVE_WCHAR_H''@/$(HAVE_WCHAR_H)/g' \
 	    -e 's/@''HAVE_STDINT_H''@/$(HAVE_STDINT_H)/g' \
-	    -e 's/@''HAVE_SYS_TYPES_H''@/$(HAVE_SYS_TYPES_H)/g' \
 	    -e 's|@''ABSOLUTE_STDINT_H''@|$(ABSOLUTE_STDINT_H)|g' \
+	    -e 's/@''HAVE_SYS_TYPES_H''@/$(HAVE_SYS_TYPES_H)/g' \
 	    -e 's/@''HAVE_INTTYPES_H''@/$(HAVE_INTTYPES_H)/g' \
 	    -e 's/@''HAVE_SYS_INTTYPES_H''@/$(HAVE_SYS_INTTYPES_H)/g' \
 	    -e 's/@''HAVE_SYS_BITYPES_H''@/$(HAVE_SYS_BITYPES_H)/g' \

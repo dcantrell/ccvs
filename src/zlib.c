@@ -16,6 +16,10 @@
 /* The routines in this file are the interface between the CVS
    client/server support and the zlib compression library.  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "cvs.h"
 #include "buffer.h"
 
