@@ -1,3 +1,10 @@
+2006-09-05  Mark D. Baushke  <mdb@gnu.org>
+
+	* validate_repo.pl (look_at_cvs_file): Check for head being in
+	state 'dead' outside the Attic and not dead inside the Attic.
+	(get_history): Remember the head revision for later use.
+	(Problem report from <David.Carter-Hitchin@rbos.com>.) 
+	
 2006-08-16  Mark D. Baushke  <mdb@gnu.org>
 
 	* Makefile.in, pam/Makefile.in: Regenerated.

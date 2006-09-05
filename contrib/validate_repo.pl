@@ -9,6 +9,10 @@
 #                & Ximbiot <http://ximbiot.com>.
 #  All rights reserved.
 #
+#  Some portions Copyright (c) 2006 by
+#                Mark D. Baushke <mailto:mdb@gnu.org>
+#  All rights reserved.
+#
 #  Permission is granted to copy and/or distribute this file, with or
 #  without modifications, provided this notice is preserved.
 #
@@ -358,7 +362,7 @@ sub process_file
 
 		if( $path =~ s/,v$// )
 		{
-			look_at_cvs_file( $path );
+			look_at_cvs_file( $path, $cvsroot );
 		}
 		elsif( !grep { $path =~ $_ } @ignore_files )
 		{
@@ -408,10 +412,11 @@ sub process_file
 ######################################################################
 sub look_at_cvs_file
 {
-    my( $file ) = @_;
+    my( $file, $root ) = @_;
     my( $name, $path ) = fileparse( $file );
+    my $in_attic = ($path =~ s#Attic/$##);
 
-    $file = $path . $name if $path =~ s#Attic/$##;
+    $file = $path . $name if $in_attic;
 
     my( $finfo, $rinfo ) = get_history( $file );
 
@@ -436,6 +441,36 @@ sub look_at_cvs_file
             push( @list_of_broken_files, $file );
             return();
         }
+    }
+
+    # Only need to check this case if the Attic file exists.
+    if( $in_attic && -f "$root/${path}$name" )
+    {
+	verbose( "\t`$path$name AND ${path}Attic/$name BOTH exist\n");
+	push( @list_of_broken_files, $file );
+	# Do not return here, there may be more ahead.
+    }
+
+    unless( defined $$finfo{'head'})
+    {
+	verbose( "\t`$file' is corrupted. It contains no head revision\n");
+	push( @list_of_broken_files, $file )
+	    unless grep ($_ eq $file, @list_of_broken_files );
+	# Do not return here, there may be more ahead.
+    }
+
+    if( $in_attic && $$rinfo{$$finfo{'head'}}{'state'} ne 'dead' )
+    {
+	verbose( "\t`$file' is corrupted. It is in the Attic and contains a non-dead head revision\n");
+	push( @list_of_broken_files, $file )
+	    unless grep ($_ eq $file, @list_of_broken_files );
+	# Do not return here, there may be more ahead.
+    }
+    elsif( !$in_attic && $$rinfo{$$finfo{'head'}}{'state'} eq 'dead' )
+    {
+	verbose( "\t`$file' is corrupted. It is NOT in the Attic and contains a dead head revision\n");
+	push( @list_of_broken_files, $file )
+	    unless grep ($_ eq $file, @list_of_broken_files );
     }
 }
 
@@ -521,6 +556,13 @@ sub get_history
 		if( $ignore == -1 )
 		{
 			# Until we find the first ---- below, we can read general file info
+                    if( my ( $head ) =
+		             $line =~ /^head: (\S+)$/ )
+			{
+				$finfo{'head'} = $head;
+				next;
+			}
+
 		    if( my ( $kwmode ) =
 		             $line =~ /^keyword substitution: (\S+)$/ )
 			{
