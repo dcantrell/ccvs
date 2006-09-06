@@ -188,9 +188,9 @@ void buf_copy_data (struct buffer *buf, struct buffer_data *data,
 #endif /* PROXY_SUPPORT */
 void buf_free_data (struct buffer *);
 
-#ifdef SERVER_FLOWCONTROL
+#if defined (SERVER_FLOWCONTROL) || defined (PROXY_SUPPORT)
 int buf_count_mem (struct buffer *);
-#endif /* SERVER_FLOWCONTROL */
+#endif /* SERVER_FLOWCONTROL || PROXY_SUPPORT */
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 

@@ -1,3 +1,7 @@
+2006-09-06  Mark D. Baushke  <mdb@gnu.org>
+
+	* buffer.h (buf_count_mem): Provide if defined (PROXY_SUPPORT).
+
 2006-09-06  Derek Price  <derek@ximbiot.com>
 
 	[bug #17560]
