@@ -7320,28 +7320,6 @@ linevector_add (struct linevector *vec, const char *text, size_t len,
 
 
 
-/* Remove NLINES lines from VEC at position POS (where line 0 is the
-   first line).  */
-static void
-linevector_delete (struct linevector *vec, unsigned int pos,
-		   unsigned int nlines)
-{
-    unsigned int i;
-    unsigned int last;
-
-    last = vec->nlines - nlines;
-    for (i = pos; i < pos + nlines; ++i)
-    {
-	if (--vec->vector[i]->refcount == 0)
-	    free (vec->vector[i]);
-    }
-    for (i = pos; i < last; ++i)
-	vec->vector[i] = vec->vector[i + nlines];
-    vec->nlines -= nlines;
-}
-
-
-
 /* Copy FROM to TO, copying the vectors but not the lines pointed to.  */
 static void
 linevector_copy (struct linevector *to, struct linevector *from)
@@ -7546,19 +7524,20 @@ apply_rcs_changes (struct linevector *lines, const char *diffbuf,
 	   original items. */
 	unsigned long deltaend;
 
-	for (deltaend = df->pos - offset;
-	     lastmodline < deltaend;
-	     lastmodline++)
-	{
-	    /* we need to copy from the orig structure into new one */
-	    lines->vector[lastmodline] =
-		orig_lines->vector[lastmodline + offset];
-	}
-
 	/* Once an error is encountered, just free the rest of the list and
 	 * return.
 	 */
 	if (!err)
+	{
+	    for (deltaend = df->pos - offset;
+		 lastmodline < deltaend;
+		 lastmodline++)
+	    {
+		/* we need to copy from the orig structure into new one */
+		lines->vector[lastmodline] =
+		    orig_lines->vector[lastmodline + offset];
+	    }
+
 	    switch (df->type)
 	    {
 	    case FRAG_ADD:
@@ -7569,7 +7548,7 @@ apply_rcs_changes (struct linevector *lines, const char *diffbuf,
 		    int nextline_newline;
 		    size_t nextline_len;
 		    int online;
-            
+	    
 		    textend = df->new_lines + df->len;
 		    nextline_newline = 0;
 		    nextline_text = df->new_lines;
@@ -7597,7 +7576,7 @@ apply_rcs_changes (struct linevector *lines, const char *diffbuf,
 			    memcpy (q->text, nextline_text, nextline_len);
 			    lines->vector[lastmodline++] = q;
 			    offset--;
-                
+		
 			    nextline_text = (char *)p + 1;
 			    nextline_newline = 0;
 			}
@@ -7615,10 +7594,9 @@ apply_rcs_changes (struct linevector *lines, const char *diffbuf,
 		    /* For each line we add the offset between the #'s
 		       increases. */
 		    offset--;
-    
 		}
-
 		break;
+
 	    case FRAG_DELETE:
 		/* we are removing this many lines from the source. */
 		offset += df->nlines;
@@ -7639,33 +7617,37 @@ apply_rcs_changes (struct linevector *lines, const char *diffbuf,
 		    }
 		break;
 	    }
+	}
 
 	df = df->next;
 	free (dfhead);
 	dfhead = df;
     }
 
-    /* add the rest of the remaining lines to the data vector */
-    for (; lastmodline < numlines; lastmodline++) {
-	/* we need to copy from the orig structure into new one */
-        lines->vector[lastmodline] = orig_lines->vector[lastmodline + offset];
-    }
-
-    /* we didn't make the lines structure fully -- so we can't
-       use the linevector_copy without issues -- so we do it inline
-       make the original vector larger if necessary */
-    if (numlines > orig_lines->nlines)
+    if (err)
     {
-	orig_lines->vector = xnrealloc (orig_lines->vector,
-					numlines,
-					sizeof (*orig_lines->vector));
-	orig_lines->lines_alloced = numlines;
+	/* No reason to try and move a half-mutated and known invalid
+	 * text into the output buffer.
+	 */
+	free (lines->vector);
     }
-    memcpy (orig_lines->vector, lines->vector,
-	    xtimes (lines->nlines, sizeof (*orig_lines->vector)));
-    orig_lines->nlines = lines->nlines;
+    else
+    {
+	/* add the rest of the remaining lines to the data vector */
+	for (; lastmodline < numlines; lastmodline++)
+	{
+	    /* we need to copy from the orig structure into new one */
+	    lines->vector[lastmodline] = orig_lines->vector[lastmodline
+							    + offset];
+	}
 
-    free (lines->vector);
+	/* Move the lines vector to the original structure for output.  */
+	free (orig_lines->vector);
+	orig_lines->vector = lines->vector;
+	orig_lines->lines_alloced = numlines;
+	orig_lines->nlines = lines->nlines;
+    }
+
     free (lines);		/* we don't need it any longer */
 
     return !err;
