@@ -1,6 +1,12 @@
 2006-09-06  Mark D. Baushke  <mdb@gnu.org>
 
+	* client.h (HAVE_NETDB_H): Explicitly include netdb.h to get
+	'struct hostent' even when --disable-password-authenticated-client
+	and --without-gssapi are used.
+	(CVS_PROXY_PORT): Define outside of AUTH_CLIENT_SUPPORT and
+	HAVE_GSSAPI.
 	* buffer.h (buf_count_mem): Provide if defined (PROXY_SUPPORT).
+	(Problems reported by Jim Salter <jsalterjim@earthlink.net>.)
 
 2006-09-06  Derek Price  <derek@ximbiot.com>
 

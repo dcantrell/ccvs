@@ -20,6 +20,10 @@
 #include <sys/types.h>
 #include "root.h"
 
+/* Needed for struct hostent */
+#ifdef HAVE_NETDB_H
+#include <netdb.h>
+#endif
 
 
 /* Stuff shared with the server.  */
@@ -76,10 +80,11 @@ void connect_to_pserver (cvsroot_t *, struct buffer **, struct buffer **,
 #   ifndef CVS_AUTH_PORT
 #     define CVS_AUTH_PORT 2401
 #   endif /* CVS_AUTH_PORT */
-#   ifndef CVS_PROXY_PORT
-#     define CVS_PROXY_PORT 8080
-#   endif /* CVS_AUTH_PORT */
 # endif /* (AUTH_CLIENT_SUPPORT) || defined (HAVE_GSSAPI) */
+
+# ifndef CVS_PROXY_PORT
+#   define CVS_PROXY_PORT 8080
+# endif /* CVS_PROXY_PORT */
 
 # if HAVE_KERBEROS
 #   ifndef CVS_PORT
