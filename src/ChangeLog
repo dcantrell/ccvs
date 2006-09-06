@@ -1,3 +1,9 @@
+2006-09-06  Larry Jones  <lawrence.jones@ugs.com>
+
+	* rcs.c (apply_rcs_changes): Improve linked list handling.  Remove
+	unused variables and unreachable error handling code.  Avoid unneeded
+	dynamic allocation of temp linevector.  Minor stylistic code clean up.
+
 2006-09-06  Derek Price  <derek@ximbiot.com>
 
 	[bug #17560]
