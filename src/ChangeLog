@@ -1,3 +1,9 @@
+2006-09-06  Derek Price  <derek@ximbiot.com>
+
+	[bug #17560]
+	* rcs.c (apply_rcs_changes): Improve header block comment.  Clean up
+	unused linevector on non-fatal error.
+
 2006-09-06  Mark D. Baushke  <mdb@gnu.org>
 
 	* client.h (HAVE_NETDB_H): Explicitly include netdb.h to get

@@ -7359,7 +7359,7 @@ linevector_free (struct linevector *vec)
     if (vec->vector != NULL)
     {
 	for (ln = 0; ln < vec->nlines; ++ln)
-	    if (--vec->vector[ln]->refcount == 0)
+	    if (vec->vector[ln] && --vec->vector[ln]->refcount == 0)
 		free (vec->vector[ln]);
 
 	free (vec->vector);
@@ -7391,16 +7391,25 @@ month_printname (const char *month)
 
 
 /* Apply changes to the line vector LINES.  DIFFBUF is a buffer of
-   length DIFFLEN holding the change text from an RCS file (the output
-   of diff -n).  NAME is used in error messages.  The VERS field of
-   any line added is set to ADDVERS.  The VERS field of any line
-   deleted is set to DELVERS, unless DELVERS is NULL, in which case
-   the VERS field of deleted lines is unchanged.  The function returns
-   non-zero if the change text is applied successfully.  It returns
-   zero if the change text does not appear to apply to LINES (e.g., a
-   line number is invalid).  If the change text is improperly
-   formatted (e.g., it is not the output of diff -n), the function
-   calls error with a status of 1, causing the program to exit.  */
+ * length DIFFLEN holding the change text from an RCS file (the output
+ * of diff -n).  NAME is used in error messages.  The VERS field of
+ * any line added is set to ADDVERS.  The VERS field of any line
+ * deleted is set to DELVERS, unless DELVERS is NULL, in which case
+ * the VERS field of deleted lines is unchanged.
+ *
+ * RETURNS
+ *   Non-zero if the change text is applied successfully to LINES.
+ *
+ *   If the change text does not appear to apply to LINES (e.g., a
+ *   line number is invalid), this function will return zero and LINES
+ *   will be in an undefined state (though refcounts and such will be
+ *   preserved for garbage collection).
+ *
+ * ERRORS
+ *   If the change text is improperly formatted (e.g., it is not the output
+ *   of diff -n), the function calls error with a status of 1, causing the
+ *   program to exit.
+ */
 static int
 apply_rcs_changes (struct linevector *lines, const char *diffbuf,
 		   size_t difflen, const char *name, RCSVers *addvers,
@@ -7427,7 +7436,11 @@ apply_rcs_changes (struct linevector *lines, const char *diffbuf,
     unsigned long numlines, lastmodline, offset;
     struct linevector *orig_lines = lines;
 
-    dfhead = NULL;
+    /* The only reason to set dftail to NULL is to appease GCC.  GCC prints a
+     * warning about its potentially being used uninitialized, even though the
+     * logic here prevents that.
+     */
+    dfhead = dftail = NULL;
     numlines = lines->nlines; /* start with init # of lines */
     for (p = diffbuf; p != NULL && p < diffbuf + difflen; )
     {
@@ -7536,6 +7549,7 @@ apply_rcs_changes (struct linevector *lines, const char *diffbuf,
 		/* we need to copy from the orig structure into new one */
 		lines->vector[lastmodline] =
 		    orig_lines->vector[lastmodline + offset];
+		lines->vector[lastmodline]->refcount++;
 	    }
 
 	    switch (df->type)
@@ -7608,12 +7622,10 @@ apply_rcs_changes (struct linevector *lines, const char *diffbuf,
 		    for (ln = df->pos; ln < df->pos + df->nlines; ++ln)
 		    {
 			if (--orig_lines->vector[ln]->refcount == 0)
-			{
 			    free (orig_lines->vector[ln]);
-			    orig_lines->vector[ln] = NULL;
-			}
-			else 
+			else
 			    orig_lines->vector[ln]->vers = delvers;
+			orig_lines->vector[ln] = NULL;
 		    }
 		break;
 	    }
@@ -7629,7 +7641,7 @@ apply_rcs_changes (struct linevector *lines, const char *diffbuf,
 	/* No reason to try and move a half-mutated and known invalid
 	 * text into the output buffer.
 	 */
-	free (lines->vector);
+	linevector_free (lines);
     }
     else
     {
@@ -7639,10 +7651,13 @@ apply_rcs_changes (struct linevector *lines, const char *diffbuf,
 	    /* we need to copy from the orig structure into new one */
 	    lines->vector[lastmodline] = orig_lines->vector[lastmodline
 							    + offset];
+	    lines->vector[lastmodline]->refcount++;
 	}
 
-	/* Move the lines vector to the original structure for output.  */
-	free (orig_lines->vector);
+	/* Move the lines vector to the original structure for output,
+	 * first deleting the old.
+	 */
+	linevector_free (orig_lines);
 	orig_lines->vector = lines->vector;
 	orig_lines->lines_alloced = numlines;
 	orig_lines->nlines = lines->nlines;
