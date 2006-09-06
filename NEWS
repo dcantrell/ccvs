@@ -3,6 +3,10 @@ Changes since 1.12.13:
 
 NEW FEATURES
 
+* Applying diffs when checking out very old revisions has been reduced from an
+  O(n^2) operation to an O(n) thanks to a patch from Michael J. Smith
+  <msmith@ideorlando.org> and additional touch-up work from the CVS team.
+
 * A new --timeout option is available to time out network connections for the
   client or server.
 
