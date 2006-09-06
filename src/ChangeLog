@@ -1,3 +1,10 @@
+2006-09-06  Derek Price  <derek@ximbiot.com>
+
+	[bug #17560]
+	* rcs.c (apply_rcs_changes): Remove an unecessary memcpy.  Avoid some
+	other processing on error.
+	(linevector_delete): Remove - it's no longer used.
+
 2006-09-06  Mark D. Baushke  <mdb@gnu.org>
 
 	[bug #17560]
