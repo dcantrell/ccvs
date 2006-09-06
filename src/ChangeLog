@@ -10,7 +10,8 @@
 	[bug #17560]
 	* rcs.c (apply_rcs_changes): Fix the merge algorithm from O(n^2)
 	to O(n).
-	(Based on a patch submitted by Michael Smith.)
+	(Based on a patch submitted by "Michael J. Smith"
+	<msmith@ideorlando.org>)
 
 2006-09-02  Mark D. Baushke  <mdb@gnu.org>
 
