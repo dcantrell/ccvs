@@ -7402,8 +7402,7 @@ month_printname (const char *month)
  *
  *   If the change text does not appear to apply to ORIG_LINES (e.g., a
  *   line number is invalid), this function will return zero and ORIG_LINES
- *   will be in an undefined state (though refcounts and such will be
- *   preserved for garbage collection).
+ *   will remain unmolested.
  *
  * ERRORS
  *   If the change text is improperly formatted (e.g., it is not the output
