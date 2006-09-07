@@ -7001,31 +7001,6 @@ linevector_add (vec, text, len, vers, pos)
     return 1;
 }
 
-static void linevector_delete PROTO ((struct linevector *, unsigned int,
-				      unsigned int));
-
-/* Remove NLINES lines from VEC at position POS (where line 0 is the
-   first line).  */
-static void
-linevector_delete (vec, pos, nlines)
-    struct linevector *vec;
-    unsigned int pos;
-    unsigned int nlines;
-{
-    unsigned int i;
-    unsigned int last;
-
-    last = vec->nlines - nlines;
-    for (i = pos; i < pos + nlines; ++i)
-    {
-	if (--vec->vector[i]->refcount == 0)
-	    free (vec->vector[i]);
-    }
-    for (i = pos; i < last; ++i)
-	vec->vector[i] = vec->vector[i + nlines];
-    vec->nlines -= nlines;
-}
-
 static void linevector_copy PROTO ((struct linevector *, struct linevector *));
 
 /* Copy FROM to TO, copying the vectors but not the lines pointed to.  */
@@ -7069,7 +7044,7 @@ linevector_free (vec)
     if (vec->vector != NULL)
     {
 	for (ln = 0; ln < vec->nlines; ++ln)
-	    if (--vec->vector[ln]->refcount == 0)
+	    if (vec->vector[ln] && --vec->vector[ln]->refcount == 0)
 		free (vec->vector[ln]);
 
 	free (vec->vector);
@@ -7104,20 +7079,28 @@ apply_rcs_changes PROTO ((struct linevector *, const char *, size_t,
 			  const char *, RCSVers *, RCSVers *));
 
 /* Apply changes to the line vector LINES.  DIFFBUF is a buffer of
-   length DIFFLEN holding the change text from an RCS file (the output
-   of diff -n).  NAME is used in error messages.  The VERS field of
-   any line added is set to ADDVERS.  The VERS field of any line
-   deleted is set to DELVERS, unless DELVERS is NULL, in which case
-   the VERS field of deleted lines is unchanged.  The function returns
-   non-zero if the change text is applied successfully.  It returns
-   zero if the change text does not appear to apply to LINES (e.g., a
-   line number is invalid).  If the change text is improperly
-   formatted (e.g., it is not the output of diff -n), the function
-   calls error with a status of 1, causing the program to exit.  */
-
+ * length DIFFLEN holding the change text from an RCS file (the output
+ * of diff -n).  NAME is used in error messages.  The VERS field of
+ * any line added is set to ADDVERS.  The VERS field of any line
+ * deleted is set to DELVERS, unless DELVERS is NULL, in which case
+ * the VERS field of deleted lines is unchanged.
+ *
+ * RETURNS
+ *   Non-zero if the change text is applied successfully to LINES.
+ *
+ *   If the change text does not appear to apply to LINES (e.g., a
+ *   line number is invalid), this function will return zero and LINES
+ *   will be in an undefined state (though refcounts and such will be
+ *   preserved for garbage collection).
+ *
+ * ERRORS
+ *   If the change text is improperly formatted (e.g., it is not the output
+ *   of diff -n), the function calls error with a status of 1, causing the
+ *   program to exit.
+ */
 static int
-apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
-     struct linevector *lines;
+apply_rcs_changes (orig_lines, diffbuf, difflen, name, addvers, delvers)
+     struct linevector *orig_lines;
      const char *diffbuf;
      size_t difflen;
      const char *name;
@@ -7139,14 +7122,14 @@ apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
 	struct deltafrag *next;
     };
     struct deltafrag *dfhead;
-    struct deltafrag *dftail;
+    struct deltafrag **dftail;
     struct deltafrag *df;
-    int err;
     unsigned long numlines, lastmodline, offset;
-    struct linevector *orig_lines = lines;
+    struct linevector lines;
 
     dfhead = NULL;
-    numlines = lines->nlines; /* start with init # of lines */
+    dftail = &dfhead;
+    numlines = orig_lines->nlines; /* start with init # of lines */
     for (p = diffbuf; p != NULL && p < diffbuf + difflen; )
     {
 	op = *p++;
@@ -7155,13 +7138,8 @@ apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
 	       of op determines the syntax.  */
 	    error (1, 0, "unrecognized operation '\\x%x' in %s",
 		   op, name);
-	df = xmalloc (sizeof (struct deltafrag));
-	df->next = NULL;
-	if (dfhead == NULL)
-	    dfhead = df;
-	else
-	    dftail->next = df;
-	dftail = df;
+	*dftail = df = xmalloc (sizeof *df);
+	*(dftail = &df->next) = NULL;
 
 	df->pos = strtoul (p, (char **) &q, 10);
 
@@ -7219,10 +7197,8 @@ apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
 
     /* New temp data structure to hold new org before
        copy back into original structure. */
-    lines = xmalloc (sizeof (struct linevector));
-    lines->nlines = lines->lines_alloced = numlines;
-    lines->vector = xmalloc (numlines * sizeof (*lines->vector));
-
+    lines.nlines = lines.lines_alloced = numlines;
+    lines.vector = xmalloc (numlines * sizeof *lines.vector);
 
     /* We changed the list order to first to last -- so the
        list never gets larger than the size numlines. */
@@ -7232,89 +7208,79 @@ apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
        between new and original structure */
     offset = 0; 
 
-    err = 0;
-    for (df = dfhead; df != NULL;)
+    for (df = dfhead; df != NULL; )
     {
 	unsigned int ln;
+	unsigned long deltaend;
 
 	/* Here we need to get to the line where the next insert will
 	   begin which is <df->pos> we will fill up to df->pos with
 	   original items. */
-	unsigned long deltaend;
-
-	for (deltaend = df->pos - offset;
-	     lastmodline < deltaend;
-	     lastmodline++)
+	for (deltaend = df->pos - offset; lastmodline < deltaend; lastmodline++)
 	{
 	    /* we need to copy from the orig structure into new one */
-	    lines->vector[lastmodline] =
-		orig_lines->vector[lastmodline + offset];
-	}
+	    lines.vector[lastmodline] =
+		    orig_lines->vector[lastmodline + offset];
+	    lines.vector[lastmodline]->refcount++;
+	    }
 
-	/* Once an error is encountered, just free the rest of the list and
-	 * return.
-	 */
-	if (!err)
-	    switch (df->type)
-	    {
+	switch (df->type)
+	{
 	    case FRAG_ADD:
-		{
-		    const char *textend, *p;
-		    const char *nextline_text;
-		    struct line *q;
-		    int nextline_newline;
-		    size_t nextline_len;
-		    int online;
+	    {
+		const char *textend, *p;
+		const char *nextline_text;
+		struct line *q;
+		int nextline_newline;
+		size_t nextline_len;
             
-		    textend = df->new_lines + df->len;
-		    nextline_newline = 0;
-		    nextline_text = df->new_lines;
-		    online = 0;	/* which line we are currently adding */
-		    for (p = df->new_lines; p < textend; ++p)
+		textend = df->new_lines + df->len;
+		nextline_newline = 0;
+		nextline_text = df->new_lines;
+		for (p = df->new_lines; p < textend; ++p)
+		{
+		    if (*p == '\n')
 		    {
-			if (*p == '\n')
+			nextline_newline = 1;
+			if (p + 1 == textend)
 			{
-			    nextline_newline = 1;
-			    if (p + 1 == textend)
-			    {
-				/* If there are no characters beyond the
-				   last newline, we don't consider it
-				   another line. */
-				break;
-			    }
-
-			    nextline_len = p - nextline_text;
-			    q = xmalloc (sizeof (struct line) + nextline_len);
-			    q->vers = addvers;
-			    q->text = (char *)q + sizeof (struct line);
-			    q->len = nextline_len;
-			    q->has_newline = nextline_newline;
-			    q->refcount = 1;
-			    memcpy (q->text, nextline_text, nextline_len);
-			    lines->vector[lastmodline++] = q;
-			    offset--;
-                
-			    nextline_text = (char *)p + 1;
-			    nextline_newline = 0;
+			    /* If there are no characters beyond the
+			       last newline, we don't consider it
+			       another line. */
+			    break;
 			}
+
+			nextline_len = p - nextline_text;
+			q = xmalloc (sizeof *q + nextline_len);
+			q->vers = addvers;
+			q->text = (char *)(q + 1);
+			q->len = nextline_len;
+			q->has_newline = nextline_newline;
+			q->refcount = 1;
+			memcpy (q->text, nextline_text, nextline_len);
+			lines.vector[lastmodline++] = q;
+			offset--;
+		
+			nextline_text = (char *)p + 1;
+			nextline_newline = 0;
 		    }
-		    nextline_len = p - nextline_text;
-		    q = xmalloc (sizeof (struct line) + nextline_len);
-		    q->vers = addvers;
-		    q->text = (char *)q + sizeof (struct line);
-		    q->len = nextline_len;
-		    q->has_newline = nextline_newline;
-		    q->refcount = 1;
-		    memcpy (q->text, nextline_text, nextline_len);
-		    lines->vector[lastmodline++] = q;
-
-		    /* For each line we add the offset between the #'s
-		       increases. */
-		    offset--;
-    
 		}
+		nextline_len = p - nextline_text;
+		q = xmalloc (sizeof *q + nextline_len);
+		q->vers = addvers;
+		q->text = (char *)(q + 1);
+		q->len = nextline_len;
+		q->has_newline = nextline_newline;
+		q->refcount = 1;
+		memcpy (q->text, nextline_text, nextline_len);
+		lines.vector[lastmodline++] = q;
 
+		/* For each line we add the offset between the #'s
+		   decreases. */
+		offset--;
 		break;
+	    }
+
 	    case FRAG_DELETE:
 		/* we are removing this many lines from the source. */
 		offset += df->nlines;
@@ -7326,15 +7292,13 @@ apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
 		    for (ln = df->pos; ln < df->pos + df->nlines; ++ln)
 		    {
 			if (--orig_lines->vector[ln]->refcount == 0)
-			{
 			    free (orig_lines->vector[ln]);
-			    orig_lines->vector[ln] = NULL;
-			}
-			else 
+			else
 			    orig_lines->vector[ln]->vers = delvers;
+			orig_lines->vector[ln] = NULL;
 		    }
 		break;
-	    }
+	}
 
 	df = df->next;
 	free (dfhead);
@@ -7342,29 +7306,22 @@ apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
     }
 
     /* add the rest of the remaining lines to the data vector */
-    for (; lastmodline < numlines; lastmodline++) {
-	/* we need to copy from the orig structure into new one */
-        lines->vector[lastmodline] = orig_lines->vector[lastmodline + offset];
-    }
-
-    /* we didn't make the lines structure fully -- so we can't
-       use the linevector_copy without issues -- so we do it inline
-       make the original vector larger if necessary */
-    if (numlines > orig_lines->nlines)
+    for (; lastmodline < numlines; lastmodline++)
     {
-	orig_lines->vector = xrealloc (orig_lines->vector,
-				       numlines
-				       * sizeof (*orig_lines->vector));
-	orig_lines->lines_alloced = numlines;
+	/* we need to copy from the orig structure into new one */
+	lines.vector[lastmodline] = orig_lines->vector[lastmodline + offset];
+	lines.vector[lastmodline]->refcount++;
     }
-    memcpy (orig_lines->vector, lines->vector,
-	    xtimes (lines->nlines, sizeof (*orig_lines->vector)));
-    orig_lines->nlines = lines->nlines;
 
-    free (lines->vector);
-    free (lines);		/* we don't need it any longer */
+    /* Move the lines vector to the original structure for output,
+     * first deleting the old.
+     */
+    linevector_free (orig_lines);
+    orig_lines->vector = lines.vector;
+    orig_lines->lines_alloced = numlines;
+    orig_lines->nlines = lines.nlines;
 
-    return !err;
+    return 1;
 }
 
 /* Apply an RCS change text to a buffer.  The function name starts
