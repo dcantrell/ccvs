@@ -1,3 +1,9 @@
+2006-09-07  Derek Price  <derek@ximbiot.com>
+
+	[bug #17560]
+	* rcs.c (apply_rcs_changes): Improve comments.  Restore repaired error
+	handling.
+
 2006-09-06  Larry Jones  <lawrence.jones@ugs.com>
 
 	* rcs.c (apply_rcs_changes): Improve linked list handling.  Remove
