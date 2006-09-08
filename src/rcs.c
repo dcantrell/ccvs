@@ -7086,12 +7086,11 @@ apply_rcs_changes PROTO ((struct linevector *, const char *, size_t,
  * the VERS field of deleted lines is unchanged.
  *
  * RETURNS
- *   Non-zero if the change text is applied successfully to LINES.
+ *   Non-zero if the change text is applied successfully to ORIG_LINES.
  *
- *   If the change text does not appear to apply to LINES (e.g., a
- *   line number is invalid), this function will return zero and LINES
- *   will be in an undefined state (though refcounts and such will be
- *   preserved for garbage collection).
+ *   If the change text does not appear to apply to ORIG_LINES (e.g., a
+ *   line number is invalid), this function will return zero and ORIG_LINES
+ *   will remain unmolested.
  *
  * ERRORS
  *   If the change text is improperly formatted (e.g., it is not the output
@@ -7126,6 +7125,7 @@ apply_rcs_changes (orig_lines, diffbuf, difflen, name, addvers, delvers)
     struct deltafrag *df;
     unsigned long numlines, lastmodline, offset;
     struct linevector lines;
+    int err;
 
     dfhead = NULL;
     dftail = &dfhead;
@@ -7207,97 +7207,105 @@ apply_rcs_changes (orig_lines, diffbuf, difflen, name, addvers, delvers)
     /* offset created when adding/removing lines
        between new and original structure */
     offset = 0; 
-
+    err = 0;
     for (df = dfhead; df != NULL; )
     {
 	unsigned int ln;
 	unsigned long deltaend;
 
-	/* Here we need to get to the line where the next insert will
-	   begin which is <df->pos> we will fill up to df->pos with
-	   original items. */
-	for (deltaend = df->pos - offset; lastmodline < deltaend; lastmodline++)
-	{
-	    /* we need to copy from the orig structure into new one */
-	    lines.vector[lastmodline] =
-		    orig_lines->vector[lastmodline + offset];
-	    lines.vector[lastmodline]->refcount++;
-	    }
+	if (df->pos > orig_lines->nlines)
+	    err = 1;
 
-	switch (df->type)
+	/* On error, just free the rest of the list.  */
+	if (!err)
 	{
-	    case FRAG_ADD:
+	    /* Here we need to get to the line where the next insert will
+	       begin, which is DF->pos in ORIG_LINES.  We will fill up to
+	       DF->pos - OFFSET in LINES with original items.  */
+	    for (deltaend = df->pos - offset;
+		 lastmodline < deltaend;
+		 lastmodline++)
 	    {
-		const char *textend, *p;
-		const char *nextline_text;
-		struct line *q;
-		int nextline_newline;
-		size_t nextline_len;
-            
-		textend = df->new_lines + df->len;
-		nextline_newline = 0;
-		nextline_text = df->new_lines;
-		for (p = df->new_lines; p < textend; ++p)
-		{
-		    if (*p == '\n')
-		    {
-			nextline_newline = 1;
-			if (p + 1 == textend)
-			{
-			    /* If there are no characters beyond the
-			       last newline, we don't consider it
-			       another line. */
-			    break;
-			}
-
-			nextline_len = p - nextline_text;
-			q = xmalloc (sizeof *q + nextline_len);
-			q->vers = addvers;
-			q->text = (char *)(q + 1);
-			q->len = nextline_len;
-			q->has_newline = nextline_newline;
-			q->refcount = 1;
-			memcpy (q->text, nextline_text, nextline_len);
-			lines.vector[lastmodline++] = q;
-			offset--;
-		
-			nextline_text = (char *)p + 1;
-			nextline_newline = 0;
-		    }
-		}
-		nextline_len = p - nextline_text;
-		q = xmalloc (sizeof *q + nextline_len);
-		q->vers = addvers;
-		q->text = (char *)(q + 1);
-		q->len = nextline_len;
-		q->has_newline = nextline_newline;
-		q->refcount = 1;
-		memcpy (q->text, nextline_text, nextline_len);
-		lines.vector[lastmodline++] = q;
-
-		/* For each line we add the offset between the #'s
-		   decreases. */
-		offset--;
-		break;
+		/* we need to copy from the orig structure into new one */
+		lines.vector[lastmodline] =
+			orig_lines->vector[lastmodline + offset];
+		lines.vector[lastmodline]->refcount++;
 	    }
 
-	    case FRAG_DELETE:
-		/* we are removing this many lines from the source. */
-		offset += df->nlines;
-
-		if (df->pos > orig_lines->nlines
-		    || df->pos + df->nlines > orig_lines->nlines)
-		    return 0;
-		if (delvers != NULL)
-		    for (ln = df->pos; ln < df->pos + df->nlines; ++ln)
+	    switch (df->type)
+	    {
+		case FRAG_ADD:
+		{
+		    const char *textend, *p;
+		    const char *nextline_text;
+		    struct line *q;
+		    int nextline_newline;
+		    size_t nextline_len;
+		
+		    textend = df->new_lines + df->len;
+		    nextline_newline = 0;
+		    nextline_text = df->new_lines;
+		    for (p = df->new_lines; p < textend; ++p)
 		    {
-			if (--orig_lines->vector[ln]->refcount == 0)
-			    free (orig_lines->vector[ln]);
-			else
-			    orig_lines->vector[ln]->vers = delvers;
-			orig_lines->vector[ln] = NULL;
+			if (*p == '\n')
+			{
+			    nextline_newline = 1;
+			    if (p + 1 == textend)
+			    {
+				/* If there are no characters beyond the
+				   last newline, we don't consider it
+				   another line. */
+				break;
+			    }
+
+			    nextline_len = p - nextline_text;
+			    q = xmalloc (sizeof *q + nextline_len);
+			    q->vers = addvers;
+			    q->text = (char *)(q + 1);
+			    q->len = nextline_len;
+			    q->has_newline = nextline_newline;
+			    q->refcount = 1;
+			    memcpy (q->text, nextline_text, nextline_len);
+			    lines.vector[lastmodline++] = q;
+			    offset--;
+		    
+			    nextline_text = (char *)p + 1;
+			    nextline_newline = 0;
+			}
 		    }
-		break;
+		    nextline_len = p - nextline_text;
+		    q = xmalloc (sizeof *q + nextline_len);
+		    q->vers = addvers;
+		    q->text = (char *)(q + 1);
+		    q->len = nextline_len;
+		    q->has_newline = nextline_newline;
+		    q->refcount = 1;
+		    memcpy (q->text, nextline_text, nextline_len);
+		    lines.vector[lastmodline++] = q;
+
+		    /* For each line we add the offset between the #'s
+		       decreases. */
+		    offset--;
+		    break;
+		}
+
+		case FRAG_DELETE:
+		    /* we are removing this many lines from the source. */
+		    offset += df->nlines;
+
+		    if (df->pos + df->nlines > orig_lines->nlines)
+			err = 1;
+		    else if (delvers)
+			for (ln = df->pos; ln < df->pos + df->nlines; ++ln)
+			    if (orig_lines->vector[ln]->refcount > 1)
+				/* Annotate needs this but, since the original
+				 * vector is disposed of before returning from
+				 * this function, we only need keep track if
+				 * there are multiple references.
+				 */
+				orig_lines->vector[ln]->vers = delvers;
+		    break;
+	    }
 	}
 
 	df = df->next;
@@ -7305,23 +7313,34 @@ apply_rcs_changes (orig_lines, diffbuf, difflen, name, addvers, delvers)
 	dfhead = df;
     }
 
-    /* add the rest of the remaining lines to the data vector */
-    for (; lastmodline < numlines; lastmodline++)
+    if (err)
     {
-	/* we need to copy from the orig structure into new one */
-	lines.vector[lastmodline] = orig_lines->vector[lastmodline + offset];
-	lines.vector[lastmodline]->refcount++;
+	/* No reason to try and move a half-mutated and known invalid
+	 * text into the output buffer.
+	 */
+	linevector_free (&lines);
+    }
+    else
+    {
+	/* add the rest of the remaining lines to the data vector */
+	for (; lastmodline < numlines; lastmodline++)
+	{
+	    /* we need to copy from the orig structure into new one */
+	    lines.vector[lastmodline] = orig_lines->vector[lastmodline
+							   + offset];
+	    lines.vector[lastmodline]->refcount++;
+	}
+
+	/* Move the lines vector to the original structure for output,
+	 * first deleting the old.
+	 */
+	linevector_free (orig_lines);
+	orig_lines->vector = lines.vector;
+	orig_lines->lines_alloced = numlines;
+	orig_lines->nlines = lines.nlines;
     }
 
-    /* Move the lines vector to the original structure for output,
-     * first deleting the old.
-     */
-    linevector_free (orig_lines);
-    orig_lines->vector = lines.vector;
-    orig_lines->lines_alloced = numlines;
-    orig_lines->nlines = lines.nlines;
-
-    return 1;
+    return !err;
 }
 
 /* Apply an RCS change text to a buffer.  The function name starts
