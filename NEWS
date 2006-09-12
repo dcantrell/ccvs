@@ -3,6 +3,8 @@ Changes since 1.12.13:
 
 NEW FEATURES
 
+* commitinfo now supports the %T flag.
+
 * A new --timeout option is available to time out network connections for the
   client or server.
 
