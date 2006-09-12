@@ -14212,13 +14212,16 @@ In addition to the common format strings (@pxref{syntax}),
 @file{commitinfo} supports:
 
 @table @t
-@item %@{sa@}
+@item %@{saT@}
 File attributes, where:
 @table @t
 @item %s
 file name
 @item %a
 file action (status)
+@item %T
+tag name of destination, or the empty string when there is no associated
+tag name (this usually means the trunk)
 @end table
 @end table
 
