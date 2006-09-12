@@ -19846,11 +19846,21 @@ third-dir file1ux'
           echo "ALL echo %s >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %{V}AX >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "second-dir echo %sux >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL $TESTDIR/commitlog %r %p %{sTa}" >> commitinfo
 	  dotest info-setup-newfmt-2 "$testcvs -q -s ZEE=garbage ci -m nuke-admin-for-info-newfmt" \
-"${CVSROOT_DIRNAME}/CVSROOT/loginfo,v  <--  loginfo
+"$CVSROOT_DIRNAME/CVSROOT/commitinfo,v  <--  commitinfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-${SPROG} commit: Rebuilding administrative file database"
+$CVSROOT_DIRNAME/CVSROOT/loginfo,v  <--  loginfo
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
 	  cd ..
+
+	  cat >$TESTDIR/commitlog <<EOF
+for arg in \${1+"\$@"}; do
+  echo \$arg >>$TESTDIR/testlog3
+done
+EOF
+	  chmod a+x $TESTDIR/commitlog
 
 	  # delete the logs now so the results look more like the last tests
 	  # (they won't include the config file update)
@@ -19892,6 +19902,10 @@ $SPROG add: use \`$SPROG commit' to add this file permanently"
 "$TESTDIR/cvsroot/fourth-dir/file1,v  <--  file1
 new revision: 1.5; previous revision: 1\.4
 $SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
+          dotest info-newfmt-5e "$testcvs -q ci -fmtag -r2" \
+"$TESTDIR/cvsroot/fourth-dir/file1,v  <--  file1
+new revision: [0-9.]*; previous revision: [0-9.]*
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
 
 	  cd ..
 	  dotest info-newfmt-6 "cat $TESTDIR/testlog" \
@@ -19926,7 +19940,44 @@ added
 
 1\.5
 file1
-1\.4AX'
+1\.4AX
+fourth-dir file1 modified 2 NONE 2\.1
+modified
+2
+2\.1
+file1
+NONEAX'
+	  dotest info-newfmt-8 "cat $TESTDIR/testlog3" \
+"$CVSROOT_DIRNAME
+fourth-dir
+file1
+
+added
+$CVSROOT_DIRNAME
+fourth-dir
+file1
+
+modified
+$CVSROOT_DIRNAME
+fourth-dir
+file1
+
+modified
+$CVSROOT_DIRNAME
+fourth-dir
+file1
+
+removed
+$CVSROOT_DIRNAME
+fourth-dir
+file1
+
+added
+$CVSROOT_DIRNAME
+fourth-dir
+file1
+2
+modified"
 
 	  # clean up after newfmt tests
 	  cd CVSROOT

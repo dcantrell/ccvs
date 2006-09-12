@@ -1,3 +1,9 @@
+2006-09-12  Derek Price  <derek@ximbiot.com>
+
+	* commit.c (precommit_list_to_args_proc, precommit_proc): Output tag
+	for commitinfo line when requested.
+	* sanity.sh (info): Add tests for this.
+
 2006-09-07  Derek Price  <derek@ximbiot.com>
 
 	[bug #17560]

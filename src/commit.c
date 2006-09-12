@@ -1222,6 +1222,10 @@ precommit_list_to_args_proc (p, closure)
 		    arg = p->key;
 		}
 		break;
+	    case 'T':
+		li = p->data;
+		arg = li->tag ? li->tag : "";
+		break;
             case 'a':
                 li = p->data;
                 switch (li->type)
@@ -1322,7 +1326,7 @@ precommit_proc (const char *repository, const char *filter, void *closure)
 #endif /* SERVER_SUPPORT */
 			      "p", "s", srepos,
 			      "r", "s", current_parsed_root->directory,
-			      "sa", ",", ulist, precommit_list_to_args_proc,
+			      "saT", ",", ulist, precommit_list_to_args_proc,
 			      (void *) NULL,
 			      (char *) NULL);
 
