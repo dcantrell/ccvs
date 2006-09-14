@@ -1153,7 +1153,8 @@ if test x"$*" = x; then
 	tests="${tests} recase"
 	# Multiple root directories and low-level protocol tests.
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
-	tests="${tests} rmroot reposmv pserver server server2 client"
+	tests="$tests rmroot reposmv pserver server server2 server3"
+	tests="$tests client client2"
 	tests="${tests} dottedroot fork commit-d"
 else
 	tests="$*"
@@ -29084,6 +29085,65 @@ EOF
 	  fi
 	  ;;
 
+
+
+	server3)
+	  # Test that various checks on the Root request generate the correct
+	  # error messages.
+	  if $remote; then
+	    # As a control, a valid request.
+	    dotest server3-1 "$testcvs server" 'ok' <<EOF
+Root $CVSROOT_DIRNAME
+Directory .
+$CVSROOT_DIRNAME
+Unchanged foo
+noop
+EOF
+
+	    dotest server3-2 "$testcvs server" \
+"E Root somewhere/over/the/rainbow must be an absolute pathname
+error  " <<EOF
+Root somewhere/over/the/rainbow
+noop
+EOF
+
+	    dotest server3-3 "$testcvs server" \
+"E Protocol error: Duplicate Root request, for $CVSROOT_DIRNAME
+error  " <<EOF
+Root $CVSROOT_DIRNAME
+Root $CVSROOT_DIRNAME
+noop
+EOF
+
+	    dotest server3-4 "$testcvs server" \
+"E Protocol error: Duplicate Root request, for $CVSROOT_DIRNAME
+error  " <<EOF
+Root $CVSROOT_DIRNAME
+Root $CVSROOT_DIRNAME
+Directory .
+$CVSROOT_DIRNAME
+Unchanged foo
+noop
+EOF
+
+	    # These cascading errors seem odd, but the client should have hung
+	    # up after the first.
+	    dotest server3-5 "$testcvs server" \
+"E Root somewhere/over/the/rainbow must be an absolute pathname
+error  
+E Protocol error: Root request missing
+error  " <<EOF
+Root somewhere/over/the/rainbow
+Directory .
+somewhere/over/the/rainbow
+Unchanged foo
+noop
+EOF
+	  fi
+	  ;;
+
+
+
 	client)
 	  # Some tests of the client (independent of the server).
 	  if $remote; then
@@ -29409,6 +29469,68 @@ EOF
 	    CVS_SERVER=${save_CVS_SERVER}; export CVS_SERVER
 	  fi # skip the whole thing for local
 	  ;;
+
+
+
+	client2)
+	  # Test how the client handles error messages from the server.
+	  if $remote; then
+	    cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
+# This is just as cheesy as the "client" tests made it out to be.
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
+echo "E Root somewhere/over/the/rainbow must be an absolute pathname"
+echo "error  "
+echo "E Protocol error: Root request missing"
+echo "error  "
+cat >/dev/null
+EOF
+	    # Cygwin.  Pthffffffffft!
+	    if test -n "$remotehost"; then
+	      $CVS_RSH $remotehost "chmod +x $TESTDIR/serveme"
+	    else
+	      chmod +x $TESTDIR/serveme
+	    fi
+	    save_CVS_SERVER=$CVS_SERVER
+	    CVS_SERVER=$TESTDIR/serveme; export CVS_SERVER
+	    mkdir client2; cd client2
+	    dotest_fail client2-1 "$testcvs co first-dir" \
+"Root somewhere/over/the/rainbow must be an absolute pathname"
+
+	    cat >$TESTDIR/serveme <<EOF
+#!$TESTSHELL
+# This is just as cheesy as the "client" tests made it out to be.
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
+echo "E Root somewhere/over/the/rainbow must be an absolute pathname"
+echo
+echo "error  "
+echo "E Protocol error: Root request missing"
+echo "error  "
+cat >/dev/null
+EOF
+	    # Cygwin.  Pthffffffffft!
+	    if test -n "$remotehost"; then
+	      $CVS_RSH $remotehost "chmod +x $TESTDIR/serveme"
+	    else
+	      chmod +x $TESTDIR/serveme
+	    fi
+	    dotest_fail client2-2 "$testcvs co first-dir" \
+"Root somewhere/over/the/rainbow must be an absolute pathname
+$PROG checkout: warning: unrecognized response \`' from cvs server"
+
+	    if $keep; then
+	      echo Keeping $TESTDIR and exiting due to --keep
+	      exit 0
+	    fi
+
+	    cd ..
+	    rm -r client2
+	    rm $TESTDIR/serveme
+	    CVS_SERVER=$save_CVS_SERVER; export CVS_SERVER
+	  fi # skip the whole thing for local
+	  ;;
+
+
 
 	dottedroot)
 	  # Check that a CVSROOT with a "." in the name will work.
