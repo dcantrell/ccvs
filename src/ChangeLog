@@ -1,3 +1,7 @@
+2006-09-14  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (server3, client2): New tests.
+
 2006-09-12  Derek Price  <derek@ximbiot.com>
 
 	* commit.c (precommit_list_to_args_proc, precommit_proc): Output tag
