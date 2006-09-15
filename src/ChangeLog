@@ -1,5 +1,8 @@
 2006-09-15  Derek Price  <derek@ximbiot.com>
 
+	* server.c (pserver_authenticate_connection): Don't call error (1, ...)
+	where code is expected to execute afterwards.
+
 	Clean up repetitive server error handling code.
 	* server.c (pending_msg, push_pending_error, push_pending_warning): New
 	functions.
