@@ -1,3 +1,11 @@
+2006-09-15  Derek Price  <derek@ximbiot.com>
+
+	Clean up repetitive server error handling code.
+	* server.c (pending_msg, push_pending_error, push_pending_warning): New
+	functions.
+	(alloc_pending, alloc_pending_warning): Remove these functions.
+	(*): Update all callers.
+
 2006-09-14  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (server3, client2): New tests.
