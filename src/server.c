@@ -24,6 +24,7 @@
 #include "getnline.h"
 #include "setenv.h"
 #include "vasprintf.h"
+#include "vasnprintf.h"
 #include "wait.h"
 
 /* CVS headers.  */
@@ -459,13 +460,23 @@ print_error (int status)
 
 
 
+/* Error number being saved for a break in the protocol.  */
 static int pending_error;
-/*
- * Malloc'd text for pending error.  Each line must start with "E ".  The
- * last line should not end with a newline.
+
+/* Potentially dynamically allocated text for pending error.  Each line must
+ * start with "E ".  The last line should not end with a newline.
  */
 static char *pending_error_text;
+
+/* So that messages might be printed when memory is low, the pending_error
+ * functions try to use this buffer before allocating the above.
+ */
+static char stat_pe_buf[256];
+
+/* Warning messages being saved up for a break in the protocol.  */
 static char *pending_warning_text;
+
+
 
 /* If an error is pending, print it and return 1.  If not, return 0.
    Also prints pending warnings, but this does not affect the return value.
@@ -505,7 +516,8 @@ print_pending_error (void)
 	buf_flush (buf_to_net, 0);
 
 	pending_error = 0;
-	free (pending_error_text);
+	if (pending_error_text != stat_pe_buf)
+	    free (pending_error_text);
 	pending_error_text = NULL;
 	return 1;
     }
@@ -519,46 +531,71 @@ print_pending_error (void)
 # define error_pending() (pending_error || pending_error_text)
 # define warning_pending() (pending_warning_text)
 
-/* Allocate SIZE bytes for pending_error_text and return nonzero
-   if we could do it.  */
-static inline int
-alloc_pending_internal (char **dest, size_t size)
+
+
+/* Print to a string, setting pending_error to ENOMEM if allocation fails.  */
+static inline char *
+pending_msg (char *trybuf, size_t length, const char *message, va_list args)
 {
-    *dest = malloc (size);
-    if (!*dest)
+    char *out;
+
+    /* Expand the message the user passed us.  */
+    out = vasnprintf (trybuf, &length, message, args);
+    if (!out) pending_error = ENOMEM;
+    return out;
+}
+
+
+
+/* Using "push" in the name here is a little misleading.  Only one error is
+ * stored and there is no stack involved, but pushing errors onto a stack
+ * and sending them all when ready would be a nicer interface.
+ */
+static void
+push_pending_error (int errnum, const char *message, ...)
+{
+    /* Only store one error.  */
+    if (error_pending ()) return;
+
+    if (errnum) pending_error = errnum;
+
+    if (message)
     {
-	pending_error = ENOMEM;
-	return 0;
+	va_list args;
+	va_start (args, message);
+	pending_error_text = pending_msg (stat_pe_buf, sizeof stat_pe_buf,
+					  message, args);
+	va_end (args);
     }
-    return 1;
+
+    return;
 }
 
 
 
-/* Allocate SIZE bytes for pending_error_text and return nonzero
-   if we could do it.  */
-static int
-alloc_pending (size_t size)
+/* Using "push" in the name here is a little misleading.  Only one warning is
+ * stored and there is no stack involved, but pushing errors onto a stack
+ * and sending them all when ready would be a nicer interface.
+ */
+static void
+push_pending_warning (const char *message, ...)
 {
-    if (error_pending ())
-	/* Probably alloc_pending callers will have already checked for
-	   this case.  But we might as well handle it if they don't, I
-	   guess.  */
-	return 0;
-    return alloc_pending_internal (&pending_error_text, size);
-}
+    va_list args;
 
+    /* I don't see a need to try so hard not to lose warnings, so no static
+     * buffer.
+     */
 
+    assert (message);
 
-/* Allocate SIZE bytes for pending_error_text and return nonzero
-   if we could do it.  */
-static int
-alloc_pending_warning (size_t size)
-{
-    if (warning_pending ())
-	/* Warnings can be lost here.  */
-	return 0;
-    return alloc_pending_internal (&pending_warning_text, size);
+    /* Only store one warning.  */
+    if (warning_pending ()) return;
+
+    va_start (args, message);
+    pending_warning_text = pending_msg (NULL, 0, message, args);
+    va_end (args);
+
+    return;
 }
 
 
@@ -802,9 +839,7 @@ serve_root (char *arg)
 
     if (!ISABSOLUTE (arg))
     {
-	if (alloc_pending (80 + strlen (arg)))
-	    sprintf (pending_error_text,
-		     "E Root %s must be an absolute pathname", arg);
+	push_pending_error (0, "E Root %s must be an absolute pathname", arg);
 	return;
     }
 
@@ -817,9 +852,9 @@ serve_root (char *arg)
        any reason why such a feature is needed.  */
     if (current_parsed_root != NULL)
     {
-	if (alloc_pending (80 + strlen (arg)))
-	    sprintf (pending_error_text,
-		     "E Protocol error: Duplicate Root request, for %s", arg);
+	push_pending_error (0,
+			    "E Protocol error: Duplicate Root request, for %s",
+			    arg);
 	return;
     }
 
@@ -830,9 +865,7 @@ serve_root (char *arg)
 # endif
 	)
     {
-	if (alloc_pending (80 + strlen (arg)))
-	    sprintf (pending_error_text,
-		     "E Bad root %s", arg);
+	push_pending_error (0, "E Bad root %s", arg);
 	return;
     }
 
@@ -847,14 +880,12 @@ serve_root (char *arg)
     {
 	if (strcmp (Pserver_Repos, current_parsed_root->directory) != 0)
 	{
-	    if (alloc_pending (80 + strlen (Pserver_Repos)
-			       + strlen (current_parsed_root->directory)))
-		/* The explicitness is to aid people who are writing clients.
-		   I don't see how this information could help an
-		   attacker.  */
-		sprintf (pending_error_text, "\
-E Protocol error: Root says \"%s\" but pserver says \"%s\"",
-			 current_parsed_root->directory, Pserver_Repos);
+	    /* The explicitness is to aid people who are writing clients.
+	       I don't see how this information could help an
+	       attacker.  */
+	    push_pending_error (0,
+"E Protocol error: Root says \"%s\" but pserver says \"%s\"",
+				current_parsed_root->directory, Pserver_Repos);
 	    return;
 	}
     }
@@ -901,10 +932,8 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 	 */
 	if (!ISABSOLUTE (get_cvs_tmp_dir ()))
 	{
-	    if (alloc_pending (80 + strlen (get_cvs_tmp_dir ())))
-		sprintf (pending_error_text,
-			 "E Value of %s for TMPDIR is not absolute",
-			 get_cvs_tmp_dir ());
+	    push_pending_error (0, "E Value of %s for TMPDIR is not absolute",
+				get_cvs_tmp_dir ());
 
 	    /* FIXME: we would like this error to be persistent, that
 	     * is, not cleared by print_pending_error.  The current client
@@ -960,33 +989,19 @@ error ENOMEM Virtual memory exhausted.\n");
 		p[1] = '\0';
 	    }
 	    if (status)
-	    {
-		if (alloc_pending (80 + strlen (server_temp_dir)))
-		    sprintf (pending_error_text,
-			    "E can't create temporary directory %s",
-			    server_temp_dir);
-		pending_error = status;
-	    }
+		push_pending_error (status,
+				    "E can't create temporary directory %s",
+				    server_temp_dir);
 #ifndef CHMOD_BROKEN
 	    else if (chmod (server_temp_dir, S_IRWXU) < 0)
-	    {
-		int save_errno = errno;
-		if (alloc_pending (80 + strlen (server_temp_dir)))
-		    sprintf (pending_error_text,
+		push_pending_error (errno,
 "E cannot change permissions on temporary directory %s",
-			     server_temp_dir);
-		pending_error = save_errno;
-	    }
+				    server_temp_dir);
 #endif
 	    else if (CVS_CHDIR (server_temp_dir) < 0)
-	    {
-		int save_errno = errno;
-		if (alloc_pending (80 + strlen (server_temp_dir)))
-		    sprintf (pending_error_text,
-"E cannot change to temporary directory %s",
-			     server_temp_dir);
-		pending_error = save_errno;
-	    }
+		push_pending_error (errno,
+				    "E cannot change to temporary directory %s",
+				    server_temp_dir);
 	}
     }
 
@@ -1011,12 +1026,12 @@ error ENOMEM Virtual memory exhausted.\n");
 	    forced = true;
 	}
 
-	if (forced && !quiet
-	    && alloc_pending_warning (120 + strlen (program_name)))
-	    sprintf (pending_warning_text,
+	if (forced && !quiet)
+	    push_pending_warning (
 "E %s server: Forcing compression level %d (allowed: %d <= z <= %d).",
-		     program_name, gzip_level, config->MinCompressionLevel,
-		     config->MaxCompressionLevel);
+				  program_name, gzip_level,
+				  config->MinCompressionLevel,
+				  config->MaxCompressionLevel);
     }
 
     path = xmalloc (strlen (current_parsed_root->directory)
@@ -1029,12 +1044,7 @@ error ENOMEM Virtual memory exhausted.\n");
     }
     (void) sprintf (path, "%s/%s", current_parsed_root->directory, CVSROOTADM);
     if (!isaccessible (path, R_OK | X_OK))
-    {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (path)))
-	    sprintf (pending_error_text, "E Cannot access %s", path);
-	pending_error = save_errno;
-    }
+	push_pending_error (errno, "E Cannot access %s", path);
     free (path);
 
     setenv (CVSROOT_ENV, current_parsed_root->directory, 1);
@@ -1096,9 +1106,7 @@ outside_root (char *repos)
      */
     if (!ISABSOLUTE (repos))
     {
-	if (alloc_pending (repos_len + 80))
-	    sprintf (pending_error_text, "\
-E protocol error: %s is not absolute", repos);
+	push_pending_error (0, "E protocol error: %s is not absolute", repos);
 	return 1;
     }
 
@@ -1106,12 +1114,9 @@ E protocol error: %s is not absolute", repos);
 	|| strncmp (current_parsed_root->directory, repos, root_len) != 0)
     {
     not_within:
-	if (alloc_pending (strlen (current_parsed_root->directory)
-			   + strlen (repos)
-			   + 80))
-	    sprintf (pending_error_text, "\
-E protocol error: directory '%s' not within root '%s'",
-		     repos, current_parsed_root->directory);
+	push_pending_error (0,
+"E protocol error: directory '%s' not within root '%s'",
+			    repos, current_parsed_root->directory);
 	return 1;
     }
     if (repos_len > root_len)
@@ -1134,11 +1139,9 @@ outside_dir (char *file)
 {
     if (strchr (file, '/') != NULL)
     {
-	if (alloc_pending (strlen (file)
-			   + 80))
-	    sprintf (pending_error_text, "\
-E protocol error: directory '%s' not within current directory",
-		     file);
+	push_pending_error (0,
+"E protocol error: directory '%s' not within current directory",
+			    file);
 	return 1;
     }
     return 0;
@@ -1204,17 +1207,14 @@ dirswitch (char *dir, char *repos)
        except they need to report errors differently.  */
     if (ISABSOLUTE (dir))
     {
-	if (alloc_pending (80 + strlen (dir)))
-	    sprintf ( pending_error_text,
-		      "E absolute pathnames invalid for server (specified `%s')",
-		      dir);
+	push_pending_error (0,
+"E absolute pathnames invalid for server (specified `%s')",
+			    dir);
 	return;
     }
     if (pathname_levels (dir) > max_dotdot_limit)
     {
-	if (alloc_pending (80 + strlen (dir)))
-	    sprintf (pending_error_text,
-		     "E protocol error: `%s' has too many ..", dir);
+	push_pending_error (0, "E protocol error: `%s' has too many ..", dir);
 	return;
     }
 
@@ -1227,9 +1227,9 @@ dirswitch (char *dir, char *repos)
     if (dir_len > 0
 	&& dir[dir_len - 1] == '/')
     {
-	if (alloc_pending (80 + dir_len))
-	    sprintf (pending_error_text,
-		     "E protocol error: invalid directory syntax in %s", dir);
+	push_pending_error (0,
+"E protocol error: invalid directory syntax in %s",
+			    dir);
 	return;
     }
 
@@ -1258,9 +1258,7 @@ dirswitch (char *dir, char *repos)
     if (status != 0
 	&& status != EEXIST)
     {
-	if (alloc_pending (80 + strlen (gDirname)))
-	    sprintf (pending_error_text, "E cannot mkdir %s", gDirname);
-	pending_error = status;
+	push_pending_error (status, "E cannot mkdir %s", gDirname);
 	return;
     }
 
@@ -1273,18 +1271,13 @@ dirswitch (char *dir, char *repos)
     status = create_adm_p (server_temp_dir, dir);
     if (status != 0)
     {
-	if (alloc_pending (80 + strlen (gDirname)))
-	    sprintf (pending_error_text, "E cannot create_adm_p %s", gDirname);
-	pending_error = status;
+	push_pending_error (status, "E cannot create_adm_p %s", gDirname);
 	return;
     }
 
-    if ( CVS_CHDIR (gDirname) < 0)
+    if (CVS_CHDIR (gDirname) < 0)
     {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (gDirname)))
-	    sprintf (pending_error_text, "E cannot change to %s", gDirname);
-	pending_error = save_errno;
+	push_pending_error (errno, "E cannot change to %s", gDirname);
 	return;
     }
     /*
@@ -1293,11 +1286,7 @@ dirswitch (char *dir, char *repos)
      */
     if ((CVS_MKDIR (CVSADM, 0777) < 0) && (errno != EEXIST))
     {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (gDirname) + strlen (CVSADM)))
-	    sprintf (pending_error_text,
-		     "E cannot mkdir %s/%s", gDirname, CVSADM);
-	pending_error = save_errno;
+	push_pending_error (errno, "E cannot mkdir %s/%s", gDirname, CVSADM);
 	return;
     }
 
@@ -1309,20 +1298,14 @@ dirswitch (char *dir, char *repos)
     f = CVS_FOPEN (CVSADM_REP, "w");
     if (f == NULL)
     {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (gDirname) + strlen (CVSADM_REP)))
-	    sprintf (pending_error_text,
-		     "E cannot open %s/%s", gDirname, CVSADM_REP);
-	pending_error = save_errno;
+	push_pending_error (errno, "E cannot open %s/%s", gDirname,
+			    CVSADM_REP);
 	return;
     }
     if (fprintf (f, "%s", repos) < 0)
     {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (gDirname) + strlen (CVSADM_REP)))
-	    sprintf (pending_error_text,
-		     "E error writing %s/%s", gDirname, CVSADM_REP);
-	pending_error = save_errno;
+	push_pending_error (errno, "E error writing %s/%s", gDirname,
+			    CVSADM_REP);
 	fclose (f);
 	return;
     }
@@ -1336,32 +1319,23 @@ dirswitch (char *dir, char *repos)
     {
 	if (fprintf (f, "/.") < 0)
 	{
-	    int save_errno = errno;
-	    if (alloc_pending (80 + strlen (gDirname) + strlen (CVSADM_REP)))
-		sprintf (pending_error_text,
-			 "E error writing %s/%s", gDirname, CVSADM_REP);
-	    pending_error = save_errno;
+	    push_pending_error (errno, "E error writing %s/%s",
+				gDirname, CVSADM_REP);
 	    fclose (f);
 	    return;
 	}
     }
     if (fprintf (f, "\n") < 0)
     {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (gDirname) + strlen (CVSADM_REP)))
-	    sprintf (pending_error_text,
-		     "E error writing %s/%s", gDirname, CVSADM_REP);
-	pending_error = save_errno;
+	push_pending_error (errno, "E error writing %s/%s", gDirname,
+			    CVSADM_REP);
 	fclose (f);
 	return;
     }
     if (fclose (f) == EOF)
     {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (gDirname) + strlen (CVSADM_REP)))
-	    sprintf (pending_error_text,
-		     "E error closing %s/%s", gDirname, CVSADM_REP);
-	pending_error = save_errno;
+	push_pending_error (errno, "E error closing %s/%s", gDirname,
+			    CVSADM_REP);
 	return;
     }
     /* We open in append mode because we don't want to clobber an
@@ -1369,18 +1343,12 @@ dirswitch (char *dir, char *repos)
     f = CVS_FOPEN (CVSADM_ENT, "a");
     if (f == NULL)
     {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (CVSADM_ENT)))
-	    sprintf (pending_error_text, "E cannot open %s", CVSADM_ENT);
-	pending_error = save_errno;
+	push_pending_error (errno, "E cannot open %s", CVSADM_ENT);
 	return;
     }
     if (fclose (f) == EOF)
     {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (CVSADM_ENT)))
-	    sprintf (pending_error_text, "E cannot close %s", CVSADM_ENT);
-	pending_error = save_errno;
+	push_pending_error (errno, "E cannot close %s", CVSADM_ENT);
 	return;
     }
 }
@@ -1394,9 +1362,7 @@ serve_repository (char *arg)
     assert (!proxy_log);
 # endif /* PROXY_SUPPORT */
 
-    if (alloc_pending (80))
-	strcpy (pending_error_text,
-		"E Repository request is obsolete; aborted");
+    push_pending_error (0, "E Repository request is obsolete; aborted");
     return;
 }
 
@@ -1489,18 +1455,12 @@ serve_static_directory (char *arg)
     f = CVS_FOPEN (CVSADM_ENTSTAT, "w+");
     if (f == NULL)
     {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (CVSADM_ENTSTAT)))
-	    sprintf (pending_error_text, "E cannot open %s", CVSADM_ENTSTAT);
-	pending_error = save_errno;
+	push_pending_error (errno, "E cannot open %s", CVSADM_ENTSTAT);
 	return;
     }
     if (fclose (f) == EOF)
     {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (CVSADM_ENTSTAT)))
-	    sprintf (pending_error_text, "E cannot close %s", CVSADM_ENTSTAT);
-	pending_error = save_errno;
+	push_pending_error (errno, "E cannot close %s", CVSADM_ENTSTAT);
 	return;
     }
 }
@@ -1521,27 +1481,18 @@ serve_sticky (char *arg)
     f = CVS_FOPEN (CVSADM_TAG, "w+");
     if (f == NULL)
     {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (CVSADM_TAG)))
-	    sprintf (pending_error_text, "E cannot open %s", CVSADM_TAG);
-	pending_error = save_errno;
+	push_pending_error (errno, "E cannot open %s", CVSADM_TAG);
 	return;
     }
     if (fprintf (f, "%s\n", arg) < 0)
     {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (CVSADM_TAG)))
-	    sprintf (pending_error_text, "E cannot write to %s", CVSADM_TAG);
-	pending_error = save_errno;
+	push_pending_error (errno, "E cannot write to %s", CVSADM_TAG);
 	(void) fclose (f);
 	return;
     }
     if (fclose (f) == EOF)
     {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (CVSADM_TAG)))
-	    sprintf (pending_error_text, "E cannot close %s", CVSADM_TAG);
-	pending_error = save_errno;
+	push_pending_error (errno, "E cannot close %s", CVSADM_TAG);
 	return;
     }
 }
@@ -1601,10 +1552,7 @@ receive_partial_file (size_t size, int file)
 	    nwrote = write (file, data, nread);
 	    if (nwrote < 0)
 	    {
-		int save_errno = errno;
-		if (alloc_pending (40))
-		    strcpy (pending_error_text, "E unable to write");
-		pending_error = save_errno;
+		push_pending_error (errno, "E unable to write");
 
 		/* Read and discard the file data.  */
 		while (size > 0)
@@ -1640,10 +1588,7 @@ receive_file (size_t size, char *file, int gzipped)
     fd = CVS_OPEN (arg, O_WRONLY | O_CREAT | O_TRUNC, 0600);
     if (fd < 0)
     {
-	int save_errno = errno;
-	if (alloc_pending (40 + strlen (arg)))
-	    sprintf (pending_error_text, "E cannot open %s", arg);
-	pending_error = save_errno;
+	push_pending_error (errno, "E cannot open %s", arg);
 	return;
     }
 
@@ -1712,9 +1657,7 @@ receive_file (size_t size, char *file, int gzipped)
 
 	if (gunzip_and_write (fd, file, (unsigned char *) filebuf, size))
 	{
-	    if (alloc_pending (80))
-		sprintf (pending_error_text,
-			 "E aborting due to compression error");
+	    push_pending_error (0, "E aborting due to compression error");
 	}
 	free (filebuf);
     }
@@ -1736,10 +1679,7 @@ receive_file (size_t size, char *file, int gzipped)
  out:
     if (close (fd) < 0 && !error_pending ())
     {
-	int save_errno = errno;
-	if (alloc_pending (40 + strlen (arg)))
-	    sprintf (pending_error_text, "E cannot close %s", arg);
-	pending_error = save_errno;
+	push_pending_error (errno, "E cannot close %s", arg);
 	return;
     }
 }
@@ -1800,9 +1740,7 @@ serve_is_modified (char *arg)
 		/* We didn't find the record separator or it is followed by
 		 * the end of the string, so just exit.
 		 */
-		if (alloc_pending (80))
-		    sprintf (pending_error_text,
-		             "E Malformed Entry encountered.");
+		push_pending_error (errno, "E Malformed Entry encountered.");
 		return;
 	    }
 	    /* If the time field is not currently empty, then one of
@@ -1844,10 +1782,9 @@ serve_is_modified (char *arg)
 
 	    if (kopt != NULL)
 	    {
-		if (alloc_pending (strlen (name) + 80))
-		    sprintf (pending_error_text,
-			     "E protocol error: both Kopt and Entry for %s",
-			     arg);
+		push_pending_error (0,
+"E protocol error: both Kopt and Entry for %s",
+				    arg);
 		free (kopt);
 		kopt = NULL;
 		return;
@@ -1905,11 +1842,7 @@ server_write_sigfile (const char *file, struct buffer *sig_buf)
     fd = CVS_OPEN (sigfile_name, O_WRONLY | O_CREAT | O_TRUNC, 0600);
     if (fd < 0)
     {
-	int save_errno = errno;
-	if (alloc_pending (40 + strlen (sigfile_name)))
-	    sprintf (pending_error_text, "E cannot open `%s'",
-		     sigfile_name);
-	pending_error = save_errno;
+	push_pending_error (errno, "E cannot open `%s'", sigfile_name);
 	err = true;
 	goto done;
     }
@@ -1926,9 +1859,8 @@ server_write_sigfile (const char *file, struct buffer *sig_buf)
 
 	    if (rc == -2)
 		pending_error = ENOMEM;
-	    else if (alloc_pending (80))
-		sprintf (pending_error_text,
-			 "E error reading signature buffer.");
+	    else
+		push_pending_error (0, "E error reading signature buffer.");
 	    pending_error = rc;
 	    err = true;
 	    goto done;
@@ -1936,12 +1868,9 @@ server_write_sigfile (const char *file, struct buffer *sig_buf)
 
 	if (write (fd, sig_data, got) < 0)
 	{
-	    int save_errno = errno;
-	    if (alloc_pending (80 + strlen (sigfile_name)))
-		sprintf (pending_error_text,
-			 "E error writing temporary signature file `%s'.",
-			 sigfile_name);
-	    pending_error = save_errno;
+	    push_pending_error (errno,
+"E error writing temporary signature file `%s'.",
+				sigfile_name);
 	    err = true;
 	    goto done;
 	 }
@@ -1951,11 +1880,8 @@ done:
     if (fd >= 0
 	&& close (fd) < 0)
     {
-	if (!error_pending ()
-	    && alloc_pending_warning (80 + strlen (sigfile_name)))
-	    sprintf (pending_warning_text,
-		     "E error closing temporary signature file `%s'.",
-		     sigfile_name);
+	push_pending_warning ("E error closing temporary signature file `%s'.",
+			      sigfile_name);
 	err = true;
     }
 
@@ -2046,10 +1972,9 @@ serve_modified (char *arg)
 	read_size = atoi (size_text);
     free (size_text);
 
-    if (read_size < 0 && alloc_pending (80))
+    if (read_size < 0)
     {
-	sprintf (pending_error_text,
-		 "E client sent invalid (negative) file size");
+	push_pending_error (0, "E client sent invalid (negative) file size");
 	return;
     }
     else
@@ -2110,10 +2035,7 @@ serve_modified (char *arg)
 	t.modtime = t.actime = checkin_time;
 	if (utime (arg, &t) < 0)
 	{
-	    int save_errno = errno;
-	    if (alloc_pending (80 + strlen (arg)))
-		sprintf (pending_error_text, "E cannot utime %s", arg);
-	    pending_error = save_errno;
+	    push_pending_error (errno, "E cannot utime %s", arg);
 	    free (mode_text);
 	    return;
 	}
@@ -2125,10 +2047,7 @@ serve_modified (char *arg)
 	free (mode_text);
 	if (status)
 	{
-	    if (alloc_pending (40 + strlen (arg)))
-		sprintf (pending_error_text,
-			 "E cannot change mode for %s", arg);
-	    pending_error = status;
+	    push_pending_error (status, "E cannot change mode for %s", arg);
 	    return;
 	}
     }
@@ -2164,8 +2083,7 @@ serve_signature (char *arg)
 
     if (sig_buf)
     {
-	if (alloc_pending (80))
-	    sprintf (pending_error_text,
+	push_pending_error (0,
 "E Multiple Signature requests received for a single file.");
     }
     else
@@ -2174,9 +2092,7 @@ serve_signature (char *arg)
     status = next_signature (buf_from_net, sig_buf);
     if (status)
     {
-	if (alloc_pending (80))
-	    sprintf (pending_error_text,
-		     "E Malformed Signature encountered.");
+	push_pending_error (0, "E Malformed Signature encountered.");
     }
     return;
 }
@@ -2229,9 +2145,7 @@ serve_unchanged (char *arg)
 		/* We didn't find the record separator or it is followed by
 		 * the end of the string, so just exit.
 		 */
-		if (alloc_pending (80))
-		    sprintf (pending_error_text,
-		             "E Malformed Entry encountered.");
+		push_pending_error (0, "E Malformed Entry encountered.");
 		return;
 	    }
 	    /* If the time field is not currently empty, then one of
@@ -2341,9 +2255,7 @@ serve_entry (char *arg)
     {
 	if (!cp || *cp != '/')
 	{
-	    if (alloc_pending (80))
-		sprintf (pending_error_text,
-			 "E protocol error: Malformed Entry");
+	    push_pending_error (0, "E protocol error: Malformed Entry");
 	    return;
 	}
 	cp = strchr (cp + 1, '/');
@@ -2383,9 +2295,8 @@ serve_kopt (char *arg)
 
     if (kopt != NULL)
     {
-	if (alloc_pending (80 + strlen (arg)))
-	    sprintf (pending_error_text,
-		     "E protocol error: duplicate Kopt request: %s", arg);
+	push_pending_error (0, "E protocol error: duplicate Kopt request: %s",
+			    arg);
 	return;
     }
 
@@ -2396,9 +2307,8 @@ serve_kopt (char *arg)
        other than via exit(), fprintf(), and such.  */
     if (strlen (arg) > 10)
     {
-	if (alloc_pending (80 + strlen (arg)))
-	    sprintf (pending_error_text,
-		     "E protocol error: invalid Kopt request: %s", arg);
+	push_pending_error (0, "E protocol error: invalid Kopt request: %s",
+			    arg);
 	return;
     }
 
@@ -2427,17 +2337,15 @@ serve_checkin_time (char *arg)
 
     if (checkin_time_valid)
     {
-	if (alloc_pending (80 + strlen (arg)))
-	    sprintf (pending_error_text,
-		     "E protocol error: duplicate Checkin-time request: %s",
-		     arg);
+	push_pending_error (0,
+"E protocol error: duplicate Checkin-time request: %s",
+			    arg);
 	return;
     }
 
     if (!get_date (&t, arg, NULL))
     {
-	if (alloc_pending (80 + strlen (arg)))
-	    sprintf (pending_error_text, "E cannot parse date %s", arg);
+	push_pending_error (0, "E cannot parse date %s", arg);
 	return;
     }
 
@@ -2469,25 +2377,14 @@ server_write_entries (void)
 	   server_write_entries for each such file.  */
 	f = CVS_FOPEN (CVSADM_ENT, "a");
 	if (f == NULL)
-	{
-	    int save_errno = errno;
-	    if (alloc_pending (80 + strlen (CVSADM_ENT)))
-		sprintf (pending_error_text, "E cannot open %s", CVSADM_ENT);
-	    pending_error = save_errno;
-	}
+	    push_pending_error (errno, "E cannot open %s", CVSADM_ENT);
     }
     for (p = entries; p != NULL;)
     {
 	if (!error_pending ())
 	{
 	    if (fprintf (f, "%s\n", p->entry) < 0)
-	    {
-		int save_errno = errno;
-		if (alloc_pending (80 + strlen(CVSADM_ENT)))
-		    sprintf (pending_error_text,
-			     "E cannot write to %s", CVSADM_ENT);
-		pending_error = save_errno;
-	    }
+		push_pending_error (errno, "E cannot write to %s", CVSADM_ENT);
 	}
 	free (p->entry);
 	q = p->next;
@@ -2496,12 +2393,7 @@ server_write_entries (void)
     }
     entries = NULL;
     if (f != NULL && fclose (f) == EOF && !error_pending ())
-    {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (CVSADM_ENT)))
-	    sprintf (pending_error_text, "E cannot close %s", CVSADM_ENT);
-	pending_error = save_errno;
-    }
+	push_pending_error (errno, "E cannot close %s", CVSADM_ENT);
 }
 
 
@@ -2938,10 +2830,9 @@ serve_notify (char *arg)
 	if (!proxy_log)
 	{
 # endif /* PROXY_SUPPORT */
-	    if (alloc_pending (160) + strlen (program_name))
-		sprintf (pending_error_text, 
+	    push_pending_error (0, 
 "E This CVS server does not support disconnected `%s edit'.  For now, remove all `%s' files in your workspace and try your command again.",
-			 program_name, CVSADM_NOTIFY);
+				program_name, CVSADM_NOTIFY);
 	return;
 # ifdef PROXY_SUPPORT
 	}
@@ -3053,10 +2944,7 @@ serve_notify (char *arg)
     }
     return;
   error:
-    pending_error = 0;
-    if (alloc_pending (80))
-	strcpy (pending_error_text,
-		"E Protocol error; misformed Notify request");
+    push_pending_error (0, "E Protocol error; misformed Notify request");
     if (data != NULL)
 	free (data);
     if (new != NULL)
@@ -3172,9 +3060,7 @@ serve_argument (char *arg)
 
     if (argument_count >= 10000)
     {
-	if (alloc_pending (80))
-	    sprintf (pending_error_text, 
-		     "E Protocol error: too many arguments");
+	push_pending_error (0, "E Protocol error: too many arguments");
 	return;
     }
 
@@ -3213,8 +3099,7 @@ serve_argumentx (char *arg)
     
     if (argument_count <= 1) 
     {
-	if (alloc_pending (80))
-	    sprintf (pending_error_text,
+	push_pending_error (0,
 "E Protocol error: called argumentx without prior call to argument");
 	return;
     }
@@ -3246,10 +3131,7 @@ serve_global_option (char *arg)
     if (arg[0] != '-' || arg[1] == '\0' || arg[2] != '\0')
     {
     error_return:
-	if (alloc_pending (strlen (arg) + 80))
-	    sprintf (pending_error_text,
-		     "E Protocol error: bad global option %s",
-		     arg);
+	push_pending_error (0, "E Protocol error: bad global option %s", arg);
 	return;
     }
     switch (arg[1])
@@ -3423,9 +3305,7 @@ serve_questionable (char *arg)
 
     if (gDirname == NULL)
     {
-	if (alloc_pending (80))
-	    sprintf (pending_error_text,
-"E Protocol error: `Directory' missing");
+	push_pending_error (0, "E Protocol error: `Directory' missing");
 	return;
     }
 
@@ -3735,11 +3615,10 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 	    }
 	}
 # else /* !PROXY_SUPPORT */
-	if (lookup_command_attribute (cmd_name)
-		    & CVS_CMD_MODIFIES_REPOSITORY
-	    && alloc_pending (120))
-	    sprintf (pending_error_text, 
-"E You need a CVS client that supports the `Redirect' response for write requests to this server.");
+	if (lookup_command_attribute (cmd_name) & CVS_CMD_MODIFIES_REPOSITORY)
+	    push_pending_error (0, 
+"E You need a CVS client that supports the `Redirect' response for\n"
+"E write requests to this server.");
 	return;
 # endif /* PROXY_SUPPORT */
     }
@@ -5028,22 +4907,19 @@ serve_init (char *arg)
 
     if (!ISABSOLUTE (arg))
     {
-	if (alloc_pending (80 + strlen (arg)))
-	    sprintf (pending_error_text,
-		     "E init %s must be an absolute pathname", arg);
+	push_pending_error (0, "E init %s must be an absolute pathname", arg);
     }
 # ifdef AUTH_SERVER_SUPPORT
     else if (Pserver_Repos != NULL)
     {
 	if (strcmp (Pserver_Repos, arg) != 0)
 	{
-	    if (alloc_pending (80 + strlen (Pserver_Repos) + strlen (arg)))
-		/* The explicitness is to aid people who are writing clients.
-		   I don't see how this information could help an
-		   attacker.  */
-		sprintf (pending_error_text, "\
-E Protocol error: init says \"%s\" but pserver says \"%s\"",
-			 arg, Pserver_Repos);
+	    /* The explicitness is to aid people who are writing clients.
+	       I don't see how this information could help an
+	       attacker.  */
+	    push_pending_error (0,
+"E Protocol error: init says \"%s\" but pserver says \"%s\"",
+				arg, Pserver_Repos);
 	}
     }
 # endif
@@ -5745,12 +5621,11 @@ serve_gzip_contents (char *arg)
 	forced = true;
     }
 
-    if (forced && !quiet
-	&& alloc_pending_warning (120 + strlen (program_name)))
-	sprintf (pending_warning_text,
+    if (forced && !quiet)
+	push_pending_warning (
 "E %s server: Forcing compression level %d (allowed: %d <= z <= %d).",
-		 program_name, level, config->MinCompressionLevel,
-		 config->MaxCompressionLevel);
+			      program_name, level, config->MinCompressionLevel,
+			      config->MaxCompressionLevel);
 
     gzip_level = file_gzip_level = level;
 }
@@ -5776,12 +5651,11 @@ serve_gzip_stream (char *arg)
 	forced = true;
     }
 
-    if (forced && !quiet
-	&& alloc_pending_warning (120 + strlen (program_name)))
-	sprintf (pending_warning_text,
+    if (forced && !quiet)
+	push_pending_warning (
 "E %s server: Forcing compression level %d (allowed: %d <= z <= %d).",
-		 program_name, level, config->MinCompressionLevel,
-		 config->MaxCompressionLevel);
+			      program_name, level, config->MinCompressionLevel,
+			      config->MaxCompressionLevel);
 	
     gzip_level = level;
 
@@ -6101,11 +5975,9 @@ serve_referrer (char *arg)
 
     referrer = parse_cvsroot (arg);
 
-    if (!referrer
-	&& alloc_pending (80 + strlen (arg)))
-	sprintf (pending_error_text,
-		 "E Protocol error: Invalid Referrer: `%s'",
-		 arg);
+    if (!referrer)
+	push_pending_error (0, "E Protocol error: Invalid Referrer: `%s'",
+			    arg);
 }
 
 
@@ -6709,9 +6581,8 @@ error ETIMEOUT Connection timed out.\n");
 		if (!(rq->flags & RQ_ROOTLESS)
 		    && current_parsed_root == NULL)
 		{
-		    if (alloc_pending (80))
-			sprintf (pending_error_text,
-				 "E Protocol error: Root request missing");
+		    push_pending_error (0,
+"E Protocol error: Root request missing");
 		}
 		else
 		{
@@ -6722,10 +6593,9 @@ error ETIMEOUT Connection timed out.\n");
 			 * level has been configured, and no compression has
 			 * been requested by the client.
 			 */
-			if (alloc_pending (80 + strlen (program_name)))
-			    sprintf (pending_error_text,
+			push_pending_error (0,
 "E %s [server aborted]: Compression must be used with this server.",
-				     program_name);
+					    program_name);
 		    }
 		    (*rq->func) (cmd);
 		}
