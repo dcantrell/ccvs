@@ -154,7 +154,6 @@ error (int status, int errnum, const char *message, ...)
 			    status ? "[" : "",
 			    cvs_cmd_name,
 			    status ? " aborted]" : "");
-	/* Else cmdbuf still = emptybuf.  */
 	if (!cmdbuf) goto memerror;
     }
     /* Else cmdbuf still = emptybuf.  */

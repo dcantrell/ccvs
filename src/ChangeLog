@@ -1,5 +1,7 @@
 2006-09-15  Derek Price  <derek@ximbiot.com>
 
+	* error.c (error): Remove errant comment.
+
 	* server.c (pserver_authenticate_connection): Don't call error (1, ...)
 	where code is expected to execute afterwards.
 
