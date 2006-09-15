@@ -7399,7 +7399,7 @@ pserver_authenticate_connection (void)
 
     if (!root_allow_ok (repository))
     {
-	error (1, 0, "%s: no such repository", repository);
+	error (0, 0, "%s: no such repository", repository);
 # ifdef HAVE_SYSLOG_H
 	syslog (LOG_DAEMON | LOG_NOTICE, "login refused for %s", repository);
 # endif /* HAVE_SYSLOG_H */
