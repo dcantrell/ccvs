@@ -1,3 +1,9 @@
+2006-09-18  Mark D. Baushke  <mdb@gnu.org>
+
+	* config.h.in.in (HAVE_DECL_*): Define to 0 instead of undef to
+	allow GNULIB-based source files to compile correctly.
+	* stamp-chi, config.h.in, config.h: Regenerated.
+	
 2006-09-02  Mark D. Baushke  <mdb@gnu.org>
 
 	* inttypes.h: Provide a windows wrapper for inttypes.h based on
