@@ -241,63 +241,63 @@
 
 /* Define to 1 if you have the declaration of `clearerr_unlocked', and to 0 if
    you don't. */
-#undef HAVE_DECL_CLEARERR_UNLOCKED
+#define HAVE_DECL_CLEARERR_UNLOCKED 0
 
 /* Define to 1 if you have the declaration of `feof_unlocked', and to 0 if you
    don't. */
-#undef HAVE_DECL_FEOF_UNLOCKED
+#define HAVE_DECL_FEOF_UNLOCKED 0
 
 /* Define to 1 if you have the declaration of `ferror_unlocked', and to 0 if
    you don't. */
-#undef HAVE_DECL_FERROR_UNLOCKED
+#define HAVE_DECL_FERROR_UNLOCKED 0
 
 /* Define to 1 if you have the declaration of `fflush_unlocked', and to 0 if
    you don't. */
-#undef HAVE_DECL_FFLUSH_UNLOCKED
+#define HAVE_DECL_FFLUSH_UNLOCKED 0
 
 /* Define to 1 if you have the declaration of `fgets_unlocked', and to 0 if
    you don't. */
-#undef HAVE_DECL_FGETS_UNLOCKED
+#define HAVE_DECL_FGETS_UNLOCKED 0
 
 /* Define to 1 if you have the declaration of `flockfile', and to 0 if you
    don't. */
-#undef HAVE_DECL_FLOCKFILE
+#define HAVE_DECL_FLOCKFILE 0
 
 /* Define to 1 if you have the declaration of `fputc_unlocked', and to 0 if
    you don't. */
-#undef HAVE_DECL_FPUTC_UNLOCKED
+#define HAVE_DECL_FPUTC_UNLOCKED 0
 
 /* Define to 1 if you have the declaration of `fputs_unlocked', and to 0 if
    you don't. */
-#undef HAVE_DECL_FPUTS_UNLOCKED
+#define HAVE_DECL_FPUTS_UNLOCKED 0
 
 /* Define to 1 if you have the declaration of `fread_unlocked', and to 0 if
    you don't. */
-#undef HAVE_DECL_FREAD_UNLOCKED
+#define HAVE_DECL_FREAD_UNLOCKED 0
 
 /* Define to 1 if you have the declaration of `freeaddrinfo', and to 0 if you
    don't. */
-#undef HAVE_DECL_FREEADDRINFO
+#define HAVE_DECL_FREEADDRINFO 0
 
 /* Define to 1 if you have the declaration of `funlockfile', and to 0 if you
    don't. */
-#undef HAVE_DECL_FUNLOCKFILE
+#define HAVE_DECL_FUNLOCKFILE 0
 
 /* Define to 1 if you have the declaration of `fwrite_unlocked', and to 0 if
    you don't. */
-#undef HAVE_DECL_FWRITE_UNLOCKED
+#define HAVE_DECL_FWRITE_UNLOCKED 0
 
 /* Define to 1 if you have the declaration of `gai_strerror', and to 0 if you
    don't. */
-#undef HAVE_DECL_GAI_STRERROR
+#define HAVE_DECL_GAI_STRERROR 0
 
 /* Define to 1 if you have the declaration of `getaddrinfo', and to 0 if you
    don't. */
-#undef HAVE_DECL_GETADDRINFO
+#define HAVE_DECL_GETADDRINFO 0
 
 /* Define to 1 if you have the declaration of `getchar_unlocked', and to 0 if
    you don't. */
-#undef HAVE_DECL_GETCHAR_UNLOCKED
+#define HAVE_DECL_GETCHAR_UNLOCKED 0
 
 /* Define to 1 if you have the declaration of `getcwd', and to 0 if you don't.
    */
@@ -305,11 +305,11 @@
 
 /* Define to 1 if you have the declaration of `getc_unlocked', and to 0 if you
    don't. */
-#undef HAVE_DECL_GETC_UNLOCKED
+#define HAVE_DECL_GETC_UNLOCKED 0
 
 /* Define to 1 if you have the declaration of `getdelim', and to 0 if you
    don't. */
-#undef HAVE_DECL_GETDELIM
+#define HAVE_DECL_GETDELIM 0
 
 /* Define to 1 if you have the declaration of `getenv', and to 0 if you don't.
    */
@@ -317,19 +317,19 @@
 
 /* Define to 1 if you have the declaration of `getline', and to 0 if you
    don't. */
-#undef HAVE_DECL_GETLINE
+#define HAVE_DECL_GETLINE 0
 
 /* Define to 1 if you have the declaration of `getlogin', and to 0 if you
    don't. */
-#undef HAVE_DECL_GETLOGIN
+#define HAVE_DECL_GETLOGIN 0
 
 /* Define to 1 if you have the declaration of `getlogin_r', and to 0 if you
    don't. */
-#undef HAVE_DECL_GETLOGIN_R
+#define HAVE_DECL_GETLOGIN_R 0
 
 /* Define to 1 if you have the declaration of `getnameinfo', and to 0 if you
    don't. */
-#undef HAVE_DECL_GETNAMEINFO
+#define HAVE_DECL_GETNAMEINFO 0
 
 /* Define to 1 if you have the declaration of `getpass', and to 0 if you
    don't. */
@@ -337,27 +337,27 @@
 
 /* Define to 1 if you have the declaration of `imaxabs', and to 0 if you
    don't. */
-#undef HAVE_DECL_IMAXABS
+#define HAVE_DECL_IMAXABS 0
 
 /* Define to 1 if you have the declaration of `imaxdiv', and to 0 if you
    don't. */
-#undef HAVE_DECL_IMAXDIV
+#define HAVE_DECL_IMAXDIV 0
 
 /* Define to 1 if you have the declaration of `inet_ntop', and to 0 if you
    don't. */
-#undef HAVE_DECL_INET_NTOP
+#define HAVE_DECL_INET_NTOP 0
 
 /* Define to 1 if you have the declaration of `isblank', and to 0 if you
    don't. */
-#undef HAVE_DECL_ISBLANK
+#define HAVE_DECL_ISBLANK 0
 
 /* Define to 1 if you have the declaration of `memrchr', and to 0 if you
    don't. */
-#undef HAVE_DECL_MEMRCHR
+#define HAVE_DECL_MEMRCHR 0
 
 /* Define to 1 if you have the declaration of `mkdir', and to 0 if you don't.
    */
-#undef HAVE_DECL_MKDIR
+#define HAVE_DECL_MKDIR 0
 
 /* Define to 1 if you have the declaration of `nanosleep', and to 0 if you
    don't. */
@@ -365,15 +365,15 @@
 
 /* Define to 1 if you have the declaration of `putchar_unlocked', and to 0 if
    you don't. */
-#undef HAVE_DECL_PUTCHAR_UNLOCKED
+#define HAVE_DECL_PUTCHAR_UNLOCKED 0
 
 /* Define to 1 if you have the declaration of `putc_unlocked', and to 0 if you
    don't. */
-#undef HAVE_DECL_PUTC_UNLOCKED
+#define HAVE_DECL_PUTC_UNLOCKED 0
 
 /* Define to 1 if you have the declaration of `snprintf', and to 0 if you
    don't. */
-#undef HAVE_DECL_SNPRINTF
+#define HAVE_DECL_SNPRINTF 0
 
 /* Define to 1 if you have the declaration of `strdup', and to 0 if you don't.
    */
@@ -381,19 +381,19 @@
 
 /* Define to 1 if you have the declaration of `strerror_r', and to 0 if you
    don't. */
-#undef HAVE_DECL_STRERROR_R
+#define HAVE_DECL_STRERROR_R 0
 
 /* Define to 1 if you have the declaration of `strndup', and to 0 if you
    don't. */
-#undef HAVE_DECL_STRNDUP
+#define HAVE_DECL_STRNDUP 0
 
 /* Define to 1 if you have the declaration of `strnlen', and to 0 if you
    don't. */
-#undef HAVE_DECL_STRNLEN
+#define HAVE_DECL_STRNLEN 0
 
 /* Define to 1 if you have the declaration of `strtoimax', and to 0 if you
    don't. */
-#undef HAVE_DECL_STRTOIMAX
+#define HAVE_DECL_STRTOIMAX 0
 
 /* Define to 1 if you have the declaration of `strtoll', and to 0 if you
    don't. */
@@ -405,11 +405,11 @@
 
 /* Define to 1 if you have the declaration of `strtoumax', and to 0 if you
    don't. */
-#undef HAVE_DECL_STRTOUMAX
+#define HAVE_DECL_STRTOUMAX 0
 
 /* Define to 1 if you have the declaration of `tzname', and to 0 if you don't.
    */
-#undef HAVE_DECL_TZNAME
+#define HAVE_DECL_TZNAME 0
 
 /* Define to 1 if you have the declaration of `wcwidth', and to 0 if you
    don't. */
