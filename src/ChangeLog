@@ -1,3 +1,10 @@
+2006-09-21  Mark D. Baushke  <mdb@gnu.org>
+
+	* commit.c (commit_fileproc): If support for the old info format
+	strings is removed, then the block should always be run, not just
+	when ci->status is not T_REMOVED.
+	(Patch from "C. Michael Pilato" <cmpilato@collab.net>)
+
 2006-09-15  Derek Price  <derek@ximbiot.com>
 
 	* error.c (error): Remove errant comment.
