@@ -607,10 +607,6 @@
    to 0 otherwise. */
 #define HAVE_MALLOC 1
 
-/* Define to 1 if mmap()'s MAP_ANONYMOUS flag is available after including
-   config.h and <sys/mman.h>. */
-#undef HAVE_MAP_ANONYMOUS
-
 /* Define to 1 if you have the `mblen' function. */
 #define HAVE_MBLEN 1
 
@@ -653,12 +649,6 @@
 /* Define to 1 if you have the `mknod' function. */
 #undef HAVE_MKNOD
 
-/* Define to 1 if you have the `mkstemp' function. */
-#undef HAVE_MKSTEMP
-
-/* Define to 1 if you have a working `mmap' system call. */
-#undef HAVE_MMAP
-
 /* Define to 1 if you have the `nanotime' function. */
 #undef HAVE_NANOTIME
 
@@ -698,9 +688,6 @@
 
 /* Define to 1 if you have the `pipe' function. */
 #undef HAVE_PIPE
-
-/* Define to 1 if you have the `posix_memalign' function. */
-#undef HAVE_POSIX_MEMALIGN
 
 /* Define to 1 if the `printf' function supports the %p format for printing
    pointers. */
@@ -1060,9 +1047,6 @@
 /* If malloc(0) is != NULL, define this to 1. Otherwise define this to 0. */
 #undef MALLOC_0_IS_NONNULL
 
-/* Define to a substitute value for mmap()'s MAP_ANONYMOUS flag. */
-#undef MAP_ANONYMOUS
-
 /* By default, CVS stores its modules and other such items in flat text files
    (MY_NDBM enables this). Turning off MY_NDBM causes CVS to look for a
    system-supplied ndbm database library and use it instead. That may speed
@@ -1396,6 +1380,9 @@
    used. */
 #define __GETOPT_PREFIX rpl_
 
+/* Define to rpl_ if the mkstemp replacement function should be used. */
+#define __MKSTEMP_PREFIX rpl_
+
 /* Define to rpl_ if the openat replacement function should be used. */
 #undef __OPENAT_PREFIX
 
@@ -1430,7 +1417,7 @@
 #undef getline
 
 /* Define to a replacement function name for getpass(). */
-#undef getpass
+#define getpass gnu_getpass
 
 /* Define to rpl_gettimeofday if the replacement function should be used. */
 #undef gettimeofday
@@ -1461,9 +1448,6 @@
 
 /* Define to rpl_mkdir if the replacement function should be used. */
 #undef mkdir
-
-/* Define to rpl_mkstemp if the replacement function should be used. */
-#undef mkstemp
 
 /* Define to rpl_mktime if the replacement function should be used. */
 #undef mktime

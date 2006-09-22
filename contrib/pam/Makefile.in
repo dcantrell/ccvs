@@ -86,7 +86,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/absolute-header.m4 \
 	$(top_srcdir)/m4/gettimeofday.m4 $(top_srcdir)/m4/glob.m4 \
 	$(top_srcdir)/m4/gnulib-comp.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/inet_ntop.m4 $(top_srcdir)/m4/intmax_t.m4 \
-	$(top_srcdir)/m4/inttypes-h.m4 \
 	$(top_srcdir)/m4/inttypes-pri.m4 $(top_srcdir)/m4/inttypes.m4 \
 	$(top_srcdir)/m4/inttypes_h.m4 $(top_srcdir)/m4/lchown.m4 \
 	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
@@ -99,9 +98,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/absolute-header.m4 \
 	$(top_srcdir)/m4/mempcpy.m4 $(top_srcdir)/m4/memrchr.m4 \
 	$(top_srcdir)/m4/minmax.m4 $(top_srcdir)/m4/mkdir-slash.m4 \
 	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
-	$(top_srcdir)/m4/mmap-anon.m4 $(top_srcdir)/m4/nanosleep.m4 \
-	$(top_srcdir)/m4/netinet_in_h.m4 $(top_srcdir)/m4/nls.m4 \
-	$(top_srcdir)/m4/openat.m4 $(top_srcdir)/m4/pagealign_alloc.m4 \
+	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/netinet_in_h.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/openat.m4 \
 	$(top_srcdir)/m4/pathmax.m4 $(top_srcdir)/m4/po.m4 \
 	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/quotearg.m4 \
 	$(top_srcdir)/m4/readlink.m4 $(top_srcdir)/m4/regex.m4 \
@@ -213,6 +211,8 @@ INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
 INTTYPES_H = @INTTYPES_H@
 KRB4 = @KRB4@
 LDFLAGS = @LDFLAGS@
+LIBCVS_LIBDEPS = @LIBCVS_LIBDEPS@
+LIBCVS_LTLIBDEPS = @LIBCVS_LTLIBDEPS@
 LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBMULTITHREAD = @LIBMULTITHREAD@

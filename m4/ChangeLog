@@ -1,3 +1,10 @@
+2006-09-22  Mark D. Baushke  <mdb@gnu.org>
+
+	* mmap-anon.m4, pagealign_alloc.m4: Remove as no longer needed.
+	* getdate.m4, gettext.m4, gnulib-cache.m4, gnulib-comp.m4,
+	inttypes-h.m4, inttypes-pri.m4, inttypes.m4, lib-link.m4,
+	mkstemp.m4, mktime.m4, regex.m4, rename.m4: Update from GNULIB.
+
 2006-09-02  Mark D. Baushke  <mdb@gnu.org>
 
 	* codeset.m4, fnmatch.m4, gnulib-cache.m4, gnulib-comp.m4,
