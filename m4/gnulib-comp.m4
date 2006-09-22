@@ -32,6 +32,10 @@ AC_DEFUN([gl_EARLY],
 AC_DEFUN([gl_INIT],
 [
   AM_CONDITIONAL([GL_COND_LIBTOOL], [false])
+  gl_cond_libtool=false
+  gl_libdeps=
+  gl_ltlibdeps=
+  gl_source_base='lib'
   gl_FUNC_ALLOCA
   gl_ALLOCSA
   gl_HEADER_ARPA_INET
@@ -94,13 +98,12 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_NANOSLEEP
   gl_HEADER_NETINET_IN
   gl_FUNC_OPENAT
-  gl_PAGEALIGN_ALLOC
   gl_PATHMAX
   gl_QUOTEARG
   gl_FUNC_READLINK
   AC_FUNC_REALLOC
   gl_REGEX
-  vb_FUNC_RENAME
+  gl_FUNC_RENAME
   gl_FUNC_RPMATCH
   gl_SAVE_CWD
   gt_FUNC_SETENV
@@ -141,6 +144,10 @@ AC_DEFUN([gl_INIT],
   gl_XSIZE
   gl_XSTRNDUP
   gl_YESNO
+  LIBCVS_LIBDEPS="$gl_libdeps"
+  AC_SUBST([LIBCVS_LIBDEPS])
+  LIBCVS_LTLIBDEPS="$gl_ltlibdeps"
+  AC_SUBST([LIBCVS_LTLIBDEPS])
 ])
 
 # This macro records the list of files which have been installed by
@@ -253,6 +260,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/mkdir.c
   lib/mkdirat.c
   lib/mkstemp.c
+  lib/mkstemp.h
   lib/mktime.c
   lib/nanosleep.c
   lib/open-safer.c
@@ -260,8 +268,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/openat-priv.h
   lib/openat.c
   lib/openat.h
-  lib/pagealign_alloc.c
-  lib/pagealign_alloc.h
   lib/pathmax.h
   lib/pipe-safer.c
   lib/printf-args.c
@@ -428,12 +434,10 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mkdir-slash.m4
   m4/mkstemp.m4
   m4/mktime.m4
-  m4/mmap-anon.m4
   m4/nanosleep.m4
   m4/netinet_in_h.m4
   m4/nls.m4
   m4/openat.m4
-  m4/pagealign_alloc.m4
   m4/pathmax.m4
   m4/po.m4
   m4/printf-posix.m4

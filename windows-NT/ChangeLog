@@ -1,3 +1,11 @@
+2006-09-22  Mark D. Baushke  <mdb@juniper.net>
+
+	* config.h.in.in (HAVE_MAP_ANONYMOUS, HAVE_MMAP,
+	HAVE_POSIX_MEMALIGN, MAP_ANONYMOUS, mkstemp): Remove as unused.
+	(__MKSTEMP_PREFIX): New define as rpl_.
+	(getpass): Define as gnu_getpass.
+	* Maekfile.in, stamp-chi, config.h.in, config.h: Regenerated.
+	
 2006-09-18  Mark D. Baushke  <mdb@gnu.org>
 
 	* config.h.in.in (HAVE_DECL_*): Define to 0 instead of undef to

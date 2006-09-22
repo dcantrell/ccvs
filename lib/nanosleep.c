@@ -19,9 +19,7 @@
 
 /* written by Jim Meyering */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#include <config.h>
 
 /* Undefine nanosleep here so any prototype is not redefined to be a
    prototype for rpl_nanosleep. (they'd conflict e.g., on alpha-dec-osf3.2)  */
@@ -29,10 +27,10 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <sys/types.h>
 #if HAVE_SYS_SELECT_H
 # include <sys/select.h>
 #endif
-#include <sys/types.h>
 #include <signal.h>
 
 #if TIME_WITH_SYS_TIME

@@ -48,6 +48,7 @@
 	"..\windows-NT\woe32.h"\
 	".\__fpending.h"\
 	".\closeout.h"\
+	".\close-stream.h"\
 	".\error.h"\
 	".\exitfail.h"\
 	".\gettext.h"\
@@ -297,20 +298,19 @@
 .\mkstemp.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\woe32.h"\
+	".\mkstemp.h"\
 	".\timespec.h"\
 	
 
-.\pagealign_alloc.c : \
+.\openat.c : \
 	"..\windows-NT\config.h"\
-	"..\windows-NT\unistd.h"\
 	"..\windows-NT\woe32.h"\
-	".\error.h"\
-	".\exit.h"\
-	".\getpagesize.h"\
-	".\gettext.h"\
-	".\pagealign_alloc.h"\
-	".\timespec.h"\
-	".\xalloc.h"\
+	".\dirname.h"\
+	".\dfcntl--.h"\
+	".\lstat.h"\
+	".\open-priv.h"\
+	".\openat.h"\
+	".\save-cwd.h"\
 	
 
 ".\printf-args.c" : \

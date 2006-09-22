@@ -71,8 +71,8 @@ EXTRA_DIST += alloca_.h
 # We need the following in order to create <alloca.h> when the system
 # doesn't have one that works with the given compiler.
 alloca.h: alloca_.h
-	cp $(srcdir)/alloca_.h $@-t
-	mv $@-t $@
+	cp -f $(srcdir)/alloca_.h $@-t
+	mv -f $@-t $@
 MOSTLYCLEANFILES += alloca.h alloca.h-t
 
 ## end   gnulib module alloca-opt
@@ -92,6 +92,7 @@ BUILT_SOURCES += $(ARPA_INET_H)
 # doesn't have one.
 arpa/inet.h:
 	test -d arpa || mkdir arpa
+	rm -f $@-t $@
 	echo '#include <sys/socket.h>' >$@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += arpa/inet.h arpa/inet.h-t
@@ -181,6 +182,7 @@ EXTRA_DIST += fcntl_.h
 # We need the following in order to create <fcntl.h> when the system
 # doesn't have one that works with the given compiler.
 fcntl.h: fcntl_.h
+	rm -f $@-t $@
 	sed -e 's|@''ABSOLUTE_FCNTL_H''@|$(ABSOLUTE_FCNTL_H)|g' \
 	    < $(srcdir)/fcntl_.h > $@-t
 	mv $@-t $@
@@ -208,8 +210,8 @@ EXTRA_DIST += fnmatch_.h fnmatch_loop.c
 # We need the following in order to create <fnmatch.h> when the system
 # doesn't have one that supports the required API.
 fnmatch.h: fnmatch_.h
-	cp $(srcdir)/fnmatch_.h $@-t
-	mv $@-t $@
+	cp -f $(srcdir)/fnmatch_.h $@-t
+	mv -f $@-t $@
 MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
 
 ## end   gnulib module fnmatch
@@ -253,6 +255,7 @@ getdate_LDADD = \
 	$(LIB_CLOCK_GETTIME) \
 	$(LIBINTL)
 
+libcvs_a_SOURCES += getdate.y
 BUILT_SOURCES += getdate.c
 MAINTAINERCLEANFILES += getdate.c
 EXTRA_DIST += getdate.c getdate.h
@@ -297,8 +300,8 @@ EXTRA_DIST += getopt_.h getopt_int.h
 # We need the following in order to create <getopt.h> when the system
 # doesn't have one that works with the given compiler.
 getopt.h: getopt_.h
-	cp $(srcdir)/getopt_.h $@-t
-	mv $@-t $@
+	cp -f $(srcdir)/getopt_.h $@-t
+	mv -f $@-t $@
 MOSTLYCLEANFILES += getopt.h getopt.h-t
 
 ## end   gnulib module getopt
@@ -344,8 +347,8 @@ EXTRA_DIST += glob_.h glob-libc.h
 # doesn't have one that works with the given compiler.
 all-local $(libcvs_a_OBJECTS): $(GLOB_H)
 glob.h: glob_.h
-	cp $(srcdir)/glob_.h $@-t
-	mv $@-t $@
+	cp -f $(srcdir)/glob_.h $@-t
+	mv -f $@-t $@
 MOSTLYCLEANFILES += glob.h glob.h-t
 
 ## end   gnulib module glob
@@ -370,6 +373,7 @@ EXTRA_DIST += inttypes_.h
 # We need the following in order to create <inttypes.h> when the system
 # doesn't have one that works with the given compiler.
 inttypes.h: inttypes_.h
+	rm -f $@-t $@
 	sed -e 's/@''HAVE_INTTYPES_H''@/$(HAVE_INTTYPES_H)/g' \
 	    -e 's|@''ABSOLUTE_INTTYPES_H''@|$(ABSOLUTE_INTTYPES_H)|g' \
 	    -e 's/@''PRI_MACROS_BROKEN''@/$(PRI_MACROS_BROKEN)/g' \
@@ -433,6 +437,12 @@ libcvs_a_SOURCES += minmax.h
 
 ## end   gnulib module minmax
 
+## begin gnulib module mkstemp
+
+EXTRA_DIST += mkstemp.h
+
+## end   gnulib module mkstemp
+
 ## begin gnulib module netinet_in
 
 BUILT_SOURCES += $(NETINET_IN_H)
@@ -441,6 +451,7 @@ BUILT_SOURCES += $(NETINET_IN_H)
 # doesn't have one.
 netinet/in.h:
 	test -d netinet || mkdir netinet
+	rm -f $@-t $@
 	echo '#include <sys/socket.h>' >$@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += netinet/in.h netinet/in.h-t
@@ -453,12 +464,6 @@ MOSTLYCLEANDIRS += netinet
 EXTRA_DIST += at-func.c openat.h openat-priv.h
 
 ## end   gnulib module openat
-
-## begin gnulib module pagealign_alloc
-
-EXTRA_DIST += pagealign_alloc.h
-
-## end   gnulib module pagealign_alloc
 
 ## begin gnulib module pathmax
 
@@ -522,6 +527,7 @@ EXTRA_DIST += stdbool_.h
 # We need the following in order to create <stdbool.h> when the system
 # doesn't have one that works.
 stdbool.h: stdbool_.h
+	rm -f $@-t $@
 	sed -e 's/@''HAVE__BOOL''@/$(HAVE__BOOL)/g' \
 		< $(srcdir)/stdbool_.h > $@-t
 	mv $@-t $@
@@ -537,6 +543,7 @@ EXTRA_DIST += stdint_.h
 # We need the following in order to create <stdint.h> when the system
 # doesn't have one that works with the given compiler.
 stdint.h: stdint_.h
+	rm -f $@-t $@
 	sed -e 's/@''HAVE_WCHAR_H''@/$(HAVE_WCHAR_H)/g' \
 	    -e 's/@''HAVE_STDINT_H''@/$(HAVE_STDINT_H)/g' \
 	    -e 's|@''ABSOLUTE_STDINT_H''@|$(ABSOLUTE_STDINT_H)|g' \
@@ -615,8 +622,8 @@ EXTRA_DIST += socket_.h
 # doesn't have one that works with the given compiler.
 sys/socket.h: socket_.h
 	test -d sys || mkdir sys
-	cp $(srcdir)/socket_.h $@-t
-	mv $@-t $@
+	cp -f $(srcdir)/socket_.h $@-t
+	mv -f $@-t $@
 MOSTLYCLEANFILES += sys/socket.h sys/socket.h-t
 MOSTLYCLEANDIRS += sys
 
@@ -631,6 +638,7 @@ EXTRA_DIST += stat_.h
 # has one that is incomplete.
 sys/stat.h: stat_.h
 	test -d sys || mkdir sys
+	rm -f $@-t $@
 	sed -e 's|@''ABSOLUTE_SYS_STAT_H''@|$(ABSOLUTE_SYS_STAT_H)|g' \
 	    < $(srcdir)/stat_.h > $@-t
 	mv $@-t $@

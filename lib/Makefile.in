@@ -67,14 +67,14 @@ DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	gettime.c gettimeofday.c glob.c inet_ntop.c lchown.c lstat.c \
 	malloc.c mbchar.c md5.c memchr.c memmove.c mempcpy.c memrchr.c \
 	mkdir.c mkdirat.c mkstemp.c mktime.c nanosleep.c open-safer.c \
-	openat-die.c openat.c pagealign_alloc.c pipe-safer.c \
-	printf-args.c printf-parse.c quotearg.c readlink.c realloc.c \
-	regex.c rename.c rpmatch.c save-cwd.c setenv.c snprintf.c \
-	strcasecmp.c strdup.c strerror.c strftime.c stripslash.c \
-	strncasecmp.c strndup.c strnlen.c strstr.c strtoimax.c \
-	strtol.c strtoll.c strtoul.c strtoull.c strtoumax.c \
-	sunos57-select.c tempname.c time_r.c unsetenv.c vasnprintf.c \
-	vasprintf.c waitpid.c xgetcwd.c xmalloc.c xreadlink.c yesno.c
+	openat-die.c openat.c pipe-safer.c printf-args.c \
+	printf-parse.c quotearg.c readlink.c realloc.c regex.c \
+	rename.c rpmatch.c save-cwd.c setenv.c snprintf.c strcasecmp.c \
+	strdup.c strerror.c strftime.c stripslash.c strncasecmp.c \
+	strndup.c strnlen.c strstr.c strtoimax.c strtol.c strtoll.c \
+	strtoul.c strtoull.c strtoumax.c sunos57-select.c tempname.c \
+	time_r.c unsetenv.c vasnprintf.c vasprintf.c waitpid.c \
+	xgetcwd.c xmalloc.c xreadlink.c yesno.c
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/absolute-header.m4 \
 	$(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
@@ -111,7 +111,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/absolute-header.m4 \
 	$(top_srcdir)/m4/gettimeofday.m4 $(top_srcdir)/m4/glob.m4 \
 	$(top_srcdir)/m4/gnulib-comp.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/inet_ntop.m4 $(top_srcdir)/m4/intmax_t.m4 \
-	$(top_srcdir)/m4/inttypes-h.m4 \
 	$(top_srcdir)/m4/inttypes-pri.m4 $(top_srcdir)/m4/inttypes.m4 \
 	$(top_srcdir)/m4/inttypes_h.m4 $(top_srcdir)/m4/lchown.m4 \
 	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
@@ -124,9 +123,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/absolute-header.m4 \
 	$(top_srcdir)/m4/mempcpy.m4 $(top_srcdir)/m4/memrchr.m4 \
 	$(top_srcdir)/m4/minmax.m4 $(top_srcdir)/m4/mkdir-slash.m4 \
 	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
-	$(top_srcdir)/m4/mmap-anon.m4 $(top_srcdir)/m4/nanosleep.m4 \
-	$(top_srcdir)/m4/netinet_in_h.m4 $(top_srcdir)/m4/nls.m4 \
-	$(top_srcdir)/m4/openat.m4 $(top_srcdir)/m4/pagealign_alloc.m4 \
+	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/netinet_in_h.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/openat.m4 \
 	$(top_srcdir)/m4/pathmax.m4 $(top_srcdir)/m4/po.m4 \
 	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/quotearg.m4 \
 	$(top_srcdir)/m4/readlink.m4 $(top_srcdir)/m4/regex.m4 \
@@ -168,8 +166,9 @@ ARFLAGS = cru
 libcvs_a_AR = $(AR) $(ARFLAGS)
 libcvs_a_DEPENDENCIES = @LIBOBJS@ @ALLOCA@
 am_libcvs_a_OBJECTS = sighandle.$(OBJEXT) allocsa.$(OBJEXT) \
-	base64.$(OBJEXT) getnline.$(OBJEXT) strnlen1.$(OBJEXT) \
-	xalloc-die.$(OBJEXT) xgethostname.$(OBJEXT) xstrndup.$(OBJEXT)
+	base64.$(OBJEXT) getdate.$(OBJEXT) getnline.$(OBJEXT) \
+	strnlen1.$(OBJEXT) xalloc-die.$(OBJEXT) xgethostname.$(OBJEXT) \
+	xstrndup.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 am_getdate_OBJECTS = getdate-error.$(OBJEXT) getdate-getdate.$(OBJEXT) \
 	getdate-progname.$(OBJEXT)
@@ -186,6 +185,7 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 YACCCOMPILE = $(YACC) $(YFLAGS) $(AM_YFLAGS)
+YLWRAP = $(top_srcdir)/build-aux/ylwrap
 SOURCES = $(libcvs_a_SOURCES) $(getdate_SOURCES)
 DIST_SOURCES = $(libcvs_a_SOURCES) $(getdate_SOURCES)
 ETAGS = etags
@@ -264,6 +264,8 @@ INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
 INTTYPES_H = @INTTYPES_H@
 KRB4 = @KRB4@
 LDFLAGS = @LDFLAGS@
+LIBCVS_LIBDEPS = @LIBCVS_LIBDEPS@
+LIBCVS_LTLIBDEPS = @LIBCVS_LTLIBDEPS@
 LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBMULTITHREAD = @LIBMULTITHREAD@
@@ -385,9 +387,9 @@ noinst_LIBRARIES = libcvs.a
 # matching?)
 libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	allocsa.h allocsa.c base64.h base64.c error.h exit.h \
-	getaddrinfo.h getnline.h getnline.c gettext.h inet_ntop.h \
-	mbchar.h mbuiter.h md5.h minmax.h setenv.h size_max.h \
-	snprintf.h strcase.h strnlen1.h strnlen1.c strstr.h \
+	getaddrinfo.h getdate.y getnline.h getnline.c gettext.h \
+	inet_ntop.h mbchar.h mbuiter.h md5.h minmax.h setenv.h \
+	size_max.h snprintf.h strcase.h strnlen1.h strnlen1.c strstr.h \
 	printf-args.h printf-parse.h vasnprintf.h vasprintf.h verify.h \
 	wcwidth.h xalloc-die.c xgethostname.h xgethostname.c xsize.h \
 	xstrndup.h xstrndup.c
@@ -425,13 +427,13 @@ EXTRA_DIST = .cvsignore ChangeLog.fsf Makefile.gnulib build_lib.com \
 	getdate.h getdelim.h getline.h getlogin_r.h getndelim2.h \
 	getndelim2.c getopt_.h getopt_int.h getpagesize.h getpass.h \
 	glob_.h glob-libc.h intprops.h inttypes_.h lchown.h lstat.h \
-	mempcpy.h memrchr.h at-func.c openat.h openat-priv.h \
-	pagealign_alloc.h pathmax.h quotearg.h regcomp.c regex.h \
-	regex_internal.c regex_internal.h regexec.c same-inode.h \
-	save-cwd.h stat-macros.h stdbool_.h stdint_.h strdup.h \
-	strftime.h strndup.h strnlen.h socket_.h stat_.h time_r.h \
-	timespec.h unistd-safer.h unistd--.h unlocked-io.h xalloc.h \
-	xgetcwd.h xreadlink.h yesno.h
+	mempcpy.h memrchr.h mkstemp.h at-func.c openat.h openat-priv.h \
+	pathmax.h quotearg.h regcomp.c regex.h regex_internal.c \
+	regex_internal.h regexec.c same-inode.h save-cwd.h \
+	stat-macros.h stdbool_.h stdint_.h strdup.h strftime.h \
+	strndup.h strnlen.h socket_.h stat_.h time_r.h timespec.h \
+	unistd-safer.h unistd--.h unlocked-io.h xalloc.h xgetcwd.h \
+	xreadlink.h yesno.h
 getdate_SOURCES = error.c getdate.y progname.c
 getdate_CPPFLAGS = -DTEST
 getdate_LDADD = \
@@ -523,7 +525,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/gai_strerror.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getaddrinfo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getcwd.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getdate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getdelim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/gethostname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getline.Po@am__quote@
@@ -553,7 +554,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/open-safer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/openat-die.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/openat.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/pagealign_alloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/pipe-safer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/printf-args.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/printf-parse.Po@am__quote@
@@ -597,6 +597,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-getdate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-progname.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getnline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sighandle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strnlen1.Po@am__quote@
@@ -661,25 +662,7 @@ getdate-progname.obj: progname.c
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-progname.obj `if test -f 'progname.c'; then $(CYGPATH_W) 'progname.c'; else $(CYGPATH_W) '$(srcdir)/progname.c'; fi`
 
 .y.c:
-	$(YACCCOMPILE) $<
-	if test -f y.tab.h; then \
-	  to=`echo "$*_H" | sed \
-                -e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/' \
-                -e 's/[^ABCDEFGHIJKLMNOPQRSTUVWXYZ]/_/g'`; \
-	  sed -e "/^#/!b" -e "s/Y_TAB_H/$$to/g" -e "s|y\.tab\.h|$*.h|" \
-            y.tab.h >$*.ht; \
-	  rm -f y.tab.h; \
-	  if cmp -s $*.ht $*.h; then \
-	    rm -f $*.ht ;\
-	  else \
-	    mv $*.ht $*.h; \
-	  fi; \
-	fi
-	if test -f y.output; then \
-	  mv y.output $*.output; \
-	fi
-	sed '/^#/ s|y\.tab\.c|$@|' y.tab.c >$@t && mv $@t $@
-	rm -f y.tab.c
+	$(SHELL) $(YLWRAP) $< y.tab.c $@ y.tab.h $*.h y.output $*.output -- $(YACCCOMPILE)
 uninstall-info-am:
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
@@ -933,19 +916,21 @@ uninstall-am: uninstall-info-am
 # We need the following in order to create <alloca.h> when the system
 # doesn't have one that works with the given compiler.
 alloca.h: alloca_.h
-	cp $(srcdir)/alloca_.h $@-t
-	mv $@-t $@
+	cp -f $(srcdir)/alloca_.h $@-t
+	mv -f $@-t $@
 
 # We need the following in order to create <arpa/inet.h> when the system
 # doesn't have one.
 arpa/inet.h:
 	test -d arpa || mkdir arpa
+	rm -f $@-t $@
 	echo '#include <sys/socket.h>' >$@-t
 	mv $@-t $@
 
 # We need the following in order to create <fcntl.h> when the system
 # doesn't have one that works with the given compiler.
 fcntl.h: fcntl_.h
+	rm -f $@-t $@
 	sed -e 's|@''ABSOLUTE_FCNTL_H''@|$(ABSOLUTE_FCNTL_H)|g' \
 	    < $(srcdir)/fcntl_.h > $@-t
 	mv $@-t $@
@@ -953,25 +938,26 @@ fcntl.h: fcntl_.h
 # We need the following in order to create <fnmatch.h> when the system
 # doesn't have one that supports the required API.
 fnmatch.h: fnmatch_.h
-	cp $(srcdir)/fnmatch_.h $@-t
-	mv $@-t $@
+	cp -f $(srcdir)/fnmatch_.h $@-t
+	mv -f $@-t $@
 
 # We need the following in order to create <getopt.h> when the system
 # doesn't have one that works with the given compiler.
 getopt.h: getopt_.h
-	cp $(srcdir)/getopt_.h $@-t
-	mv $@-t $@
+	cp -f $(srcdir)/getopt_.h $@-t
+	mv -f $@-t $@
 
 # We need the following in order to create <glob.h> when the system
 # doesn't have one that works with the given compiler.
 all-local $(libcvs_a_OBJECTS): $(GLOB_H)
 glob.h: glob_.h
-	cp $(srcdir)/glob_.h $@-t
-	mv $@-t $@
+	cp -f $(srcdir)/glob_.h $@-t
+	mv -f $@-t $@
 
 # We need the following in order to create <inttypes.h> when the system
 # doesn't have one that works with the given compiler.
 inttypes.h: inttypes_.h
+	rm -f $@-t $@
 	sed -e 's/@''HAVE_INTTYPES_H''@/$(HAVE_INTTYPES_H)/g' \
 	    -e 's|@''ABSOLUTE_INTTYPES_H''@|$(ABSOLUTE_INTTYPES_H)|g' \
 	    -e 's/@''PRI_MACROS_BROKEN''@/$(PRI_MACROS_BROKEN)/g' \
@@ -988,12 +974,14 @@ inttypes.h: inttypes_.h
 # doesn't have one.
 netinet/in.h:
 	test -d netinet || mkdir netinet
+	rm -f $@-t $@
 	echo '#include <sys/socket.h>' >$@-t
 	mv $@-t $@
 
 # We need the following in order to create <stdbool.h> when the system
 # doesn't have one that works.
 stdbool.h: stdbool_.h
+	rm -f $@-t $@
 	sed -e 's/@''HAVE__BOOL''@/$(HAVE__BOOL)/g' \
 		< $(srcdir)/stdbool_.h > $@-t
 	mv $@-t $@
@@ -1001,6 +989,7 @@ stdbool.h: stdbool_.h
 # We need the following in order to create <stdint.h> when the system
 # doesn't have one that works with the given compiler.
 stdint.h: stdint_.h
+	rm -f $@-t $@
 	sed -e 's/@''HAVE_WCHAR_H''@/$(HAVE_WCHAR_H)/g' \
 	    -e 's/@''HAVE_STDINT_H''@/$(HAVE_STDINT_H)/g' \
 	    -e 's|@''ABSOLUTE_STDINT_H''@|$(ABSOLUTE_STDINT_H)|g' \
@@ -1029,13 +1018,14 @@ stdint.h: stdint_.h
 # doesn't have one that works with the given compiler.
 sys/socket.h: socket_.h
 	test -d sys || mkdir sys
-	cp $(srcdir)/socket_.h $@-t
-	mv $@-t $@
+	cp -f $(srcdir)/socket_.h $@-t
+	mv -f $@-t $@
 
 # We need the following in order to create <sys/stat.h> when the system
 # has one that is incomplete.
 sys/stat.h: stat_.h
 	test -d sys || mkdir sys
+	rm -f $@-t $@
 	sed -e 's|@''ABSOLUTE_SYS_STAT_H''@|$(ABSOLUTE_SYS_STAT_H)|g' \
 	    < $(srcdir)/stat_.h > $@-t
 	mv $@-t $@

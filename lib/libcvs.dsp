@@ -89,7 +89,19 @@ SOURCE=.\__fpending.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\alloca.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\allocsa.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\asnprintf.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\atexit.c
 # End Source File
 # Begin Source File
 
@@ -105,11 +117,27 @@ SOURCE=".\canon-host.c"
 # End Source File
 # Begin Source File
 
+SOURCE=.\canonicalize.c
+# End Source File
+# Begin Source File
+
+SOURCE=".\chdir-long.c"
+# End Source File
+# Begin Source File
+
+SOURCE=.\chown.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\closeout.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\close-stream.c
+# End Source File
+# Begin Source File
+
+SOURCE=".\creat-safer.c"
 # End Source File
 # Begin Source File
 
@@ -125,11 +153,27 @@ SOURCE=".\dup-safer.c"
 # End Source File
 # Begin Source File
 
+SOURCE=.\dup2.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\exitfail.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\fchmodat.c
+# End Source File
+# Begin Source File
+
+SOURCE=".\fchown-stub.c"
+# End Source File
+# Begin Source File
+
 SOURCE=".\fd-safer.c"
+# End Source File
+# Begin Source File
+
+SOURCE=.\filenamecat.c
 # End Source File
 # Begin Source File
 
@@ -141,11 +185,19 @@ SOURCE=.\fnmatch.c
 # End Source File
 # Begin Source File
 
+SOURCE=".\fnmatch_loop.c"
+# End Source File
+# Begin Source File
+
 SOURCE=.\fseeko.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\ftello.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\ftruncate.c
 # End Source File
 # Begin Source File
 
@@ -177,6 +229,10 @@ SOURCE=.\getndelim2.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\getnline.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\getopt.c
 # End Source File
 # Begin Source File
@@ -185,7 +241,15 @@ SOURCE=.\getopt1.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\getpass.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\gettime.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\gettimeofday.c
 # End Source File
 # Begin Source File
 
@@ -194,6 +258,10 @@ SOURCE=.\glob.c
 # Begin Source File
 
 SOURCE=.\inet_ntop.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\lchown.c
 # End Source File
 # Begin Source File
 
@@ -209,7 +277,27 @@ SOURCE=.\md5.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\memchr.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\memmove.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\mempcpy.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\memrchr.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\mkdir.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\mkdirat.c
 # End Source File
 # Begin Source File
 
@@ -217,7 +305,23 @@ SOURCE=.\mkstemp.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\pagealign_alloc.c
+SOURCE=.\mkstime.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\openat.c
+# End Source File
+# Begin Source File
+
+SOURCE=".\openat-die.c"
+# End Source File
+# Begin Source File
+
+SOURCE=".\open-safer.c"
+# End Source File
+# Begin Source File
+
+SOURCE=".\pipe-safer.c"
 # End Source File
 # Begin Source File
 
@@ -269,11 +373,19 @@ SOURCE=.\strcasecmp.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\strdup.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\strftime.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\stripslash.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\strncasecmp.c
 # End Source File
 # Begin Source File
 
@@ -286,6 +398,34 @@ SOURCE=.\strnlen.c
 # Begin Source File
 
 SOURCE=.\strnlen1.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\strstr.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\strtoimax.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\strtol.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\strtoll.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\strtoul.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\strtoull.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\strtoumax.c
 # End Source File
 # Begin Source File
 
@@ -306,6 +446,10 @@ SOURCE=.\vasnprintf.c
 # Begin Source File
 
 SOURCE=.\vasprintf.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\waitpid.c
 # End Source File
 # Begin Source File
 
@@ -380,6 +524,10 @@ SOURCE=.\allocsa.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\at-func.c"
+# End Source File
+# Begin Source File
+
 SOURCE=.\base64.h
 # End Source File
 # Begin Source File
@@ -397,6 +545,10 @@ SOURCE=".\chdir-long.h"
 # Begin Source File
 
 SOURCE=.\closeout.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\close-stream.h"
 # End Source File
 # Begin Source File
 
@@ -425,6 +577,14 @@ SOURCE=.\exit.h
 # Begin Source File
 
 SOURCE=.\exitfail.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\fcntl--.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\fcntl-safer.h"
 # End Source File
 # Begin Source File
 
@@ -491,6 +651,10 @@ SOURCE=.\getndelim2.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\getnline.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\getopt.h
 # End Source File
 # Begin Source File
@@ -527,6 +691,10 @@ SOURCE=.\getopt_int.h
 # Begin Source File
 
 SOURCE=.\getpagesize.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\getpass.h
 # End Source File
 # Begin Source File
 
@@ -573,6 +741,22 @@ SOURCE=.\inet_ntop.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\intprops.h
+# End Source File
+# Begin Source File
+
+SOURCE="..\windows-NT\inttypes.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\lchown.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lstat.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\mbchar.h
 # End Source File
 # Begin Source File
@@ -585,11 +769,19 @@ SOURCE=.\md5.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\memrchr.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\mempcpy.h
 # End Source File
 # Begin Source File
 
-SOURCE="..\windows-NT\inttypes.h"
+SOURCE=.\minmax.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\mkstemp.h
 # End Source File
 # Begin Source File
 
@@ -601,7 +793,11 @@ SOURCE="..\windows-NT\netdb.h"
 # End Source File
 # Begin Source File
 
-SOURCE=.\pagealign_alloc.h
+SOURCE=".\openat.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\openat-priv.h"
 # End Source File
 # Begin Source File
 
@@ -637,11 +833,19 @@ SOURCE=.\regex_internal.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\same-inode.h"
+# End Source File
+# Begin Source File
+
 SOURCE=".\save-cwd.h"
 # End Source File
 # Begin Source File
 
 SOURCE=.\setenv.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\size_max.h
 # End Source File
 # Begin Source File
 
@@ -677,11 +881,19 @@ SOURCE=.\strndup.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\strftime.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\strnlen.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\strnlen1.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\strstr.h
 # End Source File
 # Begin Source File
 
@@ -717,6 +929,18 @@ SOURCE=.\vasprintf.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\verify.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\wait.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\wcwidth.h
+# End Source File
+# Begin Source File
+
 SOURCE="..\windows-NT\woe32.h"
 # End Source File
 # Begin Source File
@@ -734,6 +958,10 @@ SOURCE=.\xgethostname.h
 # Begin Source File
 
 SOURCE=.\xreadlink.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\xselect.h
 # End Source File
 # Begin Source File
 

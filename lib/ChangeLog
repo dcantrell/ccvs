@@ -1,3 +1,49 @@
+2006-09-22  Mark D. Baushke  <mdb@gnu.org>
+
+	* pagealign_alloc.c, pagealign_alloc.h: Removed as no longer
+	needed.
+	* Makefile.am: Import changes from...
+	* Makefile.gnulib: ...this regenerated file.
+	* Makefile.in, lib/getdate.c: Regenerated.
+	* libcvs.dep (mkstemp.c): Depends on mkstemp.h now.
+	(pagealign_alloc.c): Removed.
+	(openat.c): Added.
+	* libcvs.dsp (pagealign_alloc.c, pagealign_alloc.h): Removed.
+	(mkstemp.h): Added.
+	(alloca.c, allocsa.c, atexit.c, canonicalize.c, chdir-long.c,
+	chown.c, creat-safer.c, dup2.c, fchmodat.c, fchown-stub.c,
+	filenamecat.c, fnmatch_loop.c, ftruncate.c, getnline.c, getpass.c,
+	gettimeofday.c, lchown.c, memchr.c, memmove.c, mempcpy.c,
+	memrchr.c, mkdir.c, mkdirat.c, mkstime.c, openat.c, openat-die.c,
+	open-safer.c, pipe-safer.c, strdup.c, strncasecmp.c, strstr.c,
+	strtoimax.c, strtol.c, strtoll.c, strtoul.c, strtoull.c,
+	strtoumax.c, waitpid.c, at-func.c, close-stream.h, fcntl--.h,
+	fcntl-safer.h, getnline.h, getpass.h, intprops.h, lchown.h,
+	lstat.h, memrchr.h, minmax.h, openat.h, openat-priv.h,
+	same-inode.h, size_max.h, strftime.h, strstr.h, verify.h, wait.h,
+	wcwidth.h, xselect.h): Add SOURCE lines.
+	* libcvs.mak (pagealign_alloc.obj, pagealign_alloc.c): Remove.
+	* mkstemp.h: New from GNULIB.
+	* __fpending.c, alloca.c, allocsa.c, asnprintf.c, asprintf.c,
+	atexit.c, basename.c, canon-host.c, canonicalize.c, chdir-long.c,
+	chown.c, close-stream.c, closeout.c, creat-safer.c, cycle-check.c,
+	dirname.c, dup-safer.c, dup2.c, error.c, exitfail.c, fchmodat.c,
+	fchown-stub.c, fd-safer.c, filenamecat.c, fnmatch.c, ftruncate.c,
+	gai_strerror.c, getaddrinfo.c, getcwd.c, getdate.y, gethostname.c,
+	getlogin_r.c, getndelim2.c, getnline.c, getopt.c, getopt1.c,
+	getpass.c, gettime.c, gettimeofday.c, glob.c, inet_ntop.c,
+	lchown.c, lstat.c, malloc.c, mbchar.c, md5.c, memchr.c, memmove.c,
+	memrchr.c, mkdir.c, mkdirat.c, mkstemp.c, mktime.c, nanosleep.c,
+	open-safer.c, openat-die.c, openat.c, pipe-safer.c, printf-args.c,
+	printf-parse.c, quotearg.c, readlink.c, realloc.c, regex.c,
+	regex_internal.c, rename.c, rpmatch.c, save-cwd.c, setenv.c,
+	snprintf.c, strcasecmp.c, strdup.c, strerror.c, strftime.c,
+	stripslash.c, strncasecmp.c, strndup.c, strnlen.c, strnlen1.c,
+	strstr.c, strtoimax.c, strtol.c, tempname.c, time_r.c, unsetenv.c,
+	vasnprintf.c, vasprintf.c, xalloc-die.c, xgetcwd.c,
+	xgethostname.c, xmalloc.c, xreadlink.c, yesno.c: Update from
+	GNULIB.
+
 2006-09-06  Derek Price  <derek@ximbiot.com>
 
 	* .cvsignore: Ignore generated fcntl.h & inttypes.h.

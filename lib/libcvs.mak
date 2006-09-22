@@ -72,7 +72,6 @@ CLEAN :
 	-@erase "$(INTDIR)\md5.obj"
 	-@erase "$(INTDIR)\mempcpy.obj"
 	-@erase "$(INTDIR)\mkstemp.obj"
-	-@erase "$(INTDIR)\pagealign_alloc.obj"
 	-@erase "$(INTDIR)\printf-args.obj"
 	-@erase "$(INTDIR)\printf-parse.obj"
 	-@erase "$(INTDIR)\quotearg.obj"
@@ -152,7 +151,6 @@ LIB32_OBJS= \
 	"$(INTDIR)\md5.obj" \
 	"$(INTDIR)\mempcpy.obj" \
 	"$(INTDIR)\mkstemp.obj" \
-	"$(INTDIR)\pagealign_alloc.obj" \
 	"$(INTDIR)\printf-args.obj" \
 	"$(INTDIR)\printf-parse.obj" \
 	"$(INTDIR)\quotearg.obj" \
@@ -232,7 +230,6 @@ CLEAN :
 	-@erase "$(INTDIR)\md5.obj"
 	-@erase "$(INTDIR)\mempcpy.obj"
 	-@erase "$(INTDIR)\mkstemp.obj"
-	-@erase "$(INTDIR)\pagealign_alloc.obj"
 	-@erase "$(INTDIR)\printf-args.obj"
 	-@erase "$(INTDIR)\printf-parse.obj"
 	-@erase "$(INTDIR)\quotearg.obj"
@@ -309,7 +306,6 @@ LIB32_OBJS= \
 	"$(INTDIR)\md5.obj" \
 	"$(INTDIR)\mempcpy.obj" \
 	"$(INTDIR)\mkstemp.obj" \
-	"$(INTDIR)\pagealign_alloc.obj" \
 	"$(INTDIR)\printf-args.obj" \
 	"$(INTDIR)\printf-parse.obj" \
 	"$(INTDIR)\quotearg.obj" \
@@ -546,11 +542,6 @@ SOURCE=.\mempcpy.c
 SOURCE=.\mkstemp.c
 
 "$(INTDIR)\mkstemp.obj" : $(SOURCE) "$(INTDIR)"
-
-
-SOURCE=.\pagealign_alloc.c
-
-"$(INTDIR)\pagealign_alloc.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=".\printf-args.c"
