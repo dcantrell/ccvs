@@ -1,3 +1,9 @@
+2006-09-25  Mark D. Baushke  <mdb@gnu.org>
+
+	* fnmatch.m4, getdate.m4, lock.m4, mkdir-slash.m4, signed.m4,
+	sockpfaf.m4, strndup.m4, time_r.m4, vasprintf.m4: Update from
+	GNULIB.
+
 2006-09-22  Mark D. Baushke  <mdb@gnu.org>
 
 	* mmap-anon.m4, pagealign_alloc.m4: Remove as no longer needed.
@@ -104,7 +110,7 @@
 	* stdint.m4: Combine BSD/OS stuff with OpenBSD/SGI and use the
 	correct preprocessor symbol.
 
-2006-06-23  Mark D. Baushke  <mdb@juniper.net>
+2006-06-23  Mark D. Baushke  <mdb@gnu.org>
 
 	* stdint.m4: Both BSD/OS 4.2 and SGI-cc IRIX 5.3 seem to also need
 	<sys/types.h> included.
