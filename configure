@@ -5884,6 +5884,7 @@ main ()
 error "No, in FreeBSD 4.0 recursive mutexes actually don't work."
 #else
 int x = (int)PTHREAD_MUTEX_RECURSIVE;
+return !x;
 #endif
   ;
   return 0;
@@ -11115,6 +11116,7 @@ int
 main ()
 {
 int x = AF_INET; struct in_addr y; struct sockaddr_in z;
+ if (&x && &y && &z) return 0;
   ;
   return 0;
 }
@@ -11199,6 +11201,7 @@ int
 main ()
 {
 int x = AF_INET6; struct in6_addr y; struct sockaddr_in6 z;
+ if (&x && &y && &z) return 0;
   ;
   return 0;
 }
@@ -14452,6 +14455,7 @@ int
 main ()
 {
 struct s t = (struct s) { 3, 4 };
+     if (t.i != 0) return 0;
   ;
   return 0;
 }
@@ -21086,7 +21090,7 @@ cat >>conftest.$ac_ext <<_ACEOF
 int
 main ()
 {
-signed char x;
+signed char x; return !x;
   ;
   return 0;
 }
@@ -23299,7 +23303,7 @@ int
 main ()
 {
 exit
-	   (!((fnm ? fnm : fnmatch) ("a*", "", 0) == FNM_NOMATCH
+	   (!(fnm ("a*", "", 0) == FNM_NOMATCH
 	      && y ("a*", "abc", 0)
 	      && n ("d*/*1", "d/s/1", FNM_PATHNAME)
 	      && y ("a\\\\bc", "abc", 0)
@@ -30449,7 +30453,13 @@ done
 
 
 
-    { echo "$as_me:$LINENO: checking whether mkdir fails due to a trailing slash" >&5
+
+
+
+
+
+
+  { echo "$as_me:$LINENO: checking whether mkdir fails due to a trailing slash" >&5
 echo $ECHO_N "checking whether mkdir fails due to a trailing slash... $ECHO_C" >&6; }
 if test "${gl_cv_func_mkdir_trailing_slash_bug+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -30471,6 +30481,9 @@ cat >>conftest.$ac_ext <<_ACEOF
 #       include <sys/types.h>
 #       include <sys/stat.h>
 #       include <stdlib.h>
+#       ifdef HAVE_UNISTD_H
+#         include <unistd.h>
+#       endif
 	int main ()
 	{
 	  rmdir ("confdir-slash");
@@ -36237,6 +36250,7 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 #include <string.h>
+		 	#include <stdlib.h>
 int
 main ()
 {
@@ -37922,6 +37936,7 @@ main ()
 	   even though the POSIX signature has the 'restrict's,
 	   since C99 says they can't affect type compatibility.  */
 	struct tm * (*ptr) (time_t const *, struct tm *) = localtime_r;
+        if (ptr) return 0;
   ;
   return 0;
 }
@@ -39057,6 +39072,9 @@ done
   *) LIBOBJS="$LIBOBJS asprintf.$ac_objext"
  ;;
 esac
+
+
+
 
 
 

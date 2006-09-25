@@ -1394,9 +1394,7 @@
 /* Define to a replacement function name for getline(). */
 #undef getline
 
-/* We want to always use the GNULIB version of getpass which we have in lib,
-   so define getpass to something that won't conflict with any existing system
-   declarations. */
+/* Define to a replacement function name for getpass(). */
 #undef getpass
 
 /* Define to rpl_gettimeofday if the replacement function should be used. */

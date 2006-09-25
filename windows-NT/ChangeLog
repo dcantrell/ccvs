@@ -1,4 +1,8 @@
-2006-09-22  Mark D. Baushke  <mdb@juniper.net>
+2006-09-25  Mark D. Baushke  <mdb@gnu.org>
+
+	* config.h.in.in: Update from ../config.h.in
+
+2006-09-22  Mark D. Baushke  <mdb@gnu.org>
 
 	* config.h.in.in (HAVE_MAP_ANONYMOUS, HAVE_MMAP,
 	HAVE_POSIX_MEMALIGN, MAP_ANONYMOUS, mkstemp): Remove as unused.
