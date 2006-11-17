@@ -1,5 +1,7 @@
 2006-11-17  Derek Price  <derek@ximbiot.com>
 
+	* log_accum.pl: Remove redundant config default.
+
 	* log_accum.pl: Fix a few minor bugs.  Some minor reformatting.
 	(Original patch from Sylvain Beucler <beuc@beuc.net>.)
 

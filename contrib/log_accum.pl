@@ -166,13 +166,6 @@ sub set_defaults
 	       || exists $config->{'empty-diffs'}
 	       || exists $config->{'separate-diffs'});
 
-    # Doc says that --send-diff is implied by -D, -E, -e, & -S.
-    $config->{'send-diff'} = 1
-	if !exists $config->{'send-diff'}
-           && (exists $config->{'diff-arg'}
-	       || exists $config->{'empty-diffs'}
-               || exists $config->{'separate-diffs'});
-
     # Set defaults.
     if (!exists $config->{'cvsroot'})
     {
