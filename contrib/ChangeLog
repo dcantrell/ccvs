@@ -1,3 +1,8 @@
+2006-11-17  Derek Price  <derek@ximbiot.com>
+
+	* log_accum.pl: Fix a few minor bugs.  Some minor reformatting.
+	(Original patch from Sylvain Beucler <beuc@beuc.net>.)
+
 2006-09-05  Mark D. Baushke  <mdb@gnu.org>
 
 	* validate_repo.pl (look_at_cvs_file): Check for head being in

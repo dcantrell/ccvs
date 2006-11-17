@@ -236,7 +236,7 @@ sub new_config
     my %config;
 
     # Set up the option processing functions.
-    $config{'only-tags'} =
+    $config{'only-tag'} =
 	sub
 	{
 	    $_[1] = '' if $_[1] eq "HEAD" || $_[1] eq "TRUNK";
@@ -245,7 +245,7 @@ sub new_config
     $config{'quiet'} =
 	sub
 	{
-	    $config{'verbose'} = !$_[1];
+	    $config{debug} = !$_[1];
 	};
     $config{'file-prefix'} =
 	sub
@@ -258,7 +258,7 @@ sub new_config
 	sub
 	{
 	    warn "Using deprecated -u option. Use -T instead.";
-	    &{$config{'file-text'}} (@_);
+	    &{$config{'file-prefix'}} (@_);
 	};
     $config{'suppress-diffs-against-empties'} =
 	sub
@@ -274,7 +274,7 @@ sub new_config
 # This is global for convenience.  It is used in parse_config & process_argv.
 my @option_spec = ("config|c=s@",
 		   "mail-to|m=s@",
-		   "tag|only-tag|r=s@",
+		   "only-tag|tag|r=s@",
 		   "file-prefix|file-text|T=s", "user|u=s",
 		   "debug|verbose|v!",
 		   "debug-log|debug-file=s@",
