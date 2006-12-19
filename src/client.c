@@ -1278,7 +1278,7 @@ static time_t last_register_time;
  * it here, and then check it in update_entries.
  */
 static int stored_checksum_valid;
-static unsigned char stored_checksum[16];
+static checksum_t stored_ck;	/* sixteen bytes for MD5 checksum */
 static void
 handle_checksum (char *args, size_t len)
 {
@@ -1297,7 +1297,7 @@ handle_checksum (char *args, size_t len)
 
 	buf[0] = *s++;
 	buf[1] = *s++;
-	stored_checksum[i] = (char) strtol (buf, &bufend, 16);
+	stored_ck.char_checksum[i] = (unsigned char) strtol (buf, &bufend, 16);
 	if (bufend != buf + 2)
 	    break;
     }
@@ -1705,13 +1705,13 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    {
 		if (stored_checksum_valid)
 		{
-		    unsigned char checksum[16];
+		    checksum_t ck;
 
 		    /* We have a checksum.  Check it before writing
 		       the file out, so that we don't have to read it
 		       back in again.  */
-		    md5_buffer (patchedbuf, patchedlen, checksum);
-		    if (memcmp (checksum, stored_checksum, 16) != 0)
+		    md5_buffer (patchedbuf, patchedlen, ck.char_checksum);
+		    if (memcmp (ck.char_checksum, stored_ck.char_checksum, 16) != 0)
 		    {
 			error (0, 0,
 "checksum failure after patch to `%s'; will refetch",
@@ -1752,7 +1752,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    struct md5_ctx context;
 	    unsigned char buf[8192];
 	    unsigned len;
-	    unsigned char checksum[16];
+	    checksum_t ck;
 
 	    /*
 	     * Compute the MD5 checksum.  This will normally only be
@@ -1773,13 +1773,13 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		md5_process_bytes (buf, len, &context);
 	    if (ferror (e))
 		error (1, errno, "could not read %s", short_pathname);
-	    md5_finish_ctx (&context, checksum);
+	    md5_finish_ctx (&context, ck.char_checksum);
 
 	    fclose (e);
 
 	    stored_checksum_valid = 0;
 
-	    if (memcmp (checksum, stored_checksum, 16) != 0)
+	    if (memcmp (ck.char_checksum, stored_ck.char_checksum, 16) != 0)
 	    {
 	        if (data->contents != UPDATE_ENTRIES_PATCH)
 		    error (1, 0, "checksum failure on %s",
