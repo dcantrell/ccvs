@@ -1,3 +1,13 @@
+2006-12-18  Mark D. Baushke  <mdb@gnu.org>
+
+	* cvs.h (checksum_t): New typedef union for md5 checksum
+	alignment.
+	* client.c (stored_checksum, handle_checksum, update_entires):
+          Use it.
+	* update.c (update_fileproc): Ditto.
+	(struct patch_file_data): Use bool for compute_checksum flag.
+	(patch_file): Update compute_checksum assignments to bool.
+
 2006-09-21  Mark D. Baushke  <mdb@gnu.org>
 
 	* commit.c (commit_fileproc): If support for the old info format

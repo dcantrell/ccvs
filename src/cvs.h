@@ -601,3 +601,8 @@ extern const char *global_session_id;
 
 /* From find_names.c.  */
 List *find_files (const char *dir, const char *pat);
+
+typedef union {
+    uint32_t int_checksum[4];
+    unsigned char char_checksum[16];
+} checksum_t;

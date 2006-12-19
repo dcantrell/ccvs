@@ -742,11 +742,11 @@ update_fileproc (void *callerdat, struct file_info *finfo)
 		{
 		    int docheckout;
 		    struct stat file_info;
-		    unsigned char checksum[16];
+		    checksum_t ck;
 
 		    retval = patch_file (finfo,
 					 vers, &docheckout,
-					 &file_info, checksum);
+					 &file_info, ck.char_checksum);
 		    if (!docheckout)
 		    {
 		        if (retval == 0)
@@ -754,7 +754,8 @@ update_fileproc (void *callerdat, struct file_info *finfo)
 					    (rcs_diff_patches
 					     ? SERVER_RCS_DIFF
 					     : SERVER_PATCHED),
-					    file_info.st_mode, checksum,
+					    file_info.st_mode,
+					    ck.char_checksum,
 					    NULL);
 			break;
 		    }
@@ -1472,7 +1473,7 @@ struct patch_file_data
     /* File to which to write.  */
     FILE *fp;
     /* Whether to compute the MD5 checksum.  */
-    int compute_checksum;
+    bool compute_checksum;
     /* Data structure for computing the MD5 checksum.  */
     struct md5_ctx context;
     /* Set if the file has a final newline.  */
@@ -1567,7 +1568,7 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
     data.filename = file1;
     data.fp = e;
     data.final_nl = 0;
-    data.compute_checksum = 0;
+    data.compute_checksum = false;
 
     /* Duplicating the client working file, so use the original sticky options.
      */
@@ -1591,7 +1592,7 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
 	data.filename = file2;
 	data.fp = e;
 	data.final_nl = 0;
-	data.compute_checksum = 1;
+	data.compute_checksum = true;
 	md5_init_ctx (&data.context);
 
 	retcode = RCS_checkout (vers_ts->srcfile, NULL,
