@@ -1601,8 +1601,8 @@ import_descend_dir (message, dir, vtag, targc, targv)
     if ( CVS_CHDIR (dir) < 0)
     {
 	ierrno = errno;
-	fperrmsg (logfp, 0, ierrno, "ERROR: cannot chdir to %s", repository);
-	error (0, ierrno, "ERROR: cannot chdir to %s", repository);
+	fperrmsg (logfp, 0, ierrno, "ERROR: cannot chdir to %s", dir);
+	error (0, ierrno, "ERROR: cannot chdir to %s", dir);
 	err = 1;
 	goto out;
     }
