@@ -1,3 +1,7 @@
+2007-03-01  Larry Jones  <lawrence.jones@ugs.com>
+
+	* sanity.sh (pserver-3a): New test.
+
 2006-09-14  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (server3, client2): New tests.

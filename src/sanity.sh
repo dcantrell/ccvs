@@ -28400,6 +28400,16 @@ Ay::'d
 END AUTH REQUEST
 EOF
 
+	    dotest_fail pserver-3a "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"error 0 ${CVSROOT_DIRNAME}XXX: no such repository
+I HATE YOU" <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}XXX
+testme
+Ay::'d
+END AUTH REQUEST
+EOF
+
 	    # Confirm that not sending a newline during auth cannot constitute
 	    # a denial-of-service attack.  This assumes that PATH_MAX is less
 	    # than 65536 bytes.  If PATH_MAX is larger than 65535 bytes, this
