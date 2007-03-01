@@ -1,5 +1,6 @@
 2007-03-01  Larry Jones  <lawrence.jones@ugs.com>
 
+	* import.c (import_descend_dir): Correct error message.
 	* sanity.sh (pserver-3a): New test.
 
 2006-09-14  Derek Price  <derek@ximbiot.com>
