@@ -1,3 +1,8 @@
+2007-03-01  Larry Jones  <lawrence.jones@ugs.com>
+
+	* import.c (import_descend_dir): Correct error message.
+	* sanity.sh (pserver-3a): New test.
+
 2006-12-18  Mark D. Baushke  <mdb@gnu.org>
 
 	* cvs.h (checksum_t): New typedef union for md5 checksum
