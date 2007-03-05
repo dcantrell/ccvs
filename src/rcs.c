@@ -6284,6 +6284,25 @@ findtag (node, arg)
 	return 0;
 }
 
+static int findmagictag PROTO ((Node *, void *));
+
+/* Return a nonzero value if a magic tag rooted at ARG is found.  */
+
+static int
+findmagictag (node, arg)
+    Node *node;
+    void *arg;
+{
+    char *rev = (char *)arg;
+    size_t len = strlen (rev);
+
+    if (strncmp (node->data, rev, len) == 0 &&
+	strncmp (node->data + len, ".0.", 3) == 0)
+	return 1;
+    else
+	return 0;
+}
+
 /* Delete revisions between REV1 and REV2.  The changes between the two
    revisions must be collapsed, and the result stored in the revision
    immediately preceding the lower one.  Return 0 for successful completion,
@@ -6543,8 +6562,9 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 
 	    /* Doing this only for the :: syntax is for compatibility.
 	       See cvs.texinfo for somewhat more discussion.  */
-	    if (!inclusive
-		&& walklist (RCS_symbols (rcs), findtag, revp->version))
+	    if (!inclusive &&
+		(walklist (RCS_symbols (rcs), findtag, revp->version) ||
+		 walklist (RCS_symbols (rcs), findmagictag, revp->version)))
 	    {
 		/* We don't print which file this happens to on the theory
 		   that the caller will print the name of the file in a
