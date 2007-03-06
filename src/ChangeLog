@@ -1,3 +1,8 @@
+2007-03-05  Larry Jones  <lawrence.jones@ugs.com>
+
+	* rcs.c (RCS_delete_revs): When checking for tagged revisions,
+	include magic branch tags.
+
 2007-03-01  Larry Jones  <lawrence.jones@ugs.com>
 
 	* import.c (import_descend_dir): Correct error message.
