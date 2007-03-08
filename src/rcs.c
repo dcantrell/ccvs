@@ -6620,7 +6620,7 @@ findmagictag (Node *node, void *arg)
     size_t len = strlen (rev);
 
     if (strncmp (node->data, rev, len) == 0 &&
-	strncmp (node->data + len, ".0.", 3) == 0)
+	strncmp ((char *)node->data + len, ".0.", 3) == 0)
 	return 1;
     else
 	return 0;
