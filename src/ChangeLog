@@ -1,3 +1,8 @@
+2007-03-08  Larry Jones  <lawrence.jones@ugs.com>
+
+	* rcs.c (findmagictag): Cast node->data before doing arithmetic
+	since it's now (void *).
+
 2007-03-05  Larry Jones  <lawrence.jones@ugs.com>
 
 	* rcs.c (RCS_delete_revs): When checking for tagged revisions,
