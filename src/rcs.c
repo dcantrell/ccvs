@@ -143,6 +143,8 @@ static void putdeltatext (FILE *, Deltatext *);
 static FILE *rcs_internal_lockfile (char *);
 static void rcs_internal_unlockfile (FILE *, char *);
 static char *rcs_lockfilename (const char *);
+static int findnextmagicrev (RCSNode *rcs, char *rev, int default_rv);
+static int findnextmagicrev_proc (Node *p, void *closure);
 
 /* The RCS file reading functions are called a lot, and they do some
    string comparisons.  This macro speeds things up a bit by skipping
@@ -2499,17 +2501,24 @@ RCS_magicrev (RCSNode *rcs, char *rev)
     xrev = xmalloc (strlen (rev) + 14); /* enough for .0.number */
     check_rev = xrev;
 
-    local_branch_num = getenv("CVS_LOCAL_BRANCH_NUM");
+    local_branch_num = getenv ("CVS_LOCAL_BRANCH_NUM");
     if (local_branch_num)
     {
-      rev_num = atoi(local_branch_num);
-      if (rev_num < 2)
-	rev_num = 2;
-      else
-	rev_num &= ~1;
+	rev_num = atoi (local_branch_num);
+	if (rev_num < 2)
+	    rev_num = 2;
+	else
+	    rev_num &= ~1;
     }
     else
-      rev_num = 2;
+    {
+	rev_num = 2;
+    }
+
+    /* Find the next unused magic rev,
+     * if none are found, it should return rev_num.
+     */
+    rev_num = findnextmagicrev (rcs, rev, rev_num);
 
     /* only look at even numbered branches */
     for ( ; ; rev_num += 2)
@@ -9385,4 +9394,223 @@ getfullCVSname(char *CVSname, char **pathstore)
 	    CVSname = (*pathstore);
     }
     return CVSname;
+}
+
+/* closure structure to communicate through walklist */
+struct findnextmagicrev_info
+{
+    char *target_rev;
+    int target_rev_dots;
+    int target_rev_len;
+    int min_rev;
+    List *rev_list;
+};
+
+/* sort a list assuming that the data members are integers */
+static int
+findnextmagicrev_sortfunc (const Node *p, const Node *q)
+{
+    /* We want the lowest value sorted first, then we'll look for the
+     * first gap
+     */
+    return ((int)p->data - (int)q->data);
+}
+
+/* free a list node where the data member is an integer */
+static void
+findnextmagicrev_delproc (Node *p)
+{
+    /* Do nothing, it's not used as a pointer, but as an integer. */
+    p->data = NULL;
+}
+
+/*
+ * Go through the symbolic tag list, find the next unused magic
+ * branch revision.
+ *
+ * Returns defaultrv if it can't figure anything out, then the caller
+ * will end up doing a linear search.
+ */
+static int
+findnextmagicrev (RCSNode *rcs, char *rev, int defaultrv)
+{
+    int rv = defaultrv;
+    struct findnextmagicrev_info info;
+    Node *p;
+  
+    /* Tell the walklist proc how many dots we're looking for,
+     * which is the number of dots in the existing rev, plus
+     * 2.  one for RCS_MAGIC_BRANCH and one for the new rev number.
+     */
+    info.target_rev = rev;
+    info.target_rev_dots = numdots (rev) + 2;
+    info.target_rev_len = strlen (rev);
+    info.min_rev = defaultrv;
+    info.rev_list = getlist ();
+  
+    /* walk the symbols list to find the highest revision. */
+    (void) walklist (RCS_symbols (rcs), findnextmagicrev_proc, &info);
+
+    if (! list_isempty (info.rev_list))
+    {
+	/* sort the list that came back */
+	sortlist(info.rev_list, findnextmagicrev_sortfunc);
+
+	/* Now, starting with the passed in defaultrev, look for the 
+	 * first gap in revisions, that's what we want to start with.
+	 * If there is no gap, then return the highest in use revision number.
+	 * This is needed in the case that a repo has branches based 
+	 * on CVS_LOCAL_BRANCH_NUM, but that variable isn't currently set.
+	 * If that's the case, to maintain backwards compatibility, we want
+	 * to use the first unused revision, as opposed to the one after 
+	 * the highest in use value.
+	 */
+	for (p = info.rev_list->list->next; p != info.rev_list->list;
+	     p = p->next)
+	{
+	    if ( ((int)p->data) > (rv + 2) )
+		break;
+
+	    rv = (int)p->data;
+	}
+
+	/* adjust to next even number if we found something */
+	if (rv != defaultrv)
+	{
+	    if ((rv % 2) != 0)
+		rv++;
+	    else
+		rv += 2;
+	}
+    }
+
+    dellist (&(info.rev_list));
+    return rv;
+}
+
+/*
+ * walklist proc to find all "interesting" revs,
+ * and put them in a list for the caller to look through.
+ * Interesting is defined as having numdots+2 and same initial
+ * substring (up to the dot of numdots+1), or the second to last
+ * term indicates this is a magic branch.
+ */
+static int
+findnextmagicrev_proc (Node *p, void *closure)
+{
+    struct findnextmagicrev_info *pinfo = closure;
+    int sym_dots = numdots (p->data);
+
+    /*
+     * Quick first level screen, if the number of dots isn't right, then we
+     * don't care about this revision.
+     */
+    if (sym_dots == pinfo->target_rev_dots) 
+    {
+        /* We can't rely on being able to find the magic branch tag to
+	 * find all existing branches, as that may have been deleted.
+	 * So, here we're looking for revisions where the initial
+	 * substring matches our target, and that have the same number
+	 * of dots that revisions in the new branch will have in this
+	 * case we record atoi of the second to last term in the list.
+	 *
+	 * We're also looking at revisions with RCS_MAGIC_BRANCH as
+	 * the second to last term, for those, we record atoi of the
+	 * last term in the list.
+	 *
+	 * Example:
+	 * We're about to create a branch from 1.1, if we see
+	 * revisions like 1.1.2.1, or 1.1.6.1, then we know we can't
+	 * use either 2 or 6 as the new rev term, even if we don't see
+	 * the symbols 1.1.0.2 and 1.1.0.6.
+	 *
+	 * If we see revisions like 1.1.0.8 or 1.1.0.12, we know that
+	 * we can't use 8 or 12.
+	 *
+	 * Simply put, for revistions that have the same initial
+	 * substring as our target, if the second to last term is
+	 * RCS_MAGIC_BRANCH, take atoi of the last term and put it in
+	 * the list, if not, take atoi of the second to last term, put
+	 * it in the list.
+	 */
+    
+	/*
+	 * Second screen, make sure that target_rev is an initial substring
+	 * of the rev we're considering.  This means doing a strncmp, then if
+	 * it's the same, making sure that the one under consideration has a
+	 * dot after the target rev.
+	 *
+	 * Check the dot first, since that's faster.
+	 */
+	char *ver_str = p->data;
+	if ((ver_str[pinfo->target_rev_len] == '.')
+	    && (!strncmp (pinfo->target_rev, p->data, pinfo->target_rev_len)))
+	{
+	    char *plast_dot = NULL;
+	    char *psecond_to_last_dot = NULL;
+	    char *vcur = ver_str + strlen (ver_str);
+
+	    /* Get pointers in this revision to the last and second to
+	     * last dots
+	     */
+	    while((vcur > ver_str)
+		  && ((plast_dot == NULL) || (psecond_to_last_dot == NULL)))
+	    {
+		if (*vcur == '.')
+		{
+		    if (plast_dot == NULL)
+			plast_dot = vcur;
+		    else
+		    {
+			psecond_to_last_dot = vcur;
+			break;	/* Done with the while loop. */
+		    }
+		}
+		vcur--;
+	    }
+	    if ((plast_dot != 0) && (psecond_to_last_dot != 0))
+	    {
+		int term_to_add = 0;
+		int second_to_last_term = atoi (psecond_to_last_dot + 1);
+		if (second_to_last_term == RCS_MAGIC_BRANCH)
+		{
+		    /* We want to put the value of the last term into
+		     * the list.
+		     */
+		    term_to_add = atoi (plast_dot + 1);
+		}
+		else
+		{
+		    /* We want to put the value of the second to last
+		     * term into the list.
+		     */
+		    term_to_add = atoi (psecond_to_last_dot + 1);
+		}
+		if (term_to_add != 0)
+		{
+		    /* Check that this meets the minimum rev number
+		     * requirement.
+		     * If not, don't bother to add to the list.
+		     * Note: If backporting this fix to the stable branch,
+		     * pinfo->min_rev and this test are not needed.
+		     */
+		    if (term_to_add >= pinfo->min_rev)
+		    {
+			Node *n = getnode ();
+			n->type = VARIABLE;
+			n->key = 0;
+			/* Use the void* data to store an integer. */
+			n->data = (void *)term_to_add;
+			n->delproc = findnextmagicrev_delproc;
+        
+			/* dupe insert won't fail because we aren't
+			 * using a hash
+			 */
+			addnode (pinfo->rev_list, n);
+		    }
+		}
+	    }
+	}
+    }
+    return 1;
 }
