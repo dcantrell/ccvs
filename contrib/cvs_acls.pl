@@ -221,7 +221,7 @@ differs substantially in goals and methods from the original and there
 are probably a significant number of people out there that still require 
 the original version's functionality.
 
-The 'cvsacl' file flags of 'allow' and 'deny' were intentionally 
+The 'cvsacl' file flags of 'avail' and 'unavail' were intentionally 
 changed to 'allow' and 'deny' because there are enough differences 
 between the original script's behavior and this one's that we wanted to
 make sure that users will rethink their 'cvsacl' file formats before
