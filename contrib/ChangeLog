@@ -1,3 +1,10 @@
+2007-03-15  Mark D. Baushke  <mdb@gnu.org>
+
+	* cvs_acls.pl: Fix typo. The first "'allow' and 'deny'" should
+	really be "'avail' and 'unavail'".
+	(Reported by Reed Loden <reed@reedloden.com>)
+	* cvs_acls.html: Ditto.
+	
 2006-11-17  Derek Price  <derek@ximbiot.com>
 
 	* log_accum.pl: Remove redundant config default.
