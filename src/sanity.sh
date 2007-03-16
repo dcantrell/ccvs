@@ -2068,7 +2068,7 @@ if test x"$*" = x; then
 	tests="${tests} rdiff2 diff diffnl death death2 death-rtag"
 	tests="${tests} rm-update-message rmadd rmadd2 rmadd3 resurrection"
 	tests="${tests} dirs dirs2 branches branches2 branches3"
-	tests="${tests} branches4 tagc tagf tag-space"
+	tests="${tests} branches4 branches5 tagc tagf tag-space"
 	tests="${tests} rcslib multibranch import importb importc importX"
 	tests="$tests importX2 import-CVS import-quirks"
 	tests="${tests} update-p import-after-initial branch-after-import"
@@ -8482,6 +8482,230 @@ ${SPROG} update: Updating versions"
 	  rm -rf branches4
 	  ;;
 
+
+
+	branches5)
+	  # test new faster branching code to make sure it doesn't
+	  # reuse a previously used magic branch tag.
+	  # Set up a repo, files, etc.
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
+	  mkdir branches5; cd branches5
+
+	  dotest branches5-1 "${testcvs} -q co first-dir" ''
+	  cd first-dir
+	  echo 1:ancest >file1
+	  echo 2:ancest >file2
+	  dotest branches5-2 "${testcvs} add file1 file2" \
+"${SPROG} add: scheduling file .file1. for addition
+${SPROG} add: scheduling file .file2. for addition
+${SPROG} add: use .${SPROG} commit. to add these files permanently"
+	  dotest branches5-3a "${testcvs} -q ci -m add-it" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
+initial revision: 1\.1"
+
+	  dotest branches5-3b "${testcvs} update -d " \
+"${SPROG} update: Updating \."
+
+	  # First branch gets a commit, then the branch gets deleted.
+	  # The purpose of this test is to make sure that even if the 
+	  # magic branch tag is missing, we see the commits and don't
+	  # consider the missing branch tag as eligible for reuse.
+	  dotest branches5-4a "${testcvs} -q tag -b br3br1" \
+'T file1
+T file2'
+	  dotest branches5-4b "${testcvs} -q update -r br3br1" \
+'[UP] file1
+[UP] file2'
+	  echo 1:br3br1 >file1
+	  dotest branches5-4c "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.1; previous revision: 1\.1"
+
+	  dotest branches5-4d "${testcvs} tag -d -B br3br1 file1 file2" \
+'D file1
+D file2'
+
+
+	  # Second branch gets no commits.
+	  # The purpose of this test is to make sure we respect branches
+	  # that don't (yet) have any changes on them.
+	  dotest branches5-5a "${testcvs} -q update -r HEAD" \
+'[UP] file1
+[UP] file2'
+	  echo "about to issue:${testcvs} -q tag -b br3br2" >>$LOGFILE
+	  dotest branches5-5b "${testcvs} -q tag -b br3br2" \
+'T file1
+T file2'
+
+	  # Third branch gets several commits so that the 4th 
+	  # digit of it's revision number is 10 to test that
+	  # we don't just consider the highest number in the 4th position.
+	  dotest branches5-6a "${testcvs} -q update -r HEAD" ''
+	  dotest branches5-6b "${testcvs} -q tag -b br3br3" \
+'T file1
+T file2'
+
+	  dotest branches5-6c "${testcvs} -q update -r br3br3" \
+'[UP] file1
+[UP] file2'
+	  echo 1:br3br3.1 >file1
+	  dotest branches5-6d "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.1\.6\.1; previous revision: 1\.1"
+	  echo 1:br3br3.2 >file1
+	  dotest branches5-6e "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.1\.6\.2; previous revision: 1\.1\.6\.1"
+
+	  echo 1:br3br3.3 >file1
+	  dotest branches5-6f "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.1\.6\.3; previous revision: 1\.1\.6\.2"
+
+	  echo 1:br3br3.4 >file1
+	  dotest branches5-6g "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.1\.6\.4; previous revision: 1\.1\.6\.3"
+
+	  echo 1:br3br3.5 >file1
+	  dotest branches5-6h "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.1\.6\.5; previous revision: 1\.1\.6\.4"
+
+	  echo 1:br3br3.6 >file1
+	  dotest branches5-6i "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.1\.6\.6; previous revision: 1\.1\.6\.5"
+
+	  echo 1:br3br3.7 >file1
+	  dotest branches5-6i "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.1\.6\.7; previous revision: 1\.1\.6\.6"
+
+	  echo 1:br3br3.8 >file1
+	  dotest branches5-6k "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.1\.6\.8; previous revision: 1\.1\.6\.7"
+
+	  echo 1:br3br3.9 >file1
+	  dotest branches5-6l "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.1\.6\.9; previous revision: 1\.1\.6\.8"
+
+	  echo 1:br3br3.10 >file1
+	  dotest branches5-6m "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.1\.6\.10; previous revision: 1\.1\.6\.9"
+
+	  # Create a tag on revision 1.1.6.10 so it shows up in RCS symbols
+	  dotest branches5-6n "${testcvs} -q tag br3br3_rev_10" \
+'T file1
+T file2'
+
+	  # Create the fourth branch, ensure that it gets the correct magic
+	  # branch tag.
+	  dotest branches5-7a "${testcvs} -q update -r HEAD" \
+'[UP] file1
+[UP] file2'
+	  dotest branches5-7b "${testcvs} -q tag -b br3br4" \
+'T file1
+T file2'
+	  dotest branches5-7c "${testcvs} -q update -r br3br4" \
+'[UP] file1
+[UP] file2'
+	  echo 1:br3br4 >file1
+	  dotest branches5-7d "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.1\.8\.1; previous revision: 1\.1"
+
+
+	  # Make a commit on the trunk, then create the fifth branch,
+	  # make sure we get the correct revision.
+	  #
+	  # The purpose of this test is to make sure that we're only
+	  # looking at the revisions we should be. If we didn't, this
+	  # branch would end up being 1.2.0.10 instead of 1.2.0.2
+	  cd ..
+	  rm -rf first-dir
+	  dotest branches5-8a "${testcvs} -q co first-dir" \
+'U first-dir/file1
+U first-dir/file2'
+	  cd first-dir
+	  echo 1:HEAD.2 >file1
+	  dotest branches5-8b "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1"
+
+	  dotest branches5-8c "${testcvs} -q tag -b br3br5" \
+'T file1
+T file2'
+	  dotest branches5-8d "${testcvs} -q update -r br3br5" \
+'[UP] file1
+[UP] file2'
+	  echo 1:br3br5 >file1
+	  dotest branches5-8e "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.2\.2\.1; previous revision: 1\.2"
+
+	  # Create a branch with CVS_LOCAL_BRANCH_NUM set,
+	  # the new branch should have a revision of 1000.
+	  # The purpose of this test is to be sure that when
+	  # creating a local branch based on a remote version
+	  # we assign it a proper magic branch tag.
+	  CVS_LOCAL_BRANCH_NUM=1000; export CVS_LOCAL_BRANCH_NUM
+	  dotest branches5-9a "${testcvs} -q tag -b br3br6" \
+'T file1
+T file2'
+	  dotest branches5-9b "${testcvs} -q update -r br3br6" \
+'[UP] file1
+[UP] file2'
+	  echo 1:br3br6 >file1
+	  dotest branches5-9c "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.2\.2\.1\.1000\.1; previous revision: 1\.2\.2\.1"
+
+	  # Create another branch with CVS_LOCAL_BRANCH_NUM set,
+	  # the purpose is to make sure that if we branch based on
+	  # a local branch, the correct thing happens.
+	  dotest branches5-10a "${testcvs} -q update -r br3br5" \
+'[UP] file1
+[UP] file2'
+	  dotest branches5-10b "${testcvs} -q tag -b br3br7" \
+'T file1
+T file2'
+	  dotest branches5-10c "${testcvs} -q update -r br3br7" \
+'[UP] file1
+[UP] file2'
+	  echo 1:br3br7 >file1
+	  dotest branches5-10d "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.2\.2\.1\.1002\.1; previous revision: 1\.2\.2\.1"
+
+	  unset CVS_LOCAL_BRANCH_NUM
+
+	  # Go back to the 1.2.2.1 revision and branch
+	  # with CVS_LOCAL_BRANCH_NUM unset.
+	  dotest branches5-11a "${testcvs} -q update -r br3br5" \
+'[UP] file1
+[UP] file2'
+	  dotest branches5-11b "${testcvs} -q tag -b br3br8" \
+'T file1
+T file2'
+	  dotest branches5-11c "${testcvs} -q update -r br3br8" \
+'[UP] file1
+[UP] file2'
+	  echo 1:br3br8 >file1
+	  dotest branches5-11d "${testcvs} -q ci -m modify" \
+"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.2\.2\.1\.2\.1; previous revision: 1\.2\.2\.1"
+
+	  dokeep
+	  cd ../..
+	  modify_repo rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -rf branches5
+	  ;;
 
 
 	tagc)

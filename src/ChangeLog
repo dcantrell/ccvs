@@ -1,3 +1,15 @@
+2007-03-12  Mark D. Baushke  <mdb@gnu.org>
+
+	* rcs.c (findnextmagicrev_proc): New function to find 
+	all rev numbers with the required number of dots and matching
+	initial substring.
+	(findnextmagicrev): New function to walk the symbolic tag list
+	calling findnextmagicrev_proc() to get a list of used rev numbers
+	and choose the highest suitable one.
+	(RCS_magicrev): Use findnextmagicrev().
+	* sanity.sh (branches5): New test for it.
+	(Based on a patch provided by Kelly F. Hickel <kfh@mqsoftware.com>)
+ 
 2007-03-08  Larry Jones  <lawrence.jones@ugs.com>
 
 	* rcs.c (findmagictag): Cast node->data before doing arithmetic
