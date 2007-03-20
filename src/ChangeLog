@@ -1,3 +1,16 @@
+2007-03-20  Mark D. Baushke  <mdb@gnu.org>
+
+	* lock.c (lockers_uid): New file scope global.
+	(unset_lockers_name): New function.
+	(lock_list_promotably): Use it.
+	(lock_wait): Handle NULL lockers_name value.
+	(set_lockers_name): Some systems with huge NIS+ maps may take more
+	than a few seconds for the getpwuid() call. Cache the result to
+	avoid hammering the system.
+	* sanity.sh (lockfiles-10,lockfiles-20): Add a few more seconds to
+	the sleep before removing the lockfile to aid with the above
+	problem.
+
 2007-03-12  Mark D. Baushke  <mdb@gnu.org>
 
 	* rcs.c (findnextmagicrev_proc): New function to find 

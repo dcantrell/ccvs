@@ -116,10 +116,14 @@ static void remove_locks (void);
 static int set_lock (struct lock *lock, int will_wait);
 static void clear_lock (struct lock *lock);
 static void set_lockers_name (struct stat *statp);
+static void unset_lockers_name (void);
 
 /* Malloc'd array containing the username of the whoever has the lock.
    Will always be non-NULL in the cases where it is needed.  */
 static char *lockers_name;
+/* The uid of the lockers_name is cached here as getpwuid() can be
+   expensive on some systems. */
+static uid_t lockers_uid;
 /* Malloc'd array specifying name of a readlock within a directory.
    Or NULL if none.  */
 static char *readlock;
@@ -879,7 +883,7 @@ lock_wait (const char *repos)
     tm_p = gmtime (&now);
     msg = Xasprintf ("[%8.8s] waiting for %s's lock in %s",
 		     (tm_p ? asctime (tm_p) : ctime (&now)) + 11,
-		     lockers_name, repos);
+		     lockers_name ? lockers_name : "unknown", repos);
     error (0, 0, "%s", msg);
     /* Call cvs_flusherr to ensure that the user sees this message as
        soon as possible.  */
@@ -946,9 +950,7 @@ Attempting to write to a read-only filesystem is not allowed.");
 	lock_error = L_OK;		/* init for set_promotablelock_proc */
 	lock_error_repos = NULL;	/* init for set_promotablelock_proc */
 	locklist = list;		/* init for Lock_Cleanup */
-	if (lockers_name != NULL)
-	    free (lockers_name);
-	lockers_name = xstrdup ("unknown");
+	unset_lockers_name ();
 
 	(void) walklist (list, set_promotablelock_proc, NULL);
 
@@ -996,6 +998,9 @@ set_lockers_name (struct stat *statp)
 {
     struct passwd *pw;
 
+    if (lockers_name != NULL && lockers_uid == statp->st_uid)
+        return;			/* optimization to avoid getpwuid() calls */
+
     if (lockers_name != NULL)
 	free (lockers_name);
     pw = (struct passwd *) getpwuid (statp->st_uid);
@@ -1003,6 +1008,21 @@ set_lockers_name (struct stat *statp)
 	lockers_name = xstrdup (pw->pw_name);
     else
 	lockers_name = Xasprintf ("uid%lu", (unsigned long) statp->st_uid);
+
+    lockers_uid = statp->st_uid; /* cache for later use */
+}
+
+
+
+/*
+ * Reset any old locker name information.
+ */
+static void
+unset_lockers_name (void)
+{
+    if (lockers_name != NULL)
+	free (lockers_name);
+    lockers_name = NULL;
 }
 
 

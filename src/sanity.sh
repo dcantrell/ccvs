@@ -24140,7 +24140,7 @@ $SPROG commit: Rebuilding administrative file database"
 
 	  # 3. Don't read when write locks present...
 	  mkdir "$TESTDIR/locks/first-dir/#cvs.lock"
-	  (sleep 5; rmdir "$TESTDIR/locks/first-dir/#cvs.lock")&
+	  (sleep 8; rmdir "$TESTDIR/locks/first-dir/#cvs.lock")&
 	  dotest lockfiles-10 "$testcvs -q co -l first-dir" \
 "$SPROG checkout: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir
 $SPROG checkout: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir"
@@ -24224,7 +24224,7 @@ new revision: 1\.4; previous revision: 1\.3"
 	  # 10. Don't write when history locks are present...
 	  echo have you ever heard a poem quite so vile\? >>first-dir/sdir/ssdir/file1
 	  mkdir "$TESTDIR/locks/CVSROOT/#cvs.history.lock"
-	  (sleep 5; rmdir "$TESTDIR/locks/CVSROOT/#cvs.history.lock")&
+	  (sleep 8; rmdir "$TESTDIR/locks/CVSROOT/#cvs.history.lock")&
 	  dotest lockfiles-20 "$testcvs -q ci -mnot-up-to-date first-dir" \
 "$CVSROOT_DIRNAME/first-dir/sdir/ssdir/file1,v  <--  first-dir/sdir/ssdir/file1
 new revision: 1\.5; previous revision: 1\.4
