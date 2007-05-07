@@ -10,6 +10,7 @@
  * You may distribute under the terms of the GNU General Public License as
  * specified in the README file that comes with the CVS kit.  */
 
+#include <assert.h>
 #include "cvs.h"
 #include "getline.h"
 #include "history.h"
@@ -867,6 +868,8 @@ init (argc, argv)
     int err = 0;
 
     const struct admin_file *fileptr;
+
+    assert (!server_active);
 
     umask (cvsumask);
 
