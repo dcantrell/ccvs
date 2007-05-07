@@ -1,3 +1,7 @@
+2007-05-07  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note removal of remote `cvs init'.
+
 2006-09-06  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note apply_rcs_diff speedup.
