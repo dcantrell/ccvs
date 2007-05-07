@@ -1,3 +1,7 @@
+2007-05-07  Derek Price  <derek@ximbiot.com>
+
+	* cvsclient.text: Remove references to remote `init' command.
+
 2006-08-25  Derek Price  <derek@ximbiot.com>
 
 	* cvsclient.texi (Requests, Responses): Remove reference to the
