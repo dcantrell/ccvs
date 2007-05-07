@@ -3,6 +3,8 @@ Changes since 1.11.22:
 
 BUG FIXES
 
+* The CVS server will no longer allow clients to run `cvs init'.
+
 * Applying diffs when checking out very old revisions has been reduced from an
   O(n^2) operation to an O(n) thanks to a patch from Michael J. Smith
   <msmith@ideorlando.org> and additional touch-up work from the CVS team.
