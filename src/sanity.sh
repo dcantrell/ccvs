@@ -803,6 +803,13 @@ pass ()
   passed=`expr $passed + 1`
 }
 
+# Like skip(), but don't fail when $skipfail is set.
+skip_always ()
+{
+  echo "SKIP: $1${2+ ($2)}" >>$LOGFILE
+  skipped=`expr $skipped + 1`
+}
+
 skip ()
 {
   if $skipfail; then
@@ -821,6 +828,12 @@ warn ()
     echo "WARNING: $1${2+ ($2)}" >>$LOGFILE
   fi
   warnings=`expr $warnings + 1`
+}
+
+# Convenience function for skipping tests run only in local mode.
+localonly ()
+{
+  skip_always $1 "only tested in local mode"
 }
 
 fail ()
@@ -851,6 +864,13 @@ verify_tmp_empty ()
     # The above will exit if $skipfail
     rm -f ls $TMPDIR/cvs??????
   fi
+}
+
+# Restore changes to CVSROOT admin files.
+restore_adm ()
+{
+    rm -rf $CVSROOT_DIRNAME/CVSROOT
+    cp -Rp $TESTDIR/CVSROOT.save $CVSROOT_DIRNAME/CVSROOT
 }
 
 # See dotest and dotest_fail for explanation (this is the parts
@@ -2075,10 +2095,25 @@ CVSROOT=`newroot $CVSROOT_DIRNAME`; export CVSROOT
 
 
 ###
+### Init the repository.
+###
+dotest init-1 "$testcvs -d$CVSROOT_DIRNAME init"
+
+# Copy the admin files for restore_adm.
+cp -Rp $CVSROOT_DIRNAME/CVSROOT $TESTDIR/CVSROOT.save
+
+
+
+###
 ### The tests
 ###
-dotest 1 "${testcvs} init" ''
-dotest 1a "${testcvs} init" ''
+if $remote; then
+	localonly init-1a
+else
+	dotest init-1a "$testcvs init"
+fi
+
+
 
 ### The big loop
 for what in $tests; do
@@ -15459,12 +15494,7 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +0 -0
 	    exit 0
 	  fi
 
-	  # restore the default loginfo script
-	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/loginfo,v \
-                ${CVSROOT_DIRNAME}/CVSROOT/loginfo \
-                ${CVSROOT_DIRNAME}/CVSROOT/commitlog
-	  dotest editor-emptylog-continue-cleanup-1 "${testcvs} init" ''
-
+	  restore_adm
 	  cd ../..
 	  rm -r 1
 	  rm ${TESTDIR}/editme
@@ -19917,16 +19947,6 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 "${PROG} [a-z]*: CVSROOT may only specify a positive, non-zero, integer port (not .\.\..)\.
 ${PROG} [a-z]*: Perhaps you entered a relative pathname${QUESTION}
 ${PROG} \[[a-z]* aborted\]: Bad CVSROOT: .:ext:${hostname}:\.\./crerepos.\."
-	    cd ..
-	    rm -r 1
-
-	    mkdir 1; cd 1
-	    dotest_fail crerepos-6b-r \
-"${testcvs} -d :ext:`hostname`:crerepos init" \
-"${PROG} [a-z]*: CVSROOT requires a path spec:
-${PROG} [a-z]*: :(gserver|kserver|pserver):\[\[user\]\[:password\]@\]host\[:\[port\]\]/path
-${PROG} [a-z]*: \[:(ext|server):\]\[\[user\]@\]host\[:\]/path
-${PROG} \[[a-z]* aborted\]: Bad CVSROOT: .:ext:${hostname}:crerepos.\."
 	    cd ..
 	    rm -r 1
 	  else # local
@@ -26771,9 +26791,9 @@ C first-dir/FiLe"
 	  testcvs1="${testcvs} -d ${CVSROOT1}"
 	  testcvs2="${testcvs} -d ${CVSROOT2}"
 
-	  dotest multiroot-setup-1 "mkdir ${CVSROOT1_DIRNAME} ${CVSROOT2_DIRNAME}" ""
-	  dotest multiroot-setup-2 "${testcvs1} init" ""
-	  dotest multiroot-setup-3 "${testcvs2} init" ""
+	  dotest multiroot-setup-1 "mkdir $CVSROOT1_DIRNAME $CVSROOT2_DIRNAME"
+	  dotest multiroot-setup-2 "$testcvs -d$CVSROOT1_DIRNAME init"
+	  dotest multiroot-setup-3 "$testcvs -d$CVSROOT2_DIRNAME init"
 
 	  #
 	  # create some directories in root1
@@ -27902,8 +27922,8 @@ anyone
 	  CVSROOT1=`newroot $CVSROOT1_DIRNAME`
 	  CVSROOT2=`newroot $CVSROOT2_DIRNAME`
 
-	  dotest multiroot2-1 "${testcvs} -d ${CVSROOT1} init" ""
-	  dotest multiroot2-2 "${testcvs} -d ${CVSROOT2} init" ""
+	  dotest multiroot2-1 "$testcvs -d$CVSROOT1_DIRNAME init"
+	  dotest multiroot2-2 "$testcvs -d$CVSROOT2_DIRNAME init"
 
 	  mkdir imp-dir; cd imp-dir
 	  echo file1 >file1
@@ -28045,12 +28065,12 @@ ${PLUS}change him too"
 	  CVSROOT2=`newroot ${TESTDIR}/root2`
 
 	  mkdir 1; cd 1
-	  dotest multiroot3-1 "${testcvs} -d ${CVSROOT1} init" ""
+	  dotest multiroot3-1 "$testcvs -d$TESTDIR/root1 init"
 	  dotest multiroot3-2 "${testcvs} -d ${CVSROOT1} -q co -l ." ""
 	  mkdir dir1
 	  dotest multiroot3-3 "${testcvs} add dir1" \
 "Directory ${TESTDIR}/root1/dir1 added to the repository"
-	  dotest multiroot3-4 "${testcvs} -d ${CVSROOT2} init" ""
+	  dotest multiroot3-4 "$testcvs -d$TESTDIR/root2 init"
 	  rm -r CVS
 	  dotest multiroot3-5 "${testcvs} -d ${CVSROOT2} -q co -l ." ""
 	  mkdir dir2
@@ -28170,7 +28190,7 @@ $PROG \[checkout aborted\]: end of file from server (consult above messages if a
 	  CVSROOT2=`newroot ${TESTDIR}/root2`
 
 	  mkdir 1; cd 1
-	  dotest multiroot4-1 "${testcvs} -d ${CVSROOT1} init" ""
+	  dotest multiroot4-1 "$testcvs -d$TESTDIR/root1 init"
 	  dotest multiroot4-2 "${testcvs} -d ${CVSROOT1} -q co -l ." ""
 	  mkdir dircom
 	  dotest multiroot4-3 "${testcvs} add dircom" \
@@ -28189,7 +28209,7 @@ initial revision: 1\.1
 done"
 	  cd ../..
 	  mkdir 2; cd 2
-	  dotest multiroot4-6 "${testcvs} -d ${CVSROOT2} init" ""
+	  dotest multiroot4-6 "$testcvs -d$TESTDIR/root2 init"
 	  dotest multiroot4-7 "${testcvs} -d ${CVSROOT2} -q co -l ." ""
 	  mkdir dircom
 	  dotest multiroot4-8 "${testcvs} add dircom" \
@@ -28276,7 +28296,7 @@ done"
 	  CVSROOT1=`newroot ${TESTDIR}/root1`
 	  CVSROOT_MOVED=`newroot ${TESTDIR}/root-moved`
 
-	  dotest reposmv-setup-1 "${testcvs} -d ${CVSROOT1} init" ""
+	  dotest reposmv-setup-1 "$testcvs -d$TESTDIR/root1 init"
 	  mkdir imp-dir; cd imp-dir
 	  echo file1 >file1
 	  dotest reposmv-setup-2 \
@@ -28474,31 +28494,18 @@ Root ${TESTDIR}/1
 noop
 EOF
 
-	    dotest pserver-5a "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-E Protocol error: init says \"${TESTDIR}/2\" but pserver says \"${CVSROOT_DIRNAME}\"
+	    dotest pserver-5a "$testcvs --allow-root=$CVSROOT_DIRNAME pserver" \
+"$DOTSTAR LOVE YOU
+E init may not be run remotely
 error  " <<EOF
 BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
+$CVSROOT_DIRNAME
 testme
 Ay::'d
 END AUTH REQUEST
-init ${TESTDIR}/2
+init $TESTDIR/2
 EOF
-	    dotest_fail pserver-5b "test -d ${TESTDIR}/2" ''
-
-	    dotest pserver-5c "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-E init xxx must be an absolute pathname
-error  " <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-testme
-Ay::'d
-END AUTH REQUEST
-init xxx
-EOF
-	    dotest_fail pserver-5d "test -d xxx" ''
+	    dotest_fail pserver-5b "test -d $TESTDIR/2"
 
 	    dotest_fail pserver-6 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "I HATE YOU" <<EOF
@@ -28600,18 +28607,6 @@ Root ${CVSROOT_DIRNAME}
 version
 EOF
 
-	    dotest pserver-15 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-E ${PROG} \\[server aborted\\]: .init. requires write access to the repository
-error  " <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-anonymous
-Ay::'d
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
-EOF
-
 	    dotest pserver-16 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
 M Concurrent Versions System (CVS) .*
@@ -28625,17 +28620,6 @@ Root ${CVSROOT_DIRNAME}
 version
 EOF
 
-	    dotest pserver-17 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-ok" <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-testme
-Ay::'d
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
-EOF
-
 	    dotest pserver-18 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
 M Concurrent Versions System (CVS) .*
@@ -28647,17 +28631,6 @@ Ay::'d
 END AUTH REQUEST
 Root ${CVSROOT_DIRNAME}
 version
-EOF
-
-	    dotest pserver-19 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-ok" <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-${username}
-Anything
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
 EOF
 
 	    # Check that writers can write, everyone else can only read
@@ -28680,18 +28653,6 @@ Root ${CVSROOT_DIRNAME}
 version
 EOF
 
-	    dotest pserver-21 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-E ${PROG} \\[server aborted\\]: .init. requires write access to the repository
-error  " <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-anonymous
-Ay::'d
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
-EOF
-
 	    dotest pserver-22 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
 M Concurrent Versions System (CVS) .*
@@ -28705,17 +28666,6 @@ Root ${CVSROOT_DIRNAME}
 version
 EOF
 
-	    dotest pserver-23 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-ok" <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-testme
-Ay::'d
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
-EOF
-
 	    dotest pserver-24 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
 M Concurrent Versions System (CVS) .*
@@ -28727,18 +28677,6 @@ Ay::'d
 END AUTH REQUEST
 Root ${CVSROOT_DIRNAME}
 version
-EOF
-
-	    dotest pserver-25 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-E ${PROG} \\[server aborted\\]: .init. requires write access to the repository
-error  " <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-${username}
-Anything
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
 EOF
 
 	    # Should work the same without readers
@@ -28758,18 +28696,6 @@ Root ${CVSROOT_DIRNAME}
 version
 EOF
 
-	    dotest pserver-27 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-E ${PROG} \\[server aborted\\]: .init. requires write access to the repository
-error  " <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-anonymous
-Ay::'d
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
-EOF
-
 	    dotest pserver-28 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
 M Concurrent Versions System (CVS) .*
@@ -28783,17 +28709,6 @@ Root ${CVSROOT_DIRNAME}
 version
 EOF
 
-	    dotest pserver-29 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-ok" <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-testme
-Ay::'d
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
-EOF
-
 	    dotest pserver-30 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
 M Concurrent Versions System (CVS) .*
@@ -28805,18 +28720,6 @@ Ay::'d
 END AUTH REQUEST
 Root ${CVSROOT_DIRNAME}
 version
-EOF
-
-	    dotest pserver-31 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-E ${PROG} \\[server aborted\\]: .init. requires write access to the repository
-error  " <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-${username}
-Anything
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
 EOF
 
 	    # pserver used to try and print from the NULL pointer 
@@ -28851,12 +28754,16 @@ EOF
 
 	    # Could also test for relative pathnames here (so that crerepos-6a
 	    # and crerepos-6b can use :fork:).
-	    dotest server-2 "${testcvs} server" "ok" <<EOF
+	    dotest server-2 "$testcvs server" \
+"E init may not be run remotely
+error  " <<EOF
 Set OTHER=variable
 Set MYENV=env-value
 init ${TESTDIR}/crerepos
 EOF
-	    dotest server-3 "test -d ${TESTDIR}/crerepos/CVSROOT" ""
+	    dotest_fail server-3 "test -d $TESTDIR/crerepos/CVSROOT"
+
+	    dotest server-3a "$testcvs -d$TESTDIR/crerepos init"
 
 	    # Now some tests of gzip-file-contents (used by jCVS).
 	    ${AWK} 'BEGIN { \
@@ -29549,7 +29456,7 @@ $PROG checkout: warning: unrecognized response \`' from cvs server"
 	  CVSROOT_DIRNAME=${TESTDIR}/cvs.root
 	  CVSROOT=`newroot ${CVSROOT_DIRNAME}`
 
-	  dotest dottedroot-init-1 "${testcvs} init" ""
+	  dotest dottedroot-init-1 "$testcvs -d$CVSROOT_DIRNAME init"
 	  mkdir dir1
 	  mkdir dir1/dir2
 	  echo version1 >dir1/dir2/file1
