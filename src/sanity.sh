@@ -1544,6 +1544,12 @@ warn ()
   warnings=`expr $warnings + 1`
 }
 
+# Convenience function for skipping tests run only in local mode.
+localonly ()
+{
+  skip_always $1 "only tested in local mode"
+}
+
 fail ()
 {
   echo "FAIL: $1" | tee -a ${LOGFILE}
@@ -3230,10 +3236,15 @@ fi # $proxy
 cp -Rp $CVSROOT_DIRNAME/CVSROOT $TESTDIR/CVSROOT.save
 
 
+
 ###
 ### The tests
 ###
-dotest init-2 "$testcvs init"
+if $remote; then
+	localonly init-2
+else
+	dotest init-2 "$testcvs init"
+fi
 
 
 
@@ -23097,14 +23108,6 @@ $SPROG checkout: when using local access method\.
 $SPROG \[checkout aborted\]: Bad CVSROOT: \`\.\./crerepos'\."
 	    cd ..
 	    rm -r 1
-
-	    mkdir 1; cd 1
-	    dotest_fail crerepos-6b "${testcvs} -d crerepos init" \
-"${SPROG} init: CVSROOT must be an absolute pathname (not .crerepos.)
-${SPROG} init: when using local access method\.
-${SPROG} \[init aborted\]: Bad CVSROOT: .crerepos.\."
-	    cd ..
-	    rm -r 1
 	  fi # end of tests to be skipped for remote
 
 	  # CVS should have created a history file.  If the administrator 
@@ -30008,8 +30011,8 @@ C first-dir/FiLe"
 	  testcvs2="$testcvs -d '$CVSROOT2'"
 
 	  dotest multiroot-setup-1 "mkdir $CVSROOT1_DIRNAME $CVSROOT2_DIRNAME"
-	  dotest multiroot-setup-2 "$testcvs1 init"
-	  dotest multiroot-setup-3 "$testcvs2 init"
+	  dotest multiroot-setup-2 "$testcvs -d$CVSROOT1_DIRNAME init"
+	  dotest multiroot-setup-3 "$testcvs -d$CVSROOT2_DIRNAME init"
 
 	  #
 	  # create some directories in ${CVSROOT1_DIRNAME}
@@ -31080,8 +31083,8 @@ ${log_keyid}anyone
 	  CVSROOT1=`newroot $CVSROOT1_DIRNAME`
 	  CVSROOT2=`newroot $CVSROOT2_DIRNAME`
 
-	  dotest multiroot2-1 "${testcvs} -d ${CVSROOT1} init" ""
-	  dotest multiroot2-2 "${testcvs} -d ${CVSROOT2} init" ""
+	  dotest multiroot2-1 "$testcvs -d$CVSROOT1_DIRNAME init"
+	  dotest multiroot2-2 "$testcvs -d$CVSROOT2_DIRNAME init"
 
 	  mkdir imp-dir; cd imp-dir
 	  echo file1 >file1
@@ -31252,12 +31255,12 @@ ${PLUS}change him too"
 	  CVSROOT2=`newroot ${TESTDIR}/root2`
 
 	  mkdir 1; cd 1
-	  dotest multiroot3-1 "${testcvs} -d ${CVSROOT1} init" ""
+	  dotest multiroot3-1 "$testcvs -d$TESTDIR/root1 init"
 	  dotest multiroot3-2 "${testcvs} -d ${CVSROOT1} -q co -l ." ""
 	  mkdir dir1
 	  dotest multiroot3-3 "${testcvs} add dir1" \
 "Directory ${TESTDIR}/root1/dir1 added to the repository"
-	  dotest multiroot3-4 "${testcvs} -d ${CVSROOT2} init" ""
+	  dotest multiroot3-4 "$testcvs -d$TESTDIR/root2 init"
 	  rm -r CVS
 	  dotest multiroot3-5 "${testcvs} -d ${CVSROOT2} -q co -l ." ""
 	  mkdir dir2
@@ -31378,7 +31381,7 @@ $CPROG \[checkout aborted\]: end of file from server (consult above messages if 
 	  CVSROOT2=`newroot ${TESTDIR}/root2`
 
 	  mkdir 1; cd 1
-	  dotest multiroot4-1 "${testcvs} -d ${CVSROOT1} init" ""
+	  dotest multiroot4-1 "$testcvs -d$TESTDIR/root1 init"
 	  dotest multiroot4-2 "${testcvs} -d ${CVSROOT1} -q co -l ." ""
 	  mkdir dircom
 	  dotest multiroot4-3 "${testcvs} add dircom" \
@@ -31393,7 +31396,7 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 initial revision: 1\.1"
 	  cd ../..
 	  mkdir 2; cd 2
-	  dotest multiroot4-6 "${testcvs} -d ${CVSROOT2} init" ""
+	  dotest multiroot4-6 "$testcvs -d$TESTDIR/root2 init"
 	  dotest multiroot4-7 "${testcvs} -d ${CVSROOT2} -q co -l ." ""
 	  mkdir dircom
 	  dotest multiroot4-8 "${testcvs} add dircom" \
@@ -31480,7 +31483,7 @@ initial revision: 1\.1"
 	  CVSROOT1=`newroot ${TESTDIR}/root1`
 	  CVSROOT_MOVED=`newroot ${TESTDIR}/root-moved`
 
-	  dotest reposmv-setup-1 "${testcvs} -d ${CVSROOT1} init" ""
+	  dotest reposmv-setup-1 "$testcvs -d$TESTDIR/root1 init"
 	  mkdir imp-dir; cd imp-dir
 	  echo file1 >file1
 	  dotest reposmv-setup-2 \
@@ -31702,31 +31705,18 @@ Root $TESTDIR/1
 noop
 EOF
 
-	    dotest pserver-5a "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-E Protocol error: init says \"${TESTDIR}/2\" but pserver says \"${CVSROOT_DIRNAME}\"
+	    dotest pserver-5a "$testcvs --allow-root=$CVSROOT_DIRNAME pserver" \
+"$DOTSTAR LOVE YOU
+E init may not be run remotely
 error  " <<EOF
 BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
+$CVSROOT_DIRNAME
 testme
 Ay::'d
 END AUTH REQUEST
-init ${TESTDIR}/2
+init $TESTDIR/2
 EOF
-	    dotest_fail pserver-5b "test -d ${TESTDIR}/2" ''
-
-	    dotest pserver-5c "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-E init xxx must be an absolute pathname
-error  " <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-testme
-Ay::'d
-END AUTH REQUEST
-init xxx
-EOF
-	    dotest_fail pserver-5d "test -d xxx" ''
+	    dotest_fail pserver-5b "test -d $TESTDIR/2"
 
 	    dotest_fail pserver-6 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "I HATE YOU" <<EOF
@@ -31826,18 +31816,6 @@ Root $CVSROOT_DIRNAME
 version
 EOF
 
-	    dotest pserver-15 "$servercvs --allow-root=$CVSROOT_DIRNAME pserver" \
-"$DOTSTAR LOVE YOU
-E $CPROG \\[server aborted\\]: .init. requires write access to the repository
-error  " <<EOF
-BEGIN AUTH REQUEST
-$CVSROOT_DIRNAME
-anonymous
-Ay::'d
-END AUTH REQUEST
-init $CVSROOT_DIRNAME
-EOF
-
 	    dotest pserver-16 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
 M Concurrent Versions System (CVS) .*
@@ -31851,17 +31829,6 @@ Root ${CVSROOT_DIRNAME}
 version
 EOF
 
-	    dotest pserver-17 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-ok" <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-testme
-Ay::'d
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
-EOF
-
 	    dotest pserver-18 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
 M Concurrent Versions System (CVS) .*
@@ -31873,17 +31840,6 @@ Ay::'d
 END AUTH REQUEST
 Root ${CVSROOT_DIRNAME}
 version
-EOF
-
-	    dotest pserver-19 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-ok" <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-${username}
-Anything
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
 EOF
 
 	    # Check that writers can write, everyone else can only read
@@ -31906,18 +31862,6 @@ Root ${CVSROOT_DIRNAME}
 version
 EOF
 
-	    dotest pserver-21 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-E $CPROG \\[server aborted\\]: .init. requires write access to the repository
-error  " <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-anonymous
-Ay::'d
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
-EOF
-
 	    dotest pserver-22 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
 M Concurrent Versions System (CVS) .*
@@ -31931,18 +31875,7 @@ Root ${CVSROOT_DIRNAME}
 version
 EOF
 
-	    dotest pserver-23 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-ok" <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-testme
-Ay::'d
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
-EOF
-
-	    dotest pserver-24 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+	    dotest pserver-24 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
 M Concurrent Versions System (CVS) .*
 ok" <<EOF
@@ -31953,18 +31886,6 @@ Ay::'d
 END AUTH REQUEST
 Root ${CVSROOT_DIRNAME}
 version
-EOF
-
-	    dotest pserver-25 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-E $CPROG \\[server aborted\\]: .init. requires write access to the repository
-error  " <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-${username}
-Anything
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
 EOF
 
 	    # Should work the same without readers
@@ -31984,18 +31905,6 @@ Root ${CVSROOT_DIRNAME}
 version
 EOF
 
-	    dotest pserver-27 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-E $CPROG \\[server aborted\\]: .init. requires write access to the repository
-error  " <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-anonymous
-Ay::'d
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
-EOF
-
 	    dotest pserver-28 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
 M Concurrent Versions System (CVS) .*
@@ -32009,18 +31918,7 @@ Root ${CVSROOT_DIRNAME}
 version
 EOF
 
-	    dotest pserver-29 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-ok" <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-testme
-Ay::'d
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
-EOF
-
-	    dotest pserver-30 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+	    dotest pserver-30 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
 M Concurrent Versions System (CVS) .*
 ok" <<EOF
@@ -32031,18 +31929,6 @@ Ay::'d
 END AUTH REQUEST
 Root ${CVSROOT_DIRNAME}
 version
-EOF
-
-	    dotest pserver-31 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-E $CPROG \\[server aborted\\]: .init. requires write access to the repository
-error  " <<EOF
-BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
-${username}
-Anything
-END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
 EOF
 
 	    # pserver used to try and print from the NULL pointer 
@@ -32082,12 +31968,16 @@ EOF
 
 	    # Could also test for relative pathnames here (so that crerepos-6a
 	    # and crerepos-6b can use :fork:).
-	    dotest server-2 "${servercvs} server" "ok" <<EOF
+	    dotest server-2 "$servercvs server" \
+"E init may not be run remotely
+error  " <<EOF
 Set OTHER=variable
 Set MYENV=env-value
 init ${TESTDIR}/crerepos
 EOF
-	    dotest server-3 "test -d ${TESTDIR}/crerepos/CVSROOT" ""
+	    dotest_fail server-3 "test -d $TESTDIR/crerepos/CVSROOT"
+
+	    dotest server-3a "$testcvs -d$TESTDIR/crerepos init"
 
 	    # Now some tests of gzip-file-contents (used by jCVS).
 	    ${AWK} 'BEGIN { \
@@ -32893,7 +32783,7 @@ $CPROG checkout: warning: unrecognized response \`' from cvs server"
 	  CVSROOT_DIRNAME=${TESTDIR}/cvs.root
 	  CVSROOT=`newroot ${CVSROOT_DIRNAME}`
 
-	  dotest dottedroot-init-1 "${testcvs} init" ""
+	  dotest dottedroot-init-1 "$testcvs -d$CVSROOT_DIRNAME init"
 	  mkdir dir1
 	  mkdir dir1/dir2
 	  echo version1 >dir1/dir2/file1
@@ -33464,7 +33354,7 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSRO
 
 	  # Initialize the primary repository
 	  dotest writeproxy-noredirect-init-1 \
-"$testcvs -d'$PRIMARY_CVSROOT' init"
+"$testcvs -d'$PRIMARY_CVSROOT_DIRNAME' init"
 	  mkdir writeproxy-noredirect; cd writeproxy-noredirect
 	  mkdir primary; cd primary
 	  dotest writeproxy-noredirect-init-2 \
@@ -33739,7 +33629,8 @@ EOF
 	  SECONDARY_CVSROOT=":ext;Redirect=yes:$host$SECONDARY_CVSROOT_DIRNAME"
 
 	  # Initialize the primary repository
-	  dotest writeproxy-ssh-init-1 "$testcvs -d$PRIMARY_CVSROOT init"
+	  dotest writeproxy-ssh-init-1 \
+"$testcvs -d$PRIMARY_CVSROOT_DIRNAME init"
 	  mkdir writeproxy-ssh; cd writeproxy-ssh
 	  mkdir primary; cd primary
 	  dotest writeproxy-ssh-init-2 "$testcvs -Qd$PRIMARY_CVSROOT co CVSROOT"
@@ -33839,7 +33730,7 @@ EOF
 
 	  # Initialize the primary repository
 	  dotest writeproxy-ssh-noredirect-init-1 \
-"$testcvs -d$PRIMARY_CVSROOT init"
+"$testcvs -d$PRIMARY_CVSROOT_DIRNAME init"
 	  mkdir writeproxy-ssh-noredirect; cd writeproxy-ssh-noredirect
 	  mkdir primary; cd primary
 	  dotest writeproxy-ssh-noredirect-init-2 \

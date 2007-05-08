@@ -4903,37 +4903,8 @@ serve_version (char *arg)
 static void
 serve_init (char *arg)
 {
-    cvsroot_t *saved_parsed_root;
-
-    if (!ISABSOLUTE (arg))
-    {
-	push_pending_error (0, "E init %s must be an absolute pathname", arg);
-    }
-# ifdef AUTH_SERVER_SUPPORT
-    else if (Pserver_Repos != NULL)
-    {
-	if (strcmp (Pserver_Repos, arg) != 0)
-	{
-	    /* The explicitness is to aid people who are writing clients.
-	       I don't see how this information could help an
-	       attacker.  */
-	    push_pending_error (0,
-"E Protocol error: init says \"%s\" but pserver says \"%s\"",
-				arg, Pserver_Repos);
-	}
-    }
-# endif
-
-    if (print_pending_error ())
-	return;
-
-    saved_parsed_root = current_parsed_root;
-    current_parsed_root = local_cvsroot (arg);
-
-    do_cvs_command ("init", init);
-
-    /* Do not free CURRENT_PARSED_ROOT since it is still in the cache.  */
-    current_parsed_root = saved_parsed_root;
+    push_pending_error (0, "E init may not be run remotely", arg);
+    print_pending_error();
 }
 
 

@@ -1,3 +1,12 @@
+2007-05-07  Derek Price  <derek@ximbiot.com>
+
+	* mkmodules.c (init): Assert that the server is not active.
+	* server.c (serve_init): Send error message when the init command is
+	received from a client.
+
+	* sanity.sh (*): Avoid using remote init.
+	(skip_always, localonly, restore_adm): New convenience functions.	
+
 2007-03-20  Mark D. Baushke  <mdb@gnu.org>
 
 	* lock.c (lockers_uid): New file scope global.
