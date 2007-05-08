@@ -14,6 +14,9 @@
 # include <config.h>
 #endif
 
+/* ANSI headers.  */
+#include <assert.h>
+
 /* GNULIB headers.  */
 #include "getline.h"
 #include "save-cwd.h"
@@ -1164,6 +1167,8 @@ init (int argc, char **argv)
     int err = 0;
 
     const struct admin_file *fileptr;
+
+    assert (!server_active);
 
     umask (cvsumask);
 

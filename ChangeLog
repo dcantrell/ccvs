@@ -1,3 +1,7 @@
+2007-05-07  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note removal of remote `cvs init'.
+
 2006-09-25  Mark D. Baushke  <mdb@gnu.org>
 
 	* config.h.in, configure: Regenerated.

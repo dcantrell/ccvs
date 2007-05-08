@@ -537,8 +537,7 @@ Here are the requests:
 Response expected: no.  Tell the server which @code{CVSROOT} to use.
 Note that @var{pathname} is @emph{not} a fully qualified @code{CVSROOT}
 variable, but only the local directory part of it.  @var{pathname} must
-already exist on the server; if creating a new root, use the @code{init}
-request, not @code{Root}.  Again, @var{pathname} @emph{does not} include
+already exist on the server.  Again, @var{pathname} @emph{does not} include
 the hostname of the server, how to access the server, etc.; by the time
 the CVS protocol is in use, connection, authentication, etc., are
 already taken care of.
@@ -546,7 +545,7 @@ already taken care of.
 The @code{Root} request must be sent only once, and it must be sent
 before any requests other than @code{Valid-responses},
 @code{valid-requests}, @code{UseUnchanged}, @code{Set},
-@code{Global_option}, @code{init}, @code{noop}, or @code{version}.
+@code{Global_option}, @code{noop}, or @code{version}.
 
 @item Valid-responses @var{request-list} \n
 Response expected: no.
@@ -876,7 +875,7 @@ Commands for which @code{Modified} is necessary are @code{co},
 Commands which do not need to inform the server about a working
 directory, and thus should not be sending either @code{Modified} or
 @code{Is-modified}: @code{rdiff}, @code{rtag}, @code{history},
-@code{init}, and @code{release}.
+and @code{release}.
 
 Commands for which further investigation is warranted are:
 @code{remove}, @code{add}, and @code{export}.  Pending such
@@ -1229,12 +1228,6 @@ should not send @code{Directory}, @code{Entry}, or @code{Modified}
 requests for these commands; they are not used.  Arguments to these
 commands are module names, as described for @code{co}.  @code{ls} is a
 synonym for @code{rlist}, for compatibility with CVSNT.
-
-@item init @var{root-name} \n
-Response expected: yes.  If it doesn't already exist, create a @sc{cvs}
-repository @var{root-name}.  Note that @var{root-name} is a local
-directory and @emph{not} a fully qualified @code{CVSROOT} variable.
-The @code{Root} request need not have been previously sent.
 
 @item update \n
 Response expected: yes.  Actually do a @code{cvs update} command.  This
