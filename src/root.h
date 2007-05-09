@@ -89,6 +89,7 @@ cvsroot_t *local_cvsroot (const char *dir)
 	__attribute__ ((__malloc__));
 void Create_Root (const char *dir, const char *rootdir);
 void root_allow_add (const char *, const char *configPath);
+void root_allow_regexp_add (const char *, const char *configPath);
 void root_allow_free (void);
 bool root_allow_used (void);
 bool root_allow_ok (const char *);
