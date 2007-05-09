@@ -2604,15 +2604,19 @@ cvs -f --allow-root=/usr/cvsroot pserver
 The @samp{--allow-root} option specifies the allowable
 @sc{cvsroot} directory.  Clients which attempt to use a
 different @sc{cvsroot} directory will not be allowed to
-connect.  If there is more than one @sc{cvsroot}
-directory which you want to allow, repeat the option.
+connect.  To allow a whole class of @sc{cvsroot}, specify
+a regular expression to match allowed directories with the
+@samp{--allow-root-regexp} option.  These options may be
+used in conjunction and both options may be repeated to
+allow access to multiple @sc{cvsroot} directories and
+classes of directories.
 (Unfortunately, many versions of @code{inetd} have very small
 limits on the number of arguments and/or the total length
 of the command.  The usual solution to this problem is
 to have @code{inetd} run a shell script which then invokes
 @sc{cvs} with the necessary arguments.)
 
-        If your @code{inetd} wants a symbolic service
+If your @code{inetd} wants a symbolic service
 name instead of a raw port number, then put this in
 @file{/etc/services}:
 
@@ -12332,9 +12336,14 @@ Global options:
 
 @table @code
 @item --allow-root=@var{rootdir}
-Specify legal @sc{cvsroot} directory (server only) (not
-in @sc{cvs} 1.9 and older).  See @ref{Password
+Specify acceptable @sc{cvsroot} directory (server only).
+Appeared in @sc{cvs} 1.10.  See @ref{Password
 authentication server}.
+
+@item --allow-root-regexp=@var{rootdir}
+Specify a regular expression which matches acceptable
+@sc{cvsroot} directories (server only).  Appeared in @sc{cvs}
+1.12.14.  See @ref{Password authentication server}.
 
 @item -a
 Authenticate all communication (client only) (not in @sc{cvs}
@@ -15944,6 +15953,7 @@ pserver server which chooses not to provide a
 specific reason for denying authorization.  Check that
 the username and password specified are correct and
 that the @code{CVSROOT} specified is allowed by @samp{--allow-root}
+or @samp{--allow-root-regexp}
 in @file{inetd.conf}.  See @ref{Password authenticated}.
 
 @item cvs @var{command}: Bad root @var{directory}

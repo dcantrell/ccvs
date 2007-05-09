@@ -1,3 +1,8 @@
+2007-05-09  Derek Price  <derek@ximbiot.com>
+	and Sylvain Beucler  <beuc@beuc.net>
+
+	* cvs.texinfo: Document --allow-root-regexp.
+
 2007-05-07  Derek Price  <derek@ximbiot.com>
 
 	* cvsclient.text: Remove references to remote `init' command.
