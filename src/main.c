@@ -576,6 +576,7 @@ main (int argc, char **argv)
 	{"verify-arg", required_argument, NULL, 12},
 #ifdef SERVER_SUPPORT
 	{"allow-root", required_argument, NULL, 3},
+	{"allow-root-regexp", required_argument, NULL, 14},
 	{"timeout", required_argument, NULL, 13},
 #endif /* SERVER_SUPPORT */
         {0, 0, 0, 0}
@@ -822,6 +823,10 @@ main (int argc, char **argv)
 	    case 3:
 		/* --allow-root */
 		root_allow_add (optarg, gConfigPath);
+		break;
+	    case 14:
+		/* --allow-root-regexp */
+		root_allow_regexp_add (optarg, gConfigPath);
 		break;
 	    case 13:
 		/* --timeout */

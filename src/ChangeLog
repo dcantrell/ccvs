@@ -1,3 +1,19 @@
+2007-05-09  Derek Price  <derek@ximbiot.com>
+	for Sylvain Beucler  <beuc@beuc.net>
+
+	* main.c (main): Use new root_allow_regexp_add function, declare
+	new --allow-root-regexp option parameter.
+	* root.c: Added new functions root_allow_regexp_add and
+	root_allow_compare_regexp, new variables
+	root_allow_regexp.  Modified root_allow_ok, root_allow_used and
+	root_allow_free.  The code adds the matched repository path to
+	root_allow as if specified using --allow-root.  --allow-root is not
+	mandatory anymore if --allow-root-regexp is used instead.
+	(Original 2001/2004 patches from Roland Mas <lolando@debian.org>.)
+
+	* sanity.sh: Added test cases as pserver-3b and pserver-3c,
+	updated pserver-3.
+
 2007-05-07  Derek Price  <derek@ximbiot.com>
 
 	* mkmodules.c (init): Assert that the server is not active.
