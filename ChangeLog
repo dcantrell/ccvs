@@ -1,3 +1,8 @@
+2007-05-09  Derek Price  <derek@ximbiot.com>
+	and Sylvain Beucler  <beuc@beuc.net>
+
+	* NEWS: Documented --allow-root-regexp.
+
 2007-05-07  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note removal of remote `cvs init'.

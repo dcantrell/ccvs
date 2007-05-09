@@ -23,6 +23,9 @@ NEW FEATURES
 * When UseNewInfoFmtStrings is enabled, the %{vV} formats will now
   expose the real version instead of NONE for removed files.
 
+* A new command line option, --allow-root-regexp, was added which allows
+acceptable repositories to be specified using a list of regular expressions.
+
 BUG FIXES
 
 * The CVS server will no longer allow clients to run `cvs init'.
