@@ -848,8 +848,8 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
 			op = *cp++;
 			if (op != 'a' && op  != 'd')
 			    error (1, 0, "\
-unrecognized operation '\\x%x' in %s",
-				   op, rcs->print_path);
+unrecognized operation '\\x%x' in %s revision %s",
+				   op, rcs->print_path, vnode->version);
 			(void) strtoul (cp, (char **) &cp, 10);
 			if (*cp++ != ' ')
 			    error (1, 0, "space expected in %s revision %s",
