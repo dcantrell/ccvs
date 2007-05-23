@@ -1,3 +1,7 @@
+2007-05-22  Larry Jones  <lawrence.jones@ugs.com>
+
+	* rcs.c (RCS_fully_parse): Include revision in error message.
+
 2007-05-07  Derek Price  <derek@ximbiot.com>
 
 	* mkmodules.c (init): Assert that the server is not active.
