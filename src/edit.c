@@ -329,6 +329,7 @@ static int find_editors_and_output (struct file_info *finfo)
 
     editors_output (finfo->fullname, them);
 
+    free (them);
     return 0;
 }
 
@@ -411,6 +412,7 @@ edit_fileproc (void *callerdat, struct file_info *finfo)
     if (!vers->vn_user)
     {
 	error (0, 0, "no such file %s; ignored", finfo->fullname);
+	freevers_ts (&vers);
 	return 1;
     }
 

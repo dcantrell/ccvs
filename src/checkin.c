@@ -128,6 +128,7 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 	    }
 	    /* Remove the previous base file, in local mode.  */
 	    base_remove (finfo->file, pvers->vn_user);
+	    freevers_ts (&pvers);
 
 	    wrap_fromcvs_process_file (finfo->file);
 

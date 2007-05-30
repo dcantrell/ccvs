@@ -3563,6 +3563,10 @@ new_keywords (void)
 void
 free_keywords (void *keywords)
 {
+    struct rcs_keyword *k;
+    k = (struct rcs_keyword *) keywords + KEYWORD_LOCALID;
+    if (k->string)
+	free ((char *) k->string);
     free (keywords);
 }
 
@@ -4002,6 +4006,8 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
 		{
 		    error (0, 0,
 "Skipping `$" "Log$' keyword due to excessive comment leader.");
+		    free (sub);
+		    sub = NULL;
 		    continue;
 		}
 	    }

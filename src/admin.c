@@ -761,6 +761,12 @@ admin (int argc, char **argv)
 
     Lock_Cleanup ();
 
+    if (admin_data.cmdline)
+    {
+	free (admin_data.cmdline);
+	admin_data.cmdline = NULL;
+    }
+
 /* This just suppresses a warning from -Wall.  */
 #ifdef CLIENT_SUPPORT
  return_it:

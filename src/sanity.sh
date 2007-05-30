@@ -76,6 +76,7 @@ exit_help ()
     echo "              implies --remote)."
     echo "-v|--verbose  List test names as they are executed."
     echo "-B|--no-bases Suppress use of Base files."
+    echo "-V|--valgrind Run valgrind on the cvs test"
     echo
     echo "CVS-TO-TEST   The path to the CVS executable to be tested; used as"
     echo "              the path to the CVS client when CVS-FOR-CVS-SERVER is"
@@ -132,6 +133,7 @@ unset fromtest
 unset remotehost
 unset rootoptions
 bases=:
+valgrind=false
 keep=false
 linkroot=false
 noredirect=false
@@ -215,6 +217,10 @@ while getopts BHc:ef:h:klnpqrs:v-: option ; do
 		option=e
 		OPTARG=
 		;;
+            valgrind)
+                option=V
+                OPTARG=
+                ;;
 	    v|ve|ver|verb|verbo|verbos|verbose)
 		option=v
 		OPTARG=
@@ -227,6 +233,9 @@ while getopts BHc:ef:h:klnpqrs:v-: option ; do
     case "$option" in
 	B)
 	    bases=false
+	    ;;
+	V)
+	    valgrind=:
 	    ;;
 	c)
 	    configfile="$OPTARG"
@@ -319,6 +328,9 @@ if $testcvs --version </dev/null 2>/dev/null |
   exit 1
 fi
 
+# If $valgrind is set, then prefix it with a real $origtestcvs command.
+origtestcvs=$testcvs
+
 # If $remotehost is set, warn if $TESTDIR isn't since we are pretty sure
 # that its default value of `/tmp/cvs-sanity' will not resolve to the same
 # directory on two different machines.
@@ -347,7 +359,7 @@ fi
 # If no config files are found, then this script will issue a warning and
 # attempt to assume the most portable configuration.
 foundaconfig=false
-for dir in `dirname $0` `dirname $testcvs`; do
+for dir in `dirname $0` `dirname $origtestcvs`; do
 	if test -r "$dir/sanity.config.sh"; then
 		. "$dir/sanity.config.sh"
 		foundaconfig=:
@@ -401,7 +413,7 @@ if test false != $servercvs; then
   CVS_SERVER=$servercvs
 else
   # default $CVS_SERVER to ${testcvs}
-  : ${CVS_SERVER=$testcvs}
+  : ${CVS_SERVER=$origtestcvs}
   # With the previous command, effectively defaults $servercvs to $CVS_SERVER,
   # then $testcvs
   servercvs=$CVS_SERVER
@@ -532,7 +544,7 @@ fi
 # FIXME: we don't properly quote this--if the name contains . we'll
 # just spuriously match a few things; if the name contains other regexp
 # special characters we are probably in big trouble.
-CPROG=`basename ${testcvs} |sed 's/\.exe$//'`
+CPROG=`basename ${origtestcvs} |sed 's/\.exe$//'`
 # And the regexp for the CVS server when we have one.  In local mode, this
 # defaults to $CPROG since $servercvs already did.
 # FIXCVS: There are a few places in error messages where CVS suggests a command
@@ -665,6 +677,7 @@ fi
 CVS="${testcvs} -Q"
 
 LOGFILE=`pwd`/check.log
+VALGRINDLOG=`pwd`/valgrind.log
 
 # Save the previous log in case the person running the tests decides
 # they want to look at it.  The extension ".plog" is chosen for consistency
@@ -822,9 +835,11 @@ tempname=$TMPDIR/$tempfile
 # versions that do.
 : ${AWK=awk}
 : ${DIFF=diff}
+: ${BINDATE=date}
 : ${EXPR=expr}
 : ${ID=id}
 : ${TR=tr}
+: ${VALGRIND=valgrind}
 
 # Keep track of tools that are found, but do NOT work as we hope
 # in order to avoid them in future
@@ -1180,6 +1195,136 @@ EXPR=`find_tool expr ${EXPR}:gexpr \
   version_test expr_tooltest1 expr_tooltest2 expr_tooltest3 \
 expr_set_ENDANCHOR expr_set_DOTSTAR expr_tooltest_DOTSTAR`
 
+: ${VALGRIND_OPTS='--tool=memcheck'}
+# Does valgrind allow this additional argument?
+valgrind_check_opts ()
+{
+    if $VALGRIND $VALGRIND_OPTS ${1+"$@"} ; then
+	return 0
+    else
+	return 1
+    fi
+}
+
+valgrind_set_opts ()
+{
+    testout=valgrind_$$
+    for newopt in "$@"; do
+        # First, does the current set of VALGRIND_OPTS work?
+	if valgrind_check_opts date >/dev/null 2>$testout; then
+	    if valgrind_check_opts $newopt date >/dev/null 2>$testout; then
+		VALGRIND_OPTS="$VALGRIND_OPTS $newopt"
+	    fi
+	    rm $testout
+	else
+	    echo "WARNING: A problem was encountered trying to use valgrind."
+	    echo "The command:"
+	    echo "  $VALGRIND $VALGRIND_OPTS date"
+	    if [ -s $testout ]; then
+		echo "failed with the following error output:"
+		cat $testout
+	    else
+		echo "failed."
+	    fi
+	    rm $testout
+	    echo "$VALGRIND does not appear to work properly." >&2
+	    echo Disabling valgrind processing. 
+	    valgrind=false
+	    return 1
+	fi
+    done
+    return 0
+}
+
+valgrind_test_gpg ()
+{
+    if $gpg; then
+	testout=valgrind_$$
+	if valgrind_check_opts gpg --version >/dev/null 2>$testout; then
+	    rm $testout;
+	else
+	    valgrind=false
+	    if grep 's[ug]id' $testout >/dev/null; then
+		echo WARNING: Valgrind does not work well with a
+		echo setuid/setgid gpg program. You may wish to
+		echo chmod your gpg program to remove those bits
+		echo until testing of CVS with valgrind is complete.
+		echo Disabling valgrind processing. 
+	    else
+		echo WARNING: Valgrind does not seem to work properly with gpg.
+		echo This may be due to setuid/setgid bits on the
+		echo gpg executable. You may wish to remove those bits
+		echo until testing of CVS with valgrind is complete.
+		echo Disabling valgrind processing.
+	    fi
+	    echo "Problems with the command:" >>$LOGFILE
+	    echo "$VALGRIND $VALGRIND_OPTS gpg --version" >>$LOGFILE
+	    echo "which yeilds to this unexpected output:" >>$LOGFILE
+	    cat $testout >> $LOGFILE
+	    rm $testout
+	fi
+    fi
+    return 0
+}
+
+valgrind_log_file_exactly=false
+if $valgrind; then
+  VALGRIND=`find_tool valgrind valgrind version_test`
+  val_log=/tmp/valgrind$$
+  if valgrind_set_opts --num-callers=20 --trace-children=yes \
+      --leak-check=full; then
+      if valgrind_check_opts \
+	  --log-file-exactly=$val_log date >/dev/null 2>&1; then
+	  valgrind_log_file_exactly=:
+      fi
+      valgrind_test_gpg
+  fi
+fi
+
+
+# In the best of all possible worlds, date +%s prints the number
+# of seconds since the epoch.
+datenum=1
+date_s_emulate ()
+{
+    shift
+    datenum=`expr $datenum + 1`
+    echo $datenum
+}
+case `date +%s` in
+%s) echo "WARNING: date does not support +%s format properly."
+    BINDATE=date_s_emulate;;
+[0-9]+) BINDATE=date;;
+esac
+
+valgrind_lastlog=''
+valgrind_cvs () {
+    CUR=vg_`$BINDATE +%s`
+    if $valgrind_log_file_exactly; then
+	valgrind_lastlog=$CUR
+	valgrindcmd="$VALGRIND $VALGRIND_OPTS --log-file-exactly=$VALGRINDLOG/$CUR"
+    else
+	valgrind_lastlog=$CUR
+	valgrindcmd="$VALGRIND $VALGRIND_OPTS --log-file=$VALGRINDLOG/$CUR"
+    fi
+    echo $valgrindcmd $origtestcvs "$@" >> $VALGRINDLOG/$CUR
+    $valgrindcmd $origtestcvs "$@"
+}
+
+if $valgrind; then
+    [ -d $VALGRINDLOG ] || mkdir $VALGRINDLOG
+    testcvs=valgrind_cvs
+fi
+
+echo "Using EXPR=$EXPR" >>$LOGFILE
+echo "Using ENDANCHOR=$ENDANCHOR" >>$LOGFILE
+echo "Using DOTSTAR=$DOTSTAR" >>$LOGFILE
+echo "Using BINDATE=$BINDATE" >>$LOGFILE
+if $valgrind; then
+    echo "Using VALGRIND=$VALGRIND" >>$LOGFILE
+    echo "Using VALGRIND_OPTS=$VALGRIND_OPTS" >>$LOGFILE
+fi
+
 # Set the ENDANCHOR and DOTSTAR for the chosen expr version.
 expr_set_ENDANCHOR ${EXPR} >/dev/null
 expr_tooltest_DOTSTAR ${EXPR} >/dev/null
@@ -1188,10 +1333,6 @@ expr_tooltest_DOTSTAR ${EXPR} >/dev/null
 # with regard to command-line arguments?
 expr_set_DASHDASH ${EXPR}
 $exprDASHDASH && EXPR="$EXPR --"
-
-echo "Using EXPR=$EXPR" >>$LOGFILE
-echo "Using ENDANCHOR=$ENDANCHOR" >>$LOGFILE
-echo "Using DOTSTAR=$DOTSTAR" >>$LOGFILE
 
 # Cleanup
 rm -f ${TESTDIR}/bar
@@ -1626,6 +1767,18 @@ dotest_internal ()
     echo "** got: " >>${LOGFILE}
     cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
     fail "$1"
+  fi
+  if $valgrind; then
+      if $valgrind_log_file_exactly; then
+	  lsf=`ls -1tr $VALGRINDLOG | tail -1`
+      else
+	  lsf=`ls -1tr $VALGRINDLOG | grep ${valgrind_lastlog}`
+      fi
+      for f in $lsf; do
+	  if echo $f | grep "\-" 2>&1 1>/dev/null; then :; else
+	      mv $VALGRINDLOG/$f "$VALGRINDLOG/$f-$1"
+	  fi
+      done
   fi
 }
 
@@ -24047,6 +24200,17 @@ line5"
 	    continue
 	  fi
 
+	  # Running valgrind on these tests takes much longer than the
+	  # normal 5 seconds of sleep. Bump to by 7 seconds and hope
+	  # for the best.
+	  if $valgrind; then
+	    sleep5='sleep 12'
+	    sleep8='sleep 15'
+	  else
+	    sleep5='sleep 5'
+	    sleep8='sleep 8'
+	  fi
+
 	  mkdir 1; cd 1
 	  mkdir sdir
 	  mkdir sdir/ssdir
@@ -24143,7 +24307,7 @@ $SPROG commit: Rebuilding administrative file database"
 
 	  # 3. Don't read when write locks present...
 	  mkdir "$TESTDIR/locks/first-dir/#cvs.lock"
-	  (sleep 8; rmdir "$TESTDIR/locks/first-dir/#cvs.lock")&
+	  ($sleep8; rmdir "$TESTDIR/locks/first-dir/#cvs.lock")&
 	  dotest lockfiles-10 "$testcvs -q co -l first-dir" \
 "$SPROG checkout: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir
 $SPROG checkout: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir"
@@ -24164,7 +24328,7 @@ $SPROG checkout: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir"
 	  # 7. Don't write when read locks are present...
 	  echo I always have trouble coming up with witty text for the test files >>first-dir/sdir/ssdir/file1
 	  touch "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.rfl.test.lock"
-	  (sleep 5; rm "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.rfl.test.lock")&
+	  ($sleep5; rm "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.rfl.test.lock")&
 	  dotest lockfiles-13 "$testcvs -q ci -mconflict first-dir" \
 "$SPROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
 $SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
@@ -24185,7 +24349,7 @@ $SPROG \[commit aborted\]: correct above errors first!"
 	  #    (fail to perform commit up-to-date check with promotable lock
 	  #     present).
 	  touch "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.pfl.test.lock"
-	  (sleep 5; rm "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.pfl.test.lock")&
+	  ($sleep5; rm "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.pfl.test.lock")&
 	  dotest_fail lockfiles-15 "$testcvs -q ci -mnot-up-to-date first-dir" \
 "$SPROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
 $SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
@@ -24196,7 +24360,7 @@ $SPROG \[commit aborted\]: correct above errors first!"
 	  #    (fail to perform commit up-to-date check with promotable lock
 	  #     present).
 	  mkdir "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.lock"
-	  (sleep 5; rmdir "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.lock")&
+	  ($sleep5; rmdir "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.lock")&
 	  dotest_fail lockfiles-16 "$testcvs -q ci -mnot-up-to-date first-dir" \
 "$SPROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
 $SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
@@ -24207,7 +24371,7 @@ $SPROG \[commit aborted\]: correct above errors first!"
 	  dotest lockfiles-17 "$testcvs -Q up -C first-dir/sdir/ssdir"
 	  echo the kinds of smiles that light faces for miles >>first-dir/sdir/ssdir/file1
 	  touch "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.pfl.test.lock"
-	  (sleep 5; rm "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.pfl.test.lock")&
+	  ($sleep5; rm "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.pfl.test.lock")&
 	  dotest lockfiles-18 "$testcvs -q ci -mnot-up-to-date first-dir" \
 "$SPROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
 $SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
@@ -24217,7 +24381,7 @@ new revision: 1\.3; previous revision: 1\.2"
 	  # 9. Don't write when write locks are present...
 	  echo yet this poem would probably only give longfellow bile >>first-dir/sdir/ssdir/file1
 	  mkdir "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.lock"
-	  (sleep 5; rmdir "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.lock")&
+	  ($sleep5; rmdir "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.lock")&
 	  dotest lockfiles-19 "$testcvs -q ci -mnot-up-to-date first-dir" \
 "$SPROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
 $SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
@@ -24227,7 +24391,7 @@ new revision: 1\.4; previous revision: 1\.3"
 	  # 10. Don't write when history locks are present...
 	  echo have you ever heard a poem quite so vile\? >>first-dir/sdir/ssdir/file1
 	  mkdir "$TESTDIR/locks/CVSROOT/#cvs.history.lock"
-	  (sleep 8; rmdir "$TESTDIR/locks/CVSROOT/#cvs.history.lock")&
+	  ($sleep8; rmdir "$TESTDIR/locks/CVSROOT/#cvs.history.lock")&
 	  dotest lockfiles-20 "$testcvs -q ci -mnot-up-to-date first-dir" \
 "$CVSROOT_DIRNAME/first-dir/sdir/ssdir/file1,v  <--  first-dir/sdir/ssdir/file1
 new revision: 1\.5; previous revision: 1\.4
@@ -24238,7 +24402,7 @@ $SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/CVSROOT"
 
 	  rm -f $CVSROOT_DIRNAME/CVSROOT/val-tags
 	  mkdir "$TESTDIR/locks/CVSROOT/#cvs.val-tags.lock"
-	  (sleep 5; rmdir "$TESTDIR/locks/CVSROOT/#cvs.val-tags.lock")&
+	  ($sleep5; rmdir "$TESTDIR/locks/CVSROOT/#cvs.val-tags.lock")&
 	  dotest lockfiles-22 "$testcvs -q up -r newtag first-dir" \
 "$SPROG update: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/CVSROOT
 $SPROG update: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/CVSROOT
@@ -31145,6 +31309,7 @@ ${SPROG} update: Updating dir1/sdir/ssdir"
 	    dotest multiroot2-9a "${testcvs} -t update" \
 " *-> main: Session ID is ${commitid}
  *-> main loop with CVSROOT=${TESTDIR}/root1
+ *-> get_root_config (${TESTDIR}/root1)
  *-> parse_config ($TESTDIR/root1)
  *-> do_update ((null), (null), (null), 1, 0, 0, 0, 0, 0, 3, (null), (null), (null), (null), (null), 1, (null))
  *-> Write_Template (\., ${TESTDIR}/root1)
@@ -31159,6 +31324,7 @@ ${CPROG} update: Updating dir1
  *-> Version_TS (dir1/file1, (null), (null), (null), 1, 0)
  *-> Simple_Lock_Cleanup()
  *-> main loop with CVSROOT=${TESTDIR}/root2
+ *-> get_root_config (${TESTDIR}/root2)
  *-> parse_config ($TESTDIR/root2)
  *-> do_update ((null), (null), (null), 1, 0, 0, 0, 0, 0, 3, (null), (null), (null), (null), (null), 1, (null))
  *-> Write_Template (dir1/sdir, ${TESTDIR}/root2/dir1/sdir)
@@ -31641,7 +31807,7 @@ END AUTH REQUEST
 EOF
 
             regexp='^'`dirname ${CVSROOT_DIRNAME}`'/[^/]+$'
-	    dotest pserver-3b "${testcvs} --allow-root-regexp=$regexp pserver" \
+	    dotest pserver-3b "${testcvs} --allow-root-regexp='$regexp' pserver" \
 "I LOVE YOU" <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
@@ -31651,7 +31817,7 @@ END AUTH REQUEST
 EOF
 
             regexp='^'`dirname ${CVSROOT_DIRNAME}`'/[^/]+$'
-	    dotest_fail pserver-3c "${testcvs} --allow-root-regexp=$regexp pserver" \
+	    dotest_fail pserver-3c "${testcvs} --allow-root-regexp='$regexp' pserver" \
 "$CPROG pserver: ${CVSROOT_DIRNAME}/subdir: no such repository
 I HATE YOU" <<EOF
 BEGIN AUTH REQUEST
@@ -34094,7 +34260,21 @@ $CPROG \[checkout aborted\]: The server sent unsigned file content\."
 	  touch file1
 
 	  dotest_sort trace-1 "${testcvs} -t -t -t init" \
-"  *-> Lock_Cleanup()
+"
+
+
+
+
+
+
+
+
+
+
+
+
+  *-> Lock_Cleanup()
+  *-> Name_Root ((null), (null))
   *-> RCS_checkout (checkoutlist,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (commitinfo,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (config,v, , , , \.#[0-9][0-9]*)
@@ -34110,10 +34290,37 @@ $CPROG \[checkout aborted\]: The server sent unsigned file content\."
   *-> RCS_checkout (rcsinfo,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (taginfo,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (verifymsg,v, , , , \.#[0-9][0-9]*)
+  *-> Read 0 for UseNewInfoFmtStrings
   *-> Simple_Lock_Cleanup()
+  *-> get_root_config (${CVSROOT_DIRNAME})
   *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
-  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> main: Session ID is ${commitid}
+  *-> new_config ()
+  *-> next_keyword: searching .# Set .SystemAuth. to .no. if pserver shouldn.t check system users/passwords.
+  *-> next_keyword: searching .# The .checkoutlist. file is used to support additional version controlled
+  *-> next_keyword: searching .# The .commitinfo. file is used to control pre-commit checks.
+  *-> next_keyword: searching .# The .loginfo. file controls where .cvs commit. log information is
+  *-> next_keyword: searching .# The .notify. file controls where notifications from watches set by
+  *-> next_keyword: searching .# The .postadmin. file is called after the .admin. command finishes
+  *-> next_keyword: searching .# The .postproxy. file is called from a secondary server as soon as
+  *-> next_keyword: searching .# The .posttag. file is called after the .tag. command finishes
+  *-> next_keyword: searching .# The .postwatch. file is called after any command finishes writing new
+  *-> next_keyword: searching .# The .preproxy. file is called form the secondary server as soon as
+  *-> next_keyword: searching .# The .rcsinfo. file is used to control templates with which the editor
+  *-> next_keyword: searching .# The .taginfo. file is used to control pre-tag checks.
+  *-> next_keyword: searching .# The .verifymsg. file is used to allow verification of logging
+  *-> next_keyword: searching .# This file affects handling of files based on their names.
+  *-> next_keyword: searching .# Three different line formats are valid:
+  *-> parse_config (${CVSROOT_DIRNAME})
+  *-> parse_cvsroot (${CVSROOT_DIRNAME})
+  *-> parse_info() examining line: \`UseNewInfoFmtStrings=yes.
+  *-> readBool (${CVSROOT_DIRNAME}/CVSROOT/config, UseNewInfoFmtStrings, yes)
   *-> remove_locks()
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
+  *-> unlink_file(\.#[0-9][0-9]*)
   *-> unlink_file(\.#[0-9][0-9]*)
   *-> unlink_file(\.#[0-9][0-9]*)
   *-> unlink_file(\.#[0-9][0-9]*)
@@ -34143,7 +34350,444 @@ $CPROG \[checkout aborted\]: The server sent unsigned file content\."
   *-> unlink_file(\.#taginfo)
   *-> unlink_file(\.#verifymsg)
   *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
-  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )" \
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#                     | .N. (not branch)
+#                     | .N. (not branch)
+#             from, new version tag will be added to (or deleted from, but
+#             from, new version tag will be added to (or deleted from, but
+#             this feature is deprecated.  When either old or new revision is
+#             this feature is deprecated.  When either old or new revision is
+#             unknown, doesn.t exist, or isn.t applicable, the string .NONE.
+#             unknown, doesn.t exist, or isn.t applicable, the string .NONE.
+#             will be placed on the command line.
+#             will be placed on the command line.
+#         (pre-checkin), new version number (post-checkin).  When
+#         command line instead.
+#         either old or new revision is unknown, doesn.t exist, or
+#         file name, file action, destination tag, old version number
+#         isn.t applicable, the string .NONE., will be placed on the
+#       checked in (using the bug-id number or a seperate review
+#       number to identify this particular code set.).
+#    %R = the name of the referrer, if any, otherwise the value NONE
+#    %R = the name of the referrer, if any, otherwise the value NONE
+#    %R = the name of the referrer, if any, otherwise the value NONE
+#    %R = the name of the referrer, if any, otherwise the value NONE
+#    %R = the name of the referrer, if any, otherwise the value NONE
+#    %R = the name of the referrer, if any, otherwise the value NONE
+#    %R = the name of the referrer, if any, otherwise the value NONE
+#    %R = the name of the referrer, if any, otherwise the value NONE
+#    %R = the name of the referrer, if any, otherwise the value NONE
+#    %R = the name of the referrer, if any, otherwise the value NONE
+#    %b = branch mode = .?. (delete ops - unknown) | .T. (branch)
+#    %b = branch mode = .?. (delete ops - unknown) | .T. (branch)
+#    %c = canonical name of the command being executed
+#    %c = canonical name of the command being executed
+#    %c = canonical name of the command being executed
+#    %c = canonical name of the command being executed
+#    %c = canonical name of the command being executed
+#    %c = canonical name of the command being executed
+#    %c = canonical name of the command being executed
+#    %c = canonical name of the command being executed
+#    %c = canonical name of the command being executed
+#    %c = canonical name of the command being executed
+#    %l = name of log file to be verified.
+#    %o = operation = .add. | .mov. | .del.
+#    %o = operation = .add. | .mov. | .del.
+#    %p = path relative to repository
+#    %p = path relative to repository
+#    %p = path relative to repository
+#    %p = path relative to repository
+#    %p = path relative to repository
+#    %p = path relative to repository
+#    %p = path relative to repository
+#    %p = path relative to repository
+#    %p = path relative to repository (currently always ...)
+#    %p = path relative to repository (currently always ...)
+#    %r = repository (path portion of \$CVSROOT)
+#    %r = repository (path portion of \$CVSROOT)
+#    %r = repository (path portion of \$CVSROOT)
+#    %r = repository (path portion of \$CVSROOT)
+#    %r = repository (path portion of \$CVSROOT)
+#    %r = repository (path portion of \$CVSROOT)
+#    %r = repository (path portion of \$CVSROOT)
+#    %r = repository (path portion of \$CVSROOT)
+#    %r = repository (path portion of \$CVSROOT)
+#    %r = repository (path portion of \$CVSROOT)
+#    %s = user to notify
+#    %t = tagname
+#    %t = tagname
+#    %{sVv} = attribute list = file name, old version tag will be deleted
+#    %{sVv} = attribute list = file name, old version tag will be deleted
+#    %{saTVv} = attribute list consisting of:
+#    %{s} = file name, file name, ...
+#   Making sure that the entered bug-id number is correct.
+#   MaxCommentLeaderLength=20
+#   MaxProxyBufferSize=1G
+#   PrimaryServer=:fork:localhost/cvsroot
+#   UseArchiveCommentLeader=no
+#   Validating that the code that was reviewed is indeed the code being
+#  -f  from cvs filter  value: path to filter
+#  -k  expansion mode  value: b, o, kkv, &c
+#  -m  update methodology value: MERGE or COPY
+#  -t  to cvs filter  value: path to filter
+#  and value is a single-quote delimited value.
+#  where option is one of
+#  wildcard .option value..option value....
+# . %r %s. will be appended to the filter string, but this usage is
+# .ALL. or .DEFAULT. can be used in place of the regular expression.
+# .cvs watch add. or .cvs edit. are sent.  The first entry on a line is
+# \$1 -- tagname
+# \$2 -- operation .add. for tag, .mov. for tag -F, and .del. for tag -d
+# \$3 -- tagtype .?. on delete, .T. for branch, .N. for static
+# \$4 -- repository
+# \$5->  file revision .file revision ....
+# \$CVSROOT.  For the first match that is found, then the remainder of the
+# \$CVSROOT.  If a match is found, then the remainder of the line is a
+# -d dir  Place module in directory .dir. instead of module name.
+# -e prog  Run .prog. on .cvs export. of module.
+# -l  Top-level directory only -- do not recurse.
+# -o prog  Run .prog. on .cvs checkout. of module.
+# -t prog  Run .prog. on .cvs rtag. of module.
+# -u prog  Run .prog. on .cvs update. of module.
+# A non-zero exit of the filter program will cause the tag to be aborted.
+# Actions such as mailing a copy of the report to each reviewer are
+# And .directory. is a path to a directory relative to \$CVSROOT.
+# Be warned that these strings could be disabled in any new version of CVS.
+# File format:
+# For example:
+# For example:
+# For example:
+# For example:
+# For example:
+# For example:
+# For example:
+# Format of wrapper file (\$CVSROOT/CVSROOT/cvswrappers or .cvswrappers)
+# Format strings present in the filter will be replaced as follows:
+# Format strings present in the filter will be replaced as follows:
+# High values for MaxProxyBufferSize may speed up a secondary server
+# If any format strings are present in the filter, they will be replaced
+# If any format strings are present in the filter, they will be replaced
+# If any format strings are present in the filter, they will be replaced
+# If any format strings are present in the filter, they will be replaced
+# If any format strings are present in the filter, they will be replaced
+# If any format strings are present in the filter, they will be replaced
+# If any format strings are present in the filter, they will be replaced
+# If any of the above test failed, then the commit would be aborted.
+# If no format strings are present in the filter string, a default of
+# If no format strings are present in the filter, a default . %l. will
+# If the name .ALL. appears as a regular expression it is always used
+# If the name .ALL. appears as a regular expression it is always used
+# If the name .ALL. appears as a regular expression it is always used
+# If the name .ALL. appears as a regular expression it is always used
+# If the name .ALL. appears as a regular expression it is always used
+# If the name .ALL. appears as a regular expression it is always used
+# If the name .ALL. appears as a regular expression it is always used
+# If the name .ALL. appears as a regular expression it is always used
+# If the name ALL appears as a regular expression it is always used
+# If the repository name does not match any of the regular expressions in this
+# If the repository name does not match any of the regular expressions in this
+# If the repository name does not match any of the regular expressions in this
+# If the repository name does not match any of the regular expressions in this
+# If the repository name does not match any of the regular expressions in this
+# If the repository name does not match any of the regular expressions in this
+# If the repository name does not match any of the regular expressions in this
+# If the repository name does not match any of the regular expressions in this
+# If the repository name does not match any of the regular expressions in this
+# It also generates multiple arguments for each file being operated upon.
+# NOTE:  If you change any of the .Run. options above, you.ll have to
+# Note that %{sVv} is a list operator and not all elements are necessary.
+# Note that %{sVv} is a list operator and not all elements are necessary.
+# Note that %{saTVv} is a list operator and not all elements are necessary.
+# One thing that should be noted is the the ALL keyword is not
+# Put CVS lock files in this directory rather than directly in the repository.
+# Set .ImportNewFilesToVendorBranchOnly. to .yes. if you wish to force
+# Set .KeywordExpand. to .i. followed by a list of keywords to expand or
+# Set .LocalKeyword. to specify a local alias for a standard keyword.
+# Set .LogHistory. to .all. or .TOEFWUPCGMARX. to log all transactions to the
+# Set .MaxCommentLeaderLength. to the maximum length permitted for the
+# Set .MaxProxyBufferSize. to the the maximum allowable secondary
+# Set .PrimaryServer. to the CVSROOT to the primary, or write, server when
+# Set .RereadLogAfterVerify. to .always. (the default) to allow the verifymsg
+# Set .TopLevelAdmin. to .yes. to create a CVS directory at the top
+# Set .UseArchiveCommentLeader. to .yes. to cause CVS to fall back on
+# Set .UseNewInfoFmtStrings. to .no. if you must support a legacy system by
+# Set .UserAdminOptions. to the list of .cvs admin. commands (options)
+# That is, if two files, file1 & file2, are being commited from 1.1 to
+# The .-a. option specifies an alias.  An alias is interpreted as if
+# The -k option specifies keyword expansion (e.g. -kb for binary).
+# The -m option specifies whether CVS attempts to merge files.
+# The filter on the right is invoked with the following arguments
+# The filter on the right is invoked with the repository and a list 
+# The first entry on a line is a filename which will be checked out from
+# The first entry on a line is a regular expression which is tested
+# The first entry on a line is a regular expression which is tested
+# The first entry on a line is a regular expression which is tested
+# The first entry on a line is a regular expression which is tested
+# The first entry on a line is a regular expression which is tested
+# The first entry on a line is a regular expression which is tested
+# The first entry on a line is a regular expression which is tested
+# The first entry on a line is a regular expression which is tested
+# The following string would enable all .cvs admin. commands for all
+# The remainder of the line is an error message to use if the file cannot
+# This script might, for example, be used to shut down a dial up
+# This value is ignored if the .cvsadmin. group does not exist.
+# Thus %{sV} is a legal format string, but will only be replaced with file
+# Thus %{sV} is a legal format string, but will only be replaced with file
+# Thus %{sv} is a legal format string, but will only be replaced with
+# Where .options. are composed of:
+# You can encode a module within a module by using the special .&.
+# .<whitespace>.<filename>.<whitespace><error message>.<end-of-line>
+# .UseArchiveCommentLeader. set in this file.  .unlimited. is a valid
+# .e. followed by a list of keywords to not expand.
+# a regular expression which is tested against the directory that the
+# administrative files in \$CVSROOT/CVSROOT, such as template files.
+# against the directory that the change is being committed to, relative
+# against the directory that the change is being committed to, relative
+# against the directory that the change is being committed to, relative
+# against the directory that the change is being committed to, relative
+# against the directory that the change is being committed to, relative
+# against the directory that the change is being committed to, relative
+# against the directory that the change is being committed to, relative
+# against the directory that the change is being made to, relative to the
+# as follows:
+# as follows:
+# as follows:
+# as follows:
+# as follows:
+# as follows:
+# as follows:
+# automagically determined comment leader exceeds .MaxCommentLeaderLength.
+# automagically determined comment leader used when expanding the Log
+# be appended to the filter, but this usage is deprecated.
+# be checked out.
+# being examined will not be expanded.  Defaults to .no..
+# being operated upon.  i.e. if two files, file1 & file2, are having a tag
+# being operated upon.  i.e. if two files, file1 & file2, are having a tag
+# better handled by an entry in the loginfo file.
+# buffer memory cache size before the buffer begins being stored to disk, in
+# bytes.  If .UseArchiveCommentLeader. is not set and a comment leader
+# bytes.  Must be a positive integer but may end in .k., .M., .G., or .T. (for
+# can be useful for creating a module that consists of many directories
+# cause the commit to be aborted.
+# change is being made to, relative to the \$CVSROOT.  If it matches,
+# character to interpose another module into the current module.  This
+# command to a primary server and immediately before it opens a
+# command.
+# comment leader exceeds this length is dependant on the value of
+# comment lines begin with .#.
+# connection to the primary server.  This script might, for example, be
+# defaults to .k., or only allowing the changing of the default
+# deprecated.
+# enabling the deprecated old style info file command line format strings.
+# establishing one or more read-only mirrors which serve as proxies for
+# every .cvs import. command to behave as if the .-X. flag was
+# everything on the right of the .-a. had been typed on the command line.
+# file attibute (watch/edit) information in a directory.
+# file name and new revision.
+# file, the .DEFAULT. line is used, if it is specified.
+# file, the .DEFAULT. line is used, if it is specified.
+# file, the .DEFAULT. line is used, if it is specified.
+# file, the .DEFAULT. line is used, if it is specified.
+# file, the .DEFAULT. line is used, if it is specified.
+# file, the .DEFAULT. line is used, if it is specified.
+# file, the .DEFAULT. line is used, if it is specified.
+# file, the .DEFAULT. line is used, if it is specified.
+# file, the .DEFAULT. line is used, if it is specified.
+# file1, 1.1, 1.1.2.1, file2, 1.1.2.2, 1.1.2.3.
+# file1, 1.1, 1.1.2.9, file2, 1.1, 1.1.2.9.
+# file1, 1.1, 1.1.2.9, file2, 1.1, 1.1.2.9.
+# filter program that should expect log information on its standard input.
+# following six arguments in this order:
+# following six arguments in this order:
+# following test can be applied to the code:
+# format strings are replaceed as follows:
+# generate the following six arguments in this order:
+# greater than .MaxCommentLeaderLength. is calculated, the Log keyword
+# history file, or a subset as needed (ie .TMAR. logs all write operations)
+# if no format strings are present:
+# in addition to the first matching regex or .DEFAULT..
+# in addition to the first matching regex or .DEFAULT..
+# in addition to the first matching regex or .DEFAULT..
+# in addition to the first matching regex or .DEFAULT..
+# in addition to the first matching regex or .DEFAULT..
+# in addition to the first matching regex or .DEFAULT..
+# in addition to the first matching regex or .DEFAULT..
+# in addition to the first matching regex or .DEFAULT..
+# in addition to the first matching regex or DEFAULT.
+# information.  It works best when a template (as specified in the
+# is invoked on commit and import.
+# key -a    aliases...
+# key .options. directory
+# key .options. directory files...
+# keyword expansion mode for files for users not in the .cvsadmin. group.
+# keyword, in bytes.  CVS.s behavior when the automagically determined
+# kiilo, mega, giga, & tera, respectively).  If an otherwise valid number you
+# level of the new working directory when using the .cvs checkout.
+# line is the name of the file that contains the template.
+# match the directory that the change is being made to, relative to the
+# megabytes).
+# modern system down slightly.
+# moved from version 1.1 to version 1.1.2.9, %{sVv} will generate the
+# moved from version 1.1 to version 1.1.2.9, %{sVv} will generate the
+# name and old revision. it also generates multiple arguments for each file
+# name and old revision. it also generates multiple arguments for each file
+# network.
+# of files to check.  A non-zero exit of the filter program will 
+# of the line is the name of the filter to run.
+# of the line is the name of the filter to run.
+# of the line is the name of the filter to run.
+# of the line is the name of the filter to run.
+# of the line is the name of the filter to run.
+# of the line is the name of the filter to run.
+# of the line is the name of the filter to run.
+# one occurrence of %s for the user to notify, and information on its
+# or
+# or VPN connection to the primary server.s network.
+# process to catalog the differences that were code reviewed, the
+# processing a directory.
+# processing a directory.
+# rcsinfo file) is provided for the logging procedure.  Given a
+# release and re-checkout any working directories of these modules.
+# repositories.  Set it to .never. (the previous CVS behavior) to prevent
+# repository.
+# reviewed the code before it can be checked in, and an external
+# script to change the log message.  Set it to .stat. to force CVS to verify
+# second per directory being committed, so it is not recommended for large
+# sent. The first entry on a line is a regular expression which must
+# setting for this value.  Defaults to 20 bytes.
+# specified.
+# specify is greater than the SIZE_MAX defined by your system.s C compiler,
+# spread out over the entire source repository.
+# standard input.
+# supported.  There can be only one entry that matches a given
+# template with locations for, a bug-id number, a list of people who
+# that the file has changed before reading it (this can take up to an extra
+# that users not in the .cvsadmin. group are allowed to run.  This
+# the comment leader set in the RCS archive file, if any, when the
+# the corresponding RCS file in the \$CVSROOT/CVSROOT directory.
+# the secondary server closes its connection to the primary server.
+# the secondary server determines that it will be proxying a write
+# the write server in write mode or redirect the client to the primary for
+# then it will be resolved to SIZE_MAX without a warning.  Defaults to 8M (8
+# then the remainder of the line is a filter program that should contain
+# to the \$CVSROOT.  For the first match that is found, then the remainder
+# to the \$CVSROOT.  For the first match that is found, then the remainder
+# to the \$CVSROOT.  For the first match that is found, then the remainder
+# to the \$CVSROOT.  For the first match that is found, then the remainder
+# to the \$CVSROOT.  For the first match that is found, then the remainder
+# to the \$CVSROOT.  For the first match that is found, then the remainder
+# to the \$CVSROOT.  For the first match that is found, then the remainder
+# used to launch a dial up or VPN connection to the primary server.s
+# users:
+# verifymsg scripts from changing the log message.
+# version 1.1.2.1 and from 1.1.2.2 to 1.1.2.3, respectively, %{sVv} will
+# with old hardware and a lot of available memory but can actually slow a
+# write requests.
+#\*.gif -k .b.
+#ALL (echo Committed to %r/%p; cat) |mail %s -s .CVS notification.
+#DEFAULT (echo ..; id; echo %s; date; cat) >> \$CVSROOT/CVSROOT/commitlog
+#DEFAULT (echo ..; id; echo %{sVv}; date; cat) >> \$CVSROOT/CVSROOT/commitlog
+#ImportNewFilesToVendorBranchOnly=no
+#KeywordExpand=eCVSHeader
+#KeywordExpand=iMYCVS,Name,Date
+#LocalKeyword=MYCVS=CVSHeader
+#LockDir=/var/lock/cvs
+#LogHistory=TOEFWUPCGMARX
+#RereadLogAfterVerify=always
+#SystemAuth=yes
+#TopLevelAdmin=no
+#UserAdminOptions=aAbceIklLmnNostuU;execute;no-execute
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+UseNewInfoFmtStrings=yes" \
 "
   *-> Forking server: ${CVS_SERVER} server
   *-> main loop with CVSROOT=${CVSROOT}
@@ -34213,11 +34857,36 @@ S -> unlink_file(\.#verifymsg)" \
   *-> Lock_Cleanup()
   *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/loginfo, trace, ALL)
   *-> Parse_Info (${CVSROOT_DIRNAME}/CVSROOT/verifymsg, trace, not ALL)
+  *-> Read 0 for UseNewInfoFmtStrings
   *-> Simple_Lock_Cleanup()
+  *-> Simple_Lock_Cleanup()
+  -> add_rcs_file (.${CVSROOT_DIRNAME}/trace/file1,v., .file1., .1\.1., .(null)., .1\.1\.1., .MYVENDOR., .(null).)
+  -> add_rcs_file: found signature.
+  -> add_rcs_file: signature not found.
+  -> get_root_config (${CVSROOT_DIRNAME})
+  -> iget_verify_commits () returning VERIFY_OFF
+  -> lock_dir_for_write (${CVSROOT_DIRNAME}/trace)
+  -> lock_exists (${CVSROOT_DIRNAME}/trace, #cvs\.pfl\.\*, (null))
+  -> lock_exists (${CVSROOT_DIRNAME}/trace, #cvs\.rfl\.\*, (null))
+  -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.lock)
+  -> lock_name (${CVSROOT_DIRNAME}/trace, #cvs\.wfl\..*)
+  -> lock_name (${CVSROOT_DIRNAME}/trace, )
+  -> lock_name (${CVSROOT_DIRNAME}/trace, )
   *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
-  *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
+  *-> main: Session ID is ${commitid}
+  *-> new_config ()
+  *-> parse_config (${CVSROOT_DIRNAME})
+  *-> parse_cvsroot (${CVSROOT_DIRNAME})
+  *-> parse_info() examining line: .UseNewInfoFmtStrings=yes.
+  *-> promotable_exists (${CVSROOT_DIRNAME}/trace)
+  *-> readBool (${CVSROOT_DIRNAME}/CVSROOT/config, UseNewInfoFmtStrings, yes)
+  *-> readers_exist (${CVSROOT_DIRNAME}/trace)
+  *-> remove_lock_files (${CVSROOT_DIRNAME}/trace)
   *-> remove_locks()
+  .*
   *-> safe_location( where=(null) )
+  *-> set_lock (${CVSROOT_DIRNAME}/trace, 1)
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
   *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
   *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
 N trace/file1

@@ -406,6 +406,10 @@ checkout (int argc, char **argv)
     }
     if (history_name != tag && history_name != date && history_name != NULL)
 	free (history_name);
+
+    if (join_orig1) free (join_orig1);
+    if (join_orig2) free (join_orig2);
+
     return err;
 }
 

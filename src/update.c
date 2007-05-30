@@ -454,6 +454,8 @@ update (int argc, char **argv)
     /* Free the space allocated for tags and dates, if necessary.  */
     if (tag) free (tag);
     if (date) free (date);
+    if (join_orig1) free (join_orig1);
+    if (join_orig2) free (join_orig2);
 
     return err;
 }

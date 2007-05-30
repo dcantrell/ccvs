@@ -178,7 +178,11 @@ mergelists (List *dest, List **src)
     {
 	n = p->next;
 	removenode (p);
-	addnode (dest, p);
+
+	/* If the node is already in the list, then free
+	   the duplicate which was not inserted. */ 
+	if (addnode (dest, p) == -1)
+	    freenode (p);
     }
     dellist (src);
 }

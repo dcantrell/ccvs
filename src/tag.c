@@ -122,6 +122,19 @@ static const char *const tag_usage[] =
 
 
 
+void
+del_tag_info (struct tag_info *ti)
+{
+    if (ti)
+    {
+	if (ti->oldrev) free (ti->oldrev);
+	if (ti->rev) free (ti->rev);
+	if (ti->tag) free (ti->tag);
+	if (ti->options) free (ti->options);
+	ti->oldrev = ti->rev = ti->tag = ti->options = NULL;
+    }
+}
+
 int
 cvstag (int argc, char **argv)
 {
@@ -642,6 +655,7 @@ check_fileproc (void *callerdat, struct file_info *finfo)
        (e.g. numtag is "foo" which gets moved between here and
        tag_fileproc).  */
     p->data = ti = xmalloc (sizeof (struct tag_info));
+    memset (ti, 0, sizeof (struct tag_info));
     ti->tag = xstrdup (numtag ? numtag : vers->tag);
     if (!is_rtag && numtag == NULL && date == NULL)
 	ti->rev = xstrdup (vers->vn_user);
@@ -672,7 +686,7 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 	    ti->rev = NULL;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	}
-        else if (strcmp(ti->oldrev, p->data) == 0)
+        else if (strcmp (ti->oldrev, p->data) == 0)
             addit = 0;
         else if (!force_tag_move)
             addit = 0;
@@ -681,7 +695,8 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 	addit = 0;
     if (!addit)
     {
-	free(p->data);
+	del_tag_info (ti);
+	free (p->data);
 	p->data = NULL;
     }
     freevers_ts (&vers);

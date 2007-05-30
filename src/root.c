@@ -287,10 +287,39 @@ primary_root_inverse_translate (const char *root_in)
 static List *root_allow;
 static List *root_allow_regexp;
 
+/* The root_configs_read maintains a list of valid CVSROOT directories
+   read by parse_config(). */
+static List *root_configs_read;
+
 static void
 delconfig (Node *n)
 {
     if (n->data) free_config (n->data);
+}
+
+
+
+static Node *
+root_configs_read_add (const char *arg, const char *configPath)
+{
+    Node *n;
+
+    if (!root_configs_read) root_configs_read = getlist ();
+    n = getnode ();
+    n->key = xstrdup (arg);
+    n->data = parse_config (arg, configPath);
+    n->delproc = delconfig;
+    addnode (root_configs_read, n);
+
+    return n;
+}
+
+
+
+void
+root_configs_read_free (void)
+{
+    dellist (&root_configs_read);
 }
 
 
@@ -300,8 +329,8 @@ root_allow_add (const char *arg, const char *configPath)
 {
     Node *n;
 
-    if (!root_allow) root_allow = getlist();
-    n = getnode();
+    if (!root_allow) root_allow = getlist ();
+    n = getnode ();
     n->key = xstrdup (arg);
     n->data = parse_config (arg, configPath);
     n->delproc = delconfig;
@@ -402,11 +431,11 @@ error 0 Server configuration missing --allow-root or --allow-root-regexp in inet
  *   The config associated with ARG.
  */
 struct config *
-get_root_allow_config (const char *arg, const char *configPath)
+get_root_config (const char *arg, const char *configPath)
 {
     Node *n;
 
-    TRACE (TRACE_FUNCTION, "get_root_allow_config (%s)", arg);
+    TRACE (TRACE_FUNCTION, "get_root_config (%s)", arg);
 
     if (root_allow)
 	n = findnode (root_allow, arg);
@@ -414,7 +443,15 @@ get_root_allow_config (const char *arg, const char *configPath)
 	n = NULL;
 
     if (n) return n->data;
-    return parse_config (arg, configPath);
+
+    /* If it is not in root_allow, it might be in root_configs_read */
+    if (root_configs_read)
+	n = findnode (root_configs_read, arg);
+
+    if (n) return n->data;
+    n = root_configs_read_add (arg, configPath);
+
+    return n->data;
 }
 
 
