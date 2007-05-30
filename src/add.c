@@ -516,6 +516,7 @@ add (int argc, char **argv)
 "File `%s' has no previous revision to resurrect.",
 			                   finfo.fullname);
 				free (prev);
+				freevers_ts (&vers);
 				goto skip_this_file;
 			    }
 			    if (!quiet)

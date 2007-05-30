@@ -292,13 +292,20 @@ gen_signature (const char *srepos, const char *filename, bool bin, size_t *len)
 	                      (char *) NULL);
 
     if (!cmdline || !strlen (cmdline))
+    {
+	if (cmdline) free (cmdline);
 	error (1, 0, "sign template resolved to the empty string!");
+    }
 
     noexec = false;
     if (!(pipefp = run_popen (cmdline, "r" POPEN_BINARY_FLAG)))
+    {
+	if (cmdline) free (cmdline);
 	error (1, errno, "failed to execute signature generator");
+    }
     noexec = save_noexec;
 
+    if (cmdline) free (cmdline);
     do
     {
 	size_t len;

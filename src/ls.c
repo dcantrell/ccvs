@@ -474,6 +474,7 @@ ls_direntproc (void *callerdat, const char *dir, const char *repos,
         parent[strlen (update_dir) - strlen (dir)] = '\0';
         strip_trailing_slashes (parent);
         p = findnode (callerdat, parent);
+        free (parent);
     }
     else
         p = NULL;

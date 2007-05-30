@@ -484,6 +484,14 @@ diff (int argc, char **argv)
 	free (diff_date1);
     if (diff_date2 != NULL)
 	free (diff_date2);
+    if (diff_orig1)
+	free (diff_orig1);
+    if (diff_orig1)
+	free (diff_orig2);
+    if (diff_rev1)
+	free (diff_rev1);
+    if (diff_rev2)
+	free (diff_rev2);
 
     return err;
 }

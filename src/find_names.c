@@ -335,8 +335,11 @@ find_files (const char *dir, const char *pat)
     if (err && err != GLOB_NOMATCH)
     {
 	if (err == GLOB_ABORTED)
+	{
 	    /* Let our caller handle the problem.  */
+	    if (catpat) free (catpat);
 	    return NULL;
+	}
 	if (err == GLOB_NOSPACE) errno = ENOMEM;
 	if (!really_quiet)
 	    error (0, errno, "glob failed");

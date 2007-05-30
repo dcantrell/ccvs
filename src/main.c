@@ -1324,8 +1324,8 @@ cause intermittent sandbox corruption.");
 		   already printed an error.  We keep going.  Why?  Because
 		   if we didn't, then there would be no way to check in a new
 		   CVSROOT/config file to fix the broken one!  */
-		if (config) free_config (config);
-		config = parse_config (current_parsed_root->directory, NULL);
+		config = get_root_config (current_parsed_root->directory,
+					  NULL);
 
 		/* Can set TMPDIR in the environment if necessary now, since
 		 * if it was set in config, we now know it.
@@ -1392,6 +1392,14 @@ cause intermittent sandbox corruption.");
     } /* end of stuff that gets done if the user DOESN'T ask for help */
 
     root_allow_free ();
+    root_configs_read_free ();
+
+    /* free up some memory */
+    if (CurDir) free (CurDir);
+    if (global_session_id) free (global_session_id);
+    if (program_path) free (program_path);
+    if (hostname) free (hostname);
+    CurDir = global_session_id = program_path = hostname = NULL;
 
     /* This is exit rather than return because apparently that keeps
        some tools which check for memory leaks happier.  */

@@ -343,6 +343,16 @@ void
 free_config (struct config *data)
 {
     if (data->keywords) free_keywords (data->keywords);
+    if (data->lock_dir) free(data->lock_dir);
+    if (data->logHistory) free (data->logHistory);
+    if (data->HistoryLogPath) free (data->HistoryLogPath);
+    if (data->HistorySearchPath) free (data->HistorySearchPath);
+    if (data->TmpDir) free(data->TmpDir);
+    if (data->UserAdminOptions) free (data->UserAdminOptions);
+    if (data->PrimaryServer) free (data->PrimaryServer);
+    if (data->VerifyTemplate) free (data->VerifyTemplate);
+    if (data->OpenPGPTextmode) free (data->OpenPGPTextmode);
+    if (data->VerifyArgs) dellist (&data->VerifyArgs);
     free (data);
 }
 

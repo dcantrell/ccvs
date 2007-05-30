@@ -893,8 +893,7 @@ serve_root (char *arg)
 
     /* For pserver, this will already have happened, and the call will do
        nothing.  But for rsh, we need to do it now.  */
-    config = get_root_allow_config (current_parsed_root->directory,
-				    gConfigPath);
+    config = get_root_config (current_parsed_root->directory, gConfigPath);
 
 # ifdef PROXY_SUPPORT
     /* At this point we have enough information to determine if we are a
@@ -6347,7 +6346,12 @@ server_cleanup (void)
 
 	    /* SIG_beginCrSect(); */
 	    noexec = 0;
-	    unlink_file_dir (orig_server_temp_dir);
+	    if (orig_server_temp_dir)
+	    {
+		unlink_file_dir (orig_server_temp_dir);
+		free (orig_server_temp_dir);
+		orig_server_temp_dir = NULL;
+	    }
 	    noexec = save_noexec;
 	    /* SIG_endCrSect(); */
 	} /* !dont_delete_temp */
@@ -7382,7 +7386,7 @@ pserver_authenticate_connection (void)
        file, parse_config already printed an error.  We keep going.
        Why?  Because if we didn't, then there would be no way to check
        in a new CVSROOT/config file to fix the broken one!  */
-    config = get_root_allow_config (repository, gConfigPath);
+    config = get_root_config (repository, gConfigPath);
 
     /* We need the real cleartext before we hash it. */
     descrambled_password = descramble (password);

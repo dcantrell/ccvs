@@ -1,3 +1,67 @@
+2007-05-30  Mark D. Baushke  <mdb@gnu.org>
+
+	* sanity.sh: Add --valgrind command-line option for running the
+	valgrind command to do memory checks during normal santity check
+	processing.
+	(valgrind_check_opts): New shell function.
+	(valgrind_set_opts): Ditto.
+	(valgrind_tewst_pgp): Ditto.
+	(date_s_emulate): Ditto.
+	(valgrind_cvs): Ditto.
+	(logfiles): Update sleep times to allow for valgrind processing.
+	(pserver-3b, pserver-3c): Quote $regexp to work around problems
+	with Solaris 10 /bin/sh processing of the interpolated command
+	argument.
+	(multiroot2-9a): Update trace matching.
+	(trace-1): Ditto.
+
+	* root.c (root_configs_read): New global list.
+	(root_configs_read_add): Add a new parse_config table to
+	root_configs_read.
+	(root_configs_read_free): New function to free the
+	root_configs_read list.
+	(get_root_allow_config): Change name to get_root_config and
+	use in main.c keep track of parsed configuration files using
+	the new root_configs_read list.
+	(get_root_config): A missing root config is now parsed and
+	put into the root_configs_read list.
+	* root.h (root_configs_free): New function prototype.
+	s/get_root_allow_config/get_root_config/
+	* main.c (main): Call get_root_config instead of parse_config.
+	Fix memory leak of some global variables.
+	* tag.c (del_tag_info): New function to free struct tag_info
+	contents.
+	(check_fileproc): Use it.
+
+	* admin.c (admin): Fix memory leak.
+	* checkin.c (Checkin): Ditto.
+	* rcs.c (RCS_gettag): Ditto.
+	* sign.c (gen_signature): Ditto.
+
+	[bug #5911]
+	* history.c (free_hrecs): New function to free hrec_head records.
+	(history): Use it.
+	(read_hrecs_file, read_hrecs): Initialize newly added hrec_head
+	records.
+
+	* add.c (add): Fix memory leak.
+	* checkout.c (checkout): Ditto.
+	* commit.c (check_fileproc, update_delproc): Ditto.
+	* diff.c (diff): Ditto.
+	* edit.c (find_editors_and_output, edit_fileproc): Ditto.
+	* find_names.c (find_files): Ditto.
+	* hash.c (mergelists): Ditto.
+	* history.c (history_write): Ditto.
+	* import.c (add_rcs_file): Ditto.
+	* ls.c (ls_direntproc): Ditto.
+	* main.c (main): Ditto.
+	* parseinfo.c (free_config): Ditto.
+	* rcs.c (free_keywords, expand_keywords): Ditto.
+	* subr.c (previous_rev): Ditto.
+	* tag.c (check_fileproc): Ditto.
+	* update.c (update): Ditto.
+	(bug report from yarony@jungo.com)
+
 2007-05-22  Larry Jones  <lawrence.jones@ugs.com>
 
 	* rcs.c (RCS_fully_parse): Include revision in error message.

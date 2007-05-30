@@ -429,6 +429,30 @@ get_history_log_name (time_t now)
 
 
 
+/* go over all history records in array pointed by hrec_head,
+ * and free the allocated memory.
+ */
+static void
+free_hrecs (void)
+{
+    struct hrec *hr;
+
+    if (!hrec_head)
+	return;
+
+    /* hrec_head points to array of hrec */
+    /* hrline string is parsed into hrec fields, starting at type,
+     * (this is done in fill_hrec)
+     * so freeing type alone is sufficient
+     */
+    for (hr = hrec_head; (hr < hrec_head + hrec_max) && hr->type; hr++)
+	free (hr->type);
+    free (hrec_head);
+    hrec_head = NULL;
+}
+
+
+
 int
 history (int argc, char **argv)
 {
@@ -761,6 +785,8 @@ history (int argc, char **argv)
     if (hrec_count > 0)
 	qsort (hrec_head, hrec_count, sizeof (struct hrec), sort_order);
     report_hrecs ();
+    free_hrecs ();
+    dellist (&flist);
     if (since_date != NULL)
 	free (since_date);
     free (since_rev);
@@ -779,7 +805,7 @@ void
 history_write (int type, const char *update_dir, const char *revs,
                const char *name, const char *repository)
 {
-    const char *fname;
+    char *fname;
     char *workdir;
     char *username = getcaller ();
     int fd;
@@ -918,7 +944,7 @@ history_write (int type, const char *update_dir, const char *revs,
     line = Xasprintf ("%c%08lx|%s|%s|%s|%s|%s\n", type, (long) now,
 		      username, workdir, repos, revs, name);
 
-    fname = get_history_log_name (now);
+    fname = (char *) get_history_log_name (now);
 
     if (!history_lock (current_parsed_root->directory))
 	/* history_lock() will already have printed an error on failure.  */
@@ -953,6 +979,7 @@ history_write (int type, const char *update_dir, const char *revs,
 	error (1, errno, "cannot close history file: %s", fname);
     free (workdir);
  out:
+    free (fname);
     clear_history_lock ();
 }
 
@@ -1199,6 +1226,9 @@ read_hrecs_file (Node *p, void *closure)
 		error (1, 0, "Too many history records in history file.");
 
 	    hrec_head = xnrealloc (hrec_head, hrec_max, sizeof (struct hrec));
+	    /* initialize newly added records */
+	    memset (&hrec_head[hrec_count], 0,
+		    HREC_INCREMENT * sizeof (struct hrec));
 	    if (last_since_tag)
 		last_since_tag = hrec_head + (last_since_tag - old_head);
 	    if (last_backto)
@@ -1216,7 +1246,10 @@ read_hrecs_file (Node *p, void *closure)
 	if (select_hrec (&hrec_head[hrec_count]))
 	    hrec_count++;
 	else 
+	{
 	    free (hrline);
+	    hrec_head[hrec_count].type = NULL;
+	}
 
 	cp = nl + 1;
     }
@@ -1238,6 +1271,7 @@ read_hrecs (List *flist)
      */
     hrec_max = HREC_INCREMENT;
     hrec_head = xmalloc (hrec_max * sizeof (struct hrec));
+    memset (hrec_head, 0, hrec_max * sizeof (struct hrec));
     hrec_idx = 0;
 
     files_read = walklist (flist, read_hrecs_file, NULL);

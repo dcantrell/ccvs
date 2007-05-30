@@ -1086,6 +1086,8 @@ warning: file `%s' seems to still contain conflict indicators",
             {
                 error (0, 0, "Valid edit does not exist for %s",
                        finfo->fullname);
+		if (li) free (li);
+		if (p) freenode (p);
                 freevers_ts (&vers);
                 return 1;
             }
@@ -2510,6 +2512,8 @@ update_delproc (Node *p)
 {
     struct logfile_info *li = p->data;
 
+    if (!li)
+	return;
     if (li->tag)
 	free (li->tag);
     if (li->rev_old)

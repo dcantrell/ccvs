@@ -1356,7 +1356,10 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 
 	    if (fprintf (fprcs, "openpgp-signatures        %s;\012",
 			 b64sig) < 0)
+	    {
+		free (b64sig);
 		goto write_error;
+	    }
 	    free (b64sig);
 	}
 	else
@@ -1545,8 +1548,10 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
     if (tocvsPath)
 	if (unlink_file_dir (tocvsPath) < 0)
 		error (0, errno, "cannot remove %s", tocvsPath);
-    if (free_opt != NULL)
+    if (free_opt)
 	free (free_opt);
+    if (dead_revision)
+	free (dead_revision);
     return err;
 
 write_error:
@@ -1572,8 +1577,10 @@ read_error:
 	if (unlink_file_dir (tocvsPath) < 0)
 	    error (0, errno, "cannot remove %s", tocvsPath);
 
-    if (free_opt != NULL)
+    if (free_opt)
 	free (free_opt);
+    if (dead_revision)
+	free (dead_revision);
 
     return err + 1;
 }

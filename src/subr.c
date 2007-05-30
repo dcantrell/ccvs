@@ -409,8 +409,11 @@ previous_rev (RCSNode *rcs, const char *rev)
 		 */
 		p = strrchr (tmp, '.');
 		if (p == NULL)
+		{
 		    /* We are on the trunk.  */
+		    free (retval);
 		    retval = NULL;
+		}
 		else
 		{
 		    *p = '\0';

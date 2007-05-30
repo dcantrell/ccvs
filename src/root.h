@@ -93,7 +93,8 @@ void root_allow_regexp_add (const char *, const char *configPath);
 void root_allow_free (void);
 bool root_allow_used (void);
 bool root_allow_ok (const char *);
-struct config *get_root_allow_config (const char *arg, const char *configPath);
+void root_configs_read_free (void);
+struct config *get_root_config (const char *arg, const char *configPath);
 const char *primary_root_translate (const char *root_in);
 const char *primary_root_inverse_translate (const char *root_in);
 
