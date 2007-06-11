@@ -1,3 +1,9 @@
+2007-06-11  Derek Price  <derek@ximbiot.com>
+
+	* history.c: Output more useful error messages when multiple history
+	files are being parsed.
+	* sanity.sh: Test this new feature.
+
 2007-05-30  Mark D. Baushke  <mdb@gnu.org>
 
 	* sanity.sh: Add --valgrind command-line option for running the

@@ -220,11 +220,14 @@ static struct hrec
     char *mod;		/* The module within which the file is contained */
     time_t date;	/* Calculated from date stored in record */
     long idx;		/* Index of record, for "stable" sort. */
+    const char *source_file_name;  /* For error messages.  */
+    long source_line_num;	   /* For error messages.  */
 } *hrec_head;
 static long hrec_idx;
 
 
-static void fill_hrec (char *line, struct hrec * hr);
+static void fill_hrec (const char *source_file_name, long source_line_num,
+		       char *line, struct hrec * hr);
 static int accept_hrec (struct hrec * hr, struct hrec * lr);
 static int select_hrec (struct hrec * hr);
 static int sort_order (const void *l, const void *r);
@@ -1094,7 +1097,8 @@ expand_modules (void)
 	} while (0)
 
 static void
-fill_hrec (char *line, struct hrec *hr)
+fill_hrec (const char *source_file_name, long source_line_num,
+	   char *line, struct hrec *hr)
 {
     char *cp;
     int c;
@@ -1103,6 +1107,8 @@ fill_hrec (char *line, struct hrec *hr)
 	hr->end = hr->mod = NULL;
     hr->date = -1;
     hr->idx = ++hrec_idx;
+    hr->source_file_name = source_file_name;
+    hr->source_line_num = source_line_num;
 
     while (isspace ((unsigned char) *line))
 	line++;
@@ -1157,6 +1163,7 @@ read_hrecs_file (Node *p, void *closure)
     char *hrline;
     int i;
     int fd;
+    long line_num;
     struct stat st_buf;
     const char *fname = p->key;
 
@@ -1181,6 +1188,7 @@ read_hrecs_file (Node *p, void *closure)
     cpstart = xnmalloc (2, STAT_BLOCKSIZE (st_buf));
     cpstart[0] = '\0';
     cp = cpend = cpstart;
+    line_num = 1;
 
     for (;;)
     {
@@ -1191,8 +1199,8 @@ read_hrecs_file (Node *p, void *closure)
 	{
 	    if (nl - cp >= STAT_BLOCKSIZE (st_buf))
 	    {
-		error(1, 0, "history line %ld too long (> %lu)", hrec_idx + 1,
-		      (unsigned long) STAT_BLOCKSIZE(st_buf));
+		error(1, 0, "line %ld of history file `%s' too long (> %lu)",
+		      line_num, fname, (unsigned long) STAT_BLOCKSIZE(st_buf));
 	    }
 	    if (nl > cp)
 		memmove (cpstart, cp, nl - cp);
@@ -1242,7 +1250,7 @@ read_hrecs_file (Node *p, void *closure)
 	   re-write the whole history stuff right now.  */
 
 	hrline = xstrdup (cp);
-	fill_hrec (hrline, &hrec_head[hrec_count]);
+	fill_hrec (fname, line_num, hrline, &hrec_head[hrec_count]);
 	if (select_hrec (&hrec_head[hrec_count]))
 	    hrec_count++;
 	else 
@@ -1252,6 +1260,7 @@ read_hrecs_file (Node *p, void *closure)
 	}
 
 	cp = nl + 1;
+	line_num++;
     }
     free (cpstart);
     close (fd);
@@ -1337,7 +1346,8 @@ select_hrec (struct hrec *hr)
     if (!hr->type || !hr->user || !hr->dir || !hr->repos || !hr->rev ||
 	!hr->file || !hr->end)
     {
-	error (0, 0, "warning: history line %ld invalid", hr->idx);
+	error (0, 0, "warning: line %ld from history file `%s' invalid",
+	       hr->source_line_num, hr->source_file_name);
 	return 0;
     }
 
