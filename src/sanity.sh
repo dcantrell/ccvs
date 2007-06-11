@@ -21264,14 +21264,21 @@ $SPROG commit: Rebuilding administrative file database"
 "-rw-rw-r--.*$TESTDIR/historylogs/2[0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]-[0-2][0-9]-[0-5][0-9]-[0-5][0-9]
 -rw-rw-r--.*$TESTDIR/historylogs/2[0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]-[0-2][0-9]-[0-5][0-9]-[0-5][0-9]"
 
-	    # Should still see both commits.
+	    echo garbage >$TESTDIR/historylogs/garbage
+	    echo more garbage >>$TESTDIR/historylogs/garbage
+
+	    # Should still see both commits and the error message.
 	    if $remote; then
 	      dotest config-9r "$testcvs history -ea" \
-"M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == <remote>
+"$SPROG history: warning: line 1 from history file \`$CVSROOT_DIRNAME/\.\./historylogs/garbage' invalid
+$SPROG history: warning: line 2 from history file \`$CVSROOT_DIRNAME/\.\./historylogs/garbage' invalid
+M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == <remote>
 M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == <remote>"
 	    else
 	      dotest config-9 "$testcvs history -ea" \
-"M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == $TESTDIR/wnt/CVSROOT
+"$SPROG history: warning: line 1 from history file \`$CVSROOT_DIRNAME/\.\./historylogs/garbage' invalid
+$SPROG history: warning: line 2 from history file \`$CVSROOT_DIRNAME/\.\./historylogs/garbage' invalid
+M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == $TESTDIR/wnt/CVSROOT
 M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == $TESTDIR/wnt/CVSROOT"
 	    fi
 
