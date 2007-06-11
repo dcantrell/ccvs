@@ -3,6 +3,10 @@ Changes since 1.12.13:
 
 NEW FEATURES
 
+* Rare error messages should me more informative when multiple history files
+  are being parsed (as a result of the HistorySearchPath config option and the
+  `cvs history' command).
+
 * commitinfo now supports the %T flag.
 
 * A new --timeout option is available to time out network connections for the
