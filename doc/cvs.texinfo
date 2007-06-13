@@ -3089,11 +3089,26 @@ cvs/@var{hostname}, where @var{hostname} is the
 canonical name of the server host.  You will have to
 set this up as required by your GSSAPI mechanism.
 
+If the client has a local username @var{luser} they
+wish to use, then a @var{$CVSROOT} may be set to use
+@samp{:gserver:}@var{luser@@hostname}@samp{:/path}, and
+the client will use send a GSSAPI-U request to the CVS
+server the server will attempt to determine if the user
+is authorized to log in to the account @var{luser}
+given the Kerberos principal name of cvs/@var{hostname}
+and a local username @var{luser}.
+
 To connect using GSSAPI, use the @samp{:gserver:} method.  For
 example,
 
 @example
 cvs -d :gserver:faun.example.org:/usr/local/cvsroot checkout foo
+@end example
+
+or
+
+@example
+cvs -d :gserver:myuser@@faun.example.org:/usr/local/cvsroot checkout foo
 @end example
 
 @node Kerberos authenticated

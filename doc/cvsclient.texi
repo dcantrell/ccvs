@@ -249,6 +249,15 @@ of a two byte big-endian length, followed by that many bytes of data.
 After the GSSAPI authentication is complete, the server continues with
 the responses described above (@samp{I LOVE YOU}, etc.).
 
+If the client wishes to log in to the account @var{luser}, then a
+slightly different request is sent. The procedure is to start with
+@samp{BEGIN GSSAPI-U REQUEST} and the next line sent is
+@samp{luser}. GSSAPI authentication information is then exchanged
+between the client and the server. Each packet of information consists
+of a two byte big-endian length, followed by that many bytes of data.
+After the GSSAPI-U authentication is complete, the server continues
+with the responses described above (@samp{I LOVE YOU}, etc.).
+
 @item future possibilities
 There are a nearly unlimited number of ways to connect and authenticate.
 One might want to allow access based on IP address (similar to the usual

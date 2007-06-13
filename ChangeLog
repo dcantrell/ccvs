@@ -1,3 +1,8 @@
+2007-06-12  Mark D. Baushke  <mdb@gnu.org>
+
+	[bug #17083]
+	* NEWS: Document :gserver:luser@host:/path support.
+
 2007-05-11  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note improved error messages for `cvs history'.

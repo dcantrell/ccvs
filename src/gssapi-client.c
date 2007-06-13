@@ -85,10 +85,21 @@ connect_to_gserver (cvsroot_t *root, int sock, struct hostent *hostinfo)
     OM_uint32 stat_min, stat_maj;
     gss_name_t server_name;
 
-    str = "BEGIN GSSAPI REQUEST\012";
+    if (current_parsed_root->username != NULL)
+	str = "BEGIN GSSAPI-U REQUEST\012";
+    else
+	str = "BEGIN GSSAPI REQUEST\012";
 
     if (send (sock, str, strlen (str), 0) < 0)
 	error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
+
+    if (current_parsed_root->username != NULL) {
+	str = current_parsed_root->username;
+	if (send (sock, str, strlen (str), 0) < 0)
+	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
+	if (send (sock, "\012", 1, 0) < 0)
+	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
+    }
 
     if (strlen (hostinfo->h_name) > BUFSIZE - 5)
 	error (1, 0, "Internal error: hostname exceeds length of buffer");

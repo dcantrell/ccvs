@@ -65,7 +65,7 @@ int trace = 0;
    name.  */
 # include <krb5.h>
 
-static void gserver_authenticate_connection (void);
+static void gserver_authenticate_connection (char *);
 
 /* Whether we are already wrapping GSSAPI communication.  */
 static int cvs_gssapi_wrapping;
@@ -7337,10 +7337,22 @@ pserver_authenticate_connection (void)
     {
 #ifdef HAVE_GSSAPI
 	free (tmp);
-	gserver_authenticate_connection ();
+	gserver_authenticate_connection (NULL);
 	return;
 #else
 	error (1, 0, "GSSAPI authentication not supported by this server");
+#endif
+    }
+    else if (strcmp (tmp, "BEGIN GSSAPI-U REQUEST") == 0)
+    {
+#ifdef HAVE_GSSAPI
+	free (tmp);
+	pserver_read_line (&username, NULL);
+	gserver_authenticate_connection (username);
+	free (username);
+	return;
+#else
+	error (1, 0, "GSSAPI-U authentication not supported by this server");
 #endif
     }
     else
@@ -7520,7 +7532,7 @@ error 0 kerberos: %s\n", krb_get_err_text(status));
  *			xgethostname() in main().
  */
 static void
-gserver_authenticate_connection (void)
+gserver_authenticate_connection (char *username)
 {
     char *hn;
     gss_buffer_desc tok_in, tok_out;
@@ -7608,12 +7620,19 @@ gserver_authenticate_connection (void)
 			      &mechid) != GSS_S_COMPLETE
 	    || krb5_parse_name (kc, ((gss_buffer_t) &desc)->value, &p) != 0
 	    || krb5_aname_to_localname (kc, p, sizeof buf, buf) != 0
-	    || krb5_kuserok (kc, p, buf) != TRUE)
+	    || krb5_kuserok (kc, p, (username ? username : buf)) != TRUE)
 	{
 	    error (1, 0, "access denied");
 	}
 	krb5_free_principal (kc, p);
 	krb5_free_context (kc);
+
+#if AUTH_SERVER_SUPPORT
+	/* Update our CVS_Username to be our kerberos principal */
+	if (CVS_Username != NULL)
+	    free (CVS_Username);
+	CVS_Username = xstrdup (buf);
+#endif
     }
 
     if (tok_out.length != 0)
@@ -7628,7 +7647,10 @@ gserver_authenticate_connection (void)
 	    error (1, errno, "fwrite failed");
     }
 
-    switch_to_user ("GSSAPI", buf);
+    if (username)
+	switch_to_user ("GSSAPI-U", username);
+    else
+	switch_to_user ("GSSAPI", buf);
 
     if (credbuf != buf)
         free (credbuf);
