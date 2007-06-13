@@ -1,3 +1,15 @@
+2007-06-12  Mark D. Baushke  <mdb@gnu.org>
+
+	[bug #17083]
+	* gssapi-client.c (connect_to_gserver): send GSSAPI-U(ser)
+	auth string and user name if gserver:user@host is used.
+
+	* server.c (pserver_authenticate_connection): handle
+	GSSAPI-U(ser) auth string, looking in that account's .k5login
+	for allowed principals.
+	(gserver_authenticate_connection): Add a username argument.
+	(patch adapted from Marc W. Mengel <mengel@fnal.gov>)
+
 2007-06-11  Derek Price  <derek@ximbiot.com>
 
 	* history.c: Output more useful error messages when multiple history

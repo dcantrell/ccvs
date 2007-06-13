@@ -1,3 +1,13 @@
+2007-06-12  Mark D. Baushke  <mdb@gnu.org>
+
+	[bug #17083]
+	* cvs.texinfo (GSSAPI authenticated): Allow
+	:gserver:luser@host:/path in addition to the :gserver:host:/path
+	method.
+
+	* cvsclient.texi (Connection and Authentication): Describe the new
+	GSSAPI-U autentication request.
+
 2007-05-09  Derek Price  <derek@ximbiot.com>
 	and Sylvain Beucler  <beuc@beuc.net>
 
