@@ -1,3 +1,12 @@
+2007-06-13  Mark D. Baushke  <mdb@gnu.org>
+
+	* parseinfo.c (free_config): Avoid double free of
+	config->PrimaryServer and config.
+	Avoid double free of 'config' using a gross hack.
+
+	* sanity.sh: Correct the GPG installation warning if --valgrind is
+	in use.
+
 2007-06-12  Mark D. Baushke  <mdb@gnu.org>
 
 	[bug #17083]

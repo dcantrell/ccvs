@@ -349,10 +349,12 @@ free_config (struct config *data)
     if (data->HistorySearchPath) free (data->HistorySearchPath);
     if (data->TmpDir) free(data->TmpDir);
     if (data->UserAdminOptions) free (data->UserAdminOptions);
-    if (data->PrimaryServer) free (data->PrimaryServer);
     if (data->VerifyTemplate) free (data->VerifyTemplate);
     if (data->OpenPGPTextmode) free (data->OpenPGPTextmode);
     if (data->VerifyArgs) dellist (&data->VerifyArgs);
+    /* FIXME - an exit handler is doing a double free of config
+       somehow. Use a hack for now to make it go away. */
+    if (data == config) config = NULL; 
     free (data);
 }
 

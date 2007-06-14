@@ -2027,8 +2027,12 @@ if $gpg; then
     case " $gpgopts " in
       *" --no-secmem-warning "*)
 	echo "WARNING: GPG is installed incorrectly.  This will not" >&2
-	echo "interfere with testing, but you may want to set \`$GPG' to" >&2
-	echo "setuid root to avoid using insecure memory." >&2
+	echo "interfere with testing, but you may want to set" >&2
+	echo "  \`$GPG'" >&2
+	echo "to setuid root to avoid using insecure memory." >&2
+	if $valgrind; then
+	    echo "Note: GPG is installed correctly to allow --valgrind testing." >&2
+	fi
 	echo Adding 'no-secmem-warning' to $HOME/.gnupg/options >>$LOGFILE
 	echo no-secmem-warning >$HOME/.gnupg/options
 	;;
