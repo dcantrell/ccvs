@@ -1,3 +1,9 @@
+2007-06-15  Derek Price  <derek@ximbiot.com>
+
+	* import.c (import): Check more carefully for files and directories
+	named "CVS".
+	* sanity.sh (import-1b): Test for same.
+
 2007-06-13  Mark D. Baushke  <mdb@gnu.org>
 
 	* parseinfo.c (free_config): Avoid double free of

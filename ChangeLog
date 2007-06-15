@@ -1,3 +1,7 @@
+2007-06-15  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note `cvs import CVS-/CVS' fix.
+
 2007-06-12  Mark D. Baushke  <mdb@gnu.org>
 
 	[bug #17083]
