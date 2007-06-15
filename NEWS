@@ -3,6 +3,9 @@ Changes since 1.11.22:
 
 BUG FIXES
 
+* `cvs import' makes more of an effort not to import patchs containing files
+  and directories named "CVS".
+
 * The CVS server will no longer allow clients to run `cvs init'.
 
 * Applying diffs when checking out very old revisions has been reduced from an
