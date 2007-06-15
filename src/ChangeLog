@@ -2,7 +2,8 @@
 
 	* import.c (import): Check more carefully for files and directories
 	named "CVS".
-	* sanity.sh (import-1b): Test for same.
+	* sanity.sh (import-1b): New test for same.
+	(import-2): Test files named "CVS", in addition to directories.
 
 2007-05-22  Larry Jones  <lawrence.jones@ugs.com>
 
