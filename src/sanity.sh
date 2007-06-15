@@ -8657,7 +8657,11 @@ import-it
 	  mkdir import-CVS
 	  cd import-CVS
 	  touch file1 file2 file3
-	  dotest_fail import-CVS-1 "$testcvs import CVS vtag rtag" \
+	  dotest_fail import-CVS-1 "$testcvs import -mimport CVS vtag rtag" \
+"$PROG import: The word \`CVS' is reserved by CVS and may not be used
+$PROG \[import aborted\]: as a directory in a path or as a file name\."
+	  dotest_fail import-CVS-1b \
+"$testcvs import -mimport CVS-/CVS vtag rtag" \
 "$PROG import: The word \`CVS' is reserved by CVS and may not be used
 $PROG \[import aborted\]: as a directory in a path or as a file name\."
 	  mkdir sdir
