@@ -8666,7 +8666,7 @@ $PROG \[import aborted\]: as a directory in a path or as a file name\."
 $PROG \[import aborted\]: as a directory in a path or as a file name\."
 	  mkdir sdir
 	  mkdir sdir/CVS
-	  touch sdir/CVS/file4 sdir/CVS/file5 sdir/file6 sdir/file7
+	  touch CVS sdir/CVS/file4 sdir/CVS/file5 sdir/file6 sdir/file7
 	  # Calling the imported directory import-CVS is dual purpose in the
 	  # following test.  It makes sure the path test which matched above
 	  # wasn't too strict.
@@ -8674,6 +8674,7 @@ $PROG \[import aborted\]: as a directory in a path or as a file name\."
 "$testcvs import -I! -mimport import-CVS vtag rtag" \
 "
 
+I import-CVS/CVS
 I import-CVS/sdir/CVS
 N import-CVS/file1
 N import-CVS/file2
