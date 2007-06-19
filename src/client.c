@@ -2783,7 +2783,8 @@ send_repository (dir, repos, update_dir)
     send_to_server (repos, 0);
     send_to_server ("\012", 1);
 
-    if (supported_request ("Static-directory"))
+    if (strcmp (cvs_cmd_name, "import")
+	&& supported_request ("Static-directory"))
     {
 	adm_name[0] = '\0';
 	if (dir[0] != '\0')
@@ -2797,7 +2798,8 @@ send_repository (dir, repos, update_dir)
 	    send_to_server ("Static-directory\012", 0);
 	}
     }
-    if (supported_request ("Sticky"))
+    if (strcmp (cvs_cmd_name, "import")
+	&& supported_request ("Sticky"))
     {
 	FILE *f;
 	if (dir[0] == '\0')
