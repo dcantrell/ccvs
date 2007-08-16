@@ -1,3 +1,7 @@
+2007-08-16  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note backport of `cvs --allow-root=PATH server'.
+
 2007-06-18  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note import now keeps metadata to itself.

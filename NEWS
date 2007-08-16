@@ -3,6 +3,8 @@ Changes since 1.11.22:
 
 BUG FIXES
 
+* `cvs server' now accepts `--allow-root=PATH' options.
+
 * `cvs import' no longer attempts to send CVS metadata to the server.
 
 * `cvs import' makes more of an effort not to import paths containing files
