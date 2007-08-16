@@ -759,6 +759,19 @@ serve_root (arg)
 	return;
     }
 
+    /* We need to check :ext: server here, :pserver: checks happen below. */
+    if (root_allow_used() && !root_allow_ok (arg)
+# ifdef AUTH_SERVER_SUPPORT
+	&& Pserver_Repos == NULL
+# endif
+	)
+    {
+	if (alloc_pending (80 + strlen (arg)))
+	    sprintf (pending_error_text,
+		     "E Bad root %s", arg);
+	return;
+    }
+
 #ifdef AUTH_SERVER_SUPPORT
     if (Pserver_Repos != NULL)
     {
