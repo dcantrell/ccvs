@@ -182,6 +182,12 @@ static int root_allow_count;
 static char **root_allow_vector;
 static int root_allow_size;
 
+int
+root_allow_used ()
+{
+    return root_allow_count;
+}
+
 void
 root_allow_add (arg)
     char *arg;

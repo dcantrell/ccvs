@@ -28982,7 +28982,7 @@ ${CVSROOT_DIRNAME}dir1
 noop
 EOF
 
-	    dotest 2-3 "${testcvs} server" \
+	    dotest server2-3 "${testcvs} server" \
 "E protocol error: directory '${TESTDIR}' not within root '${CVSROOT_DIRNAME}'
 error  " <<EOF
 Root ${CVSROOT_DIRNAME}
@@ -29002,6 +29002,19 @@ Root ${CVSROOT_DIRNAME}
 Directory .
 ${CVSROOT_DIRNAME}
 Unchanged foo/bar
+noop
+EOF
+	    dotest server2-5 \
+"$testcvs --allow-root=$CVSROOT_DIRNAME.bad server" \
+"E Bad root $CVSROOT_DIRNAME
+error  " <<EOF
+Root $CVSROOT_DIRNAME
+noop
+EOF
+	    dotest server2-6 \
+"$testcvs --allow-root=$CVSROOT_DIRNAME server" \
+"ok" <<EOF
+Root $CVSROOT_DIRNAME
 noop
 EOF
 	  fi

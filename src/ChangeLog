@@ -1,3 +1,10 @@
+2007-08-16  Derek Price  <derek@ximbiot.com>
+
+	* root.c (root_allow_used): New function and...
+	* root.h (root_allow_used): ...its prototype.
+	* server.c (serve_root): Backport --allow-root test for `cvs server'.
+	* sanity.sh (server2-5, server2-6): New tests for the above.
+
 2007-06-18  Derek Price  <derek@ximbiot.com>
 
 	* client.c (send_repository): Don't attempt to send metadata from CVS
