@@ -1,5 +1,8 @@
 2007-08-21  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Set package configuration string here (e.g.
+	"client/server").
+
 	* HACKING: Note Autoconf 2.61 and Automake 1.10 are used in
 	development.
 	* NEWS: Note same and why.
