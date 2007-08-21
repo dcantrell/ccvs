@@ -1372,6 +1372,9 @@
 #ifndef _POSIX_PTHREAD_SEMANTICS
 # undef _POSIX_PTHREAD_SEMANTICS
 #endif
+#ifndef _TANDEM_SOURCE
+# undef _TANDEM_SOURCE
+#endif
 
 /* Define to rpl_ if the getcwd replacement function should be used. */
 #undef __GETCWD_PREFIX
