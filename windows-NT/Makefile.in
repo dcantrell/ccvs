@@ -254,6 +254,7 @@ NETINET_IN_H = @NETINET_IN_H@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
+PACKAGE_CONFIG = @PACKAGE_CONFIG@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
@@ -705,7 +706,7 @@ stamp-ch: config.h.in $(top_srcdir)/configure
 	@echo " *" >>config.tmp
 	@echo " * Edit config.h.in instead." >>config.tmp
 	@echo " */" >>config.tmp
-	sed -e "s/%PACKAGE_STRING%/$(PACKAGE_STRING)/" \
+	sed -e "s/%PACKAGE_CONFIG%/$(PACKAGE_CONFIG)/" \
 	    -e "s/%PACKAGE_BUGREPORT%/$(PACKAGE_BUGREPORT)/" \
 	    <$(srcdir)/config.h.in >>config.tmp
 	@cmp -s config.tmp $(srcdir)/config.h \
