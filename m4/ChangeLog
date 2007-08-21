@@ -1,3 +1,7 @@
+2007-08-21  Derek Price  <derek@ximbiot.com>
+
+	* bison.m4: Unfork.
+
 2006-09-25  Mark D. Baushke  <mdb@gnu.org>
 
 	* fnmatch.m4, getdate.m4, lock.m4, mkdir-slash.m4, signed.m4,
