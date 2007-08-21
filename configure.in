@@ -1536,6 +1536,36 @@ dnl
 
 
 
+dnl
+dnl Now that the enables have been processed, append to the package string as
+dnl required.
+dnl
+if test x"$enable_client" != xno; then
+	if test x"$enable_server" != xno; then
+		# yes,yes
+		PACKAGE_APPEND=" (client/server)"
+	else
+		# yes,no
+		PACKAGE_APPEND=" (client)"
+	fi
+else
+	if test x"$enable_server" != xno; then
+		# no,yes
+		PACKAGE_APPEND=" (server)"
+	else
+		# no,no
+		# no change
+		PACKAGE_APPEND=
+	fi
+fi
+PACKAGE_CONFIG="AS_ESCAPE(AC_PACKAGE_STRING)$PACKAGE_APPEND"
+AC_SUBST([PACKAGE_CONFIG])
+AC_DEFINE_UNQUOTED([PACKAGE_CONFIG], ["$PACKAGE_CONFIG"],
+		   [Define this to PACKAGE_STRING plus configuration data
+		    ("(client)", "(client/server)", etc.).])
+
+
+
 dnl For the moment we will assume that all systems which have
 dnl the unixyness to run configure are unixy enough to do the
 dnl PreservePermissions stuff.  I have this sinking feeling that
