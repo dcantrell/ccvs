@@ -2,7 +2,7 @@
 :
 #	sanity.sh -- a growing testsuite for cvs.
 #
-# Copyright (C) 2006 The Free Software Foundation, Inc.
+# Copyright (C) 2007 The Free Software Foundation, Inc.
 # Copyright (C) 1992, 1993 Cygnus Support
 #
 # This program is free software; you can redistribute it and/or modify
@@ -3427,19 +3427,16 @@ for what in $tests; do
 	  # We've had cases where the version command started dumping core,
 	  # so we might as well test it
 	  dotest version-1 "${testcvs} --version" \
-'
-Concurrent Versions System (CVS) [0-9.]*.*
+'Concurrent Versions System (CVS) [0-9.]*.*
+Copyright (C) [0-9]* Free Software Foundation, Inc\.
 
-Copyright (C) [0-9]* Free Software Foundation, Inc.
+This is free software\.  You may redistribute copies of it under the terms of
+the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.
+There is NO WARRANTY, to the extent permitted by law\.
 
-Senior active maintainers include Larry Jones, Derek R. Price,
-and Mark D. Baushke.  Please see the AUTHORS and README files from the CVS
-distribution kit for a complete list of contributors and copyrights.
-
-CVS may be copied only under the terms of the GNU General Public License,
-a copy of which can be found with the CVS distribution kit.
-
-Specify the --help option for further information about CVS'
+Senior active maintainers include Larry Jones, Derek R\. Price,
+and Mark D\. Baushke\.  Please see the AUTHORS and README files from the CVS
+distribution kit for a complete list of contributors and copyrights\.'
 
 # Maybe someday...
 #	  if $proxy; then

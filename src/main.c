@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2006 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
@@ -884,23 +885,18 @@ main (int argc, char **argv)
 		logoff = 1;
 		break;
 	    case 'v':
-		(void) fputs ("\n", stdout);
 		version (0, NULL);    
-		(void) fputs ("\n", stdout);
-		(void) fputs ("\
-Copyright (C) 2006 Free Software Foundation, Inc.\n\
+		fputs ("\
+Copyright (C) 2007 Free Software Foundation, Inc.\n\
+\n\
+This is free software.  You may redistribute copies of it under the terms of\n\
+the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.\n\
+There is NO WARRANTY, to the extent permitted by law.\n\
 \n\
 Senior active maintainers include Larry Jones, Derek R. Price,\n\
 and Mark D. Baushke.  Please see the AUTHORS and README files from the CVS\n\
 distribution kit for a complete list of contributors and copyrights.\n",
-		              stdout);
-		(void) fputs ("\n", stdout);
-		(void) fputs ("CVS may be copied only under the terms of the GNU General Public License,\n", stdout);
-		(void) fputs ("a copy of which can be found with the CVS distribution kit.\n", stdout);
-		(void) fputs ("\n", stdout);
-
-		(void) fputs ("Specify the --help option for further information about CVS\n", stdout);
-
+		       stdout);
 		exit (0);
 		break;
 	    case 'b':
