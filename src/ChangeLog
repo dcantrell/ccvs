@@ -1,3 +1,11 @@
+2007-08-21  Derek Price  <derek@ximbiot.com>
+
+	* main.c (main): Improve version string with standard GNU GPL notice.
+	Update copyright year.
+	* version.c (version): Use new PACKAGE_CONFIG string defined by
+	configure.
+	* sanity.sh (version-1): Update to account for new version string.
+
 2007-06-18  Derek Price  <derek@ximbiot.com>
 
 	* client.c (send_repository): Don't attempt to send metadata from CVS

@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (C) 1994 david d `zoo' zuhn
@@ -19,22 +20,6 @@
 #endif
 
 #include "cvs.h"
-
-#ifdef CLIENT_SUPPORT
-#ifdef SERVER_SUPPORT
-char *config_string = " (client/server)\n";
-#else
-char *config_string = " (client)\n";
-#endif
-#else
-#ifdef SERVER_SUPPORT
-char *config_string = " (server)\n";
-#else
-char *config_string = "\n";
-#endif
-#endif
-
-
 
 static const char *const version_usage[] =
 {
@@ -65,8 +50,8 @@ version (int argc, char **argv)
     /* Having the year here is a good idea, so people have
        some idea of how long ago their version of CVS was
        released.  */
-    (void) fputs (PACKAGE_STRING, stdout);
-    (void) fputs (config_string, stdout);
+    (void) fputs (PACKAGE_CONFIG, stdout);
+    (void) fputc ('\n', stdout);
 
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root && current_parsed_root->isremote)
