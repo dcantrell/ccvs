@@ -1065,11 +1065,15 @@
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "bug-cvs@nongnu.org"
 
+/* Define this to PACKAGE_STRING plus configuration data ("(client)",
+   "(client/server)", etc.). */
+#define PACKAGE_CONFIG "Concurrent Versions System (CVS) 1.12.13.1"
+
 /* Define to the full name of this package. */
 #undef PACKAGE_NAME
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Concurrent Versions System (CVS) 1.12.13.1"
+#undef PACKAGE_STRING
 
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME

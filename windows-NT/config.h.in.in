@@ -1053,11 +1053,15 @@
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "%PACKAGE_BUGREPORT%"
 
+/* Define this to PACKAGE_STRING plus configuration data ("(client)",
+   "(client/server)", etc.). */
+#define PACKAGE_CONFIG "%PACKAGE_CONFIG%"
+
 /* Define to the full name of this package. */
 #undef PACKAGE_NAME
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "%PACKAGE_STRING%"
+#undef PACKAGE_STRING
 
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
