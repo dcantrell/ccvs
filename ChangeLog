@@ -1,3 +1,16 @@
+2007-08-21  Derek Price  <derek@ximbiot.com>
+
+	* HACKING: Note Autoconf 2.61 and Automake 1.10 are used in
+	development.
+	* NEWS: Note same and why.
+	* configure.in: Require Automake 1.10 so that maintainer mode is
+	required to build C sources from YACC sources.
+	* build-aux/bison-missing: Remove obsolete file.
+	* build-aux/compile, build-aux/config.guess, build-aux/config.sub,
+	build-aux/depcomp, build-aux/install-sh, build-aux/mdate-sh,
+	build-aux/missing, build-aux/texinfo.tex, build-aux/ylwrap: Update
+	from Automake 1.10.
+
 2007-06-18  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note import now keeps metadata to itself.

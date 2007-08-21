@@ -87,9 +87,12 @@ BUG FIXES
 
 DEVELOPER ISSUES
 
-* We've standardized on Autoconf version 2.60 to get a bug fix that notes
+* We've standardized on Autoconf version 2.61 to get a bug fix that notes
   that the AIX C compiler's default mode isn't quite C89 and sets the
   correct mode instead.
+
+* We've standardized on Autoconf version 1.10 because it lets us simplify our
+  sources.
 
 Changes from 1.12.12 to 1.12.13:
 ********************************
@@ -186,7 +189,7 @@ BUILD ISSUES
 
 DEVELOPER ISSUES
 
-* We've standardized on Automake 1.9.6 to get some at new features that make
+* We've standardized on Automake 1.9.6 to get at some new features that make
   our jobs easier.  See the HACKING file for more on using the autotools with
   CVS.
 
