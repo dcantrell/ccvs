@@ -1,5 +1,5 @@
-# inttypes.m4 serial 5
-dnl Copyright (C) 2006 Free Software Foundation, Inc.
+# inttypes.m4 serial 11
+dnl Copyright (C) 2006-2007 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -22,20 +22,23 @@ AC_DEFUN([gl_INTTYPES_H],
   dnl   - the existence of an <inttypes.h>,
   dnl   - that imaxabs, imaxdiv, strtoimax, strtoumax are declared,
   dnl   - some additional tests.
-  gl_cv_header_working_inttypes_h=no
-  if test "$gl_cv_header_working_stdint_h" = yes \
-     && test $ac_cv_header_inttypes_h = yes \
-     && test "$ac_cv_have_decl_imaxabs" = yes \
-     && test "$ac_cv_have_decl_imaxdiv" = yes \
-     && test "$ac_cv_have_decl_strtoimax" = yes \
-     && test "$ac_cv_have_decl_strtoumax" = yes; then
-    AC_COMPILE_IFELSE([
-      AC_LANG_PROGRAM([
+  AC_CACHE_CHECK([whether inttypes.h conforms to C99],
+    [gl_cv_header_working_inttypes_h],
+    [gl_cv_header_working_inttypes_h=no
+     if test "$gl_cv_header_working_stdint_h" = yes \
+	&& test $ac_cv_header_inttypes_h = yes \
+	&& test "$ac_cv_have_decl_imaxabs" = yes \
+	&& test "$ac_cv_have_decl_imaxdiv" = yes \
+	&& test "$ac_cv_have_decl_strtoimax" = yes \
+	&& test "$ac_cv_have_decl_strtoumax" = yes; then
+       AC_COMPILE_IFELSE([
+	 AC_LANG_PROGRAM([
 #include <stddef.h>
 #define __STDC_LIMIT_MACROS 1 /* to make it work also in C++ mode */
 #define __STDC_CONSTANT_MACROS 1 /* to make it work also in C++ mode */
 #define __STDC_FORMAT_MACROS 1 /* to make it work also in C++ mode */
-#include ABSOLUTE_INTTYPES_H
+#define _GL_JUST_INCLUDE_SYSTEM_INTTYPES_H /* work if build isn't clean */
+#include <inttypes.h>
 
 /* No need to duplicate the tests of stdint.m4; they are subsumed by
    $gl_cv_header_working_stdint_h = yes.  */
@@ -128,22 +131,34 @@ const char *l = /* implicit string concatenation */
   SCNoPTR SCNuPTR SCNxPTR
 #endif
   ;
-      ])],
-      [gl_cv_header_working_inttypes_h=yes])
-  fi
-  if test $gl_cv_header_working_inttypes_h = yes; then
+	 ])],
+	 [gl_cv_header_working_inttypes_h=yes])
+     fi])
+
+  dnl Override <inttypes.h> always, so that the portability warnings work.
+  if false && test $gl_cv_header_working_inttypes_h = yes; then
     dnl Use the existing <inttypes.h>.
     INTTYPES_H=''
   else
 
-    dnl AC_INCLUDES_DEFAULT defines $ac_cv_header_inttypes_h.
-    if test $ac_cv_header_inttypes_h = yes; then
-      gl_ABSOLUTE_HEADER([inttypes.h])
-      ABSOLUTE_INTTYPES_H=\"$gl_cv_absolute_inttypes_h\"
-    else
-      ABSOLUTE_INTTYPES_H=\"no/such/file/inttypes.h\"
-    fi
-    AC_SUBST([ABSOLUTE_INTTYPES_H])
+    AC_REQUIRE([gl_INTTYPES_H_DEFAULTS])
+    gl_CHECK_NEXT_HEADERS([inttypes.h])
+
+    dnl Ensure that <stdint.h> defines the limit macros, since gnulib's
+    dnl <inttypes.h> relies on them.  This macro is only needed when a
+    dnl C++ compiler is in use; it has no effect for a C compiler.
+    dnl Also be careful to define __STDC_LIMIT_MACROS only when gnulib's
+    dnl <inttypes.h> is going to be created, and to avoid redefinition warnings
+    dnl if the __STDC_LIMIT_MACROS is already defined through the CPPFLAGS.
+    AC_DEFINE([GL_TRIGGER_STDC_LIMIT_MACROS], 1,
+      [Define to make the limit macros in <stdint.h> visible.])
+    AH_VERBATIM([__STDC_LIMIT_MACROS_ZZZ],
+[/* Ensure that <stdint.h> defines the limit macros, since gnulib's
+   <inttypes.h> relies on them.  */
+#if defined __cplusplus && !defined __STDC_LIMIT_MACROS && GL_TRIGGER_STDC_LIMIT_MACROS
+# define __STDC_LIMIT_MACROS 1
+#endif
+])
 
     PRIPTR_PREFIX=
     if test -n "$STDINT_H"; then
@@ -173,30 +188,46 @@ const char *l = /* implicit string concatenation */
     else
       HAVE_DECL_IMAXABS=0
     fi
-    AC_SUBST([HAVE_DECL_IMAXABS])
 
     if test "$ac_cv_have_decl_imaxdiv" = yes; then
       HAVE_DECL_IMAXDIV=1
     else
       HAVE_DECL_IMAXDIV=0
     fi
-    AC_SUBST([HAVE_DECL_IMAXDIV])
 
     if test "$ac_cv_have_decl_strtoimax" = yes; then
       HAVE_DECL_STRTOIMAX=1
     else
       HAVE_DECL_STRTOIMAX=0
     fi
-    AC_SUBST([HAVE_DECL_STRTOIMAX])
 
     if test "$ac_cv_have_decl_strtoumax" = yes; then
       HAVE_DECL_STRTOUMAX=1
     else
       HAVE_DECL_STRTOUMAX=0
     fi
-    AC_SUBST([HAVE_DECL_STRTOUMAX])
 
     INTTYPES_H='inttypes.h'
   fi
   AC_SUBST(INTTYPES_H)
+])
+
+AC_DEFUN([gl_INTTYPES_MODULE_INDICATOR],
+[
+  dnl Use AC_REQUIRE here, so that the default settings are expanded once only.
+  AC_REQUIRE([gl_INTTYPES_H_DEFAULTS])
+  GNULIB_[]m4_translit([$1],[abcdefghijklmnopqrstuvwxyz./-],[ABCDEFGHIJKLMNOPQRSTUVWXYZ___])=1
+])
+
+AC_DEFUN([gl_INTTYPES_H_DEFAULTS],
+[
+  GNULIB_IMAXABS=0;      AC_SUBST([GNULIB_IMAXABS])
+  GNULIB_IMAXDIV=0;      AC_SUBST([GNULIB_IMAXDIV])
+  GNULIB_STRTOIMAX=0;    AC_SUBST([GNULIB_STRTOIMAX])
+  GNULIB_STRTOUMAX=0;    AC_SUBST([GNULIB_STRTOUMAX])
+  dnl Assume proper GNU behavior unless another module says otherwise.
+  HAVE_DECL_IMAXABS=1;   AC_SUBST([HAVE_DECL_IMAXABS])
+  HAVE_DECL_IMAXDIV=1;   AC_SUBST([HAVE_DECL_IMAXDIV])
+  HAVE_DECL_STRTOIMAX=1; AC_SUBST([HAVE_DECL_STRTOIMAX])
+  HAVE_DECL_STRTOUMAX=1; AC_SUBST([HAVE_DECL_STRTOUMAX])
 ])
