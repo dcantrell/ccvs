@@ -1,5 +1,8 @@
 2007-08-22  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note `cvs server' accepts `--allow-root=PATH'.  Note further
+	`cvs add' stops for `CVS' dirs.
+
 	* HACKING, NEWS: Note new Autotool versions.
 
 2007-08-16  Derek Price  <derek@ximbiot.com>
