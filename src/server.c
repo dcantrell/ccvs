@@ -23,7 +23,6 @@
 #include "getline.h"
 #include "getnline.h"
 #include "setenv.h"
-#include "vasprintf.h"
 #include "vasnprintf.h"
 #include "wait.h"
 

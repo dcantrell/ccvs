@@ -1,3 +1,11 @@
+2007-08-22  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h, server.c: Remove references to obsolete headers.
+	* subr.c: Ditto.  Include <sys/time.h>.
+	(format_cmdline): Assume long double type as per GNULIB.
+	(Xreadlink): s/xreadlink/mreadlink_with_size).
+	* import.c (import), ls.c (ls): s/strstr/mbsstr/.
+
 2007-08-21  Derek Price  <derek@ximbiot.com>
 
 	* main.c (main): Improve version string with standard GNU GPL notice.
