@@ -35,6 +35,8 @@ acceptable repositories to be specified using a list of regular expressions.
 
 BUG FIXES
 
+* `cvs add' checks more thoroughly for `CVS' directories in the argument list.
+
 * `cvs server' now accepts `--allow-root=PATH' options.
 
 * `cvs import' no longer attempts to send CVS metadata to the server.

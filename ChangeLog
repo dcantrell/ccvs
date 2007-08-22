@@ -1,6 +1,7 @@
 2007-08-22  Derek Price  <derek@ximbiot.com>
 
-	* NEWS: Note `cvs server' accepts `--allow-root=PATH'.
+	* NEWS: Note `cvs server' accepts `--allow-root=PATH'.  Note further
+	`cvs add' stops for `CVS' dirs.
 
 	* configure.in: Assume long double type as per GNULIB.  Require
 	gettext version as per GNULIB.
