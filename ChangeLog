@@ -1,3 +1,7 @@
+2007-08-22  Derek Price  <derek@ximbiot.com>
+
+	* HACKING, NEWS: Note new Autotool versions.
+
 2007-08-16  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note backport of `cvs --allow-root=PATH server'.

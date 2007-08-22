@@ -33,9 +33,12 @@ BUG FIXES
 
 DEVELOPER ISSUES
 
-* We've standardized on Autoconf version 2.60 to get a bug fix that notes
+* We've standardized on Autoconf version 2.61 to get a bug fix that notes
   that the AIX C compiler's default mode isn't quite C89 and sets the
   correct mode instead.
+
+* We've standardized on Autoconf version 1.10 because it lets us simplify our
+  sources.
 
 Changes from 1.11.21 to 1.11.22:
 ********************************
