@@ -1,5 +1,9 @@
 2007-08-22  Derek Price  <derek@ximbiot.com>
 
+	* mkmodules.c (in_root): New function.
+	(init): Verify that new roots are not created inside others.
+	* sanity.sh (init-3): New test for same.
+
 	* add.c (add): Check last component of argument paths instead of the
 	entire argument.
 	(add_directory): Change error messages to assertions since the check

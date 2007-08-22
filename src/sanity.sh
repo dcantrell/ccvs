@@ -3400,8 +3400,11 @@ cp -Rp $CVSROOT_DIRNAME/CVSROOT $TESTDIR/CVSROOT.save
 ###
 if $remote; then
 	localonly init-2
+	localonly init-3
 else
 	dotest init-2 "$testcvs init"
+	dotest_fail init-3 "$testcvs -d $CVSROOT/sdir init" \
+"$CPROG \[init aborted\]: Cannot initialize repository under existing CVSROOT: \`$CVSROOT_DIRNAME'"
 fi
 
 

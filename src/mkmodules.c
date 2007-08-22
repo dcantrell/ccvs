@@ -1147,6 +1147,43 @@ rename_rcsfile (char *temp, char *real)
 
     free (bak);
 }
+
+/*
+ * Walk PATH backwards to the root directory looking for the root of a
+ * repository.
+ */
+static char *
+in_root (const char *path)
+{
+    char *cp = xstrdup (path);
+
+    for (;;)
+    {
+	char *p;
+
+	if (isdir (cp))
+	{
+	    char *adm = Xasprintf ("%s/%s", cp, CVSROOTADM);
+	    bool foundit = isdir (adm);
+	    free (adm);
+	    if (foundit) return cp;
+	}
+
+	/* If last_component() returns the empty string, then cp either
+	 * points at the system root or is the empty string itself.
+	 */
+	if (!*last_component (cp) || !strcmp (cp, "."))
+	    break;
+
+	p = dir_name (cp);
+	free (cp);
+
+	cp = p;
+    }
+
+    return NULL;
+}
+
 
 const char *const init_usage[] = {
     "Usage: %s %s\n",
@@ -1185,6 +1222,14 @@ init (int argc, char **argv)
 	return get_responses_and_close ();
     }
 #endif /* CLIENT_SUPPORT */
+
+    char *root_dir = in_root (current_parsed_root->directory);
+
+    if (root_dir && strcmp (root_dir, current_parsed_root->directory))
+	error (1, 0,
+	       "Cannot initialize repository under existing CVSROOT: `%s'",
+	       root_dir);
+    free (root_dir);
 
     /* Note: we do *not* create parent directories as needed like the
        old cvsinit.sh script did.  Few utilities do that, and a
