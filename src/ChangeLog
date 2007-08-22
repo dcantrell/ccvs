@@ -1,5 +1,10 @@
 2007-08-22  Derek Price  <derek@ximbiot.com>
 
+	* add.c (add): Check last component of argument paths instead of the
+	entire argument.
+	* sanity.sh (add-restricted): Test indirect paths to `CVS' dir with
+	add.
+
 	* server.c (serve_init): Remove unnecessary argument to printf style
 	function.
 
