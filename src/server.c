@@ -4901,7 +4901,7 @@ serve_version (char *arg)
 static void
 serve_init (char *arg)
 {
-    push_pending_error (0, "E init may not be run remotely", arg);
+    push_pending_error (0, "E init may not be run remotely");
     print_pending_error();
 }
 
