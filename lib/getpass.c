@@ -1,4 +1,4 @@
-/* Copyright (C) 1992-2001, 2003, 2004, 2005, 2006 Free Software
+/* Copyright (C) 1992-2001, 2003, 2004, 2005, 2006, 2007 Free Software
    Foundation, Inc.
 
    This file is part of the GNU C Library.
@@ -29,10 +29,11 @@
 
 #include <stdbool.h>
 
-#if HAVE_STDIO_EXT_H
-# include <stdio_ext.h>
-#endif
-#if !HAVE___FSETLOCKING
+#if HAVE_DECL___FSETLOCKING && HAVE___FSETLOCKING
+# if HAVE_STDIO_EXT_H
+#  include <stdio_ext.h>
+# endif
+#else
 # define __fsetlocking(stream, type)	/* empty */
 #endif
 
@@ -141,7 +142,7 @@ getpass (const char *prompt)
      == fileno (out).  The POSIX restrictions are tricky and change
      from POSIX version to POSIX version, so play it safe and invoke
      fseek even if in != out.  */
-  fseek (out, 0, SEEK_CUR);
+  fseeko (out, 0, SEEK_CUR);
 
   if (buf != NULL)
     {

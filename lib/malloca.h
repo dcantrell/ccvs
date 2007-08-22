@@ -1,5 +1,5 @@
 /* Safe automatic memory allocation.
-   Copyright (C) 2003-2006 Free Software Foundation, Inc.
+   Copyright (C) 2003-2007 Free Software Foundation, Inc.
    Written by Bruno Haible <bruno@clisp.org>, 2003.
 
    This program is free software; you can redistribute it and/or modify
@@ -16,8 +16,8 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#ifndef _ALLOCSA_H
-#define _ALLOCSA_H
+#ifndef _MALLOCA_H
+#define _MALLOCA_H
 
 #include <alloca.h>
 #include <stddef.h>
@@ -46,32 +46,32 @@ extern "C" {
    This must be a macro, not an inline function.  */
 # define safe_alloca(N) ((N) < 4032 ? alloca (N) : NULL)
 #else
-# define safe_alloca(N) ((N), NULL)
+# define safe_alloca(N) ((void) (N), NULL)
 #endif
 
-/* allocsa(N) is a safe variant of alloca(N).  It allocates N bytes of
-   memory allocated on the stack, that must be freed using freesa() before
+/* malloca(N) is a safe variant of alloca(N).  It allocates N bytes of
+   memory allocated on the stack, that must be freed using freea() before
    the function returns.  Upon failure, it returns NULL.  */
 #if HAVE_ALLOCA
-# define allocsa(N) \
+# define malloca(N) \
   ((N) < 4032 - sa_increment					    \
    ? (void *) ((char *) alloca ((N) + sa_increment) + sa_increment) \
-   : mallocsa (N))
+   : mmalloca (N))
 #else
-# define allocsa(N) \
-  mallocsa (N)
+# define malloca(N) \
+  mmalloca (N)
 #endif
-extern void * mallocsa (size_t n);
+extern void * mmalloca (size_t n);
 
-/* Free a block of memory allocated through allocsa().  */
+/* Free a block of memory allocated through malloca().  */
 #if HAVE_ALLOCA
-extern void freesa (void *p);
+extern void freea (void *p);
 #else
-# define freesa free
+# define freea free
 #endif
 
 /* Maybe we should also define a variant
-    nallocsa (size_t n, size_t s) - behaves like allocsa (n * s)
+    nmalloca (size_t n, size_t s) - behaves like malloca (n * s)
    If this would be useful in your application. please speak up.  */
 
 
@@ -106,23 +106,19 @@ enum
    among all elementary types.  */
   sa_alignment_long = sa_alignof (long),
   sa_alignment_double = sa_alignof (double),
-#ifdef HAVE_LONG_LONG
+#if HAVE_LONG_LONG_INT
   sa_alignment_longlong = sa_alignof (long long),
 #endif
-#ifdef HAVE_LONG_DOUBLE
   sa_alignment_longdouble = sa_alignof (long double),
-#endif
   sa_alignment_max = ((sa_alignment_long - 1) | (sa_alignment_double - 1)
-#ifdef HAVE_LONG_LONG
+#if HAVE_LONG_LONG_INT
 		      | (sa_alignment_longlong - 1)
 #endif
-#ifdef HAVE_LONG_DOUBLE
 		      | (sa_alignment_longdouble - 1)
-#endif
 		     ) + 1,
 /* The increment that guarantees room for a magic word must be >= sizeof (int)
    and a multiple of sa_alignment_max.  */
   sa_increment = ((sizeof (int) + sa_alignment_max - 1) / sa_alignment_max) * sa_alignment_max
 };
 
-#endif /* _ALLOCSA_H */
+#endif /* _MALLOCA_H */

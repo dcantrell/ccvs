@@ -1,5 +1,5 @@
 /* Return the canonical absolute name of a given file.
-   Copyright (C) 1996-2006 Free Software Foundation, Inc.
+   Copyright (C) 1996-2007 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,16 +36,18 @@
 
 #include "cycle-check.h"
 #include "filenamecat.h"
-#include "stat-macros.h"
 #include "xalloc.h"
 #include "xgetcwd.h"
 
+#ifndef ELOOP
+# define ELOOP 0
+#endif
 #ifndef __set_errno
 # define __set_errno(Val) errno = (Val)
 #endif
 
 #include "pathmax.h"
-#include "xreadlink.h"
+#include "mreadlink.h"
 
 #if !HAVE_CANONICALIZE_FILE_NAME
 /* Return the canonical absolute name of file NAME.  A canonical name
@@ -244,10 +246,10 @@ canonicalize_filename_mode (const char *name, canonicalize_mode_t can_mode)
 		    goto error;
 		}
 
-	      buf = xreadlink (rname, st.st_size);
+	      buf = mreadlink_with_size (rname, st.st_size);
 	      if (!buf)
 		{
-		  if (can_mode == CAN_MISSING)
+		  if (can_mode == CAN_MISSING && errno != ENOMEM)
 		    continue;
 		  else
 		    goto error;

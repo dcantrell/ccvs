@@ -34,6 +34,10 @@
 #include <limits.h>
 #include <stdint.h>
 
+#ifndef SSIZE_MAX
+# define SSIZE_MAX ((ssize_t) (SIZE_MAX / 2))
+#endif
+
 /* The maximum value that getndelim2 can return without suffering from
    overflow problems, either internally (because of pointer
    subtraction overflow) or due to the API (because of ssize_t).  */

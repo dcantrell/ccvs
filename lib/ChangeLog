@@ -1,3 +1,55 @@
+2007-08-22  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Add new generated files.
+	* Makefile.am: Import automated changes from...
+	* Makefile.gnulib: ...here.
+	* __fpending.h, alloca_.h, asprintf.c, at-func.c, base64.c,
+	canon-host.c, canonicalize.c, canonicalize.h, chdir-long.c, chown.c,
+	closeout.c, closeout.h, dirname.h, dup-safer.c, dup2.c, error.c,
+	exitfail.c, fcntl_.h, filenamecat.c, filenamecat.h, fnmatch.c,
+	fnmatch_.h, fnmatch_loop.c, ftruncate.c, gai_strerror.c,
+	getaddrinfo.c, getcwd.c, getdate.c, getdate.h, getdate.y, getdelim.c,
+	getline.c, getlogin_r.c, getndelim2.c, getopt_.h, getpagesize.h,
+	getpass.c, gettext.h, gettime.c, gettimeofday.c, glob-libc.h, glob.c,
+	glob_.h, inttypes_.h, lchown.c, lstat.c, mbchar.c, mbchar.h,
+	mempcpy.c, memrchr.c, mkstemp.c, mbuiter.h, mktime.c, nanosleep.c,
+	openat-priv.h, openat.c, openat.h, printf-args.c, printf-args.h,
+	printf-parse.c, printf-parse.h, quotearg.c, quotearg.h, readlink.c,
+	regcomp.c, regex.h, regex_internal.c, regex_internal.h, regexec.c,
+	setenv.c, setenv.h, snprintf.c, stat-macros.h, stdbool_.h, stdint_.h,
+	strcasecmp.c, strdup.c, strerror.c, strftime.c, strncasecmp.c,
+	strndup.c, strnlen.c, strnlen1.c, strtoimax.c, strtol.c, tempname.c,
+	time_r.c, timespec.h, vasnprintf.c, vasnprintf.h, vasprintf.c,
+	xalloc.h, xgetcwd.c, xmalloc.c, xreadlink.c, xreadlink.h, xstrndup.c,
+	yesno.c: Update from GNULIB.
+	* allocsa.c, allocsa.h, allocsa.valgrind: Update from GNULIB renamed
+	these to...
+	* malloca.c, malloca.h, malloca.valgrind: ...here.
+	* strstr.c: GNULIB update renamed to...
+	* mbsstr.c: ...this.
+	* exit.h, mkstemp.h: GNULIB update removed in favor of...
+	* stdlib_.h: ...including (generated) <stdlib.h> instead.
+	* getcwd.h, getlogin_r.h, lchown.h: GNULIB update removed in favor
+	of...
+	* unistd_.h: ...including (generated) <unistd.h> instead.
+	* mempcpy.h, memrchr.h, strcase.h, strdup.h, strndup.h, strnlen.h,
+	strstr.h: GNULIB update removed in favor of...
+	* string_.h: ...including (generated) <string.h> instead.
+	* snprintf.h, vasprintf.h: GNULIB update removed in favor of...
+	* stdio_.h: ...including (generated) <stdio.h> instead.
+	* socket_.h, stat_.h: Renamed by GNULIB update to...
+	* time_r.h:: GNULIB update removed in favor of...
+	* time_.h: ...including (generated) <time.h> instead.
+	* wcwidth.h: GNULIB update removed in favor of...
+	* wchar_.h: ...including (generated) <wchar.h> instead.
+	* sys_socket_.h, sys_stat_.h, canonicalize-lgpl.c, config.charset,
+	dirent_.h, dirfd.c, dirfd.h, fchdir.c, fchownat.c, float+.h, float_.h,
+	fstatat.c, localcharset.c, localcharset.h, mbslen.c,
+	mreadlink-with-size.c, mreadlink.h, netinet_in_.h, openat-proc.c,
+	ref-add.sin, ref-del.sin, streq.h, sys_time_.h, tempname.h,
+	unitypes.h, uniwidth.h, wctype_.h, wcwidth.c, uniwidth/.cvsignore,
+	uniwidth/cjk.h, uniwidth/width.c: New files from GNULIB.
+
 2006-09-22  Mark D. Baushke  <mdb@gnu.org>
 
 	* pagealign_alloc.c, pagealign_alloc.h: Removed as no longer

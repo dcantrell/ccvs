@@ -1,6 +1,5 @@
-/* memrchr -- Find the last occurrence of a byte in a memory block.
-
-   Copyright (C) 2005 Free Software Foundation, Inc.
+/* Wrapper around <dirent.h>.
+   Copyright (C) 2006-2007 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,12 +15,32 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#if HAVE_DECL_MEMRCHR
-# include <string.h>
-#else
-# include <stddef.h>
+#ifndef _GL_DIRENT_H
 
-/* Search backwards through a block for a byte (specified as an int).  */
-void *memrchr (void const *, int, size_t);
+/* The include_next requires a split double-inclusion guard.  */
+#@INCLUDE_NEXT@ @NEXT_DIRENT_H@
 
+#ifndef _GL_DIRENT_H
+#define _GL_DIRENT_H
+
+
+/* Declare overridden functions.  */
+
+#ifdef __cplusplus
+extern "C" {
 #endif
+
+#if @REPLACE_FCHDIR@
+# define opendir rpl_opendir
+extern DIR * opendir (const char *);
+# define closedir rpl_closedir
+extern int closedir (DIR *);
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+
+
+#endif /* _GL_DIRENT_H */
+#endif /* _GL_DIRENT_H */

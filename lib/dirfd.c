@@ -1,6 +1,6 @@
-/* getlogin_r declaration
+/* dirfd.c -- return the file descriptor associated with an open DIR*
 
-   Copyright (C) 2005 Free Software Foundation, Inc.
+   Copyright (C) 2001, 2006 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,20 +16,14 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-/* Written by Paul Eggert and Derek Price.  */
+/* Written by Jim Meyering. */
 
-#include <stddef.h>
-#include <unistd.h>
+#include <config.h>
 
-/* Copies the user's login name to NAME.
-   The array pointed to by NAME has room for SIZE bytes.
+#include "dirfd.h"
 
-   Returns 0 if successful.  Upon error, an error number is returned, or -1 in
-   the case that the login name cannot be found but no specific error is
-   provided (this case is hopefully rare but is left open by the POSIX spec).
-
-   See <http://www.opengroup.org/susv3xsh/getlogin.html>.
- */
-#if !HAVE_DECL_GETLOGIN_R
-int getlogin_r (char *name, size_t size);
-#endif
+int
+dirfd (DIR const *dir_p)
+{
+  return DIR_TO_FD (dir_p);
+}

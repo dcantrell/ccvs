@@ -1,6 +1,6 @@
 /* glob_.h -- Find a path matching a pattern.
 
-   Copyright (C) 2005, 2006 Free Software Foundation, Inc.
+   Copyright (C) 2005-2007 Free Software Foundation, Inc.
 
    Written by Derek Price <derek@ximbiot.com> & Paul Eggert <eggert@CS.UCLA.EDU>
 
@@ -18,14 +18,19 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#ifndef GLOB_H
-#define GLOB_H 1
+#ifndef _GL_GLOB_H
+#define _GL_GLOB_H
 
-#ifdef HAVE_SYS_CDEFS_H
+#if @HAVE_SYS_CDEFS_H@
 # include <sys/cdefs.h>
 #endif
 
 #include <stddef.h>
+
+/* On some systems, such as AIX 5.1, <sys/stat.h> does a "#define stat stat64".
+   Make sure this definition is seen before glob-libc.h defines types that
+   rely on 'struct stat'.  */
+#include <sys/stat.h>
 
 #ifndef __BEGIN_DECLS
 # define __BEGIN_DECLS
@@ -37,9 +42,6 @@
 
 #ifndef __size_t
 # define __size_t	size_t
-#endif
-#ifndef __restrict
-# define __restrict	restrict
 #endif
 #ifndef __USE_GNU
 # define __USE_GNU    1
@@ -55,4 +57,4 @@
 /* Now the standard GNU C Library header should work.  */
 #include "glob-libc.h"
 
-#endif /* GLOB_H */
+#endif /* _GL_GLOB_H */

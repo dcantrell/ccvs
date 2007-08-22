@@ -1,6 +1,5 @@
-/* Create a unique temporary file.
-
-   Copyright (C) 2006 Free Software Foundation, Inc.
+/* Declare dirfd, if necessary.
+   Copyright (C) 2001, 2002, 2006 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -14,17 +13,17 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-/* written by Jim Meyering */
+   Written by Jim Meyering.  */
 
-#include <stdlib.h>
+#include <sys/types.h>
 
-#ifdef __MKSTEMP_PREFIX
-# define _GL_CONCAT(x, y) x ## y
-# define _GL_XCONCAT(x, y) _GL_CONCAT (x, y)
-# define __MKSTEMP_ID(y) _GL_XCONCAT (__MKSTEMP_PREFIX, y)
-# undef mkstemp
-# define mkstemp __MKSTEMP_ID (mkstemp)
-int mkstemp (char *);
+#include <dirent.h>
+
+#ifndef HAVE_DECL_DIRFD
+"this configure-time declaration test was not run"
+#endif
+#if !HAVE_DECL_DIRFD && !defined dirfd
+int dirfd (DIR const *);
 #endif

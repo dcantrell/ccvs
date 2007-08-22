@@ -1,6 +1,6 @@
 /* Provide a stub lchown function for systems that lack it.
 
-   Copyright (C) 1998, 1999, 2002, 2004, 2006 Free Software
+   Copyright (C) 1998, 1999, 2002, 2004, 2006, 2007 Free Software
    Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
@@ -21,16 +21,25 @@
 
 #include <config.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
+/* If the system chown does not follow symlinks, we don't want it
+   replaced by gnulib's chown, which does follow symlinks.  */
+#if CHOWN_MODIFIES_SYMLINK
+# define REPLACE_CHOWN 0
+#endif
+#include <unistd.h>
+
 #include <errno.h>
+#include <sys/stat.h>
 
-#include "lchown.h"
-#include "stat-macros.h"
-
-/* Declare chown to avoid a warning.  Don't include unistd.h,
-   because it may have a conflicting prototype for lchown.  */
-int chown ();
+/* Some systems don't have EOPNOTSUPP.  */
+#ifndef EOPNOTSUPP
+# ifdef ENOTSUP
+#  define EOPNOTSUPP ENOTSUP
+# else
+/* Some systems don't have ENOTSUP either.  */
+#  define EOPNOTSUPP EINVAL
+# endif
+#endif
 
 /* Work just like chown, except when FILE is a symbolic link.
    In that case, set errno to EOPNOTSUPP and return -1.

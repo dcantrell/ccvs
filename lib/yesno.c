@@ -1,6 +1,6 @@
 /* yesno.c -- read a yes/no response from stdin
 
-   Copyright (C) 1990, 1998, 2001, 2003, 2004, 2005, 2006 Free
+   Copyright (C) 1990, 1998, 2001, 2003, 2004, 2005, 2006, 2007 Free
    Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
@@ -24,19 +24,27 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "getline.h"
-
-/* Return true if we read an affirmative line from standard input.  */
+#if ENABLE_NLS
+# include "getline.h"
+#endif
 
 extern int rpmatch (char const *response);
+
+/* Return true if we read an affirmative line from standard input.
+
+   Since this function uses stdin, it is suggested that the caller not
+   use STDIN_FILENO directly, and also that the line
+   atexit(close_stdin) be added to main().  */
 
 bool
 yesno (void)
 {
+  bool yes;
+
+#if ENABLE_NLS
   char *response = NULL;
   size_t response_size = 0;
   ssize_t response_len = getline (&response, &response_size, stdin);
-  bool yes;
 
   if (response_len <= 0)
     yes = false;
@@ -47,5 +55,14 @@ yesno (void)
     }
 
   free (response);
+#else
+  /* Test against "^[yY]", hardcoded to avoid requiring getline,
+     regex, and rpmatch.  */
+  int c = getchar ();
+  yes = (c == 'y' || c == 'Y');
+  while (c != '\n' && c != EOF)
+    c = getchar ();
+#endif
+
   return yes;
 }
