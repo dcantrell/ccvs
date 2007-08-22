@@ -1,5 +1,7 @@
 2007-08-22  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note `cvs server' accepts `--allow-root=PATH'.
+
 	* configure.in: Assume long double type as per GNULIB.  Require
 	gettext version as per GNULIB.
 	* build-aux/.cvsignore, build-aux/link-warning.h: New file from GNULIB.
