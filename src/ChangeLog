@@ -1,5 +1,8 @@
 2007-08-22  Derek Price  <derek@ximbiot.com>
 
+	* server.c (serve_init): Remove unnecessary argument to printf style
+	function.
+
 	* mkmodules.c (in_root): New function.
 	(init): Verify that new roots are not created inside others.
 	* sanity.sh (init-3): New test for same.

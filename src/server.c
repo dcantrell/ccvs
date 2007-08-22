@@ -4000,7 +4000,7 @@ serve_init (arg)
     char *arg;
 {
     if (alloc_pending (80 + strlen (arg)))
-	sprintf (pending_error_text, "E init may not be run remotely", arg);
+	sprintf (pending_error_text, "E init may not be run remotely");
 
     if (print_pending_error ())
 	return;
