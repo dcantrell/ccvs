@@ -1,3 +1,11 @@
+2007-08-22  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Assume long double type as per GNULIB.  Require
+	gettext version as per GNULIB.
+	* build-aux/.cvsignore, build-aux/link-warning.h: New file from GNULIB.
+	* build-aux/config.rpath, maint-aux/gnulib-filelist.txt: Updated from
+	GNULIB.
+
 2007-08-21  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Set package configuration string here (e.g.
