@@ -1,4 +1,4 @@
-/* Copyright (C) 1991-2002,2003,2004,2005,2006 Free Software Foundation, Inc.
+/* Copyright (C) 1991-2002,2003,2004,2005,2006,2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -132,10 +132,6 @@
 # endif
 # define struct_stat64		struct stat64
 #else /* !_LIBC */
-# include "getlogin_r.h"
-# include "mempcpy.h"
-# include "stat-macros.h"
-# include "strdup.h"
 # define __stat64(fname, buf)	stat (fname, buf)
 # define struct_stat64		struct stat
 # define __stat(fname, buf)	stat (fname, buf)
@@ -162,6 +158,11 @@
 static const char *next_brace_sub (const char *begin, int flags) __THROW;
 
 #endif /* !defined _LIBC || !defined GLOB_ONLY_P */
+
+/* The results of opendir() in this file are not used with dirfd and fchdir,
+   therefore save some unnecessary work in fchdir.c.  */
+#undef opendir
+#undef closedir
 
 static int glob_in_dir (const char *pattern, const char *directory,
 			int flags, int (*errfunc) (const char *, int),
@@ -211,10 +212,10 @@ int
 GLOB_ATTRIBUTE
 #endif
 glob (pattern, flags, errfunc, pglob)
-     const char *pattern;
+     const char * restrict pattern;
      int flags;
      int (*errfunc) (const char *, int);
-     glob_t *pglob;
+     glob_t * restrict pglob;
 {
   const char *filename;
   const char *dirname;

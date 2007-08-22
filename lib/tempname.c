@@ -1,7 +1,8 @@
 /* tempname.c - generate the name of a temporary file.
 
    Copyright (C) 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
-   2000, 2001, 2002, 2003, 2005, 2006 Free Software Foundation, Inc.
+   2000, 2001, 2002, 2003, 2005, 2006, 2007 Free Software Foundation,
+   Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,8 +18,11 @@
    with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
+/* Extracted from glibc sysdeps/posix/tempname.c.  See also tmpdir.c.  */
+
 #if !_LIBC
 # include <config.h>
+# include "tempname.h"
 #endif
 
 #include <sys/types.h>
@@ -48,11 +52,7 @@
 #include <string.h>
 
 #include <fcntl.h>
-
-#if HAVE_SYS_TIME_H || _LIBC
-# include <sys/time.h>
-#endif
-
+#include <sys/time.h>
 #include <stdint.h>
 #include <unistd.h>
 
@@ -63,10 +63,10 @@
 # define small_open __open
 # define large_open __open64
 #else
-# include "stat-macros.h"
 # define struct_stat64 struct stat
 # define small_open open
 # define large_open open
+# define __gen_tempname gen_tempname
 # define __getpid getpid
 # define __gettimeofday gettimeofday
 # define __mkdir mkdir
@@ -106,6 +106,7 @@
 # define uint64_t uintmax_t
 #endif
 
+#if _LIBC
 /* Return nonzero if DIR is an existent directory.  */
 static int
 direxists (const char *dir)
@@ -176,6 +177,7 @@ __path_search (char *tmpl, size_t tmpl_len, const char *dir, const char *pfx,
   sprintf (tmpl, "%.*s/%.*sXXXXXX", (int) dlen, dir, (int) plen, pfx);
   return 0;
 }
+#endif /* _LIBC */
 
 /* These are the characters used in temporary file names.  */
 static const char letters[] =
@@ -237,15 +239,11 @@ __gen_tempname (char *tmpl, int kind)
 #ifdef RANDOM_BITS
   RANDOM_BITS (random_time_bits);
 #else
-# if HAVE_GETTIMEOFDAY || _LIBC
   {
     struct timeval tv;
     __gettimeofday (&tv, NULL);
     random_time_bits = ((uint64_t) tv.tv_usec << 16) ^ tv.tv_sec;
   }
-# else
-  random_time_bits = time (NULL);
-# endif
 #endif
   value += random_time_bits ^ __getpid ();
 

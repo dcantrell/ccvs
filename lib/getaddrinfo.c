@@ -1,5 +1,6 @@
 /* Get address information (partial implementation).
-   Copyright (C) 1997, 2001, 2002, 2004, 2005, 2006 Free Software Foundation, Inc.
+   Copyright (C) 1997, 2001, 2002, 2004, 2005, 2006, 2007 Free Software
+   Foundation, Inc.
    Contributed by Simon Josefsson <simon@josefsson.org>.
 
    This program is free software; you can redistribute it and/or modify
@@ -16,9 +17,7 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#include <config.h>
 
 #include "getaddrinfo.h"
 
@@ -29,8 +28,11 @@
 /* Get calloc. */
 #include <stdlib.h>
 
-/* Get memcpy. */
+/* Get memcpy, strdup. */
 #include <string.h>
+
+/* Get snprintf. */
+#include <stdio.h>
 
 #include <stdbool.h>
 
@@ -39,8 +41,6 @@
 #define N_(String) String
 
 #include "inet_ntop.h"
-#include "snprintf.h"
-#include "strdup.h"
 
 /* BeOS has AF_INET, but not PF_INET.  */
 #ifndef PF_INET
@@ -179,7 +179,7 @@ getaddrinfo (const char *restrict nodename,
       const char *proto =
 	(hints && hints->ai_socktype == SOCK_DGRAM) ? "udp" : "tcp";
 
-      if (!(hints->ai_flags & AI_NUMERICSERV))
+      if (hints == NULL || !(hints->ai_flags & AI_NUMERICSERV))
 	/* FIXME: Use getservbyname_r if available. */
 	se = getservbyname (servname, proto);
 
@@ -405,10 +405,12 @@ int getnameinfo(const struct sockaddr *restrict sa, socklen_t salen,
 #if HAVE_IPV6
       case AF_INET6:
 #endif
-	if (snprintf (service, servicelen, "%d",
-		      ntohs (((const struct sockaddr_in *) sa)->sin_port))
-	    + 1 > servicelen)
-	  return EAI_OVERFLOW;
+	{
+	  unsigned short int port
+	    = ntohs (((const struct sockaddr_in *) sa)->sin_port);
+	  if (servicelen <= snprintf (service, servicelen, "%u", port))
+	    return EAI_OVERFLOW;
+	}
 	break;
       }
 
