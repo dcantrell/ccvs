@@ -1,5 +1,12 @@
 2007-08-22  Derek Price  <derek@ximbiot.com>
 
+	* add.c (add): Check last component of argument paths instead of the
+	entire argument.
+	(add_directory): Change error messages to assertions since the check
+	in add() should prevent the problems.
+	* sanity.sh (add-restricted): Test indirect paths to `CVS' dir with
+	add.
+
 	* cvs.h, server.c: Remove references to obsolete headers.
 	* subr.c: Ditto.  Include <sys/time.h>.
 	(format_cmdline): Assume long double type as per GNULIB.
