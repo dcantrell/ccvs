@@ -1694,14 +1694,6 @@ libcvs_a_SOURCES += xgethostname.h xgethostname.c
 
 ## end   gnulib module xgethostname
 
-## begin gnulib module xreadlink
-
-libcvs_a_SOURCES += xreadlink.c
-
-EXTRA_DIST += xreadlink.h
-
-## end   gnulib module xreadlink
-
 ## begin gnulib module xsize
 
 libcvs_a_SOURCES += xsize.h

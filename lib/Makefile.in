@@ -158,7 +158,7 @@ am_libcvs_a_OBJECTS = sighandle.$(OBJEXT) base64.$(OBJEXT) \
 	mbsstr.$(OBJEXT) mreadlink-with-size.$(OBJEXT) \
 	openat-die.$(OBJEXT) strnlen1.$(OBJEXT) \
 	uniwidth/width.$(OBJEXT) xalloc-die.$(OBJEXT) \
-	xgethostname.$(OBJEXT) xreadlink.$(OBJEXT) xstrndup.$(OBJEXT)
+	xgethostname.$(OBJEXT) xstrndup.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 am_getdate_OBJECTS = getdate-error.$(OBJEXT) getdate-getdate.$(OBJEXT) \
 	getdate-progname.$(OBJEXT)
@@ -528,8 +528,8 @@ libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	localcharset.h localcharset.c malloca.c mbchar.c mbslen.c \
 	mbsstr.c mbuiter.h minmax.h mreadlink-with-size.c openat-die.c \
 	size_max.h strnlen1.h strnlen1.c uniwidth/width.c verify.h \
-	xalloc-die.c xgethostname.h xgethostname.c xreadlink.c xsize.h \
-	xstrndup.h xstrndup.c
+	xalloc-die.c xgethostname.h xgethostname.c xsize.h xstrndup.h \
+	xstrndup.c
 libcvs_a_LIBADD = @LIBOBJS@ $(gl_LIBOBJS) @ALLOCA@
 libcvs_a_DEPENDENCIES = $(gl_LIBOBJS) @ALLOCA@
 BUILT_SOURCES = $(ALLOCA_H) $(ARPA_INET_H) configmake.h $(DIRENT_H) \
@@ -604,7 +604,7 @@ EXTRA_DIST = .cvsignore ChangeLog.fsf Makefile.gnulib build_lib.com \
 	unlocked-io.h asnprintf.c float+.h printf-args.c printf-args.h \
 	printf-parse.c printf-parse.h vasnprintf.c vasnprintf.h \
 	asprintf.c vasprintf.c wchar_.h wctype_.h wcwidth.c xalloc.h \
-	xmalloc.c xgetcwd.c xgetcwd.h xreadlink.h yesno.c yesno.h
+	xmalloc.c xgetcwd.c xgetcwd.h yesno.c yesno.h
 EXTRA_libcvs_a_SOURCES = alloca.c atexit.c canon-host.c canonicalize.c \
 	canonicalize-lgpl.c chdir-long.c chown.c fchown-stub.c \
 	close-stream.c closeout.c md5.c cycle-check.c dirfd.c \
@@ -825,7 +825,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgetcwd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgethostname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xmalloc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xreadlink.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xstrndup.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/yesno.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@uniwidth/$(DEPDIR)/width.Po@am__quote@

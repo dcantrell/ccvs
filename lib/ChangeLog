@@ -1,5 +1,8 @@
 2007-08-22  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (xreadlink): Remove module config per...
+	* Makefile.gnulib: ...automated changes to this file.
+
 	* .cvsignore: Add new generated files.
 	* Makefile.am: Import automated changes from...
 	* Makefile.gnulib: ...here.
