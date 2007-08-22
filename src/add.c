@@ -132,7 +132,7 @@ add (int argc, char **argv)
 	strip_trailing_slashes (argv[i]);
 	if (strcmp (argv[i], ".") == 0
 	    || strcmp (argv[i], "..") == 0
-	    || fncmp (argv[i], CVSADM) == 0)
+	    || fncmp (last_component (argv[i]), CVSADM) == 0)
 	{
 	    if (!quiet)
 		error (0, 0, "cannot add special file `%s'; skipping", argv[i]);
@@ -771,18 +771,8 @@ add_directory (struct file_info *finfo)
     int nonbranch;
     char *attrs;
 
-    if (strchr (dir, '/') != NULL)
-    {
-	/* "Can't happen".  */
-	error (0, 0,
-	       "directory %s not added; must be a direct sub-directory", dir);
-	return 1;
-    }
-    if (fncmp (dir, CVSADM) == 0)
-    {
-	error (0, 0, "cannot add a `%s' directory", CVSADM);
-	return 1;
-    }
+    assert (strchr (dir, '/') == NULL);
+    assert (fncmp (dir, CVSADM));
 
     /* before we do anything else, see if we have any per-directory tags */
     ParseTag (&tag, &date, &nonbranch);

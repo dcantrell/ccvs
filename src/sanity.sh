@@ -2225,6 +2225,7 @@ if test x"$*" = x; then
 	tests="version basica basicb basicc basic1 deep basic2 ls"
 	tests="$tests parseroot parseroot2 parseroot3 files spacefiles"
 	tests="${tests} commit-readonly commit-add-missing"
+	tests="$tests add-restricted"
 	tests="${tests} status"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff rdiff-short"
@@ -33094,6 +33095,34 @@ ${SPROG} \[commit aborted\]: correct above errors first!"
 	  rm -rf 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
 	  ;;
+
+
+
+	add-restricted)
+	  # Verify that `sdir/CVS' may not be explicitly added.
+	  mkdir add-restricted; cd add-restricted
+
+	  mkdir import; cd import
+	  : > junk
+	  dotest add-restricted-init-1 \
+"$testcvs -Q import -m. add-restricted X Y"
+	  cd ..
+
+	  dotest add-restricted-init-2 "$testcvs -Q co add-restricted"
+	  cd add-restricted
+
+	  # errmsg2-3 tests the specific message here.
+	  dotest_fail add-restricted-1 "$testcvs -Q add CVS"
+
+	  mkdir sdir
+	  dotest add-restricted-2 "$testcvs -Q add sdir"
+	  dotest_fail add-restricted-3 "$testcvs add sdir/CVS" \
+"$CPROG add: cannot add special file \`sdir/CVS'; skipping"
+
+	  dokeep
+	  cd ../..
+	  rm -rf add-restricted $CVSROOT_DIRNAME/add-restricted
+	;;
 
 
 
