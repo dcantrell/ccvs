@@ -1,12 +1,12 @@
-#serial 19
+#serial 22
 
 dnl From Jim Meyering.
 dnl Check for the nanosleep function.
 dnl If not found, use the supplied replacement.
 dnl
 
-# Copyright (C) 1999, 2000, 2001, 2003, 2004, 2005, 2006 Free Software
-# Foundation, Inc.
+# Copyright (C) 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2007 Free
+# Software Foundation, Inc.
 
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -17,7 +17,7 @@ AC_DEFUN([gl_FUNC_NANOSLEEP],
  dnl Persuade glibc and Solaris <time.h> to declare nanosleep.
  AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
 
- AC_REQUIRE([AC_HEADER_TIME])
+ AC_REQUIRE([gl_HEADER_TIME_H_DEFAULTS])
  AC_REQUIRE([gl_CLOCK_TIME])
  AC_CHECK_HEADERS_ONCE(sys/time.h)
 
@@ -34,19 +34,13 @@ AC_DEFUN([gl_FUNC_NANOSLEEP],
   [
    AC_RUN_IFELSE(
      [AC_LANG_SOURCE([[
-	#if TIME_WITH_SYS_TIME
-	 #include <sys/time.h>
-	 #include <time.h>
-	#else
-	 #if HAVE_SYS_TIME_H
-	  #include <sys/time.h>
-	 #else
-	  #include <time.h>
-	 #endif
-	#endif
 	#include <errno.h>
 	#include <limits.h>
 	#include <signal.h>
+	#if HAVE_SYS_TIME_H
+	 #include <sys/time.h>
+	#endif
+	#include <time.h>
 	#include <unistd.h>
 	#define TYPE_SIGNED(t) (! ((t) 0 < (t) -1))
 	#define TYPE_MAXIMUM(t) \
@@ -67,9 +61,16 @@ AC_DEFUN([gl_FUNC_NANOSLEEP],
 	  static struct timespec ts_sleep;
 	  static struct timespec ts_remaining;
 	  static struct sigaction act;
+	  if (! nanosleep)
+	    return 1;
 	  act.sa_handler = check_for_SIGALRM;
-          sigemptyset (&act.sa_mask);
+	  sigemptyset (&act.sa_mask);
 	  sigaction (SIGALRM, &act, NULL);
+	  ts_sleep.tv_sec = 0;
+	  ts_sleep.tv_nsec = 1;
+	  alarm (1);
+	  if (nanosleep (&ts_sleep, NULL) != 0)
+	    return 1;
 	  ts_sleep.tv_sec = TYPE_MAXIMUM (time_t);
 	  ts_sleep.tv_nsec = 999999999;
 	  alarm (1);
@@ -85,7 +86,10 @@ AC_DEFUN([gl_FUNC_NANOSLEEP],
       esac],
      [gl_cv_func_nanosleep=cross-compiling])
   ])
-  if test "$gl_cv_func_nanosleep" != yes; then
+  if test "$gl_cv_func_nanosleep" = yes; then
+    REPLACE_NANOSLEEP=0
+  else
+    REPLACE_NANOSLEEP=1
     if test "$gl_cv_func_nanosleep" = 'no (mishandles large arguments)'; then
       AC_DEFINE([HAVE_BUG_BIG_NANOSLEEP], 1,
 	[Define to 1 if nanosleep mishandle large arguments.])
@@ -97,8 +101,6 @@ AC_DEFUN([gl_FUNC_NANOSLEEP],
       done
     fi
     AC_LIBOBJ(nanosleep)
-    AC_DEFINE(nanosleep, rpl_nanosleep,
-      [Define to rpl_nanosleep if the replacement function should be used.])
     gl_PREREQ_NANOSLEEP
   fi
 
