@@ -1,3 +1,8 @@
+2007-08-22  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (config.h): Use better delimiters to pass / in sed
+	exprs.
+
 2007-08-21  Derek Price  <derek@ximbiot.com>
 
 	* configure.in.in, Makefile.am: Use new PACKAGE_CONFIG string defined

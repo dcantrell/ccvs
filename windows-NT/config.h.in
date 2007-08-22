@@ -15,18 +15,6 @@
 
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
-/* Define this to an absolute name of <fcntl.h>. */
-#undef ABSOLUTE_FCNTL_H
-
-/* Define this to an absolute name of <inttypes.h>. */
-#undef ABSOLUTE_INTTYPES_H
-
-/* Define this to an absolute name of <stdint.h>. */
-#undef ABSOLUTE_STDINT_H
-
-/* Define this to an absolute name of <sys/stat.h>. */
-#undef ABSOLUTE_SYS_STAT_H
-
 /* Define this to a NULL terminated list of allowed path prefixes (for
    directories) and paths to files the CVS server will allow configuration to
    be read from when specified from the command line. */
@@ -111,11 +99,20 @@
    list of arguments provided by the user. */
 #define DEFAULT_VERIFY_TEMPLATE ""
 
+/* the name of the file descriptor member of DIR */
+#undef DIR_FD_MEMBER_NAME
+
+#ifdef DIR_FD_MEMBER_NAME
+# define DIR_TO_FD(Dir_p) ((Dir_p)->DIR_FD_MEMBER_NAME)
+#else
+# define DIR_TO_FD(Dir_p) -1
+#endif
+
+
 /* Define to 1 if // is a file system root distinct from /. */
 #undef DOUBLE_SLASH_IS_DISTINCT_ROOT
 
-/* Define if there is a member named d_ino in the struct describing directory
-   headers. */
+/* Define if struct dirent has a member d_ino that actually works. */
 #undef D_INO_IN_DIRENT
 
 /* The default editor to use, if one does not specify the "-e" option to cvs,
@@ -134,6 +131,9 @@
 
 /* Define as good substitute value for EOVERFLOW. */
 #define EOVERFLOW EINVAL
+
+/* Define if gnulib's fchdir() replacement is used. */
+#undef FCHDIR_REPLACEMENT
 
 /* Define if this executable will be running on case insensitive file systems.
    In the client case, this means that it will request that the server pretend
@@ -162,6 +162,21 @@
    message to be appended to the temp file when the editor is started. */
 #undef FORCE_USE_EDITOR
 
+/* Define if gettimeofday clobbers the localtime buffer. */
+#undef GETTIMEOFDAY_CLOBBERS_LOCALTIME
+
+/* Define to make the limit macros in <stdint.h> visible. */
+#undef GL_TRIGGER_STDC_LIMIT_MACROS
+
+/* Define to 1 when using the gnulib module canonicalize. */
+#undef GNULIB_CANONICALIZE
+
+/* Define to 1 when using the gnulib module close-stream. */
+#undef GNULIB_CLOSE_STREAM
+
+/* Define to 1 when using the gnulib module fcntl-safer. */
+#undef GNULIB_FCNTL_SAFER
+
 /* Define to an alternative value if GSS_C_NT_HOSTBASED_SERVICE isn't defined
    in the gssapi.h header file. MIT Kerberos 1.2.1 requires this. Only
    relevant when using GSSAPI. */
@@ -170,7 +185,7 @@
 /* Define to 1 if you have the `alarm' function. */
 #undef HAVE_ALARM
 
-/* Define to 1 if you have `alloca' after including <alloca.h>, a header that
+/* Define to 1 if you have 'alloca' after including <alloca.h>, a header that
    may be supplied by this distribution. */
 #undef HAVE_ALLOCA
 
@@ -232,9 +247,17 @@
    */
 #undef HAVE_DCGETTEXT
 
+/* Define to 1 if you have the declaration of `canonicalize_file_name', and to
+   0 if you don't. */
+#undef HAVE_DECL_CANONICALIZE_FILE_NAME
+
 /* Define to 1 if you have the declaration of `clearerr_unlocked', and to 0 if
    you don't. */
 #define HAVE_DECL_CLEARERR_UNLOCKED 0
+
+/* Define to 1 if you have the declaration of `dirfd', and to 0 if you don't.
+   */
+#undef HAVE_DECL_DIRFD
 
 /* Define to 1 if you have the declaration of `feof_unlocked', and to 0 if you
    don't. */
@@ -352,10 +375,6 @@
    */
 #define HAVE_DECL_MKDIR 0
 
-/* Define to 1 if you have the declaration of `nanosleep', and to 0 if you
-   don't. */
-#define HAVE_DECL_NANOSLEEP 1
-
 /* Define to 1 if you have the declaration of `putchar_unlocked', and to 0 if
    you don't. */
 #define HAVE_DECL_PUTCHAR_UNLOCKED 0
@@ -375,6 +394,10 @@
 /* Define to 1 if you have the declaration of `strerror_r', and to 0 if you
    don't. */
 #define HAVE_DECL_STRERROR_R 0
+
+/* Define to 1 if you have the declaration of `strncasecmp', and to 0 if you
+   don't. */
+#undef HAVE_DECL_STRNCASECMP
 
 /* Define to 1 if you have the declaration of `strndup', and to 0 if you
    don't. */
@@ -408,9 +431,23 @@
    don't. */
 #define HAVE_DECL_WCWIDTH 0
 
+/* Define to 1 if you have the declaration of `_snprintf', and to 0 if you
+   don't. */
+#undef HAVE_DECL__SNPRINTF
+
 /* Define to 1 if you have the declaration of `__fpending', and to 0 if you
    don't. */
 #define HAVE_DECL___FPENDING 0
+
+/* Define to 1 if you have the declaration of `__fsetlocking', and to 0 if you
+   don't. */
+#undef HAVE_DECL___FSETLOCKING
+
+/* Define to 1 if you have the <dirent.h> header file. */
+#undef HAVE_DIRENT_H
+
+/* Define to 1 if you have the `dirfd' function. */
+#undef HAVE_DIRFD
 
 /* Define to 1 if you have the `dup2' function. */
 #define HAVE_DUP2 1
@@ -424,11 +461,17 @@
 /* Define to 1 if you have the `fchmod' function. */
 #undef HAVE_FCHMOD
 
+/* Define to 1 if you have the `fchmodat' function. */
+#undef HAVE_FCHMODAT
+
 /* Define to 1 if you have the <fcntl.h> header file. */
 #define HAVE_FCNTL_H 1
 
 /* Define to 1 if you have the `fdopendir' function. */
 #undef HAVE_FDOPENDIR
+
+/* Define to 1 if you have the <float.h> header file. */
+#undef HAVE_FLOAT_H
 
 /* Define to 1 if you have the `flockfile' function. */
 #undef HAVE_FLOCKFILE
@@ -451,11 +494,11 @@
 /* Define to 1 if you have the `funlockfile' function. */
 #undef HAVE_FUNLOCKFILE
 
-/* Define to 1 if you have the `gai_strerror' function. */
-#undef HAVE_GAI_STRERROR
-
 /* Define to 1 if you have the `getaddrinfo' function. */
 #undef HAVE_GETADDRINFO
+
+/* Define to 1 if you have the `getcwd' function. */
+#undef HAVE_GETCWD
 
 /* Define to 1 if you have the `getdelim' function. */
 #undef HAVE_GETDELIM
@@ -511,14 +554,22 @@
 /* Define to 1 if you have the <gssapi.h> header file. */
 #undef HAVE_GSSAPI_H
 
-/* Define if you have the iconv() function. */
+/* Define if you have the iconv() function and it works. */
 #undef HAVE_ICONV
+
+/* Define if your compiler supports the #include_next directive. */
+#undef HAVE_INCLUDE_NEXT
 
 /* Define to 1 if you have the `inet_ntop' function. */
 #undef HAVE_INET_NTOP
 
 /* Define to 1 if you have the `initgroups' function. */
 #undef HAVE_INITGROUPS
+
+/* Define to 1 if the compiler supports one of the keywords 'inline',
+   '__inline__', '__inline' and effectively inlines functions marked as such.
+   */
+#undef HAVE_INLINE
 
 /* Define if you have the 'intmax_t' type in <stdint.h> or <inttypes.h>. */
 #undef HAVE_INTMAX_T
@@ -539,11 +590,14 @@
 /* Define to 1 if <sys/socket.h> defines AF_INET6. */
 #undef HAVE_IPV6
 
+/* Define to 1 if you have the `isblank' function. */
+#undef HAVE_ISBLANK
+
 /* Define to 1 if you have the `iswcntrl' function. */
 #undef HAVE_ISWCNTRL
 
-/* Define to 1 if you have the `iswprint' function. */
-#define HAVE_ISWPRINT 1
+/* Define to 1 if you have the `iswctype' function. */
+#undef HAVE_ISWCTYPE
 
 /* Define if you have MIT Kerberos version 4 available. */
 #undef HAVE_KERBEROS
@@ -580,9 +634,6 @@
 
 /* Define to 1 if you have the `logout' function. */
 #undef HAVE_LOGOUT
-
-/* Define if you have the 'long double' type. */
-#undef HAVE_LONG_DOUBLE
 
 /* Define to 1 if you support file names longer than 14 characters. */
 #define HAVE_LONG_FILE_NAMES 1
@@ -639,6 +690,9 @@
 /* Define to 1 if <sys/param.h> defines the MIN and MAX macros. */
 #undef HAVE_MINMAX_IN_SYS_PARAM_H
 
+/* Define to 1 if you have the `mkdirat' function. */
+#undef HAVE_MKDIRAT
+
 /* Define to 1 if you have the `mknod' function. */
 #undef HAVE_MKNOD
 
@@ -685,12 +739,6 @@
 /* Define to 1 if the `printf' function supports the %p format for printing
    pointers. */
 #define HAVE_PRINTF_PTR 1
-
-/* Define if the <pthread.h> defines PTHREAD_MUTEX_RECURSIVE. */
-#undef HAVE_PTHREAD_MUTEX_RECURSIVE
-
-/* Define if the POSIX multithreading library has read/write locks. */
-#undef HAVE_PTHREAD_RWLOCK
 
 /* Define to 1 if the system has the type `ptrdiff_t'. */
 #define HAVE_PTRDIFF_T 1
@@ -778,8 +826,14 @@
 /* Define to 1 if you have the <stdio_ext.h> header file. */
 #undef HAVE_STDIO_EXT_H
 
+/* Define to 1 if you have the <stdio.h> header file. */
+#undef HAVE_STDIO_H
+
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H 1
+
+/* Define to 1 if you have the `strcasecmp' function. */
+#undef HAVE_STRCASECMP
 
 /* Define if you have strchr (always for CVS). */
 #define HAVE_STRCHR 1
@@ -836,9 +890,6 @@
 /* Define to 1 if `st_rdev' is member of `struct stat'. */
 #define HAVE_STRUCT_STAT_ST_RDEV 1
 
-/* Define if struct timespec is declared in <time.h>. */
-#undef HAVE_STRUCT_TIMESPEC
-
 /* Define to 1 if `tm_zone' is member of `struct tm'. */
 #undef HAVE_STRUCT_TM_TM_ZONE
 
@@ -875,6 +926,9 @@
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
 
+/* Define to 1 if you have the <sys/timeb.h> header file. */
+#undef HAVE_SYS_TIMEB_H
+
 /* Define to 1 if you have the <sys/time.h> header file. */
 #undef HAVE_SYS_TIME_H
 
@@ -896,9 +950,8 @@
 /* Define to 1 if you have the `timezone' function. */
 #undef HAVE_TIMEZONE
 
-/* Define to 1 if localtime_r, etc. have the type signatures that POSIX
-   requires. */
-#undef HAVE_TIME_R_POSIX
+/* Define to 1 if you have the <time.h> header file. */
+#undef HAVE_TIME_H
 
 /* Define if struct tm has the tm_gmtoff member. */
 #undef HAVE_TM_GMTOFF
@@ -992,6 +1045,12 @@
 /* Define to 1 if `fork' works. */
 #undef HAVE_WORKING_FORK
 
+/* Define to 1 if O_NOATIME works. */
+#undef HAVE_WORKING_O_NOATIME
+
+/* Define to 1 if O_NOFOLLOW works. */
+#undef HAVE_WORKING_O_NOFOLLOW
+
 /* Define to 1 if `vfork' works. */
 #undef HAVE_WORKING_VFORK
 
@@ -1004,14 +1063,14 @@
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
+/* Define to 1 if you have the `_ftime' function. */
+#undef HAVE__FTIME
+
 /* Define to 1 if you have the `__fpending' function. */
 #undef HAVE___FPENDING
 
 /* Define to 1 if you have the `__fsetlocking' function. */
 #undef HAVE___FSETLOCKING
-
-/* Define to 1 if you have the `__secure_getenv' function. */
-#undef HAVE___SECURE_GETENV
 
 #if FILE_SYSTEM_BACKSLASH_IS_FILE_NAME_SEPARATOR
 # define ISSLASH(C) ((C) == '/' || (C) == '\\')
@@ -1051,9 +1110,6 @@
 
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 #undef NO_MINUS_C_MINUS_O
-
-/* Define to 1 if O_NOFOLLOW is ineffective. */
-#undef O_NOFOLLOW_IS_INEFFECTIVE
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "%PACKAGE_BUGREPORT%"
@@ -1097,9 +1153,6 @@
 /* Path to the pr utility */
 #undef PR_PROGRAM
 
-/* Define if the pthread_in_use() detection is hard. */
-#undef PTHREAD_IN_USE_DETECTION_HARD
-
 /* Define to l, ll, u, ul, ull, etc., as suitable for constants of type
    'ptrdiff_t'. */
 #undef PTRDIFF_T_SUFFIX
@@ -1110,6 +1163,9 @@
 /* Define if rename does not work for source file names with a trailing slash,
    like the one from SunOS 4.1.1_U1. */
 #undef RENAME_TRAILING_SLASH_BUG
+
+/* Define if vasnprintf exists but is overridden by gnulib. */
+#undef REPLACE_VASNPRINTF
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
@@ -1213,9 +1269,6 @@
    out the line below. */
 #undef SUPPORT_OLD_INFO_FMT_STRINGS
 
-/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
-#undef TIME_WITH_SYS_TIME
-
 /* Directory used for storing temporary files, if not overridden by
    environment variables or the -T global option. There should be little need
    to change this (-T is a better mechanism if you need to use a different
@@ -1226,7 +1279,7 @@
 #undef TM_IN_SYS_TIME
 
 /* Define if tzset clobbers localtime's static buffer. */
-#undef TZSET_CLOBBERS_LOCALTIME_BUFFER
+#undef TZSET_CLOBBERS_LOCALTIME
 
 /* The default umask to use when creating or otherwise setting file or
    directory permissions in the repository. Must be a value in the range of 0
@@ -1274,37 +1327,13 @@
 /* Define if wint_t is the first integer type detected with its size. */
 #undef UNIQUE_INT_TYPE_WINT_T
 
-/* Define if the POSIX multithreading library can be used. */
-#undef USE_POSIX_THREADS
-
-/* Define if references to the POSIX multithreading library should be made
-   weak. */
-#undef USE_POSIX_THREADS_WEAK
-
-/* Define if the GNU Pth multithreading library can be used. */
-#undef USE_PTH_THREADS
-
-/* Define if references to the GNU Pth multithreading library should be made
-   weak. */
-#undef USE_PTH_THREADS_WEAK
-
 /* Define if setmode is required when writing binary data to stdout. */
 #define USE_SETMODE_STDOUT 1
-
-/* Define if the old Solaris multithreading library can be used. */
-#undef USE_SOLARIS_THREADS
-
-/* Define if references to the old Solaris multithreading library should be
-   made weak. */
-#undef USE_SOLARIS_THREADS_WEAK
 
 /* Define to 1 if you want getc etc. to use unlocked I/O if available.
    Unlocked I/O can improve performance in unithreaded apps, but it is not
    safe for multithreaded apps. */
 #undef USE_UNLOCKED_IO
-
-/* Define if the Win32 multithreading API can be used. */
-#define USE_WIN32_THREADS 1
 
 /* Define if utime requires write access to the file (true on Windows, but not
    Unix). */
@@ -1373,18 +1402,19 @@
 # undef _TANDEM_SOURCE
 #endif
 
-/* Define to rpl_ if the getcwd replacement function should be used. */
-#undef __GETCWD_PREFIX
-
 /* Define to rpl_ if the getopt replacement functions and variables should be
    used. */
 #define __GETOPT_PREFIX rpl_
 
-/* Define to rpl_ if the mkstemp replacement function should be used. */
-#define __MKSTEMP_PREFIX rpl_
-
 /* Define to rpl_ if the openat replacement function should be used. */
 #undef __OPENAT_PREFIX
+
+/* Ensure that <stdint.h> defines the limit macros, since gnulib's
+   <inttypes.h> relies on them.  */
+#if defined __cplusplus && !defined __STDC_LIMIT_MACROS && GL_TRIGGER_STDC_LIMIT_MACROS
+# define __STDC_LIMIT_MACROS 1
+#endif
+
 
 #ifndef __attribute__
   /* Function attributes are available in gcc versions 2.5 and later.  */
@@ -1407,8 +1437,8 @@
 # endif
 #endif /* __attribute__ */
 
-/* Define to rpl_chown if the replacement function should be used. */
-#undef chown
+/* Define to rpl_fchownat if the replacement function should be used. */
+#undef fchownat
 
 /* Define to a replacement function name for fnmatch(). */
 #undef fnmatch
@@ -1418,9 +1448,6 @@
 
 /* Define to a replacement function name for getpass(). */
 #define getpass gnu_getpass
-
-/* Define to rpl_gettimeofday if the replacement function should be used. */
-#undef gettimeofday
 
 /* Define to `int' if <sys/types.h> doesn't define. */
 #undef gid_t
@@ -1457,9 +1484,6 @@
 
 /* Define to the name of the strftime replacement function. */
 #define my_strftime nstrftime
-
-/* Define to rpl_nanosleep if the replacement function should be used. */
-#define nanosleep woe32_nanosleep
 
 /* Define to `int' if <sys/types.h> does not define. */
 #undef pid_t
@@ -1500,6 +1524,9 @@
 /* Define to rpl_realloc if the replacement function should be used. */
 #define realloc rpl_realloc
 
+/* Define to a replacement function name for realpath(). */
+#undef realpath
+
 /* Define to rpl_regcomp if the replacement should be used. */
 #undef regcomp
 
@@ -1522,9 +1549,6 @@
 /* Define to rpl_select if the replacement function should be used. */
 #undef select
 
-/* Define to empty if the C compiler doesn't support this keyword. */
-#undef signed
-
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
 
@@ -1533,12 +1557,6 @@
 
 /* Define as a signed type of the same size as size_t. */
 #define ssize_t int
-
-/* Define to rpl_strcasecmp always. */
-#define strcasecmp rpl_strcasecmp
-
-/* Define to rpl_strndup if the replacement function should be used, */
-#undef strndup
 
 /* Define to rpl_strnlen if the replacement function should be used. */
 #undef strnlen
