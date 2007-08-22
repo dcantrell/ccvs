@@ -197,7 +197,7 @@ import (int argc, char **argv)
      */
     /* for each "CVS" in path */
     cp = argv[0];
-    while ((cp = strstr (cp, "CVS")))
+    while ((cp = mbsstr (cp, "CVS")))
     {
 	if (/* /^CVS/ OR m#/CVS#... */
 	    (cp == argv[0] || ISSLASH (*(cp-1)))

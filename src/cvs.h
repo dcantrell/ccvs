@@ -22,17 +22,14 @@
 
 /* begin GNULIB headers */
 #include "dirname.h"
-#include "exit.h"
 #include "getdate.h"
 #include "minmax.h"
 #include "regex.h"
-#include "strcase.h"
 #include "stat-macros.h"
 #include "timespec.h"
 #include "unlocked-io.h"
 #include "xalloc.h"
 #include "xgetcwd.h"
-#include "xreadlink.h"
 #include "xsize.h"
 /* end GNULIB headers */
 

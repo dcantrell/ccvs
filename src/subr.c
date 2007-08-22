@@ -24,12 +24,13 @@
 #ifdef HAVE_CVS_ADMIN_GROUP
 # include <grp.h>
 #endif
+#include <sys/time.h>
 
 /* GNULIB headers.  */
 #include "canonicalize.h"
 #include "canon-host.h"
 #include "getline.h"
-#include "vasprintf.h"
+#include "mreadlink.h"
 #include "vasnprintf.h"
 
 /* CVS headers.  */
@@ -78,7 +79,7 @@ expand_string (char **strptr, size_t *n, size_t newsize)
 char *
 Xreadlink (const char *link, size_t size)
 {
-    char *file = xreadlink (link, size);
+    char *file = mreadlink_with_size (link, size);
 
     if (file == NULL)
 	error (1, errno, "cannot readlink %s", link);
@@ -1243,13 +1244,11 @@ format_cmdline (const char *format, ...)
 		    length = sizeof (size_t);
 		    s++;
 		    break;
-#ifdef HAVE_LONG_DOUBLE
 		case 'L':
 		    decimal_conversion = 1;
 		    length = sizeof (long double);
 		    s++;
 		    break;
-#endif
 		default:
 		    char_conversion = 1;
 		    decimal_conversion = 1;
@@ -1409,7 +1408,7 @@ format_cmdline (const char *format, ...)
 			b->data = Xasprintf (buf, arg_double);
 			break;
 		    }
-#ifdef UNIQUE_FLOAT_TYPE_LONG_DOUBLE	/* implies HAVE_LONG_DOUBLE */
+#ifdef UNIQUE_FLOAT_TYPE_LONG_DOUBLE
 		    case sizeof(long double):
 		    {
 		    	long double arg_long_double = va_arg (args, long double);
