@@ -438,6 +438,24 @@ EXTRA_libcvs_a_SOURCES += __fpending.c
 
 ## end   gnulib module fpending
 
+## begin gnulib module fseeko
+
+
+EXTRA_DIST += fseeko.c
+
+EXTRA_libcvs_a_SOURCES += fseeko.c
+
+## end   gnulib module fseeko
+
+## begin gnulib module ftello
+
+
+EXTRA_DIST += ftello.c
+
+EXTRA_libcvs_a_SOURCES += ftello.c
+
+## end   gnulib module ftello
+
 ## begin gnulib module ftruncate
 
 
@@ -773,6 +791,15 @@ CLEANFILES += charset.alias ref-add.sed ref-del.sed
 EXTRA_DIST += config.charset ref-add.sin ref-del.sin
 
 ## end   gnulib module localcharset
+
+## begin gnulib module lseek
+
+
+EXTRA_DIST += lseek.c
+
+EXTRA_libcvs_a_SOURCES += lseek.c
+
+## end   gnulib module lseek
 
 ## begin gnulib module lstat
 
