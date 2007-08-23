@@ -28,6 +28,8 @@ AC_DEFUN([gl_EARLY],
   AC_REQUIRE([AM_PROG_CC_C_O])
   AC_REQUIRE([AC_GNU_SOURCE])
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
+  AC_REQUIRE([AC_FUNC_FSEEKO])
+  AC_REQUIRE([AC_FUNC_FSEEKO])
 ])
 
 # This macro should be invoked from ./configure.in, in the section
@@ -79,6 +81,10 @@ AC_DEFUN([gl_INIT],
   # No macro. You should also use one of fnmatch-posix or fnmatch-gnu.
   gl_FUNC_FNMATCH_POSIX
   gl_FUNC_FPENDING
+  gl_FUNC_FSEEKO
+  gl_STDIO_MODULE_INDICATOR([fseeko])
+  gl_FUNC_FTELLO
+  gl_STDIO_MODULE_INDICATOR([ftello])
   gl_FUNC_FTRUNCATE
   gl_UNISTD_MODULE_INDICATOR([ftruncate])
   gl_GETADDRINFO
@@ -108,6 +114,8 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_LCHOWN
   gl_UNISTD_MODULE_INDICATOR([lchown])
   gl_LOCALCHARSET
+  gl_FUNC_LSEEK
+  gl_UNISTD_MODULE_INDICATOR([lseek])
   gl_FUNC_LSTAT
   AC_FUNC_MALLOC
   gl_MALLOCA
@@ -294,7 +302,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fnmatch.c
   lib/fnmatch_.h
   lib/fnmatch_loop.c
+  lib/fseeko.c
   lib/fstatat.c
+  lib/ftello.c
   lib/ftruncate.c
   lib/gai_strerror.c
   lib/getaddrinfo.c
@@ -332,6 +342,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/lchown.c
   lib/localcharset.c
   lib/localcharset.h
+  lib/lseek.c
   lib/lstat.c
   lib/lstat.h
   lib/malloc.c
@@ -486,6 +497,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/float_h.m4
   m4/fnmatch.m4
   m4/fpending.m4
+  m4/fseeko.m4
+  m4/ftello.m4
   m4/ftruncate.m4
   m4/getaddrinfo.m4
   m4/getcwd-abort-bug.m4
@@ -529,6 +542,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/localcharset.m4
   m4/lock.m4
   m4/longlong.m4
+  m4/lseek.m4
   m4/lstat.m4
   m4/malloca.m4
   m4/mbchar.m4
