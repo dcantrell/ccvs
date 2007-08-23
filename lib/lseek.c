@@ -1,4 +1,4 @@
-/* An ftello() function that works around platform bugs.
+/* An lseek() function that detects pipes.
    Copyright (C) 2007 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
@@ -18,38 +18,45 @@
 #include <config.h>
 
 /* Specification.  */
-#include <stdio.h>
-
-/* Get lseek.  */
 #include <unistd.h>
 
-#undef ftello
-#if !HAVE_FTELLO
-# undef ftell
-# define ftello ftell
+#if (defined _WIN32 || defined __WIN32__) && ! defined __CYGWIN__
+/* Windows platforms.  */
+/* Get GetFileType.  */
+# include <windows.h>
+#else
+# include <sys/stat.h>
 #endif
+#include <errno.h>
+
+#undef lseek
 
 off_t
-rpl_ftello (FILE *fp)
+rpl_lseek (int fd, off_t offset, int whence)
 {
-#if LSEEK_PIPE_BROKEN
-  /* mingw gives bogus answers rather than failure on non-seekable files.  */
-  if (lseek (fileno (fp), 0, SEEK_CUR) == -1)
-    return -1;
-#endif
-
-#if defined __SL64 && defined __SCLE /* Cygwin */
-  if ((fp->_flags & __SL64) == 0)
+#if (defined _WIN32 || defined __WIN32__) && ! defined __CYGWIN__
+  /* mingw lseek mistakenly succeeds on pipes, sockets, and terminals.  */
+  HANDLE h = (HANDLE) _get_osfhandle (fd);
+  if (h == INVALID_HANDLE_VALUE)
     {
-      /* Cygwin 1.5.0 through 1.5.24 failed to open stdin in 64-bit
-	 mode; but has an ftello that requires 64-bit mode.  */
-      FILE *tmp = fopen ("/dev/null", "r");
-      if (!tmp)
-	return -1;
-      fp->_flags |= __SL64;
-      fp->_seek64 = tmp->_seek64;
-      fclose (tmp);
+      errno = EBADF;
+      return -1;
+    }
+  if (GetFileType (h) != FILE_TYPE_DISK)
+    {
+      errno = ESPIPE;
+      return -1;
+    }
+#else
+  /* BeOS lseek mistakenly succeeds on pipes...  */
+  struct stat statbuf;
+  if (fstat (fd, &statbuf) < 0)
+    return -1;
+  if (!S_ISREG (statbuf.st_mode))
+    {
+      errno = ESPIPE;
+      return -1;
     }
 #endif
-  return ftello (fp);
+  return lseek (fd, offset, whence);
 }

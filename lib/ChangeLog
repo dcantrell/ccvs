@@ -1,3 +1,10 @@
+2007-08-23  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: Import automated changes from...
+	* Makefile.gnulib: ...here.
+	* fseeko.c, ftello.c: Update from GNULIB.
+	* lseek.c: New file from GNULIB.
+
 2007-08-22  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (xreadlink): Remove module config per...
