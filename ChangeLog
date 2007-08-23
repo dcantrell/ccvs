@@ -1,3 +1,7 @@
+2007-08-23  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Depend on GNULIB for fseeko & ftello cruft.
+
 2007-08-22  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note `cvs server' accepts `--allow-root=PATH'.  Note further

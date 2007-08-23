@@ -176,12 +176,6 @@ AC_TYPE_SIGNAL
 AC_CHECK_MEMBERS([struct stat.st_blksize])
 AC_CHECK_MEMBERS([struct stat.st_rdev])
 
-AC_FUNC_FSEEKO
-if test $ac_cv_func_fseeko = no; then
-    AC_LIBOBJ(fseeko)
-    AC_LIBOBJ(ftello)
-fi
-
 # Replace functions with versions in lib/ when they can't be found.
 AC_REPLACE_FUNCS(\
 	waitpid \
