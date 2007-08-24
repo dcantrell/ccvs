@@ -1,3 +1,8 @@
+2007-08-24  Derek Price  <derek@ximbiot.com>
+
+	* lchmod.m4, mkancesdirs.m4, mkdir-p.m4, quote.m4, savewd.m4: New
+	files from GNULIB.
+
 2007-08-23  Derek Price  <derek@ximbiot.com>
 
 	* .cvsignore: Remove error.m4.
