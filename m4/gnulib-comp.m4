@@ -111,6 +111,7 @@ AC_DEFUN([gl_INIT],
   gl_INET_NTOP
   gl_INLINE
   gl_INTTYPES_H
+  gl_FUNC_LCHMOD
   gl_FUNC_LCHOWN
   gl_UNISTD_MODULE_INDICATOR([lchown])
   gl_LOCALCHARSET
@@ -132,7 +133,9 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_MEMRCHR
   gl_STRING_MODULE_INDICATOR([memrchr])
   gl_MINMAX
+  gl_MKANCESDIRS
   gl_FUNC_MKDIR_TRAILING_SLASH
+  gl_MKDIR_PARENTS
   gl_FUNC_MKSTEMP
   gl_STDLIB_MODULE_INDICATOR([mkstemp])
   gl_FUNC_MKTIME
@@ -141,7 +144,9 @@ AC_DEFUN([gl_INIT],
   AC_PROG_MKDIR_P
   gl_FUNC_OPENAT
   gl_PATHMAX
+  gl_QUOTE
   gl_QUOTEARG
+  AC_REPLACE_FUNCS(raise)
   gl_FUNC_READLINK
   gl_UNISTD_MODULE_INDICATOR([readlink])
   AC_FUNC_REALLOC
@@ -149,6 +154,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_RENAME
   gl_FUNC_RPMATCH
   gl_SAVE_CWD
+  gl_SAVEWD
   gl_FUNC_SETENV
   gl_FUNC_UNSETENV
   gl_SIZE_MAX
@@ -276,6 +282,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/cycle-check.c
   lib/cycle-check.h
   lib/dev-ino.h
+  lib/dirchownmod.c
+  lib/dirchownmod.h
   lib/dirent_.h
   lib/dirfd.c
   lib/dirfd.h
@@ -339,6 +347,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/inet_ntop.h
   lib/intprops.h
   lib/inttypes_.h
+  lib/lchmod.h
   lib/lchown.c
   lib/localcharset.c
   lib/localcharset.h
@@ -361,6 +370,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/mempcpy.c
   lib/memrchr.c
   lib/minmax.h
+  lib/mkancesdirs.c
+  lib/mkancesdirs.h
+  lib/mkdir-p.c
+  lib/mkdir-p.h
   lib/mkdir.c
   lib/mkdirat.c
   lib/mkstemp.c
@@ -381,8 +394,11 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/printf-args.h
   lib/printf-parse.c
   lib/printf-parse.h
+  lib/quote.c
+  lib/quote.h
   lib/quotearg.c
   lib/quotearg.h
+  lib/raise.c
   lib/readlink.c
   lib/realloc.c
   lib/ref-add.sin
@@ -398,6 +414,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/same-inode.h
   lib/save-cwd.c
   lib/save-cwd.h
+  lib/savewd.c
+  lib/savewd.h
   lib/setenv.c
   lib/setenv.h
   lib/size_max.h
@@ -534,6 +552,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/inttypes-pri.m4
   m4/inttypes.m4
   m4/inttypes_h.m4
+  m4/lchmod.m4
   m4/lchown.m4
   m4/lcmessage.m4
   m4/lib-ld.m4
@@ -557,6 +576,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mempcpy.m4
   m4/memrchr.m4
   m4/minmax.m4
+  m4/mkancesdirs.m4
+  m4/mkdir-p.m4
   m4/mkdir-slash.m4
   m4/mkstemp.m4
   m4/mktime.m4
@@ -568,12 +589,14 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/po.m4
   m4/printf-posix.m4
   m4/progtest.m4
+  m4/quote.m4
   m4/quotearg.m4
   m4/readlink.m4
   m4/regex.m4
   m4/rename.m4
   m4/rpmatch.m4
   m4/save-cwd.m4
+  m4/savewd.m4
   m4/setenv.m4
   m4/size_max.m4
   m4/snprintf.m4
