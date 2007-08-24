@@ -717,6 +717,13 @@ EXTRA_DIST += inttypes_.h
 
 ## end   gnulib module inttypes
 
+## begin gnulib module lchmod
+
+
+EXTRA_DIST += lchmod.h
+
+## end   gnulib module lchmod
+
 ## begin gnulib module lchown
 
 
@@ -895,6 +902,15 @@ libcvs_a_SOURCES += minmax.h
 
 ## end   gnulib module minmax
 
+## begin gnulib module mkancesdirs
+
+
+EXTRA_DIST += mkancesdirs.c mkancesdirs.h
+
+EXTRA_libcvs_a_SOURCES += mkancesdirs.c
+
+## end   gnulib module mkancesdirs
+
 ## begin gnulib module mkdir
 
 
@@ -903,6 +919,15 @@ EXTRA_DIST += mkdir.c
 EXTRA_libcvs_a_SOURCES += mkdir.c
 
 ## end   gnulib module mkdir
+
+## begin gnulib module mkdir-p
+
+
+EXTRA_DIST += dirchownmod.c dirchownmod.h mkdir-p.c mkdir-p.h
+
+EXTRA_libcvs_a_SOURCES += dirchownmod.c mkdir-p.c
+
+## end   gnulib module mkdir-p
 
 ## begin gnulib module mkstemp
 
@@ -984,6 +1009,15 @@ EXTRA_DIST += pathmax.h
 
 ## end   gnulib module pathmax
 
+## begin gnulib module quote
+
+
+EXTRA_DIST += quote.c quote.h
+
+EXTRA_libcvs_a_SOURCES += quote.c
+
+## end   gnulib module quote
+
 ## begin gnulib module quotearg
 
 
@@ -992,6 +1026,15 @@ EXTRA_DIST += quotearg.c quotearg.h
 EXTRA_libcvs_a_SOURCES += quotearg.c
 
 ## end   gnulib module quotearg
+
+## begin gnulib module raise
+
+
+EXTRA_DIST += raise.c
+
+EXTRA_libcvs_a_SOURCES += raise.c
+
+## end   gnulib module raise
 
 ## begin gnulib module readlink
 
@@ -1053,6 +1096,12 @@ EXTRA_DIST += save-cwd.c save-cwd.h
 EXTRA_libcvs_a_SOURCES += save-cwd.c
 
 ## end   gnulib module save-cwd
+
+## begin gnulib module savewd
+
+libcvs_a_SOURCES += savewd.h savewd.c
+
+## end   gnulib module savewd
 
 ## begin gnulib module setenv
 
