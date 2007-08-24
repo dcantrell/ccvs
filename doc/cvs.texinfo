@@ -1074,7 +1074,7 @@ options}; or @code{CVSREAD}, @ref{Environment variables}).
 @c FIXME: Need more discussion of which
 @c group should own the file in the repository.
 @c Include a somewhat detailed example of the usual
-@c case where CVSUMASK is 007, the developers are all
+@c case where CVSUMASK is 0070, the developers are all
 @c in a group, and that group owns stuff in the
 @c repository.  Need to talk about group ownership of
 @c newly-created directories/files (on some unices,

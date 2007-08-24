@@ -1,3 +1,7 @@
+2007-08-24  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (File permissions): Minor typo fix in comment.
+
 2007-06-12  Mark D. Baushke  <mdb@gnu.org>
 
 	[bug #17083]
