@@ -1,3 +1,11 @@
+2007-08-24  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: Import automated changes from...
+	* Makefile.gnulib: ...here.
+	* dirchownmod.c, lchmod.h, mkancesdirs.c, mkancesdirs.h, mkdir-p.c,
+	mkdir-p.h, quote.c, quote.h, raise.c, savewd.c, savewd.h: New files
+	from GNULIB.
+
 2007-08-23  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am: Import automated changes from...

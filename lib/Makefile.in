@@ -97,8 +97,9 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/inline.m4 $(top_srcdir)/m4/intlmacosx.m4 \
 	$(top_srcdir)/m4/intmax_t.m4 $(top_srcdir)/m4/inttypes-pri.m4 \
 	$(top_srcdir)/m4/inttypes.m4 $(top_srcdir)/m4/inttypes_h.m4 \
-	$(top_srcdir)/m4/lchown.m4 $(top_srcdir)/m4/lib-ld.m4 \
-	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
+	$(top_srcdir)/m4/lchmod.m4 $(top_srcdir)/m4/lchown.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 \
 	$(top_srcdir)/m4/localcharset.m4 $(top_srcdir)/m4/longlong.m4 \
 	$(top_srcdir)/m4/lseek.m4 $(top_srcdir)/m4/lstat.m4 \
 	$(top_srcdir)/m4/malloca.m4 $(top_srcdir)/m4/mbchar.m4 \
@@ -107,15 +108,17 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/mbstate_t.m4 $(top_srcdir)/m4/md5.m4 \
 	$(top_srcdir)/m4/memchr.m4 $(top_srcdir)/m4/memmove.m4 \
 	$(top_srcdir)/m4/mempcpy.m4 $(top_srcdir)/m4/memrchr.m4 \
-	$(top_srcdir)/m4/minmax.m4 $(top_srcdir)/m4/mkdir-slash.m4 \
+	$(top_srcdir)/m4/minmax.m4 $(top_srcdir)/m4/mkancesdirs.m4 \
+	$(top_srcdir)/m4/mkdir-p.m4 $(top_srcdir)/m4/mkdir-slash.m4 \
 	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
 	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/netinet_in_h.m4 \
 	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/openat.m4 \
 	$(top_srcdir)/m4/pathmax.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/quotearg.m4 \
-	$(top_srcdir)/m4/readlink.m4 $(top_srcdir)/m4/regex.m4 \
-	$(top_srcdir)/m4/rename.m4 $(top_srcdir)/m4/rpmatch.m4 \
-	$(top_srcdir)/m4/save-cwd.m4 $(top_srcdir)/m4/setenv.m4 \
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/quote.m4 \
+	$(top_srcdir)/m4/quotearg.m4 $(top_srcdir)/m4/readlink.m4 \
+	$(top_srcdir)/m4/regex.m4 $(top_srcdir)/m4/rename.m4 \
+	$(top_srcdir)/m4/rpmatch.m4 $(top_srcdir)/m4/save-cwd.m4 \
+	$(top_srcdir)/m4/savewd.m4 $(top_srcdir)/m4/setenv.m4 \
 	$(top_srcdir)/m4/size_max.m4 $(top_srcdir)/m4/snprintf.m4 \
 	$(top_srcdir)/m4/socklen.m4 $(top_srcdir)/m4/sockpfaf.m4 \
 	$(top_srcdir)/m4/ssize_t.m4 $(top_srcdir)/m4/stdbool.m4 \
@@ -158,7 +161,7 @@ am_libcvs_a_OBJECTS = sighandle.$(OBJEXT) base64.$(OBJEXT) \
 	getdate.$(OBJEXT) getnline.$(OBJEXT) localcharset.$(OBJEXT) \
 	malloca.$(OBJEXT) mbchar.$(OBJEXT) mbslen.$(OBJEXT) \
 	mbsstr.$(OBJEXT) mreadlink-with-size.$(OBJEXT) \
-	openat-die.$(OBJEXT) strnlen1.$(OBJEXT) \
+	openat-die.$(OBJEXT) savewd.$(OBJEXT) strnlen1.$(OBJEXT) \
 	uniwidth/width.$(OBJEXT) xalloc-die.$(OBJEXT) \
 	xgethostname.$(OBJEXT) xstrndup.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
@@ -529,9 +532,9 @@ libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	base64.h base64.c getdate.y getnline.h getnline.c gettext.h \
 	localcharset.h localcharset.c malloca.c mbchar.c mbslen.c \
 	mbsstr.c mbuiter.h minmax.h mreadlink-with-size.c openat-die.c \
-	size_max.h strnlen1.h strnlen1.c uniwidth/width.c verify.h \
-	xalloc-die.c xgethostname.h xgethostname.c xsize.h xstrndup.h \
-	xstrndup.c
+	savewd.h savewd.c size_max.h strnlen1.h strnlen1.c \
+	uniwidth/width.c verify.h xalloc-die.c xgethostname.h \
+	xgethostname.c xsize.h xstrndup.h xstrndup.c
 libcvs_a_LIBADD = @LIBOBJS@ $(gl_LIBOBJS) @ALLOCA@
 libcvs_a_DEPENDENCIES = $(gl_LIBOBJS) @ALLOCA@
 BUILT_SOURCES = $(ALLOCA_H) $(ARPA_INET_H) configmake.h $(DIRENT_H) \
@@ -585,26 +588,27 @@ EXTRA_DIST = .cvsignore ChangeLog.fsf Makefile.gnulib build_lib.com \
 	$(top_srcdir)/build-aux/config.rpath gettime.c gettimeofday.c \
 	glob-libc.h glob.c glob_.h \
 	$(top_srcdir)/build-aux/config.rpath inet_ntop.c inet_ntop.h \
-	intprops.h inttypes_.h lchown.c \
+	intprops.h inttypes_.h lchmod.h lchown.c \
 	$(top_srcdir)/build-aux/link-warning.h config.charset \
 	ref-add.sin ref-del.sin lseek.c lstat.c lstat.h malloc.c \
 	malloca.h malloca.valgrind mbchar.h memchr.c memmove.c \
-	mempcpy.c memrchr.c mkdir.c mkstemp.c mktime.c mreadlink.h \
-	nanosleep.c netinet_in_.h at-func.c fchmodat.c fchownat.c \
-	fstatat.c mkdirat.c openat-priv.h openat-proc.c openat.c \
-	openat.h pathmax.h quotearg.c quotearg.h readlink.c realloc.c \
-	regcomp.c regex.c regex.h regex_internal.c regex_internal.h \
-	regexec.c rename.c rpmatch.c same-inode.h save-cwd.c \
-	save-cwd.h setenv.c setenv.h unsetenv.c snprintf.c \
-	stat-macros.h stdbool_.h stdint_.h stdio_.h stdlib_.h \
-	strcasecmp.c strncasecmp.c strdup.c streq.h strerror.c \
-	strftime.c strftime.h string_.h strndup.c strnlen.c \
-	strtoimax.c strtol.c strtoll.c strtoul.c strtoull.c \
-	strtoumax.c sys_socket_.h sys_stat_.h sys_time_.h tempname.c \
-	tempname.h time_.h time_r.c timespec.h unistd_.h dup-safer.c \
-	fd-safer.c pipe-safer.c unistd--.h unistd-safer.h unitypes.h \
-	localcharset.h uniwidth.h uniwidth/cjk.h unlocked-io.h \
-	asnprintf.c float+.h printf-args.c printf-args.h \
+	mempcpy.c memrchr.c mkancesdirs.c mkancesdirs.h mkdir.c \
+	dirchownmod.c dirchownmod.h mkdir-p.c mkdir-p.h mkstemp.c \
+	mktime.c mreadlink.h nanosleep.c netinet_in_.h at-func.c \
+	fchmodat.c fchownat.c fstatat.c mkdirat.c openat-priv.h \
+	openat-proc.c openat.c openat.h pathmax.h quote.c quote.h \
+	quotearg.c quotearg.h raise.c readlink.c realloc.c regcomp.c \
+	regex.c regex.h regex_internal.c regex_internal.h regexec.c \
+	rename.c rpmatch.c same-inode.h save-cwd.c save-cwd.h setenv.c \
+	setenv.h unsetenv.c snprintf.c stat-macros.h stdbool_.h \
+	stdint_.h stdio_.h stdlib_.h strcasecmp.c strncasecmp.c \
+	strdup.c streq.h strerror.c strftime.c strftime.h string_.h \
+	strndup.c strnlen.c strtoimax.c strtol.c strtoll.c strtoul.c \
+	strtoull.c strtoumax.c sys_socket_.h sys_stat_.h sys_time_.h \
+	tempname.c tempname.h time_.h time_r.c timespec.h unistd_.h \
+	dup-safer.c fd-safer.c pipe-safer.c unistd--.h unistd-safer.h \
+	unitypes.h localcharset.h uniwidth.h uniwidth/cjk.h \
+	unlocked-io.h asnprintf.c float+.h printf-args.c printf-args.h \
 	printf-parse.c printf-parse.h vasnprintf.c vasnprintf.h \
 	asprintf.c vasprintf.c wchar_.h wctype_.h wcwidth.c xalloc.h \
 	xmalloc.c xgetcwd.c xgetcwd.h yesno.c yesno.h
@@ -618,9 +622,10 @@ EXTRA_libcvs_a_SOURCES = alloca.c atexit.c canon-host.c canonicalize.c \
 	getline.c getlogin_r.c getndelim2.c getopt.c getopt1.c \
 	getpass.c gettime.c gettimeofday.c glob.c inet_ntop.c lchown.c \
 	lseek.c lstat.c malloc.c memchr.c memmove.c mempcpy.c \
-	memrchr.c mkdir.c mkstemp.c mktime.c nanosleep.c at-func.c \
-	fchmodat.c fchownat.c fstatat.c mkdirat.c openat-proc.c \
-	openat.c quotearg.c readlink.c realloc.c regcomp.c regex.c \
+	memrchr.c mkancesdirs.c mkdir.c dirchownmod.c mkdir-p.c \
+	mkstemp.c mktime.c nanosleep.c at-func.c fchmodat.c fchownat.c \
+	fstatat.c mkdirat.c openat-proc.c openat.c quote.c quotearg.c \
+	raise.c readlink.c realloc.c regcomp.c regex.c \
 	regex_internal.c regexec.c rename.c rpmatch.c save-cwd.c \
 	setenv.c unsetenv.c snprintf.c strcasecmp.c strncasecmp.c \
 	strdup.c strerror.c strftime.c strndup.c strnlen.c strtoimax.c \
@@ -727,6 +732,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/closeout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/creat-safer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cycle-check.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirchownmod.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirfd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dup-safer.Po@am__quote@
@@ -778,6 +784,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/memmove.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mempcpy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/memrchr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mkancesdirs.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mkdir-p.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mkdir.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mkdirat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mkstemp.Po@am__quote@
@@ -791,7 +799,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pipe-safer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/printf-args.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/printf-parse.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/quote.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/quotearg.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raise.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/readlink.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/realloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/regcomp.Po@am__quote@
@@ -801,6 +811,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rename.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rpmatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/save-cwd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/savewd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/setenv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sighandle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/snprintf.Po@am__quote@
