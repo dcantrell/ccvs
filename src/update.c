@@ -945,13 +945,18 @@ update_dirent_proc (void *callerdat, const char *dir, const char *repository,
 		    tag_update_dir = xstrdup (update_dir);
 	    }
 
-	    make_directory (dir);
-	    Create_Admin (dir, update_dir, repository, tag, date,
-			  /* This is a guess.  We will rewrite it later
-			     via WriteTag.  */
-			  0,
-			  0,
-			  dotemplate);
+	    cvs_xmkdir (dir, NULL, 0);
+	    if (Create_Admin (dir, update_dir, repository, tag, date,
+			      /* This is a guess.  We will rewrite it later
+				 via WriteTag.  */
+			      0,
+			      0, dotemplate))
+	    {
+		error (0, 0,
+		       "Failed to create admin data in `%s'.  Skipping.",
+		       update_dir);
+		return R_SKIP_ALL;
+	    }
 	    rewrite_tag = 1;
 	    nonbranch = -1;
 	    warned = 0;

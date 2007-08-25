@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
@@ -44,6 +45,7 @@ Create_Admin (const char *dir, const char *update_dir, const char *repository,
     char *cp;
     char *reposcopy;
     char *tmp;
+    bool ud;
 
     TRACE (TRACE_FUNCTION, "Create_Admin (%s, %s, %s, %s, %s, %d, %d, %d)",
 	   dir, update_dir, repository, tag ? tag : "",
@@ -52,41 +54,22 @@ Create_Admin (const char *dir, const char *update_dir, const char *repository,
     if (noexec)
 	return 0;
 
-    tmp = Xasprintf ("%s/%s", dir, CVSADM);
+    /* A leading "./" looks bad in error messages.  */
+    ud = strcmp (dir, ".");
+    tmp = Xasprintf ("%s%s%s", ud ? dir : "", ud ? "/" : "", CVSADM);
     if (isfile (tmp))
 	error (1, 0, "there is a version in %s already", update_dir);
 
-    if (CVS_MKDIR (tmp, 0777) < 0)
+    if (!cvs_mkdir (tmp, update_dir, warn ? 0 : MD_FATAL))
     {
 	free (tmp);
 	tmp = NULL;
-
-	/* We want to print out the entire update_dir, since a lot of
-	   our code calls this function with dir == "." or dir ==
-	   NULL.  I hope that gives enough information in cases like
-	   absolute pathnames; printing out xgetcwd() or something would
-	   be way too verbose in the common cases.  */
-
-	if (warn)
-	{
-	    /* The reason that this is a warning, rather than silently
-	       just skipping creating the directory, is that we don't want
-	       CVS's behavior to vary subtly based on factors (like directory
-	       permissions) which are not made clear to the user.  With
-	       the warning at least we let them know what is going on.  */
-	    error (0, errno, "warning: cannot make directory %s in %s",
-		   CVSADM, update_dir);
-	    return 1;
-	}
-	else
-	    error (1, errno, "cannot make directory %s in %s",
-		   CVSADM, update_dir);
+	return 1;
     }
-    else
-    {
-	free (tmp);
-	tmp = NULL;
-    }
+    /* else */
+
+    free (tmp);
+    tmp = NULL;
 
     /* record the current cvs root for later use */
 

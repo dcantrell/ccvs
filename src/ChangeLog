@@ -1,3 +1,23 @@
+2007-08-24  Derek Price  <derek@ximbiot.com>
+
+	Simplify code using new GNULIB modules.
+	* add.c (add_directory), base.c (base_checkout), checkin.c (Checkin),
+	checkout.c (emptydir_name, build_dirs_and_chdir), client.c
+	(call_in_directory, update_entries), commit.c (checkaddfile),
+	create_adm.c (Create_Admin), edit.c (edit_file, edit_fileproc),
+	fileattr.c (fileattr_write), import.c (import, process_import_file,
+	import_descend_dir), lock.c (lock_name), ls.c (ls_direntproc),
+	mkmodules.c (init), modules.c (my_modules), update.c
+	(update_dirent_proc): Replace directory access with new functions.
+	* file_subr.c (make_directory, make_directories, mkdir_if_needed):
+	Remove in favor of...
+	* subr.c (mkdir_i, cvs_mkdir_i, cvs_mkdir, cvs_xmkdir,
+	mkdir_callback, mkdir_announce_callback, cvs_mkdirs_i, cvs_mkdirs,
+	cvs_xmkdirs): ...these new functions.
+	* subr.h (cvs_mkdir, cvs_xmkdir, cvs_mkdirs, cvs_xmkdirs): New
+	prototypes.
+	* sanity.sh (abspath-4, toplevel-12): Compensate for the above.
+
 2007-08-22  Derek Price  <derek@ximbiot.com>
 
 	* server.c (serve_init): Remove unnecessary argument to printf style

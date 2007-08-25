@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
@@ -232,7 +233,7 @@ lock_name (const char *repository, const char *name)
 	else
 	{
 	    if (S_ISDIR (sb.st_mode))
-		goto created;
+		goto exists;
 	    else
 		error (1, 0, "%s is not a directory", retval);
 	}
@@ -258,42 +259,9 @@ lock_name (const char *repository, const char *name)
 	new_mode = sb.st_mode;
 	save_umask = umask (0000);
 	saved_umask = 1;
+	cvs_xmkdirs (retval, new_mode, NULL, 0);
 
-	p = short_repos;
-	while (1)
-	{
-	    while (!ISSLASH (*p) && *p != '\0')
-		++p;
-	    if (ISSLASH (*p))
-	    {
-		strncpy (q, short_repos, p - short_repos);
-		q[p - short_repos] = '\0';
-		if (!ISSLASH (q[p - short_repos - 1])
-		    && CVS_MKDIR (retval, new_mode) < 0)
-		{
-		    int saved_errno = errno;
-		    if (saved_errno != EEXIST)
-			error (1, errno, "cannot make directory %s", retval);
-		    else
-		    {
-			if (stat (retval, &sb) < 0)
-			    error (1, errno, "cannot stat %s", retval);
-			new_mode = sb.st_mode;
-		    }
-		}
-		++p;
-	    }
-	    else
-	    {
-		strcpy (q, short_repos);
-		if (CVS_MKDIR (retval, new_mode) < 0
-		    && errno != EEXIST)
-		    error (1, errno, "cannot make directory %s", retval);
-		goto created;
-	    }
-	}
-    created:;
-
+exists:
 	strcat (retval, "/");
 	strcat (retval, name);
 

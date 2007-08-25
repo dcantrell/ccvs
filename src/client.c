@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2006 The Free Software Foundation, Inc.
+ * Copyright (C) 2007 The Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -952,7 +952,7 @@ call_in_directory (const char *pathname,
 		error (1, 0, "rename the directory and try again");
 	    }
 
-	    if (mkdir_if_needed (dir))
+	    if (!cvs_xmkdir (dir, NULL, MD_EXIST_OK))
 	    {
 		/* It already existed, fine.  Just keep going.  */
 	    }
@@ -1914,7 +1914,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    /* A real checkin.  */
 	    char *basefile = make_base_file_name (filename, vn);
 
-	    mkdir_if_needed (CVSADM_BASE);
+	    cvs_xmkdir (CVSADM_BASE, NULL, MD_EXIST_OK);
 	    copy_file (filename, basefile);
 
 	    if ((n = findnode_fn (sig_cache, short_pathname)))
@@ -2387,7 +2387,7 @@ client_base_checkout (void *data_arg, List *ent_list,
 	bool verify = get_verify_checkouts (true);
 
 	if (!*istemp)
-	    mkdir_if_needed (CVSADM_BASE);
+	    cvs_xmkdir (CVSADM_BASE, NULL, MD_EXIST_OK);
 	e = xfopen (basefile, bin ? FOPEN_BINARY_WRITE : "w");
 	if (fwrite (buf, sizeof *buf, size, e) != size)
 	    error (1, errno, "cannot write `%s'", fullbase);

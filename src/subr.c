@@ -30,7 +30,9 @@
 #include "canonicalize.h"
 #include "canon-host.h"
 #include "getline.h"
+#include "mkdir-p.h"
 #include "mreadlink.h"
+#include "savewd.h"
 #include "vasnprintf.h"
 
 /* CVS headers.  */
@@ -2193,3 +2195,189 @@ is_admin (void)
     return true;
 }
 #endif /* HAVE_CVS_ADMIN_GROUP */
+
+
+
+/* Return true if NAME is created.  If FATAL is true, exit on errors.
+ * Otherwise, return false.
+ */
+static inline bool
+mkdir_i (const char *name, mode_t mode,
+	 const char *update_dir, unsigned int flags)
+{
+    bool err = mkdir (name, mode);
+    if (err && !(flags & MD_EXIST_OK && errno == EEXIST)
+	&& (flags & MD_FATAL || !(flags & MD_QUIET)))
+    {
+	bool uud = update_dir && strlen (update_dir)
+		   && strcmp (update_dir, ".");
+	error (flags & MD_FATAL, errno, "cannot make directory `%s%s%s'",
+	       uud ? update_dir : "", uud ? "/" : "", name);
+    }
+    return !err;
+}
+
+
+
+/* Returns true if NAME was created, false otherwise.
+ *
+ * GLOBALS
+ *   cvsumask	Set umask before creating driectories if FLAGS & MD_REPO.
+ *   noexec	If set, skip directory creation unless FLAGS & MD_FORCE.
+ */
+static inline bool
+cvs_mkdir_i (const char *name, mode_t mode,
+	     const char *update_dir, unsigned int flags)
+{
+    mode_t omask;
+    bool retval;
+
+    if (noexec && !(flags & MD_FORCE)) return false;
+
+    /* Use umask(CVSUMASK) rather than CVSUMASK & 0777 since CVSUMASK could be
+     * more permissive than OMASK.
+     */
+    if (flags & MD_REPO)
+	omask = umask (cvsumask);
+
+    retval = mkdir_i (name, mode, update_dir, flags);
+
+    if (flags & MD_REPO)
+	umask (omask);
+
+    return retval;
+}
+
+
+
+/* Create directory NAME.
+ *
+ * GLOBALS
+ *   cvsumask
+ *   noexec	If set, skip directory creation.
+ *
+ * RETURNS
+ *   True if NAME was created, false otherwise.
+ */
+bool
+cvs_mkdir (const char *name, const char *update_dir, unsigned int flags)
+{
+    return cvs_mkdir_i (name, 0777, update_dir, flags);
+}
+
+
+
+/*
+ * Make a directory and die with a message if it fails.
+ *
+ * GLOBALS
+ *   cvsumask
+ *   noexec	If set, skip directory creation.
+ */
+bool
+cvs_xmkdir (const char *name, const char *update_dir, unsigned int flags)
+{
+    return cvs_mkdir_i (name, 0777, update_dir, flags | MD_FATAL);
+}
+
+
+
+/*
+ * Closure struct for mkdir_callback.
+ */
+struct mkdir_callback_closure
+{
+    mode_t mode;
+    unsigned int flags;
+    const char *update_dir;
+};
+
+
+
+/*
+ * Callback for make_dir_parents which honors FLAGS.
+ */
+int
+mkdir_callback (const char *child, const char *dir, void *closure)
+{
+    struct mkdir_callback_closure *mcc = closure;
+    return cvs_mkdir_i (dir, mcc->mode, mcc->update_dir,
+			mcc->flags | MD_EXIST_OK) ? 0 : -1;
+}
+
+
+
+/*
+ * make_dir_parents() announce callback which does nothing.
+ */
+void
+mkdir_announce_callback (const char *dir, void *closure)
+{
+    return;
+}
+
+
+
+/* Returns true if complete path to NAME was created, false otherwise.
+ *
+ * GLOBALS
+ *   cvsumask	Set umask before creating driectories if FLAGS & MD_REPO.
+ *   noexec	If set, skip directory creation unless FLAGS & MD_FORCE.
+ */
+static inline bool
+cvs_mkdirs_i (const char *name, mode_t mode, const char *update_dir,
+	      unsigned int flags)
+{
+    struct mkdir_callback_closure mcc;
+    struct savewd wd;
+    bool retval;
+
+    if (noexec && !(flags & MD_FORCE)) return false;
+    if (isdir (name))
+    {
+	/* Have to set EEXIST explicitly since make_dir_parents will not
+	 * do so when MAKE_ANCESTOR is supplied.
+	 */
+	if (!(flags & MD_EXIST_OK)) errno = EEXIST;
+	return false;
+    }
+
+    mcc.mode = mode;
+    mcc.flags = flags;
+    mcc.update_dir = NULL;
+
+    savewd_init (&wd);
+    retval = make_dir_parents ((char *)name, &wd, mkdir_callback, &mcc,
+			       mode, mkdir_announce_callback, 0777, -1, -1,
+			       true);
+    if (!retval && !(flags & MD_EXIST_OK && errno == EEXIST)
+	&& (flags & MD_FATAL || !(flags & MD_QUIET)))
+    {
+	bool uud = update_dir && strlen (update_dir)
+		   && strcmp (update_dir, ".");
+	error (flags & MD_FATAL, errno, "cannot make directory tree `%s%s%s'",
+	       uud ? update_dir : "", uud ? "/" : "", name);
+    }
+    savewd_restore (&wd, 0);
+    savewd_finish (&wd);
+
+    return retval;
+}
+
+
+
+bool
+cvs_mkdirs (const char *name, mode_t mode, const char *update_dir,
+	    unsigned int flags)
+{
+    return cvs_mkdirs_i (name, mode, update_dir, flags);
+}
+
+
+
+bool
+cvs_xmkdirs (const char *name, mode_t mode, const char *update_dir,
+	     unsigned int flags)
+{
+    return cvs_mkdirs_i (name, mode, update_dir, flags | MD_FATAL);
+}

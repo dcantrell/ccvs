@@ -16136,9 +16136,9 @@ U $TESTDIR/1/2/file1"
 	  # Now try someplace where we don't have permission.
 	  mkdir ${TESTDIR}/barf
 	  chmod -w ${TESTDIR}/barf
-	  dotest_fail abspath-4r "${testcvs} co -d ${TESTDIR}/barf/sub mod1" \
-"${SPROG} \[checkout aborted\]: cannot make directory sub: Permission denied" \
-"${SPROG} \[checkout aborted\]: absolute pathnames invalid for server (specified .${TESTDIR}/barf/sub.)"
+	  dotest_fail abspath-4 "$testcvs co -d $TESTDIR/barf/sub mod1" \
+"$SPROG \[checkout aborted\]: cannot make directory \`sub': Permission denied" \
+"$SPROG \[checkout aborted\]: absolute pathnames invalid for server (specified \`$TESTDIR/barf/sub')"
 	  chmod +w ${TESTDIR}/barf
 	  rmdir ${TESTDIR}/barf
 	  # Done.  Nothing to clean up.
@@ -16355,13 +16355,13 @@ U top-dir/file1"
 	  fi
 	  # Now see whether CVS has trouble because it can't create CVS.
 	  # First string is for local, second is for remote.
-	  dotest toplevel-12 "${testcvs} co top-dir" \
-"${SPROG} checkout: warning: cannot make directory CVS in \.: Permission denied
-${SPROG} checkout: Updating top-dir" \
-"${CPROG} checkout: warning: cannot make directory CVS in \.: Permission denied
-${CPROG} checkout: in directory \.:
-${CPROG} checkout: cannot open CVS/Entries for reading: No such file or directory
-${SPROG} checkout: Updating top-dir"
+	  dotest toplevel-12 "$testcvs co top-dir" \
+"$SPROG checkout: cannot make directory \`CVS': Permission denied
+$SPROG checkout: Updating top-dir" \
+"$SPROG checkout: cannot make directory \`CVS': Permission denied
+$SPROG checkout: in directory \.:
+$SPROG checkout: cannot open CVS/Entries for reading: No such file or directory
+$SPROG checkout: Updating top-dir"
 
 	  chmod +w ../1
 

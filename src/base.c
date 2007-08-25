@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 2005-2007 The Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -262,7 +262,7 @@ base_checkout (RCSNode *rcs, struct file_info *finfo,
     if (noexec)
 	return 0;
 
-    mkdir_if_needed (CVSADM_BASE);
+    cvs_xmkdir (CVSADM_BASE, NULL, MD_EXIST_OK);
 
     assert (!current_parsed_root->isremote);
 

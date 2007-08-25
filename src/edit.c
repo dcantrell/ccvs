@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 The Free Software Foundation, Inc.
+ * Copyright (C) 2007 The Free Software Foundation, Inc.
  *
  * Implementation for "cvs edit", "cvs watch on", and related commands
  *
@@ -355,7 +355,7 @@ edit_file (void *data, List *ent_list, const char *short_pathname,
     rev = ((Entnode *) node->data)->version;
 
     xchmod (filename, 1);
-    mkdir_if_needed (CVSADM_BASE);
+    cvs_xmkdir (CVSADM_BASE, NULL, MD_EXIST_OK);
     basefn = make_base_file_name (filename, rev);
 
     if (!isfile (basefn))
@@ -471,7 +471,7 @@ edit_fileproc (void *callerdat, struct file_info *finfo)
        copy so that if the user removes the working file, then restores it
        with "cvs update" (which clears _editors but does not update
        CVSADM_BASE), then a future "cvs edit" can still win.  */
-    /* Could save a system call by only calling mkdir_if_needed if
+    /* Could save a system call by only calling cvs_xmkdir() if
        trying to create the output file fails.  But copy_file isn't
        set up to facilitate that.  */
 #ifdef SERVER_SUPPORT

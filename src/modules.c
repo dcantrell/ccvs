@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
@@ -552,7 +553,7 @@ module `%s' is a request for a file in a module which is not a directory",
 	dir = where ? where : (mwhere ? mwhere : mname);
 	/* XXX - think about making null repositories at each dir here
 		 instead of just at the bottom */
-	make_directories (dir);
+	cvs_xmkdirs (dir, 0777, NULL, MD_EXIST_OK);
 	if (CVS_CHDIR (dir) < 0)
 	{
 	    error (0, errno, "cannot chdir to %s", dir);

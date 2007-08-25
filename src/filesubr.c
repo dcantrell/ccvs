@@ -294,67 +294,6 @@ isaccessible (const char *file, const int mode)
 
 
 /*
- * Make a directory and die if it fails
- */
-void
-make_directory (const char *name)
-{
-    struct stat sb;
-
-    if (stat (name, &sb) == 0 && (!S_ISDIR (sb.st_mode)))
-	    error (0, 0, "%s already exists but is not a directory", name);
-    if (!noexec && mkdir (name, 0777) < 0)
-	error (1, errno, "cannot make directory %s", name);
-}
-
-/*
- * Make a path to the argument directory, printing a message if something
- * goes wrong.
- */
-void
-make_directories (const char *name)
-{
-    char *cp;
-
-    if (noexec)
-	return;
-
-    if (mkdir (name, 0777) == 0 || errno == EEXIST)
-	return;
-    if (! existence_error (errno))
-    {
-	error (0, errno, "cannot make path to %s", name);
-	return;
-    }
-    if ((cp = strrchr (name, '/')) == NULL)
-	return;
-    *cp = '\0';
-    make_directories (name);
-    *cp++ = '/';
-    if (*cp == '\0')
-	return;
-    (void) mkdir (name, 0777);
-}
-
-/* Create directory NAME if it does not already exist; fatal error for
-   other errors.  Returns 0 if directory was created; 1 if it already
-   existed.  */
-int
-mkdir_if_needed (const char *name)
-{
-    if (mkdir (name, 0777) < 0)
-    {
-	int save_errno = errno;
-	if (save_errno != EEXIST && !isdir (name))
-	    error (1, save_errno, "cannot make directory %s", name);
-	return 1;
-    }
-    return 0;
-}
-
-
-
-/*
  * Change the mode of a file, either adding write permissions, or removing
  * all write permissions.  Either change honors the current umask setting.
  *

@@ -119,4 +119,15 @@ bool is_admin (void);
 #   define is_admin()	true
 # endif
 
+#define MD_QUIET	(1 << 0)	/* Don't spout on nonfatal errors.  */
+#define MD_FATAL	(1 << 1)	/* Die on error.  */
+#define MD_REPO		(1 << 2)	/* Honor CVSUMASK.  */
+#define MD_FORCE	(1 << 3)	/* Ignore NOEXEC.  */
+#define MD_EXIST_OK	(1 << 4)	/* Ok if directory already exists.  */
+bool cvs_mkdir (const char *name, const char *update_dir, unsigned int flags);
+bool cvs_xmkdir (const char *name, const char *update_dir, unsigned int flags);
+bool cvs_mkdirs (const char *name, mode_t mode, const char *update_dir,
+		 unsigned int flags);
+bool cvs_xmkdirs (const char *name, mode_t mode, const char *update_dir,
+		  unsigned int flags);
 #endif /* !SUBR_H */

@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
@@ -2096,23 +2097,16 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 
 	if (adding_on_branch)
 	{
-	    mode_t omask;
 	    rcsname = xmalloc (strlen (repository)
 			       + sizeof (CVSATTIC)
 			       + strlen (file)
 			       + sizeof (RCSEXT)
 			       + 3);
-	    (void) sprintf (rcsname, "%s/%s", repository, CVSATTIC);
-	    omask = umask (cvsumask);
-	    if (CVS_MKDIR (rcsname, 0777) != 0 && errno != EEXIST)
-		error (1, errno, "cannot make directory `%s'", rcsname);
-	    (void) umask (omask);
-	    (void) sprintf (rcsname,
-			    "%s/%s/%s%s",
-			    repository,
-			    CVSATTIC,
-			    file,
-			    RCSEXT);
+	    sprintf (rcsname, "%s/%s", repository, CVSATTIC);
+	    if (!isdir (rcsname))
+		cvs_xmkdir (rcsname, NULL, MD_REPO);
+	    sprintf (rcsname, "%s/%s/%s%s",
+		     repository, CVSATTIC, file, RCSEXT);
 	}
 	else
 	    rcsname = Xasprintf ("%s/%s%s", repository, file, RCSEXT);

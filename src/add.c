@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (c) 1992, Brian Berliner and Jeff Polk
@@ -818,7 +819,6 @@ add_directory (struct file_info *finfo)
 
     if (!isdir (rcsdir))
     {
-	mode_t omask;
 	Node *p;
 	List *ulist;
 	struct logfile_info *li;
@@ -831,17 +831,8 @@ add_directory (struct file_info *finfo)
 	   directories would be to have to add and commit directories
 	   like for files.  The code was #if 0'd at least since CVS 1.5.  */
 
-	if (!noexec)
-	{
-	    omask = umask (cvsumask);
-	    if (CVS_MKDIR (rcsdir, 0777) < 0)
-	    {
-		error (0, errno, "cannot mkdir %s", rcsdir);
-		(void) umask (omask);
-		goto out;
-	    }
-	    (void) umask (omask);
-	}
+	if (!noexec && !cvs_mkdir (rcsdir, NULL, MD_REPO) && errno != EEXIST)
+	    goto out;
 
 	/* Now set the default file attributes to the ones we inherited
 	   from the parent directory.  */
