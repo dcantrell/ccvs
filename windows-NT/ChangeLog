@@ -1,3 +1,15 @@
+2007-08-24  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (sys/stat.h, stamp-sh3): Create sys/stat.h.
+	* config.h.in.in [mkdir]: Define to woe32_mkdir.
+	* config.h.in.footer: Don't #include <direct.h>.
+	(wnt_mkdir): Replace proto...
+	(woe32_mkdir): ...with this one.
+	* mkdir.c: #include <config.h> & <direct.h>.
+	(wnt_mkdir): Rename to...
+	(woe32_mkdir): ...this.
+	* filesubr.c: Include direct.h.
+
 2007-08-22  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (config.h): Use better delimiters to pass / in sed
@@ -66,8 +78,6 @@
 2006-07-12  Derek Price  <derek@ximbiot.com>
 
 	* dirent.h, dirent.c: Restore GPL license.
-
-2006-07-11  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in [HAVE_DIRECT_H, HAVE_DIRENT_H]: Remove obsolescent
 	macros.
