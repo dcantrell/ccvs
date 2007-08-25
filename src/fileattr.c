@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 The Free Software Foundation, Inc.
+ * Copyright (C) 2007 The Free Software Foundation, Inc.
  *
  * Implementation for file attribute munging features.
  *
@@ -637,10 +637,9 @@ fileattr_write (void)
 
 	    repname = Xasprintf ("%s/%s", fileattr_stored_repos, CVSREP);
 
-	    if (CVS_MKDIR (repname, 0777) < 0 && errno != EEXIST)
+	    if (!isdir (repname) && !cvs_mkdir (repname, NULL, MD_REPO))
 	    {
-		error (0, errno, "cannot make directory %s", repname);
-		(void) umask (omask);
+		umask (omask);
 		free (fname);
 		free (repname);
 		return;

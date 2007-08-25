@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
@@ -1160,14 +1161,8 @@ emptydir_name (void)
 
     repository = Xasprintf ("%s/%s/%s", current_parsed_root->directory,
 			    CVSROOTADM, CVSNULLREPOS);
-    if (!isfile (repository))
-    {
-	mode_t omask;
-	omask = umask (cvsumask);
-	if (CVS_MKDIR (repository, 0777) < 0)
-	    error (1, errno, "cannot create %s", repository);
-	(void) umask (omask);
-    }
+    if (!isdir (repository))
+	cvs_xmkdir (repository, NULL, MD_REPO);
     return repository;
 }
 
@@ -1209,7 +1204,7 @@ build_dirs_and_chdir (struct dir_to_build *dirs, int sticky)
 
 	if (*dir)
 	{
-	    made_dir = !mkdir_if_needed (dir);
+	    made_dir = cvs_xmkdir (dir, NULL, MD_EXIST_OK);
 	    if (made_dir) Subdir_Register (NULL, NULL, dir);
 	}
 	else

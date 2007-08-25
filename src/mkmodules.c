@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
@@ -1235,10 +1236,10 @@ init (int argc, char **argv)
        old cvsinit.sh script did.  Few utilities do that, and a
        non-existent parent directory is as likely to be a typo as something
        which needs to be created.  */
-    mkdir_if_needed (current_parsed_root->directory);
+    cvs_xmkdir (current_parsed_root->directory, NULL, MD_REPO | MD_EXIST_OK);
 
     adm = Xasprintf ("%s/%s", current_parsed_root->directory, CVSROOTADM);
-    mkdir_if_needed (adm);
+    cvs_xmkdir (adm, NULL, MD_REPO | MD_EXIST_OK);
 
     /* This is needed because we pass "fileptr->filename" not "info"
        to add_rcs_file below.  I think this would be easy to change,
@@ -1248,7 +1249,7 @@ init (int argc, char **argv)
 	error (1, errno, "cannot change to directory %s", adm);
 
     /* Make Emptydir so it's there if we need it */
-    mkdir_if_needed (CVSNULLREPOS);
+    cvs_xmkdir (CVSNULLREPOS, NULL, MD_REPO | MD_EXIST_OK);
 
     /* 80 is long enough for all the administrative file names, plus
        "/" and so on.  */

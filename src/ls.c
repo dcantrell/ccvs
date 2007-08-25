@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2006 The Free Software Foundation, Inc.
- * Copyright (c) 2004, Derek R. Price & Ximbiot <http://ximbiot.com>
+ * Copyright (C) 2007 The Free Software Foundation, Inc.
+ * Copyright (c) 2004-2007, Derek R. Price & Ximbiot LLC <http://ximbiot.com>
  * Copyright (c) 2001, Tony Hoyle
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
@@ -528,7 +528,7 @@ ls_direntproc (void *callerdat, const char *dir, const char *repos,
 	    if (!created_dir)
 		created_dir = xstrdup (update_dir);
 
-	    make_directory (dir);
+	    cvs_xmkdir (dir, NULL, 0);
 	    Create_Admin (dir, update_dir, repos, show_tag, show_date,
 			  nonbranch, 0, 0);
 	    Subdir_Register (entries, NULL, dir);

@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
@@ -358,8 +359,7 @@ import (int argc, char **argv)
      * Make all newly created directories writable.  Should really use a more
      * sophisticated security mechanism here.
      */
-    (void) umask (cvsumask);
-    make_directories (repository);
+    cvs_xmkdirs (repository, 0777, NULL, MD_REPO | MD_EXIST_OK);
 
     /* Create the logfile that will be logged upon completion */
     if ((logfp = cvs_temp_file (&tmpfile)) == NULL)
@@ -623,8 +623,8 @@ process_import_file (char *message, char *vfile, char *vtag, int targc,
 		/* Attempt to make the Attic directory, in case it
 		   does not exist.  */
 		(void) sprintf (rcs, "%s/%s", repository, CVSATTIC);
-		if (CVS_MKDIR (rcs, 0777 ) != 0 && errno != EEXIST)
-		    error (1, errno, "cannot make directory `%s'", rcs);
+		if (!isdir (rcs))
+		    cvs_xmkdir (rcs, NULL, MD_REPO | MD_EXIST_OK);
 
 		/* Note that the above clobbered the path name, so we
 		   recreate it here.  */
@@ -1843,13 +1843,13 @@ import_descend_dir (char *message, char *dir, char *vtag, int targc,
 	    err = 1;
 	    goto out;
 	}
-	if (noexec == 0 && CVS_MKDIR (repository, 0777) < 0)
+	if (!noexec && !cvs_mkdir (repository, NULL, MD_REPO | MD_QUIET))
 	{
 	    ierrno = errno;
 	    fperrmsg (logfp, 0, ierrno,
-		      "ERROR: cannot mkdir %s -- not added", repository);
+		      "ERROR: cannot mkdir `%s' -- not added", repository);
 	    error (0, ierrno,
-		   "ERROR: cannot mkdir %s -- not added", repository);
+		   "ERROR: cannot mkdir `%s' -- not added", repository);
 	    err = 1;
 	    goto out;
 	}
