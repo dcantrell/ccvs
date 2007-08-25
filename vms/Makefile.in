@@ -96,8 +96,9 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/inline.m4 $(top_srcdir)/m4/intlmacosx.m4 \
 	$(top_srcdir)/m4/intmax_t.m4 $(top_srcdir)/m4/inttypes-pri.m4 \
 	$(top_srcdir)/m4/inttypes.m4 $(top_srcdir)/m4/inttypes_h.m4 \
-	$(top_srcdir)/m4/lchown.m4 $(top_srcdir)/m4/lib-ld.m4 \
-	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
+	$(top_srcdir)/m4/lchmod.m4 $(top_srcdir)/m4/lchown.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 \
 	$(top_srcdir)/m4/localcharset.m4 $(top_srcdir)/m4/longlong.m4 \
 	$(top_srcdir)/m4/lseek.m4 $(top_srcdir)/m4/lstat.m4 \
 	$(top_srcdir)/m4/malloca.m4 $(top_srcdir)/m4/mbchar.m4 \
@@ -106,15 +107,17 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/mbstate_t.m4 $(top_srcdir)/m4/md5.m4 \
 	$(top_srcdir)/m4/memchr.m4 $(top_srcdir)/m4/memmove.m4 \
 	$(top_srcdir)/m4/mempcpy.m4 $(top_srcdir)/m4/memrchr.m4 \
-	$(top_srcdir)/m4/minmax.m4 $(top_srcdir)/m4/mkdir-slash.m4 \
+	$(top_srcdir)/m4/minmax.m4 $(top_srcdir)/m4/mkancesdirs.m4 \
+	$(top_srcdir)/m4/mkdir-p.m4 $(top_srcdir)/m4/mkdir-slash.m4 \
 	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
 	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/netinet_in_h.m4 \
 	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/openat.m4 \
 	$(top_srcdir)/m4/pathmax.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/quotearg.m4 \
-	$(top_srcdir)/m4/readlink.m4 $(top_srcdir)/m4/regex.m4 \
-	$(top_srcdir)/m4/rename.m4 $(top_srcdir)/m4/rpmatch.m4 \
-	$(top_srcdir)/m4/save-cwd.m4 $(top_srcdir)/m4/setenv.m4 \
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/quote.m4 \
+	$(top_srcdir)/m4/quotearg.m4 $(top_srcdir)/m4/readlink.m4 \
+	$(top_srcdir)/m4/regex.m4 $(top_srcdir)/m4/rename.m4 \
+	$(top_srcdir)/m4/rpmatch.m4 $(top_srcdir)/m4/save-cwd.m4 \
+	$(top_srcdir)/m4/savewd.m4 $(top_srcdir)/m4/setenv.m4 \
 	$(top_srcdir)/m4/size_max.m4 $(top_srcdir)/m4/snprintf.m4 \
 	$(top_srcdir)/m4/socklen.m4 $(top_srcdir)/m4/sockpfaf.m4 \
 	$(top_srcdir)/m4/ssize_t.m4 $(top_srcdir)/m4/stdbool.m4 \
