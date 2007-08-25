@@ -26,7 +26,9 @@
 
 #include "JmgStat.h"
 
+/* Get WOE32 mkdir().  */
 #undef mkdir
+#include <direct.h>
 
 static int deep_remove_dir (const char *path);
 

@@ -1421,7 +1421,7 @@
 #undef mbstate_t
 
 /* Define to rpl_mkdir if the replacement function should be used. */
-#undef mkdir
+#define mkdir woe32_mkdir
 
 /* Define to rpl_mktime if the replacement function should be used. */
 #undef mktime

@@ -132,8 +132,8 @@
 /* #define SOCK_STRERROR sock_strerror */
 char *sock_strerror (int errnum);
 
-/* #define CVS_MKDIR wnt_mkdir */
-int wnt_mkdir (const char *PATH, int MODE);
+/* #define mkdir woe32_mkdir */
+int woe32_mkdir (const char *path, int mode);
 
 /* #define CVS_RENAME wnt_rename */
 int wnt_rename (const char *, const char *);
@@ -150,11 +150,6 @@ void wnt_start_server (int *tofd, int *fromfd,
 
 /* #define stat wnt_stat and #define lstat wnt_stat */
 int wnt_stat (const char *file, struct wnt_stat *sb);
-
-/* =============== Special mkdir Prototype Handling Follows =============== */
-
-#include <direct.h>
-#define mkdir wnt_mkdir
 
 /* ===================== Special Function Definitions ===================== */
 
