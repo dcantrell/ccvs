@@ -1164,8 +1164,9 @@ in_root (const char *path)
 
 	if (isdir (cp))
 	{
+	    bool foundit;
 	    char *adm = Xasprintf ("%s/%s", cp, CVSROOTADM);
-	    bool foundit = isdir (adm);
+	    foundit = isdir (adm);
 	    free (adm);
 	    if (foundit) return cp;
 	}
@@ -1204,6 +1205,7 @@ init (int argc, char **argv)
     /* Exit status.  */
     int err = 0;
 
+    char *root_dir;
     const struct admin_file *fileptr;
 
     assert (!server_active);
@@ -1224,7 +1226,7 @@ init (int argc, char **argv)
     }
 #endif /* CLIENT_SUPPORT */
 
-    char *root_dir = in_root (current_parsed_root->directory);
+    root_dir = in_root (current_parsed_root->directory);
 
     if (root_dir && strcmp (root_dir, current_parsed_root->directory))
 	error (1, 0,
