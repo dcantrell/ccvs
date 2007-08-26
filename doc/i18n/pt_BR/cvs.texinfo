@@ -14488,11 +14488,11 @@ Synonyms: co, get
 @c <en>@code{checkout} before using most of the other @sc{cvs}
 @c <en>commands, since most of them operate on your working
 @c <en>directory.
-Create or update a working directory containing copies of the
-source files specified by @var{modules}.  You must execute
-@code{checkout} before using most of the other @sc{cvs}
-commands, since most of them operate on your working
-directory.
+Cria ou atualiza um diretório de trabalho contendo
+cópias dos fontes especificados em @var{modules}.  Você
+deve executar @code{checkout} antes de usar a maioria
+dos outros comandos do @sc{cvs}, já que a maioria age
+no seu diretório de trabalho.
 
 @c <en>The @var{modules} are either
 @c <en>symbolic names for some
@@ -14500,12 +14500,11 @@ directory.
 @c <en>directories or files in the repository.  The symbolic
 @c <en>names are defined in the @samp{modules} file.
 @c <en>@xref{modules}.
-The @var{modules} are either
-symbolic names for some
-collection of source directories and files, or paths to
-directories or files in the repository.  The symbolic
-names are defined in the @samp{modules} file.
-@xref{modules}.
+O arquivo @var{modules} tem tanto nomes simbólicos para
+coleções de arquivos e diretórios com códigos fonte,
+como também caminhos para diretórios ou arquivos no
+repositório.  Os nomes simbólicos são definidos no
+arquivo @samp{modules}. @xref{modules}.
 @c Needs an example, particularly of the non-"modules"
 @c case but probably of both.
 
@@ -14521,14 +14520,16 @@ names are defined in the @samp{modules} file.
 @c <en>sources); update them to include new changes applied by
 @c <en>others to the source repository; or commit your work as
 @c <en>a permanent change to the source repository.
-Depending on the modules you specify, @code{checkout} may
-recursively create directories and populate them with
-the appropriate source files.  You can then edit these
-source files at any time (regardless of whether other
-software developers are editing their own copies of the
-sources); update them to include new changes applied by
-others to the source repository; or commit your work as
-a permanent change to the source repository.
+Dependendo dos módulos que você especifica, o
+@code{checkout} pode recursivamente criar diretórios e
+populá-los com os fontes apropriados.  Você pode então
+editar estes arquivos a qualquer momento (a despeito de
+outros desenvolvedores estarem editando as suas
+próprias cópias dos fontes); atualize eles (comando
+update) para incluir as novas alterações aplicadas por
+outros no repositório fonte; ou faça ???commit??? de
+seu trabalho fazendo com que suas mudanças fiquem
+permanentes no repositório fonte.
 
 @c <en>Note that @code{checkout} is used to create
 @c <en>directories.  The top-level directory created is always
