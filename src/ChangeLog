@@ -1,3 +1,7 @@
+2007-08-26  Larry Jones  <lawrence.jones@ugs.com>
+
+	* mkmodules.c (in_root, init): Unmix declarations and code.
+
 2007-08-22  Derek Price  <derek@ximbiot.com>
 
 	* add.c (add): Check last component of argument paths instead of the
