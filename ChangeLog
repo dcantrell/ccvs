@@ -1,3 +1,7 @@
+2007-08-26  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Don't call gettext macros - let GNULIB handle it.
+
 2007-08-23  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Depend on GNULIB for fseeko & ftello cruft.
