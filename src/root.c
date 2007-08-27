@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Poritons Copyright (c) 1992, Mark D. Baushke
@@ -23,9 +24,6 @@
 
 /* ANSI C headers.  */
 #include <assert.h>
-
-/* GNULIB headers.  */
-#include "getline.h"
 
 /* CVS headers.  */
 #include "repos.h"

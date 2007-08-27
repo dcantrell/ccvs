@@ -24,9 +24,6 @@
 # include <config.h>
 #endif
 
-/* GNULIB headers.  */
-#include "getline.h"
-
 /* CVS headers.  */
 #include "edit.h"
 #include "fileattr.h"

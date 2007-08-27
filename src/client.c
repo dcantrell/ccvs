@@ -27,7 +27,6 @@
 #include <inttypes.h>
 
 /* GNULIB headers.  */
-#include "getline.h"
 #include "save-cwd.h"
 
 /* CVS headers.  */

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1994-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 1994-2007 The Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@
 #endif
 
 /* GNULIB headers.  */
-#include "getline.h"
 #include "save-cwd.h"
 #include "yesno.h"
 
