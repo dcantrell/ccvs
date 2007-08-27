@@ -92,8 +92,10 @@ AC_DEFUN([gl_INIT],
   gl_UNISTD_MODULE_INDICATOR([getcwd])
   gl_GETDATE
   gl_FUNC_GETDELIM
+  gl_STDIO_MODULE_INDICATOR([getdelim])
   gl_FUNC_GETHOSTNAME
   gl_FUNC_GETLINE
+  gl_STDIO_MODULE_INDICATOR([getline])
   gl_GETLOGIN_R
   gl_UNISTD_MODULE_INDICATOR([getlogin_r])
   gl_GETNDELIM2
@@ -321,10 +323,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getdate.h
   lib/getdate.y
   lib/getdelim.c
-  lib/getdelim.h
   lib/gethostname.c
   lib/getline.c
-  lib/getline.h
   lib/getlogin_r.c
   lib/getndelim2.c
   lib/getndelim2.h

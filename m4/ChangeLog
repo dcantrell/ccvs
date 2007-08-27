@@ -1,3 +1,7 @@
+2007-08-26  Derek Price  <derek@ximbiot.com>
+
+	* getdelim.m4, getline.m4, stdio_h.m4: Update from GNULIB.
+
 2007-08-24  Derek Price  <derek@ximbiot.com>
 
 	* lchmod.m4, mkancesdirs.m4, mkdir-p.m4, quote.m4, savewd.m4: New
