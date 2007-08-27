@@ -21,9 +21,6 @@
 /* Verify interface.  */
 #include "fileattr.h"
 
-/* GNULIB headers.  */
-#include "getline.h"
-
 /* CVS headers.  */
 #include "repos.h"
 

@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (C) 1993 david d zuhn
@@ -19,7 +20,6 @@
 #endif
 
 #include "cvs.h"
-#include "getline.h"
 
 /* this file is to be found in the user's home directory */
 

@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (c) 1995, Cyclic Software, Bloomington, IN, USA
@@ -17,7 +18,6 @@
 #endif
 
 #include "cvs.h"
-#include "getline.h"
 
 /* There seems to be very little agreement on which system header
    getpass is declared in.  With a lot of fancy autoconfiscation,

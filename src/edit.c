@@ -22,7 +22,6 @@
 #include "edit.h"
 
 /* GNULIB headers.  */
-#include "getline.h"
 #include "yesno.h"
 
 /* CVS headers.  */

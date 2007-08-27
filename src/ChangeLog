@@ -1,3 +1,11 @@
+2007-08-26  Derek Price  <derek@ximbiot.com>
+
+	* base.c, client.c, commit.c, cvsrc.c, edit.c, entries.c, fileattr.c,
+	ignore.c, login.c, logmsg.c, mkmodules.c, myndbm.c, parseinfo.c,
+	patch.c, release.c, repos.c, root.c, server.c, subr.c, update.c,
+	wrapper.c: Remove obsolete includes of GNULIB's "getline.h" &
+	"getdelim.h".
+
 2007-08-26  Larry Jones  <lawrence.jones@ugs.com>
 
 	* mkmodules.c (in_root, init): Unmix declarations and code.
