@@ -1,3 +1,8 @@
+2007-08-26  Derek Price  <derek@ximbiot.com>
+
+	* mkmodules.c (in_root): Rename to...
+	(in_repository): ...this.
+
 2007-08-26  Larry Jones  <lawrence.jones@ugs.com>
 
 	* mkmodules.c (in_root, init): Unmix declarations and code.
