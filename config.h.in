@@ -107,10 +107,6 @@
    equally well (assuming that their PATH is reasonable). */
 #undef EDITOR_DFLT
 
-/* Define to 1 if translation of program messages to the user's native
-   language is requested. */
-#undef ENABLE_NLS
-
 /* Define to enable encryption support. */
 #undef ENCRYPTION
 
@@ -196,14 +192,6 @@
 /* Define to 1 if you have the `canonicalize_file_name' function. */
 #undef HAVE_CANONICALIZE_FILE_NAME
 
-/* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
-   CoreFoundation framework. */
-#undef HAVE_CFLOCALECOPYCURRENT
-
-/* Define to 1 if you have the MacOS X function CFPreferencesCopyAppValue in
-   the CoreFoundation framework. */
-#undef HAVE_CFPREFERENCESCOPYAPPVALUE
-
 /* Define to 1 if your system has a working `chown' function. */
 #undef HAVE_CHOWN
 
@@ -227,10 +215,6 @@
 
 /* Define if CVS_ADMIN_GROUP should be used. */
 #undef HAVE_CVS_ADMIN_GROUP
-
-/* Define if the GNU dcgettext() function is already present or preinstalled.
-   */
-#undef HAVE_DCGETTEXT
 
 /* Define to 1 if you have the declaration of `canonicalize_file_name', and to
    0 if you don't. */
@@ -518,9 +502,6 @@
 /* Define if you have the getspnam function. */
 #undef HAVE_GETSPNAM
 
-/* Define if the GNU gettext() function is already present or preinstalled. */
-#undef HAVE_GETTEXT
-
 /* Define to 1 if you have the `gettimeofday' function. */
 #undef HAVE_GETTIMEOFDAY
 
@@ -538,9 +519,6 @@
 
 /* Define to 1 if you have the <gssapi.h> header file. */
 #undef HAVE_GSSAPI_H
-
-/* Define if you have the iconv() function and it works. */
-#undef HAVE_ICONV
 
 /* Define if your compiler supports the #include_next directive. */
 #undef HAVE_INCLUDE_NEXT
@@ -1433,9 +1411,6 @@
 
 /* Define to a replacement function name for fnmatch(). */
 #undef fnmatch
-
-/* Define to a replacement function name for getline(). */
-#undef getline
 
 /* Define to a replacement function name for getpass(). */
 #undef getpass
