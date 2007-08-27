@@ -1153,7 +1153,7 @@ rename_rcsfile (char *temp, char *real)
  * repository.
  */
 static char *
-in_root (const char *path)
+in_repository (const char *path)
 {
     char *cp = xstrdup (path);
 
@@ -1225,7 +1225,7 @@ init (int argc, char **argv)
     }
 #endif /* CLIENT_SUPPORT */
 
-    root_dir = in_root (current_parsed_root->directory);
+    root_dir = in_repository (current_parsed_root->directory);
 
     if (root_dir && strcmp (root_dir, current_parsed_root->directory))
 	error (1, 0,
