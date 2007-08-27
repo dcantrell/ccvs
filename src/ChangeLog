@@ -1,5 +1,8 @@
 2007-08-26  Derek Price  <derek@ximbiot.com>
 
+	* mkmodules.c (in_root): Rename to...
+	(in_repository): ...this.
+
 	* base.c, client.c, commit.c, cvsrc.c, edit.c, entries.c, fileattr.c,
 	ignore.c, login.c, logmsg.c, mkmodules.c, myndbm.c, parseinfo.c,
 	patch.c, release.c, repos.c, root.c, server.c, subr.c, update.c,
