@@ -319,6 +319,7 @@ new_config (void)
 
     new->logHistory = xstrdup (ALL_HISTORY_REC_TYPES);
     new->RereadLogAfterVerify = LOGMSG_REREAD_ALWAYS;
+    new->FirstVerifyLogErrorFatal = true;
     new->UserAdminOptions = xstrdup ("k");
     new->MaxCommentLeaderLength = 20;
 #ifdef SERVER_SUPPORT
@@ -688,6 +689,9 @@ parse_config (const char *cvsroot, const char *path)
 		}
 	    }
 	}
+	else if (strcmp (line, "FirstVerifyLogErrorFatal") == 0)
+	    readBool (infopath, "FirstVerifyLogErrorFatal", p,
+		      &retval->FirstVerifyLogErrorFatal);
 	else if (strcmp (line, "TmpDir") == 0)
 	{
 	    if (retval->TmpDir) free (retval->TmpDir);

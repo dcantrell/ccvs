@@ -40,6 +40,12 @@ struct config
      */
     int RereadLogAfterVerify;
 
+    /* Should the verifymsg failures cause CVS to exit instantly or should
+     * the script be run in each directory before the application quits a la
+     * commitinfo.
+     */
+    bool FirstVerifyLogErrorFatal;
+
     char *UserAdminOptions;
 
     /* Control default behavior of 'cvs import' (-X option on or off) in

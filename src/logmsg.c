@@ -407,6 +407,22 @@ do_editor (const char *dir, char **messagep, const char *repository,
    process.  This verification is meant to be run whether or not the user 
    included the -m attribute.  unlike the do_editor function, this is 
    independant of the running of an editor for getting a message.
+
+   INPUTS
+     MESSAGEP	A pointer to the string to be verified.
+     REPOSITORY	The path to the CVS repository.
+     CHANGES	The list of changed files in this directory.
+
+   GLOBALS
+     config->FirstVerifyLogErrorFatal
+
+   RETURNS
+     0 for success.
+     1 for non-system errors when CONFIG->FirstVerifyLogErrorFatal isn't set.
+
+   ERRORS
+     Exits with a fatal error on system errors and when
+     CONFIG->FirstVerifyLogErrorFatal is set.
  */
 int
 do_verify (char **messagep, const char *repository, List *changes)
@@ -438,7 +454,8 @@ do_verify (char **messagep, const char *repository, List *changes)
 	free (data.fname);
 
 	errno = saved_errno;
-	error (err == -1 ? 1: 0, err == -1 ? errno : 0,
+	error (err == -1 || config->FirstVerifyLogErrorFatal ? 1: 0,
+	       err == -1 ? errno : 0,
 	       "Message verification failed.");
 	return err;
     }
