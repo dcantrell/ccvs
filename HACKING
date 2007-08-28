@@ -242,10 +242,9 @@ system lacks them, despite their not being required: <stdlib.h>, <string.h>.
 When the system does not lack these headers, they can sometimes not be
 standards compatible, but GCC provides a script, `fixincludes', for the purpose
 of fixing ANSI conformance problems and we think we can rely on asking users to
-either use GCC or run this script to fix conformance problems manually.  A
-GNULIB developer has made a statement that if this turns out to be a problem,
-GNULIB <stdlib.h> and <string.h> substitutes could be included in GNULIB, so if
-we discover the problem, this should be discussed on <bug-gnulib@gnu.org>.
+either use GCC or run this script to fix conformance problems manually.
+GNULIB also recently began providing wrappers for these headers, which should
+work around some deficiencies.
 
 Substitute C99 <stdbool.h> & <stdint.h> headers are included from GNULIB for
 platforms that lack one or both of these headers.  The
