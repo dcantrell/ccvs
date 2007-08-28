@@ -38,4 +38,11 @@ struct logfile_info
 				   add, or import, NULL for remove */
 };
 
+
+
+#define LOGMSG_REREAD_NEVER 0	/* do_verify - never  reread message */
+#define LOGMSG_REREAD_ALWAYS 1	/* do_verify - always reread message */
+#define LOGMSG_REREAD_STAT 2	/* do_verify - reread message if changed */
+int do_verify (char **messagep, const char *repository, List *changes);
+
 #endif /* LOGMSG_H */

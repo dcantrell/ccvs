@@ -21,6 +21,7 @@
 
 /* CVS includes.  */
 #include "history.h"
+#include "logmsg.h"
 #include "repos.h"
 
 #include "cvs.h"

@@ -20437,10 +20437,17 @@ $SPROG commit: Rebuilding administrative file database"
 
 	  cd ../first-dir
 	  echo line2 >>file1
-	  dotest_fail info-v2 "${testcvs} -q ci -m bogus" \
+	  dotest_fail info-v2a "$testcvs -q ci -m bogus" \
 "vscript $tempname file1 1\.5
 No BugId found\.
-${SPROG} \[commit aborted\]: Message verification failed"
+$SPROG commit: Message verification failed\.
+$SPROG \[commit aborted\]: correct above errors first!"
+
+	  dotest_fail info-v2b "$testcvs -q ci -m bogus file1" \
+"vscript $tempname file1 1\.5
+No BugId found\.
+$SPROG commit: Message verification failed\.
+$SPROG \[commit aborted\]: correct above errors first!"
 
 	  cat >${TESTDIR}/comment.tmp <<EOF
 BugId: 42
@@ -20460,7 +20467,8 @@ new revision: 1\.6; previous revision: 1\.5"
 	    "${testcvs} import -m bogus first-dir/another x y" \
 "vscript $tempname - Imported sources NONE
 No BugId found\.
-${SPROG} \[import aborted\]: Message verification failed"
+$SPROG import: Message verification failed\.
+$SPROG \[import aborted\]: correct above errors first!"
 
 	  # now verify that directory dependent verifymsgs work
 	  dotest info-v5 \
@@ -20491,7 +20499,8 @@ No conflicts created by this import"
 	      "${testcvs} import -m bogus first-dir/yet-another/and-another x y" \
 "vscript2 $tempname - Imported sources NONE
 $CVSROOT_DIRNAME/first-dir/yet-another/and-another
-$SPROG \[import aborted\]: Message verification failed"
+$SPROG import: Message verification failed\.
+$SPROG \[import aborted\]: correct above errors first!"
 	  else
 	    dotest info-v6 \
 	      "${testcvs} import -m bogus first-dir/yet-another/and-another x y" \
@@ -20507,14 +20516,17 @@ No conflicts created by this import"
 	  # The second text below occurs on Cygwin, where I assume execvp
 	  # does not return to let CVS print the error message when its
 	  # argument does not exist.
-	  dotest_fail info-v7 "${testcvs} import -m bogus missing-script x y" \
-"${SPROG} import: cannot exec ${TESTDIR}/bogus: No such file or directory
-${SPROG} \[import aborted\]: Message verification failed" \
-"${SPROG} \[import aborted\]: Message verification failed"
+	  dotest_fail info-v7 "$testcvs import -m bogus missing-script x y" \
+"$SPROG import: cannot exec $TESTDIR/bogus: No such file or directory
+$SPROG import: Message verification failed\.
+$SPROG \[import aborted\]: correct above errors first!" \
+"$SPROG import: Message verification failed\.
+$SPROG \[import aborted\]: correct above errors first!"
 
-	  dotest_fail info-v8 "${testcvs} import -m bogus missing-var x y" \
-"${SPROG} import: verifymsg:4: no such user variable \${=Bogus}
-${SPROG} \[import aborted\]: Message verification failed"
+	  dotest_fail info-v8 "$testcvs import -m bogus missing-var x y" \
+"$SPROG import: verifymsg:4: no such user variable \${=Bogus}
+$SPROG import: Message verification failed\.
+$SPROG \[import aborted\]: correct above errors first!"
 
 	  rm file2
 	  cd ..

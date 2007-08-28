@@ -1379,6 +1379,18 @@ check_filesdoneproc (void *callerdat, int err, const char *repos,
 	err += n;
     }
 
+    /* Get the log message.
+     *
+     * This, and the call to do_verify() used to be run once in
+     * check_dirent_proc() and once in commit_fileproc, but putting it here
+     * covers both cases (recursion and files specified on the command line).
+     */
+    got_message = 1;
+    if (!server_active && use_editor)
+	do_editor (update_dir, &saved_message, repos, saved_ulist);
+
+    err += do_verify (&saved_message, repos, saved_ulist);
+
     return err;
 }
 
@@ -1427,20 +1439,6 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
 	return 0;
     ulist = ((struct master_lists *) p->data)->ulist;
     cilist = ((struct master_lists *) p->data)->cilist;
-
-    /*
-     * At this point, we should have the commit message unless we were called
-     * with files as args from the command line.  In that latter case, we
-     * need to get the commit message ourselves
-     */
-    if (!got_message)
-    {
-	got_message = 1;
-	if (!server_active && use_editor)
-	    do_editor (finfo->update_dir, &saved_message,
-		       finfo->repository, ulist);
-	do_verify (&saved_message, finfo->repository, ulist);
-    }
 
     p = findnode (cilist, finfo->file);
     if (p == NULL)
@@ -1721,13 +1719,6 @@ commit_direntproc (void *callerdat, const char *dir, const char *repos,
     if (ulist == NULL || ulist->list->next == ulist->list)
 	return R_SKIP_FILES;
 
-    /* get commit message */
-    got_message = 1;
-    real_repos = Name_Repository (dir, update_dir);
-    if (!server_active && use_editor)
-	do_editor (update_dir, &saved_message, real_repos, ulist);
-    do_verify (&saved_message, real_repos, ulist);
-    free (real_repos);
     return R_PROCESS;
 }
 

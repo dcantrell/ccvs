@@ -1,3 +1,17 @@
+2007-08-27  Derek Price  <derek@ximbiot.com>
+
+	* commit.c (commit_fileproc): Move the do_editor & do_verify calls...
+	(commit_direntproc): ...from these two locations...
+	(check_filesdoneproc): ...to here.
+	* cvs.h [LOGMSG_REREAD_NEVER, LOGMSG_REREAD_ALWAYS,
+	LOGMSG_REREAD_STAT]: Move these definitions...
+	(do_verify): ...and this prototype...
+	* logmsg.h: ...to identically named entities here.
+	* import.c (import): Check for errors returned by do_verify.
+	* logmsg.c (do_verify): Return errors.
+	* parseinfo.c: Include logmsg.h.
+	* sanity.sh (info-v*): Compensate for changes.
+
 2007-08-26  Derek Price  <derek@ximbiot.com>
 
 	* mkmodules.c (in_root): Rename to...
