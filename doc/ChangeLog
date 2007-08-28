@@ -1,3 +1,8 @@
+2007-08-28  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo: Consistently quote `CVSROOT/config'.
+	(verifymsg, config): Note new FirstVerifyLogErrorFatal option.
+
 2007-08-24  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (File permissions): Minor typo fix in comment.

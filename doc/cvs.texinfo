@@ -1034,7 +1034,7 @@ a per-directory basis.
 
 Note that users must also have write access to check
 out files, because @sc{cvs} needs to create lock files
-(@pxref{Concurrency}).  You can use LockDir in CVSROOT/config
+(@pxref{Concurrency}).  You can use LockDir in @file{CVSROOT/config}
 to put the lock files somewhere other than in the repository
 if you want to allow read-only access to some directories
 (@pxref{config}).
@@ -3196,7 +3196,7 @@ environment variable.
 @node Write proxies
 @subsection Distributing load across several CVS servers
 
-@cindex PrimaryServer, in CVSROOT/config
+@cindex PrimaryServer, in @file{CVSROOT/config}
 @cindex Primary server
 @cindex Secondary server
 @cindex proxy, write
@@ -9156,7 +9156,7 @@ are likely to disappear in the future.  This command
 used.
 
 @cindex cvsadmin
-@cindex UserAdminOptions, in CVSROOT/config
+@cindex UserAdminOptions, in @file{CVSROOT/config}
 On unix, if there is a group named @code{cvsadmin},
 only members of that group can run @code{cvs admin}
 commands, except for those specified using the
@@ -11126,7 +11126,7 @@ and placing the file in the Attic directory (@pxref{Attic}).
 
 Use of this option can be forced on a repository-wide basis
 by setting the @samp{ImportNewFilesToVendorBranchOnly} option in
-CVSROOT/config (@pxref{config}).
+@file{CVSROOT/config} (@pxref{config}).
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -14357,14 +14357,20 @@ useful for specifying a default verification script in a
 directory, and then overriding it in a subdirectory.
 
 @cindex Exit status, of @file{verifymsg}
+@cindex FirstVerifyLogErrorFatal, in @file{CVSROOT/config}
 If the verification script exits with a non-zero exit status,
-the commit is aborted.
+the commit is aborted.  Whether @sc{cvs} aborts when the
+first script fails, or runs scripts for each directory affected
+by the commit before reporting the failures and exiting, is
+controlled by the @samp{FirstVerifyLogErrorFatal} config option,
+which defaults to @samp{true}.
 
 @cindex @file{verifymsg}, changing the log message
+@cindex RereadLogAfterVerify, in @file{CVSROOT/config}
 In the default configuration, CVS allows the
 verification script to change the log message. This is
-controlled via the RereadLogAfterVerify CVSROOT/config
-option.
+controlled via the @samp{RereadLogAfterVerify}
+@file{CVSROOT/config} option.
 
 When @samp{RereadLogAfterVerify=always} or
 @samp{RereadLogAfterVerify=stat}, the log message will
@@ -14372,7 +14378,7 @@ either always be reread after the verification script
 is run or reread only if the log message file status
 has changed.
 
-@xref{config}, for more on CVSROOT/config options.
+@xref{config}, for more on @file{CVSROOT/config} options.
 
 It is NOT a good idea for a @file{verifymsg} script to
 interact directly with the user in the various
@@ -15237,7 +15243,7 @@ Do not confuse this with the internal variable of the same name.
 @end table
 
 @node config
-@appendixsec The CVSROOT/config configuration file
+@appendixsec The @file{CVSROOT/config} configuration file
 
 @cindex configuration file
 @cindex config, in CVSROOT
@@ -15306,7 +15312,17 @@ repositories.
 Currently defined keywords are:
 
 @table @code
-@cindex HistoryLogPath, in CVSROOT/config
+@cindex FirstVerifyLogErrorFatal, in @file{CVSROOT/config}
+@item FirstVerifyLogErrorFatal=@var{value}
+When set to @code{true}, the application will immediately exit when any script
+launched via the @file{verifymsg} trigger exits with a non-zero exit status.
+Otherwise, execute scripts for each directory affected by the commit before
+reporting the failures and exiting.  @xref{commit files} and @ref{verifymsg},
+for more on the commit triggers.
+
+If no value is supplied for this option, it defaults to @code{true}.
+
+@cindex HistoryLogPath, in @file{CVSROOT/config}
 @item HistorySearchPath=@var{pattern}
 Request that @sc{cvs} look for its history information in files matching
 @var{pattern}, which is a standard UNIX file glob.  If @var{pattern} matches
@@ -15316,7 +15332,7 @@ multiple files, all will be searched in lexicographically sorted order.
 If no value is supplied for this option, it defaults to
 @file{$CVSROOT/CVSROOT/history}.
 
-@cindex HistorySearchPath, in CVSROOT/config
+@cindex HistorySearchPath, in @file{CVSROOT/config}
 @item HistoryLogPath=@var{path}
 Control where @sc{cvs} logs its history.  If the file does not exist, @sc{cvs}
 will attempt to create it.  Format strings, as available to the GNU C
@@ -15338,7 +15354,7 @@ repository root directory in a file named @file{CVSROOT/history/2005-05-11}).
 If no value is supplied for this option, it defaults to
 @file{$CVSROOT/CVSROOT/history}.
 
-@cindex ImportNewFilesToVendorBranchOnly, in CVSROOT/config
+@cindex ImportNewFilesToVendorBranchOnly, in @file{CVSROOT/config}
 @cindex import, config admin file
 @cindex config (admin file), import
 @item ImportNewFilesToVendorBranchOnly=@var{value}
@@ -15348,7 +15364,7 @@ Specify whether @code{cvs import} should always behave as if the
 all uses of @code{cvs import} on the repository will behave as if the
 @samp{-X} flag was set.  The default value is @samp{no}.
 
-@cindex KeywordExpand, in CVSROOT/config
+@cindex KeywordExpand, in @file{CVSROOT/config}
 @item KeywordExpand=@var{value}
 Specify @samp{i} followed by a list of keywords to be expanded
 (for example, @samp{KeywordExpand=iMYCVS,Name,Date}),
@@ -15356,13 +15372,13 @@ or @samp{e} followed by a list of keywords not to be expanded
 (for example, @samp{KeywordExpand=eCVSHeader}).
 For more on keyword expansion, see @ref{Configuring keyword expansion}.
 
-@cindex LocalKeyword, in CVSROOT/config
+@cindex LocalKeyword, in @file{CVSROOT/config}
 @item LocalKeyword=@var{value}
 Specify a local alias for a standard keyword.
 For example, @samp{LocalKeyword=MYCVS=CVSHeader}.
 For more on local keywords, see @ref{Keyword substitution}.
 
-@cindex LockDir, in CVSROOT/config
+@cindex LockDir, in @file{CVSROOT/config}
 @item LockDir=@var{directory}
 Put @sc{cvs} lock files in @var{directory} rather than
 directly in the repository.  This is useful if you want
@@ -15389,7 +15405,7 @@ could become corrupted.  @sc{cvs} 1.10 does not support
 LockDir but it will print a warning if run on a
 repository with LockDir enabled.
 
-@cindex LogHistory, in CVSROOT/config
+@cindex LogHistory, in @file{CVSROOT/config}
 @item LogHistory=@var{value}
 Control what is logged to the @file{CVSROOT/history} file (@pxref{history}).
 Default of @samp{TOEFWUPCGMARX} (or simply @samp{all}) will log
@@ -15398,7 +15414,7 @@ legal.  (For example, to only log transactions that modify the
 @file{*,v} files, use @samp{LogHistory=TMAR}.)  To disable history logging
 completely, use @samp{LogHistory=}.
 
-@cindex MaxCommentLeaderLength, in CVSROOT/config
+@cindex MaxCommentLeaderLength, in @file{CVSROOT/config}
 @cindex Log keyword, configuring substitution behavior
 @item MaxCommentLeaderLength=@var{length}
 Set to some length, in bytes, where a trailing @samp{k}, @samp{M}, @samp{G},
@@ -15412,8 +15428,8 @@ to proceed normally when they include binary files containing
 @code{$@splitrcskeyword{Log}$} keywords and which users have neglected to mark
 as binary.
 
-@cindex MinCompressionLevel, in CVSROOT/config
-@cindex MaxCompressionLevel, in CVSROOT/config
+@cindex MinCompressionLevel, in @file{CVSROOT/config}
+@cindex MaxCompressionLevel, in @file{CVSROOT/config}
 @cindex Compression levels, restricting on server
 @item MinCompressionLevel=@var{value}
 @itemx MaxCompressionLevel=@var{value}
@@ -15433,7 +15449,7 @@ these client versions allow the server to notify them that they must request
 some level of compression.
 
 @ignore
-@cindex PreservePermissions, in CVSROOT/config
+@cindex PreservePermissions, in @file{CVSROOT/config}
 @item PreservePermissions=@var{value}
 Enable support for saving special device files,
 symbolic links, file permissions and ownerships in the
@@ -15442,7 +15458,7 @@ repository.  The default value is @samp{no}.
 this keyword.
 @end ignore
 
-@cindex PrimaryServer, in CVSROOT/config
+@cindex PrimaryServer, in @file{CVSROOT/config}
 @cindex Primary server
 @cindex Secondary server
 @cindex proxy, write
@@ -15464,7 +15480,7 @@ via the @samp{:fork:} method, please send a note to @email{bug-cvs@@nongnu.org}
 about it).  See @ref{Write proxies} for more on configuring and using write
 proxies.
 
-@cindex RCSBIN, in CVSROOT/config
+@cindex RCSBIN, in @file{CVSROOT/config}
 @item RCSBIN=@var{bindir}
 For @sc{cvs} 1.9.12 through 1.9.18, this setting told
 @sc{cvs} to look for @sc{rcs} programs in the
@@ -15472,7 +15488,7 @@ For @sc{cvs} 1.9.12 through 1.9.18, this setting told
 do not run @sc{rcs} programs; for compatibility this
 setting is accepted, but it does nothing.
 
-@cindex RereadLogAfterVerify, in CVSROOT/config
+@cindex RereadLogAfterVerify, in @file{CVSROOT/config}
 @cindex @file{verifymsg}, changing the log message
 @item RereadLogAfterVerify=@var{value}
 Modify the @samp{commit} command such that CVS will reread the
@@ -15492,7 +15508,7 @@ CPU intensive but is not recommended for use with large repositories}
 @xref{verifymsg}, for more information on how verifymsg
 may be used.
 
-@cindex SystemAuth, in CVSROOT/config
+@cindex SystemAuth, in @file{CVSROOT/config}
 @item SystemAuth=@var{value}
 If @var{value} is @samp{yes}, then pserver should check
 for users in the system's user database if not found in
@@ -15509,7 +15525,7 @@ Specify @var{path} as the directory to create temporary files in.
 @xref{Global options}, for more on setting the path to the temporary
 directory.  This option first appeared with @sc{cvs} release 1.12.13.
 
-@cindex TopLevelAdmin, in CVSROOT/config
+@cindex TopLevelAdmin, in @file{CVSROOT/config}
 @item TopLevelAdmin=@var{value}
 Modify the @samp{checkout} command to create a
 @samp{CVS} directory at the top level of the new
@@ -15526,7 +15542,7 @@ each command.  It also provides a place for the
 @file{CVS/Template} file (@pxref{Working directory
 storage}).
 
-@cindex UseArchiveCommentLeader, in CVSROOT/config
+@cindex UseArchiveCommentLeader, in @file{CVSROOT/config}
 @cindex Log keyword, configuring substitution behavior
 @item UseArchiveCommentLeader=@var{value}
 Set to @code{true}, if the text preceding a @code{$@splitrcskeyword{Log}$}
@@ -15539,7 +15555,7 @@ be used exclusively (and @code{$@splitrcskeyword{Log}$} expansion skipped in
 files where the comment leader has not been set in the archive file), set
 @var{value} and set @code{MaxCommentLeaderLength} to @code{0}.
 
-@cindex UseNewInfoFmtStrings, in CVSROOT/config
+@cindex UseNewInfoFmtStrings, in @file{CVSROOT/config}
 @cindex format strings, config admin file
 @cindex config (admin file), updating legacy repositories
 @cindex compatibility notes, config admin file
@@ -15555,7 +15571,7 @@ please see @ref{Updating Commit Files}.
 @emph{Note that new repositories (created with the @code{cvs init} command)
 will have this value set to @samp{yes}, but the default value is @samp{no}.}
 
-@cindex UserAdminOptions, in CVSROOT/config
+@cindex UserAdminOptions, in @file{CVSROOT/config}
 @item UserAdminOptions=@var{value}
 Control what options will be allowed with the @code{cvs admin}
 command (@pxref{admin}) for users not in the @code{cvsadmin} group.
