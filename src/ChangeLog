@@ -1,3 +1,13 @@
+2007-08-28  Derek Price  <derek@ximbiot.com>
+
+	* logmsg.c (do_editor): Improve header block comment.  Honor new
+	FirstVerifyLogErrorFatal option.
+	* parseinfo.c (new_config): Initialize new FirstVerifyLogErrorFatal
+	option.
+	(parse_config): Parse new FirstVerifyLogErrorFatal option.
+	* parseinfo.h (struct config): Declare storage for new option.
+	* sanity.sh (info-v*): Compensate for and test changes.
+
 2007-08-27  Derek Price  <derek@ximbiot.com>
 
 	* commit.c (commit_fileproc): Move the do_editor & do_verify calls...
