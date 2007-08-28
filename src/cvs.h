@@ -331,10 +331,6 @@ extern bool suppress_bases;
 
 
 
-#define LOGMSG_REREAD_NEVER 0	/* do_verify - never  reread message */
-#define LOGMSG_REREAD_ALWAYS 1	/* do_verify - always reread message */
-#define LOGMSG_REREAD_STAT 2	/* do_verify - reread message if changed */
-
 /* This header needs the LOGMSG_* defns above.  */
 #include "parseinfo.h"
 
@@ -492,8 +488,6 @@ void Update_Logfile (const char *repository, const char *xmessage,
                      FILE *xlogfp, List *xchanges);
 void do_editor (const char *dir, char **messagep,
                 const char *repository, List *changes);
-
-void do_verify (char **messagep, const char *repository, List *changes);
 
 typedef	int (*CALLBACKPROC)	(int argc, char *argv[], char *where,
 	char *mwhere, char *mfile, int shorten, int local_specified,

@@ -408,7 +408,7 @@ do_editor (const char *dir, char **messagep, const char *repository,
    included the -m attribute.  unlike the do_editor function, this is 
    independant of the running of an editor for getting a message.
  */
-void
+int
 do_verify (char **messagep, const char *repository, List *changes)
 {
     int err;
@@ -417,13 +417,11 @@ do_verify (char **messagep, const char *repository, List *changes)
 
     if (current_parsed_root->isremote)
 	/* The verification will happen on the server.  */
-	return;
+	return 0;
 
-    /* FIXME? Do we really want to skip this on noexec?  What do we do
-       for the other administrative files?  */
     /* EXPLAIN: Why do we check for repository == NULL here? */
-    if (noexec || repository == NULL)
-	return;
+    if (repository == NULL)
+	return 0;
 
     /* Get the name of the verification script to run  */
 
@@ -431,23 +429,25 @@ do_verify (char **messagep, const char *repository, List *changes)
     data.fname = NULL;
     data.changes = changes;
     if ((err = Parse_Info (CVSROOTADM_VERIFYMSG, repository,
-	                  verifymsg_proc, 0, &data)) != 0)
+			   verifymsg_proc, 0, &data)) != 0)
     {
 	int saved_errno = errno;
 	/* Since following error() exits, delete the temp file now.  */
-	if (data.fname != NULL && unlink_file( data.fname ) < 0)
+	if (data.fname != NULL && unlink_file (data.fname) < 0)
 	    error (0, errno, "cannot remove %s", data.fname);
 	free (data.fname);
 
 	errno = saved_errno;
-	error (1, err == -1 ? errno : 0, "Message verification failed");
+	error (err == -1 ? 1: 0, err == -1 ? errno : 0,
+	       "Message verification failed.");
+	return err;
     }
 
     /* Return if no temp file was created.  That means that we didn't call any
      * verifymsg scripts.
      */
     if (data.fname == NULL)
-	return;
+	return 0;
 
     /* Get the mod time and size of the possibly new log message
      * in always and stat modes.
@@ -516,6 +516,8 @@ do_verify (char **messagep, const char *repository, List *changes)
     if (unlink_file (data.fname) < 0)
 	error (0, errno, "cannot remove `%s'", data.fname);
     free (data.fname);
+
+    return 0;
 }
 
 

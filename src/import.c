@@ -353,7 +353,9 @@ import (int argc, char **argv)
     li->rev_old = li->rev_new = NULL;
     p->data = li;
     (void) addnode (ulist, p);
-    do_verify (&message, repository, ulist);
+
+    if (do_verify (&message, repository, ulist))
+	error (1, 0, "correct above errors first!");
 
     /*
      * Make all newly created directories writable.  Should really use a more
