@@ -395,22 +395,11 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 	    char *file_to_try;
 
 	    /* Now break out argv[i] into directory part (DIR) and file part
-	     * (COMP).  DIR and COMP will each point to a newly malloc'd
-	     * string.
+	     * (COMP).  DIR will point to a newly malloc'd string.
 	     */
-	    dir = xstrdup (argv[i]);
-	    comp = last_component (dir);
-	    if (comp == dir)
-	    {
-		/* no dir component.  What we have is an implied "./" */
-		dir = xstrdup (".");
-	    }
-	    else if (*comp)
-	    {
-		comp[-1] = '\0';
-		comp = xstrdup (comp);
-	    }
-	    else
+	    dir = dir_name (argv[i]);
+	    comp = last_component (argv[i]);
+	    if (!*comp)
 	    {
 		/* A root directory would have existed under UNIX and a missing
 		 * one specified on the command line (for instance,
@@ -474,7 +463,6 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 
 	    free (file_to_try);
 	    free (dir);
-	    free (comp);
 	}
     }
 
