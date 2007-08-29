@@ -445,21 +445,15 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
 	if (ign_name (file))
 	    continue;
 
-	if (
-#ifdef DT_DIR
-	    dp->d_type != DT_UNKNOWN ||
-#endif
-	    lstat (file, &sb) != -1)
+	if (!DIRENT_MUST_BE(dp, DT_UNKNOWN)
+	    || lstat (file, &sb) != -1)
 	{
-
-	    if (
-#ifdef DT_DIR
-		dp->d_type == DT_DIR
-		|| (dp->d_type == DT_UNKNOWN && S_ISDIR (sb.st_mode))
-#else
-		S_ISDIR (sb.st_mode)
-#endif
-		)
+	    if (DIRENT_MUST_BE(dp, DT_LNK)
+		|| DIRENT_MIGHT_BE_SYMLINK(dp) && S_ISLNK(sb.st_mode))
+		/* Skip symlinks.  */
+		continue;
+	    else if (DIRENT_MUST_BE(dp, DT_DIR)
+		     || DIRENT_MIGHT_BE_DIR(dp) && S_ISDIR (sb.st_mode))
 	    {
 		if (!subdirs)
 		{
@@ -472,19 +466,6 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
 		    free (temp);
 		}
 	    }
-#ifdef S_ISLNK
-	    else if (
-#ifdef DT_DIR
-		     dp->d_type == DT_LNK
-		     || (dp->d_type == DT_UNKNOWN && S_ISLNK (sb.st_mode))
-#else
-		     S_ISLNK (sb.st_mode)
-#endif
-		     )
-	    {
-		continue;
-	    }
-#endif
 	}
 
 	p = getnode ();
