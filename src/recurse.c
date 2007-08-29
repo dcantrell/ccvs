@@ -856,7 +856,7 @@ do_recursion (struct recursion_frame *frame)
 	   have writelocks in place, and there is no way to get writelocks
 	   here.  */
 	if (current_parsed_root->isremote)
-	    notify_check (repository, update_dir);
+	    cvs_notfiy_check (repository, update_dir);
 #endif /* CLIENT_SUPPORT */
 
 	finfo_struct.repository = repository;
