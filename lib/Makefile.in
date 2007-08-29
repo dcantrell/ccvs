@@ -524,7 +524,7 @@ libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	uniwidth/width.c verify.h xalloc-die.c xgethostname.h \
 	xgethostname.c xsize.h xstrndup.h xstrndup.c
 libcvs_a_LIBADD = @LIBOBJS@ $(gl_LIBOBJS) @ALLOCA@
-libcvs_a_DEPENDENCIES = $(gl_LIBOBJS) @ALLOCA@
+libcvs_a_DEPENDENCIES = @LIBOBJS@ $(gl_LIBOBJS) @ALLOCA@
 BUILT_SOURCES = $(ALLOCA_H) $(ARPA_INET_H) configmake.h $(DIRENT_H) \
 	$(FCNTL_H) $(FLOAT_H) $(FNMATCH_H) getdate.c $(GETOPT_H) \
 	$(GLOB_H) $(INTTYPES_H) $(NETINET_IN_H) $(STDBOOL_H) \
