@@ -1,3 +1,9 @@
+2007-08-28  Derek Price  <derek@ximbiot.com>
+
+	* system.h: Correct statements about <string.h> and <stdlib.h>.
+	[DIRENT_MUST_BE, DIRENT_MIGHT_BE_DIR, DIRENT_MIGHT_BE_SYMLINK]: Adapt
+	definitions from glob.c.
+
 2007-08-26  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am: Import changes from...

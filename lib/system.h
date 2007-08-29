@@ -29,9 +29,8 @@
 #include <signal.h>
 #include <stdio.h>
 
-/* C89 hosted headers we _think_ GCC supplies even on freestanding systems.
- * If we find any systems which do not have them, a replacement header should
- * be discussed with the GNULIB folks.
+/* A GNULIB wrapper for these C89 headers is supplied to solve problems in
+ * deficient headers.
  *
  * For more information, please see the `Portability' section of the `HACKING'
  * file.
@@ -173,7 +172,33 @@ int utime ();
 # define R_OK 4
 #endif
 
+/* GNULIB provides a replacement for this POSIX.2 header.  */
 #include <dirent.h>
+
+/* GNULIB defines HAVE_STRUCT_DIRENT_D_TYPE if the `d_type' member for
+ * `struct dirent' is available.
+ *
+ * Much of this is copied out of GNULIB's lib/glob.c.
+ */
+#if defined HAVE_STRUCT_DIRENT_D_TYPE
+/* True if the directory entry D must be of type T.  */
+# define DIRENT_MUST_BE(d, t)	((d)->d_type == (t))
+
+/* True if the directory entry D might be a symbolic link.  */
+# define DIRENT_MIGHT_BE_SYMLINK(d) \
+    ((d)->d_type == DT_UNKNOWN || (d)->d_type == DT_LNK)
+
+/* True if the directory entry D might be a directory.  */
+# define DIRENT_MIGHT_BE_DIR(d)	 \
+    ((d)->d_type == DT_DIR || DIRENT_MIGHT_BE_SYMLINK (d))
+
+#else /* !HAVE_STRUCT_DIRENT_D_TYPE */
+# define DIRENT_MUST_BE(d, t)		false
+# define DIRENT_MIGHT_BE_SYMLINK(d)	true
+# define DIRENT_MIGHT_BE_DIR(d)		true
+#endif /* HAVE_STRUCT_DIRENT_D_TYPE */
+
+
 
 /* Convert B 512-byte blocks to kilobytes if K is nonzero,
    otherwise return it unchanged. */
