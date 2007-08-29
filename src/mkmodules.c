@@ -1164,7 +1164,7 @@ in_repository (const char *path)
 	if (isdir (cp))
 	{
 	    bool foundit;
-	    char *adm = Xasprintf ("%s/%s", cp, CVSROOTADM);
+	    char *adm = Xasprintf ("%s/%s/%s", cp, CVSROOTADM, CVSNULLREPOS);
 	    foundit = isdir (adm);
 	    free (adm);
 	    if (foundit) return cp;

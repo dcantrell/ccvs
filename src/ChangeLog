@@ -1,5 +1,9 @@
 2007-08-29  Derek Price  <derek@ximbiot.com>
 
+	* mkmodules.c (in_repository): Check for CVSROOT/Emptydir rather than
+	simply CVSROOT since that can match more than we like on case
+	insensitive file systems.
+
 	* recurse.c (start_recursion): Use GNULIB's dir_name() function to
 	simplify code.
 
