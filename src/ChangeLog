@@ -1,3 +1,7 @@
+2007-08-29  Derek Price  <derek@ximbiot.com>
+
+	* update.c (update_ignproc): Add comment.
+
 2007-08-28  Derek Price  <derek@ximbiot.com>
 
 	* find_names.c, ignore.c, import.c [DT_DIR]: Remove blocks, simplyfing

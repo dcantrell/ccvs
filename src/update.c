@@ -812,6 +812,10 @@ update_fileproc (void *callerdat, struct file_info *finfo)
 
 
 
+/*
+ * Paradoxically, this callback function is called by ignore_files() for
+ * files that should NOT be ignored.
+ */
 static void
 update_ignproc (const char *file, const char *dir)
 {
