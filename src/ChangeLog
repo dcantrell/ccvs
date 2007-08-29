@@ -1,5 +1,8 @@
 2007-08-29  Derek Price  <derek@ximbiot.com>
 
+	* recurse.c (start_recursion): Use GNULIB's dir_name() function to
+	simplify code.
+
 	* update.c (update_ignproc): Add comment.
 
 2007-08-28  Derek Price  <derek@ximbiot.com>
