@@ -38,6 +38,7 @@ libcvs_a_LIBADD = \
 	@LIBOBJS@ \
 	$(gl_LIBOBJS)
 libcvs_a_DEPENDENCIES = \
+	@LIBOBJS@ \
 	$(gl_LIBOBJS)
 
 

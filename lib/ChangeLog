@@ -1,3 +1,7 @@
+2007-08-29  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (libcvs_a_DEPENDENCIES): Add @LIBOBJS@.
+
 2007-08-28  Derek Price  <derek@ximbiot.com>
 
 	* system.h: Correct statements about <string.h> and <stdlib.h>.
