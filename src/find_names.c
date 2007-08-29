@@ -472,45 +472,30 @@ find_dirs (char *dir, List *list, int checkadm, List *entries)
 	    && strcmp (dp->d_name, CVSNULLREPOS) == 0)
 	    goto do_it_again;
 
-#ifdef DT_DIR
-	if (dp->d_type != DT_DIR) 
-	{
-	    if (dp->d_type != DT_UNKNOWN && dp->d_type != DT_LNK)
-		goto do_it_again;
-#endif
-	    /* don't bother stating ,v files */
-	    if (CVS_FNMATCH (RCSPAT, dp->d_name, 0) == 0)
-		goto do_it_again;
+	if (!DIRENT_MIGHT_BE_DIR(dp))
+	    goto do_it_again;
 
+	/* don't bother stating ,v files */
+	if (CVS_FNMATCH (RCSPAT, dp->d_name, 0) == 0)
+	    goto do_it_again;
+
+	if (!DIRENT_MUST_BE(dp, DT_DIR))
+	{
 	    expand_string (&tmp,
 			   &tmp_size,
 			   strlen (dir) + strlen (dp->d_name) + 10);
 	    sprintf (tmp, "%s/%s", dir, dp->d_name);
 	    if (!isdir (tmp))
 		goto do_it_again;
-
-#ifdef DT_DIR
 	}
-#endif
 
 	/* check for administration directories (if needed) */
 	if (checkadm)
 	{
 	    /* blow off symbolic links to dirs in local dir */
-#ifdef DT_DIR
-	    if (dp->d_type != DT_DIR)
-	    {
-		/* we're either unknown or a symlink at this point */
-		if (dp->d_type == DT_LNK)
-		    goto do_it_again;
-#endif
-		/* Note that we only get here if we already set tmp
-		   above.  */
-		if (islink (tmp))
-		    goto do_it_again;
-#ifdef DT_DIR
-	    }
-#endif
+	    if (DIRENT_MUST_BE(dp, DT_LNK)
+		|| DIRENT_MIGHT_BE_SYMLINK(dp) && islink(tmp))
+		goto do_it_again;
 
 	    /* check for new style */
 	    expand_string (&tmp,

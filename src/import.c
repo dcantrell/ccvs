@@ -512,15 +512,14 @@ import_descend (char *message, char *vtag, int targc, char **targv)
 		goto one_more_time_boys;
 	    }
 
-	    if (
-#ifdef DT_DIR
-		(dp->d_type == DT_DIR
-		 || (dp->d_type == DT_UNKNOWN && isdir (dp->d_name)))
-#else
-		isdir (dp->d_name)
-#endif
-		&& !wrap_name_has (dp->d_name, WRAP_TOCVS)
-		)
+	    if (DIRENT_MUST_BE(dp, DT_LNK)
+		     || DIRENT_MIGHT_BE_SYMLINK(dp) && islink (dp->d_name))
+	    {
+		add_log ('L', dp->d_name);
+		err++;
+	    }
+	    else if (DIRENT_MUST_BE(dp, DT_DIR)
+		|| DIRENT_MIGHT_BE_DIR(dp) && isdir (dp->d_name))
 	    {
 		Node *n;
 
@@ -530,18 +529,6 @@ import_descend (char *message, char *vtag, int targc, char **targv)
 		n = getnode ();
 		n->key = xstrdup (dp->d_name);
 		addnode (dirlist, n);
-	    }
-	    else if (
-#ifdef DT_DIR
-		     dp->d_type == DT_LNK
-		     || (dp->d_type == DT_UNKNOWN && islink (dp->d_name))
-#else
-		     islink (dp->d_name)
-#endif
-		     )
-	    {
-		add_log ('L', dp->d_name);
-		err++;
 	    }
 	    else
 	    {

@@ -1,5 +1,8 @@
 2007-08-28  Derek Price  <derek@ximbiot.com>
 
+	* find_names.c, ignore.c, import.c [DT_DIR]: Remove blocks, simplyfing
+	with replacements using new DIRENT_* macros from lib/system.h.
+
 	* logmsg.c (do_editor): Improve header block comment.  Honor new
 	FirstVerifyLogErrorFatal option.
 	* parseinfo.c (new_config): Initialize new FirstVerifyLogErrorFatal
