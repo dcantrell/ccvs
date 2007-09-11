@@ -1,3 +1,7 @@
+2007-09-11  Derek Price  <derek@ximbiot.com>
+
+	* main.c (main): Suppress warnings.
+
 2007-08-29  Derek Price  <derek@ximbiot.com>
 	for Mark D. Baushke  <mdb@gnu.org>
 
