@@ -1391,11 +1391,14 @@ cause intermittent sandbox corruption.");
     root_configs_read_free ();
 
     /* free up some memory */
-    if (CurDir) free (CurDir);
-    if (global_session_id) free (global_session_id);
-    if (program_path) free (program_path);
-    if (hostname) free (hostname);
-    CurDir = global_session_id = program_path = hostname = NULL;
+    if (CurDir) {free (CurDir); CurDir = NULL;}
+    if (global_session_id)
+    {
+	free ((char *)global_session_id);
+	global_session_id = NULL;
+    }
+    if (hostname) {free (hostname); hostname = NULL;}
+    if (program_path) {free ((char *)program_path); program_path = NULL;}
 
     /* This is exit rather than return because apparently that keeps
        some tools which check for memory leaks happier.  */
