@@ -1,5 +1,7 @@
 2007-09-12  Derek Price  <derek@ximbiot.com>
 
+	* update.c: Include GNULIB's "quote.h".
+
 	* main.c (main): Use xstrdup in preference to strdup.
 
 	* cvs.h (Reader_Lock, Simple_Lock_Cleanup, Lock_Cleanup,

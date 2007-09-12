@@ -44,6 +44,7 @@
 #endif
 
 /* GNULIB */
+#include "quote.h"
 #include "save-cwd.h"
 
 #ifdef SERVER_SUPPORT
