@@ -1023,7 +1023,7 @@ cause intermittent sandbox corruption.");
 	    }
 	}
 	convert(buf, out);
-	global_session_id = strdup (out);
+	global_session_id = xstrdup (out);
     }
 
 
