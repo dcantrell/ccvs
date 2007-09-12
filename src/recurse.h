@@ -22,9 +22,9 @@
 #include "rcs.h"	/* Get struct file_info.  */
 
 /* Flags for find_{names,dirs} routines */
-#define W_LOCAL			0x01	/* look for files locally */
-#define W_REPOS			0x02	/* look for files in the repository */
-#define W_ATTIC			0x04	/* look for files in the attic */
+#define W_LOCAL		(1 << 0)	/* look for files locally */
+#define W_REPOS		(1 << 1)	/* look for files in the repository */
+#define W_ATTIC		(1 << 2)	/* look for files in the attic */
 
 /* Flags for return values of direnter procs for the recursion processor */
 enum direnter_type
@@ -41,9 +41,12 @@ typedef enum direnter_type Dtype;
 #endif
 
 /* Recursion processor lock types */
-#define CVS_LOCK_NONE	0
-#define CVS_LOCK_READ	1
-#define CVS_LOCK_WRITE	2
+enum lock_type
+{
+    CVS_LOCK_NONE,
+    CVS_LOCK_READ,
+    CVS_LOCK_WRITE
+};
 
 /* Callback functions.  */
 typedef	int (*FILEPROC) (void *callerdat, struct file_info *finfo);
@@ -58,9 +61,8 @@ typedef	int (*DIRLEAVEPROC) (void *callerdat, const char *dir, int err,
 
 int start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 		     DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc,
-		     void *callerdat,
-		     int argc, char *argv[], int local, int which,
-		     int aflag, int locktype, char *update_preload,
-		     int dosrcs, char *repository);
+		     void *callerdat, int argc, char *argv[], int local,
+		     int which, int aflag, enum lock_type locktype,
+		     const char *update_preload, int dosrcs, char *repository);
 
 #endif /* RECURSE_H */

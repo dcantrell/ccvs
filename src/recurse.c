@@ -57,7 +57,7 @@ struct recursion_frame {
     Dtype flags;
     int which;
     int aflag;
-    int locktype;
+    enum lock_type locktype;
     int dosrcs;
     char *repository;			/* Keep track of repository for rtag */
 };
@@ -190,8 +190,9 @@ int
 start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
                  DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc,
                  void *callerdat, int argc, char **argv, int local,
-                 int which, int aflag, int locktype,
-                 char *update_preload, int dosrcs, char *repository_in)
+                 int which, int aflag, enum lock_type locktype,
+                 const char *update_preload, int dosrcs,
+		 char *repository_in)
 {
     int i, err = 0;
 #ifdef CLIENT_SUPPORT
@@ -201,33 +202,33 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
     struct recursion_frame frame;
 
 #ifdef HAVE_PRINTF_PTR
-    TRACE ( TRACE_FLOW,
-	    "start_recursion ( fileproc=%p, filesdoneproc=%p,\n"
-       "                       direntproc=%p, dirleavproc=%p,\n"
-       "                       callerdat=%p, argc=%d, argv=%p,\n"
-       "                       local=%d, which=%d, aflag=%d,\n"
-       "                       locktype=%d, update_preload=%s\n"
-       "                       dosrcs=%d, repository_in=%s )",
-	       (void *) fileproc, (void *) filesdoneproc,
-	       (void *) direntproc, (void *) dirleaveproc,
-	       (void *) callerdat, argc, (void *) argv,
-	       local, which, aflag, locktype,
-	       update_preload ? update_preload : "(null)", dosrcs,
-	       repository_in ? repository_in : "(null)");
+    TRACE (TRACE_FLOW,
+	   "start_recursion (fileproc=%p, filesdoneproc=%p,\n"
+      "                      direntproc=%p, dirleavproc=%p,\n"
+      "                      callerdat=%p, argc=%d, argv=%p,\n"
+      "                      local=%d, which=%d, aflag=%d,\n"
+      "                      locktype=%d, update_preload=%s\n"
+      "                      dosrcs=%d, repository_in=%s )",
+	   (void *) fileproc, (void *) filesdoneproc,
+	   (void *) direntproc, (void *) dirleaveproc,
+	   (void *) callerdat, argc, (void *) argv,
+	   local, which, aflag, locktype,
+	   TRACE_NULL (update_preload), dosrcs,
+	   TRACE_NULL (repository_in));
 #else
-    TRACE ( TRACE_FLOW,
-	    "start_recursion ( fileproc=%lx, filesdoneproc=%lx,\n"
-       "                       direntproc=%lx, dirleavproc=%lx,\n"
-       "                       callerdat=%lx, argc=%d, argv=%lx,\n"
-       "                       local=%d, which=%d, aflag=%d,\n"
-       "                       locktype=%d, update_preload=%s\n"
-       "                       dosrcs=%d, repository_in=%s )",
-	       (unsigned long) fileproc, (unsigned long) filesdoneproc,
-	       (unsigned long) direntproc, (unsigned long) dirleaveproc,
-	       (unsigned long) callerdat, argc, (unsigned long) argv,
-	       local, which, aflag, locktype,
-	       update_preload ? update_preload : "(null)", dosrcs,
-	       repository_in ? repository_in : "(null)");
+    TRACE (TRACE_FLOW,
+	   "start_recursion (fileproc=%lx, filesdoneproc=%lx,\n"
+      "                      direntproc=%lx, dirleavproc=%lx,\n"
+      "                      callerdat=%lx, argc=%d, argv=%lx,\n"
+      "                      local=%d, which=%d, aflag=%d,\n"
+      "                      locktype=%d, update_preload=%s\n"
+      "                      dosrcs=%d, repository_in=%s )",
+	   (unsigned long) fileproc, (unsigned long) filesdoneproc,
+	   (unsigned long) direntproc, (unsigned long) dirleaveproc,
+	   (unsigned long) callerdat, argc, (unsigned long) argv,
+	   local, which, aflag, locktype,
+	   TRACE_NULL (update_preload), dosrcs,
+	   TRACE_NULL (repository_in));
 #endif
 
     frame.fileproc = fileproc;

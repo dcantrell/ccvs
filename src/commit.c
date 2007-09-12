@@ -24,9 +24,13 @@
 # include <config.h>
 #endif
 
-/* CVS headers.  */
+/* GNULIB */
+#include "quote.h"
+
+/* CVS */
 #include "edit.h"
 #include "fileattr.h"
+#include "hardlink.h"
 #include "ignore.h"
 #include "lock.h"
 #include "logmsg.h"
@@ -35,7 +39,6 @@
 #include "wrapper.h"
 
 #include "cvs.h"
-#include "hardlink.h"
 
 static Dtype check_direntproc (void *callerdat, const char *dir,
                                const char *repos, const char *update_dir,
@@ -251,23 +254,23 @@ find_fileproc (void *callerdat, struct file_info *finfo)
     xfinfo.rcs = NULL;
 
     vers = Version_TS (&xfinfo, NULL, saved_tag, NULL, 0, 0);
-    if (vers->vn_user == NULL)
+    if (!vers->vn_user)
     {
-	if (vers->ts_user == NULL)
-	    error (0, 0, "nothing known about `%s'", finfo->fullname);
+	if (!vers->ts_user)
+	    error (0, 0, "nothing known about %s", quote (finfo->fullname));
 	else
-	    error (0, 0, "use `%s add' to create an entry for `%s'",
-		   program_name, finfo->fullname);
+	    error (0, 0, "use `%s add' to create an entry for %s",
+		   program_name, quote (finfo->fullname));
 	freevers_ts (&vers);
 	return 1;
     }
     if (vers->vn_user[0] == '-')
     {
-	if (vers->ts_user != NULL)
+	if (vers->ts_user)
 	{
 	    error (0, 0,
-		   "`%s' should be removed and is still there (or is back"
-		   " again)", finfo->fullname);
+		   "%s should be removed and is still there (or is back again)",
+		   quote (finfo->fullname));
 	    freevers_ts (&vers);
 	    return 1;
 	}
@@ -276,7 +279,7 @@ find_fileproc (void *callerdat, struct file_info *finfo)
     }
     else if (STREQ (vers->vn_user, "0"))
     {
-	if (vers->ts_user == NULL)
+	if (!vers->ts_user)
 	{
 	    /* This happens when one has `cvs add'ed a file, but it no
 	       longer exists in the working directory at commit time.
@@ -291,7 +294,7 @@ find_fileproc (void *callerdat, struct file_info *finfo)
 	else
 	    status = T_ADDED;
     }
-    else if (vers->ts_user == NULL)
+    else if (!vers->ts_user)
     {
 	/* FIXME: What classify_file does in this case is print
 	   "%s was lost".  We probably should do the same.  */
@@ -933,9 +936,9 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 		   keyword expansion, because there is no -ko
 		   analogue.  */
 		error (0, 0,
-		       "\
-warning: file `%s' seems to still contain conflict indicators",
-		       finfo->fullname);
+		       "warning: file %s seems to still contain conflict"
+		       " indicators",
+		       quote (finfo->fullname));
 	    }
 
 	    if ((status == T_ADDED || status == T_MODIFIED)
@@ -956,7 +959,7 @@ warning: file `%s' seems to still contain conflict indicators",
 
 	    if (status == T_REMOVED)
 	    {
-		if (vers->ts_user != NULL)
+		if (vers->ts_user)
 		{
 		    error (0, 0,
 			   "`%s' should be removed and is still there (or is"
@@ -980,33 +983,35 @@ warning: file `%s' seems to still contain conflict indicators",
 	    }
 	    if (status == T_ADDED)
 	    {
-	        if (vers->tag == NULL)
+	        if (!vers->tag)
 		{
-		    if (finfo->rcs != NULL &&
-			!RCS_isdead (finfo->rcs, finfo->rcs->head))
+		    if (finfo->rcs
+			&& !RCS_isdead (finfo->rcs, finfo->rcs->head))
 		    {
 			error (0, 0,
-		    "cannot add file `%s' when RCS file `%s' already exists",
-			       finfo->fullname, finfo->rcs->path);
+			"cannot add file %s when RCS file %s already exists",
+			       quote_n (0, finfo->fullname),
+			       quote_n (1, finfo->rcs->path));
 			goto out;
 		    }
 		}
-		else if (isdigit ((unsigned char) *vers->tag) &&
-		    numdots (vers->tag) > 1)
+		else if (isdigit ((unsigned char)*vers->tag)
+				  && numdots (vers->tag) > 1)
 		{
 		    error (0, 0,
-		"cannot add file `%s' with revision `%s'; must be on trunk",
-			       finfo->fullname, vers->tag);
+		    "cannot add file %s with revision %s; must be on trunk",
+			       quote_n (0, finfo->fullname),
+			       quote_n (1, vers->tag));
 		    goto out;
 		}
 	    }
 
 	    /* done with consistency checks; now, to get on with the commit */
-	    if (finfo->update_dir[0] == '\0')
+	    if (!*finfo->update_dir)
 		xdir = ".";
 	    else
 		xdir = finfo->update_dir;
-	    if ((p = findnode (mulist, xdir)) != NULL)
+	    if (p = findnode (mulist, xdir))
 	    {
 		ulist = ((struct master_lists *) p->data)->ulist;
 		cilist = ((struct master_lists *) p->data)->cilist;
@@ -1041,7 +1046,7 @@ warning: file `%s' seems to still contain conflict indicators",
 
 		editor = NULL;
                 editors = fileattr_get0 (finfo->file, "_editors");
-                if (editors != NULL)
+                if (editors)
                 {
                     char *caller = getcaller ();
                     char *p = NULL;
@@ -1052,7 +1057,7 @@ warning: file `%s' seems to still contain conflict indicators",
                     while (*p != '\0')
                     {
                         p = strchr (p, '>');
-                        if (p == NULL)
+                        if (!p)
                         {
                             break;
                         }
@@ -1062,7 +1067,7 @@ warning: file `%s' seems to still contain conflict indicators",
                             break;
                         }
                         p = strchr (p + 1, ',');
-                        if (p == NULL)
+                        if (!p)
                         {
                             break;
                         }
@@ -1079,10 +1084,10 @@ warning: file `%s' seems to still contain conflict indicators",
                 }
             }
 
-            if (check_valid_edit && editor == NULL)
+            if (check_valid_edit && !editor)
             {
                 error (0, 0, "Valid edit does not exist for %s",
-                       finfo->fullname);
+                       quote (finfo->fullname));
 		if (li) free (li);
 		if (p) freenode (p);
                 freevers_ts (&vers);
@@ -1132,7 +1137,7 @@ warning: file `%s' seems to still contain conflict indicators",
 
 		/* If linkp is NULL, the file doesn't exist... maybe
 		   we're doing a remove operation? */
-		if (linkp != NULL)
+		if (linkp)
 		{
 		    /* Create a new hardlink_info node, which will record
 		       the current file's status and the links listed in its
@@ -1149,7 +1154,7 @@ warning: file `%s' seems to still contain conflict indicators",
         }
 
 	case T_UNKNOWN:
-	    error (0, 0, "nothing known about `%s'", finfo->fullname);
+	    error (0, 0, "nothing known about %s", quote (finfo->fullname));
 	    goto out;
 	case T_UPTODATE:
 	    break;
