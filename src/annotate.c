@@ -70,7 +70,7 @@ annotate (int argc, char **argv)
     char *widthstr = NULL;
     int c;
 
-    is_rannotate = (strcmp(cvs_cmd_name, "rannotate") == 0);
+    is_rannotate = STREQ (cvs_cmd_name, "rannotate");
 
     if (argc == -1)
 	usage (annotate_usage);

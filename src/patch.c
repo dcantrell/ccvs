@@ -445,7 +445,7 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
 
     if ((vers_tag == NULL && vers_head == NULL) ||
         (vers_tag != NULL && vers_head != NULL &&
-	 strcmp (vers_head, vers_tag) == 0))
+	 STREQ (vers_head, vers_tag)))
     {
 	/* Nothing known about specified revs or
 	 * not changed between releases.

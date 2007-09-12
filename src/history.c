@@ -1450,7 +1450,7 @@ select_hrec (struct hrec *hr)
 	{
 	    if (!**cpp)
 		break;			/* null user == accept */
-	    if (!strcmp (hr->user, *cpp))	/* found listed user */
+	    if (STREQ (hr->user, *cpp))	/* found listed user */
 		break;
 	}
 	if (!count)
@@ -1524,7 +1524,7 @@ select_hrec (struct hrec *hr)
     {
 	for (cpp = mod_list, count = mod_count; count; cpp++, count--)
 	{
-	    if (hr->mod && !strcmp (hr->mod, *cpp))	/* found module */
+	    if (hr->mod && STREQ (hr->mod, *cpp))	/* found module */
 		break;
 	}
 	if (!count)
@@ -1583,7 +1583,7 @@ report_hrecs (void)
 	repos = xstrdup (lr->repos);
 	if ((cp = strrchr (repos, '/')) != NULL)
 	{
-	    if (lr->mod && !strcmp (++cp, lr->mod))
+	    if (lr->mod && STREQ (++cp, lr->mod))
 	    {
 		(void) strcpy (cp, "*");
 	    }
@@ -1637,7 +1637,7 @@ report_hrecs (void)
 	(void) sprintf (workdir, "%s%s", lr->dir, lr->end);
 	if ((cp = strrchr (workdir, '/')) != NULL)
 	{
-	    if (lr->mod && !strcmp (++cp, lr->mod))
+	    if (lr->mod && STREQ (++cp, lr->mod))
 	    {
 		(void) strcpy (cp, "*");
 	    }
@@ -1646,7 +1646,7 @@ report_hrecs (void)
 	(void) strcpy (repos, lr->repos);
 	if ((cp = strrchr (repos, '/')) != NULL)
 	{
-	    if (lr->mod && !strcmp (++cp, lr->mod))
+	    if (lr->mod && STREQ (++cp, lr->mod))
 	    {
 		(void) strcpy (cp, "*");
 	    }
@@ -1713,37 +1713,37 @@ accept_hrec (struct hrec *lr, struct hrec *hr)
 	 * print a line at the allowed boundaries.
 	 */
 
-	if (!hr ||			/* The last record */
-	    strcmp (hr->user, lr->user) ||	/* User has changed */
-	    strcmp (hr->mod, lr->mod) ||/* Module has changed */
-	    (working &&			/* If must match "workdir" */
-	     (strcmp (hr->dir, lr->dir) ||	/*    and the 1st parts or */
-	      strcmp (hr->end, lr->end))))	/*    the 2nd parts differ */
+	if (!hr					/* The last record */
+	    || !STREQ (hr->user, lr->user)	/* User has changed */
+	    || !STREQ (hr->mod, lr->mod)	/* Module has changed */
+	    || (working				/* If must match "workdir" */
+	        && (!STREQ (hr->dir, lr->dir)	/* and the 1st parts or */
+		    || !STREQ (hr->end, lr->end))))/* the 2nd parts differ */
 
 	    return 1;
     }
     else if (modified)
     {
-	if (!last_entry ||		/* Don't want only last rec */
-	    !hr ||			/* Last entry is a "last entry" */
-	    strcmp (hr->repos, lr->repos) ||	/* Repository has changed */
-	    strcmp (hr->file, lr->file))/* File has changed */
+	if (!last_entry			     /* Don't want only last rec */
+	    || !hr			     /* Last entry is a "last entry" */
+	    || !STREQ (hr->repos, lr->repos) /* Repository has changed */
+	    || !STREQ (hr->file, lr->file))  /* File has changed */
 	    return 1;
 
 	if (working)
-	{				/* If must match "workdir" */
-	    if (strcmp (hr->dir, lr->dir) ||	/*    and the 1st parts or */
-		strcmp (hr->end, lr->end))	/*    the 2nd parts differ */
+	{					/* If must match "workdir" */
+	    if (!STREQ (hr->dir, lr->dir)	/*    and the 1st parts or */
+		|| !STREQ (hr->end, lr->end))	/*    the 2nd parts differ */
 		return 1;
 	}
     }
     else if (module_report)
     {
-	if (!last_entry ||		/* Don't want only last rec */
-	    !hr ||			/* Last entry is a "last entry" */
-	    strcmp (hr->mod, lr->mod) ||/* Module has changed */
-	    strcmp (hr->repos, lr->repos) ||	/* Repository has changed */
-	    strcmp (hr->file, lr->file))/* File has changed */
+	if (!last_entry			     /* Don't want only last rec */
+	    || !hr			     /* Last entry is a "last entry" */
+	    || !STREQ (hr->mod, lr->mod)     /* Module has changed */
+	    || !STREQ (hr->repos, lr->repos) /* Repository has changed */
+	    || !STREQ (hr->file, lr->file))  /* File has changed */
 	    return 1;
     }
     else

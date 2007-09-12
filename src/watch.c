@@ -77,7 +77,7 @@ watch_modify_watchers (const char *file, struct addremove_args *what)
 
     TRACE( TRACE_FUNCTION, "modify_watchers ( %s )", file );
 
-    if (the_args.user && strcmp (getcaller (), the_args.user) && !is_admin ())
+    if (the_args.user && !STREQ (getcaller (), the_args.user) && !is_admin ())
     {
 	error (1, 0,
 	       "Editing other user's watches is restricted to the %s group.",
@@ -226,7 +226,7 @@ watch_modify_watchers (const char *file, struct addremove_args *what)
 	if (!((curattr_new == NULL && curattr == NULL)
 	      || (curattr_new != NULL
 		  && curattr != NULL
-		  && strcmp (curattr_new, curattr) == 0)))
+		  && STREQ (curattr_new, curattr))))
 	    fileattr_set (file,
 			  "_watchers",
 			  curattr_new);
@@ -264,7 +264,7 @@ static int addremove_filesdoneproc (void * callerdat, int err, const char * repo
 	   matches any of the specified directories. Otherwise, it must be an exact
 	   match. */
 	if ( the_args.local )
-	    set_default = strcmp( update_dir, the_args.dirs[ dir_check ] )==0;
+	    set_default = STREQ (update_dir, the_args.dirs[dir_check]);
 	else 
 	    set_default = strncmp( update_dir, the_args.dirs[ dir_check ], strlen( the_args.dirs[ dir_check ] ) ) == 0;
 	dir_check++;
@@ -307,19 +307,19 @@ watch_addremove (int argc, char **argv)
 		break;
 	    case 'a':
 		a_omitted = 0;
-		if (strcmp (optarg, "edit") == 0)
+		if (STREQ (optarg, "edit"))
 		    the_args.edit = 1;
-		else if (strcmp (optarg, "unedit") == 0)
+		else if (STREQ (optarg, "unedit"))
 		    the_args.unedit = 1;
-		else if (strcmp (optarg, "commit") == 0)
+		else if (STREQ (optarg, "commit"))
 		    the_args.commit = 1;
-		else if (strcmp (optarg, "all") == 0)
+		else if (STREQ (optarg, "all"))
 		{
 		    the_args.edit = 1;
 		    the_args.unedit = 1;
 		    the_args.commit = 1;
 		}
-		else if (strcmp (optarg, "none") == 0)
+		else if (STREQ (optarg, "none"))
 		{
 		    the_args.edit = 0;
 		    the_args.unedit = 0;
@@ -444,25 +444,25 @@ watch (int argc, char **argv)
 {
     if (argc <= 1)
 	usage (watch_usage);
-    if (strcmp (argv[1], "on") == 0)
+    if (STREQ (argv[1], "on"))
     {
 	--argc;
 	++argv;
 	return watch_on (argc, argv);
     }
-    else if (strcmp (argv[1], "off") == 0)
+    else if (STREQ (argv[1], "off"))
     {
 	--argc;
 	++argv;
 	return watch_off (argc, argv);
     }
-    else if (strcmp (argv[1], "add") == 0)
+    else if (STREQ (argv[1], "add"))
     {
 	--argc;
 	++argv;
 	return watch_add (argc, argv);
     }
-    else if (strcmp (argv[1], "remove") == 0)
+    else if (STREQ (argv[1], "remove"))
     {
 	--argc;
 	++argv;

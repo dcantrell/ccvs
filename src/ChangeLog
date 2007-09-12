@@ -1,5 +1,15 @@
 2007-09-12  Derek Price  <derek@ximbiot.com>
 
+	* subr.h (STREQ): New macro.
+	* add.c, admin.c, annotate.c, base.c, checkin.c, checkout.c,
+	classify.c, client.c, commit.c, create_adm.c, diff.c, edit.c,
+	entries.c, expand_path.c, filesubr.c, find_names.c, hardlink.c,
+	hash.c, history.c, ignore.c, import.c, lock.c, log.c, login.c,
+	logmsg.c, ls.c, main.c, mkmodules.c, no_diff.c, parseinfo.c, patch.c,
+	rcs.c, rcscmds.c, recurse.c, root.c, run.c, server.c, sign.c, subr.c,
+	tag.c, update.c, verify.c, vers_ts.c, watch.c, wrapper.c: Use STREQ.
+	Some cleanup.
+
 	* edit.c: Alphabetize includes.
 	* entries.c, find_names.c, update.c: Gratuitous cleanup.
 	* sanity.sh (errmsg2-16): Fix bug from previous commit.

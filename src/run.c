@@ -267,7 +267,7 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 	** This prevents a user from creating a privileged shell
 	** from the text editor when the SETXID_SUPPORT option is selected.
 	*/
-	if (!strcmp (run_argv[0], Editor) && setegid (getgid ()))
+	if (STREQ (run_argv[0], Editor) && setegid (getgid ()))
 	{
 	    error (0, errno, "cannot set egid to gid");
 	    _exit (127);

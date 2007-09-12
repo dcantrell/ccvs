@@ -147,7 +147,7 @@ fmt_proc (Node *p, void *closure)
     {
         if (li->tag == NULL
 	    ? tag != NULL
-	    : tag == NULL || strcmp (tag, li->tag) != 0)
+	    : tag == NULL || !STREQ (tag, li->tag))
 	{
 	    if (col > 0)
 	        (void) fprintf (fp, "\n");
@@ -219,7 +219,7 @@ do_editor (const char *dir, char **messagep, const char *repository,
 	return;
 
     /* Abort before creation of the temp file if no editor is defined. */
-    if (strcmp (Editor, "") == 0)
+    if (STREQ (Editor, ""))
         error(1, 0, "no editor defined, must use -e or -m");
 
   again:
@@ -354,7 +354,7 @@ do_editor (const char *dir, char **messagep, const char *repository,
 
     /* canonicalize emply messages */
     if (*messagep != NULL &&
-        (**messagep == '\0' || strcmp (*messagep, "\n") == 0))
+        (**messagep == '\0' || STREQ (*messagep, "\n")))
     {
 	free (*messagep);
 	*messagep = NULL;
@@ -552,7 +552,7 @@ rcsinfo_proc (const char *repository, const char *template, void *closure)
     FILE *tfp;
 
     /* nothing to do if the last one included is the same as this one */
-    if (last_template && strcmp (last_template, template) == 0)
+    if (last_template && STREQ (last_template, template))
 	return (0);
     if (last_template)
 	free (last_template);

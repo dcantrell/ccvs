@@ -410,8 +410,9 @@ sign_check_fileproc (void *callerdat, struct file_info *finfo)
         return 1;
     }
 
-    if (strcmp (vers->ts_conflict
-		? vers->ts_conflict : vers->ts_rcs, vers->ts_user))
+    if (!STREQ (vers->ts_conflict
+		? vers->ts_conflict : vers->ts_rcs,
+		vers->ts_user))
     {
 	char *basefn = make_base_file_name (finfo->file, vers->ts_user);
 	if (!isfile (basefn))

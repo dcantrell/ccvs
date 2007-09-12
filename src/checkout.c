@@ -147,7 +147,7 @@ checkout (int argc, char **argv)
      * options to be default (like -kv) and takes care to remove the CVS
      * directory when it has done its duty
      */
-    if (strcmp (cvs_cmd_name, "export") == 0)
+    if (STREQ (cvs_cmd_name, "export"))
     {
         m_type = EXPORT;
 	valid_options = "+Nnk:d:flRQqr:D:";
@@ -900,7 +900,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 		 bar   -> Emptydir   (generated dir -- not in repos)
 		 baz   -> quux       (finally!) */
 
-	    if (strcmp (reposcopy, current_parsed_root->directory) == 0)
+	    if (STREQ (reposcopy, current_parsed_root->directory))
 	    {
 		/* We can't walk up past CVSROOT.  Instead, the
                    repository should be Emptydir. */
@@ -922,7 +922,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 			   
 		*rp = '\0';
 		    
-		if (strcmp (reposcopy, current_parsed_root->directory) == 0)
+		if (STREQ (reposcopy, current_parsed_root->directory))
 		{
 		    /* Special case -- the repository name needs
 		       to be "/path/to/repos/." (the trailing dot

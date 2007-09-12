@@ -299,7 +299,7 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 	    cvsroot_t *root = Name_Root (NULL, update_dir);
 	    if (root)
 	    {
-		if (strcmp (root->original, original_parsed_root->original))
+		if (!STREQ (root->original, original_parsed_root->original))
 		    /* We're skipping this directory because it is for
 		     * a different root.  Therefore, we just want to
 		     * do the subdirectories only.  Processing files would
@@ -719,11 +719,8 @@ do_recursion (struct recursion_frame *frame)
 	if (this_root != NULL)
 	{
 	    if (findnode (root_directories, this_root->original))
-	    {
-		process_this_directory =
-		    !strcmp (original_parsed_root->original,
-			     this_root->original);
-	    }
+		process_this_directory = STREQ (original_parsed_root->original,
+						this_root->original);
 	    else
 	    {
 		/* Add it to our list. */
@@ -1059,9 +1056,9 @@ but CVS uses %s for its own purposes; skipping %s directory",
     strcpy (update_dir, saved_update_dir);
 
     /* set up update_dir - skip dots if not at start */
-    if (strcmp (dir, ".") != 0)
+    if (!STREQ (dir, "."))
     {
-	if (update_dir[0] != '\0')
+	if (update_dir[0])
 	{
 	    (void) strcat (update_dir, "/");
 	    (void) strcat (update_dir, dir);
@@ -1168,11 +1165,8 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	if (this_root != NULL)
 	{
 	    if (findnode (root_directories, this_root->original))
-	    {
-		process_this_directory =
-		    !strcmp (original_parsed_root->original,
-			     this_root->original);
-	    }
+		process_this_directory = STREQ (original_parsed_root->original,
+						this_root->original);
 	    else
 	    {
 		/* Add it to our list. */
@@ -1235,7 +1229,7 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	    dir_return = R_SKIP_DIRS;
 
 	/* remember if the `.' will be stripped for subsequent dirs */
-	if (strcmp (update_dir, ".") == 0)
+	if (STREQ (update_dir, "."))
 	{
 	    update_dir[0] = '\0';
 	    stripped_dot = 1;
@@ -1250,7 +1244,7 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	 */
 	if (repository)
 	{
-	    if (strcmp (dir, ".") == 0)
+	    if (STREQ (dir, "."))
 		xframe.repository = xstrdup (repository);
 	    else
 		xframe.repository = Xasprintf ("%s/%s", repository, dir);
@@ -1350,7 +1344,7 @@ unroll_files_proc (Node *p, void *closure)
     save_dirlist = dirlist;
     dirlist = NULL;
 
-    if (strcmp(p->key, ".") != 0)
+    if (!STREQ (p->key, "."))
     {
         if (save_cwd (&cwd))
 	    error (1, errno, "Failed to save current directory.");

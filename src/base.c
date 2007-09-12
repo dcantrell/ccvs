@@ -276,7 +276,7 @@ base_checkout (RCSNode *rcs, struct file_info *finfo,
     /* FIXME: Verify the signature in local mode.  */
 
 #ifdef SERVER_SUPPORT
-    if (server_active && strcmp (cvs_cmd_name, "export"))
+    if (server_active && !STREQ (cvs_cmd_name, "export"))
 	server_base_checkout (rcs, finfo, prev, rev, ptag, tag,
 			      poptions, options);
 #endif
@@ -312,7 +312,7 @@ temp_checkout (RCSNode *rcs, struct file_info *finfo,
     }
     noexec = save_noexec;
 
-    assert (strcmp (cvs_cmd_name, "export"));
+    assert (!STREQ (cvs_cmd_name, "export"));
 
 #ifdef SERVER_SUPPORT
     if (server_active)
@@ -442,7 +442,7 @@ ibase_copy (struct file_info *finfo, const char *rev, const char *flags,
 	xchmod (finfo->file, true);
 
 #ifdef SERVER_SUPPORT
-    if (server_active && strcmp (cvs_cmd_name, "export"))
+    if (server_active && !STREQ (cvs_cmd_name, "export"))
 	server_base_copy (finfo, rev ? rev : "", flags);
 #endif
 
@@ -551,7 +551,7 @@ base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
 	    cvs_output (" and ", 5);
 	    cvs_output (rev2, 0);
 	    cvs_output (" into `", 7);
-	    if (!finfo->update_dir || !strcmp (finfo->update_dir, "."))
+	    if (!finfo->update_dir || STREQ (finfo->update_dir, "."))
 		cvs_output (finfo->file, 0);
 	    else
 		cvs_output (finfo->fullname, 0);

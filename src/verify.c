@@ -513,7 +513,7 @@ verify_fileproc (void *callerdat, struct file_info *finfo)
     assert (n);
 
     e = n->data;
-    bin = !strcmp (e->options, "-kb");
+    bin = STREQ (e->options, "-kb");
 
     basefn = make_base_file_name (finfo->file, e->version);
     basesigfn = Xasprintf ("%s%s", basefn, ".sig");

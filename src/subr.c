@@ -1959,14 +1959,14 @@ readBool (const char *infopath, const char *option, const char *p, bool *val)
 {
     TRACE (TRACE_FLOW, "readBool (%s, %s, %s)", infopath, option, p);
     if (!strcasecmp (p, "no") || !strcasecmp (p, "false")
-        || !strcasecmp (p, "off") || !strcmp (p, "0"))
+        || !strcasecmp (p, "off") || STREQ (p, "0"))
     {
 	TRACE (TRACE_DATA, "Read %d for %s", *val, option);
 	*val = false;
 	return true;
     }
     else if (!strcasecmp (p, "yes") || !strcasecmp (p, "true")
-	     || !strcasecmp (p, "on") || !strcmp (p, "1"))
+	     || !strcasecmp (p, "on") || STREQ (p, "1"))
     {
 	TRACE (TRACE_DATA, "Read %d for %s", *val, option);
 	*val = true;
@@ -2083,7 +2083,7 @@ isSamePath (const char *path1_in, const char *path2_in)
     char *p1, *p2;
     bool same;
 
-    if (!strcmp (path1_in, path2_in))
+    if (STREQ (path1_in, path2_in))
 	return true;
 
     /* Path didn't match, but try to resolve any links that may be
@@ -2095,10 +2095,10 @@ isSamePath (const char *path1_in, const char *path2_in)
 
     p1 = xcanonicalize_file_name (path1_in);
     p2 = xcanonicalize_file_name (path2_in);
-    if (strcmp (p1, p2))
-	same = false;
-    else
+    if (STREQ (p1, p2))
 	same = true;
+    else
+	same = false;
 
     free (p1);
     free (p2);
@@ -2187,7 +2187,7 @@ is_admin (void)
 	char **grnam;
 	
 	for (grnam = grp->gr_mem; *grnam; grnam++)
-	    if (strcmp (*grnam, me) == 0) break;
+	    if (STREQ (*grnam, me)) break;
 	if (!*grnam && getgid() != grp->gr_gid)
 	    return false;
     }
@@ -2211,7 +2211,7 @@ mkdir_i (const char *name, mode_t mode,
 	&& (flags & MD_FATAL || !(flags & MD_QUIET)))
     {
 	bool uud = update_dir && strlen (update_dir)
-		   && strcmp (update_dir, ".");
+		   && !STREQ (update_dir, ".");
 	error (flags & MD_FATAL, errno, "cannot make directory `%s%s%s'",
 	       uud ? update_dir : "", uud ? "/" : "", name);
     }
@@ -2355,7 +2355,7 @@ cvs_mkdirs_i (const char *name, mode_t mode, const char *update_dir,
 	&& (flags & MD_FATAL || !(flags & MD_QUIET)))
     {
 	bool uud = update_dir && strlen (update_dir)
-		   && strcmp (update_dir, ".");
+		   && !STREQ (update_dir, ".");
 	error (flags & MD_FATAL, errno, "cannot make directory tree `%s%s%s'",
 	       uud ? update_dir : "", uud ? "/" : "", name);
     }
@@ -2426,7 +2426,7 @@ dir_append_dirs (const char *dir, ...)
 
 	TRACE (TRACE_DATA, "dir_append (%s, %s)", dir, append);
 
-	if (!strlen (append) || !strcmp (append, "."))
+	if (!strlen (append) || STREQ (append, "."))
 	    continue;
 
 	if (!strlen (retval))

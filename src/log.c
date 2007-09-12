@@ -209,7 +209,7 @@ send_one (Node *node, void *closure)
 
     send_to_server ("Argument ", 0);
     send_to_server (option, 0);
-    if (strcmp (node->key, "@@MYSELF") == 0)
+    if (STREQ (node->key, "@@MYSELF"))
 	/* It is a bare -w option.  Note that we must send it as
 	   -w rather than messing with getcaller() or something (which on
 	   the client will return garbage).  */
@@ -244,7 +244,7 @@ cvslog (int argc, char **argv)
     int local = 0;
     struct option_revlist **prl;
 
-    is_rlog = (strcmp (cvs_cmd_name, "rlog") == 0);
+    is_rlog = STREQ (cvs_cmd_name, "rlog");
 
     if (argc == -1)
 	usage (log_usage);
@@ -1122,7 +1122,7 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
 		nr->first = xstrdup (r->first);
 	    else
 	    {
-		if (baserev && strcmp (r->first, TAG_BASE) == 0)
+		if (baserev && STREQ (r->first, TAG_BASE))
 		    nr->first = xstrdup (baserev);
 		else if (RCS_nodeisbranch (rcs, r->first))
 		    nr->first = RCS_whatbranch (rcs, r->first);
@@ -1136,13 +1136,13 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
 	    }
 
 	    if (r->last == r->first || (r->last != NULL && r->first != NULL &&
-					strcmp (r->last, r->first) == 0))
+					STREQ (r->last, r->first)))
 		nr->last = xstrdup (nr->first);
 	    else if (r->last == NULL || isdigit ((unsigned char) r->last[0]))
 		nr->last = xstrdup (r->last);
 	    else
 	    {
-		if (baserev && strcmp (r->last, TAG_BASE) == 0)
+		if (baserev && STREQ (r->last, TAG_BASE))
 		    nr->last = xstrdup (baserev);
 		else if (RCS_nodeisbranch (rcs, r->last))
 		    nr->last = RCS_whatbranch (rcs, r->last);
@@ -1191,7 +1191,7 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
 	    }
 	    else if (nr->first == NULL || nr->last == NULL)
 		nr->fields = 0;
-	    else if (strcmp (nr->first, nr->last) == 0)
+	    else if (STREQ (nr->first, nr->last))
 		nr->fields = numdots (nr->last) + 1;
 	    else
 	    {

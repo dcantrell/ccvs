@@ -38,6 +38,7 @@
 /* CVS headers.  */
 #include "rcs.h"
 #include "server.h"
+#include "subr.h"
 #include "system.h"
 #include "vers_ts.h"
 #include "wrapper.h"
@@ -55,8 +56,7 @@ No_Difference (struct file_info *finfo, Vers_TS *vers)
 
     /* If ts_user is "Is-modified", we can only conclude the files are
        different (since we don't have the file's contents).  */
-    if (vers->ts_user != NULL
-	&& strcmp (vers->ts_user, "Is-modified") == 0)
+    if (vers->ts_user && STREQ (vers->ts_user, "Is-modified"))
 	return -1;
 
     if (!vers->srcfile || !vers->srcfile->path)

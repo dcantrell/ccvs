@@ -151,7 +151,7 @@ password_entry_parseline (const char *cvsroot_canonical,
 		else
 		{
 		    *p = '\0';
-		    if (strcmp (cvsroot_canonical, q) == 0)
+		    if (STREQ (cvsroot_canonical, q))
 			password = p + 1;
 		    *p = ' ';
 		}
@@ -205,7 +205,7 @@ password_entry_parseline (const char *cvsroot_canonical,
 	}
 	*p = ' ';
 	tmp_root_canonical = normalize_cvsroot (tmp_root);
-	if (strcmp (cvsroot_canonical, tmp_root_canonical) == 0)
+	if (STREQ (cvsroot_canonical, tmp_root_canonical))
 	    password = p + 1;
 
 	free (tmp_root_canonical);
@@ -374,7 +374,7 @@ process:
      */
     if (!noexec && password != NULL && (operation == password_entry_delete
         || (operation == password_entry_add
-            && strcmp (password, newpassword))))
+            && !STREQ (password, newpassword))))
     {
 	long found_at = line;
 	char *tmp_name;
@@ -453,7 +453,7 @@ process:
      * different password, append the new line
      */
     if (!noexec && operation == password_entry_add
-	    && (password == NULL || strcmp (password, newpassword)))
+	    && (password == NULL || !STREQ (password, newpassword)))
     {
 	if ((fp = CVS_FOPEN (passfile, "a")) == NULL)
 	    error (1, errno, "could not open %s for writing", passfile);
