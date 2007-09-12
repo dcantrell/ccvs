@@ -1,5 +1,14 @@
 2007-09-12  Derek Price  <derek@ximbiot.com>
 
+	* commit.c: Misc cleanup.  Use GNULIB's quote(), if not consistently.
+	* edit.c: Alphabetize includes.
+	* recurse.c (start_recursion): Use new enum lock_type and make
+	UPDATE_PRELOAD const.  Use TRACE_NULL in traces.
+	* recurse.h (enum lock_type): New type replacing...
+	(CVS_LOCK_NONE, CVS_LOCK_READ, CVS_LOCK_WRITE): ...these macros.
+	(W_LOCAL, W_ATTIC, W_REPOS): Clean up.
+	(start_recursion): Update prototype per recurse.c.
+
 	* subr.h (STRNEQ): New macro.
 	* add.c, admin.c, checkout.c, client.c, commit.c, create_adm.c,
 	cvsrc.c, edit.c, entries.c, fileattr.c, find_names.c, history.c,
