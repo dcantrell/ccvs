@@ -27,6 +27,7 @@
 /* CVS headers.  */
 #include "base.h"
 #include "ignore.h"
+#include "lock.h"
 #include "recurse.h"
 #include "repos.h"
 

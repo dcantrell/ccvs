@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
@@ -406,28 +407,6 @@ int Create_Admin (const char *dir, const char *update_dir,
                   const char *repository, const char *tag, const char *date,
                   int nonbranch, int warn, int dotemplate);
 int expand_at_signs (const char *, size_t, FILE *);
-
-/* Locking subsystem (implemented in lock.c).  */
-
-int Reader_Lock (char *xrepository);
-void Simple_Lock_Cleanup (void);
-void Lock_Cleanup (void);
-
-/* Writelock an entire subtree, well the part specified by ARGC, ARGV, LOCAL,
-   and AFLAG, anyway.  */
-void lock_tree_promotably (int argc, char **argv, int local, int which,
-			   int aflag);
-
-/* See lock.c for description.  */
-void lock_dir_for_write (const char *);
-
-/* Get a write lock for the history file.  */
-int history_lock (const char *);
-void clear_history_lock (void);
-
-/* Get a write lock for the val-tags file.  */
-int val_tags_lock (const char *);
-void clear_val_tags_lock (void);
 
 void Scratch_Entry (List * list, const char *fname);
 void ParseTag (char **tagp, char **datep, int *nonbranchp);

@@ -1,3 +1,15 @@
+2007-09-12  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (Reader_Lock, Simple_Lock_Cleanup, Lock_Cleanup,
+	lock_tree_promotably, lock_dir_for_write, history_lock,
+	clear_history_lock, val_tags_lock, clear_val_tags_lock): Move these...
+	* lock.h (Reader_Lock, Simple_Lock_Cleanup, Lock_Cleanup,
+	lock_tree_promotably, lock_dir_for_write, history_lock,
+	clear_history_lock, val_tags_lock, clear_val_tags_lock): ...prototype
+	to this new file.
+	* admin.c, commit.c, edit.c, history.c, import.c, lock.c, main.c,
+	recurse.c, server.c, tag.c, watch.c: Include new "lock.h".
+
 2007-09-11  Derek Price  <derek@ximbiot.com>
 
 	* add.c, import.c, update.c: Call Entries_Open() & Entries_Close() with

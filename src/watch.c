@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 The Free Software Foundation, Inc.
+ * Copyright (C) 2007 The Free Software Foundation, Inc.
  *
  * Implementation for "cvs watch add", "cvs watchers", and related commands
  *
@@ -25,6 +25,7 @@
 #include "edit.h"
 #include "fileattr.h"
 #include "ignore.h"
+#include "lock.h"
 #include "recurse.h"
 
 #include "cvs.h"
