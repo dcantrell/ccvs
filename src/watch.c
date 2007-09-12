@@ -93,8 +93,7 @@ watch_modify_watchers (const char *file, struct addremove_args *what)
     {
 	p = curattr;
 	while (1) {
-	    if (strncmp (who, p, who_len) == 0
-		&& p[who_len] == '>')
+	    if (STRNEQ (who, p, who_len) && p[who_len] == '>')
 	    {
 		/* Found this user.  */
 		mycurattr = p + who_len + 1;
@@ -147,37 +146,37 @@ watch_modify_watchers (const char *file, struct addremove_args *what)
 	    nextp = pend + 1;
 
 	/* Process this item.  */
-	if (pend - p == 4 && strncmp ("edit", p, 4) == 0)
+	if (pend - p == 4 && STRNEQ ("edit", p, 4))
 	{
 	    if (!remove_edit_pending)
 		strcat (mynewattr, "+edit");
 	    add_edit_pending = 0;
 	}
-	else if (pend - p == 6 && strncmp ("unedit", p, 6) == 0)
+	else if (pend - p == 6 && STRNEQ ("unedit", p, 6))
 	{
 	    if (!remove_unedit_pending)
 		strcat (mynewattr, "+unedit");
 	    add_unedit_pending = 0;
 	}
-	else if (pend - p == 6 && strncmp ("commit", p, 6) == 0)
+	else if (pend - p == 6 && STRNEQ ("commit", p, 6))
 	{
 	    if (!remove_commit_pending)
 		strcat (mynewattr, "+commit");
 	    add_commit_pending = 0;
 	}
-	else if (pend - p == 5 && strncmp ("tedit", p, 5) == 0)
+	else if (pend - p == 5 && STRNEQ ("tedit", p, 5))
 	{
 	    if (!what->remove_temp)
 		strcat (mynewattr, "+tedit");
 	    add_tedit_pending = 0;
 	}
-	else if (pend - p == 7 && strncmp ("tunedit", p, 7) == 0)
+	else if (pend - p == 7 && STRNEQ ("tunedit", p, 7))
 	{
 	    if (!what->remove_temp)
 		strcat (mynewattr, "+tunedit");
 	    add_tunedit_pending = 0;
 	}
-	else if (pend - p == 7 && strncmp ("tcommit", p, 7) == 0)
+	else if (pend - p == 7 && STRNEQ ("tcommit", p, 7))
 	{
 	    if (!what->remove_temp)
 		strcat (mynewattr, "+tcommit");
@@ -266,7 +265,8 @@ static int addremove_filesdoneproc (void * callerdat, int err, const char * repo
 	if ( the_args.local )
 	    set_default = STREQ (update_dir, the_args.dirs[dir_check]);
 	else 
-	    set_default = strncmp( update_dir, the_args.dirs[ dir_check ], strlen( the_args.dirs[ dir_check ] ) ) == 0;
+	    set_default = STRNEQ (update_dir, the_args.dirs[dir_check],
+		    		  strlen (the_args.dirs[dir_check]));
 	dir_check++;
     }
 

@@ -205,8 +205,7 @@ fileattr_get (const char *filename, const char *attrname)
     }
     while (p)
     {
-	if (strncmp (attrname, p, attrname_len) == 0
-	    && p[attrname_len] == '=')
+	if (STRNEQ (attrname, p, attrname_len) && p[attrname_len] == '=')
 	{
 	    /* Found it.  */
 	    return p + attrname_len + 1;
@@ -277,7 +276,7 @@ fileattr_modify (char *list, const char *attrname, const char *attrval, int name
 	    }
 	    else
 		++p2;
-	    if (strncmp (attrname, p, attrname_len) == 0
+	    if (STRNEQ (attrname, p, attrname_len)
 		&& p[attrname_len] == namevalsep)
 	    {
 		/* Found it.  */

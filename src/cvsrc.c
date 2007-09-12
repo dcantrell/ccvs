@@ -101,7 +101,7 @@ read_cvsrc (int *argc, char ***argv, const char *cmdname)
 	    continue;
 
 	/* stop if we match the current command */
-	if (!strncmp (line, cmdname, command_len)
+	if (STRNEQ (line, cmdname, command_len)
 	    && isspace ((unsigned char) *(line + command_len)))
 	{
 	    found = 1;

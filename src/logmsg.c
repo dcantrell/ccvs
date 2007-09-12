@@ -340,7 +340,7 @@ do_editor (const char *dir, char **messagep, const char *repository,
 		    error (0, errno, "warning: cannot read %s", fname);
 		break;
 	    }
-	    if (strncmp (line, CVSEDITPREFIX, CVSEDITPREFIXLEN) == 0)
+	    if (STRNEQ (line, CVSEDITPREFIX, CVSEDITPREFIXLEN))
 		continue;
 	    if (offset + line_length >= message_len)
 		expand_string (messagep, &message_len,
@@ -519,7 +519,7 @@ do_verify (char **messagep, const char *repository, List *changes)
 			error (1, errno, "cannot read %s", data.fname);
 		    break;
 		}
-		if (strncmp (line, CVSEDITPREFIX, CVSEDITPREFIXLEN) == 0)
+		if (STRNEQ (line, CVSEDITPREFIX, CVSEDITPREFIXLEN))
 		    continue;
 		(void) strcpy (p, line);
 		p += line_length;

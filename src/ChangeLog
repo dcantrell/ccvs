@@ -1,5 +1,12 @@
 2007-09-12  Derek Price  <derek@ximbiot.com>
 
+	* subr.h (STRNEQ): New macro.
+	* add.c, admin.c, checkout.c, client.c, commit.c, create_adm.c,
+	cvsrc.c, edit.c, entries.c, fileattr.c, find_names.c, history.c,
+	ignore.c, lock.c, logmsg.c, parseinfo.c, patch.c, rcs.c, repos.c,
+	root.c, server.c, subr.c, update.c, watch.c: Use STRNEQ.  Some
+	cleanup.
+
 	* subr.h (STREQ): New macro.
 	* add.c, admin.c, annotate.c, base.c, checkin.c, checkout.c,
 	classify.c, client.c, commit.c, create_adm.c, diff.c, edit.c,

@@ -1,8 +1,12 @@
 /*
- * Copyright (c) 1992, Brian Berliner and Jeff Polk
- * Copyright (c) 1989-1992, Brian Berliner
- * Copyright (c) 2004, Derek R. Price and Ximbiot <http://ximbiot.com>
- * Copyright (c) 1989-2004 The Free Software Foundation <http://gnu.org>
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
+ *
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
+ *                                  and others.
+ *
+ * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
+ * Portions Copyright (C) 1989-1992, Brian Berliner
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +22,10 @@
 #ifndef SUBR_H
 # define SUBR_H
 
+/* ANSI C */
+#include <string.h>
+
+/* CVS */
 /* FIXME - This shouldn't be needed here.  Any routine that needs to understand
  * the underlying structure of an RCSNode should be in rcs*.c.
  */
@@ -148,9 +156,16 @@ streq (const char *a, const char *b)
 {
     return *a == *b && strcmp (a, b) == 0;
 }
+static inline bool
+strneq (const char *a, const char *b, size_t n)
+{
+    return !n || *a == *b && strncmp (a, b, n) == 0;
+}
 # define STREQ(a, b) streq ((a), (b))
+# define STRNEQ(a, b, n) strneq ((a), (b), (n))
 #else /* !HAVE_INLINE */
 # define STREQ(a, b) (strcmp ((a), (b)) == 0)
+# define STRNEQ(a, b, n) (strncmp ((a), (b), (n)) == 0)
 #endif /* HAVE_INLINE */
 
 #endif /* !SUBR_H */

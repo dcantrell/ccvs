@@ -987,7 +987,7 @@ notify_do (int type, const char *filename, const char *update_dir,
 	    break;
 	nextp = strchr (p, ',');
 
-	if ((size_t)(endp - p) == strlen (who) && strncmp (who, p, endp - p) == 0)
+	if ((size_t)(endp - p) == strlen (who) && STRNEQ (who, p, endp - p))
 	{
 	    /* Don't notify user of their own changes.  Would perhaps
 	       be better to check whether it is the same working
@@ -1016,34 +1016,34 @@ notify_do (int type, const char *filename, const char *update_dir,
 
 	    /* If there is a temporary and a regular watch, send a single
 	       notification, for the regular watch.  */
-	    if (type == 'E' && endq - q == 4 && strncmp ("edit", q, 4) == 0)
+	    if (type == 'E' && endq - q == 4 && STRNEQ ("edit", q, 4))
 	    {
 		notif = "edit";
 	    }
 	    else if (type == 'U'
-		     && endq - q == 6 && strncmp ("unedit", q, 6) == 0)
+		     && endq - q == 6 && STRNEQ ("unedit", q, 6))
 	    {
 		notif = "unedit";
 	    }
 	    else if (type == 'C'
-		     && endq - q == 6 && strncmp ("commit", q, 6) == 0)
+		     && endq - q == 6 && STRNEQ ("commit", q, 6))
 	    {
 		notif = "commit";
 	    }
 	    else if (type == 'E'
-		     && endq - q == 5 && strncmp ("tedit", q, 5) == 0)
+		     && endq - q == 5 && STRNEQ ("tedit", q, 5))
 	    {
 		if (notif == NULL)
 		    notif = "temporary edit";
 	    }
 	    else if (type == 'U'
-		     && endq - q == 7 && strncmp ("tunedit", q, 7) == 0)
+		     && endq - q == 7 && STRNEQ ("tunedit", q, 7))
 	    {
 		if (notif == NULL)
 		    notif = "temporary unedit";
 	    }
 	    else if (type == 'C'
-		     && endq - q == 7 && strncmp ("tcommit", q, 7) == 0)
+		     && endq - q == 7 && STRNEQ ("tcommit", q, 7))
 	    {
 		if (notif == NULL)
 		    notif = "temporary commit";
@@ -1072,8 +1072,7 @@ notify_do (int type, const char *filename, const char *update_dir,
 	    {
 		while (getline (&line, &line_len, fp) >= 0)
 		{
-		    if (strncmp (line, p, len) == 0
-			&& line[len] == ':')
+		    if (STRNEQ (line, p, len) && line[len] == ':')
 		    {
 			char *cp;
 			args.notifyee = xstrdup (line + len + 1);

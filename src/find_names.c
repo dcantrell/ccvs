@@ -241,7 +241,8 @@ find_dirs (const char *dir, List *list, int checkadm, List *entries)
        Emptydir.  Except in the CVSNULLREPOS case, Emptydir is just
        a normal directory name.  */
     if (ISABSOLUTE (dir)
-	&& strncmp (dir, current_parsed_root->directory, strlen (current_parsed_root->directory)) == 0
+	&& STRNEQ (dir, current_parsed_root->directory,
+		   strlen (current_parsed_root->directory))
 	&& ISSLASH (dir[strlen (current_parsed_root->directory)])
 	&& STREQ (dir + strlen (current_parsed_root->directory) + 1,
 		  CVSROOTADM))

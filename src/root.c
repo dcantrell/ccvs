@@ -211,8 +211,8 @@ primary_root_translate (const char *root_in)
     if (!config) return root_in;
 
     if (config->PrimaryServer
-        && !strncmp (root_in, config->PrimaryServer->directory,
-		     strlen (config->PrimaryServer->directory))
+        && STRNEQ (root_in, config->PrimaryServer->directory,
+		   strlen (config->PrimaryServer->directory))
         && (ISSLASH (root_in[strlen (config->PrimaryServer->directory)])
             || root_in[strlen (config->PrimaryServer->directory)] == '\0')
        )
@@ -257,8 +257,8 @@ primary_root_inverse_translate (const char *root_in)
     if (!config) return root_in;
 
     if (config->PrimaryServer
-        && !strncmp (root_in, current_parsed_root->directory,
-		     strlen (current_parsed_root->directory))
+        && STRNEQ (root_in, current_parsed_root->directory,
+		   strlen (current_parsed_root->directory))
         && (ISSLASH (root_in[strlen (current_parsed_root->directory)])
             || root_in[strlen (current_parsed_root->directory)] == '\0')
        )

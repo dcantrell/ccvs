@@ -843,7 +843,7 @@ history_write (int type, const char *update_dir, const char *revs,
 	{
 	    /* Assumes neither CurDir nor pwdir ends in '/' */
 	    i = strlen (pwdir);
-	    if (!strncmp (CurDir, pwdir, i))
+	    if (STRNEQ (CurDir, pwdir, i))
 	    {
 		PrCurDir += i;		/* Point to '/' separator */
 		tilde = "~";
@@ -867,7 +867,7 @@ history_write (int type, const char *update_dir, const char *revs,
 		free_cwd (&cwd);
 
 		i = strlen (homedir);
-		if (!strncmp (CurDir, homedir, i))
+		if (STRNEQ (CurDir, homedir, i))
 		{
 		    PrCurDir += i;	/* Point to '/' separator */
 		    tilde = "~";
@@ -1326,7 +1326,7 @@ within (char *find, char *string)
 	if (!(string = strchr (string, c)))
 	    return 0;
 	string++;
-	if (!strncmp (find, string, len))
+	if (STRNEQ (find, string, len))
 	    return 1;
     }
     return 0;
@@ -1486,7 +1486,7 @@ select_hrec (struct hrec *hr)
 		{
 		    cp++;
 		    /* if argument to -p is a prefix of repository */
-		    if (!strncmp (cp, hr->repos, strlen (cp)))
+		    if (STRNEQ (cp, hr->repos, strlen (cp)))
 		    {
 			hr->mod = fl->l_module;
 			break;

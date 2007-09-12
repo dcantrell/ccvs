@@ -616,7 +616,7 @@ fgetentent (FILE *fpin, char *cmd, int *sawdir)
 		/* Fix non-standard format.  */
 		if (c[8] == '0') c[8] = ' ';
 
-		if (!strncmp (ts + 25, c, 24))
+		if (STRNEQ (ts + 25, c, 24))
 		    ts = time_stamp (user);
 		else
 		{

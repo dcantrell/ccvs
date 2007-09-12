@@ -693,7 +693,7 @@ int path_list_prefixed (Node *p, void *closure)
 {
     const char *questionable = closure;
     const char *prefix = p->key;
-    if (strncmp (prefix, questionable, strlen (prefix))) return 0;
+    if (!STRNEQ (prefix, questionable, strlen (prefix))) return 0;
     questionable += strlen (prefix);
     while (ISSLASH (*questionable)) questionable++;
     if (*questionable == '\0') return 1;
@@ -786,7 +786,7 @@ call_in_directory (const char *pathname,
     assert (reposname);
 
     reposdirname_absolute = 0;
-    if (strncmp (reposname, toplevel_repos, strlen (toplevel_repos)))
+    if (!STRNEQ (reposname, toplevel_repos, strlen (toplevel_repos)))
     {
 	reposdirname_absolute = 1;
 	short_repos = reposname;
@@ -4162,7 +4162,7 @@ get_server_responses (void)
 	
 	len = read_line (&cmd);
 	for (rs = responses; rs->name; ++rs)
-	    if (!strncmp (cmd, rs->name, strlen (rs->name)))
+	    if (STRNEQ (cmd, rs->name, strlen (rs->name)))
 	    {
 		size_t cmdlen = strlen (rs->name);
 		if (cmd[cmdlen] == '\0')
@@ -4704,13 +4704,13 @@ auth_server (cvsroot_t *root, struct buffer *to_server,
 		}
 		exit (EXIT_FAILURE);
 	    }
-	    else if (!strncmp (read_buf, "E ", 2))
+	    else if (STRNEQ (read_buf, "E ", 2))
 	    {
 		fprintf (stderr, "%s\n", read_buf + 2);
 
 		/* Continue with the authentication protocol.  */
 	    }
-	    else if (!strncmp (read_buf, "error ", 6))
+	    else if (STRNEQ (read_buf, "error ", 6))
 	    {
 		char *p;
 
@@ -4978,7 +4978,7 @@ start_server (void)
 	    {
 		if (suppress_redirect && STREQ (rs->name, "Redirect"))
 		    continue;
-		if (suppress_bases && !strncmp (rs->name, "Base-", 5))
+		if (suppress_bases && STRNEQ (rs->name, "Base-", 5))
 		    continue;
 		if (suppress_bases && STREQ (rs->name, "OpenPGP-signature"))
 		    continue;
@@ -6065,7 +6065,7 @@ client_process_import_file (char *message, char *vfile, char *vtag, int targc,
 
     assert (toplevel_repos);
 
-    if (strncmp (repository, toplevel_repos, strlen (toplevel_repos)))
+    if (!STRNEQ (repository, toplevel_repos, strlen (toplevel_repos)))
 	error (1, 0,
 	       "internal error: pathname `%s' doesn't specify file in `%s'",
 	       repository, toplevel_repos);

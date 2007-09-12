@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
@@ -581,7 +582,7 @@ RCS_reparsercsfile (RCSNode *rdata, FILE **pfp, struct rcsbuffer *rcsbufp)
 	/* Note that when comparing with RCSDATE, we are not massaging
            VALUE from the string found in the RCS file.  This is OK
            since we know exactly what to expect.  */
-	if (*cp == '\0' && strncmp (RCSDATE, value, (sizeof RCSDATE) - 1) == 0)
+	if (!*cp && STRNEQ (RCSDATE, value, sizeof RCSDATE - 1))
 	    break;
 
 	if (STREQ (key, RCSDESC))
@@ -735,7 +736,7 @@ RCS_setattic (RCSNode *rcs, int toattic)
 	strncpy (newpath, rcs->path, p - rcs->path - 1);
 	newpath[p - rcs->path - 1] = '\0';
 	q = newpath + (p - rcs->path - 1) - (sizeof CVSATTIC - 1);
-	assert (strncmp (q, CVSATTIC, sizeof CVSATTIC - 1) == 0);
+	assert (STRNEQ (q, CVSATTIC, sizeof CVSATTIC - 1));
 	strcpy (q, p);
 
 	if (CVS_RENAME (rcs->path, newpath) < 0)
@@ -2381,7 +2382,7 @@ RCS_gettag (RCSNode *rcs, const char *symtag, int force_tag_match,
 		/* see if we have .magic-branch. (".0.") */
 		magic = xmalloc (strlen (tag) + 1);
 		(void) sprintf (magic, ".%d.", RCS_MAGIC_BRANCH);
-		if (strncmp (magic, cp, strlen (magic)) == 0)
+		if (STRNEQ (magic, cp, strlen (magic)))
 		{
 		    /* it's magic.  See if the branch exists */
 		    *cp = '\0';		/* turn it into a revision */
@@ -2618,7 +2619,7 @@ RCS_nodeisbranch (RCSNode *rcs, const char *rev)
 
 	/* see if we have .magic-branch. (".0.") */
 	magic = Xasprintf (".%d.", RCS_MAGIC_BRANCH);
-	if (strncmp (magic, cp, strlen (magic)) == 0)
+	if (STRNEQ (magic, cp, strlen (magic)))
 	{
 	    free (magic);
 	    free (version);
@@ -2666,7 +2667,7 @@ RCS_whatbranch (RCSNode *rcs, const char *rev)
 	/* see if we have .magic-branch. (".0.") */
 	magic = xmalloc (strlen (version) + 1);
 	(void) sprintf (magic, ".%d.", RCS_MAGIC_BRANCH);
-	if (strncmp (magic, cp, strlen (magic)) == 0)
+	if (STRNEQ (magic, cp, strlen (magic)))
 	{
 	    /* yep.  it's magic.  now, construct the real branch */
 	    *cp = '\0';			/* turn it into a revision */
@@ -2711,7 +2712,7 @@ RCS_getbranch (RCSNode *rcs, const char *tag, int force_tag_match)
 	xtag = Xasprintf ("%s.", tag);
 	for (cp = rcs->head; cp != NULL;)
 	{
-	    if (strncmp (xtag, cp, strlen (xtag)) == 0)
+	    if (STRNEQ (xtag, cp, strlen (xtag)))
 		break;
 	    p = findnode (rcs->versions, cp);
 	    if (p == NULL)
@@ -2761,7 +2762,7 @@ RCS_getbranch (RCSNode *rcs, const char *tag, int force_tag_match)
     xtag = Xasprintf ("%s.", tag);
     head = vn->branches->list;
     for (p = head->next; p != head; p = p->next)
-	if (strncmp (p->key, xtag, strlen (xtag)) == 0)
+	if (STRNEQ (p->key, xtag, strlen (xtag)))
 	    break;
     free (xtag);
 
@@ -2892,7 +2893,7 @@ RCS_getbranchpoint (RCSNode *rcs, char *target)
 	   found our branch point if the first BRANCHLEN characters
 	   of the revision number match, *and* if the following
 	   character is a dot. */
-	if (strncmp (vp->key, branch, brlen) == 0 && vp->key[brlen] == '.')
+	if (STRNEQ (vp->key, branch, brlen) && vp->key[brlen] == '.')
 	    break;
 	vp = vp->next;
     }
@@ -3087,7 +3088,7 @@ RCS_getdatebranch (RCSNode *rcs, const char *date, const char *branch)
     /* walk the branches list looking for the branch number */
     xbranch = Xasprintf ("%s.", branch);
     for (p = vers->branches->list->next; p != vers->branches->list; p = p->next)
-	if (strncmp (p->key, xbranch, strlen (xbranch)) == 0)
+	if (STRNEQ (p->key, xbranch, strlen (xbranch)))
 	    break;
     free (xbranch);
     if (p == vers->branches->list)
@@ -3304,7 +3305,7 @@ translate_symtag (RCSNode *rcs, const char *tag)
 	{
 	    if (cp == last) break;
 	    if ((cp == rcs->symbols_data || whitespace (cp[-1]))
-		&& strncmp (cp, tag, len) == 0
+		&& STRNEQ (cp, tag, len)
 		&& cp[len] == ':')
 	    {
 		char *v, *r;
@@ -3706,7 +3707,7 @@ next_keyword (char **start, size_t *len, char **end)
 	{
 	    if (keyword->expandit
 		&& keyword->len == slen
-		&& !strncmp (keyword->string, srch, slen))
+		&& STRNEQ (keyword->string, srch, slen))
 	    {
 		break;
 	    }
@@ -3948,8 +3949,8 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
 	if (keyword->expandto == KEYWORD_LOG
 	    && (sizeof "checked in with -k by " <= loglen
 		|| log == NULL
-		|| strncmp (log, "checked in with -k by ",
-			    sizeof "checked in with -k by " - 1) != 0))
+		|| !STRNEQ (log, "checked in with -k by ",
+			    sizeof "checked in with -k by " - 1)))
 	{
 	    char *start;
 	    char *leader;
@@ -5410,7 +5411,7 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
 	assert (rcs->path);
 	workfile = xstrdup (last_component (rcs->path));
 	p = workfile + (strlen (workfile) - extlen);
-	assert (strncmp (p, RCSEXT, extlen) == 0);
+	assert (STRNEQ (p, RCSEXT, extlen));
 	*p = '\0';
     }
 
@@ -6565,10 +6566,10 @@ RCS_delaccess (RCSNode *rcs, char *user)
     if (rcs->flags & PARTIAL)
 	RCS_reparsercsfile (rcs, NULL, NULL);
 
-    if (rcs->access == NULL)
+    if (!rcs->access)
 	return;
 
-    if (user == NULL)
+    if (!user)
     {
         free (rcs->access);
         rcs->access = NULL;
@@ -6577,16 +6578,16 @@ RCS_delaccess (RCSNode *rcs, char *user)
 
     p = rcs->access;
     ulen = strlen (user);
-    while (p != NULL)
+    while (p)
     {
-	if (strncmp (p, user, ulen) == 0 && (p[ulen] == '\0' || p[ulen] == ' '))
+	if (STRNEQ (p, user, ulen) && (p[ulen] == '\0' || p[ulen] == ' '))
 	    break;
 	p = strchr (p, ' ');
-	if (p != NULL)
+	if (p)
 	    ++p;
     }
 
-    if (p == NULL)
+    if (!p)
 	return;
 
     s = p + ulen;
@@ -6626,11 +6627,11 @@ findtag (Node *node, void *arg)
 static int
 findmagictag (Node *node, void *arg)
 {
-    char *rev = (char *)arg;
+    char *rev = arg;
     size_t len = strlen (rev);
 
-    if (strncmp (node->data, rev, len) == 0 &&
-	strncmp ((char *)node->data + len, ".0.", 3) == 0)
+    if (STRNEQ (node->data, rev, len)
+	&& STRNEQ (node->data + len, ".0.", 3))
 	return 1;
     else
 	return 0;
@@ -7964,8 +7965,8 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
 		for (p = vers->branches->list->next;
 		     p != vers->branches->list;
 		     p = p->next)
-		    if (strncmp (p->key, branchversion,
-				 cpversion - branchversion) == 0)
+		    if (STRNEQ (p->key, branchversion,
+				cpversion - branchversion))
 			break;
 		if (p == vers->branches->list)
 		    error (1, 0, "missing expected branch in %s",
@@ -8123,7 +8124,7 @@ getdelta (struct rcsbuffer *rcsbuf, char *rcsfile, char **keyp, char **valp)
     /* Note that when comparing with RCSDATE, we are not massaging
        VALUE from the string found in the RCS file.  This is OK since
        we know exactly what to expect.  */
-    if (*cp != '\0' || strncmp (RCSDATE, value, (sizeof RCSDATE) - 1) != 0)
+    if (*cp || !STRNEQ (RCSDATE, value, sizeof RCSDATE - 1))
     {
 	*keyp = key;
 	*valp = value;
@@ -8261,7 +8262,7 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	/* Note that when comparing with RCSDATE, we are not massaging
 	   VALUE from the string found in the RCS file.  This is OK
 	   since we know exactly what to expect.  */
-	if (*cp == '\0' && strncmp (RCSDATE, value, strlen (RCSDATE)) == 0)
+	if (!*cp && STRNEQ (RCSDATE, value, strlen (RCSDATE)))
 	    break;
 
 	/* At this point, key and value represent a user-defined field
@@ -8811,7 +8812,7 @@ RCS_copydeltas (RCSNode *rcs, FILE *fin, struct rcsbuffer *rcsbufin,
     if (buflen > 0)
     {
 	if (bufrest[0] != '\n'
-	    || strncmp (bufrest, "\n\n\n", buflen < 3 ? buflen : 3) != 0)
+	    || !STRNEQ (bufrest, "\n\n\n", buflen < 3 ? buflen : 3))
 	{
 	    nls = 0;
 	}
@@ -8840,7 +8841,7 @@ RCS_copydeltas (RCSNode *rcs, FILE *fin, struct rcsbuffer *rcsbufin,
 	if (nls > 0
 	    && got >= nls
 	    && buf[0] == '\n'
-	    && strncmp (buf, "\n\n\n", nls) == 0)
+	    && STRNEQ (buf, "\n\n\n", nls))
 	{
 	    fwrite (buf + 1, 1, got - 1, fout);
 	}
@@ -9377,7 +9378,7 @@ getfullCVSname(char *CVSname, char **pathstore)
 	*pathstore = xstrdup(CVSname);
 	if ((c = strrchr(*pathstore, '/')) != NULL) {
 	    if (c - *pathstore >= alen) {
-		if (!strncmp(c - alen, ATTIC, alen)) {
+		if (STRNEQ(c - alen, ATTIC, alen)) {
 		    while (*c != '\0') {
 			*(c - alen) = *c;
 			c++;
@@ -9388,11 +9389,11 @@ getfullCVSname(char *CVSname, char **pathstore)
 	}
 
 	rootlen = strlen(current_parsed_root->directory);
-	if (!strncmp(*pathstore, current_parsed_root->directory, rootlen) &&
-	    (*pathstore)[rootlen] == '/')
-	    CVSname = (*pathstore + rootlen + 1);
+	if (STRNEQ (*pathstore, current_parsed_root->directory, rootlen)
+	    && (*pathstore)[rootlen] == '/')
+	    CVSname = *pathstore + rootlen + 1;
 	else
-	    CVSname = (*pathstore);
+	    CVSname = *pathstore;
     }
     return CVSname;
 }
@@ -9545,7 +9546,7 @@ findnextmagicrev_proc (Node *p, void *closure)
 	 */
 	char *ver_str = p->data;
 	if ((ver_str[pinfo->target_rev_len] == '.')
-	    && (!strncmp (pinfo->target_rev, p->data, pinfo->target_rev_len)))
+	    && (STRNEQ (pinfo->target_rev, p->data, pinfo->target_rev_len)))
 	{
 	    char *plast_dot = NULL;
 	    char *psecond_to_last_dot = NULL;

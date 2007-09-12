@@ -1109,7 +1109,7 @@ outside_root (char *repos)
     }
 
     if (repos_len < root_len
-	|| strncmp (current_parsed_root->directory, repos, root_len) != 0)
+	|| !STRNEQ (current_parsed_root->directory, repos, root_len))
     {
     not_within:
 	push_pending_error (0,
@@ -1728,9 +1728,9 @@ serve_is_modified (char *arg)
     {
 	name = p->entry + 1;
 	cp = strchr (name, '/');
-	if (cp != NULL
+	if (cp
 	    && strlen (arg) == cp - name
-	    && strncmp (arg, name, cp - name) == 0)
+	    && STRNEQ (arg, name, cp - name))
 	{
 	    if (!(timefield = strchr (cp + 1, '/')) || *++timefield == '\0')
 	    {
@@ -2133,9 +2133,9 @@ serve_unchanged (char *arg)
     {
 	name = p->entry + 1;
 	cp = strchr (name, '/');
-	if (cp != NULL
+	if (cp
 	    && strlen (arg) == cp - name
-	    && strncmp (arg, name, cp - name) == 0)
+	    && STRNEQ (arg, name, cp - name))
 	{
 	    if (!(timefield = strchr (cp + 1, '/')) || *++timefield == '\0')
 	    {
@@ -6536,7 +6536,7 @@ error ETIMEOUT Connection timed out.\n");
 
 	orig_cmd = cmd;
 	for (rq = requests; rq->name != NULL; ++rq)
-	    if (strncmp (cmd, rq->name, strlen (rq->name)) == 0)
+	    if (STRNEQ (cmd, rq->name, strlen (rq->name)))
 	    {
 		int len = strlen (rq->name);
 		if (cmd[len] == '\0')
@@ -6843,8 +6843,7 @@ check_repository_password (char *username, char *password, char *repository, cha
     namelen = strlen (username);
     while (getline (&linebuf, &linebuf_len, fp) >= 0)
     {
-	if ((strncmp (linebuf, username, namelen) == 0)
-	    && (linebuf[namelen] == ':'))
+	if (STRNEQ (linebuf, username, namelen) && linebuf[namelen] == ':')
 	{
 	    found_it = 1;
 	    break;
@@ -6892,15 +6891,15 @@ check_repository_password (char *username, char *password, char *repository, cha
 	/* Okay, after this conditional chain, found_password and
 	   host_user_tmp will have useful values: */
 
-	if ((non_cvsuser_portion == NULL)
-	    || (strlen (non_cvsuser_portion) == 0)
-	    || ((strspn (non_cvsuser_portion, " \t"))
-		== strlen (non_cvsuser_portion)))
+	if (!non_cvsuser_portion
+	    || !*non_cvsuser_portion
+	    || strspn (non_cvsuser_portion, " \t")
+	       == strlen (non_cvsuser_portion))
 	{
 	    found_password = NULL;
 	    host_user_tmp = NULL;
 	}
-	else if (strncmp (non_cvsuser_portion, ":", 1) == 0)
+	else if (STRNEQ (non_cvsuser_portion, ":", 1))
 	{
 	    found_password = NULL;
 	    host_user_tmp = non_cvsuser_portion + 1;

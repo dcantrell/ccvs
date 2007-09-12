@@ -531,7 +531,7 @@ could not change directory to requested checkout directory `%s'",
 
     hardpath_len = strlen (hardpath);
     if (strlen (current) >= hardpath_len
-	&& strncmp (current, hardpath, hardpath_len) == 0)
+	&& STRNEQ (current, hardpath, hardpath_len))
     {
 	if (/* Current is a subdirectory of hardpath.  */
 	    current[hardpath_len] == '/'
@@ -831,8 +831,8 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
 	struct dir_to_build *head;
 	char *reposcopy;
 
-	if (strncmp (repository, current_parsed_root->directory,
-		     strlen (current_parsed_root->directory)) != 0)
+	if (!STRNEQ (repository, current_parsed_root->directory,
+		     strlen (current_parsed_root->directory)))
 	    error (1, 0, "\
 internal error: %s doesn't start with %s in checkout_proc",
 		   repository, current_parsed_root->directory);

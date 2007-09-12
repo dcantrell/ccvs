@@ -205,8 +205,8 @@ lock_name (const char *repository, const char *name)
 	   to CVSROOT.  */
 	assert (current_parsed_root != NULL);
 	assert (current_parsed_root->directory != NULL);
-	assert (strncmp (repository, current_parsed_root->directory,
-			 strlen (current_parsed_root->directory)) == 0);
+	assert (STRNEQ (repository, current_parsed_root->directory,
+			strlen (current_parsed_root->directory)));
 	short_repos = repository + strlen (current_parsed_root->directory) + 1;
 
 	if (STREQ (repository, current_parsed_root->directory))

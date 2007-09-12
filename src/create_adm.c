@@ -109,7 +109,7 @@ Create_Admin (const char *dir, const char *update_dir, const char *repository,
      */
     {
 	char *path = Xasprintf ("%s/", current_parsed_root->directory);
-	if (strncmp (cp, path, strlen (path)) == 0)
+	if (STRNEQ (cp, path, strlen (path)))
 	    cp += strlen (path);
 	free (path);
     }

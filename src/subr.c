@@ -612,9 +612,9 @@ file_has_markers (const struct file_info *finfo)
 	error (1, errno, "cannot open %s", finfo->fullname);
     while (getline (&line, &line_allocated, fp) > 0)
     {
-	if (strncmp (line, RCS_MERGE_PAT_1, sizeof RCS_MERGE_PAT_1 - 1) == 0 ||
-	    strncmp (line, RCS_MERGE_PAT_2, sizeof RCS_MERGE_PAT_2 - 1) == 0 ||
-	    strncmp (line, RCS_MERGE_PAT_3, sizeof RCS_MERGE_PAT_3 - 1) == 0)
+	if (STRNEQ (line, RCS_MERGE_PAT_1, sizeof RCS_MERGE_PAT_1 - 1)
+	    || STRNEQ (line, RCS_MERGE_PAT_2, sizeof RCS_MERGE_PAT_2 - 1)
+	    || STRNEQ (line, RCS_MERGE_PAT_3, sizeof RCS_MERGE_PAT_3 - 1))
 	{
 	    result = 1;
 	    goto out;
@@ -2114,7 +2114,7 @@ isParentPath (const char *maybe_parent, const char *maybe_child)
     bool isparent;
 
     if (strlen (maybe_parent) <= strlen (maybe_child)
-	&& !strncmp (maybe_parent, maybe_child, strlen (maybe_parent))
+	&& STRNEQ (maybe_parent, maybe_child, strlen (maybe_parent))
 	&& (maybe_child[strlen (maybe_parent)] == '\0'
 	    || ISSLASH (maybe_child[strlen (maybe_parent)])))
 	return true;
@@ -2129,7 +2129,7 @@ isParentPath (const char *maybe_parent, const char *maybe_child)
     p1 = xcanonicalize_file_name (maybe_parent);
     p2 = xcanonicalize_file_name (maybe_child);
     if (strlen (p1) <= strlen (p2)
-	&& !strncmp (p1, p2, strlen (p1))
+	&& STRNEQ (p1, p2, strlen (p1))
 	&& (p2[strlen (p1)] == '\0' || ISSLASH (p2[strlen (p1)])))
 	isparent = true;
     else
