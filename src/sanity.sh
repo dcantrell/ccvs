@@ -18192,7 +18192,7 @@ new revision: 1\.2; previous revision: 1\.1"
           chmod u+w file1
           echo "morebar" > file1
           dotest_fail edit-check-13a "$testcvs commit -m 'c3' -c file1" \
-"$SPROG [a-z]*: Valid edit does not exist for file1
+"$SPROG [a-z]*: Valid edit does not exist for \`file1'
 $SPROG \[[a-z]* aborted\]: correct above errors first!"
           dotest edit-check-13b "$testcvs editors file1"
 
@@ -18305,7 +18305,7 @@ new revision: 1\.5; previous revision: 1\.4"
           echo "unofficial change" >file1
 
           dotest_fail edit-check-28a "$testcvs -q commit -mmsg -c" \
-"$SPROG commit: Valid edit does not exist for file1
+"$SPROG commit: Valid edit does not exist for \`file1'
 $SPROG \[commit aborted\]: correct above errors first!"
           dotest edit-check-28b "$testcvs editors" "$O_editorsLineRE"
 

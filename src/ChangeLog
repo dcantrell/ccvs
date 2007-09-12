@@ -1,5 +1,8 @@
 2007-09-12  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (edit-check): Update to compensate for quoting introduce
+	by last commit.
+
 	* commit.c: Misc cleanup.  Use GNULIB's quote(), if not consistently.
 	* edit.c: Alphabetize includes.
 	* recurse.c (start_recursion): Use new enum lock_type and make
