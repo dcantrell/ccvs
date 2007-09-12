@@ -1,5 +1,9 @@
 2007-09-12  Derek Price  <derek@ximbiot.com>
 
+	* server.h (TRACE_MINUTIA): Add new trace level.
+	* server.c (cvs_trace_i, cvs_trace_ia): New internal functions.
+	(cvs_trace): Trace the PWD when tracing minutia.
+
 	* sanity.sh (edit-check): Update to compensate for quoting introduce
 	by last commit.
 

@@ -43,7 +43,7 @@
 
 
 int server_active = 0;
-int trace = 0;
+enum trace_level trace = TRACE_NONE;
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 # include "log-buffer.h"
@@ -8460,6 +8460,37 @@ server_base_diff (struct file_info *finfo, const char *f1, const char *rev1,
 
 
 
+static void
+cvs_trace_i (const char *fmt, va_list va)
+{
+    char *buf;
+    int size;
+
+#ifdef SERVER_SUPPORT
+    cvs_outerr (server_active ? (isProxyServer() ? "P" : "S") : " ", 1);
+#else
+    cvs_outerr (" ", 1);
+#endif
+    cvs_outerr (" -> ", 4);
+    if ((size = vasprintf (&buf, fmt, va)) < 0)
+	abort ();
+    cvs_outerr (buf, size);
+    cvs_outerr ("\n", 1);
+}
+
+
+
+static inline void
+cvs_trace_ia (const char *fmt, ...)
+{
+    va_list va;
+    va_start (va, fmt);
+    cvs_trace_i (fmt, va);
+    va_end (va);
+}
+
+
+
 /*
  * void cvs_trace(int level, const char *fmt, ...)
  *
@@ -8467,25 +8498,16 @@ server_base_diff (struct file_info *finfo, const char *f1, const char *rev1,
  * as with CVSNT.
  */
 void
-cvs_trace (int level, const char *fmt, ...)
+cvs_trace (enum trace_level level, const char *fmt, ...)
 {
+    if (trace >= TRACE_MINUTIA)
+	cvs_trace_ia ("CWD = %s", xgetcwd());
+
     if (trace >= level)
     {
 	va_list va;
-	char *buf;
-	int size;
-
 	va_start (va, fmt);
-#ifdef SERVER_SUPPORT
-	cvs_outerr (server_active ? (isProxyServer() ? "P" : "S") : " ", 1);
-#else
-	cvs_outerr (" ", 1);
-#endif
-	cvs_outerr (" -> ", 4);
-	if ((size = vasprintf (&buf, fmt, va)) < 0)
-	    abort ();
-	cvs_outerr (buf, size);
-	cvs_outerr ("\n", 1);
+	cvs_trace_i (fmt, va);
 	va_end (va);
     }
 }
