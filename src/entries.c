@@ -34,13 +34,6 @@
 
 
 
-static Node *AddEntryNode (List * list, Entnode *entnode);
-
-static Entnode *fgetentent (FILE *, char *, int *);
-static int   fputentent (FILE *, Entnode *);
-
-static Entnode *subdir_record (int, const char *, const char *);
-
 static FILE *entfile;
 static char *entfilename;		/* for error messages */
 
@@ -96,11 +89,11 @@ Entnode_Create (enum ent_type type, const char *user, const char *vn,
     return ent;
 }
 
+
+
 /*
  * Destruct an Entnode
  */
-static void Entnode_Destroy (Entnode *);
-
 static void
 Entnode_Destroy (Entnode *ent)
 {
@@ -119,10 +112,55 @@ Entnode_Destroy (Entnode *ent)
     free (ent);
 }
 
+
+
+static int
+fputentent (FILE *fp, Entnode *p)
+{
+    switch (p->type)
+    {
+    case ENT_FILE:
+        break;
+    case ENT_SUBDIR:
+        if (fprintf (fp, "D") < 0)
+	    return 1;
+	break;
+    }
+
+    if (fprintf (fp, "/%s/%s/%s", p->user, p->version, p->timestamp) < 0)
+	return 1;
+    if (p->conflict)
+    {
+	if (fprintf (fp, "+%s", p->conflict) < 0)
+	    return 1;
+    }
+    if (fprintf (fp, "/%s/", p->options) < 0)
+	return 1;
+
+    if (p->tag)
+    {
+	if (fprintf (fp, "T%s\n", p->tag) < 0)
+	    return 1;
+    }
+    else if (p->date)
+    {
+	if (fprintf (fp, "D%s\n", p->date) < 0)
+	    return 1;
+    }
+    else 
+    {
+	if (fprintf (fp, "\n") < 0)
+	    return 1;
+    }
+
+    return 0;
+}
+
+
+
 /*
  * Write out the line associated with a node of an entries file
  */
-static int write_ent_proc (Node *, void *);
 static int
 write_ent_proc (Node *node, void *closure)
 {
@@ -136,6 +174,8 @@ write_ent_proc (Node *node, void *closure)
 
     return 0;
 }
+
+
 
 /*
  * write out the current entries file given a list,  making a backup copy
@@ -257,6 +297,58 @@ Scratch_Entry (List *list, const char *fname)
 
 
 /*
+ * Free up the memory associated with the data section of an ENTRIES type
+ * node
+ */
+static void
+Entries_delproc (Node *node)
+{
+    Entnode *p = node->data;
+
+    Entnode_Destroy (p);
+}
+
+
+
+/*
+ * Get an Entries file list node, initialize it, and add it to the specified
+ * list
+ */
+static Node *
+AddEntryNode (List *list, Entnode *entdata)
+{
+    Node *p;
+
+    TRACE (TRACE_FLOW, "AddEntryNode (%s, %s)",
+	   entdata->user, entdata->timestamp);
+
+    /* was it already there? */
+    if ((p  = findnode_fn (list, entdata->user)) != NULL)
+    {
+	/* take it out */
+	delnode (p);
+    }
+
+    /* get a node and fill in the regular stuff */
+    p = getnode ();
+    p->type = ENTRIES;
+    p->delproc = Entries_delproc;
+
+    /* this one gets a key of the name for hashing */
+    /* FIXME This results in duplicated data --- the hash package shouldn't
+       assume that the key is dynamically allocated.  The user's free proc
+       should be responsible for freeing the key. */
+    p->key = xstrdup (entdata->user);
+    p->data = entdata;
+
+    /* put the node into the list */
+    addnode (list, p);
+    return p;
+}
+
+
+
+/*
  * Enters the given file name/version/time-stamp into the Entries file,
  * removing the old entry first, if necessary.
  */
@@ -306,6 +398,8 @@ Register (List *list, const char *fname, const char *vn, const char *ts,
 	    error (1, errno, "error closing %s", entfilename);
     }
 }
+
+
 
 /*
  * Node delete procedure for list-private sticky dir tag/date info
@@ -424,7 +518,6 @@ entriesGetDate (List *entries)
 
 /* Return the next real Entries line.  On end of file, returns NULL.
    On error, prints an error message and returns NULL.  */
-
 static Entnode *
 fgetentent (FILE *fpin, char *cmd, int *sawdir)
 {
@@ -543,48 +636,6 @@ fgetentent (FILE *fpin, char *cmd, int *sawdir)
 
     free (line);
     return ent;
-}
-
-static int
-fputentent (FILE *fp, Entnode *p)
-{
-    switch (p->type)
-    {
-    case ENT_FILE:
-        break;
-    case ENT_SUBDIR:
-        if (fprintf (fp, "D") < 0)
-	    return 1;
-	break;
-    }
-
-    if (fprintf (fp, "/%s/%s/%s", p->user, p->version, p->timestamp) < 0)
-	return 1;
-    if (p->conflict)
-    {
-	if (fprintf (fp, "+%s", p->conflict) < 0)
-	    return 1;
-    }
-    if (fprintf (fp, "/%s/", p->options) < 0)
-	return 1;
-
-    if (p->tag)
-    {
-	if (fprintf (fp, "T%s\n", p->tag) < 0)
-	    return 1;
-    }
-    else if (p->date)
-    {
-	if (fprintf (fp, "D%s\n", p->date) < 0)
-	    return 1;
-    }
-    else 
-    {
-	if (fprintf (fp, "\n") < 0)
-	    return 1;
-    }
-
-    return 0;
 }
 
 
@@ -760,56 +811,6 @@ Entries_Close (List *list, const char *update_dir)
 
 
 /*
- * Free up the memory associated with the data section of an ENTRIES type
- * node
- */
-static void
-Entries_delproc (Node *node)
-{
-    Entnode *p = node->data;
-
-    Entnode_Destroy (p);
-}
-
-/*
- * Get an Entries file list node, initialize it, and add it to the specified
- * list
- */
-static Node *
-AddEntryNode (List *list, Entnode *entdata)
-{
-    Node *p;
-
-    TRACE (TRACE_FLOW, "AddEntryNode (%s, %s)",
-	   entdata->user, entdata->timestamp);
-
-    /* was it already there? */
-    if ((p  = findnode_fn (list, entdata->user)) != NULL)
-    {
-	/* take it out */
-	delnode (p);
-    }
-
-    /* get a node and fill in the regular stuff */
-    p = getnode ();
-    p->type = ENTRIES;
-    p->delproc = Entries_delproc;
-
-    /* this one gets a key of the name for hashing */
-    /* FIXME This results in duplicated data --- the hash package shouldn't
-       assume that the key is dynamically allocated.  The user's free proc
-       should be responsible for freeing the key. */
-    p->key = xstrdup (entdata->user);
-    p->data = entdata;
-
-    /* put the node into the list */
-    addnode (list, p);
-    return p;
-}
-
-
-
-/*
  * Write out the CVS/Template file.
  */
 void
@@ -889,6 +890,8 @@ WriteTag (const char *dir, const char *tag, const char *date, int nonbranch,
 	server_set_sticky (update_dir, repository, tag, date, nonbranch);
 #endif
 }
+
+
 
 /* Parse the CVS/Tag file for the current directory.
 
@@ -980,12 +983,13 @@ ParseTag (char **tagp, char **datep, int *nonbranchp)
 	error (0, errno, "cannot open %s", CVSADM_TAG);
 }
 
+
+
 /*
  * This is called if all subdirectory information is known, but there
  * aren't any subdirectories.  It records that fact in the list
  * private data.
  */
-
 void
 Subdirs_Known (List *entries)
 {
@@ -1022,8 +1026,9 @@ Subdirs_Known (List *entries)
     }
 }
 
-/* Record subdirectory information.  */
 
+
+/* Record subdirectory information.  */
 static Entnode *
 subdir_record (int cmd, const char *parent, const char *dir)
 {
@@ -1089,13 +1094,14 @@ subdir_record (int cmd, const char *parent, const char *dir)
     return entnode;
 }
 
+
+
 /*
  * Record the addition of a new subdirectory DIR in PARENT.  PARENT
  * may be NULL, which means the current directory.  ENTRIES is the
  * current entries list; it may be NULL, which means that it need not
  * be updated.
  */
-
 void
 Subdir_Register (List *entries, const char *parent, const char *dir)
 {

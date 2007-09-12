@@ -43,6 +43,9 @@
 # include <config.h>
 #endif
 
+/* ANSI C headers.  */
+#include <assert.h>
+
 /* GNULIB */
 #include "quote.h"
 #include "save-cwd.h"
@@ -51,15 +54,13 @@
 # include "md5.h"
 #endif
 
-/* ANSI C headers.  */
-#include <assert.h>
-
 /* CVS headers.  */
 #include "base.h"
 #include "buffer.h"
 #include "classify.h"
 #include "edit.h"
 #include "fileattr.h"
+#include "hardlink.h"
 #include "ignore.h"
 #include "no_diff.h"
 #include "recurse.h"
@@ -68,7 +69,6 @@
 #include "wrapper.h"
 
 #include "cvs.h"
-#include "hardlink.h"
 
 
 
