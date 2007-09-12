@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (c) 1992, Brian Berliner and Jeff Polk
@@ -20,6 +21,7 @@
 
 /* CVS headers.  */
 #include "ignore.h"
+#include "lock.h"
 #include "recurse.h"
 #include "repos.h"
 #include "wrapper.h"

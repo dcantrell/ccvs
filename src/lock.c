@@ -74,6 +74,9 @@
 # include <config.h>
 #endif
 
+/* Verify API */
+#include "lock.h"
+
 /* CVS headers.  */
 #include "recurse.h"
 #include "repos.h"
@@ -487,7 +490,7 @@ set_readlock_name (void)
  * Create a lock file for readers
  */
 int
-Reader_Lock (char *xrepository)
+Reader_Lock (const char *xrepository)
 {
     int err = 0;
     FILE *fp;

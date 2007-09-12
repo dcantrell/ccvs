@@ -31,6 +31,7 @@
 /* CVS Headers.  */
 #include "command_line_opt.h"
 #include "gpg.h"
+#include "lock.h"
 #include "sign.h"
 #include "verify.h"
 

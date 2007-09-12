@@ -33,6 +33,7 @@
 
 /* CVS headers.  */
 #include "ignore.h"
+#include "lock.h"
 #include "logmsg.h"
 #include "wrapper.h"
 

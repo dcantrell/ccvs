@@ -28,6 +28,7 @@
 #include "edit.h"
 #include "fileattr.h"
 #include "ignore.h"
+#include "lock.h"
 #include "logmsg.h"
 #include "recurse.h"
 #include "repos.h"
