@@ -130,9 +130,7 @@ diff_exec (const char *file1, const char *file2, const char *label1,
        There may be ways around this, but I think they are fraught
        with danger. -twp */
 
-    if (preserve_perms &&
-	strcmp (file1, DEVNULL) != 0 &&
-	strcmp (file2, DEVNULL) != 0)
+    if (preserve_perms && !STREQ (file1, DEVNULL) && !STREQ (file2, DEVNULL))
     {
 	struct stat sb1, sb2;
 

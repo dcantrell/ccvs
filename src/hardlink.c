@@ -251,7 +251,7 @@ compare_linkage_lists (List *links1, List *links2)
 	    ++p2;
 
 	/* Compare the files' basenames. */
-	if (strcmp (p1, p2) != 0)
+	if (!STREQ (p1, p2))
 	    return 0;
 
 	n1 = n1->next;

@@ -146,7 +146,7 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	 */
 
 	/* save the default value so we have it later if we need it */
-	if (strcmp (exp, "DEFAULT") == 0)
+	if (STREQ (exp, "DEFAULT"))
 	{
 	    if (default_value)
 	    {
@@ -164,7 +164,7 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	 * execute lots of ALL callbacks in addition to *one* regular matching
 	 * callback or default
 	 */
-	if (strcmp (exp, "ALL") == 0)
+	if (STREQ (exp, "ALL"))
 	{
 	    if (!(opt & PIOPT_ALL))
 		error (0, 0, "Keyword `ALL' is ignored at line %d in %s file",
@@ -566,7 +566,7 @@ parse_config (const char *cvsroot, const char *path)
 	    *p++ = '\0';
 	else if (
 		 /* The following keys have optional arguments.  */
-		 strcmp (line, "VerifyCommits"))
+		 !STREQ (line, "VerifyCommits"))
 	{
 	    if (!parse_error (infopath, ln))
 		error (0, 0,
@@ -576,7 +576,7 @@ parse_config (const char *cvsroot, const char *path)
 	}
 
 
-	if (strcmp (line, "RCSBIN") == 0)
+	if (STREQ (line, "RCSBIN"))
 	{
 	    /* This option used to specify the directory for RCS
 	       executables.  But since we don't run them any more,
@@ -584,7 +584,7 @@ parse_config (const char *cvsroot, const char *path)
 	       repository can work with either new or old CVS.  */
 	    ;
 	}
-	else if (strcmp (line, "SystemAuth") == 0)
+	else if (STREQ (line, "SystemAuth"))
 #ifdef AUTH_SERVER_SUPPORT
 	    readBool (infopath, "SystemAuth", p, &retval->system_auth);
 #else
@@ -596,11 +596,11 @@ parse_config (const char *cvsroot, const char *path)
 	    readBool (infopath, "SystemAuth", p, &dummy);
 	}
 #endif
-	else if (strcmp (line, "LocalKeyword") == 0)
+	else if (STREQ (line, "LocalKeyword"))
 	    RCS_setlocalid (infopath, ln, &retval->keywords, p);
-	else if (strcmp (line, "KeywordExpand") == 0)
+	else if (STREQ (line, "KeywordExpand"))
 	    RCS_setincexc (&retval->keywords, p);
-	else if (strcmp (line, "PreservePermissions") == 0)
+	else if (STREQ (line, "PreservePermissions"))
 	{
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 	    readBool (infopath, "PreservePermissions", p,
@@ -612,9 +612,9 @@ parse_config (const char *cvsroot, const char *path)
 		       infopath, ln);
 #endif
 	}
-	else if (strcmp (line, "TopLevelAdmin") == 0)
+	else if (STREQ (line, "TopLevelAdmin"))
 	    readBool (infopath, "TopLevelAdmin", p, &retval->top_level_admin);
-	else if (strcmp (line, "LockDir") == 0)
+	else if (STREQ (line, "LockDir"))
 	{
 	    if (retval->lock_dir)
 		free (retval->lock_dir);
@@ -623,7 +623,7 @@ parse_config (const char *cvsroot, const char *path)
 	       opendir it or something, but I don't see any particular
 	       reason to do that now rather than waiting until lock.c.  */
 	}
-	else if (strcmp (line, "HistoryLogPath") == 0)
+	else if (STREQ (line, "HistoryLogPath"))
 	{
 	    if (retval->HistoryLogPath) free (retval->HistoryLogPath);
 
@@ -639,7 +639,7 @@ parse_config (const char *cvsroot, const char *path)
 		retval->HistoryLogPath = NULL;
 	    }
 	}
-	else if (strcmp (line, "HistorySearchPath") == 0)
+	else if (STREQ (line, "HistorySearchPath"))
 	{
 	    if (retval->HistorySearchPath) free (retval->HistorySearchPath);
 	    retval->HistorySearchPath = expand_path (p, cvsroot, false,
@@ -654,9 +654,9 @@ parse_config (const char *cvsroot, const char *path)
 		retval->HistorySearchPath = NULL;
 	    }
 	}
-	else if (strcmp (line, "LogHistory") == 0)
+	else if (STREQ (line, "LogHistory"))
 	{
-	    if (strcmp (p, "all") != 0)
+	    if (!STREQ (p, "all"))
 	    {
 		static bool gotone = false;
 		if (gotone)
@@ -669,7 +669,7 @@ parse_config (const char *cvsroot, const char *path)
 		retval->logHistory = xstrdup (p);
 	    }
 	}
-	else if (strcmp (line, "RereadLogAfterVerify") == 0)
+	else if (STREQ (line, "RereadLogAfterVerify"))
 	{
 	    if (!strcasecmp (p, "never"))
 	      retval->RereadLogAfterVerify = LOGMSG_REREAD_NEVER;
@@ -689,10 +689,10 @@ parse_config (const char *cvsroot, const char *path)
 		}
 	    }
 	}
-	else if (strcmp (line, "FirstVerifyLogErrorFatal") == 0)
+	else if (STREQ (line, "FirstVerifyLogErrorFatal"))
 	    readBool (infopath, "FirstVerifyLogErrorFatal", p,
 		      &retval->FirstVerifyLogErrorFatal);
-	else if (strcmp (line, "TmpDir") == 0)
+	else if (STREQ (line, "TmpDir"))
 	{
 	    if (retval->TmpDir) free (retval->TmpDir);
 	    retval->TmpDir = expand_path (p, cvsroot, false, infopath, ln);
@@ -702,9 +702,9 @@ parse_config (const char *cvsroot, const char *path)
 	     * tries to create a temp file.
 	     */
 	}
-	else if (strcmp (line, "UserAdminOptions") == 0)
+	else if (STREQ (line, "UserAdminOptions"))
 	    retval->UserAdminOptions = make_UserAdminOptions (infopath, ln, p);
-	else if (strcmp (line, "UseNewInfoFmtStrings") == 0)
+	else if (STREQ (line, "UseNewInfoFmtStrings"))
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 	    readBool (infopath, "UseNewInfoFmtStrings", p,
 		      &retval->UseNewInfoFmtStrings);
@@ -718,31 +718,31 @@ parse_config (const char *cvsroot, const char *path)
 		       infopath, ln);
 	}
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-	else if (strcmp (line, "ImportNewFilesToVendorBranchOnly") == 0)
+	else if (STREQ (line, "ImportNewFilesToVendorBranchOnly"))
 	    readBool (infopath, "ImportNewFilesToVendorBranchOnly", p,
 		      &retval->ImportNewFilesToVendorBranchOnly);
-	else if (strcmp (line, "PrimaryServer") == 0)
+	else if (STREQ (line, "PrimaryServer"))
 	    retval->PrimaryServer = parse_cvsroot (p);
 #ifdef PROXY_SUPPORT
-	else if (!strcmp (line, "MaxProxyBufferSize"))
+	else if (STREQ (line, "MaxProxyBufferSize"))
 	    readSizeT (infopath, "MaxProxyBufferSize", p,
 		       &retval->MaxProxyBufferSize);
 #endif /* PROXY_SUPPORT */
-	else if (!strcmp (line, "MaxCommentLeaderLength"))
+	else if (STREQ (line, "MaxCommentLeaderLength"))
 	    readSizeT (infopath, "MaxCommentLeaderLength", p,
 		       &retval->MaxCommentLeaderLength);
-	else if (!strcmp (line, "UseArchiveCommentLeader"))
+	else if (STREQ (line, "UseArchiveCommentLeader"))
 	    readBool (infopath, "UseArchiveCommentLeader", p,
 		      &retval->UseArchiveCommentLeader);
 #ifdef SERVER_SUPPORT
-	else if (!strcmp (line, "MinCompressionLevel"))
+	else if (STREQ (line, "MinCompressionLevel"))
 	    readSizeT (infopath, "MinCompressionLevel", p,
 		       &retval->MinCompressionLevel);
-	else if (!strcmp (line, "MaxCompressionLevel"))
+	else if (STREQ (line, "MaxCompressionLevel"))
 	    readSizeT (infopath, "MaxCompressionLevel", p,
 		       &retval->MaxCompressionLevel);
 #endif /* SERVER_SUPPORT */
-	else if (!strcmp (line, "VerifyCommits"))
+	else if (STREQ (line, "VerifyCommits"))
 	{
 	    if (retval->VerifyCommits != VERIFY_DEFAULT)
 		error (0, 0,
@@ -769,7 +769,7 @@ parse_config (const char *cvsroot, const char *path)
 		 */
 	    }
 	}
-	else if (!strcmp (line, "VerifyTemplate"))
+	else if (STREQ (line, "VerifyTemplate"))
 	{
 	    if (retval->VerifyTemplate)
 	    {
@@ -780,7 +780,7 @@ parse_config (const char *cvsroot, const char *path)
 	    }
 	    retval->VerifyTemplate = xstrdup (p);
 	}
-	else if (!strcmp (line, "OpenPGPTextmode"))
+	else if (STREQ (line, "OpenPGPTextmode"))
 	{
 	    if (retval->OpenPGPTextmode)
 	    {
@@ -791,7 +791,7 @@ parse_config (const char *cvsroot, const char *path)
 	    }
 	    retval->OpenPGPTextmode = xstrdup (p);
 	}
-	else if (!strcmp (line, "VerifyArg"))
+	else if (STREQ (line, "VerifyArg"))
 	{
 	    if (!retval->VerifyArgs) retval->VerifyArgs = getlist ();
 	    push_string (retval->VerifyArgs, xstrdup (p));

@@ -857,7 +857,7 @@ update_filesdone_proc (void *callerdat, int err, const char *repository,
     }
 
     /* Clean up CVS admin dirs if we are export */
-    if (strcmp (cvs_cmd_name, "export") == 0)
+    if (STREQ (cvs_cmd_name, "export"))
     {
 	/* I'm not sure the existence_error is actually possible (except
 	   in cases where we really should print a message), but since
@@ -1050,7 +1050,7 @@ update_dirleave_proc (void *callerdat, const char *dir, int err,
        update_dirent_proc, and we're now done with that subdirectory,
        undo the tag/date setting.  Note that we know that the tag and
        date were both originally NULL in this case.  */
-    if (tag_update_dir != NULL && strcmp (update_dir, tag_update_dir) == 0)
+    if (tag_update_dir && STREQ (update_dir, tag_update_dir))
     {
 	if (tag != NULL)
 	{
@@ -1122,10 +1122,9 @@ isemptydir (const char *update_dir, const char *dir, int might_not_exist)
     errno = 0;
     while (dp = CVS_READDIR (dirp))
     {
-	if (strcmp (dp->d_name, ".") != 0
-	    && strcmp (dp->d_name, "..") != 0)
+	if (!STREQ (dp->d_name, ".") && !STREQ (dp->d_name, ".."))
 	{
-	    if (strcmp (dp->d_name, CVSADM) != 0)
+	    if (!STREQ (dp->d_name, CVSADM))
 	    {
 		/* An entry other than the CVS directory.  The directory
 		   is certainly not empty. */
@@ -1368,7 +1367,7 @@ VERS: ", 0);
 
 	    xvers_ts = Version_TS (finfo, options, tag, date, 
 				   force_tag_match, set_time);
-	    if (strcmp (xvers_ts->options, "-V4") == 0)
+	    if (STREQ (xvers_ts->options, "-V4"))
 		xvers_ts->options[0] = '\0';
 
 	    (void) time (&last_register_time);
@@ -1424,7 +1423,7 @@ VERS: ", 0);
 	    }
 
 	    /* If this is really Update and not Checkout, recode history */
-	    if (strcmp (cvs_cmd_name, "update") == 0)
+	    if (STREQ (cvs_cmd_name, "update"))
 		history_write ('U', finfo->update_dir, xvers_ts->vn_rcs,
 			       finfo->file, finfo->repository);
 
@@ -1520,7 +1519,7 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
 
     /* If this file has been marked as being binary, then never send a
        patch.  */
-    if (strcmp (vers_ts->options, "-kb") == 0)
+    if (STREQ (vers_ts->options, "-kb"))
     {
 	*docheckout = 1;
 	return 0;
@@ -1688,7 +1687,7 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
 		   finfo->fullname);
 	c = fread (buf, 1, sizeof BINARY - 1, e);
 	buf[c] = '\0';
-	if (strcmp (buf, BINARY) == 0)
+	if (STREQ (buf, BINARY))
 	{
 	    /* These are binary files.  We could use diff -a, but
 	       patch can't handle that.  */
@@ -1718,7 +1717,7 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
 	   don't really know what it does.  */
         xvers_ts = Version_TS (finfo, options, tag, date,
 			       force_tag_match, 0);
-	if (strcmp (xvers_ts->options, "-V4") == 0)
+	if (STREQ (xvers_ts->options, "-V4"))
 	    xvers_ts->options[0] = '\0';
 
 	Register (finfo->entries, finfo->file, xvers_ts->vn_rcs,
@@ -1729,7 +1728,7 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
 	    error (1, errno, "could not stat %s", finfo->file);
 
 	/* If this is really Update and not Checkout, record history.  */
-	if (strcmp (cvs_cmd_name, "update") == 0)
+	if (STREQ (cvs_cmd_name, "update"))
 	    history_write ('P', finfo->update_dir, xvers_ts->vn_rcs,
 	                   finfo->file, finfo->repository);
 
@@ -1909,7 +1908,7 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
     copy_file (finfo->file, backup);
     xchmod (finfo->file, 1);
 
-    if (strcmp (vers->options, "-kb") == 0
+    if (STREQ (vers->options, "-kb")
 	|| wrap_merge_is_copy (finfo->file)
 	|| special_file_mismatch (finfo, NULL, vers->vn_rcs))
     {
@@ -1979,7 +1978,7 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
     }
     base_remove (finfo->file, vers->vn_user);
 
-    if (strcmp (vers->options, "-V4") == 0)
+    if (STREQ (vers->options, "-V4"))
 	vers->options[0] = '\0';
 
     /* fix up the vers structure, in case it is used by join */
@@ -2202,9 +2201,8 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	   resolve.  No_Difference will already have been called in
 	   this case, so comparing the timestamps is sufficient to
 	   determine whether the file is locally modified.  */
-	if (strcmp (vers->vn_user, "0") == 0
-	    || (vers->ts_user != NULL
-		&& strcmp (vers->ts_user, vers->ts_rcs) != 0))
+	if (STREQ (vers->vn_user, "0")
+	    || (vers->ts_user && !STREQ (vers->ts_user, vers->ts_rcs)))
 	{
 	    if (jdate2 != NULL)
 		error (0, 0,
@@ -2228,10 +2226,9 @@ join_file (struct file_info *finfo, Vers_TS *vers)
            been changed since the greatest common ancestor (rev1),
            then there is a conflict we can not resolve.  See above for
            the rationale.  */
-	if (join_rev2 == NULL
-	    && strcmp (rev1, vers->vn_user) != 0)
+	if (!join_rev2 && !STREQ (rev1, vers->vn_user))
 	{
-	    if (jdate2 != NULL)
+	    if (jdate2)
 		error (0, 0,
 		       "file %s has been modified, but has been removed in revision %s as of %s",
 		       finfo->fullname, jrev2, jdate2);
@@ -2295,7 +2292,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
      * revision check tha comes next.  Otherwise, rev1 can == rev2 and get an
      * "already contains the changes between <rev1> and <rev1>" message.
      */
-    if (rev1 && strcmp (rev1, rev2) == 0)
+    if (rev1 && STREQ (rev1, rev2))
     {
 	free (rev1);
 	free (rev2);
@@ -2307,9 +2304,9 @@ join_file (struct file_info *finfo, Vers_TS *vers)
      * revision.  i.e. we know that diff3(file2,file1,file2) will produce
      * file2.
      */
-    if (vers->vn_user != NULL && vers->ts_user != NULL
-        && strcmp (vers->ts_user, vers->ts_rcs) == 0
-        && strcmp (rev2, vers->vn_user) == 0)
+    if (vers->vn_user && vers->ts_user
+        && STREQ (vers->ts_user, vers->ts_rcs)
+        && STREQ (rev2, vers->vn_user))
     {
 	if (!quiet)
 	{
@@ -2467,12 +2464,12 @@ join_file (struct file_info *finfo, Vers_TS *vers)
        similar to the RCS_merge, but in the binary file case,
        RCS_merge gives all kinds of trouble.  */
     replace_it =
-	vers->vn_user && !strcmp (rev1, vers->vn_user)
+	vers->vn_user && STREQ (rev1, vers->vn_user)
 	/* See comments above about how No_Difference has already been
 	   called.  */
-	&& vers->ts_user && !strcmp (vers->ts_user, vers->ts_rcs);
+	&& vers->ts_user && STREQ (vers->ts_user, vers->ts_rcs);
 
-    if (!strcmp (vers->options, "-kb")
+    if (STREQ (vers->options, "-kb")
 	|| special_file_mismatch (finfo, rev1, rev2)
 	|| replace_it)
     {
@@ -2567,7 +2564,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	basefile = make_base_file_name (finfo->file, vers->vn_user);
 	if (!noexec
 	    && ((isfile (basefile) && !xcmp (basefile, finfo->file))
-		|| (strcmp (vers->vn_user, "0")
+		|| (!STREQ (vers->vn_user, "0")
 		    && !RCS_cmp_file (finfo->rcs, vers->tag, vers->vn_user,
 				      NULL, NULL, vers->options,
 				      finfo->file))))
@@ -2731,9 +2728,9 @@ special_file_mismatch (struct file_info *finfo, char *rev1, char *rev2)
 		    error (1, 0, "%s:%s has bad `special' newphrase %s",
 			   finfo->file, rev1, (char *)n->data);
 		rev1_dev = dev_long;
-		if (strcmp (ftype, "character") == 0)
+		if (STREQ (ftype, "character"))
 		    rev1_mode |= S_IFCHR;
-		else if (strcmp (ftype, "block") == 0)
+		else if (STREQ (ftype, "block"))
 		    rev1_mode |= S_IFBLK;
 		else
 		    error (0, 0, "%s:%s unknown file type `%s'",
@@ -2811,9 +2808,9 @@ special_file_mismatch (struct file_info *finfo, char *rev1, char *rev2)
 		    error (1, 0, "%s:%s has bad `special' newphrase %s",
 			   finfo->file, rev2, (char *)n->data);
 		rev2_dev = dev_long;
-		if (strcmp (ftype, "character") == 0)
+		if (STREQ (ftype, "character"))
 		    rev2_mode |= S_IFCHR;
-		else if (strcmp (ftype, "block") == 0)
+		else if (STREQ (ftype, "block"))
 		    rev2_mode |= S_IFBLK;
 		else
 		    error (0, 0, "%s:%s unknown file type `%s'",
@@ -2847,7 +2844,7 @@ special_file_mismatch (struct file_info *finfo, char *rev1, char *rev2)
 	result = 1;
     }
     else if (rev1_symlink != NULL)
-	result = (strcmp (rev1_symlink, rev2_symlink) == 0);
+	result = STREQ (rev1_symlink, rev2_symlink);
     else
     {
 	/* Compare user ownership. */

@@ -220,7 +220,7 @@ import (int argc, char **argv)
 
 	RCS_check_tag (argv[i]);
 	for (j = 1; j < i; j++)
-	    if (strcmp (argv[j], argv[i]) == 0)
+	    if (STREQ (argv[j], argv[i]))
 		error (1, 0, "tag `%s' was specified more than once", argv[i]);
     }
 
@@ -490,15 +490,15 @@ import_descend (char *message, char *vtag, int targc, char **targv)
     else
     {
 	errno = 0;
-	while ((dp = CVS_READDIR (dirp)) != NULL)
+	while (dp = CVS_READDIR (dirp))
 	{
-	    if (strcmp (dp->d_name, ".") == 0 || strcmp (dp->d_name, "..") == 0)
+	    if (STREQ (dp->d_name, ".") || STREQ (dp->d_name, ".."))
 		goto one_more_time_boys;
 
 	    /* CVS directories are created in the temp directory by
 	       server.c because it doesn't special-case import.  So
 	       don't print a message about them, regardless of -I!.  */
-	    if (server_active && strcmp (dp->d_name, CVSADM) == 0)
+	    if (server_active && STREQ (dp->d_name, CVSADM))
 		goto one_more_time_boys;
 
 	    /* FIXME: .#filename.sig is where the server currently saves the
@@ -752,8 +752,8 @@ update_rcs_file (char *message, char *vfile, char *vtag, int targc,
 	return 1;
     }
 
-    if (vers->srcfile->branch == NULL || inattic ||
-	strcmp (vers->srcfile->branch, vbranch) != 0)
+    if (!vers->srcfile->branch || inattic
+	|| !STREQ (vers->srcfile->branch, vbranch))
     {
 	conflicts++;
 	letter = 'C';
@@ -1019,14 +1019,14 @@ get_comment (const char *user)
 	suffix = "";			/* will use the default */
     for (i = 0;; i++)
     {
-	if (comtable[i].suffix == NULL)
+	if (!comtable[i].suffix)
 	{
 	    /* Default.  Note we'll always hit this case before we
 	       ever return NULL.  */
 	    retval = comtable[i].comlead;
 	    break;
 	}
-	if (strcmp (suffix, comtable[i].suffix) == 0)
+	if (STREQ (suffix, comtable[i].suffix))
 	{
 	    retval = comtable[i].comlead;
 	    break;
@@ -1187,7 +1187,7 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 	file_type == S_IFREG)
     {
 	fpuser = CVS_FOPEN (userfile,
-			    ((key_opt != NULL && strcmp (key_opt, "b") == 0)
+			    ((key_opt != NULL && STREQ (key_opt, "b"))
 			     ? "rb"
 			     : "r")
 	    );
@@ -1261,7 +1261,7 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 	goto write_error;
     }
 
-    if (key_opt != NULL && strcmp (key_opt, "kv") != 0)
+    if (key_opt != NULL && !STREQ (key_opt, "kv"))
     {
 	if (fprintf (fprcs, "expand   @%s@;\012", key_opt) < 0)
 	{
@@ -1345,7 +1345,7 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 	    TRACE (TRACE_DATA, "add_rcs_file: found signature.");
 
 	    rawsig = get_signature ("", userfile,
-				    key_opt && !strcmp (key_opt, "b"),
+				    key_opt && STREQ (key_opt, "b"),
 				    &rawlen);
 	    base64_encode_alloc (rawsig, rawlen, &b64sig);
 	    if (!b64sig) xalloc_die ();
@@ -1391,7 +1391,7 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 		TRACE (TRACE_DATA, "add_rcs_file: found signature.");
 
 		rawsig = get_signature ("", userfile,
-					key_opt && !strcmp (key_opt, "b"),
+					key_opt && STREQ (key_opt, "b"),
 					&rawlen);
 		base64_encode_alloc (rawsig, rawlen, &b64sig);
 		if (!b64sig) xalloc_die ();

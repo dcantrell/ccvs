@@ -810,7 +810,7 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
     vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
 
     version = vers->vn_user;
-    if (version != NULL && strcmp (version, "0") == 0)
+    if (version != NULL && STREQ (version, "0"))
     {
 	error (0, 0, "cannot admin newly added file `%s'", finfo->file);
 	status = 1;
@@ -942,7 +942,7 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
     {
 	char *kflag = admin_data->kflag + 2;
 	char *oldexpand = RCS_getexpand (rcs);
-	if (oldexpand == NULL || strcmp (oldexpand, kflag) != 0)
+	if (!oldexpand || !STREQ (oldexpand, kflag))
 	    RCS_setexpand (rcs, kflag);
     }
 

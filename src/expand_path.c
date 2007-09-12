@@ -109,23 +109,23 @@ static const char *
 expand_variable (const char *name, const char *cvsroot,
 		 const char *file, int line)
 {
-    if (!strcmp (name, CVSROOT_ENV))
+    if (STREQ (name, CVSROOT_ENV))
 	return cvsroot;
-    else if (!strcmp (name, "RCSBIN"))
+    else if (STREQ (name, "RCSBIN"))
     {
 	error (0, 0, "RCSBIN internal variable is no longer supported");
 	return NULL;
     }
-    else if (!strcmp (name, EDITOR1_ENV))
+    else if (STREQ (name, EDITOR1_ENV))
 	return Editor;
-    else if (!strcmp (name, EDITOR2_ENV))
+    else if (STREQ (name, EDITOR2_ENV))
 	return Editor;
-    else if (!strcmp (name, EDITOR3_ENV))
+    else if (STREQ (name, EDITOR3_ENV))
 	return Editor;
-    else if (!strcmp (name, "USER"))
+    else if (STREQ (name, "USER"))
 	return getcaller ();
-    else if (!strcmp (name, "SESSIONID")
-	     || !strcmp (name, "COMMITID"))
+    else if (STREQ (name, "SESSIONID")
+	     || STREQ (name, "COMMITID"))
 	return global_session_id;
     else if (isalpha (name[0]))
     {

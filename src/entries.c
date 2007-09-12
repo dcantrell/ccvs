@@ -1114,7 +1114,7 @@ Subdir_Register (List *entries, const char *parent, const char *dir)
 
     entnode = subdir_record ('A', parent, dir);
 
-    if (entries != NULL && (parent == NULL || strcmp (parent, ".") == 0))
+    if (entries && (!parent || STREQ (parent, ".")))
 	(void) AddEntryNode (entries, entnode);
     else
 	Entnode_Destroy (entnode);
@@ -1135,7 +1135,7 @@ Subdir_Deregister (List *entries, const char *parent, const char *dir)
     entnode = subdir_record ('R', parent, dir);
     Entnode_Destroy (entnode);
 
-    if (entries != NULL && (parent == NULL || strcmp (parent, ".") == 0))
+    if (entries && (!parent || STREQ (parent, ".")))
     {
 	Node *p;
 

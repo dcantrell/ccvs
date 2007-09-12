@@ -35,7 +35,7 @@ keywords_may_change (int aflag, Vers_TS *vers)
     bool retval;
 
     if (/* Options are different...  */
-	strcmp (vers->entdata->options, vers->options)
+	!STREQ (vers->entdata->options, vers->options)
 	/* ...or...  */
 	|| (/* ...clearing stickies...  */
 	    aflag
@@ -46,15 +46,15 @@ keywords_may_change (int aflag, Vers_TS *vers)
 		 * changed by -A...
 		 */
 		|| (strlen (vers->entdata->options)
-		    && strcmp (vers->entdata->options, "-kkv")
-		    && strcmp (vers->entdata->options, "-kb"))))
+		    && !STREQ (vers->entdata->options, "-kkv")
+		    && !STREQ (vers->entdata->options, "-kb"))))
 	/* ...or...  */
 	|| (/* ...this is not commit...  */
-	    strcmp (cvs_cmd_name, "commit")
+	    !STREQ (cvs_cmd_name, "commit")
 	    /* ...and...  */
 	    && (/* ...the tag is changing in a way that affects Name keys...  */
 		(vers->entdata->tag && vers->tag
-		 && strcmp (vers->entdata->tag, vers->tag)
+		 && !STREQ (vers->entdata->tag, vers->tag)
 		 && !(isdigit (vers->entdata->tag[0])
 		      && isdigit (vers->entdata->tag[0])))
 		|| (!vers->entdata->tag && vers->tag
@@ -161,7 +161,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 	    /* no user file or no difference, just checkout */
 	    ret = T_CHECKOUT;
     }
-    else if (strcmp (vers->vn_user, "0") == 0)
+    else if (STREQ (vers->vn_user, "0"))
     {
 	/* An entry for a new-born file; ts_rcs is dummy */
 
@@ -240,7 +240,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		 */
 		ret = T_REMOVE_ENTRY;
 	    }
-	    else if (strcmp (vers->vn_rcs, vers->vn_user + 1) == 0)
+	    else if (STREQ (vers->vn_rcs, vers->vn_user + 1))
 		/*
 		 * The RCS file is the same version as the user file was, and
 		 * that's OK; remove it
@@ -291,7 +291,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 			   finfo->fullname);
 		ret = T_REMOVE_ENTRY;
 	    }
-	    else if (strcmp (vers->ts_user, vers->ts_rcs)
+	    else if (!STREQ (vers->ts_user, vers->ts_rcs)
 		     && No_Difference (finfo, vers))
 	    {
 		/* they are different -> conflict */
@@ -315,7 +315,7 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		ret = T_REMOVE_ENTRY;
 	    }
 	}
-	else if (strcmp (vers->vn_rcs, vers->vn_user) == 0)
+	else if (STREQ (vers->vn_rcs, vers->vn_user))
 	{
 	    /* The RCS file is the same version as the user file */
 
@@ -334,14 +334,14 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		   gets hit when a patch fails and the client fetches
 		   a file.  I'm not sure there is currently any way
 		   for the server to distinguish those two cases.  */
-		if (strcmp (cvs_cmd_name, "update") == 0)
+		if (STREQ (cvs_cmd_name, "update"))
 		    if (!really_quiet)
 			error (0, 0, "warning: `%s' was lost", finfo->fullname);
 		ret = T_CHECKOUT;
 	    }
-	    else if (!strcmp (vers->ts_user,
-			      vers->ts_conflict
-			      ? vers->ts_conflict : vers->ts_rcs))
+	    else if (STREQ (vers->ts_user,
+			    vers->ts_conflict ? vers->ts_conflict
+					      : vers->ts_rcs))
 	    {
 
 		/*
@@ -370,8 +370,9 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		 * changing any sticky -k options, else needs merge
 		 */
 #ifdef XXX_FIXME_WHEN_RCSMERGE_IS_FIXED
-		if (strcmp (vers->entdata->options ?
-		       vers->entdata->options : "", vers->options) == 0)
+		if (STREQ (vers->entdata->options ? vers->entdata->options
+			    			  : "",
+			   vers->options))
 		    ret = T_MODIFIED;
 		else
 		    ret = T_NEEDS_MERGE;
@@ -387,14 +388,12 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		sticky_ck (finfo, aflag, vers);
 #endif
 	    }
-	    else if (strcmp (vers->entdata->options ?
-		       vers->entdata->options : "", vers->options) != 0)
-	    {
+	    else if (!STREQ (vers->entdata->options ? vers->entdata->options
+						    : "",
+			     vers->options))
 		/* file has not changed; check out if -k changed */
 		ret = T_CHECKOUT;
-	    }
 	    else
-	    {
 
 		/*
 		 * else -> note that No_Difference will Register the
@@ -402,7 +401,6 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		 * is the desired behaviour
 		 */
 		ret = T_UPTODATE;
-	    }
 	}
 	else
 	{
@@ -414,12 +412,12 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 
 		/* See comment at other "update" compare, for more
 		   thoughts on this comparison.  */
-		if (strcmp (cvs_cmd_name, "update") == 0)
+		if (STREQ (cvs_cmd_name, "update"))
 		    if (!really_quiet)
 			error (0, 0, "warning: `%s' was lost", finfo->fullname);
 		ret = T_CHECKOUT;
 	    }
-	    else if (strcmp (vers->ts_user, vers->ts_rcs) == 0)
+	    else if (STREQ (vers->ts_user, vers->ts_rcs))
 
 		/*
 		 * The user file is still unmodified, so just get it as well
@@ -451,9 +449,9 @@ sticky_ck (struct file_info *finfo, int aflag, Vers_TS *vers)
 	char *enttag = vers->entdata->tag;
 	char *entdate = vers->entdata->date;
 
-	if ((enttag && vers->tag && strcmp (enttag, vers->tag)) ||
+	if ((enttag && vers->tag && !STREQ (enttag, vers->tag)) ||
 	    ((enttag && !vers->tag) || (!enttag && vers->tag)) ||
-	    (entdate && vers->date && strcmp (entdate, vers->date)) ||
+	    (entdate && vers->date && !STREQ (entdate, vers->date)) ||
 	    ((entdate && !vers->date) || (!entdate && vers->date)))
 	{
 	    Register (finfo->entries, finfo->file, vers->vn_user, vers->ts_rcs,
@@ -465,10 +463,11 @@ sticky_ck (struct file_info *finfo, int aflag, Vers_TS *vers)
 		/* We need to update the entries line on the client side.
 		   It is possible we will later update it again via
 		   server_updated or some such, but that is OK.  */
-		server_update_entries
-		  (finfo->file, finfo->update_dir, finfo->repository,
-		   strcmp (vers->ts_rcs, vers->ts_user) == 0 ?
-		   SERVER_UPDATED : SERVER_MERGED);
+		server_update_entries (finfo->file, finfo->update_dir,
+				       finfo->repository,
+				       STREQ (vers->ts_rcs,
+					      vers->ts_user) ? SERVER_UPDATED
+							     : SERVER_MERGED);
 	    }
 #endif
 	}

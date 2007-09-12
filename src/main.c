@@ -408,7 +408,7 @@ lookup_command_attribute (const char *cmd_name)
 
     for (cm = cmds; cm->fullname; cm++)
     {
-	if (strcmp (cmd_name, cm->fullname) == 0)
+	if (STREQ (cmd_name, cm->fullname))
 	    break;
     }
     if (!cm->fullname)
@@ -706,12 +706,12 @@ main (int argc, char **argv)
     if (optind < argc
 	&& (false
 # if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
-	    || !strcmp (argv[optind], "pserver")
+	    || STREQ (argv[optind], "pserver")
 # endif
 # ifdef HAVE_KERBEROS
-	    || !strcmp (argv[optind], "kserver")
+	    || STREQ (argv[optind], "kserver")
 # endif /* HAVE_KERBEROS */
-	    || !strcmp (argv[optind], "server")))
+	    || STREQ (argv[optind], "server")))
 	{
 	    /* Avoid any .cvsrc file.  */
 	    use_cvsrc = 0;
@@ -1034,11 +1034,11 @@ cause intermittent sandbox corruption.");
     cvs_cmd_name = argv[0];
     for (cm = cmds; cm->fullname; cm++)
     {
-	if (cm->nick1 && !strcmp (cvs_cmd_name, cm->nick1))
+	if (cm->nick1 && STREQ (cvs_cmd_name, cm->nick1))
 	    break;
-	if (cm->nick2 && !strcmp (cvs_cmd_name, cm->nick2))
+	if (cm->nick2 && STREQ (cvs_cmd_name, cm->nick2))
 	    break;
-	if (!strcmp (cvs_cmd_name, cm->fullname))
+	if (STREQ (cvs_cmd_name, cm->fullname))
 	    break;
     }
 
@@ -1104,7 +1104,7 @@ cause intermittent sandbox corruption.");
 	   running as Kerberos server as root.  Do the authentication as
 	   the very first thing, to minimize the amount of time we are
 	   running as root.  */
-	if (strcmp (cvs_cmd_name, "kserver") == 0)
+	if (STREQ (cvs_cmd_name, "kserver"))
 	{
 	    kserver_authenticate_connection ();
 
@@ -1114,7 +1114,7 @@ cause intermittent sandbox corruption.");
 # endif /* HAVE_KERBEROS */
 
 # if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
-	if (strcmp (cvs_cmd_name, "pserver") == 0)
+	if (STREQ (cvs_cmd_name, "pserver"))
 	{
 	    /* The reason that --allow-root is not a command option
 	       is mainly that it seems easier to make it a global option.  */
@@ -1130,7 +1130,7 @@ cause intermittent sandbox corruption.");
 # endif /* AUTH_SERVER_SUPPORT || HAVE_GSSAPI */
 #endif /* SERVER_SUPPORT */
 
-	server_active = strcmp (cvs_cmd_name, "server") == 0;
+	server_active = STREQ (cvs_cmd_name, "server");
 
 #ifdef SERVER_SUPPORT
 	if (server_active)
@@ -1297,7 +1297,7 @@ cause intermittent sandbox corruption.");
 			save_errno = errno;
 			/* If this is "cvs init", the root need not exist yet.
 			 */
-			if (strcmp (cvs_cmd_name, "init"))
+			if (!STREQ (cvs_cmd_name, "init"))
 			    error (1, save_errno, "%s", path);
 		    }
 		    free (path);

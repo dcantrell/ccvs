@@ -77,8 +77,7 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 	       changes is if the file contains RCS keywords.  So we if
 	       we are not expanding RCS keywords, we are done.  */
 
-	    if (options != NULL
-		&& strcmp (options, "-V4") == 0) /* upgrade to V5 now */
+	    if (options && STREQ (options, "-V4")) /* upgrade to V5 now */
 		options[0] = '\0';
 
 	    /* FIXME: If PreservePermissions is on, RCS_cmp_file is
@@ -92,7 +91,7 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 		 !config->preserve_perms
 #endif /* PRESERVE_PERMISSIONS_SUPPORT */
 		 && options
-		 && (!strcmp (options, "-ko") || !strcmp (options, "-kb")))
+		 && (STREQ (options, "-ko") || STREQ (options, "-kb")))
 		|| !RCS_cmp_file (finfo->rcs, pvers->tag, rev, NULL, NULL,
 	                          options, finfo->file))
 		/* The existing file is correct.  We don't have to do
@@ -141,7 +140,7 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 		xchmod (finfo->file, 0);
 
 	    /* Re-register with the new data.  */
-	    if (strcmp (vers->options, "-V4") == 0)
+	    if (STREQ (vers->options, "-V4"))
 		vers->options[0] = '\0';
 	    Register (finfo->entries, finfo->file, vers->vn_rcs, vers->ts_user,
 		      vers->options, vers->tag, vers->date, NULL);

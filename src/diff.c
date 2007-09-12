@@ -526,7 +526,7 @@ diff_file_nodiff (struct file_info *finfo, Vers_TS *vers,
     if (diff_rev1 || diff_date1)
     {
 	/* special handling for TAG_HEAD */
-	if (diff_rev1 && strcmp (diff_rev1, TAG_HEAD) == 0)
+	if (diff_rev1 && STREQ (diff_rev1, TAG_HEAD))
 	{
 	    if (vers->vn_rcs != NULL && vers->srcfile != NULL)
 		*use_rev1 = RCS_branch_head (vers->srcfile, vers->vn_rcs);
@@ -542,7 +542,7 @@ diff_file_nodiff (struct file_info *finfo, Vers_TS *vers,
     if (diff_rev2 || diff_date2)
     {
 	/* special handling for TAG_HEAD */
-	if (diff_rev2 && strcmp (diff_rev2, TAG_HEAD) == 0)
+	if (diff_rev2 && STREQ (diff_rev2, TAG_HEAD))
 	{
 	    if (vers->vn_rcs && vers->srcfile)
 		*use_rev2 = RCS_branch_head (vers->srcfile, vers->vn_rcs);
@@ -635,7 +635,7 @@ diff_file_nodiff (struct file_info *finfo, Vers_TS *vers,
 	 * files are different when the revs are.
 	 */
 	assert (*use_rev2);
-	if (!strcmp (*use_rev1, *use_rev2))
+	if (STREQ (*use_rev1, *use_rev2))
 	    return DIFF_SAME;
 	/* else fall through and do the diff */
     }
@@ -704,7 +704,7 @@ diff_file_nodiff (struct file_info *finfo, Vers_TS *vers,
      */
     if (*use_rev1 && *use_rev2) 
     {
-	if (!strcmp (*use_rev1, *use_rev2))
+	if (STREQ (*use_rev1, *use_rev2))
 	    return DIFF_SAME;
 	/* Fall through and do the diff. */
     }
@@ -712,14 +712,12 @@ diff_file_nodiff (struct file_info *finfo, Vers_TS *vers,
      * The timestamp check is just for the default case of diffing the
      * workspace file against its base revision.
      */
-    else if (!*use_rev1
-             || (vers->vn_user
-                 && !strcmp (*use_rev1, vers->vn_user)))
+    else if (!*use_rev1 || (vers->vn_user && STREQ (*use_rev1, vers->vn_user)))
     {
 	if ((empty_file == DIFF_DIFFERENT || empty_file == DIFF_CLIENT)
 	    && vers->ts_user != NULL
-	    && strcmp (vers->ts_rcs, vers->ts_user) == 0
-	    && (!(*options) || strcmp (options, vers->options) == 0))
+	    && STREQ (vers->ts_rcs, vers->ts_user)
+	    && (!(*options) || STREQ (options, vers->options)))
 	{
 	    return DIFF_SAME;
 	}
@@ -790,7 +788,7 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 
 		exists = 0;
 		/* special handling for TAG_HEAD */
-		if (diff_rev1 && strcmp (diff_rev1, TAG_HEAD) == 0)
+		if (diff_rev1 && STREQ (diff_rev1, TAG_HEAD))
 		{
 		    char *head =
 			(vers->vn_rcs == NULL
@@ -835,7 +833,7 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 	    if (diff_rev1 || diff_date1)
 	    {
 		/* special handling for TAG_HEAD */
-		if (diff_rev1 && strcmp (diff_rev1, TAG_HEAD) == 0)
+		if (diff_rev1 && STREQ (diff_rev1, TAG_HEAD))
 		{
 		    char *head =
 			(vers->vn_rcs == NULL
@@ -905,7 +903,7 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 		error (0, 0, "cannot find %s", finfo->fullname);
 		goto out;
 	    }
-	    else if (!strcmp (vers->ts_user, vers->ts_rcs)) 
+	    else if (STREQ (vers->ts_user, vers->ts_rcs)) 
 	    {
 		/* The user file matches some revision in the repository
 		   Diff against the repository (for remote CVS, we might not
@@ -1110,7 +1108,7 @@ get_diff_info (void)
 {
     static struct diff_info di;
 
-    if (strcmp ("diff", cvs_cmd_name))
+    if (!STREQ ("diff", cvs_cmd_name))
 	return NULL;
 
     di.diff_argc = diff_argc;

@@ -66,7 +66,7 @@ ls (int argc, char **argv)
     int c;
     int err = 0;
 
-    is_rls = strcmp (cvs_cmd_name, "rls") == 0;
+    is_rls = STREQ (cvs_cmd_name, "rls");
 
     if (argc == -1)
 	usage (ls_usage);
@@ -234,7 +234,7 @@ ls (int argc, char **argv)
 
 		/* Frontends like to do 'ls -q /', so we support it explicitly.
                  */
-		if (!strcmp (mod,"/"))
+		if (STREQ (mod,"/"))
 		{
 		    *mod='\0';
 		}
@@ -307,7 +307,7 @@ ls_print_dir (Node *p, void *closure)
         else
             printed = true;
 
-        if (!strcmp (p->key, ""))
+        if (STREQ (p->key, ""))
             cvs_output (".", 1);
         else
 	    cvs_output (p->key, 0);
@@ -465,7 +465,7 @@ ls_direntproc (void *callerdat, const char *dir, const char *repos,
      * directory in DIRS then this directory should be processed.
      */
 
-    if (strcmp (dir, "."))
+    if (!STREQ (dir, "."))
     {
         /* Search for our parent directory.  */
 	char *parent;
@@ -507,7 +507,7 @@ ls_direntproc (void *callerdat, const char *dir, const char *repos,
     {
 	/* Create a new list for this directory.  */
 	p = getnode ();
-	p->key = xstrdup (strcmp (update_dir, ".") ? update_dir : "");
+	p->key = xstrdup (STREQ (update_dir, ".") ? "" : update_dir);
 	p->data = getlist ();
         p->delproc = ls_delproc;
 	addnode (callerdat, p);
@@ -551,7 +551,7 @@ static int
 ls_dirleaveproc (void *callerdat, const char *dir, int err,
                  const char *update_dir, List *entries)
 {
-	if (created_dir && !strcmp (created_dir, update_dir))
+	if (created_dir && STREQ (created_dir, update_dir))
 	{
 		if (set_tag)
 		{
@@ -591,7 +591,7 @@ ls_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 
 	if (!quiet)
 	    error (0, 0, "Listing module: `%s'",
-	           strcmp (mname, "") ? mname : ".");
+	           STREQ (mname, "") ? "." : mname);
 
 	repository = xmalloc (strlen (current_parsed_root->directory)
 			      + strlen (argv[0])

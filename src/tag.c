@@ -145,7 +145,7 @@ cvstag (int argc, char **argv)
     int err = 0;
     bool run_module_prog = true;
 
-    is_rtag = (strcmp (cvs_cmd_name, "rtag") == 0);
+    is_rtag = STREQ (cvs_cmd_name, "rtag");
 
     if (argc == -1)
 	usage (is_rtag ? rtag_usage : tag_usage);
@@ -688,7 +688,7 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 	    ti->rev = NULL;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	}
-        else if (strcmp (ti->oldrev, p->data) == 0)
+        else if (STREQ (ti->oldrev, p->data))
             addit = 0;
         else if (!force_tag_move)
             addit = 0;
@@ -1017,7 +1017,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
     }
     if (numtag
 	&& isdigit ((unsigned char)*numtag)
-	&& strcmp (numtag, version) != 0)
+	&& !STREQ (numtag, version))
     {
 
 	/*
@@ -1056,7 +1056,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 	     * if versions the same and neither old or new are branches don't
 	     * have to do anything
 	     */
-	    if (strcmp (version, oversion) == 0 && !branch_mode && !isbranch)
+	    if (STREQ (version, oversion) && !branch_mode && !isbranch)
 	    {
 		free (oversion);
 		goto free_vars_and_return;
@@ -1264,7 +1264,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
         version = nversion;
     if (!version)
 	goto free_vars_and_return;
-    else if (strcmp (version, "0") == 0)
+    else if (STREQ (version, "0"))
     {
 	if (!quiet)
 	    error (0, 0, "couldn't tag added but un-commited file `%s'",
@@ -1304,7 +1304,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 	 * if versions the same and neither old or new are branches don't have
 	 * to do anything
 	 */
-	if (strcmp (version, oversion) == 0 && !branch_mode && !isbranch)
+	if (STREQ (version, oversion) && !branch_mode && !isbranch)
 	{
 	    free (oversion);
 	    if (branch_mode)
@@ -1669,8 +1669,7 @@ Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
     }
 
     /* Special tags are always valid.  */
-    if (strcmp (name, TAG_BASE) == 0
-	|| strcmp (name, TAG_HEAD) == 0)
+    if (STREQ (name, TAG_BASE) || STREQ (name, TAG_HEAD))
     {
 	/* insert is not possible for numeric revisions */
 	assert (!valid);

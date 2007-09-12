@@ -131,8 +131,8 @@ add (int argc, char **argv)
 	   don't seem to object to the warnings.
 	   Whatever.  */
 	strip_trailing_slashes (argv[i]);
-	if (strcmp (argv[i], ".") == 0
-	    || strcmp (argv[i], "..") == 0
+	if (STREQ (argv[i], ".")
+	    || STREQ (argv[i], "..")
 	    || fncmp (last_component (argv[i]), CVSADM) == 0)
 	{
 	    if (!quiet)
@@ -262,8 +262,8 @@ add (int argc, char **argv)
 				CVSROOTADM,
 				sizeof CVSROOTADM - 1) == 0
 		    && ISSLASH (repository[cvsroot_len + sizeof CVSROOTADM])
-		    && strcmp (repository + cvsroot_len + sizeof CVSROOTADM + 1,
-			       CVSNULLREPOS) == 0)
+		    && STREQ (repository + cvsroot_len + sizeof CVSROOTADM + 1,
+			       CVSNULLREPOS))
 		    error (1, 0, "cannot add to `%s'", repository);
 
 		/* before we do anything else, see if we have any
@@ -363,8 +363,8 @@ add (int argc, char **argv)
 			CVSROOTADM,
 			sizeof CVSROOTADM - 1) == 0
 	    && ISSLASH (repository[cvsroot_len + sizeof CVSROOTADM])
-	    && strcmp (repository + cvsroot_len + sizeof CVSROOTADM + 1,
-		       CVSNULLREPOS) == 0)
+	    && STREQ (repository + cvsroot_len + sizeof CVSROOTADM + 1,
+		      CVSNULLREPOS))
 	    error (1, 0, "cannot add to `%s'", repository);
 
 	entries = Entries_Open (0, finfo.update_dir);

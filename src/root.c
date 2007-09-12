@@ -1182,7 +1182,7 @@ get_local_root_dir (Node *p, void *root_in)
     if (get_local_root_dir_done)
 	return 0;
 
-    if (c->PrimaryServer && !strcmp (*r, c->PrimaryServer->directory))
+    if (c->PrimaryServer && STREQ (*r, c->PrimaryServer->directory))
     {
 	free (*r);
 	*r = xstrdup (p->key);

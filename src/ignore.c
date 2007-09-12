@@ -389,7 +389,7 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
 	subdirs = entriesHasAllSubdirs (entries);
 
     /* we get called with update_dir set to "." sometimes... strip it */
-    if (strcmp (update_dir, ".") == 0)
+    if (STREQ (update_dir, "."))
 	xdir = "";
     else
 	xdir = update_dir;
@@ -410,7 +410,7 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
     while (errno = 0, dp = CVS_READDIR (dirp))
     {
 	file = dp->d_name;
-	if (!strcmp (file, ".") || !strcmp (file, ".."))
+	if (STREQ (file, ".") || STREQ (file, ".."))
 	    continue;
 	if (findnode_fn (ilist, file))
 	    continue;

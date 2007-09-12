@@ -249,7 +249,7 @@ send_notifications (int argc, char **argv, int local)
        notifications stay in CVSADM_NOTIFY to be sent next time.  */
     if (current_parsed_root->isremote)
     {
-	if (strcmp (cvs_cmd_name, "release") != 0)
+	if (!STREQ (cvs_cmd_name, "release"))
 	{
 	    start_server ();
 	    ign_setup ();
@@ -259,7 +259,7 @@ send_notifications (int argc, char **argv, int local)
 				argv, local, W_LOCAL, 0, 0, NULL, 0, NULL);
 
 	send_to_server ("noop\012", 0);
-	if (strcmp (cvs_cmd_name, "release") == 0)
+	if (STREQ (cvs_cmd_name, "release"))
 	    err += get_server_responses ();
 	else
 	    err += get_responses_and_close ();
@@ -533,13 +533,13 @@ edit (int argc, char **argv)
 		break;
 	    case 'a':
 		a_omitted = false;
-		if (strcmp (optarg, "edit") == 0)
+		if (STREQ (optarg, "edit"))
 		    setting_tedit = true;
-		else if (strcmp (optarg, "unedit") == 0)
+		else if (STREQ (optarg, "unedit"))
 		    setting_tunedit = true;
-		else if (strcmp (optarg, "commit") == 0)
+		else if (STREQ (optarg, "commit"))
 		    setting_tcommit = true;
-		else if (strcmp (optarg, "all") == 0)
+		else if (STREQ (optarg, "all"))
 		{
 		    a_all = true;
 		    a_none = false;
@@ -547,7 +547,7 @@ edit (int argc, char **argv)
 		    setting_tunedit = true;
 		    setting_tcommit = true;
 		}
-		else if (strcmp (optarg, "none") == 0)
+		else if (STREQ (optarg, "none"))
 		{
 		    a_none = true;
 		    a_all = false;
@@ -837,7 +837,7 @@ editor_set (const char *filename, const char *editor, const char *val)
     if (!((edlist == NULL && newlist == NULL)
 	  || (edlist != NULL
 	      && newlist != NULL
-	      && strcmp (edlist, newlist) == 0)))
+	      && STREQ (edlist, newlist))))
 	fileattr_set (filename, "_editors", newlist);
     if (edlist != NULL)
 	free (edlist);

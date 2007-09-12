@@ -209,7 +209,7 @@ lock_name (const char *repository, const char *name)
 			 strlen (current_parsed_root->directory)) == 0);
 	short_repos = repository + strlen (current_parsed_root->directory) + 1;
 
-	if (strcmp (repository, current_parsed_root->directory) == 0)
+	if (STREQ (repository, current_parsed_root->directory))
 	    short_repos = ".";
 	else
 	    assert (short_repos[-1] == '/');
@@ -1224,7 +1224,7 @@ lock_dir_for_write (const char *repository)
 
     if (repository != NULL
 	&& (global_writelock.repository == NULL
-	    || !strcmp (global_writelock.repository, repository)))
+	    || STREQ (global_writelock.repository, repository)))
     {
 	if (writelock == NULL)
 	{

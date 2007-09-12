@@ -55,8 +55,8 @@ Create_Admin (const char *dir, const char *update_dir, const char *repository,
 	return 0;
 
     /* A leading "./" looks bad in error messages.  */
-    ud = strcmp (dir, ".");
-    tmp = Xasprintf ("%s%s%s", ud ? dir : "", ud ? "/" : "", CVSADM);
+    ud = STREQ (dir, ".");
+    tmp = Xasprintf ("%s%s%s", ud ? "" : dir, ud ? "" : "/", CVSADM);
     if (isfile (tmp))
 	error (1, 0, "there is a version in %s already", update_dir);
 
@@ -95,7 +95,7 @@ Create_Admin (const char *dir, const char *update_dir, const char *repository,
        spend the time making sure all of the code can handle it if we
        don't do it. */
 
-    if (strcmp (reposcopy, current_parsed_root->directory) == 0)
+    if (STREQ (reposcopy, current_parsed_root->directory))
     {
 	reposcopy = xrealloc (reposcopy, strlen (reposcopy) + 3);
 	strcat (reposcopy, "/.");

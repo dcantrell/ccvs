@@ -206,7 +206,7 @@ create_adm_p (char *base_dir, char *dir)
     int retval, done;
     FILE *f;
 
-    if (strcmp (dir, ".") == 0)
+    if (STREQ (dir, "."))
 	return 0;			/* nothing to do */
 
     /* Allocate some space for our directory-munging string. */
@@ -605,7 +605,7 @@ supported_response (char *name)
     struct response *rs;
 
     for (rs = responses; rs->name != NULL; ++rs)
-	if (strcmp (rs->name, name) == 0)
+	if (STREQ (rs->name, name))
 	    return rs->status == rs_supported;
     error (1, 0, "internal error: testing support for unknown response?");
     /* NOTREACHED */
@@ -697,7 +697,7 @@ serve_valid_responses (char *arg)
 	    *q++ = '\0';
 	for (rs = responses; rs->name != NULL; ++rs)
 	{
-	    if (strcmp (rs->name, p) == 0)
+	    if (STREQ (rs->name, p))
 		break;
 	}
 	if (rs->name == NULL)
@@ -877,7 +877,7 @@ serve_root (char *arg)
 # ifdef AUTH_SERVER_SUPPORT
     if (Pserver_Repos != NULL)
     {
-	if (strcmp (Pserver_Repos, current_parsed_root->directory) != 0)
+	if (!STREQ (Pserver_Repos, current_parsed_root->directory))
 	{
 	    /* The explicitness is to aid people who are writing clients.
 	       I don't see how this information could help an
@@ -1236,7 +1236,7 @@ dirswitch (char *dir, char *repos)
     if (gupdate_dir != NULL)
 	free (gupdate_dir);
 
-    if (!strcmp (dir, "."))
+    if (STREQ (dir, "."))
 	gupdate_dir = xstrdup ("");
     else
 	gupdate_dir = xstrdup (dir);
@@ -1310,10 +1310,9 @@ dirswitch (char *dir, char *repos)
     /* Non-remote CVS handles a module representing the entire tree
        (e.g., an entry like ``world -a .'') by putting /. at the end
        of the Repository file, so we do the same.  */
-    if (strcmp (dir, ".") == 0
-	&& current_parsed_root != NULL
-	&& current_parsed_root->directory != NULL
-	&& strcmp (current_parsed_root->directory, repos) == 0)
+    if (STREQ (dir, ".")
+	&& current_parsed_root && current_parsed_root->directory
+	&& STREQ (current_parsed_root->directory, repos))
     {
 	if (fprintf (f, "/.") < 0)
 	{
@@ -3428,7 +3427,7 @@ check_command_valid_p (char *cmd_name)
                  if (num_red > 0 && linebuf[num_red - 1] == '\n')
                      linebuf[num_red - 1] = '\0';
 
-                 if (strcmp (linebuf, CVS_Username) == 0)
+                 if (STREQ (linebuf, CVS_Username))
                      goto handle_invalid;
              }
 	     if (num_red < 0 && !feof (fp))
@@ -3483,7 +3482,7 @@ check_command_valid_p (char *cmd_name)
 	     if (num_red > 0 && linebuf[num_red - 1] == '\n')
 		 linebuf[num_red - 1] = '\0';
 
-	     if (strcmp (linebuf, CVS_Username) == 0)
+	     if (STREQ (linebuf, CVS_Username))
 	     {
 		 found_it = 1;
 		 break;
@@ -4957,8 +4956,8 @@ serve_co (char *arg)
      * [It probably doesn't matter if do_cvs_command() gets "export"
      *  or "checkout", but we ought to be accurate where possible.]
      */
-    do_cvs_command (!strcmp (cvs_cmd_name, "export") ? "export" : "checkout",
-                   checkout);
+    do_cvs_command (STREQ (cvs_cmd_name, "export") ? "export" : "checkout",
+		    checkout);
 }
 
 
@@ -5225,7 +5224,7 @@ server_updated (
 	    return;
 	}
 
-	if (strcmp (cvs_cmd_name, "export")
+	if (!STREQ (cvs_cmd_name, "export")
 	    && supported_response ("Base-entry"))
 	{
 	    /* The client was already asked to create the base file and copy
@@ -5314,9 +5313,9 @@ server_updated (
 		       finfo->fullname);
 	}
     }
-    else if (scratched_file != NULL && entries_line == NULL)
+    else if (scratched_file && !entries_line)
     {
-	if (strcmp (scratched_file, finfo->file) != 0)
+	if (!STREQ (scratched_file, finfo->file))
 	    error (1, 0,
 		   "CVS server internal error: `%s' vs. `%s' scratched",
 		   scratched_file,
@@ -6919,9 +6918,8 @@ check_repository_password (char *username, char *password, char *repository, cha
 	    host_user_tmp = username;
 
 	/* Verify blank passwords directly, otherwise use crypt(). */
-	if ((found_password == NULL)
-	    || ((strcmp (found_password, crypt (password, found_password))
-		 == 0)))
+	if (!found_password
+	    || STREQ (found_password, crypt (password, found_password)))
 	{
 	    /* Give host_user_ptr permanent storage. */
 	    *host_user_ptr = xstrdup (host_user_tmp);
@@ -7124,7 +7122,7 @@ error 0 %s: no such user\n", username);
     if (*found_passwd)
     {
 	/* user exists and has a password */
-	if (strcmp (found_passwd, crypt (password, found_passwd)) == 0)
+	if (STREQ (found_passwd, crypt (password, found_passwd)))
 	    return 1;
 	else
 	{
@@ -7328,11 +7326,11 @@ pserver_authenticate_connection (void)
     /* Make sure the protocol starts off on the right foot... */
     pserver_read_line (&tmp, NULL);
 
-    if (strcmp (tmp, "BEGIN VERIFICATION REQUEST") == 0)
+    if (STREQ (tmp, "BEGIN VERIFICATION REQUEST"))
 	verify_and_exit = 1;
-    else if (strcmp (tmp, "BEGIN AUTH REQUEST") == 0)
+    else if (STREQ (tmp, "BEGIN AUTH REQUEST"))
 	;
-    else if (strcmp (tmp, "BEGIN GSSAPI REQUEST") == 0)
+    else if (STREQ (tmp, "BEGIN GSSAPI REQUEST"))
     {
 #ifdef HAVE_GSSAPI
 	free (tmp);
@@ -7342,7 +7340,7 @@ pserver_authenticate_connection (void)
 	error (1, 0, "GSSAPI authentication not supported by this server");
 #endif
     }
-    else if (strcmp (tmp, "BEGIN GSSAPI-U REQUEST") == 0)
+    else if (STREQ (tmp, "BEGIN GSSAPI-U REQUEST"))
     {
 #ifdef HAVE_GSSAPI
 	free (tmp);
@@ -7374,13 +7372,10 @@ pserver_authenticate_connection (void)
     /* ... and make sure the protocol ends on the right foot. */
     /* See above comment about error handling.  */
     pserver_read_line (&tmp, NULL);
-    if (strcmp (tmp,
-		verify_and_exit ?
-		"END VERIFICATION REQUEST" : "END AUTH REQUEST")
-	!= 0)
-    {
+    if (!STREQ (tmp,
+		verify_and_exit ? "END VERIFICATION REQUEST"
+				: "END AUTH REQUEST"))
 	error (1, 0, "bad auth protocol end: %s", tmp);
-    }
     free (tmp);
 
     if (!root_allow_ok (repository))
@@ -8105,9 +8100,9 @@ cvs_output_tagged (const char *tag, const char *text)
 #endif /* SERVER_SUPPORT */
     {
 	/* No MT support or we are using a local repository. */
-	if (strcmp (tag, "newline") == 0)
+	if (STREQ (tag, "newline"))
 	    cvs_output ("\n", 1);
-	else if (strcmp (tag, "date") == 0)
+	else if (STREQ (tag, "date"))
 	{
 #ifdef SERVER_SUPPORT
 	    if (server_active)
@@ -8223,17 +8218,17 @@ iserver_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
     if (/* Not sending a temp file...  */
 	!istemp
 	/* ...and entry rev and new rev are the same...  */
-	&& prev && !strcmp (prev, rev)
+	&& prev && STREQ (prev, rev)
 	/* ...and... */
 	&& (   /* ...both option specs are empty...  */
 	    (  (!poptions || !poptions[0]) && (!options || !options[0]))
 	       /* ...or the option specs match...  */
-	    || (poptions && options && !strcmp (poptions, options)))
+	    || (poptions && options && STREQ (poptions, options)))
 	/* ...and... */
 	&& (   /* ...both tag specs are empty...  */
 	    (  (!ptag || !ptag[0]) && (!tag || !tag[0]))
 	       /* ...or the tag specs match.  */
-	    || (ptag && tag && !strcmp (ptag, tag)))
+	    || (ptag && tag && STREQ (ptag, tag)))
        )
 	/* PREV & REV are the same, so the client should already have this
 	 * base file.
@@ -8245,7 +8240,7 @@ iserver_base_checkout (RCSNode *rcs, struct file_info *finfo, const char *prev,
     /* FIXME: It would be more efficient if diffs could be sent when the
      * revision numbers haven't changed but the keywords have.
      */
-    if (prev && strcmp (prev, "0") && strcmp (prev, rev))
+    if (prev && !STREQ (prev, "0") && !STREQ (prev, rev))
     {
 	/* Compute and send diff.  */
 	int dargc = 0;
@@ -8444,15 +8439,15 @@ server_base_diff (struct file_info *finfo, const char *f1, const char *rev1,
     output_dir (finfo->update_dir, finfo->repository);
     buf_output0 (protocol, finfo->file);
     buf_output (protocol, "\n", 1);
-    buf_output0 (protocol, strcmp (f1, DEVNULL) ? "TEMP" : "DEVNULL");
+    buf_output0 (protocol, STREQ (f1, DEVNULL) ? "DEVNULL" : "TEMP");
     buf_output (protocol, "\n", 1);
     buf_output0 (protocol, rev1 ? rev1 : "");
     buf_output (protocol, "\n", 1);
     buf_output0 (protocol, label1 ? label1 : "");
     buf_output (protocol, "\n", 1);
-    buf_output0 (protocol, strcmp (f2, DEVNULL)
-			   ? (rev2 ? "TEMP" : "WORKFILE")
-			   : "DEVNULL");
+    buf_output0 (protocol, STREQ (f2, DEVNULL)
+			   ? "DEVNULL"
+			   : (rev2 ? "TEMP" : "WORKFILE"));
     buf_output (protocol, "\n", 1);
     buf_output0 (protocol, rev2 ? rev2 : "");
     buf_output (protocol, "\n", 1);

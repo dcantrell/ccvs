@@ -1173,7 +1173,7 @@ in_repository (const char *path)
 	/* If last_component() returns the empty string, then cp either
 	 * points at the system root or is the empty string itself.
 	 */
-	if (!*last_component (cp) || !strcmp (cp, "."))
+	if (!*last_component (cp) || STREQ (cp, "."))
 	    break;
 
 	p = dir_name (cp);
@@ -1227,7 +1227,7 @@ init (int argc, char **argv)
 
     root_dir = in_repository (current_parsed_root->directory);
 
-    if (root_dir && strcmp (root_dir, current_parsed_root->directory))
+    if (root_dir && !STREQ (root_dir, current_parsed_root->directory))
 	error (1, 0,
 	       "Cannot initialize repository under existing CVSROOT: `%s'",
 	       root_dir);

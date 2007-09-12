@@ -101,7 +101,7 @@ Version_TS (struct file_info *finfo, const char *options, const char *tag,
 	   use the entries line for the sole purpose of telling
 	   time_stamp_server what is up; we don't want the rest of CVS
 	   to think there is an entries line.  */
-	if (strcmp (entdata->timestamp, "D") != 0)
+	if (!STREQ (entdata->timestamp, "D"))
 #endif
 	{
 	    vers_ts->vn_user = xstrdup (entdata->version);
@@ -133,17 +133,17 @@ Version_TS (struct file_info *finfo, const char *options, const char *tag,
      * options stored in the entries file and default options from the RCS
      * archive, except for binary mode (-kb).
      */
-    if (options && *options != '\0')
+    if (options && *options)
     {
-	if (vers_ts->options != NULL)
+	if (vers_ts->options)
 	    free (vers_ts->options);
-	if (rcsexpand != NULL && strcmp (rcsexpand, "b") == 0)
+	if (rcsexpand && STREQ (rcsexpand, "b"))
 	    vers_ts->options = xstrdup ("-kb");
 	else
 	    vers_ts->options = xstrdup (options);
     }
-    else if ((!vers_ts->options || *vers_ts->options == '\0')
-             && rcsexpand != NULL)
+    else if ((!vers_ts->options || !*vers_ts->options)
+             && rcsexpand)
     {
 	/* If no keyword expansion was specified on command line,
 	   use whatever was in the rcs file (if there is one).  This
@@ -200,7 +200,7 @@ Version_TS (struct file_info *finfo, const char *options, const char *tag,
 	    finfo->rcs = rcsdata;
 	}
 
-	if (vers_ts->tag && strcmp (vers_ts->tag, TAG_BASE) == 0)
+	if (vers_ts->tag && STREQ (vers_ts->tag, TAG_BASE))
 	{
 	    vers_ts->vn_rcs = xstrdup (vers_ts->vn_user);
 	    vers_ts->vn_tag = xstrdup (vers_ts->vn_user);

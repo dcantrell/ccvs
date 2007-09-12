@@ -72,7 +72,7 @@ static int
 strip_rcsext (Node *p, void *closure)
 {
     char *s = p->key + strlen (p->key) - strlen (RCSEXT);
-    assert (!strcmp (s, RCSEXT));
+    assert (STREQ (s, RCSEXT));
     *s = '\0'; /* strip the ,v */
     return 0;
 }
@@ -243,7 +243,8 @@ find_dirs (const char *dir, List *list, int checkadm, List *entries)
     if (ISABSOLUTE (dir)
 	&& strncmp (dir, current_parsed_root->directory, strlen (current_parsed_root->directory)) == 0
 	&& ISSLASH (dir[strlen (current_parsed_root->directory)])
-	&& strcmp (dir + strlen (current_parsed_root->directory) + 1, CVSROOTADM) == 0)
+	&& STREQ (dir + strlen (current_parsed_root->directory) + 1,
+		  CVSROOTADM))
 	skip_emptydir = 1;
 
     /* set up to read the dir */
@@ -254,11 +255,11 @@ find_dirs (const char *dir, List *list, int checkadm, List *entries)
     errno = 0;
     while (dp = CVS_READDIR (dirp))
     {
-	if (!strcmp (dp->d_name, ".") ||
-	    !strcmp (dp->d_name, "..") ||
-	    !strcmp (dp->d_name, CVSATTIC) ||
-	    !strcmp (dp->d_name, CVSLCK) ||
-	    !strcmp (dp->d_name, CVSREP))
+	if (STREQ (dp->d_name, ".")
+	    || STREQ (dp->d_name, "..")
+	    || STREQ (dp->d_name, CVSATTIC)
+	    || STREQ (dp->d_name, CVSLCK)
+	    || STREQ (dp->d_name, CVSREP))
 	    goto do_it_again;
 
 	/* findnode() is going to be significantly faster than stat()
@@ -268,7 +269,7 @@ find_dirs (const char *dir, List *list, int checkadm, List *entries)
 	    goto do_it_again;
 
 	if (skip_emptydir
-	    && !strcmp (dp->d_name, CVSNULLREPOS))
+	    && STREQ (dp->d_name, CVSNULLREPOS))
 	    goto do_it_again;
 
 	if (!DIRENT_MIGHT_BE_DIR(dp))
@@ -519,7 +520,7 @@ find_files (const char *dir, const char *pat)
 
 	/* Ignore `.' && `..'.  */
 	tmp = last_component (glist.gl_pathv[i]);
-	if (!strcmp (tmp, ".") || !strcmp (tmp, ".."))
+	if (STREQ (tmp, ".") || STREQ (tmp, ".."))
 	    continue;
 
 	p = getnode ();

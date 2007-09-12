@@ -133,4 +133,24 @@ bool cvs_xmkdirs (const char *name, mode_t mode, const char *update_dir,
 
 char *dir_append (const char *dir, const char *append);
 char *dir_append_dirs (const char *dir, ...);
+
+
+
+/* The STREQ macro speeds string comparison up a bit by skipping the function
+ * call to strcmp() when the first characters are different.  The inlined
+ * streq() call is necessary to avoid evaluating the macro arguments more than
+ * once, but we don't want to do that with a compiler that doesn't deal
+ * effectively with the inline keyword.
+ */
+#ifdef HAVE_INLINE
+static inline bool
+streq (const char *a, const char *b)
+{
+    return *a == *b && strcmp (a, b) == 0;
+}
+# define STREQ(a, b) streq ((a), (b))
+#else /* !HAVE_INLINE */
+# define STREQ(a, b) (strcmp ((a), (b)) == 0)
+#endif /* HAVE_INLINE */
+
 #endif /* !SUBR_H */

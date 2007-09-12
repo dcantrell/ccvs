@@ -27,11 +27,11 @@
 /* CVS headers.  */
 #include "edit.h"
 #include "gpg.h"
+#include "hardlink.h"
 #include "repos.h"
 #include "sign.h"
 
 #include "cvs.h"
-#include "hardlink.h"
 
 /* These need to be source after cvs.h or HAVE_MMAP won't be set... */
 #ifdef HAVE_MMAP
@@ -145,14 +145,9 @@ static void rcs_internal_unlockfile (FILE *, char *);
 static char *rcs_lockfilename (const char *);
 static int findnextmagicrev (RCSNode *rcs, char *rev, int default_rv);
 static int findnextmagicrev_proc (Node *p, void *closure);
-
-/* The RCS file reading functions are called a lot, and they do some
-   string comparisons.  This macro speeds things up a bit by skipping
-   the function call when the first characters are different.  It
-   evaluates its arguments multiple times.  */
-#define STREQ(a, b) (*(char *)(a) == *(char *)(b) && strcmp ((a), (b)) == 0)
-
 static char * getfullCVSname (char *, char **);
+
+
 
 /*
  * We don't want to use isspace() from the C library because:
@@ -8223,14 +8218,14 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	    error (1, 0, "unexpected end of file reading %s", rcsfile);
 
 	/* The `desc' keyword is the end of the deltas. */
-	if (strcmp (key, RCSDESC) == 0)
+	if (STREQ (key, RCSDESC))
 	    break;
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 
 	/* The `hardlinks' value is a group of words, which must
 	   be parsed separately and added as a list to vnode->hardlinks. */
-	if (strcmp (key, "hardlinks") == 0)
+	if (STREQ (key, "hardlinks"))
 	{
 	    char *word;
 
@@ -9211,14 +9206,14 @@ make_file_label (const char *path, const char *rev, const char *ts_user,
     {
 	char date[MAXDATELEN + 1];
 	/* revs cannot be attached to /dev/null ... duh. */
-	assert (strcmp (DEVNULL, path));
+	assert (!STREQ (DEVNULL, path));
 	RCS_getrevtime (rcs, rev, datebuf, 0);
 	(void) date_to_internet (date, datebuf);
 	label = Xasprintf ("-L%s\t%s\t%s", path, date, rev);
     }
     else if (ts_user)
     {
-	if (strcmp (ts_user, "Is-modified"))
+	if (!STREQ (ts_user, "Is-modified"))
 	{
 	    struct timespec t;
 	    struct tm *wm;
@@ -9236,7 +9231,7 @@ make_file_label (const char *path, const char *rev, const char *ts_user,
 	time_t t = 0;
 	struct tm *wm = gmtime (&t);
 
-	assert (!strcmp (DEVNULL, path));
+	assert (STREQ (DEVNULL, path));
 	tm_to_internet (datebuf, wm);
 	label = Xasprintf ("-L%s\t%s", path, datebuf);
     }
@@ -9295,11 +9290,11 @@ RCS_setlocalid (const char *infopath, unsigned int ln,
 
     /* options? */
     while ((key = strtok (NULL, ",")) != NULL) {
-	if (!strcmp(key, keywords[KEYWORD_ID].string))
+	if (STREQ (key, keywords[KEYWORD_ID].string))
 	    keywords[KEYWORD_LOCALID].expandto = KEYWORD_ID;
-	else if (!strcmp(key, keywords[KEYWORD_HEADER].string))
+	else if (STREQ (key, keywords[KEYWORD_HEADER].string))
 	    keywords[KEYWORD_LOCALID].expandto = KEYWORD_HEADER;
-	else if (!strcmp(key, keywords[KEYWORD_CVSHEADER].string))
+	else if (STREQ (key, keywords[KEYWORD_CVSHEADER].string))
 	    keywords[KEYWORD_LOCALID].expandto = KEYWORD_CVSHEADER;
 	else
 	{
@@ -9359,7 +9354,7 @@ RCS_setincexc (void **keywords_in, const char *arg)
     key = strtok(next, ",");
     while (key) {
 	for (keyword = keywords; keyword->string != NULL; keyword++) {
-	    if (strcmp (keyword->string, key) == 0)
+	    if (STREQ (keyword->string, key))
 		keyword->expandit = include;
 	}
 	key = strtok(NULL, ",");

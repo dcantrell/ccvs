@@ -164,7 +164,7 @@ arg_should_not_be_sent_to_server (char *arg)
     if (list_isempty (dirs_sent_to_server))
 	return 0;		/* always send it */
 
-    if (!strcmp (arg, "."))
+    if (STREQ (arg, "."))
 	return 0;		/* always send it */
 
     /* We should send arg if it is one of the directories sent to the
@@ -233,7 +233,7 @@ arg_should_not_be_sent_to_server (char *arg)
 
 	/* Now check the value for root. */
 	if (root_string && current_parsed_root
-	    && strcmp (root_string, original_parsed_root->original))
+	    && !STREQ (root_string, original_parsed_root->original))
 	{
 	    /* Don't send this, since the CVSROOTs don't match. */
 	    return 1;
@@ -548,7 +548,7 @@ handle_valid_requests (char *args, size_t len)
 	    *q++ = '\0';
 	for (rq = requests; rq->name; ++rq)
 	{
-	    if (!strcmp (rq->name, p))
+	    if (STREQ (rq->name, p))
 		break;
 	}
 	if (!rq->name)
@@ -812,7 +812,7 @@ call_in_directory (const char *pathname,
 
     short_pathname = xmalloc (strlen (pathname) + strlen (filename) + 5);
     /* Leave off the path when it is the CWD.  */
-    if (strcmp (pathname, "./"))
+    if (!STREQ (pathname, "./"))
 	strcpy (short_pathname, pathname);
     else
 	short_pathname[0] = '\0';
@@ -956,7 +956,7 @@ call_in_directory (const char *pathname,
 	    {
 		/* It already existed, fine.  Just keep going.  */
 	    }
-	    else if (!strcmp (cvs_cmd_name, "export"))
+	    else if (STREQ (cvs_cmd_name, "export"))
 		/* Don't create CVSADM directories if this is export.  */
 		;
 	    else
@@ -1023,7 +1023,7 @@ warning: server is not creating directories one at a time");
 	if (CVS_CHDIR (dir_name) < 0)
 	    error (1, errno, "could not chdir to %s", dir_name);
     }
-    else if (!strcmp (cvs_cmd_name, "export"))
+    else if (STREQ (cvs_cmd_name, "export"))
 	/* Don't create CVSADM directories if this is export.  */
 	;
     else if (!isdir (CVSADM))
@@ -1046,9 +1046,9 @@ warning: server is not creating directories one at a time");
 	    free (repo);
     }
 
-    if (strcmp (cvs_cmd_name, "export"))
+    if (!STREQ (cvs_cmd_name, "export"))
     {
-	last_entries = Entries_Open (0, strcmp (pathname, "./")
+	last_entries = Entries_Open (0, !STREQ (pathname, "./")
 					? pathname : "");
 
 	/* If this is a newly created directory, we will record
@@ -1068,7 +1068,7 @@ warning: server is not creating directories one at a time");
 	    List *dirlist;
 
 	    dirlist = Find_Directories (NULL,
-					strcmp (pathname, "./")
+					!STREQ (pathname, "./")
 					? pathname : "",
 					W_LOCAL, last_entries);
 	    dellist (&dirlist);
@@ -1077,7 +1077,7 @@ warning: server is not creating directories one at a time");
     free (reposdirname);
     (*func) (data, last_entries, short_pathname, filename);
     if (last_entries)
-	Entries_Close (last_entries, strcmp (pathname, "./") ? pathname : "");
+	Entries_Close (last_entries, !STREQ (pathname, "./") ? pathname : "");
     free (dir_name);
     free (short_pathname);
     free (reposname);
@@ -1578,7 +1578,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	char *buf;
 	bool patch_failed;
 
-	if (get_verify_checkouts (true) && strcmp (cvs_cmd_name, "export"))
+	if (get_verify_checkouts (true) && !STREQ (cvs_cmd_name, "export"))
 	    error (get_verify_checkouts_fatal (), 0,
 		   "No signature for `%s'.", short_pathname);
 
@@ -1619,7 +1619,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
            flag, then we don't want to convert, else we do (because
            CVS assumes text files by default). */
 	if (options)
-	    bin = !strcmp (options, "-kb");
+	    bin = STREQ (options, "-kb");
 	else
 	    bin = false;
 
@@ -1846,17 +1846,17 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    /* After a join, control can get here without having changed the
 	     * version number.  In this case, do not remove the base file.
 	     */
-	    if (strcmp (vn, e->version))
+	    if (!STREQ (vn, e->version))
 		base_remove (filename, e->version);
 	}
 
 	if (last_merge)
 	{
 	    /* Won't need these now that the merge is complete.  */
-	    if (strcmp (vn, base_merge_rev1))
+	    if (!STREQ (vn, base_merge_rev1))
 		base_remove (filename, base_merge_rev1);
 	    free (base_merge_rev1);
-	    if (strcmp (vn, base_merge_rev2))
+	    if (!STREQ (vn, base_merge_rev2))
 		base_remove (filename, base_merge_rev2);
 	    free (base_merge_rev2);
 	}
@@ -1892,7 +1892,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
     else if (data->contents == UPDATE_ENTRIES_CHECKIN
 	     && !noexec
 	     /* This isn't add or remove.  */
-	     && strcmp (vn, "0") && *vn != '-')
+	     && !STREQ (vn, "0") && *vn != '-')
     {
 	/* On checkin, create the base file.  */
 	Node *n;
@@ -1905,7 +1905,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	     * changing the revision number or the base file.
 	     */
 	    Entnode *e = n->data;
-	    if (strcmp (vn, e->version))
+	    if (!STREQ (vn, e->version))
 		/* The version number has changed.  */
 		base_remove (filename, e->version);
 	    else
@@ -1987,7 +1987,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
      * Process the entries line.  Do this after we've written the file,
      * since we need the timestamp.
      */
-    if (strcmp (cvs_cmd_name, "export"))
+    if (!STREQ (cvs_cmd_name, "export"))
     {
 	char *local_timestamp;
 	char *file_timestamp;
@@ -2006,7 +2006,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	 * date.  Create a dummy timestamp which will never compare
 	 * equal to the timestamp of the file.
 	 */
-	if (vn[0] == '\0' || !strcmp (vn, "0") || vn[0] == '-')
+	if (vn[0] == '\0' || STREQ (vn, "0") || vn[0] == '-')
 	    local_timestamp = "dummy timestamp";
 	else if (!local_timestamp)
 	{
@@ -2020,7 +2020,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	       vis-a-vis both Entries and Base and clarify
 	       cvsclient.texi accordingly.  */
 
-	    if (!strcmp (cvs_cmd_name, "commit"))
+	    if (STREQ (cvs_cmd_name, "commit"))
 	    {
 		char *update_dir = dir_name (short_pathname);
 		mark_up_to_date (update_dir, filename);
@@ -2039,7 +2039,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		assert (n);
 
 		e = n->data;
-		if (strcmp (vn, e->version))
+		if (!STREQ (vn, e->version))
 		    /* Merge.  */
 		    ignore_merge = false;
 		else
@@ -2330,10 +2330,10 @@ client_base_checkout (void *data_arg, List *ent_list,
      */
     buf = read_file_from_server (fullbase, &mode_string, &size);
 
-    if (options) bin = !strcmp (options, "-kb");
+    if (options) bin = STREQ (options, "-kb");
     else bin = false;
 
-    if (*prev && strcmp (prev, rev))
+    if (*prev && !STREQ (prev, rev))
     {
 	char *filebuf;
 	size_t filebufsize;
@@ -2847,7 +2847,7 @@ client_base_diff (void *data_arg, List *ent_list, const char *short_pathname,
 	label2 = NULL;
     }
 
-    if (!strcmp (ft1, "TEMP"))
+    if (STREQ (ft1, "TEMP"))
     {
 	if (!temp_checkout1)
 	    error (1, 0,
@@ -2856,12 +2856,12 @@ client_base_diff (void *data_arg, List *ent_list, const char *short_pathname,
 
 	used_t1 = true;
     }
-    else if (!strcmp (ft1, "DEVNULL"))
+    else if (STREQ (ft1, "DEVNULL"))
 	f1 = DEVNULL;
     else
 	error (1, 0, "Server sent unrecognized diff file type (`%s')", ft1);
 
-    if (!strcmp (ft2, "TEMP"))
+    if (STREQ (ft2, "TEMP"))
     {
 	if ((used_t1 && !temp_checkout2) || (!used_t1 && !temp_checkout1))
 	    error (1, 0,
@@ -2878,9 +2878,9 @@ client_base_diff (void *data_arg, List *ent_list, const char *short_pathname,
 	    used_t1 = true;
 	}
     }
-    else if (!strcmp (ft2, "DEVNULL"))
+    else if (STREQ (ft2, "DEVNULL"))
 	f2 = DEVNULL;
-    else if (!strcmp (ft2, "WORKFILE"))
+    else if (STREQ (ft2, "WORKFILE"))
 	f2 = filename;
     else
 	error (1, 0, "Server sent unrecognized diff file type (`%s')", ft2);
@@ -2979,7 +2979,7 @@ handle_removed (char *args, size_t len)
 static int
 is_cvsroot_level (char *pathname)
 {
-    if (strcmp (toplevel_repos, current_parsed_root->directory))
+    if (!STREQ (toplevel_repos, current_parsed_root->directory))
 	return 0;
 
     return !strchr (pathname, '/');
@@ -3002,7 +3002,7 @@ set_static (void *data, List *ent_list, const char *short_pathname,
 static void
 handle_set_static_directory (char *args, size_t len)
 {
-    if (!strcmp (cvs_cmd_name, "export"))
+    if (STREQ (cvs_cmd_name, "export"))
     {
 	/* Swallow the repository.  */
 	read_line (NULL);
@@ -3026,7 +3026,7 @@ clear_static (void *data, List *ent_list, const char *short_pathname,
 static void
 handle_clear_static_directory (char *pathname, size_t len)
 {
-    if (!strcmp (cvs_cmd_name, "export"))
+    if (STREQ (cvs_cmd_name, "export"))
     {
 	/* Swallow the repository.  */
 	read_line (NULL);
@@ -3080,7 +3080,7 @@ set_sticky (void *data, List *ent_list, const char *short_pathname,
 static void
 handle_set_sticky (char *pathname, size_t len)
 {
-    if (!strcmp (cvs_cmd_name, "export"))
+    if (STREQ (cvs_cmd_name, "export"))
     {
 	/* Swallow the repository.  */
 	read_line (NULL);
@@ -3120,7 +3120,7 @@ clear_sticky (void *data, List *ent_list, const char *short_pathname,
 static void
 handle_clear_sticky (char *pathname, size_t len)
 {
-    if (!strcmp (cvs_cmd_name, "export"))
+    if (STREQ (cvs_cmd_name, "export"))
     {
 	/* Swallow the repository.  */
 	read_line (NULL);
@@ -3201,7 +3201,7 @@ add_prune_candidate (const char *dir)
     struct save_dir *p;
 
     if ((dir[0] == '.' && dir[1] == '\0')
-	|| (prune_candidates && !strcmp (dir, prune_candidates->dir)))
+	|| (prune_candidates && STREQ (dir, prune_candidates->dir)))
 	return;
     p = xmalloc (sizeof (struct save_dir));
     p->dir = xstrdup (dir);
@@ -3281,8 +3281,8 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
     if (!update_dir || update_dir[0] == '\0')
 	update_dir = ".";
 
-    if (last_repos && !strcmp (repos, last_repos)
-	&& last_update_dir && !strcmp (update_dir, last_update_dir))
+    if (last_repos && STREQ (repos, last_repos)
+	&& last_update_dir && STREQ (update_dir, last_update_dir))
 	/* We've already sent it.  */
 	return;
 
@@ -3291,7 +3291,7 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
 
     /* Add a directory name to the list of those sent to the
        server. */
-    if (update_dir && *update_dir != '\0' && strcmp (update_dir, ".")
+    if (update_dir && *update_dir != '\0' && !STREQ (update_dir, ".")
 	&& !findnode (dirs_sent_to_server, update_dir))
     {
 	Node *n;
@@ -3340,7 +3340,7 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
 	send_to_server (repos, 0);
     send_to_server ("\012", 1);
 
-    if (strcmp (cvs_cmd_name, "import")
+    if (!STREQ (cvs_cmd_name, "import")
 	&& supported_request ("Static-directory"))
     {
 	adm_name[0] = '\0';
@@ -3355,7 +3355,7 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
 	    send_to_server ("Static-directory\012", 0);
 	}
     }
-    if (strcmp (cvs_cmd_name, "import")
+    if (!STREQ (cvs_cmd_name, "import")
 	&& supported_request ("Sticky"))
     {
 	FILE *f;
@@ -3467,8 +3467,8 @@ send_a_repository (const char *dir, const char *repository,
                    current_parsed_root->directory, set toplevel_repos to
                    current_parsed_root->directory. */
 		if (repository_len > update_dir_len
-		    && !strcmp (repository + repository_len - update_dir_len,
-				update_dir)
+		    && STREQ (repository + repository_len - update_dir_len,
+			      update_dir)
 		    /* TOPLEVEL_REPOS shouldn't be above current_parsed_root->directory */
 		    && ((size_t)(repository_len - update_dir_len)
 			> strlen (current_parsed_root->directory)))
@@ -3526,7 +3526,7 @@ notified_a_file (void *data, List *ent_list, const char *short_pathname,
 	goto error_exit;
     }
     *cp = '\0';
-    if (strcmp (filename, line + 1))
+    if (!STREQ (filename, line + 1))
 	error (0, 0, "protocol error: notified %s, expected %s", filename,
 	       line + 1);
 
@@ -3838,15 +3838,15 @@ handle_mt (char *args, size_t len)
     switch (tag[0])
     {
 	case '+':
-	    if (!strcmp (tag, "+updated"))
+	    if (STREQ (tag, "+updated"))
 		updated_seen = 1;
-	    else if (!strcmp (tag, "+importmergecmd"))
+	    else if (STREQ (tag, "+importmergecmd"))
 		importmergecmd.seen = 1;
 	    break;
 	case '-':
-	    if (!strcmp (tag, "-updated"))
+	    if (STREQ (tag, "-updated"))
 		updated_seen = 0;
-	    else if (!strcmp (tag, "-importmergecmd"))
+	    else if (STREQ (tag, "-importmergecmd"))
 	    {
 		char buf[80];
 
@@ -3902,7 +3902,7 @@ handle_mt (char *args, size_t len)
 	default:
 	    if (updated_seen)
 	    {
-		if (!strcmp (tag, "fname"))
+		if (STREQ (tag, "fname"))
 		{
 		    if (updated_fname)
 		    {
@@ -3922,27 +3922,27 @@ handle_mt (char *args, size_t len)
 	    }
 	    else if (importmergecmd.seen)
 	    {
-		if (!strcmp (tag, "conflicts"))
+		if (STREQ (tag, "conflicts"))
 		{
-		    if (text == NULL || !strcmp (text, "No"))
+		    if (text == NULL || STREQ (text, "No"))
 			importmergecmd.conflicts = -1;
 		    else
 			importmergecmd.conflicts = atoi (text);
 		}
-		else if (!strcmp (tag, "mergetag1"))
+		else if (STREQ (tag, "mergetag1"))
 		    importmergecmd.mergetag1 = xstrdup (text);
-		else if (!strcmp (tag, "mergetag2"))
+		else if (STREQ (tag, "mergetag2"))
 		    importmergecmd.mergetag2 = xstrdup (text);
-		else if (!strcmp (tag, "repository"))
+		else if (STREQ (tag, "repository"))
 		    importmergecmd.repository = xstrdup (text);
 		/* Swallow all other tags.  Either they are text for
                    which we are going to print our own version when we
                    see -importmergecmd, or they are future extensions
                    we can safely ignore.  */
 	    }
-	    else if (!strcmp (tag, "newline"))
+	    else if (STREQ (tag, "newline"))
 		printf ("\n");
-	    else if (!strcmp (tag, "date"))
+	    else if (STREQ (tag, "date"))
 	    {
 		if (text)
 		{
@@ -4296,7 +4296,7 @@ supported_request (const char *name)
     struct request *rq;
 
     for (rq = requests; rq->name; rq++)
-	if (!strcmp (rq->name, name))
+	if (STREQ (rq->name, name))
 	    return (rq->flags & RQ_SUPPORTED) != 0;
     error (1, 0, "internal error: testing support for unknown request?");
     /* NOTREACHED */
@@ -4673,7 +4673,7 @@ auth_server (cvsroot_t *root, struct buffer *to_server,
 	{
 	    read_line_via (from_server, to_server, &read_buf);
 
-	    if (!strcmp (read_buf, "I HATE YOU"))
+	    if (STREQ (read_buf, "I HATE YOU"))
 	    {
 		/* Authorization not granted.
 		 *
@@ -4727,7 +4727,7 @@ auth_server (cvsroot_t *root, struct buffer *to_server,
 		fprintf (stderr, "%s\n", p);
 		exit (EXIT_FAILURE);
 	    }
-	    else if (!strcmp (read_buf, "I LOVE YOU"))
+	    else if (STREQ (read_buf, "I LOVE YOU"))
 	    {
 		free (read_buf);
 		break;
@@ -4960,7 +4960,7 @@ start_server (void)
 	    stored_mode = NULL;
 	}
 
-	rootless = !strcmp (cvs_cmd_name, "init");
+	rootless = STREQ (cvs_cmd_name, "init");
 	if (!rootless)
 	{
 	    send_to_server ("Root ", 0);
@@ -4976,13 +4976,13 @@ start_server (void)
 
 	    for (rs = responses; rs->name; ++rs)
 	    {
-		if (suppress_redirect && !strcmp (rs->name, "Redirect"))
+		if (suppress_redirect && STREQ (rs->name, "Redirect"))
 		    continue;
 		if (suppress_bases && !strncmp (rs->name, "Base-", 5))
 		    continue;
-		if (suppress_bases && !strcmp (rs->name, "OpenPGP-signature"))
+		if (suppress_bases && STREQ (rs->name, "OpenPGP-signature"))
 		    continue;
-		if (suppress_bases && !strcmp (rs->name, "Temp-checkout"))
+		if (suppress_bases && STREQ (rs->name, "Temp-checkout"))
 		    continue;
 
 		send_to_server (" ", 0);
@@ -5183,7 +5183,7 @@ start_server (void)
        reason to bother would be so we could make add work without
        contacting the server, I suspect).  */
 
-    if (!strcmp (cvs_cmd_name, "import") || !strcmp (cvs_cmd_name, "add"))
+    if (STREQ (cvs_cmd_name, "import") || STREQ (cvs_cmd_name, "add"))
     {
 	if (supported_request ("wrapper-sendme-rcsOptions"))
 	{
@@ -5285,7 +5285,7 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
        If so, make sure to open it in binary mode: */
 
     if (vers && vers->options)
-      bin = !strcmp (vers->options, "-kb");
+      bin = STREQ (vers->options, "-kb");
     else
       bin = 0;
 
@@ -5474,7 +5474,7 @@ send_fileproc (void *callerdat, struct file_info *finfo)
 	send_to_server ("/", 0);
 	if (vers->ts_conflict)
 	{
-	    if (vers->ts_user && !strcmp (vers->ts_conflict, vers->ts_user))
+	    if (vers->ts_user && STREQ (vers->ts_conflict, vers->ts_user))
 		send_to_server ("+=", 0);
 	    else
 		send_to_server ("+modified", 0);
@@ -5541,10 +5541,9 @@ warning: ignoring -k options due to server limitations");
     }
     else if (!vers->ts_rcs || args->force)
 	may_be_modified = true;
-    else if (strcmp (vers->ts_conflict
-		     && supported_request ("Empty-conflicts")
+    else if (!STREQ (vers->ts_conflict && supported_request ("Empty-conflicts")
 		     ? vers->ts_conflict : vers->ts_rcs, vers->ts_user)
-	     || (vers->ts_conflict && !strcmp (cvs_cmd_name, "diff")))
+	     || (vers->ts_conflict && STREQ (cvs_cmd_name, "diff")))
     {
 	char *basefn = make_base_file_name (filename, vers->ts_user);
 	if (!isfile (basefn) || xcmp (filename, basefn))
@@ -5563,7 +5562,7 @@ warning: ignoring -k options due to server limitations");
 	if (may_be_modified)
 	{
 	    if (args->force_signatures
-		|| (!strcmp (cvs_cmd_name, "commit")
+		|| (STREQ (cvs_cmd_name, "commit")
 		    && get_sign_commits (supported_request ("Signature"))))
 	    {
 		if (!supported_request ("Signature"))
@@ -5571,7 +5570,7 @@ warning: ignoring -k options due to server limitations");
 
 		send_signature (Short_Repository (finfo->repository),
 				finfo->file, finfo->fullname,
-				vers && !strcmp (vers->options, "-kb"));
+				vers && STREQ (vers->options, "-kb"));
 	    }
 
 	    if (args->no_contents
@@ -5605,7 +5604,7 @@ warning: ignoring -k options due to server limitations");
 
 		send_signature (Short_Repository (finfo->repository),
 				finfo->file, finfo->fullname,
-				vers && !strcmp (vers->options, "-kb"));
+				vers && STREQ (vers->options, "-kb"));
 	    }
 
 	    send_to_server ("Unchanged ", 0);
@@ -6071,7 +6070,7 @@ client_process_import_file (char *message, char *vfile, char *vtag, int targc,
 	       "internal error: pathname `%s' doesn't specify file in `%s'",
 	       repository, toplevel_repos);
 
-    if (!strcmp (repository, toplevel_repos))
+    if (STREQ (repository, toplevel_repos))
     {
 	update_dir = "";
 	fullname = xstrdup (vfile);
@@ -6131,7 +6130,7 @@ client_process_import_file (char *message, char *vfile, char *vtag, int targc,
 	    error (1, 0, "Server doesn't support commit signatures.");
 
 	send_signature (Short_Repository (repository), vfile, fullname,
-			vers.options && !strcmp (vers.options, "-kb"));
+			vers.options && STREQ (vers.options, "-kb"));
     }
 
     send_modified (vfile, fullname, &vers);

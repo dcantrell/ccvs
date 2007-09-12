@@ -304,7 +304,7 @@ insert_before (List *list, Node *marker, Node *p)
 	for (q = list->hasharray[hashval]->hashnext;
 	     q != list->hasharray[hashval]; q = q->hashnext)
 	{
-	    if (strcmp (p->key, q->key) == 0)
+	    if (STREQ (p->key, q->key))
 		return -1;
 	}
 	q = list->hasharray[hashval];
@@ -370,7 +370,7 @@ findnode (List *list, const char *key)
 	return NULL;
 
     for (p = head->hashnext; p != head; p = p->hashnext)
-	if (strcmp (p->key, key) == 0)
+	if (STREQ (p->key, key))
 	    return p;
     return NULL;
 }

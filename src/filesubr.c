@@ -461,8 +461,7 @@ deep_remove_dir (const char *path)
 	    {
 		char *buf;
 
-		if (strcmp (dp->d_name, ".") == 0 ||
-			    strcmp (dp->d_name, "..") == 0)
+		if (STREQ (dp->d_name, ".") || STREQ (dp->d_name, ".."))
 		    continue;
 
 		buf = Xasprintf ("%s/%s", path, dp->d_name);
@@ -574,7 +573,7 @@ xcmp (const char *file1, const char *file2)
 	int result;
 	buf1 = Xreadlink (file1, sb1.st_size);
 	buf2 = Xreadlink (file2, sb2.st_size);
-	result = (strcmp (buf1, buf2) == 0);
+	result = STREQ (buf1, buf2);
 	free (buf1);
 	free (buf2);
 	return result;
@@ -855,6 +854,6 @@ void
 push_env_temp_dir (void)
 {
     const char *tmpdir = get_cvs_tmp_dir ();
-    if (tmpdir_env && strcmp (tmpdir_env, tmpdir))
+    if (tmpdir_env && !STREQ (tmpdir_env, tmpdir))
 	setenv (TMPDIR_ENV, tmpdir, 1);
 }

@@ -445,7 +445,7 @@ wrap_add (char *line, int isTemp)
 	case 'k':
 	    if (e.rcsOption)
 		free (e.rcsOption);
-	    e.rcsOption = strcmp (temp, "kv") ? xstrdup (temp) : NULL;
+	    e.rcsOption = STREQ (temp, "kv") ? NULL : xstrdup (temp);
 	    break;
 	default:
 	    break;

@@ -274,7 +274,7 @@ find_fileproc (void *callerdat, struct file_info *finfo)
 	/* else */
 	status = T_REMOVED;
     }
-    else if (strcmp (vers->vn_user, "0") == 0)
+    else if (STREQ (vers->vn_user, "0"))
     {
 	if (vers->ts_user == NULL)
 	{
@@ -298,8 +298,8 @@ find_fileproc (void *callerdat, struct file_info *finfo)
 	freevers_ts (&vers);
 	return 0;
     }
-    else if (vers->ts_rcs != NULL
-	     && (args->force || strcmp (vers->ts_user, vers->ts_rcs) != 0))
+    else if (vers->ts_rcs
+	     && (args->force || !STREQ (vers->ts_user, vers->ts_rcs)))
 	/* If we are forcing commits, pretend that the file is
            modified.  */
 	status = T_MODIFIED;
@@ -852,8 +852,8 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 		    CVSROOTADM,
 		    sizeof (CVSROOTADM) - 1) == 0
 	&& ISSLASH (finfo->repository[cvsroot_len + sizeof (CVSROOTADM)])
-	&& strcmp (finfo->repository + cvsroot_len + sizeof (CVSROOTADM) + 1,
-		   CVSNULLREPOS) == 0
+	&& STREQ (finfo->repository + cvsroot_len + sizeof (CVSROOTADM) + 1,
+		  CVSNULLREPOS)
 	)
 	error (1, 0, "cannot check in to %s", finfo->repository);
 
@@ -1059,7 +1059,7 @@ warning: file `%s' seems to still contain conflict indicators",
                             break;
                         }
                         *p = '\0';
-                        if (strcmp (caller, p0) == 0)
+                        if (STREQ (caller, p0))
                         {
                             break;
                         }
@@ -1072,7 +1072,7 @@ warning: file `%s' seems to still contain conflict indicators",
                         p0 = p;
                     }
 
-                    if (strcmp (caller, p0) == 0)
+                    if (STREQ (caller, p0))
                     {
                         editor = caller;
                     }
@@ -1645,7 +1645,7 @@ commit_filesdoneproc (void *callerdat, int err, const char *repository,
 	p = repository + strlen (current_parsed_root->directory);
 	if (*p == '/')
 	    ++p;
-	if (strcmp ("CVSROOT", p) == 0
+	if (STREQ ("CVSROOT", p)
 	    /* Check for subdirectories because people may want to create
 	       subdirectories and list files therein in checkoutlist.  */
 	    || strncmp ("CVSROOT/", p, strlen ("CVSROOT/")) == 0
@@ -2154,7 +2154,7 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	oldexpand = RCS_getexpand (rcs);
 	if ((oldexpand != NULL
 	     && options != NULL
-	     && strcmp (options + 2, oldexpand) != 0)
+	     && !STREQ (options + 2, oldexpand))
 	    || (oldexpand == NULL && options != NULL))
 	{
 	    /* We tell the user about this, because it means that the
