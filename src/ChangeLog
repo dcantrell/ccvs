@@ -1,5 +1,7 @@
 2007-09-12  Derek Price  <derek@ximbiot.com>
 
+	* main.c (main): Use xstrdup in preference to strdup.
+
 	* cvs.h (Reader_Lock, Simple_Lock_Cleanup, Lock_Cleanup,
 	lock_tree_promotably, lock_dir_for_write, history_lock,
 	clear_history_lock, val_tags_lock, clear_val_tags_lock): Move these...
