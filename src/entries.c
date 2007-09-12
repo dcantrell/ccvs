@@ -24,6 +24,9 @@
 /* Validate API.  */
 #include "entries.h"
 
+/* GNULIB */
+#include "quote.h"
+
 /* CVS */
 #include "base.h"
 
@@ -40,6 +43,27 @@ static Entnode *subdir_record (int, const char *, const char *);
 
 static FILE *entfile;
 static char *entfilename;		/* for error messages */
+
+
+
+/*
+ * structure used for list-private storage by Entries_Open() and
+ * Version_TS() and Find_Directories().
+ */
+struct stickydirtag
+{
+    /* These fields pass sticky tag information from Entries_Open() to
+       Version_TS().  */
+    int aflag;
+    char *tag;
+    char *date;
+    int nonbranch;
+
+    /* This field is set by Entries_Open() if there was subdirectory
+       information; Find_Directories() uses it to see whether it needs
+       to scan the directory itself.  */
+    int subdirs;
+};
 
 
 
@@ -118,16 +142,25 @@ write_ent_proc (Node *node, void *closure)
  * first of course
  */
 static void
-write_entries (List *list)
+write_entries (List *list, const char *update_dir, const char *dir)
 {
     int sawdir;
+    char *update_file;
+    char *bakfilename;
+    char *entfilename;
+
+    assert (update_dir);
+    assert (dir);
+
+    TRACE (TRACE_FUNCTION, "write_entries (%s, %s)", update_dir, dir);
 
     sawdir = 0;
 
     /* open the new one and walk the list writing entries */
-    entfilename = CVSADM_ENTBAK;
-    entfile = CVS_FOPEN (entfilename, "w+");
-    if (entfile == NULL)
+    bakfilename = dir_append (dir, CVSADM_ENTBAK);
+    update_file = dir_append_dirs (update_dir, dir, CVSADM_ENTBAK, NULL);
+    entfile = CVS_FOPEN (bakfilename, "w+");
+    if (!entfile)
     {
 	/* Make this a warning, not an error.  For example, one user might
 	   have checked out a working directory which, for whatever reason,
@@ -136,39 +169,47 @@ write_entries (List *list)
 	   problem rewriting Entries shouldn't affect the ability of "cvs log"
 	   to work, although the warning is probably a good idea so that
 	   whether Entries gets rewritten is not an inexplicable process.  */
-	/* FIXME: should be including update_dir in message.  */
-	error (0, errno, "cannot rewrite %s", entfilename);
+	error (0, errno, "cannot rewrite %s", quote (update_file));
 
 	/* Now just return.  We leave the Entries.Log file around.  As far
 	   as I know, there is never any data lying around in 'list' that
 	   is not in Entries.Log at this time (if there is an error writing
 	   Entries.Log that is a separate problem).  */
-	return;
+	goto done;
     }
 
-    (void) walklist (list, write_ent_proc, (void *) &sawdir);
-    if (! sawdir)
+    walklist (list, write_ent_proc, &sawdir);
+    if (!sawdir)
     {
-	struct stickydirtag *sdtp;
-
 	/* We didn't write out any directories.  Check the list
            private data to see whether subdirectory information is
            known.  If it is, we need to write out an empty D line.  */
-	sdtp = list->list->data;
-	if (sdtp == NULL || sdtp->subdirs)
+	if (entriesHasAllSubdirs (list))
 	    if (fprintf (entfile, "D\n") < 0)
-		error (1, errno, "cannot write %s", entfilename);
+		error (1, errno, "cannot write %s", quote (update_file));
     }
     if (fclose (entfile) == EOF)
-	error (1, errno, "error closing %s", entfilename);
+	error (1, errno, "error closing %s", quote (update_file));
 
     /* now, atomically (on systems that support it) rename it */
-    rename_file (entfilename, CVSADM_ENT);
+    entfilename = dir_append (dir, CVSADM_ENT);
+    rename_file (bakfilename, entfilename);
+    free (entfilename);
 
+    entfilename = dir_append (dir, CVSADM_ENTLOG);
     /* now, remove the log file */
-    if (unlink_file (CVSADM_ENTLOG) < 0
-	&& !existence_error (errno))
-	error (0, errno, "cannot remove %s", CVSADM_ENTLOG);
+    if (unlink_file (entfilename) < 0 && !existence_error (errno))
+    {
+	char *newupdate_file = dir_append_dirs (update_dir, dir, CVSADM_ENTLOG,
+						NULL);
+	error (0, errno, "cannot remove %s", quote (newupdate_file));
+	free (newupdate_file);
+    }
+    free (entfilename);
+
+done:
+    free (bakfilename);
+    free (update_file);
 }
 
 
@@ -280,6 +321,106 @@ freesdt (Node *p)
 	free (sdtp->date);
     free ((char *) sdtp);
 }
+
+
+
+/* Return true iff ENTRIES && SDTP && (SDTP->tag || SDTP->date).
+ */
+bool
+entriesHasSticky (List *entries)
+{
+    struct stickydirtag *sdtp;
+
+    if (!entries) return false;
+
+    assert (entries->list);
+
+    sdtp = entries->list->data;
+    return sdtp && (sdtp->tag || sdtp->date);
+}
+
+
+
+/* When SDTP is NULL, or SDTP->subdirs is nonzero, then all subdirectory
+ * information is recorded in ENTRIES.
+ */
+bool
+entriesHasAllSubdirs (List *entries)
+{
+    struct stickydirtag *sdtp;
+
+    assert (entries);
+    assert (entries->list);
+
+    sdtp = entries->list->data;
+    return !sdtp || sdtp->subdirs;
+}
+
+
+
+/* Returns false if !ENTRIES || !SDTP.  Otherwise, returns SDTP->aflag.
+ */
+bool
+entriesGetAflag (List *entries)
+{
+    struct stickydirtag *sdtp;
+
+    if (!entries) return false;
+
+    assert (entries->list);
+
+    sdtp = entries->list->data;
+    if (!sdtp) return false;
+
+    return sdtp->aflag;
+}
+
+
+
+const char *
+entriesGetTag (List *entries)
+{
+    struct stickydirtag *sdtp;
+
+    assert (entries);
+    assert (entries->list);
+    assert (entries->list->data);
+
+    sdtp = entries->list->data;
+    return sdtp->tag;
+}
+
+
+
+int
+entriesGetNonbranch (List *entries)
+{
+    struct stickydirtag *sdtp;
+
+    assert (entries);
+    assert (entries->list);
+    assert (entries->list->data);
+
+    sdtp = entries->list->data;
+    return sdtp->nonbranch;
+}
+
+
+
+const char *
+entriesGetDate (List *entries)
+{
+    struct stickydirtag *sdtp;
+
+    assert (entries);
+    assert (entries->list);
+    assert (entries->list->data);
+
+    sdtp = entries->list->data;
+    return sdtp->date;
+}
+
+
 
 /* Return the next real Entries line.  On end of file, returns NULL.
    On error, prints an error message and returns NULL.  */
@@ -447,13 +588,14 @@ fputentent (FILE *fp, Entnode *p)
 }
 
 
+
 /* Read the entries file into a list, hashing on the file name.
 
    UPDATE_DIR is the name of the current directory, for use in error
    messages, or NULL if not known (that is, noone has gotten around
    to updating the caller to pass in the information).  */
 List *
-Entries_Open (int aflag, char *update_dir)
+Entries_Open_Dir (int aflag, const char *update_dir_i, const char *dir)
 {
     List *entries;
     struct stickydirtag *sdtp = NULL;
@@ -463,8 +605,13 @@ Entries_Open (int aflag, char *update_dir)
     int do_rewrite = 0;
     FILE *fpin;
     int sawdir;
+    char *entfile;
+    char *update_dir;
 
-    TRACE (TRACE_FLOW, "EntriesOpen (%s)", update_dir);
+    assert (update_dir_i);
+    assert (dir);
+
+    TRACE (TRACE_FLOW, "Entries_Open_Dir (%s, %s)", update_dir, dir);
 
     /* get a fresh list... */
     entries = getlist ();
@@ -476,8 +623,7 @@ Entries_Open (int aflag, char *update_dir)
     ParseTag (&dirtag, &dirdate, &dirnonbranch);
     if (aflag || dirtag || dirdate)
     {
-	sdtp = xmalloc (sizeof (*sdtp));
-	memset (sdtp, 0, sizeof (*sdtp));
+	sdtp = xzalloc (sizeof (*sdtp));
 	sdtp->aflag = aflag;
 	sdtp->tag = xstrdup (dirtag);
 	sdtp->date = xstrdup (dirdate);
@@ -490,27 +636,33 @@ Entries_Open (int aflag, char *update_dir)
 
     sawdir = 0;
 
-    fpin = CVS_FOPEN (CVSADM_ENT, "r");
-    if (fpin == NULL)
+    update_dir = dir_append (update_dir_i, dir);
+    entfile = dir_append (dir, CVSADM_ENT);
+    fpin = CVS_FOPEN (entfile, "r");
+    if (fpin)
     {
-	if (update_dir != NULL)
-	    error (0, 0, "in directory %s:", update_dir);
-	error (0, errno, "cannot open %s for reading", CVSADM_ENT);
+	while (ent = fgetentent (fpin, NULL, &sawdir)) 
+	    AddEntryNode (entries, ent);
+
+	if (fclose (fpin) < 0)
+	{
+	    /* FIXME-update-dir: should include update_dir in message.  */
+	    char *update_file = dir_append (update_dir, CVSADM_ENT);
+	    error (0, errno, "cannot close %s", quote (update_file));
+	    free (update_file);
+	}
     }
     else
     {
-	while ((ent = fgetentent (fpin, NULL, &sawdir)) != NULL) 
-	{
-	    (void) AddEntryNode (entries, ent);
-	}
-
-	if (fclose (fpin) < 0)
-	    /* FIXME-update-dir: should include update_dir in message.  */
-	    error (0, errno, "cannot close %s", CVSADM_ENT);
+	char *update_file = dir_append (update_dir, CVSADM_ENT);
+	error (0, errno, "cannot open %s for reading", quote (update_file));
+	free (update_file);
     }
+    free (entfile);
 
-    fpin = CVS_FOPEN (CVSADM_ENTLOG, "r");
-    if (fpin != NULL) 
+    entfile = dir_append (dir, CVSADM_ENTLOG);
+    fpin = CVS_FOPEN (entfile, "r");
+    if (fpin) 
     {
 	char cmd;
 	Node *node;
@@ -524,8 +676,7 @@ Entries_Open (int aflag, char *update_dir)
 		break;
 	    case 'R':
 		node = findnode_fn (entries, ent->user);
-		if (node != NULL)
-		    delnode (node);
+		if (node) delnode (node);
 		Entnode_Destroy (ent);
 		break;
 	    default:
@@ -536,28 +687,32 @@ Entries_Open (int aflag, char *update_dir)
 	}
 	do_rewrite = 1;
 	if (fclose (fpin) < 0)
-	    /* FIXME-update-dir: should include update_dir in message.  */
-	    error (0, errno, "cannot close %s", CVSADM_ENTLOG);
+	{
+	    char *update_file = dir_append (update_dir, CVSADM_ENTLOG);
+	    error (0, errno, "cannot close %s", quote (update_file));
+	    free (update_file);
+	}
     }
+    free (entfile);
 
     /* Update the list private data to indicate whether subdirectory
        information is known.  Nonexistent list private data is taken
        to mean that it is known.  */
-    if (sdtp != NULL)
+    if (sdtp)
 	sdtp->subdirs = sawdir;
-    else if (! sawdir)
+    else if (!sawdir)
     {
-	sdtp = xmalloc (sizeof (*sdtp));
-	memset (sdtp, 0, sizeof (*sdtp));
+	sdtp = xzalloc (sizeof (*sdtp));
 	sdtp->subdirs = 0;
 	entries->list->data = sdtp;
 	entries->list->delproc = freesdt;
     }
 
     if (do_rewrite && !noexec)
-	write_entries (entries);
+	write_entries (entries, update_dir_i, dir);
 
     /* clean up and return */
+    free (update_dir);
     if (dirtag)
 	free (dirtag);
     if (dirdate)
@@ -565,19 +720,43 @@ Entries_Open (int aflag, char *update_dir)
     return entries;
 }
 
-void
-Entries_Close (List *list)
+
+
+List *
+Entries_Open (int aflag, const char *update_dir)
 {
+    return Entries_Open_Dir (aflag, update_dir, ".");
+}
+
+
+
+void
+Entries_Close_Dir (List *list, const char *update_dir, const char *dir)
+{
+    assert (dir);
+    assert (update_dir);
+
     if (list)
     {
-	if (!noexec) 
-        {
-            if (isfile (CVSADM_ENTLOG))
-		write_entries (list);
+	if (!noexec)
+	{
+	    char *entfile = dir_append (dir, CVSADM_ENTLOG);
+	    if (isfile (entfile))
+		write_entries (list, update_dir, dir);
+	    free (entfile);
 	}
 	dellist (&list);
     }
 }
+
+
+
+void
+Entries_Close (List *list, const char *update_dir)
+{
+    Entries_Close_Dir (list, update_dir, ".");
+}
+
 
 
 /*

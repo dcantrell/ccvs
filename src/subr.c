@@ -21,15 +21,16 @@
 /* Verify interface.  */
 #include "subr.h"
 
-/* ANSI headers.  */
+/* ANSI */
 #ifdef HAVE_CVS_ADMIN_GROUP
 # include <grp.h>
 #endif
 #include <sys/time.h>
 
-/* GNULIB headers.  */
+/* GNULIB */
 #include "canonicalize.h"
 #include "canon-host.h"
+#include "filenamecat.h"
 #include "mkdir-p.h"
 #include "mreadlink.h"
 #include "savewd.h"
@@ -2380,4 +2381,76 @@ cvs_xmkdirs (const char *name, mode_t mode, const char *update_dir,
 	     unsigned int flags)
 {
     return cvs_mkdirs_i (name, mode, update_dir, flags | MD_FATAL);
+}
+
+
+
+/* Append BASE to DIR and return it in allocated memory.  This is slightly more
+ * sophisticated than file_name_concat because it is smart enough to ignore
+ * both DIR and BASE when they are both empty and to ignore BASE when it is "."
+ * and return the original DIR or BASE as needed.
+ *
+ * EXAMPLES
+ *    dir_append ("dir", ".", &allocated)	returns the original pointer to
+ *						"dir"
+ *    dir_append ("dir", "", &allocated)	returns the original pointer to
+ *						"dir"
+ *    dir_append ("", ".", &allocated)		returns the original pointer to
+ *						""
+ *    dir_append (".", "", &allocated)		returns the original pointer to
+ *						"."
+ *    dir_append (".", ".", &allocated)		returns the original pointer to
+ *						the first "."
+ *    dir_append ("", "dir", &allocated)	returns the original pointer to
+ *						"dir"
+ *    dir_append (".", "dir", &allocated)	returns "./dir" in allocated
+ *						memory and sets *allocated to
+ *						point to it as well.
+ *    dir_append ("dir", "sdir", &allocated)	returns "dir/sdir" in allocated
+ *						memory and sets *allocated to
+ *						point to it as well.
+ */
+char *
+dir_append_dirs (const char *dir, ...)
+{
+    const char *append;
+    va_list args;
+    char *retval;
+
+    va_start (args, dir);
+
+    retval = xstrdup (dir);
+    while (append = va_arg (args, const char *))
+    {
+	char *new;
+
+	TRACE (TRACE_DATA, "dir_append (%s, %s)", dir, append);
+
+	if (!strlen (append) || !strcmp (append, "."))
+	    continue;
+
+	if (!strlen (retval))
+	{
+	    free (retval);
+	    retval = xstrdup (append);
+	    continue;
+	}
+
+	/* base = clean_path_prefix (base); */
+	new = file_name_concat (retval, append, NULL);
+	free (retval);
+	retval = new;
+    }
+
+    va_end (args);
+
+    return retval;
+}
+
+
+
+char *
+dir_append (const char *dir, const char *base)
+{
+    return dir_append_dirs (dir, base, NULL);
 }

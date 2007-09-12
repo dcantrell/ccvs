@@ -367,7 +367,7 @@ add (int argc, char **argv)
 		       CVSNULLREPOS) == 0)
 	    error (1, 0, "cannot add to `%s'", repository);
 
-	entries = Entries_Open (0, NULL);
+	entries = Entries_Open (0, finfo.update_dir);
 
 	finfo.repository = repository;
 	finfo.entries = entries;
@@ -723,7 +723,7 @@ add (int argc, char **argv)
 
 skip_this_file:
 	free (repository);
-	Entries_Close (entries);
+	Entries_Close (entries, finfo.update_dir);
 
 	if (restore_cwd (&cwd))
 	    error (1, errno, "Failed to restore current directory, `%s'.",

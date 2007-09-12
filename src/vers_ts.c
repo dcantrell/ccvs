@@ -52,7 +52,6 @@ Version_TS (struct file_info *finfo, const char *options, const char *tag,
     Node *p;
     RCSNode *rcsdata;
     Vers_TS *vers_ts;
-    struct stickydirtag *sdtp;
     Entnode *entdata;
     char *rcsexpand = NULL;
 
@@ -71,15 +70,9 @@ Version_TS (struct file_info *finfo, const char *options, const char *tag,
      * look it up (used by checkout -P)
      */
     if (finfo->entries == NULL)
-    {
-	sdtp = NULL;
 	p = NULL;
-    }
     else
-    {
 	p = findnode_fn (finfo->entries, finfo->file);
-	sdtp = finfo->entries->list->data; /* list-private */
-    }
 
     if (p == NULL)
     {
@@ -114,7 +107,7 @@ Version_TS (struct file_info *finfo, const char *options, const char *tag,
 	    vers_ts->vn_user = xstrdup (entdata->version);
 	    vers_ts->ts_rcs = xstrdup (entdata->timestamp);
 	    vers_ts->ts_conflict = xstrdup (entdata->conflict);
-	    if (!(tag || date) && !(sdtp && sdtp->aflag))
+	    if (!(tag || date) && !entriesGetAflag (finfo->entries))
 	    {
 		vers_ts->tag = xstrdup (entdata->tag);
 		vers_ts->date = xstrdup (entdata->date);
@@ -124,11 +117,8 @@ Version_TS (struct file_info *finfo, const char *options, const char *tag,
 	/* Even if we don't have an "entries line" as such
 	   (vers_ts->entdata), we want to pick up options which could
 	   have been from a Kopt protocol request.  */
-	if (!options || *options == '\0')
-	{
-	    if (!(sdtp && sdtp->aflag))
-		vers_ts->options = xstrdup (entdata->options);
-	}
+	if ((!options || !*options) && !entriesGetAflag (finfo->entries))
+	    vers_ts->options = xstrdup (entdata->options);
     }
 
     /* Always look up the RCS keyword mode when we have an RCS archive.  It
@@ -177,15 +167,16 @@ Version_TS (struct file_info *finfo, const char *options, const char *tag,
 	vers_ts->tag = xstrdup (tag);
 	vers_ts->date = xstrdup (date);
     }
-    else if (!vers_ts->entdata && (sdtp && sdtp->aflag == 0))
+    else if (!vers_ts->entdata && !entriesGetAflag (finfo->entries)
+	     && entriesHasSticky (finfo->entries))
     {
 	if (!vers_ts->tag)
 	{
-	    vers_ts->tag = xstrdup (sdtp->tag);
-	    vers_ts->nonbranch = sdtp->nonbranch;
+	    vers_ts->tag = xstrdup (entriesGetTag (finfo->entries));
+	    vers_ts->nonbranch = entriesGetNonbranch (finfo->entries);
 	}
 	if (!vers_ts->date)
-	    vers_ts->date = xstrdup (sdtp->date);
+	    vers_ts->date = xstrdup (entriesGetDate (finfo->entries));
     }
 
     /* Now look up the info on the source controlled file */

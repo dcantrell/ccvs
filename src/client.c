@@ -36,6 +36,7 @@
 #include "diff.h"
 #include "difflib.h"
 #include "edit.h"
+#include "find-names.h"
 #include "gpg.h"
 #include "ignore.h"
 #include "recurse.h"
@@ -1047,7 +1048,8 @@ warning: server is not creating directories one at a time");
 
     if (strcmp (cvs_cmd_name, "export"))
     {
-	last_entries = Entries_Open (0, dir_name);
+	last_entries = Entries_Open (0, strcmp (pathname, "./")
+					? pathname : "");
 
 	/* If this is a newly created directory, we will record
 	   all subdirectory information, so call Subdirs_Known in
@@ -1065,14 +1067,17 @@ warning: server is not creating directories one at a time");
 	{
 	    List *dirlist;
 
-	    dirlist = Find_Directories (NULL, W_LOCAL, last_entries);
+	    dirlist = Find_Directories (NULL,
+					strcmp (pathname, "./")
+					? pathname : "",
+					W_LOCAL, last_entries);
 	    dellist (&dirlist);
 	}
     }
     free (reposdirname);
     (*func) (data, last_entries, short_pathname, filename);
     if (last_entries)
-	Entries_Close (last_entries);
+	Entries_Close (last_entries, strcmp (pathname, "./") ? pathname : "");
     free (dir_name);
     free (short_pathname);
     free (reposname);
@@ -3219,7 +3224,7 @@ process_prune_candidates (void)
     }
     for (p = prune_candidates; p; )
     {
-	if (isemptydir (p->dir, 1))
+	if (isemptydir ("", p->dir, 1))
 	{
 	    char *b;
 
@@ -5812,6 +5817,7 @@ send_file_names (int argc, char **argv, unsigned int flags)
 	    size_t line_len = 0;
 	    char *q, *r;
 	    struct saved_cwd sdir;
+	    char *update_dir;
 
 	    /* Split the argument onto the stack.  */
 	    stack = getlist();
@@ -5825,7 +5831,8 @@ send_file_names (int argc, char **argv, unsigned int flags)
 
 	    /* Normalize the path into outstr. */
 	    save_cwd (&sdir);
-	    while ((q = pop (stack)) != NULL)
+	    update_dir = xstrdup ("");
+	    while (q = pop (stack))
 	    {
 		Node *node = NULL;
 	        if (isdir (CVSADM))
@@ -5839,7 +5846,7 @@ send_file_names (int argc, char **argv, unsigned int flags)
 		       command line, not the case of the
 		       directory in the filesystem.  This
 		       is correct behavior.  */
-		    entries = Entries_Open (0, NULL);
+		    entries = Entries_Open (0, update_dir);
 		    node = findnode_fn (entries, q);
 		    if (node)
 		    {
@@ -5849,7 +5856,7 @@ send_file_names (int argc, char **argv, unsigned int flags)
 			xrealloc_and_strcat (&line, &line_len, node->key);
 			delnode (node);
 		    }
-		    Entries_Close (entries);
+		    Entries_Close (entries, update_dir);
 		}
 
 		/* If node is still NULL then we either didn't find CVSADM or
@@ -5866,14 +5873,20 @@ send_file_names (int argc, char **argv, unsigned int flags)
 
 		/* And descend the tree. */
 		if (isdir (q))
+		{
+		    char *tmp_update_dir = dir_append (update_dir, q);
+		    free (update_dir);
+		    update_dir = tmp_update_dir;
 		    CVS_CHDIR (q);
+		}
 		free (q);
 	    }
 	    restore_cwd (&sdir);
+	    free (update_dir);
 	    free_cwd (&sdir);
 
 	    /* Now put everything we didn't find entries for back on. */
-	    while ((q = pop (stack)) != NULL)
+	    while (q = pop (stack))
 	    {
 		if (line_len)
 		    xrealloc_and_strcat (&line, &line_len, "/");

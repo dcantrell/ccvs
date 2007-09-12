@@ -16359,8 +16359,7 @@ U top-dir/file1"
 "$SPROG checkout: cannot make directory \`CVS': Permission denied
 $SPROG checkout: Updating top-dir" \
 "$SPROG checkout: cannot make directory \`CVS': Permission denied
-$SPROG checkout: in directory \.:
-$SPROG checkout: cannot open CVS/Entries for reading: No such file or directory
+$SPROG checkout: cannot open \`CVS/Entries' for reading: No such file or directory
 $SPROG checkout: Updating top-dir"
 
 	  chmod +w ../1
@@ -17183,11 +17182,10 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  # is not nice; would be good to fix remote CVS to give a clearer
 	  # message (e.g. the one from local CVS).  But at least it is an
 	  # error message.
-	  dotest_fail errmsg2-16 "${testcvs} add bogus-dir/file16" \
-"${SPROG} add: in directory \`bogus-dir':
-${SPROG} \[add aborted\]: there is no version here; do .${SPROG} checkout. first" \
-"${CPROG} add: cannot open CVS/Entries for reading: No such file or directory
-${CPROG} \[add aborted\]: no repository"
+	  dotest_fail errmsg2-16 "$testcvs add bogus-dir/file16" \
+"$SPROG \[add aborted\]: there is no version here; do \`$SPROG checkout' first" \
+"$CPROG add: cannot open \`bogus-dir/CVS/Entries' for reading: No such file or directory
+$CPROG \[add aborted\]: no repository"
 	  rm -r bogus-dir
 
 	  # One error condition we don't test for is trying to add a file

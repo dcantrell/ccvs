@@ -93,7 +93,7 @@ char *strerror (int);
 #define CVSADM_BASEREV   "CVS/Baserev."
 #define CVSADM_BASEREVTMP "CVS/Baserev.tmp"
 #define CVSADM_TEMPLATE "CVS/Template."
-#else /* USE_VMS_FILENAMES */
+#else /* !USE_VMS_FILENAMES */
 #define	CVSADM		"CVS"
 #define	CVSADM_ENT	"CVS/Entries"
 #define	CVSADM_ENTBAK	"CVS/Entries.Backup"
@@ -272,24 +272,7 @@ enum mtype
     CHECKOUT, TAG, PATCH, EXPORT, MISC
 };
 
-/*
- * structure used for list-private storage by Entries_Open() and
- * Version_TS() and Find_Directories().
- */
-struct stickydirtag
-{
-    /* These fields pass sticky tag information from Entries_Open() to
-       Version_TS().  */
-    int aflag;
-    char *tag;
-    char *date;
-    int nonbranch;
 
-    /* This field is set by Entries_Open() if there was subdirectory
-       information; Find_Directories() uses it to see whether it needs
-       to scan the directory itself.  */
-    int subdirs;
-};
 
 /* Option flags for Parse_Info() */
 #define PIOPT_ALL 1	/* accept "all" keyword */
@@ -381,9 +364,6 @@ extern int error_use_protocol;
 
 
 DBM *open_module (void);
-List *Find_Directories (char *repository, int which, List *entries);
-void Entries_Close (List *entries);
-List *Entries_Open (int aflag, char *update_dir);
 void Subdirs_Known (List *entries);
 void Subdir_Register (List *, const char *, const char *);
 void Subdir_Deregister (List *, const char *, const char *);
@@ -482,8 +462,6 @@ void cleanup_register (void (*handler) (void));
 
 void update_delproc (Node * p);
 void usage (const char *const *cpp);
-List *Find_Names (char *repository, int which, int aflag,
-		  List ** optentries);
 void Update_Logfile (const char *repository, const char *xmessage,
                      FILE *xlogfp, List *xchanges);
 void do_editor (const char *dir, char **messagep,
