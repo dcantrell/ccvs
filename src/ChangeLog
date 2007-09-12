@@ -1,5 +1,33 @@
 2007-09-11  Derek Price  <derek@ximbiot.com>
 
+	* add.c, import.c, update.c: Call Entries_Open() & Entries_Close() with
+	UPDATE_DIR.
+	* client.c, recurse.c: Ditto, and use new Find_Names() and
+	Find_Directories() APIs.
+	* cvs.h (struct stickydirtag): Move to private entries.c struct.
+	(Entries_Open, Entries_Close): Move prototypes to entries.h.
+	(Find_Names, Find_Directories): Move prototypes to find-names.h.
+	* entries.c: Include GNULIB's "quote.h".
+	(struct stickydirtag): Moved in from cvs.h.
+	(write_entries): Accept and process DIR and UPDATE_DIR.
+	(entriesHasSticky, entriesHasAllSubdirs, entriesGetAflag,
+	entriesGetTag, entriesGetNonbranch, entriesGetDate, Entries_Open_Dir,
+	Entries_Close_Dir): New functions.
+	(Entries_Open): Wrap new Entries_Open_Dir().
+	(Entries_Close): Wrap new Entries_Close_Dir().
+	* entries.h (Entries_Close, Entries_Open_Dir, Entries_Open,
+	entriesHasSticky, entriesHasAllSubdirs, entriesGetAflag,
+	entriesGetTag, entriesGetNonbranch, entriesGetDate): New prototypes.
+	* find_names.c: Include GNULIB's "quote.h".
+	(Find_Names, Find_Directories): Accept and process new UPDATE_DIR
+	argument.  Make REPOSITORY arg const.
+	(find_dirs): Make DIR arg const. - Move to eliminate prototype.
+	* find-names.h: New file.
+	* ignore.c, vers_ts.c: Use new entries.c APIs.
+	* subr.c (dir_append_dirs, dir_append): New functions.
+	* subr.h (dir_append_dirs, dir_append): Prototypes for same.
+	* sanity.sh: Update to compensate.
+
 	* main.c (main): Suppress warnings.
 
 2007-08-29  Derek Price  <derek@ximbiot.com>

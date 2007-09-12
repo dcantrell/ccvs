@@ -23,10 +23,11 @@
 /* Verify interface.  */
 #include "ignore.h"
 
-/* GNULIB headers.  */
+/* GNULIB */
 #include "lstat.h"
+#include "quote.h"
 
-/* CVS headers.  */
+/* CVS */
 #include "wrapper.h"
 
 #include "cvs.h"
@@ -372,7 +373,7 @@ void
 ignore_files (List *ilist, List *entries, const char *update_dir,
               Ignore_proc proc)
 {
-    int subdirs;
+    bool subdirs;
     DIR *dirp;
     struct dirent *dp;
     struct stat sb;
@@ -382,14 +383,10 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
     Node *p;
 
     /* Set SUBDIRS if we have subdirectory information in ENTRIES.  */
-    if (entries == NULL)
-	subdirs = 0;
+    if (!entries)
+	subdirs = false;
     else
-    {
-	struct stickydirtag *sdtp = entries->list->data;
-
-	subdirs = sdtp == NULL || sdtp->subdirs;
-    }
+	subdirs = entriesHasAllSubdirs (entries);
 
     /* we get called with update_dir set to "." sometimes... strip it */
     if (strcmp (update_dir, ".") == 0)
@@ -398,9 +395,9 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
 	xdir = update_dir;
 
     dirp = CVS_OPENDIR (".");
-    if (dirp == NULL)
+    if (!dirp)
     {
-	error (0, errno, "cannot open current directory");
+	error (0, errno, "cannot open %s", quote (update_dir));
 	return;
     }
 
@@ -410,20 +407,19 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
     /* Make a list for the files.  */
     files = getlist ();
 
-    while (errno = 0, (dp = CVS_READDIR (dirp)) != NULL)
+    while (errno = 0, dp = CVS_READDIR (dirp))
     {
 	file = dp->d_name;
-	if (strcmp (file, ".") == 0 || strcmp (file, "..") == 0)
+	if (!strcmp (file, ".") || !strcmp (file, ".."))
 	    continue;
-	if (findnode_fn (ilist, file) != NULL)
+	if (findnode_fn (ilist, file))
 	    continue;
 	if (subdirs)
 	{
 	    Node *node;
 
 	    node = findnode_fn (entries, file);
-	    if (node != NULL
-		&& ((Entnode *) node->data)->type == ENT_SUBDIR)
+	    if (node && ((Entnode *) node->data)->type == ENT_SUBDIR)
 	    {
 		char *p;
 		int dir;
@@ -432,7 +428,7 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
 		   this directory if there is a CVS subdirectory.
 		   This will normally be the case, but the user may
 		   have messed up the working directory somehow.  */
-		p = Xasprintf ("%s/%s", file, CVSADM);
+		p = dir_append (file, CVSADM);
 		dir = isdir (p);
 		free (p);
 		if (dir)
@@ -445,19 +441,19 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
 	if (ign_name (file))
 	    continue;
 
-	if (!DIRENT_MUST_BE(dp, DT_UNKNOWN)
+	if (!DIRENT_MUST_BE (dp, DT_UNKNOWN)
 	    || lstat (file, &sb) != -1)
 	{
-	    if (DIRENT_MUST_BE(dp, DT_LNK)
+	    if (DIRENT_MUST_BE (dp, DT_LNK)
 		|| DIRENT_MIGHT_BE_SYMLINK(dp) && S_ISLNK(sb.st_mode))
 		/* Skip symlinks.  */
 		continue;
-	    else if (DIRENT_MUST_BE(dp, DT_DIR)
-		     || DIRENT_MIGHT_BE_DIR(dp) && S_ISDIR (sb.st_mode))
+	    else if (DIRENT_MUST_BE (dp, DT_DIR)
+		     || DIRENT_MIGHT_BE_DIR (dp) && S_ISDIR (sb.st_mode))
 	    {
 		if (!subdirs)
 		{
-		    char *temp = Xasprintf ("%s/%s", file, CVSADM);
+		    char *temp = dir_append (file, CVSADM);
 		    if (isdir (temp))
 		    {
 			free (temp);
@@ -471,11 +467,11 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
 	p = getnode ();
 	p->type = FILES;
 	p->key = xstrdup (file);
-	(void) addnode (files, p);
+	addnode (files, p);
     }
-    if (errno != 0)
+    if (errno)
 	error (0, errno, "error reading current directory");
-    (void) CVS_CLOSEDIR (dirp);
+    CVS_CLOSEDIR (dirp);
 
     sortlist (files, fsortcmp);
     for (p = files->list->next; p != files->list; p = p->next)

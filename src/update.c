@@ -1072,7 +1072,7 @@ update_dirleave_proc (void *callerdat, const char *dir, int err,
 	/* FIXME: chdir ("..") loses with symlinks.  */
 	/* Prune empty dirs on the way out - if necessary */
 	(void) CVS_CHDIR ("..");
-	if (update_prune_dirs && isemptydir (dir, 0))
+	if (update_prune_dirs && isemptydir (update_dir, dir, 0))
 	{
 	    /* I'm not sure the existence_error is actually possible (except
 	       in cases where we really should print a message), but since
@@ -1105,20 +1105,21 @@ isremoved (Node *node, void *closure)
    existence of the CVS directory entry.  Zero otherwise.  If MIGHT_NOT_EXIST
    and the directory doesn't exist, then just return 0.  */
 int
-isemptydir (const char *dir, int might_not_exist)
+isemptydir (const char *update_dir, const char *dir, int might_not_exist)
 {
     DIR *dirp;
     struct dirent *dp;
 
-    if ((dirp = CVS_OPENDIR (dir)) == NULL)
+    if (!(dirp = CVS_OPENDIR (dir)))
     {
 	if (might_not_exist && existence_error (errno))
 	    return 0;
-	error (0, errno, "cannot open directory %s for empty check", dir);
+	error (0, errno, "cannot open directory %s for empty check",
+	       quote (update_dir));
 	return 0;
     }
     errno = 0;
-    while ((dp = CVS_READDIR (dirp)) != NULL)
+    while (dp = CVS_READDIR (dirp))
     {
 	if (strcmp (dp->d_name, ".") != 0
 	    && strcmp (dp->d_name, "..") != 0)
@@ -1127,7 +1128,7 @@ isemptydir (const char *dir, int might_not_exist)
 	    {
 		/* An entry other than the CVS directory.  The directory
 		   is certainly not empty. */
-		(void) CVS_CLOSEDIR (dirp);
+		CVS_CLOSEDIR (dirp);
 		return 0;
 	    }
 	    else
@@ -1146,9 +1147,9 @@ isemptydir (const char *dir, int might_not_exist)
 
 		if (CVS_CHDIR (dir) < 0)
 		    error (1, errno, "cannot change directory to %s", dir);
-		l = Entries_Open (0, NULL);
+		l = Entries_Open (0, update_dir);
 		files_removed = walklist (l, isremoved, 0);
-		Entries_Close (l);
+		Entries_Close (l, update_dir);
 
 		if (restore_cwd (&cwd))
 		    error (1, errno,
@@ -1160,20 +1161,20 @@ isemptydir (const char *dir, int might_not_exist)
 		{
 		    /* There are files that have been removed, but not
 		       committed!  Do not consider the directory empty. */
-		    (void) CVS_CLOSEDIR (dirp);
+		    CVS_CLOSEDIR (dirp);
 		    return 0;
 		}
 	    }
 	}
 	errno = 0;
     }
-    if (errno != 0)
+    if (errno)
     {
-	error (0, errno, "cannot read directory %s", dir);
-	(void) CVS_CLOSEDIR (dirp);
+	error (0, errno, "cannot read directory %s", quote (update_dir));
+	CVS_CLOSEDIR (dirp);
 	return 0;
     }
-    (void) CVS_CLOSEDIR (dirp);
+    CVS_CLOSEDIR (dirp);
     return 1;
 }
 

@@ -26,6 +26,7 @@
 
 /* CVS headers.  */
 #include "edit.h"
+#include "find-names.h"
 #include "fileattr.h"
 #include "repos.h"
 #include "wrapper.h"
@@ -322,7 +323,7 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 	 */
 	if (just_subdirs)
 	{
-	    dirlist = Find_Directories (NULL, W_LOCAL, NULL);
+	    dirlist = Find_Directories (NULL, update_dir, W_LOCAL, NULL);
 	    /* If there are no sub-directories, there is a certain logic in
 	       favor of doing nothing, but in fact probably the user is just
 	       confused about what directory they are in, or whether they
@@ -353,6 +354,7 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
                    FIXME: perhaps it would be better to write a
                    function that duplicates a list. */
 		args_to_send_when_finished = Find_Directories (NULL,
+							       update_dir,
 							       W_LOCAL,
 							       NULL);
 	    }
@@ -802,8 +804,8 @@ do_recursion (struct recursion_frame *frame)
 	    /* find the files and fill in entries if appropriate */
 	    if (process_this_directory)
 	    {
-		filelist = Find_Names (repository, lwhich, frame->aflag,
-				       &entries);
+		filelist = Find_Names (repository, update_dir, lwhich,
+				       frame->aflag, &entries);
 		if (filelist == NULL)
 		{
 		    error (0, 0, "skipping directory %s", update_dir);
@@ -819,7 +821,7 @@ do_recursion (struct recursion_frame *frame)
 	if (frame->flags != R_SKIP_DIRS)
 	    dirlist = Find_Directories (
 		process_this_directory ? repository : NULL,
-		frame->which, entries);
+		update_dir, frame->which, entries);
     }
     else
     {
@@ -828,7 +830,7 @@ do_recursion (struct recursion_frame *frame)
 	{
 	    /* we will process files, so pre-parse entries */
 	    if (frame->which & W_LOCAL)
-		entries = Entries_Open (frame->aflag, NULL);
+		entries = Entries_Open (frame->aflag, update_dir);
 	}
     }
 
@@ -908,7 +910,7 @@ do_recursion (struct recursion_frame *frame)
 
     if (entries)
     {
-	Entries_Close (entries);
+	Entries_Close (entries, update_dir);
 	entries = NULL;
     }
 

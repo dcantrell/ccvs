@@ -130,4 +130,7 @@ bool cvs_mkdirs (const char *name, mode_t mode, const char *update_dir,
 		 unsigned int flags);
 bool cvs_xmkdirs (const char *name, mode_t mode, const char *update_dir,
 		  unsigned int flags);
+
+char *dir_append (const char *dir, const char *append);
+char *dir_append_dirs (const char *dir, ...);
 #endif /* !SUBR_H */

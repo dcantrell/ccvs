@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 1986-2006 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ * Portions Copyright (C) 1998-2007 Derek Price,
+ *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
  * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
@@ -25,19 +26,23 @@
 # include <config.h>
 #endif
 
-/* ANSI C headers.  */
+/* Verify Interface.  */
+#include "find-names.h"
+
+/* ANSI C */
 #include <assert.h>
 #include <glob.h>
 
-/* CVS headers.  */
+/* GNULIB */
+#include "quote.h"
+
+/* CVS */
 #include "recurse.h"
 
 #include "cvs.h"
 
 
 
-static int find_dirs (char *dir, List * list, int checkadm,
-			    List *entries);
 static int find_rcs (const char *dir, List * list);
 static int add_subdir_proc (Node *, void *);
 static int register_subdir_proc (Node *, void *);
@@ -70,7 +75,8 @@ add_entries_proc (Node *node, void *closure)
    list).  */
 
 List *
-Find_Names (char *repository, int which, int aflag, List **optentries)
+Find_Names (const char *repository, const char *update_dir,
+	    int which, int aflag, List **optentries)
 {
     List *entries;
     List *files;
@@ -82,17 +88,17 @@ Find_Names (char *repository, int which, int aflag, List **optentries)
     if (which & W_LOCAL)
     {
 	/* parse the entries file (if it exists) */
-	entries = Entries_Open (aflag, NULL);
-	if (entries != NULL)
+	entries = Entries_Open (aflag, update_dir);
+	if (entries)
 	{
 	    /* walk the entries file adding elements to the files list */
-	    (void) walklist (entries, add_entries_proc, files);
+	    walklist (entries, add_entries_proc, files);
 
 	    /* if our caller wanted the entries list, return it; else free it */
 	    if (optentries != NULL)
 		*optentries = entries;
 	    else
-		Entries_Close (entries);
+		Entries_Close (entries, update_dir);
 	}
     }
 
@@ -165,11 +171,125 @@ register_subdir_proc (Node *p, void *closure)
     return 0;
 }
 
+
+
+/*
+ * Finds all the subdirectories of the argument dir and adds them to
+ * the specified list.  Sub-directories without a CVS administration
+ * directory are optionally ignored.  If ENTRIES is not NULL, all
+ * files on the list are ignored.  Returns 0 for success or 1 on
+ * error, in which case errno is set to indicate the error.
+ */
+static int
+find_dirs (const char *dir, List *list, int checkadm, List *entries)
+{
+    Node *p;
+    char *tmp = NULL;
+    size_t tmp_size = 0;
+    struct dirent *dp;
+    DIR *dirp;
+    int skip_emptydir = 0;
+
+    /* First figure out whether we need to skip directories named
+       Emptydir.  Except in the CVSNULLREPOS case, Emptydir is just
+       a normal directory name.  */
+    if (ISABSOLUTE (dir)
+	&& strncmp (dir, current_parsed_root->directory, strlen (current_parsed_root->directory)) == 0
+	&& ISSLASH (dir[strlen (current_parsed_root->directory)])
+	&& strcmp (dir + strlen (current_parsed_root->directory) + 1, CVSROOTADM) == 0)
+	skip_emptydir = 1;
+
+    /* set up to read the dir */
+    if ((dirp = CVS_OPENDIR (dir)) == NULL)
+	return (1);
+
+    /* read the dir, grabbing sub-dirs */
+    errno = 0;
+    while ((dp = CVS_READDIR (dirp)) != NULL)
+    {
+	if (strcmp (dp->d_name, ".") == 0 ||
+	    strcmp (dp->d_name, "..") == 0 ||
+	    strcmp (dp->d_name, CVSATTIC) == 0 ||
+	    strcmp (dp->d_name, CVSLCK) == 0 ||
+	    strcmp (dp->d_name, CVSREP) == 0)
+	    goto do_it_again;
+
+	/* findnode() is going to be significantly faster than stat()
+	   because it involves no system calls.  That is why we bother
+	   with the entries argument, and why we check this first.  */
+	if (entries != NULL && findnode (entries, dp->d_name) != NULL)
+	    goto do_it_again;
+
+	if (skip_emptydir
+	    && strcmp (dp->d_name, CVSNULLREPOS) == 0)
+	    goto do_it_again;
+
+	if (!DIRENT_MIGHT_BE_DIR(dp))
+	    goto do_it_again;
+
+	/* don't bother stating ,v files */
+	if (CVS_FNMATCH (RCSPAT, dp->d_name, 0) == 0)
+	    goto do_it_again;
+
+	if (!DIRENT_MUST_BE(dp, DT_DIR))
+	{
+	    expand_string (&tmp,
+			   &tmp_size,
+			   strlen (dir) + strlen (dp->d_name) + 10);
+	    sprintf (tmp, "%s/%s", dir, dp->d_name);
+	    if (!isdir (tmp))
+		goto do_it_again;
+	}
+
+	/* check for administration directories (if needed) */
+	if (checkadm)
+	{
+	    /* blow off symbolic links to dirs in local dir */
+	    if (DIRENT_MUST_BE(dp, DT_LNK)
+		|| DIRENT_MIGHT_BE_SYMLINK(dp) && islink(tmp))
+		goto do_it_again;
+
+	    /* check for new style */
+	    expand_string (&tmp,
+			   &tmp_size,
+			   (strlen (dir) + strlen (dp->d_name)
+			    + sizeof (CVSADM) + 10));
+	    (void) sprintf (tmp, "%s/%s/%s", dir, dp->d_name, CVSADM);
+	    if (!isdir (tmp))
+		goto do_it_again;
+	}
+
+	/* put it in the list */
+	p = getnode ();
+	p->type = DIRS;
+	p->key = xstrdup (dp->d_name);
+	if (addnode (list, p) != 0)
+	    freenode (p);
+
+    do_it_again:
+	errno = 0;
+    }
+    if (errno != 0)
+    {
+	int save_errno = errno;
+	(void) CVS_CLOSEDIR (dirp);
+	errno = save_errno;
+	return 1;
+    }
+    (void) CVS_CLOSEDIR (dirp);
+    if (tmp != NULL)
+	free (tmp);
+    return (0);
+}
+
+
+
 /*
  * create a list of directories to traverse from the current directory
  */
 List *
-Find_Directories (char *repository, int which, List *entries)
+Find_Directories (const char *repository, const char *update_dir,
+		  int which, List *entries)
 {
     List *dirlist;
 
@@ -180,25 +300,21 @@ Find_Directories (char *repository, int which, List *entries)
     if (which & W_LOCAL)
     {
 	List *tmpentries;
-	struct stickydirtag *sdtp;
 
 	/* Look through the Entries file.  */
 
-	if (entries != NULL)
+	if (entries)
 	    tmpentries = entries;
 	else if (isfile (CVSADM_ENT))
-	    tmpentries = Entries_Open (0, NULL);
+	    tmpentries = Entries_Open (0, update_dir);
 	else
 	    tmpentries = NULL;
-
-	if (tmpentries != NULL)
-	    sdtp = tmpentries->list->data;
 
 	/* If we do have an entries list, then if sdtp is NULL, or if
            sdtp->subdirs is nonzero, all subdirectory information is
            recorded in the entries list.  */
-	if (tmpentries != NULL && (sdtp == NULL || sdtp->subdirs))
-	    walklist (tmpentries, add_subdir_proc, (void *) dirlist);
+	if (tmpentries && entriesHasAllSubdirs (tmpentries))
+	    walklist (tmpentries, add_subdir_proc, dirlist);
 	else
 	{
 	    /* This is an old working directory, in which subdirectory
@@ -215,23 +331,22 @@ Find_Directories (char *repository, int which, List *entries)
 	       hacking on the CVS/Entries file).  */
 
 	    if (find_dirs (".", dirlist, 1, tmpentries) != 0)
-		error (1, errno, "cannot open current directory");
-	    if (tmpentries != NULL)
+		error (1, errno, "cannot open %s", quote (update_dir));
+	    if (tmpentries)
 	    {
-		if (! list_isempty (dirlist))
-		    walklist (dirlist, register_subdir_proc,
-			      (void *) tmpentries);
+		if (!list_isempty (dirlist))
+		    walklist (dirlist, register_subdir_proc, tmpentries);
 		else
 		    Subdirs_Known (tmpentries);
 	    }
 	}
 
-	if (entries == NULL && tmpentries != NULL)
-	    Entries_Close (tmpentries);
+	if (!entries && tmpentries)
+	    Entries_Close (tmpentries, update_dir);
     }
 
     /* look for sub-dirs in the repository */
-    if ((which & W_REPOS) && repository)
+    if (which & W_REPOS && repository)
     {
 	/* search the repository */
 	if (find_dirs (repository, dirlist, 0, entries) != 0)
@@ -246,7 +361,7 @@ Find_Directories (char *repository, int which, List *entries)
 
     /* sort the list into alphabetical order and return it */
     sortlist (dirlist, fsortcmp);
-    return (dirlist);
+    return dirlist;
 }
 
 
@@ -417,115 +532,4 @@ find_rcs (dir, list)
     walklist (newlist, strip_rcsext, NULL);
     mergelists (list, &newlist);
     return 0;
-}
-
-
-
-/*
- * Finds all the subdirectories of the argument dir and adds them to
- * the specified list.  Sub-directories without a CVS administration
- * directory are optionally ignored.  If ENTRIES is not NULL, all
- * files on the list are ignored.  Returns 0 for success or 1 on
- * error, in which case errno is set to indicate the error.
- */
-static int
-find_dirs (char *dir, List *list, int checkadm, List *entries)
-{
-    Node *p;
-    char *tmp = NULL;
-    size_t tmp_size = 0;
-    struct dirent *dp;
-    DIR *dirp;
-    int skip_emptydir = 0;
-
-    /* First figure out whether we need to skip directories named
-       Emptydir.  Except in the CVSNULLREPOS case, Emptydir is just
-       a normal directory name.  */
-    if (ISABSOLUTE (dir)
-	&& strncmp (dir, current_parsed_root->directory, strlen (current_parsed_root->directory)) == 0
-	&& ISSLASH (dir[strlen (current_parsed_root->directory)])
-	&& strcmp (dir + strlen (current_parsed_root->directory) + 1, CVSROOTADM) == 0)
-	skip_emptydir = 1;
-
-    /* set up to read the dir */
-    if ((dirp = CVS_OPENDIR (dir)) == NULL)
-	return (1);
-
-    /* read the dir, grabbing sub-dirs */
-    errno = 0;
-    while ((dp = CVS_READDIR (dirp)) != NULL)
-    {
-	if (strcmp (dp->d_name, ".") == 0 ||
-	    strcmp (dp->d_name, "..") == 0 ||
-	    strcmp (dp->d_name, CVSATTIC) == 0 ||
-	    strcmp (dp->d_name, CVSLCK) == 0 ||
-	    strcmp (dp->d_name, CVSREP) == 0)
-	    goto do_it_again;
-
-	/* findnode() is going to be significantly faster than stat()
-	   because it involves no system calls.  That is why we bother
-	   with the entries argument, and why we check this first.  */
-	if (entries != NULL && findnode (entries, dp->d_name) != NULL)
-	    goto do_it_again;
-
-	if (skip_emptydir
-	    && strcmp (dp->d_name, CVSNULLREPOS) == 0)
-	    goto do_it_again;
-
-	if (!DIRENT_MIGHT_BE_DIR(dp))
-	    goto do_it_again;
-
-	/* don't bother stating ,v files */
-	if (CVS_FNMATCH (RCSPAT, dp->d_name, 0) == 0)
-	    goto do_it_again;
-
-	if (!DIRENT_MUST_BE(dp, DT_DIR))
-	{
-	    expand_string (&tmp,
-			   &tmp_size,
-			   strlen (dir) + strlen (dp->d_name) + 10);
-	    sprintf (tmp, "%s/%s", dir, dp->d_name);
-	    if (!isdir (tmp))
-		goto do_it_again;
-	}
-
-	/* check for administration directories (if needed) */
-	if (checkadm)
-	{
-	    /* blow off symbolic links to dirs in local dir */
-	    if (DIRENT_MUST_BE(dp, DT_LNK)
-		|| DIRENT_MIGHT_BE_SYMLINK(dp) && islink(tmp))
-		goto do_it_again;
-
-	    /* check for new style */
-	    expand_string (&tmp,
-			   &tmp_size,
-			   (strlen (dir) + strlen (dp->d_name)
-			    + sizeof (CVSADM) + 10));
-	    (void) sprintf (tmp, "%s/%s/%s", dir, dp->d_name, CVSADM);
-	    if (!isdir (tmp))
-		goto do_it_again;
-	}
-
-	/* put it in the list */
-	p = getnode ();
-	p->type = DIRS;
-	p->key = xstrdup (dp->d_name);
-	if (addnode (list, p) != 0)
-	    freenode (p);
-
-    do_it_again:
-	errno = 0;
-    }
-    if (errno != 0)
-    {
-	int save_errno = errno;
-	(void) CVS_CLOSEDIR (dirp);
-	errno = save_errno;
-	return 1;
-    }
-    (void) CVS_CLOSEDIR (dirp);
-    if (tmp != NULL)
-	free (tmp);
-    return (0);
 }

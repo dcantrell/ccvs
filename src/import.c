@@ -640,7 +640,7 @@ process_import_file (char *message, char *vfile, char *vtag, int targc,
 		/* Reading all the entries for each file is fairly silly, and
 		   probably slow.  But I am too lazy at the moment to do
 		   anything else.  */
-		entries = Entries_Open (0, NULL);
+		entries = Entries_Open (0, repository);
 		node = findnode_fn (entries, vfile);
 		if (node != NULL)
 		{
@@ -654,7 +654,7 @@ process_import_file (char *message, char *vfile, char *vtag, int targc,
 			free_opt = our_opt;
 		    }
 		}
-		Entries_Close (entries);
+		Entries_Close (entries, repository);
 	    }
 #endif
 

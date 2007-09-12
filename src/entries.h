@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 The Free Software Foundation, Inc.
+ * Copyright (C) 2005-2007 The Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,10 @@
 #ifndef ENTRIES_H
 #define ENTRIES_H
 
+/* ANSI C */
+#include <stdbool.h>
+
+/* CVS */
 #include "hash.h"
 
 /* The type of an entnode.  */
@@ -46,7 +50,19 @@ struct entnode
 };
 typedef struct entnode Entnode;
 
+void Entries_Close (List *entries, const char *update_dir);
+List *Entries_Open_Dir (int aflag, const char *update_dir, const char *dir);
+List *Entries_Open (int aflag, const char *update_dir);
+
 void Register (List *list, const char *fname, const char *vn,
 	       const char *ts, const char *options, const char *tag,
 	       const char *date, const char *ts_conflict);
+
+bool entriesHasSticky (List *entries);
+bool entriesHasAllSubdirs (List *entries);
+bool entriesGetAflag (List *entries);
+const char *entriesGetTag (List *entries);
+int entriesGetNonbranch (List *entries);
+const char *entriesGetDate (List *entries);
+
 #endif /* !defined ENTRIES_H */
