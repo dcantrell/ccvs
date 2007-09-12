@@ -352,7 +352,7 @@ ignore_directory (const char *name)
     i = dir_ign_current;
     while (i--)
     {
-	if (strncmp (name, dir_ign_list[i], strlen (dir_ign_list[i])+1) == 0)
+	if (STRNEQ (name, dir_ign_list[i], strlen (dir_ign_list[i])+1))
 	    return 1;
     }
 

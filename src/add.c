@@ -256,11 +256,11 @@ add (int argc, char **argv)
 		repository = Name_Repository (NULL, update_dir);
 
 		/* don't add stuff to Emptydir */
-		if (strncmp (repository, current_parsed_root->directory, cvsroot_len) == 0
+		if (STRNEQ (repository, current_parsed_root->directory,
+			    cvsroot_len)
 		    && ISSLASH (repository[cvsroot_len])
-		    && strncmp (repository + cvsroot_len + 1,
-				CVSROOTADM,
-				sizeof CVSROOTADM - 1) == 0
+		    && STRNEQ (repository + cvsroot_len + 1, CVSROOTADM,
+			       sizeof CVSROOTADM - 1)
 		    && ISSLASH (repository[cvsroot_len + sizeof CVSROOTADM])
 		    && STREQ (repository + cvsroot_len + sizeof CVSROOTADM + 1,
 			       CVSNULLREPOS))
@@ -356,12 +356,11 @@ add (int argc, char **argv)
 	repository = Name_Repository (NULL, finfo.update_dir);
 
 	/* don't add stuff to Emptydir */
-	if (strncmp (repository, current_parsed_root->directory,
-		     cvsroot_len) == 0
+	if (STRNEQ (repository, current_parsed_root->directory,
+		     cvsroot_len)
 	    && ISSLASH (repository[cvsroot_len])
-	    && strncmp (repository + cvsroot_len + 1,
-			CVSROOTADM,
-			sizeof CVSROOTADM - 1) == 0
+	    && STRNEQ (repository + cvsroot_len + 1, CVSROOTADM,
+		       sizeof CVSROOTADM - 1)
 	    && ISSLASH (repository[cvsroot_len + sizeof CVSROOTADM])
 	    && STREQ (repository + cvsroot_len + sizeof CVSROOTADM + 1,
 		      CVSNULLREPOS))

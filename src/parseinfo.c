@@ -447,7 +447,7 @@ parse_config (const char *cvsroot, const char *path)
 
 	    if (!isreadable (*prefix)) continue;
 	    nprefix = xcanonicalize_file_name (*prefix);
-	    if (!strncmp (nprefix, npath, strlen (nprefix))
+	    if (STRNEQ (nprefix, npath, strlen (nprefix))
 		&& (((*prefix)[strlen (*prefix)] != '/'
 		     && strlen (npath) == strlen (nprefix))
 		    || ((*prefix)[strlen (*prefix)] == '/'

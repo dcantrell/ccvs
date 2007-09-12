@@ -153,8 +153,8 @@ Short_Repository (const char *repository)
 
     /* If repository matches CVSroot at the beginning, strip off CVSroot */
     /* And skip leading '/' in rep, in case CVSroot ended with '/'. */
-    if (strncmp (original_parsed_root->directory, repository,
-		 strlen (original_parsed_root->directory)) == 0)
+    if (STRNEQ (original_parsed_root->directory, repository,
+		strlen (original_parsed_root->directory)))
     {
 	const char *rep = repository + strlen (original_parsed_root->directory);
 	return (*rep == '/') ? rep+1 : rep;

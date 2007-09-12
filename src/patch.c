@@ -617,10 +617,10 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
 	    }
 	    if (!unidiff)
 	    {
-		if (strncmp (line1, "*** ", 4) != 0 ||
-		    strncmp (line2, "--- ", 4) != 0 ||
-		    (cp1 = strchr (line1, '\t')) == NULL ||
-		    (cp2 = strchr (line2, '\t')) == NULL)
+		if (!STRNEQ (line1, "*** ", 4)
+		    || !STRNEQ (line2, "--- ", 4)
+		    || !(cp1 = strchr (line1, '\t'))
+		    || !(cp2 = strchr (line2, '\t')))
 		{
 		    error (0, 0, "invalid diff header for %s", rcs);
 		    ret = 1;
@@ -631,10 +631,10 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
 	    }
 	    else
 	    {
-		if (strncmp (line1, "--- ", 4) != 0 ||
-		    strncmp (line2, "+++ ", 4) != 0 ||
-		    (cp1 = strchr (line1, '\t')) == NULL ||
-		    (cp2 = strchr  (line2, '\t')) == NULL)
+		if (!STRNEQ (line1, "--- ", 4)
+		    || !STRNEQ (line2, "+++ ", 4)
+		    || !(cp1 = strchr (line1, '\t'))
+		    || !(cp2 = strchr  (line2, '\t')))
 		{
 		    error (0, 0, "invalid unidiff header for %s", rcs);
 		    ret = 1;
@@ -648,7 +648,7 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
 
 	    strippath = Xasprintf ("%s/", current_parsed_root->directory);
 
-	    if (strncmp (rcs, strippath, strlen (strippath)) == 0)
+	    if (STRNEQ (rcs, strippath, strlen (strippath)))
 		rcs += strlen (strippath);
 	    free (strippath);
 	    if (vers_tag != NULL)

@@ -305,7 +305,7 @@ make_UserAdminOptions (const char *infopath, unsigned int ln, const char *s)
 
 	    for (found = long_options; found->name; found++)
 		if (len == strlen (found->name)
-		    && !strncmp (cur_opt, found->name, len))
+		    && STRNEQ (cur_opt, found->name, len))
 		    break;
 
 	    if (found->name)
@@ -376,9 +376,9 @@ makecmdline (int argc, char **argv)
 	char *arg = argv[i];
 	if (i == 0)
 	{
-	    if (strncmp (argv[i], "cvs server", 10) == 0)
+	    if (STRNEQ (argv[i], "cvs server", 10))
 		arg = "admin";
-	    else if (strncmp (argv[i], "cvs ", 4) == 0)
+	    else if (STRNEQ (argv[i], "cvs ", 4))
 		arg = argv[i] + 4;
 	}
 

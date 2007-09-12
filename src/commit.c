@@ -845,14 +845,12 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 	return 1;
     }
 
-    if (strncmp (finfo->repository, current_parsed_root->directory,
-                 cvsroot_len) == 0
+    if (STRNEQ (finfo->repository, current_parsed_root->directory, cvsroot_len)
 	&& ISSLASH (finfo->repository[cvsroot_len])
-	&& strncmp (finfo->repository + cvsroot_len + 1,
-		    CVSROOTADM,
-		    sizeof (CVSROOTADM) - 1) == 0
-	&& ISSLASH (finfo->repository[cvsroot_len + sizeof (CVSROOTADM)])
-	&& STREQ (finfo->repository + cvsroot_len + sizeof (CVSROOTADM) + 1,
+	&& STRNEQ (finfo->repository + cvsroot_len + 1, CVSROOTADM,
+		   sizeof CVSROOTADM - 1)
+	&& ISSLASH (finfo->repository[cvsroot_len + sizeof CVSROOTADM])
+	&& STREQ (finfo->repository + cvsroot_len + sizeof CVSROOTADM + 1,
 		  CVSNULLREPOS)
 	)
 	error (1, 0, "cannot check in to %s", finfo->repository);
@@ -1637,8 +1635,8 @@ commit_filesdoneproc (void *callerdat, int err, const char *repository,
     {
 	const char *p;
 
-	if (strncmp (current_parsed_root->directory, repository,
-		     strlen (current_parsed_root->directory)) != 0)
+	if (!STRNEQ (current_parsed_root->directory, repository,
+		     strlen (current_parsed_root->directory)))
 	    error (0, 0,
 		 "internal error: repository (%s) doesn't begin with root (%s)",
 		   repository, current_parsed_root->directory);
@@ -1648,7 +1646,7 @@ commit_filesdoneproc (void *callerdat, int err, const char *repository,
 	if (STREQ ("CVSROOT", p)
 	    /* Check for subdirectories because people may want to create
 	       subdirectories and list files therein in checkoutlist.  */
-	    || strncmp ("CVSROOT/", p, strlen ("CVSROOT/")) == 0
+	    || STRNEQ ("CVSROOT/", p, strlen ("CVSROOT/"))
 	    )
 	{
 	    /* "Database" might a little bit grandiose and/or vague,

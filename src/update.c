@@ -1360,7 +1360,7 @@ VERS: ", 0);
 	    set_time =
 		(!noexec
 		 && (!vers_ts->vn_user ||
-		     !strncmp (vers_ts->ts_rcs, "Initial", 7))
+		     STRNEQ (vers_ts->ts_rcs, "Initial", 7))
 		 && !file_is_dead);
 
 	    wrap_fromcvs_process_file (finfo->file);
