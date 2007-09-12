@@ -214,11 +214,10 @@ void server_edit_file (struct file_info *finfo);
 
 
 
-/* The TRACE macro */
-extern int trace;		/* User defined trace level.  */
-void cvs_trace (int level, const char *fmt, ...)
-  __attribute__ ((__format__ (__printf__, 2, 3)));
-#define TRACE cvs_trace
+/***
+ *** The TRACE macro
+ ***/
+
 /* Trace levels:
  *
  * TRACE_FUNCTION	Trace function calls, often including function
@@ -228,10 +227,22 @@ void cvs_trace (int level, const char *fmt, ...)
  * 			start_recursion, do_recursion, and walklist in the
  * 			function traces.
  * TRACE_DATA		Trace important internal function data.
+ * TRACE_MINUTIA	Trace certain things every call to trace.  Currently,
+ *                      this is only the CWD.
  */ 
-#define TRACE_FUNCTION		1
-#define TRACE_FLOW		2
-#define TRACE_DATA		3
+enum trace_level
+{
+    TRACE_NONE = 0,
+    TRACE_FUNCTION,
+    TRACE_FLOW,
+    TRACE_DATA,
+    TRACE_MINUTIA
+};
+
+extern enum trace_level trace;		/* User defined trace level.  */
+void cvs_trace (enum trace_level level, const char *fmt, ...)
+  __attribute__ ((__format__ (__printf__, 2, 3)));
+#define TRACE cvs_trace
 
 
 
