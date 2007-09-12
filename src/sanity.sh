@@ -17183,7 +17183,8 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  # message (e.g. the one from local CVS).  But at least it is an
 	  # error message.
 	  dotest_fail errmsg2-16 "$testcvs add bogus-dir/file16" \
-"$SPROG \[add aborted\]: there is no version here; do \`$SPROG checkout' first" \
+"$SPROG add: in directory \`bogus-dir':
+$SPROG \[add aborted\]: there is no version here; do \`$SPROG checkout' first" \
 "$CPROG add: cannot open \`bogus-dir/CVS/Entries' for reading: No such file or directory
 $CPROG \[add aborted\]: no repository"
 	  rm -r bogus-dir

@@ -1,5 +1,9 @@
 2007-09-12  Derek Price  <derek@ximbiot.com>
 
+	* edit.c: Alphabetize includes.
+	* entries.c, find_names.c, update.c: Gratuitous cleanup.
+	* sanity.sh (errmsg2-16): Fix bug from previous commit.
+
 	* update.c: Include GNULIB's "quote.h".
 
 	* main.c (main): Use xstrdup in preference to strdup.

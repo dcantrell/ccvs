@@ -26,7 +26,7 @@
 # include <config.h>
 #endif
 
-/* Verify Interface.  */
+/* Verify interface.  */
 #include "find-names.h"
 
 /* ANSI C */
@@ -43,14 +43,9 @@
 
 
 
-static int find_rcs (const char *dir, List * list);
-static int add_subdir_proc (Node *, void *);
-static int register_subdir_proc (Node *, void *);
-
 /*
  * add the key from entry on entries list to the files list
  */
-static int add_entries_proc (Node *, void *);
 static int
 add_entries_proc (Node *node, void *closure)
 {
@@ -59,21 +54,70 @@ add_entries_proc (Node *node, void *closure)
     Entnode *entnode = node->data;
 
     if (entnode->type != ENT_FILE)
-	return (0);
+	return 0;
 
     fnode = getnode ();
     fnode->type = FILES;
     fnode->key = xstrdup (node->key);
-    if (addnode (filelist, fnode) != 0)
+    if (addnode (filelist, fnode))
 	freenode (fnode);
-    return (0);
+    return 0;
 }
+
+
+
+/* walklist() proc which strips a trailing RCSEXT from node keys.
+ */
+static int
+strip_rcsext (Node *p, void *closure)
+{
+    char *s = p->key + strlen (p->key) - strlen (RCSEXT);
+    assert (!strcmp (s, RCSEXT));
+    *s = '\0'; /* strip the ,v */
+    return 0;
+}
+
+
+
+/*
+ * Finds all the ,v files in the directory DIR, and adds them to the LIST.
+ * Returns 0 for success and non-zero if DIR cannot be opened, in which case
+ * ERRNO is set to indicate the error.  In the error case, LIST is left in some
+ * reasonable state (unchanged, or containing the files which were found before
+ * the error occurred).
+ *
+ * INPUTS
+ *   dir	The directory to open for read.
+ *
+ * OUTPUTS
+ *   list	Where to store matching file entries.
+ *
+ * GLOBALS
+ *   errno	Set on error.
+ *
+ * RETURNS
+ *   0, for success.
+ *   <> 0, on error.
+ */
+static int
+find_rcs (dir, list)
+    const char *dir;
+    List *list;
+{
+    List *newlist;
+    if (!(newlist = find_files (dir, RCSPAT)))
+	return 1;
+    walklist (newlist, strip_rcsext, NULL);
+    mergelists (list, &newlist);
+    return 0;
+}
+
+
 
 /* Find files in the repository and/or working directory.  On error,
    may either print a nonfatal error and return NULL, or just give
    a fatal error.  On success, return non-NULL (even if it is an empty
    list).  */
-
 List *
 Find_Names (const char *repository, const char *update_dir,
 	    int which, int aflag, List **optentries)
@@ -95,7 +139,7 @@ Find_Names (const char *repository, const char *update_dir,
 	    walklist (entries, add_entries_proc, files);
 
 	    /* if our caller wanted the entries list, return it; else free it */
-	    if (optentries != NULL)
+	    if (optentries)
 		*optentries = entries;
 	    else
 		Entries_Close (entries, update_dir);
@@ -129,16 +173,18 @@ Find_Names (const char *repository, const char *update_dir,
     /* sort the list into alphabetical order and return it */
     sortlist (files, fsortcmp);
     return files;
+
  error_exit:
     dellist (&files);
     return NULL;
 }
 
+
+
 /*
  * Add an entry from the subdirs list to the directories list.  This
  * is called via walklist.
  */
-
 static int
 add_subdir_proc (Node *p, void *closure)
 {
@@ -152,15 +198,16 @@ add_subdir_proc (Node *p, void *closure)
     dnode = getnode ();
     dnode->type = DIRS;
     dnode->key = xstrdup (entnode->user);
-    if (addnode (dirlist, dnode) != 0)
+    if (addnode (dirlist, dnode))
 	freenode (dnode);
     return 0;
 }
 
+
+
 /*
  * Register a subdirectory.  This is called via walklist.
  */
-
 /*ARGSUSED*/
 static int
 register_subdir_proc (Node *p, void *closure)
@@ -200,35 +247,35 @@ find_dirs (const char *dir, List *list, int checkadm, List *entries)
 	skip_emptydir = 1;
 
     /* set up to read the dir */
-    if ((dirp = CVS_OPENDIR (dir)) == NULL)
-	return (1);
+    if (!(dirp = CVS_OPENDIR (dir)))
+	return 1;
 
     /* read the dir, grabbing sub-dirs */
     errno = 0;
-    while ((dp = CVS_READDIR (dirp)) != NULL)
+    while (dp = CVS_READDIR (dirp))
     {
-	if (strcmp (dp->d_name, ".") == 0 ||
-	    strcmp (dp->d_name, "..") == 0 ||
-	    strcmp (dp->d_name, CVSATTIC) == 0 ||
-	    strcmp (dp->d_name, CVSLCK) == 0 ||
-	    strcmp (dp->d_name, CVSREP) == 0)
+	if (!strcmp (dp->d_name, ".") ||
+	    !strcmp (dp->d_name, "..") ||
+	    !strcmp (dp->d_name, CVSATTIC) ||
+	    !strcmp (dp->d_name, CVSLCK) ||
+	    !strcmp (dp->d_name, CVSREP))
 	    goto do_it_again;
 
 	/* findnode() is going to be significantly faster than stat()
 	   because it involves no system calls.  That is why we bother
 	   with the entries argument, and why we check this first.  */
-	if (entries != NULL && findnode (entries, dp->d_name) != NULL)
+	if (entries && findnode (entries, dp->d_name))
 	    goto do_it_again;
 
 	if (skip_emptydir
-	    && strcmp (dp->d_name, CVSNULLREPOS) == 0)
+	    && !strcmp (dp->d_name, CVSNULLREPOS))
 	    goto do_it_again;
 
 	if (!DIRENT_MIGHT_BE_DIR(dp))
 	    goto do_it_again;
 
 	/* don't bother stating ,v files */
-	if (CVS_FNMATCH (RCSPAT, dp->d_name, 0) == 0)
+	if (!CVS_FNMATCH (RCSPAT, dp->d_name, 0))
 	    goto do_it_again;
 
 	if (!DIRENT_MUST_BE(dp, DT_DIR))
@@ -279,7 +326,7 @@ find_dirs (const char *dir, List *list, int checkadm, List *entries)
     (void) CVS_CLOSEDIR (dirp);
     if (tmp != NULL)
 	free (tmp);
-    return (0);
+    return 0;
 }
 
 
@@ -322,15 +369,16 @@ Find_Directories (const char *repository, const char *update_dir,
                the subdirectories the hard way, and, if possible, add
                it to the Entries file for next time.  */
 
-	    /* FIXME-maybe: find_dirs is bogus for this usage because
-	       it skips CVSATTIC and CVSLCK directories--those names
-	       should be special only in the repository.  However, in
-	       the interests of not perturbing this code, we probably
-	       should leave well enough alone unless we want to write
-	       a sanity.sh test case (which would operate by manually
-	       hacking on the CVS/Entries file).  */
-
-	    if (find_dirs (".", dirlist, 1, tmpentries) != 0)
+	    /* find_dirs() is appropriate here.  It was originally designed for
+	     * use in the repository, so it skips CVSATTIC and CVSLCK
+	     * directories, but this is still the right thing to do in a
+	     * sandbox since doing otherwise would cause name conflicts when
+	     * the directories are imported.
+	     *
+	     * FIXME: The user should really see a warning about the skipped
+	     * directories, however.
+	     */
+	    if (find_dirs (".", dirlist, 1, tmpentries))
 		error (1, errno, "cannot open %s", quote (update_dir));
 	    if (tmpentries)
 	    {
@@ -484,52 +532,4 @@ find_files (const char *dir, const char *pat)
     if (catpat) free (catpat);
     globfree (&glist);
     return retval;
-}
-
-
-
-/* walklist() proc which strips a trailing RCSEXT from node keys.
- */
-static int
-strip_rcsext (Node *p, void *closure)
-{
-    char *s = p->key + strlen (p->key) - strlen (RCSEXT);
-    assert (!strcmp (s, RCSEXT));
-    *s = '\0'; /* strip the ,v */
-    return 0;
-}
-
-
-
-/*
- * Finds all the ,v files in the directory DIR, and adds them to the LIST.
- * Returns 0 for success and non-zero if DIR cannot be opened, in which case
- * ERRNO is set to indicate the error.  In the error case, LIST is left in some
- * reasonable state (unchanged, or containing the files which were found before
- * the error occurred).
- *
- * INPUTS
- *   dir	The directory to open for read.
- *
- * OUTPUTS
- *   list	Where to store matching file entries.
- *
- * GLOBALS
- *   errno	Set on error.
- *
- * RETURNS
- *   0, for success.
- *   <> 0, on error.
- */
-static int
-find_rcs (dir, list)
-    const char *dir;
-    List *list;
-{
-    List *newlist;
-    if (!(newlist = find_files (dir, RCSPAT)))
-	return 1;
-    walklist (newlist, strip_rcsext, NULL);
-    mergelists (list, &newlist);
-    return 0;
 }
