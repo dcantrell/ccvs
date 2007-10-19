@@ -4,16 +4,16 @@
 @macro copyleftnotice
 @noindent
 Copyright @copyright{} 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
-                       2001, 2002, 2003, 2004, 2005, 2006
+                       2001, 2002, 2003, 2004, 2005, 2006, 2007
                        Free Software Foundation, Inc.
 
 @multitable @columnfractions .12 .88
 @item Portions
 @item @tab Copyright @copyright{} 1999, 2000, 2001, 2002, 2003, 2004, 2005,
-                                  2006
+                                  2006, 2007
                                   Derek R. Price,
-@item @tab Copyright @copyright{} 2002, 2003, 2004, 2005, 2006
-                                  Ximbiot @url{http://ximbiot.com},
+@item @tab Copyright @copyright{} 2002, 2003, 2004, 2005, 2006, 2007
+                                  Ximbiot LLC @url{http://ximbiot.com},
 @item @tab Copyright @copyright{} 1992, 1993, 1999 Signum Support AB,
 @item @tab and Copyright @copyright{} others.
 @end multitable
@@ -16647,16 +16647,17 @@ If you want someone to help you and fix bugs that you
 report, there are companies which will do that for a
 fee.  One such company is:
 
-@cindex Ximbiot
+@cindex Ximbiot LLC
 @cindex Support, getting CVS support
 @example
-Ximbiot
-319 S. River St.
-Harrisburg, PA  17104-1657
+Ximbiot LLC
+Suite 230
+200 Diversion St.
+Rochester Hills, MI  48307-6636
 USA
 Email: info@@ximbiot.com
-Phone: (717) 579-6168
-Fax:   (717) 234-3125
+Phone: (248) 835-1260
+Fax:   (248) 835-1263
 @url{http://ximbiot.com/}
 
 @end example
