@@ -414,14 +414,8 @@ walklist (List *list, int (*proc) (Node *, void *), void *closure)
     Node *head, *p;
     int err = 0;
 
-#ifdef HAVE_PRINTF_PTR
-    TRACE (TRACE_FLOW, "walklist ( list=%p, proc=%p, closure=%p )",
-	   (void *)list, (void *)proc, (void *)closure);
-#else
-    TRACE (TRACE_FLOW, "walklist ( list=%lx, proc=%lx, closure=%lx )",
-	   (unsigned long)list,(unsigned long) proc,
-	   (unsigned long)closure);
-#endif
+    TRACE (TRACE_FLOW, "walklist (list=%s, proc=%s, closure=%s)",
+	   TRACE_PTR (list, 0), TRACE_PTR (proc, 1), TRACE_PTR (closure, 2));
 
     if (list == NULL)
 	return 0;
@@ -552,17 +546,10 @@ printnode (Node *node, void *closure)
 	return 0;
     }
 
-#ifdef HAVE_PRINTF_PTR
-    (void) printf("Node at %p: type = %s, key = %p = \"%s\", data = %p, next = %p, prev = %p\n",
-	   (void *) node, nodetypestring(node->type),
-	   (void *) node->key, node->key, node->data,
-	   (void *) node->next, (void *) node->prev);
-#else
-    (void) printf("Node at 0x%lx: type = %s, key = 0x%lx = \"%s\", data = 0x%lx, next = 0x%lx, prev = 0x%lx\n",
-	   (unsigned long) node, nodetypestring(node->type),
-	   (unsigned long) node->key, node->key, (unsigned long) node->data,
-	   (unsigned long) node->next, (unsigned long) node->prev);
-#endif
+    printf("Node at %s: type=%s, key=%s = \"%s\", data=%s, next=%s, prev=%s\n",
+	   TRACE_PTR (node, 0), nodetypestring(node->type),
+	   TRACE_PTR (node->key, 1), node->key, TRACE_PTR (node->data, 2),
+	   TRACE_PTR (node->next, 3), TRACE_PTR (node->prev, 4));
 
     return 0;
 }
@@ -582,14 +569,9 @@ printlist (List *list)
 	return;
     }
 
-#ifdef HAVE_PRINTF_PTR
-    (void) printf("List at %p: list = %p, HASHSIZE = %d, next = %p\n",
-	   (void *) list, (void *) list->list, HASHSIZE, (void *) list->next);
-#else
-    (void) printf("List at 0x%lx: list = 0x%lx, HASHSIZE = %d, next = 0x%lx\n",
-	   (unsigned long) list, (unsigned long) list->list, HASHSIZE,
-	   (unsigned long) list->next);
-#endif
+    printf ("List at %s: list=%s, HASHSIZE=%d, next=%s\n",
+	    TRACE_PTR (list, 0), TRACE_PTR (list->list, 1), HASHSIZE,
+	    TRACE_PTR (list->next, 2));
 
     (void) walklist(list, printnode, NULL);
 

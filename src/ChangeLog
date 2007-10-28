@@ -1,3 +1,8 @@
+2007-10-28  Derek Price  <derek@ximbiot.com>
+
+	* server.h (TRACE_PTR): Abstract cross-platform printing of pointers.
+	* hash.c, recurse.c, tag.c: Use new macro.
+
 2007-09-12  Derek Price  <derek@ximbiot.com>
 
 	* server.h (TRACE_MINUTIA): Add new trace level.

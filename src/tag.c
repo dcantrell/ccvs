@@ -438,25 +438,14 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
     char *repository;
     char *where;
 
-#ifdef HAVE_PRINTF_PTR
     TRACE (TRACE_FUNCTION,
-	   "rtag_proc (argc=%d, argv=%p, xwhere=%s,\n"
+	   "rtag_proc (argc=%d, argv=%s, xwhere=%s,\n"
       "                mwhere=%s, mfile=%s, shorten=%d,\n"
       "                local_specified=%d, mname=%s, msg=%s)",
-	    argc, (void *)argv, xwhere ? xwhere : "(null)",
+	    argc, TRACE_PTR (argv, 0), xwhere ? xwhere : "(null)",
 	    mwhere ? mwhere : "(null)", mfile ? mfile : "(null)",
 	    shorten, local_specified,
 	    mname ? mname : "(null)", msg ? msg : "(null)" );
-#else
-    TRACE (TRACE_FUNCTION,
-	   "rtag_proc (argc=%d, argv=%lx, xwhere=%s,\n"
-      "                mwhere=%s, mfile=%s, shorten=%d,\n"
-      "                local_specified=%d, mname=%s, msg=%s )",
-	    argc, (unsigned long)argv, xwhere ? xwhere : "(null)",
-	    mwhere ? mwhere : "(null)", mfile ? mfile : "(null)",
-	    shorten, local_specified,
-	    mname ? mname : "(null)", msg ? msg : "(null)" );
-#endif
 
     if (is_rtag)
     {
@@ -1641,21 +1630,12 @@ tag_check_valid (const char *name, int argc, char **argv, int local, int aflag,
     struct saved_cwd cwd;
     int which;
 
-#ifdef HAVE_PRINTF_PTR
     TRACE (TRACE_FUNCTION,
-	   "tag_check_valid (name=%s, argc=%d, argv=%p, local=%d,\n"
+	   "tag_check_valid (name=%s, argc=%d, argv=%s, local=%d,\n"
       "                      aflag=%d, repository=%s, valid=%s)",
-	   name ? name : "(name)", argc, (void *)argv, local, aflag,
+	   name ? name : "(name)", argc, TRACE_PTR (argv, 0), local, aflag,
 	   repository ? repository : "(null)",
 	   valid ? "true" : "false");
-#else
-    TRACE (TRACE_FUNCTION,
-	   "tag_check_valid (name=%s, argc=%d, argv=%lx, local=%d,\n"
-      "                      aflag=%d, repository=%s, valid=%s)",
-	   name ? name : "(name)", argc, (unsigned long)argv, local, aflag,
-	   repository ? repository : "(null)",
-	   valid ? "true" : "false");
-#endif
 
     /* Numeric tags require only a syntactic check.  */
     if (isdigit ((unsigned char) name[0]))
