@@ -406,7 +406,11 @@ findnode_fn (List *list, const char *key)
 
 
 /*
- * walk a list with a specific proc
+ * Walk LIST, calling PROC for each node in LIST and preserving CLOSURE.  Does
+ * nothing when LIST is NULL or empty.
+ *
+ * RETURNS
+ *   The sum total of each of the integers returned by all calls to PROC.
  */
 int
 walklist (List *list, int (*proc) (Node *, void *), void *closure)
@@ -417,8 +421,7 @@ walklist (List *list, int (*proc) (Node *, void *), void *closure)
     TRACE (TRACE_FLOW, "walklist (list=%s, proc=%s, closure=%s)",
 	   TRACE_PTR (list, 0), TRACE_PTR (proc, 1), TRACE_PTR (closure, 2));
 
-    if (list == NULL)
-	return 0;
+    if (!list) return 0;
 
     head = list->list;
     for (p = head->next; p != head; p = p->next)
@@ -540,16 +543,16 @@ nodetypestring (Ntype type)
 static int
 printnode (Node *node, void *closure)
 {
-    if (node == NULL)
+    if (!node)
     {
-	(void) printf("NULL node.\n");
+	printf ("NULL node.\n");
 	return 0;
     }
 
-    printf("Node at %s: type=%s, key=%s = \"%s\", data=%s, next=%s, prev=%s\n",
-	   TRACE_PTR (node, 0), nodetypestring(node->type),
-	   TRACE_PTR (node->key, 1), node->key, TRACE_PTR (node->data, 2),
-	   TRACE_PTR (node->next, 3), TRACE_PTR (node->prev, 4));
+    printf ("Node at %s: type=%s, key=%s = \"%s\", data=%s, next=%s, prev=%s\n",
+	    TRACE_PTR (node, 0), nodetypestring(node->type),
+	    TRACE_PTR (node->key, 1), node->key, TRACE_PTR (node->data, 2),
+	    TRACE_PTR (node->next, 3), TRACE_PTR (node->prev, 4));
 
     return 0;
 }
