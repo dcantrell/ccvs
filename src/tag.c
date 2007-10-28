@@ -442,10 +442,9 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 	   "rtag_proc (argc=%d, argv=%s, xwhere=%s,\n"
       "                mwhere=%s, mfile=%s, shorten=%d,\n"
       "                local_specified=%d, mname=%s, msg=%s)",
-	    argc, TRACE_PTR (argv, 0), xwhere ? xwhere : "(null)",
-	    mwhere ? mwhere : "(null)", mfile ? mfile : "(null)",
-	    shorten, local_specified,
-	    mname ? mname : "(null)", msg ? msg : "(null)" );
+	   argc, TRACE_PTR (argv, 0), TRACE_NULL (xwhere),
+	   TRACE_NULL (mwhere), TRACE_NULL (mfile), shorten,
+	   local_specified, TRACE_NULL (mname), TRACE_NULL (msg));
 
     if (is_rtag)
     {
@@ -453,17 +452,16 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
                               + strlen (argv[0])
 			      + (mfile == NULL ? 0 : strlen (mfile) + 1)
                               + 2);
-	(void) sprintf (repository, "%s/%s", current_parsed_root->directory,
-                        argv[0]);
+	sprintf (repository, "%s/%s", current_parsed_root->directory, argv[0]);
 	where = xmalloc (strlen (argv[0])
-                         + (mfile == NULL ? 0 : strlen (mfile) + 1)
+                         + (mfile ? strlen (mfile) + 1 : 0)
 			 + 1);
-	(void) strcpy (where, argv[0]);
+	strcpy (where, argv[0]);
 
 	/* If MFILE isn't null, we need to set up to do only part of the
          * module.
          */
-	if (mfile != NULL)
+	if (mfile)
 	{
 	    char *cp;
 	    char *path;
@@ -471,25 +469,25 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 	    /* If the portion of the module is a path, put the dir part on
              * REPOS.
              */
-	    if ((cp = strrchr (mfile, '/')) != NULL)
+	    if (cp = strrchr (mfile, '/'))
 	    {
 		*cp = '\0';
-		(void) strcat (repository, "/");
-		(void) strcat (repository, mfile);
-		(void) strcat (where, "/");
-		(void) strcat (where, mfile);
+		strcat (repository, "/");
+		strcat (repository, mfile);
+		strcat (where, "/");
+		strcat (where, mfile);
 		mfile = cp + 1;
 	    }
 
 	    /* take care of the rest */
 	    path = xmalloc (strlen (repository) + strlen (mfile) + 5);
-	    (void) sprintf (path, "%s/%s", repository, mfile);
+	    sprintf (path, "%s/%s", repository, mfile);
 	    if (isdir (path))
 	    {
 		/* directory means repository gets the dir tacked on */
-		(void) strcpy (repository, path);
-		(void) strcat (where, "/");
-		(void) strcat (where, mfile);
+		strcpy (repository, path);
+		strcat (where, "/");
+		strcat (where, mfile);
 	    }
 	    else
 	    {
@@ -523,7 +521,7 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
         repository = "";
     }
 
-    if (numtag != NULL && !numtag_validated)
+    if (numtag && !numtag_validated)
     {
 	tag_check_valid (numtag, argc - 1, argv + 1, local_specified, 0,
 			 repository, false);
@@ -540,9 +538,7 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 			   CVS_LOCK_READ, where, 1, repository);
 
     if (err)
-    {
        error (1, 0, "correct the above errors first!");
-    }
 
     /* It would be nice to provide consistency with respect to
        commits; however CVS lacks the infrastructure to do that (see
@@ -556,8 +552,7 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 	 repository);
     dellist (&mtlist);
     if (which & W_REPOS) free (repository);
-    if (where != NULL)
-	free (where);
+    if (where) free (where);
     return err;
 }
 
@@ -1633,9 +1628,8 @@ tag_check_valid (const char *name, int argc, char **argv, int local, int aflag,
     TRACE (TRACE_FUNCTION,
 	   "tag_check_valid (name=%s, argc=%d, argv=%s, local=%d,\n"
       "                      aflag=%d, repository=%s, valid=%s)",
-	   name ? name : "(name)", argc, TRACE_PTR (argv, 0), local, aflag,
-	   repository ? repository : "(null)",
-	   valid ? "true" : "false");
+	   TRACE_NULL (name), argc, TRACE_PTR (argv, 0), local,
+	   aflag, TRACE_NULL (repository), valid ? "true" : "false");
 
     /* Numeric tags require only a syntactic check.  */
     if (isdigit ((unsigned char) name[0]))
@@ -1675,7 +1669,7 @@ Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
 	the_val_args.found = 0;
 	which = W_REPOS | W_ATTIC;
 
-	if (repository == NULL || repository[0] == '\0')
+	if (!repository || !*repository)
 	    which |= W_LOCAL;
 	else
 	{

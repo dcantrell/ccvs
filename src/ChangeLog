@@ -1,5 +1,7 @@
 2007-10-28  Derek Price  <derek@ximbiot.com>
 
+	* hash.c, tag.c: Use TRACE_NULL as needed.  Some cleanup.
+
 	* server.h (TRACE_PTR): Abstract cross-platform printing of pointers.
 	* hash.c, recurse.c, tag.c: Use new macro.
 
