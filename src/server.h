@@ -244,6 +244,21 @@ void cvs_trace (enum trace_level level, const char *fmt, ...)
   __attribute__ ((__format__ (__printf__, 2, 3)));
 #define TRACE cvs_trace
 
+static inline const char *
+cvs_trace_ptr (void *ptr_in, unsigned short int index)
+{
+    /* # bytes * 2 chars/byte + '0x\0'.  */
+#ifdef HAVE_PRINTF_PTR
+    static char buf[10][sizeof (void *) * 2 + 3];
+    sprintf (buf[index], "%p", ptr_in);
+#else
+    static char buf[10][sizeof (unsigned long) * 2 + 3];
+    sprintf (buf[index], "%lx", (unsigned long) ptr_in);
+#endif
+    return buf[index];
+}
+#define TRACE_PTR cvs_trace_ptr
+
 
 
 extern cvsroot_t *referrer;

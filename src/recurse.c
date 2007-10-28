@@ -201,35 +201,19 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
     List *files_by_dir = NULL;
     struct recursion_frame frame;
 
-#ifdef HAVE_PRINTF_PTR
     TRACE (TRACE_FLOW,
-	   "start_recursion (fileproc=%p, filesdoneproc=%p,\n"
-      "                      direntproc=%p, dirleavproc=%p,\n"
-      "                      callerdat=%p, argc=%d, argv=%p,\n"
+	   "start_recursion (fileproc=%s, filesdoneproc=%s,\n"
+      "                      direntproc=%s, dirleavproc=%s,\n"
+      "                      callerdat=%s, argc=%d, argv=%s,\n"
       "                      local=%d, which=%d, aflag=%d,\n"
       "                      locktype=%d, update_preload=%s\n"
       "                      dosrcs=%d, repository_in=%s )",
-	   (void *) fileproc, (void *) filesdoneproc,
-	   (void *) direntproc, (void *) dirleaveproc,
-	   (void *) callerdat, argc, (void *) argv,
+	   TRACE_PTR (fileproc, 0), TRACE_PTR (filesdoneproc, 1),
+	   TRACE_PTR (direntproc, 2), TRACE_PTR (dirleaveproc, 3),
+	   TRACE_PTR (callerdat, 4), argc, TRACE_PTR (argv, 5),
 	   local, which, aflag, locktype,
 	   TRACE_NULL (update_preload), dosrcs,
 	   TRACE_NULL (repository_in));
-#else
-    TRACE (TRACE_FLOW,
-	   "start_recursion (fileproc=%lx, filesdoneproc=%lx,\n"
-      "                      direntproc=%lx, dirleavproc=%lx,\n"
-      "                      callerdat=%lx, argc=%d, argv=%lx,\n"
-      "                      local=%d, which=%d, aflag=%d,\n"
-      "                      locktype=%d, update_preload=%s\n"
-      "                      dosrcs=%d, repository_in=%s )",
-	   (unsigned long) fileproc, (unsigned long) filesdoneproc,
-	   (unsigned long) direntproc, (unsigned long) dirleaveproc,
-	   (unsigned long) callerdat, argc, (unsigned long) argv,
-	   local, which, aflag, locktype,
-	   TRACE_NULL (update_preload), dosrcs,
-	   TRACE_NULL (repository_in));
-#endif
 
     frame.fileproc = fileproc;
     frame.filesdoneproc = filesdoneproc;
