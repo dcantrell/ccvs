@@ -1,5 +1,13 @@
 2007-11-10  Mark D. Baushke  <mdb@gnu.org>
 
+	* rcs.c (RCS_getprevious): Fix warnings for non-gcc compilers.
+	(RCS_getorigin): Ditto.
+	(RCS_getroot): Ditto.
+	(translate_tag): Ditto.
+	(Patch suggested by Larry Jones  <lawrence.jones@ugs.com>.)
+	
+2007-11-10  Mark D. Baushke  <mdb@gnu.org>
+
 	* rcs.c (RCS_getdate): Remove unused local variables.
 	(RCS_getprevious, RCS_getorigin, RCS_getroot): Silence gcc warning.
 	(RCS_getorigin): Logic cleanup.

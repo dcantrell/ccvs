@@ -3385,7 +3385,7 @@ RCS_getprevious (RCSNode *rcs, const char *rev)
 	    Node *br;
 	    for (br = head->next; br != head; br = br->next)
 	    {
-                if ((node = findnode (rcs->versions, br->key)))
+                if ((node = findnode (rcs->versions, br->key)) != NULL)
 		{
 		    if (strncmp (((RCSVers *)node->data)->version, trev, len))
 		        continue;
@@ -3468,7 +3468,7 @@ RCS_getprevious (RCSNode *rcs, const char *rev)
 		    for (br = head->next; br != head; br = br->next)
 		    {
 		        Node *node = NULL;
-		        if ((node = findnode (rcs->versions, br->key)))
+		        if ((node = findnode (rcs->versions, br->key)) != NULL)
 			{
 			    vers = node->data;
 			    if (!vers->dead
@@ -3647,7 +3647,7 @@ RCS_getorigin (RCSNode *rcs, const char *rev)
 		      if (!strncmp (tmp, br->key, len))
 		      {
 			  Node *bn = NULL;
-			  if ((bn = findnode (rcs->versions, br->key)))
+			  if ((bn = findnode (rcs->versions, br->key)) != NULL)
 			  {
 			      RCSVers *cv = bn->data;
 			      if (cv->dead)
@@ -3774,7 +3774,7 @@ RCS_getroot (RCSNode *rcs, const char *rev)
                     //check if br->key is on branch rev
                     if (!strncmp (rev, br->key, len))
                     {
-                        if ((node = findnode (rcs->versions, br->key)))
+                        if ((node = findnode (rcs->versions, br->key)) != NULL)
                         {
 			    vers = node->data;
                             if (vers->dead && !RCS_datecmp (rootdate, vers->date))
@@ -4002,7 +4002,7 @@ translate_tag (RCSNode *rcs, const char *tag, bool keepmagic)
 		else if (STREQ (token, TAG_COMMITID))
 		{
 		    char *commitid = strtok (NULL,".");
-		    if ((token = strtok (NULL,".")))
+		    if ((token = strtok (NULL,".")) != NULL)
 		        /* The next token needs to be evaluated here because
 			 * RCS_getcommitid needs to know whether a previous
 			 * revision is requested (performance enhancement).
