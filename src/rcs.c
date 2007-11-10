@@ -2998,10 +2998,7 @@ RCS_head (RCSNode *rcs)
 char *
 RCS_getdate (RCSNode *rcs, const char *date, int force_tag_match)
 {
-    char *cur_rev = NULL;
     char *retval = NULL;
-    Node *p;
-    RCSVers *vers = NULL;
 
     /* make sure we have something to look at... */
     assert (rcs != NULL);
@@ -3388,7 +3385,7 @@ RCS_getprevious (RCSNode *rcs, const char *rev)
 	    Node *br;
 	    for (br = head->next; br != head; br = br->next)
 	    {
-	        if (node = findnode (rcs->versions, br->key))
+                if ((node = findnode (rcs->versions, br->key)))
 		{
 		    if (strncmp (((RCSVers *)node->data)->version, trev, len))
 		        continue;
@@ -3471,7 +3468,7 @@ RCS_getprevious (RCSNode *rcs, const char *rev)
 		    for (br = head->next; br != head; br = br->next)
 		    {
 		        Node *node = NULL;
-		        if (node = findnode (rcs->versions, br->key))
+		        if ((node = findnode (rcs->versions, br->key)))
 			{
 			    vers = node->data;
 			    if (!vers->dead
@@ -3601,21 +3598,15 @@ RCS_getorigin (RCSNode *rcs, const char *rev)
     if (!(dots & 1)) /* branch handling => turn into a head revision */
     {
         trev = RCS_branch_head (rcs, rev);
-	if (trev)
-	{
-	    if (dots > (dots = numdots (trev)))
-	    {
-		/* Got the root revision.  The first commit to the branch is
-		 * defined as the origin, so return NULL.
-		 */
-		free (trev);
-		return NULL;
-	    }
-	    /* Else, we have a head revision on the branch.  */
-	}
-	else
-	    /* Error - branch not found...  */
-	    return NULL;
+        if (!trev)
+        {
+	    /* Head not found, so there are no commits on this branch
+             * Only the tag exists ... take its revision
+             */
+            trev = xstrdup (rev);
+            truncate_revnum_in_place (trev);
+        }
+        dots = numdots (trev);
     }
     else
         trev = xstrdup (rev);
@@ -3656,7 +3647,7 @@ RCS_getorigin (RCSNode *rcs, const char *rev)
 		      if (!strncmp (tmp, br->key, len))
 		      {
 			  Node *bn = NULL;
-			  if (bn = findnode (rcs->versions, br->key))
+			  if ((bn = findnode (rcs->versions, br->key)))
 			  {
 			      RCSVers *cv = bn->data;
 			      if (cv->dead)
@@ -3783,7 +3774,7 @@ RCS_getroot (RCSNode *rcs, const char *rev)
                     //check if br->key is on branch rev
                     if (!strncmp (rev, br->key, len))
                     {
-                        if (node = findnode (rcs->versions, br->key))
+                        if ((node = findnode (rcs->versions, br->key)))
                         {
 			    vers = node->data;
                             if (vers->dead && !RCS_datecmp (rootdate, vers->date))
@@ -3909,10 +3900,8 @@ static char *
 translate_tag (RCSNode *rcs, const char *tag, bool keepmagic)
 {
 /*    printf("translate_tag: %s\n",tag); */
-    char c;
     char *retval = NULL;
     char *tmp, *tmpval;
-    bool dotstart = false;
 
     assert (rcs && tag);
 
@@ -4013,7 +4002,7 @@ translate_tag (RCSNode *rcs, const char *tag, bool keepmagic)
 		else if (STREQ (token, TAG_COMMITID))
 		{
 		    char *commitid = strtok (NULL,".");
-		    if (token = strtok (NULL,"."))
+		    if ((token = strtok (NULL,".")))
 		        /* The next token needs to be evaluated here because
 			 * RCS_getcommitid needs to know whether a previous
 			 * revision is requested (performance enhancement).
