@@ -1,4 +1,4 @@
-2007-11-10  Mark D. Baushke  <mdb@juniper.net>
+2007-11-10  Mark D. Baushke  <mdb@gnu.org>
 
 	* rcs.c (RCS_getdate): Remove unused local variables.
 	(RCS_getprevious, RCS_getorigin, RCS_getroot): Silence gcc warning.
