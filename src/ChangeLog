@@ -1,3 +1,14 @@
+2007-11-10  Mark D. Baushke  <mdb@juniper.net>
+
+	* rcs.c (RCS_getdate): Remove unused local variables.
+	(RCS_getprevious, RCS_getorigin, RCS_getroot): Silence gcc warning.
+	(RCS_getorigin): Logic cleanup.
+	(translate_tag): Silence gcc warning. Remove unused local
+	variables.
+	* update.c (join_file): j1 and j2 are const.
+	* sanity.sh: Update tests for tag-ext-70 thru tag-ext-92
+	(Patch from Frank Hemer <frank@hemer.org>.)
+
 2006-01-16  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h: New fn (Version_release_relTag)

@@ -78,7 +78,7 @@ static int update_filesdone_proc (void *callerdat, int err,
 static int get_linkinfo_proc( void *_callerdat, struct _finfo * );
 #endif
 static void join_file (struct file_info *finfo, Vers_TS *vers_ts,
-                       const char *j1, const char *j2);
+                       char *j1, char *j2);
 
 static char *options = NULL;
 static char *tag = NULL;
@@ -2089,7 +2089,7 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
  *   1.  Is not called in client mode.
  */
 static void
-join_file (struct file_info *finfo, Vers_TS *vers, const char *j1, const char *j2)
+join_file (struct file_info *finfo, Vers_TS *vers, char *j1, char *j2)
 {
     char *backup;
     char *t_options;

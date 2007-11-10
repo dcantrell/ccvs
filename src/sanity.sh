@@ -12955,7 +12955,31 @@ diff -r1\.1\.2\.1 -r1\.1\.2\.3
 "cvs diff: Tag \.root\.head refers to a dead (removed) revision in file \`file3'\.
 cvs diff: No comparison available\.  Pass \`-N' to \`cvs diff'?"
 
-	  dotest_fail tag-ext-70 "$testcvs diff -r \.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev file3" \
+          dotest_fail tag-ext-70 "$testcvs diff -r BRANCH1\.origin file1" \
+"Index: file1
+===================================================================
+RCS file: /tmp/cvs-sanity/cvsroot/tag-ext/file1,v
+retrieving revision 1\.1
+retrieving revision 1\.3
+diff -r1\.1 -r1\.3
+1c1
+< content
+---
+> content3"
+
+          dotest_fail tag-ext-71 "$testcvs diff -r BRANCH1-2-1-1\.origin file3" \
+"Index: file3
+===================================================================
+RCS file: $CVSROOT_DIRNAME/$module/file3,v
+retrieving revision 1\.1\.2\.1
+retrieving revision 1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+diff -r1\.1\.2\.1 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
+1c1
+< b1content
+---
+> b1-2-1-1content3"
+
+	  dotest_fail tag-ext-72 "$testcvs diff -r \.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev\.prev file3" \
 "Index: file3
 ===================================================================
 RCS file: $CVSROOT_DIRNAME/$module/file3,v
@@ -12970,7 +12994,7 @@ diff -r1\.1\.2\.1 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
 	  date_T1=`getrlogdate -r1\.2 tag-ext/file3`
 	  date_T2=`getrlogdate -r1\.1\.2\.2\.2\.2\.2\.8 tag-ext/file3`
 	  
-	  dotest_fail tag-ext-71 "$testcvs diff -r \.trunk:'$date_T1' file3" \
+	  dotest_fail tag-ext-73 "$testcvs diff -r \.trunk:'$date_T1' file3" \
 "Index: file3
 ===================================================================
 RCS file: $CVSROOT_DIRNAME/$module/file3,v
@@ -12982,7 +13006,7 @@ diff -r1\.2 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
 ---
 > b1-2-1-1content3"
 
-	  dotest_fail tag-ext-72 "$testcvs diff -r BRANCH1-2-1:'$date_T2' file3" \
+	  dotest_fail tag-ext-74 "$testcvs diff -r BRANCH1-2-1:'$date_T2' file3" \
 "Index: file3
 ===================================================================
 RCS file: $CVSROOT_DIRNAME/$module/file3,v
@@ -12994,7 +13018,7 @@ diff -r1\.1\.2\.2\.2\.2\.2\.8 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
 ---
 > b1-2-1-1content3"
 
-          dotest_fail tag-ext-73 "$testcvs diff -rBRANCH1.prev file1" \
+          dotest_fail tag-ext-75 "$testcvs diff -rBRANCH1.prev file1" \
 "Index: file1
 ===================================================================
 RCS file: $CVSROOT_DIRNAME/$module/file1,v
@@ -13008,7 +13032,7 @@ diff -r1\.2\.2\.1 -r1\.3
 
           COMMITID=$(cat $CVSROOT_DIRNAME/tag-ext/file3,v | grep -m 21 commitid | tail -n 1);
           COMMITID=`expr match ${COMMITID:9} '\([a-zA-Z0-9]*\)'`
-	  dotest_fail tag-ext-74 "$testcvs diff -r .commitid.$COMMITID file3" \
+	  dotest_fail tag-ext-76 "$testcvs diff -r .commitid.$COMMITID file3" \
 "Index: file3
 ===================================================================
 RCS file: $CVSROOT_DIRNAME/$module/file3,v
@@ -13020,7 +13044,7 @@ diff -r1\.1\.2\.2\.2\.2\.2\.9\.2\.2 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
 ---
 > b1-2-1-1content3"
 
-	  dotest_fail tag-ext-75 "$testcvs diff -r @$COMMITID file3" \
+	  dotest_fail tag-ext-77 "$testcvs diff -r @$COMMITID file3" \
 "Index: file3
 ===================================================================
 RCS file: $CVSROOT_DIRNAME/$module/file3,v
@@ -13032,7 +13056,7 @@ diff -r1\.1\.2\.2\.2\.2\.2\.9\.2\.2 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
 ---
 > b1-2-1-1content3"
 
-	  dotest_fail tag-ext-76 "$testcvs diff -r '@<$COMMITID' file3" \
+	  dotest_fail tag-ext-78 "$testcvs diff -r '@<$COMMITID' file3" \
 "Index: file3
 ===================================================================
 RCS file: $CVSROOT_DIRNAME/$module/file3,v
@@ -13046,34 +13070,34 @@ diff -r1\.1\.2\.2\.2\.2\.2\.9\.2\.1 -r1\.1\.2\.2\.2\.2\.2\.9\.2\.3
 
           COMMITID=$(cat $CVSROOT_DIRNAME/tag-ext/file1,v | grep -m 3 commitid | tail -n 1);
           COMMITID=`expr match ${COMMITID:9} '\([a-zA-Z0-9]*\)'`
-          dotest tag-ext-77 "$testcvs update -r .commitid.$COMMITID" \
+          dotest tag-ext-79 "$testcvs update -r .commitid.$COMMITID" \
 "cvs update: Updating .
 U file1
 U file2
 cvs update: \`file3' is no longer in the repository"
 
-	  dotest tag-ext-78 "cat CVS/Entries && cat CVS/Tag" \
+	  dotest tag-ext-80 "cat CVS/Entries && cat CVS/Tag" \
 "/file1/1\.1/[a-zA-Z0-9 :]*//T\.commitid\.$COMMITID
 /file2/1\.1/[a-zA-Z0-9 :]*//T\.commitid\.$COMMITID
 D
 N\.commitid\.$COMMITID"
 
-          dotest tag-ext-79 "$testcvs update -r @$COMMITID" \
+          dotest tag-ext-81 "$testcvs update -r @$COMMITID" \
 "cvs update: Updating ."
 
-	  dotest tag-ext-80 "cat CVS/Entries && cat CVS/Tag" \
+	  dotest tag-ext-82 "cat CVS/Entries && cat CVS/Tag" \
 "/file1/1\.1/[a-zA-Z0-9 :]*//T@$COMMITID
 /file2/1\.1/[a-zA-Z0-9 :]*//T@$COMMITID
 D
 N@$COMMITID"
 
-	  dotest tag-ext-81 "$testcvs -Q update -r BRANCH1-1"
+	  dotest tag-ext-83 "$testcvs -Q update -r BRANCH1-1"
 
-	  dotest tag-ext-82 "$testcvs -Q update -r BRANCH1 file1"
+	  dotest tag-ext-84 "$testcvs -Q update -r BRANCH1 file1"
 
           COMMITID=$(cat $CVSROOT_DIRNAME/tag-ext/file3,v | grep -m 3 commitid | tail -n 1);
           COMMITID=`expr match ${COMMITID:9} '\([a-zA-Z0-9]*\)'`
-          dotest_fail tag-ext-83 "$testcvs diff -r .commitid.$COMMITID" \
+          dotest_fail tag-ext-85 "$testcvs diff -r .commitid.$COMMITID" \
 "cvs diff: Diffing .
 cvs diff: tag .commitid.$COMMITID is not in file file1
 cvs diff: tag .commitid.$COMMITID is not in file file2
@@ -13088,7 +13112,7 @@ diff -r1\.1\.2\.1 -r1\.1\.2\.1\.2\.2
 ---
 > b1-1content2"
 
-          dotest_fail tag-ext-84 "$testcvs diff -r '@<$COMMITID'" \
+          dotest_fail tag-ext-86 "$testcvs diff -r '@<$COMMITID'" \
 "cvs diff: Diffing .
 cvs diff: tag @<$COMMITID is not in file file1
 cvs diff: tag @<$COMMITID is not in file file2
@@ -13096,7 +13120,7 @@ cvs diff: tag @<$COMMITID is not in file file3"
 
           COMMITID=$(cat $CVSROOT_DIRNAME/tag-ext/file3,v | grep -m 2 commitid | tail -n 1);
           COMMITID=`expr match ${COMMITID:9} '\([a-zA-Z0-9]*\)'`
-          dotest_fail tag-ext-85 "$testcvs diff -r '@<$COMMITID'" \
+          dotest_fail tag-ext-87 "$testcvs diff -r '@<$COMMITID'" \
 "cvs diff: Diffing .
 cvs diff: tag @<$COMMITID is not in file file1
 cvs diff: tag @<$COMMITID is not in file file2
@@ -13111,7 +13135,7 @@ diff -r1\.1\.2\.1 -r1\.1\.2\.1\.2\.2
 ---
 > b1-1content2"
 
-          dotest tag-ext-86 "$testcvs update -j .origin -j .prev file1 file2 file3" \
+          dotest tag-ext-88 "$testcvs update -j .origin -j .prev file1 file2 file3" \
 "RCS file: /tmp/cvs-sanity/cvsroot/tag-ext/file1,v
 retrieving revision 1\.1
 retrieving revision 1\.2\.2\.1
@@ -13128,22 +13152,22 @@ retrieving revision 1\.1\.2\.1\.2\.1
 Merging differences between 1\.1\.2\.1 and 1\.1\.2\.1\.2\.1 into file3
 rcsmerge: warning: conflicts during merge"
 
-          dotest tag-ext-87 "cat CVS/Entries && cat CVS/Tag" \
+          dotest tag-ext-89 "cat CVS/Entries && cat CVS/Tag" \
 "/file1/1\.2\.2\.2/Result of merge+[a-zA-Z0-9 :]*//TBRANCH1
 /file2/1\.2\.2\.1\.2\.2/Result of merge+[a-zA-Z0-9 :]*//TBRANCH1-1
 /file3/1\.1\.2\.1\.2\.2/Result of merge+[a-zA-Z0-9 :]*//TBRANCH1-1
 D
 TBRANCH1-1"
 
-          dotest tag-ext-88 "$testcvs tag -r .prev atag file1 file2 file3" \
+          dotest tag-ext-90 "$testcvs tag -r .prev atag file1 file2 file3" \
 "T file1
 T file2
 T file3"
 
-          dotest tag-ext-89 "$testcvs rtag -r BRANCH1-1.root.next btag tag-ext" \
+          dotest tag-ext-91 "$testcvs rtag -r BRANCH1-1.root.next btag tag-ext" \
 "cvs rtag: Tagging tag-ext"
 
-          dotest tag-ext-90 "$testcvs rlog tag-ext" \
+          dotest tag-ext-92 "$testcvs rlog tag-ext" \
 "cvs rlog: Logging tag-ext
 
 RCS file: $CVSROOT_DIRNAME/$module/file1,v
