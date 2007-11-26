@@ -1,7 +1,7 @@
 Words and expressions hard to translate:
 
 - annotate
-  hard to translate
+  hard to translate. one possible translation: 'com anotações'
 
 - branch
   'ramo'. should the 'galho' too, but in the documentation I'm using
@@ -67,6 +67,9 @@ Words and expressions hard to translate:
 - magic branch
   'ramo mágico'
 
+- main trunk
+  'tronco principal'. see also 'trunk'
+
 - marker
   'marcador'
 
@@ -112,6 +115,9 @@ Words and expressions hard to translate:
 
 - traceability
   'rastreabilidade'
+
+- trunk
+  'tronco'. see also 'main trunk'
 
 - unreserved
   the term appears in the expression 'unreserved checkout'. one option
