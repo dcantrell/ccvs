@@ -14097,46 +14097,44 @@ mágicos, veja em @ref{Números de ramos mágicos}.
 @c <en>associates @var{name} with the revision numbers
 @c <en>extracted from keyword strings in the corresponding
 @c <en>working files.
-Associate the symbolic name @var{name} with the branch
-or revision @var{rev}.  It is normally better to use
-@samp{cvs tag} or @samp{cvs rtag} instead.  Delete the
-symbolic name if both @samp{:} and @var{rev} are
-omitted; otherwise, print an error message if
-@var{name} is already associated with another number.
-If @var{rev} is symbolic, it is expanded before
-association.  A @var{rev} consisting of a branch number
-followed by a @samp{.} stands for the current latest
-revision in the branch.  A @samp{:} with an empty
-@var{rev} stands for the current latest revision on the
-default branch, normally the trunk.  For example,
-@samp{cvs admin -n@var{name}:} associates @var{name} with the
-current latest revision of all the RCS files;
-this contrasts with @samp{cvs admin -n@var{name}:$} which
-associates @var{name} with the revision numbers
-extracted from keyword strings in the corresponding
-working files.
+Associa o nome simbólico @var{name} com o ramo ou
+revisão @var{rev}.  Normalmente é melhor usar @samp{cvs
+tag} ou @samp{cvs rtag} ao invés disto.  Apaga o nome
+simbólico se tanto @samp{:} quanto @var{rev} forem
+omitidos; caso contrário, mostra uma mensagem de erro
+se @var{name} já estiver associado com outro número.
+Se @var{rev} é simbólico, ele é expandido depois da
+associação.  Um @var{rev} composto por um número de
+ramo seguido de um @samp{.} se refere à ultima revisão
+do momento no ramo.  Um @samp{:} com um @var{rev} vazio
+se refere à última revisão do momento no ramo padrão,
+normalmente o tronco.  Por exemplo, @samp{cvs admin
+-n@var{name}:} associa @var{name} à última revisão do
+momento de todos os arquivos RCS; Isto contrasta com
+@samp{cvs admin -n@var{name}:$} que associa @var{name}
+com os números de revisão extraídos de strings de
+palavras-chave nos arquivos de trabalho correspondentes.
 
 @c <en>@cindex Deleting revisions
-@cindex Deleting revisions
+@cindex Apagando revisões
 @c <en>@cindex Outdating revisions
-@cindex Outdating revisions
+@cindex ???Outdating??? revisões
 @c <en>@cindex Saving space
-@cindex Saving space
+@cindex Economizando espaço
 @c <en>@item -o@var{range}
 @item -o@var{range}
 @c <en>Deletes (@dfn{outdates}) the revisions given by
 @c <en>@var{range}.
-Deletes (@dfn{outdates}) the revisions given by
-@var{range}.
+Apaga (@dfn{???outdates???}) as revisões em @var{range}.
 
 @c <en>Note that this command can be quite dangerous unless
 @c <en>you know @emph{exactly} what you are doing (for example
 @c <en>see the warnings below about how the
 @c <en>@var{rev1}:@var{rev2} syntax is confusing).
-Note that this command can be quite dangerous unless
-you know @emph{exactly} what you are doing (for example
-see the warnings below about how the
-@var{rev1}:@var{rev2} syntax is confusing).
+Observe que este comando pode ser bastante perigoso
+exceto que você saiba @emph{exatamente} o que está
+fazendo (por exemplo, veja os avisos abaixo a respeito
+de como a sintaxe @var{rev1}:@var{rev2} é confusa).
 
 @c <en>If you are short on disc this option might help you.
 @c <en>But think twice before using it---there is no way short
