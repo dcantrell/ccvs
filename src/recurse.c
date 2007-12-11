@@ -318,15 +318,10 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 	       sub-directory, at least when we recurse into them we
 	       notice (hopefully) whether they are under CVS control.  */
 	    if (list_isempty (dirlist))
-	    {
-		if (update_dir[0] == '\0')
-		    error (0, 0, "in directory .:");
-		else
-		    error (0, 0, "in directory %s:", update_dir);
 		error (1, 0,
-		       "there is no version here; run '%s checkout' first",
+		       "%s is not a working directory; try `%s checkout'?",
+		       *update_dir ? quote (update_dir) : quote ("."),
 		       program_name);
-	    }
 #ifdef CLIENT_SUPPORT
 	    else if (current_parsed_root->isremote && server_started)
 	    {

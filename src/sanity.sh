@@ -3989,8 +3989,7 @@ ${CPROG} \[admin aborted\]: specify ${CPROG} -H admin for usage information"
 	  # More tests of basic/miscellaneous functionality.
 	  mkdir 1; cd 1
 	  dotest_fail basicc-1 "$testcvs diff" \
-"$CPROG diff: in directory \.:
-$CPROG \[diff aborted\]: there is no version here; run .$CPROG checkout. first"
+"$CPROG \[diff aborted\]: \`.' is not a working directory; try \`$CPROG checkout'$QUESTION"
 	  dotest basicc-2 "$testcvs -q co -l ."
 	  mkdir first-dir second-dir
 	  dotest basicc-3 "${testcvs} add first-dir second-dir" \
