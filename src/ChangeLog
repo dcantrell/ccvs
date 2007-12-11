@@ -1,3 +1,8 @@
+2007-12-11  Derek Price  <derek@ximbiot.com>
+
+	* recurse.c (start_recursion): Improve error message.
+	* sanity.sh (basicc): Update to compensate.
+
 2007-10-28  Derek Price  <derek@ximbiot.com>
 
 	* hash.c, tag.c: Use TRACE_NULL as needed.  Some cleanup.
