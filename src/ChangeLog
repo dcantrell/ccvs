@@ -1,3 +1,7 @@
+2007-12-12  Derek Price  <derek@ximbiot.com>
+
+	* recurse.c: Include GNULIB's "quote.h".
+
 2007-12-11  Derek Price  <derek@ximbiot.com>
 
 	* recurse.c (start_recursion): Improve error message.
