@@ -23,6 +23,7 @@
 #include "recurse.h"
 
 /* GNULIB headers.  */
+#include "quote.h"
 #include "save-cwd.h"
 
 /* CVS headers.  */
