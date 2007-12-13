@@ -414,6 +414,8 @@ unix_time_stamp (const char *file)
     {
 	mtime = sb.st_mtime;
     }
+    else if (! existence_error (errno))
+	error (0, errno, "cannot lstat %s", file);
 
     /* If it's a symlink, return whichever is the newest mtime of
        the link and its target, for safety.
@@ -423,6 +425,8 @@ unix_time_stamp (const char *file)
         if (mtime < sb.st_mtime)
 	    mtime = sb.st_mtime;
     }
+    else if (! existence_error (errno))
+	error (0, errno, "cannot stat %s", file);
 
     return mtime;
 }
