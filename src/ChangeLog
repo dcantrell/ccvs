@@ -1,3 +1,8 @@
+2007-12-12  Larry Jones  <lawrence.jones@siemens.com>
+
+	* vers_ts.c (unix_time_stamp): Add warnings for [l]stat failures
+	other than no such file.
+
 2007-12-12  Derek Price  <derek@ximbiot.com>
 
 	* recurse.c: Include GNULIB's "quote.h".
