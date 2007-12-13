@@ -1961,7 +1961,7 @@ static unsigned long
 rcsbuf_ftell (rcsbuf)
     struct rcsbuffer *rcsbuf;
 {
-    return rcsbuf->pos + rcsbuf->ptr - rcsbuf_buffer;
+    return rcsbuf->pos + (rcsbuf->ptr - rcsbuf_buffer);
 }
 
 /* Return a pointer to any data buffered for RCSBUF, along with the
