@@ -1921,7 +1921,7 @@ rcsbuf_valword (struct rcsbuffer *rcsbuf, char **valp)
 static off_t
 rcsbuf_ftello (struct rcsbuffer *rcsbuf)
 {
-    return rcsbuf->pos + rcsbuf->ptr - rcsbuf_buffer;
+    return rcsbuf->pos + (rcsbuf->ptr - rcsbuf_buffer);
 }
 
 
