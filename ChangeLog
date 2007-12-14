@@ -1,3 +1,9 @@
+2007-12-14  Larry Jones  <lawrence.jones@siemens.com>
+
+	* configure.in: Restore test for mmap that was inadvertently removed
+	along with the pagealign stuff, but allow user to disable.
+	* configure, config.h.in: Regenerated.
+
 2007-08-28  Derek Price  <derek@ximbiot.com>
 
 	* HACKING: Correct some statements about GNULIB's <string.h> &

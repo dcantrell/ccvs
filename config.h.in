@@ -659,6 +659,9 @@
 /* Define to 1 if you have the `mknod' function. */
 #undef HAVE_MKNOD
 
+/* Define to 1 if you have a working `mmap' system call. */
+#undef HAVE_MMAP
+
 /* Define to 1 if you have the `nanotime' function. */
 #undef HAVE_NANOTIME
 
