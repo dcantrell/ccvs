@@ -300,9 +300,6 @@ if test "$ac_cv_func_fnmatch_works" = no; then
   AC_LIBSOURCE(fnmatch.h.in)
 fi
 
-dnl for the buffer routine replacements
-AC_FUNC_MMAP
-
 # Try to find connect and gethostbyname.
 AC_CHECK_LIB(nsl, main)
 AC_SEARCH_LIBS(connect, xnet socket inet,
@@ -662,6 +659,11 @@ dnl Done setting CVS Administrator Group
 dnl
 
 dnl
+dnl end --with-*
+dnl
+
+
+dnl
 dnl Set the NDBM library to use.
 dnl
 dnl XXX - FIXME - FIXME - FIXME - XXX
@@ -699,16 +701,23 @@ dnl Done selecting NDBM library.
 dnl
 
 
-
-dnl
-dnl end --with-*
-dnl
-
-
 dnl
 dnl begin --enables
 dnl
 
+
+dnl Allow mmap for the buffer routine replacements to be disabled in
+dnl case of problems.
+
+AC_ARG_ENABLE(
+  [mmap],
+  AC_HELP_STRING(
+    [--disable-mmap],
+    [Don't mmap RCS files]))
+
+if test no != "$enable_mmap"; then
+  AC_FUNC_MMAP
+fi
 
 # Check for options requesting client and server feature. If none are
 # given and we have connect(), we want the full client & server arrangement.

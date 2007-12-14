@@ -1,3 +1,8 @@
+2007-12-14  Larry Jones  <lawrence.jones@siemens.com>
+
+	* configure.in: Add --disable-mmap.
+	* configure: Regenerated.
+
 2007-10-19  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo: Update Ximbiot's address and Copyright dates.
