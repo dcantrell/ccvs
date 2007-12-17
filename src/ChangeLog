@@ -1,3 +1,7 @@
+2007-12-16  Larry Jones  <lawrence.jones@siemens.com>
+
+	* rcs.c (HAVE_MMAP): Fall back to stdio if mmap fails.
+
 2007-12-13  Larry Jones  <lawrence.jones@siemens.com>
 
 	* rcs.c (rcsbuf_ftell): Avoid potential overflow.

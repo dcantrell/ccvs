@@ -49,6 +49,15 @@
 # endif
 #endif
 
+#ifdef MMAP_FALLBACK_TEST
+void *my_mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset)
+{
+   if (rand() & 1) return mmap(addr, len, prot, flags, fd, offset);
+   return NULL;
+}
+#define mmap my_mmap
+#endif
+
 /* The RCS -k options, and a set of enums that must match the array.
    These come first so that we can use enum kflag in function
    prototypes.  */
@@ -82,6 +91,8 @@ struct rcsbuffer
        this is non-zero, we must search the string for pairs of '@'
        and convert them to a single '@'.  */
     int embedded_at;
+    /* Whether the buffer has been mmap'ed or not.  */
+    int mmapped;
 };
 
 static RCSNode *RCS_parsercsfile_i (FILE * fp, const char *rcsfile);
@@ -1045,46 +1056,58 @@ static void
 rcsbuf_open (struct rcsbuffer *rcsbuf, FILE *fp, const char *filename,
 	     long unsigned int pos)
 {
+#ifdef HAVE_MMAP
+    void *p;
+    struct stat fs;
+    size_t mmap_off = 0;
+#endif
+
     if (rcsbuf_inuse)
 	error (1, 0, "rcsbuf_open: internal error");
     rcsbuf_inuse = 1;
 
 #ifdef HAVE_MMAP
+    /* When we have mmap, it is much more efficient to let the system do the
+     * buffering and caching for us
+     */
+
+    if ( fstat (fileno(fp), &fs) < 0 )
+	error ( 1, errno, "Could not stat RCS archive %s for mapping", filename );
+
+    if (pos)
     {
-	/* When we have mmap, it is much more efficient to let the system do the
-	 * buffering and caching for us
-	 */
-	struct stat fs;
-	size_t mmap_off = 0;
+	size_t ps = getpagesize ();
+	mmap_off = ( pos / ps ) * ps;
+    }
 
-	if ( fstat (fileno(fp), &fs) < 0 )
-	    error ( 1, errno, "Could not stat RCS archive %s for mapping", filename );
-
-	if (pos)
-	{
-	    size_t ps = getpagesize ();
-	    mmap_off = ( pos / ps ) * ps;
-	}
-
-	/* Map private here since this particular buffer is read only */
-	rcsbuf_buffer = mmap ( NULL, fs.st_size - mmap_off,
-				PROT_READ | PROT_WRITE,
-				MAP_PRIVATE, fileno(fp), mmap_off );
-	if ( rcsbuf_buffer == NULL || rcsbuf_buffer == MAP_FAILED )
-	    error ( 1, errno, "Could not map memory to RCS archive %s", filename );
-
+    /* Map private here since this particular buffer is read only */
+    p = mmap ( NULL, fs.st_size - mmap_off, PROT_READ | PROT_WRITE,
+	       MAP_PRIVATE, fileno(fp), mmap_off );
+    if (p != NULL && p != MAP_FAILED)
+    {
+	if (rcsbuf_buffer) free (rcsbuf_buffer);
+	rcsbuf_buffer = p;
 	rcsbuf_buffer_size = fs.st_size - mmap_off;
+	rcsbuf->mmapped = 1;
 	rcsbuf->ptr = rcsbuf_buffer + pos - mmap_off;
 	rcsbuf->ptrend = rcsbuf_buffer + fs.st_size - mmap_off;
 	rcsbuf->pos = mmap_off;
     }
-#else /* !HAVE_MMAP */
-    if (rcsbuf_buffer_size < RCSBUF_BUFSIZE)
+    else
+    {
+#ifndef MMAP_FALLBACK_TEST
+	error (0, errno, "Could not map memory to RCS archive %s", filename);
+#endif
+#endif /* HAVE_MMAP */
+	if (rcsbuf_buffer_size < RCSBUF_BUFSIZE)
 	expand_string (&rcsbuf_buffer, &rcsbuf_buffer_size, RCSBUF_BUFSIZE);
 
-    rcsbuf->ptr = rcsbuf_buffer;
-    rcsbuf->ptrend = rcsbuf_buffer;
-    rcsbuf->pos = pos;
+	rcsbuf->mmapped = 0;
+	rcsbuf->ptr = rcsbuf_buffer;
+	rcsbuf->ptrend = rcsbuf_buffer;
+	rcsbuf->pos = pos;
+#ifdef HAVE_MMAP
+    }
 #endif /* HAVE_MMAP */
     rcsbuf->fp = fp;
     rcsbuf->filename = filename;
@@ -1102,7 +1125,12 @@ rcsbuf_close (struct rcsbuffer *rcsbuf)
     if (! rcsbuf_inuse)
 	error (1, 0, "rcsbuf_close: internal error");
 #ifdef HAVE_MMAP
-    munmap ( rcsbuf_buffer, rcsbuf_buffer_size );
+    if (rcsbuf->mmapped)
+    {
+	munmap ( rcsbuf_buffer, rcsbuf_buffer_size );
+	rcsbuf_buffer = NULL;
+	rcsbuf_buffer_size = 0;
+    }
 #endif
     rcsbuf_inuse = 0;
 }
@@ -1145,11 +1173,10 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
     assert (ptr >= rcsbuf_buffer && ptr <= rcsbuf_buffer + rcsbuf_buffer_size);
     assert (ptrend >= rcsbuf_buffer && ptrend <= rcsbuf_buffer + rcsbuf_buffer_size);
 
-#ifndef HAVE_MMAP
     /* If the pointer is more than RCSBUF_BUFSIZE bytes into the
        buffer, move back to the start of the buffer.  This keeps the
        buffer from growing indefinitely.  */
-    if (ptr - rcsbuf_buffer >= RCSBUF_BUFSIZE)
+    if (!rcsbuf->mmapped && ptr - rcsbuf_buffer >= RCSBUF_BUFSIZE)
     {
 	int len;
 
@@ -1168,7 +1195,6 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	ptrend = ptr + len;
 	rcsbuf->ptrend = ptrend;
     }
-#endif /* HAVE_MMAP */
 
     /* Skip leading whitespace.  */
 
@@ -1581,10 +1607,10 @@ unexpected '\\x%x' reading revision number in RCS file %s",
 static char *
 rcsbuf_fill (struct rcsbuffer *rcsbuf, char *ptr, char **keyp, char **valp)
 {
-#ifdef HAVE_MMAP
-    return NULL;
-#else /* HAVE_MMAP */
     int got;
+
+    if (rcsbuf->mmapped)
+	return NULL;
 
     if (rcsbuf->ptrend - rcsbuf_buffer + RCSBUF_BUFSIZE > rcsbuf_buffer_size)
     {
@@ -1617,7 +1643,6 @@ rcsbuf_fill (struct rcsbuffer *rcsbuf, char *ptr, char **keyp, char **valp)
     rcsbuf->ptrend += got;
 
     return ptr;
-#endif /* HAVE_MMAP */
 }
 
 
@@ -1982,8 +2007,7 @@ static void
 rcsbuf_cache_open (RCSNode *rcs, off_t pos, FILE **pfp,
 		   struct rcsbuffer *prcsbuf)
 {
-#ifndef HAVE_MMAP
-    if (cached_rcs == rcs)
+    if (cached_rcs == rcs && !cached_rcsbuf.mmapped)
     {
 	if (rcsbuf_ftello (&cached_rcsbuf) != pos)
 	{
@@ -2018,7 +2042,6 @@ rcsbuf_cache_open (RCSNode *rcs, off_t pos, FILE **pfp,
     }
     else
     {
-#endif /* ifndef HAVE_MMAP */
 	/* FIXME:  If these routines can be rewritten to not write to the
 	 * rcs file buffer, there would be a considerably larger memory savings
 	 * from using mmap since the shared file would never need be copied to
@@ -2033,17 +2056,13 @@ rcsbuf_cache_open (RCSNode *rcs, off_t pos, FILE **pfp,
 	*pfp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
 	if (*pfp == NULL)
 	    error (1, 0, "unable to reopen `%s'", rcs->path);
-#ifndef HAVE_MMAP
 	if (pos != 0)
 	{
 	    if (fseeko (*pfp, pos, SEEK_SET) != 0)
 		error (1, 0, "cannot fseeko RCS file %s", rcs->path);
 	}
-#endif /* ifndef HAVE_MMAP */
 	rcsbuf_open (prcsbuf, *pfp, rcs->path, pos);
-#ifndef HAVE_MMAP
     }
-#endif /* ifndef HAVE_MMAP */
 }
 
 
@@ -8713,10 +8732,8 @@ RCS_copydeltas (RCSNode *rcs, FILE *fin, struct rcsbuffer *rcsbufin,
     char *bufrest;
     int nls;
     size_t buflen;
-#ifndef HAVE_MMAP
     char buf[8192];
     int got;
-#endif
 
     /* Count the number of versions for which we have to do some
        special operation.  */
@@ -8830,29 +8847,30 @@ RCS_copydeltas (RCSNode *rcs, FILE *fin, struct rcsbuffer *rcsbufin,
 
 	fwrite (bufrest, 1, buflen, fout);
     }
-#ifndef HAVE_MMAP
-    /* This bit isn't necessary when using mmap since the entire file
-     * will already be available via the RCS buffer.  Besides, the
-     * mmap code doesn't always keep the file pointer up to date, so
-     * this adds some data twice.
-     */
-    while ((got = fread (buf, 1, sizeof buf, fin)) != 0)
+    if (!rcsbufin->mmapped)
     {
-	if (nls > 0
-	    && got >= nls
-	    && buf[0] == '\n'
-	    && STRNEQ (buf, "\n\n\n", nls))
+	/* This bit isn't necessary when using mmap since the entire file
+	 * will already be available via the RCS buffer.  Besides, the
+	 * mmap code doesn't always keep the file pointer up to date, so
+	 * this adds some data twice.
+	 */
+	while ((got = fread (buf, 1, sizeof buf, fin)) != 0)
 	{
-	    fwrite (buf + 1, 1, got - 1, fout);
-	}
-	else
-	{
-	    fwrite (buf, 1, got, fout);
-	}
+	    if (nls > 0
+		&& got >= nls
+		&& buf[0] == '\n'
+		&& STRNEQ (buf, "\n\n\n", nls))
+	    {
+		fwrite (buf + 1, 1, got - 1, fout);
+	    }
+	    else
+	    {
+		fwrite (buf, 1, got, fout);
+	    }
 
 	nls = 0;
+	}
     }
-#endif /* HAVE_MMAP */
 }
 
 
