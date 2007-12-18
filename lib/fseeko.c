@@ -90,6 +90,10 @@ rpl_fseeko (FILE *fp, off_t offset, int whence)
        || fp->__bufpos == fp->__bufstart)
       && ((fp->__modeflags & (__FLAG_READONLY | __FLAG_READING)) == 0
 	  || fp->__bufpos == fp->__bufread))
+#elif defined __QNX__               /* QNX */
+  if ((fp->_Mode & _MWRITE ? fp->_Next == fp->_Buf : fp->_Next == fp->_Rend)
+      && fp->_Rback == fp->_Back + sizeof (fp->_Back)
+      && fp->_Rsave == NULL)
 #else
   #error "Please port gnulib fseeko.c to your platform! Look at the code in fpurge.c, then report this to bug-gnulib."
 #endif
@@ -107,6 +111,9 @@ rpl_fseeko (FILE *fp, off_t offset, int whence)
 #if defined __sferror               /* FreeBSD, NetBSD, OpenBSD, MacOS X, Cygwin */
 	  fp->_offset = pos;
 	  fp->_flags |= __SOFF;
+	  fp->_flags &= ~__SEOF;
+#elif defined _IOERR                /* AIX, HP-UX, IRIX, OSF/1, Solaris, mingw */
+          fp->_flag &= ~_IOEOF;
 #endif
 	  return 0;
 	}

@@ -1,3 +1,7 @@
+2007-12-18  Larry Jones  <lawrence.jones@siemens.com>
+
+	* fseeko.c: Update from GNULIB for EOF bug fix.
+
 2007-08-29  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (libcvs_a_DEPENDENCIES): Add @LIBOBJS@.
