@@ -1,3 +1,8 @@
+2007-12-19  Larry Jones  <lawrence.jones@siemens.com>
+
+	* client.c, import.c, lock.c, login.c, mkmodules.c, modules.c,
+	rcs.c, server.c: Fix gcc -Wall warnings.
+
 2007-12-16  Larry Jones  <lawrence.jones@siemens.com>
 
 	* rcs.c (HAVE_MMAP): Fall back to stdio if mmap fails.

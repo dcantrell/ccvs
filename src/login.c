@@ -115,20 +115,20 @@ password_entry_parseline (cvsroot_canonical, warn, linenumber, linebuf)
     {
 	/* Yes: slurp '^/\d+\D' and parse the rest of the line according to version number */
 	char *q;
-	unsigned long int entry_version;
+	unsigned long int entry_version = 0;
 
 	if (isspace(*(linebuf + 1)))
+	{
 	    /* special case since strtoul ignores leading white space */
 	    q = linebuf + 1;
+	}
 	else
+	{
 	    entry_version = strtoul (linebuf + 1, &q, 10);
-
-	if (q == linebuf + 1)
-	    /* no valid digits found by strtoul */
-	    entry_version = 0;
-	else
-	    /* assume a delimiting seperator */
-	    q++;
+	    if (q != linebuf + 1)
+		/* assume a delimiting seperator */
+		q++;
+	}
 
 	switch (entry_version)
 	{

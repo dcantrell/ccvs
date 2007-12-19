@@ -3842,7 +3842,7 @@ auth_server (root, lto_server, lfrom_server, verify_only, do_gssapi, hostinfo)
     int do_gssapi;
     struct hostent *hostinfo;
 {
-    char *username;			/* the username we use to connect */
+    char *username = "";		/* the username we use to connect */
     char no_passwd = 0;			/* gets set if no password found */
 
     /* FIXME!!!!!!!!!!!!!!!!!!
