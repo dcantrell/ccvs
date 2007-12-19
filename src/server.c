@@ -2767,7 +2767,7 @@ do_cvs_command (cmd_name, command)
 
     int dev_null_fd = -1;
 
-    int errs;
+    int errs = 0;
 
     command_pid = -1;
     stdout_pipe[0] = -1;

@@ -164,7 +164,7 @@ import (argc, argv)
      */
     /* for each "CVS" in path... */
     cp = argv[0];
-    while (cp = strstr(cp, "CVS"))
+    while ((cp = strstr(cp, "CVS")) != NULL)
     {
 	if ( /* /^CVS/ OR m#/CVS#... */
 	    (cp == argv[0] || ISDIRSEP(*(cp-1)))

@@ -858,8 +858,6 @@ in_repository (const char *path)
 
     for (;;)
     {
-	char *p;
-
 	if (isdir (cp))
 	{
 	    int foundit;

@@ -4140,7 +4140,8 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 {
     int free_rev = 0;
     enum kflag expand;
-    FILE *fp, *ofp;
+    FILE *fp;
+    FILE *ofp = NULL;
     struct stat sb;
     struct rcsbuffer rcsbuf;
     char *key;
