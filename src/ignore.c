@@ -445,11 +445,11 @@ ignore_files (List *ilist, List *entries, const char *update_dir,
 	    || lstat (file, &sb) != -1)
 	{
 	    if (DIRENT_MUST_BE (dp, DT_LNK)
-		|| DIRENT_MIGHT_BE_SYMLINK(dp) && S_ISLNK(sb.st_mode))
+		|| (DIRENT_MIGHT_BE_SYMLINK(dp) && S_ISLNK(sb.st_mode)))
 		/* Skip symlinks.  */
 		continue;
 	    else if (DIRENT_MUST_BE (dp, DT_DIR)
-		     || DIRENT_MIGHT_BE_DIR (dp) && S_ISDIR (sb.st_mode))
+		     || (DIRENT_MIGHT_BE_DIR (dp) && S_ISDIR (sb.st_mode)))
 	    {
 		if (!subdirs)
 		{

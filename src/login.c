@@ -124,15 +124,18 @@ password_entry_parseline (const char *cvsroot_canonical,
 	unsigned long int entry_version = 0 /* Placate -Wall.  */;
 
 	if (isspace(*(linebuf + 1)))
+	{
 	    /* special case since strtoul ignores leading white space */
 	    q = linebuf + 1;
+	}
 	else
+	{
 	    entry_version = strtoul (linebuf + 1, &q, 10);
-
-	if (q != linebuf + 1)
-	    /* assume a delimiting seperator */
-	    q++;
-	/* else, no valid digits found by strtoul */
+	    if (q != linebuf + 1)
+		/* assume a delimiting seperator */
+		q++;
+	    /* else, no valid digits found by strtoul */
+	}
 
 	switch (entry_version)
 	{

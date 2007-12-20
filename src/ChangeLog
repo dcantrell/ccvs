@@ -1,3 +1,9 @@
+2007-12-20  Larry Jones  <lawrence.jones@siemens.com>
+
+	* commit.c, entries.c, find_names.c, history.c, ignore.c, import.c,
+	lock.c, login.c, subr.c, subr.h, tag.c, update.c: Fix gcc -Wall
+	warnings.
+
 2007-12-16  Larry Jones  <lawrence.jones@siemens.com>
 
 	* rcs.c (HAVE_MMAP): Fall back to stdio if mmap fails.

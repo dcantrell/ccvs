@@ -809,7 +809,7 @@ void
 history_write (int type, const char *update_dir, const char *revs,
                const char *name, const char *repository)
 {
-    char *fname;
+    char *fname = NULL;
     char *workdir;
     char *username = getcaller ();
     int fd;
@@ -983,7 +983,8 @@ history_write (int type, const char *update_dir, const char *revs,
 	error (1, errno, "cannot close history file: %s", fname);
     free (workdir);
  out:
-    free (fname);
+    if (fname)
+	free (fname);
     clear_history_lock ();
 }
 

@@ -2230,7 +2230,7 @@ static inline bool
 cvs_mkdir_i (const char *name, mode_t mode,
 	     const char *update_dir, unsigned int flags)
 {
-    mode_t omask;
+    mode_t omask = 0;
     bool retval;
 
     if (noexec && !(flags & MD_FORCE)) return false;
@@ -2420,7 +2420,7 @@ dir_append_dirs (const char *dir, ...)
     va_start (args, dir);
 
     retval = xstrdup (dir);
-    while (append = va_arg (args, const char *))
+    while ((append = va_arg (args, const char *)) != NULL)
     {
 	char *new;
 

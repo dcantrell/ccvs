@@ -1011,7 +1011,7 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 		xdir = ".";
 	    else
 		xdir = finfo->update_dir;
-	    if (p = findnode (mulist, xdir))
+	    if ((p = findnode (mulist, xdir)) != NULL)
 	    {
 		ulist = ((struct master_lists *) p->data)->ulist;
 		cilist = ((struct master_lists *) p->data)->cilist;
@@ -1707,7 +1707,6 @@ commit_direntproc (void *callerdat, const char *dir, const char *repos,
 {
     Node *p;
     List *ulist;
-    char *real_repos;
 
     if (!isdir (dir))
 	return R_SKIP_ALL;

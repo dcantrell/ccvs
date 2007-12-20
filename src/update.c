@@ -1120,7 +1120,7 @@ isemptydir (const char *update_dir, const char *dir, int might_not_exist)
 	return 0;
     }
     errno = 0;
-    while (dp = CVS_READDIR (dirp))
+    while ((dp = CVS_READDIR (dirp)) != NULL)
     {
 	if (!STREQ (dp->d_name, ".") && !STREQ (dp->d_name, ".."))
 	{

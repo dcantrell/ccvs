@@ -469,7 +469,7 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 	    /* If the portion of the module is a path, put the dir part on
              * REPOS.
              */
-	    if (cp = strrchr (mfile, '/'))
+	    if ((cp = strrchr (mfile, '/')) != NULL)
 	    {
 		*cp = '\0';
 		strcat (repository, "/");
