@@ -159,7 +159,7 @@ streq (const char *a, const char *b)
 static inline bool
 strneq (const char *a, const char *b, size_t n)
 {
-    return !n || *a == *b && strncmp (a, b, n) == 0;
+    return !n || (*a == *b && strncmp (a, b, n) == 0);
 }
 # define STREQ(a, b) streq ((a), (b))
 # define STRNEQ(a, b, n) strneq ((a), (b), (n))

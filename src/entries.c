@@ -662,7 +662,7 @@ Entries_Open_Dir (int aflag, const char *update_dir_i, const char *dir)
     assert (update_dir_i);
     assert (dir);
 
-    TRACE (TRACE_FLOW, "Entries_Open_Dir (%s, %s)", update_dir, dir);
+    TRACE (TRACE_FLOW, "Entries_Open_Dir (%s, %s)", update_dir_i, dir);
 
     /* get a fresh list... */
     entries = getlist ();
@@ -692,7 +692,7 @@ Entries_Open_Dir (int aflag, const char *update_dir_i, const char *dir)
     fpin = CVS_FOPEN (entfile, "r");
     if (fpin)
     {
-	while (ent = fgetentent (fpin, NULL, &sawdir)) 
+	while ((ent = fgetentent (fpin, NULL, &sawdir)) != NULL)
 	    AddEntryNode (entries, ent);
 
 	if (fclose (fpin) < 0)

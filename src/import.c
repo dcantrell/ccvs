@@ -199,7 +199,7 @@ import (int argc, char **argv)
      */
     /* for each "CVS" in path */
     cp = argv[0];
-    while ((cp = mbsstr (cp, "CVS")))
+    while ((cp = mbsstr (cp, "CVS")) != NULL)
     {
 	if (/* /^CVS/ OR m#/CVS#... */
 	    (cp == argv[0] || ISSLASH (*(cp-1)))
@@ -490,7 +490,7 @@ import_descend (char *message, char *vtag, int targc, char **targv)
     else
     {
 	errno = 0;
-	while (dp = CVS_READDIR (dirp))
+	while ((dp = CVS_READDIR (dirp)) != NULL)
 	{
 	    if (STREQ (dp->d_name, ".") || STREQ (dp->d_name, ".."))
 		goto one_more_time_boys;
@@ -514,13 +514,13 @@ import_descend (char *message, char *vtag, int targc, char **targv)
 	    }
 
 	    if (DIRENT_MUST_BE(dp, DT_LNK)
-		     || DIRENT_MIGHT_BE_SYMLINK(dp) && islink (dp->d_name))
+		     || (DIRENT_MIGHT_BE_SYMLINK(dp) && islink (dp->d_name)))
 	    {
 		add_log ('L', dp->d_name);
 		err++;
 	    }
 	    else if (DIRENT_MUST_BE(dp, DT_DIR)
-		|| DIRENT_MIGHT_BE_DIR(dp) && isdir (dp->d_name))
+		|| (DIRENT_MIGHT_BE_DIR(dp) && isdir (dp->d_name)))
 	    {
 		Node *n;
 

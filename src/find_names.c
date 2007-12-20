@@ -254,7 +254,7 @@ find_dirs (const char *dir, List *list, int checkadm, List *entries)
 
     /* read the dir, grabbing sub-dirs */
     errno = 0;
-    while (dp = CVS_READDIR (dirp))
+    while ((dp = CVS_READDIR (dirp)) != NULL)
     {
 	if (STREQ (dp->d_name, ".")
 	    || STREQ (dp->d_name, "..")
@@ -295,7 +295,7 @@ find_dirs (const char *dir, List *list, int checkadm, List *entries)
 	{
 	    /* blow off symbolic links to dirs in local dir */
 	    if (DIRENT_MUST_BE(dp, DT_LNK)
-		|| DIRENT_MIGHT_BE_SYMLINK(dp) && islink(tmp))
+		|| (DIRENT_MIGHT_BE_SYMLINK(dp) && islink(tmp)))
 		goto do_it_again;
 
 	    /* check for new style */

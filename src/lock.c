@@ -179,7 +179,6 @@ static char *
 lock_name (const char *repository, const char *name)
 {
     char *retval;
-    const char *p;
     char *q;
     const char *short_repos;
     mode_t save_umask = 0000;
