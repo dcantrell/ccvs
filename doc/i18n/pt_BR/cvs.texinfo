@@ -6033,7 +6033,7 @@ cópia de trabalho mais recente.
 @c <en>any of these commands, you will need beware of sticky
 @c <en>tags; see @ref{Sticky tags}.
 Você também pode pegar um módulo do jeito que ele
-estava em qualquer data.  @xref{checkout options}.
+estava em qualquer data.  @xref{opções do checkout}.
 Quando usar @samp{-r} em qualquer destes comandos, você
 vai precisar estar atento às etiquetas adesivas; veja
 em @ref{Etiquetas adesivas}.
@@ -6185,7 +6185,7 @@ Etiqueta a revisão mais recente que seja anterior a @var{data}.
 @c <en>flags.  If no matching revision is found, use the most
 @c <en>recent revision (instead of ignoring the file).
 Útil apenas em conjunto com @samp{-D @var{data}} ou
-@samp{-r @var{etiqueta}}.  Se não encontrar uma revisã
+@samp{-r @var{etiqueta}}.  Se não encontrar uma revisão
 casando com o padrão, usar a revisão mais recente (ao
 invés de ignorar o arquivo).
 
@@ -7471,7 +7471,7 @@ estiver operando em vários arquivos.
 @c <en>contents it had previously.  Here is how to do it:
 Ao especificar duas opções @samp{-j} você pode também
 desfazer uma remoção ou adição de arquivo.  Por
-exemplo, suponhao que você tem um arquivo chamado
+exemplo, suponha que você tem um arquivo chamado
 @file{file1} que existia numa revisão 1.1, e você
 removeu ele (adicionando então uma revisão morta 1.2).
 Agora suponha que você quer adicioná-lo novamente, com
@@ -7681,7 +7681,7 @@ diretório de trabalho.  Portanto, não há conflito.
 @c <en>to @samp{-kb}).  Therefore, when a repository contained binary files,
 @c <en>conflicts had to be dealt with manually rather than using @samp{-kk} in
 @c <en>a merge command.}
-@strong{WARNING: Em versões do @sc{cvs} anteriores à
+@strong{ALERTA: Em versões do @sc{cvs} anteriores à
 1.12.2, existia um grande problema ao usar @samp{-kk}
 em mesclagens.  A saber, @samp{-kk} sobreescrevia
 qualquer modo de expansão de palavra-chave padrão
@@ -11358,7 +11358,7 @@ atribuídos com @code{cvs admin -s}---veja em @ref{Opções do admin}.
 @c <en>look something like this:
 A opção @code{LocalKeyword} no arquivo
 @file{CVSROOT/config} pode ser usada para especificar
-uma palavra-chave que não é usada como um alias para
+uma palavra-chave que não é usada como um ???alias??? para
 uma das seguintes palavras-chave: $@splitrcskeyword{}Id$,
 $@splitrcskeyword{}Header$, ou $@splitrcskeyword{}CVSHeader$. Por
 exemplo, se o arquivo @file{CVSROOT/config} contém uma
@@ -13704,7 +13704,7 @@ atual.  Disponível com os comandos @code{checkout} e @code{update}.
 
 @item -R
 @c <en>Process directories recursively.  This is on by default.
-Porcessa os diretórios recursivamente.  Este é o padrão.
+Processa os diretórios recursivamente.  Este é o padrão.
 
 @c <en>Available with the following commands: @code{annotate}, @code{checkout},
 @c <en>@code{commit}, @code{diff}, @code{edit}, @code{editors}, @code{export},
@@ -14539,16 +14539,17 @@ permanentes no repositório fonte.
 @c <en>@code{checkout} will show the relative path leading to
 @c <en>each file as it is extracted into your private work
 @c <en>area (unless you specify the @samp{-Q} global option).
-Note that @code{checkout} is used to create
-directories.  The top-level directory created is always
-added to the directory where @code{checkout} is
-invoked, and usually has the same name as the specified
-module.  In the case of a module alias, the created
-sub-directory may have a different name, but you can be
-sure that it will be a sub-directory, and that
-@code{checkout} will show the relative path leading to
-each file as it is extracted into your private work
-area (unless you specify the @samp{-Q} global option).
+Observe que @code{checkout} é usado para criar
+diretórios.  O diretório ???top-level??? criado é
+sempre posto no diretório onde o @code{checkout} foi
+chamado, e normalmente tem o mesmo nome do módulo
+especificado.  No caso de um ???alias??? do módulo, o
+subdiretório criado pode ter um nome diferente, mas
+pode ter certeza que será um subdiretório, e que o
+@code{checkout} vai mostrar o caminho relativo para
+cada arquivo como ele foi extraído na sua área de
+trabalho particular (a menos que você tenha
+especificado a opção global @samp{-Q}).
 
 @c <en>The files created by @code{checkout} are created
 @c <en>read-write, unless the @samp{-r} option to @sc{cvs}
@@ -14556,12 +14557,13 @@ area (unless you specify the @samp{-Q} global option).
 @c <en>@code{CVSREAD} environment variable is specified
 @c <en>(@pxref{Environment variables}), or a watch is in
 @c <en>effect for that file (@pxref{Watches}).
-The files created by @code{checkout} are created
-read-write, unless the @samp{-r} option to @sc{cvs}
-(@pxref{Opções globais}) is specified, the
-@code{CVSREAD} environment variable is specified
-(@pxref{Variáveis de ambiente}), or a watch is in
-effect for that file (@pxref{???Watches???}).
+Os arquivos criados pelo @code{checkout} são criados
+como leitura-escrita, a não ser que a opção @samp{-r}
+para o @sc{cvs}
+(@pxref{Opções globais}) tenha sido especificada, a
+variável de ambiente @code{CVSREAD} tenha sido especificada
+(@pxref{Variáveis de ambiente}), ou um ???watch??? está
+ativo para o arquivo (@pxref{???Watches???}).
 
 @c <en>Note that running @code{checkout} on a directory that was already
 @c <en>built by a prior @code{checkout} is also permitted.
@@ -14577,71 +14579,66 @@ effect for that file (@pxref{???Watches???}).
 @c <en>@code{checkout} to update an existing directory, don't
 @c <en>forget to change your directory to the top level
 @c <en>directory.
-Note that running @code{checkout} on a directory that was already
-built by a prior @code{checkout} is also permitted.
-This is similar to specifying the @samp{-d} option
-to the @code{update} command in the sense that new
-directories that have been created in the repository
-will appear in your work area.
-However, @code{checkout} takes a module name whereas
-@code{update} takes a directory name.  Also
-to use @code{checkout} this way it must be run from the
-top level directory (where you originally ran
-@code{checkout} from), so before you run
-@code{checkout} to update an existing directory, don't
-forget to change your directory to the top level
-directory.
+Observe que rodar o @code{checkout} em um diretório que
+já foi construído por um @code{checkout} anterior é
+permitido. Isto é similar a especificar a opção
+@samp{-d} no comando @code{update} fazendo com que
+novos diretórios que tenham sido criados no repositório
+vão aparecer na área de trabalho.  Entretanto, o
+@code{checkout} revebe um nome de módulo enquanto o
+@code{update} recebe um nome de diretório.  Além disso,
+para usar @code{checkout} desta forma, ele deve ser
+rodado no diretório ???top level??? (onde você
+originalmente rodou o @code{checkout}). Portanto, antes
+de rodar o @code{checkout} para atualizar um diretório
+existente, não esqueça de ir para o diretório ???top
+level???.
 
 @c <en>For the output produced by the @code{checkout} command
 @c <en>see @ref{update output}.
-For the output produced by the @code{checkout} command
-see @ref{update output}.
+Para ler sobre a saída produzida pelo comando
+@code{checkout}, veja em @ref{update output}.
 
 @menu
 @c <en>* checkout options::            checkout options
-* checkout options::            checkout options
+* opções do checkout::            opções do checkout
 @c <en>* checkout examples::           checkout examples
-* checkout examples::           checkout examples
+* exemplos de checkout::           exemplos de checkout
 @end menu
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @c <en>@node checkout options
-@node checkout options
+@node opções do checkout
 @c <en>@appendixsubsec checkout options
-@appendixsubsec checkout options
+@appendixsubsec opções do checkout
 
 @c <en>These standard options are supported by @code{checkout}
 @c <en>(@pxref{Common options}, for a complete description of
 @c <en>them):
-These standard options are supported by @code{checkout}
-(@pxref{Opções comuns}, for a complete description of
-them):
+As seguintes opções padrão são suportadas pelo @code{checkout}
+(veja em @pxref{Opções comuns} para uma descrição
+completa delas):
 
 @table @code
-@c <en>@item -D @var{date}
+@c <en>@item -D @var{data}
 @item -D @var{date}
 @c <en>Use the most recent revision no later than @var{date}.
 @c <en>This option is sticky, and implies @samp{-P}.  See
 @c <en>@ref{Sticky tags}, for more information on sticky tags/dates.
-@c <en>Use the most recent revision no later than @var{date}.
-@c <en>This option is sticky, and implies @samp{-P}.  See
-@c <en>@ref{Sticky tags}, for more information on sticky tags/dates.
-Use the most recent revision no later than @var{date}.
-This option is sticky, and implies @samp{-P}.  See
-@ref{Etiquetas adesivas}, for more information on sticky tags/dates.
-Use the most recent revision no later than @var{date}.
-This option is sticky, and implies @samp{-P}.  See
-@ref{Etiquetas adesivas}, for more information on sticky tags/dates.
+Usa a revisão mais recente entre as anteriores a @var{data}.
+Esta opção é adesiva, e implica @samp{-P}.  Veja
+@ref{Etiquetas adesivas}, para mais informações sobre
+etiquetas/datas adesivas.
 
 @item -f
 @c <en>Only useful with the @samp{-D @var{date}} or @samp{-r
 @c <en>@var{tag}} flags.  If no matching revision is found,
 @c <en>retrieve the most recent revision (instead of ignoring
 @c <en>the file).
-Only useful with the @samp{-D @var{date}} or @samp{-r
-@var{tag}} flags.  If no matching revision is found,
-retrieve the most recent revision (instead of ignoring
-the file).
+Útil apenas com as opções @samp{-D @var{data}} ou @samp{-r
+@var{tag}}.  Se nenhuma revisão casando com o padrão é
+encontrada, recupera a revisão mais recente (ao invés
+de ignorar o arquivo).
 
 @c <en>@item -k @var{kflag}
 @item -k @var{kflag}
@@ -14652,66 +14649,69 @@ the file).
 @c <en>@var{kflag}.  The @code{status} command can be viewed
 @c <en>to see the sticky options.  See @ref{Invoking CVS}, for
 @c <en>more information on the @code{status} command.
-Process keywords according to @var{kflag}.  See
-@ref{Substituição de palavra-chave}.
-This option is sticky; future updates of
-this file in this working directory will use the same
-@var{kflag}.  The @code{status} command can be viewed
-to see the sticky options.  See @ref{Chamando o CVS}, for
-more information on the @code{status} command.
+Processa palavras-chave de acordo com @var{kflag}.
+Veja em @ref{Substituição de palavra-chave}.
+Esta opção é adesiva; updates futuros deste arquivo
+neste diretório de trabalho vão usar a mesma
+@var{kflag}.  O comando @code{status} pode ser usado
+para ver as opções adesivas.  Veja em @ref{Chamando o
+CVS}, para mais informações sobre o comando @code{status}.
 
 @item -l
 @c <en>Local; run only in current working directory.
-Local; run only in current working directory.
+Local; roda apenas no diretório de trabalho atual.
 
 @item -n
 @c <en>Do not run any checkout program (as specified
 @c <en>with the @samp{-o} option in the modules file;
 @c <en>@pxref{modules}).
-Do not run any checkout program (as specified
-with the @samp{-o} option in the modules file;
+Não executa nenhum ???checkout program??? (que tenha
+sido especificado com a opção @samp{-o} no arquivo modules;
 @pxref{modules}).
 
 @item -P
 @c <en>Prune empty directories.  See @ref{Moving directories}.
-Prune empty directories.  See @ref{Movendo diretórios}.
+elimina completamente diretórios.  Veja @ref{Movendo diretórios}.
 
 @item -p
 @c <en>Pipe files to the standard output.
-Pipe files to the standard output.
+redireciona (com pipe) os arquivos para a saída padrão.
 
 @item -R
 @c <en>Checkout directories recursively.  This option is on by default.
-Checkout directories recursively.  This option is on by default.
+Faz ???Checkout??? de diretórios recursivamente.  Esta
+opção é ativa por padrão.
 
 @c <en>@item -r @var{tag}
 @item -r @var{tag}
 @c <en>Use revision @var{tag}.  This option is sticky, and implies @samp{-P}.
 @c <en>See @ref{Sticky tags}, for more information on sticky tags/dates.
-Use revision @var{tag}.  This option is sticky, and implies @samp{-P}.
-See @ref{Etiquetas adesivas}, for more information on sticky tags/dates.
+Usa a revisão @var{tag}.  Esta opção é adesiva, e
+implica @samp{-P}.  Veja @ref{Etiquetas adesivas}, para
+mais informações sobre etiquetas/datas adesivas.
 @end table
 
 @c <en>In addition to those, you can use these special command
 @c <en>options with @code{checkout}:
-In addition to those, you can use these special command
-options with @code{checkout}:
+Além destes, você pode usar as seguintes opções de
+comando especiais com @code{checkout}:
 
 @table @code
 @c <en>@item -A
 @item -A
 @c <en>Reset any sticky tags, dates, or @samp{-k} options.
 @c <en>See @ref{Sticky tags}, for more information on sticky tags/dates.
-Reset any sticky tags, dates, or @samp{-k} options.
-See @ref{Etiquetas adesivas}, for more information on sticky tags/dates.
+Desmarca qualquer etiqueta, data ou opção @samp{-k} adesivas.
+Veja @ref{Etiquetas adesivas}, para mais informações
+sobre etiquetas/datas adesivas.
 
 @item -c
 @c <en>Copy the module file, sorted, to the standard output,
 @c <en>instead of creating or modifying any files or
 @c <en>directories in your working directory.
-Copy the module file, sorted, to the standard output,
-instead of creating or modifying any files or
-directories in your working directory.
+Manda o arquivo module, ordenado, para a saída padrão,
+ao invés de criar ou modificar quaisquer arquivos ou
+diretórios no seu diretório de trabalho.
 
 @item -d @var{dir}
 @c <en>Create a directory called @var{dir} for the working
@@ -14719,11 +14719,11 @@ directories in your working directory.
 @c <en>using this flag is equivalent to using @samp{mkdir
 @c <en>@var{dir}; cd @var{dir}} followed by the checkout
 @c <en>command without the @samp{-d} flag.
-Create a directory called @var{dir} for the working
-files, instead of using the module name.  In general,
-using this flag is equivalent to using @samp{mkdir
-@var{dir}; cd @var{dir}} followed by the checkout
-command without the @samp{-d} flag.
+Cria um diretório chamado @var{dir} para os arquivos de
+trabalho, ao invés de usar o nome do módulo.  Em geral,
+usar esta opção é equivalente a usar @samp{mkdir
+@var{dir}; cd @var{dir}} seguido do comando checkout
+sem a opção @samp{-d}.
 
 @c <en>There is an important exception, however.  It is very
 @c <en>convenient when checking out a single item to have the
@@ -14731,12 +14731,12 @@ command without the @samp{-d} flag.
 @c <en>intermediate directories.  In this case @emph{only},
 @c <en>@sc{cvs} tries to ``shorten'' pathnames to avoid those empty
 @c <en>directories.
-There is an important exception, however.  It is very
-convenient when checking out a single item to have the
-output appear in a directory that doesn't contain empty
-intermediate directories.  In this case @emph{only},
-@sc{cvs} tries to ``shorten'' pathnames to avoid those empty
-directories.
+Existe uma importante exceção, entretanto.  é muito
+conveniente, quando se está fazendo check out de um
+único item, ter a saída em um diretório que não contém
+diretórios vazios intermediários.  @emph{Somente} neste
+caso, o @sc{cvs} vai tentar ``encurtar'' caminhos de arquivos
+para evitar estes diretórios vazios.
 
 @c <en>For example, given a module @samp{foo} that contains
 @c <en>the file @samp{bar.c}, the command @samp{cvs co -d dir
@@ -14746,14 +14746,14 @@ directories.
 @c <en>there is a file @samp{quux.c}, the command @samp{cvs co
 @c <en>-d dir bar/baz} will create directory @samp{dir} and
 @c <en>place @samp{quux.c} inside.
-For example, given a module @samp{foo} that contains
-the file @samp{bar.c}, the command @samp{cvs co -d dir
-foo} will create directory @samp{dir} and place
-@samp{bar.c} inside.  Similarly, given a module
-@samp{bar} which has subdirectory @samp{baz} wherein
-there is a file @samp{quux.c}, the command @samp{cvs co
--d dir bar/baz} will create directory @samp{dir} and
-place @samp{quux.c} inside.
+Por exemplo, dado um módulo @samp{foo} que contém o
+arquivo @samp{bar.c}, o comando @samp{cvs co -d dir
+foo} vai criar um diretório @samp{dir} e colocar
+@samp{bar.c} dentro.  Similarmente, dado um módulo
+@samp{bar} que tem subdiretórios @samp{baz} dentro do
+qual existe um arquivo @samp{quux.c}, o comando @samp{cvs co
+-d dir bar/baz} vai criar o diretório @samp{dir} e
+colocar @samp{quux.c} dentro.
 
 @c <en>Using the @samp{-N} flag will defeat this behavior.
 @c <en>Given the same module definitions above, @samp{cvs co
@@ -14761,22 +14761,22 @@ place @samp{quux.c} inside.
 @c <en>and place @samp{bar.c} inside, while @samp{cvs co -N -d
 @c <en>dir bar/baz} will create directories @samp{dir/bar/baz}
 @c <en>and place @samp{quux.c} inside.
-Using the @samp{-N} flag will defeat this behavior.
-Given the same module definitions above, @samp{cvs co
--N -d dir foo} will create directories @samp{dir/foo}
-and place @samp{bar.c} inside, while @samp{cvs co -N -d
-dir bar/baz} will create directories @samp{dir/bar/baz}
-and place @samp{quux.c} inside.
+Usar a opção @samp{-N} vai evitar este
+comportamento. Dadas as mesmas definições de módulo
+abaixo, @samp{cvs co -N -d dir foo} vai criar
+diretórios @samp{dir/foo} e colocar @samp{bar.c}
+dentro, enquanto @samp{cvs co -N -d dir bar/baz} vai
+criar os diretórios @samp{dir/bar/baz} e colocar @samp{quux.c} dentro.
 
 @item -j @var{tag}
 @c <en>With two @samp{-j} options, merge changes from the
 @c <en>revision specified with the first @samp{-j} option to
 @c <en>the revision specified with the second @samp{j} option,
 @c <en>into the working directory.
-With two @samp{-j} options, merge changes from the
-revision specified with the first @samp{-j} option to
-the revision specified with the second @samp{j} option,
-into the working directory.
+Com duas opções @samp{-j}, mescla mudanças da revisão
+especificada na primeira opção @samp{-j} nas revisão
+especificada com a segunda opção @samp{j}, no diretório
+de trabalho.
 
 @c <en>With one @samp{-j} option, merge changes from the
 @c <en>ancestor revision to the revision specified with the
@@ -14784,12 +14784,12 @@ into the working directory.
 @c <en>ancestor revision is the common ancestor of the
 @c <en>revision which the working directory is based on, and
 @c <en>the revision specified in the @samp{-j} option.
-With one @samp{-j} option, merge changes from the
-ancestor revision to the revision specified with the
-@samp{-j} option, into the working directory.  The
-ancestor revision is the common ancestor of the
-revision which the working directory is based on, and
-the revision specified in the @samp{-j} option.
+Com uma opção @samp{-j}, mescla mudanças da revisão
+???ancestor??? para a revisão especificada com a opção
+@samp{-j}, no diretório de trabalho.  a revisão
+???ancestor??? é o ???common ancestor??? da revisão na
+qual o diretório de trabalho é baseado, com a revisão
+especificada na opção @samp{-j}.
 
 @c <en>In addition, each -j option can contain an optional
 @c <en>date specification which, when used with branches, can
@@ -14797,11 +14797,11 @@ the revision specified in the @samp{-j} option.
 @c <en>date.  An optional date is specified by adding a colon
 @c <en>(:) to the tag:
 @c <en>@samp{-j@var{Symbolic_Tag}:@var{Date_Specifier}}.
-In addition, each -j option can contain an optional
-date specification which, when used with branches, can
-limit the chosen revision to one within a specific
-date.  An optional date is specified by adding a colon
-(:) to the tag:
+Além disso, cada opção -j pode conter um ???optional
+date specification??? que, quando usado com ramos, pode
+limitar a revisão escolhida para uma dentro de uma data
+especifica.  Uma data opcional é especificada
+adicionando dois-pontos (:) à etiqueta:
 @samp{-j@var{Symbolic_Tag}:@var{Date_Specifier}}.
 
 @c <en>@xref{Branching and merging}.
@@ -14813,31 +14813,32 @@ date.  An optional date is specified by adding a colon
 @c <en>in your working directory when you check out a single
 @c <en>module.  See the @samp{-d} flag for examples and a
 @c <en>discussion.
-Only useful together with @samp{-d @var{dir}}.  With
-this option, @sc{cvs} will not ``shorten'' module paths
-in your working directory when you check out a single
-module.  See the @samp{-d} flag for examples and a
-discussion.
+Só é útil junto com a opção @samp{-d @var{dir}}.  Com
+esta opção, o @sc{cvs} não ``encurta'' caminhos de
+módulo no seu diretório de trabalho quando você
+???check out??? um único módulo.  Veja a opção
+@samp{-d} para exemplos e uma explicação.
 
 @item -s
 @c <en>Like @samp{-c}, but include the status of all modules,
 @c <en>and sort it by the status string.  @xref{modules}, for
 @c <en>info about the @samp{-s} option that is used inside the
 @c <en>modules file to set the module status.
-Like @samp{-c}, but include the status of all modules,
-and sort it by the status string.  @xref{modules}, for
-info about the @samp{-s} option that is used inside the
-modules file to set the module status.
+Como o @samp{-c}, mas inclui o estado de todos os
+módulos, e ordena-os pela string de estado.
+@xref{modules}, para informações a respeito da opção
+@samp{-s} que é usada dentro do arquivo modules para
+configurar o estado do módulo.
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @c <en>@node checkout examples
-@node checkout examples
+@node exemplos de checkout
 @c <en>@appendixsubsec checkout examples
-@appendixsubsec checkout examples
+@appendixsubsec exemplos de checkout
 
 @c <en>Get a copy of the module @samp{tc}:
-Get a copy of the module @samp{tc}:
+Obter uma cópia do módulo @samp{tc}:
 
 @example
 $ cvs checkout tc
@@ -14845,8 +14846,8 @@ $ cvs checkout tc
 
 @c <en>Get a copy of the module @samp{tc} as it looked one day
 @c <en>ago:
-Get a copy of the module @samp{tc} as it looked one day
-ago:
+Obter uma cópia do módulo  @samp{tc} como ele era a um
+dia atrás:
 
 @example
 $ cvs checkout -D yesterday tc
@@ -15223,6 +15224,8 @@ them):
 
 @table @code
 @item -D @var{date}
+@c <en>Use the most recent revision no later than @var{date}.
+@c <en>See @samp{-r} for how this affects the comparison.
 Use the most recent revision no later than @var{date}.
 See @samp{-r} for how this affects the comparison.
 
@@ -15234,13 +15237,24 @@ Process keywords according to @var{kflag}.  See
 @ref{Substituição de palavra-chave}.
 
 @item -l
+@c <en>Local; run only in current working directory.
 Local; run only in current working directory.
 
 @item -R
+@c <en>Examine directories recursively.  This option is on by
+@c <en>default.
 Examine directories recursively.  This option is on by
 default.
 
 @item -r @var{tag}
+@c <en>Compare with revision @var{tag}.  Zero, one or two
+@c <en>@samp{-r} options can be present.  With no @samp{-r}
+@c <en>option, the working file will be compared with the
+@c <en>revision it was based on.  With one @samp{-r}, that
+@c <en>revision will be compared to your current working file.
+@c <en>With two @samp{-r} options those two revisions will be
+@c <en>compared (and your working file will not affect the
+@c <en>outcome in any way).
 Compare with revision @var{tag}.  Zero, one or two
 @samp{-r} options can be present.  With no @samp{-r}
 option, the working file will be compared with the
@@ -15253,6 +15267,8 @@ outcome in any way).
 @c about the difference between "cvs diff" and "cvs
 @c diff -r HEAD".  This often confuses new users.
 
+@c <en>One or both @samp{-r} options can be replaced by a
+@c <en>@samp{-D @var{date}} option, described above.
 One or both @samp{-r} options can be replaced by a
 @samp{-D @var{date}} option, described above.
 @end table
@@ -15273,6 +15289,11 @@ One or both @samp{-r} options can be replaced by a
 @c the obscure options of the diff library, because it
 @c would let people specify an external GNU diff if
 @c they are into that sort of thing.
+@c <en>The following options specify the format of the
+@c <en>output.  They have the same meaning as in GNU diff.
+@c <en>Most options have two equivalent names, one of which is a single letter
+@c <en>preceded by @samp{-}, and the other of which is a long name preceded by
+@c <en>@samp{--}.
 The following options specify the format of the
 output.  They have the same meaning as in GNU diff.
 Most options have two equivalent names, one of which is a single letter
@@ -15281,16 +15302,24 @@ preceded by @samp{-}, and the other of which is a long name preceded by
 
 @table @samp
 @item -@var{lines}
+@c <en>Show @var{lines} (an integer) lines of context.  This option does not
+@c <en>specify an output format by itself; it has no effect unless it is
+@c <en>combined with @samp{-c} or @samp{-u}.  This option is obsolete.  For proper
+@c <en>operation, @code{patch} typically needs at least two lines of context.
 Show @var{lines} (an integer) lines of context.  This option does not
 specify an output format by itself; it has no effect unless it is
 combined with @samp{-c} or @samp{-u}.  This option is obsolete.  For proper
 operation, @code{patch} typically needs at least two lines of context.
 
 @item -a
+@c <en>Treat all files as text and compare them line-by-line, even if they
+@c <en>do not seem to be text.
 Treat all files as text and compare them line-by-line, even if they
 do not seem to be text.
 
 @item -b
+@c <en>Ignore trailing white space and consider all other sequences of one or
+@c <en>more white space characters to be equivalent.
 Ignore trailing white space and consider all other sequences of one or
 more white space characters to be equivalent.
 
@@ -15301,6 +15330,8 @@ Ignore changes that just insert or delete blank lines.
 Read and write data in binary mode.
 
 @item --brief
+@c <en>Report only whether the files differ, not the details of the
+@c <en>differences.
 Report only whether the files differ, not the details of the
 differences.
 
@@ -15315,10 +15346,14 @@ For proper operation, @code{patch} typically needs at least two lines of
 context.
 
 @item --changed-group-format=@var{format}
+@c <en>Use @var{format} to output a line group containing differing lines from
+@c <en>both files in if-then-else format.  @xref{Line group formats}.
 Use @var{format} to output a line group containing differing lines from
 both files in if-then-else format.  @xref{Line group formats}.
 
 @item -d
+@c <en>Change the algorithm to perhaps find a smaller set of changes.  This makes
+@c <en>@code{diff} slower (sometimes much slower).
 Change the algorithm to perhaps find a smaller set of changes.  This makes
 @code{diff} slower (sometimes much slower).
 
@@ -15327,30 +15362,44 @@ Change the algorithm to perhaps find a smaller set of changes.  This makes
 Make output that is a valid @code{ed} script.
 
 @item --expand-tabs
+@c <en>Expand tabs to spaces in the output, to preserve the alignment of tabs
+@c <en>in the input files.
 Expand tabs to spaces in the output, to preserve the alignment of tabs
 in the input files.
 
 @item -f
+@c <en>Make output that looks vaguely like an @code{ed} script but has changes
+@c <en>in the order they appear in the file.
 Make output that looks vaguely like an @code{ed} script but has changes
 in the order they appear in the file.
 
 @item -F @var{regexp}
+@c <en>In context and unified format, for each hunk of differences, show some
+@c <en>of the last preceding line that matches @var{regexp}.
 In context and unified format, for each hunk of differences, show some
 of the last preceding line that matches @var{regexp}.
 
 @item --forward-ed
+@c <en>Make output that looks vaguely like an @code{ed} script but has changes
+@c <en>in the order they appear in the file.
 Make output that looks vaguely like an @code{ed} script but has changes
 in the order they appear in the file.
 
 @item -H
+@c <en>Use heuristics to speed handling of large files that have numerous
+@c <en>scattered small changes.
 Use heuristics to speed handling of large files that have numerous
 scattered small changes.
 
 @item --horizon-lines=@var{lines}
+@c <en>Do not discard the last @var{lines} lines of the common prefix
+@c <en>and the first @var{lines} lines of the common suffix.
 Do not discard the last @var{lines} lines of the common prefix
 and the first @var{lines} lines of the common suffix.
 
 @item -i
+@c <en>Ignore changes in case; consider upper- and lower-case letters
+@c <en>equivalent.
 Ignore changes in case; consider upper- and lower-case letters
 equivalent.
 
@@ -15373,6 +15422,8 @@ Ignore changes in case; consider upper- and lower-case to be the same.
 Ignore changes that just insert or delete lines that match @var{regexp}.
 
 @item --ignore-space-change
+@c <en>Ignore trailing white space and consider all other sequences of one or
+@c <en>more white space characters to be equivalent.
 Ignore trailing white space and consider all other sequences of one or
 more white space characters to be equivalent.
 
@@ -15382,10 +15433,14 @@ context format.  This causes the alignment of tabs in the line to look
 normal.
 
 @item -L @var{label}
+@c <en>Use @var{label} instead of the file name in the context format
+@c <en>and unified format headers.
 Use @var{label} instead of the file name in the context format
 and unified format headers.
 
 @item --label=@var{label}
+@c <en>Use @var{label} instead of the file name in the context format
+@c <en>and unified format headers.
 Use @var{label} instead of the file name in the context format
 and unified format headers.
 
@@ -15393,35 +15448,51 @@ and unified format headers.
 Print only the left column of two common lines in side by side format.
 
 @item --line-format=@var{format}
+@c <en>Use @var{format} to output all input lines in if-then-else format.
+@c <en>@xref{Line formats}.
 Use @var{format} to output all input lines in if-then-else format.
 @xref{Line formats}.
 
 @item --minimal
+@c <en>Change the algorithm to perhaps find a smaller set of changes.  This
+@c <en>makes @code{diff} slower (sometimes much slower).
 Change the algorithm to perhaps find a smaller set of changes.  This
 makes @code{diff} slower (sometimes much slower).
 
 @item -n
+@c <en>Output RCS-format diffs; like @samp{-f} except that each command
+@c <en>specifies the number of lines affected.
 Output RCS-format diffs; like @samp{-f} except that each command
 specifies the number of lines affected.
 
 @item -N
 @itemx --new-file
+@c <en>In directory comparison, if a file is found in only one directory,
+@c <en>treat it as present but empty in the other directory.
 In directory comparison, if a file is found in only one directory,
 treat it as present but empty in the other directory.
 
 @item --new-group-format=@var{format}
+@c <en>Use @var{format} to output a group of lines taken from just the second
+@c <en>file in if-then-else format.  @xref{Line group formats}.
 Use @var{format} to output a group of lines taken from just the second
 file in if-then-else format.  @xref{Line group formats}.
 
 @item --new-line-format=@var{format}
+@c <en>Use @var{format} to output a line taken from just the second file in
+@c <en>if-then-else format.  @xref{Line formats}.
 Use @var{format} to output a line taken from just the second file in
 if-then-else format.  @xref{Line formats}.
 
 @item --old-group-format=@var{format}
+@c <en>Use @var{format} to output a group of lines taken from just the first
+@c <en>file in if-then-else format.  @xref{Line group formats}.
 Use @var{format} to output a group of lines taken from just the first
 file in if-then-else format.  @xref{Line group formats}.
 
 @item --old-line-format=@var{format}
+@c <en>Use @var{format} to output a line taken from just the first file in
+@c <en>if-then-else format.  @xref{Line formats}.
 Use @var{format} to output a line taken from just the first file in
 if-then-else format.  @xref{Line formats}.
 
@@ -15429,6 +15500,8 @@ if-then-else format.  @xref{Line formats}.
 Show which C function each change is in.
 
 @item --rcs
+@c <en>Output RCS-format diffs; like @samp{-f} except that each command
+@c <en>specifies the number of lines affected.
 Output RCS-format diffs; like @samp{-f} except that each command
 specifies the number of lines affected.
 
@@ -15440,6 +15513,8 @@ Report when two files are the same.
 Show which C function each change is in.
 
 @item --show-function-line=@var{regexp}
+@c <en>In context and unified format, for each hunk of differences, show some
+@c <en>of the last preceding line that matches @var{regexp}.
 In context and unified format, for each hunk of differences, show some
 of the last preceding line that matches @var{regexp}.
 
@@ -15447,6 +15522,8 @@ of the last preceding line that matches @var{regexp}.
 Use the side by side output format.
 
 @item --speed-large-files
+@c <en>Use heuristics to speed handling of large files that have numerous
+@c <en>scattered small changes.
 Use heuristics to speed handling of large files that have numerous
 scattered small changes.
 
@@ -15454,6 +15531,8 @@ scattered small changes.
 Do not print common lines in side by side format.
 
 @item -t
+@c <en>Expand tabs to spaces in the output, to preserve the alignment of tabs
+@c <en>in the input files.
 Expand tabs to spaces in the output, to preserve the alignment of tabs
 in the input files.
 
@@ -15463,6 +15542,8 @@ context format.  This causes the alignment of tabs in the line to look
 normal.
 
 @item --text
+@c <en>Treat all files as text and compare them line-by-line, even if they
+@c <en>do not appear to be text.
 Treat all files as text and compare them line-by-line, even if they
 do not appear to be text.
 
@@ -15470,10 +15551,14 @@ do not appear to be text.
 Use the unified output format.
 
 @item --unchanged-group-format=@var{format}
+@c <en>Use @var{format} to output a group of common lines taken from both files
+@c <en>in if-then-else format.  @xref{Line group formats}.
 Use @var{format} to output a group of common lines taken from both files
 in if-then-else format.  @xref{Line group formats}.
 
 @item --unchanged-line-format=@var{format}
+@c <en>Use @var{format} to output a line common to both files in if-then-else
+@c <en>format.  @xref{Line formats}.
 Use @var{format} to output a line common to both files in if-then-else
 format.  @xref{Line formats}.
 
@@ -15526,6 +15611,8 @@ cvs diff \
    myfile
 @end example
 
+@c <en>The following command is equivalent to the above example, but it is a
+@c <en>little more verbose, because it spells out the default line group formats.
 The following command is equivalent to the above example, but it is a
 little more verbose, because it spells out the default line group formats.
 
@@ -15546,6 +15633,8 @@ cvs diff \
    myfile
 @end example
 
+@c <en>Here is a more advanced example, which outputs a diff listing with
+@c <en>headers containing line numbers in a ``plain English'' style.
 Here is a more advanced example, which outputs a diff listing with
 headers containing line numbers in a ``plain English'' style.
 
@@ -15595,14 +15684,20 @@ following forms.
 
 @table @samp
 @item %<
+@c <en>stands for the lines from the first file, including the trailing newline.
+@c <en>Each line is formatted according to the old line format (@pxref{Line formats}).
 stands for the lines from the first file, including the trailing newline.
 Each line is formatted according to the old line format (@pxref{Line formats}).
 
 @item %>
+@c <en>stands for the lines from the second file, including the trailing newline.
+@c <en>Each line is formatted according to the new line format.
 stands for the lines from the second file, including the trailing newline.
 Each line is formatted according to the new line format.
 
 @item %=
+@c <en>stands for the lines common to both files, including the trailing newline.
+@c <en>Each line is formatted according to the unchanged line format.
 stands for the lines common to both files, including the trailing newline.
 Each line is formatted according to the unchanged line format.
 
@@ -15622,6 +15717,8 @@ stands for the character with octal code @var{O}.
 For example, @samp{%c'\0'} stands for a null character.
 
 @item @var{F}@var{n}
+@c <en>where @var{F} is a @code{printf} conversion specification and @var{n} is one
+@c <en>of the following letters, stands for @var{n}'s value formatted with @var{F}.
 where @var{F} is a @code{printf} conversion specification and @var{n} is one
 of the following letters, stands for @var{n}'s value formatted with @var{F}.
 
@@ -15630,6 +15727,8 @@ of the following letters, stands for @var{n}'s value formatted with @var{F}.
 The line number of the line just before the group in the old file.
 
 @item f
+@c <en>The line number of the first line in the group in the old file;
+@c <en>equals @var{e} + 1.
 The line number of the first line in the group in the old file;
 equals @var{e} + 1.
 
@@ -15637,6 +15736,8 @@ equals @var{e} + 1.
 The line number of the last line in the group in the old file.
 
 @item m
+@c <en>The line number of the line just after the group in the old file;
+@c <en>equals @var{l} + 1.
 The line number of the line just after the group in the old file;
 equals @var{l} + 1.
 
@@ -15675,6 +15776,8 @@ otherwise.
 @node Line formats
 @appendixsubsubsec Line formats
 
+@c <en>Line formats control how each line taken from an input file is
+@c <en>output as part of a line group in if-then-else format.
 Line formats control how each line taken from an input file is
 output as part of a line group in if-then-else format.
 
@@ -15695,6 +15798,8 @@ cvs diff \
    myfile
 @end example
 
+@c <en>To specify a line format, use one of the following options.  You should
+@c <en>quote @var{format}, since it often contains shell metacharacters.
 To specify a line format, use one of the following options.  You should
 quote @var{format}, since it often contains shell metacharacters.
 
@@ -15718,6 +15823,8 @@ following forms.
 
 @table @samp
 @item %l
+@c <en>stands for the contents of the line, not counting its trailing
+@c <en>newline (if any).  This format ignores whether the line is incomplete.
 stands for the contents of the line, not counting its trailing
 newline (if any).  This format ignores whether the line is incomplete.
 
@@ -15800,6 +15907,8 @@ happened on that branch, the following can be used:
 $ cvs diff -r RELEASE_1_0 -r EXPR1
 @end example
 
+@c <en>A command like this can be used to produce a context
+@c <en>diff between two releases:
 A command like this can be used to produce a context
 diff between two releases:
 
@@ -15871,6 +15980,8 @@ them):
 Use the most recent revision no later than @var{date}.
 
 @item -f
+@c <en>If no matching revision is found, retrieve the most
+@c <en>recent revision (instead of ignoring the file).
 If no matching revision is found, retrieve the most
 recent revision (instead of ignoring the file).
 
@@ -15887,14 +15998,20 @@ Export directories recursively.  This is on by default.
 Use revision @var{tag}.
 @end table
 
+@c <en>In addition, these options (that are common to
+@c <en>@code{checkout} and @code{export}) are also supported:
 In addition, these options (that are common to
 @code{checkout} and @code{export}) are also supported:
 
 @table @code
 @item -d @var{dir}
+@c <en>Create a directory called @var{dir} for the working
+@c <en>files, instead of using the module name.
+@c <en>@xref{checkout options}, for complete details on how
+@c <en>@sc{cvs} handles this flag.
 Create a directory called @var{dir} for the working
 files, instead of using the module name.
-@xref{checkout options}, for complete details on how
+@xref{opções do checkout}, for complete details on how
 @sc{cvs} handles this flag.
 
 @c <en>@item -k @var{subst}
@@ -15903,8 +16020,11 @@ files, instead of using the module name.
 Set keyword expansion mode (@pxref{Modos de substituição}).
 
 @item -N
+@c <en>Only useful together with @samp{-d @var{dir}}.
+@c <en>@xref{checkout options}, for complete details on how
+@c <en>@sc{cvs} handles this flag.
 Only useful together with @samp{-d @var{dir}}.
-@xref{checkout options}, for complete details on how
+@xref{opções do checkout}, for complete details on how
 @sc{cvs} handles this flag.
 @end table
 
@@ -15937,6 +16057,8 @@ Changes: nothing.
 use @code{history} to display this information in
 various formats.
 
+@c <en>Logging must be enabled by creating the file
+@c <en>@file{$CVSROOT/CVSROOT/history}.
 Logging must be enabled by creating the file
 @file{$CVSROOT/CVSROOT/history}.
 
@@ -15955,11 +16077,15 @@ normal use inside @sc{cvs} (@pxref{Opções comuns}).}
 @node history options
 @appendixsubsec history options
 
+@c <en>Several options (shown above as @samp{-report})  control  what
+@c <en>kind of report is generated:
 Several options (shown above as @samp{-report})  control  what
 kind of report is generated:
 
 @table @code
 @item -c
+@c <en>Report on each time commit was used (i.e., each time
+@c <en>the repository was modified).
 Report on each time commit was used (i.e., each time
 the repository was modified).
 
@@ -15972,6 +16098,8 @@ writing a script which can only handle certain record
 types, you'll want to specify @samp{-x}.
 
 @item -m @var{module}
+@c <en>Report on a particular module.  (You can meaningfully
+@c <en>use @samp{-m} more than once on the command line.)
 Report on a particular module.  (You can meaningfully
 use @samp{-m} more than once on the command line.)
 
@@ -16030,11 +16158,15 @@ A file was removed.
 @end table
 @end table
 
+@c <en>The options shown as @samp{-flags} constrain or expand
+@c <en>the report without requiring option arguments:
 The options shown as @samp{-flags} constrain or expand
 the report without requiring option arguments:
 
 @table @code
 @item -a
+@c <en>Show data for all users (the default is to show data
+@c <en>only for the user executing @code{history}).
 Show data for all users (the default is to show data
 only for the user executing @code{history}).
 
@@ -16047,6 +16179,8 @@ same working directory where @code{history} is
 executing.
 @end table
 
+@c <en>The options shown as @samp{-options @var{args}} constrain the report
+@c <en>based on an argument:
 The options shown as @samp{-options @var{args}} constrain the report
 based on an argument:
 
@@ -16067,6 +16201,8 @@ Show data for a particular file
 This is equivalent to specifying the file on the command line.
 
 @item -n @var{module}
+@c <en>Show data for a particular module
+@c <en>(you can specify several @samp{-n} options on the same command line).
 Show data for a particular module
 (you can specify several @samp{-n} options on the same command line).
 
@@ -16235,6 +16371,8 @@ that you can specify in the @file{.cvsignore} file.
 @c -- Is this really true?
 
 @item -W @var{spec}
+@c <en>Specify file names that should be filtered during
+@c <en>import.  You can use this option repeatedly.
 Specify file names that should be filtered during
 import.  You can use this option repeatedly.
 
@@ -16372,11 +16510,15 @@ with the normal use inside @sc{cvs} (@pxref{Opções comuns}).}
 @node log options
 @appendixsubsec log options
 
+@c <en>By default, @code{log} prints all information that is
+@c <en>available.  All other options restrict the output.
 By default, @code{log} prints all information that is
 available.  All other options restrict the output.
 
 @table @code
 @item -b
+@c <en>Print information about the revisions on the default
+@c <en>branch, normally the highest branch on the trunk.
 Print information about the revisions on the default
 branch, normally the highest branch on the trunk.
 
@@ -16429,6 +16571,8 @@ default branch, access list, locks, symbolic names, and
 suffix.
 
 @item -l
+@c <en>Local; run only in current working directory.  (Default
+@c <en>is to run recursively).
 Local; run only in current working directory.  (Default
 is to run recursively).
 
@@ -16468,6 +16612,8 @@ range formats:
 
 @table @code
 @item @var{rev1}:@var{rev2}
+@c <en>Revisions @var{rev1} to @var{rev2} (which must be on
+@c <en>the same branch).
 Revisions @var{rev1} to @var{rev2} (which must be on
 the same branch).
 
@@ -16476,23 +16622,33 @@ The same, but excluding @var{rev1}.
 
 @item :@var{rev}
 @itemx ::@var{rev}
+@c <en>Revisions from the beginning of the branch up to
+@c <en>and including @var{rev}.
 Revisions from the beginning of the branch up to
 and including @var{rev}.
 
 @item @var{rev}:
+@c <en>Revisions starting with @var{rev} to the end of the
+@c <en>branch containing @var{rev}.
 Revisions starting with @var{rev} to the end of the
 branch containing @var{rev}.
 
 @item @var{rev}::
+@c <en>Revisions starting just after @var{rev} to the end of the
+@c <en>branch containing @var{rev}.
 Revisions starting just after @var{rev} to the end of the
 branch containing @var{rev}.
 
 @item @var{branch}
+@c <en>An argument that is a branch means all revisions on
+@c <en>that branch.
 An argument that is a branch means all revisions on
 that branch.
 
 @item @var{branch1}:@var{branch2}
 @itemx @var{branch1}::@var{branch2}
+@c <en>A range of branches means all revisions
+@c <en>on the branches in that range.
 A range of branches means all revisions
 on the branches in that range.
 
@@ -16593,6 +16749,8 @@ them):
 Use the most recent revision no later than @var{date}.
 
 @item -f
+@c <en>If no matching revision is found, retrieve the most
+@c <en>recent revision (instead of ignoring the file).
 If no matching revision is found, retrieve the most
 recent revision (instead of ignoring the file).
 
@@ -17501,7 +17659,7 @@ and @ref{Substituição de palavra-chave}.
 @c <en>@item -c
 @item -c
 @c <en>Output the module database.  See @ref{checkout options}.
-Output the module database.  See @ref{checkout options}.
+Output the module database.  See @ref{opções do checkout}.
 
 @c <en>@item -D @var{date}
 @item -D @var{date}
@@ -17513,7 +17671,7 @@ Check out revisions as of @var{date} (is sticky).  See
 @c <en>@item -d @var{dir}
 @item -d @var{dir}
 @c <en>Check out into @var{dir}.  See @ref{checkout options}.
-Check out into @var{dir}.  See @ref{checkout options}.
+Check out into @var{dir}.  See @ref{opções do checkout}.
 
 @c <en>@item -f
 @item -f
@@ -17527,7 +17685,7 @@ Use head revision if tag/date not found.  See
 @c <en>@item -j @var{rev}
 @item -j @var{rev}
 @c <en>Merge in changes.  See @ref{checkout options}.
-Merge in changes.  See @ref{checkout options}.
+Merge in changes.  See @ref{opções do checkout}.
 
 @c <en>@item -k @var{kflag}
 @item -k @var{kflag}
@@ -17546,12 +17704,12 @@ Local; run only in current working directory.  @xref{Comportamento recursivo}.
 @c <en>Don't ``shorten'' module paths if -d specified.  See
 @c <en>@ref{checkout options}.
 Don't ``shorten'' module paths if -d specified.  See
-@ref{checkout options}.
+@ref{opções do checkout}.
 
 @c <en>@item -n
 @item -n
 @c <en>Do not run module program (if any).  See @ref{checkout options}.
-Do not run module program (if any).  See @ref{checkout options}.
+Do not run module program (if any).  See @ref{opções do checkout}.
 
 @c <en>@item -P
 @item -P
@@ -17563,7 +17721,7 @@ Prune empty directories.  See @ref{Movendo diretórios}.
 @c <en>Check out files to standard output (avoids
 @c <en>stickiness).  See @ref{checkout options}.
 Check out files to standard output (avoids
-stickiness).  See @ref{checkout options}.
+stickiness).  See @ref{opções do checkout}.
 
 @c <en>@item -R
 @item -R
@@ -17579,7 +17737,7 @@ Checkout revision @var{tag} (is sticky).  See @ref{Opções comuns}.
 @c <en>@item -s
 @item -s
 @c <en>Like -c, but include module status.  See @ref{checkout options}.
-Like -c, but include module status.  See @ref{checkout options}.
+Like -c, but include module status.  See @ref{opções do checkout}.
 @end table
 
 @c ------------------------------------------------------------
@@ -18723,7 +18881,7 @@ contra-barra (@samp{\}) como último caractere da linha.
 @c <en>contains two files, @file{file1} and @file{file2}, and a
 @c <en>directory @file{sdir}.  @file{first-dir/sdir} contains
 @c <en>a file @file{sfile}.
-Existem três tipos básicos de módulos: módulos de alias,
+Existem três tipos básicos de módulos: módulos de ???alias???,
 módulos regulares, e módulos ???ampersand???.  A
 diferença entre eles é a forma como eles relacionam
 arquivos no repositório com arquivos no diretório de
