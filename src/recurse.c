@@ -58,7 +58,7 @@ struct recursion_frame {
     Dtype flags;
     int which;
     int aflag;
-    enum lock_type locktype;
+    enum cvs_lock_type locktype;
     int dosrcs;
     char *repository;			/* Keep track of repository for rtag */
 };
@@ -191,7 +191,7 @@ int
 start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
                  DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc,
                  void *callerdat, int argc, char **argv, int local,
-                 int which, int aflag, enum lock_type locktype,
+                 int which, int aflag, enum cvs_lock_type locktype,
                  const char *update_preload, int dosrcs,
 		 char *repository_in)
 {
