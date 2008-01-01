@@ -1,3 +1,10 @@
+2008-01-01  Larry Jones  <lawrence.jones@siemens.com>
+
+	* recurse.h (enum lock_type): Change to cvs_lock_type to avoid
+	conflicts on Solaris 8.
+	(Reported by Carson Gaspar <carson@taltos.org>.)
+	* recurse.c: Ditto.
+
 2007-12-20  Larry Jones  <lawrence.jones@siemens.com>
 
 	* commit.c, entries.c, find_names.c, history.c, ignore.c, import.c,
