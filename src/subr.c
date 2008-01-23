@@ -2207,7 +2207,7 @@ mkdir_i (const char *name, mode_t mode,
 	 const char *update_dir, unsigned int flags)
 {
     bool err = mkdir (name, mode);
-    if (err && !(flags & MD_EXIST_OK && errno == EEXIST)
+    if (err && !(flags & MD_EXIST_OK && (errno == EEXIST || isdir (name)))
 	&& (flags & MD_FATAL || !(flags & MD_QUIET)))
     {
 	bool uud = update_dir && strlen (update_dir)

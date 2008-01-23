@@ -1,3 +1,11 @@
+2008-01-22  Mark D. Baushke  <mdb@gnu.org>
+
+	* subr.c (mkdir_i): Check to see if the directory already exists.
+	(The Solaris mkdir() returns an EACCESS rather than EEXISTS error
+	when a swap filesystem is used and when access is bad to create
+	the directory, even if it already exists which causes the
+	toplevel-12 test to fail.)
+
 2008-01-01  Larry Jones  <lawrence.jones@siemens.com>
 
 	* recurse.h (enum lock_type): Change to cvs_lock_type to avoid
@@ -196,7 +204,7 @@
 	import_descend_dir), lock.c (lock_name), ls.c (ls_direntproc),
 	mkmodules.c (init), modules.c (my_modules), update.c
 	(update_dirent_proc): Replace directory access with new functions.
-	* file_subr.c (make_directory, make_directories, mkdir_if_needed):
+	* filesubr.c (make_directory, make_directories, mkdir_if_needed):
 	Remove in favor of...
 	* subr.c (mkdir_i, cvs_mkdir_i, cvs_mkdir, cvs_xmkdir,
 	mkdir_callback, mkdir_announce_callback, cvs_mkdirs_i, cvs_mkdirs,
