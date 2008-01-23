@@ -1,5 +1,7 @@
 2008-01-22  Mark D. Baushke  <mdb@gnu.org>
 
+	* subr.c (mkdir_i): Save/restore errno around isdir().
+
 	* subr.c (mkdir_i): Check to see if the directory already exists.
 	(The Solaris mkdir() returns an EACCESS rather than EEXISTS error
 	when a swap filesystem is used and when access is bad to create
