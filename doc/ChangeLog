@@ -1,3 +1,14 @@
+2008-01-23  Mark D. Baushke  <mdb@gnu.org>
+
+	* cvs.texinfo (log options): Document the new cvs log -n
+	switch to reverse the -N switch.
+	* cvs.texinfo (annotate & rannotate): Document "blame" as a
+	synonym for the "annotate" command.
+	(Patch suggested by "David O'Brien" <obrien@FreeBSD.org>)
+
+	* cvs.1, stamp-1, stamp-vti, version-client.texi, version.texi:
+	Regenerated.
+
 2007-05-07  Derek Price  <derek@ximbiot.com>
 
 	* cvsclient.text: Remove references to remote `init' command.

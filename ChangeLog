@@ -1,3 +1,9 @@
+2008-01-24  Mark D. Baushke  <mdb@gnu.org>
+
+	* NEWS: Note that :extssh: method was fixed. New `cvs blame' as an
+	alias for `cvs annotate' command. New `cvs log -n' switch to undo
+	a `log -N' entry in a .cvsrc file.
+
 2007-12-14  Larry Jones  <lawrence.jones@siemens.com>
 
 	* configure.in: Add --disable-mmap.

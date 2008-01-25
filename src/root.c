@@ -444,6 +444,8 @@ parse_cvsroot (root_in)
 	    newroot->method = server_method;
 	else if (strcmp (method, "ext") == 0)
 	    newroot->method = ext_method;
+	else if (strcmp (method, "extssh") == 0)
+	    newroot->method = extssh_method;
 	else if (strcmp (method, "fork") == 0)
 	    newroot->method = fork_method;
 	else
@@ -673,6 +675,7 @@ parse_cvsroot (root_in)
 # endif
     case server_method:
     case ext_method:
+    case extssh_method:
 	no_port = 1;
 	/* no_password already set */
 	check_hostname = 1;
