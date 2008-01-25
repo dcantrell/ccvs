@@ -176,6 +176,7 @@ static const char *const log_usage[] =
     "\t-R\tOnly print name of RCS file.\n",
     "\t-t\tOnly print header and descriptive text.\n",
     "\t-N\tDo not list tags.\n",
+    "\t-n\tList tags (default).\n",
     "\t-S\tDo not print name/header if no revisions selected.  -d, -r,\n",
     "\t\t-s, & -w have little effect in conjunction with -b, -h, -R, and\n",
     "\t\t-t without this option.\n",
@@ -253,7 +254,7 @@ cvslog (int argc, char **argv)
     prl = &log_data.revlist;
 
     optind = 0;
-    while ((c = getopt (argc, argv, "+bd:hlNSRr::s:tw::")) != -1)
+    while ((c = getopt (argc, argv, "+bd:hlNnSRr::s:tw::")) != -1)
     {
 	switch (c)
 	{
@@ -271,6 +272,9 @@ cvslog (int argc, char **argv)
 		break;
 	    case 'N':
 		log_data.notags = 1;
+		break;
+	    case 'n':
+		log_data.notags = 0;
 		break;
 	    case 'S':
 		log_data.sup_header = 1;

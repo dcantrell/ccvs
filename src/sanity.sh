@@ -1316,10 +1316,6 @@ if $valgrind; then
     testcvs=valgrind_cvs
 fi
 
-echo "Using EXPR=$EXPR" >>$LOGFILE
-echo "Using ENDANCHOR=$ENDANCHOR" >>$LOGFILE
-echo "Using DOTSTAR=$DOTSTAR" >>$LOGFILE
-echo "Using BINDATE=$BINDATE" >>$LOGFILE
 if $valgrind; then
     echo "Using VALGRIND=$VALGRIND" >>$LOGFILE
     echo "Using VALGRIND_OPTS=$VALGRIND_OPTS" >>$LOGFILE
@@ -1333,6 +1329,11 @@ expr_tooltest_DOTSTAR ${EXPR} >/dev/null
 # with regard to command-line arguments?
 expr_set_DASHDASH ${EXPR}
 $exprDASHDASH && EXPR="$EXPR --"
+
+echo "Using EXPR=$EXPR" >>$LOGFILE
+echo "Using ENDANCHOR=$ENDANCHOR" >>$LOGFILE
+echo "Using DOTSTAR=$DOTSTAR" >>$LOGFILE
+echo "Using BINDATE=$BINDATE" >>$LOGFILE
 
 # Cleanup
 rm -f ${TESTDIR}/bar
@@ -2232,7 +2233,7 @@ if test x"$*" = x; then
 	tests="${tests} rdiff2 diff diffnl death death2 death-rtag"
 	tests="${tests} rm-update-message rmadd rmadd2 rmadd3 resurrection"
 	tests="${tests} dirs dirs2 branches branches2 branches3"
-	tests="${tests} branches4 branches5 tagc tagf tag-space"
+	tests="${tests} branches4 branches5 tagc tagf tag-log tag-space"
 	tests="${tests} rcslib multibranch import importb importc importX"
 	tests="$tests importX2 import-CVS import-quirks"
 	tests="${tests} update-p import-after-initial branch-after-import"
@@ -2263,7 +2264,7 @@ if test x"$*" = x; then
 	tests="${tests} serverpatch log log2 logopt ann ann-id"
 	# Repository Storage (RCS file format, CVS lock files, creating
 	# a repository without "cvs init", &c).
-	tests="${tests} crerepos rcs rcs2 rcs3 rcs4 rcs5 rcs6"
+	tests="${tests} crerepos crerepos-extssh rcs rcs2 rcs3 rcs4 rcs5 rcs6"
 	tests="$tests lockfiles backuprecover"
 	tests="${tests} sshstdio"
 	# More history browsing, &c.
@@ -3206,7 +3207,10 @@ newroot() {
 ###
 ### Initialize the repository
 ###
-CVSROOT_DIRNAME=$TESTDIR/cvsroot
+# Use a name which will be different than CVSROOT on case insensitive
+# filesystems (e.g., HFS+)
+CVSROOTDIR=cvsrootdir
+CVSROOT_DIRNAME=$TESTDIR/$CVSROOTDIR
 CVSROOT=`newroot $CVSROOT_DIRNAME`; export CVSROOT
 dotest init-1 "$testcvs -d$CVSROOT_DIRNAME init"
 
@@ -9236,6 +9240,100 @@ ${SPROG} rtag: first-dir/file1: Not moving non-branch tag .regulartag. from 1\.1
 
 
 
+	tag-log)
+	  # Test log output for tags
+	  mkdir 1; cd 1
+	  dotest tag-log-init-1 "$testcvs -q co -l ."
+	  mkdir first-dir
+	  dotest tag-log-init-2 "$testcvs add first-dir" \
+"Directory $CVSROOT_DIRNAME/first-dir added to the repository"
+	  cd first-dir
+	  touch file1
+	  dotest tag-log-init-3 "$testcvs add file1" \
+"$SPROG add: scheduling file \`file1' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently"
+	  dotest tag-log-init-4 "$testcvs -Q ci -m add"
+
+          dotest tag-log-1 "$testcvs -Q tag mytag file1" ''
+          dotest tag-log-2 "$testcvs log -N file1" \
+"
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
+${log_keyid}add
+============================================================================="
+          dotest tag-log-3 "$testcvs log -N -n file1" \
+"
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	mytag: 1\.1
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
+${log_keyid}add
+============================================================================="
+          dotest tag-log-4 "$testcvs log file1" \
+"
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	mytag: 1\.1
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
+${log_keyid}add
+============================================================================="
+          dotest tag-log-5 "$testcvs log -n file1" \
+"
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	mytag: 1\.1
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
+${log_keyid}add
+============================================================================="
+
+	  dokeep
+	  cd ../..
+	  rm -rf 1
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  ;;
+
+
+
 	tag-space)
 	  # Test tags with spaces in the names.
 	  #
@@ -10467,7 +10565,7 @@ ${log_keyid}add
           echo "ImportNewFilesToVendorBranchOnly=yes" >> config
 
 	  dotest importX2-2 "$testcvs -q ci -m force-cvs-import-X" \
-"$TESTDIR/cvsroot/CVSROOT/config,v  <--  config
+"$TESTDIR/$CVSROOTDIR/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 
@@ -19867,7 +19965,7 @@ C aa"
 $SPROG add: use \`$SPROG commit' to add this file permanently"
 
 	  dotest_fail info-3 "$testcvs -q ci -m new-loginfo" \
-"$TESTDIR/cvsroot/CVSROOT/config,v  <--  config
+"$TESTDIR/$CVSROOTDIR/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $CVSROOT_DIRNAME/CVSROOT/loginfo,v  <--  loginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
@@ -19938,7 +20036,7 @@ leisure\."
 	  dotest info-8 "${testcvs} -q rm -f file1" \
 "${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  dotest_sort info-8a "${testcvs} -q ci -m remove-it" \
-"$TESTDIR/cvsroot/first-dir/file1,v  <--  file1
+"$TESTDIR/$CVSROOTDIR/first-dir/file1,v  <--  file1
 all info files after each .%. which doesn.t represent a literal percent)
 and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
 compatibility with the new info file format strings (add a temporary .1. in
@@ -19952,7 +20050,7 @@ new revision: delete; previous revision: 1\.3"
 "$SPROG add: Re-adding file \`file1' after dead revision 1\.4\.
 $SPROG add: use \`$SPROG commit' to add this file permanently"
 	  dotest_sort info-8c "${testcvs} -q ci -m add-it" \
-"$TESTDIR/cvsroot/first-dir/file1,v  <--  file1
+"$TESTDIR/$CVSROOTDIR/first-dir/file1,v  <--  file1
 all info files after each .%. which doesn.t represent a literal percent)
 and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
 compatibility with the new info file format strings (add a temporary .1. in
@@ -20036,9 +20134,9 @@ first-dir file1ux'
             >> loginfo
 
 	  dotest info-setup-intfmt-2 "${testcvs} -q -s ZEE=garbage ci -m nuke-admin-for-info-intfmt" \
-"$TESTDIR/cvsroot/CVSROOT/config,v  <--  config
+"$TESTDIR/$CVSROOTDIR/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-$TESTDIR/cvsroot/CVSROOT/loginfo,v  <--  loginfo
+$TESTDIR/$CVSROOTDIR/CVSROOT/loginfo,v  <--  loginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database
 $SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
@@ -20062,7 +20160,7 @@ leisure\."
 '"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
 	  echo "cvs -s OTHER=not-this -s MYENV=env-" >>$HOME/.cvsrc
 	  dotest info-intfmt-6b "${testcvs} -q -s OTHER=value ci -m add-it" \
-"${TESTDIR}/cvsroot/third-dir/file1,v  <--  file1
+"${TESTDIR}/$CVSROOTDIR/third-dir/file1,v  <--  file1
 initial revision: 1\.1
 ${SPROG} commit: loginfo:[0-9]*: no such user variable \${=ZEE}
 ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
@@ -20085,7 +20183,7 @@ ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to
 the new argument format and remove '1's from your info file format strings\."
 	  echo line0 >>file1
 	  dotest info-intfmt-6c "${testcvs} -q -sOTHER=foo ci -m mod-it" \
-"${TESTDIR}/cvsroot/third-dir/file1,v  <--  file1
+"$TESTDIR/$CVSROOTDIR/third-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
 ${SPROG} commit: loginfo:[0-9]*: no such user variable \${=ZEE}
 ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
@@ -20108,7 +20206,7 @@ ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to
 the new argument format and remove '1's from your info file format strings\."
 	  echo line1 >>file1
 	  dotest info-intfmt-7 "${testcvs} -q -s OTHER=value -s ZEE=z ci -m mod-it" \
-"${TESTDIR}/cvsroot/third-dir/file1,v  <--  file1
+"$TESTDIR/$CVSROOTDIR/third-dir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2
 ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
 the new argument format and remove '1's from your info file format strings\.
@@ -20132,7 +20230,7 @@ the new argument format and remove '1's from your info file format strings\."
 	  dotest info-intfmt-8 "${testcvs} -q rm -f file1" \
 "${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  dotest info-intfmt-8a "${testcvs} -q ci -m remove-it" \
-"$TESTDIR/cvsroot/third-dir/file1,v  <--  file1
+"$TESTDIR/$CVSROOTDIR/third-dir/file1,v  <--  file1
 new revision: delete; previous revision: 1\.3
 ${SPROG} commit: loginfo:[0-9]*: no such user variable \${=ZEE}
 ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
@@ -20158,7 +20256,7 @@ the new argument format and remove '1's from your info file format strings\."
 "$SPROG add: Re-adding file \`file1' after dead revision 1\.4\.
 $SPROG add: use \`$SPROG commit' to add this file permanently"
 	  dotest info-8c "${testcvs} -q ci -m add-it" \
-"$TESTDIR/cvsroot/third-dir/file1,v  <--  file1
+"$TESTDIR/$CVSROOTDIR/third-dir/file1,v  <--  file1
 new revision: 1.5; previous revision: 1\.4
 ${SPROG} commit: loginfo:[0-9]*: no such user variable \${=ZEE}
 ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
@@ -20181,7 +20279,7 @@ ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to
 the new argument format and remove '1's from your info file format strings\."
 
 	  cd ..
-	  dotest info-intfmt-9 "cat $TESTDIR/testlog" "xenv-valueyz=${username}=${TESTDIR}/cvsroot="
+	  dotest info-intfmt-9 "cat $TESTDIR/testlog" "xenv-valueyz=${username}=$TESTDIR/$CVSROOTDIR="
           dotest info-intfmt-10 "cat $TESTDIR/testlog2" \
 'third-dir
 third-dir
@@ -20272,23 +20370,23 @@ EOF
 '"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
 	  echo "cvs -s OTHER=not-this -s MYENV=env-" >>$HOME/.cvsrc
 	  dotest info-newfmt-3 "$testcvs -q -s OTHER=value ci -m add-it" \
-"$TESTDIR/cvsroot/fourth-dir/file1,v  <--  file1
+"$TESTDIR/$CVSROOTDIR/fourth-dir/file1,v  <--  file1
 initial revision: 1\.1
 $SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
 	  echo line0 >>file1
 	  dotest info-newfmt-4 "$testcvs -q -sOTHER=foo ci -m mod-it" \
-"$TESTDIR/cvsroot/fourth-dir/file1,v  <--  file1
+"$TESTDIR/$CVSROOTDIR/fourth-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
 $SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
 	  echo line1 >>file1
 	  dotest info-newfmt-5 "${testcvs} -q -s OTHER=value -s ZEE=z ci -m mod-it" \
-"${TESTDIR}/cvsroot/fourth-dir/file1,v  <--  file1
+"$TESTDIR/$CVSROOTDIR/fourth-dir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2"
           rm file1
           dotest info-newfmt-5a "${testcvs} -q rm -f file1" \
 "${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
           dotest info-newfmt-5b "${testcvs} -q  ci -m remove-it" \
-"$TESTDIR/cvsroot/fourth-dir/file1,v  <--  file1
+"$TESTDIR/$CVSROOTDIR/fourth-dir/file1,v  <--  file1
 new revision: delete; previous revision: 1\.3
 $SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
           echo "resurrected file1" >file1
@@ -20296,17 +20394,17 @@ $SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
 "$SPROG add: Re-adding file \`file1' after dead revision 1\.4\.
 $SPROG add: use \`$SPROG commit' to add this file permanently"
           dotest info-newfmt-5d "${testcvs} -q ci -m add-it" \
-"$TESTDIR/cvsroot/fourth-dir/file1,v  <--  file1
+"$TESTDIR/$CVSROOTDIR/fourth-dir/file1,v  <--  file1
 new revision: 1.5; previous revision: 1\.4
 $SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
           dotest info-newfmt-5e "$testcvs -q ci -fmtag -r2" \
-"$TESTDIR/cvsroot/fourth-dir/file1,v  <--  file1
+"$TESTDIR/$CVSROOTDIR/fourth-dir/file1,v  <--  file1
 new revision: [0-9.]*; previous revision: [0-9.]*
 $SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
 
 	  cd ..
 	  dotest info-newfmt-6 "cat $TESTDIR/testlog" \
-"xenv-valueyz=${username}=${TESTDIR}/cvsroot="
+"xenv-valueyz=${username}=$TESTDIR/$CVSROOTDIR="
           dotest info-newfmt-7 "cat $TESTDIR/testlog2" \
 'fourth-dir file1 added  NONE 1\.1
 added
@@ -20692,7 +20790,7 @@ EOF
 	  sed -e's/%p/ALL/' <loginfo >tmploginfo
 	  mv tmploginfo loginfo
 	  dotest taginfo-2 "${testcvs} -q ci -m check-in-taginfo" \
-"$TESTDIR/cvsroot/CVSROOT/config,v  <--  config
+"$TESTDIR/$CVSROOTDIR/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $CVSROOT_DIRNAME/CVSROOT/loginfo,v  <--  loginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
@@ -20845,10 +20943,10 @@ tag1 del first-dir"
 "$testcvs -q up -prtaginfo-start taginfo >taginfo"
 	  echo "ALL $TESTDIR/1/loggit %r %t %o %b %p %{sTVv}" >>taginfo
 	  dotest taginfo-newfmt-init-2 "$testcvs -q ci -m check-in-taginfo" \
-"$TESTDIR/cvsroot/CVSROOT/taginfo,v  <--  taginfo
+"$TESTDIR/$CVSROOTDIR/CVSROOT/taginfo,v  <--  taginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"  \
-"$TESTDIR/cvsroot/CVSROOT/taginfo,v  <--  taginfo
+"$TESTDIR/$CVSROOTDIR/CVSROOT/taginfo,v  <--  taginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database
 $SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
@@ -20879,9 +20977,9 @@ EOF
 "${SPROG} add: scheduling file .file 2. for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest taginfo-newfmt-2c "$testcvs -q ci -m add-it" \
-"$TESTDIR/cvsroot/first-dir/file 2,v  <--  file 2
+"$TESTDIR/$CVSROOTDIR/first-dir/file 2,v  <--  file 2
 initial revision: 1\.1" \
-"$TESTDIR/cvsroot/first-dir/file 2,v  <--  file 2
+"$TESTDIR/$CVSROOTDIR/first-dir/file 2,v  <--  file 2
 initial revision: 1\.1
 $SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
 compatibility with the new info file format strings (add a temporary '1' in
@@ -20901,7 +20999,7 @@ T file1"
 T file1"
 
 	  dotest taginfo-newfmt-examine-1 "cat ${TESTDIR}/1/taglog" \
-"$TESTDIR/cvsroot
+"$TESTDIR/$CVSROOTDIR
 tag1
 add
 N
@@ -20914,7 +21012,7 @@ file1
 
 NONE
 1\.1
-$TESTDIR/cvsroot
+$TESTDIR/$CVSROOTDIR
 tag3
 add
 N
@@ -20927,7 +21025,7 @@ file1
 
 NONE
 1\.1
-$TESTDIR/cvsroot
+$TESTDIR/$CVSROOTDIR
 tag4
 add
 N
@@ -20960,14 +21058,14 @@ EOF
 	  echo "ALL ${TESTDIR}/1/loggit %{t} %b %{o} %p %{sTVv}" >>taginfo
 	  echo "UseNewInfoFmtStrings=yes" >>config
 	  dotest taginfo-newfmt-7 "$testcvs -q ci -m check-in-taginfo" \
-"$TESTDIR/cvsroot/CVSROOT/config,v  <--  config
+"$TESTDIR/$CVSROOTDIR/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-$TESTDIR/cvsroot/CVSROOT/taginfo,v  <--  taginfo
+$TESTDIR/$CVSROOTDIR/CVSROOT/taginfo,v  <--  taginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database" \
-"$TESTDIR/cvsroot/CVSROOT/config,v  <--  config
+"$TESTDIR/$CVSROOTDIR/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-$TESTDIR/cvsroot/CVSROOT/taginfo,v  <--  taginfo
+$TESTDIR/$CVSROOTDIR/CVSROOT/taginfo,v  <--  taginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database
 $SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
@@ -20981,12 +21079,12 @@ leisure\."
 	  dotest taginfo-newfmt-8 "${testcvs} -q tag tag1" ""
 	  mkdir sdir
 	  dotest taginfo-newfmt-8b "${testcvs} -q add sdir" \
-"Directory ${TESTDIR}/cvsroot/first-dir/sdir added to the repository"
+"Directory $TESTDIR/$CVSROOTDIR/first-dir/sdir added to the repository"
 	  touch sdir/file3
 	  dotest taginfo-newfmt-8c "${testcvs} -q add sdir/file3" \
 "${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest taginfo-newfmt-8d "${testcvs} -q ci -m added-sdir" \
-"${TESTDIR}/cvsroot/first-dir/sdir/file3,v  <--  sdir/file3
+"$TESTDIR/$CVSROOTDIR/first-dir/sdir/file3,v  <--  sdir/file3
 initial revision: 1\.1"
 	  dotest taginfo-newfmt-9 "${testcvs} -q tag -b br" \
 "T file 2
@@ -20998,7 +21096,7 @@ U file1
 U sdir/file3'
 	  echo add more text on branch >>file1
 	  dotest taginfo-newfmt-11 "${testcvs} -q ci -m modify-on-br" \
-"${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+"$TESTDIR/$CVSROOTDIR/first-dir/file1,v  <--  file1
 new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1"
 	  dotest taginfo-newfmt-12 "${testcvs} -q tag -F -c brtag" \
 "T file 2
@@ -21096,7 +21194,7 @@ tag1 ? del first-dir/sdir"
 	  cd CVSROOT
 	  echo "ALL $TESTDIR/1/loggit %r %t %o %b %p %{sVv}" >posttag
 	  dotest posttag-init-2 "$testcvs -q ci -m check-in-taginfo" \
-"$TESTDIR/cvsroot/CVSROOT/posttag,v  <--  posttag
+"$TESTDIR/$CVSROOTDIR/CVSROOT/posttag,v  <--  posttag
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 	  cd ..
@@ -21158,7 +21256,7 @@ T file1"
 D file1"
 
 	  dotest posttag-examine-1 "cat $TESTDIR/1/taglog" \
-"$TESTDIR/cvsroot
+"$TESTDIR/$CVSROOTDIR
 tag1
 add
 N
@@ -21169,7 +21267,7 @@ NONE
 file1
 NONE
 1\.1
-$TESTDIR/cvsroot
+$TESTDIR/$CVSROOTDIR
 tag3
 add
 N
@@ -21180,7 +21278,7 @@ NONE
 file1
 NONE
 1\.1
-$TESTDIR/cvsroot
+$TESTDIR/$CVSROOTDIR
 rejectme
 add
 N
@@ -21191,7 +21289,7 @@ NONE
 file1
 NONE
 1.1
-$TESTDIR/cvsroot
+$TESTDIR/$CVSROOTDIR
 rejectme
 del
 ?
@@ -23032,6 +23130,19 @@ Annotations for file1
 1\.2          ($username1 *[0-9a-zA-Z-]*): a
 1\.2          ($username1 *[0-9a-zA-Z-]*): blank
 1\.2          ($username1 *[0-9a-zA-Z-]*): line"
+	  dotest ann-10w1blame "${testcvs} blame -w 1" \
+"
+Annotations for file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1          ($username1 *[0-9a-zA-Z-]*): this
+1\.1          ($username1 *[0-9a-zA-Z-]*): is
+1\.2          ($username1 *[0-9a-zA-Z-]*): a
+1\.3          ($username1 *[0-9a-zA-Z-]*): trunk file
+1\.2          ($username1 *[0-9a-zA-Z-]*): 
+1\.2          ($username1 *[0-9a-zA-Z-]*): with
+1\.2          ($username1 *[0-9a-zA-Z-]*): a
+1\.2          ($username1 *[0-9a-zA-Z-]*): blank
+1\.2          ($username1 *[0-9a-zA-Z-]*): line"
 	  if test $userlen -lt 80; then
 	    dotest ann-10wmax "${testcvs} ann -w $userlen" \
 "
@@ -23341,6 +23452,179 @@ U first-dir/file1"
 "${SPROG} checkout: Updating crerepos-dir
 U crerepos-dir/cfile"
 	  dotest crerepos-18 "${testcvs} update" \
+"${SPROG} update: Updating first-dir
+${SPROG} update: Updating crerepos-dir"
+
+	  cd ..
+
+          CVS_SERVER=$CVS_SERVER_save; export CVS_SERVER
+
+	  dokeep
+          rm -f $TESTDIR/cvs-setHome
+	  rm -rf 1
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  rm -rf $TESTDIR/crerepos
+	  ;;
+
+
+
+	crerepos-extssh)
+	  # Various tests relating to creating repositories, operating
+	  # on repositories created with old versions of CVS, etc.
+
+	  CVS_SERVER_save=$CVS_SERVER
+
+	  # Because this test is all about -d options and such, it
+	  # at least to some extent needs to be different for remote vs.
+	  # local.
+	  if $remote; then
+
+	    # Use :extssh: rather than :fork:.  Most of the tests use :fork:,
+	    # so we want to make sure that we test :extssh: _somewhere_.
+	    # Make sure 'ssh' works first.
+	    require_rsh "$CVS_RSH"
+	    if test $? -eq 77; then
+		skip crerepos "$skipreason"
+		continue
+	    fi
+
+            # Make sure server ignores real $HOME/.cvsrc:
+            cat >$TESTDIR/cvs-setHome <<EOF
+#!$TESTSHELL
+HOME=$HOME
+export HOME
+exec $CVS_SERVER "\$@"
+EOF
+            chmod a+x $TESTDIR/cvs-setHome
+
+	    # Note that we set CVS_SERVER at the beginning.
+	    CVS_SERVER=$TESTDIR/cvs-setHome; export CVS_SERVER
+	    CREREPOS_ROOT=:extssh:$host$TESTDIR/crerepos
+	  else # local
+	    CREREPOS_ROOT=$TESTDIR/crerepos
+	  fi
+
+	  # First, if the repository doesn't exist at all...
+	  dotest_fail crerepos-extssh-1 \
+"${testcvs} -d ${TESTDIR}/crerepos co cvs-sanity" \
+"${SPROG} \[checkout aborted\]: ${TESTDIR}/crerepos/CVSROOT: .*"
+	  mkdir crerepos
+
+	  # The repository exists but CVSROOT doesn't.
+	  dotest_fail crerepos-extssh-2 \
+"${testcvs} -d ${TESTDIR}/crerepos co cvs-sanity" \
+"${SPROG} \[checkout aborted\]: ${TESTDIR}/crerepos/CVSROOT: .*"
+	  mkdir crerepos/CVSROOT
+
+	  # Checkout of nonexistent module
+	  dotest_fail crerepos-extssh-3 \
+"${testcvs} -d ${TESTDIR}/crerepos co cvs-sanity" \
+"${SPROG} checkout: cannot find module .cvs-sanity. - ignored"
+
+	  # Now test that CVS works correctly without a modules file
+	  # or any of that other stuff.  In particular, it *must*
+	  # function if administrative files added to CVS recently (since
+	  # CVS 1.3) do not exist, because the repository might have
+	  # been created with an old version of CVS.
+	  mkdir 1; cd 1
+	  dotest crerepos-extssh-4 \
+"${testcvs} -q -d ${TESTDIR}/crerepos co CVSROOT" \
+''
+	  dotest crerepos-extssh-5 \
+"echo yes | $testcvs -d $TESTDIR/crerepos release -d CVSROOT" \
+"You have \[0\] altered files in this repository\.
+Are you sure you want to release (and delete) directory \`CVSROOT': "
+	  rm -rf CVS
+	  cd ..
+	  # The directory 1 should be empty
+	  dotest crerepos-extssh-6 "rmdir 1"
+
+	  if $remote; then
+	    # Test that CVS rejects a relative path in CVSROOT.
+	    mkdir 1; cd 1
+	    # Note that having the client reject the pathname (as :fork:
+	    # does), does _not_ test for the bugs we are trying to catch
+	    # here.  The point is that malicious clients might send all
+	    # manner of things and the server better protect itself.
+	    dotest_fail crerepos-extssh-6a-r \
+"${testcvs} -q -d :extssh:`hostname`:../crerepos get ." \
+"${CPROG} checkout: CVSROOT may only specify a positive, non-zero, integer port (not .\.\..)\.
+${CPROG} checkout: Perhaps you entered a relative pathname${QUESTION}
+${CPROG} \[checkout aborted\]: Bad CVSROOT: .:extssh:${hostname}:\.\./crerepos.\."
+	    cd ..
+	    rm -r 1
+
+	    mkdir 1; cd 1
+	    dotest_fail crerepos-extssh-6b-r \
+"${testcvs} -d :extssh:`hostname`:crerepos init" \
+"${CPROG} init: CVSROOT requires a path spec:
+${CPROG} init: :(gserver|kserver|pserver):\[\[user\]\[:password\]@\]host\[:\[port\]\]/path
+${CPROG} init: \[:(ext|server):\]\[\[user\]@\]host\[:\]/path
+${CPROG} \[init aborted\]: Bad CVSROOT: .:extssh:${hostname}:crerepos.\."
+	    cd ..
+	    rm -r 1
+	  else # local
+	    # Test that CVS rejects a relative path in CVSROOT.
+
+	    mkdir 1; cd 1
+	    # CVS used to interpret this case as hostname/path, but that
+	    # changed with 1.12.14 to interpreting it as a relative path
+	    # and rejecting it.
+	    dotest_fail crerepos-extssh-6a "$testcvs -q -d ../crerepos get ." \
+"$SPROG checkout: CVSROOT must be an absolute pathname (not \`\.\./crerepos')
+$SPROG checkout: when using local access method\.
+$SPROG \[checkout aborted\]: Bad CVSROOT: \`\.\./crerepos'\."
+	    cd ..
+	    rm -r 1
+	  fi # end of tests to be skipped for remote
+
+	  # CVS should have created a history file.  If the administrator 
+	  # doesn't need it and wants to save on disk space, they just
+	  # delete it and set LogHistory = the empty string in config.
+	  dotest crerepos-extssh-7 "test -f $TESTDIR/crerepos/CVSROOT/history"
+
+	  # Now test mixing repositories.  This kind of thing tends to
+	  # happen accidentally when people work with several repositories.
+	  mkdir 1; cd 1
+	  dotest crerepos-extssh-8 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest crerepos-extssh-9 "${testcvs} add first-dir" \
+"Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
+	  cd first-dir
+	  touch file1
+	  dotest crerepos-extssh-10 "${testcvs} add file1" \
+"${SPROG} add: scheduling file .file1. for addition
+${SPROG} add: use .${SPROG} commit. to add this file permanently"
+	  dotest crerepos-extssh-11 "${testcvs} -q ci -m add-it" \
+"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+initial revision: 1\.1"
+	  cd ../..
+	  rm -r 1
+
+	  mkdir 1; cd 1
+	  dotest crerepos-extssh-12 "$testcvs -d $CREREPOS_ROOT -q co -l ."
+	  mkdir crerepos-dir
+	  dotest crerepos-extssh-13 "$testcvs add crerepos-dir" \
+"Directory $TESTDIR/crerepos/crerepos-dir added to the repository"
+	  cd crerepos-dir
+	  touch cfile
+	  dotest crerepos-extssh-14 "${testcvs} add cfile" \
+"${SPROG} add: scheduling file .cfile. for addition
+${SPROG} add: use .${SPROG} commit. to add this file permanently"
+	  dotest crerepos-extssh-15 "${testcvs} -q ci -m add-it" \
+"$TESTDIR/crerepos/crerepos-dir/cfile,v  <--  cfile
+initial revision: 1\.1"
+	  cd ../..
+	  rm -r 1
+
+	  mkdir 1; cd 1
+	  dotest crerepos-extssh-16 "${testcvs} co first-dir" \
+"${SPROG} checkout: Updating first-dir
+U first-dir/file1"
+	  dotest crerepos-extssh-17 "${testcvs} -d ${CREREPOS_ROOT} co crerepos-dir" \
+"${SPROG} checkout: Updating crerepos-dir
+U crerepos-dir/cfile"
+	  dotest crerepos-extssh-18 "${testcvs} update" \
 "${SPROG} update: Updating first-dir
 ${SPROG} update: Updating crerepos-dir"
 
@@ -27818,7 +28102,7 @@ ${SPROG} \[admin aborted\]: cannot continue"
 	  # In the remote case, we are cd'd off into the temp directory
 	  # and so these tests give "No such file or directory" errors.
 	  if $remote; then :; else
-	    dotest admin-19a-admin "${testcvs} -q admin -A../../cvsroot/first-dir/file2,v file1" \
+	    dotest admin-19a-admin "${testcvs} -q admin -A../../$CVSROOTDIR/first-dir/file2,v file1" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 done"
 	    dotest admin-19a-log "${testcvs} -q log -h -N file1" "
