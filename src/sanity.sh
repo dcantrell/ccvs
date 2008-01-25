@@ -527,7 +527,7 @@ expr=$1
 if $expr 'a
 b' : 'a
 c' >/dev/null; then
-  echo 'Warning: you are using a version of expr that does not correctly'
+  echo 'WARNING: you are using a version of expr that does not correctly'
   echo 'match multi-line patterns.  Some tests may spuriously pass or fail.'
   echo 'You may wish to make sure GNU expr is in your path.'
   return 1
@@ -553,13 +553,13 @@ test ! -f ${TESTDIR}/bar && expr_create_bar
 if $expr "`cat ${TESTDIR}/bar`" : "`cat ${TESTDIR}/bar`" >/dev/null; then
   : good, it works
 else
-  echo 'Warning: you are using a version of expr that does not correctly'
+  echo 'WARNING: you are using a version of expr that does not correctly'
   echo 'match large patterns.  Some tests may spuriously pass or fail.'
   echo 'You may wish to make sure GNU expr is in your path.'
   return 1
 fi
 if $expr "`cat ${TESTDIR}/bar`x" : "`cat ${TESTDIR}/bar`y" >/dev/null; then
-  echo 'Warning: you are using a version of expr that does not correctly'
+  echo 'WARNING: you are using a version of expr that does not correctly'
   echo 'match large patterns.  Some tests may spuriously pass or fail.'
   echo 'You may wish to make sure GNU expr is in your path.'
   return 1
@@ -622,12 +622,45 @@ if $expr "`cat ${TESTDIR}/bar`" : "${DOTSTAR}xyzABC${DOTSTAR}$" >/dev/null; then
   # good, it works
   return 0
 else
-  echo 'Warning: you are using a version of expr that does not correctly'
+  echo 'WARNING: you are using a version of expr that does not correctly'
   echo 'match large patterns.  Some tests may spuriously pass or fail.'
   echo 'You may wish to make sure GNU expr is in your path.'
   return 77
 fi
 }
+
+# FreeBSD 5.2 and 6.1 support 'expr [-e] expression' 
+# They get confused unless '--' is used before the expressions
+# when those expressions begin with a '-' character, such as the
+# output of an ls -l command. The EXPR_COMPAT environment variable may
+# be used to go back to the non-POSIX behavior as an alternative.
+# (GNU expr appears to accept the '--' argument and work correctly or
+# not have it and still get the results we want.)
+exprDASHDASH='false'
+expr_set_DASHDASH ()
+{
+expr=$1
+exprDASHDASH='false'
+# Not POSIX, but works on a lot of expr versions.
+if $expr "-rw-rw-r--" : "-rw-rw-r--" >/dev/null 2>&1; then
+  # good, it works
+  return 0
+else
+  # Do things in the POSIX manner.
+  if $expr -- "-rw-rw-r--" : "-rw-rw-r--" >/dev/null 2>&1; then
+    exprDASHDASH=':'
+    return 0
+  else
+    echo 'WARNING: Your $expr does not correctly handle'
+    echo 'leading "-" characters in regular expressions to'
+    echo 'be matched. You may wish to see if there is an'
+    echo 'environment variable or other setting to allow'
+    echo 'POSIX functionality to be enabled.'
+    return 77
+  fi
+fi
+}
+
 
 EXPR=`find_tool ${EXPR}:gexpr \
   version_test expr_tooltest1 expr_tooltest2 expr_tooltest3 \
@@ -636,6 +669,11 @@ expr_set_ENDANCHOR expr_set_DOTSTAR expr_tooltest_DOTSTAR`
 # Set the ENDANCHOR and DOTSTAR for the chosen expr version.
 expr_set_ENDANCHOR ${EXPR} >/dev/null
 expr_tooltest_DOTSTAR ${EXPR} >/dev/null
+
+# Is $EXPR a POSIX or non-POSIX implementation
+# with regard to command-line arguments?
+expr_set_DASHDASH ${EXPR}
+$exprDASHDASH && EXPR="$EXPR --"
 
 echo "Using EXPR=$EXPR" >>$LOGFILE
 echo "Using ENDANCHOR=$ENDANCHOR" >>$LOGFILE
@@ -1129,7 +1167,8 @@ if test x"$*" = x; then
 	tests="${tests} rdiff rdiff-short"
 	tests="${tests} rdiff2 diff diffnl death death2 death-rtag"
 	tests="${tests} rm-update-message rmadd rmadd2 rmadd3 resurrection"
-	tests="${tests} dirs dirs2 branches branches2 tagc tagf tag-space"
+	tests="${tests} dirs dirs2 branches branches2 tagc tagf "
+	tests="${tests} tag-log tag-space"
 	tests="${tests} rcslib multibranch import importb importc import-CVS"
 	tests="$tests import-quirks"
 	tests="${tests} update-p import-after-initial branch-after-import"
@@ -1154,7 +1193,7 @@ if test x"$*" = x; then
 	tests="${tests} serverpatch log log2 logopt ann ann-id"
 	# Repository Storage (RCS file format, CVS lock files, creating
 	# a repository without "cvs init", &c).
-	tests="${tests} crerepos rcs rcs2 rcs3 rcs4 rcs5 rcs6"
+	tests="${tests} crerepos crerepos-extssh rcs rcs2 rcs3 rcs4 rcs5 rcs6"
 	tests="$tests lockfiles backuprecover"
 	tests="${tests} sshstdio"
 	# More history browsing, &c.
@@ -2086,11 +2125,14 @@ newroot() {
 # sensitive server and visa versa.
 : ${CVS_SERVER=$testcvs}; export CVS_SERVER
 
+# Use a name which will be different than CVSROOT on case insensitive
+# filesystems (e.g., HFS+)
+CVSROOTDIR=cvsrootdir
 if $linkroot; then
     mkdir ${TESTDIR}/realcvsroot
-    ln -s realcvsroot ${TESTDIR}/cvsroot
+    ln -s realcvsroot ${TESTDIR}/${CVSROOTDIR}
 fi
-CVSROOT_DIRNAME=${TESTDIR}/cvsroot
+CVSROOT_DIRNAME=${TESTDIR}/${CVSROOTDIR}
 CVSROOT=`newroot $CVSROOT_DIRNAME`; export CVSROOT
 
 
@@ -7550,6 +7592,103 @@ ${PROG} rtag: first-dir/file1: Not moving non-branch tag .regulartag. from 1\.1 
 	  cd ../..
 
 	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	tag-log)
+	  # Test log output for tags
+	  mkdir 1; cd 1
+	  dotest tag-log-init-1 "$testcvs -q co -l ."
+	  mkdir first-dir
+	  dotest tag-log-init-2 "$testcvs add first-dir" \
+"Directory $CVSROOT_DIRNAME/first-dir added to the repository"
+	  cd first-dir
+	  touch file1
+	  dotest tag-log-init-3 "$testcvs add file1" \
+"${PROG}"' add: scheduling file `file1'\'' for addition
+'"${PROG}"' add: use .'"${PROG}"' commit. to add this file permanently'
+	  dotest tag-log-init-4 "$testcvs -Q ci -m add" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+done
+Checking in file1;
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+
+          dotest tag-log-1 "$testcvs -Q tag mytag file1" ''
+          dotest tag-log-2 "$testcvs log -N file1" \
+"
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+add
+============================================================================="
+          dotest tag-log-3 "$testcvs log -N -n file1" \
+"
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	mytag: 1\.1
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+add
+============================================================================="
+          dotest tag-log-4 "$testcvs log file1" \
+"
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	mytag: 1\.1
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+add
+============================================================================="
+          dotest tag-log-5 "$testcvs log -n file1" \
+"
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	mytag: 1\.1
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+add
+============================================================================="
+
+          cd ../..
+	  rm -fr 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
@@ -19726,6 +19865,19 @@ Annotations for file1
 1\.2          ($username8 *[0-9a-zA-Z-]*): a
 1\.2          ($username8 *[0-9a-zA-Z-]*): blank
 1\.2          ($username8 *[0-9a-zA-Z-]*): line"
+	  dotest ann-10blame "${testcvs} blame" \
+"
+Annotations for file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1          ($username8 *[0-9a-zA-Z-]*): this
+1\.1          ($username8 *[0-9a-zA-Z-]*): is
+1\.2          ($username8 *[0-9a-zA-Z-]*): a
+1\.3          ($username8 *[0-9a-zA-Z-]*): trunk file
+1\.2          ($username8 *[0-9a-zA-Z-]*): 
+1\.2          ($username8 *[0-9a-zA-Z-]*): with
+1\.2          ($username8 *[0-9a-zA-Z-]*): a
+1\.2          ($username8 *[0-9a-zA-Z-]*): blank
+1\.2          ($username8 *[0-9a-zA-Z-]*): line"
 	  dotest ann-11 "${testcvs} ann -r br" \
 "
 Annotations for file1
@@ -20040,6 +20192,202 @@ U first-dir/file1"
 "${PROG} checkout: Updating crerepos-dir
 U crerepos-dir/cfile"
 	  dotest crerepos-18 "${testcvs} update" \
+"${PROG} update: Updating first-dir
+${PROG} update: Updating crerepos-dir"
+
+	  cd ..
+
+          CVS_SERVER=$CVS_SERVER_save; export CVS_SERVER
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+          rm -f $TESTDIR/cvs-setHome
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${TESTDIR}/crerepos
+	  ;;
+
+
+
+	crerepos-extssh)
+	  # Various tests relating to creating repositories, operating
+	  # on repositories created with old versions of CVS, etc.
+
+	  CVS_SERVER_save=$CVS_SERVER
+
+	  # Because this test is all about -d options and such, it
+	  # at least to some extent needs to be different for remote vs.
+	  # local.
+	  if $remote; then
+
+	    # Use :extssh: rather than :fork:.  Most of the tests use :fork:,
+	    # so we want to make sure that we test :extssh: _somewhere_.
+	    # Make sure 'ssh' works first.
+	    depends_on_rsh "$CVS_RSH"
+	    if test $? -eq 77; then
+		skip crerepos "$skipreason"
+		continue
+	    fi
+
+	    # For remote, just create the repository.  We don't yet do
+	    # the various other tests above for remote but that should be
+	    # changed.
+	    mkdir crerepos
+	    mkdir crerepos/CVSROOT
+
+            # Make sure server ignores real ${HOME}/.cvsrc:
+            cat >$TESTDIR/cvs-setHome <<EOF
+#!/bin/sh
+HOME=$HOME
+export HOME
+exec $CVS_SERVER_save "\$@"
+EOF
+            chmod a+x $TESTDIR/cvs-setHome
+
+	    # Note that we set CVS_SERVER at the beginning.
+	    CVS_SERVER=$TESTDIR/cvs-setHome; export CVS_SERVER
+	    CREREPOS_ROOT=:extssh:$host$TESTDIR/crerepos
+	  else
+
+	    # First, if the repository doesn't exist at all...
+	    dotest_fail crerepos-extssh-1 \
+"${testcvs} -d ${TESTDIR}/crerepos co cvs-sanity" \
+"${PROG} \[checkout aborted\]: ${TESTDIR}/crerepos/CVSROOT: .*"
+	    mkdir crerepos
+
+	    # The repository exists but CVSROOT doesn't.
+	    dotest_fail crerepos-extssh-2 \
+"${testcvs} -d ${TESTDIR}/crerepos co cvs-sanity" \
+"${PROG} \[checkout aborted\]: ${TESTDIR}/crerepos/CVSROOT: .*"
+	    mkdir crerepos/CVSROOT
+
+	    # Checkout of nonexistent module
+	    dotest_fail crerepos-extssh-3 \
+"${testcvs} -d ${TESTDIR}/crerepos co cvs-sanity" \
+"${PROG} checkout: cannot find module .cvs-sanity. - ignored"
+
+	    # Now test that CVS works correctly without a modules file
+	    # or any of that other stuff.  In particular, it *must*
+	    # function if administrative files added to CVS recently (since
+	    # CVS 1.3) do not exist, because the repository might have
+	    # been created with an old version of CVS.
+	    mkdir 1; cd 1
+	    dotest crerepos-extssh-4 \
+"${testcvs} -q -d ${TESTDIR}/crerepos co CVSROOT" \
+''
+	    if echo yes | \
+${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
+	      pass crerepos-extssh-5
+	    else
+	      fail crerepos-extssh-5
+	    fi
+	    rm -rf CVS
+	    cd ..
+	    # The directory 1 should be empty
+	    dotest crerepos-extssh-6 "rmdir 1"
+
+	    CREREPOS_ROOT=${TESTDIR}/crerepos
+
+	  fi
+
+	  if $remote; then
+	    # Test that CVS rejects a relative path in CVSROOT.
+	    mkdir 1; cd 1
+	    # Note that having the client reject the pathname (as :fork:
+	    # does), does _not_ test for the bugs we are trying to catch
+	    # here.  The point is that malicious clients might send all
+	    # manner of things and the server better protect itself.
+	    dotest_fail crerepos-extssh-6a-r \
+"${testcvs} -q -d :extssh:`hostname`:../crerepos get ." \
+"${PROG} [a-z]*: CVSROOT may only specify a positive, non-zero, integer port (not .\.\..)\.
+${PROG} [a-z]*: Perhaps you entered a relative pathname${QUESTION}
+${PROG} \[[a-z]* aborted\]: Bad CVSROOT: .:extssh:${hostname}:\.\./crerepos.\."
+	    cd ..
+	    rm -r 1
+	  else # local
+	    # Test that CVS rejects a relative path in CVSROOT.
+
+	    mkdir 1; cd 1
+	    # Set CVS_RSH=false since ocassionally (e.g. when CVS_RSH=ssh on
+	    # some systems) some rsh implementations will block because they
+	    # can look up '..' and want to ask the user about the unknown host
+	    # key or somesuch.  Which error message we get depends on whether
+	    # false finishes running before we try to talk to it or not.
+	    dotest_fail crerepos-extssh-6a "CVS_RSH=false ${testcvs} -q -d ../crerepos get ." \
+"${PROG} \[checkout aborted\]: .*" \
+"${PROG} checkout: CVSROOT is set for a remote access method but your
+${PROG} checkout: CVS executable doesn't support it\.
+${PROG} \[checkout aborted\]: Bad CVSROOT: .\.\./crerepos.\."
+	    cd ..
+	    rm -r 1
+
+	    mkdir 1; cd 1
+	    dotest_fail crerepos-extssh-6b "${testcvs} -d crerepos init" \
+"${PROG} init: CVSROOT must be an absolute pathname (not .crerepos.)
+${PROG} init: when using local access method\.
+${PROG} \[init aborted\]: Bad CVSROOT: .crerepos.\."
+	    cd ..
+	    rm -r 1
+	  fi # end of tests to be skipped for remote
+
+	  # CVS better not create a history file--if the administrator 
+	  # doesn't need it and wants to save on disk space, they just
+	  # delete it.
+	  dotest_fail crerepos-extssh-7 \
+"test -f ${TESTDIR}/crerepos/CVSROOT/history" ''
+
+	  # Now test mixing repositories.  This kind of thing tends to
+	  # happen accidentally when people work with several repositories.
+	  mkdir 1; cd 1
+	  dotest crerepos-extssh-8 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest crerepos-extssh-9 "${testcvs} add first-dir" \
+"Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
+	  cd first-dir
+	  touch file1
+	  dotest crerepos-extssh-10 "${testcvs} add file1" \
+"${PROG} add: scheduling file .file1. for addition
+${PROG} add: use .${PROG} commit. to add this file permanently"
+	  dotest crerepos-extssh-11 "${testcvs} -q ci -m add-it" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+done
+Checking in file1;
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  cd ../..
+	  rm -r 1
+
+	  mkdir 1; cd 1
+	  dotest crerepos-extssh-12 "${testcvs} -d ${CREREPOS_ROOT} -q co -l ." ''
+	  mkdir crerepos-dir
+	  dotest crerepos-extssh-13 "${testcvs} add crerepos-dir" \
+"Directory ${TESTDIR}/crerepos/crerepos-dir added to the repository"
+	  cd crerepos-dir
+	  touch cfile
+	  dotest crerepos-extssh-14 "${testcvs} add cfile" \
+"${PROG} add: scheduling file .cfile. for addition
+${PROG} add: use .${PROG} commit. to add this file permanently"
+	  dotest crerepos-extssh-15 "${testcvs} -q ci -m add-it" \
+"RCS file: ${TESTDIR}/crerepos/crerepos-dir/cfile,v
+done
+Checking in cfile;
+${TESTDIR}/crerepos/crerepos-dir/cfile,v  <--  cfile
+initial revision: 1\.1
+done"
+	  cd ../..
+	  rm -r 1
+
+	  mkdir 1; cd 1
+	  dotest crerepos-extssh-16 "${testcvs} co first-dir" \
+"${PROG} checkout: Updating first-dir
+U first-dir/file1"
+	  dotest crerepos-extssh-17 "${testcvs} -d ${CREREPOS_ROOT} co crerepos-dir" \
+"${PROG} checkout: Updating crerepos-dir
+U crerepos-dir/cfile"
+	  dotest crerepos-extssh-18 "${testcvs} update" \
 "${PROG} update: Updating first-dir
 ${PROG} update: Updating crerepos-dir"
 
@@ -24378,7 +24726,7 @@ ${PROG} \[admin aborted\]: cannot continue"
 	  # In the remote case, we are cd'd off into the temp directory
 	  # and so these tests give "No such file or directory" errors.
 	  if $remote; then :; else
-	    dotest admin-19a-admin "${testcvs} -q admin -A../../cvsroot/first-dir/file2,v file1" \
+	    dotest admin-19a-admin "${testcvs} -q admin -A../../${CVSROOTDIR}/first-dir/file2,v file1" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 done"
 	    dotest admin-19a-log "${testcvs} -q log -h -N file1" "

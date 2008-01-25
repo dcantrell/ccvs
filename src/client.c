@@ -4795,7 +4795,7 @@ start_rsh_server (root, to_server, from_server)
     int child_pid;
 
     if (!cvs_rsh)
-	cvs_rsh = "rsh";
+	cvs_rsh = RSH_DFLT;
     if (!cvs_server)
 	cvs_server = "cvs";
 

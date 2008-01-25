@@ -1,6 +1,13 @@
 Changes since 1.11.22:
 **********************
 
+NEW FEATURES
+
+* A new log option -n reverts the -N option which may be in a .cvsrc
+  file.
+
+* The `cvs blame' command is now a synonym for the `cvs annotate' command.
+
 BUG FIXES
 
 * `cvs add' checks more thoroughly for `CVS' directories in the argument list.
@@ -32,6 +39,8 @@ BUG FIXES
 
 * Thanks to a report and patch from <mbarabas@redhat.com>, potential stack
   corruption during pserver login is avoided (bug #16961).
+
+* The :extssh: method is now properly recognized as an alias for :ext:.
 
 DEVELOPER ISSUES
 

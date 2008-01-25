@@ -65,7 +65,7 @@ extern struct buffer *cvs_gssapi_wrap_buffer_initialize ();
 #ifdef CLIENT_SUPPORT
 /*
  * Flag variable for seeing whether the server has been started yet.
- * As of this writing, only edit.c:notify_check() uses it.
+ * As of this writing, only edit.c:cvs_notify_check() uses it.
  */
 extern int server_started;
 

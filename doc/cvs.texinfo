@@ -8753,6 +8753,8 @@ Synopsis: annotate [options] files@dots{}
 @item
 Requires: repository.
 @item
+Synonym: blame
+@item
 Changes: nothing.
 @end itemize
 
@@ -10462,6 +10464,12 @@ option can be very useful when your site uses a lot of
 tags, so rather than "more"'ing over 3 pages of tag
 information, the log information is presented without
 tags at all.
+
+@item -n
+Print the list of tags for this file. This option can
+be very useful when your @file{.cvsrc} file has a
+@samp{log -N} entry as a way to get a full list of all
+of the tags.
 
 @item -R
 Print only the name of the @sc{rcs} file.
