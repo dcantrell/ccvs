@@ -1,3 +1,8 @@
+2008-01-25  Mark D. Baushke  <mdb@juniper.net>
+
+	* client.h, log.c, main.c, recurse.c, root.c: Update copyright for
+	2008.
+
 2008-01-24  Mark D. Baushke  <mdb@gnu.org>
 
 	* log.c (cvslog): New -n option to revert the -N switch.
