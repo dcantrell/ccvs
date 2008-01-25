@@ -1,3 +1,13 @@
+2008-01-24  Mark D. Baushke  <mdb@gnu.org>
+
+	* cvs.texinfo (log options): Document the new cvs log -n
+	switch to reverse the -N switch.
+	* cvs.texinfo (annotate & rannotate): Document "blame" as a
+	synonym for the "annotate" command.
+	(Patch suggested by "David O'Brien" <obrien@FreeBSD.org>)
+
+	* cvs.1, stamp-vti, version.texi: Regenerated.
+
 2007-10-19  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo: Update Ximbiot's address and Copyright dates.

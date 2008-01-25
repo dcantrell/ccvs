@@ -1350,6 +1350,8 @@ Synopsis: annotate [options] files\&...
 .IP "\(bu" 2
 Requires: repository.
 .IP "\(bu" 2
+Synonym: blame
+.IP "\(bu" 2
 Changes: nothing.
 .SP
 For each file in \fIfiles\fR, print the head revision
@@ -3387,6 +3389,14 @@ option can be very useful when your site uses a lot of
 tags, so rather than "more"\(aqing over 3 pages of tag
 information, the log information is presented without
 tags at all.
+.SP
+.IP "" 0
+\fB-n\fR
+.IP "" 2
+Print the list of tags for this file. This option can
+be very useful when your \fB.cvsrc\fR file has a
+\fBlog -N\fR entry as a way to get a full list of all
+of the tags.
 .SP
 .IP "" 0
 \fB-R\fR

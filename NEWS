@@ -31,7 +31,12 @@ NEW FEATURES
   expose the real version instead of NONE for removed files.
 
 * A new command line option, --allow-root-regexp, was added which allows
-acceptable repositories to be specified using a list of regular expressions.
+  acceptable repositories to be specified using a list of regular expressions.
+
+* A new log option -n reverts the -N option which may be in a .cvsrc
+  file.
+
+* The `cvs blame' command is now a synonym for the `cvs annotate' command.
 
 BUG FIXES
 
@@ -64,6 +69,8 @@ BUG FIXES
 
 * Thanks to a report and patch from <mbarabas@redhat.com>, potential stack
   corruption during pserver login is avoided (bug #16961).
+
+* The :extssh: method is now properly recognized as an alias for :ext:.
 
 * The CVS client again correctly reports files with conflicts when using
   servers running CVS 1.11.20/1.12.12, or earlier (and maybe 3rd party

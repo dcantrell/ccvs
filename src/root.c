@@ -676,6 +676,8 @@ parse_cvsroot (const char *root_in)
 	    newroot->method = server_method;
 	else if (!strcasecmp (method, "ext"))
 	    newroot->method = ext_method;
+	else if (!strcasecmp (method, "extssh"))
+	    newroot->method = extssh_method;
 	else if (!strcasecmp (method, "fork"))
 	    newroot->method = fork_method;
 	else
@@ -1043,6 +1045,7 @@ parse_cvsroot (const char *root_in)
 	break;
     case server_method:
     case ext_method:
+    case extssh_method:
 	no_port = 1;
 	/* no_password already set */
 	check_hostname = 1;
