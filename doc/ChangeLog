@@ -1,3 +1,11 @@
+2008-01-27  Mark D. Baushke  <mdb@gnu.org>
+
+	* cvs.texinfo: Document use of --with-ssh flag to configure and
+	how :extssh: uses the CVS_SSH environment variable or "ssh".
+	* stamp-vti, version.texi: Regenerated.
+	
+	* cvs.texinfo: Update copyright for 2008.
+
 2008-01-24  Mark D. Baushke  <mdb@gnu.org>
 
 	* cvs.texinfo (log options): Document the new cvs log -n

@@ -1,3 +1,13 @@
+2008-01-27  Mark D. Baushke  <mdb@gnu.org>
+
+	* configure.in: Look for lshc rather than lsh to avoid problems
+	under Debian GNU/Linux.
+	* configure: Regenerated.
+
+	* configure.in: Add support for --with-ssh and CVS_SSH.
+	* NEWS: Note that :extssh: looks to CVS_SSH rather tha CVS_RSH.
+	* Makefile.in, config.h.in, configure: Regenerated.
+
 2008-01-24  Mark D. Baushke  <mdb@gnu.org>
 
 	* NEWS: Note that :extssh: method was fixed. New `cvs blame' as an

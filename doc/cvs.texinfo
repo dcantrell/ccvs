@@ -4,7 +4,7 @@
 @macro copyleftnotice
 @noindent
 Copyright @copyright{} 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
-                       2001, 2002, 2003, 2004, 2005, 2006, 2007
+                       2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008
                        Free Software Foundation, Inc.
 
 @multitable @columnfractions .12 .88
@@ -2282,6 +2282,23 @@ example, to connect to a @sc{cvs} server via the local
 This method option first appeared in @sc{cvs} version 1.12.11 and is valid only
 as a modification to the @code{ext} connection method.
 
+@cindex CVS_SSH method option
+@item CVS_SSH=@var{path}
+This method option can be used with the @code{extssh} method to specify the path
+the @sc{cvs} client will use to find the remote shell used to contact the
+@sc{cvs} server and takes precedence over any path specified in the
+@code{$CVS_SSH} environment variable (@pxref{Connecting via rsh}).  For
+example, to connect to a @sc{cvs} server via the local
+@file{/path/to/ssh/command} command, you could choose to specify the following
+@var{path} via the @code{CVS_SSH} method option:
+
+@example
+:extssh;CVS_SSH=/path/to/ssh/command:@var{ext_connection_string}
+@end example
+
+This method option first appeared in @sc{cvs} version 1.12.14 and is valid only
+as a modification to the @code{extssh} connection method.
+
 @cindex CVS_SERVER method option
 @item CVS_SERVER=@var{path}
 This method option can be used with the @code{ext} and @code{fork} methods to
@@ -2433,7 +2450,16 @@ variables set correctly.  See @ref{Connecting via rsh}, for more details on
 these environment variables.
 
 @node Connecting via rsh
-@subsection Connecting with rsh
+@subsection Connecting with rsh or ssh
+
+@cindex ssh
+@sc{cvs} may use the @samp{ssh} protocol to perform
+these operations, so the remote user host needs to have
+a either an agent like @code{ssh-agent} to hold
+credentials or a @file{.shosts} file which grants
+access to the local user. Note that the program that
+@sc{cvs} uses for this purpose may be specified using
+the @file{--with-ssh} flag to configure.
 
 @cindex rsh
 @sc{cvs} uses the @samp{rsh} protocol to perform these
@@ -2460,6 +2486,13 @@ Then test that @samp{rsh} is working with
 rsh -l bach faun.example.org 'echo $PATH'
 @end example
 
+@noindent
+To test that @samp{ssh} is working use
+
+@example
+ssh -l bach faun.example.org 'echo $PATH'
+@end example
+
 @cindex CVS_SERVER, environment variable
 Next you have to make sure that @code{rsh} will be able
 to find the server.  Make sure that the path which
@@ -2471,7 +2504,7 @@ or @file{.profile}.  Alternately, you can set the
 environment variable @code{CVS_SERVER} on the client
 machine to the filename of the server you want to use,
 for example @file{/usr/local/bin/cvs-1.6}.
-For the @code{ext} and @code{fork} methods, you may
+For the @code{ext}, @code{extssh} and @code{fork} methods, you may
 also specify @var{CVS_SERVER} as an option in the
 @var{CVSROOT} so that you may use different servers for
 different roots. See @ref{Remote repositories} for more
@@ -2482,12 +2515,18 @@ There is no need to edit @file{inetd.conf} or start a
 
 @cindex :server:, setting up
 @cindex :ext:, setting up
+@cindex :extssh:, setting up
 @cindex Kerberos, using kerberized rsh
 @cindex SSH (rsh replacement)
 @cindex rsh replacements (Kerberized, SSH, &c)
-There are two access methods that you use in @code{CVSROOT}
-for rsh.  @code{:server:} specifies an internal rsh
+There are three access methods that you use in @code{CVSROOT}
+for rsh or ssh.  @code{:server:} specifies an internal rsh
 client, which is supported only by some @sc{cvs} ports.
+@code{:extssh:} specifies an external ssh program. By
+default this is @code{ssh} (unless otherwise specified
+by the @file{--with-ssh} flag to configure) but you may set the
+@code{CVS_SSH} environment variable to invoke another
+program or wrapper script.
 @code{:ext:} specifies an external rsh program.  By
 default this is @code{rsh} (unless otherwise specified
 by the @file{--with-rsh} flag to configure) but you may set the
@@ -2513,6 +2552,13 @@ in the @var{CVSROOT} string to allow you to use different connection tools
 for different roots (@pxref{The connection method}).  For example, allowing
 some roots to use @code{CVS_RSH=remsh} and some to use
 @code{CVS_RSH=ssh} for the @code{ext} method.  See also
+the @ref{Remote repositories} for more details.
+
+You may choose to specify the @var{CVS_SSH} option as a method option
+in the @var{CVSROOT} string to allow you to use different connection tools
+for different roots (@pxref{The connection method}).  For example, allowing
+some roots to use @code{CVS_SSH=/path/to/wrapper/ssh} and some to use
+@code{CVS_SSH=ssh} for the @code{extssh} method.  See also
 the @ref{Remote repositories} for more details.
 @c See also the comment in src/client.c for rationale
 @c concerning "rsh" being the default and never
@@ -15745,6 +15791,12 @@ Specifies the external program which @sc{cvs} connects with,
 when @code{:ext:} access method is specified.
 @pxref{Connecting via rsh}.
 
+@cindex CVS_SSH, environment variable
+@item $CVS_SSH
+Specifies the external program which @sc{cvs} connects with,
+when @code{:extssh:} access method is specified.
+@pxref{Connecting via rsh}.
+
 @item $CVS_SERVER
 Used in client-server mode when accessing a remote
 repository using @sc{rsh}.  It specifies the name of
@@ -16164,7 +16216,7 @@ cause, please let us know as described in @ref{BUGS}.
 
 @item end of file from server (consult above messages if any)
 The most common cause for this message is if you are
-using an external @code{rsh} program and it exited with
+using an external @code{rsh} or @code{ssh} program and it exited with
 an error.  In this case the @code{rsh} program should
 have printed a message, which will appear before the
 above message.  For more information on setting up a
