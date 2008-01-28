@@ -1,7 +1,5 @@
 2008-01-27  Mark D. Baushke  <mdb@gnu.org>
 
-	* filesubr.c (xreadlink): s/128/BUFSIZ/ avoid magic numbers.
-
 	* client.c (start_rsh_server): Use CVS_SSH for the :extssh:
 	method or fall back to "ssh" as set using the --with-ssh flag to
 	configure.
