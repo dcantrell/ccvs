@@ -505,7 +505,7 @@ AC_ARG_WITH(
     [--with-ssh],
     [The default remote shell CVS will use for :extssh: transport
      (default autodetects)]), ,
-  [with_ssh="ssh lsh ssh2"])
+  [with_ssh="ssh lshc ssh2"])
 
 if test no = "$with_ssh"; then
   AC_MSG_WARN([Failed to find usable remote shell. Using 'ssh'.])
@@ -558,7 +558,7 @@ AC_ARG_WITH(
   dnl and `remsh' is the remote shell, but look for it first since it
   dnl probably won't exist on any platform where it shouldn't be preferred
   dnl to `rsh'.
-  [with_rsh="remsh rsh ssh lsh ssh2"])
+  [with_rsh="remsh rsh ssh lshc ssh2"])
 
 if test no = "$with_rsh"; then
   AC_MSG_WARN([Failed to find usable remote shell. Using 'rsh'.])
