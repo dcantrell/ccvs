@@ -1217,6 +1217,10 @@
    'size_t'. */
 #undef SIZE_T_SUFFIX
 
+/* The default remote shell to use, if one does not specify the CVS_SSH
+   environment variable. */
+#undef SSH_DFLT
+
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
    automatically deduced at runtime.

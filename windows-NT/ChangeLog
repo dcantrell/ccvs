@@ -1,3 +1,8 @@
+2008-01-27  Mark D. Baushke  <mdb@gnu.org>
+
+	* config.h.in (SSH_DFLT): Add default value.
+	* Makefile.in, config.h: Regenerated.
+	
 2007-08-24  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (sys/stat.h, stamp-sh3): Create sys/stat.h.

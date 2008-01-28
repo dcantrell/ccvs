@@ -406,6 +406,7 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SIG_ATOMIC_T_SUFFIX = @SIG_ATOMIC_T_SUFFIX@
 SIZE_T_SUFFIX = @SIZE_T_SUFFIX@
+SSH_DFLT = @SSH_DFLT@
 STDBOOL_H = @STDBOOL_H@
 STDINT_H = @STDINT_H@
 STRIP = @STRIP@
@@ -479,6 +480,7 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 with_default_rsh = @with_default_rsh@
+with_default_ssh = @with_default_ssh@
 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2008 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2007 Derek Price,
  *                                  Ximbiot LLC <http://ximbiot.com>,
@@ -789,6 +789,12 @@ parse_cvsroot (const char *root_in)
 		newroot->verify_template = xstrdup (q);
 	    else if (!strcasecmp (p, "verify-arg"))
 		push_string (newroot->verify_args, q);
+	    else if (!strcasecmp (p, "CVS_SSH"))
+	    {
+		/* override CVS_RSH environment variable */
+		if (newroot->method == extssh_method)
+		    newroot->cvs_rsh = xstrdup (q);
+	    }
 	    else if (!strcasecmp (p, "CVS_RSH"))
 	    {
 		/* override CVS_RSH environment variable */

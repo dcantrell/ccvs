@@ -641,6 +641,56 @@ dnl
 ACX_WITH_EXTERNAL_ZLIB
 
 dnl
+dnl begin --with-ssh
+dnl
+dnl Many sites no longer desire the use of "ssh" as the default
+dnl remote shell program. They typically favor "ssh" as the default
+
+# What remote shell transport should our client cvs default to using?
+AC_ARG_WITH(
+  [ssh],
+  AC_HELP_STRING(
+    [--with-ssh],
+    [The default remote shell CVS will use for :extssh: transport
+     (default ssh)]), ,
+  [with_ssh="ssh lshc ssh2"])
+
+if test no = "$with_ssh"; then
+  AC_MSG_WARN([Failed to find usable remote shell. Using 'ssh'.])
+  with_ssh=ssh
+elif test yes = "$with_ssh"; then
+  # Make --with-ssh mean the same thing as --with-ssh=ssh
+  with_ssh=ssh
+fi
+
+if echo $with_ssh |grep ^/ >/dev/null; then
+  # If $with_ssh is an absolute path, issue a warning if the executable
+  # doesn't exist or isn't usable, but then trust the user and use it
+  # regardless
+  with_default_ssh=$with_ssh
+  AC_MSG_CHECKING([for a remote shell])
+  if ! test -f $with_ssh \
+      || ! test -x $with_ssh; then
+    # warn the user that they may encounter problems
+    AC_MSG_WARN([$with_ssh is not a path to an executable file])
+  fi
+else
+  # Search for a remote shell
+  AC_CHECK_PROGS([with_default_ssh], [$with_ssh], "ssh")
+fi
+
+AC_DEFINE_UNQUOTED(
+  [SSH_DFLT], ["$with_default_ssh"],
+  [The default remote shell to use, if one does not specify the
+   CVS_SSH environment variable.])
+SSH_DFLT=$with_default_ssh
+AC_SUBST(SSH_DFLT)
+dnl done with finding a default CVS_SSH value
+dnl
+dnl end --with-ssh
+dnl
+
+dnl
 dnl begin --with-rsh
 dnl
 dnl Many sites no longer desire the use of "rsh" as the default
