@@ -8,6 +8,10 @@ NEW FEATURES
 
 * The `cvs blame' command is now a synonym for the `cvs annotate' command.
 
+* The :extssh: method will use $CVS_SSH if set, or fall back on "ssh"
+  by default (but may be explicitly set using the --with-ssh flag to
+  configure).
+
 BUG FIXES
 
 * `cvs add' checks more thoroughly for `CVS' directories in the argument list.

@@ -433,6 +433,10 @@
    it. */
 #undef SIZE_MAX
 
+/* The default remote shell to use, if one does not specify the CVS_SSH
+   environment variable. */
+#undef SSH_DFLT
+
 /* Define to 1 if the `S_IS*' macros in <sys/stat.h> do not work properly. */
 #undef STAT_MACROS_BROKEN
 
