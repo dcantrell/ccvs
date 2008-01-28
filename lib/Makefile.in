@@ -193,6 +193,7 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 with_default_rsh = @with_default_rsh@
+with_default_ssh = @with_default_ssh@
 
 # For now we need to include $(top_srcdir)/src because some systems
 # (at least 'AIX rioscpu2 3 4 000030498200',

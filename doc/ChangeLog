@@ -1,6 +1,10 @@
-2008-01-25  Mark D. Baushke  <mdb@gnu.org>
+2008-01-27  Mark D. Baushke  <mdb@gnu.org>
 
-	* doc/cvs.texinfo: Update copyright for 2008.
+	* cvs.texinfo: Document use of --with-ssh flag to configure and
+	how :extssh: uses the CVS_SSH environment variable or "ssh".
+	* stamp-vti, version.texi: Regenerated.
+	
+	* cvs.texinfo: Update copyright for 2008.
 
 2008-01-24  Mark D. Baushke  <mdb@gnu.org>
 

@@ -199,6 +199,7 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 with_default_rsh = @with_default_rsh@
+with_default_ssh = @with_default_ssh@
 
 # $(includeopt) is CVS specific and set by configure
 # FIXME - This includes line is dependant on its order.  This means there is

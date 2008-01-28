@@ -1,3 +1,8 @@
+2008-01-27  Mark D. Baushke  <mdb@gnu.org>
+
+	* config.h.in (RSH_DFLT, SSH_DFLT): Add default values.
+	* Makefile.in, config.h: Regenerated.
+	
 2005-09-19  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (stamp-ch): Sub PACKAGE_STRING rather than reconstructing

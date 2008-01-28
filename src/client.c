@@ -4726,15 +4726,20 @@ start_rsh_server (root, to_server, from_server)
     /* If you're working through firewalls, you can set the
        CVS_RSH environment variable to a script which uses rsh to
        invoke another rsh on a proxy machine.  */
-    char *cvs_rsh = getenv ("CVS_RSH");
+    char *env_cvs_rsh = getenv ("CVS_RSH");
+    char *env_cvs_ssh = getenv ("CVS_SSH");
+    char *cvs_rsh;
     char *cvs_server = getenv ("CVS_SERVER");
     int i = 0;
     /* This needs to fit "rsh", "-b", "-l", "USER", "host",
        "cmd (w/ args)", and NULL.  We leave some room to grow. */
     char *rsh_argv[10];
 
-    if (!cvs_rsh)
-	cvs_rsh = RSH_DFLT;
+    if (root->method == extssh_method)
+	cvs_rsh = env_cvs_ssh ? env_cvs_ssh : SSH_DFLT;
+    else
+	cvs_rsh = env_cvs_rsh ? env_cvs_rsh : RSH_DFLT;
+
     if (!cvs_server)
 	cvs_server = "cvs";
 
@@ -4788,14 +4793,19 @@ start_rsh_server (root, to_server, from_server)
     /* If you're working through firewalls, you can set the
        CVS_RSH environment variable to a script which uses rsh to
        invoke another rsh on a proxy machine.  */
-    char *cvs_rsh = getenv ("CVS_RSH");
+    char *env_cvs_rsh = getenv ("CVS_RSH");
+    char *env_cvs_ssh = getenv ("CVS_SSH");
+    char *cvs_rsh;
     char *cvs_server = getenv ("CVS_SERVER");
     char *command;
     int tofd, fromfd;
     int child_pid;
 
-    if (!cvs_rsh)
-	cvs_rsh = RSH_DFLT;
+    if (root->method == extssh_method)
+	cvs_rsh = env_cvs_ssh ? env_cvs_ssh : SSH_DFLT;
+    else
+	cvs_rsh = env_cvs_rsh ? env_cvs_rsh : RSH_DFLT;
+
     if (!cvs_server)
 	cvs_server = "cvs";
 

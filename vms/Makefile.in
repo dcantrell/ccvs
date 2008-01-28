@@ -165,6 +165,7 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 with_default_rsh = @with_default_rsh@
+with_default_ssh = @with_default_ssh@
 EXTRA_DIST = \
     .cvsignore \
     ChangeLog \
