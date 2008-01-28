@@ -12134,7 +12134,7 @@ _ACEOF
 if test "${with_ssh+set}" = set; then
   withval=$with_ssh;
 else
-  with_ssh="ssh lsh ssh2"
+  with_ssh="ssh lshc ssh2"
 fi
 
 
@@ -12221,7 +12221,7 @@ _ACEOF
 if test "${with_rsh+set}" = set; then
   withval=$with_rsh;
 else
-          with_rsh="remsh rsh ssh lsh ssh2"
+          with_rsh="remsh rsh ssh lshc ssh2"
 fi
 
 
