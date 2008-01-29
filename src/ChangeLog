@@ -1,4 +1,8 @@
 2008-01-29  Derek R. Price  <derek@ximbiot.com>
+
+	* update.c (join_file): Remove trace that is no longer needed.
+
+2008-01-29  Derek R. Price  <derek@ximbiot.com>
 	    Paul Edwards  <fight.subjugation@gmail.com>
 
 	* update.c (join_file): Detect deletion conflicts.

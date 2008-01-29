@@ -2338,9 +2338,6 @@ join_file (finfo, vers)
 		       finfo->fullname, locally, modmsg, jrev2);
 
 	    /* Register the conflict with the client.  */
-	    if (trace)
-		fprintf (stderr, "%s-> join_file: ts=%s, conflict=%s\n",
-			 CLIENT_SERVER_STR, vers->ts_user, vers->ts_conflict);
 
 	    /* FIXME: vers->ts_user should always be set here but sometimes
 	     * isn't, namely when checkout_file() has just created the file,
