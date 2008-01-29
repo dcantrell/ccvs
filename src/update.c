@@ -1435,8 +1435,10 @@ VERS: ", 0);
 	    /* fix up the vers structure, in case it is used by join */
 	    if (join_rev1)
 	    {
-		/* FIXME: Throwing away the original revision info is almost
-		   certainly wrong -- what if join_rev1 is "BASE"?  */
+		/* FIXME: It seems like we should be preserving ts_user
+		 * & ts_rcs here, but setting them causes problems in
+		 * join_file().
+		 */
 		if (vers_ts->vn_user != NULL)
 		    free (vers_ts->vn_user);
 		if (vers_ts->vn_rcs != NULL)
@@ -2207,9 +2209,8 @@ join_file (finfo, vers)
     if (rev2 == NULL || RCS_isdead (vers->srcfile, rev2))
     {
 	char *mrev;
-
-	if (rev2 != NULL)
-	    free (rev2);
+	short conflict = 0;
+	char *modmsg = NULL;
 
 	/* If the first revision doesn't exist either, then there is
            no change between the two revisions, so we don't do
@@ -2218,6 +2219,8 @@ join_file (finfo, vers)
 	{
 	    if (rev1 != NULL)
 		free (rev1);
+	    if (rev2 != NULL)
+		free (rev2);
 	    return;
 	}
 
@@ -2257,8 +2260,9 @@ join_file (finfo, vers)
 	    || vers->vn_user[0] == '-'
 	    || RCS_isdead (vers->srcfile, vers->vn_user))
 	{
-	    if (rev1 != NULL)
-		free (rev1);
+	    free (rev1);
+	    if (rev2 != NULL)
+		free (rev2);
 	    return;
 	}
 
@@ -2267,55 +2271,113 @@ join_file (finfo, vers)
 	   resolve.  No_Difference will already have been called in
 	   this case, so comparing the timestamps is sufficient to
 	   determine whether the file is locally modified.  */
-	if (strcmp (vers->vn_user, "0") == 0
-	    || (vers->ts_user != NULL
-		&& strcmp (vers->ts_user, vers->ts_rcs) != 0))
+	if (/* added */ !strcmp (vers->vn_user, "0")
+	    || /* locally modified */
+	       vers->ts_user && strcmp (vers->ts_user, vers->ts_rcs))
+	    conflict = 1;
+
+	if (!conflict
+	    && /* may have changed */
+	       strcmp (rev1, vers->vn_user))
 	{
-	    if (jdate2 != NULL)
-		error (0, 0,
-		       "file %s is locally modified, but has been removed in revision %s as of %s",
-		       finfo->fullname, jrev2, jdate2);
-	    else
-		error (0, 0,
-		       "file %s is locally modified, but has been removed in revision %s",
-		       finfo->fullname, jrev2);
-
-	    /* FIXME: Should we arrange to return a non-zero exit
-               status?  */
-
-	    if (rev1 != NULL)
-		free (rev1);
-
-	    return;
+	    /* The removal should happen if either the file has never changed
+	     * on the destination or the file has changed to be identical to
+	     * the first join revision.
+	     *
+	     * ------R-----------D
+	     *       |
+	     *       \----J1---J2-----S
+	     *
+	     * So:
+	     *
+	     * J2 is dead.
+	     * D is destination.
+	     * R is source branch root/GCA.
+	     * if J1 == D       removal should happen
+	     * if D == R        removal should happen
+	     * otherwise, fail.
+	     *
+	     * (In the source, J2 = REV2, D = VN_USER, R = GCA computed below)
+	     */
+	    char *gca_rev1 = gca (rev1, vers->vn_user);
+	    if (/* genuinely changed on destination branch */
+	        RCS_cmp_file (vers->srcfile, gca_rev1, NULL,
+			      vers->vn_user, vers->options, finfo->file)
+	        && /* genuinely different from REV1 */
+		   RCS_cmp_file (vers->srcfile, rev1, NULL,
+				 vers->vn_user, vers->options, finfo->file))
+	    {
+		conflict = 1;
+		modmsg = xmalloc (14 + strlen (gca_rev1));
+		sprintf (modmsg, " since GCA (%s)", gca_rev1);
+	    }
 	}
 
-	/* If only one join tag was specified, and the user file has
-           been changed since the greatest common ancestor (rev1),
-           then there is a conflict we can not resolve.  See above for
-           the rationale.  */
-	if (join_rev2 == NULL
-	    && strcmp (rev1, vers->vn_user) != 0)
+	if (conflict)
 	{
-	    if (jdate2 != NULL)
+	    const char *locally;
+	    char *cp;
+
+	    if (!modmsg)
+		modmsg = xstrdup ("");
+
+	    if (/* added */ !strcmp (vers->vn_user, "0")
+		|| /* locally modified */
+		   vers->ts_user && strcmp (vers->ts_user, vers->ts_rcs))
+		locally = " locally";
+	    else
+		locally = "";
+
+	    if (jdate2)
 		error (0, 0,
-		       "file %s has been modified, but has been removed in revision %s as of %s",
-		       finfo->fullname, jrev2, jdate2);
+		       "file %s is%s modified%s, but has been removed in revision %s as of %s",
+		       finfo->fullname, locally, modmsg, jrev2, jdate2);
 	    else
 		error (0, 0,
-		       "file %s has been modified, but has been removed in revision %s",
-		       finfo->fullname, jrev2);
+		       "file %s is%s modified%s, but has been removed in revision %s",
+		       finfo->fullname, locally, modmsg, jrev2);
 
-	    /* FIXME: Should we arrange to return a non-zero exit
-               status?  */
+	    /* Register the conflict with the client.  */
+	    if (trace)
+		fprintf (stderr, "%s-> join_file: ts=%s, conflict=%s\n",
+			 CLIENT_SERVER_STR, vers->ts_user, vers->ts_conflict);
 
-	    if (rev1 != NULL)
-		free (rev1);
+	    /* FIXME: vers->ts_user should always be set here but sometimes
+	     * isn't, namely when checkout_file() has just created the file,
+	     * but simply setting it in checkout_file() appears to cause other
+	     * problems.
+	     */
+	    if (isfile (finfo->file))
+		cp = time_stamp (finfo->file);
+	    else
+		cp = xstrdup (vers->ts_user);
 
-	    return;
-	}
+	    Register (finfo->entries, finfo->file, vers->vn_user,
+		      "Result of merge", vers->options, vers->tag, vers->date,
+		      cp);
+	    write_letter (finfo, 'C');
+	    free (cp);
 
-	if (rev1 != NULL)
+#ifdef SERVER_SUPPORT
+	    /* Abuse server_checked_in() to send the updated entry without
+	     * needing to update the file.
+	     */
+	    if (server_active)
+		server_checked_in (finfo->file, finfo->update_dir,
+				   finfo->repository);
+#endif
+
+	    free (modmsg);
 	    free (rev1);
+	    if (rev2 != NULL)
+		free (rev2);
+
+	    return;
+	}
+
+	free (rev1);
+	if (rev2 != NULL)
+	    free (rev2);
 
 	/* The user file exists and has not been modified.  Mark it
            for removal.  FIXME: If we are doing a checkout, this has
