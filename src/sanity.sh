@@ -1172,7 +1172,7 @@ if test x"$*" = x; then
 	tests="${tests} rcslib multibranch import importb importc import-CVS"
 	tests="$tests import-quirks"
 	tests="${tests} update-p import-after-initial branch-after-import"
-	tests="${tests} join join2 join3 join4 join5 join6 join7"
+	tests="${tests} join join2 join3 join4 join5 join6 join7 join8 join9"
 	tests="${tests} join-readonly-conflict join-admin join-admin-2"
 	tests="${tests} join-rm"
 	tests="${tests} new newb conflicts conflicts2 conflicts3 conflicts4"
@@ -5469,9 +5469,10 @@ U first-dir/file3'
 		fi
 
 		# and join
-		dotest 95 "${testcvs} -q update -j HEAD" \
-"${PROG}"' update: file file1 has been modified, but has been removed in revision HEAD
-'"${PROG}"' update: file file3 exists, but has been added in revision HEAD'
+		dotest 95 "$testcvs -q update -j HEAD" \
+"$PROG update: file file1 is modified since GCA (1\.3), but has been removed in revision HEAD
+C file1
+$PROG update: file file3 exists, but has been added in revision HEAD"
 
 		dotest_fail death-file4-7 "test -f file4" ''
 
@@ -9340,40 +9341,42 @@ T file9'
 	  cd ../..
 	  mkdir 3
 	  cd 3
-	  dotest join-16 "${testcvs} -q co -jT1 -jT2 first-dir" \
-'U first-dir/file1
+	  dotest join-16 "$testcvs -q co -jT1 -jT2 first-dir" \
+"U first-dir/file1
 U first-dir/file2
-'"${PROG}"' checkout: file first-dir/file2 exists, but has been added in revision T2
+$PROG checkout: file first-dir/file2 exists, but has been added in revision T2
 U first-dir/file3
-'"${PROG}"' checkout: scheduling first-dir/file3 for removal
+$PROG checkout: scheduling first-dir/file3 for removal
 U first-dir/file4
-'"${PROG}"' checkout: scheduling first-dir/file4 for removal
+$PROG checkout: file first-dir/file4 is modified since GCA (1\.1), but has been removed in revision T2
+C first-dir/file4
 U first-dir/file7
-'"${PROG}"' checkout: file first-dir/file9 does not exist, but is present in revision T2'
+$PROG checkout: file first-dir/file9 does not exist, but is present in revision T2"
 
 	  # Verify that the right changes have been scheduled.
 	  cd first-dir
-	  dotest join-17 "${testcvs} -q update" \
+	  dotest_fail join-17 "$testcvs -q update" \
 'A file1
 R file3
-R file4'
+C file4'
 
 	  # Modify file4 locally, and do an update with a merge.
 	  cd ../../1/first-dir
 	  echo 'third revision of file4' > file4
-	  dotest join-18 "${testcvs} -q update -jT1 -jT2 ." \
-'U file1
-'"${PROG}"' update: file file2 exists, but has been added in revision T2
-'"${PROG}"' update: scheduling file3 for removal
+	  dotest join-18 "$testcvs -q update -jT1 -jT2 ." \
+"U file1
+$PROG update: file file2 exists, but has been added in revision T2
+$PROG update: scheduling file3 for removal
 M file4
-'"${PROG}"' update: file file4 is locally modified, but has been removed in revision T2
-'"${PROG}"' update: file file9 does not exist, but is present in revision T2'
+$PROG update: file file4 is locally modified, but has been removed in revision T2
+C file4
+$PROG update: file file9 does not exist, but is present in revision T2"
 
 	  # Verify that the right changes have been scheduled.
-	  dotest join-19 "${testcvs} -q update" \
+	  dotest_fail join-19 "$testcvs -q update" \
 'A file1
 R file3
-M file4'
+C file4'
 
 	  # Do a checkout with a merge from a single revision.
 
@@ -9388,27 +9391,29 @@ M file4'
 	  # on branches.
 	  cd ../../3
 	  rm -r first-dir
-	  dotest join-20 "${testcvs} -q co -jbranch first-dir" \
+	  dotest join-20 "$testcvs -q co -jbranch first-dir" \
 "U first-dir/file1
 U first-dir/file2
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
+RCS file: $CVSROOT_DIRNAME/first-dir/file2,v
 retrieving revision 1\.1
 retrieving revision 1\.1\.2\.2
 Merging differences between 1\.1 and 1\.1\.2\.2 into file2
 U first-dir/file3
-${PROG} checkout: scheduling first-dir/file3 for removal
+$PROG checkout: scheduling first-dir/file3 for removal
 U first-dir/file4
-${PROG} checkout: file first-dir/file4 has been modified, but has been removed in revision branch
+$PROG checkout: file first-dir/file4 is modified since GCA (1\.1), but has been removed in revision branch
+C first-dir/file4
 U first-dir/file7
-${PROG} checkout: file first-dir/file9 does not exist, but is present in revision branch"
+$PROG checkout: file first-dir/file9 does not exist, but is present in revision branch"
 
 	  # Verify that the right changes have been scheduled.
 	  # The M file2 line is a bug; see above join-20.
 	  cd first-dir
-	  dotest join-21 "${testcvs} -q update" \
+	  dotest_fail join-21 "$testcvs -q update" \
 'A file1
 M file2
-R file3'
+R file3
+C file4'
 
 	  # Checkout the main line again.
 	  cd ../../1
@@ -9424,24 +9429,25 @@ U first-dir/file7'
 	  # The file2 handling is a bug; see above join-20.
 	  cd first-dir
 	  echo 'third revision of file4' > file4
-	  dotest join-23 "${testcvs} -q update -jbranch ." \
+	  dotest join-23 "$testcvs -q update -jbranch ." \
 "U file1
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
+RCS file: $CVSROOT_DIRNAME/first-dir/file2,v
 retrieving revision 1\.1
 retrieving revision 1\.1\.2\.2
 Merging differences between 1\.1 and 1\.1\.2\.2 into file2
-${PROG} update: scheduling file3 for removal
+$PROG update: scheduling file3 for removal
 M file4
-${PROG} update: file file4 is locally modified, but has been removed in revision branch
-${PROG} update: file file9 does not exist, but is present in revision branch"
+$PROG update: file file4 is locally modified, but has been removed in revision branch
+C file4
+$PROG update: file file9 does not exist, but is present in revision branch"
 
 	  # Verify that the right changes have been scheduled.
 	  # The M file2 line is a bug; see above join-20
-	  dotest join-24 "${testcvs} -q update" \
+	  dotest_fail join-24 "$testcvs -q update" \
 'A file1
 M file2
 R file3
-M file4'
+C file4'
 
 	  cd ..
 
@@ -9467,21 +9473,23 @@ T file7"
 	  # The handling of file8 and file9 here look fishy to me.  I don't
 	  # see why it should be different from the case where we merge to
 	  # the trunk (e.g. join-23).
-	  dotest join-28 "${testcvs} -q update -j branch" \
+	  dotest join-28 "$testcvs -q update -j branch" \
 "U file1
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
-retrieving revision 1.1
-retrieving revision 1.1.2.2
-Merging differences between 1.1 and 1.1.2.2 into file2
-${PROG} update: scheduling file3 for removal
-${PROG} update: file file4 has been modified, but has been removed in revision branch
+RCS file: $CVSROOT_DIRNAME/first-dir/file2,v
+retrieving revision 1\.1
+retrieving revision 1\.1\.2\.2
+Merging differences between 1\.1 and 1\.1\.2\.2 into file2
+$PROG update: scheduling file3 for removal
+$PROG update: file file4 is modified since GCA (1\.1), but has been removed in revision branch
+C file4
 U file8
 U file9"
 	  # Verify that the right changes have been scheduled.
-	  dotest join-29 "${testcvs} -q update" \
+	  dotest_fail join-29 "$testcvs -q update" \
 "A file1
 M file2
 R file3
+C file4
 A file8
 A file9"
 
@@ -9499,28 +9507,30 @@ U first-dir/file2
 U first-dir/file8
 U first-dir/file9'
 	  cd first-dir
-	  dotest join-twobranch-2 "${testcvs} -q update -rbr2 -jbranch" \
-"${PROG} update: file1 is no longer in the repository
+	  dotest join-twobranch-2 "$testcvs -q update -rbr2 -jbranch" \
+"$PROG update: file1 is no longer in the repository
 U file1
 U file2
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
+RCS file: $CVSROOT_DIRNAME/first-dir/file2,v
 retrieving revision 1\.1
 retrieving revision 1\.1\.2\.2
 Merging differences between 1\.1 and 1\.1\.2\.2 into file2
 U file3
-${PROG} update: scheduling file3 for removal
+$PROG update: scheduling file3 for removal
 U file4
-${PROG} update: file file4 has been modified, but has been removed in revision branch
+$PROG update: file file4 is modified since GCA (1\.1), but has been removed in revision branch
+C file4
 U file7
-${PROG} update: file8 is no longer in the repository
+$PROG update: file8 is no longer in the repository
 U file8
-${PROG} update: file9 is no longer in the repository
+$PROG update: file9 is no longer in the repository
 U file9"
 	  # Verify that the right changes have been scheduled.
-	  dotest join-twobranch-3 "${testcvs} -q update" \
+	  dotest_fail join-twobranch-3 "$testcvs -q update" \
 "A file1
 M file2
 R file3
+C file4
 A file8
 A file9"
 
@@ -10023,27 +10033,28 @@ T file9'
 	  # Modify file4 locally, and do an update with a merge.
 	  cd ../../1/first-dir
 	  echo 'third revision of file4' > file4
-	  dotest join4-18 "${testcvs} -q update -jT1 -jT2 ." \
-'U file1
+	  dotest join4-18 "$testcvs -q update -jT1 -jT2 ." \
+"U file1
 R file10
 A file2
-'"${PROG}"' update: file file2 exists, but has been added in revision T2
-'"${PROG}"' update: scheduling file3 for removal
+$PROG update: file file2 exists, but has been added in revision T2
+$PROG update: scheduling file3 for removal
 M file4
-'"${PROG}"' update: file file4 is locally modified, but has been removed in revision T2
+$PROG update: file file4 is locally modified, but has been removed in revision T2
+C file4
 R file6
 A file7
 R file8
 R file9
-'"${PROG}"' update: file file9 does not exist, but is present in revision T2'
+$PROG update: file file9 does not exist, but is present in revision T2"
 
 	  # Verify that the right changes have been scheduled.
-	  dotest join4-19 "${testcvs} -q update" \
+	  dotest_fail join4-19 "${testcvs} -q update" \
 'A file1
 R file10
 A file2
 R file3
-M file4
+C file4
 R file6
 A file7
 R file8
@@ -10365,6 +10376,128 @@ rcsmerge: warning: conflicts during merge"
 	  rm -r join7
 	  rm -rf $CVSROOT_DIRNAME/join7
 	  ;;
+
+
+
+        join8)
+	  # In this test case, we have 2 projects, one called "pvcs" and one
+	  # called "project".  The "pvcs" project has modified the file, while
+	  # the "project" project has caused a deletion.  When "project" is
+	  # merged into "pvcs", we expect CVS to detect a conflict.
+          mkdir join8; cd join8
+          mkdir combine
+          mkdir base
+          mkdir pvcs
+          mkdir project
+       
+          echo "aaa" >base/file.txt
+          echo "bbb" >pvcs/file.txt
+          echo "ccc" >project/xxx.txt
+       
+          cd base
+          dotest join8-1 \
+"$testcvs import -b 1.1.101 -ko -m 'base import' join8 base base-1" \
+"N join8/file\.txt
+
+No conflicts created by this import"
+       
+          cd ../pvcs
+          dotest join8-2 \
+"$testcvs import -b 1.1.201 -ko -m 'pvcs import' join8 pvcs pvcs-1" \
+"C join8/file\.txt
+
+1 conflicts created by this import.
+Use the following command to help the merge:
+
+	$PROG checkout -j<prev_rel_tag> -jpvcs-1 join8"
+
+          cd ../project
+          dotest join8-3 \
+"$testcvs import -b 1.1.301 -ko -m 'project import' join8 project project-1" \
+"N join8/xxx\.txt
+
+No conflicts created by this import"
+
+          cd ..
+          dotest join8-4 \
+"$testcvs checkout -r pvcs-1 -j base-1 -j project-1 -d combine join8" \
+"$PROG checkout: Updating combine
+U combine/file\.txt
+$PROG checkout: file combine/file\.txt is modified since GCA (1\.1), but has been removed in revision project-1
+C combine/file.txt
+U combine/xxx\.txt"
+
+          cd ..
+       
+          if $keep; then
+            echo Keeping $TESTDIR and exiting due to --keep
+                   exit 0
+          fi
+       
+          rm -r join8
+          rm -rf $CVSROOT_DIRNAME/join8
+          ;;
+
+
+
+        join9)
+	  # In this test case, we have 2 projects, one called "pvcs" and one
+	  # called "project".  The "pvcs" project has not modified the file,
+	  # while the "project" project has caused a deletion.  When "project"
+	  # is merged into "pvcs", we expect CVS to remove the file without
+	  # fuss, as there is no conflict.
+          mkdir join9; cd join9
+          mkdir combine
+          mkdir base
+          mkdir pvcs
+          mkdir project
+       
+          echo "aaa" >base/file.txt
+          echo "aaa" >pvcs/file.txt
+          echo "ccc" >project/xxx.txt
+       
+          cd base
+          dotest join9-1 \
+"$testcvs import -b 1.1.101 -ko -m 'base import' join9 base base-1" \
+"N join9/file\.txt
+
+No conflicts created by this import"
+
+          cd ../pvcs
+          dotest join9-2 \
+"$testcvs import -b 1.1.201 -ko -m 'pvcs import' join9 pvcs pvcs-1" \
+"C join9/file\.txt
+
+1 conflicts created by this import.
+Use the following command to help the merge:
+
+	$PROG checkout -j<prev_rel_tag> -jpvcs-1 join9"
+
+          cd ../project
+          dotest join9-3 \
+"$testcvs import -b 1.1.301 -ko -m 'project import' join9 project project-1" \
+"N join9/xxx\.txt
+
+No conflicts created by this import"
+
+          cd ..
+          dotest join9-4 \
+"$testcvs checkout -r pvcs-1 -j base-1 -j project-1 -d combine join9" \
+"$PROG checkout: Updating combine
+U combine/file\.txt
+$PROG checkout: scheduling combine/file\.txt for removal
+U combine/xxx\.txt"
+
+          cd ..
+
+          if $keep; then
+            echo Keeping $TESTDIR and exiting due to --keep
+                   exit 0
+          fi
+
+          rm -r join9
+          rm -rf $CVSROOT_DIRNAME/join9
+         ;;
 
 
 
