@@ -1,3 +1,7 @@
+2008-01-30  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note improved join of removals.
+
 2008-01-27  Mark D. Baushke  <mdb@gnu.org>
 
 	* configure.in: Look for lshc rather than lsh to avoid problems

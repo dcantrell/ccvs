@@ -14,6 +14,8 @@ NEW FEATURES
 
 BUG FIXES
 
+* Merges of file removals using -j options are a little smarter.
+
 * `cvs add' checks more thoroughly for `CVS' directories in the argument list.
 
 * `cvs server' now accepts `--allow-root=PATH' options.
