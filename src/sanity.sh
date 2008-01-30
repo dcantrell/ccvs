@@ -2237,7 +2237,7 @@ if test x"$*" = x; then
 	tests="${tests} rcslib multibranch import importb importc importX"
 	tests="$tests importX2 import-CVS import-quirks"
 	tests="${tests} update-p import-after-initial branch-after-import"
-	tests="${tests} join join2 join3 join4 join5 join6 join7"
+	tests="${tests} join join2 join3 join4 join5 join6 join7 join8 join9"
 	tests="${tests} join-readonly-conflict join-admin join-admin-2"
 	tests="${tests} join-rm"
 	tests="${tests} new newb conflicts conflicts2 conflicts3 conflicts4"
@@ -6719,7 +6719,8 @@ U file3"
 
 		# and join
 		dotest death-95 "$testcvs -q update -j HEAD" \
-"$SPROG update: file file1 has been modified, but has been removed in revision HEAD
+"$SPROG update: file \`file1' is modified since GCA (1\.3), but has been removed in revision HEAD
+C file1
 $SPROG update: file file3 exists, but has been added in revision HEAD"
 
 		dotest_fail death-file4-7 "test -f file4"
@@ -11102,33 +11103,35 @@ $SPROG checkout: file first-dir/file2 exists, but has been added in revision T2
 U first-dir/file3
 $SPROG checkout: scheduling \`first-dir/file3' for removal
 U first-dir/file4
-$SPROG checkout: scheduling \`first-dir/file4' for removal
+$SPROG checkout: file \`first-dir/file4' is modified since GCA (1\.1), but has been removed in revision T2
+C first-dir/file4
 U first-dir/file7
 $SPROG checkout: file first-dir/file9 does not exist, but is present in revision T2"
 
 	  # Verify that the right changes have been scheduled.
 	  cd first-dir
-	  dotest join-17 "${testcvs} -q update" \
+	  dotest_fail join-17 "$testcvs -q update" \
 'A file1
 R file3
-R file4'
+C file4'
 
 	  # Modify file4 locally, and do an update with a merge.
 	  cd ../../1/first-dir
 	  echo 'third revision of file4' > file4
-	  dotest join-18 "${testcvs} -q update -jT1 -jT2 ." \
+	  dotest join-18 "$testcvs -q update -jT1 -jT2 ." \
 "$SPROG update: scheduling addition from revision 1\.1\.2\.1 of \`file1'\.
 $SPROG update: file file2 exists, but has been added in revision T2
 $SPROG update: scheduling \`file3' for removal
 M file4
-$SPROG update: file file4 is locally modified, but has been removed in revision T2
+$SPROG update: file \`file4' is locally modified, but has been removed in revision T2
+C file4
 $SPROG update: file file9 does not exist, but is present in revision T2"
 
 	  # Verify that the right changes have been scheduled.
-	  dotest join-19 "${testcvs} -q update" \
+	  dotest_fail join-19 "$testcvs -q update" \
 'A file1
 R file3
-M file4'
+C file4'
 
 	  # Do a checkout with a merge from a single revision.
 
@@ -11151,17 +11154,19 @@ M first-dir/file2
 U first-dir/file3
 $SPROG checkout: scheduling \`first-dir/file3' for removal
 U first-dir/file4
-$SPROG checkout: file first-dir/file4 has been modified, but has been removed in revision branch
+$SPROG checkout: file \`first-dir/file4' is modified since GCA (1\.1), but has been removed in revision branch
+C first-dir/file4
 U first-dir/file7
 $SPROG checkout: file first-dir/file9 does not exist, but is present in revision branch"
 
 	  # Verify that the right changes have been scheduled.
 	  # The M file2 line is a bug; see above join-20.
 	  cd first-dir
-	  dotest join-21 "${testcvs} -q update" \
+	  dotest_fail join-21 "$testcvs -q update" \
 'A file1
 M file2
-R file3'
+R file3
+C file4'
 
 	  # Checkout the main line again.
 	  cd ../../1
@@ -11177,22 +11182,23 @@ U first-dir/file7'
 	  # The file2 handling is a bug; see above join-20.
 	  cd first-dir
 	  echo 'third revision of file4' > file4
-	  dotest join-23 "${testcvs} -q update -jbranch ." \
+	  dotest join-23 "$testcvs -q update -jbranch ." \
 "$SPROG update: scheduling addition from revision 1\.1\.2\.1 of \`file1'\.
 $SPROG update: Replacing \`file2' with contents of revision 1\.1\.2\.2\.
 M file2
 $SPROG update: scheduling \`file3' for removal
 M file4
-$SPROG update: file file4 is locally modified, but has been removed in revision branch
+$SPROG update: file \`file4' is locally modified, but has been removed in revision branch
+C file4
 $SPROG update: file file9 does not exist, but is present in revision branch"
 
 	  # Verify that the right changes have been scheduled.
 	  # The M file2 line is a bug; see above join-20
-	  dotest join-24 "${testcvs} -q update" \
+	  dotest_fail join-24 "$testcvs -q update" \
 'A file1
 M file2
 R file3
-M file4'
+C file4'
 
 	  cd ..
 
@@ -11223,14 +11229,16 @@ U file7'
 $SPROG update: Replacing \`file2' with contents of revision 1\.1\.2\.2\.
 M file2
 $SPROG update: scheduling \`file3' for removal
-$SPROG update: file file4 has been modified, but has been removed in revision branch
+$SPROG update: file \`file4' is modified since GCA (1\.1), but has been removed in revision branch
+C file4
 $SPROG update: scheduling addition from revision 1\.1 of \`file8'\.
 $SPROG update: scheduling addition from revision 1\.1\.2\.2 of \`file9'\."
 	  # Verify that the right changes have been scheduled.
-	  dotest join-29 "${testcvs} -q update" \
+	  dotest_fail join-29 "$testcvs -q update" \
 "A file1
 M file2
 R file3
+C file4
 A file8
 A file9"
 
@@ -11257,17 +11265,19 @@ M file2
 U file3
 $SPROG update: scheduling \`file3' for removal
 U file4
-$SPROG update: file file4 has been modified, but has been removed in revision branch
+$SPROG update: file \`file4' is modified since GCA (1\.1), but has been removed in revision branch
+C file4
 U file7
 $SPROG update: \`file8' is no longer in the repository
 $SPROG update: scheduling addition from revision 1\.1 of \`file8'\.
 $SPROG update: \`file9' is no longer in the repository
 $SPROG update: scheduling addition from revision 1\.1\.2\.2 of \`file9'\."
 	  # Verify that the right changes have been scheduled.
-	  dotest join-twobranch-3 "${testcvs} -q update" \
+	  dotest_fail join-twobranch-3 "$testcvs -q update" \
 "A file1
 M file2
 R file3
+C file4
 A file8
 A file9"
 
@@ -11697,20 +11707,21 @@ A file2
 $SPROG update: file file2 exists, but has been added in revision T2
 $SPROG update: scheduling \`file3' for removal
 M file4
-$SPROG update: file file4 is locally modified, but has been removed in revision T2
+$SPROG update: file \`file4' is locally modified, but has been removed in revision T2
+C file4
 R file6
 A file7
 R file8
 R file9
-${SPROG} update: file file9 does not exist, but is present in revision T2"
+$SPROG update: file file9 does not exist, but is present in revision T2"
 
 	  # Verify that the right changes have been scheduled.
-	  dotest join4-19 "${testcvs} -q update" \
+	  dotest_fail join4-19 "${testcvs} -q update" \
 'A file1
 R file10
 A file2
 R file3
-M file4
+C file4
 R file6
 A file7
 R file8
@@ -11949,6 +11960,118 @@ C temp\.txt"
 	  rm -rf join7
 	  modify_repo rm -rf $CVSROOT_DIRNAME/join7
 	  ;;
+
+
+
+        join8)
+	  # In this test case, we have 2 projects, one called "pvcs" and one
+	  # called "project".  The "pvcs" project has modified the file, while
+	  # the "project" project has caused a deletion.  When "project" is
+	  # merged into "pvcs", we expect CVS to detect a conflict.
+          mkdir join8; cd join8
+          mkdir combine
+          mkdir base
+          mkdir pvcs
+          mkdir project
+       
+          echo "aaa" >base/file.txt
+          echo "bbb" >pvcs/file.txt
+          echo "ccc" >project/xxx.txt
+       
+          cd base
+          dotest join8-1 \
+"$testcvs import -b 1.1.101 -ko -m 'base import' join8 base base-1" \
+"N join8/file\.txt
+
+No conflicts created by this import"
+       
+          cd ../pvcs
+          dotest join8-2 \
+"$testcvs import -b 1.1.201 -ko -m 'pvcs import' join8 pvcs pvcs-1" \
+"C join8/file\.txt
+
+1 conflicts created by this import.
+Use the following command to help the merge:
+
+	$SPROG checkout -j<prev_rel_tag> -jpvcs-1 join8"
+
+          cd ../project
+          dotest join8-3 \
+"$testcvs import -b 1.1.301 -ko -m 'project import' join8 project project-1" \
+"N join8/xxx\.txt
+
+No conflicts created by this import"
+
+          cd ..
+          dotest join8-4 \
+"$testcvs checkout -r pvcs-1 -j base-1 -j project-1 -d combine join8" \
+"$SPROG checkout: Updating combine
+U combine/file\.txt
+$SPROG checkout: file \`combine/file\.txt' is modified since GCA (1\.1), but has been removed in revision project-1
+C combine/file.txt
+$SPROG checkout: scheduling addition from revision 1\.1\.301\.1 of \`combine/xxx\.txt'\."
+
+          cd ..
+          dokeep
+          rm -rf join8
+          rm -rf $CVSROOT_DIRNAME/join8
+          ;;
+
+
+
+        join9)
+	  # In this test case, we have 2 projects, one called "pvcs" and one
+	  # called "project".  The "pvcs" project has not modified the file,
+	  # while the "project" project has caused a deletion.  When "project"
+	  # is merged into "pvcs", we expect CVS to remove the file without
+	  # fuss, as there is no conflict.
+          mkdir join9; cd join9
+          mkdir combine
+          mkdir base
+          mkdir pvcs
+          mkdir project
+       
+          echo "aaa" >base/file.txt
+          echo "aaa" >pvcs/file.txt
+          echo "ccc" >project/xxx.txt
+       
+          cd base
+          dotest join9-1 \
+"$testcvs import -b 1.1.101 -ko -m 'base import' join9 base base-1" \
+"N join9/file\.txt
+
+No conflicts created by this import"
+
+          cd ../pvcs
+          dotest join9-2 \
+"$testcvs import -b 1.1.201 -ko -m 'pvcs import' join9 pvcs pvcs-1" \
+"C join9/file\.txt
+
+1 conflicts created by this import.
+Use the following command to help the merge:
+
+	$SPROG checkout -j<prev_rel_tag> -jpvcs-1 join9"
+
+          cd ../project
+          dotest join9-3 \
+"$testcvs import -b 1.1.301 -ko -m 'project import' join9 project project-1" \
+"N join9/xxx\.txt
+
+No conflicts created by this import"
+
+          cd ..
+          dotest join9-4 \
+"$testcvs checkout -r pvcs-1 -j base-1 -j project-1 -d combine join9" \
+"$SPROG checkout: Updating combine
+U combine/file\.txt
+$SPROG checkout: scheduling \`combine/file\.txt' for removal
+$SPROG checkout: scheduling addition from revision 1\.1\.301\.1 of \`combine/xxx\.txt'\."
+
+          cd ..
+	  dokeep
+          rm -rf join9
+          rm -rf $CVSROOT_DIRNAME/join9
+         ;;
 
 
 

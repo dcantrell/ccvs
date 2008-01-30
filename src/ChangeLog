@@ -1,3 +1,10 @@
+2008-01-29  Derek R. Price  <derek@ximbiot.com>
+	    Paul Edwards  <fight.subjugation@gmail.com>
+
+	* update.c (join_file): Detect deletion conflicts.
+	* sanity.sh (join, join4): Adjusted for this fix.
+	  (join8, join9): Add new tests for conflicts.
+
 2008-01-27  Mark D. Baushke  <mdb@gnu.org>
 
 	* client.c (start_rsh_server): Use CVS_SSH for the :extssh:
@@ -8043,7 +8050,7 @@
 2003-11-01  Larry Jones  <lawrence.jones@eds.com>
 
 	* filesubr.c (xcmp): Make sure S_ISLNK exists before calling it.
-	(Reported by Paul Edwards <kerravon@nosppaam.w3.to>.)
+	(Reported by Paul Edwards <fight.subjugation@gmail.com>.)
 
 2003-10-31  Derek Price  <derek@ximbiot.com>
 
