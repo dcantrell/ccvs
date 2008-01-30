@@ -681,6 +681,9 @@
 /* Define to 1 if you have the `mknod' function. */
 #undef HAVE_MKNOD
 
+/* Define to 1 if you have a working `mmap' system call. */
+#undef HAVE_MMAP
+
 /* Define to 1 if you have the `nanotime' function. */
 #undef HAVE_NANOTIME
 
@@ -1238,7 +1241,7 @@
 
 /* The default remote shell to use, if one does not specify the CVS_SSH
    environment variable. */
-#define SSH_DFLT "putty"
+#undef SSH_DFLT
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
