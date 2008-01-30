@@ -1,3 +1,10 @@
+2008-01-30  Derek R. Price  <derek@ximbiot.com>
+
+	* update.c (join_file): Use local copy to detect deletion conflicts,
+	as opposed to the base revision.  Restore freeing of rev2 to its
+	original location.  Use simpler conflict message.
+	* sanity.sh: Update to compensate.
+
 2008-01-29  Derek R. Price  <derek@ximbiot.com>
 
 	* update.c (join_file): Remove trace that is no longer needed.
