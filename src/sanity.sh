@@ -5470,7 +5470,7 @@ U first-dir/file3'
 
 		# and join
 		dotest 95 "$testcvs -q update -j HEAD" \
-"$PROG update: file file1 is modified since GCA (1\.3), but has been removed in revision HEAD
+"$PROG update: file file1 has been removed in revision HEAD, but the destination is incompatibly modified
 C file1
 $PROG update: file file3 exists, but has been added in revision HEAD"
 
@@ -9348,7 +9348,7 @@ $PROG checkout: file first-dir/file2 exists, but has been added in revision T2
 U first-dir/file3
 $PROG checkout: scheduling first-dir/file3 for removal
 U first-dir/file4
-$PROG checkout: file first-dir/file4 is modified since GCA (1\.1), but has been removed in revision T2
+$PROG checkout: file first-dir/file4 has been removed in revision T2, but the destination is incompatibly modified
 C first-dir/file4
 U first-dir/file7
 $PROG checkout: file first-dir/file9 does not exist, but is present in revision T2"
@@ -9368,7 +9368,7 @@ C file4'
 $PROG update: file file2 exists, but has been added in revision T2
 $PROG update: scheduling file3 for removal
 M file4
-$PROG update: file file4 is locally modified, but has been removed in revision T2
+$PROG update: file file4 has been removed in revision T2, but the destination is incompatibly modified
 C file4
 $PROG update: file file9 does not exist, but is present in revision T2"
 
@@ -9401,7 +9401,7 @@ Merging differences between 1\.1 and 1\.1\.2\.2 into file2
 U first-dir/file3
 $PROG checkout: scheduling first-dir/file3 for removal
 U first-dir/file4
-$PROG checkout: file first-dir/file4 is modified since GCA (1\.1), but has been removed in revision branch
+$PROG checkout: file first-dir/file4 has been removed in revision branch, but the destination is incompatibly modified
 C first-dir/file4
 U first-dir/file7
 $PROG checkout: file first-dir/file9 does not exist, but is present in revision branch"
@@ -9437,7 +9437,7 @@ retrieving revision 1\.1\.2\.2
 Merging differences between 1\.1 and 1\.1\.2\.2 into file2
 $PROG update: scheduling file3 for removal
 M file4
-$PROG update: file file4 is locally modified, but has been removed in revision branch
+$PROG update: file file4 has been removed in revision branch, but the destination is incompatibly modified
 C file4
 $PROG update: file file9 does not exist, but is present in revision branch"
 
@@ -9480,7 +9480,7 @@ retrieving revision 1\.1
 retrieving revision 1\.1\.2\.2
 Merging differences between 1\.1 and 1\.1\.2\.2 into file2
 $PROG update: scheduling file3 for removal
-$PROG update: file file4 is modified since GCA (1\.1), but has been removed in revision branch
+$PROG update: file file4 has been removed in revision branch, but the destination is incompatibly modified
 C file4
 U file8
 U file9"
@@ -9500,7 +9500,7 @@ A file9"
 	  # once that if the file was removed in the update then it wouldn't be
 	  # readded in the merge
 	  cd ..
-	  rm -r first-dir
+	  rm -rf first-dir
 	  dotest join-twobranch-1 "${testcvs} -q co -rbranch first-dir" \
 'U first-dir/file1
 U first-dir/file2
@@ -9518,7 +9518,7 @@ Merging differences between 1\.1 and 1\.1\.2\.2 into file2
 U file3
 $PROG update: scheduling file3 for removal
 U file4
-$PROG update: file file4 is modified since GCA (1\.1), but has been removed in revision branch
+$PROG update: file file4 has been removed in revision branch, but the destination is incompatibly modified
 C file4
 U file7
 $PROG update: file8 is no longer in the repository
@@ -10040,7 +10040,7 @@ A file2
 $PROG update: file file2 exists, but has been added in revision T2
 $PROG update: scheduling file3 for removal
 M file4
-$PROG update: file file4 is locally modified, but has been removed in revision T2
+$PROG update: file file4 has been removed in revision T2, but the destination is incompatibly modified
 C file4
 R file6
 A file7
@@ -10423,10 +10423,20 @@ No conflicts created by this import"
 "$testcvs checkout -r pvcs-1 -j base-1 -j project-1 -d combine join8" \
 "$PROG checkout: Updating combine
 U combine/file\.txt
-$PROG checkout: file combine/file\.txt is modified since GCA (1\.1), but has been removed in revision project-1
+$PROG checkout: file combine/file\.txt has been removed in revision project-1, but the destination is incompatibly modified
 C combine/file.txt
 U combine/xxx\.txt"
 
+          dotest join8-5 \
+"$testcvs -Q up -pr base-1 combine/file.txt >combine/file.txt"
+
+          dotest join8-6 \
+"$testcvs up -j base-1 -j project-1 combine" \
+"$PROG update: Updating combine
+M combine/file\.txt
+$PROG update: scheduling combine/file\.txt for removal
+A combine/xxx\.txt
+$PROG update: file combine/xxx\.txt exists, but has been added in revision project-1"
           cd ..
        
           if $keep; then
