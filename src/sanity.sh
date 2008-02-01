@@ -6719,7 +6719,7 @@ U file3"
 
 		# and join
 		dotest death-95 "$testcvs -q update -j HEAD" \
-"$SPROG update: file \`file1' is modified since GCA (1\.3), but has been removed in revision HEAD
+"$SPROG update: file \`file1' has been removed in revision HEAD, but the destination is incompatibly modified
 C file1
 $SPROG update: file file3 exists, but has been added in revision HEAD"
 
@@ -11103,7 +11103,7 @@ $SPROG checkout: file first-dir/file2 exists, but has been added in revision T2
 U first-dir/file3
 $SPROG checkout: scheduling \`first-dir/file3' for removal
 U first-dir/file4
-$SPROG checkout: file \`first-dir/file4' is modified since GCA (1\.1), but has been removed in revision T2
+$SPROG checkout: file \`first-dir/file4' has been removed in revision T2, but the destination is incompatibly modified
 C first-dir/file4
 U first-dir/file7
 $SPROG checkout: file first-dir/file9 does not exist, but is present in revision T2"
@@ -11123,7 +11123,7 @@ C file4'
 $SPROG update: file file2 exists, but has been added in revision T2
 $SPROG update: scheduling \`file3' for removal
 M file4
-$SPROG update: file \`file4' is locally modified, but has been removed in revision T2
+$SPROG update: file \`file4' has been removed in revision T2, but the destination is incompatibly modified
 C file4
 $SPROG update: file file9 does not exist, but is present in revision T2"
 
@@ -11154,7 +11154,7 @@ M first-dir/file2
 U first-dir/file3
 $SPROG checkout: scheduling \`first-dir/file3' for removal
 U first-dir/file4
-$SPROG checkout: file \`first-dir/file4' is modified since GCA (1\.1), but has been removed in revision branch
+$SPROG checkout: file \`first-dir/file4' has been removed in revision branch, but the destination is incompatibly modified
 C first-dir/file4
 U first-dir/file7
 $SPROG checkout: file first-dir/file9 does not exist, but is present in revision branch"
@@ -11188,7 +11188,7 @@ $SPROG update: Replacing \`file2' with contents of revision 1\.1\.2\.2\.
 M file2
 $SPROG update: scheduling \`file3' for removal
 M file4
-$SPROG update: file \`file4' is locally modified, but has been removed in revision branch
+$SPROG update: file \`file4' has been removed in revision branch, but the destination is incompatibly modified
 C file4
 $SPROG update: file file9 does not exist, but is present in revision branch"
 
@@ -11229,7 +11229,7 @@ U file7'
 $SPROG update: Replacing \`file2' with contents of revision 1\.1\.2\.2\.
 M file2
 $SPROG update: scheduling \`file3' for removal
-$SPROG update: file \`file4' is modified since GCA (1\.1), but has been removed in revision branch
+$SPROG update: file \`file4' has been removed in revision branch, but the destination is incompatibly modified
 C file4
 $SPROG update: scheduling addition from revision 1\.1 of \`file8'\.
 $SPROG update: scheduling addition from revision 1\.1\.2\.2 of \`file9'\."
@@ -11265,7 +11265,7 @@ M file2
 U file3
 $SPROG update: scheduling \`file3' for removal
 U file4
-$SPROG update: file \`file4' is modified since GCA (1\.1), but has been removed in revision branch
+$SPROG update: file \`file4' has been removed in revision branch, but the destination is incompatibly modified
 C file4
 U file7
 $SPROG update: \`file8' is no longer in the repository
@@ -11707,7 +11707,7 @@ A file2
 $SPROG update: file file2 exists, but has been added in revision T2
 $SPROG update: scheduling \`file3' for removal
 M file4
-$SPROG update: file \`file4' is locally modified, but has been removed in revision T2
+$SPROG update: file \`file4' has been removed in revision T2, but the destination is incompatibly modified
 C file4
 R file6
 A file7
@@ -12007,10 +12007,20 @@ No conflicts created by this import"
 "$testcvs checkout -r pvcs-1 -j base-1 -j project-1 -d combine join8" \
 "$SPROG checkout: Updating combine
 U combine/file\.txt
-$SPROG checkout: file \`combine/file\.txt' is modified since GCA (1\.1), but has been removed in revision project-1
+$SPROG checkout: file \`combine/file\.txt' has been removed in revision project-1, but the destination is incompatibly modified
 C combine/file.txt
 $SPROG checkout: scheduling addition from revision 1\.1\.301\.1 of \`combine/xxx\.txt'\."
 
+          dotest join8-5 \
+"$testcvs -Q up -pr base-1 combine/file.txt >combine/file.txt"
+
+          dotest join8-6 \
+"$testcvs up -j base-1 -j project-1 combine" \
+"$SPROG update: Updating combine
+M combine/file\.txt
+$SPROG update: scheduling \`combine/file\.txt' for removal
+A combine/xxx\.txt
+$SPROG update: file combine/xxx\.txt exists, but has been added in revision project-1"
           cd ..
           dokeep
           rm -rf join8
