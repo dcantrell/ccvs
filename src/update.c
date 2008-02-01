@@ -2144,7 +2144,9 @@ join_file (struct file_info *finfo, Vers_TS *vers)
     {
 	char *mrev;
 	short conflict = 0;
-	char *modmsg = NULL;
+
+	if (rev2 != NULL)
+	    free (rev2);
 
 	/* If the first revision doesn't exist either, then there is
            no change between the two revisions, so we don't do
@@ -2153,8 +2155,6 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	{
 	    if (rev1 != NULL)
 		free (rev1);
-	    if (rev2 != NULL)
-		free (rev2);
 	    return;
 	}
 
@@ -2195,8 +2195,6 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	    || RCS_isdead (vers->srcfile, vers->vn_user))
 	{
 	    free (rev1);
-	    if (rev2 != NULL)
-		free (rev2);
 	    return;
 	}
 
@@ -2205,14 +2203,13 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	   resolve.  No_Difference will already have been called in
 	   this case, so comparing the timestamps is sufficient to
 	   determine whether the file is locally modified.  */
-	if (/* added */ STREQ (vers->vn_user, "0")
+	if (/* may have changed on destination branch */
+	    /* file added locally */
+	    STREQ (vers->vn_user, "0")
+	    || /* destination branch modified in repository */
+	       !STREQ (rev1, vers->vn_user)
 	    || /* locally modified */
 	       vers->ts_user && !STREQ (vers->ts_user, vers->ts_rcs))
-	    conflict = 1;
-
-	if (!conflict
-	    && /* may have changed */
-	       strcmp (rev1, vers->vn_user))
 	{
 	    /* The removal should happen if either the file has never changed
 	     * on the destination or the file has changed to be identical to
@@ -2231,36 +2228,42 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	     * if D == R        removal should happen
 	     * otherwise, fail.
 	     *
-	     * (In the source, J2 = REV2, D = VN_USER, R = GCA computed below)
+	     * (In the source, J2 = REV2, D = user file (potentially VN_USER),
+	     * R = GCA computed below)
 	     */
 	    char *gca_rev1 = gca (rev1, vers->vn_user);
+#ifdef SERVER_SUPPORT
+	    if (server_active && !isreadable (finfo->file))
+	    {
+		int retcode;
+		/* The file is up to date.  Need to check out the current
+		 * contents.
+		 */
+		/* FIXME - see the FIXME comment above the call to RCS_checkout
+		 * in the patch_file function.
+		 */
+		retcode = RCS_checkout (vers->srcfile, finfo->file,
+					vers->vn_user, vers->tag,
+					NULL, RUN_TTY, NULL, NULL);
+		if (retcode)
+		    error (1, 0,
+			   "failed to check out %s file", finfo->fullname);
+	    }
+#endif
 	    if (/* genuinely changed on destination branch */
 	        RCS_cmp_file (vers->srcfile, NULL, gca_rev1, NULL,
-			      vers->vn_user, vers->options, finfo->file)
+			      NULL, vers->options, finfo->file)
 	        && /* genuinely different from REV1 */
 		   RCS_cmp_file (vers->srcfile, jrev1, rev1, NULL,
-				 vers->vn_user, vers->options, finfo->file))
-	    {
+				 NULL, vers->options, finfo->file))
 		conflict = 1;
-		modmsg = xmalloc (14 + strlen (gca_rev1));
-		sprintf (modmsg, " since GCA (%s)", gca_rev1);
-	    }
 	}
+
+	free (rev1);
 
 	if (conflict)
 	{
-	    const char *locally;
 	    char *cp, *brmsg;
-
-	    if (!modmsg)
-		modmsg = xstrdup ("");
-
-	    if (/* added */ !strcmp (vers->vn_user, "0")
-		|| /* locally modified */
-		   vers->ts_user && strcmp (vers->ts_user, vers->ts_rcs))
-		locally = " locally";
-	    else
-		locally = "";
 
 	    if (jdate2)
 		brmsg = Xasprintf (" as of %s", jdate2);
@@ -2268,8 +2271,8 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 		brmsg = xstrdup ("");
 
 	    error (0, 0,
-		   "file %s is%s modified%s, but has been removed in revision %s%s",
-		   quote (finfo->fullname), locally, modmsg, jrev2, brmsg);
+		   "file %s has been removed in revision %s%s, but the destination is incompatibly modified",
+		   quote (finfo->fullname), jrev2, brmsg);
 
 	    /* FIXME: vers->ts_user should always be set here but sometimes
 	     * isn't, namely when checkout_file() has just created the file,
@@ -2297,17 +2300,8 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 #endif
 
 	    free (brmsg);
-	    free (modmsg);
-	    free (rev1);
-	    if (rev2)
-		free (rev2);
-
 	    return;
 	}
-
-	free (rev1);
-	if (rev2 != NULL)
-	    free (rev2);
 
 	/* The user file exists and has not been modified.  Mark it
            for removal.  FIXME: If we are doing a checkout, this has
