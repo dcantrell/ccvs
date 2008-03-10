@@ -18680,6 +18680,23 @@ new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${PROG} commit: Rebuilding administrative file database"
 	  dotest config-6 "${testcvs} -q update" ''
+	  echo 'IgnoreUnknownConfigKeys=yes' > config
+	  echo 'BogusOption=yes' >> config
+	  dotest config-7 "${testcvs} -q ci -m change-to-comment" \
+"Checking in config;
+${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} commit: Rebuilding administrative file database"
+	  dotest config-8 "${testcvs} -q update" ''
+	  echo '# No config is a good config' > config
+	  dotest config-9 "${testcvs} -q ci -m change-to-comment" \
+"Checking in config;
+${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} commit: Rebuilding administrative file database"
+	  dotest config-10 "${testcvs} -q update" ''
 
 	  cd ..
 	  rm -r CVSROOT

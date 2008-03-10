@@ -12,6 +12,9 @@ NEW FEATURES
   by default (but may be explicitly set using the --with-ssh flag to
   configure).
 
+* There is a new IgnoreUnknownConfigKeys option available for
+  CVSROOT/config to aid in the transition to newer versions of CVS.
+
 BUG FIXES
 
 * Merges of file removals using -j options are a little smarter.
