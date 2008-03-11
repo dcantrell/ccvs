@@ -2,7 +2,7 @@
 :
 #	sanity.sh -- a growing testsuite for cvs.
 #
-# Copyright (C) 2007 The Free Software Foundation, Inc.
+# Copyright (C) 2007, 2008 The Free Software Foundation, Inc.
 # Copyright (C) 1992, 1993 Cygnus Support
 #
 # This program is free software; you can redistribute it and/or modify
@@ -21472,8 +21472,8 @@ $SPROG commit: Rebuilding administrative file database"
 	  echo 'BogusOption=yes' >>config
 	  if $proxy; then
 	    dotest config-4p "$testcvs -q ci -m change-to-bogus-opt" \
-"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[99\]: syntax error: missing \`=' between keyword and value
-$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[99\]: syntax error: missing \`=' between keyword and value
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[0-9][0-9]*\]: syntax error: missing \`=' between keyword and value
+$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[0-9][0-9]*\]: syntax error: missing \`=' between keyword and value
 $CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
@@ -21485,6 +21485,25 @@ new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 	  fi
 
+	  echo 'IgnoreUnknownConfigKeys=yes' > config
+	  echo 'BogusOption=yes' >>config
+	  if $proxy; then
+	    dotest config-5p "$testcvs -q ci -m change-to-bogus-opt" \
+"$SPROG [a-z]*: $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \[[0-9][0-9]*\]: unrecognized keyword \`BogusOption'
+$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[0-9][0-9]*\]: unrecognized keyword \`BogusOption'
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
+	  else
+	    dotest config-5 "$testcvs -q ci -m change-to-bogus-opt" \
+"$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[0-9][0-9]*\]: unrecognized keyword \`BogusOption'
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
+	  fi
+	  dotest config-6 "$testcvs -q up"
+
+
 	  if $proxy; then
 	    : # FIXME: don't try in proxy mode
 	  else
@@ -21495,27 +21514,26 @@ $SPROG commit: Rebuilding administrative file database"
 	    echo 'HistorySearchPath=$CVSROOT/../historylogs/*' >>config
 
 	    # The warning is left over from the previous test.
-	    dotest config-5 "$testcvs -q ci -m set-HistoryLogPath" \
-"$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[0-9][0-9]*\]: unrecognized keyword \`BogusOption'
-$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+	    dotest config-7 "$testcvs -q ci -m set-HistoryLogPath" \
+"$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 
 	    echo '# noop' >> config
-	    dotest config-6 "$testcvs -q ci -mlog-commit" \
+	    dotest config-8 "$testcvs -q ci -mlog-commit" \
 "$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 
 	    sleep 1
 	    echo '# noop' >> config
-	    dotest config-7 "$testcvs -q ci -mlog-commit" \
+	    dotest config-9 "$testcvs -q ci -mlog-commit" \
 "$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 
 	    # The log entry was intentionally split across multiple files.
-	    dotest config-8 "ls -l $TESTDIR/historylogs/*" \
+	    dotest config-10 "ls -l $TESTDIR/historylogs/*" \
 "-rw-rw-r--.*$TESTDIR/historylogs/2[0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]-[0-2][0-9]-[0-5][0-9]-[0-5][0-9]
 -rw-rw-r--.*$TESTDIR/historylogs/2[0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]-[0-2][0-9]-[0-5][0-9]-[0-5][0-9]"
 
@@ -21524,13 +21542,13 @@ $SPROG commit: Rebuilding administrative file database"
 
 	    # Should still see both commits and the error message.
 	    if $remote; then
-	      dotest config-9r "$testcvs history -ea" \
+	      dotest config-11r "$testcvs history -ea" \
 "$SPROG history: warning: line 1 from history file \`$CVSROOT_DIRNAME/\.\./historylogs/garbage' invalid
 $SPROG history: warning: line 2 from history file \`$CVSROOT_DIRNAME/\.\./historylogs/garbage' invalid
 M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == <remote>
 M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == <remote>"
 	    else
-	      dotest config-9 "$testcvs history -ea" \
+	      dotest config-11 "$testcvs history -ea" \
 "$SPROG history: warning: line 1 from history file \`$CVSROOT_DIRNAME/\.\./historylogs/garbage' invalid
 $SPROG history: warning: line 2 from history file \`$CVSROOT_DIRNAME/\.\./historylogs/garbage' invalid
 M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.[0-9]* config CVSROOT == $TESTDIR/wnt/CVSROOT

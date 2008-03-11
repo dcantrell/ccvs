@@ -1,3 +1,8 @@
+2008-03-10  Mark D. Baushke  <mdb@gnu.org>
+
+	* cvs.texinfo (config): Document the IgnoreUnknownConfigKeys
+	option.
+
 2008-01-27  Mark D. Baushke  <mdb@gnu.org>
 
 	* cvs.texinfo: Document use of --with-ssh flag to configure and

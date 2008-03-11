@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2008 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2007 Derek Price,
  *                                  Ximbiot LLC <http://ximbiot.com>,
@@ -432,6 +432,7 @@ parse_config (const char *cvsroot, const char *path)
      */
     bool processing = true;
     bool processed = true;
+    bool ignore_unknown_config_keys = false;
 
     TRACE (TRACE_FUNCTION, "parse_config (%s)", cvsroot);
 
@@ -796,6 +797,11 @@ parse_config (const char *cvsroot, const char *path)
 	    if (!retval->VerifyArgs) retval->VerifyArgs = getlist ();
 	    push_string (retval->VerifyArgs, xstrdup (p));
 	}
+	else if (STREQ (line, "IgnoreUnknownConfigKeys"))
+	    readBool (infopath, "IgnoreUnknownConfigKeys", p,
+		      &ignore_unknown_config_keys);
+	else if (ignore_unknown_config_keys)
+	    ;
 	else
 	    /* We may be dealing with a keyword which was added in a
 	       subsequent version of CVS.  In that case it is a good idea
