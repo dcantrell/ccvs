@@ -1,5 +1,7 @@
 2008-03-10  Mark D. Baushke  <mdb@gnu.org>
 
+	* mkmodules.c, parseinfo.c: Update copyright.
+
 	* parseinfo.c (parse_config): Add support for new
 	"IgnoreUnknownConfigKeys" configuration key.
 	* mkmodules.c (config_contents): Add text about the
