@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2008 The Free Software Foundation, Inc.
  *
  * Portions Copyright (C) 1998-2007 Derek Price,
  *                                  Ximbiot LLC <http://ximbiot.com>,
@@ -506,6 +506,13 @@ static const char *const modules_contents[] = {
 static const char *const config_contents[] = {
     "# Set `SystemAuth' to `no' if pserver shouldn't check system users/passwords.\n",
     "#SystemAuth=yes\n",
+    "\n",
+    "# Set `IgnoreUnknownConfigKeys' to `yes' to ignore unknown config\n",
+    "# keys which are supported in a future version of CVS.\n",
+    "# This option is intended to be useful as a transition for read-only\n",
+    "# mirror sites when sites may need to be updated later than the\n",
+    "# primary CVS repository.\n",
+    "#IgnoreUnknownConfigKeys=no\n",
     "\n",
     "# Set `LocalKeyword' to specify a local alias for a standard keyword.\n",
     "#LocalKeyword=MYCVS=CVSHeader\n",

@@ -15648,6 +15648,20 @@ As an example, to restrict users not in the @code{cvsadmin}
 group to using @code{cvs admin} to change the default keyword
 substitution mode, lock revisions, unlock revisions, and
 replace the log message, use @samp{UserAdminOptions=klum}.
+
+@cindex IgnoreUnknownConfigKeys, in @file{CVSROOT/config}
+@item IgnoreUnknownConfigKeys=@var{value}
+If @var{value} is @samp{yes}, then @sc{cvs} should
+ignore any keywords in @file{CVSROOT/config} which it
+does not recognize. This option is intended primarily
+for transitions between versions of @sc{cvs} which
+support more configuration options in an environment
+where a read-only mirror of the current @sc{cvs} server
+may be maintained by someone else who is not yet ready
+to upgrade to the same version. It is recommended that
+this option be used only for a short time so that
+problems with the @file{CVSROOT/config} file will be
+found quickly. The default is @samp{no}.
 @end table
 
 

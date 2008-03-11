@@ -1,3 +1,13 @@
+2008-03-10  Mark D. Baushke  <mdb@gnu.org>
+
+	* mkmodules.c, parseinfo.c: Update copyright.
+
+	* parseinfo.c (parse_config): Add support for new
+	"IgnoreUnknownConfigKeys" configuration key.
+	* mkmodules.c (config_contents): Add text about the
+	"IgnoreUnknownConfigKeys" option.
+	* sanity.sh (config): Test that IgnoreUnknownConfigKeys=yes works.
+
 2008-01-30  Derek R. Price  <derek@ximbiot.com>
 
 	* update.c (join_file): Use local copy to detect deletion conflicts,
