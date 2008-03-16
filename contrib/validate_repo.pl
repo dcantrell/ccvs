@@ -46,7 +46,7 @@ files in it are corrupted.
 
 This is normally accomplished by checking out all I<important> revisions, where
 I<important> revisions are defined as the smallest set which, when checked out,
-will cause each and every revision's integrity to be verified.  This resolves
+will cause each and every revisions' integrity to be verified.  This resolves
 to the most recent revision on each branch and the first and last revisions on
 the trunk.
 
@@ -115,7 +115,7 @@ F<./CVS/Repository> file when it exists and is readable, then to F<.>
     validate_repo.pl -d /another/cvsroot --verbose --exec '
     system "grep \"This string means Im a bad, bad file!\" <&"
            . fileno( $_[3] )
-           . ">/dev/null"
+           . " >/dev/null"
         or die "Revision $_[2] of $_[0]/$_[1],v is bad, bad, bad!"'
 
 =head1 SEE ALSO

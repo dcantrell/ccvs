@@ -1,3 +1,7 @@
+2008-03-16  Derek Price  <derek@ximbiot.com>
+
+	* validate_repo.pl: Fix minor typos in doc.
+
 2007-03-15  Mark D. Baushke  <mdb@gnu.org>
 
 	* cvs_acls.pl: Fix typo. The first "'allow' and 'deny'" should
