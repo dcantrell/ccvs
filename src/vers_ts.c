@@ -386,8 +386,8 @@ time_stamp (file)
 	   systems where gmtime returns NULL, the modification time is
 	   stored in local time, and therefore it is not possible to cause
 	   st_mtime to be out of sync by changing the timezone.  */
-	tm_p = gmtime (&sb.st_mtime);
-	cp = tm_p ? asctime (tm_p) : ctime (&sb.st_mtime);
+	tm_p = gmtime (&mtime);
+	cp = tm_p ? asctime (tm_p) : ctime (&mtime);
 	cp[24] = 0;
 	/* Fix non-standard format.  */
 	if (cp[8] == '0') cp[8] = ' ';
