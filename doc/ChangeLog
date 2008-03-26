@@ -1,3 +1,10 @@
+2008-03-26  Larry Jones  <lawrence.jones@siemens.com>
+
+	* cvs.texinfo (Password authentication server): Add example
+	shell script.
+	(Error messages): Add "out of memory".
+	* stamp-vti, version.texi: Regenerated.
+
 2008-03-10  Mark D. Baushke  <mdb@gnu.org>
 
 	* cvs.texinfo (config): Document the IgnoreUnknownConfigKeys
