@@ -2656,11 +2656,21 @@ a regular expression to match allowed directories with the
 used in conjunction and both options may be repeated to
 allow access to multiple @sc{cvsroot} directories and
 classes of directories.
-(Unfortunately, many versions of @code{inetd} have very small
+Unfortunately, many versions of @code{inetd} have very small
 limits on the number of arguments and/or the total length
 of the command.  The usual solution to this problem is
 to have @code{inetd} run a shell script which then invokes
-@sc{cvs} with the necessary arguments.)
+@sc{cvs} with the necessary arguments:
+
+@example
+#! /bin/sh
+exec /usr/local/bin/cvs -f \
+     --allow-root=/repo1 \
+     --allow-root=/repo2 \
+     ...
+     --allow-root=/repo@var{N} \
+     pserver
+@end example
 
 If your @code{inetd} wants a symbolic service
 name instead of a raw port number, then put this in
@@ -16313,6 +16323,17 @@ This updating is only required once per tag - once a tag is listed in
 Note that using @samp{tag -f} to not require tag matches did not and
 does not override this check (@pxref{Common options}). 
  
+@item cvs [@var{command} aborted]: out of memory
+There is insufficient (virtual) memory available to continue.
+In client/server mode, the problem is almost certainly on the server
+rather than the client;
+see @ref{Server requirements} for memory estimates.
+Many systems have limits on the amount of virtual memory that a
+single process can use, so a process can run out of virtual memory
+long before the system itself has run out.
+The method of increasing the per-process limits varies depending
+on the operating system.
+
 @item *PANIC* administration files missing
 This typically means that there is a directory named
 @sc{cvs} but it does not contain the administrative files
