@@ -1,3 +1,8 @@
+2008-03-29  Larry Jones  <lawrence.jones@siemens.com>
+
+	* cvs.texinfo (import options): Add -d.
+	* cvs.1, stamp-vti, version.texi: Regenerated.
+
 2008-03-26  Larry Jones  <lawrence.jones@siemens.com>
 
 	* cvs.texinfo (Password authentication server): Add example
