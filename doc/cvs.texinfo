@@ -10304,6 +10304,10 @@ There are the following additional special options.
 @item -b @var{branch}
 See @ref{Multiple vendor branches}.
 
+@item -d
+Use each file's modification time as the time of import
+rather than the current time.
+
 @item -k @var{subst}
 Indicate the keyword expansion mode desired.  This
 setting will apply to all files created during the
