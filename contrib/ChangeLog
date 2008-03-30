@@ -1,3 +1,7 @@
+2008-03-30  Larry Jones  <lawrence.jones@siemens.com>
+
+	* pvcs2rcs.in: Convert to correct line endings.
+
 2005-09-01  Derek Price  <derek@ximbiot.com>
 
 	* cvs_acls.html, cvs_acls.in, log_accum.in: Update links.
