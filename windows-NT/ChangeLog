@@ -1,3 +1,8 @@
+2008-03-30  Mark D. Baushke  <mdb@gnu.org>
+
+	* JmgStat.c, JmgStat.h: Convert CRLF to LF on UNIX to get CRLF on
+	checkout for Windows filesystems.
+
 2008-01-27  Mark D. Baushke  <mdb@gnu.org>
 
 	* config.h.in (RSH_DFLT, SSH_DFLT): Add default values.
