@@ -1,3 +1,9 @@
+2008-03-23  Mark D. Baushke  <mdb@gnu.org>
+
+	[bug #22710]
+	* vers_ts.c (time_stamp): Use computed minimum mtime for symlink.
+	(Patch suggested by Nelson B Bolyard <nelsonb@iname.com>.)
+
 2008-03-10  Mark D. Baushke  <mdb@gnu.org>
 
 	* mkmodules.c, parseinfo.c: Update copyright.
