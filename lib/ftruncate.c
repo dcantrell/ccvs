@@ -33,7 +33,7 @@ ftruncate (fd, length)
   struct flock fl;
   struct stat filebuf;
 
-  if (fstat (fd, &filebuf) < 0)
+  if (CVS_FSTAT (fd, &filebuf) < 0)
     return -1;
 
   if (filebuf.st_size < length)

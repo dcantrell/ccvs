@@ -1,3 +1,43 @@
+2008-05-07  Mark D. Baushke  <mdb@gnu.org>
+
+	* client.c (read_counted_file): Set errno = 0 before CVS_FOPEN
+	because Standard C doesn't require errno be set on error.
+	(set_sticky, send_repository): Ditto.
+	* create_adm.c (Create_Admin): Ditto.
+	* edit.c (ncheck_fileproc, cvs_notify_check): Ditto.
+	* entries.c (write_entries, Register, Subdirs_Known, base_walk):
+	Ditto.
+	* ignore.c (ign_add_file): Ditto.
+	* import.c (add_rcs_file): Ditto.
+	* lock.c (Reader_Lock, write_lock): Ditto.
+	* login.c (password_entry_operation): Ditto.
+	* logmsg.c (do_editor, rcsinfo_proc): Ditto.
+	* myndbm.c (mydbm_open, mydbm_close): Ditto.
+	* parseinfo.c (Parse_Info, parse_config): Ditto.
+	* rcs.c (RCS_parse, RCS_parsercsfile, RCS_checkout)
+	(RCS_cmp_file, rcsbuf_cache_open):  Ditto.
+	* repos.c (Name_Repository): 
+	* server.c (create_adm_p, dirswitch, serve_static_directory)
+	(serve_sticky, server_write_entries, server_updated)
+	(template_proc): Ditto. 
+	* subr.c (file_has_markers): Ditto.
+	* update.c (patch_file): Ditto.
+	* wrapper.c (wrap_add_file): Ditto.
+
+	* rcs.c (rcsbuf_cache_open): Pass errno to error() calls from
+	CVS_FOPEN and fseek on failure.
+
+	[bug #22781]
+	* buffer.c, client.c, filesubr.c, hardlink.c, history.c, patch.c, 
+	rcs.c, run.c, server.c, update.c, vers_ts.c:
+	Change stat, fstat and utime calls to call CVS_STAT CVS_FSTAT and
+	CVS_UTIME.
+	* client.c, vers_ts.c: add conditionally compiled debug printfs.
+	* cvsrc.c, error.c: remove declaration conflicts with system headers.
+	* login.c: add missing declaration of getpass.
+	* subr.c: don't assume time_t is long.
+	(Patch from Nelson B Bolyard <nelson@bolyard.com>.)
+
 2008-03-23  Mark D. Baushke  <mdb@gnu.org>
 
 	[bug #22710]

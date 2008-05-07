@@ -1119,6 +1119,7 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
     fpuser = NULL;
     if (!preserve_perms || file_type == S_IFREG)
     {
+	errno = 0; /* Standard C doesn't require errno be set on error */
 	fpuser = CVS_FOPEN (userfile,
 			    ((key_opt != NULL && strcmp (key_opt, "b") == 0)
 			     ? "rb"
@@ -1135,6 +1136,7 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 	}
     }
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fprcs = CVS_FOPEN (rcs, "w+b");
     if (fprcs == NULL)
     {

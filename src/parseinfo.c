@@ -62,6 +62,7 @@ Parse_Info (infofile, repository, callproc, all)
 			+ 3);
     (void) sprintf (infopath, "%s/%s/%s", current_parsed_root->directory,
 		    CVSROOTADM, infofile);
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fp_info = CVS_FOPEN (infopath, "r");
     if (fp_info == NULL)
     {
@@ -269,6 +270,7 @@ parse_config (cvsroot)
     strcat (infopath, "/");
     strcat (infopath, CVSROOTADM_CONFIG);
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fp_info = CVS_FOPEN (infopath, "r");
     if (fp_info == NULL)
     {

@@ -148,6 +148,7 @@ AC_CHECK_HEADERS(\
 	limits.h \
 	memory.h \
 	ndbm.h \
+	process.h \
 	string.h \
 	syslog.h \
 	sys/bsdtypes.h \
@@ -157,6 +158,7 @@ AC_CHECK_HEADERS(\
 	sys/select.h \
 	sys/time.h \
 	sys/timeb.h \
+	sys/utime.h \
 	unistd.h \
 	utime.h\
 )
@@ -216,6 +218,7 @@ AC_CHECK_FUNCS(\
 	getgroups \
 	getopt \
 	getpagesize \
+	getpid \
 	gettimeofday \
 	initgroups \
 	login \

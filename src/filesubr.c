@@ -67,7 +67,7 @@ copy_file (from, to)
 	/* Not a link or a device... probably a regular file. */
 	if ((fdin = open (from, O_RDONLY)) < 0)
 	    error (1, errno, "cannot open %s for copying", from);
-	if (fstat (fdin, &sb) < 0)
+	if (CVS_FSTAT (fdin, &sb) < 0)
 	    error (1, errno, "cannot fstat %s", from);
 	if ((fdout = creat (to, (int) sb.st_mode & 07777)) < 0)
 	    error (1, errno, "cannot create %s for copying", to);
@@ -111,7 +111,7 @@ copy_file (from, to)
     memset ((char *) &t, 0, sizeof (t));
     t.actime = sb.st_atime;
     t.modtime = sb.st_mtime;
-    (void) utime (to, &t);
+    (void) CVS_UTIME (to, &t);
 }
 
 /* FIXME-krp: these functions would benefit from caching the char * &

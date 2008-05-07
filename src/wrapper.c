@@ -276,6 +276,7 @@ wrap_add_file (file, temp)
     wrap_kill_temp ();
 
     /* Load the file.  */
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fp = CVS_FOPEN (file, "r");
     if (fp == NULL)
     {

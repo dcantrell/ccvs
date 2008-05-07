@@ -202,6 +202,9 @@
    Unix I/O routines like open and creat and stuff.  */
 #define HAVE_IO_H 1
 
+/* Define to 1 if you have the <limits.h> header file. */
+#define HAVE_LIMITS_H 1
+
 /* Define if you have the <memory.h> header file.  */
 #define HAVE_MEMORY_H 1
 
@@ -229,11 +232,14 @@
 /* Define if you have the <sys/select.h> header file.  */
 #undef HAVE_SYS_SELECT_H
 
+/* Define if you have the <sys/timeb.h> header file.  */
+#define HAVE_SYS_TIMEB_H 1
+
 /* Define if you have the <sys/time.h> header file.  */
 #undef HAVE_SYS_TIME_H
 
-/* Define if you have the <sys/timeb.h> header file.  */
-#define HAVE_SYS_TIMEB_H 1
+/* Define if you have the <sys/utime.h> header file.  */
+#define HAVE_SYS_UTIME_H 1
 
 /* Define if you have the <unistd.h> header file.  */
 #undef HAVE_UNISTD_H
@@ -255,6 +261,8 @@
 /* This isn't ever used either.  */
 #undef HAVE_LIBSOCKET
 
+#define CVS_FSTAT wnt_fstat
+extern int wnt_fstat (int fd, struct stat *sb);
 /* Under Windows NT, mkdir only takes one argument.  */
 #define CVS_MKDIR wnt_mkdir
 extern int wnt_mkdir (const char *PATH, int MODE);
@@ -262,6 +270,8 @@ extern int wnt_mkdir (const char *PATH, int MODE);
 extern int wnt_stat ();
 #define CVS_LSTAT wnt_lstat
 extern int wnt_lstat ();
+#define CVS_UTIME wnt_utime
+extern int wnt_utime();
 
 #define CVS_RENAME wnt_rename
 extern int wnt_rename (const char *, const char *);
@@ -270,8 +280,22 @@ extern int wnt_rename (const char *, const char *);
    provide a stub.  */
 extern int readlink (char *path, char *buf, int buf_size);
 
-/* This is just a call to GetCurrentProcessID.  */
+/* Define to 1 if you have the <process.h> header file. */
+#define HAVE_PROCESS_H 1
+
+/* This is just a call to GetCurrentProcessID.
+   However, it is defined in <process.h> as
+   __declspec(dllimport) int __cdecl getpid(void);
+  On UNIX systems, expect a declaration in <unitstd.h>
+  for getpid().
+ */
+#ifdef HAVE_PROCESS_H
+# define HAVE_GETPID 1
+#endif
+
+#ifndef HAVE_GETPID
 extern pid_t getpid (void);
+#endif
 
 /* We definitely have prototypes.  */
 #define USE_PROTOTYPES 1
@@ -473,6 +497,12 @@ typedef int ssize_t;
 
 /* Define as the maximum value of type 'size_t', if the system doesn't define
    it. */
-#define SIZE_MAX ((size_t) -1)
+/* Windows has a '#define SIZE_MAX UINT_MAX' in <limits.h> now. */
+#ifdef HAVE_LIMITS_H
+# include <limits.h>
+#endif
+#ifndef SIZE_MAX
+# define SIZE_MAX ((size_t) -1)
+#endif
 
 /* End of #include "xsize.h" fix. */

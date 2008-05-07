@@ -178,6 +178,7 @@ ncheck_fileproc (callerdat, finfo)
     /* We send notifications even if noexec.  I'm not sure which behavior
        is most sensible.  */
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fp = CVS_FOPEN (CVSADM_NOTIFY, "r");
     if (fp == NULL)
     {
@@ -899,6 +900,7 @@ notify_do (type, filename, who, val, watches, repository)
 	    strcat (usersname, CVSROOTADM);
 	    strcat (usersname, "/");
 	    strcat (usersname, CVSROOTADM_USERS);
+	    errno = 0; /* Standard C doesn't require errno be set on error */
 	    fp = CVS_FOPEN (usersname, "r");
 	    if (fp == NULL && !existence_error (errno))
 		error (0, errno, "cannot read %s", usersname);
@@ -1008,6 +1010,7 @@ cvs_notify_check (repository, update_dir)
     /* We send notifications even if noexec.  I'm not sure which behavior
        is most sensible.  */
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fp = CVS_FOPEN (CVSADM_NOTIFY, "r");
     if (fp == NULL)
     {

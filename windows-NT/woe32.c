@@ -24,6 +24,10 @@
 #include <stdio.h>
 #include <conio.h>
 
+#ifdef HAVE_PROCESS_H
+# include <process.h>
+#endif
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
@@ -93,11 +97,13 @@ char *win32getlogin()
 }
 
 
+#ifndef HAVE_GETPID
 pid_t
-getpid ()
+getpid (void)
 {
     return (pid_t) GetCurrentProcessId();
 }
+#endif
 
 char *
 getpass (const char *prompt)

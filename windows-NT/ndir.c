@@ -27,6 +27,7 @@
 #include <dos.h>
 
 #include <ndir.h>
+extern void *xmalloc (size_t bytes);
 
 static void free_dircontents (struct _dircontents *);
 

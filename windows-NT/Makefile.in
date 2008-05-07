@@ -181,8 +181,6 @@ top_srcdir = @top_srcdir@
 with_default_rsh = @with_default_rsh@
 with_default_ssh = @with_default_ssh@
 EXTRA_DIST = \
-	JmgStat.c \
-	JmgStat.h \
 	stamp-ch \
 	config.h \
 	config.h.in \

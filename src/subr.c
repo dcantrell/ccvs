@@ -664,6 +664,7 @@ file_has_markers (finfo)
     int result;
 
     result = 0;
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fp = CVS_FOPEN (finfo->file, "r");
     if (fp == NULL)
 	error (1, errno, "cannot open %s", finfo->fullname);
@@ -922,7 +923,7 @@ sleep_past (desttime)
 	}
 #else
 	/* default to 20 ms increments */
-	s = desttime - t;
+	s = (long)(desttime - t);
 	us = 20000;
 #endif
 

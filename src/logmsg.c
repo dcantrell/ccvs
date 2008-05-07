@@ -216,6 +216,7 @@ do_editor (dir, messagep, repository, changes)
      */
     fname = cvs_temp_name ();
   again:
+    errno = 0; /* Standard C doesn't require errno be set on error */
     if ((fp = CVS_FOPEN (fname, "w+")) == NULL)
 	error (1, 0, "cannot create temporary file %s", fname);
 
@@ -239,6 +240,7 @@ do_editor (dir, messagep, repository, changes)
 	size_t nwrite;
 
 	/* Why "b"?  */
+	errno = 0; /* Standard C doesn't require errno be set on error */
 	tfp = CVS_FOPEN (CVSADM_TEMPLATE, "rb");
 	if (tfp == NULL)
 	{
@@ -571,6 +573,7 @@ rcsinfo_proc (repository, template)
 	free (last_template);
     last_template = xstrdup (template);
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     if ((tfp = CVS_FOPEN (template, "r")) != NULL)
     {
 	char *line = NULL;

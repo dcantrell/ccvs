@@ -1,3 +1,14 @@
+2008-05-07  Mark D. Baushke  <mdb@gnu.org>
+
+	* system.h (CVS_STAT, CVS_FSTAT): Add default values.
+
+	[bug #22781]
+	* diff.c, diff3.c: convert all stat and fstat calls to call 
+	CVS_STAT and CVS_FSTAT.
+	* system.h, util.c: remove declaration conflicts with system headers.
+	* libdiff.mak: Change CFLAGS to work with MSVC 2005 express.
+	(Patch from Nelson B Bolyard <nelson@bolyard.com>.)
+	
 2005-09-04  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (EXTRA_DIST): Add .cvsignore.

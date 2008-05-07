@@ -1115,7 +1115,7 @@ read_hrecs (fname)
     if ((fd = CVS_OPEN (fname, O_RDONLY | OPEN_BINARY)) < 0)
 	error (1, errno, "cannot open history file: %s", fname);
 
-    if (fstat (fd, &st_buf) < 0)
+    if (CVS_FSTAT (fd, &st_buf) < 0)
 	error (1, errno, "can't stat history file");
 
     if (!(st_buf.st_size))

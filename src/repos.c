@@ -53,6 +53,7 @@ Name_Repository (dir, update_dir)
      * The assumption here is that the repository is always contained in the
      * first line of the "Repository" file.
      */
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fpin = CVS_FOPEN (tmp, "r");
 
     if (fpin == NULL)

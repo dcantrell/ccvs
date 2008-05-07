@@ -1,3 +1,21 @@
+2008-05-07  Mark D. Baushke  <mdb@gnu.org>
+
+	[bug #22781]
+	* JmgStat.c, JmgStat.h: remove. 
+	* config.h: Add macros CVS_FSTAT & CVS_UTIME, declare wnt_fstat 
+	and wnt_utime, include sys/utime.h, remove declarations that 
+	conflict with windows header files.
+	* filesubr.c: convert all fstat and utime calls to use the new 
+	CVS_FSTAT and CVS_UTIME macros.  Reimplement check_statbuf to 
+	use GetFileTime to get accurate file timestamps, and new function
+	UTCFileTimeToUnixTime to accurtately convert them.
+	Implement wnt_utime and wnt_fstat.
+	* ndir.c, pwd.c: Add missing declaratiosn of xmalloc.
+	* rcmd.c: substitute errorCode for reserved word errcode.
+	* run.c: correct function signature of piped_child.
+	* Makefile.am Makefile.in: remove references to jmgStat.[ch]
+	(Patch from Nelson B. Bolyard <nelson@bolyard.com>.)
+	
 2008-03-30  Mark D. Baushke  <mdb@gnu.org>
 
 	* JmgStat.c, JmgStat.h: Convert CRLF to LF on UNIX to get CRLF on

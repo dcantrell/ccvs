@@ -1429,7 +1429,7 @@ stdio_buffer_shutdown (buf)
      * fstat() will return -1 on the server if the client has gone
      * away.
      */
-    if (fstat(fileno(bc->fp), &s) == -1) statted = 0;
+    if (CVS_FSTAT(fileno(bc->fp), &s) == -1) statted = 0;
     else statted = 1;
     closefp = statted;
 

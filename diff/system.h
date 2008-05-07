@@ -175,9 +175,9 @@ GNU General Public License for more details.
 #else
 VOID *malloc ();
 VOID *realloc ();
-#endif
 #ifndef getenv
 char *getenv ();
+#endif
 #endif
 
 #if HAVE_LIMITS_H
@@ -301,4 +301,10 @@ extern int errno;
 #endif
 #ifndef CVS_CLOSEDIR
 #define CVS_CLOSEDIR closedir
+#endif
+#ifndef CVS_STAT
+#define CVS_STAT stat
+#endif
+#ifndef CVS_FSTAT
+#define CVS_FSTAT fstat
 #endif

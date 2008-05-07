@@ -89,6 +89,7 @@ fileattr_read ()
     strcat (fname, CVSREP_FILEATTR);
 
     attr_read_attempted = 1;
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fp = CVS_FOPEN (fname, FOPEN_BINARY_READ);
     if (fp == NULL)
     {
@@ -570,6 +571,7 @@ fileattr_write ()
     }
 
     omask = umask (cvsumask);
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fp = CVS_FOPEN (fname, FOPEN_BINARY_WRITE);
     if (fp == NULL)
     {
@@ -596,6 +598,7 @@ fileattr_write ()
 	    }
 	    free (repname);
 
+	    errno = 0; /* Standard C doesn't require errno be set on error */
 	    fp = CVS_FOPEN (fname, FOPEN_BINARY_WRITE);
 	}
 	if (fp == NULL)

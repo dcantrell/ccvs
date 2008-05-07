@@ -1545,6 +1545,7 @@ protocol error: compressed files not supported for that operation");
        is binary or not.  I haven't carefully looked into whether
        CVS/Template files should use local text file conventions or
        not.  */
+    errno = 0;  /* Standard C doesn't require errno be set on error */
     fp = CVS_FOPEN (filename, "wb");
     if (fp == NULL)
 	error (1, errno, "cannot write %s", fullname);
@@ -1693,6 +1694,9 @@ handle_mod_time (args, len)
 	error (0, 0, "protocol error: cannot parse date %s", args);
     else
 	stored_modtime_valid = 1;
+#ifdef DEBUG_TIMESTAMPS
+    printf("stored_modtime = %llu, 0x%llX\n", stored_modtime, stored_modtime);
+#endif
 }
 
 /*
@@ -2136,6 +2140,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	     * here using text mode, so its lines will be terminated the same
 	     * way they were transmitted.
 	     */
+	    errno = 0; /* Standard C doesn't require errno be set on error */
 	    e = CVS_FOPEN (filename, "r");
 	    if (e == NULL)
 	        error (1, errno, "could not open %s", short_pathname);
@@ -2217,7 +2222,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	}
 #endif  /* UTIME_EXPECTS_WRITABLE  */
 
-	if (utime (filename, &t) < 0)
+	if (CVS_UTIME (filename, &t) < 0)
 	    error (0, errno, "cannot set time on %s", filename);
 
 #ifdef UTIME_EXPECTS_WRITABLE
@@ -2513,6 +2518,7 @@ set_sticky (data, ent_list, short_pathname, filename)
     read_line (&tagspec);
 
     /* FIXME-update-dir: error messages should include the directory.  */
+    errno = 0; /* Standard C doesn't require errno be set on error */
     f = CVS_FOPEN (CVSADM_TAG, "w+");
     if (f == NULL)
     {
@@ -2807,6 +2813,7 @@ send_repository (dir, repos, update_dir)
 	else
 	    sprintf (adm_name, "%s/%s", dir, CVSADM_TAG);
 
+	errno = 0; /* Standard C doesn't require errno be set on error */
 	f = CVS_FOPEN (adm_name, "r");
 	if (f == NULL)
 	{
@@ -3865,7 +3872,7 @@ auth_server (root, lto_server, lfrom_server, verify_only, do_gssapi, hostinfo)
 	int fd = fp ? fileno(fp) : -1;
 	struct stat s;
 
-	if ((fd < 0) || (fstat (fd, &s) < 0) || !S_ISSOCK(s.st_mode))
+	if ((fd < 0) || (CVS_FSTAT (fd, &s) < 0) || !S_ISSOCK(s.st_mode))
 	{
 	    error (1, 0, "gserver currently only enabled for socket connections");
 	}

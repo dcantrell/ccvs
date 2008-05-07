@@ -434,7 +434,7 @@ work_around_openssh_glitch (void)
 
     /* Do nothing unless stderr is a file that is affected by
        nonblocking mode.  */
-    if (!(fstat (STDERR_FILENO, &sb) == 0
+    if (!(CVS_FSTAT (STDERR_FILENO, &sb) == 0
           && (S_ISFIFO (sb.st_mode) || S_ISSOCK (sb.st_mode)
               || S_ISCHR (sb.st_mode) || S_ISBLK (sb.st_mode))))
 	return;

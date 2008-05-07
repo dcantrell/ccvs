@@ -42,6 +42,7 @@ mydbm_open (file, flags, mode)
     FILE *fp;
     DBM *db;
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fp = CVS_FOPEN (file, (flags & O_ACCMODE) != O_RDONLY ?
                                  FOPEN_BINARY_READWRITE : FOPEN_BINARY_READ);
     if (fp == NULL && !(existence_error (errno) && (flags & O_CREAT)))
@@ -83,6 +84,7 @@ mydbm_close (db)
     if (db->modified)
     {
 	FILE *fp;
+	errno = 0; /* Standard C doesn't require errno be set on error */
 	fp = CVS_FOPEN (db->name, FOPEN_BINARY_WRITE);
 	if (fp == NULL)
 	    error (1, errno, "cannot write %s", db->name);

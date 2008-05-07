@@ -142,7 +142,7 @@ int gz_compress_mmap(in, out)
     struct stat sb;
 
     /* Determine the size of the file, needed for mmap: */
-    if (fstat(ifd, &sb) < 0) return Z_ERRNO;
+    if (CVS_FSTAT(ifd, &sb) < 0) return Z_ERRNO;
     buf_len = sb.st_size;
     if (buf_len <= 0) return Z_ERRNO;
 

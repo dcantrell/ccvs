@@ -61,10 +61,10 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-# ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /c
-CPP_PROJ=/nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS"\
- /Fp"$(INTDIR)/SCC.pch" /YX /Fo"$(INTDIR)/" /c 
+# ADD BASE CPP /nologo /MT /W3  /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS"  /c
+# ADD CPP /nologo /MT /W3  /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS"  /c
+CPP_PROJ=/nologo /MT /W3  /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS"\
+ /Fp"$(INTDIR)/SCC.pch"  /Fo"$(INTDIR)/" /c 
 CPP_OBJS=.\Release/
 CPP_SBRS=
 # ADD BASE MTL /nologo /D "NDEBUG" /win32
@@ -124,10 +124,10 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /c
-CPP_PROJ=/nologo /MTd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS"\
- /Fp"$(INTDIR)/SCC.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c 
+# ADD BASE CPP /nologo /MTd /W3 /Gm  /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS"  /c
+# ADD CPP /nologo /MTd /W3 /Gm  /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS"  /c
+CPP_PROJ=/nologo /MTd /W3 /Gm  /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS"\
+ /Fp"$(INTDIR)/SCC.pch"  /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c 
 CPP_OBJS=.\Debug/
 CPP_SBRS=
 # ADD BASE MTL /nologo /D "_DEBUG" /win32

@@ -66,7 +66,7 @@ lookup_file_by_inode (filepath)
        inode, so it requires two bytes of text to represent
        each byte of the inode number. */
     inodestr = (char *) xmalloc (2*sizeof(ino_t) + 1);
-    if (stat (file, &sb) < 0)
+    if (CVS_STAT (file, &sb) < 0)
     {
 	if (existence_error (errno))
 	{
@@ -189,7 +189,7 @@ list_linked_files_on_disk (file)
        linkage for a file would always fail. */
     (void) lookup_file_by_inode (path);
 
-    if (stat (path, &sb) < 0)
+    if (CVS_STAT (path, &sb) < 0)
 	error (1, errno, "cannot stat %s", file);
     /* inodestr contains the hexadecimal representation of an
        inode, so it requires two bytes of text to represent

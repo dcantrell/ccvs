@@ -1,3 +1,16 @@
+2008-05-07  Mark D. Baushke  <mdb@gnu.org>
+
+	[bug #22781]
+	* ftruncate.c, mkdir.c, rename.c: change stat and fstat calls
+	to call CVS_STAT and CVS_FSTAT.
+	* regex.c: substitute errorCode for reserved word errcode
+	* system.h: get symbols from system header files rather 
+	than using conflicting substitute declarations.
+	Don't assume that time_t is long. 
+	Define CVS_FSTAT as fstat and CVS_UTIME as utime for 
+	non-Windows platforms.
+	* libcvs.mak: Change CFLAGS to work with MSVC 2005 express.
+
 2006-06-23  Larry Jones  <lawrence.jones@ugs.com>
 
 	* xsize.h: Avoid SGI problem with <stdint.h> being unusable in C89

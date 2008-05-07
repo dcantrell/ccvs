@@ -57,10 +57,6 @@ void exit ();
 #endif /* __STDC__ */
 #endif /* STDC_HEADERS */
 
-#ifndef strerror
-extern char *strerror ();
-#endif
-
 void
 error_exit PROTO ((void))
 {
