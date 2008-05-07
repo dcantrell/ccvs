@@ -4,6 +4,9 @@ Changes since 1.11.23:
 Changes from 1.11.22 to 1.11.23:
 ********************************
 
+Changes from 1.11.22 to 1.11.23:
+********************************
+
 NEW FEATURES
 
 * A new log option -n reverts the -N option which may be in a .cvsrc
