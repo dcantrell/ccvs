@@ -23,10 +23,6 @@ GNU General Public License for more details.
 #include <varargs.h>
 #endif
 
-#ifndef strerror
-extern char *strerror ();
-#endif
-
 /* Queue up one-line messages to be printed at the end,
    when -l is specified.  Each message is recorded with a `struct msg'.  */
 

@@ -33,7 +33,7 @@ rename (from, to)
   struct stat from_stats;
   int pid, status;
 
-  if (stat (from, &from_stats) == 0)
+  if (CVS_STAT (from, &from_stats) == 0)
     {
       /* We don't check existence_error because the systems which need it
 	 have rename().  */

@@ -5642,6 +5642,8 @@ fi
 
 
 
+
+
 for ac_header in \
 	errno.h \
 	direct.h \
@@ -5651,6 +5653,7 @@ for ac_header in \
 	limits.h \
 	memory.h \
 	ndbm.h \
+	process.h \
 	string.h \
 	syslog.h \
 	sys/bsdtypes.h \
@@ -5660,6 +5663,7 @@ for ac_header in \
 	sys/select.h \
 	sys/time.h \
 	sys/timeb.h \
+	sys/utime.h \
 	unistd.h \
 	utime.h\
 
@@ -8086,6 +8090,7 @@ _ACEOF
 
 
 
+
 for ac_func in \
 	fchdir \
 	fchmod \
@@ -8095,6 +8100,7 @@ for ac_func in \
 	getgroups \
 	getopt \
 	getpagesize \
+	getpid \
 	gettimeofday \
 	initgroups \
 	login \

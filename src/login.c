@@ -14,6 +14,7 @@
 
 #include "cvs.h"
 #include "getline.h"
+extern char * getpass (const char *prompt);
 
 #ifdef AUTH_CLIENT_SUPPORT   /* This covers the rest of the file. */
 
@@ -310,6 +311,7 @@ internal error: can only call password_entry_operation with pserver method");
      */
 
     passfile = construct_cvspass_filename ();
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fp = CVS_FOPEN (passfile, "r");
     if (fp == NULL)
     {
@@ -381,6 +383,7 @@ process:
 	FILE *tmp_fp;
 
 	/* open the original file again */
+	errno = 0; /* Standard C doesn't require errno be set on error */
 	fp = CVS_FOPEN (passfile, "r");
 	if (fp == NULL)
 	    error (1, errno, "failed to open %s for reading", passfile);
@@ -455,6 +458,7 @@ process:
     if (!noexec && operation == password_entry_add
 	    && (password == NULL || strcmp (password, newpassword)))
     {
+	errno = 0; /* Standard C doesn't require errno be set on error */
 	if ((fp = CVS_FOPEN (passfile, "a")) == NULL)
 	    error (1, errno, "could not open %s for writing", passfile);
 

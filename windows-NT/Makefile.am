@@ -22,8 +22,6 @@
 # GNU General Public License for more details.
 
 EXTRA_DIST = \
-	JmgStat.c \
-	JmgStat.h \
 	stamp-ch \
 	config.h \
 	config.h.in \

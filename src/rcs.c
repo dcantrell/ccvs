@@ -294,6 +294,7 @@ RCS_parse (file, repos)
        in the cache.  */
     rcsbuf_cache_close ();
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     if ((rcsfile = locate_rcs (repos, file, &inattic)) == NULL)
     {
 	/* Handle the error cases */
@@ -335,6 +336,7 @@ RCS_parsercsfile (rcsfile)
     rcsbuf_cache_close ();
 
     /* open the rcsfile */
+    errno = 0; /* Standard C doesn't require errno be set on error */
     if ((fp = CVS_FOPEN (rcsfile, FOPEN_BINARY_READ)) == NULL)
     {
 	error (0, errno, "Couldn't open rcs file `%s'", rcsfile);
@@ -1053,7 +1055,7 @@ rcsbuf_open (rcsbuf, fp, filename, pos)
      * buffering and caching for us
      */
 
-    if ( fstat (fileno(fp), &fs) < 0 )
+    if ( CVS_FSTAT (fileno(fp), &fs) < 0 )
 	error ( 1, errno, "Could not stat RCS archive %s for mapping", filename );
 
     if (pos)
@@ -2049,13 +2051,14 @@ rcsbuf_cache_open (rcs, pos, pfp, prcsbuf)
 	if (cached_rcs != NULL)
 	    rcsbuf_cache_close ();
 
+	errno = 0; /* Standard C doesn't require errno be set on error */
 	*pfp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
 	if (*pfp == NULL)
-	    error (1, 0, "unable to reopen `%s'", rcs->path);
+	    error (1, errno, "unable to reopen `%s'", rcs->path);
 	if (pos != 0)
 	{
 	    if (fseek (*pfp, pos, SEEK_SET) != 0)
-		error (1, 0, "cannot fseek RCS file %s", rcs->path);
+		error (1, errno, "cannot fseek RCS file %s", rcs->path);
 	}
 	rcsbuf_open (prcsbuf, *pfp, rcs->path, pos);
     }
@@ -4249,7 +4252,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 
 	rcsbuf_valpolish (&rcsbuf, value, 0, &len);
 
-	if (fstat (fileno (fp), &sb) < 0)
+	if (CVS_FSTAT (fileno (fp), &sb) < 0)
 	    error (1, errno, "cannot fstat %s", rcs->path);
 
 	rcsbuf_cache (rcs, &rcsbuf);
@@ -4269,13 +4272,13 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	{
 	    /* If RCS_deltas didn't close the file, we could use fstat
 	       here too.  Probably should change it thusly....  */
-	    if (stat (rcs->path, &sb) < 0)
+	    if (CVS_STAT (rcs->path, &sb) < 0)
 		error (1, errno, "cannot stat %s", rcs->path);
 	    rcsbufp = NULL;
 	}
 	else
 	{
-	    if (fstat (fileno (fp), &sb) < 0)
+	    if (CVS_FSTAT (fileno (fp), &sb) < 0)
 		error (1, errno, "cannot fstat %s", rcs->path);
 	    rcsbufp = &rcsbuf;
 	}
@@ -4554,6 +4557,8 @@ workfile);
 		if (islink (sout))
 		    if (unlink_file (sout) < 0)
 			error (1, errno, "cannot remove %s", sout);
+		/* Standard C doesn't require errno be set on error */
+		errno = 0;
 		ofp = CVS_FOPEN (sout, expand == KFLAG_B ? "wb" : "w");
 		if (ofp == NULL)
 		    error (1, errno, "cannot open %s", sout);
@@ -4567,6 +4572,7 @@ workfile);
 		if (unlink_file (workfile) < 0)
 		    error (1, errno, "cannot remove %s", workfile);
 
+	    errno = 0; /* Standard C doesn't require errno be set on error */
 	    ofp = CVS_FOPEN (workfile, expand == KFLAG_B ? "wb" : "w");
 
 	    /* If the open failed because the existing workfile was not
@@ -4575,6 +4581,8 @@ workfile);
 		&& isfile (workfile) && !iswritable (workfile))
 	    {
 		xchmod (workfile, 1);
+		/* Standard C doesn't require errno be set on error */
+		errno = 0;
 		ofp = CVS_FOPEN (workfile, expand == KFLAG_B ? "wb" : "w");
 	    }
 
@@ -5083,7 +5091,7 @@ RCS_checkin (rcs, workfile_in, message, rev, citime, flags)
     if (flags & RCS_FLAGS_MODTIME)
     {
 	struct stat ws;
-	if (stat (workfile, &ws) < 0)
+	if (CVS_STAT (workfile, &ws) < 0)
 	{
 	    error (1, errno, "cannot stat %s", workfile);
 	}
@@ -5740,6 +5748,7 @@ RCS_cmp_file (rcs, rev1, rev1_cache, rev2, options, filename)
 	else
 	    use_file1 = filename;
 
+	errno = 0; /* Standard C doesn't require errno be set on error */
         fp = CVS_FOPEN (use_file1, binary ? FOPEN_BINARY_READ : "r");
 	if (fp == NULL)
 	    /* FIXME-update-dir: should include update_dir in message.  */
@@ -8671,7 +8680,7 @@ rcs_internal_lockfile (rcsfile)
        file.  (Really, this is a lie -- if this is a new file,
        RCS_checkin uses the permissions from the working copy.  For
        actually creating the file, we use 0444 as a safe default mode.) */
-    if (stat (rcsfile, &rstat) < 0)
+    if (CVS_STAT (rcsfile, &rstat) < 0)
     {
 	if (existence_error (errno))
 	    rstat.st_mode = S_IRUSR | S_IRGRP | S_IROTH;

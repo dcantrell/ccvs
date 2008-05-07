@@ -415,7 +415,7 @@ diff3_run (argc, argv, out, callbacks_arg)
   for (i = 0; i < 3; i++)
     if (strcmp (file[i], "-") != 0)
       {
-	if (stat (file[i], &statb) < 0)
+	if (CVS_STAT (file[i], &statb) < 0)
 	  {
 	    perror_with_name (file[i]);
 	    return 2;
@@ -1070,7 +1070,9 @@ compare_line_list (list1, lengths1, list2, lengths2, nl)
  * Routines to input and parse two way diffs.
  */
 
+#if !(HAVE_STDLIB_H || defined(STDC_HEADERS))
 extern char **environ;
+#endif
 
 static struct diff_block *
 process_diff (filea, fileb, last_block, diff_contents)
@@ -1330,7 +1332,7 @@ read_diff (filea, fileb, output_placement)
     diff3_fatal ("could not open temporary diff file");
 
   current_chunk_size = 8 * 1024;
-  if (fstat (fd, &pipestat) == 0)
+  if (CVS_FSTAT (fd, &pipestat) == 0)
     current_chunk_size = max (current_chunk_size, STAT_BLOCKSIZE (pipestat));
 
   diff_result = xmalloc (current_chunk_size);

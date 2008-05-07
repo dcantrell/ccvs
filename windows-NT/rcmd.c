@@ -96,7 +96,7 @@ bind_and_connect (struct sockaddr_in *server_sai)
          client_port >= IPPORT_RESERVED/2;
          client_port--)
     {
-	int result, errcode;
+	int result, errorCode;
 	client_sai.sin_port = htons (client_port);
 
         if ((s = socket (PF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
@@ -105,28 +105,28 @@ bind_and_connect (struct sockaddr_in *server_sai)
 
 	result = bind (s, (struct sockaddr *) &client_sai,
 	               sizeof (client_sai));
-	errcode = SOCK_ERRNO;
+	errorCode = SOCK_ERRNO;
 	if (result == SOCKET_ERROR)
 	{
 	    closesocket (s);
-	    if (errcode == WSAEADDRINUSE)
+	    if (errorCode == WSAEADDRINUSE)
 		continue;
 	    else
 		error (1, 0, "cannot bind to socket: %s",
-		       SOCK_STRERROR (errcode));
+		       SOCK_STRERROR (errorCode));
 	}
 
 	result = connect (s, (struct sockaddr *) server_sai,
 	                  sizeof (*server_sai));
-	errcode = SOCK_ERRNO;
+	errorCode = SOCK_ERRNO;
 	if (result == SOCKET_ERROR)
 	{
 	    closesocket (s);
-	    if (errcode == WSAEADDRINUSE)
+	    if (errorCode == WSAEADDRINUSE)
 		continue;
 	    else
 		error (1, 0, "cannot connect to socket: %s",
-		       SOCK_STRERROR (errcode));
+		       SOCK_STRERROR (errorCode));
 	}
 
 	return s;

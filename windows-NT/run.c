@@ -25,7 +25,7 @@
 static void run_add_arg PROTO((const char *s));
 static void run_init_prog PROTO((void));
 
-extern char *strtok ();
+//extern char *strtok ();
 
 /*
  * To exec a program under CVS, first call run_setup() to setup any initial
@@ -620,7 +620,7 @@ build_command (char **argv)
    Return the handle of the child process (this is what
    _cwait and waitpid expect).  */
 int
-piped_child (const char **argv, int *to, int *from)
+piped_child (const char **argv, int *to, int *from, int fix_stderr)
 {
   int child;
   HANDLE pipein[2], pipeout[2];

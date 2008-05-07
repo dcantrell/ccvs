@@ -1322,7 +1322,7 @@ VERS: ", 0);
 		   That would also fix the kludge with noexec, above, which
 		   is here only because noexec doesn't write srcfile->path
 		   for us to stat.  */
-		if (stat (vers_ts->srcfile->path, &sb) < 0)
+		if (CVS_STAT (vers_ts->srcfile->path, &sb) < 0)
 		{
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 		    buf_free (revbuf);
@@ -1638,6 +1638,7 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
        has a trailing newline.  Because of this, we don't use rcsdiff,
        but just use diff.  */
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     e = CVS_FOPEN (file1, "w");
     if (e == NULL)
 	error (1, errno, "cannot open %s", file1);
@@ -1662,6 +1663,7 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 
     if (! fail)
     {
+	errno = 0; /* Standard C doesn't require errno be set on error */
 	e = CVS_FOPEN (file2, "w");
 	if (e == NULL)
 	    error (1, errno, "cannot open %s", file2);
@@ -1749,6 +1751,7 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 	unsigned int c;
 
 	/* Check the diff output to make sure patch will be handle it.  */
+	errno = 0; /* Standard C doesn't require errno be set on error */
 	e = CVS_FOPEN (finfo->file, "r");
 	if (e == NULL)
 	    error (1, errno, "could not open diff output file %s",

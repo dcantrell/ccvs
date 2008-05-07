@@ -16,6 +16,10 @@
 #include "getline.h"
 #include "buffer.h"
 
+#ifdef HAVE_PROCESS_H
+# include <process.h>
+#endif
+
 int server_active = 0;
 
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
@@ -437,6 +441,7 @@ create_adm_p (base_dir, dir)
 		(void) umask (omask);
 	    }
 
+	    errno = 0; /* Standard C doesn't require errno be set on error */
 	    f = CVS_FOPEN (tmp, "w");
 	    if (f == NULL)
 	    {
@@ -466,6 +471,7 @@ create_adm_p (base_dir, dir)
 	/* Create CVSADM_ENT.  We open in append mode because we
 	   don't want to clobber an existing Entries file.  */
 	(void) sprintf (tmp, "%s/%s", dir_where_cvsadm_lives, CVSADM_ENT);
+	errno = 0; /* Standard C doesn't require errno be set on error */
 	f = CVS_FOPEN (tmp, "a");
 	if (f == NULL)
 	{
@@ -1071,6 +1077,7 @@ dirswitch (dir, repos)
        placeholder value to this file and we need to insert the
        correct value. */
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     f = CVS_FOPEN (CVSADM_REP, "w");
     if (f == NULL)
     {
@@ -1131,6 +1138,7 @@ dirswitch (dir, repos)
     }
     /* We open in append mode because we don't want to clobber an
        existing Entries file.  */
+    errno = 0; /* Standard C doesn't require errno be set on error */
     f = CVS_FOPEN (CVSADM_ENT, "a");
     if (f == NULL)
     {
@@ -1207,6 +1215,7 @@ serve_static_directory (arg)
 
     if (error_pending ()) return;
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     f = CVS_FOPEN (CVSADM_ENTSTAT, "w+");
     if (f == NULL)
     {
@@ -1234,6 +1243,7 @@ serve_sticky (arg)
 
     if (error_pending ()) return;
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     f = CVS_FOPEN (CVSADM_TAG, "w+");
     if (f == NULL)
     {
@@ -1587,7 +1597,7 @@ serve_modified (arg)
 
 	memset (&t, 0, sizeof (t));
 	t.modtime = t.actime = checkin_time;
-	if (utime (arg, &t) < 0)
+	if (CVS_UTIME (arg, &t) < 0)
 	{
 	    int save_errno = errno;
 	    if (alloc_pending (80 + strlen (arg)))
@@ -1957,6 +1967,7 @@ server_write_entries ()
 	   which explicitly lists more than one file in a particular
 	   directory, then we will wind up calling
 	   server_write_entries for each such file.  */
+	errno = 0; /* Standard C doesn't require errno be set on error */
 	f = CVS_FOPEN (CVSADM_ENT, "a");
 	if (f == NULL)
 	{
@@ -4357,6 +4368,8 @@ CVS server internal error: unhandled case in server_updated");
 	    {
 		long status;
 
+		/* Standard C doesn't require errno be set on error */
+		errno = 0;
 		f = CVS_FOPEN (finfo->file, "rb");
 		if (f == NULL)
 		    error (1, errno, "reading %s", finfo->fullname);
@@ -4585,13 +4598,14 @@ template_proc (repository, template)
     output_dir (data->update_dir, data->repository);
     buf_output0 (protocol, "\n");
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fp = CVS_FOPEN (template, "rb");
     if (fp == NULL)
     {
 	error (0, errno, "Couldn't open rcsinfo template file %s", template);
 	return 1;
     }
-    if (fstat (fileno (fp), &sb) < 0)
+    if (CVS_FSTAT (fileno (fp), &sb) < 0)
     {
 	error (0, errno, "cannot stat rcsinfo template file %s", template);
 	return 1;
@@ -5529,6 +5543,7 @@ check_repository_password (username, password, repository, host_user_ptr)
     (void) sprintf (filename, "%s/%s/%s", repository,
 		    CVSROOTADM, CVSROOTADM_PASSWD);
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fp = CVS_FOPEN (filename, "r");
     if (fp == NULL)
     {

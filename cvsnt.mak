@@ -77,7 +77,6 @@ CLEAN :
 	-@erase "$(INTDIR)\history.obj"
 	-@erase "$(INTDIR)\ignore.obj"
 	-@erase "$(INTDIR)\import.obj"
-	-@erase "$(INTDIR)\JmgStat.obj"
 	-@erase "$(INTDIR)\lock.obj"
 	-@erase "$(INTDIR)\log.obj"
 	-@erase "$(INTDIR)\login.obj"
@@ -123,7 +122,7 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP_PROJ=/nologo /ML /W3 /GX /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /I ".\WinDebug" /D "NDEBUG" /D "WANT_WIN_COMPILER_VERSION" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /Fp"$(INTDIR)\cvsnt.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /MD /W3  /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /I ".\WinDebug" /D "NDEBUG" /D "WANT_WIN_COMPILER_VERSION" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /Fp"$(INTDIR)\cvsnt.pch"  /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\cvsnt.bsc" 
 BSC32_SBRS= \
@@ -154,7 +153,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\history.obj" \
 	"$(INTDIR)\ignore.obj" \
 	"$(INTDIR)\import.obj" \
-	"$(INTDIR)\JmgStat.obj" \
 	"$(INTDIR)\lock.obj" \
 	"$(INTDIR)\log.obj" \
 	"$(INTDIR)\login.obj" \
@@ -199,9 +197,14 @@ LINK32_OBJS= \
 	".\lib\WinRel\libcvs.lib"
 
 "$(OUTDIR)\cvs.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
-    $(LINK32) @<<
+    @type <<
+  $(LINK32) $(LINK32_FLAGS) $(LINK32_OBJS)
+<<
+    @$(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
+    mt.exe -NOLOGO -MANIFEST $(OUTDIR)/cvs.exe.manifest "-OUTPUTRESOURCE:$(OUTDIR)/cvs.exe;1"
+    rm -f $(OUTDIR)/cvs.exe.manifest
 
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
@@ -249,7 +252,6 @@ CLEAN :
 	-@erase "$(INTDIR)\history.obj"
 	-@erase "$(INTDIR)\ignore.obj"
 	-@erase "$(INTDIR)\import.obj"
-	-@erase "$(INTDIR)\JmgStat.obj"
 	-@erase "$(INTDIR)\lock.obj"
 	-@erase "$(INTDIR)\log.obj"
 	-@erase "$(INTDIR)\login.obj"
@@ -298,13 +300,27 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /D "_DEBUG" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /Fp"$(INTDIR)\cvsnt.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /MD /W3 /Gm  /Zi /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /D "_DEBUG" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /Fp"$(INTDIR)\cvsnt.pch"  /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\cvsnt.bsc" 
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=diff\WinDebug\libdiff.lib lib\WinDebug\libcvs.lib zlib\WinDebug\libz.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\cvs.pdb" /debug /machine:I386 /out:"$(OUTDIR)\cvs.exe" 
+LINK32_LIBS= \
+	wsock32.lib \
+	kernel32.lib \
+	user32.lib \
+	gdi32.lib \
+	winspool.lib \
+	comdlg32.lib \
+	advapi32.lib \
+	shell32.lib \
+	ole32.lib \
+	oleaut32.lib \
+	uuid.lib \
+	$(NULL)
+#LINK32_FLAGS=/nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\cvs.pdb" /debug /machine:I386 /out:"$(OUTDIR)\cvs.exe" /NODEFAULTLIB:LIBCMT
+LINK32_FLAGS=/nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\cvs.pdb" /debug /machine:I386  /NODEFAULTLIB:LIBCMT
 LINK32_OBJS= \
 	"$(INTDIR)\add.obj" \
 	"$(INTDIR)\admin.obj" \
@@ -329,7 +345,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\history.obj" \
 	"$(INTDIR)\ignore.obj" \
 	"$(INTDIR)\import.obj" \
-	"$(INTDIR)\JmgStat.obj" \
 	"$(INTDIR)\lock.obj" \
 	"$(INTDIR)\log.obj" \
 	"$(INTDIR)\login.obj" \
@@ -369,19 +384,31 @@ LINK32_OBJS= \
 	"$(INTDIR)\woe32.obj" \
 	"$(INTDIR)\wrapper.obj" \
 	"$(INTDIR)\zlib.obj" \
-	".\diff\WinDebug\libdiff.lib" \
-	".\zlib\WinDebug\libz.lib" \
-	".\lib\WinDebug\libcvs.lib"
+	diff\WinDebug\libdiff.lib \
+	lib\WinDebug\libcvs.lib \
+	zlib\WinDebug\libz.lib \
+	$(NULL)
+
+
+
 
 "$(OUTDIR)\cvs.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
-    $(LINK32) @<<
-  $(LINK32_FLAGS) $(LINK32_OBJS)
+    @type <<
+  cl -Fe$(OUTDIR)\cvs.exe $(LINK32_OBJS) $(LINK32_LIBS) -link $(LINK32_FLAGS)
 <<
+    @cl @<<
+  -Fe$(OUTDIR)\cvs.exe $(LINK32_OBJS) $(LINK32_LIBS) -link $(LINK32_FLAGS)
+<<
+    mt.exe -NOLOGO -MANIFEST $(OUTDIR)/cvs.exe.manifest "-OUTPUTRESOURCE:$(OUTDIR)/cvs.exe;1"
+    rm -f $(OUTDIR)/cvs.exe.manifest
 
-!ENDIF 
+!ENDIF
 
 .c{$(INTDIR)}.obj::
-   $(CPP) @<<
+   @type @<<
+   $(CPP) $(CPP_PROJ) $< 
+<<
+   @$(CPP) @<<
    $(CPP_PROJ) $< 
 <<
 
@@ -556,12 +583,6 @@ SOURCE=.\src\ignore.c
 SOURCE=.\src\import.c
 
 "$(INTDIR)\import.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=".\windows-NT\JmgStat.c"
-
-"$(INTDIR)\JmgStat.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 

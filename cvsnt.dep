@@ -394,7 +394,6 @@
 	".\src\stack.h"\
 	".\src\update.h"\
 	".\windows-NT\config.h"\
-	".\windows-NT\JmgStat.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	
@@ -506,10 +505,6 @@
 	".\windows-NT\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	
-
-".\windows-NT\JmgStat.c" : \
-	".\windows-NT\JmgStat.h"\
 	
 
 .\src\lock.c : \

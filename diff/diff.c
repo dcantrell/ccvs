@@ -158,7 +158,7 @@ add_exclude_file (name)
   f.desc = (strcmp (optarg, "-") == 0
 	    ? STDIN_FILENO
 	    : open (optarg, O_RDONLY, 0));
-  if (f.desc < 0 || fstat (f.desc, &f.stat) != 0)
+  if (f.desc < 0 || CVS_FSTAT (f.desc, &f.stat) != 0)
     return -1;
 
   sip (&f, 1);
@@ -996,7 +996,7 @@ compare_files (dir0, name0, dir1, name1, depth)
 	  else if (strcmp (inf[i].name, "-") == 0)
 	    {
 	      inf[i].desc = STDIN_FILENO;
-	      stat_result = fstat (STDIN_FILENO, &inf[i].stat);
+	      stat_result = CVS_FSTAT (STDIN_FILENO, &inf[i].stat);
 	      if (stat_result == 0 && S_ISREG (inf[i].stat.st_mode))
 		{
 		  off_t pos = lseek (STDIN_FILENO, (off_t) 0, SEEK_CUR);
@@ -1014,7 +1014,7 @@ compare_files (dir0, name0, dir1, name1, depth)
 		}
 	    }
 	  else
-	    stat_result = stat (inf[i].name, &inf[i].stat);
+	    stat_result = CVS_STAT (inf[i].name, &inf[i].stat);
 
 	  if (stat_result != 0)
 	    {
@@ -1049,7 +1049,7 @@ compare_files (dir0, name0, dir1, name1, depth)
       if (strcmp (fnm, "-") == 0)
 	fatal ("can't compare - to a directory");
 
-      if (stat (filename, &inf[dir_arg].stat) != 0)
+      if (CVS_STAT (filename, &inf[dir_arg].stat) != 0)
 	{
 	  perror_with_name (filename);
 	  failed = 1;

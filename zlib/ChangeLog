@@ -1,3 +1,10 @@
+2008-05-07  Mark D. Baushke  <mdb@gnu.org>
+
+	[bug #22781]
+	* libz.mak: Change CFLAGS to work with MSVC 2005 express
+	* minigzip.c: change fstat call to CVS_FSTAT call
+	(Patch from Nelson B Bolyard <nelson@bolyard.com>.)
+
 2004-05-15  Derek Price  <derek@ximbiot.com>
 
 	* libz.dsp: Header file list updated.

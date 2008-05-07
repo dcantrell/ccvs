@@ -21,9 +21,6 @@
 #include <windows.h>
 
 #include "cvs.h"
-#include "JmgStat.h"
-
-
 
 static int deep_remove_dir PROTO((const char *path));
 
@@ -55,7 +52,7 @@ copy_file (from, to)
 
     if ((fdin = open (from, O_RDONLY | O_BINARY)) < 0)
 	error (1, errno, "cannot open %s for copying", from);
-    if (fstat (fdin, &sb) < 0)
+    if (CVS_FSTAT (fdin, &sb) < 0)
 	error (1, errno, "cannot fstat %s", from);
     if ((fdout = open (to, O_CREAT | O_TRUNC | O_RDWR | O_BINARY,
 		       (int) sb.st_mode & 07777)) < 0)
@@ -99,7 +96,7 @@ copy_file (from, to)
     memset ((char *) &t, 0, sizeof (t));
     t.actime = sb.st_atime;
     t.modtime = sb.st_mtime;
-    (void) utime (to, &t);
+    (void) CVS_UTIME (to, &t);
 }
 
 /* FIXME-krp: these functions would benefit from caching the char * &
@@ -115,7 +112,7 @@ isdir (file)
 {
     struct stat sb;
 
-    if (stat (file, &sb) < 0)
+    if (wnt_stat (file, &sb) < 0)
 	return (0);
     return (S_ISDIR (sb.st_mode));
 }
@@ -130,7 +127,7 @@ islink (file)
 #ifdef S_ISLNK
     struct stat sb;
 
-    if (lstat (file, &sb) < 0)
+    if (wnt_lstat (file, &sb) < 0)
 	return (0);
     return (S_ISLNK (sb.st_mode));
 #else
@@ -185,7 +182,7 @@ isaccessible (file, mode)
     int omask = 0;
     int uid;
     
-    if (stat(file, &sb) == -1)
+    if (wnt_stat(file, &sb) == -1)
 	return 0;
     if (mode == F_OK)
 	return 1;
@@ -253,7 +250,7 @@ make_directory (name)
 {
     struct stat sb;
 
-    if (stat (name, &sb) == 0 && (!S_ISDIR (sb.st_mode)))
+    if (wnt_stat (name, &sb) == 0 && (!S_ISDIR (sb.st_mode)))
 	    error (0, 0, "%s already exists but is not a directory", name);
     if (!noexec && mkdir (name) < 0)
 	error (1, errno, "cannot make directory %s", name);
@@ -329,7 +326,7 @@ xchmod (fname, writable)
     struct stat sb;
     mode_t mode, oumask;
 
-    if (stat (fname, &sb) < 0)
+    if (wnt_stat (fname, &sb) < 0)
     {
 	if (!noexec)
 	    error (0, errno, "cannot stat %s", fname);
@@ -613,9 +610,9 @@ xcmp (file1, file2)
 	error (1, errno, "cannot open file %s for comparing", file1);
     if ((fd2 = open (file2, O_RDONLY | O_BINARY)) < 0)
 	error (1, errno, "cannot open file %s for comparing", file2);
-    if (fstat (fd1, &sb1) < 0)
+    if (CVS_FSTAT (fd1, &sb1) < 0)
 	error (1, errno, "cannot fstat %s", file1);
-    if (fstat (fd2, &sb2) < 0)
+    if (CVS_FSTAT (fd2, &sb2) < 0)
 	error (1, errno, "cannot fstat %s", file2);
 
     /* A generic file compare routine might compare st_dev & st_ino here 
@@ -996,10 +993,54 @@ expand_wild (argc, argv, pargc, pargv)
     *pargv = new_argv;
 }
 
-static void check_statbuf (const char *file, struct stat *sb)
+/* FILETIME = number of 100-nanosecond ticks since midnight 1 Jan 1601 UTC. 
+ * time_t = number of 1-second ticks since midnight 1 Jan 1970 UTC. 
+ * To translate, we subtract a FILETIME representation of midnight, 
+ * 1 Jan 1970 from the FILETIME in question and divide by the number 
+ * of 100-ns ticks in one second.
+ */
+static BOOL UTCFileTimeToUnixTime(const FILETIME* ft, time_t* ut)
 {
-    struct tm *newtime;
-    time_t long_time;
+    /* One second = 10,000,000 * 100 nsec */
+    static const ULONGLONG tenmillion = 10000000ull;
+    static const ULONGLONG Jan1970    = 116444736000000000ull;
+
+    ULONGLONG itime;
+
+    *(FILETIME *)&itime = *ft;
+    if (itime < Jan1970) {
+	itime = (ULONGLONG)(-1LL);
+    } else {
+	itime -= Jan1970;
+	itime /= tenmillion;
+    }
+    *ut = itime;
+    return TRUE;
+}
+
+static void check_statbuf (const char *fileName, struct stat *sb)
+{
+    HANDLE     hFile;
+    FILETIME   ft1, ft2, ft3;
+
+    hFile = CreateFile(
+                fileName,
+                GENERIC_READ,
+                FILE_SHARE_READ,
+                NULL,        // hFile cannot be inherited
+                OPEN_EXISTING,
+                0,
+                NULL );      // no template file handle
+    if (hFile != INVALID_HANDLE_VALUE) {
+	BOOL success = GetFileTime(hFile, &ft1, &ft2, &ft3 );
+	(void) CloseHandle(hFile);
+	if (success) {
+	    /* GetFileTime returns UTC times, even for FAT file systems. */
+	    (void)UTCFileTimeToUnixTime(&ft1, &sb->st_ctime);
+	    (void)UTCFileTimeToUnixTime(&ft2, &sb->st_atime);
+	    (void)UTCFileTimeToUnixTime(&ft3, &sb->st_mtime);
+	}
+    }
 
     /* Win32 processes file times in a 64 bit format
        (see Win32 functions SetFileTime and GetFileTime).
@@ -1013,38 +1054,108 @@ static void check_statbuf (const char *file, struct stat *sb)
        on Win32 via GetFileTime, but that would be a lot of
        hair and I'm not sure there is much payoff.  */
     if (sb->st_mtime == (time_t) -1)
-	error (1, 0, "invalid modification time for %s", file);
+	error (1, 0, "invalid modification time for %s", fileName);
     if (sb->st_ctime == (time_t) -1)
 	/* I'm not sure what this means on windows.  It
 	   might be a creation time (unlike unix)....  */
-	error (1, 0, "invalid ctime for %s", file);
+	error (1, 0, "invalid ctime for %s", fileName);
     if (sb->st_atime == (time_t) -1)
-	error (1, 0, "invalid access time for %s", file);
-
-    if (!GetUTCFileModTime (file, &sb->st_mtime))
-	error (1, 0, "Failed to retrieve modification time for %s", file);
+	error (1, 0, "invalid access time for %s", fileName);
 }
 
 int
-wnt_stat (const char *file, struct stat *sb)
+wnt_stat (const char *fileName, struct stat *sb)
 {
     int retval;
 
-    retval = stat (file, sb);
+    retval = stat (fileName, sb);
     if (retval < 0)
 	return retval;
-    check_statbuf (file, sb);
+    check_statbuf (fileName, sb);
     return retval;
 }
 
 int
-wnt_lstat (const char *file, struct stat *sb)
+wnt_lstat (const char *fileName, struct stat *sb)
 {
     int retval;
 
-    retval = lstat (file, sb);
+    retval = lstat (fileName, sb);
     if (retval < 0)
 	return retval;
-    check_statbuf (file, sb);
+    check_statbuf (fileName, sb);
     return retval;
+}
+
+int 
+wnt_utime( const char *fileName, struct utimbuf *times )
+{
+    HANDLE   hFile;
+    BOOL     success = FALSE;
+    FILETIME ftac, ftmod;
+
+    if (!times) {
+    	GetSystemTimeAsFileTime(&ftmod);
+	ftac = ftmod;
+    } else {
+	/* One second = 10,000,000 * 100 nsec */
+	static const ULONGLONG tenmillion = 10000000ull;
+	static const ULONGLONG Jan1970    = 116444736000000000ull;
+
+	ULONGLONG ulac, ulmod;
+	ulac  = (tenmillion * times->actime ) + Jan1970;
+	ulmod = (tenmillion * times->modtime) + Jan1970;
+
+	ftac  = *(FILETIME *)&ulac;
+	ftmod = *(FILETIME *)&ulmod;
+    }
+
+    hFile = CreateFile(
+                fileName,
+                FILE_WRITE_ATTRIBUTES,
+                0,           // hFile cannot be shared while doing this
+                NULL,        // hFile cannot be inherited
+                OPEN_EXISTING,
+                0,
+                NULL );      // no template file handle
+    if (hFile != INVALID_HANDLE_VALUE) {
+	success = SetFileTime(hFile, NULL, &ftac, &ftmod);
+	(void) CloseHandle(hFile);
+	if (!success) {
+	    errno = EACCES;
+	}
+    } else {
+        errno = ENOENT;
+    }
+    return (success != FALSE) - 1;
+}
+
+
+int
+wnt_fstat (int fd, struct stat *sb)
+{
+    HANDLE hFile;
+    BOOL   success;
+    int    rv;
+    BY_HANDLE_FILE_INFORMATION hInfo;
+
+    rv = fstat(fd, sb);
+    if (rv != 0)
+	return rv;
+
+    /* below here, if fstat has succeeded, there's no need to report failure.*/
+    hFile = (HANDLE)_get_osfhandle(fd);
+    if (hFile == INVALID_HANDLE_VALUE) 
+    	return rv;
+
+    success = GetFileInformationByHandle(hFile, &hInfo);
+    if (!success)
+    	return rv;
+    /* don't have to close hFile */
+
+    /* Now, fix fstat's lies about timestamps */
+    (void)UTCFileTimeToUnixTime(&hInfo.ftLastAccessTime,  &sb->st_atime);
+    (void)UTCFileTimeToUnixTime(&hInfo.ftCreationTime,    &sb->st_ctime);
+    (void)UTCFileTimeToUnixTime(&hInfo.ftLastWriteTime,   &sb->st_mtime);
+    return 0;
 }

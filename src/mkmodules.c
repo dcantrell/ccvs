@@ -16,6 +16,10 @@
 #include "history.h"
 #include "savecwd.h"
 
+#ifdef HAVE_PROCESS_H
+# include <process.h>
+#endif
+
 #ifndef DBLKSIZ
 #define	DBLKSIZ	4096			/* since GNU ndbm doesn't define it */
 #endif
@@ -468,6 +472,7 @@ mkmodules (dir)
 	free (temp);
     }
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fp = CVS_FOPEN (CVSROOTADM_CHECKOUTLIST, "r");
     if (fp)
     {

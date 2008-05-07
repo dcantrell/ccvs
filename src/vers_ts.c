@@ -239,7 +239,7 @@ Version_TS (finfo, options, tag, date, force_tag_match, set_time)
 		       set_time if noexec, but didn't used to).  I
 		       think maybe now it doesn't (server_modtime does
 		       not like those kinds of cases).  */
-		    (void) utime (finfo->file, &t);
+		    (void) CVS_UTIME (finfo->file, &t);
 
 #ifdef UTIME_EXPECTS_WRITABLE
 		    if (change_it_back)
@@ -340,6 +340,10 @@ time_stamp_server (file, vers_ts, entdata)
 	/* Fix non-standard format.  */
 	if (cp[8] == '0') cp[8] = ' ';
 	(void) strcpy (vers_ts->ts_user, cp);
+#ifdef DEBUG_TIMESTAMPS
+	printf("sb.st_mtime = %llu, 0x%llX, %s\n", 
+	        sb.st_mtime, sb.st_mtime, cp);
+#endif
     }
 }
 
@@ -392,6 +396,10 @@ time_stamp (file)
 	/* Fix non-standard format.  */
 	if (cp[8] == '0') cp[8] = ' ';
 	(void) strcpy (ts, cp);
+#ifdef DEBUG_TIMESTAMPS
+	printf("sb.st_mtime = %llu, 0x%llX, %s\n",
+		sb.st_mtime, sb.st_mtime, cp);
+#endif
     }
 
     return (ts);

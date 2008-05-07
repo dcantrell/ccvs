@@ -81,6 +81,9 @@
 # endif /* !defined HAVE_USLEEP && defined HAVE_SELECT */
 #endif /* !HAVE_NANOSLEEP */
 
+#ifdef HAVE_PROCESS_H
+# include <process.h>
+#endif
 
 struct lock {
     /* This is the directory in which we may have a lock named by the
@@ -461,6 +464,7 @@ Reader_Lock (xrepository)
 
     /* write a read-lock */
     tmp = lock_name (xrepository, readlock);
+    errno = 0; /* Standard C doesn't require errno be set on error */
     if ((fp = CVS_FOPEN (tmp, "w+")) == NULL || fclose (fp) == EOF)
     {
 	error (0, errno, "cannot create read lock in repository `%s'",
@@ -619,6 +623,7 @@ write_lock (lock)
 
 	/* write the write-lock file */
 	tmp = lock_name (lock->repository, writelock);
+	errno = 0; /* Standard C doesn't require errno be set on error */
 	if ((fp = CVS_FOPEN (tmp, "w+")) == NULL || fclose (fp) == EOF)
 	{
 	    int xerrno = errno;

@@ -122,6 +122,7 @@ write_entries (list)
 
     /* open the new one and walk the list writing entries */
     entfilename = CVSADM_ENTBAK;
+    errno = 0; /* Standard C doesn't require errno be set on error */
     entfile = CVS_FOPEN (entfilename, "w+");
     if (entfile == NULL)
     {
@@ -252,6 +253,7 @@ Register (list, fname, vn, ts, options, tag, date, ts_conflict)
     if (!noexec)
     {
 	entfilename = CVSADM_ENTLOG;
+	errno = 0; /* Standard C doesn't require errno be set on error */
 	entfile = CVS_FOPEN (entfilename, "a");
 
 	if (entfile == NULL)
@@ -502,6 +504,7 @@ Entries_Open (aflag, update_dir)
 
     sawdir = 0;
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fpin = CVS_FOPEN (CVSADM_ENT, "r");
     if (fpin == NULL)
     {
@@ -817,6 +820,7 @@ Subdirs_Known (entries)
 	{
 	    /* Create Entries.Log so that Entries_Close will do something.  */
 	    entfilename = CVSADM_ENTLOG;
+	    errno = 0; /* Standard C doesn't require errno be set on error */
 	    fp = CVS_FOPEN (entfilename, "a");
 	    if (fp == NULL)
 	    {
@@ -865,6 +869,7 @@ subdir_record (cmd, parent, dir)
 	    sprintf (entfilename, "%s/%s", parent, CVSADM_ENTLOG);
 	}
 
+	errno = 0; /* Standard C doesn't require errno be set on error */
 	entfile = CVS_FOPEN (entfilename, "a");
 	if (entfile == NULL)
 	{
@@ -1048,6 +1053,7 @@ base_walk (code, finfo, rev)
     strcat (baserev_fullname, CVSADM_BASEREV);
     strcat (baserevtmp_fullname, CVSADM_BASEREVTMP);
 
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fp = CVS_FOPEN (CVSADM_BASEREV, "r");
     if (fp == NULL)
     {
@@ -1062,6 +1068,7 @@ base_walk (code, finfo, rev)
     {
 	case BASE_REGISTER:
 	case BASE_DEREGISTER:
+	    errno = 0; /* Standard C doesn't require errno be set on error */
 	    newf = CVS_FOPEN (CVSADM_BASEREVTMP, "w");
 	    if (newf == NULL)
 	    {

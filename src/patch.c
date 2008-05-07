@@ -564,7 +564,7 @@ patch_fileproc (callerdat, finfo)
 						    (char *) 0, 0)) != -1)
 	    /* I believe this timestamp only affects the dates in our diffs,
 	       and therefore should be on the server, not the client.  */
-	    (void) utime (tmpfile1, &t);
+	    (void) CVS_UTIME (tmpfile1, &t);
     }
     else if (toptwo_diffs)
     {
@@ -587,7 +587,7 @@ patch_fileproc (callerdat, finfo)
 						    (char *)0, 0)) != -1)
 	    /* I believe this timestamp only affects the dates in our diffs,
 	       and therefore should be on the server, not the client.  */
-	    (void)utime (tmpfile2, &t);
+	    (void)CVS_UTIME (tmpfile2, &t);
     }
 
     if (unidiff) run_add_arg_p (&dargc, &darg_allocated, &dargv, "-u");

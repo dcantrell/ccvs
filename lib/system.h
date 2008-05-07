@@ -157,8 +157,12 @@
 #include <unistd.h>
 #include <limits.h>
 #else
+#ifndef HAVE_IO_H
 off_t lseek ();
+#endif
+#ifndef HAVE_DIRECT_H
 char *getcwd ();
+#endif
 #endif
 
 #include "xtime.h"
@@ -251,8 +255,8 @@ char *getcwd ();
 #    ifndef ALTOS
 struct utimbuf
 {
-  long actime;
-  long modtime;
+  time_t actime;
+  time_t modtime;
 };
 #    endif
 int utime ();
@@ -288,7 +292,7 @@ int utime ();
 #endif
 
 
-#ifdef STDC_HEADERS
+#if HAVE_STDLIB_H || defined(STDC_HEADERS)
 # include <stdlib.h>
 #else
 char *getenv ();
@@ -448,8 +452,16 @@ extern int errno;
 # define CVS_LSTAT lstat
 #endif
 
+#ifndef CVS_FSTAT
+# define CVS_FSTAT fstat
+#endif
+
 #ifndef CVS_UNLINK
 # define CVS_UNLINK unlink
+#endif
+
+#ifndef CVS_UTIME
+# define CVS_UTIME utime
 #endif
 
 /* Wildcard matcher.  Should be case-insensitive if the system is.  */

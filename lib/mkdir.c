@@ -43,7 +43,7 @@ mkdir (dpath, dmode)
   int cpid, status;
   struct stat statbuf;
 
-  if (stat (dpath, &statbuf) == 0)
+  if (CVS_STAT (dpath, &statbuf) == 0)
     {
       errno = EEXIST;		/* stat worked, so it already exists. */
       return -1;
@@ -92,7 +92,7 @@ rmdir (dpath)
   int cpid, status;
   struct stat statbuf;
 
-  if (stat (dpath, &statbuf) != 0)
+  if (CVS_STAT (dpath, &statbuf) != 0)
     return -1;			/* stat set errno. */
 
   if ((statbuf.st_mode & S_IFMT) != S_IFDIR)

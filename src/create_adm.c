@@ -91,6 +91,7 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn,
 	(void) sprintf (tmp, "%s/%s", dir, CVSADM_REP);
     else
 	(void) strcpy (tmp, CVSADM_REP);
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fout = CVS_FOPEN (tmp, "w+");
     if (fout == NULL)
     {
@@ -149,6 +150,7 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn,
 	(void) sprintf (tmp, "%s/%s", dir, CVSADM_ENT);
     else
 	(void) strcpy (tmp, CVSADM_ENT);
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fout = CVS_FOPEN (tmp, "w+");
     if (fout == NULL)
     {

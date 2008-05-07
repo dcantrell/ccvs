@@ -151,6 +151,7 @@ ign_add_file (file, hold)
     }
 
     /* load the file */
+    errno = 0; /* Standard C doesn't require errno be set on error */
     fp = CVS_FOPEN (file, "r");
     if (fp == NULL)
     {
