@@ -346,22 +346,7 @@ time_stamp_server (const char *file, Vers_TS *vers_ts, Entnode *entdata)
     }
     else
     {
-        struct tm *tm_p;
-
-	vers_ts->ts_user = xmalloc (25);
-	/* We want to use the same timestamp format as is stored in the
-	   st_mtime.  For unix (and NT I think) this *must* be universal
-	   time (UT), so that files don't appear to be modified merely
-	   because the timezone has changed.  For VMS, or hopefully other
-	   systems where gmtime returns NULL, the modification time is
-	   stored in local time, and therefore it is not possible to cause
-	   st_mtime to be out of sync by changing the timezone.  */
-	tm_p = gmtime (&sb.st_mtime);
-	cp = tm_p ? asctime (tm_p) : ctime (&sb.st_mtime);
-	cp[24] = 0;
-	/* Fix non-standard format.  */
-	if (cp[8] == '0') cp[8] = ' ';
-	(void) strcpy (vers_ts->ts_user, cp);
+	vers_ts->ts_user = entries_time (sb.st_mtime);
     }
 }
 
