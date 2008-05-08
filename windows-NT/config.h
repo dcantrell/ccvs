@@ -487,7 +487,7 @@ typedef int ssize_t;
  * under UNIX OSs.
  */
 #define PACKAGE_BUGREPORT "bug-cvs@nongnu.org"
-#define PACKAGE_STRING "Concurrent Versions System (CVS) 1.11.23.1"
+#define PACKAGE_STRING "Concurrent Versions System (CVS) 1.11.23"
 
 /* The following were added to make #include "xsize.h" work. */
 
