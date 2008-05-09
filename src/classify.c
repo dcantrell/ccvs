@@ -339,8 +339,6 @@ Classify_File (finfo, tag, date, options, force_tag_match, aflag, versp,
 		 * has changed.  If the sticky tag has changed, we just need
 		 * to re-register the entry
 		 */
-		/* TODO: decide whether we need to check file permissions
-		   for a mismatch, and return T_CONFLICT if so. */
 		if (keywords_may_change (aflag, vers))
 		    ret = T_PATCH;
 		else if (vers->ts_conflict)
