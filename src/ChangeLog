@@ -1,3 +1,7 @@
+2008-05-09  Derek R. Price  <derek@ximbiot.com>
+
+	* classify.c (Classify_File): Remove obsolete TODO comment.
+
 2008-05-07  Mark D. Baushke  <mdb@gnu.org>
 
 	* client.c (read_counted_file): Set errno = 0 before CVS_FOPEN
