@@ -1,3 +1,8 @@
+2008-06-14  Mark D. Baushke  <mdb@gnu.org>
+
+	* libcvs.mak (CPP_PROJ): Add /I "..\src" to find error.h
+	[Patch provided by "Nelson Bolyard" <nelsonb@iname.com>]
+
 2008-05-07  Mark D. Baushke  <mdb@gnu.org>
 
 	[bug #22781]
