@@ -2,7 +2,7 @@
 
 	* cvs.texinfo (export): Clarify the use of both -r rev and -D date
 	on the same command line.
-	* cvs.1: Regenerated.
+	* cvs.1, stamp-vti, version.texi: Regenerated.
 
 2008-03-29  Larry Jones  <lawrence.jones@siemens.com>
 
@@ -26,7 +26,7 @@
 	* cvs.texinfo: Document use of --with-ssh flag to configure and
 	how :extssh: uses the CVS_SSH environment variable or "ssh".
 	* stamp-vti, version.texi: Regenerated.
-	
+
 	* cvs.texinfo: Update copyright for 2008.
 
 2008-01-24  Mark D. Baushke  <mdb@gnu.org>
