@@ -2566,7 +2566,7 @@ $ cvs diff -u | less
 .IX "export (subcommand)"
 .SP
 .IP "\(bu" 2
-Synopsis: export [-flNnR] [-r rev|-D date] [-k subst] [-d dir] module\&...
+Synopsis: export [-flNnR] (-r rev [-D date] | -D date) [-k subst] [-d dir] module\&...
 .IP "\(bu" 2
 Requires: repository.
 .IP "\(bu" 2
@@ -2628,7 +2628,10 @@ Export directories recursively.  This is on by default.
 .IP "" 0
 \fB-r \fItag\fB\fR
 .IP "" 2
-Use revision \fItag\fR.
+Export the revision specified by \fItag\fR or, when
+\fB-D\fR \fIdate\fR is specified and \fItag\fR is a
+branch tag, the version from the branch \fItag\fR as it
+existed on \fIdate\fR.
 .SP
 In addition, these options (that are common to
 \fBcheckout\fR and \fBexport\fR) are also supported:

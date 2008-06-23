@@ -1,3 +1,9 @@
+2008-06-23  Mark D. Baushke  <mdb@gnu.org>
+
+	* cvs.texinfo (export): Clarify the use of both -r rev and -D date
+	on the same command line.
+	* cvs.1: Regenerated.
+
 2008-03-29  Larry Jones  <lawrence.jones@siemens.com>
 
 	* cvs.texinfo (import options): Add -d.

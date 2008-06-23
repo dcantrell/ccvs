@@ -9933,7 +9933,7 @@ $ cvs diff -u | less
 
 @itemize @bullet
 @item
-Synopsis: export [-flNnR] [-r rev|-D date] [-k subst] [-d dir] module@dots{}
+Synopsis: export [-flNnR] (-r rev [-D date] | -D date) [-k subst] [-d dir] module@dots{}
 @item
 Requires: repository.
 @item
@@ -9991,7 +9991,10 @@ Do not run any checkout program.
 Export directories recursively.  This is on by default.
 
 @item -r @var{tag}
-Use revision @var{tag}.
+Export the revision specified by @var{tag} or, when
+@code{-D} @var{date} is specified and @var{tag} is a
+branch tag, the version from the branch @var{tag} as it
+existed on @var{date}.
 @end table
 
 In addition, these options (that are common to
