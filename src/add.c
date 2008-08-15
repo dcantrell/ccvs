@@ -140,7 +140,7 @@ add (int argc, char **argv)
 	    skip_file = 1;
 	}
 	else
-	    found_slash = found_slash || has_slash (argv[i]);
+	    found_slash = found_slash || hasSlash (argv[i]);
 
 	if (skip_file)
 	{

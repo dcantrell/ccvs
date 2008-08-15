@@ -5679,8 +5679,7 @@ send_dirent_proc (void *callerdat, const char *dir, const char *repository,
                   const char *update_dir, List *entries)
 {
     struct send_data *args = callerdat;
-    int dir_exists;
-    char *cvsadm_name;
+    bool dir_exists;
 
     if (ignore_directory (update_dir))
     {
@@ -5698,9 +5697,7 @@ send_dirent_proc (void *callerdat, const char *dir, const char *repository,
      * This case will happen when checking out a module defined as
      * ``-a .''.
      */
-    cvsadm_name = Xasprintf ("%s/%s", dir, CVSADM);
-    dir_exists = isdir (cvsadm_name);
-    free (cvsadm_name);
+    dir_exists = hasAdmin (dir);
 
     /*
      * If there is an empty directory (e.g. we are doing `cvs add' on a

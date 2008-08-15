@@ -1,5 +1,12 @@
 2008-08-15  Derek R. Price  <derek@ximbiot.com>
 
+	* subr.c (has_slash): Rename to...
+	(hasSlash): ...this.
+	(hasAdmin): New convenience function.
+	* subr.h (has_slash, hasSlash, hasAdmin): Update to match.
+	* add.c (add): s/has_slash/hasSlash/.
+	* client.c (send_dirent_proc): Use new hasAdmin() function.
+
 	* subr.c (has_slash): New convenience function and...
 	* subr.h (has_slash): ...its prototype.
 	* add.c (add): Use new convenience function.
