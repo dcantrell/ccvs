@@ -82,7 +82,7 @@ add (int argc, char **argv)
     struct saved_cwd cwd;
     /* Nonzero if we found a slash, and are thus adding files in a
        subdirectory.  */
-    int found_slash = 0;
+    bool found_slash = false;
     size_t cvsroot_len;
 
     if (argc == 1 || argc == -1)
@@ -140,19 +140,7 @@ add (int argc, char **argv)
 	    skip_file = 1;
 	}
 	else
-	{
-	    char *p;
-	    p = argv[i];
-	    while (*p != '\0')
-	    {
-		if (ISSLASH (*p))
-		{
-		    found_slash = 1;
-		    break;
-		}
-		++p;
-	    }
-	}
+	    found_slash = found_slash || has_slash (argv[i]);
 
 	if (skip_file)
 	{

@@ -1,3 +1,9 @@
+2008-08-15  Derek R. Price  <derek@ximbiot.com>
+
+	* subr.c (has_slash): New convenience function and...
+	* subr.h (has_slash): ...its prototype.
+	* add.c (add): Use new convenience function.
+
 2008-03-23  Mark D. Baushke  <mdb@gnu.org>
 
 	[bug #22710]

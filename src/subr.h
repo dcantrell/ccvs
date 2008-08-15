@@ -141,6 +141,7 @@ bool cvs_xmkdirs (const char *name, mode_t mode, const char *update_dir,
 
 char *dir_append (const char *dir, const char *append);
 char *dir_append_dirs (const char *dir, ...);
+bool has_slash (const char *path);
 
 
 
