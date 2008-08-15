@@ -2457,3 +2457,16 @@ dir_append (const char *dir, const char *base)
 {
     return dir_append_dirs (dir, base, NULL);
 }
+
+
+
+/* Return TRUE if PATH contains a slash as determined by ISSLASH().
+ */
+bool
+has_slash (const char *path)
+{
+    while (*path)
+	if (ISSLASH (*(path++)))
+	    return true;
+    return false;
+}
