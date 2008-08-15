@@ -2463,10 +2463,21 @@ dir_append (const char *dir, const char *base)
 /* Return TRUE if PATH contains a slash as determined by ISSLASH().
  */
 bool
-has_slash (const char *path)
+hasSlash (const char *path)
 {
     while (*path)
 	if (ISSLASH (*(path++)))
 	    return true;
     return false;
+}
+
+
+
+bool
+hasAdmin (const char *dir)
+{
+    char *adm = file_name_concat (dir, CVSADM, NULL);
+    bool has = isdir (adm);
+    free (adm);
+    return has;
 }
