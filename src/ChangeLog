@@ -1,5 +1,7 @@
 2008-08-15  Derek R. Price  <derek@ximbiot.com>
 
+	* update.c (send_dirent_proc): Another simplification via hasAdmin().
+
 	* subr.c (has_slash): Rename to...
 	(hasSlash): ...this.
 	(hasAdmin): New convenience function.

@@ -971,22 +971,13 @@ update_dirent_proc (void *callerdat, const char *dir, const char *repository,
     /* Do we need to check noexec here? */
     else if (!pipeout)
     {
-	char *cvsadmdir;
-
 	/* The directory exists.  Check to see if it has a CVS
 	   subdirectory.  */
-
-	cvsadmdir = Xasprintf ("%s/%s", dir, CVSADM);
-
-	if (!isdir (cvsadmdir))
-	{
+	if (!hasAdmin (dir))
 	    /* We cannot successfully recurse into a directory without a CVS
 	       subdirectory.  Generally we will have already printed
 	       "? foo".  */
-	    free (cvsadmdir);
 	    return R_SKIP_ALL;
-	}
-	free (cvsadmdir);
     }
 
     /*
