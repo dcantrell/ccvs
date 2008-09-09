@@ -170,4 +170,9 @@ strneq (const char *a, const char *b, size_t n)
 # define STRNEQ(a, b, n) (strncmp ((a), (b), (n)) == 0)
 #endif /* HAVE_INLINE */
 
+/* Convenience macro for printing the commonly used but sometimes empty
+ * UPDATE_DIR string.
+ */
+#define PRINT_UPDATE_DIR(u) (*u ? u : ".")
+
 #endif /* !SUBR_H */

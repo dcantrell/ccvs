@@ -2393,25 +2393,18 @@ cvs_xmkdirs (const char *name, mode_t mode, const char *update_dir,
  * both DIR and BASE when they are both empty and to ignore BASE when it is "."
  * and return the original DIR or BASE as needed.
  *
+ * A NULL DIR is treated like the empty string.  No BASE may be NULL since that
+ * terminates the va_arg processing.
+ *
  * EXAMPLES
- *    dir_append ("dir", ".", &allocated)	returns the original pointer to
- *						"dir"
- *    dir_append ("dir", "", &allocated)	returns the original pointer to
- *						"dir"
- *    dir_append ("", ".", &allocated)		returns the original pointer to
- *						""
- *    dir_append (".", "", &allocated)		returns the original pointer to
- *						"."
- *    dir_append (".", ".", &allocated)		returns the original pointer to
- *						the first "."
- *    dir_append ("", "dir", &allocated)	returns the original pointer to
- *						"dir"
- *    dir_append (".", "dir", &allocated)	returns "./dir" in allocated
- *						memory and sets *allocated to
- *						point to it as well.
- *    dir_append ("dir", "sdir", &allocated)	returns "dir/sdir" in allocated
- *						memory and sets *allocated to
- *						point to it as well.
+ *    dir_append ("dir", ".")		returns "dir"
+ *    dir_append ("dir", "")		returns "dir"
+ *    dir_append ("", ".")		returns ""
+ *    dir_append (".", "")		returns "."
+ *    dir_append (".", ".")		returns "."
+ *    dir_append ("", "dir")		returns "dir"
+ *    dir_append (".", "dir")		returns "./dir"
+ *    dir_append ("dir", "sdir")	returns "dir/sdir"
  */
 char *
 dir_append_dirs (const char *dir, ...)
@@ -2422,7 +2415,7 @@ dir_append_dirs (const char *dir, ...)
 
     va_start (args, dir);
 
-    retval = xstrdup (dir);
+    retval = xstrdup (dir ? dir : "");
     while ((append = va_arg (args, const char *)) != NULL)
     {
 	char *new;
