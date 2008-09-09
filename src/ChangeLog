@@ -1,5 +1,8 @@
 2008-09-09  Derek R. Price  <derek@ximbiot.com>
 
+	* client.c (call_in_directory): Simplify drastically.  Servers always
+	send parent directories before children.
+
 	* subr.h (PRINT_UPDATE_DIR): Rename macro to...
 	(NULL2DOT): ...this.  Handle NULL input.
 	* commit.c, root.c: Update all callers.
