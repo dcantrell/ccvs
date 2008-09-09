@@ -173,6 +173,6 @@ strneq (const char *a, const char *b, size_t n)
 /* Convenience macro for printing the commonly used but sometimes empty
  * UPDATE_DIR string.
  */
-#define PRINT_UPDATE_DIR(u) (*u ? u : ".")
+#define NULL2DOT(u) (u && *u ? u : ".")
 
 #endif /* !SUBR_H */

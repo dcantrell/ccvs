@@ -1,5 +1,9 @@
 2008-09-09  Derek R. Price  <derek@ximbiot.com>
 
+	* subr.h (PRINT_UPDATE_DIR): Rename macro to...
+	(NULL2DOT): ...this.  Handle NULL input.
+	* commit.c, root.c: Update all callers.
+
 	* subr.c (dir_append_dirs): Fix block comment.  Accept NULL DIR arg.
 	* subr.h (PRINT_UPDATE_DIR): New convenience macro.
 	* commit.c (find_dirent_proc, check_dirent_proc): Use new macro.
