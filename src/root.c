@@ -89,7 +89,7 @@ Name_Root (const char *dir, const char *update_dir)
 	int saved_errno = errno;
 	/* FIXME: should be checking for end of file separately; errno
 	   is not set in that case.  */
-	error (0, 0, "in directory %s:", PRINT_UPDATE_DIR (update_dir));
+	error (0, 0, "in directory %s:", NULL2DOT (update_dir));
 	error (0, saved_errno, "cannot read %s", CVSADM_ROOT);
 	error (0, 0, "please correct this problem");
 	ret = NULL;
@@ -108,7 +108,7 @@ Name_Root (const char *dir, const char *update_dir)
     ret = parse_cvsroot (root);
     if (ret == NULL)
     {
-	error (0, 0, "in directory %s:", PRINT_UPDATE_DIR (update_dir));
+	error (0, 0, "in directory %s:", NULL2DOT (update_dir));
 	error (0, 0,
 	       "ignoring %s because it does not contain a valid root.",
 	       CVSADM_ROOT);
@@ -117,7 +117,7 @@ Name_Root (const char *dir, const char *update_dir)
 
     if (!ret->isremote && !isdir (ret->directory))
     {
-	error (0, 0, "in directory %s:", PRINT_UPDATE_DIR (update_dir));
+	error (0, 0, "in directory %s:", NULL2DOT (update_dir));
 	error (0, 0,
 	       "ignoring %s because it specifies a non-existent repository %s",
 	       CVSADM_ROOT, root);
