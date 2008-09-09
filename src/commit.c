@@ -173,7 +173,7 @@ find_dirent_proc (void *callerdat, const char *dir, const char *repository,
        code will never be run during client/server operation and we
        want the messages to match. */
     if (!quiet)
-	error (0, 0, "Examining %s", update_dir);
+	error (0, 0, "Examining %s", PRINT_UPDATE_DIR (update_dir));
 
     return R_PROCESS;
 }
@@ -1186,7 +1186,7 @@ check_direntproc (void *callerdat, const char *dir, const char *repos,
 	return R_SKIP_ALL;
 
     if (!quiet)
-	error (0, 0, "Examining %s", update_dir);
+	error (0, 0, "Examining %s", PRINT_UPDATE_DIR (update_dir));
 
     return R_PROCESS;
 }

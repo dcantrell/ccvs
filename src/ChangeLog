@@ -1,3 +1,11 @@
+2008-09-09  Derek R. Price  <derek@ximbiot.com>
+
+	* subr.c (dir_append_dirs): Fix block comment.  Accept NULL DIR arg.
+	* subr.h (PRINT_UPDATE_DIR): New convenience macro.
+	* commit.c (find_dirent_proc, check_dirent_proc): Use new macro.
+	* root.c (Name_Root): Ditto.  Also use TRACE_NULL and dir_append to
+	further simplify.
+
 2008-08-15  Derek R. Price  <derek@ximbiot.com>
 
 	* update.c (send_dirent_proc): Another simplification via hasAdmin().
