@@ -1,5 +1,7 @@
 2008-09-10  Derek R. Price  <derek@ximbiot.com>
 
+	* sanity.sh: More minor expectation synchronization.
+
 	* recurse.c (do_file_proc): Simplify via dir_append.
 	(do_dir_proc): Ditto.  Some cleanup.
 

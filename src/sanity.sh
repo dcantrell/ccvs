@@ -30776,7 +30776,7 @@ $SPROG update: cannot open directory $CVSROOT1_DIRNAME/mod2-2: No such file or d
 $SPROG update: skipping directory \`mod1-2/mod2-2'
 $SPROG update: Updating mod2-1
 $SPROG update: cannot open directory $CVSROOT1_DIRNAME/mod2-1: No such file or directory
-$SPROG update: skipping directory mod2-1
+$SPROG update: skipping directory \`mod2-1'
 $SPROG update: Updating mod2-2
 $SPROG update: cannot open directory $CVSROOT1_DIRNAME/mod2-2: No such file or directory
 $SPROG update: skipping directory \`mod2-2'"
@@ -30789,7 +30789,7 @@ $SPROG update: cannot open directory $CVSROOT2_DIRNAME/mod1-1: No such file or d
 $SPROG update: skipping directory \`mod1-1'
 $SPROG update: Updating mod1-2
 $SPROG update: cannot open directory $CVSROOT2_DIRNAME/mod1-2: No such file or directory
-$SPROG update: skipping directory mod1-2
+$SPROG update: skipping directory \`mod1-2'
 $SPROG update: Updating mod2-1
 $SPROG update: Updating mod2-2
 $SPROG update: Updating mod2-2/mod1-2
@@ -32158,8 +32158,8 @@ No conflicts created by this import"
 No such file or directory"
 	  else
 	    dotest reposmv-2 "$testcvs update" \
-"$DOTSTAR$CPROG update: ignoring \`CVS/Root' because it specifies non-existent repository \`$TESTDIR/root1'
-$CPROG update: Updating \.
+"$DOTSTAR$CPROG update: Updating \.
+$CPROG update: ignoring \`CVS/Root' because it specifies non-existent repository \`$TESTDIR/root1'
 $DOTSTAR$CPROG update: cannot open directory $CVSROOT_DIRNAME/dir1: No such file or directory
 $CPROG update: skipping directory \`.'"
 	  fi
@@ -32176,8 +32176,8 @@ No such file or directory"
 	    CVSROOT_save=$CVSROOT
 	    CVSROOT=$TESTDIR/root-moved; export CVSROOT
 	    dotest reposmv-3 "$testcvs update" \
-"$DOTSTAR$CPROG update: ignoring \`CVS/Root' because it specifies non-existent repository \`$TESTDIR/root1'
-$CPROG update: Updating \.$DOTSTAR"
+"$DOTSTAR$CPROG update: Updating \.$DOTSTAR
+$CPROG update: ignoring \`CVS/Root' because it specifies non-existent repository \`$TESTDIR/root1'"
 	    CVSROOT=$CVSROOT_save; export CVSROOT
 	  fi
 
