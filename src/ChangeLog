@@ -1,5 +1,9 @@
 2008-09-10  Derek R. Price  <derek@ximbiot.com>
 
+	* root.c (Name_Root): Remove unneeded article from error message.
+	* sanity.sh: Update to compensate.
+	(dirs-4): Improve FIXCVS comment.
+
 	* recurse.c (do_recursion): Quote UPDATE_DIR in output.  Use new
 	NULL2DOT macro.
 	* root.c: Include "quote.h".
