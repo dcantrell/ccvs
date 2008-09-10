@@ -1,3 +1,13 @@
+2008-09-10  Derek R. Price  <derek@ximbiot.com>
+
+	* recurse.c (do_recursion): Quote UPDATE_DIR in output.  Use new
+	NULL2DOT macro.
+	* root.c: Include "quote.h".
+	(Name_Root): Use dir_append to simplify error messages and improve
+	readability.  Add quoting.
+	* update.c: Use NULL2DOT in output.
+	* sanity.sh: Update to compensate.
+
 2008-09-09  Derek R. Price  <derek@ximbiot.com>
 
 	* client.c (call_in_directory): Simplify drastically.  Servers always

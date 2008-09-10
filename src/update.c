@@ -43,7 +43,7 @@
 # include <config.h>
 #endif
 
-/* ANSI C headers.  */
+/* ANSI C */
 #include <assert.h>
 
 /* GNULIB */
@@ -54,7 +54,7 @@
 # include "md5.h"
 #endif
 
-/* CVS headers.  */
+/* CVS */
 #include "base.h"
 #include "buffer.h"
 #include "classify.h"
@@ -1016,7 +1016,7 @@ update_dirent_proc (void *callerdat, const char *dir, const char *repository,
 
     /* print the warm fuzzy message */
     if (!quiet)
-	error (0, 0, "Updating %s", update_dir);
+	error (0, 0, "Updating %s", NULL2DOT (update_dir));
 
     return R_PROCESS;
 }

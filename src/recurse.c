@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1986-2008 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2007 Derek Price,
+ * Portions Copyright (C) 1998-2008 Derek Price,
  *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
@@ -22,11 +22,11 @@
 /* Verify interface.  */
 #include "recurse.h"
 
-/* GNULIB headers.  */
+/* GNULIB */
 #include "quote.h"
 #include "save-cwd.h"
 
-/* CVS headers.  */
+/* CVS */
 #include "edit.h"
 #include "find-names.h"
 #include "fileattr.h"
@@ -788,7 +788,8 @@ do_recursion (struct recursion_frame *frame)
 				       frame->aflag, &entries);
 		if (filelist == NULL)
 		{
-		    error (0, 0, "skipping directory %s", update_dir);
+		    error (0, 0, "skipping directory %s",
+			   quote (NULL2DOT (update_dir)));
 		    /* Note that Find_Directories and the filesdoneproc
 		       in particular would do bad things ("? foo.c" in
 		       the case of some filesdoneproc's).  */
