@@ -936,10 +936,7 @@ do_file_proc (Node *p, void *closure)
     char *tmp;
 
     finfo->file = p->key;
-    if (finfo->update_dir[0] != '\0')
-	tmp = Xasprintf ("%s/%s", finfo->update_dir, finfo->file);
-    else
-	tmp = xstrdup (finfo->file);
+    tmp = dir_append (finfo->update_dir, finfo->file);
 
     if (frfile->frame->dosrcs && repository)
     {
@@ -1038,38 +1035,29 @@ but CVS uses %s for its own purposes; skipping %s directory",
     strcpy (update_dir, saved_update_dir);
 
     /* set up update_dir - skip dots if not at start */
-    if (!STREQ (dir, "."))
+    if (STREQ (dir, "."))
     {
-	if (update_dir[0])
-	{
-	    (void) strcat (update_dir, "/");
-	    (void) strcat (update_dir, dir);
-	}
-	else
-	    (void) strcpy (update_dir, dir);
-
-	/*
-	 * Here we need a plausible repository name for the sub-directory. We
-	 * create one by concatenating the new directory name onto the
-	 * previous repository name.  The only case where the name should be
-	 * used is in the case where we are creating a new sub-directory for
-	 * update -d and in that case the generated name will be correct.
-	 */
-	if (repository == NULL)
-	    newrepos = xstrdup ("");
-	else
-	    newrepos = Xasprintf ("%s/%s", repository, dir);
+	if (update_dir[0] == '\0')
+	    strcpy (update_dir, dir);
     }
     else
     {
-	if (update_dir[0] == '\0')
-	    (void) strcpy (update_dir, dir);
-
-	if (repository == NULL)
-	    newrepos = xstrdup ("");
+	if (update_dir[0])
+	{
+	    strcat (update_dir, "/");
+	    strcat (update_dir, dir);
+	}
 	else
-	    newrepos = xstrdup (repository);
+	    strcpy (update_dir, dir);
     }
+
+    /* Here we need a plausible repository name for the sub-directory.  We
+     * create one by concatenating the new directory name onto the previous
+     * repository name.  The only case where the name should be used is in
+     * the case where we are creating a new sub-directory for update -d and
+     * in that case the generated name will be correct.
+     */
+    newrepos = dir_append (repository, dir);
 
     /* Check to see that the CVSADM directory, if it exists, seems to be
        well-formed.  It can be missing files if the user hit ^C in the
