@@ -1,5 +1,8 @@
 2008-09-10  Derek R. Price  <derek@ximbiot.com>
 
+	* recurse.c (do_file_proc): Simplify via dir_append.
+	(do_dir_proc): Ditto.  Some cleanup.
+
 	* root.c (Name_Root): Remove unneeded article from error message.
 	* sanity.sh: Update to compensate.
 	(dirs-4): Improve FIXCVS comment.
