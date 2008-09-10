@@ -22,10 +22,13 @@
 /* Verify interface.  */
 #include "root.h"
 
-/* ANSI C headers.  */
+/* ANSI C */
 #include <assert.h>
 
-/* CVS headers.  */
+/* GNULIB */
+#include "quote.h"
+
+/* CVS */
 #include "repos.h"
 #include "stack.h"
 
@@ -86,12 +89,11 @@ Name_Root (const char *dir, const char *update_dir)
 
     if ((len = getline (&root, &root_allocated, fpin)) < 0)
     {
-	int saved_errno = errno;
+	char *admfile = dir_append (update_dir, CVSADM_ROOT);
 	/* FIXME: should be checking for end of file separately; errno
-	   is not set in that case.  */
-	error (0, 0, "in directory %s:", NULL2DOT (update_dir));
-	error (0, saved_errno, "cannot read %s", CVSADM_ROOT);
-	error (0, 0, "please correct this problem");
+	 *	  is not set in that case.  */
+	error (0, errno, "cannot read %s", quote (admfile));
+	free (admfile);
 	ret = NULL;
 	goto out;
     }
@@ -108,19 +110,20 @@ Name_Root (const char *dir, const char *update_dir)
     ret = parse_cvsroot (root);
     if (ret == NULL)
     {
-	error (0, 0, "in directory %s:", NULL2DOT (update_dir));
-	error (0, 0,
-	       "ignoring %s because it does not contain a valid root.",
-	       CVSADM_ROOT);
+	char *admfile = dir_append (update_dir, CVSADM_ROOT);
+	error (0, 0, "ignoring %s because it does not contain a valid root.",
+	       quote (admfile));
+	free (admfile);
 	goto out;
     }
 
     if (!ret->isremote && !isdir (ret->directory))
     {
-	error (0, 0, "in directory %s:", NULL2DOT (update_dir));
+	char *admfile = dir_append (update_dir, CVSADM_ROOT);
 	error (0, 0,
 	       "ignoring %s because it specifies a non-existent repository %s",
-	       CVSADM_ROOT, root);
+	       quote_n (0, admfile), quote_n (1, root));
+	free (admfile);
 	ret = NULL;
 	goto out;
     }

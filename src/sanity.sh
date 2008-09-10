@@ -7625,24 +7625,24 @@ ${SPROG} import: Importing ${CVSROOT_DIRNAME}/dir1/sdir"
 	  # behavior.
 	  modify_repo rm -rf $CVSROOT_DIRNAME/dir1/sdir
 
-	  dotest dirs-3 "${testcvs} update" \
-"${SPROG} update: Updating dir1
-${SPROG} update: Updating dir1/sdir
-${SPROG} update: cannot open directory ${CVSROOT_DIRNAME}/dir1/sdir: No such file or directory
-${SPROG} update: skipping directory dir1/sdir"
-	  dotest dirs-3a "${testcvs} update -d" \
-"${SPROG} update: Updating dir1
-${SPROG} update: Updating dir1/sdir
-${SPROG} update: cannot open directory ${CVSROOT_DIRNAME}/dir1/sdir: No such file or directory
-${SPROG} update: skipping directory dir1/sdir"
+	  dotest dirs-3 "$testcvs update" \
+"$SPROG update: Updating dir1
+$SPROG update: Updating dir1/sdir
+$SPROG update: cannot open directory $CVSROOT_DIRNAME/dir1/sdir: No such file or directory
+$SPROG update: skipping directory \`dir1/sdir'"
+	  dotest dirs-3a "$testcvs update -d" \
+"$SPROG update: Updating dir1
+$SPROG update: Updating dir1/sdir
+$SPROG update: cannot open directory $CVSROOT_DIRNAME/dir1/sdir: No such file or directory
+$SPROG update: skipping directory \`dir1/sdir'"
 
 	  # If we say "yes", then CVS gives errors about not being able to
 	  # create lock files.
-	  # The fact that it says "skipping directory " rather than
-	  # "skipping directory dir1/sdir" is some kind of bug.
+	  # The fact that it says "skipping directory `.'" rather than
+	  # "skipping directory `dir1/sdir'" is some kind of bug.
 	  dotest dirs-4 "echo no | ${testcvs} release -d dir1/sdir" \
-"${SPROG} update: cannot open directory ${CVSROOT_DIRNAME}/dir1/sdir: No such file or directory
-${SPROG} update: skipping directory 
+"$SPROG update: cannot open directory $CVSROOT_DIRNAME/dir1/sdir: No such file or directory
+$SPROG update: skipping directory \`.'
 You have \[0\] altered files in this repository\.
 Are you sure you want to release (and delete) directory .dir1/sdir': .. .release' aborted by user choice."
 
@@ -25827,12 +25827,12 @@ initial revision: 1\.1"
 
 	  cd $TESTDIR/1
 	  if $cygwin_hack; then :; else
-	    dotest modes3-5 "${testcvs} update" \
-"${SPROG} update: Updating \.
-${SPROG} update: Updating first-dir
-${SPROG} update: cannot open directory ${CVSROOT_DIRNAME}/first-dir: Permission denied
-${SPROG} update: skipping directory first-dir
-${SPROG} update: Updating second-dir"
+	    dotest modes3-5 "$testcvs update" \
+"$SPROG update: Updating \.
+$SPROG update: Updating first-dir
+$SPROG update: cannot open directory $CVSROOT_DIRNAME/first-dir: Permission denied
+$SPROG update: skipping directory \`first-dir'
+$SPROG update: Updating second-dir"
 	  fi
 
 	  # OK, I can see why one might say the above case could be a
@@ -25845,18 +25845,18 @@ ${SPROG} update: Updating second-dir"
 	  # passing opendir by accepting the alternate string.
 	  rm -r first-dir
 	  dotest modes3-6 "${testcvs} update -dP" \
-"${SPROG} update: Updating .
-${SPROG} update: Updating CVSROOT
-U ${DOTSTAR}
-${SPROG} update: Updating first-dir
-${SPROG} update: cannot open directory ${CVSROOT_DIRNAME}/first-dir: Permission denied
-${SPROG} update: skipping directory first-dir
-${SPROG} update: Updating second-dir" \
-"${SPROG} update: Updating .
-${SPROG} update: Updating CVSROOT
-U ${DOTSTAR}
-${SPROG} update: Updating first-dir
-${SPROG} update: Updating second-dir"
+"$SPROG update: Updating .
+$SPROG update: Updating CVSROOT
+U $DOTSTAR
+$SPROG update: Updating first-dir
+$SPROG update: cannot open directory $CVSROOT_DIRNAME/first-dir: Permission denied
+$SPROG update: skipping directory \`first-dir'
+$SPROG update: Updating second-dir" \
+"$SPROG update: Updating \.
+$SPROG update: Updating CVSROOT
+U $DOTSTAR
+$SPROG update: Updating first-dir
+$SPROG update: Updating second-dir"
 
 	  dokeep
 	  cd ..
@@ -30763,34 +30763,34 @@ U mod1-2/file1-2"
 	  # that there's not some kind of unexpected dependency on the
 	  # choice of which CVSROOT is specified on the command line.
 
-	  dotest multiroot-update-1a "${testcvs1} update" \
-"${SPROG} update: Updating \.
-${SPROG} update: Updating mod1-1
-${SPROG} update: Updating mod1-2
-${SPROG} update: Updating mod1-2/mod2-2
-${SPROG} update: cannot open directory ${CVSROOT1_DIRNAME}/mod2-2: No such file or directory
-${SPROG} update: skipping directory mod1-2/mod2-2
-${SPROG} update: Updating mod2-1
-${SPROG} update: cannot open directory ${CVSROOT1_DIRNAME}/mod2-1: No such file or directory
-${SPROG} update: skipping directory mod2-1
-${SPROG} update: Updating mod2-2
-${SPROG} update: cannot open directory ${CVSROOT1_DIRNAME}/mod2-2: No such file or directory
-${SPROG} update: skipping directory mod2-2"
+	  dotest multiroot-update-1a "$testcvs1 update" \
+"$SPROG update: Updating \.
+$SPROG update: Updating mod1-1
+$SPROG update: Updating mod1-2
+$SPROG update: Updating mod1-2/mod2-2
+$SPROG update: cannot open directory $CVSROOT1_DIRNAME/mod2-2: No such file or directory
+$SPROG update: skipping directory \`mod1-2/mod2-2'
+$SPROG update: Updating mod2-1
+$SPROG update: cannot open directory $CVSROOT1_DIRNAME/mod2-1: No such file or directory
+$SPROG update: skipping directory mod2-1
+$SPROG update: Updating mod2-2
+$SPROG update: cannot open directory $CVSROOT1_DIRNAME/mod2-2: No such file or directory
+$SPROG update: skipping directory \`mod2-2'"
 
 	  # Same deal but with -d ${CVSROOT2}.
-	  dotest multiroot-update-1b "${testcvs2} update" \
-"${SPROG} update: Updating \.
-${SPROG} update: Updating mod1-1
-${SPROG} update: cannot open directory ${CVSROOT2_DIRNAME}/mod1-1: No such file or directory
-${SPROG} update: skipping directory mod1-1
-${SPROG} update: Updating mod1-2
-${SPROG} update: cannot open directory ${CVSROOT2_DIRNAME}/mod1-2: No such file or directory
-${SPROG} update: skipping directory mod1-2
-${SPROG} update: Updating mod2-1
-${SPROG} update: Updating mod2-2
-${SPROG} update: Updating mod2-2/mod1-2
-${SPROG} update: cannot open directory ${CVSROOT2_DIRNAME}/mod1-2: No such file or directory
-${SPROG} update: skipping directory mod2-2/mod1-2"
+	  dotest multiroot-update-1b "$testcvs2 update" \
+"$SPROG update: Updating \.
+$SPROG update: Updating mod1-1
+$SPROG update: cannot open directory $CVSROOT2_DIRNAME/mod1-1: No such file or directory
+$SPROG update: skipping directory \`mod1-1'
+$SPROG update: Updating mod1-2
+$SPROG update: cannot open directory $CVSROOT2_DIRNAME/mod1-2: No such file or directory
+$SPROG update: skipping directory mod1-2
+$SPROG update: Updating mod2-1
+$SPROG update: Updating mod2-2
+$SPROG update: Updating mod2-2/mod1-2
+$SPROG update: cannot open directory $CVSROOT2_DIRNAME/mod1-2: No such file or directory
+$SPROG update: skipping directory \`mod2-2/mod1-2'"
 
 	  # modify all files and do a diff
 
@@ -32148,19 +32148,16 @@ No conflicts created by this import"
 	  # (Linux 2.4.20-37.9.legacy), and probably AIX 3.4, Solaris 8, 
 	  # BSD/OS 4.2, & IRIX 6.5 only call Name_Root() once as a result of
 	  # this test.
-	  #
-	  # Bug: "skipping directory " without filename.
 	  if $remote; then
 	    dotest_fail reposmv-2r "${testcvs} update" \
 "Cannot access ${TESTDIR}/root1/CVSROOT
 No such file or directory"
 	  else
 	    dotest reposmv-2 "$testcvs update" \
-"$DOTSTAR$CPROG update: in directory \.:
-$CPROG update: ignoring CVS/Root because it specifies a non-existent repository $TESTDIR/root1
+"$DOTSTAR$CPROG update: ignoring \`CVS/Root' because it specifies a non-existent repository \`$TESTDIR/root1'
 $CPROG update: Updating \.
 $DOTSTAR$CPROG update: cannot open directory $CVSROOT_DIRNAME/dir1: No such file or directory
-$CPROG update: skipping directory "
+$CPROG update: skipping directory \`.'"
 	  fi
 
 	  # CVS/Root overrides $CVSROOT
@@ -32175,8 +32172,7 @@ No such file or directory"
 	    CVSROOT_save=$CVSROOT
 	    CVSROOT=$TESTDIR/root-moved; export CVSROOT
 	    dotest reposmv-3 "$testcvs update" \
-"$DOTSTAR$CPROG update: in directory \.:
-$CPROG update: ignoring CVS/Root because it specifies a non-existent repository $TESTDIR/root1
+"$DOTSTAR$CPROG update: ignoring \`CVS/Root' because it specifies a non-existent repository \`$TESTDIR/root1'
 $CPROG update: Updating \.$DOTSTAR"
 	    CVSROOT=$CVSROOT_save; export CVSROOT
 	  fi
@@ -32194,10 +32190,9 @@ No such file or directory"
 	    # messages.
 	    CVSROOT_save=${CVSROOT}
 	    CVSROOT=${TESTDIR}/root-none; export CVSROOT
-	    dotest_fail reposmv-4 "${testcvs} update" \
-"${CPROG} update: in directory \.:
-${CPROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
-${CPROG} \[update aborted\]: ${TESTDIR}/root-none/CVSROOT: No such file or directory"
+	    dotest_fail reposmv-4 "$testcvs update" \
+"$CPROG update: ignoring \`CVS/Root' because it specifies a non-existent repository \`$TESTDIR/root1'
+$CPROG \[update aborted\]: $TESTDIR/root-none/CVSROOT: No such file or directory"
 	    CVSROOT=${CVSROOT_save}; export CVSROOT
 	  fi
 
