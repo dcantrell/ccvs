@@ -121,7 +121,7 @@ Name_Root (const char *dir, const char *update_dir)
     {
 	char *admfile = dir_append (update_dir, CVSADM_ROOT);
 	error (0, 0,
-	       "ignoring %s because it specifies a non-existent repository %s",
+	       "ignoring %s because it specifies non-existent repository %s",
 	       quote_n (0, admfile), quote_n (1, root));
 	free (admfile);
 	ret = NULL;

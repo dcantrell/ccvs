@@ -7638,8 +7638,12 @@ $SPROG update: skipping directory \`dir1/sdir'"
 
 	  # If we say "yes", then CVS gives errors about not being able to
 	  # create lock files.
-	  # The fact that it says "skipping directory `.'" rather than
-	  # "skipping directory `dir1/sdir'" is some kind of bug.
+	  #
+	  # FIXCVS:
+	  # The fact that it says "warning: skipping `.'" rather than
+	  # "warning: skipping `dir1/sdir'" is a bug caused by the fact that
+	  # release.c is changing directory before calling update as a
+	  # subprocess.
 	  dotest dirs-4 "echo no | ${testcvs} release -d dir1/sdir" \
 "$SPROG update: cannot open directory $CVSROOT_DIRNAME/dir1/sdir: No such file or directory
 $SPROG update: skipping directory \`.'
@@ -32154,7 +32158,7 @@ No conflicts created by this import"
 No such file or directory"
 	  else
 	    dotest reposmv-2 "$testcvs update" \
-"$DOTSTAR$CPROG update: ignoring \`CVS/Root' because it specifies a non-existent repository \`$TESTDIR/root1'
+"$DOTSTAR$CPROG update: ignoring \`CVS/Root' because it specifies non-existent repository \`$TESTDIR/root1'
 $CPROG update: Updating \.
 $DOTSTAR$CPROG update: cannot open directory $CVSROOT_DIRNAME/dir1: No such file or directory
 $CPROG update: skipping directory \`.'"
@@ -32172,7 +32176,7 @@ No such file or directory"
 	    CVSROOT_save=$CVSROOT
 	    CVSROOT=$TESTDIR/root-moved; export CVSROOT
 	    dotest reposmv-3 "$testcvs update" \
-"$DOTSTAR$CPROG update: ignoring \`CVS/Root' because it specifies a non-existent repository \`$TESTDIR/root1'
+"$DOTSTAR$CPROG update: ignoring \`CVS/Root' because it specifies non-existent repository \`$TESTDIR/root1'
 $CPROG update: Updating \.$DOTSTAR"
 	    CVSROOT=$CVSROOT_save; export CVSROOT
 	  fi
@@ -32191,7 +32195,7 @@ No such file or directory"
 	    CVSROOT_save=${CVSROOT}
 	    CVSROOT=${TESTDIR}/root-none; export CVSROOT
 	    dotest_fail reposmv-4 "$testcvs update" \
-"$CPROG update: ignoring \`CVS/Root' because it specifies a non-existent repository \`$TESTDIR/root1'
+"$CPROG update: ignoring \`CVS/Root' because it specifies non-existent repository \`$TESTDIR/root1'
 $CPROG \[update aborted\]: $TESTDIR/root-none/CVSROOT: No such file or directory"
 	    CVSROOT=${CVSROOT_save}; export CVSROOT
 	  fi
