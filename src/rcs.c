@@ -1069,9 +1069,9 @@ rcsbuf_open (struct rcsbuffer *rcsbuf, FILE *fp, const char *filename,
     }
 
     /* Map private here since this particular buffer is read only */
-    p = mmap ( NULL, fs.st_size - mmap_off, PROT_READ | PROT_WRITE,
-	       MAP_PRIVATE, fileno(fp), mmap_off );
-    if (p != NULL && p != MAP_FAILED)
+    p = mmap (NULL, fs.st_size - mmap_off, PROT_READ | PROT_WRITE,
+	      MAP_PRIVATE, fileno(fp), mmap_off);
+    if (p && p != MAP_FAILED)
     {
 	if (rcsbuf_buffer) free (rcsbuf_buffer);
 	rcsbuf_buffer = p;
