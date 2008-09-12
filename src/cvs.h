@@ -311,10 +311,6 @@ extern int logoff;		/* Don't write history entry */
 extern bool suppress_bases;
 
 
-
-/* This header needs the LOGMSG_* defns above.  */
-//#include "parseinfo.h"
-
 /* This structure holds the global configuration data.  */
 extern struct config *config;
 
