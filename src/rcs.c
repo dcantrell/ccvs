@@ -29,25 +29,13 @@
 #include "edit.h"
 #include "gpg.h"
 #include "hardlink.h"
+#ifdef HAVE_MMAP
+# include "mman.h"
+#endif
 #include "repos.h"
 #include "sign.h"
 
 #include "cvs.h"
-
-/* These need to be source after cvs.h or HAVE_MMAP won't be set... */
-#ifdef HAVE_MMAP
-# include "getpagesize.h"
-# include <sys/mman.h>
-
-/* Define MAP_FILE when it isn't otherwise.  */
-# ifndef MAP_FILE
-#  define MAP_FILE 0
-# endif
-/* Define MAP_FAILED for old systems which neglect to.  */
-# ifndef MAP_FAILED
-#  define MAP_FAILED ((void *)-1)
-# endif
-#endif
 
 #ifdef MMAP_FALLBACK_TEST
 void *my_mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset)
