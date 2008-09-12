@@ -1,3 +1,8 @@
+2008-09-12  Derek R. Price  <derek@ximbiot.com>
+
+	* sanity.sh: Unset CDPATH during initialization.
+	(Report from Paul Edwards <mutazilah@gmail.com>.)
+
 2008-05-09  Derek R. Price  <derek@ximbiot.com>
 
 	* classify.c (Classify_File): Remove obsolete TODO comment.
