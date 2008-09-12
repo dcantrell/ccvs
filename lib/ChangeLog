@@ -1,3 +1,8 @@
+2008-09-12  Derek Price  <derek@ximbiot.com>
+
+	* mman.h: New file.
+	* Makefile.am (libcvs_a_SOURCES): Add mman.h.
+
 2008-06-14  Mark D. Baushke  <mdb@gnu.org>
 
 	* libcvs.mak (CPP_PROJ): Add /I "..\src" to find error.h
