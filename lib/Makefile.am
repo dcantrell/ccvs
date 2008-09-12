@@ -1,9 +1,9 @@
 ## Process this file with automake to produce Makefile.in.
 # Makefile for library files used by GNU CVS.
 #
-# Copyright (C) 1986-2007 The Free Software Foundation, Inc.
+# Copyright (C) 1986-2008 The Free Software Foundation, Inc.
 #
-# Portions Copyright (C) 1998-2007 Derek Price,
+# Portions Copyright (C) 1998-2008 Derek Price,
 # 				   Ximbiot LLC <http://ximbiot.com>,
 #                                  and others.
 
@@ -26,6 +26,7 @@ noinst_LIBRARIES = libcvs.a
 # with the diff library (perhaps to have the caller, CVS, do the
 # matching?)
 libcvs_a_SOURCES = \
+	mman.h \
 	sighandle.c \
 	system.h \
 	wait.h \

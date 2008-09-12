@@ -16,9 +16,9 @@
 
 # Makefile for library files used by GNU CVS.
 #
-# Copyright (C) 1986-2007 The Free Software Foundation, Inc.
+# Copyright (C) 1986-2008 The Free Software Foundation, Inc.
 #
-# Portions Copyright (C) 1998-2007 Derek Price,
+# Portions Copyright (C) 1998-2008 Derek Price,
 # 				   Ximbiot LLC <http://ximbiot.com>,
 #                                  and others.
 
@@ -518,13 +518,13 @@ noinst_LIBRARIES = libcvs.a libcvs.a
 # Should look into unifying regular expression matching in CVS
 # with the diff library (perhaps to have the caller, CVS, do the
 # matching?)
-libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
-	base64.h base64.c getdate.y getnline.h getnline.c gettext.h \
-	localcharset.h localcharset.c malloca.c mbchar.c mbslen.c \
-	mbsstr.c mbuiter.h minmax.h mreadlink-with-size.c openat-die.c \
-	savewd.h savewd.c size_max.h strnlen1.h strnlen1.c \
-	uniwidth/width.c verify.h xalloc-die.c xgethostname.h \
-	xgethostname.c xsize.h xstrndup.h xstrndup.c
+libcvs_a_SOURCES = mman.h sighandle.c system.h wait.h xselect.h \
+	xtime.h base64.h base64.c getdate.y getnline.h getnline.c \
+	gettext.h localcharset.h localcharset.c malloca.c mbchar.c \
+	mbslen.c mbsstr.c mbuiter.h minmax.h mreadlink-with-size.c \
+	openat-die.c savewd.h savewd.c size_max.h strnlen1.h \
+	strnlen1.c uniwidth/width.c verify.h xalloc-die.c \
+	xgethostname.h xgethostname.c xsize.h xstrndup.h xstrndup.c
 libcvs_a_LIBADD = @LIBOBJS@ $(gl_LIBOBJS) @ALLOCA@
 libcvs_a_DEPENDENCIES = @LIBOBJS@ $(gl_LIBOBJS) @ALLOCA@
 BUILT_SOURCES = $(ALLOCA_H) $(ARPA_INET_H) configmake.h $(DIRENT_H) \
