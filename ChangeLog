@@ -1,5 +1,7 @@
 2008-09-12  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note fix for bug #17565.
+
 	* NEWS: Note several recent changes.
 
 2008-05-07  Mark D. Baushke  <mdb@gnu.org>
