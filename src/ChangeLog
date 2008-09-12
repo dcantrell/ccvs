@@ -1,5 +1,10 @@
 2008-09-12  Derek R. Price  <derek@ximbiot.com>
 
+	[bug #17565] (Patch from Susanne Bertling <susbert@gnu.org>).
+	* classify.c (Classify_File): Check for conflicts before keywords.
+	* sanity.sh (branches-15): Update to compensate.
+	(branches-15a, keyword2-11b, keyword2-12b): New tests.
+
 	* sanity.sh: Unset CDPATH during initialization.
 	(Report from Paul Edwards <mutazilah@gmail.com>.)
 
