@@ -7,12 +7,12 @@
 	* configure.in: Add AC_CHECK_HEADERS for process.h and sys/utime.h
 	which are needed for Windows-NT builds.
 	* configure, config.h.in: Regenerated.
-	
+
 	[bug #22781]
 	* cvsnt.dep, cvsnt.dsp, cvsnt.mak: remove references to jmgStat.[ch]
 	* cvsnt.mak: convert to work with MSVC 2005 express and MSVC 8.
 	(Patch submitted by Nelson B. Bolyard <nelson@bolyard.com>.)
-	
+
 2008-03-10  Mark D. Baushke  <mdb@gnu.org>
 
 	* NEWS: Note new IgnoreUnknownConfigKeys CVSROOT/config option.
