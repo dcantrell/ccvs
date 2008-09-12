@@ -401,7 +401,7 @@ verify_signature (const char *srepos, const char *sig, size_t siglen,
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 	                      false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-	                      get_verify_template (),
+	                      "verify template", 1, get_verify_template (),
 	                      "@", ",", get_verify_args (),
 			      verify_args_list_to_args_proc, (void *) NULL,
 	                      "r", "s", current_parsed_root->directory,

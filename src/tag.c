@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2008 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2007 Derek Price,
+ * Portions Copyright (C) 1998-2008 Derek Price,
  *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
@@ -29,6 +29,8 @@
 #include "classify.h"
 #include "ignore.h"
 #include "lock.h"
+#include "parseinfo.h"
+#include "quote.h"
 #include "recurse.h"
 #include "repos.h"
 
@@ -43,8 +45,6 @@ static int check_fileproc (void *callerdat, struct file_info *finfo);
 static int check_filesdoneproc (void *callerdat, int err,
 				const char *repos, const char *update_dir,
 				List *entries);
-static int pretag_proc (const char *_repository, const char *_filter,
-                        void *_closure);
 static void masterlist_delproc (Node *_p);
 static void tag_delproc (Node *_p);
 static int pretag_list_to_args_proc (Node *_p, void *_closure);
@@ -329,7 +329,8 @@ struct pretag_proc_data {
  *    of its callbacks having returned an error.
  */
 static int
-posttag_proc (const char *repository, const char *filter, void *closure)
+posttag_proc (const char *repository, const char *filter,
+	      const char *file, int line, void *closure)
 {
     char *cmdline;
     const char *srepos = Short_Repository (repository);
@@ -356,7 +357,7 @@ posttag_proc (const char *repository, const char *filter, void *closure)
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 			      false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-			      filter,
+			      file, line, filter,
 			      "t", "s", ppd->symtag,
 			      "o", "s", ppd->delete_flag
 			      ? "del" : ppd->force_tag_move ? "mov" : "add",
@@ -375,7 +376,8 @@ posttag_proc (const char *repository, const char *filter, void *closure)
     if (!cmdline || !strlen (cmdline))
     {
 	if (cmdline) free (cmdline);
-	error (0, 0, "pretag proc resolved to the empty string!");
+	error (0, 0, "%s:%d: pretag proc resolved to the empty string!",
+	       file, line);
 	return 1;
     }
 
@@ -414,8 +416,7 @@ tag_filesdoneproc (void *callerdat, int err, const char *repository,
     ppd.delete_flag = delete_flag;
     ppd.force_tag_move = force_tag_move;
     ppd.symtag = symtag;
-    Parse_Info (CVSROOTADM_POSTTAG, repository, posttag_proc,
-                PIOPT_ALL, &ppd);
+    Parse_Info (CVSROOTADM_POSTTAG, repository, posttag_proc, PIOPT_ALL, &ppd);
 
     return err;
 }
@@ -692,6 +693,109 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 
 
 
+/*
+ * called from Parse_Info, this routine processes a line that came out
+ * of a taginfo file and turns it into a command and executes it.
+ *
+ * RETURNS
+ *    the absolute value of the return value of run_exec, which may or
+ *    may not be the return value of the child process.  this is
+ *    contrained to return positive values because Parse_Info is adding up
+ *    return values and testing for non-zeroness to signify one or more
+ *    of its callbacks having returned an error.
+ */
+static int
+pretag_proc (const char *repository, const char *filter,
+	     const char *file, int line, void *closure)
+{
+    char *newfilter = NULL;
+    char *cmdline;
+    const char *srepos = Short_Repository (repository);
+    struct pretag_proc_data *ppd = closure;
+
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+    if (!strchr (filter, '%'))
+    {
+	const char *default_format = " %t %o %p %{sv}";
+	error (0,0,
+"%s:%d: warning: taginfo line contains no format strings.\n"
+"Filling in old defaults (%s), but please be aware that this\n"
+"usage is deprecated.",
+	       file, line, quote (default_format));
+	filter = newfilter = Xasprintf ("%s%s", filter, default_format);
+    }
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+
+    /* %t = tag being added/moved/removed
+     * %o = operation = "add" | "mov" | "del"
+     * %b = branch mode = "?" (delete ops - unknown) | "T" (branch)
+     *                    | "N" (not branch)
+     * %c = cvs_cmd_name
+     * %p = path from $CVSROOT
+     * %r = path from root
+     * %{sVv} = attribute list = file name, old version tag will be deleted
+     *                           from, new version tag will be added to (or
+     *                           deleted from until
+     *                           SUPPORT_OLD_INFO_FMT_STRINGS is undefined)
+     */
+    /*
+     * Cast any NULL arguments as appropriate pointers as this is an
+     * stdarg function and we need to be certain the caller gets what
+     * is expected.
+     */
+    cmdline = format_cmdline (
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+			      false, srepos,
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+			      file, line, filter,
+			      "t", "s", ppd->symtag,
+			      "o", "s", ppd->delete_flag ? "del" :
+			      ppd->force_tag_move ? "mov" : "add",
+			      "b", "c", delete_flag
+			      ? '?' : branch_mode ? 'T' : 'N',
+			      "c", "s", cvs_cmd_name,
+#ifdef SERVER_SUPPORT
+			      "R", "s", referrer ? referrer->original : "NONE",
+#endif /* SERVER_SUPPORT */
+			      "p", "s", srepos,
+			      "r", "s", current_parsed_root->directory,
+			      "sVv", ",", ppd->tlist,
+			      pretag_list_to_args_proc, (void *) NULL,
+			      (char *) NULL);
+
+    if (newfilter) free (newfilter);
+
+    if (!cmdline || !strlen (cmdline))
+    {
+	if (cmdline) free (cmdline);
+	error (0, 0, "%s:%d: pretag proc resolved to the empty string!",
+	       file, line);
+	return 1;
+    }
+
+    run_setup (cmdline);
+
+    /* FIXME - the old code used to run the following here:
+     *
+     * if (!isfile(s))
+     * {
+     *     error (0, errno, "cannot find pre-tag filter '%s'", s);
+     *     free(s);
+     *     return (1);
+     * }
+     *
+     * not sure this is really necessary.  it might give a little finer grained
+     * error than letting the execution attempt fail but i'm not sure.  in any
+     * case it should be easy enough to add a function in run.c to test its
+     * first arg for fileness & executability.
+     */
+
+    free (cmdline);
+    return abs (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL));
+}
+
+
+
 static int
 check_filesdoneproc (void *callerdat, int err, const char *repos,
                      const char *update_dir, List *entries)
@@ -720,109 +824,6 @@ check_filesdoneproc (void *callerdat, int err, const char *repos,
         err += n;
     }
     return err;
-}
-
-
-
-/*
- * called from Parse_Info, this routine processes a line that came out
- * of a taginfo file and turns it into a command and executes it.
- *
- * RETURNS
- *    the absolute value of the return value of run_exec, which may or
- *    may not be the return value of the child process.  this is
- *    contrained to return positive values because Parse_Info is adding up
- *    return values and testing for non-zeroness to signify one or more
- *    of its callbacks having returned an error.
- */
-static int
-pretag_proc (const char *repository, const char *filter, void *closure)
-{
-    char *newfilter = NULL;
-    char *cmdline;
-    const char *srepos = Short_Repository (repository);
-    struct pretag_proc_data *ppd = closure;
-
-#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-    if (!strchr (filter, '%'))
-    {
-	error (0,0,
-               "warning: taginfo line contains no format strings:\n"
-               "    \"%s\"\n"
-               "Filling in old defaults ('%%t %%o %%p %%{sv}'), but please be aware that this\n"
-               "usage is deprecated.", filter);
-	newfilter = xmalloc (strlen (filter) + 16);
-	strcpy (newfilter, filter);
-	strcat (newfilter, " %t %o %p %{sv}");
-	filter = newfilter;
-    }
-#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-
-    /* %t = tag being added/moved/removed
-     * %o = operation = "add" | "mov" | "del"
-     * %b = branch mode = "?" (delete ops - unknown) | "T" (branch)
-     *                    | "N" (not branch)
-     * %c = cvs_cmd_name
-     * %p = path from $CVSROOT
-     * %r = path from root
-     * %{sVv} = attribute list = file name, old version tag will be deleted
-     *                           from, new version tag will be added to (or
-     *                           deleted from until
-     *                           SUPPORT_OLD_INFO_FMT_STRINGS is undefined)
-     */
-    /*
-     * Cast any NULL arguments as appropriate pointers as this is an
-     * stdarg function and we need to be certain the caller gets what
-     * is expected.
-     */
-    cmdline = format_cmdline (
-#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-			      false, srepos,
-#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-			      filter,
-			      "t", "s", ppd->symtag,
-			      "o", "s", ppd->delete_flag ? "del" :
-			      ppd->force_tag_move ? "mov" : "add",
-			      "b", "c", delete_flag
-			      ? '?' : branch_mode ? 'T' : 'N',
-			      "c", "s", cvs_cmd_name,
-#ifdef SERVER_SUPPORT
-			      "R", "s", referrer ? referrer->original : "NONE",
-#endif /* SERVER_SUPPORT */
-			      "p", "s", srepos,
-			      "r", "s", current_parsed_root->directory,
-			      "sVv", ",", ppd->tlist,
-			      pretag_list_to_args_proc, (void *) NULL,
-			      (char *) NULL);
-
-    if (newfilter) free (newfilter);
-
-    if (!cmdline || !strlen (cmdline))
-    {
-	if (cmdline) free (cmdline);
-	error (0, 0, "pretag proc resolved to the empty string!");
-	return 1;
-    }
-
-    run_setup (cmdline);
-
-    /* FIXME - the old code used to run the following here:
-     *
-     * if (!isfile(s))
-     * {
-     *     error (0, errno, "cannot find pre-tag filter '%s'", s);
-     *     free(s);
-     *     return (1);
-     * }
-     *
-     * not sure this is really necessary.  it might give a little finer grained
-     * error than letting the execution attempt fail but i'm not sure.  in any
-     * case it should be easy enough to add a function in run.c to test its
-     * first arg for fileness & executability.
-     */
-
-    free (cmdline);
-    return abs (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL));
 }
 
 

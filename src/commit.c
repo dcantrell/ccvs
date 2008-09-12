@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2008 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2007 Derek Price,
+ * Portions Copyright (C) 1998-2008 Derek Price,
  *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
@@ -34,6 +34,7 @@
 #include "ignore.h"
 #include "lock.h"
 #include "logmsg.h"
+#include "parseinfo.h"
 #include "recurse.h"
 #include "repos.h"
 #include "wrapper.h"
@@ -63,9 +64,6 @@ static int finaladd (struct file_info *finfo, char *revision, char *tag,
 static int findmaxrev (Node * p, void *closure);
 static int lock_RCS (const char *user, RCSNode *rcs, const char *rev,
                      const char *repository);
-static int precommit_list_to_args_proc (Node * p, void *closure);
-static int precommit_proc (const char *repository, const char *filter,
-                           void *closure);
 static int remove_file (struct file_info *finfo, char *tag,
 			char *message);
 static void fixaddfile (const char *rcs);
@@ -1294,7 +1292,8 @@ precommit_list_to_args_proc (p, closure)
  * Callback proc for pre-commit checking
  */
 static int
-precommit_proc (const char *repository, const char *filter, void *closure)
+precommit_proc (const char *repository, const char *filter,
+		const char *file, int line, void *closure)
 {
     char *newfilter = NULL;
     char *cmdline;
@@ -1305,10 +1304,10 @@ precommit_proc (const char *repository, const char *filter, void *closure)
     if (!strchr (filter, '%'))
     {
 	error (0, 0,
-               "warning: commitinfo line contains no format strings:\n"
-               "    \"%s\"\n"
-               "Appending defaults (\" %%r/%%p %%s\"), but please be aware that this usage is\n"
-               "deprecated.", filter);
+"%s:%d: warning: commitinfo line contains no format strings.\n"
+"Appending defaults (%s), but please be aware that this usage is\n"
+"deprecated.",
+	       file, line, quote (" %r/%p %s"));
 	newfilter = Xasprintf ("%s %%r/%%p %%s", filter);
 	filter = newfilter;
     }
@@ -1323,7 +1322,7 @@ precommit_proc (const char *repository, const char *filter, void *closure)
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 			      false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-			      filter,
+			      file, line, filter,
 			      "c", "s", cvs_cmd_name,
 #ifdef SERVER_SUPPORT
 			      "R", "s", referrer ? referrer->original : "NONE",
@@ -1339,7 +1338,8 @@ precommit_proc (const char *repository, const char *filter, void *closure)
     if (!cmdline || !strlen (cmdline))
     {
 	if (cmdline) free (cmdline);
-	error (0, 0, "precommit proc resolved to the empty string!");
+	error (0, 0, "%s:%d: precommit proc resolved to the empty string!",
+	       file, line);
 	return 1;
     }
 

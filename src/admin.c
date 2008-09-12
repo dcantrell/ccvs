@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2008 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2007 Derek Price,
+ * Portions Copyright (C) 1998-2008 Derek Price,
  *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
@@ -19,9 +19,10 @@
 # include <config.h>
 #endif
 
-/* CVS headers.  */
+/* CVS */
 #include "ignore.h"
 #include "lock.h"
+#include "parseinfo.h"
 #include "recurse.h"
 #include "repos.h"
 #include "wrapper.h"
@@ -158,12 +159,14 @@ arg_add (struct admin_data *dat, int opt, char *arg)
  * callback proc to run a script when admin finishes.
  */
 static int
-postadmin_proc (const char *repository, const char *filter, void *closure)
+postadmin_proc (const char *repository, const char *filter,
+		const char *file, int line, void *closure)
 {
     char *cmdline;
     const char *srepos = Short_Repository (repository);
 
-    TRACE (TRACE_FUNCTION, "postadmin_proc (%s, %s)", repository, filter);
+    TRACE (TRACE_FUNCTION, "postadmin_proc (%s, %s, %s, %d)",
+	   repository, filter, file, line);
 
     /* %c = cvs_cmd_name
      * %R = referrer
@@ -179,7 +182,7 @@ postadmin_proc (const char *repository, const char *filter, void *closure)
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 	                      false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-	                      filter,
+			      file, line, filter,
 	                      "c", "s", cvs_cmd_name,
 #ifdef SERVER_SUPPORT
 	                      "R", "s", referrer ? referrer->original : "NONE",
@@ -191,7 +194,8 @@ postadmin_proc (const char *repository, const char *filter, void *closure)
     if (!cmdline || !strlen (cmdline))
     {
 	if (cmdline) free (cmdline);
-	error (0, 0, "postadmin proc resolved to the empty string!");
+	error (0, 0, "%s:%d: postadmin proc resolved to the empty string!",
+	       file, line);
 	return 1;
     }
 

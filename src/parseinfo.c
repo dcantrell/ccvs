@@ -173,7 +173,8 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 			expand_path (value, current_parsed_root->directory,
 				     true, infofile, line_number)))
 	    {
-		err += callproc (repository, expanded_value, closure);
+		err += callproc (repository, expanded_value,
+				 infofile, line_number, closure);
 		free (expanded_value);
 	    }
 	    else
@@ -201,7 +202,8 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 				      true, infofile, line_number);
 	if (expanded_value)
 	{
-	    err += callproc (repository, expanded_value, closure);
+	    err += callproc (repository, expanded_value,
+			     infofile, line_number, closure);
 	    free (expanded_value);
 	}
 	else
@@ -221,7 +223,8 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 				      true, infofile, line_number);
 	if (expanded_value)
 	{
-	    err += callproc (repository, expanded_value, closure);
+	    err += callproc (repository, expanded_value,
+			     infofile, line_number, closure);
 	    free (expanded_value);
 	}
 	else

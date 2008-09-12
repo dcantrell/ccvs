@@ -33,6 +33,7 @@
 #include "filenamecat.h"
 #include "mkdir-p.h"
 #include "mreadlink.h"
+#include "quote.h"
 #include "savewd.h"
 #include "vasnprintf.h"
 
@@ -1114,11 +1115,11 @@ cmdlineescape (char quotes, char *s)
  *    disposing of this string.
  */
 char *
+format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-format_cmdline (bool oldway, const char *srepos, const char *format, ...)
-#else /* SUPPORT_OLD_INFO_FMT_STRINGS */
-format_cmdline (const char *format, ...)
+		bool oldway, const char *srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+		const char *file, int line, const char *format, ...)
 {
     va_list args;	/* our input function args */
     char *buf;		/* where we store our output string */
@@ -1655,10 +1656,11 @@ format_cmdline (const char *format, ...)
 		    s++;
 		    if (!oldway)
 		    {
-			/* FIXME - add FILE && LINE */
 			error (0, 0,
-"Using deprecated info format strings.  Convert your scripts to use\n"
-"the new argument format and remove '1's from your info file format strings.");
+"%s:%d: Using deprecated info format strings.  Convert your\n"
+"scripts to use the new argument format and remove '1's from your info file\n"
+"format strings.",
+			       file, line);
 		    }
 		}
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
@@ -1689,15 +1691,11 @@ format_cmdline (const char *format, ...)
 		     * - we had an empty fmt string or didn't find a list
 		     * terminator ('}')
 		     */
-		    /* FIXME - this wants a file name and line number in a bad
-		     * way.
-		     */
 		    error(1, 0,
-"unterminated format string encountered in command spec.\n"
-"This error is likely to have been caused by an invalid line in a hook script\n"
-"spec (see taginfo, loginfo, verifymsginfo, etc. in the Cederqvist).  Most\n"
-"likely the offending line would end with a '%%' character or contain a string\n"
-"beginning \"%%{\" and no closing '}' before the end of the line.");
+"%s:%d: unterminated format string encountered in command spec.\n"
+"Most likely this line would end with a '%%' character or contain a string\n"
+"beginning %s and have no closing %s before the end of the line.",
+			  file, line, quote ("%{"), quote ("}"));
 		}
 		if (list)
 		{
@@ -1749,6 +1747,8 @@ format_cmdline (const char *format, ...)
 		    {
 			/* process the rest of the format string as a list */
 			struct format_cmdline_walklist_closure c;
+			c.file = file;
+			c.line = line;
 			c.format = q;
 			c.buf = &buf;
 			c.length = &length;
@@ -1771,8 +1771,16 @@ format_cmdline (const char *format, ...)
 			char *outstr;
 			if (strlen(q) > 1)
 			{
+			    int i;
+			    char *bad = Xasprintf ("%%{%s}", q);
+			    char *good = xmalloc (2 * strlen (q) + 1);
+			    for (i=0; i<strlen(q); i++)
+			    {   good[2*i] = '%'; good[2*i+1] = q[i]; }
+			    good[2*i] = '\0';
 			    error (1, 0,
-"Multiple non-list variables are not allowed in a single format string.");
+"%s:%d: Multiple non-list variables prohibited in a single format string.\n"
+"(use %s, not %s)",
+				   file, line, quote (good), quote (bad));
 			}
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 			if (onearg)
@@ -1844,12 +1852,9 @@ format_cmdline (const char *format, ...)
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 		else /* no key */
 		{
-		    /* print an error message to the user
-		     * FIXME - this should have a file and line number!!! */
-		    error (1, 0,
-"Unknown format character in info file ('%s').\n"
-"Info files are the hook files, verifymsg, taginfo, commitinfo, etc.",
-                           q);
+		    /* print an error message to the user.  */
+		    error (1, 0, "%s:%d: Unknown format character (%s).",
+                           file, line, quote (q));
 		}
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 		/* always add quotes in the deprecated onearg case - for
@@ -1875,7 +1880,7 @@ format_cmdline (const char *format, ...)
 	/* FIXME - we shouldn't need this - Parse_Info should be handling
 	 * multiple lines...
 	 */
-	error (1, 0, "unterminated quote in format string: %s", format);
+	error (1, 0, "%s:%d: unterminated quote in format string", file, line);
     }
 
     dellist (&pflist);

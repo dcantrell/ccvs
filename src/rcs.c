@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2008 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2007 Derek Price,
+ * Portions Copyright (C) 1998-2008 Derek Price,
  *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
@@ -22,16 +22,18 @@
 /* Verify interface.  */
 #include "rcs.h"
 
-/* GNULIB headers.  */
+/* GNULIB */
 #include "base64.h"
 
-/* CVS headers.  */
+/* CVS */
 #include "edit.h"
+#include "getpagesize.h"
 #include "gpg.h"
 #include "hardlink.h"
 #ifdef HAVE_MMAP
 # include "mman.h"
 #endif
+#include "parseinfo.h"
 #include "repos.h"
 #include "sign.h"
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 The Free Software Foundation, Inc.
+ * Copyright (C) 2008 The Free Software Foundation, Inc.
  *
  * Implementation for "cvs edit", "cvs watch on", and related commands
  *
@@ -21,14 +21,16 @@
 /* Verify interface.  */
 #include "edit.h"
 
-/* GNULIB headers.  */
+/* GNULIB */
+#include "quote.h"
 #include "yesno.h"
 
-/* CVS headers.  */
+/* CVS */
 #include "base.h"
 #include "fileattr.h"
 #include "ignore.h"
 #include "lock.h"
+#include "parseinfo.h"
 #include "recurse.h"
 #include "repos.h"
 #include "watch.h"
@@ -859,7 +861,8 @@ struct notify_proc_args {
 
 
 static int
-notify_proc (const char *repository, const char *filter, void *closure)
+notify_proc (const char *repository, const char *filter,
+	     const char *file, int line, void *closure)
 {
     char *cmdline;
     FILE *pipefp;
@@ -875,7 +878,7 @@ notify_proc (const char *repository, const char *filter, void *closure)
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 			      false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-			      filter,
+			      file, line, filter,
 			      "c", "s", cvs_cmd_name,
 #ifdef SERVER_SUPPORT
 			      "R", "s", referrer ? referrer->original : "NONE",
@@ -887,14 +890,17 @@ notify_proc (const char *repository, const char *filter, void *closure)
     if (!cmdline || !strlen (cmdline))
     {
 	if (cmdline) free (cmdline);
-	error (0, 0, "pretag proc resolved to the empty string!");
+	error (0, 0, "%s:%d: pretag proc resolved to the empty string!",
+	       file, line);
 	return 1;
     }
 
     pipefp = run_popen (cmdline, "w");
     if (pipefp == NULL)
     {
-	error (0, errno, "cannot write entry to notify filter: %s", cmdline);
+	error (0, errno,
+	       "%s:%d: cannot write entry to notify filter: %s",
+	       file, line, quote (cmdline));
 	free (cmdline);
 	return 1;
     }

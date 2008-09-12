@@ -94,6 +94,20 @@ extern struct config *config;
 
 
 
+/* Option flags for Parse_Info().  */
+#define PIOPT_ALL 1	/* accept "all" keyword */
+
+
+
+/* Callback proc for Parse_Info().  */
+typedef	int (*CALLPROC)	(const char *repository, const char *value,
+                         const char *filename, int linenum, void *closure);
+
+
+
+/* Function prototypes.  */
+int Parse_Info (const char *infofile, const char *repository,
+                CALLPROC callproc, int opt, void *closure);
 bool parse_error (const char *, unsigned int);
 struct config *parse_config (const char *, const char *);
 void free_config (struct config *data);

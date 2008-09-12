@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 The Free Software Foundation, Inc.
+ * Copyright (C) 2008 The Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,14 @@
 /* Validate API.  */
 #include "server.h"
 
-/* GNULIB headers.  */
+/* GNULIB */
 #include "getnline.h"
+#include "quote.h"
 #include "setenv.h"
 #include "vasnprintf.h"
 #include "wait.h"
 
-/* CVS headers.  */
+/* CVS */
 #include "base.h"
 #include "buffer.h"
 #include "command_line_opt.h"
@@ -34,6 +35,7 @@
 #include "gpg.h"
 #include "ignore.h"
 #include "lock.h"
+#include "parseinfo.h"
 #include "repos.h"
 #include "watch.h"
 #include "wrapper.h"
@@ -2400,7 +2402,8 @@ server_write_entries (void)
  * callback proc to run a script when admin finishes.
  */
 static int
-prepost_proxy_proc (const char *repository, const char *filter, void *closure)
+prepost_proxy_proc (const char *repository, const char *filter,
+		    const char *file, int line, void *closure)
 {
     char *cmdline;
     bool *pre = closure;
@@ -2409,8 +2412,8 @@ prepost_proxy_proc (const char *repository, const char *filter, void *closure)
      * %p = shortrepos
      * %r = repository
      */
-    TRACE (TRACE_FUNCTION, "prepost_proxy_proc (%s, %s, %s)", repository,
-	   filter, *pre ? "pre" : "post");
+    TRACE (TRACE_FUNCTION, "prepost_proxy_proc (%s, %s, %s, %d, %s)",
+	   repository, filter, file, line, *pre ? "pre" : "post");
 
     /*
      * Cast any NULL arguments as appropriate pointers as this is an
@@ -2421,7 +2424,7 @@ prepost_proxy_proc (const char *repository, const char *filter, void *closure)
 # ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 	                      0, ".",
 # endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-	                      filter,
+	                      file, line, filter,
 	                      "c", "s", cvs_cmd_name,
 	                      "R", "s", referrer ? referrer->original : "NONE",
 	                      "p", "s", ".",
@@ -2431,11 +2434,14 @@ prepost_proxy_proc (const char *repository, const char *filter, void *closure)
 
     if (!cmdline || !strlen (cmdline))
     {
+	const char *type;
 	if (cmdline) free (cmdline);
 	if (*pre)
-	    error (0, 0, "preadmin proc resolved to the empty string!");
+	    type = "preadmin";
 	else
-	    error (0, 0, "postadmin proc resolved to the empty string!");
+	    type = "postadmin";
+	error (0, 0, "%s:%d: %s proc resolved to the empty string!",
+	       file, line, type);
 	return 1;
     }
 
@@ -5473,7 +5479,8 @@ struct template_proc_data
 };
 
 static int
-template_proc (const char *repository, const char *template, void *closure)
+template_proc (const char *repository, const char *template,
+	       const char *file, int line, void *closure)
 {
     FILE *fp;
     char buf[1024];
@@ -5491,12 +5498,14 @@ template_proc (const char *repository, const char *template, void *closure)
     fp = CVS_FOPEN (template, "rb");
     if (fp == NULL)
     {
-	error (0, errno, "Couldn't open rcsinfo template file %s", template);
+	error (0, errno, "%s:%d: Couldn't open rcsinfo template file %s",
+	       file, line, quote (template));
 	return 1;
     }
     if (fstat (fileno (fp), &sb) < 0)
     {
-	error (0, errno, "cannot stat rcsinfo template file %s", template);
+	error (0, errno, "%s:%d: cannot stat rcsinfo template file %s",
+	       file, line, quote (template));
 	return 1;
     }
     sprintf (buf, "%ld\n", (long) sb.st_size);
@@ -5507,14 +5516,16 @@ template_proc (const char *repository, const char *template, void *closure)
 	buf_output (protocol, buf, n);
 	if (ferror (fp))
 	{
-	    error (0, errno, "cannot read rcsinfo template file %s", template);
+	    error (0, errno, "%s:%d: cannot read rcsinfo template file %s",
+		   file, line, quote (template));
 	    (void) fclose (fp);
 	    return 1;
 	}
     }
     buf_send_counted (protocol);
     if (fclose (fp) < 0)
-	error (0, errno, "cannot close rcsinfo template file %s", template);
+	error (0, errno, "%s:%d: cannot close rcsinfo template file %s",
+	       file, line, quote (template));
     return 0;
 }
 
@@ -5558,8 +5569,8 @@ server_template (const char *update_dir, const char *repository)
     struct template_proc_data data;
     data.update_dir = update_dir;
     data.repository = repository;
-    (void) Parse_Info (CVSROOTADM_RCSINFO, repository, template_proc,
-		       PIOPT_ALL, &data);
+    Parse_Info (CVSROOTADM_RCSINFO, repository, template_proc,
+		PIOPT_ALL, &data);
 }
 
 

@@ -282,7 +282,7 @@ gen_signature (const char *srepos, const char *filename, bool bin, size_t *len)
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 	                      false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-	                      get_sign_template (),
+	                      "sign template", 1, get_sign_template (),
 	                      "@", ",", get_sign_args (),
 			      sign_args_list_to_args_proc, (void *) NULL,
 	                      "r", "s", current_parsed_root->directory,
