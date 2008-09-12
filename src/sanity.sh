@@ -64,6 +64,9 @@ exit_help ()
 # required to make this script work properly.
 unset CVSREAD
 
+# Bash sometimes echoes the path when CDPATH is set.
+unset CDPATH
+
 # This will cause malloc to run slower but should also catch some common errors
 # when CVS is linked with glibc 2.x.
 MALLOC_CHECK_=2; export MALLOC_CHECK_
