@@ -1,5 +1,7 @@
 2008-09-12  Derek R. Price  <derek@ximbiot.com>
 
+	* cvs.h: Remove comment.
+
 	* cvs.h [PIOPT_ALL] (CALLPROC, Parse_Info): Move defs and protos to...
 	* parseinfo.h: ...similarly named entities here.
 	* subr.h (format_cmdline_walklist_closure): Store file and line number
