@@ -6900,12 +6900,14 @@ diff -c -r1\.1 -r1\.2\.2\.1
 --- 1 ----
 ! 4:br1"
 	  dotest branches-15 \
-	    "${testcvs} update -j 1.1.2.1 -j 1.1.2.1.2.1 file1" \
-	    "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+	    "${testcvs} update -kk -j 1.1.2.1 -j 1.1.2.1.2.1 file1" \
+	    "U file1
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 retrieving revision 1\.1\.2\.1
 retrieving revision 1\.1\.2\.1\.2\.1
 Merging differences between 1\.1\.2\.1 and 1\.1\.2\.1\.2\.1 into file1
 rcsmerge: warning: conflicts during merge"
+	  dotest_fail branches-15a "${testcvs} update -A file1" "C file1"
 	  dotest branches-16 "cat file1" '<<<<<<< file1
 1:ancest
 [=]======
@@ -23619,6 +23621,24 @@ diff -r1\.2 file1
 > >>>>>>> 1\.1\.2\.1
 14a19
 > what else do we have${QUESTION}"
+
+	  # The next two tests illustrate a different problem: conflicts
+	  # prevent merge of keyword changes.
+	  dotest_fail keyword2-11b "$testcvs -q update -kk file1" "C file1"
+	  dotest_fail keyword2-12b "$testcvs diff file1" \
+"Index: file1
+===================================================================
+RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
+retrieving revision 1\.2
+diff -r1\.2 file1
+0a1
+> <<<<<<< file1
+1a3,5
+> =======
+> \\\$""Revision: 1\.1\.2\.1 \\\$
+> >>>>>>> 1\.1\.2\.1
+14a19
+> what else do we have$QUESTION"
 
 	  # Here's the problem... shouldn't -kk a binary file...
 	  rm file1
