@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 The Free Software Foundation, Inc.
+ * Copyright (C) 2008 The Free Software Foundation, Inc.
  *
  * Implementation for file attribute munging features.
  *
@@ -21,7 +21,8 @@
 /* Verify interface.  */
 #include "fileattr.h"
 
-/* CVS headers.  */
+/* CVS */
+#include "parseinfo.h"
 #include "repos.h"
 
 #include "cvs.h"
@@ -519,12 +520,14 @@ writeattr_proc (Node *node, void *data)
  * callback proc to run a script when fileattrs are updated.
  */
 static int
-postwatch_proc (const char *repository, const char *filter, void *closure)
+postwatch_proc (const char *repository, const char *filter,
+		const char *file, int line, void *closure)
 {
     char *cmdline;
     const char *srepos = Short_Repository (repository);
 
-    TRACE (TRACE_FUNCTION, "postwatch_proc (%s, %s)", repository, filter);
+    TRACE (TRACE_FUNCTION, "postwatch_proc (%s, %s, %s, %d)",
+	   repository, filter, file, line);
 
     /* %c = command name
      * %p = shortrepos
@@ -539,7 +542,7 @@ postwatch_proc (const char *repository, const char *filter, void *closure)
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 	                      false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-	                      filter,
+	                      file, line, filter,
 	                      "c", "s", cvs_cmd_name,
 #ifdef SERVER_SUPPORT
 	                      "R", "s", referrer ? referrer->original : "NONE",
@@ -551,7 +554,8 @@ postwatch_proc (const char *repository, const char *filter, void *closure)
     if (!cmdline || !strlen (cmdline))
     {
 	if (cmdline) free (cmdline);
-	error (0, 0, "postwatch proc resolved to the empty string!");
+	error (0, 0, "%s:%d: postwatch proc resolved to the empty string!",
+	       file, line);
 	return 1;
     }
 

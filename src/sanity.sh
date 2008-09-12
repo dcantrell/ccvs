@@ -20113,8 +20113,7 @@ $CVSROOT_DIRNAME/CVSROOT/loginfo,v  <--  loginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database
 $SPROG commit: loginfo:[0-9]*: no such user variable \${=MYENV}
-$SPROG \[commit aborted\]: Unknown format character in info file ('').
-Info files are the hook files, verifymsg, taginfo, commitinfo, etc\."
+$SPROG \[commit aborted\]: loginfo:[0-9]*: Unknown format character (\`')\."
 	  cd ..
 
 	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
@@ -20301,124 +20300,169 @@ leisure\."
 "${SPROG}"' add: scheduling file `file1'\'' for addition
 '"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
 	  echo "cvs -s OTHER=not-this -s MYENV=env-" >>$HOME/.cvsrc
-	  dotest info-intfmt-6b "${testcvs} -q -s OTHER=value ci -m add-it" \
-"${TESTDIR}/$CVSROOTDIR/third-dir/file1,v  <--  file1
+	  dotest info-intfmt-6b "$testcvs -q -s OTHER=value ci -m add-it" \
+"$TESTDIR/$CVSROOTDIR/third-dir/file1,v  <--  file1
 initial revision: 1\.1
-${SPROG} commit: loginfo:[0-9]*: no such user variable \${=ZEE}
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\."
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\."
 	  echo line0 >>file1
-	  dotest info-intfmt-6c "${testcvs} -q -sOTHER=foo ci -m mod-it" \
+	  dotest info-intfmt-6c "$testcvs -q -sOTHER=foo ci -m mod-it" \
 "$TESTDIR/$CVSROOTDIR/third-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
-${SPROG} commit: loginfo:[0-9]*: no such user variable \${=ZEE}
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\."
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\."
 	  echo line1 >>file1
-	  dotest info-intfmt-7 "${testcvs} -q -s OTHER=value -s ZEE=z ci -m mod-it" \
+	  dotest info-intfmt-7 "$testcvs -q -s OTHER=value -s ZEE=z ci -m mod-it" \
 "$TESTDIR/$CVSROOTDIR/third-dir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\."
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\."
           rm file1
 	  dotest info-intfmt-8 "${testcvs} -q rm -f file1" \
 "${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
-	  dotest info-intfmt-8a "${testcvs} -q ci -m remove-it" \
+	  dotest info-intfmt-8a "$testcvs -q ci -m remove-it" \
 "$TESTDIR/$CVSROOTDIR/third-dir/file1,v  <--  file1
 new revision: delete; previous revision: 1\.3
-${SPROG} commit: loginfo:[0-9]*: no such user variable \${=ZEE}
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\."
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\."
           echo "resurrected file1" >file1
 	  dotest info-8b "$testcvs add file1" \
 "$SPROG add: Re-adding file \`file1' after dead revision 1\.4\.
 $SPROG add: use \`$SPROG commit' to add this file permanently"
-	  dotest info-8c "${testcvs} -q ci -m add-it" \
+	  dotest info-8c "$testcvs -q ci -m add-it" \
 "$TESTDIR/$CVSROOTDIR/third-dir/file1,v  <--  file1
 new revision: 1.5; previous revision: 1\.4
-${SPROG} commit: loginfo:[0-9]*: no such user variable \${=ZEE}
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove '1's from your info file format strings\."
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\.
+$SPROG commit: loginfo:[0-9]*: Using deprecated info format strings\.  Convert your
+scripts to use the new argument format and remove '1's from your info file
+format strings\."
 
 	  cd ..
 	  dotest info-intfmt-9 "cat $TESTDIR/testlog" "xenv-valueyz=${username}=$TESTDIR/$CVSROOTDIR="
@@ -20964,16 +21008,14 @@ all info files after each '%' which doesn't represent a literal percent)
 and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
 individual command lines and scripts to handle the new format at your
 leisure\."
-	  dotest taginfo-6 "${testcvs} -q tag tag1" \
-"${SPROG} tag: warning: taginfo line contains no format strings:
-    \"${TESTDIR}/1/loggit\"
-Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+	  dotest taginfo-6 "$testcvs -q tag tag1" \
+"$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
+Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
 usage is deprecated\.
 T file1"
-	  dotest taginfo-7 "${testcvs} -q tag -b br" \
-"${SPROG} tag: warning: taginfo line contains no format strings:
-    \"${TESTDIR}/1/loggit\"
-Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+	  dotest taginfo-7 "$testcvs -q tag -b br" \
+"$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
+Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
 usage is deprecated\.
 T file1"
 	  dotest taginfo-8 "$testcvs -q update -r br" 'U file1'
@@ -20989,70 +21031,61 @@ all info files after each '%' which doesn't represent a literal percent)
 and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
 individual command lines and scripts to handle the new format at your
 leisure\."
-	  dotest taginfo-10 "${testcvs} -q tag -F -c brtag" \
-"${SPROG} tag: warning: taginfo line contains no format strings:
-    \"${TESTDIR}/1/loggit\"
-Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+	  dotest taginfo-10 "$testcvs -q tag -F -c brtag" \
+"$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
+Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
 usage is deprecated\.
 T file1"
 
-	  dotest_fail taginfo-11 "${testcvs} -q tag rejectme" \
-"${SPROG} tag: warning: taginfo line contains no format strings:
-    \"${TESTDIR}/1/loggit\"
-Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+	  dotest_fail taginfo-11 "$testcvs -q tag rejectme" \
+"$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
+Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
 usage is deprecated\.
-${SPROG} tag: Pre-tag check failed
-${SPROG} \[tag aborted\]: correct the above errors first!"
+$SPROG tag: Pre-tag check failed
+$SPROG \[tag aborted\]: correct the above errors first!"
 
 	  # When we are using taginfo to allow/disallow, it would be
 	  # convenient to be able to use "cvs -n tag" to test whether
 	  # the allow/disallow functionality is working as expected.
-	  dotest taginfo-12 "${testcvs} -nq tag rejectme" \
-"${SPROG} tag: warning: taginfo line contains no format strings:
-    \"${TESTDIR}/1/loggit\"
-Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+	  dotest taginfo-12 "$testcvs -nq tag rejectme" \
+"$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
+Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
 usage is deprecated\.
 T file1"
 
 	  # But when taginfo is used for logging, it is a pain for -n
 	  # to call taginfo, since taginfo doesn't know whether -n was
 	  # specified or not.
-	  dotest taginfo-13 "${testcvs} -nq tag would-be-tag" \
-"${SPROG} tag: warning: taginfo line contains no format strings:
-    \"${TESTDIR}/1/loggit\"
-Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+	  dotest taginfo-13 "$testcvs -nq tag would-be-tag" \
+"$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
+Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
 usage is deprecated\.
 T file1"
 
 	  # Deleting: the cases are basically either the tag existed,
 	  # or it didn't exist.
-	  dotest taginfo-14 "${testcvs} -q tag -d tag1" \
-"${SPROG} tag: warning: taginfo line contains no format strings:
-    \"${TESTDIR}/1/loggit\"
-Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+	  dotest taginfo-14 "$testcvs -q tag -d tag1" \
+"$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
+Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
 usage is deprecated\.
 D file1"
-	  dotest taginfo-15 "${testcvs} -q tag -d tag1" \
-"${SPROG} tag: warning: taginfo line contains no format strings:
-    \"${TESTDIR}/1/loggit\"
-Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+	  dotest taginfo-15 "$testcvs -q tag -d tag1" \
+"$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
+Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
 usage is deprecated\."
 
 	  # Likewise with rtag.
-	  dotest taginfo-16 "${testcvs} -q rtag tag1 first-dir" \
-"${SPROG} rtag: warning: taginfo line contains no format strings:
-    \"${TESTDIR}/1/loggit\"
-Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+	  dotest taginfo-16 "$testcvs -q rtag tag1 first-dir" \
+"$SPROG rtag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
+Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
 usage is deprecated\."
-	  dotest taginfo-17 "${testcvs} -q rtag -d tag1 first-dir" \
-"${SPROG} rtag: warning: taginfo line contains no format strings:
-    \"${TESTDIR}/1/loggit\"
-Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+	  dotest taginfo-17 "$testcvs -q rtag -d tag1 first-dir" \
+"$SPROG rtag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
+Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
 usage is deprecated\."
-	  dotest taginfo-18 "${testcvs} -q rtag -d tag1 first-dir" \
-"${SPROG} rtag: warning: taginfo line contains no format strings:
-    \"${TESTDIR}/1/loggit\"
-Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+	  dotest taginfo-18 "$testcvs -q rtag -d tag1 first-dir" \
+"$SPROG rtag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
+Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
 usage is deprecated\."
 
 	  # The "br" example should be passing 1.1.2 or 1.1.0.2.
@@ -29059,11 +29092,10 @@ $SPROG commit: Rebuilding administrative file database"
 	  fi
 	  echo more stuff >> a-lock
 	  dotest_fail_sort reserved-13b "$testcvs ci -m '' a-lock" \
-"    \"$TESTDIR/lockme\"
-Appending defaults (\" %r/%p %s\"), but please be aware that this usage is
+"Appending defaults (\` %r/%p %s'), but please be aware that this usage is
 $SPROG \[commit aborted\]: correct above errors first!
 $SPROG commit: Pre-commit check failed
-$SPROG commit: warning: commitinfo line contains no format strings:
+$SPROG commit: commitinfo:[0-9]*: warning: commitinfo line contains no format strings\.
 deprecated\.
 fred has file a-lock locked for version  1\.1"
 	  # OK, now test "cvs admin -l" in the case where someone
@@ -29078,9 +29110,8 @@ ${SPROG} admin: ${CVSROOT_DIRNAME}/first-dir/a-lock,v: revision 1\.1 locked by f
 1\.1 unlocked
 done"
 	  dotest reserved-15 "$testcvs -q ci -m success a-lock" \
-"$SPROG commit: warning: commitinfo line contains no format strings:
-    \"$TESTDIR/lockme\"
-Appending defaults (\" %r/%p %s\"), but please be aware that this usage is
+"$SPROG commit: commitinfo:[0-9]*: warning: commitinfo line contains no format strings\.
+Appending defaults (\` %r/%p %s'), but please be aware that this usage is
 deprecated\.
 $CVSROOT_DIRNAME/first-dir/a-lock,v  <--  a-lock
 new revision: 1\.2; previous revision: 1\.1"
@@ -29095,9 +29126,8 @@ new revision: 1\.2; previous revision: 1\.1"
 	  dotest reserved-18 "$testcvs -q update -r br a-lock" 'U a-lock'
 	  echo edit it >>a-lock
 	  dotest reserved-19 "${testcvs} -q ci -m modify a-lock" \
-"$SPROG commit: warning: commitinfo line contains no format strings:
-    \"$TESTDIR/lockme\"
-Appending defaults (\" %r/%p %s\"), but please be aware that this usage is
+"$SPROG commit: commitinfo:[0-9]*: warning: commitinfo line contains no format strings\.
+Appending defaults (\` %r/%p %s'), but please be aware that this usage is
 deprecated\.
 $CVSROOT_DIRNAME/first-dir/a-lock,v  <--  a-lock
 new revision: 1\.2\.2\.1; previous revision: 1\.2"
@@ -29105,10 +29135,9 @@ new revision: 1\.2\.2\.1; previous revision: 1\.2"
 	  # undo commitinfo changes
 	  cd ../CVSROOT
 	  echo '# vanilla commitinfo' >commitinfo
-	  dotest reserved-cleanup-1 "${testcvs} -q ci -m back commitinfo" \
-"$SPROG commit: warning: commitinfo line contains no format strings:
-    \"$TESTDIR/lockme\"
-Appending defaults (\" %r/%p %s\"), but please be aware that this usage is
+	  dotest reserved-cleanup-1 "$testcvs -q ci -m back commitinfo" \
+"$SPROG commit: commitinfo:[0-9]*: warning: commitinfo line contains no format strings\.
+Appending defaults (\` %r/%p %s'), but please be aware that this usage is
 deprecated\.
 $CVSROOT_DIRNAME/CVSROOT/commitinfo,v  <--  commitinfo
 new revision: 1\.3; previous revision: 1\.2

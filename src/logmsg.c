@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2008 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2007 Derek Price,
+ * Portions Copyright (C) 1998-2008 Derek Price,
  *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
@@ -19,7 +19,11 @@
 /* Verify interface.  */
 #include "logmsg.h"
 
-/* CVS Headers.  */
+/* GNULIB */
+#include "quote.h"
+
+/* CVS */
+#include "parseinfo.h"
 #include "repos.h"
 
 #include "cvs.h"
@@ -28,16 +32,8 @@
 
 static int find_type (Node * p, void *closure);
 static int fmt_proc (Node * p, void *closure);
-static int logfile_write (const char *repository, const char *filter,
-			  const char *message, FILE * logfp, List * changes);
 static int logmsg_list_to_args_proc (Node *p, void *closure);
-static int rcsinfo_proc (const char *repository, const char *template,
-                         void *closure );
-static int update_logfile_proc (const char *repository, const char *filter,
-                                void *closure);
 static void setup_tmpfile (FILE * xfp, char *xprefix, List * changes);
-static int verifymsg_proc (const char *repository, const char *script,
-                           void *closure );
 
 static FILE *fp;
 static Ctype type;
@@ -185,8 +181,58 @@ fmt_proc (Node *p, void *closure)
 	(void) fprintf (fp, "%s ", p->key);
 	col += strlen (p->key) + 1;
     }
-    return (0);
+    return 0;
 }
+
+
+
+/*
+ * callback proc for Parse_Info for rcsinfo templates this routine basically
+ * copies the matching template onto the end of the tempfile we are setting
+ * up
+ */
+/* ARGSUSED */
+static int
+rcsinfo_proc (const char *repository, const char *template,
+	      const char *file, int line, void *closure)
+{
+    static char *last_template;
+    FILE *tfp;
+
+    /* nothing to do if the last one included is the same as this one */
+    if (last_template && STREQ (last_template, template))
+	return (0);
+    if (last_template)
+	free (last_template);
+    last_template = xstrdup (template);
+
+    if ((tfp = CVS_FOPEN (template, "r")) != NULL)
+    {
+	char *line = NULL;
+	size_t line_chars_allocated = 0;
+
+	while (getline (&line, &line_chars_allocated, tfp) >= 0)
+	    (void) fputs (line, fp);
+	if (ferror (tfp))
+	    error (0, errno, "%s:%d: warning: cannot read %s",
+		   file, line, quote (template));
+	if (fclose (tfp) < 0)
+	    error (0, errno,
+		   "%s:%d: warning: cannot close %s",
+		   file, line, quote (template));
+	if (line)
+	    free (line);
+	return (0);
+    }
+    else
+    {
+	error (0, errno, "%s:%d: Couldn't open rcsinfo template file %s",
+	       file, line, quote (template));
+	return 1;
+    }
+}
+
+
 
 /*
  * Builds a temporary file using setup_tmpfile() and invokes the user's
@@ -236,10 +282,10 @@ do_editor (const char *dir, char **messagep, const char *repository,
 	    (void) fprintf (fp, "\n");
     }
 
-    if (repository != NULL)
+    if (repository)
 	/* tack templates on if necessary */
-	(void) Parse_Info (CVSROOTADM_RCSINFO, repository, rcsinfo_proc,
-		PIOPT_ALL, NULL);
+	Parse_Info (CVSROOTADM_RCSINFO, repository, rcsinfo_proc,
+		    PIOPT_ALL, NULL);
     else
     {
 	FILE *tfp;
@@ -403,6 +449,141 @@ do_editor (const char *dir, char **messagep, const char *repository,
     free (fname);
 }
 
+
+
+/*  This routine is called by Parse_Info.  It runs the
+ *  message verification script.
+ */
+static int
+verifymsg_proc (const char *repository, const char *script,
+		const char *file, int line, void *closure)
+{
+    char *verifymsg_script;
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+    char *newscript = NULL;
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+    struct verifymsg_proc_data *vpd = closure;
+    const char *srepos = Short_Repository (repository);
+
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+    if (!strchr (script, '%'))
+    {
+	error (0, 0,
+"%s:%d: warning: verifymsg line doesn't contain any format strings.\n"
+"Appending default format string (%s), but please be aware that this usage\n"
+"is deprecated.",
+	       file, line, quote ("%1"));
+	script = newscript = Xasprintf ("%s %%l", script);
+    }
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+
+    /* If we don't already have one, open a temporary file, write the message
+     * to the temp file, and close the file.
+     *
+     * We do this here so that we only create the file when there is a
+     * verifymsg script specified and we only create it once when there is
+     * more than one verifymsg script specified.
+     */
+    if (vpd->fname == NULL)
+    {
+	FILE *fp;
+	if ((fp = cvs_temp_file (&(vpd->fname))) == NULL)
+	    error (1, errno, "%s:%d: cannot create temporary file %s",
+		   file, line, quote (vpd->fname));
+
+	if (vpd->message != NULL)
+	    fputs (vpd->message, fp);
+	if (vpd->message == NULL ||
+	    (vpd->message)[0] == '\0' ||
+	    (vpd->message)[strlen (vpd->message) - 1] != '\n')
+	    putc ('\n', fp);
+	if (fclose (fp) == EOF)
+	    error (1, errno, "%s:%d: error closing temporary file %s",
+		   file, line, quote (vpd->fname));
+
+	if (config->RereadLogAfterVerify == LOGMSG_REREAD_STAT)
+	{
+	    /* Remember the status of the temp file for later */
+	    if (stat (vpd->fname, &(vpd->pre_stbuf)) != 0)
+		error (1, errno, "%s:%d: cannot stat temp file %s",
+		       file, line, quote (vpd->fname));
+
+	    /*
+	     * See if we need to sleep before running the verification
+	     * script to avoid time-stamp races.
+	     */
+	    sleep_past (vpd->pre_stbuf.st_mtime);
+	}
+    } /* if (vpd->fname == NULL) */
+
+    /*
+     * Cast any NULL arguments as appropriate pointers as this is an
+     * stdarg function and we need to be certain the caller gets what
+     * is expected.
+     */
+    verifymsg_script = format_cmdline (
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+                                       false, srepos,
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+                                       file, line, script,
+				       "c", "s", cvs_cmd_name,
+#ifdef SERVER_SUPPORT
+				       "R", "s", referrer
+				       ? referrer->original : "NONE",
+#endif /* SERVER_SUPPORT */
+                                       "p", "s", srepos,
+                                       "r", "s",
+                                       current_parsed_root->directory,
+                                       "l", "s", vpd->fname,
+				       "sV", ",", vpd->changes,
+				       logmsg_list_to_args_proc, (void *) NULL,
+				       (char *) NULL);
+
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+    if (newscript) free (newscript);
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+
+    if (!verifymsg_script || !strlen (verifymsg_script))
+    {
+	if (verifymsg_script) free (verifymsg_script);
+	verifymsg_script = NULL;
+	error (0, 0, "%s:%d: verifymsg proc resolved to the empty string!",
+	       file, line);
+	return 1;
+    }
+
+    run_setup (verifymsg_script);
+
+    free (verifymsg_script);
+
+    /* FIXME - because run_exec can return negative values and Parse_Info adds
+     * the values of each call to this function to get a total error, we are
+     * calling abs on the value of run_exec to ensure two errors do not sum to
+     * zero.
+     *
+     * The only REALLY obnoxious thing about this, I guess, is that a -1 return
+     * code from run_exec can mean we failed to call the process for some
+     * reason and should care about errno or that the process we called
+     * returned -1 and the value of errno is undefined.  In other words,
+     * run_exec should probably be rewritten to have two return codes.  one
+     * which is its own exit status and one which is the child process's.  So
+     * there.  :P
+     *
+     * Once run_exec is returning two error codes, we should probably be
+     * failing here with an error message including errno when we get the
+     * return code which means we care about errno, in case you missed that
+     * little tidbit.
+     *
+     * I do happen to know we just fail for a non-zero value anyway and I
+     * believe the docs actually state that if the verifymsg_proc returns a
+     * "non-zero" value we will fail.
+     */
+    return abs (run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
+			  RUN_NORMAL | RUN_SIGIGNORE));
+}
+
+
+
 /* Runs the user-defined verification script as part of the commit or import 
    process.  This verification is meant to be run whether or not the user 
    included the -m attribute.  unlike the do_editor function, this is 
@@ -540,47 +721,6 @@ do_verify (char **messagep, const char *repository, List *changes)
 
 
 /*
- * callback proc for Parse_Info for rcsinfo templates this routine basically
- * copies the matching template onto the end of the tempfile we are setting
- * up
- */
-/* ARGSUSED */
-static int
-rcsinfo_proc (const char *repository, const char *template, void *closure)
-{
-    static char *last_template;
-    FILE *tfp;
-
-    /* nothing to do if the last one included is the same as this one */
-    if (last_template && STREQ (last_template, template))
-	return (0);
-    if (last_template)
-	free (last_template);
-    last_template = xstrdup (template);
-
-    if ((tfp = CVS_FOPEN (template, "r")) != NULL)
-    {
-	char *line = NULL;
-	size_t line_chars_allocated = 0;
-
-	while (getline (&line, &line_chars_allocated, tfp) >= 0)
-	    (void) fputs (line, fp);
-	if (ferror (tfp))
-	    error (0, errno, "warning: cannot read %s", template);
-	if (fclose (tfp) < 0)
-	    error (0, errno, "warning: cannot close %s", template);
-	if (line)
-	    free (line);
-	return (0);
-    }
-    else
-    {
-	error (0, errno, "Couldn't open rcsinfo template file %s", template);
-	return (1);
-    }
-}
-
-/*
  * Uses setup_tmpfile() to pass the updated message on directly to any
  * logfile programs that have a regular expression match for the checked in
  * directory in the source repository.  The log information is fed into the
@@ -591,6 +731,161 @@ struct ulp_data {
     const char *message;
     List *changes;
 };
+
+
+
+/*
+ * Writes some stuff to the logfile "filter" and returns the status of the
+ * filter program.
+ */
+static int
+logfile_write (const char *repository, const char *filter,
+	       const char *file, int line, const char *message,
+               FILE *logfp, List *changes)
+{
+    char *cmdline;
+    FILE *pipefp;
+    char *cp;
+    int c;
+    int pipestatus;
+    const char *srepos = Short_Repository (repository);
+
+    assert (repository);
+
+    /* The user may specify a format string as part of the filter.
+       Originally, `%s' was the only valid string.  The string that
+       was substituted for it was:
+
+         <repository-name> <file1> <file2> <file3> ...
+
+       Each file was either a new directory/import (T_TITLE), or a
+       added (T_ADDED), modified (T_MODIFIED), or removed (T_REMOVED)
+       file.
+
+       It is desirable to preserve that behavior so lots of commitlog
+       scripts won't die when they get this new code.  At the same
+       time, we'd like to pass other information about the files (like
+       version numbers, statuses, or checkin times).
+
+       The solution is to allow a format string that allows us to
+       specify those other pieces of information.  The format string
+       will be composed of `%' followed by a single format character,
+       or followed by a set of format characters surrounded by `{' and
+       `}' as separators.  The format characters are:
+
+         s = file name
+         a = file action (status)
+	 V = old version number (pre-checkin)
+	 v = new version number (post-checkin)
+
+       For example, valid format strings are:
+
+         %{}
+	 %s
+	 %{s}
+	 %{sVv}
+
+       There's no reason that more items couldn't be added (like
+       modification date or file status [added, modified, updated,
+       etc.]) -- the code modifications would be minimal (logmsg.c
+       (title_proc) and commit.c (check_fileproc)).
+
+       The output will be a string of tokens separated by spaces.  For
+       backwards compatibility, the the first token will be the
+       repository name.  The rest of the tokens will be
+       comma-delimited lists of the information requested in the
+       format string.  For example, if `/u/src/master' is the
+       repository, `%{sVv}' is the format string, and three files
+       (ChangeLog, Makefile, foo.c) were modified, the output might
+       be:
+
+         /u/src/master ChangeLog,1.1,1.2 Makefile,1.3,1.4 foo.c,1.12,1.13
+
+       Why this duplicates the old behavior when the format string is
+       `%s' is left as an exercise for the reader. */
+
+    /* %c = cvs_cmd_name
+     * %p = shortrepos
+     * %r = repository
+     * %{saVv} = file name, file action (status)
+                 old revision (precommit), new revision (postcommit)
+     */
+    /*
+     * Cast any NULL arguments as appropriate pointers as this is an
+     * stdarg function and we need to be certain the caller gets what
+     * is expected.
+     */
+    cmdline = format_cmdline (
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+	                      !config->UseNewInfoFmtStrings, srepos,
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	                      file, line, filter,
+	                      "c", "s", cvs_cmd_name,
+#ifdef SERVER_SUPPORT
+	                      "R", "s", referrer ? referrer->original : "NONE",
+#endif /* SERVER_SUPPORT */
+	                      "p", "s", srepos,
+	                      "r", "s", current_parsed_root->directory,
+	                      "saTVv", ",", changes,
+			      logmsg_list_to_args_proc, (void *) NULL,
+	                      (char *) NULL);
+    if (!cmdline || !strlen (cmdline))
+    {
+	if (cmdline) free (cmdline);
+	error (0, 0, "%s:%d: logmsg proc resolved to the empty string!",
+	       file, line);
+	return 1;
+    }
+
+    if ((pipefp = run_popen (cmdline, "w")) == NULL)
+    {
+	if (!noexec)
+	    error (0, 0, "%s:%d: cannot write entry to log filter: %s",
+		   file, line, quote (cmdline));
+	free (cmdline);
+	return 1;
+    }
+    (void) fprintf (pipefp, "Update of %s\n", repository);
+    (void) fprintf (pipefp, "In directory %s:", hostname);
+    cp = xgetcwd ();
+    if (cp == NULL)
+	fprintf (pipefp, "<cannot get working directory: %s>\n\n",
+		 strerror (errno));
+    else
+    {
+	fprintf (pipefp, "%s\n\n", cp);
+	free (cp);
+    }
+
+    setup_tmpfile (pipefp, "", changes);
+    (void) fprintf (pipefp, "Log Message:\n%s\n", (message) ? message : "");
+    if (logfp)
+    {
+	(void) fprintf (pipefp, "Status:\n");
+	rewind (logfp);
+	while ((c = getc (logfp)) != EOF)
+	    (void) putc (c, pipefp);
+    }
+    free (cmdline);
+    pipestatus = pclose (pipefp);
+    return ((pipestatus == -1) || (pipestatus == 127)) ? 1 : 0;
+}
+
+
+
+/*
+ * callback proc to actually do the logfile write from Update_Logfile
+ */
+static int
+update_logfile_proc (const char *repository, const char *filter,
+		     const char *file, int line, void *closure)
+{
+    struct ulp_data *udp = closure;
+    TRACE (TRACE_FUNCTION, "update_logfile_proc (%s, %s, %s, %d)",
+	   repository, filter, file, line);
+    return logfile_write (repository, filter, file, line,
+			  udp->message, udp->logfp, udp->changes);
+}
 
 
 
@@ -610,22 +905,8 @@ Update_Logfile (const char *repository, const char *xmessage, FILE *xlogfp,
     ud.changes = xchanges;
 
     /* call Parse_Info to do the actual logfile updates */
-    (void) Parse_Info (CVSROOTADM_LOGINFO, repository, update_logfile_proc,
-		       PIOPT_ALL, &ud);
-}
-
-
-
-/*
- * callback proc to actually do the logfile write from Update_Logfile
- */
-static int
-update_logfile_proc (const char *repository, const char *filter, void *closure)
-{
-    struct ulp_data *udp = closure;
-    TRACE (TRACE_FUNCTION, "update_logfile_proc(%s,%s)", repository, filter);
-    return logfile_write (repository, filter, udp->message, udp->logfp,
-                          udp->changes);
+    Parse_Info (CVSROOTADM_LOGINFO, repository, update_logfile_proc,
+		PIOPT_ALL, &ud);
 }
 
 
@@ -764,268 +1045,4 @@ logmsg_list_to_args_proc (Node *p, void *closure)
     /* correct our original pointer into the buff */
     *c->d = d;
     return 0;
-}
-
-
-
-/*
- * Writes some stuff to the logfile "filter" and returns the status of the
- * filter program.
- */
-static int
-logfile_write (const char *repository, const char *filter, const char *message,
-               FILE *logfp, List *changes)
-{
-    char *cmdline;
-    FILE *pipefp;
-    char *cp;
-    int c;
-    int pipestatus;
-    const char *srepos = Short_Repository (repository);
-
-    assert (repository);
-
-    /* The user may specify a format string as part of the filter.
-       Originally, `%s' was the only valid string.  The string that
-       was substituted for it was:
-
-         <repository-name> <file1> <file2> <file3> ...
-
-       Each file was either a new directory/import (T_TITLE), or a
-       added (T_ADDED), modified (T_MODIFIED), or removed (T_REMOVED)
-       file.
-
-       It is desirable to preserve that behavior so lots of commitlog
-       scripts won't die when they get this new code.  At the same
-       time, we'd like to pass other information about the files (like
-       version numbers, statuses, or checkin times).
-
-       The solution is to allow a format string that allows us to
-       specify those other pieces of information.  The format string
-       will be composed of `%' followed by a single format character,
-       or followed by a set of format characters surrounded by `{' and
-       `}' as separators.  The format characters are:
-
-         s = file name
-         a = file action (status)
-	 V = old version number (pre-checkin)
-	 v = new version number (post-checkin)
-
-       For example, valid format strings are:
-
-         %{}
-	 %s
-	 %{s}
-	 %{sVv}
-
-       There's no reason that more items couldn't be added (like
-       modification date or file status [added, modified, updated,
-       etc.]) -- the code modifications would be minimal (logmsg.c
-       (title_proc) and commit.c (check_fileproc)).
-
-       The output will be a string of tokens separated by spaces.  For
-       backwards compatibility, the the first token will be the
-       repository name.  The rest of the tokens will be
-       comma-delimited lists of the information requested in the
-       format string.  For example, if `/u/src/master' is the
-       repository, `%{sVv}' is the format string, and three files
-       (ChangeLog, Makefile, foo.c) were modified, the output might
-       be:
-
-         /u/src/master ChangeLog,1.1,1.2 Makefile,1.3,1.4 foo.c,1.12,1.13
-
-       Why this duplicates the old behavior when the format string is
-       `%s' is left as an exercise for the reader. */
-
-    /* %c = cvs_cmd_name
-     * %p = shortrepos
-     * %r = repository
-     * %{saVv} = file name, file action (status)
-                 old revision (precommit), new revision (postcommit)
-     */
-    /*
-     * Cast any NULL arguments as appropriate pointers as this is an
-     * stdarg function and we need to be certain the caller gets what
-     * is expected.
-     */
-    cmdline = format_cmdline (
-#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-	                      !config->UseNewInfoFmtStrings, srepos,
-#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-	                      filter,
-	                      "c", "s", cvs_cmd_name,
-#ifdef SERVER_SUPPORT
-	                      "R", "s", referrer ? referrer->original : "NONE",
-#endif /* SERVER_SUPPORT */
-	                      "p", "s", srepos,
-	                      "r", "s", current_parsed_root->directory,
-	                      "saTVv", ",", changes,
-			      logmsg_list_to_args_proc, (void *) NULL,
-	                      (char *) NULL);
-    if (!cmdline || !strlen (cmdline))
-    {
-	if (cmdline) free (cmdline);
-	error (0, 0, "logmsg proc resolved to the empty string!");
-	return 1;
-    }
-
-    if ((pipefp = run_popen (cmdline, "w")) == NULL)
-    {
-	if (!noexec)
-	    error (0, 0, "cannot write entry to log filter: %s", cmdline);
-	free (cmdline);
-	return 1;
-    }
-    (void) fprintf (pipefp, "Update of %s\n", repository);
-    (void) fprintf (pipefp, "In directory %s:", hostname);
-    cp = xgetcwd ();
-    if (cp == NULL)
-	fprintf (pipefp, "<cannot get working directory: %s>\n\n",
-		 strerror (errno));
-    else
-    {
-	fprintf (pipefp, "%s\n\n", cp);
-	free (cp);
-    }
-
-    setup_tmpfile (pipefp, "", changes);
-    (void) fprintf (pipefp, "Log Message:\n%s\n", (message) ? message : "");
-    if (logfp)
-    {
-	(void) fprintf (pipefp, "Status:\n");
-	rewind (logfp);
-	while ((c = getc (logfp)) != EOF)
-	    (void) putc (c, pipefp);
-    }
-    free (cmdline);
-    pipestatus = pclose (pipefp);
-    return ((pipestatus == -1) || (pipestatus == 127)) ? 1 : 0;
-}
-
-
-
-/*  This routine is called by Parse_Info.  It runs the
- *  message verification script.
- */
-static int
-verifymsg_proc (const char *repository, const char *script, void *closure)
-{
-    char *verifymsg_script;
-#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-    char *newscript = NULL;
-#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-    struct verifymsg_proc_data *vpd = closure;
-    const char *srepos = Short_Repository (repository);
-
-#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-    if (!strchr (script, '%'))
-    {
-	error (0, 0,
-	       "warning: verifymsg line doesn't contain any format strings:\n"
-               "    \"%s\"\n"
-               "Appending default format string (\" %%l\"), but be aware that this usage is\n"
-               "deprecated.", script);
-	script = newscript = Xasprintf ("%s %%l", script);
-    }
-#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-
-    /* If we don't already have one, open a temporary file, write the message
-     * to the temp file, and close the file.
-     *
-     * We do this here so that we only create the file when there is a
-     * verifymsg script specified and we only create it once when there is
-     * more than one verifymsg script specified.
-     */
-    if (vpd->fname == NULL)
-    {
-	FILE *fp;
-	if ((fp = cvs_temp_file (&(vpd->fname))) == NULL)
-	    error (1, errno, "cannot create temporary file %s", vpd->fname);
-
-	if (vpd->message != NULL)
-	    fputs (vpd->message, fp);
-	if (vpd->message == NULL ||
-	    (vpd->message)[0] == '\0' ||
-	    (vpd->message)[strlen (vpd->message) - 1] != '\n')
-	    putc ('\n', fp);
-	if (fclose (fp) == EOF)
-	    error (1, errno, "%s", vpd->fname);
-
-	if (config->RereadLogAfterVerify == LOGMSG_REREAD_STAT)
-	{
-	    /* Remember the status of the temp file for later */
-	    if (stat (vpd->fname, &(vpd->pre_stbuf)) != 0)
-		error (1, errno, "cannot stat temp file %s", vpd->fname);
-
-	    /*
-	     * See if we need to sleep before running the verification
-	     * script to avoid time-stamp races.
-	     */
-	    sleep_past (vpd->pre_stbuf.st_mtime);
-	}
-    } /* if (vpd->fname == NULL) */
-
-    /*
-     * Cast any NULL arguments as appropriate pointers as this is an
-     * stdarg function and we need to be certain the caller gets what
-     * is expected.
-     */
-    verifymsg_script = format_cmdline (
-#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-                                       false, srepos,
-#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-                                       script,
-				       "c", "s", cvs_cmd_name,
-#ifdef SERVER_SUPPORT
-				       "R", "s", referrer
-				       ? referrer->original : "NONE",
-#endif /* SERVER_SUPPORT */
-                                       "p", "s", srepos,
-                                       "r", "s",
-                                       current_parsed_root->directory,
-                                       "l", "s", vpd->fname,
-				       "sV", ",", vpd->changes,
-				       logmsg_list_to_args_proc, (void *) NULL,
-				       (char *) NULL);
-
-#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-    if (newscript) free (newscript);
-#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-
-    if (!verifymsg_script || !strlen (verifymsg_script))
-    {
-	if (verifymsg_script) free (verifymsg_script);
-	verifymsg_script = NULL;
-	error (0, 0, "verifymsg proc resolved to the empty string!");
-	return 1;
-    }
-
-    run_setup (verifymsg_script);
-
-    free (verifymsg_script);
-
-    /* FIXME - because run_exec can return negative values and Parse_Info adds
-     * the values of each call to this function to get a total error, we are
-     * calling abs on the value of run_exec to ensure two errors do not sum to
-     * zero.
-     *
-     * The only REALLY obnoxious thing about this, I guess, is that a -1 return
-     * code from run_exec can mean we failed to call the process for some
-     * reason and should care about errno or that the process we called
-     * returned -1 and the value of errno is undefined.  In other words,
-     * run_exec should probably be rewritten to have two return codes.  one
-     * which is its own exit status and one which is the child process's.  So
-     * there.  :P
-     *
-     * Once run_exec is returning two error codes, we should probably be
-     * failing here with an error message including errno when we get the
-     * return code which means we care about errno, in case you missed that
-     * little tidbit.
-     *
-     * I do happen to know we just fail for a non-zero value anyway and I
-     * believe the docs actually state that if the verifymsg_proc returns a
-     * "non-zero" value we will fail.
-     */
-    return abs (run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
-			  RUN_NORMAL | RUN_SIGIGNORE));
 }

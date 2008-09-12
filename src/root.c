@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1986-2008 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2007 Derek Price,
+ * Portions Copyright (C) 1998-2008 Derek Price,
  *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
@@ -29,6 +29,7 @@
 #include "quote.h"
 
 /* CVS */
+#include "parseinfo.h"
 #include "repos.h"
 #include "stack.h"
 

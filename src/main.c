@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1986-2008 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2007 Derek Price,
+ * Portions Copyright (C) 1998-2008 Derek Price,
  *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
@@ -22,16 +22,17 @@
 # include <config.h>
 #endif
 
-/* GNULIB Headers.  */
+/* GNULIB */
 #include "closeout.h"
 #include "setenv.h"
 #include "strftime.h"
 #include "xgethostname.h"
 
-/* CVS Headers.  */
+/* CVS */
 #include "command_line_opt.h"
 #include "gpg.h"
 #include "lock.h"
+#include "parseinfo.h"
 #include "sign.h"
 #include "verify.h"
 

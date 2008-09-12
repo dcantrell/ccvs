@@ -1,5 +1,23 @@
 2008-09-12  Derek R. Price  <derek@ximbiot.com>
 
+	* cvs.h [PIOPT_ALL] (CALLPROC, Parse_Info): Move defs and protos to...
+	* parseinfo.h: ...similarly named entities here.
+	* subr.h (format_cmdline_walklist_closure): Store file and line number
+	for error messages.
+	(format_cmdline): Update prototype with file and line number.
+	* admin.c (postadmin_proc), commit.c (precommit_proc), edit.c
+	(notify_proc), fileattr.c (postwatch_proc), logmsg.c (rcsinfo_proc,
+	do_editor, verifymsg_proc, do_verify, Update_Logfile, logfile_write,
+	update_logfile_proc), parseinfo.c (Parse_Info), server.c
+	(prepost_proxy_proc, template_proc, server_template), subr.c
+	(format_cmdline), tag.c (pretag_proc, posttag_proc: Accept file & line
+	number and use in error messages.
+	* sign.c (gen_signature)i, verify.c (verify_signature): Pass dummy file
+	and line to format_cmdline().
+	* checkout.c, history.c, import.c, lock.c, main.c, root.c:
+	#include "parseinfo.h".
+	* sanity.sh: Update to compensate for new error messages.
+
 	* rcs.c (rcsbuf_open): Some cleanup.
 
 	* rcs.c: Move mmap cruft into a library header.

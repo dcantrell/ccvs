@@ -74,6 +74,8 @@ void sleep_past (time_t desttime);
  */
 struct format_cmdline_walklist_closure
 {
+    const char *file;	/* The trigger file being processed.  */
+    int line;		/* The line number in the trigger being processed.  */
     const char *format;	/* the format string the user passed us */
     char **buf;		/* *dest = our NUL terminated and possibly too short
 			 * destination string
@@ -92,11 +94,11 @@ struct format_cmdline_walklist_closure
 };
 char *cmdlinequote (char quotes, char *s);
 char *cmdlineescape (char quotes, char *s);
+char *format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-char *format_cmdline (bool oldway, const char *srepos, const char *format, ...);
-#else /* SUPPORT_OLD_INFO_FMT_STRINGS */
-char *format_cmdline (const char *format, ...);
+		      bool oldway, const char *srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+		      const char *file, int line, const char *format, ...);
 
 /* Many, many CVS calls to xstrdup depend on it to return NULL when its
  * argument is NULL.

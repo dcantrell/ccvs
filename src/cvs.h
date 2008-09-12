@@ -275,9 +275,6 @@ enum mtype
 
 
 
-/* Option flags for Parse_Info() */
-#define PIOPT_ALL 1	/* accept "all" keyword */
-
 extern const char *program_name, *program_path, *cvs_cmd_name;
 extern char *Editor;
 extern int cvsadmin_root;
@@ -316,7 +313,7 @@ extern bool suppress_bases;
 
 
 /* This header needs the LOGMSG_* defns above.  */
-#include "parseinfo.h"
+//#include "parseinfo.h"
 
 /* This structure holds the global configuration data.  */
 extern struct config *config;
@@ -380,11 +377,6 @@ char *format_date_alloc (char *text);
 
 char *entries_time (time_t unixtime);
 time_t unix_time_stamp (const char *file);
-
-typedef	int (*CALLPROC)	(const char *repository, const char *value,
-                         void *closure);
-int Parse_Info (const char *infofile, const char *repository,
-                CALLPROC callproc, int opt, void *closure);
 
 typedef	RETSIGTYPE (*SIGCLEANUPPROC)	(int);
 int SIG_register (int sig, SIGCLEANUPPROC sigcleanup);
