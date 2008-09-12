@@ -47,6 +47,9 @@ NEW FEATURES
 
 BUG FIXES
 
+* Changing keyword substitution mode no longer interferes with conflict
+  tracking (fixes bug #17565).
+
 * Merges of file removals using -j options are a little smarter.
 
 * `cvs add' checks more thoroughly for `CVS' directories in the argument list.

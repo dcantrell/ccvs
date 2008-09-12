@@ -350,10 +350,10 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		 * has changed.  If the sticky tag has changed, we just need
 		 * to re-register the entry
 		 */
-		if (keywords_may_change (aflag, vers))
-		    ret = T_PATCH;
-		else if (vers->ts_conflict)
+		if (vers->ts_conflict)
 		    ret = T_CONFLICT;
+		else if (keywords_may_change (aflag, vers))
+		    ret = T_PATCH;
 		else
 		{
 		    ret = T_UPTODATE;
