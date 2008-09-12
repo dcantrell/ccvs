@@ -3,6 +3,9 @@ Changes since 1.11.23:
 
 BUG FIXES
 
+* Changing keyword substitution mode no longer interferes with conflict
+  tracking (fixes bug #17565).
+
 * Minor documentation improvements.
 
 DEVELOPER ISSUES
