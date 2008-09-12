@@ -1,5 +1,7 @@
 2008-09-12  Derek R. Price  <derek@ximbiot.com>
 
+	* rcs.c: Move mmap cruft into a library header.
+
 	[bug #17565] (Patch from Susanne Bertling <susbert@gnu.org>).
 	* classify.c (Classify_File): Check for conflicts before keywords.
 	* sanity.sh (branches-15): Update to compensate.
