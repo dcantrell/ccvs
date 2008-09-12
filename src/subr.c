@@ -1046,6 +1046,8 @@ cmdlineescape (char quotes, char *s)
  *
  * INPUTS
  *    int oldway	to support old format strings
+ *    char *file	name of the file being processed, for error messages
+ *    int line		line of the file being processed, for error messages
  *    char *srepos	you guessed it
  *    char *format	the format string to parse
  *    ...		NULL terminated data list in the following format:
