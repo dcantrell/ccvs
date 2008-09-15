@@ -1,10 +1,10 @@
 /* fchdir replacement.
    Copyright (C) 2006, 2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 #include <config.h>
 
@@ -79,7 +78,7 @@ ensure_dirs_slot (size_t fd)
 /* Override open() and close(), to keep track of the open file descriptors.  */
 
 int
-close (int fd)
+rpl_close (int fd)
 #undef close
 {
   int retval = close (fd);
@@ -95,7 +94,7 @@ close (int fd)
 }
 
 int
-open (const char *filename, int flags, ...)
+rpl_open (const char *filename, int flags, ...)
 #undef open
 {
   mode_t mode;
@@ -117,6 +116,10 @@ open (const char *filename, int flags, ...)
 
       va_end (arg);
     }
+#if defined GNULIB_OPEN && ((defined _WIN32 || defined __WIN32__) && ! defined __CYGWIN__)
+  if (strcmp (filename, "/dev/null") == 0)
+    filename = "NUL";
+#endif
   fd = open (filename, flags, mode);
   if (fd >= 0)
     {
@@ -136,7 +139,7 @@ open (const char *filename, int flags, ...)
    descriptors.  Needed because there is a function dirfd().  */
 
 int
-closedir (DIR *dp)
+rpl_closedir (DIR *dp)
 #undef closedir
 {
   int fd = dirfd (dp);
@@ -153,7 +156,7 @@ closedir (DIR *dp)
 }
 
 DIR *
-opendir (const char *filename)
+rpl_opendir (const char *filename)
 #undef opendir
 {
   DIR *dp;
@@ -179,7 +182,7 @@ opendir (const char *filename)
 /* Override dup() and dup2(), to keep track of open file descriptors.  */
 
 int
-dup (int oldfd)
+rpl_dup (int oldfd)
 #undef dup
 {
   int newfd = dup (oldfd);
@@ -214,7 +217,7 @@ dup (int oldfd)
 }
 
 int
-dup2 (int oldfd, int newfd)
+rpl_dup2 (int oldfd, int newfd)
 #undef dup2
 {
   int retval = dup2 (oldfd, newfd);

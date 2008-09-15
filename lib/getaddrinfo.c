@@ -1,11 +1,11 @@
 /* Get address information (partial implementation).
-   Copyright (C) 1997, 2001, 2002, 2004, 2005, 2006, 2007 Free Software
+   Copyright (C) 1997, 2001, 2002, 2004, 2005, 2006, 2007, 2008 Free Software
    Foundation, Inc.
    Contributed by Simon Josefsson <simon@josefsson.org>.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
+   the Free Software Foundation; either version 3, or (at your option)
    any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -25,6 +25,9 @@
 # include <netinet/in.h>
 #endif
 
+/* Get inet_ntop.  */
+#include <arpa/inet.h>
+
 /* Get calloc. */
 #include <stdlib.h>
 
@@ -39,8 +42,6 @@
 #include "gettext.h"
 #define _(String) gettext (String)
 #define N_(String) String
-
-#include "inet_ntop.h"
 
 /* BeOS has AF_INET, but not PF_INET.  */
 #ifndef PF_INET
@@ -326,7 +327,7 @@ freeaddrinfo (struct addrinfo *ai)
       cur = ai;
       ai = ai->ai_next;
 
-      if (cur->ai_canonname) free (cur->ai_canonname);
+      free (cur->ai_canonname);
       free (cur);
     }
 }
