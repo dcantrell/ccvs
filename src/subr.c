@@ -32,7 +32,7 @@
 #include "canon-host.h"
 #include "filenamecat.h"
 #include "mkdir-p.h"
-#include "mreadlink.h"
+#include "areadlink.h"
 #include "quote.h"
 #include "savewd.h"
 #include "vasnprintf.h"
@@ -83,7 +83,7 @@ expand_string (char **strptr, size_t *n, size_t newsize)
 char *
 Xreadlink (const char *link, size_t size)
 {
-    char *file = mreadlink_with_size (link, size);
+    char *file = areadlink_with_size (link, size);
 
     if (file == NULL)
 	error (1, errno, "cannot readlink %s", link);

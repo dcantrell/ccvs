@@ -24,10 +24,12 @@
 /* Verify interface.  */
 #include "filesubr.h"
 
+/* SUSv3 */
+#include <stdlib.h>
+
 /* GNULIB */
 #include "lstat.h"
 #include "save-cwd.h"
-#include "setenv.h"
 #include "xsize.h"
 
 /* CVS */

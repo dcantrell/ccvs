@@ -19,10 +19,12 @@
 /* Validate API.  */
 #include "server.h"
 
+/* SUSv3 */
+#include <stdlib.h>
+
 /* GNULIB */
 #include "getnline.h"
 #include "quote.h"
-#include "setenv.h"
 #include "vasnprintf.h"
 #include "wait.h"
 

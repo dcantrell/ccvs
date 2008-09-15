@@ -22,12 +22,14 @@
 /* Verify interface.  */
 #include "rcs.h"
 
+/* SUS */
+#include <unistd.h>
+
 /* GNULIB */
 #include "base64.h"
 
 /* CVS */
 #include "edit.h"
-#include "getpagesize.h"
 #include "gpg.h"
 #include "hardlink.h"
 #ifdef HAVE_MMAP

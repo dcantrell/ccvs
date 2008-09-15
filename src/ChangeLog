@@ -1,5 +1,12 @@
 2008-09-15  Derek R. Price  <derek@ximbiot.com>
 
+	Compensate for GNULIB update.
+	* buffer.h, rcs.c: Assume <unistd.h> instead of "getpagesize.h".
+	* filesubr.c, main.c, server.c: Assume <stdlib.h> in lieu of "setenv.h".
+	* gpg.h: #include "subr.h" to supress a warning.
+	* log.c: Ditto, but for "quote.h".
+	* subr.c: s/mreadlink/areadlink/.
+
 	* client.c (send_repository): More cleanup.
 
 	* add.c, admin.c, classify.c, commit.c, log.c, remove.c, tag.c:

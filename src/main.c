@@ -22,9 +22,11 @@
 # include <config.h>
 #endif
 
+/* SUSv3 */
+#include <stdlib.h>
+
 /* GNULIB */
 #include "closeout.h"
-#include "setenv.h"
 #include "strftime.h"
 #include "xgethostname.h"
 
