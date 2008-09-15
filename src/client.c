@@ -3112,13 +3112,11 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
      * getting set from the -d argument either... ?
      */
     if (!repos)
-    {
         /* Lame error.  I want a real fix but can't stay up to track
            this down right now. */
         error (1, 0, "no repository");
-    }
 
-    if (!update_dir || update_dir[0] == '\0')
+    if (!update_dir || !*update_dir)
 	update_dir = ".";
 
     if (last_repos && STREQ (repos, last_repos)
@@ -3131,7 +3129,7 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
 
     /* Add a directory name to the list of those sent to the
        server. */
-    if (update_dir && *update_dir != '\0' && !STREQ (update_dir, ".")
+    if (!STREQ (update_dir, ".")
 	&& !findnode (dirs_sent_to_server, update_dir))
     {
 	Node *n;
@@ -3152,21 +3150,11 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
 	/* Send the directory name.  I know that this
 	   sort of duplicates code elsewhere, but each
 	   case seems slightly different...  */
-	char buf[1];
 	const char *p = update_dir;
-	while (*p != '\0')
+	while (*p)
 	{
 	    assert (*p != '\012');
-	    if (ISSLASH (*p))
-	    {
-		buf[0] = '/';
-		send_to_server (buf, 1);
-	    }
-	    else
-	    {
-		buf[0] = *p;
-		send_to_server (buf, 1);
-	    }
+	    send_to_server (ISSLASH (*p) ? "/" : p, 1);
 	    ++p;
 	}
     }

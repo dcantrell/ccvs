@@ -1,5 +1,7 @@
 2008-09-15  Derek R. Price  <derek@ximbiot.com>
 
+	* client.c (send_repository): More cleanup.
+
 	* add.c, admin.c, classify.c, commit.c, log.c, remove.c, tag.c:
 	Improve error messages for consitency.
 	* sanity.sh: Update to compensate.
