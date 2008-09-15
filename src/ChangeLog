@@ -1,3 +1,9 @@
+2008-09-15  Derek R. Price  <derek@ximbiot.com>
+
+	* add.c, admin.c, classify.c, commit.c, log.c, remove.c, tag.c:
+	Improve error messages for consitency.
+	* sanity.sh: Update to compensate.
+
 2008-09-12  Derek R. Price  <derek@ximbiot.com>
 
 	* subr.c (format_cmdline): Note new file/line args in header block.

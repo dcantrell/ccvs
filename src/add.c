@@ -35,6 +35,7 @@
 #endif
 
 /* GNULIB headers.  */
+#include "quote.h"
 #include "save-cwd.h"
 
 /* CVS headers.  */
@@ -373,7 +374,8 @@ add (int argc, char **argv)
 		if (vers->ts_user == NULL)
 		{
 		    /* There is no user file either */
-		    error (0, 0, "nothing known about `%s'", finfo.fullname);
+		    error (0, 0, "Nothing known about %s",
+			   quote (finfo.fullname));
 		    err++;
 		}
 		else if (!isdir (finfo.file)

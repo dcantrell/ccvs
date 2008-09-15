@@ -19,6 +19,9 @@
 # include <config.h>
 #endif
 
+/* GNULIB */
+#include "quote.h"
+
 /* CVS */
 #include "ignore.h"
 #include "lock.h"
@@ -825,10 +828,10 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		   finfo->repository);
 
     rcs = vers->srcfile;
-    if (rcs == NULL)
+    if (!rcs)
     {
 	if (!really_quiet)
-	    error (0, 0, "nothing known about %s", finfo->file);
+	    error (0, 0, "Nothing known about %s", quote (finfo->file));
 	status = 1;
 	goto exitfunc;
     }
@@ -1239,6 +1242,6 @@ admin_dirproc (void *callerdat, const char *dir, const char *repos,
                const char *update_dir, List *entries)
 {
     if (!quiet)
-	error (0, 0, "Administrating %s", update_dir);
+	error (0, 0, "Administrating %s", NULL2DOT (update_dir));
     return R_PROCESS;
 }

@@ -24,7 +24,10 @@
 # include <config.h>
 #endif
 
-/* CVS headers.  */
+/* GNULIB */
+#include "quote.h"
+
+/* CVS */
 #include "ignore.h"
 #include "recurse.h"
 #include "wrapper.h"
@@ -191,10 +194,10 @@ remove_fileproc (void *callerdat, struct file_info *finfo)
 	    error (0, 0, "file `%s' still in working directory",
 		   finfo->fullname);
     }
-    else if (vers->vn_user == NULL)
+    else if (!vers->vn_user)
     {
 	if (!quiet)
-	    error (0, 0, "nothing known about `%s'", finfo->fullname);
+	    error (0, 0, "Nothing known about %s", quote (finfo->fullname));
     }
     else if (vers->vn_user[0] == '0' && vers->vn_user[1] == '\0')
     {

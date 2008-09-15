@@ -849,7 +849,7 @@ log_fileproc (void *callerdat, struct file_info *finfo)
 	}
 	
 	if (!really_quiet)
-	    error (0, 0, "nothing known about %s", finfo->file);
+	    error (0, 0, "Nothing known about %s", quote (finfo->file));
 	
 	return 1;
     }

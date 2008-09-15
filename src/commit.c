@@ -255,10 +255,14 @@ find_fileproc (void *callerdat, struct file_info *finfo)
     if (!vers->vn_user)
     {
 	if (!vers->ts_user)
-	    error (0, 0, "nothing known about %s", quote (finfo->fullname));
+	    error (0, 0, "Nothing known about %s", quote (finfo->fullname));
 	else
-	    error (0, 0, "use `%s add' to create an entry for %s",
-		   program_name, quote (finfo->fullname));
+	{
+	    char *cmd = Xasprintf ("%s add", program_name);
+	    error (0, 0, "Use %s to create an entry for %s",
+		   quote_n (0, cmd), quote_n (1, finfo->fullname));
+	    free (cmd);
+	}
 	freevers_ts (&vers);
 	return 1;
     }
@@ -842,7 +846,7 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 
     if (!finfo->repository)
     {
-	error (0, 0, "nothing known about `%s'", finfo->fullname);
+	error (0, 0, "Nothing known about %s", quote (finfo->fullname));
 	return 1;
     }
 
@@ -1152,7 +1156,16 @@ check_fileproc (void *callerdat, struct file_info *finfo)
         }
 
 	case T_UNKNOWN:
-	    error (0, 0, "nothing known about %s", quote (finfo->fullname));
+	    if (!vers->ts_user)
+		error (0, 0, "Nothing known about %s",
+		       quote (finfo->fullname));
+	    else
+	    {
+		char *cmd = Xasprintf ("%s add", program_name);
+		error (0, 0, "Use %s to create an entry for %s",
+		       quote_n (0, cmd), quote_n (1, finfo->fullname));
+		free (cmd);
+	    }
 	    goto out;
 	case T_UPTODATE:
 	    break;
