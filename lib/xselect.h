@@ -10,12 +10,11 @@
 
 /* This file simply performs the include magic necessary for using select */
 
-/* select also requires <sys/types.h>, "xtime.h", and <unistd.h> */
+/* select also requires <sys/time.h>, <sys/types.h>, and <unistd.h> */
 
+/* FIXME: GNULIB doesn't do this.  Is it needed?  */
 #ifdef HAVE_SYS_BSDTYPES_H
 # include <sys/bsdtypes.h>
 #endif
 
-#if HAVE_SYS_SELECT_H
-# include <sys/select.h>
-#endif
+#include <sys/select.h>

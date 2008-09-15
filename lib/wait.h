@@ -14,7 +14,7 @@
 #ifdef HAVE_SYS_WAIT_H
 # include <sys/types.h>		/* For pid_t. */
 # ifdef HAVE_SYS_RESOURCE_H
-#  include "xtime.h"		/* FreeBSD 4.11, at least, needs struct timeval
+#  include <sys/time.h>		/* FreeBSD 4.11, at least, needs struct timeval
 				 * defined before including <sys/resource.h>
 				 */
 #  include <sys/resource.h>	/* for rusage */

@@ -48,18 +48,16 @@
 #include <sys/types.h>
 
 /* A GNULIB replacement for these C99 headers is supplied when any are missing.
- * See the comments in stdbool_.h for its limitations.
+ * See the comments in stdbool.in.h for its limitations.
  */
 #include <stdbool.h>
 #include <stdint.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 /* Ditto for these POSIX.2 headers.  */
 #include <fnmatch.h>
 #include <getopt.h>	/* Has GNU extensions,  */
-
-/* We assume <sys/stat.h> & <unistd.h> because GNULIB does.  */
-#include <sys/stat.h>
-#include <unistd.h>
 
 #if !STDC_HEADERS && HAVE_MEMORY_H
 # include <memory.h>
