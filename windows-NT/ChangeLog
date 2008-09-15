@@ -1,3 +1,7 @@
+2007-09-15  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: Compensate for new GNULIB header file names.
+
 2008-01-27  Mark D. Baushke  <mdb@gnu.org>
 
 	* config.h.in (SSH_DFLT): Add default value.
