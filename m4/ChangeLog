@@ -1,3 +1,27 @@
+2008-09-15  Derek Price  <derek@ximbiot.com>
+
+	Update from GNULIB.
+	* absolute-header.m4, cycle-check.m4, eoverflow.m4, ulonglong.m4:
+	Removed.
+	* environ.m4, errno_h.m4, hash.m4, malloc.m4, open.m4, printf.m4,
+	realloc.m4, same.m4, sigaction.m4, signal_h.m4, signalblocking.m4,
+	strings_h.m4, sys_select_h.m4, threadlib.m4: New files.
+	* alloca.m4, arpa_inet_h.m4, d-type.m4, double-slash-root.m4,
+	extensions.m4, fcntl_h.m4, float_h.m4, fnmatch.m4, fpending.m4,
+	fseeko.m4, ftello.m4, getaddrinfo.m4, getdate.m4, getdelim.m4,
+	getline.m4, getndelim2.m4, getopt.m4, getpagesize.m4, gettext.m4,
+	glob.m4, gnulib-cache.m4, gnulib-common.m4, gnulib-comp.m4,
+	gnulib-tool.m4, iconv.m4, include_next.m4, inet_ntop.m4, intdiv0.m4,
+	intl.m4, intlmacosx.m4, intmax_t.m4, inttypes.m4, lib-link.m4,
+	lib-prefix.m4, lock.m4, longlong.m4, mbchar.m4, mbstate_t.m4, md5.m4,
+	mempcpy.m4, memrchr.m4, mkdir-slash.m4, nanosleep.m4, netinet_in_h.m4,
+	openat.m4, po.m4, printf-posix.m4, regex.m4, rpmatch.m4, setenv.m4,
+	snprintf.m4, socklen.m4, stdint.m4, stdio_h.m4, stdlib_h.m4,
+	strcase.m4, strerror.m4, string_h.m4, strndup.m4, strnlen.m4,
+	strtoimax.m4, strtoumax.m4, sys_socket_h.m4, sys_stat_h.m4, time_h.m4,
+	time_r.m4, uintmax_t.m4, unistd_h.m4, vasnprintf.m4, vasprintf.m4,
+	wctype.m4, wcwidth.m4, wint_t.m4: Updated.
+
 2007-08-26  Derek Price  <derek@ximbiot.com>
 
 	* getdelim.m4, getline.m4, stdio_h.m4: Update from GNULIB.

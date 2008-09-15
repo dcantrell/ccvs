@@ -1,12 +1,12 @@
-#serial 22
+#serial 25
 
 dnl From Jim Meyering.
 dnl Check for the nanosleep function.
 dnl If not found, use the supplied replacement.
 dnl
 
-# Copyright (C) 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2007 Free
-# Software Foundation, Inc.
+# Copyright (C) 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2007, 2008
+# Free Software Foundation, Inc.
 
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -92,7 +92,7 @@ AC_DEFUN([gl_FUNC_NANOSLEEP],
     REPLACE_NANOSLEEP=1
     if test "$gl_cv_func_nanosleep" = 'no (mishandles large arguments)'; then
       AC_DEFINE([HAVE_BUG_BIG_NANOSLEEP], 1,
-	[Define to 1 if nanosleep mishandle large arguments.])
+	[Define to 1 if nanosleep mishandles large arguments.])
       for ac_lib in $LIB_CLOCK_GETTIME; do
 	case " $LIB_NANOSLEEP " in
 	*" $ac_lib "*) ;;
@@ -111,6 +111,6 @@ AC_DEFUN([gl_FUNC_NANOSLEEP],
 # Prerequisites of lib/nanosleep.c.
 AC_DEFUN([gl_PREREQ_NANOSLEEP],
 [
-  AC_CHECK_FUNCS_ONCE(siginterrupt)
   AC_CHECK_HEADERS_ONCE(sys/select.h)
+  gl_PREREQ_SIG_HANDLER_H
 ])
