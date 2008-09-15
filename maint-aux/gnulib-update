@@ -111,7 +111,7 @@ else
 fi
 
 # Extract the names of the files we imported.
-sed -n '/^gl_MODULES/{s/^gl_MODULES(\[\(.*\)\])$/\1/;p;}' \
+sed -n '/^gl_MODULES/,/^[^ ])/{/^ /p;}' \
     <m4/gnulib-cache.m4 >maint-aux/gnulib-modules.txt
 rm -f maint-aux/gnulib-modules.last
 touch maint-aux/gnulib-modules.last

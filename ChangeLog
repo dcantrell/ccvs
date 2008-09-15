@@ -1,3 +1,11 @@
+2008-09-15  Derek Price  <derek@ximbiot.com>
+
+	* HACKING: Note new GNULIB replacement headers.
+	* configure.in: s/gl_AC_TYPE_LONG_LONG/AC_TYPE_LONG_LONG_INT/.
+	* build-aux/config.rpath: Updated form GNULIB.
+	* maint-aux/gnulib-update: Update for new gnulib-tool behavior.
+	* maint-aux/gnulib-filelist.txt: Updated via gnulib-update.
+
 2008-09-12  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note fix for bug #17565.
