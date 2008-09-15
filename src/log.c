@@ -21,15 +21,16 @@
 # include <config.h> 
 #endif
 
-/* ANSI C Headers.  */
+/* SUSv3  */
 #include <assert.h>
 
-/* GNULIB Headers.  */
+/* GNULIB */
 #include "base64.h"
 
-/* CVS Headers.  */
+/* CVS */
 #include "gpg.h"
 #include "ignore.h"
+#include "quote.h"
 #include "recurse.h"
 #include "wrapper.h"
 

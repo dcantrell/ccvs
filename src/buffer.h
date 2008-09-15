@@ -17,16 +17,14 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-/* ANSI headers.  */
+/* ANSI */
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <unistd.h>
 
-/* GNULIB headers.  */
-#include "getpagesize.h"
-
-/* CVS headers.  */
+/* CVS */
 #include "root.h"
 
 

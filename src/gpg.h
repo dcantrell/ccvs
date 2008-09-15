@@ -27,6 +27,7 @@
 
 /* CVS Headers.  */
 #include "buffer.h"
+#include "subr.h"
 
 
 
