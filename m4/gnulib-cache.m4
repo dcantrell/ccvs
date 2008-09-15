@@ -1,4 +1,4 @@
-# Copyright (C) 2004-2007 Free Software Foundation, Inc.
+# Copyright (C) 2002-2008 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -15,11 +15,82 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libcvs --source-base=lib --m4-base=m4 --doc-base=doc --aux-dir=build-aux --no-libtool --macro-prefix=gl atexit base64 canon-host canonicalize closeout crypto/md5 dirname dup2 error exit exitfail extensions fnmatch fnmatch-posix fseeko ftello ftruncate getdate gethostname getline getlogin_r getndelim2 getnline getopt getpagesize getpass-gnu gettext gettime gettimeofday glob inttypes lstat malloc mbsstr memmove minmax mkdir mkdir-p mkstemp mktime mreadlink-with-size nanosleep pathmax quotearg readlink realloc regex rename save-cwd setenv stat-macros stdbool stdint strcase strdup strerror strftime strtoul strtoumax time_r timespec tzset unlocked-io vasnprintf vasprintf xalloc-die xgethostname xsize yesno
+#   gnulib-tool --import --dir=. --lib=libcvs --source-base=lib --m4-base=m4 --doc-base=doc --aux-dir=build-aux --no-libtool --macro-prefix=gl areadlink-with-size atexit base64 canon-host canonicalize closeout crypto/md5 dirname dup2 error exit exitfail extensions fnmatch fnmatch-posix fseeko ftello ftruncate getdate gethostname getline getlogin_r getndelim2 getnline getopt getpagesize getpass-gnu gettext gettime gettimeofday glob inttypes longlong lstat malloc mbsstr memmove minmax mkdir mkdir-p mkstemp mktime nanosleep pathmax quotearg readlink realloc regex rename save-cwd setenv stat-macros stdbool stdint strcase strdup strerror strftime strtoul strtoumax time_r timespec tzset unlocked-io vasnprintf vasprintf xalloc-die xgethostname xsize yesno
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
-gl_MODULES([atexit base64 canon-host canonicalize closeout crypto/md5 dirname dup2 error exit exitfail extensions fnmatch fnmatch-posix fseeko ftello ftruncate getdate gethostname getline getlogin_r getndelim2 getnline getopt getpagesize getpass-gnu gettext gettime gettimeofday glob inttypes lstat malloc mbsstr memmove minmax mkdir mkdir-p mkstemp mktime mreadlink-with-size nanosleep pathmax quotearg readlink realloc regex rename save-cwd setenv stat-macros stdbool stdint strcase strdup strerror strftime strtoul strtoumax time_r timespec tzset unlocked-io vasnprintf vasprintf xalloc-die xgethostname xsize yesno])
+gl_MODULES([
+  areadlink-with-size
+  atexit
+  base64
+  canon-host
+  canonicalize
+  closeout
+  crypto/md5
+  dirname
+  dup2
+  error
+  exit
+  exitfail
+  extensions
+  fnmatch
+  fnmatch-posix
+  fseeko
+  ftello
+  ftruncate
+  getdate
+  gethostname
+  getline
+  getlogin_r
+  getndelim2
+  getnline
+  getopt
+  getpagesize
+  getpass-gnu
+  gettext
+  gettime
+  gettimeofday
+  glob
+  inttypes
+  longlong
+  lstat
+  malloc
+  mbsstr
+  memmove
+  minmax
+  mkdir
+  mkdir-p
+  mkstemp
+  mktime
+  nanosleep
+  pathmax
+  quotearg
+  readlink
+  realloc
+  regex
+  rename
+  save-cwd
+  setenv
+  stat-macros
+  stdbool
+  stdint
+  strcase
+  strdup
+  strerror
+  strftime
+  strtoul
+  strtoumax
+  time_r
+  timespec
+  tzset
+  unlocked-io
+  vasnprintf
+  vasprintf
+  xalloc-die
+  xgethostname
+  xsize
+  yesno
+])
 gl_AVOID([])
 gl_SOURCE_BASE([lib])
 gl_M4_BASE([m4])
