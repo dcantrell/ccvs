@@ -19,7 +19,10 @@
 /* Verify interface.  */
 #include "classify.h"
 
-/* CVS Headers.  */
+/* GNULIB */
+#include "quote.h"
+
+/* CVS */
 #include "no_diff.h"
 
 #include "cvs.h"
@@ -118,8 +121,8 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		   is what I would expect.  */
 		if (!force_tag_match || !(vers->tag || vers->date))
 		    if (!really_quiet)
-			error (0, 0, "nothing known about `%s'",
-			       finfo->fullname);
+			error (0, 0, "Nothing known about %s",
+			       quote (finfo->fullname));
 		ret = T_UNKNOWN;
 	    }
 	    else
@@ -132,8 +135,12 @@ Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
 		   is what I would expect.  */
 		if (!force_tag_match || !(vers->tag || vers->date))
 		    if (!really_quiet)
-			error (0, 0, "use `%s add' to create an entry for `%s'",
-			       program_name, finfo->fullname);
+		    {
+			char *cmd = Xasprintf ("%s add", program_name);
+			error (0, 0, "Use %s to create an entry for %s",
+			       quote_n (0, cmd), quote_n (1, finfo->fullname));
+			free (cmd);
+		    }
 		ret = T_UNKNOWN;
 	    }
 	}

@@ -628,10 +628,10 @@ check_fileproc (void *callerdat, struct file_info *finfo)
     p->key = xstrdup (finfo->file);
     p->type = UPDATE;
     p->delproc = tag_delproc;
-    if (vers->srcfile == NULL)
+    if (!vers->srcfile)
     {
         if (!really_quiet)
-	    error (0, 0, "nothing known about %s", finfo->file);
+	    error (0, 0, "Nothing known about %s", quote (finfo->file));
 	freevers_ts (&vers);
 	freenode (p);
 	return 1;

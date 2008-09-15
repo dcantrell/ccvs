@@ -3515,21 +3515,21 @@ Directory $CVSROOT_DIRNAME/first-dir/sdir added to the repository"
 	  echo ssfile >ssfile
 
 	  # Trying to commit it without a "cvs add" should be an error.
-	  # The "use `cvs add' to create an entry" message is the one
+	  # The "Use `cvs add' to create an entry" message is the one
 	  # that I consider to be more correct, but local cvs prints the
-	  # "nothing known" message and noone has gotten around to fixing it.
-	  dotest_fail basica-notadded "${testcvs} -q ci ssfile" \
-"${CPROG} commit: use .${CPROG} add. to create an entry for \`ssfile'
-${CPROG}"' \[commit aborted\]: correct above errors first!' \
-"${CPROG}"' commit: nothing known about `ssfile'\''
-'"${CPROG}"' \[commit aborted\]: correct above errors first!'
+	  # "Nothing known" message and noone has gotten around to fixing it.
+	  dotest_fail basica-notadded "$testcvs -q ci ssfile" \
+"$CPROG commit: Use \`$CPROG add' to create an entry for \`ssfile'
+$CPROG \[commit aborted\]: correct above errors first!" \
+"$CPROG commit: Nothing known about \`ssfile'
+$CPROG \[commit aborted\]: correct above errors first!"
 
 	  dotest basica-4 "${testcvs} add ssfile" \
 "${SPROG}"' add: scheduling file `ssfile'\'' for addition
 '"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
-	  dotest_fail basica-4a "${testcvs} tag tag0 ssfile" \
-"${SPROG} tag: nothing known about ssfile
-${SPROG} "'\[tag aborted\]: correct the above errors first!'
+	  dotest_fail basica-4a "$testcvs tag tag0 ssfile" \
+"$SPROG tag: Nothing known about \`ssfile'
+$SPROG \[tag aborted\]: correct the above errors first!"
 	  cd ../..
 
 	  dotest basica-5 "${testcvs} -q ci -m add-it" \
@@ -3568,9 +3568,9 @@ ${SPROG} diff: invalid context length argument"
 	  dotest basica-7 "${testcvs} -q ci -m modify-it" \
 "$CVSROOT_DIRNAME/first-dir/sdir/ssdir/ssfile,v  <--  sdir/ssdir/ssfile
 new revision: 1\.2; previous revision: 1\.1"
-	  dotest_fail basica-nonexist "${testcvs} -q ci nonexist" \
-"${CPROG}"' commit: nothing known about `nonexist'\''
-'"${CPROG}"' \[commit aborted\]: correct above errors first!'
+	  dotest_fail basica-nonexist "$testcvs -q ci nonexist" \
+"$CPROG commit: Nothing known about \`nonexist'
+$CPROG \[commit aborted\]: correct above errors first!"
 	  dotest basica-8 "${testcvs} -q update ." ''
 
 	  # Test the -f option to ci
@@ -3817,8 +3817,8 @@ Directory ${CVSROOT_DIRNAME}/first-dir/sdir2 added to the repository"
 	  dotest basicb-2a10 "${testcvs} -n add sfile1" \
 "${SPROG} add: scheduling file .sfile1. for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest basicb-2a11 "${testcvs} status sfile1" \
-"${SPROG} status: use \`${SPROG} add' to create an entry for \`sfile1'
+	  dotest basicb-2a11 "$testcvs status sfile1" \
+"$SPROG status: Use \`$SPROG add' to create an entry for \`sfile1'
 ===================================================================
 File: sfile1           	Status: Unknown
 
@@ -13776,7 +13776,7 @@ Are you sure you want to release (and delete) directory .dirmodule.: "
 	  # (Dec 95).  Probably the exit status should be nonzero,
 	  # however.
 	  dotest modules-150g1 "$testcvs co dirmodule/nonexist" \
-"$SPROG checkout: nothing known about \`dirmodule/nonexist'"
+"$SPROG checkout: Nothing known about \`dirmodule/nonexist'"
 	  # We tolerate the creation of the dirmodule directory, since that
 	  # is what CVS does, not because we view that as preferable to not
 	  # creating it.
@@ -14599,13 +14599,13 @@ Are you sure you want to release (and delete) directory .dirmodule.: "
 	  # however.
 	  if $remote; then
 	    dotest modules5-22r "$testcvs co dirmodule/nonexist" \
-"$SPROG checkout: nothing known about \`dirmodule/nonexist'
+"$SPROG checkout: Nothing known about \`dirmodule/nonexist'
 $SPROG checkout: Executing ..$CVSROOT_DIRNAME/checkout\.sh. .dirmodule..
 checkout script invoked in $TMPDIR/cvs-serv[0-9a-z]*
 args: dirmodule"
 	  else
 	    dotest modules5-22 "$testcvs co dirmodule/nonexist" \
-"$SPROG checkout: nothing known about \`dirmodule/nonexist'
+"$SPROG checkout: Nothing known about \`dirmodule/nonexist'
 $SPROG checkout: Executing ..$CVSROOT_DIRNAME/checkout\.sh. .dirmodule..
 checkout script invoked in $TESTDIR/1
 args: dirmodule"
@@ -14751,13 +14751,13 @@ Are you sure you want to release (and delete) directory .mydir.: "
 	  # however.
 	  if $remote; then
 	    dotest modules5-42r "$testcvs co -d mydir dirmodule/nonexist" \
-"$SPROG checkout: nothing known about \`mydir/nonexist'
+"$SPROG checkout: Nothing known about \`mydir/nonexist'
 $SPROG checkout: Executing ..$CVSROOT_DIRNAME/checkout\.sh. .mydir..
 checkout script invoked in $TMPDIR/cvs-serv[0-9a-z]*
 args: mydir"
 	  else
 	    dotest modules5-42 "$testcvs co -d mydir dirmodule/nonexist" \
-"$SPROG checkout: nothing known about \`mydir/nonexist'
+"$SPROG checkout: Nothing known about \`mydir/nonexist'
 $SPROG checkout: Executing ..$CVSROOT_DIRNAME/checkout\.sh. .mydir..
 checkout script invoked in $TESTDIR/1
 args: mydir"
@@ -17373,11 +17373,11 @@ initial revision: 1\.1"
 	  dotest errmsg2-8 "${testcvs} add first-dir/sdir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir/sdir added to the repository"
 	  # while we're here... check commit with no CVS directory
-	  dotest_fail errmsg2-8a "${testcvs} -q ci first-dir nonexistant" \
-"${CPROG} commit: nothing known about .nonexistant'
-${CPROG} \[commit aborted\]: correct above errors first!"
+	  dotest_fail errmsg2-8a "$testcvs -q ci first-dir nonexistant" \
+"$CPROG commit: Nothing known about \`nonexistant'
+$CPROG \[commit aborted\]: correct above errors first!"
 	  dotest_fail errmsg2-8b "$testcvs -q ci nonexistant first-dir" \
-"$CPROG commit: nothing known about .nonexistant'
+"$CPROG commit: Nothing known about \`nonexistant'
 $CPROG \[commit aborted\]: correct above errors first!"
 	  dotest errmsg2-8c "$testcvs -q ci first-dir"
 
@@ -22190,15 +22190,15 @@ ${log_trailer}"
 	  # The user might not realize that "-r" must not take a space.
 	  # In the error message, HEAD is a file name, not a tag name (which
 	  # might be confusing itself).
-	  dotest_fail log-14b "${testcvs} log -r HEAD file1" \
-"${SPROG} log: nothing known about HEAD
-${log_header1}
-${log_tags1}
-${log_keyword}
+	  dotest_fail log-14b "$testcvs log -r HEAD file1" \
+"$SPROG log: Nothing known about \`HEAD'
+$log_header1
+$log_tags1
+$log_keyword
 total revisions: 5;	selected revisions: 1
 description:
-${log_rev3}
-${log_trailer}"
+$log_rev3
+$log_trailer"
 
 #	  Check that unusual syntax works correctly.
 
@@ -28000,10 +28000,10 @@ EOF
 "${CPROG} admin: the -i option to admin is not supported
 ${CPROG} admin: run add or import to create an RCS file
 ${CPROG} \[admin aborted\]: specify ${CPROG} -H admin for usage information"
-	  dotest_fail admin-4 "${testcvs} -q log file1" \
-"${SPROG} log: nothing known about file1"
+	  dotest_fail admin-4 "$testcvs -q log file1" \
+"$SPROG log: Nothing known about \`file1'"
 	  dotest_fail admin-4a "${testcvs} -q admin file1" \
-"${SPROG} admin: nothing known about file1"
+"$SPROG admin: Nothing known about \`file1'"
 
 	  # Set up some files, file2 a plain one and file1 with a revision
 	  # on a branch.
@@ -30400,7 +30400,7 @@ ${log_keyid}add
 	  # client Entries match.
 	  if $client_sensitive && $server_sensitive; then
 	    dotest recase-8sscs "$testcvs status fIlE" \
-"$SPROG status: nothing known about \`fIlE'
+"$SPROG status: Nothing known about \`fIlE'
 ===================================================================
 File: no file fIlE		Status: Unknown
 
@@ -30622,7 +30622,7 @@ ${log_keyid}recase
 
 	  if $client_sensitive && $server_sensitive; then
 	    dotest recase-19sscs "$testcvs status fIlE" \
-"$SPROG status: nothing known about \`fIlE'
+"$SPROG status: Nothing known about \`fIlE'
 ===================================================================
 File: no file fIlE		Status: Unknown
 
