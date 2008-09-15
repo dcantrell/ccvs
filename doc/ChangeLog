@@ -1,3 +1,7 @@
+2008-09-15  Derek Price  <derek@ximbiot.com>
+
+	* getdate.texi: Updated from GNULIB.
+
 2008-03-29  Larry Jones  <lawrence.jones@siemens.com>
 
 	* cvs.texinfo (import options): Add -d.
