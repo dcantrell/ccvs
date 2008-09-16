@@ -1711,8 +1711,8 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
 	if (STREQ (xvers_ts->options, "-V4"))
 	    xvers_ts->options[0] = '\0';
 
-	Register (finfo, xvers_ts->vn_rcs, xvers_ts->ts_user, xvers_ts->options,
-		  xvers_ts->tag, xvers_ts->date, NULL);
+	Register (finfo, xvers_ts->vn_rcs, xvers_ts->ts_user,
+		  xvers_ts->options, xvers_ts->tag, xvers_ts->date, NULL);
 
 	if (stat (finfo->file, file_info) < 0)
 	    error (1, errno, "could not stat %s", finfo->file);
