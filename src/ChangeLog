@@ -1,5 +1,7 @@
 2008-09-16  Derek R. Price  <derek@ximbiot.com>
 
+	* update.c (patch_file): Repaginate.
+
 	* diff.c (diff): Return real errors as 2 or more, like GNU diff.
 	(diff_filesdoneproc, diff_dirleaveproc): No longer needed.
 
