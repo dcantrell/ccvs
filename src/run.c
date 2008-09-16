@@ -19,10 +19,13 @@
 /* Verify interface.  */
 #include "run.h"
 
-/* GNULIB headers.  */
+/* Standards */
+#include <signal.h>
+
+/* GNULIB */
 #include "wait.h"
 
-/* CVS headers.  */
+/* CVS */
 #include "cvs.h"
 
 
@@ -158,19 +161,8 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
     int rerrno = 0;
     int pid, w;
 
-#ifdef POSIX_SIGNALS
     sigset_t sigset_mask, sigset_omask;
     struct sigaction act, iact, qact;
-
-#else
-#ifdef BSD_SIGNALS
-    int mask;
-    struct sigvec vec, ivec, qvec;
-
-#else
-    RETSIGTYPE (*istat) (), (*qstat) ();
-#endif
-#endif
 
     if (trace)
     {
@@ -286,7 +278,6 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
     }
 
     /* the parent.  Ignore some signals for now */
-#ifdef POSIX_SIGNALS
     if (flags & RUN_SIGIGNORE)
     {
 	act.sa_handler = SIG_IGN;
@@ -302,34 +293,10 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 	(void) sigaddset (&sigset_mask, SIGQUIT);
 	(void) sigprocmask (SIG_SETMASK, &sigset_mask, &sigset_omask);
     }
-#else
-#ifdef BSD_SIGNALS
-    if (flags & RUN_SIGIGNORE)
-    {
-	memset (&vec, 0, sizeof vec);
-	vec.sv_handler = SIG_IGN;
-	(void) sigvec (SIGINT, &vec, &ivec);
-	(void) sigvec (SIGQUIT, &vec, &qvec);
-    }
-    else
-	mask = sigblock (sigmask (SIGINT) | sigmask (SIGQUIT));
-#else
-    istat = signal (SIGINT, SIG_IGN);
-    qstat = signal (SIGQUIT, SIG_IGN);
-#endif
-#endif
 
     /* wait for our process to die and munge return status */
-#ifdef POSIX_SIGNALS
     while ((w = waitpid (pid, &status, 0)) == -1 && errno == EINTR)
 	;
-#else
-    while ((w = wait (&status)) != pid)
-    {
-	if (w == -1 && errno != EINTR)
-	    break;
-    }
-#endif
 
     if (w == -1)
     {
@@ -352,7 +319,6 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 #endif /* VMS */
 
     /* restore the signals */
-#ifdef POSIX_SIGNALS
     if (flags & RUN_SIGIGNORE)
     {
 	(void) sigaction (SIGINT, &iact, NULL);
@@ -360,20 +326,6 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
     }
     else
 	(void) sigprocmask (SIG_SETMASK, &sigset_omask, NULL);
-#else
-#ifdef BSD_SIGNALS
-    if (flags & RUN_SIGIGNORE)
-    {
-	(void) sigvec (SIGINT, &ivec, NULL);
-	(void) sigvec (SIGQUIT, &qvec, NULL);
-    }
-    else
-	(void) sigsetmask (mask);
-#else
-    (void) signal (SIGINT, istat);
-    (void) signal (SIGQUIT, qstat);
-#endif
-#endif
 
     /* cleanup the open file descriptors */
   out:
