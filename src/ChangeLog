@@ -1,5 +1,7 @@
 2008-09-16  Derek R. Price  <derek@ximbiot.com>
 
+	* client.c (arg_should_not_be_sent_to_server): Avoid memory leak.
+
 	* client.c (arg_should_not_be_sent_to_server): Simplify.
 	* subr.c (update_dir_name): New function.
 	* subr.h (update_dir_name): Prototype for same.
