@@ -1,3 +1,7 @@
+2008-09-16  Derek R. Price  <derek@ximbiot.com>
+
+	* run.c: Assume POSIX signal handling, via GNULIB.
+
 2008-09-15  Derek R. Price  <derek@ximbiot.com>
 
 	Compensate for GNULIB update.
