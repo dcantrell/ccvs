@@ -1,3 +1,8 @@
+2008-09-16  Derek Price  <derek@ximbiot.com>
+
+	* lib/system.h: Remove signal detection.
+	* lib/sighandle.c: Assume POSIX signal semantics via GNULIB.
+
 2008-09-15  Derek Price  <derek@ximbiot.com>
 
 	* .cvsignore: Ignore generated files.
