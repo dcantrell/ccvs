@@ -19,11 +19,14 @@
 #ifndef ENTRIES_H
 #define ENTRIES_H
 
-/* ANSI C */
+/* Standards */
 #include <stdbool.h>
 
 /* CVS */
 #include "hash.h"
+#include "rcs.h"
+
+
 
 /* The type of an entnode.  */
 enum ent_type
@@ -54,7 +57,7 @@ void Entries_Close (List *entries, const char *update_dir);
 List *Entries_Open_Dir (int aflag, const char *update_dir, const char *dir);
 List *Entries_Open (int aflag, const char *update_dir);
 
-void Register (List *list, const char *fname, const char *vn,
+void Register (const struct file_info *finfo, const char *vn,
 	       const char *ts, const char *options, const char *tag,
 	       const char *date, const char *ts_conflict);
 

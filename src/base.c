@@ -23,8 +23,11 @@
 /* Verify interface.  */
 #include "base.h"
 
-/* Standard headers.  */
+/* Standards  */
 #include <assert.h>
+
+/* GNULIB */
+#include "quote.h"
 
 /* CVS headers.  */
 #include "difflib.h"
@@ -350,8 +353,7 @@ translate_exists (const char *exists)
  * accidentally overwriting a user's changes.
  */
 bool
-validate_change (enum update_existing existp, const char *filename,
-		 const char *fullname)
+validate_change (enum update_existing existp, const struct file_info *finfo)
 {
     /* Note that checking this separately from writing the file is
        a race condition: if the existence or lack thereof of the
@@ -362,11 +364,12 @@ validate_change (enum update_existing existp, const char *filename,
        does the right thing, and (c) it isn't clear this needs to
        work.  */
     if (existp == UPDATE_ENTRIES_EXISTING
-	&& !isfile (filename))
+	&& !isfile (finfo->file))
 	/* Emit a warning and update the file anyway.  */
-	error (0, 0, "warning: %s unexpectedly disappeared", fullname);
+	error (0, 0, "warning: %s unexpectedly disappeared",
+	       quote (finfo->fullname));
     else if (existp == UPDATE_ENTRIES_NEW
-	&& isfile (filename))
+	&& isfile (finfo->file))
     {
 	/* This error might be confusing; it isn't really clear to
 	   the user what to do about it.  Keep in mind that it has
@@ -387,7 +390,8 @@ validate_change (enum update_existing existp, const char *filename,
 
 	   I hope the above paragraph makes it clear that making this
 	   clearer is not a one-line fix.  */
-	error (0, 0, "move away `%s'; it is in the way", fullname);
+	error (0, 0, "move away %s; it is in the way",
+	       quote (finfo->fullname));
 
 	/* The Mode, Mod-time, and Checksum responses should not carry
 	 * over to a subsequent Created (or whatever) response, even
@@ -396,7 +400,7 @@ validate_change (enum update_existing existp, const char *filename,
 	if (!really_quiet)
 	{
 	    cvs_output ("C ", 0);
-	    cvs_output (fullname, 0);
+	    cvs_output (finfo->fullname, 0);
 	    cvs_output ("\n", 1);
 	}
 	return false;
@@ -422,8 +426,7 @@ ibase_copy (struct file_info *finfo, const char *rev, const char *flags,
     if (!server_active /* The server still doesn't stay perfectly in sync with
 			* the client workspace.
 			*/
-	&& !validate_change (translate_exists (flags), finfo->file,
-			     finfo->fullname))
+	&& !validate_change (translate_exists (flags), finfo))
 	exit (EXIT_FAILURE);
 
     if (noexec)
@@ -569,7 +572,7 @@ base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
 #endif
 
     if (CVS_UNLINK (f1) < 0)
-	error (0, errno, "unable to remove `%s'", f1);
+	error (0, errno, "unable to remove %s", quote (f1));
     /* Using a base file instead of a temp file here and not deleting it is an
      * optimization since, for instance, on merge from 1.1 to 1.4 with local
      * changes, the client is going to want to leave base 1.4 and delete base
@@ -579,9 +582,9 @@ base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
     {
 	char *sigfile = Xasprintf ("%s.sig", f2);
 	if (CVS_UNLINK (f2) < 0)
-	    error (0, errno, "unable to remove `%s'", f2);
+	    error (0, errno, "unable to remove %s", quote (f2));
 	if (CVS_UNLINK (sigfile) < 0 && !existence_error (errno))
-	    error (0, errno, "unable to remove `%s'", sigfile);
+	    error (0, errno, "unable to remove %s", quote (sigfile));
 	free (sigfile);
     }
     free (f1);
@@ -594,7 +597,8 @@ base_merge (RCSNode *rcs, struct file_info *finfo, const char *ptag,
 
 /* Merge revisions REV1 and REV2. */
 int
-base_diff (struct file_info *finfo, int diff_argc, char *const *diff_argv,
+base_diff (const struct file_info *finfo,
+	   int diff_argc, char *const *diff_argv,
 	   const char *f1, const char *use_rev1, const char *label1,
 	   const char *f2, const char *use_rev2, const char *label2,
 	   bool empty_files)

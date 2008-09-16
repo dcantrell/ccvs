@@ -17307,14 +17307,14 @@ initial revision: 1\.1"
 	  # below happens on Cygwin under Windows, where write privileges
 	  # aren't enforced properly.
 	  if $remote; then
-	    dotest errmsg1-168r "${testcvs} -q update" \
-"${SPROG} update: \`foo' is no longer in the repository
-$CPROG update: unable to remove foo: Permission denied" \
-"${SPROG} update: \`foo' is no longer in the repository"
+	    dotest errmsg1-168r "$testcvs -q update" \
+"$SPROG update: \`foo' is no longer in the repository
+$CPROG update: unable to remove \`foo': Permission denied" \
+"$SPROG update: \`foo' is no longer in the repository"
 	  else
 	    dotest errmsg1-168 "${testcvs} -q update" \
 "${SPROG} update: \`foo' is no longer in the repository
-${SPROG} update: unable to remove foo: Permission denied" \
+${SPROG} update: unable to remove \`foo': Permission denied" \
 "${SPROG} update: \`foo' is no longer in the repository"
 	  fi
 

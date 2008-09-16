@@ -1,6 +1,33 @@
 2008-09-16  Derek R. Price  <derek@ximbiot.com>
 
-	* src/client.c (handle_clear_static_directory): Skip unneeded check.
+	* add.c (build_entry): Accept struct file_info in lieu of multiple
+	args.  Change all callers.  Move to avoid prototypes.
+	(add_directory): Move to avoid prototypes.
+	* base.c (validate_change): Accept struct file_info in lieu of
+	multiple args.  Add quotes to error messages.
+	(ibase_copy): Change all callers.
+	(base_merge): Add GNULIB quoting.
+	(base_diff): Make struct file_info arg const.
+	* client.c (call_in_directory): Callback accepts struct file_info in
+	lieu of multiple args.
+	(copy_a_file, update_entries, client_base_checkout,
+	-client_base_signatures, client_base_copy, client_base_merge,
+	client_base_diff, remove_entry, remove_entry_and_file, set_static,
+	clear_static, set_sticky, template, clear_template, notified_a_file):
+	Update callbacks likewise.  Some GNULIB quoting updates.
+	* edit.c (edit_file): Ditto.
+	(edit_fileproc): Update to use new edit_file() API.
+	* edit.h (edit_file): Update prototype to match.
+	* entries.h (Register): Update prototype.
+	* entries.c (Register): Accept struct file_info in lieu of multiple
+	args and...
+	* add.c, checkin.c, classify.c, edit.c, no_diff.c, remove.c,
+	update.c: ...change all callers.
+	* server.c (server_base_diff), server.h (server_base_diff): Mark
+	struct file_info arg as const.
+	* sanity.sh: Update to compensate for quoting changes.
+
+	* client.c (handle_clear_static_directory): Skip unneeded check.
 
 	* client.c (arg_should_not_be_sent_to_server): Avoid memory leak.
 

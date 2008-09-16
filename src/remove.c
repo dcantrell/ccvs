@@ -157,7 +157,7 @@ static int
 remove_force_fileproc (void *callerdat, struct file_info *finfo)
 {
     if (CVS_UNLINK (finfo->file) < 0 && ! existence_error (errno))
-	error (0, errno, "unable to remove %s", finfo->fullname);
+	error (0, errno, "unable to remove %s", quote (finfo->fullname));
     return 0;
 }
 
@@ -176,10 +176,9 @@ remove_fileproc (void *callerdat, struct file_info *finfo)
     {
 	if (!noexec)
 	{
-	    if ( CVS_UNLINK (finfo->file) < 0 && ! existence_error (errno))
-	    {
-		error (0, errno, "unable to remove %s", finfo->fullname);
-	    }
+	    if (CVS_UNLINK (finfo->file) < 0 && !existence_error (errno))
+		error (0, errno, "unable to remove %s",
+		       quote (finfo->fullname));
 	}
 	/* else FIXME should probably act as if the file doesn't exist
 	   in doing the following checks.  */
@@ -253,21 +252,20 @@ cannot remove file `%s' which has a sticky date of `%s'",
     }
     else
     {
-	char *fname;
-
 	/* Re-register it with a negative version number.  */
-	fname = Xasprintf ("-%s", vers->vn_user);
-	Register (finfo->entries, finfo->file, fname, vers->ts_rcs,
-		  vers->options, vers->tag, vers->date, vers->ts_conflict);
+	char *dver = Xasprintf ("-%s", vers->vn_user);
+	Register (finfo, dver, vers->ts_rcs, vers->options, vers->tag,
+		  vers->date, vers->ts_conflict);
 	if (!quiet)
-	    error (0, 0, "scheduling `%s' for removal", finfo->fullname);
+	    error (0, 0, "scheduling %s for removal", quote (finfo->fullname));
 	removed_files++;
 
 #ifdef SERVER_SUPPORT
 	if (server_active)
-	    server_checked_in (finfo->file, finfo->update_dir, finfo->repository);
+	    server_checked_in (finfo->file, finfo->update_dir,
+			       finfo->repository);
 #endif
-	free (fname);
+	free (dver);
     }
 
     freevers_ts (&vers);
