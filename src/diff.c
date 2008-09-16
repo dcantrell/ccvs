@@ -26,7 +26,10 @@
 /* Verify interface.  */
 #include "diff.h"
 
-/* CVS headers.  */
+/* GNULIB */
+#include "minmax.h"
+
+/* CVS */
 #include "base.h"
 #include "ignore.h"
 #include "rcs.h"
@@ -50,12 +53,6 @@ enum diff_file
 static Dtype diff_dirproc (void *callerdat, const char *dir,
                            const char *pos_repos, const char *update_dir,
                            List *entries);
-static int diff_filesdoneproc (void *callerdat, int err,
-                               const char *repos, const char *update_dir,
-                               List *entries);
-static int diff_dirleaveproc (void *callerdat, const char *dir,
-                              int err, const char *update_dir,
-                              List *entries);
 static int diff_fileproc (void *callerdat, struct file_info *finfo);
 
 
@@ -456,7 +453,10 @@ diff (int argc, char **argv)
         err = get_responses_and_close ();
 	free (options);
 	options = NULL;
-	return diff_errors ? diff_errors : err;
+	if (err) return MAX (2, err);  /* When diff encounters real errors it
+					* returns 2.
+					*/
+	return diff_errors;
     }
 #endif
 
@@ -472,9 +472,8 @@ diff (int argc, char **argv)
     wrap_setup ();
 
     /* start the recursion processor */
-    err = start_recursion (diff_fileproc, diff_filesdoneproc, diff_dirproc,
-                           diff_dirleaveproc, NULL, argc, argv, local,
-                           which, 0, CVS_LOCK_READ, NULL, 1, NULL);
+    err = start_recursion (diff_fileproc, NULL, diff_dirproc, NULL, NULL, argc,
+			   argv, local, which, 0, CVS_LOCK_READ, NULL, 1, NULL);
 
     /* clean up */
     free (options);
@@ -493,7 +492,10 @@ diff (int argc, char **argv)
     if (diff_rev2)
 	free (diff_rev2);
 
-    return err;
+    if (err) return MAX (2, err);  /* When diff encounters real errors it
+				    * returns 2.
+				    */
+    return diff_errors;
 }
 
 
@@ -1037,19 +1039,18 @@ out:
     freevers_ts (&vers);
     diff_mark_errors (err);
 
-    return err;
+    return 0;
 }
 
 
 
 /*
- * Remember the exit status for each file.
+ * Remember the maximum exit status for all files.
  */
 void
 diff_mark_errors (int err)
 {
-    if (err > diff_errors)
-	diff_errors = err;
+    if (err > diff_errors) diff_errors = err;
 }
 
 
@@ -1073,32 +1074,6 @@ diff_dirproc (void *callerdat, const char *dir, const char *pos_repos,
     if (!quiet)
 	error (0, 0, "Diffing %s", update_dir);
     return R_PROCESS;
-}
-
-
-
-/*
- * Concoct the proper exit status - done with files
- */
-/* ARGSUSED */
-static int
-diff_filesdoneproc (void *callerdat, int err, const char *repos,
-                    const char *update_dir, List *entries)
-{
-    return diff_errors;
-}
-
-
-
-/*
- * Concoct the proper exit status - leaving directories
- */
-/* ARGSUSED */
-static int
-diff_dirleaveproc (void *callerdat, const char *dir, int err,
-                   const char *update_dir, List *entries)
-{
-    return diff_errors;
 }
 
 
