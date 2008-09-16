@@ -145,6 +145,9 @@ is_arg_a_parent_or_listed_dir (Node *n, void *d)
 static bool
 arg_should_not_be_sent_to_server (char *arg)
 {
+    const char *root_string;
+    char *dir;
+
     /* Decide if we should send this directory name to the server.  We
      * should always send argv[i] if:
      *
@@ -158,7 +161,6 @@ arg_should_not_be_sent_to_server (char *arg)
      *
      * 4) the argument is a file in the CWD and the CWD is checked out
      *    from the current root
-     *
      */
 
     if (list_isempty (dirs_sent_to_server))
@@ -186,38 +188,37 @@ arg_should_not_be_sent_to_server (char *arg)
      * whether we should send arg to the server by checking the contents of
      * ARGS's parent directory's CVSADM dir, if it exists.
      */
+
+    dir = dir_name (arg);
+
+    /* First, check to see if we already sent this directory to the server,
+     * because it takes less time than actually opening the stuff in the
+     * CVSADM directory.
+     */
+    if (findnode_fn (dirs_sent_to_server, dir))
     {
-	const char *root_string;
-	char *dir = dir_name (arg);
-
-	/* First, check to see if we already sent this directory to the server,
-	 * because it takes less time than actually opening the stuff in the
-	 * CVSADM directory.
-	 */
-	if (findnode_fn (dirs_sent_to_server, dir))
-	{
-	    free (dir);
-	    return false;
-	}
-
-	if (CVSroot_cmdline)
-	    root_string = CVSroot_cmdline;
-	else
-	{
-	    const cvsroot_t *this_root;
-	    char *update_dir = update_dir_name (arg);
-
-	    this_root = Name_Root (dir, update_dir);
-	    root_string = this_root->original;
-	    free (update_dir);
-	}
-
-	/* Now check the value for root. */
-	if (root_string && current_parsed_root
-	    && !STREQ (root_string, original_parsed_root->original))
-	    /* Don't send this, since the CVSROOTs don't match. */
-	    return true;
+	free (dir);
+	return false;
     }
+
+    if (CVSroot_cmdline)
+	root_string = CVSroot_cmdline;
+    else
+    {
+	const cvsroot_t *this_root;
+	char *update_dir = update_dir_name (arg);
+
+	this_root = Name_Root (dir, update_dir);
+	root_string = this_root->original;
+	free (update_dir);
+    }
+    free (dir);
+
+    /* Now check the value for root. */
+    if (root_string && current_parsed_root
+	&& !STREQ (root_string, original_parsed_root->original))
+	/* Don't send this, since the CVSROOTs don't match. */
+	return true;
     
     /* OK, let's send it.  */
     return false;
