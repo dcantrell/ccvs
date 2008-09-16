@@ -69,24 +69,12 @@ static	struct SIG_hlist	**SIG_handlers;
 
 /* Define array of default signal vectors */
 
-#ifdef POSIX_SIGNALS
 static	struct sigaction	*SIG_defaults;
-#else
-#ifdef BSD_SIGNALS
-static	struct sigvec		*SIG_defaults;
-#else
-static	RETSIGTYPE		(**SIG_defaults) (int);
-#endif
-#endif
 
 /* Critical section housekeeping */
 static	int		SIG_crSectNest = 0;	/* Nesting level */
-#ifdef POSIX_SIGNALS
 static	sigset_t	SIG_crSectMask;		/* Signal mask */
-#else
-static	int		SIG_crSectMask;		/* Signal mask */
-#endif
-
+
 /*
  * Initialize the signal handler arrays
  */
@@ -94,14 +82,11 @@ static	int		SIG_crSectMask;		/* Signal mask */
 static int SIG_init()
 {
 	int i;
-#ifdef POSIX_SIGNALS
 	sigset_t sigset_test;
-#endif
 
 	if (SIG_defaults && SIG_handlers)	/* already allocated */
 		return (0);
 
-#ifdef POSIX_SIGNALS
 	(void) sigfillset(&sigset_test);
 	for (i = 1; i < SIGMAX && sigismember(&sigset_test, i) == 1; i++)
 		;
@@ -112,19 +97,6 @@ static int SIG_init()
 		SIG_defaults = (struct sigaction *)
 			calloc(i, sizeof(struct sigaction));
 	(void) sigemptyset(&SIG_crSectMask);
-#else
-	i = SIGMAX+1;
-#ifdef BSD_SIGNALS
-	if (!SIG_defaults)
-		SIG_defaults = (struct sigvec *)
-			calloc(i, sizeof(struct sigvec));
-#else
-	if (!SIG_defaults)
-		SIG_defaults = ( RETSIGTYPE (**) (int) )
-			calloc( i, sizeof( RETSIGTYPE (**) (int) ) );
-#endif
-	SIG_crSectMask = 0;
-#endif
 	if (!SIG_handlers)
 		SIG_handlers = (struct SIG_hlist **)
 			calloc(i, sizeof(struct SIG_hlist *));
@@ -142,19 +114,11 @@ void SIG_beginCrSect (void)
 	{
 		if (SIG_crSectNest == 0)
 		{
-#ifdef POSIX_SIGNALS
 			sigset_t sigset_mask;
 
 			(void) sigfillset(&sigset_mask);
 			(void) sigprocmask(SIG_SETMASK,
 					   &sigset_mask, &SIG_crSectMask);
-#else
-#ifdef BSD_SIGNALS
-			SIG_crSectMask = sigblock(~0);
-#else
-			/* TBD */
-#endif
-#endif
 		}
 		SIG_crSectNest++;
 	}
@@ -171,17 +135,7 @@ void SIG_endCrSect (void)
 	{
 		SIG_crSectNest--;
 		if (SIG_crSectNest == 0)
-		{
-#ifdef POSIX_SIGNALS
 			(void) sigprocmask(SIG_SETMASK, &SIG_crSectMask, NULL);
-#else
-#ifdef BSD_SIGNALS
-			(void) sigsetmask(SIG_crSectMask);
-#else
-			/* TBD */
-#endif
-#endif
-		}
 	}
 }
 
@@ -224,15 +178,8 @@ int SIG_register(int sig, RETSIGTYPE (*fn)())
 {
 	int			val;
 	struct SIG_hlist	*this;
-#ifdef POSIX_SIGNALS
 	struct sigaction	act;
 	sigset_t		sigset_mask, sigset_omask;
-#else
-#ifdef BSD_SIGNALS
-	struct sigvec		vec;
-	int			mask;
-#endif
-#endif
 
 	/* Initialize */
 	if (SIG_init() != 0)
@@ -240,15 +187,9 @@ int SIG_register(int sig, RETSIGTYPE (*fn)())
 	val = 0;
 
 	/* Block this signal while we look at handler chain */
-#ifdef POSIX_SIGNALS
 	(void) sigemptyset(&sigset_mask);
 	(void) sigaddset(&sigset_mask, sig);
 	(void) sigprocmask(SIG_BLOCK, &sigset_mask, &sigset_omask);
-#else
-#ifdef BSD_SIGNALS
-	mask = sigblock(sigmask(sig));
-#endif
-#endif
 
 	/* See if this handler was already registered */
 	this = SIG_handlers[sig];
@@ -269,21 +210,10 @@ int SIG_register(int sig, RETSIGTYPE (*fn)())
 
 		if (SIG_handlers[sig] == (struct SIG_hlist *) NULL)
 		{
-#ifdef POSIX_SIGNALS
 			act.sa_handler = SIG_handle;
 			(void) sigemptyset(&act.sa_mask);
 			act.sa_flags = 0;
 			val = sigaction(sig, &act, &SIG_defaults[sig]);
-#else
-#ifdef BSD_SIGNALS
-			memset (&vec, 0, sizeof (vec));
-			vec.sv_handler = SIG_handle;
-			val = sigvec(sig, &vec, &SIG_defaults[sig]);
-#else
-			if ((SIG_defaults[sig] = signal(sig, SIG_handle)) == SIG_ERR)
-				val = -1;
-#endif
-#endif
 		}
 
 		/* If not, register it */
@@ -305,13 +235,7 @@ int SIG_register(int sig, RETSIGTYPE (*fn)())
 	}
 
 	/* Unblock the signal */
-#ifdef POSIX_SIGNALS
 	(void) sigprocmask(SIG_SETMASK, &sigset_omask, NULL);
-#else
-#ifdef BSD_SIGNALS
-	(void) sigsetmask(mask);
-#endif
-#endif
 
 	return val;
 }
@@ -328,13 +252,7 @@ int SIG_deregister(int sig, RETSIGTYPE (*fn)())
 	int			val;
 	struct SIG_hlist	*this;
 	struct SIG_hlist	*last;
-#ifdef POSIX_SIGNALS
 	sigset_t		sigset_mask, sigset_omask;
-#else
-#ifdef BSD_SIGNALS
-	int			mask;
-#endif
-#endif
 
 	/* Initialize */
 	if (SIG_init() != 0)
@@ -343,15 +261,9 @@ int SIG_deregister(int sig, RETSIGTYPE (*fn)())
 	last = (struct SIG_hlist *) NULL;
 
 	/* Block this signal while we look at handler chain */
-#ifdef POSIX_SIGNALS
 	(void) sigemptyset(&sigset_mask);
 	(void) sigaddset(&sigset_mask, sig);
 	(void) sigprocmask(SIG_BLOCK, &sigset_mask, &sigset_omask);
-#else
-#ifdef BSD_SIGNALS
-	mask = sigblock(sigmask(sig));
-#endif
-#endif
 
 	/* Search for the signal handler */
 	this = SIG_handlers[sig];
@@ -377,28 +289,11 @@ int SIG_deregister(int sig, RETSIGTYPE (*fn)())
 
 	/* Restore default behavior if there are no registered handlers */
 	if (SIG_handlers[sig] == (struct SIG_hlist *) NULL)
-	{
-#ifdef POSIX_SIGNALS
 		val = sigaction(sig, &SIG_defaults[sig],
 				(struct sigaction *) NULL);
-#else
-#ifdef BSD_SIGNALS
-		val = sigvec(sig, &SIG_defaults[sig], (struct sigvec *) NULL);
-#else
-		if (signal(sig, SIG_defaults[sig]) == SIG_ERR)
-			val = -1;
-#endif
-#endif
-	}
 
 	/* Unblock the signal */
-#ifdef POSIX_SIGNALS
 	(void) sigprocmask(SIG_SETMASK, &sigset_omask, NULL);
-#else
-#ifdef BSD_SIGNALS
-	(void) sigsetmask(mask);
-#endif
-#endif
 
 	return val;
 }

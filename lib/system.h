@@ -26,7 +26,6 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
-#include <signal.h>
 #include <stdio.h>
 
 /* A GNULIB wrapper for these C89 headers is supplied to solve problems in
@@ -126,23 +125,6 @@ int utime ();
 #  else
 #    define existence_error(x) ((x) == ENOENT)
 #  endif
-#endif
-
-/* check for POSIX signals */
-#if defined(HAVE_SIGACTION) && defined(HAVE_SIGPROCMASK)
-# define POSIX_SIGNALS
-#endif
-
-/* MINIX 1.6 doesn't properly support sigaction */
-#if defined(_MINIX)
-# undef POSIX_SIGNALS
-#endif
-
-/* If !POSIX, try for BSD.. Reason: 4.4BSD implements these as wrappers */
-#if !defined(POSIX_SIGNALS)
-# if defined(HAVE_SIGVEC) && defined(HAVE_SIGSETMASK) && defined(HAVE_SIGBLOCK)
-#  define BSD_SIGNALS
-# endif
 #endif
 
 /* Under OS/2, this must be included _after_ stdio.h; that's why we do
