@@ -1,5 +1,7 @@
 2008-09-16  Derek R. Price  <derek@ximbiot.com>
 
+	* client.c (arg_should_not_be_sent_to_server): Return bool.
+
 	* run.c: Assume POSIX signal handling, via GNULIB.
 
 2008-09-15  Derek R. Price  <derek@ximbiot.com>

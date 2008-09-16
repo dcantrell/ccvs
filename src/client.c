@@ -141,9 +141,8 @@ is_arg_a_parent_or_listed_dir (Node *n, void *d)
 
 
 
-/* Return nonzero if this argument should not be sent to the
-   server. */
-static int
+/* Return true if this argument should not be sent to the server. */
+static bool
 arg_should_not_be_sent_to_server (char *arg)
 {
     /* Decide if we should send this directory name to the server.  We
@@ -163,10 +162,10 @@ arg_should_not_be_sent_to_server (char *arg)
        */
 
     if (list_isempty (dirs_sent_to_server))
-	return 0;		/* always send it */
+	return false;		/* always send it */
 
     if (STREQ (arg, "."))
-	return 0;		/* always send it */
+	return false;		/* always send it */
 
     /* We should send arg if it is one of the directories sent to the
        server or the parent of one; this tells the server to descend
@@ -174,12 +173,12 @@ arg_should_not_be_sent_to_server (char *arg)
     if (isdir (arg))
     {
 	if (walklist (dirs_sent_to_server, is_arg_a_parent_or_listed_dir, arg))
-	    return 0;
+	    return false;
 
 	/* If arg wasn't a parent, we don't know anything about it (we
 	   would have seen something related to it during the
 	   send_files phase).  Don't send it.  */
-	return 1;
+	return true;
     }
 
     /* Try to decide whether we should send arg to the server by
@@ -210,7 +209,7 @@ arg_should_not_be_sent_to_server (char *arg)
 			  arg))
 	    {
 		*t = c;		/* make sure to un-truncate the arg */
-		return 0;
+		return false;
 	    }
 
 	    /* Since we didn't find it in the list, check the CVSADM
@@ -237,12 +236,12 @@ arg_should_not_be_sent_to_server (char *arg)
 	    && !STREQ (root_string, original_parsed_root->original))
 	{
 	    /* Don't send this, since the CVSROOTs don't match. */
-	    return 1;
+	    return true;
 	}
     }
     
     /* OK, let's send it. */
-    return 0;
+    return false;
 }
 #endif /* CLIENT_SUPPORT */
 
