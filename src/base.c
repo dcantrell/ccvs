@@ -621,7 +621,7 @@ base_diff (struct file_info *finfo, int diff_argc, char *const *diff_argv,
 	switch (status)
 	{
 	    case -1:			/* fork failed */
-		error (1, errno, "fork failed while diffing %s",
+		error (2, errno, "fork failed while diffing %s",
 		       finfo->fullname);
 	    case 0:				/* everything ok */
 		err = 0;
