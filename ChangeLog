@@ -1,3 +1,7 @@
+2008-09-16  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: No longer need to detect signal manipulation functions.
+
 2008-09-15  Derek Price  <derek@ximbiot.com>
 
 	* HACKING: Note new GNULIB replacement headers.
