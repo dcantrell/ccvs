@@ -82,8 +82,7 @@ No_Difference (struct file_info *finfo, Vers_TS *vers)
     {
 	/* no difference was found, so fix the entries file */
 	ts = time_stamp (finfo->file);
-	Register (finfo->entries, finfo->file,
-		  vers->vn_user ? vers->vn_user : vers->vn_rcs, ts,
+	Register (finfo, vers->vn_user ? vers->vn_user : vers->vn_rcs, ts,
 		  options, vers->tag, vers->date, NULL);
 #ifdef SERVER_SUPPORT
 	if (server_active)

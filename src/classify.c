@@ -459,7 +459,7 @@ sticky_ck (struct file_info *finfo, int aflag, Vers_TS *vers)
 	    (entdate && vers->date && !STREQ (entdate, vers->date)) ||
 	    ((entdate && !vers->date) || (!entdate && vers->date)))
 	{
-	    Register (finfo->entries, finfo->file, vers->vn_user, vers->ts_rcs,
+	    Register (finfo, vers->vn_user, vers->ts_rcs,
 		      vers->options, vers->tag, vers->date, vers->ts_conflict);
 
 #ifdef SERVER_SUPPORT

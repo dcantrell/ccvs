@@ -53,10 +53,200 @@
 #include <assert.h>
 
 
-static int add_directory (struct file_info *finfo);
-static int build_entry (const char *repository, const char *user,
-                        const char *options, const char *message,
-                        List * entries, const char *tag);
+
+/*
+ * Builds an entry for a new file and sets up "CVS/file",[pt] by
+ * interrogating the user.  Returns non-zero on error.
+ */
+static int
+build_entry (const struct file_info *finfo, const char *options,
+             const char *message, const char *tag)
+{
+    char *fname;
+    char *line;
+    FILE *fp;
+
+    if (noexec)
+	return 0;
+
+    /*
+     * The requested log is read directly from the user and stored in the
+     * file user,t.  If the "message" argument is set, use it as the
+     * initial creation log (which typically describes the file).
+     */
+    fname = Xasprintf ("%s/%s%s", CVSADM, finfo->file, CVSEXT_LOG);
+    fp = xfopen (fname, "w+");
+    if (message && fputs (message, fp) == EOF)
+	    error (1, errno, "cannot write to %s", fname);
+    if (fclose (fp) == EOF)
+        error (1, errno, "cannot close %s", fname);
+    free (fname);
+
+    /*
+     * Create the entry now, since this allows the user to interrupt us above
+     * without needing to clean anything up (well, we could clean up the
+     * ,t file, but who cares).
+     */
+    line = Xasprintf ("Initial %s", finfo->file);
+    Register (finfo, "0", line, options, tag, NULL, NULL);
+    free (line);
+    return 0;
+}
+
+
+
+/*
+ * The specified user file is really a directory.  So, let's make sure that
+ * it is created in the RCS source repository, and that the user's directory
+ * is updated to include a CVS directory.
+ * 
+ * Returns 1 on failure, 0 on success.
+ */
+static int
+add_directory (const struct file_info *finfo)
+{
+    const char *repository = finfo->repository;
+    List *entries = finfo->entries;
+    const char *dir = finfo->file;
+
+    char *rcsdir = NULL;
+    struct saved_cwd cwd;
+    char *message = NULL;
+    char *tag, *date;
+    int nonbranch;
+    char *attrs;
+
+    assert (strchr (dir, '/') == NULL);
+    assert (fncmp (dir, CVSADM));
+
+    /* before we do anything else, see if we have any per-directory tags */
+    ParseTag (&tag, &date, &nonbranch);
+
+    /* Remember the default attributes from this directory, so we can apply
+       them to the new directory.  */
+    fileattr_startdir (repository);
+    attrs = fileattr_getall (NULL);
+    fileattr_free ();
+
+    /* now, remember where we were, so we can get back */
+    if (save_cwd (&cwd))
+    {
+	error (0, errno, "Failed to save current directory.");
+	return 1;
+    }
+    if (CVS_CHDIR (dir) < 0)
+    {
+	error (0, errno, "cannot chdir to %s", finfo->fullname);
+	return 1;
+    }
+    if (!server_active && isfile (CVSADM))
+    {
+	error (0, 0, "%s/%s already exists", finfo->fullname, CVSADM);
+	goto out;
+    }
+
+    rcsdir = Xasprintf ("%s/%s", repository, dir);
+    if (isfile (rcsdir) && !isdir (rcsdir))
+    {
+	error (0, 0, "%s is not a directory; %s not added", rcsdir,
+	       finfo->fullname);
+	goto out;
+    }
+
+    /* setup the log message */
+    message = Xasprintf ("Directory %s added to the repository\n%s%s%s%s%s%s",
+			 rcsdir,
+			 tag ? "--> Using per-directory sticky tag `" : "",
+			 tag ? tag : "", tag ? "'\n" : "",
+			 date ? "--> Using per-directory sticky date `" : "",
+			 date ? date : "", date ? "'\n" : "");
+
+    if (!isdir (rcsdir))
+    {
+	Node *p;
+	List *ulist;
+	struct logfile_info *li;
+
+	/* There used to be some code here which would prompt for
+	   whether to add the directory.  The details of that code had
+	   bitrotted, but more to the point it can't work
+	   client/server, doesn't ask in the right way for GUIs, etc.
+	   A better way of making it harder to accidentally add
+	   directories would be to have to add and commit directories
+	   like for files.  The code was #if 0'd at least since CVS 1.5.  */
+
+	if (!noexec && !cvs_mkdir (rcsdir, NULL, MD_REPO) && errno != EEXIST)
+	    goto out;
+
+	/* Now set the default file attributes to the ones we inherited
+	   from the parent directory.  */
+	fileattr_startdir (rcsdir);
+	fileattr_setall (NULL, attrs);
+	fileattr_write ();
+	fileattr_free ();
+	if (attrs != NULL)
+	{
+	    free (attrs);
+	    attrs = NULL;
+	}
+
+	/*
+	 * Set up an update list with a single title node for Update_Logfile
+	 */
+	ulist = getlist ();
+	p = getnode ();
+	p->type = UPDATE;
+	p->delproc = update_delproc;
+	p->key = xstrdup ("- New directory");
+	li = xmalloc (sizeof (struct logfile_info));
+	li->type = T_TITLE;
+	li->tag = xstrdup (tag);
+	li->rev_old = li->rev_new = NULL;
+	p->data = li;
+	(void) addnode (ulist, p);
+	Update_Logfile (rcsdir, message, NULL, ulist);
+	dellist (&ulist);
+    }
+
+    if (server_active)
+	WriteTemplate (finfo->fullname, 1, rcsdir);
+    else
+	Create_Admin (".", finfo->fullname, rcsdir, tag, date, nonbranch, 0, 1);
+
+    if (tag)
+	free (tag);
+    if (date)
+	free (date);
+
+    if (restore_cwd (&cwd))
+	error (1, errno, "Failed to restore current directory, `%s'.",
+	       cwd.name);
+    free_cwd (&cwd);
+
+    Subdir_Register (entries, NULL, dir);
+
+    if (!really_quiet)
+	cvs_output (message, 0);
+
+    free (rcsdir);
+    free (message);
+    if (attrs != NULL)
+	free (attrs);
+
+    return 0;
+
+out:
+    if (restore_cwd (&cwd))
+	error (1, errno, "Failed to restore current directory, `%s'.",
+	       cwd.name);
+    free_cwd (&cwd);
+    if (message) free (message);
+    if (rcsdir != NULL)
+	free (rcsdir);
+    return 0;
+}
+
+
 
 static const char *const add_usage[] =
 {
@@ -421,8 +611,8 @@ add (int argc, char **argv)
 		    else
 		    {
 			/* There is a user file, so build the entry for it */
-			if (build_entry (repository, finfo.file, vers->options,
-					 message, entries, vers->tag) != 0)
+			if (build_entry (&finfo, vers->options, message,
+					 vers->tag) != 0)
 			    err++;
 			else
 			{
@@ -552,7 +742,7 @@ add (int argc, char **argv)
 			    if (vers->tag)
 				free (bbuf);
 			}
-			Register (entries, finfo.file, "0",
+			Register (&finfo, "0",
 				  timestamp ? timestamp : vers->ts_user,
 				  vers->options, vers->tag, vers->date, NULL);
 			if (timestamp) free (timestamp);
@@ -656,8 +846,7 @@ add (int argc, char **argv)
 			     error (0, 0, "`%s', version %s, resurrected",
 			            finfo.fullname, vers->vn_user);
 		    }
-		    Register (entries, finfo.file, vers->vn_user,
-                              tmp, vers->options,
+		    Register (&finfo, vers->vn_user, tmp, vers->options,
 			      vers->tag, vers->date, NULL);
 		    if (tmp) free (tmp);
 #ifdef SERVER_SUPPORT
@@ -736,198 +925,4 @@ skip_this_file:
 	free (options);
 
     return err;
-}
-
-
-
-/*
- * The specified user file is really a directory.  So, let's make sure that
- * it is created in the RCS source repository, and that the user's directory
- * is updated to include a CVS directory.
- * 
- * Returns 1 on failure, 0 on success.
- */
-static int
-add_directory (struct file_info *finfo)
-{
-    const char *repository = finfo->repository;
-    List *entries = finfo->entries;
-    const char *dir = finfo->file;
-
-    char *rcsdir = NULL;
-    struct saved_cwd cwd;
-    char *message = NULL;
-    char *tag, *date;
-    int nonbranch;
-    char *attrs;
-
-    assert (strchr (dir, '/') == NULL);
-    assert (fncmp (dir, CVSADM));
-
-    /* before we do anything else, see if we have any per-directory tags */
-    ParseTag (&tag, &date, &nonbranch);
-
-    /* Remember the default attributes from this directory, so we can apply
-       them to the new directory.  */
-    fileattr_startdir (repository);
-    attrs = fileattr_getall (NULL);
-    fileattr_free ();
-
-    /* now, remember where we were, so we can get back */
-    if (save_cwd (&cwd))
-    {
-	error (0, errno, "Failed to save current directory.");
-	return 1;
-    }
-    if (CVS_CHDIR (dir) < 0)
-    {
-	error (0, errno, "cannot chdir to %s", finfo->fullname);
-	return 1;
-    }
-    if (!server_active && isfile (CVSADM))
-    {
-	error (0, 0, "%s/%s already exists", finfo->fullname, CVSADM);
-	goto out;
-    }
-
-    rcsdir = Xasprintf ("%s/%s", repository, dir);
-    if (isfile (rcsdir) && !isdir (rcsdir))
-    {
-	error (0, 0, "%s is not a directory; %s not added", rcsdir,
-	       finfo->fullname);
-	goto out;
-    }
-
-    /* setup the log message */
-    message = Xasprintf ("Directory %s added to the repository\n%s%s%s%s%s%s",
-			 rcsdir,
-			 tag ? "--> Using per-directory sticky tag `" : "",
-			 tag ? tag : "", tag ? "'\n" : "",
-			 date ? "--> Using per-directory sticky date `" : "",
-			 date ? date : "", date ? "'\n" : "");
-
-    if (!isdir (rcsdir))
-    {
-	Node *p;
-	List *ulist;
-	struct logfile_info *li;
-
-	/* There used to be some code here which would prompt for
-	   whether to add the directory.  The details of that code had
-	   bitrotted, but more to the point it can't work
-	   client/server, doesn't ask in the right way for GUIs, etc.
-	   A better way of making it harder to accidentally add
-	   directories would be to have to add and commit directories
-	   like for files.  The code was #if 0'd at least since CVS 1.5.  */
-
-	if (!noexec && !cvs_mkdir (rcsdir, NULL, MD_REPO) && errno != EEXIST)
-	    goto out;
-
-	/* Now set the default file attributes to the ones we inherited
-	   from the parent directory.  */
-	fileattr_startdir (rcsdir);
-	fileattr_setall (NULL, attrs);
-	fileattr_write ();
-	fileattr_free ();
-	if (attrs != NULL)
-	{
-	    free (attrs);
-	    attrs = NULL;
-	}
-
-	/*
-	 * Set up an update list with a single title node for Update_Logfile
-	 */
-	ulist = getlist ();
-	p = getnode ();
-	p->type = UPDATE;
-	p->delproc = update_delproc;
-	p->key = xstrdup ("- New directory");
-	li = xmalloc (sizeof (struct logfile_info));
-	li->type = T_TITLE;
-	li->tag = xstrdup (tag);
-	li->rev_old = li->rev_new = NULL;
-	p->data = li;
-	(void) addnode (ulist, p);
-	Update_Logfile (rcsdir, message, NULL, ulist);
-	dellist (&ulist);
-    }
-
-    if (server_active)
-	WriteTemplate (finfo->fullname, 1, rcsdir);
-    else
-	Create_Admin (".", finfo->fullname, rcsdir, tag, date, nonbranch, 0, 1);
-
-    if (tag)
-	free (tag);
-    if (date)
-	free (date);
-
-    if (restore_cwd (&cwd))
-	error (1, errno, "Failed to restore current directory, `%s'.",
-	       cwd.name);
-    free_cwd (&cwd);
-
-    Subdir_Register (entries, NULL, dir);
-
-    if (!really_quiet)
-	cvs_output (message, 0);
-
-    free (rcsdir);
-    free (message);
-    if (attrs != NULL)
-	free (attrs);
-
-    return 0;
-
-out:
-    if (restore_cwd (&cwd))
-	error (1, errno, "Failed to restore current directory, `%s'.",
-	       cwd.name);
-    free_cwd (&cwd);
-    if (message) free (message);
-    if (rcsdir != NULL)
-	free (rcsdir);
-    return 0;
-}
-
-
-
-/*
- * Builds an entry for a new file and sets up "CVS/file",[pt] by
- * interrogating the user.  Returns non-zero on error.
- */
-static int
-build_entry (const char *repository, const char *user, const char *options,
-             const char *message, List *entries, const char *tag)
-{
-    char *fname;
-    char *line;
-    FILE *fp;
-
-    if (noexec)
-	return 0;
-
-    /*
-     * The requested log is read directly from the user and stored in the
-     * file user,t.  If the "message" argument is set, use it as the
-     * initial creation log (which typically describes the file).
-     */
-    fname = Xasprintf ("%s/%s%s", CVSADM, user, CVSEXT_LOG);
-    fp = xfopen (fname, "w+");
-    if (message && fputs (message, fp) == EOF)
-	    error (1, errno, "cannot write to %s", fname);
-    if (fclose (fp) == EOF)
-        error (1, errno, "cannot close %s", fname);
-    free (fname);
-
-    /*
-     * Create the entry now, since this allows the user to interrupt us above
-     * without needing to clean anything up (well, we could clean up the
-     * ,t file, but who cares).
-     */
-    line = Xasprintf ("Initial %s", user);
-    Register (entries, user, "0", line, options, tag, NULL, NULL);
-    free (line);
-    return 0;
 }

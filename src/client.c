@@ -723,7 +723,7 @@ int is_valid_client_path (const char *pathname)
  * the directory portion of SHORT_PATHNAME.  */
 static void
 call_in_directory (const char *pathname,
-                   void (*func) (void *, List *, const char *, const char *),
+                   void (*func) (void *, const struct file_info *),
                    void *data)
 {
     /* This variable holds the result of Entries_Open. */
@@ -755,6 +755,7 @@ call_in_directory (const char *pathname,
     char *short_repos;
     int reposdirname_absolute;
     bool newdir;
+    struct file_info finfo;
 
     assert (pathname && strlen (pathname));
 
@@ -892,7 +893,13 @@ call_in_directory (const char *pathname,
 	}
     }
 
-    (*func) (data, last_entries, short_pathname, filename);
+    finfo.update_dir = pathname;
+    finfo.file = filename;
+    finfo.fullname = short_pathname;
+    finfo.repository = short_repos;
+    finfo.entries = last_entries;
+
+    (*func) (data, &finfo);
     if (last_entries)
 	Entries_Close (last_entries, STREQ (pathname, "./") ? "" : dir);
     free (dir);
@@ -905,8 +912,7 @@ call_in_directory (const char *pathname,
 
 
 static void
-copy_a_file (void *data, List *ent_list, const char *short_pathname,
-	     const char *filename)
+copy_a_file (void *data, const struct file_info *finfo)
 {
     char *newname;
 
@@ -924,11 +930,13 @@ copy_a_file (void *data, List *ent_list, const char *short_pathname,
        same directory.  Wouldn't want a malicious or buggy server overwriting
        ~/.profile, /etc/passwd, or anything like that.  */
     if (last_component (newname) != newname)
-	error (1, 0, "protocol error: Copy-file tried to specify directory");
+	error (1, 0,
+	       "protocol error: Copy-file tried to specify directory (%s)",
+	       quote (newname));
 
     if (unlink_file (newname) && !existence_error (errno))
-	error (0, errno, "unable to remove %s", newname);
-    copy_file (filename, newname);
+	error (0, errno, "unable to remove %s", quote (newname));
+    copy_file (finfo->file, newname);
     free (newname);
 }
 
@@ -1324,8 +1332,7 @@ static List *sig_cache;
 
 /* Update the Entries line for this file.  */
 static void
-update_entries (void *data_arg, List *ent_list, const char *short_pathname,
-                const char *filename)
+update_entries (void *data_arg, const struct file_info *finfo)
 {
     char *entries_line;
     struct update_entries_data *data = data_arg;
@@ -1355,23 +1362,23 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
     scratch_entries = xstrdup (entries_line);
 
     if (scratch_entries[0] != '/')
-        error (1, 0, "bad entries line `%s' from server", entries_line);
+        error (1, 0, "bad entries line %s from server", quote (entries_line));
     user = scratch_entries + 1;
     if (!(cp = strchr (user, '/')))
-        error (1, 0, "bad entries line `%s' from server", entries_line);
+        error (1, 0, "bad entries line %s from server", quote (entries_line));
     *cp++ = '\0';
     vn = cp;
     if (!(cp = strchr (vn, '/')))
-        error (1, 0, "bad entries line `%s' from server", entries_line);
+        error (1, 0, "bad entries line %s from server", quote (entries_line));
     *cp++ = '\0';
     
     ts = cp;
     if (!(cp = strchr (ts, '/')))
-        error (1, 0, "bad entries line `%s' from server", entries_line);
+        error (1, 0, "bad entries line %s from server", quote (entries_line));
     *cp++ = '\0';
     options = cp;
     if (!(cp = strchr (options, '/')))
-        error (1, 0, "bad entries line `%s' from server", entries_line);
+        error (1, 0, "bad entries line %s from server", quote (entries_line));
     *cp++ = '\0';
     tag_or_date = cp;
     
@@ -1386,7 +1393,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 
     /* Done parsing the entries line. */
 
-    temp_filename = newfilename (filename);
+    temp_filename = newfilename (finfo->file);
 
     if (data->contents == UPDATE_ENTRIES_UPDATE
 	|| data->contents == UPDATE_ENTRIES_PATCH
@@ -1399,9 +1406,9 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 
 	if (get_verify_checkouts (true) && !STREQ (cvs_cmd_name, "export"))
 	    error (get_verify_checkouts_fatal (), 0,
-		   "No signature for `%s'.", short_pathname);
+		   "No signature for %s.", quote (finfo->fullname));
 
-	if (!validate_change (data->existp, filename, short_pathname))
+	if (!validate_change (data->existp, finfo))
 	{
 	    /* The Mode, Mod-time, and Checksum responses should not carry
 	     * over to a subsequent Created (or whatever) response, even
@@ -1429,7 +1436,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    return;
 	}
 
-	buf = read_file_from_server (short_pathname, &mode_string, &size);
+	buf = read_file_from_server (finfo->fullname, &mode_string, &size);
 
         /* Some systems, like OS/2 and Windows NT, end lines with CRLF
            instead of just LF.  Format translation is done in the C
@@ -1460,24 +1467,24 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		   a permission problem, or some such, then it is
 		   entirely possible that future files will not have
 		   the same problem.  */
-		error (0, errno, "cannot write %s", short_pathname);
+		error (0, errno, "cannot write %s", quote (finfo->fullname));
 		free (temp_filename);
 		free (buf);
 		goto discard_file_and_return;
 	    }
 
 	    if (write (fd, buf, size) != size)
-		error (1, errno, "writing %s", short_pathname);
+		error (1, errno, "writing %s", quote (finfo->fullname));
 
 	    if (close (fd) < 0)
-		error (1, errno, "writing %s", short_pathname);
+		error (1, errno, "writing %s", quote (finfo->fullname));
 	}
 
 	patch_failed = false;
 
 	if (data->contents == UPDATE_ENTRIES_UPDATE)
 	{
-	    rename_file (temp_filename, filename);
+	    rename_file (temp_filename, finfo->file);
 	}
 	else if (data->contents == UPDATE_ENTRIES_PATCH)
 	{
@@ -1489,8 +1496,8 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 
 	       Fall back to transmitting entire files.  */
 	    error (0, 0,
-		   "unsupported patch format received for `%s'; will refetch",
-		   short_pathname);
+		   "unsupported patch format received for %s; will refetch",
+		   quote (finfo->fullname));
 	    patch_failed = true;
 	}
 	else
@@ -1503,25 +1510,26 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 
 	    /* Handle UPDATE_ENTRIES_RCS_DIFF.  */
 
-	    if (!isfile (filename))
+	    if (!isfile (finfo->file))
 	        error (1, 0, "patch original file %s does not exist",
-		       short_pathname);
+		       quote (finfo->fullname));
 	    filebuf = NULL;
 	    filebufsize = 0;
 	    nread = 0;
 
-	    get_file (filename, short_pathname, bin ? FOPEN_BINARY_READ : "r",
+	    get_file (finfo->file, finfo->fullname,
+		      bin ? FOPEN_BINARY_READ : "r",
 		      &filebuf, &filebufsize, &nread);
 	    /* At this point the contents of the existing file are in
                FILEBUF, and the length of the contents is in NREAD.
                The contents of the patch from the network are in BUF,
                and the length of the patch is in SIZE.  */
 
-	    if (!rcs_change_text (short_pathname, filebuf, nread, buf, size,
+	    if (!rcs_change_text (finfo->fullname, filebuf, nread, buf, size,
 				   &patchedbuf, &patchedlen))
 	    {
-		error (0, 0, "patch failed for `%s'; will refetch",
-		       short_pathname);
+		error (0, 0, "patch failed for %s; will refetch",
+		       quote (finfo->fullname));
 		patch_failed = true;
 	    }
 	    else
@@ -1537,8 +1545,8 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		    if (memcmp (ck.char_checksum, stored_ck.char_checksum, 16) != 0)
 		    {
 			error (0, 0,
-"checksum failure after patch to `%s'; will refetch",
-			       short_pathname);
+"checksum failure after patch to %s; will refetch",
+			       quote (finfo->fullname));
 
 			patch_failed = true;
 		    }
@@ -1557,7 +1565,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 			error (1, errno, "cannot write %s", temp_filename);
 		    if (fclose (e) == EOF)
 			error (1, errno, "cannot close %s", temp_filename);
-		    rename_file (temp_filename, filename);
+		    rename_file (temp_filename, finfo->file);
 		}
 
 		free (patchedbuf);
@@ -1587,15 +1595,15 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	     * here using text mode, so its lines will be terminated the same
 	     * way they were transmitted.
 	     */
-	    e = CVS_FOPEN (filename, "r");
+	    e = CVS_FOPEN (finfo->file, "r");
 	    if (!e)
-	        error (1, errno, "could not open %s", short_pathname);
+	        error (1, errno, "could not open %s", quote (finfo->fullname));
 
 	    md5_init_ctx (&context);
 	    while ((len = fread (buf, 1, sizeof buf, e)) != 0)
 		md5_process_bytes (buf, len, &context);
 	    if (ferror (e))
-		error (1, errno, "could not read %s", short_pathname);
+		error (1, errno, "could not read %s", quote (finfo->fullname));
 	    md5_finish_ctx (&context, ck.char_checksum);
 
 	    fclose (e);
@@ -1606,11 +1614,11 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    {
 	        if (data->contents != UPDATE_ENTRIES_PATCH)
 		    error (1, 0, "checksum failure on %s",
-			   short_pathname);
+			   quote (finfo->fullname));
 
 		error (0, 0,
-		       "checksum failure after patch to `%s'; will refetch",
-		       short_pathname);
+		       "checksum failure after patch to %s; will refetch",
+		       quote (finfo->fullname));
 
 		patch_failed = true;
 	    }
@@ -1622,7 +1630,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    failed_patches = xnrealloc (failed_patches,
 					failed_patches_count + 1,
 					sizeof (char *));
-	    failed_patches[failed_patches_count] = xstrdup (short_pathname);
+	    failed_patches[failed_patches_count] = xstrdup (finfo->fullname);
 	    ++failed_patches_count;
 
 	    stored_checksum_valid = 0;
@@ -1649,9 +1657,10 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	}
 
         {
-	    int status = change_mode (filename, mode_string, 1);
+	    int status = change_mode (finfo->file, mode_string, 1);
 	    if (status != 0)
-		error (0, status, "cannot change mode of %s", short_pathname);
+		error (0, status, "cannot change mode of %s",
+		       quote (finfo->fullname));
 	}
 
 	free (mode_string);
@@ -1659,24 +1668,24 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
     else if (data->contents == UPDATE_ENTRIES_BASE)
     {
 	Node *n;
-	if (!noexec && (n = findnode_fn (ent_list, filename)))
+	if (!noexec && (n = findnode_fn (finfo->entries, finfo->file)))
 	{
 	    Entnode *e = n->data;
 	    /* After a join, control can get here without having changed the
 	     * version number.  In this case, do not remove the base file.
 	     */
 	    if (!STREQ (vn, e->version))
-		base_remove (filename, e->version);
+		base_remove (finfo->file, e->version);
 	}
 
 	if (last_merge)
 	{
 	    /* Won't need these now that the merge is complete.  */
 	    if (!STREQ (vn, base_merge_rev1))
-		base_remove (filename, base_merge_rev1);
+		base_remove (finfo->file, base_merge_rev1);
 	    free (base_merge_rev1);
 	    if (!STREQ (vn, base_merge_rev2))
-		base_remove (filename, base_merge_rev2);
+		base_remove (finfo->file, base_merge_rev2);
 	    free (base_merge_rev2);
 	}
 
@@ -1698,7 +1707,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    return;
 	}
 	if (!noexec)
-	    rename_file (temp_filename, filename);
+	    rename_file (temp_filename, finfo->file);
 	if (updated_fname)
 	{
 	    cvs_output ("U ", 0);
@@ -1717,7 +1726,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	Node *n;
 	bool makebase = true;
 
-	if ((n = findnode_fn (ent_list, filename)))
+	if ((n = findnode_fn (finfo->entries, finfo->file)))
 	{
 	    /* This could be a readd of a locally removed file or, for
 	     * instance, an update that changed keyword options without
@@ -1726,7 +1735,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    Entnode *e = n->data;
 	    if (!STREQ (vn, e->version))
 		/* The version number has changed.  */
-		base_remove (filename, e->version);
+		base_remove (finfo->file, e->version);
 	    else
 		/* The version number has not changed.  */
 		makebase = false;
@@ -1735,12 +1744,12 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	if (makebase)
 	{
 	    /* A real checkin.  */
-	    char *basefile = make_base_file_name (filename, vn);
+	    char *basefile = make_base_file_name (finfo->file, vn);
 
 	    cvs_xmkdir (CVSADM_BASE, NULL, MD_EXIST_OK);
-	    copy_file (filename, basefile);
+	    copy_file (finfo->file, basefile);
 
-	    if ((n = findnode_fn (sig_cache, short_pathname)))
+	    if ((n = findnode_fn (sig_cache, finfo->fullname)))
 	    {
 		char *sigfile = Xasprintf ("%s%s", basefile, ".sig");
 		write_file (sigfile, n->data, n->len);
@@ -1749,8 +1758,8 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    }
 	    else if (get_sign_commits (supported_request ("Signature")))
 		error (0, 0,
-"Internal error: OpenPGP signature for `%s' not found in cache.",
-		       short_pathname);
+"Internal error: OpenPGP signature for %s not found in cache.",
+		       quote (finfo->fullname));
 	    free (basefile);
 	}
     }
@@ -1767,7 +1776,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 
     if (stored_mode)
     {
-	change_mode (filename, stored_mode, 1);
+	change_mode (finfo->file, stored_mode, 1);
 	free (stored_mode);
 	stored_mode = NULL;
     }
@@ -1781,20 +1790,20 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	(void) time (&t.actime);
 
 #ifdef UTIME_EXPECTS_WRITABLE
-	if (!iswritable (filename))
+	if (!iswritable (finfo->file))
 	{
-	    xchmod (filename, 1);
+	    xchmod (finfo->file, 1);
 	    change_it_back = 1;
 	}
 #endif  /* UTIME_EXPECTS_WRITABLE  */
 
-	if (utime (filename, &t) < 0)
-	    error (0, errno, "cannot set time on %s", filename);
+	if (utime (finfo->file, &t) < 0)
+	    error (0, errno, "cannot set time on %s", quote (finfo->fullname));
 
 #ifdef UTIME_EXPECTS_WRITABLE
 	if (change_it_back)
 	{
-	    xchmod (filename, 0);
+	    xchmod (finfo->file, 0);
 	    change_it_back = 0;
 	}
 #endif  /*  UTIME_EXPECTS_WRITABLE  */
@@ -1816,7 +1825,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 
 	local_timestamp = data->timestamp;
 	if (!local_timestamp || ts[0] == '+' || last_merge_conflict)
-	    file_timestamp = time_stamp (filename);
+	    file_timestamp = time_stamp (finfo->file);
 	else
 	    file_timestamp = NULL;
 
@@ -1840,11 +1849,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	       cvsclient.texi accordingly.  */
 
 	    if (STREQ (cvs_cmd_name, "commit"))
-	    {
-		char *update_dir = dir_name (short_pathname);
-		mark_up_to_date (update_dir, filename);
-		free (update_dir);
-	    }
+		mark_up_to_date (finfo->update_dir, finfo->file);
 	}
 
 	if (last_merge)
@@ -1854,7 +1859,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 		Node *n;
 		Entnode *e;
 
-		n = findnode_fn (ent_list, filename);
+		n = findnode_fn (finfo->entries, finfo->file);
 		assert (n);
 
 		e = n->data;
@@ -1871,7 +1876,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	else
 	    ignore_merge = true;
 	
-	Register (ent_list, filename, vn,
+	Register (finfo, vn,
 		  ignore_merge ? local_timestamp : "Result of merge",
 		  options, tag, date,
 		  ts[0] == '+' || last_merge_conflict ? file_timestamp : NULL);
@@ -1881,7 +1886,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    if (!really_quiet)
 	    {
 		cvs_output ("C ", 2);
-		cvs_output (short_pathname, 0);
+		cvs_output (finfo->fullname, 0);
 		cvs_output ("\n", 1);
 	    }
 	}
@@ -1890,7 +1895,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    if (!really_quiet)
 	    {
 		cvs_output ("M ", 2);
-		cvs_output (short_pathname, 0);
+		cvs_output (finfo->fullname, 0);
 		cvs_output ("\n", 1);
 	    }
 	}
@@ -2089,8 +2094,7 @@ client_write_sigfile (const char *sigfile, bool writable, char **sigcopy,
 
 
 static void
-client_base_checkout (void *data_arg, List *ent_list,
-		      const char *short_pathname, const char *filename)
+client_base_checkout (void *data_arg, const struct file_info *finfo)
 {
     /* Options for this file, a Previous REVision if this is a diff, and the
      * REVision of the new file.
@@ -2111,7 +2115,7 @@ client_base_checkout (void *data_arg, List *ent_list,
     bool patch_failed;
     bool *istemp = data_arg;
 
-    TRACE (TRACE_FUNCTION, "client_base_checkout (%s)", short_pathname);
+    TRACE (TRACE_FUNCTION, "client_base_checkout (%s)", finfo->fullname);
 
     /* Read OPTIONS, PREV, and REV from the server.  */
     read_line (&options);
@@ -2131,7 +2135,7 @@ client_base_checkout (void *data_arg, List *ent_list,
 	    temp_checkout1 = basefile;
     }
     else
-	basefile = make_base_file_name (filename, rev);
+	basefile = make_base_file_name (finfo->file, rev);
 
     /* FIXME?  It might be nice to verify that base files aren't being
      * overwritten except when the keyword mode has changed.
@@ -2139,9 +2143,8 @@ client_base_checkout (void *data_arg, List *ent_list,
     if (!*istemp && isfile (basefile))
 	force_xchmod (basefile, true);
 
-    update_dir = dir_name (short_pathname);
-    if (*istemp || !*update_dir) fullbase = xstrdup (basefile);
-    else fullbase = Xasprintf ("%s/%s", update_dir, basefile);
+    if (*istemp) fullbase = xstrdup (basefile);
+    else fullbase = dir_append (finfo->update_dir, basefile);
 
     /* Read the file or patch from the server.  */
     /* FIXME: Read/write to file is repeated and could be optimized to
@@ -2164,13 +2167,12 @@ client_base_checkout (void *data_arg, List *ent_list,
 
 	/* Handle UPDATE_ENTRIES_RCS_DIFF.  */
 
-	pbasefile = make_base_file_name (filename, prev);
-	if (!*update_dir) pfullbase = xstrdup (pbasefile);
-	else pfullbase = Xasprintf ("%s/%s", update_dir, pbasefile);
+	pbasefile = make_base_file_name (finfo->file, prev);
+	pfullbase = dir_append (finfo->update_dir, pbasefile);
 
 	if (!isfile (pbasefile))
-	    error (1, 0, "patch original file `%s' does not exist",
-		   pfullbase);
+	    error (1, 0, "patch original file %s does not exist",
+		   quote (pfullbase));
 
 	filebuf = NULL;
 	filebufsize = 0;
@@ -2238,28 +2240,26 @@ client_base_checkout (void *data_arg, List *ent_list,
 	    /* Verify the signature here, when configured to do so.  */
 	    if (verify /* cannot be `cvs export'. */)
 	    {
-		char *repos = Name_Repository (NULL, update_dir);
-		const char *srepos = Short_Repository (repos);
-		if (!verify_signature (srepos, sigcopy, siglen, basefile, bin,
+		if (!verify_signature (finfo->repository, sigcopy, siglen,
+				       basefile, bin,
 				       get_verify_checkouts_fatal ()))
 		{
 		    /* verify_signature exits when VERIFY_FATAL.  */
 		    assert (!get_verify_checkouts_fatal ());
 		    error (0, 0, "Bad signature for `%s'.", fullbase);
 		}
-		free (repos);
 		free (sigcopy);
 	    }
 
-	    if (istemp && CVS_UNLINK (sigfile) < 0)
-		error (0, errno, "Failed to remove temp sig file `%s'",
-		       sigfile);
+	    if (*istemp && CVS_UNLINK (sigfile) < 0)
+		error (0, errno, "Failed to remove temp sig file %s",
+		       quote (sigfile));
 
 	    free (sigfile);
 	}
 	else if (verify /* cannot be `cvs export'. */)
 	    error (get_verify_checkouts_fatal (), 0,
-		   "No signature for `%s'.", fullbase);
+		   "No signature for %s.", quote (fullbase));
     }
 
     free (buf);
@@ -2267,7 +2267,6 @@ client_base_checkout (void *data_arg, List *ent_list,
     free (prev);
     if (!*istemp)
 	free (basefile);
-    free (update_dir);
     free (fullbase);
 }
 
@@ -2296,15 +2295,14 @@ handle_temp_checkout (char *args, size_t len)
 
 
 static void
-client_base_signatures (void *data_arg, List *ent_list,
-			const char *short_pathname, const char *filename)
+client_base_signatures (void *data_arg, const struct file_info *finfo)
 {
     char *rev;
     char *basefile;
     char *sigfile;
     bool *clear = data_arg;
 
-    TRACE (TRACE_FUNCTION, "client_base_signatures (%s)", short_pathname);
+    TRACE (TRACE_FUNCTION, "client_base_signatures (%s)", finfo->fullname);
 
     if (!stored_signatures && !*clear)
 	error (1, 0,
@@ -2316,7 +2314,7 @@ client_base_signatures (void *data_arg, List *ent_list,
     /* Read REV from the server.  */
     read_line (&rev);
 
-    basefile = make_base_file_name (filename, rev);
+    basefile = make_base_file_name (finfo->file, rev);
     sigfile = Xasprintf ("%s.sig", basefile);
 
     if (*clear)
@@ -2366,19 +2364,18 @@ handle_base_clear_signatures (char *args, size_t len)
  *   expect.
  */
 static void
-client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
-		  const char *filename)
+client_base_copy (void *data_arg, const struct file_info *finfo)
 {
     char *rev, *flags;
     char *basefile;
     char *temp_filename;
 
-    TRACE (TRACE_FUNCTION, "client_base_copy (%s)", short_pathname);
+    TRACE (TRACE_FUNCTION, "client_base_copy (%s)", finfo->fullname);
 
     read_line (&rev);
 
     read_line (&flags);
-    if (!validate_change (translate_exists (flags), filename, short_pathname))
+    if (!validate_change (translate_exists (flags), finfo))
     {
 	/* The Mode, Mod-time, and Checksum responses should not carry
 	 * over to a subsequent Created (or whatever) response, even
@@ -2411,9 +2408,9 @@ client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
 	basefile = temp_checkout1;
     }
     else
-	basefile = make_base_file_name (filename, rev);
+	basefile = make_base_file_name (finfo->file, rev);
 
-    temp_filename = newfilename (filename);
+    temp_filename = newfilename (finfo->file);
     copy_file (basefile, temp_filename);
 
     if (flags[0] && flags[1] == 'n')
@@ -2431,7 +2428,7 @@ client_base_copy (void *data_arg, List *ent_list, const char *short_pathname,
     {
 	temp_checkout1 = NULL;
 	if (CVS_UNLINK (basefile) < 0)
-	    error (0, errno, "Failed to remove temp file `%s'", basefile);
+	    error (0, errno, "Failed to remove temp file %s", quote (basefile));
     }
 
     free (flags);
@@ -2453,14 +2450,13 @@ handle_base_copy (char *args, size_t len)
 
 
 static void
-client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
-		   const char *filename)
+client_base_merge (void *data_arg, const struct file_info *finfo)
 {
     char *f1, *f2;
     char *temp_filename;
     int status;
 
-    TRACE (TRACE_FUNCTION, "client_base_merge (%s)", short_pathname);
+    TRACE (TRACE_FUNCTION, "client_base_merge (%s)", finfo->fullname);
 
     read_line (&base_merge_rev1);
     read_line (&base_merge_rev2);
@@ -2471,9 +2467,9 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
 	cvs_output (base_merge_rev1, 0);
 	cvs_output (" and ", 5);
 	cvs_output (base_merge_rev2, 0);
-	cvs_output (" into `", 7);
-	cvs_output (short_pathname, 0);
-	cvs_output ("'\n", 2);
+	cvs_output (" into ", 6);
+	cvs_output (quote (finfo->fullname), 0);
+	cvs_output ("\n", 1);
     }
 
     if (temp_checkout1)
@@ -2483,29 +2479,29 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
 	    f2 = temp_checkout2;
 	else
 	{
-	    f2 = make_base_file_name (filename, base_merge_rev2);
+	    f2 = make_base_file_name (finfo->file, base_merge_rev2);
 	    if (!isfile (f2))
 		error (1, 0, "Server sent only one temp file before a merge.");
 	}
     }
     else
     {
-	f1 = make_base_file_name (filename, base_merge_rev1);
-	f2 = make_base_file_name (filename, base_merge_rev2);
+	f1 = make_base_file_name (finfo->file, base_merge_rev1);
+	f2 = make_base_file_name (finfo->file, base_merge_rev2);
     }
 
-    temp_filename = newfilename (filename);
+    temp_filename = newfilename (finfo->file);
 
-    force_copy_file (filename, temp_filename);
+    force_copy_file (finfo->file, temp_filename);
     force_xchmod (temp_filename, true);
 
-    status = merge (temp_filename, filename, f1, base_merge_rev1, f2,
+    status = merge (temp_filename, finfo->file, f1, base_merge_rev1, f2,
 		    base_merge_rev2);
 
     if (status != 0 && status != 1)
 	error (status == -1, status == -1 ? errno : 0,
-	       "could not merge differences between %s & %s of `%s'",
-	       base_merge_rev1, base_merge_rev2, short_pathname);
+	       "could not merge differences between %s & %s of %s",
+	       base_merge_rev1, base_merge_rev2, quote (finfo->fullname));
 
     if (last_merge && !noexec)
 	error (1, 0,
@@ -2522,7 +2518,7 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
 	if (noexec && !really_quiet)
 	{
 	    cvs_output ("C ", 2);
-	    cvs_output (short_pathname, 0);
+	    cvs_output (finfo->fullname, 0);
 	    cvs_output ("\n", 1);
 	}
     }
@@ -2530,12 +2526,12 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
     {
 	Node *n;
 
-	if (!xcmp (temp_filename, filename))
+	if (!xcmp (temp_filename, finfo->file))
 	{
 	    if (!quiet)
 	    {
 		cvs_output ("`", 1);
-		cvs_output (short_pathname, 0);
+		cvs_output (finfo->fullname, 0);
 		cvs_output ("' already contains the differences between ", 0);
 		cvs_output (base_merge_rev1, 0);
 		cvs_output (" and ", 5);
@@ -2547,10 +2543,10 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
 	/* This next is a separate case because a join could restore the file
 	 * to its state at checkout time.
 	 */
-	if ((n = findnode_fn (ent_list, filename)))
+	if ((n = findnode_fn (finfo->entries, finfo->file)))
 	{
 	    Entnode *e = n->data;
-	    char *basefile = make_base_file_name (filename, e->version);
+	    char *basefile = make_base_file_name (finfo->file, e->version);
 	    if (isfile (basefile) && !xcmp (basefile, temp_filename))
 		/* The user's file is identical to the base file.
 		 * Pretend this merge never happened.
@@ -2572,13 +2568,13 @@ client_base_merge (void *data_arg, List *ent_list, const char *short_pathname,
     {
 	temp_checkout1 = NULL;
 	if (CVS_UNLINK (f1) < 0)
-	    error (0, errno, "Failed to remove temp file `%s'", f1);
+	    error (0, errno, "Failed to remove temp file %s", quote (f1));
     }
     if (temp_checkout2)
     {
 	temp_checkout2 = NULL;
 	if (CVS_UNLINK (f2) < 0)
-	    error (0, errno, "Failed to remove temp file `%s'", f2);
+	    error (0, errno, "Failed to remove temp file %s", quote (f2));
     }
     free (f1);
     free (f2);
@@ -2625,11 +2621,9 @@ handle_base_merged (char *args, size_t len)
 
 
 static void
-client_base_diff (void *data_arg, List *ent_list, const char *short_pathname,
-		  const char *filename)
+client_base_diff (void *data_arg, const struct file_info *finfo)
 {
     struct diff_info *di = data_arg;
-    struct file_info finfo;
     char *ft1, *ft2, *rev1, *rev2, *label1, *label2;
     const char *f1 = NULL, *f2 = NULL;
     bool used_t1 = false, used_t2 = false;
@@ -2678,7 +2672,8 @@ client_base_diff (void *data_arg, List *ent_list, const char *short_pathname,
     else if (STREQ (ft1, "DEVNULL"))
 	f1 = DEVNULL;
     else
-	error (1, 0, "Server sent unrecognized diff file type (`%s')", ft1);
+	error (1, 0, "Server sent unrecognized diff file type (%s)",
+	       quote (ft1));
 
     if (STREQ (ft2, "TEMP"))
     {
@@ -2700,18 +2695,16 @@ client_base_diff (void *data_arg, List *ent_list, const char *short_pathname,
     else if (STREQ (ft2, "DEVNULL"))
 	f2 = DEVNULL;
     else if (STREQ (ft2, "WORKFILE"))
-	f2 = filename;
+	f2 = finfo->file;
     else
-	error (1, 0, "Server sent unrecognized diff file type (`%s')", ft2);
+	error (1, 0, "Server sent unrecognized diff file type (%s)",
+	       quote (ft2));
 
     if ((!used_t1 && temp_checkout1)
 	|| (!used_t2 && temp_checkout2))
 	error (1, 0, "Unused temp files sent from server before Base-diff.");
 
-    finfo.file = filename;
-    finfo.fullname = short_pathname;
-
-    diff_mark_errors (base_diff (&finfo, di->diff_argc, di->diff_argv,
+    diff_mark_errors (base_diff (finfo, di->diff_argc, di->diff_argv,
 				 f1, rev1, label1, f2,
 				 rev2, label2, di->empty_files));
 
@@ -2726,7 +2719,7 @@ client_base_diff (void *data_arg, List *ent_list, const char *short_pathname,
 	char *tmp = temp_checkout1;
 	temp_checkout1 = NULL;
 	if (CVS_UNLINK (tmp) < 0)
-	    error (0, errno, "Failed to remove temp file `%s'", tmp);
+	    error (0, errno, "Failed to remove temp file %s", quote (tmp));
 	free (tmp);
     }
     if (temp_checkout2)
@@ -2734,7 +2727,7 @@ client_base_diff (void *data_arg, List *ent_list, const char *short_pathname,
 	char *tmp = temp_checkout2;
 	temp_checkout2 = NULL;
 	if (CVS_UNLINK (tmp) < 0)
-	    error (0, errno, "Failed to remove temp file `%s'", tmp);
+	    error (0, errno, "Failed to remove temp file %s", quote (tmp));
 	free (tmp);
     }
 
@@ -2754,10 +2747,9 @@ handle_base_diff (char *args, size_t len)
 
 
 static void
-remove_entry (void *data, List *ent_list, const char *short_pathname,
-              const char *filename)
+remove_entry (void *data, const struct file_info *finfo)
 {
-    Scratch_Entry (ent_list, filename);
+    Scratch_Entry (finfo->entries, finfo->file);
 }
 
 
@@ -2771,17 +2763,16 @@ handle_remove_entry (char *args, size_t len)
 
 
 static void
-remove_entry_and_file (void *data, List *ent_list, const char *short_pathname,
-                       const char *filename)
+remove_entry_and_file (void *data, const struct file_info *finfo)
 {
-    Scratch_Entry (ent_list, filename);
+    Scratch_Entry (finfo->entries, finfo->file);
     /* Note that we don't ignore existence_error's here.  The server
        should be sending Remove-entry rather than Removed in cases
        where the file does not exist.  And if the user removes the
        file halfway through a cvs command, we should be printing an
        error.  */
-    if (unlink_file (filename) < 0)
-	error (0, errno, "unable to remove %s", short_pathname);
+    if (unlink_file (finfo->file) < 0)
+	error (0, errno, "unable to remove %s", quote (finfo->fullname));
 }
 
 
@@ -2807,8 +2798,7 @@ is_cvsroot_level (char *pathname)
 
 
 static void
-set_static (void *data, List *ent_list, const char *short_pathname,
-	    const char *filename)
+set_static (void *data, const struct file_info *finfo)
 {
     FILE *fp;
     fp = xfopen (CVSADM_ENTSTAT, "w+");
@@ -2833,8 +2823,7 @@ handle_set_static_directory (char *args, size_t len)
 
 
 static void
-clear_static (void *data, List *ent_list, const char *short_pathname,
-              const char *filename)
+clear_static (void *data, const struct file_info *finfo)
 {
     if (unlink_file (CVSADM_ENTSTAT) < 0 && ! existence_error (errno))
         error (1, errno, "cannot remove file %s", CVSADM_ENTSTAT);
@@ -2858,8 +2847,7 @@ handle_clear_static_directory (char *pathname, size_t len)
 
 
 static void
-set_sticky (void *data, List *ent_list, const char *short_pathname,
-	    const char *filename)
+set_sticky (void *data, const struct file_info *finfo)
 {
     char *tagspec;
     FILE *f;
@@ -2919,8 +2907,7 @@ handle_set_sticky (char *pathname, size_t len)
 
 
 static void
-clear_sticky (void *data, List *ent_list, const char *short_pathname,
-              const char *filename)
+clear_sticky (void *data, const struct file_info *finfo)
 {
     if (unlink_file (CVSADM_TAG) < 0 && ! existence_error (errno))
 	error (1, errno, "cannot remove %s", CVSADM_TAG);
@@ -2963,10 +2950,9 @@ handle_edit_file (char *pathname, size_t len)
 
 
 static void
-template (void *data, List *ent_list, const char *short_pathname,
-	  const char *filename)
+template (void *data, const struct file_info *finfo)
 {
-    char *buf = Xasprintf ("%s/%s", short_pathname, CVSADM_TEMPLATE);
+    char *buf = Xasprintf ("%s/%s", finfo->update_dir, CVSADM_TEMPLATE);
     read_counted_file (CVSADM_TEMPLATE, buf);
     free (buf);
 }
@@ -2982,8 +2968,7 @@ handle_template (char *pathname, size_t len)
 
 
 static void
-clear_template (void *data, List *ent_list, const char *short_pathname,
-                const char *filename)
+clear_template (void *data, const struct file_info *finfo)
 {
     if (unlink_file (CVSADM_TEMPLATE) < 0 && ! existence_error (errno))
 	error (1, errno, "cannot remove %s", CVSADM_TEMPLATE);
@@ -3297,8 +3282,7 @@ send_a_repository (const char *dir, const char *repository,
 
 
 static void
-notified_a_file (void *data, List *ent_list, const char *short_pathname,
-                 const char *filename)
+notified_a_file (void *data, const struct file_info *finfo)
 {
     FILE *fp;
     FILE *newf;
@@ -3325,8 +3309,8 @@ notified_a_file (void *data, List *ent_list, const char *short_pathname,
 	goto error_exit;
     }
     *cp = '\0';
-    if (!STREQ (filename, line + 1))
-	error (0, 0, "protocol error: notified %s, expected %s", filename,
+    if (!STREQ (finfo->file, line + 1))
+	error (0, 0, "protocol error: notified %s, expected %s", finfo->file,
 	       line + 1);
 
     if (getline (&line, &line_len, fp) < 0)
@@ -3336,7 +3320,7 @@ notified_a_file (void *data, List *ent_list, const char *short_pathname,
 	    free (line);
 	    if (fclose (fp) < 0)
 		error (0, errno, "cannot close %s", CVSADM_NOTIFY);
-	    if ( CVS_UNLINK (CVSADM_NOTIFY) < 0)
+	    if (CVS_UNLINK (CVSADM_NOTIFY) < 0)
 		error (0, errno, "cannot remove %s", CVSADM_NOTIFY);
 	    return;
 	}
@@ -3393,10 +3377,10 @@ notified_a_file (void *data, List *ent_list, const char *short_pathname,
 
     return;
   error2:
-    (void)fclose (newf);
+    fclose (newf);
   error_exit:
     free (line);
-    (void)fclose (fp);
+    fclose (fp);
 }
 
 

@@ -17,7 +17,8 @@
 #ifndef EDIT_H
 #define EDIT_H
 
-#include "hash.h"
+/* CVS */
+#include "rcs.h"
 
 
 
@@ -51,7 +52,6 @@ void mark_up_to_date (const char *update_dir, const char *file);
 
 void editors_output (const char *fullname, const char *them);
 
-void edit_file (void *data, List *ent_list, const char *short_pathname,
-		const char *filename);
+void edit_file (void *data, const struct file_info *finfo);
 
 #endif /* EDIT_H */

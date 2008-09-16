@@ -142,7 +142,7 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
 	    /* Re-register with the new data.  */
 	    if (STREQ (vers->options, "-V4"))
 		vers->options[0] = '\0';
-	    Register (finfo->entries, finfo->file, vers->vn_rcs, vers->ts_user,
+	    Register (finfo, vers->vn_rcs, vers->ts_user,
 		      vers->options, vers->tag, vers->date, NULL);
 	    history_write (type, NULL, vers->vn_rcs,
 			   finfo->file, finfo->repository);

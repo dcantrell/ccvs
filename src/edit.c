@@ -342,23 +342,21 @@ static int find_editors_and_output (struct file_info *finfo)
  * These args could be const but this needs to fit the call_in_directory API.
  */
 void
-edit_file (void *data, List *ent_list, const char *short_pathname,
-	   const char *filename)
+edit_file (void *data, const struct file_info *finfo)
 {
     Node *node;
-    struct file_info finfo;
     char *editbasefn, *basefn, *rev;
 
 
-    node = findnode_fn (ent_list, filename);
+    node = findnode_fn (finfo->entries, finfo->file);
 
     /* I'm not sure why this isn't an error.  */
     if (!node) return;
     rev = ((Entnode *) node->data)->version;
 
-    xchmod (filename, 1);
+    xchmod (finfo->file, 1);
     cvs_xmkdir (CVSADM_BASE, NULL, MD_EXIST_OK);
-    basefn = make_base_file_name (filename, rev);
+    basefn = make_base_file_name (finfo->file, rev);
 
     if (!isfile (basefn))
     {
@@ -368,28 +366,24 @@ edit_file (void *data, List *ent_list, const char *short_pathname,
 	 */
 	if (!quiet)
 	{
-	    error (0, 0, "Base revision (%s) for `%s' is missing.",
-		   rev, short_pathname);
-	    error (0, 0, "Using `%s' to create unedit fallback.",
-		   short_pathname);
+	    error (0, 0, "Base revision (%s) for %s is missing.",
+		   rev, quote (finfo->fullname));
+	    error (0, 0, "Using %s to create unedit fallback.",
+		   quote (finfo->fullname));
 	}
 
 	free (basefn);
-	basefn = xstrdup (filename);
+	basefn = xstrdup (finfo->file);
     }
 
-    editbasefn = Xasprintf ("%s/%s", CVSADM_BASE, filename);
+    editbasefn = Xasprintf ("%s/%s", CVSADM_BASE, finfo->file);
     if (isfile (editbasefn))
 	xchmod (editbasefn, true);
     copy_file (basefn, editbasefn);
     free (basefn);
     free (editbasefn);
 
-    finfo.file = filename;
-    finfo.fullname = short_pathname;
-    finfo.update_dir = dir_name (short_pathname);
-    base_register (finfo.update_dir, finfo.file, rev);
-    free ((char *)finfo.update_dir);
+    base_register (finfo->update_dir, finfo->file, rev);
 }
 
 
@@ -481,7 +475,7 @@ edit_fileproc (void *callerdat, struct file_info *finfo)
 	server_edit_file (finfo);
     else
 #endif /* SERVER_SUPPORT */
-	edit_file (NULL, finfo->entries, finfo->fullname, finfo->file);
+	edit_file (NULL, finfo);
 
     return 0;
 }
@@ -749,9 +743,8 @@ unedit_fileproc (void *callerdat, struct file_info *finfo)
 		error (0, 0, "run update to complete the unedit");
 		return 0;
 	    }
-	    Register (finfo->entries, finfo->file, baserev, entdata->timestamp,
-		      entdata->options, entdata->tag, entdata->date,
-		      entdata->conflict);
+	    Register (finfo, baserev, entdata->timestamp, entdata->options,
+		      entdata->tag, entdata->date, entdata->conflict);
 	}
 	free (baserev);
 	base_deregister (finfo->update_dir, finfo->file);

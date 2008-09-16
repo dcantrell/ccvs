@@ -729,8 +729,7 @@ update_fileproc (void *callerdat, struct file_info *finfo)
                         else
                         {
                             /* Reregister to clear conflict flag. */
-                            Register (finfo->entries, finfo->file, 
-                                      vers->vn_rcs, vers->ts_rcs,
+                            Register (finfo, vers->vn_rcs, vers->ts_rcs,
                                       vers->options, vers->tag,
                                       vers->date, NULL);
                         }
@@ -1188,7 +1187,7 @@ scratch_file (struct file_info *finfo, Vers_TS *vers)
     }
 #endif
     if (unlink_file (finfo->file) < 0 && ! existence_error (errno))
-	error (0, errno, "unable to remove %s", finfo->fullname);
+	error (0, errno, "unable to remove %s", quote (finfo->fullname));
     else if (!server_active)
     {
 	/* skip this step when the server is running since
@@ -1387,8 +1386,7 @@ VERS: ", 0);
 		}
 	    }
 	    else
-		Register (finfo->entries, finfo->file,
-			  adding ? "0" : xvers_ts->vn_rcs,
+		Register (finfo, adding ? "0" : xvers_ts->vn_rcs,
 			  xvers_ts->ts_user, xvers_ts->options,
 			  xvers_ts->tag, xvers_ts->date,
 			  NULL); /* Clear conflict flag on fresh checkout */
@@ -1713,8 +1711,7 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
 	if (STREQ (xvers_ts->options, "-V4"))
 	    xvers_ts->options[0] = '\0';
 
-	Register (finfo->entries, finfo->file, xvers_ts->vn_rcs,
-		  xvers_ts->ts_user, xvers_ts->options,
+	Register (finfo, xvers_ts->vn_rcs, xvers_ts->ts_user, xvers_ts->options,
 		  xvers_ts->tag, xvers_ts->date, NULL);
 
 	if (stat (finfo->file, file_info) < 0)
@@ -1853,8 +1850,7 @@ RegisterMerge (struct file_info *finfo, Vers_TS *vers,
 	time (&last_register_time);
 	cp = time_stamp (finfo->file);
     }
-    Register (finfo->entries, finfo->file,
-	      vers->vn_rcs && !force_addition ? vers->vn_rcs : "0",
+    Register (finfo, vers->vn_rcs && !force_addition ? vers->vn_rcs : "0",
 	      "Result of merge", vers->options, vers->tag, vers->date, cp);
     if (cp)
 	free (cp);
@@ -1897,7 +1893,7 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
     backup = Xasprintf ("%s%s.%s", BAKPREFIX, finfo->file, vers->vn_user);
 
     if (unlink_file (backup) && !existence_error (errno))
-	error (0, errno, "unable to remove %s", backup);
+	error (0, errno, "unable to remove %s", quote (backup));
     copy_file (finfo->file, backup);
     xchmod (finfo->file, 1);
 
@@ -2275,9 +2271,8 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	    else
 		cp = xstrdup (vers->ts_user);
 
-	    Register (finfo->entries, finfo->file, vers->vn_user,
-		      "Result of merge", vers->options, vers->tag, vers->date,
-		      cp);
+	    Register (finfo, vers->vn_user, "Result of merge", vers->options,
+		      vers->tag, vers->date, cp);
 	    write_letter (finfo, 'C');
 	    free (cp);
 
@@ -2313,8 +2308,8 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 			    NULL, NULL);
 	}
 #endif
-	Register (finfo->entries, finfo->file, mrev, vers->ts_rcs,
-		  vers->options, vers->tag, vers->date, vers->ts_conflict);
+	Register (finfo, mrev, vers->ts_rcs, vers->options, vers->tag,
+		  vers->date, vers->ts_conflict);
 	free (mrev);
 	/* We need to check existence_error here because if we are
            running as the server, and the file is up to date in the
@@ -2414,8 +2409,8 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	    temp_copy (finfo, "ny", tempfile);
 	    free (tempfile);
 
-	    Register (finfo->entries, finfo->file, "0",
-		      "Result of merge", NULL, vers->tag, vers->date, NULL);
+	    Register (finfo, "0", "Result of merge", NULL, vers->tag,
+		      vers->date, NULL);
 #ifdef SERVER_SUPPORT
 	    if (server_active)
 		/* No need to create a backup for an addition - if the file

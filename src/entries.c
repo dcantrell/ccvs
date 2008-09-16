@@ -21,7 +21,7 @@
 # include <config.h>
 #endif
 
-/* Validate API.  */
+/* Validate API */
 #include "entries.h"
 
 /* GNULIB */
@@ -353,7 +353,7 @@ AddEntryNode (List *list, Entnode *entdata)
  * removing the old entry first, if necessary.
  */
 void
-Register (List *list, const char *fname, const char *vn, const char *ts,
+Register (const struct file_info *finfo, const char *vn, const char *ts,
 	  const char *options, const char *tag, const char *date,
 	  const char *ts_conflict)
 {
@@ -361,27 +361,25 @@ Register (List *list, const char *fname, const char *vn, const char *ts,
     Node *node;
 
     TRACE (TRACE_FUNCTION, "Register(%s, %s, %s%s%s, %s, %s %s)",
-	   fname, vn, ts ? ts : "",
+	   finfo->fullname, vn, ts ? ts : "",
 	   ts_conflict ? "+" : "", ts_conflict ? ts_conflict : "",
 	   options, tag ? tag : "", date ? date : "");
 
 #ifdef SERVER_SUPPORT
     if (server_active)
-    {
-	server_register (fname, vn, ts, options, tag, date, ts_conflict);
-    }
+	server_register (finfo->file, vn, ts, options, tag, date, ts_conflict);
 #endif
 
-    entnode = Entnode_Create (ENT_FILE, fname, vn, ts, options, tag, date,
-			      ts_conflict);
-    node = AddEntryNode (list, entnode);
+    entnode = Entnode_Create (ENT_FILE, finfo->file, vn, ts, options, tag,
+			      date, ts_conflict);
+    node = AddEntryNode (finfo->entries, entnode);
 
     if (!noexec)
     {
 	entfilename = CVSADM_ENTLOG;
 	entfile = CVS_FOPEN (entfilename, "a");
 
-	if (entfile == NULL)
+	if (!entfile)
 	{
 	    /* Warning, not error, as in write_entries.  */
 	    /* FIXME-update-dir: should be including update_dir in message.  */

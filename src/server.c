@@ -8440,7 +8440,8 @@ server_base_signatures (struct file_info *finfo, const char *rev)
 
 
 void
-server_base_diff (struct file_info *finfo, const char *f1, const char *rev1,
+server_base_diff (const struct file_info *finfo,
+		  const char *f1, const char *rev1,
 		  const char *label1, const char *f2, const char *rev2,
 		  const char *label2)
 {
