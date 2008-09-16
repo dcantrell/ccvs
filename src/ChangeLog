@@ -1,5 +1,8 @@
 2008-09-16  Derek R. Price  <derek@ximbiot.com>
 
+	* diff.c (diff): Return real errors as 2 or more, like GNU diff.
+	(diff_filesdoneproc, diff_dirleaveproc): No longer needed.
+
 	* commit.c (commit): Handle error return from lock_tree_promotably().
 	* lock.c (lock_obtained, lock_wait): Move up to avoid prototypes.
 	(set_lock): Likewise.  Accept bool in place of int. Update all callers.
