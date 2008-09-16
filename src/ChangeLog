@@ -1,5 +1,11 @@
 2008-09-16  Derek R. Price  <derek@ximbiot.com>
 
+	* commit.c (commit): Handle error return from lock_tree_promotably().
+	* lock.c (lock_obtained, lock_wait): Move up to avoid prototypes.
+	(set_lock): Likewise.  Accept bool in place of int. Update all callers.
+	(lock_tree_promotably): Return recursion errors.
+	* lock.h (lock_tree_promotably): Update prototype.
+
 	* add.c (build_entry): Accept struct file_info in lieu of multiple
 	args.  Change all callers.  Move to avoid prototypes.
 	(add_directory): Move to avoid prototypes.

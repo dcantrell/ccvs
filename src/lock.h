@@ -23,10 +23,11 @@ int Reader_Lock (const char *xrepository);
 void Simple_Lock_Cleanup (void);
 void Lock_Cleanup (void);
 
-/* Writelock an entire subtree, well the part specified by ARGC, ARGV, LOCAL,
-   and AFLAG, anyway.  */
-void lock_tree_promotably (int argc, char **argv, int local, int which,
-			   int aflag);
+/* Recursively aquire a promotable read lock for the subtree specified by ARGC,
+ * ARGV, LOCAL, and AFLAG.
+ */
+int lock_tree_promotably (int argc, char **argv, int local, int which,
+			  int aflag);
 
 /* See lock.c for description.  */
 void lock_dir_for_write (const char *);

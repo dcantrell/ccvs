@@ -118,7 +118,6 @@ struct lock {
 };
 
 static void remove_locks (void);
-static int set_lock (struct lock *lock, int will_wait);
 static void clear_lock (struct lock *lock);
 static void set_lockers_name (struct stat *statp);
 static void unset_lockers_name (void);
@@ -487,6 +486,180 @@ set_readlock_name (void)
 
 
 /*
+ * Print out a message when we obtain a lock.
+ */
+static void
+lock_obtained (const char *repos)
+{
+    time_t now;
+    char *msg;
+    struct tm *tm_p;
+
+    (void) time (&now);
+    tm_p = gmtime (&now);
+    msg = Xasprintf ("[%8.8s] obtained lock in %s",
+		     (tm_p ? asctime (tm_p) : ctime (&now)) + 11, repos);
+    error (0, 0, "%s", msg);
+    /* Call cvs_flusherr to ensure that the user sees this message as
+       soon as possible.  */
+    cvs_flusherr ();
+    free (msg);
+}
+
+
+
+/*
+ * Print out a message that the lock is still held, then sleep a while.
+ */
+static void
+lock_wait (const char *repos)
+{
+    time_t now;
+    char *msg;
+    struct tm *tm_p;
+
+    (void) time (&now);
+    tm_p = gmtime (&now);
+    msg = Xasprintf ("[%8.8s] waiting for %s's lock in %s",
+		     (tm_p ? asctime (tm_p) : ctime (&now)) + 11,
+		     lockers_name ? lockers_name : "unknown", repos);
+    error (0, 0, "%s", msg);
+    /* Call cvs_flusherr to ensure that the user sees this message as
+       soon as possible.  */
+    cvs_flusherr ();
+    free (msg);
+    (void)sleep (CVSLCKSLEEP);
+}
+
+
+
+/*
+ * Persistently tries to make the directory "lckdir", which serves as a
+ * lock.
+ *
+ * #ifdef CVS_FUDGELOCKS
+ * If the create time on the directory is greater than CVSLCKAGE
+ * seconds old, just try to remove the directory.
+ * #endif
+ *
+ */
+static int
+set_lock (struct lock *lock, bool will_wait)
+{
+    int waited;
+    long us;
+    struct stat sb;
+    mode_t omask;
+    char *masterlock;
+    int status;
+#ifdef CVS_FUDGELOCKS
+    time_t now;
+#endif
+
+    TRACE (TRACE_FLOW, "set_lock (%s, %d)",
+	   lock->repository ? lock->repository : "(null)", will_wait);
+
+    masterlock = lock_name (lock->repository, lock->lockdirname);
+
+    /*
+     * Note that it is up to the callers of set_lock() to arrange for signal
+     * handlers that do the appropriate things, like remove the lock
+     * directory before they exit.
+     */
+    waited = 0;
+    us = 1;
+    for (;;)
+    {
+	status = -1;
+	omask = umask (cvsumask);
+	SIG_beginCrSect ();
+	if (CVS_MKDIR (masterlock, 0777) == 0)
+	{
+	    lock->lockdir = masterlock;
+	    SIG_endCrSect ();
+	    status = L_OK;
+	    if (waited)
+	        lock_obtained (lock->repository);
+	    goto after_sig_unblock;
+	}
+	SIG_endCrSect ();
+    after_sig_unblock:
+	(void) umask (omask);
+	if (status != -1)
+	    goto done;
+
+	if (errno != EEXIST)
+	{
+	    error (0, errno,
+		   "failed to create lock directory for `%s' (%s)",
+		   lock->repository, masterlock);
+	    status = L_ERROR;
+	    goto done;
+	}
+
+	/* Find out who owns the lock.  If the lock directory is
+	   non-existent, re-try the loop since someone probably just
+	   removed it (thus releasing the lock).  */
+	if (stat (masterlock, &sb) < 0)
+	{
+	    if (existence_error (errno))
+		continue;
+
+	    error (0, errno, "couldn't stat lock directory `%s'", masterlock);
+	    status = L_ERROR;
+	    goto done;
+	}
+
+#ifdef CVS_FUDGELOCKS
+	/*
+	 * If the create time of the directory is more than CVSLCKAGE seconds
+	 * ago, try to clean-up the lock directory, and if successful, just
+	 * quietly retry to make it.
+	 */
+	(void) time (&now);
+	if (now >= (sb.st_ctime + CVSLCKAGE))
+	{
+	    if (CVS_RMDIR (masterlock) >= 0)
+		continue;
+	}
+#endif
+
+	/* set the lockers name */
+	set_lockers_name (&sb);
+
+	/* if he wasn't willing to wait, return an error */
+	if (!will_wait)
+	{
+	    status = L_LOCKED;
+	    goto done;
+	}
+
+	/* if possible, try a very short sleep without a message */
+	if (!waited && us < 1000)
+	{
+	    us += us;
+	    {
+		struct timespec ts;
+		ts.tv_sec = 0;
+		ts.tv_nsec = us * 1000;
+		(void)nanosleep (&ts, NULL);
+		continue;
+	    }
+	}
+
+	lock_wait (lock->repository);
+	waited = 1;
+    }
+
+done:
+    if (!lock->lockdir)
+	free (masterlock);
+    return status;
+}
+
+
+
+/*
  * Create a lock file for readers
  */
 int
@@ -514,7 +687,7 @@ Reader_Lock (const char *xrepository)
     global_readlock.free_repository = true;
 
     /* get the lock dir for our own */
-    if (set_lock (&global_readlock, 1) != L_OK)
+    if (set_lock (&global_readlock, true) != L_OK)
     {
 	error (0, 0, "failed to obtain dir lock in repository `%s'",
 	       xrepository);
@@ -730,7 +903,7 @@ set_promotable_lock (struct lock *lock)
     }
 
     /* make sure the lock dir is ours (not necessarily unique to us!) */
-    status = set_lock (lock, 0);
+    status = set_lock (lock, false);
     if (status == L_OK)
     {
 	/* we now own a promotable lock - make sure there are no others */
@@ -836,54 +1009,6 @@ set_promotablelock_proc (Node *p, void *closure)
     lock_error_repos = p->key;
     lock_error = set_promotable_lock ((struct lock *)p->data);
     return 0;
-}
-
-
-
-/*
- * Print out a message that the lock is still held, then sleep a while.
- */
-static void
-lock_wait (const char *repos)
-{
-    time_t now;
-    char *msg;
-    struct tm *tm_p;
-
-    (void) time (&now);
-    tm_p = gmtime (&now);
-    msg = Xasprintf ("[%8.8s] waiting for %s's lock in %s",
-		     (tm_p ? asctime (tm_p) : ctime (&now)) + 11,
-		     lockers_name ? lockers_name : "unknown", repos);
-    error (0, 0, "%s", msg);
-    /* Call cvs_flusherr to ensure that the user sees this message as
-       soon as possible.  */
-    cvs_flusherr ();
-    free (msg);
-    (void)sleep (CVSLCKSLEEP);
-}
-
-
-
-/*
- * Print out a message when we obtain a lock.
- */
-static void
-lock_obtained (const char *repos)
-{
-    time_t now;
-    char *msg;
-    struct tm *tm_p;
-
-    (void) time (&now);
-    tm_p = gmtime (&now);
-    msg = Xasprintf ("[%8.8s] obtained lock in %s",
-		     (tm_p ? asctime (tm_p) : ctime (&now)) + 11, repos);
-    error (0, 0, "%s", msg);
-    /* Call cvs_flusherr to ensure that the user sees this message as
-       soon as possible.  */
-    cvs_flusherr ();
-    free (msg);
 }
 
 
@@ -999,132 +1124,6 @@ unset_lockers_name (void)
 
 
 /*
- * Persistently tries to make the directory "lckdir", which serves as a
- * lock.
- *
- * #ifdef CVS_FUDGELOCKS
- * If the create time on the directory is greater than CVSLCKAGE
- * seconds old, just try to remove the directory.
- * #endif
- *
- */
-static int
-set_lock (struct lock *lock, int will_wait)
-{
-    int waited;
-    long us;
-    struct stat sb;
-    mode_t omask;
-    char *masterlock;
-    int status;
-#ifdef CVS_FUDGELOCKS
-    time_t now;
-#endif
-
-    TRACE (TRACE_FLOW, "set_lock (%s, %d)",
-	   lock->repository ? lock->repository : "(null)", will_wait);
-
-    masterlock = lock_name (lock->repository, lock->lockdirname);
-
-    /*
-     * Note that it is up to the callers of set_lock() to arrange for signal
-     * handlers that do the appropriate things, like remove the lock
-     * directory before they exit.
-     */
-    waited = 0;
-    us = 1;
-    for (;;)
-    {
-	status = -1;
-	omask = umask (cvsumask);
-	SIG_beginCrSect ();
-	if (CVS_MKDIR (masterlock, 0777) == 0)
-	{
-	    lock->lockdir = masterlock;
-	    SIG_endCrSect ();
-	    status = L_OK;
-	    if (waited)
-	        lock_obtained (lock->repository);
-	    goto after_sig_unblock;
-	}
-	SIG_endCrSect ();
-    after_sig_unblock:
-	(void) umask (omask);
-	if (status != -1)
-	    goto done;
-
-	if (errno != EEXIST)
-	{
-	    error (0, errno,
-		   "failed to create lock directory for `%s' (%s)",
-		   lock->repository, masterlock);
-	    status = L_ERROR;
-	    goto done;
-	}
-
-	/* Find out who owns the lock.  If the lock directory is
-	   non-existent, re-try the loop since someone probably just
-	   removed it (thus releasing the lock).  */
-	if (stat (masterlock, &sb) < 0)
-	{
-	    if (existence_error (errno))
-		continue;
-
-	    error (0, errno, "couldn't stat lock directory `%s'", masterlock);
-	    status = L_ERROR;
-	    goto done;
-	}
-
-#ifdef CVS_FUDGELOCKS
-	/*
-	 * If the create time of the directory is more than CVSLCKAGE seconds
-	 * ago, try to clean-up the lock directory, and if successful, just
-	 * quietly retry to make it.
-	 */
-	(void) time (&now);
-	if (now >= (sb.st_ctime + CVSLCKAGE))
-	{
-	    if (CVS_RMDIR (masterlock) >= 0)
-		continue;
-	}
-#endif
-
-	/* set the lockers name */
-	set_lockers_name (&sb);
-
-	/* if he wasn't willing to wait, return an error */
-	if (!will_wait)
-	{
-	    status = L_LOCKED;
-	    goto done;
-	}
-
-	/* if possible, try a very short sleep without a message */
-	if (!waited && us < 1000)
-	{
-	    us += us;
-	    {
-		struct timespec ts;
-		ts.tv_sec = 0;
-		ts.tv_nsec = us * 1000;
-		(void)nanosleep (&ts, NULL);
-		continue;
-	    }
-	}
-
-	lock_wait (lock->repository);
-	waited = 1;
-    }
-
-done:
-    if (!lock->lockdir)
-	free (masterlock);
-    return status;
-}
-
-
-
-/*
  * Clear master lock.
  *
  * INPUTS
@@ -1185,9 +1184,13 @@ lock_filesdoneproc (void *callerdat, int err, const char *repository,
 
 
 
-void
+/* Return recursion errors, but exit on locking errors.
+ */
+int
 lock_tree_promotably (int argc, char **argv, int local, int which, int aflag)
 {
+    int err;
+
     TRACE (TRACE_FUNCTION, "lock_tree_promotably (%d, argv, %d, %d, %d)",
 	   argc, local, which, aflag);
 
@@ -1196,14 +1199,16 @@ lock_tree_promotably (int argc, char **argv, int local, int which, int aflag)
      * the dirs
      */
     lock_tree_list = getlist ();
-    start_recursion
-	(NULL, lock_filesdoneproc,
-	 NULL, NULL, NULL, argc,
-	 argv, local, which, aflag, CVS_LOCK_NONE,
-	 NULL, 0, NULL );
+    err = start_recursion (NULL, lock_filesdoneproc, NULL, NULL, NULL, argc,
+			   argv, local, which, aflag, CVS_LOCK_NONE, NULL, 0,
+			   NULL);
+    if (err) return err;
+
     sortlist (lock_tree_list, fsortcmp);
     if (lock_list_promotably (lock_tree_list) != 0)
 	error (1, 0, "lock failed - giving up");
+
+    return 0;
 }
 
 
@@ -1247,7 +1252,7 @@ lock_dir_for_write (const char *repository)
 	{
 	    FILE *fp;
 
-	    if (set_lock (&global_writelock, 1) != L_OK)
+	    if (set_lock (&global_writelock, true) != L_OK)
 		error (1, 0, "failed to obtain write lock in repository `%s'",
 		       repository);
 
@@ -1322,7 +1327,7 @@ internal_lock (struct lock *lock, const char *xrepository)
     lock->free_repository = true;
 
     /* get the lock dir for our own */
-    if (set_lock (lock, 1) != L_OK)
+    if (set_lock (lock, true) != L_OK)
     {
 	if (!really_quiet)
 	    error (0, 0,

@@ -683,7 +683,8 @@ commit (int argc, char **argv)
 
     wrap_setup ();
 
-    lock_tree_promotably (argc, argv, local, W_LOCAL, aflag);
+    if (lock_tree_promotably (argc, argv, local, W_LOCAL, aflag))
+	error (1, 0, "correct above errors first!");
 
     /*
      * Set up the master update list and hard link list
@@ -706,10 +707,9 @@ commit (int argc, char **argv)
     /*
      * Run the recursion processor to verify the files are all up-to-date
      */
-    err = start_recursion (check_fileproc, check_filesdoneproc,
-                           check_direntproc, NULL, NULL, argc, argv, local,
-                           W_LOCAL, aflag, CVS_LOCK_NONE, NULL, 1, NULL);
-    if (err)
+    if (start_recursion (check_fileproc, check_filesdoneproc,
+			 check_direntproc, NULL, NULL, argc, argv, local,
+			 W_LOCAL, aflag, CVS_LOCK_NONE, NULL, 1, NULL))
 	error (1, 0, "correct above errors first!");
 
     /*
