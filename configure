@@ -39075,11 +39075,6 @@ _ACEOF
 
 
 
-
-
-
-
-
 for ac_func in \
 	fchdir \
 	fchmod \
@@ -39097,11 +39092,6 @@ for ac_func in \
 	regerror \
 	regexec \
 	regfree \
-	sigaction \
-	sigblock \
-	sigprocmask \
-	sigsetmask \
-	sigvec \
 	timezone \
 	tzset \
 	vprintf \

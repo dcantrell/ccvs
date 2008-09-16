@@ -801,9 +801,6 @@
 /* Define to 1 if you have the `sigaltstack' function. */
 #undef HAVE_SIGALTSTACK
 
-/* Define to 1 if you have the `sigblock' function. */
-#undef HAVE_SIGBLOCK
-
 /* Define to 1 if the system has the type `siginfo_t'. */
 #undef HAVE_SIGINFO_T
 
@@ -822,17 +819,8 @@
 /* Define to 1 if 'wint_t' is a signed integer type. */
 #undef HAVE_SIGNED_WINT_T
 
-/* Define to 1 if you have the `sigprocmask' function. */
-#undef HAVE_SIGPROCMASK
-
-/* Define to 1 if you have the `sigsetmask' function. */
-#undef HAVE_SIGSETMASK
-
 /* Define to 1 if the system has the type `sigset_t'. */
 #undef HAVE_SIGSET_T
-
-/* Define to 1 if you have the `sigvec' function. */
-#undef HAVE_SIGVEC
 
 /* Define to 1 if you have the `snprintf' function. */
 #undef HAVE_SNPRINTF

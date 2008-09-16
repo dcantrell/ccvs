@@ -265,11 +265,6 @@ AC_CHECK_FUNCS(\
 	regerror \
 	regexec \
 	regfree \
-	sigaction \
-	sigblock \
-	sigprocmask \
-	sigsetmask \
-	sigvec \
 	timezone \
 	tzset \
 	vprintf \
