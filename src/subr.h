@@ -145,6 +145,7 @@ char *dir_append (const char *dir, const char *append);
 char *dir_append_dirs (const char *dir, ...);
 bool hasSlash (const char *path);
 bool hasAdmin (const char *dir);
+char *update_dir_name (const char *path);
 
 
 
