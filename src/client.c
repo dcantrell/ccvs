@@ -2852,14 +2852,6 @@ handle_clear_static_directory (char *pathname, size_t len)
 	return;
     }
 
-    if (is_cvsroot_level (pathname))
-    {
-        /*
-	 * Top level (directory containing CVSROOT).  This seems to normally
-	 * lack a CVS directory, so don't try to create files in it.
-	 */
-	return;
-    }
     call_in_directory (pathname, clear_static, NULL);
 }
 

@@ -1,5 +1,7 @@
 2008-09-16  Derek R. Price  <derek@ximbiot.com>
 
+	* src/client.c (handle_clear_static_directory): Skip unneeded check.
+
 	* client.c (arg_should_not_be_sent_to_server): Avoid memory leak.
 
 	* client.c (arg_should_not_be_sent_to_server): Simplify.
