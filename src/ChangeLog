@@ -1,5 +1,8 @@
 2008-09-16  Derek R. Price  <derek@ximbiot.com>
 
+	* base.c (base_diff): Exit with error code 2 on real errors, like diff,
+	since error code 1 means differences were found.
+
 	* client.c (arg_should_not_be_sent_to_server): Return bool.
 
 	* run.c: Assume POSIX signal handling, via GNULIB.
