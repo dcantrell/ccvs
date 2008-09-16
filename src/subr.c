@@ -2481,3 +2481,16 @@ hasAdmin (const char *dir)
     free (adm);
     return has;
 }
+
+
+
+/* dir_name() wrapper that knows that "" is the correct value to return for
+ * "DIR", as opposed to ".".
+ */
+char *
+update_dir_name (const char *path)
+{
+    if (hasSlash (path))
+        return dir_name (path);
+    return xstrdup ("");
+}

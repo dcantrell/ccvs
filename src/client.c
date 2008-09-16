@@ -146,20 +146,20 @@ static bool
 arg_should_not_be_sent_to_server (char *arg)
 {
     /* Decide if we should send this directory name to the server.  We
-       should always send argv[i] if:
-
-       1) the list of directories sent to the server is empty (as it
-       will be for checkout, etc.).
-
-       2) the argument is "."
-
-       3) the argument is a file in the cwd and the cwd is checked out
-       from the current root
-
-       4) the argument lies within one of the paths in
-       dirs_sent_to_server.
-
-       */
+     * should always send argv[i] if:
+     *
+     * 1) the list of directories sent to the server is empty (as it
+     *    will be for checkout, etc.).
+     *
+     * 2) the argument is "."
+     *
+     * 3) the argument is, or is a parent of, one of the paths in
+     *    DIRS_SENT_TO_SERVER.
+     *
+     * 4) the argument is a file in the CWD and the CWD is checked out
+     *    from the current root
+     *
+     */
 
     if (list_isempty (dirs_sent_to_server))
 	return false;		/* always send it */
@@ -168,8 +168,9 @@ arg_should_not_be_sent_to_server (char *arg)
 	return false;		/* always send it */
 
     /* We should send arg if it is one of the directories sent to the
-       server or the parent of one; this tells the server to descend
-       the hierarchy starting at this level. */
+     * server or the parent of one; this tells the server to descend
+     * the hierarchy starting at this level.
+     */
     if (isdir (arg))
     {
 	if (walklist (dirs_sent_to_server, is_arg_a_parent_or_listed_dir, arg))
@@ -181,66 +182,44 @@ arg_should_not_be_sent_to_server (char *arg)
 	return true;
     }
 
-    /* Try to decide whether we should send arg to the server by
-       checking the contents of the corresponding CVSADM directory. */
+    /* Now we either have a file or ARG does not exist locally.  Try to decide
+     * whether we should send arg to the server by checking the contents of
+     * ARGS's parent directory's CVSADM dir, if it exists.
+     */
     {
-	char *t, *root_string;
-	cvsroot_t *this_root = NULL;
+	const char *root_string;
+	char *dir = dir_name (arg);
 
-	/* Calculate "dirname arg" */
-	for (t = arg + strlen (arg) - 1; t >= arg; t--)
+	/* First, check to see if we already sent this directory to the server,
+	 * because it takes less time than actually opening the stuff in the
+	 * CVSADM directory.
+	 */
+	if (findnode_fn (dirs_sent_to_server, dir))
 	{
-	    if (ISSLASH (*t))
-		break;
+	    free (dir);
+	    return false;
 	}
 
-	/* Now we're either poiting to the beginning of the
-	   string, or we found a path separator. */
-	if (t >= arg)
-	{
-	    /* Found a path separator.  */
-	    char c = *t;
-	    *t = '\0';
-	    
-	    /* First, check to see if we sent this directory to the
-               server, because it takes less time than actually
-               opening the stuff in the CVSADM directory.  */
-	    if (walklist (dirs_sent_to_server, is_arg_a_parent_or_listed_dir,
-			  arg))
-	    {
-		*t = c;		/* make sure to un-truncate the arg */
-		return false;
-	    }
-
-	    /* Since we didn't find it in the list, check the CVSADM
-               files on disk.  */
-	    this_root = Name_Root (arg, NULL);
-	    root_string = this_root->original;
-	    *t = c;
-	}
+	if (CVSroot_cmdline)
+	    root_string = CVSroot_cmdline;
 	else
 	{
-	    /* We're at the beginning of the string.  Look at the
-               CVSADM files in cwd.  */
-	    if (CVSroot_cmdline)
-		root_string = CVSroot_cmdline;
-	    else
-	    {
-		this_root = Name_Root (NULL, NULL);
-		root_string = this_root->original;
-	    }
+	    const cvsroot_t *this_root;
+	    char *update_dir = update_dir_name (arg);
+
+	    this_root = Name_Root (dir, update_dir);
+	    root_string = this_root->original;
+	    free (update_dir);
 	}
 
 	/* Now check the value for root. */
 	if (root_string && current_parsed_root
 	    && !STREQ (root_string, original_parsed_root->original))
-	{
 	    /* Don't send this, since the CVSROOTs don't match. */
 	    return true;
-	}
     }
     
-    /* OK, let's send it. */
+    /* OK, let's send it.  */
     return false;
 }
 #endif /* CLIENT_SUPPORT */
