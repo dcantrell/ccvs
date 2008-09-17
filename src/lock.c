@@ -668,7 +668,7 @@ Reader_Lock (const char *xrepository)
     int err = 0;
     FILE *fp;
 
-    TRACE (TRACE_FUNCTION, "Reader_Lock(%s)", xrepository);
+    TRACE (TRACE_FUNCTION, "Reader_Lock (%s)", xrepository);
 
     if (noexec || readonlyfs)
 	return 0;

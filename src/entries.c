@@ -71,8 +71,8 @@ Entnode_Create (enum ent_type type, const char *user, const char *vn,
     Entnode *ent;
  
     TRACE (TRACE_FLOW,
-	   "Entnode_Create (%s, %s, %s, %s, %s, %s, %s)",
-	   user, vn, ts, options, TRACE_NULL (tag), TRACE_NULL (date),
+	   "Entnode_Create (%d, %s, %s, %s, %s, %s, %s, %s)",
+	   type, user, vn, ts, options, TRACE_NULL (tag), TRACE_NULL (date),
 	   TRACE_NULL (ts_conflict));
 
     /* Note that timestamp and options must be non-NULL */
@@ -1104,6 +1104,8 @@ void
 Subdir_Register (List *entries, const char *parent, const char *dir)
 {
     Entnode *entnode;
+
+    TRACE (TRACE_FUNCTION, "Subdir_Register (%s, %s)", parent, dir);
 
     /* Ignore attempts to register ".".  These can happen in the
        server code.  */

@@ -100,6 +100,8 @@ dellist (List **listp)
     Node *p;
     List *tmp;
 
+    TRACE (TRACE_MINUTIA, "dellist()");
+
     if (*listp == NULL)
 	return;
 
@@ -360,6 +362,7 @@ findnode (List *list, const char *key)
     Node *head, *p;
 
     assert (key);
+    TRACE (TRACE_DATA, "findnode (%s, %s)", TRACE_PTR (list, 0), key);
 
     if (list_isempty (list))
 	return NULL;
@@ -386,6 +389,7 @@ findnode_fn (List *list, const char *key)
     Node *head, *p;
 
     assert (key);
+    TRACE (TRACE_DATA, "findnode_fn (%s, %s)", TRACE_PTR (list, 0), key);
 
     /* This probably should be "assert (list != NULL)" (or if not we
        should document the current behavior), but only if we check all

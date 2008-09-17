@@ -60,6 +60,8 @@ static struct unrecog *unrecog_head;
 void
 fileattr_startdir (const char *repos)
 {
+    TRACE (TRACE_FUNCTION, "fileattr_startdir (%s)", repos);
+
     assert (fileattr_stored_repos == NULL);
     fileattr_stored_repos = xstrdup (repos);
     assert (attrlist == NULL);
@@ -342,6 +344,8 @@ fileattr_set (const char *filename, const char *attrname, const char *attrval)
     char *p;
 
     assert (fileattr_stored_repos);
+    TRACE (TRACE_FUNCTION, "fileattr_set (%s, %s, %s, %s)",
+	   filename, attrname, attrval, fileattr_stored_repos);
 
     if (filename == NULL)
     {
@@ -582,6 +586,8 @@ fileattr_write (void)
     mode_t omask;
     struct unrecog *p;
 
+    TRACE (TRACE_FUNCTION, "fileattr_write (%s)", fileattr_stored_repos);
+
     if (!attrs_modified)
 	return;
 
@@ -692,6 +698,9 @@ fileattr_write (void)
 void
 fileattr_free (void)
 {
+
+    TRACE (TRACE_MINUTIA, "fileattr_free()");
+
     /* Note that attrs_modified will ordinarily be zero, but there are
        a few cases in which fileattr_write will fail to zero it (if
        noexec is set, or error conditions).  This probably is the way

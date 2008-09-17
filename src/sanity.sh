@@ -566,6 +566,9 @@ commitid="[a-zA-Z0-9]*"
 # Regexp to match an OpenPGP key id.
 keyid="0x[0-9a-f]*"
 
+# Regexp to match a pointer in traces
+ptr="0x[0-9a-f]*"
+
 # Regexp to match the name of a temporary file (from cvs_temp_name).
 # This appears in certain diff output.
 tempfile="cvs[-a-zA-Z0-9.%_]*"
@@ -31830,35 +31833,84 @@ ${SPROG} update: Updating dir1/sdir/ssdir"
  *-> get_root_config (${TESTDIR}/root1)
  *-> parse_config ($TESTDIR/root1)
  *-> do_update ((null), (null), (null), 1, 0, 0, 0, 0, 0, 3, (null), (null), (null), (null), (null), 1, (null))
+ *-> Name_Repository ((null), )
+ *-> fileattr_startdir ($TESTDIR/root1)
+ *-> fileattr_write ($TESTDIR/root1)
  *-> Write_Template (\., ${TESTDIR}/root1)
 ${CPROG} update: Updating \.
- *-> Reader_Lock(${TESTDIR}/root1)
+ *-> Name_Repository ((null), )
+ *-> fileattr_startdir ($TESTDIR/root1)
+ *-> Find_Names ($TESTDIR/root1, , 3, 0)
+ *-> Find_Directories ($TESTDIR/root1, , 3)
+ *-> find_dirs ($TESTDIR/root1, 0)
+ *-> Reader_Lock ($TESTDIR/root1)
  *-> Simple_Lock_Cleanup()
+ *-> fileattr_write ($TESTDIR/root1)
  *-> Write_Template (dir1, ${TESTDIR}/root1/dir1)
 ${CPROG} update: Updating dir1
- *-> Reader_Lock(${TESTDIR}/root1/dir1)
+ *-> Name_Repository ((null), dir1)
+ *-> fileattr_startdir ($TESTDIR/root1/dir1)
+ *-> Find_Names ($TESTDIR/root1/dir1, dir1, 3, 0)
+ *-> Find_Directories ($TESTDIR/root1/dir1, dir1, 3)
+ *-> find_dirs ($TESTDIR/root1/dir1, 0)
+ *-> Reader_Lock ($TESTDIR/root1/dir1)
+ *-> locate_rcs ($TESTDIR/root1/dir1, file1)
  *-> update_fileproc (dir1/file1)
  *-> classify_file (dir1/file1, (null), (null), (null))
  *-> Version_TS (dir1/file1, (null), (null), (null), 1, 0)
  *-> Simple_Lock_Cleanup()
+ *-> fileattr_write ($TESTDIR/root1/dir1)
+ *-> Name_Repository ((null), dir1/sdir)
+ *-> fileattr_startdir ($TESTDIR/root1/sdir)
+ *-> Find_Directories ((null), dir1/sdir, 3)
+ *-> fileattr_write ($TESTDIR/root1/sdir)
+ *-> Name_Repository ((null), dir1/sdir/ssdir)
+ *-> fileattr_startdir ($TESTDIR/root1/sdir/ssdir)
+ *-> Find_Directories ((null), dir1/sdir/ssdir, 3)
+ *-> fileattr_write ($TESTDIR/root1/sdir/ssdir)
  *-> main loop with CVSROOT=${TESTDIR}/root2
  *-> get_root_config (${TESTDIR}/root2)
  *-> parse_config ($TESTDIR/root2)
  *-> do_update ((null), (null), (null), 1, 0, 0, 0, 0, 0, 3, (null), (null), (null), (null), (null), 1, (null))
+ *-> Name_Repository ((null), )
+ *-> fileattr_startdir ($TESTDIR/root2)
+ *-> fileattr_write ($TESTDIR/root2)
+ *-> Name_Repository ((null), )
+ *-> fileattr_startdir ($TESTDIR/root2)
+ *-> Find_Directories ((null), , 3)
+ *-> fileattr_write ($TESTDIR/root2)
+ *-> Name_Repository ((null), dir1)
+ *-> fileattr_startdir ($TESTDIR/root2/dir1)
+ *-> Find_Directories ((null), dir1, 3)
+ *-> fileattr_write ($TESTDIR/root2/dir1)
  *-> Write_Template (dir1/sdir, ${TESTDIR}/root2/dir1/sdir)
 ${CPROG} update: Updating dir1/sdir
- *-> Reader_Lock(${TESTDIR}/root2/sdir)
+ *-> Name_Repository ((null), dir1/sdir)
+ *-> fileattr_startdir ($TESTDIR/root2/sdir)
+ *-> Find_Names ($TESTDIR/root2/sdir, dir1/sdir, 3, 0)
+ *-> Find_Directories ($TESTDIR/root2/sdir, dir1/sdir, 3)
+ *-> find_dirs ($TESTDIR/root2/sdir, 0)
+ *-> Reader_Lock ($TESTDIR/root2/sdir)
+ *-> locate_rcs ($TESTDIR/root2/sdir, sfile)
  *-> update_fileproc (dir1/sdir/sfile)
  *-> classify_file (dir1/sdir/sfile, (null), (null), (null))
  *-> Version_TS (dir1/sdir/sfile, (null), (null), (null), 1, 0)
  *-> Simple_Lock_Cleanup()
+ *-> fileattr_write ($TESTDIR/root2/sdir)
  *-> Write_Template (dir1/sdir/ssdir, ${TESTDIR}/root2/sdir/ssdir)
 ${CPROG} update: Updating dir1/sdir/ssdir
- *-> Reader_Lock(${TESTDIR}/root2/sdir/ssdir)
+ *-> Name_Repository ((null), dir1/sdir/ssdir)
+ *-> fileattr_startdir ($TESTDIR/root2/sdir/ssdir)
+ *-> Find_Names ($TESTDIR/root2/sdir/ssdir, dir1/sdir/ssdir, 3, 0)
+ *-> Find_Directories ($TESTDIR/root2/sdir/ssdir, dir1/sdir/ssdir, 3)
+ *-> find_dirs ($TESTDIR/root2/sdir/ssdir, 0)
+ *-> Reader_Lock ($TESTDIR/root2/sdir/ssdir)
+ *-> locate_rcs ($TESTDIR/root2/sdir/ssdir, ssfile)
  *-> update_fileproc (dir1/sdir/ssdir/ssfile)
  *-> classify_file (dir1/sdir/ssdir/ssfile, (null), (null), (null))
  *-> Version_TS (dir1/sdir/ssdir/ssfile, (null), (null), (null), 1, 0)
  *-> Simple_Lock_Cleanup()
+ *-> fileattr_write ($TESTDIR/root2/sdir/ssdir)
  *-> Lock_Cleanup()
  *-> Simple_Lock_Cleanup()" \
 " *-> main: Session ID is ${commitid}
@@ -31866,19 +31918,19 @@ ${CPROG} update: Updating dir1/sdir/ssdir
  *-> parse_config ($TESTDIR/root1)
  *-> do_update ((null), (null), (null), 1, 0, 0, 0, 0, 0, 3, (null), (null), (null), (null), (null), 1, (null))
 ${CPROG} update: Updating \.
- *-> Reader_Lock(${TESTDIR}/root1)
+ *-> Reader_Lock ($TESTDIR/root1)
  *-> Simple_Lock_Cleanup()
 ${CPROG} update: Updating dir1
- *-> Reader_Lock(${TESTDIR}/root1/dir1)
+ *-> Reader_Lock ($TESTDIR/root1/dir1)
  *-> Simple_Lock_Cleanup()
  *-> main loop with CVSROOT=${TESTDIR}/root2
  *-> parse_config ($TESTDIR/root2)
  *-> do_update ((null), (null), (null), 1, 0, 0, 0, 0, 0, 3, (null), (null), (null), (null), (null), 1, (null))
 ${CPROG} update: Updating dir1/sdir
- *-> Reader_Lock(${TESTDIR}/root2/sdir)
+ *-> Reader_Lock ($TESTDIR/root2/sdir)
  *-> Simple_Lock_Cleanup()
 ${CPROG} update: Updating dir1/sdir/ssdir
- *-> Reader_Lock(${TESTDIR}/root2/sdir/ssdir)
+ *-> Reader_Lock ($TESTDIR/root2/sdir/ssdir)
  *-> Simple_Lock_Cleanup()
  *-> Lock_Cleanup()
  *-> Simple_Lock_Cleanup()"

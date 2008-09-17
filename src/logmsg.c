@@ -261,6 +261,9 @@ do_editor (const char *dir, char **messagep, const char *repository,
 
     assert (!current_parsed_root->isremote != !repository);
 
+    TRACE (TRACE_FUNCTION, "do_editor (%s, %s, %s)",
+	   dir, TRACE_NULL (*messagep), repository);
+
     if (noexec || reuse_log_message)
 	return;
 

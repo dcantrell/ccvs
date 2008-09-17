@@ -1032,6 +1032,9 @@ static int
 update_dirleave_proc (void *callerdat, const char *dir, int err,
                       const char *update_dir, List *entries)
 {
+    TRACE (TRACE_FLOW, "update_dirleave_proc (%s, %d, %d)",
+	   dir, err, update_dir);
+
     /* Delete the ignore list if it hasn't already been done.  */
     if (ignlist)
 	dellist (&ignlist);

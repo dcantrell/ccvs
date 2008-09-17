@@ -125,6 +125,9 @@ Find_Names (const char *repository, const char *update_dir,
     List *entries;
     List *files;
 
+    TRACE (TRACE_FUNCTION, "Find_Names (%s, %s, %d, %d)",
+	   repository, update_dir, which, aflag);
+
     /* make a list for the files */
     files = getlist ();
 
@@ -237,6 +240,8 @@ find_dirs (const char *dir, List *list, int checkadm, List *entries)
     DIR *dirp;
     int skip_emptydir = 0;
 
+    TRACE (TRACE_FUNCTION, "find_dirs (%s, %d)", dir, checkadm);
+
     /* First figure out whether we need to skip directories named
        Emptydir.  Except in the CVSNULLREPOS case, Emptydir is just
        a normal directory name.  */
@@ -341,6 +346,9 @@ Find_Directories (const char *repository, const char *update_dir,
 		  int which, List *entries)
 {
     List *dirlist;
+
+    TRACE (TRACE_FUNCTION, "Find_Directories (%s, %s, %d)",
+	   repository, update_dir, which);
 
     /* make a list for the directories */
     dirlist = getlist ();

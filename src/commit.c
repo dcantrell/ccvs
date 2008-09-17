@@ -235,6 +235,8 @@ find_fileproc (void *callerdat, struct file_info *finfo)
     struct logfile_info *data;
     struct file_info xfinfo;
 
+    TRACE (TRACE_FLOW, "find_fileproc (%s)", finfo->fullname);
+
     /* if this directory has an ignore list, add this file to it */
     if (args->ignlist)
     {
@@ -837,17 +839,20 @@ check_fileproc (void *callerdat, struct file_info *finfo)
     const char *xdir;
     Node *p;
     List *ulist, *cilist;
-    Vers_TS *vers;
+    Vers_TS *vers = NULL;
     struct commit_info *ci;
     struct logfile_info *li;
     int retval = 1;
 
     size_t cvsroot_len = strlen (current_parsed_root->directory);
 
+    TRACE (TRACE_FLOW, "check_fileproc (%s)", finfo->fullname);
+
     if (!finfo->repository)
     {
 	error (0, 0, "Nothing known about %s", quote (finfo->fullname));
-	return 1;
+	retval = 1;
+	goto out;
     }
 
     if (STRNEQ (finfo->repository, current_parsed_root->directory, cvsroot_len)
@@ -1092,8 +1097,8 @@ check_fileproc (void *callerdat, struct file_info *finfo)
                        quote (finfo->fullname));
 		if (li) free (li);
 		if (p) freenode (p);
-                freevers_ts (&vers);
-                return 1;
+                retval = 1;
+		goto out;
             }
 
 	    li->tag = xstrdup (vers->tag);
@@ -1177,8 +1182,9 @@ check_fileproc (void *callerdat, struct file_info *finfo)
     retval = 0;
 
  out:
+    if (vers) freevers_ts (&vers);
 
-    freevers_ts (&vers);
+    TRACE (TRACE_DATA, "check_fileproc returning %d", retval);
     return retval;
 }
 
@@ -1376,6 +1382,9 @@ check_filesdoneproc (void *callerdat, int err, const char *repos,
     Node *p;
     List *saved_ulist;
 
+    TRACE (TRACE_FLOW, "check_filesdoneproc (%d, %s, %s)",
+	   err, repos, update_dir);
+
     /* find the update list for this dir */
     p = findnode (mulist, update_dir);
     if (p != NULL)
@@ -1384,7 +1393,7 @@ check_filesdoneproc (void *callerdat, int err, const char *repos,
 	saved_ulist = NULL;
 
     /* skip the checks if there's nothing to do */
-    if (saved_ulist == NULL || saved_ulist->list->next == saved_ulist->list)
+    if (list_isempty (saved_ulist))
 	return err;
 
     /* run any pre-commit checks */
@@ -1640,6 +1649,9 @@ commit_filesdoneproc (void *callerdat, int err, const char *repository,
     List *ulist;
 
     assert (repository);
+
+    TRACE (TRACE_FLOW, "commit_filesdoneproc (%d, %s, %s)",
+	   err, repository, update_dir);
 
     p = findnode (mulist, update_dir);
     if (p == NULL)

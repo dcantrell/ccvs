@@ -75,7 +75,7 @@ watch_modify_watchers (const char *file, struct addremove_args *what)
     int add_tunedit_pending;
     int add_tcommit_pending;
 
-    TRACE( TRACE_FUNCTION, "modify_watchers ( %s )", file );
+    TRACE (TRACE_FUNCTION, "watch_modify_watchers (%s)", file);
 
     if (the_args.user && !STREQ (getcaller (), the_args.user) && !is_admin ())
     {
@@ -246,6 +246,7 @@ watch_modify_watchers (const char *file, struct addremove_args *what)
 static int
 addremove_fileproc (void *callerdat, struct file_info *finfo)
 {
+    TRACE (TRACE_FUNCTION, "addremove_fileproc (%s)", finfo->fullname);
     watch_modify_watchers (finfo->file, &the_args);
     return 0;
 }
@@ -258,6 +259,9 @@ addremove_filesdoneproc (void *callerdat, int err, const char *repository,
 {
     int set_default = the_args.setting_default;
     int dir_check = 0;
+
+    TRACE (TRACE_FLOW, "addremove_filesdoneproc (%d, %s, %s)",
+	   err, repository, update_dir);
 
     while (!set_default && dir_check < the_args.num_dirs)
     {
@@ -290,6 +294,8 @@ watch_addremove (int argc, char **argv)
     int a_omitted;
     int arg_index;
     int max_dirs;
+
+    TRACE (TRACE_FUNCTION, "watch_addremove (%d)", argc);
 
     a_omitted = 1;
     the_args.commit = 0;

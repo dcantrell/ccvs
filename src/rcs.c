@@ -230,6 +230,8 @@ locate_rcs (const char *repository, const char *file, int *inattic)
 {
     char *retval;
 
+    TRACE (TRACE_FUNCTION, "locate_rcs (%s, %s)", repository, file);
+
     /* First, try to find the file as if we knew it existed on the trunk.  */
     retval = xmalloc (strlen (repository)
                       + sizeof (CVSATTIC)

@@ -26,8 +26,6 @@
 #define STDERR_FILENO 2
 #endif
 
-/* For printing strings which may be NULL in printf.  */
-#define TRACE_NULL(str)		((str) ? (str) : "(null)")
 
 
 /*
@@ -259,7 +257,10 @@ cvs_trace_ptr (void *ptr_in, unsigned short int index)
 }
 #define TRACE_PTR cvs_trace_ptr
 
-
+/* For printing strings which may be NULL in printf.  */
+#define TRACE_NULL(str)		((str) ? (str) : "(null)")
+/* Make booleans readable as such in strings.  */
+#define TRACE_BOOL(b)		((b) ? "true" : "false")
 
 extern cvsroot_t *referrer;
 

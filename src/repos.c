@@ -43,6 +43,9 @@ Name_Repository (const char *dir, const char *update_dir)
     char *tmp;
     char *cp;
 
+    TRACE (TRACE_FUNCTION, "Name_Repository (%s, %s)",
+	   TRACE_NULL (dir), update_dir);
+
     if (update_dir && *update_dir)
 	xupdate_dir = update_dir;
     else
@@ -136,6 +139,7 @@ Name_Repository (const char *dir, const char *update_dir)
 
     Sanitize_Repository_Name (repos);
 
+    TRACE (TRACE_DATA, "Name_Repository returning %s", repos);
     return repos;
 }
 
