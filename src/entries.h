@@ -23,7 +23,6 @@
 #include <stdbool.h>
 
 /* CVS */
-#include "hash.h"
 #include "rcs.h"
 
 
