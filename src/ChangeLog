@@ -1,5 +1,7 @@
 2008-09-17  Derek R. Price  <derek@ximbiot.com>
 
+	* watch.c: Some cleanup.
+
 	* fileattr.c: Some cleanup.
 	(fileattr_set): New assertion on global.
 
