@@ -336,6 +336,9 @@ posttag_proc (const char *repository, const char *filter,
     const char *srepos = Short_Repository (repository);
     struct pretag_proc_data *ppd = closure;
 
+    TRACE (TRACE_FUNCTION, "posttag_proc (%s, %s, %s, %d)",
+	   repository, filter, file, line);
+
     /* %t = tag being added/moved/removed
      * %o = operation = "add" | "mov" | "del"
      * %b = branch mode = "?" (delete ops - unknown) | "T" (branch)
@@ -713,6 +716,9 @@ pretag_proc (const char *repository, const char *filter,
     const char *srepos = Short_Repository (repository);
     struct pretag_proc_data *ppd = closure;
 
+    TRACE (TRACE_FUNCTION, "pretag_proc (%s, %s, %s, %s)",
+	   repository, filter, file, line);
+
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
     if (!strchr (filter, '%'))
     {
@@ -804,6 +810,9 @@ check_filesdoneproc (void *callerdat, int err, const char *repos,
     Node *p;
     List *tlist;
     struct pretag_proc_data ppd;
+
+    TRACE (TRACE_FLOW, "check_filesdoneproc (%d, %s, %s)",
+	   err, repos, update_dir);
 
     p = findnode (mtlist, update_dir);
     if (p != NULL)

@@ -4581,6 +4581,9 @@ static void
 checked_in_response (const char *file, const char *update_dir,
                      const char *repository)
 {
+    TRACE (TRACE_FUNCTION, "checked_in_response (%s, %s, %s)",
+	   file, update_dir, repository);
+
     if (supported_response ("Mode"))
     {
 	struct stat sb;
@@ -4620,6 +4623,9 @@ server_checked_in (const char *file, const char *update_dir,
     assert (update_dir);
     assert (repository);
 
+    TRACE (TRACE_FUNCTION, "server_checked_in (%s, %s, %s)",
+	   file, update_dir, repository);
+
     if (noexec)
 	return;
     if (scratched_file != NULL && entries_line == NULL)
@@ -4649,6 +4655,9 @@ server_update_entries (const char *file, const char *update_dir,
                        const char *repository,
                        enum server_updated_arg4 updated)
 {
+    TRACE (TRACE_FUNCTION, "server_update_entries (%s, %s, %s, %d)",
+	   file, update_dir, repository, updated);
+
     if (noexec)
 	return;
     if (updated == SERVER_UPDATED)

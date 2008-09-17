@@ -177,6 +177,8 @@ free_names (int *pargc, char **argv)
 {
     register int i;
 
+    TRACE (TRACE_MINUTIA, "free_names(%d)", *pargc);
+
     for (i = 0; i < *pargc; i++)
     {					/* only do through *pargc */
 	free (argv[i]);
@@ -2427,7 +2429,7 @@ dir_append_dirs (const char *dir, ...)
     {
 	char *new;
 
-	TRACE (TRACE_DATA, "dir_append (%s, %s)", dir, append);
+	TRACE (TRACE_DATA, "dir_append_dirs (%s, %s)", dir, append);
 
 	if (!strlen (append) || STREQ (append, "."))
 	    continue;
@@ -2447,6 +2449,7 @@ dir_append_dirs (const char *dir, ...)
 
     va_end (args);
 
+    TRACE (TRACE_DATA, "dir_append_dirs returning ", quote (retval));
     return retval;
 }
 

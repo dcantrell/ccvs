@@ -1,5 +1,23 @@
 2008-09-17  Derek R. Price  <derek@ximbiot.com>
 
+	* add.c (add), client.c (call_in_directory, update_entries,
+	send_repository, send_a_repository, client_send_expansions,
+	send_signature, send_fileproc, send_dirent_proc, send_file_names,
+	send_files), commit.c (find_fileproc, check_fileproc,
+	check_filesdoneproc), entries.c (Entnode_Create, Subdir_Register), 
+	fileattr.c (fileattr_startdir, fileattr_set, fileattr_write,
+	fileattr_free), find_names.c (Find_Names, find_dirs,
+	Find_Directories), hash.c (dellist, findnode, findnode_fn), lock.c
+	(Reader_Lock), logmsg.c (do_editor), rcs.c (locate_rcs), repos.c
+	(Name_Repository), server.c (checked_in_response, server_checked_in,
+	server_update_entries), subr.c (free_names, dir_append_dirs), tag.c
+	(posttag_proc, pretag_proc, check_filesdoneproc), update.c
+	(update_dirleave_proc), watch.c (watch_modify_watchers,
+	addremove_fileproc, addremove_filesdoneproc, watch_addremove): Add
+	traces.
+	* server.h (TRACE_BOOL): New macro.
+	* sanity.sh (multiroot2): Update to compensate.
+
 	* watch.c: Some cleanup.
 
 	* fileattr.c: Some cleanup.

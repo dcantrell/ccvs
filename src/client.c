@@ -758,10 +758,14 @@ call_in_directory (const char *pathname,
     struct file_info finfo;
 
     assert (pathname && strlen (pathname));
+    assert (toplevel_repos);
 
     reposname = NULL;
     read_line (&reposname);
     assert (reposname);
+
+    TRACE (TRACE_FLOW, "call_in_directory (%s, %s, %s)",
+	   pathname, reposname, toplevel_repos);
 
     reposdirname_absolute = 0;
     if (!STRNEQ (reposname, toplevel_repos, strlen (toplevel_repos)))
@@ -1353,6 +1357,8 @@ update_entries (void *data_arg, const struct file_info *finfo)
 #ifdef UTIME_EXPECTS_WRITABLE
     int change_it_back = 0;
 #endif
+
+    TRACE (TRACE_FUNCTION, "update_entries (%s)", finfo->fullname);
 
     read_line (&entries_line);
 
@@ -3053,6 +3059,9 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
 {
     char *adm_name;
 
+    TRACE (TRACE_FUNCTION, "send_repository (%s, %s, %s)",
+	   dir, repos, update_dir);
+
     /* FIXME: this is probably not the best place to check; I wish I
      * knew where in here's callers to really trap this bug.  To
      * reproduce the bug, just do this:
@@ -3189,6 +3198,10 @@ send_a_repository (const char *dir, const char *repository,
     char *update_dir;
 
     assert (update_dir_in);
+
+    TRACE (TRACE_FLOW, "send_a_repository (%s, %s, %s)",
+	   dir, repository, update_dir_in);
+
     update_dir = xstrdup (update_dir_in);
 
     if (!toplevel_repos && repository)
@@ -3461,6 +3474,9 @@ client_send_expansions (int local, char *where, int build_dirs)
 {
     int i;
     char *argv[1];
+
+    TRACE (TRACE_FUNCTION, "client_send_expansions (%d, %s, %d)",
+	   local, where, build_dirs);
 
     /* Send the original module names.  The "expanded" module name might
        not be suitable as an argument to a co request (e.g. it might be
@@ -5190,6 +5206,9 @@ send_signature (const char *srepos, const char *filename, const char *fullname,
     size_t len;
     Node *n;
 
+    TRACE (TRACE_FUNCTION, "send_signature (%s, %s, %s, %s)",
+	   srepos, filename, fullname, TRACE_BOOL (bin));
+
     sigbuf = gen_signature (srepos, filename, bin, &len);
 
     send_to_server ("Signature\012", 0);
@@ -5234,6 +5253,8 @@ send_fileproc (void *callerdat, struct file_info *finfo)
        finfo->file.  */
     const char *filename;
     bool may_be_modified;
+
+    TRACE (TRACE_FLOW, "send_fileproc (%s)", finfo->fullname);
 
     send_a_repository ("", finfo->repository, finfo->update_dir);
 
@@ -5464,6 +5485,9 @@ send_dirent_proc (void *callerdat, const char *dir, const char *repository,
     struct send_data *args = callerdat;
     bool dir_exists;
 
+    TRACE (TRACE_FLOW, "send_dirent_proc (%s, %s, %s)",
+	   dir, repository, update_dir);
+
     if (ignore_directory (update_dir))
     {
 	/* print the warm fuzzy message */
@@ -5565,7 +5589,10 @@ void
 send_file_names (int argc, char **argv, unsigned int flags)
 {
     int i;
-    
+
+    TRACE (TRACE_FUNCTION, "send_file_names (%d, %s, %u)",
+	   argc, TRACE_PTR (argv, 0), flags);
+   
     /* The fact that we do this here as well as start_recursion is a bit 
        of a performance hit.  Perhaps worth cleaning up someday.  */
     if (flags & SEND_EXPAND_WILD)
@@ -5788,6 +5815,9 @@ send_files (int argc, char **argv, int local, int aflag, unsigned int flags)
 {
     struct send_data args;
     int err;
+
+    TRACE (TRACE_FUNCTION, "send_files (%d, %s, %d, %d, %u)",
+	   argc, TRACE_PTR (argv, 0), local, aflag, flags);
 
     send_max_dotdot (argc, argv);
 

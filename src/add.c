@@ -525,6 +525,10 @@ add (int argc, char **argv)
 		error (1, errno, "could not chdir to `%s'", finfo.update_dir);
 	}
 
+	TRACE (TRACE_DATA,
+	       "add: Processing %s, set update_dir = %s, file = %s",
+	       argv[i], finfo.update_dir, finfo.file);
+
 	/* Add wrappers for this directory.  They exist only until
 	   the next call to wrap_add_file.  */
 	wrap_add_file (CVSDOTWRAPPER, 1);
