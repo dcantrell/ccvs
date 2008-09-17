@@ -28,6 +28,7 @@
 
 /* GNULIB */
 #include "minmax.h"
+#include "quote.h"
 
 /* CVS */
 #include "base.h"
@@ -775,11 +776,10 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 	/* Skip all the following checks regarding the user file; we're
 	   not using it.  */
     }
-    else if (vers->vn_user == NULL)
+    else if (!vers->vn_user)
     {
 	/* The file does not exist in the working directory.  */
-	if ((diff_rev1 || diff_date1)
-	    && vers->srcfile != NULL)
+	if ((diff_rev1 || diff_date1) && vers->srcfile)
 	{
 	    /* The file does exist in the repository.  */
 	    if (empty_files)
@@ -793,12 +793,11 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 		if (diff_rev1 && STREQ (diff_rev1, TAG_HEAD))
 		{
 		    char *head =
-			(vers->vn_rcs == NULL
-			 ? NULL
-			 : RCS_branch_head (vers->srcfile, vers->vn_rcs));
-		    exists = head != NULL && !RCS_isdead (vers->srcfile, head);
-		    if (head != NULL)
-			free (head);
+			vers->vn_rcs 
+			? RCS_branch_head (vers->srcfile, vers->vn_rcs)
+			: NULL;
+		    exists = head && !RCS_isdead (vers->srcfile, head);
+		    if (head) free (head);
 		}
 		else
 		{
@@ -806,8 +805,8 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 
 		    xvers = Version_TS (finfo, NULL, diff_rev1, diff_date1,
 					1, 0);
-		    exists = xvers->vn_rcs && !RCS_isdead (xvers->srcfile,
-		                                           xvers->vn_rcs);
+		    exists = xvers->vn_rcs
+			     && !RCS_isdead (xvers->srcfile, xvers->vn_rcs);
 		    freevers_ts (&xvers);
 		}
 		if (exists)
@@ -828,7 +827,7 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 	/* The file was added locally.  */
 	int exists = 0;
 
-	if (vers->srcfile != NULL)
+	if (vers->srcfile)
 	{
 	    /* The file does exist in the repository.  */
 
@@ -838,12 +837,11 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
 		if (diff_rev1 && STREQ (diff_rev1, TAG_HEAD))
 		{
 		    char *head =
-			(vers->vn_rcs == NULL
-			 ? NULL
-			 : RCS_branch_head (vers->srcfile, vers->vn_rcs));
+			vers->vn_rcs
+			? RCS_branch_head (vers->srcfile, vers->vn_rcs)
+			: NULL;
 		    exists = head && !RCS_isdead (vers->srcfile, head);
-		    if (head != NULL)
-			free (head);
+		    if (head) free (head);
 		}
 		else
 		{
@@ -1072,7 +1070,7 @@ diff_dirproc (void *callerdat, const char *dir, const char *pos_repos,
 	return R_SKIP_ALL;
 
     if (!quiet)
-	error (0, 0, "Diffing %s", update_dir);
+	error (0, 0, "Diffing %s", NULL2DOT (update_dir));
     return R_PROCESS;
 }
 
