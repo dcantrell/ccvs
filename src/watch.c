@@ -266,9 +266,11 @@ addremove_filesdoneproc (void *callerdat, int err, const char *repository,
 	 * exact match.
 	 */
 	if (the_args.local)
-	    set_default = STREQ (update_dir, the_args.dirs[dir_check]);
+	    set_default = STREQ (NULL2DOT (update_dir),
+				 the_args.dirs[dir_check]);
 	else 
-	    set_default = STRNEQ (update_dir, the_args.dirs[dir_check],
+	    set_default = STRNEQ (NULL2DOT (update_dir),
+				  the_args.dirs[dir_check],
 		    		  strlen (the_args.dirs[dir_check]));
 	dir_check++;
     }
@@ -355,20 +357,21 @@ watch_addremove (int argc, char **argv)
 
     the_args.num_dirs = 0;
     max_dirs = 4; /* Arbitrary choice. */
-    the_args.dirs = xmalloc( sizeof( const char * ) * max_dirs );
+    the_args.dirs = xmalloc (sizeof (const char *) * max_dirs);
 
     TRACE (TRACE_FUNCTION, "watch_addremove (%d)", argc);
-    for ( arg_index=0; arg_index<argc; ++arg_index )
+    for (arg_index=0; arg_index<argc; ++arg_index)
     {
-	TRACE( TRACE_FUNCTION, "\t%s", argv[ arg_index ]);
-	if ( isdir( argv[ arg_index ] ) )
+	TRACE (TRACE_FUNCTION, "\t%s", argv[arg_index]);
+	if (isdir (argv[arg_index]) )
 	{
-	    if ( the_args.num_dirs >= max_dirs )
+	    if (the_args.num_dirs >= max_dirs)
 	    {
 		max_dirs *= 2;
-		the_args.dirs = (const char ** )xrealloc( (void *)the_args.dirs, max_dirs );
+		the_args.dirs = (const char ** )xrealloc ((void *)the_args.dirs,
+							   max_dirs);
 	    }
-	    the_args.dirs[ the_args.num_dirs++ ] = argv[ arg_index ];
+	    the_args.dirs[the_args.num_dirs++] = argv[arg_index];
 	}
     }
 
@@ -382,8 +385,8 @@ watch_addremove (int argc, char **argv)
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root->isremote)
     {
-	start_server ();
-	ign_setup ();
+	start_server();
+	ign_setup();
 
 	if (the_args.local)
 	    send_arg ("-l");
@@ -420,8 +423,8 @@ watch_addremove (int argc, char **argv)
 	 argc, argv, the_args.local, W_LOCAL, 0, CVS_LOCK_WRITE,
 	 NULL, 1, NULL);
 
-    Lock_Cleanup ();
-    free( (void *)the_args.dirs );
+    Lock_Cleanup();
+    free ((void *)the_args.dirs);
     the_args.dirs = NULL;
 
     return err;
