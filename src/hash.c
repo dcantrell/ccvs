@@ -359,13 +359,13 @@ findnode (List *list, const char *key)
 {
     Node *head, *p;
 
-    if ((list == NULL))
+    assert (key);
+
+    if (list_isempty (list))
 	return NULL;
 
-    assert (key != NULL);
-
     head = list->hasharray[hashp (key)];
-    if (head == NULL)
+    if (!head)
 	/* Not found.  */
 	return NULL;
 
@@ -385,16 +385,16 @@ findnode_fn (List *list, const char *key)
 {
     Node *head, *p;
 
+    assert (key);
+
     /* This probably should be "assert (list != NULL)" (or if not we
        should document the current behavior), but only if we check all
        the callers to see if any are relying on this behavior.  */
-    if (list == NULL)
+    if (list_isempty(list))
 	return NULL;
 
-    assert (key != NULL);
-
     head = list->hasharray[hashp (key)];
-    if (head == NULL)
+    if (!head)
 	return NULL;
 
     for (p = head->hashnext; p != head; p = p->hashnext)

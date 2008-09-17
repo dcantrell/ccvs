@@ -241,8 +241,7 @@ watch_modify_watchers (const char *file, struct addremove_args *what)
 	free (mynewattr);
 }
 
-static int addremove_fileproc (void *callerdat,
-				      struct file_info *finfo);
+
 
 static int
 addremove_fileproc (void *callerdat, struct file_info *finfo)
@@ -251,8 +250,11 @@ addremove_fileproc (void *callerdat, struct file_info *finfo)
     return 0;
 }
 
-static int addremove_filesdoneproc (void * callerdat, int err, const char * repository,
-                                           const char *update_dir, List * entries)
+
+
+static int
+addremove_filesdoneproc (void *callerdat, int err, const char *repository,
+			 const char *update_dir, List *entries)
 {
     int set_default = the_args.setting_default;
     int dir_check = 0;
