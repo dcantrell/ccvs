@@ -72,7 +72,7 @@ fileattr_startdir (const char *repos)
 static void
 fileattr_delproc (Node *node)
 {
-    assert (node->data != NULL);
+    assert (node->data);
     free (node->data);
     node->data = NULL;
 }
@@ -93,7 +93,7 @@ fileattr_read (void)
 
     /* If NULL was passed to fileattr_startdir, then it isn't kosher to look
        at attributes.  */
-    assert (fileattr_stored_repos != NULL);
+    assert (fileattr_stored_repos);
 
     fname = Xasprintf ("%s/%s", fileattr_stored_repos, CVSREP_FILEATTR);
 
@@ -340,6 +340,8 @@ fileattr_set (const char *filename, const char *attrname, const char *attrval)
 {
     Node *node;
     char *p;
+
+    assert (fileattr_stored_repos);
 
     if (filename == NULL)
     {
@@ -588,7 +590,7 @@ fileattr_write (void)
 
     /* If NULL was passed to fileattr_startdir, then it isn't kosher to set
        attributes.  */
-    assert (fileattr_stored_repos != NULL);
+    assert (fileattr_stored_repos);
 
     fname = Xasprintf ("%s/%s", fileattr_stored_repos, CVSREP_FILEATTR);
 

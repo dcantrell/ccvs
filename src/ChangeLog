@@ -1,5 +1,8 @@
 2008-09-17  Derek R. Price  <derek@ximbiot.com>
 
+	* fileattr.c: Some cleanup.
+	(fileattr_set): New assertion on global.
+
 	* diff.c (diff_fileproc, diff_dirproc): Some cleanup.
 
 	* entries.h: "rcs.h" already includes "hash.h".
