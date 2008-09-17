@@ -1,3 +1,7 @@
+2008-09-17  Derek R. Price  <derek@ximbiot.com>
+
+	* entries.h: "rcs.h" already includes "hash.h".
+
 2008-09-16  Derek R. Price  <derek@ximbiot.com>
 
 	* update.c (patch_file): Repaginate.
