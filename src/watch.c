@@ -363,13 +363,12 @@ watch_addremove (int argc, char **argv)
     for (arg_index=0; arg_index<argc; ++arg_index)
     {
 	TRACE (TRACE_FUNCTION, "\t%s", argv[arg_index]);
-	if (isdir (argv[arg_index]) )
+	if (isdir (argv[arg_index]))
 	{
 	    if (the_args.num_dirs >= max_dirs)
 	    {
 		max_dirs *= 2;
-		the_args.dirs = (const char ** )xrealloc ((void *)the_args.dirs,
-							   max_dirs);
+		the_args.dirs = xrealloc ((void *)the_args.dirs, max_dirs);
 	    }
 	    the_args.dirs[the_args.num_dirs++] = argv[arg_index];
 	}
