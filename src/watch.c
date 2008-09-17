@@ -259,12 +259,13 @@ addremove_filesdoneproc (void *callerdat, int err, const char *repository,
     int set_default = the_args.setting_default;
     int dir_check = 0;
 
-    while ( !set_default && dir_check < the_args.num_dirs )
+    while (!set_default && dir_check < the_args.num_dirs)
     {
 	/* If we are recursing, then just see if the first part of update_dir 
-	   matches any of the specified directories. Otherwise, it must be an exact
-	   match. */
-	if ( the_args.local )
+	 * matches any of the specified directories.  Otherwise, it must be an
+	 * exact match.
+	 */
+	if (the_args.local)
 	    set_default = STREQ (update_dir, the_args.dirs[dir_check]);
 	else 
 	    set_default = STRNEQ (update_dir, the_args.dirs[dir_check],
@@ -276,6 +277,7 @@ addremove_filesdoneproc (void *callerdat, int err, const char *repository,
 	watch_modify_watchers (NULL, &the_args);
     return err;
 }
+
 
 
 static int
