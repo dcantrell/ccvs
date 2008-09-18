@@ -1,3 +1,8 @@
+2008-09-18  Derek R. Price  <derek@ximbiot.com>
+
+	* hash.c (walklist): Make it OK for callback procs to delete the node
+	they were passed.
+
 2008-09-17  Derek R. Price  <derek@ximbiot.com>
 
 	* add.c (add), client.c (call_in_directory, update_entries,
