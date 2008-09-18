@@ -810,11 +810,9 @@ call_in_directory (const char *pathname,
      * arbitrary files on the client.
      */
     if (!is_valid_client_path (short_pathname))
-    {
-	error (0, 0,
-               "Server attempted to update a file via an invalid pathname:");
-        error (1, 0, "`%s'.", short_pathname);
-    }
+	error (1, 0,
+               "Server attempted to update a file via invalid pathname %s.",
+	       quote (short_pathname));
 
     if (ISSLASH (pathname[strlen (pathname) - 1]))
     {
@@ -1827,7 +1825,7 @@ update_entries (void *data_arg, const struct file_info *finfo)
 	char *file_timestamp;
 	bool ignore_merge;
 
-	(void) time (&last_register_time);
+	time (&last_register_time);
 
 	local_timestamp = data->timestamp;
 	if (!local_timestamp || ts[0] == '+' || last_merge_conflict)
@@ -3266,13 +3264,16 @@ send_a_repository (const char *dir, const char *repository,
 		if (repository_len > update_dir_len
 		    && STREQ (repository + repository_len - update_dir_len,
 			      update_dir)
-		    /* TOPLEVEL_REPOS shouldn't be above current_parsed_root->directory */
+		    /* TOPLEVEL_REPOS shouldn't be above
+		     * CURRENT_PARSED_ROOT->directory.
+		     */
 		    && ((size_t)(repository_len - update_dir_len)
 			> strlen (current_parsed_root->directory)))
 		{
 		    /* The repository name contains UPDATE_DIR.  Set
-                       toplevel_repos to the repository name without
-                       UPDATE_DIR. */
+		     * toplevel_repos to the repository name without
+		     * UPDATE_DIR.
+		     */
 
 		    toplevel_repos = xmalloc (repository_len - update_dir_len);
 		    /* Note that we don't copy the trailing '/'.  */
@@ -3281,9 +3282,7 @@ send_a_repository (const char *dir, const char *repository,
 		    toplevel_repos[repository_len - update_dir_len - 1] = '\0';
 		}
 		else
-		{
 		    toplevel_repos = xstrdup (current_parsed_root->directory);
-		}
 	    }
 	}
     }
@@ -5230,8 +5229,9 @@ send_signature (const char *srepos, const char *filename, const char *fullname,
 
 
 /* The address of an instance of this structure is passed to
-   send_fileproc, send_filesdoneproc, and send_direntproc, as the
-   callerdat parameter.  */
+ * send_fileproc, send_filesdoneproc, and send_dirent_proc, as the
+ * callerdat parameter.
+ */
 struct send_data
 {
     /* Each of the following flags are zero for clear or nonzero for set.  */

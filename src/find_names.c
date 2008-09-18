@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 1986-2007 The Free Software Foundation, Inc.
+ * Copyright (C) 1986-2008 The Free Software Foundation, Inc.
  *
- * Portions Copyright (C) 1998-2007 Derek Price,
+ * Portions Copyright (C) 1998-2008 Derek Price,
  *                                  Ximbiot LLC <http://ximbiot.com>,
  *                                  and others.
  *
@@ -115,9 +115,10 @@ find_rcs (dir, list)
 
 
 /* Find files in the repository and/or working directory.  On error,
-   may either print a nonfatal error and return NULL, or just give
-   a fatal error.  On success, return non-NULL (even if it is an empty
-   list).  */
+ * may either print a nonfatal error and return NULL, or just give
+ * a fatal error.  On success, return non-NULL (even if it is an empty
+ * list).
+ */
 List *
 Find_Names (const char *repository, const char *update_dir,
 	    int which, int aflag, List **optentries)
@@ -308,7 +309,7 @@ find_dirs (const char *dir, List *list, int checkadm, List *entries)
 			   &tmp_size,
 			   (strlen (dir) + strlen (dp->d_name)
 			    + sizeof (CVSADM) + 10));
-	    (void) sprintf (tmp, "%s/%s/%s", dir, dp->d_name, CVSADM);
+	    sprintf (tmp, "%s/%s/%s", dir, dp->d_name, CVSADM);
 	    if (!isdir (tmp))
 		goto do_it_again;
 	}
@@ -323,16 +324,15 @@ find_dirs (const char *dir, List *list, int checkadm, List *entries)
     do_it_again:
 	errno = 0;
     }
-    if (errno != 0)
+    if (errno)
     {
 	int save_errno = errno;
-	(void) CVS_CLOSEDIR (dirp);
+	CVS_CLOSEDIR (dirp);
 	errno = save_errno;
 	return 1;
     }
-    (void) CVS_CLOSEDIR (dirp);
-    if (tmp != NULL)
-	free (tmp);
+    CVS_CLOSEDIR (dirp);
+    if (tmp) free (tmp);
     return 0;
 }
 
