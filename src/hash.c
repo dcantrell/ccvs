@@ -413,6 +413,9 @@ findnode_fn (List *list, const char *key)
  * Walk LIST, calling PROC for each node in LIST and preserving CLOSURE.  Does
  * nothing when LIST is NULL or empty.
  *
+ * NOTES
+ *   It is okay for PROC to call `delnode (P)'.
+ *
  * RETURNS
  *   The sum total of each of the integers returned by all calls to PROC.
  */
@@ -428,8 +431,13 @@ walklist (List *list, int (*proc) (Node *, void *), void *closure)
     if (!list) return 0;
 
     head = list->list;
-    for (p = head->next; p != head; p = p->next)
+    p = head->next;
+    while (p != head)
+    {
+	Node *next = p->next;
 	err += proc (p, closure);
+	p = next;
+    }
     return err;
 }
 
