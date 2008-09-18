@@ -1382,12 +1382,12 @@ check_filesdoneproc (void *callerdat, int err, const char *repos,
     Node *p;
     List *saved_ulist;
 
-    TRACE (TRACE_FLOW, "check_filesdoneproc (%d, %s, %s)",
-	   err, repos, update_dir);
+    TRACE (TRACE_FLOW, "check_filesdoneproc (%d, %s, %s, %s)",
+	   err, repos, update_dir, TRACE_BOOL (use_editor));
 
     /* find the update list for this dir */
-    p = findnode (mulist, update_dir);
-    if (p != NULL)
+    p = findnode (mulist, NULL2DOT (update_dir));
+    if (p)
 	saved_ulist = ((struct master_lists *) p->data)->ulist;
     else
 	saved_ulist = NULL;
@@ -1653,7 +1653,7 @@ commit_filesdoneproc (void *callerdat, int err, const char *repository,
     TRACE (TRACE_FLOW, "commit_filesdoneproc (%d, %s, %s)",
 	   err, repository, update_dir);
 
-    p = findnode (mulist, update_dir);
+    p = findnode (mulist, NULL2DOT (update_dir));
     if (p == NULL)
 	return err;
 

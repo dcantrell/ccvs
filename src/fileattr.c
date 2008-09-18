@@ -698,7 +698,6 @@ fileattr_write (void)
 void
 fileattr_free (void)
 {
-
     TRACE (TRACE_MINUTIA, "fileattr_free()");
 
     /* Note that attrs_modified will ordinarily be zero, but there are

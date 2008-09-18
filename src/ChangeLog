@@ -1,5 +1,7 @@
 2008-09-18  Derek R. Price  <derek@ximbiot.com>
 
+	* client.c, commit.c, fileattr.c, find_names.c: Some cleanup.
+
 	* hash.c (walklist): Make it OK for callback procs to delete the node
 	they were passed.
 
