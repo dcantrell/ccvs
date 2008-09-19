@@ -184,7 +184,7 @@ ncheck_fileproc (void *callerdat, struct file_info *finfo)
        is most sensible.  */
 
     fp = CVS_FOPEN (CVSADM_NOTIFY, "r");
-    if (fp == NULL)
+    if (!fp)
     {
 	if (!existence_error (errno))
 	    error (0, errno, "cannot open %s", CVSADM_NOTIFY);
@@ -194,33 +194,33 @@ ncheck_fileproc (void *callerdat, struct file_info *finfo)
     while (getline (&line, &line_len, fp) > 0)
     {
 	notif_type = line[0];
-	if (notif_type == '\0')
+	if (!notif_type)
 	    continue;
 	filename = line + 1;
 	cp = strchr (filename, '\t');
-	if (cp == NULL)
+	if (!cp)
 	    continue;
 	*cp++ = '\0';
 	val = cp;
 	cp = strchr (val, '\t');
-	if (cp == NULL)
+	if (!cp)
 	    continue;
 	*cp++ = '+';
 	cp = strchr (cp, '\t');
-	if (cp == NULL)
+	if (!cp)
 	    continue;
 	*cp++ = '+';
 	cp = strchr (cp, '\t');
-	if (cp == NULL)
+	if (!cp)
 	    continue;
 	*cp++ = '\0';
 	watches = cp;
 	cp = strchr (cp, '\n');
-	if (cp == NULL)
+	if (!cp)
 	    continue;
 	*cp = '\0';
 
-	notify_do (notif_type, filename, finfo->update_dir, getcaller (), val,
+	notify_do (notif_type, filename, finfo->update_dir, getcaller(), val,
 		   watches, finfo->repository);
     }
     free (line);
@@ -230,7 +230,7 @@ ncheck_fileproc (void *callerdat, struct file_info *finfo)
     if (fclose (fp) < 0)
 	error (0, errno, "cannot close %s", CVSADM_NOTIFY);
 
-    if ( CVS_UNLINK (CVSADM_NOTIFY) < 0)
+    if (CVS_UNLINK (CVSADM_NOTIFY) < 0)
 	error (0, errno, "cannot remove %s", CVSADM_NOTIFY);
 
     return 0;
