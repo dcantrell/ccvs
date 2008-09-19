@@ -1,5 +1,10 @@
 2008-09-19  Derek R. Price  <derek@ximbiot.com>
 
+	* commit.c (commit): Don't set update_dir for client/server calls to
+	do_editor().
+	* logmsg.c (do_editor): Some cleanup.
+	* sanity.sh (editor): Update to compensate.
+
 	* edit.c (ncheck_fileproc): Some cleanup.
 
 	* checkout.c (checkout_proc): Use empty update dir instead of ".".

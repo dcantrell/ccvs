@@ -553,7 +553,7 @@ commit (int argc, char **argv)
 	 * The protocol is designed this way.  This is a feature.
 	 */
 	if (use_editor)
-	    do_editor (".", &saved_message, NULL, find_args.ulist);
+	    do_editor (NULL, &saved_message, NULL, find_args.ulist);
 
 	/* We always send some sort of message, even if empty.  */
 	option_with_arg ("-m", saved_message ? saved_message : "");

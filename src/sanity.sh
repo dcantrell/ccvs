@@ -16913,8 +16913,17 @@ U file2'
 "$CVSROOT_DIRNAME/first-dir/file2,v  <--  file2
 new revision: 1\.1\.2\.1; previous revision: 1\.1"
 
-	  dotest editor-log-file1 "${testcvs} log -N file1" "
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+	  if $remote; then
+	    CITEXT=
+	  else
+	    CITEXT=\
+"xCVS: Committing in \\.
+xCVS:
+"
+	  fi
+
+	  dotest editor-log-file1 "$testcvs log -N file1" "
+RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
 Working file: file1
 head: 1\.1
 branch:
@@ -16925,25 +16934,21 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
+date: $ISO8601DATE;  author: $username;  state: Exp;  commitid: $commitid;
 branches:  1\.1\.2;
 ${log_keyid}xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
-xCVS: Committing in .
-xCVS:
-xCVS: Added Files:
+${CITEXT}xCVS: Added Files:
 xCVS: 	file1 file2
 xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
+date: $ISO8601DATE;  author: $username;  state: Exp;  lines: ${PLUS}1 -0;  commitid: $commitid;
 ${log_keyid}xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
-xCVS: Committing in .
-xCVS:
-xCVS: Modified Files:
+${CITEXT}xCVS: Modified Files:
 xCVS:  Tag: br
 xCVS: 	file1
 xCVS: ----------------------------------------------------------------------
@@ -16951,8 +16956,8 @@ xCVS: ----------------------------------------------------------------------
 
 	  # The only difference between the two expect strings is the
 	  # presence or absence of "Committing in ." for 1.1.2.1.
-	  dotest editor-log-file2 "${testcvs} log -N file2" "
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
+	  dotest editor-log-file2 "$testcvs log -N file2" "
+RCS file: $CVSROOT_DIRNAME/first-dir/file2,v
 Working file: file2
 head: 1\.1
 branch:
@@ -16963,19 +16968,17 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
+date: $ISO8601DATE;  author: $username;  state: Exp;  commitid: $commitid;
 branches:  1\.1\.2;
 ${log_keyid}xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
-xCVS: Committing in .
-xCVS:
-xCVS: Added Files:
+${CITEXT}xCVS: Added Files:
 xCVS: 	file1 file2
 xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
+date: $ISO8601DATE;  author: $username;  state: Exp;  lines: ${PLUS}1 -0;  commitid: $commitid;
 ${log_keyid}xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
@@ -16995,25 +16998,21 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  commitid: ${commitid};
+date: $ISO8601DATE;  author: $username;  state: Exp;  commitid: $commitid;
 branches:  1\.1\.2;
 ${log_keyid}xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
-xCVS: Committing in .
-xCVS:
-xCVS: Added Files:
+${CITEXT}xCVS: Added Files:
 xCVS: 	file1 file2
 xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
-date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0;  commitid: ${commitid};
+date: $ISO8601DATE;  author: $username;  state: Exp;  lines: ${PLUS}1 -0;  commitid: $commitid;
 ${log_keyid}xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
-xCVS: Committing in .
-xCVS:
-xCVS: Modified Files:
+${CITEXT}xCVS: Modified Files:
 xCVS:  Tag: br
 xCVS: 	file2
 xCVS: ----------------------------------------------------------------------
