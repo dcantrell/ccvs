@@ -32044,10 +32044,9 @@ initial revision: 1\.1"
 	  # That this is an error is good - we are asking CVS to do
 	  # something which doesn't make sense.
 	  dotest_fail multiroot3-10 \
-"${testcvs} -q -d ${CVSROOT1} diff dir1/file1 dir2/file2" \
-"${SPROG} diff: failed to create lock directory for .${TESTDIR}/root1/dir2' (${TESTDIR}/root1/dir2/#cvs.lock): No such file or directory
-${SPROG} diff: failed to obtain dir lock in repository .${TESTDIR}/root1/dir2'
-${SPROG} \[diff aborted\]: read lock failed - giving up"
+"$testcvs -q -d $CVSROOT1 diff dir1/file1 dir2/file2" \
+"$SPROG diff: failed to obtain read lock in \`$TESTDIR/root1/dir2': No such file or directory
+$SPROG \[diff aborted\]: read lock failed - giving up"
 
 	  # This one is supposed to work.
 	  dotest multiroot3-11 "${testcvs} -q diff dir1/file1 dir2/file2" ""
