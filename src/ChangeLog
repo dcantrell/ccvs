@@ -1,5 +1,13 @@
 2008-09-18  Derek R. Price  <derek@ximbiot.com>
 
+	* lock.c: Some cleanup.
+	(lock_obtained, lock_wait): Only print message when !really_quiet.
+	(set_lock): Don't print error messages, but return errno and...
+	(Reader_Lock, set_promotable_lock, lock_dir_for_write, internal_lock):
+	...rely on callers to report the error.
+	(set_readlock_name, readers_exist): Declare inline.
+	(multiroot3-10): Update to compensate for new error messages.
+
 	* client.c, commit.c, fileattr.c, find_names.c: Some cleanup.
 
 	* hash.c (walklist): Make it OK for callback procs to delete the node
