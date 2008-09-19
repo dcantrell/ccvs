@@ -248,7 +248,7 @@ rcsinfo_proc (const char *repository, const char *template,
  *              -e option to the CVS executable.
  */
 void
-do_editor (const char *dir, char **messagep, const char *repository,
+do_editor (const char *update_dir, char **messagep, const char *repository,
            List *changes)
 {
     static int reuse_log_message = 0;
@@ -259,10 +259,11 @@ do_editor (const char *dir, char **messagep, const char *repository,
     struct stat pre_stbuf, post_stbuf;
     int retcode = 0;
 
+    /* One or the other is set, but not both.  */
     assert (!current_parsed_root->isremote != !repository);
 
     TRACE (TRACE_FUNCTION, "do_editor (%s, %s, %s)",
-	   dir, TRACE_NULL (*messagep), repository);
+	   update_dir, TRACE_NULL (*messagep), repository);
 
     if (noexec || reuse_log_message)
 	return;
@@ -273,16 +274,16 @@ do_editor (const char *dir, char **messagep, const char *repository,
 
   again:
     /* Create a temporary file.  */
-    if( ( fp = cvs_temp_file( &fname ) ) == NULL )
-	error( 1, errno, "cannot create temporary file" );
+    if (!(fp = cvs_temp_file (&fname)))
+	error (1, errno, "cannot create temporary file");
 
     if (*messagep)
     {
-	(void) fputs (*messagep, fp);
+	fputs (*messagep, fp);
 
 	if ((*messagep)[0] == '\0' ||
 	    (*messagep)[strlen (*messagep) - 1] != '\n')
-	    (void) fprintf (fp, "\n");
+	    fprintf (fp, "\n");
     }
 
     if (repository)
@@ -298,7 +299,7 @@ do_editor (const char *dir, char **messagep, const char *repository,
 
 	/* Why "b"?  */
 	tfp = CVS_FOPEN (CVSADM_TEMPLATE, "rb");
-	if (tfp == NULL)
+	if (!tfp)
 	{
 	    if (!existence_error (errno))
 		error (1, errno, "cannot read %s", CVSADM_TEMPLATE);
@@ -324,21 +325,21 @@ do_editor (const char *dir, char **messagep, const char *repository,
 	}
     }
 
-    (void) fprintf (fp,
-  "%s----------------------------------------------------------------------\n",
-		    CVSEDITPREFIX);
-    (void) fprintf (fp,
-  "%sEnter Log.  Lines beginning with `%.*s' are removed automatically\n%s\n",
-		    CVSEDITPREFIX, CVSEDITPREFIXLEN, CVSEDITPREFIX,
-		    CVSEDITPREFIX);
-    if (dir != NULL && *dir)
-	(void) fprintf (fp, "%sCommitting in %s\n%s\n", CVSEDITPREFIX,
-			dir, CVSEDITPREFIX);
-    if (changes != NULL)
+    fprintf (fp,
+"%s----------------------------------------------------------------------\n",
+	     CVSEDITPREFIX);
+    fprintf (fp,
+"%sEnter Log.  Lines beginning with `%.*s' are removed automatically\n%s\n",
+	     CVSEDITPREFIX, CVSEDITPREFIXLEN, CVSEDITPREFIX,
+	     CVSEDITPREFIX);
+    if (update_dir)
+	fprintf (fp, "%sCommitting in %s\n%s\n", CVSEDITPREFIX,
+		 NULL2DOT (update_dir), CVSEDITPREFIX);
+    if (changes)
 	setup_tmpfile (fp, CVSEDITPREFIX, changes);
-    (void) fprintf (fp,
-  "%s----------------------------------------------------------------------\n",
-		    CVSEDITPREFIX);
+    fprintf (fp,
+"%s----------------------------------------------------------------------\n",
+	     CVSEDITPREFIX);
 
     /* finish off the temp file */
     if (fclose (fp) == EOF)
@@ -349,8 +350,8 @@ do_editor (const char *dir, char **messagep, const char *repository,
     /* run the editor */
     run_setup (Editor);
     run_add_arg (fname);
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
-			     RUN_NORMAL | RUN_SIGIGNORE)) != 0)
+    if (retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
+			    RUN_NORMAL | RUN_SIGIGNORE))
 	error (0, retcode == -1 ? errno : 0, "warning: editor session failed");
 
     /* put the entire message back into the *messagep variable */
@@ -361,7 +362,7 @@ do_editor (const char *dir, char **messagep, const char *repository,
 	free (*messagep);
 
     if (stat (fname, &post_stbuf) != 0)
-	    error (1, errno, "cannot find size of temp file %s", fname);
+	error (1, errno, "cannot find size of temp file %s", fname);
 
     if (post_stbuf.st_size == 0)
 	*messagep = NULL;
@@ -369,7 +370,7 @@ do_editor (const char *dir, char **messagep, const char *repository,
     {
 	/* On NT, we might read less than st_size bytes, but we won't
 	   read more.  So this works.  */
-	*messagep = (char *) xmalloc (post_stbuf.st_size + 1);
+	*messagep = xmalloc (post_stbuf.st_size + 1);
  	(*messagep)[0] = '\0';
     }
 
@@ -394,7 +395,7 @@ do_editor (const char *dir, char **messagep, const char *repository,
 	    if (offset + line_length >= message_len)
 		expand_string (messagep, &message_len,
 				offset + line_length + 1);
-	    (void) strcpy (*messagep + offset, line);
+	    strcpy (*messagep + offset, line);
 	    offset += line_length;
 	}
     }
@@ -402,21 +403,21 @@ do_editor (const char *dir, char **messagep, const char *repository,
 	error (0, errno, "warning: cannot close %s", fname);
 
     /* canonicalize emply messages */
-    if (*messagep != NULL &&
-        (**messagep == '\0' || STREQ (*messagep, "\n")))
+    if (*messagep &&
+        ((*messagep)[0] == '\0' || STREQ (*messagep, "\n")))
     {
 	free (*messagep);
 	*messagep = NULL;
     }
 
-    if (pre_stbuf.st_mtime == post_stbuf.st_mtime || *messagep == NULL)
+    if (pre_stbuf.st_mtime == post_stbuf.st_mtime || !*messagep)
     {
 	for (;;)
 	{
-	    (void) printf ("\nLog message unchanged or not specified\n");
-	    (void) printf ("a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs\n");
-	    (void) printf ("Action: (continue) ");
-	    (void) fflush (stdout);
+	    printf ("\nLog message unchanged or not specified\n");
+	    printf ("a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs\n");
+	    printf ("Action: (continue) ");
+	    fflush (stdout);
 	    line_length = getline (&line, &line_chars_allocated, stdin);
 	    if (line_length < 0)
 	    {
@@ -432,7 +433,8 @@ do_editor (const char *dir, char **messagep, const char *repository,
 	    if (*line == 'a' || *line == 'A')
 		{
 		    if (unlink_file (fname) < 0)
-			error (0, errno, "warning: cannot remove temp file %s", fname);
+			error (0, errno, "warning: cannot remove temp file %s",
+			       quote (fname));
 		    error (1, 0, "aborted by user");
 		}
 	    if (*line == 'e' || *line == 'E')
@@ -442,7 +444,7 @@ do_editor (const char *dir, char **messagep, const char *repository,
 		reuse_log_message = 1;
 		break;
 	    }
-	    (void) printf ("Unknown input\n");
+	    printf ("Unknown input\n");
 	}
     }
     if (line)
