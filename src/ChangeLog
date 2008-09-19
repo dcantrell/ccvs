@@ -1,3 +1,7 @@
+2008-09-19  Derek R. Price  <derek@ximbiot.com>
+
+	* server.c (expand_proc): Some cleanup.
+
 2008-09-18  Derek R. Price  <derek@ximbiot.com>
 
 	* lock.c: Some cleanup.

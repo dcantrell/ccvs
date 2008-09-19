@@ -5728,7 +5728,8 @@ serve_ignore (char *arg)
 
 
 static int
-expand_proc (int argc, char **argv, char *where, char *mwhere, char *mfile, int shorten, int local_specified, char *omodule, char *msg)
+expand_proc (int argc, char **argv, char *where, char *mwhere, char *mfile,
+	     int shorten, int local_specified, char *omodule, char *msg)
 {
     int i;
     char *dir = argv[0];
@@ -5739,16 +5740,16 @@ expand_proc (int argc, char **argv, char *where, char *mwhere, char *mfile, int 
        mwhere will not be set, so send out the appropriate
        expansion. */
 
-    if (mwhere != NULL)
+    if (mwhere)
     {
 	buf_output0 (buf_to_net, "Module-expansion ");
-	if (server_dir != NULL)
+	if (server_dir)
 	{
 	    buf_output0 (buf_to_net, server_dir);
-	    buf_output0 (buf_to_net, "/");
+	    buf_append_char (buf_to_net, '/');
 	}
 	buf_output0 (buf_to_net, mwhere);
-	if (mfile != NULL)
+	if (mfile)
 	{
 	    buf_append_char (buf_to_net, '/');
 	    buf_output0 (buf_to_net, mfile);
@@ -5762,10 +5763,10 @@ expand_proc (int argc, char **argv, char *where, char *mwhere, char *mfile, int 
 	if (argc == 1)
 	{
 	    buf_output0 (buf_to_net, "Module-expansion ");
-	    if (server_dir != NULL)
+	    if (server_dir)
 	    {
 		buf_output0 (buf_to_net, server_dir);
-		buf_output0 (buf_to_net, "/");
+		buf_append_char (buf_to_net, '/');
 	    }
 	    buf_output0 (buf_to_net, dir);
 	    buf_append_char (buf_to_net, '\n');
@@ -5775,10 +5776,10 @@ expand_proc (int argc, char **argv, char *where, char *mwhere, char *mfile, int 
 	    for (i = 1; i < argc; ++i)
 	    {
 		buf_output0 (buf_to_net, "Module-expansion ");
-		if (server_dir != NULL)
+		if (server_dir)
 		{
 		    buf_output0 (buf_to_net, server_dir);
-		    buf_output0 (buf_to_net, "/");
+		    buf_append_char (buf_to_net, '/');
 		}
 		buf_output0 (buf_to_net, dir);
 		buf_append_char (buf_to_net, '/');
