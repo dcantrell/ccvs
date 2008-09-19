@@ -1,5 +1,7 @@
 2008-09-19  Derek R. Price  <derek@ximbiot.com>
 
+	* logmsg.c (do_verify): Some cleanup.
+
 	* commit.c (commit): Don't set update_dir for client/server calls to
 	do_editor().
 	* logmsg.c (do_editor): Some cleanup.

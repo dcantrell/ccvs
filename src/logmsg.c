@@ -630,8 +630,8 @@ do_verify (char **messagep, const char *repository, List *changes)
     data.message = *messagep;
     data.fname = NULL;
     data.changes = changes;
-    if ((err = Parse_Info (CVSROOTADM_VERIFYMSG, repository,
-			   verifymsg_proc, 0, &data)) != 0)
+    if (err = Parse_Info (CVSROOTADM_VERIFYMSG, repository,
+			  verifymsg_proc, 0, &data))
     {
 	int saved_errno = errno;
 	/* Since following error() exits, delete the temp file now.  */
