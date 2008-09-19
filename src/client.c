@@ -713,31 +713,23 @@ int is_valid_client_path (const char *pathname)
 
 /*
  * Do all the processing for PATHNAME, where pathname consists of the
- * repository and the filename.  The parameters we pass to FUNC are:
- * DATA is just the DATA parameter which was passed to
- * call_in_directory; ENT_LIST is a pointer to an entries list (which
- * we manage the storage for); SHORT_PATHNAME is the pathname of the
- * file relative to the (overall) directory in which the command is
- * taking place; and FILENAME is the filename portion only of
- * SHORT_PATHNAME.  When we call FUNC, the curent directory points to
- * the directory portion of SHORT_PATHNAME.  */
-static void
-call_in_directory (const char *pathname,
-                   void (*func) (void *, const struct file_info *),
-                   void *data)
-{
-    /* This variable holds the result of Entries_Open. */
-    List *last_entries = NULL;
-    char *dir, *bdir, *pdir;
-    char *filename;
-    /* This is what we get when we hook up the directory (working directory
-       name) from PATHNAME with the filename from REPOSNAME.  For example:
-       pathname: ccvs/src/
-       reposname: /u/src/master/ccvs/foo/ChangeLog
-       short_pathname: ccvs/src/ChangeLog
-       */
-    char *short_pathname;
-
+ * repository and the filename.  When this function is called, it is expected
+ * that the REPOSITORY line is still available to be read from the server
+ * (an error will be reported if the server failed to send it).
+ *
+ * CALLBACK FUNCTION
+ *
+ *   The parameters we pass to FUNC are:
+ *
+ *     data	the DATA parameter which was passed to call_in_directory().
+ *     finfo	a complete struct file_info specifying the entries list for
+ *		this directory, as well as the rest of the information
+ *		required to specify the file or directory to be operated on
+ *		locally and locate it in the repository.
+ *
+ *   When FUNC is called, the current directory will be the directory
+ *   containing the file or directory specified by FINFO.
+ */
     /*
      * Do the whole descent in parallel for the repositories, so we
      * know what to put in CVS/Repository files.  I'm not sure the
@@ -751,54 +743,58 @@ call_in_directory (const char *pathname,
      * foo/bar/CVSROOT/CVS/Repository is not a subdirectory of
      * foo/bar/CVS/Repository.
      */
-    char *reposname;
-    char *short_repos;
-    int reposdirname_absolute;
+static void
+call_in_directory (const char *pathname,
+                   void (*func) (void *data, const struct file_info *finfo),
+                   void *data)
+{
+    /* This variable holds the result of Entries_Open. */
+    List *last_entries = NULL;
+    char *dir, *bdir, *pdir;
+
+    /* The name of the file or directory to operate on.  */
+    char *filename;
+    char *fullname;		/* Becomes FINFO->fullname  */
+    const char *update_dir;
+    /* The repository line as sent by the server.  */
+    char *server_repos;
+    const char *repository;	/* The repository line as stored locally.  */
     bool newdir;
     struct file_info finfo;
 
-    assert (pathname && strlen (pathname));
+    assert (pathname);
     assert (toplevel_repos);
 
-    reposname = NULL;
-    read_line (&reposname);
-    assert (reposname);
+    server_repos = NULL;
+    read_line (&server_repos);
+    if (!server_repos)
+	error (1, 0, "server failed to specify repository in %s.",
+	       quote (NULL2DOT (pathname)));
 
     TRACE (TRACE_FLOW, "call_in_directory (%s, %s, %s)",
-	   pathname, reposname, toplevel_repos);
+	   pathname, server_repos, toplevel_repos);
 
-    reposdirname_absolute = 0;
-    if (!STRNEQ (reposname, toplevel_repos, strlen (toplevel_repos)))
-    {
-	reposdirname_absolute = 1;
-	short_repos = reposname;
-    }
+    /* Why do we do this?  I know old servers used to send absolute repository
+     * lines, but I thought newer ones always sent a line relative to
+     * CURRENT_PARSED_ROOT->directory, not TOPLEVEL_REPOS.
+     */
+    if (STRNEQ (server_repos, toplevel_repos, strlen (toplevel_repos))
+	&& ISSLASH (server_repos[strlen (toplevel_repos)]))
+	repository = server_repos + strlen (toplevel_repos) + 1;
     else
-    {
-	short_repos = reposname + strlen (toplevel_repos) + 1;
-	if (short_repos[-1] != '/')
-	{
-	    reposdirname_absolute = 1;
-	    short_repos = reposname;
-	}
-    }
+	repository = server_repos;
 
-   /* Now that we have SHORT_REPOS, we can calculate the path to the file we
-    * are being requested to operate on.
-    */
-    filename = strrchr (short_repos, '/');
-    if (!filename)
-	filename = short_repos;
+    /* Now that we have SHORT_REPOS, we can calculate the path to the file or
+     * directory are being requested to operate on.  We can't just use
+     * base_name() here, because it does the wrong thing with directories (sent
+     * by the server as PATH/) - it returns base_name (PATH) instead of the
+     * empty string.
+     */
+    if (*repository && ISSLASH (repository[strlen(repository) - 1]))
+	filename = xstrdup ("");
     else
-	++filename;
-
-    short_pathname = xmalloc (strlen (pathname) + strlen (filename) + 5);
-    /* Leave off the path when it is the CWD.  */
-    if (!STREQ (pathname, "./"))
-	strcpy (short_pathname, pathname);
-    else
-	short_pathname[0] = '\0';
-    strcat (short_pathname, filename);
+	filename = base_name (repository);
+    fullname = dir_append (pathname, filename);
 
     /* Now that we know the path to the file we were requested to operate on,
      * we can verify that it is valid.
@@ -809,25 +805,38 @@ call_in_directory (const char *pathname,
      * here.  Anything less means a trojan CVS server could create and edit
      * arbitrary files on the client.
      */
-    if (!is_valid_client_path (short_pathname))
+    if (!is_valid_client_path (fullname))
 	error (1, 0,
                "Server attempted to update a file via invalid pathname %s.",
-	       quote (short_pathname));
+	       quote (fullname));
 
-    if (ISSLASH (pathname[strlen (pathname) - 1]))
+    if (!*pathname
+	/* or PATHNAME == "./" */
+	|| pathname[0] == '.' && ISSLASH (pathname[1]) && !pathname[2])
     {
-	dir = xstrdup (pathname);
-	dir[strlen (dir) - 1] = '\0';
+	/* Old servers always send a trailing '/' on PATHNAME and normalize an
+	 * UPDATE_DIR of "" or "." to "./".  We have to assume something in
+	 * that case, so assume an empty UPDATE_DIR since it is the more common
+	 * case.
+	 *
+	 * See the comment above output_dir() in server.c for more info on how
+	 * UPDATE_DIR is now preserved.
+	 */
+	dir = xstrdup (".");
+	update_dir = "";
     }
     else
-	dir = dir_name (pathname);
+    {
+	dir = xstrdup (pathname);
+	update_dir = dir;
+    }
 
     if (client_prune_dirs)
 	add_prune_candidate (dir);
 
     if (!toplevel_wd)
     {
-	toplevel_wd = xgetcwd ();
+	toplevel_wd = xgetcwd();
 	if (!toplevel_wd)
 	    error (1, errno, "could not get working directory");
     }
@@ -856,7 +865,7 @@ call_in_directory (const char *pathname,
     /* Don't create CVSADM directories if this is export.  */
     if (!STREQ (cvs_cmd_name, "export") && !hasAdmin (dir))
     {
-	Create_Admin (dir, dir, reposname, NULL, NULL, 0,
+	Create_Admin (dir, update_dir, server_repos, NULL, NULL, 0,
 		      !newdir, /* Only warn about failures unless we just
 				* created this directory.
 				*/
@@ -869,7 +878,7 @@ call_in_directory (const char *pathname,
 
     if (!STREQ (cvs_cmd_name, "export"))
     {
-	last_entries = Entries_Open (0, STREQ (pathname, "./") ? "" : dir);
+	last_entries = Entries_Open (0, update_dir);
 
 	/* If this is a newly created directory, we will record
 	 * all subdirectory information, so call Subdirs_Known in
@@ -888,27 +897,27 @@ call_in_directory (const char *pathname,
 	else if (!entriesHasAllSubdirs (last_entries))
 	{
 	    List *dirlist;
-	    dirlist = Find_Directories (NULL,
-					STREQ (pathname, "./") ? "" : dir,
-					W_LOCAL, last_entries);
+	    dirlist = Find_Directories (NULL, update_dir, W_LOCAL,
+					last_entries);
 	    dellist (&dirlist);
 	}
     }
 
     finfo.update_dir = pathname;
     finfo.file = filename;
-    finfo.fullname = short_pathname;
-    finfo.repository = short_repos;
+    finfo.fullname = fullname;
+    finfo.repository = repository;
     finfo.entries = last_entries;
 
     (*func) (data, &finfo);
     if (last_entries)
-	Entries_Close (last_entries, STREQ (pathname, "./") ? "" : dir);
+	Entries_Close (last_entries, update_dir);
     free (dir);
     free (bdir);
     free (pdir);
-    free (short_pathname);
-    free (reposname);
+    free (filename);
+    free (fullname);
+    free (server_repos);
 }
 
 
@@ -2790,13 +2799,15 @@ handle_removed (char *args, size_t len)
 
 
 /* Is this the top level (directory containing CVSROOT)?  */
-static int
+static bool
 is_cvsroot_level (char *pathname)
 {
     if (!STREQ (toplevel_repos, current_parsed_root->directory))
-	return 0;
+	return false;
 
-    return !strchr (pathname, '/');
+    return STREQ (pathname, "")
+	   /* or PATHNAME == "./" */
+	   || pathname[0] == '.' && ISSLASH (pathname[1]) && !pathname[2];
 }
 
 

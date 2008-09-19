@@ -3488,6 +3488,7 @@ Server: Concurrent Versions System (CVS) [0-9p.]* (.*server)'
 	  cd ..
 	  rm -r 1
 
+export CVS_CLIENT_LOG=/tmp/cvsclientlog
 	  dotest basica-1 "$testcvs -q co first-dir" ''
 	  cd first-dir
 

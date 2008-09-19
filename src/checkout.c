@@ -968,7 +968,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	       will be ignored on the client side.  */
 
 	    if (server_active)
-		server_clear_entstat (".", current_parsed_root->directory);
+		server_clear_entstat ("", current_parsed_root->directory);
 #endif
 	}
 
