@@ -4397,6 +4397,11 @@ char *server_dir = NULL;
 
 
 
+/* Beginning with 1.12.14, the same release that began supporting PGP
+ * signatures, this function attempts to preserve the difference between ""
+ * and "." in UPDATE_DIR.  This corrects some old problems with incorrect
+ * directories being reported in error messages.
+ */
 static void
 output_dir (const char *update_dir, const char *repository)
 {
@@ -4404,21 +4409,23 @@ output_dir (const char *update_dir, const char *repository)
     const char *short_repos = Short_Repository (repository);
 
     /* Send the update_dir/repos.  */
-    if (server_dir != NULL)
+    if (server_dir)
     {
 	buf_output0 (protocol, server_dir);
-	buf_output0 (protocol, "/");
+	buf_append_char (protocol, '/');
     }
-    if (update_dir[0] == '\0')
-	buf_output0 (protocol, ".");
+    if (!*update_dir && !supported_response ("OpenPGP-signature"))
+	buf_append_char (protocol, '.');
     else
 	buf_output0 (protocol, update_dir);
-    buf_output0 (protocol, "/\n");
-    if (short_repos[0] == '\0')
-	buf_output0 (protocol, ".");
+    if (!supported_response ("OpenPGP-signature"))
+	buf_append_char (protocol, '/');
+    buf_append_char (protocol, '\n');
+    if (!*short_repos)
+	buf_append_char (protocol, '.');
     else
 	buf_output0 (protocol, short_repos);
-    buf_output0 (protocol, "/");
+    buf_append_char (protocol, '/');
 }
 
 

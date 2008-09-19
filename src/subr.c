@@ -2449,7 +2449,7 @@ dir_append_dirs (const char *dir, ...)
 
     va_end (args);
 
-    TRACE (TRACE_DATA, "dir_append_dirs returning ", quote (retval));
+    TRACE (TRACE_DATA, "dir_append_dirs returning %s", quote (retval));
     return retval;
 }
 

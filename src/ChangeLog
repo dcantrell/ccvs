@@ -1,5 +1,13 @@
 2008-09-19  Derek R. Price  <derek@ximbiot.com>
 
+	* checkout.c (checkout_proc): Use empty update dir instead of ".".
+	* client.c (call_in_directory): Handle preservation of update_dir from
+	server.  Clean up and simplify slightly.
+	(is_cvsroot_level): Handle empty update_dir.
+	* server.c (output_dir): Preserve update_dir when sending it to
+	client.  Clean up.
+	* subr.c (dir_append_dirs): Fix TRACE.
+
 	* modules.c (my_module): Repagination.
 
 	* server.c (expand_proc): Some cleanup.
