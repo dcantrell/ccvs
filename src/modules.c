@@ -303,8 +303,7 @@ my_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 	    cwd_saved = 1;
 
 	    err += callback_proc (modargc, modargv, where, mwhere, mfile,
-				  shorten,
-				  local_specified, mname, msg);
+				  shorten, local_specified, mname, msg);
 
 	    free_names (&modargc, modargv);
 

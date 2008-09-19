@@ -1,5 +1,7 @@
 2008-09-19  Derek R. Price  <derek@ximbiot.com>
 
+	* modules.c (my_module): Repagination.
+
 	* server.c (expand_proc): Some cleanup.
 
 2008-09-18  Derek R. Price  <derek@ximbiot.com>
