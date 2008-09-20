@@ -121,9 +121,8 @@ find_rcs (dir, list)
  */
 List *
 Find_Names (const char *repository, const char *update_dir,
-	    int which, int aflag, List **optentries)
+	    int which, int aflag, List *entries)
 {
-    List *entries;
     List *files;
 
     TRACE (TRACE_FUNCTION, "Find_Names (%s, %s, %d, %d)",
@@ -134,26 +133,13 @@ Find_Names (const char *repository, const char *update_dir,
 
     /* look at entries (if necessary) */
     if (which & W_LOCAL)
-    {
-	/* parse the entries file (if it exists) */
-	entries = Entries_Open (aflag, update_dir);
-	if (entries)
-	{
-	    /* walk the entries file adding elements to the files list */
-	    walklist (entries, add_entries_proc, files);
+	/* walk the entries file adding elements to the files list */
+	walklist (entries, add_entries_proc, files);
 
-	    /* if our caller wanted the entries list, return it; else free it */
-	    if (optentries)
-		*optentries = entries;
-	    else
-		Entries_Close (entries, update_dir);
-	}
-    }
-
-    if ((which & W_REPOS) && repository && !isreadable (CVSADM_ENTSTAT))
+    if (which & W_REPOS && repository && !isreadable (CVSADM_ENTSTAT))
     {
 	/* search the repository */
-	if (find_rcs (repository, files) != 0)
+	if (find_rcs (repository, files))
 	{
 	    error (0, errno, "cannot open directory %s",
 		   primary_root_inverse_translate (repository));
@@ -351,27 +337,16 @@ Find_Directories (const char *repository, const char *update_dir,
 	   repository, update_dir, which);
 
     /* make a list for the directories */
-    dirlist = getlist ();
+    dirlist = getlist();
 
     /* find the local ones */
     if (which & W_LOCAL)
     {
-	List *tmpentries;
-
-	/* Look through the Entries file.  */
-
-	if (entries)
-	    tmpentries = entries;
-	else if (isfile (CVSADM_ENT))
-	    tmpentries = Entries_Open (0, update_dir);
-	else
-	    tmpentries = NULL;
-
 	/* If we do have an entries list, then if sdtp is NULL, or if
            sdtp->subdirs is nonzero, all subdirectory information is
            recorded in the entries list.  */
-	if (tmpentries && entriesHasAllSubdirs (tmpentries))
-	    walklist (tmpentries, add_subdir_proc, dirlist);
+	if (entries && entriesHasAllSubdirs (entries))
+	    walklist (entries, add_subdir_proc, dirlist);
 	else
 	{
 	    /* This is an old working directory, in which subdirectory
@@ -388,26 +363,23 @@ Find_Directories (const char *repository, const char *update_dir,
 	     * FIXME: The user should really see a warning about the skipped
 	     * directories, however.
 	     */
-	    if (find_dirs (".", dirlist, 1, tmpentries))
+	    if (find_dirs (".", dirlist, 1, entries))
 		error (1, errno, "cannot open %s", quote (update_dir));
-	    if (tmpentries)
+	    if (entries)
 	    {
 		if (!list_isempty (dirlist))
-		    walklist (dirlist, register_subdir_proc, tmpentries);
+		    walklist (dirlist, register_subdir_proc, entries);
 		else
-		    Subdirs_Known (tmpentries);
+		    Subdirs_Known (entries);
 	    }
 	}
-
-	if (!entries && tmpentries)
-	    Entries_Close (tmpentries, update_dir);
     }
 
     /* look for sub-dirs in the repository */
     if (which & W_REPOS && repository)
     {
 	/* search the repository */
-	if (find_dirs (repository, dirlist, 0, entries) != 0)
+	if (find_dirs (repository, dirlist, 0, entries))
 	    error (1, errno, "cannot open directory %s", repository);
 
 	/* We don't need to look in the attic because directories

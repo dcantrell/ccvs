@@ -752,6 +752,10 @@ do_recursion (struct recursion_frame *frame)
     if (dirlist != NULL && filelist == NULL)
 	dodoneproc = 0;
 
+    /* Pre-process the entries when available.  */
+    if (frame->which & W_LOCAL && hasAdmin ("."))
+	entries = Entries_Open (frame->aflag, update_dir);
+
     /*
      * If filelist or dirlist is already set, we don't look again. Otherwise,
      * find the files and directories
@@ -785,7 +789,7 @@ do_recursion (struct recursion_frame *frame)
 	    if (process_this_directory)
 	    {
 		filelist = Find_Names (repository, update_dir, lwhich,
-				       frame->aflag, &entries);
+				       frame->aflag, entries);
 		if (filelist == NULL)
 		{
 		    error (0, 0, "skipping directory %s",
@@ -803,16 +807,6 @@ do_recursion (struct recursion_frame *frame)
 	    dirlist = Find_Directories (
 		process_this_directory ? repository : NULL,
 		update_dir, frame->which, entries);
-    }
-    else
-    {
-	/* something was passed on the command line */
-	if (filelist != NULL && frame->fileproc != NULL)
-	{
-	    /* we will process files, so pre-parse entries */
-	    if (frame->which & W_LOCAL)
-		entries = Entries_Open (frame->aflag, update_dir);
-	}
     }
 
     /* process the files (if any) */
@@ -889,11 +883,7 @@ do_recursion (struct recursion_frame *frame)
 #endif
     dellist (&dirlist);
 
-    if (entries)
-    {
-	Entries_Close (entries, update_dir);
-	entries = NULL;
-    }
+    Entries_Close (entries, update_dir);
 
     /* free the saved copy of the pointer if necessary */
     if (srepository)

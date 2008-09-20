@@ -1,5 +1,11 @@
 2008-09-19  Derek R. Price  <derek@ximbiot.com>
 
+	* find_names.c (Find_Names, Find_Directories): Assume entries will be
+	set by caller.
+	* find-names.h (Find_Names): Update prototype.
+	* recurse.c (do_recursion): Always open entries when available.
+	* sanity.sh (errmsg2-16): Update to compensate.
+
 	* logmsg.c (do_verify): Some cleanup.
 
 	* commit.c (commit): Don't set update_dir for client/server calls to

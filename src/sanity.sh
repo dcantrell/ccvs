@@ -17426,8 +17426,7 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest_fail errmsg2-16 "$testcvs add bogus-dir/file16" \
 "$SPROG add: in directory \`bogus-dir':
 $SPROG \[add aborted\]: there is no version here; do \`$SPROG checkout' first" \
-"$CPROG add: cannot open \`bogus-dir/CVS/Entries' for reading: No such file or directory
-$CPROG \[add aborted\]: no repository"
+"$CPROG \[add aborted\]: no repository"
 	  rm -r bogus-dir
 
 	  # One error condition we don't test for is trying to add a file
