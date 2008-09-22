@@ -19,25 +19,27 @@
 /* Verify interface.  */
 #include "repos.h"
 
-/* CVS headers.  */
+/* GNULIB */
+#include "quote.h"
+
+/* CVS */
 #include "cvs.h"
 
 
 
 /* Determine the name of the RCS repository for directory DIR in the
-   current working directory, or for the current working directory
-   itself if DIR is NULL.  Returns the name in a newly-malloc'd
-   string.  On error, gives a fatal error and does not return.
-   UPDATE_DIR is the path from where cvs was invoked (for use in error
-   messages), and should contain DIR as its last component.
-   UPDATE_DIR can be NULL to signify the directory in which cvs was
-   invoked.  */
-
+ * current working directory, or for the current working directory
+ * itself if DIR is NULL.  Returns the name in a newly-malloc'd
+ * string.  On error, gives a fatal error and does not return.
+ * UPDATE_DIR is the path from where cvs was invoked (for use in error
+ * messages), and should contain DIR as its last component.
+ * UPDATE_DIR can be NULL to signify the directory in which cvs was
+ * invoked.
+ */
 char *
 Name_Repository (const char *dir, const char *update_dir)
 {
     FILE *fpin;
-    const char *xupdate_dir;
     char *repos = NULL;
     size_t repos_allocated = 0;
     char *tmp;
@@ -46,93 +48,79 @@ Name_Repository (const char *dir, const char *update_dir)
     TRACE (TRACE_FUNCTION, "Name_Repository (%s, %s)",
 	   TRACE_NULL (dir), update_dir);
 
-    if (update_dir && *update_dir)
-	xupdate_dir = update_dir;
-    else
-	xupdate_dir = ".";
+    tmp = dir_append (dir, CVSADM_REP);  /* dir may be NULL */
 
-    if (dir != NULL)
-	tmp = Xasprintf ("%s/%s", dir, CVSADM_REP);
-    else
-	tmp = xstrdup (CVSADM_REP);
-
-    /*
-     * The assumption here is that the repository is always contained in the
+    /* The assumption here is that the repository is always contained in the
      * first line of the "Repository" file.
      */
     fpin = CVS_FOPEN (tmp, "r");
-
-    if (fpin == NULL)
+    if (!fpin)
     {
 	int save_errno = errno;
 	char *cvsadm;
+	char *file = dir_append (update_dir, CVSADM);
 
-	if (dir != NULL)
-	    cvsadm = Xasprintf ("%s/%s", dir, CVSADM);
-	else
-	    cvsadm = xstrdup (CVSADM);
-
+	cvsadm = dir_append (dir, CVSADM);
 	if (!isdir (cvsadm))
 	{
-	    error (0, 0, "in directory `%s':", xupdate_dir);
-	    error (1, 0, "there is no version here; do `%s checkout' first",
-		   program_name);
+	    error (1, 0, "admin directory %s is missing; do %s first",
+		   quote_n (0, file),
+		   quote_n (1, Xasprintf ("%s checkout", program_name)));
+	    /* NOT REACHED */
 	}
-	free (cvsadm);
 
 	if (existence_error (save_errno))
 	{
 	    /* This occurs at least in the case where the user manually
 	     * creates a directory named CVS.
 	     */
-	    error (0, 0, "in directory `%s':", xupdate_dir);
-	    error (0, 0, "CVS directory found without administrative files.");
+	    error (0, 0,
+		   "admin directory %s found without administrative files.",
+		   quote (file));
 	    error (0, 0, "Use CVS to create the CVS directory, or rename the");
 	    error (0, 0, "directory if it is intended to store something");
 	    error (0, 0, "besides CVS administrative files.");
 	    error (1, 0, "*PANIC* administration files missing!");
+	    /* NOT REACHED */
 	}
 
-	error (1, save_errno, "cannot open `%s'", tmp);
+	error (1, save_errno, "cannot open %s", quote (file));
+	/* NOT REACHED */
     }
 
     if (getline (&repos, &repos_allocated, fpin) < 0)
     {
-	/* FIXME: should be checking for end of file separately.  */
-	error (0, 0, "in directory `%s':", xupdate_dir);
-	error (1, errno, "cannot read `%s'", CVSADM_REP);
+	char *file = dir_append (update_dir, CVSADM_REP);
+	if (feof (fpin))
+	    error (1, 0, "unexpected EOF reading %s", quote (file));
+	else
+	    error (1, errno, "cannot read %s", quote (file));
+	/* NOT REACHED */
     }
     if (fclose (fpin) < 0)
-	error (0, errno, "cannot close `%s'", tmp);
+	error (0, errno, "cannot close %s", quote (tmp));
     free (tmp);
 
-    if ((cp = strrchr (repos, '\n')) != NULL)
+    if (cp = strrchr (repos, '\n'))
 	*cp = '\0';			/* strip the newline */
 
     /* If this is a relative repository pathname, turn it into an absolute
      * one by tacking on the current root.  There is no need to grab it from
      * the CVS/Root file via the Name_Root() function because by the time
-     * this function is called, we the contents of CVS/Root have already been
+     * this function is called, the contents of CVS/Root have already been
      * compared to original_root and found to match.
      */
     if (!ISABSOLUTE (repos))
     {
 	char *newrepos;
-
-	if (current_parsed_root == NULL)
-	{
-	    error (0, 0, "in directory `%s:", xupdate_dir);
-	    error (0, 0, "must set the CVSROOT environment variable\n");
-	    error (0, 0, "or specify the '-d' option to `%s'.", program_name);
-	    error (1, 0, "invalid repository setting");
-	}
+	assert (current_parsed_root);
 	if (pathname_levels (repos) > 0)
-	{
-	    error (0, 0, "in directory `%s':", xupdate_dir);
-	    error (0, 0, "`..'-relative repositories are not supported.");
-	    error (1, 0, "invalid source repository");
-	}
-	newrepos = Xasprintf ("%s/%s", original_parsed_root->directory, repos);
+	    error (1, 0,
+"unsupported %s-relative repository specification found in %s",
+		   quote_n (0, ".."),
+		   quote_n (1, dir_append (update_dir, CVSADM_REP)));
+
+	newrepos = dir_append (original_parsed_root->directory, repos);
 	free (repos);
 	repos = newrepos;
     }

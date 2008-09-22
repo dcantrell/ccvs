@@ -12801,10 +12801,12 @@ File: a                	Status: Needs Patch
 ${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 
 	  if $remote; then
-	    # Haven't investigated this one.
+	    # FIXCVS
+	    # This one is beacause add always assumes the current directory has
+	    # a valid CVS/Repository file in it in order to send the root
+	    # repository line.  Should be an easy fix.
 	    dotest_fail conflicts2-142b8r "$testcvs add first-dir/a" \
-"${CPROG} add: in directory \`\.':
-${CPROG} \[add aborted\]: there is no version here; do \`${CPROG} checkout' first"
+"$CPROG \[add aborted\]: admin directory \`CVS' is missing; do \`$CPROG checkout' first"
 	    cd first-dir
 	  else
 	    dotest conflicts2-142b8 "${testcvs} add first-dir/a" \
@@ -17424,9 +17426,8 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  # message (e.g. the one from local CVS).  But at least it is an
 	  # error message.
 	  dotest_fail errmsg2-16 "$testcvs add bogus-dir/file16" \
-"$SPROG add: in directory \`bogus-dir':
-$SPROG \[add aborted\]: there is no version here; do \`$SPROG checkout' first" \
-"$CPROG \[add aborted\]: no repository"
+"$SPROG \[add aborted\]: admin directory \`bogus-dir/CVS' is missing; do \`$SPROG checkout' first" \
+"$SPROG \[add aborted\]: no repository"
 	  rm -r bogus-dir
 
 	  # One error condition we don't test for is trying to add a file
@@ -17462,13 +17463,12 @@ initial revision: 1\.1"
 	  mkdir errmsg3
 	  cd errmsg3
 	  mkdir CVS
-	  dotest_fail errmsg3-1 "${testcvs} -q up" \
-"${CPROG} update: in directory \`.':
-${CPROG} update: CVS directory found without administrative files\.
-${CPROG} update: Use CVS to create the CVS directory, or rename the
-${CPROG} update: directory if it is intended to store something
-${CPROG} update: besides CVS administrative files\.
-${CPROG} \[update aborted\]: \*PANIC\* administration files missing!"
+	  dotest_fail errmsg3-1 "$testcvs -q up" \
+"$CPROG update: admin directory \`CVS' found without administrative files\.
+$CPROG update: Use CVS to create the CVS directory, or rename the
+$CPROG update: directory if it is intended to store something
+$CPROG update: besides CVS administrative files\.
+$CPROG \[update aborted\]: \*PANIC\* administration files missing!"
 
 	  dokeep
 	  cd ..

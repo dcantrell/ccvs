@@ -1,5 +1,7 @@
 2008-09-22  Derek R. Price  <derek@ximbiot.com>
 
+	* repos.c (Name_Repository): Clean up and simplify.
+
 	* log.c, main.c, remove.c: Some cleanup.
 	* rcs.c: Likewise.
 	(locate_rcs): Export.  Change int arg to bool.
