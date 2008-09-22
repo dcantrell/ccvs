@@ -26,5 +26,6 @@ List *Find_Directories (const char *repository, const char *update_dir,
 			int which, List *entries);
 List *Find_Names (const char *repository, const char *update_dir,
 		  int which, int aflag, List *entries);
+int find_dirs (const char *dir, List *list, int checkadm, List *entries);
 
 #endif /* !defined FIND_NAMES_H */

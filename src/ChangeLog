@@ -1,3 +1,8 @@
+2008-09-22  Derek R. Price  <derek@ximbiot.com>
+
+	* find_names.c (find_dirs): Export function.
+	* find-names.h (find_dirs): Add prototype.
+
 2008-09-19  Derek R. Price  <derek@ximbiot.com>
 
 	* find_names.c (Find_Names, Find_Directories): Assume entries will be

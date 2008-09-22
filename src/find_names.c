@@ -217,7 +217,7 @@ register_subdir_proc (Node *p, void *closure)
  * files on the list are ignored.  Returns 0 for success or 1 on
  * error, in which case errno is set to indicate the error.
  */
-static int
+int
 find_dirs (const char *dir, List *list, int checkadm, List *entries)
 {
     Node *p;
