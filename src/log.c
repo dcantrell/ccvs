@@ -1788,7 +1788,7 @@ log_dirproc (void *callerdat, const char *dir, const char *repository,
 	return R_SKIP_ALL;
 
     if (!quiet)
-	error (0, 0, "Logging %s", update_dir);
+	error (0, 0, "Logging %s", NULL2DOT (update_dir));
     return R_PROCESS;
 }
 

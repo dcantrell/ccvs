@@ -22,11 +22,12 @@
 /* Verify interface.  */
 #include "rcs.h"
 
-/* SUS */
+/* Standards */
 #include <unistd.h>
 
 /* GNULIB */
 #include "base64.h"
+#include "quote.h"
 
 /* CVS */
 #include "edit.h"
@@ -189,7 +190,7 @@ static int rcs_lockfd = -1;
 
 /*
  * char *
- * locate_rcs ( const char* file, const char *repository , int *inattic )
+ * locate_rcs (const char* file, const char *repository, bool *inattic)
  *
  * Find an RCS file in the repository, case insensitively when the cased name
  * doesn't exist, we are running as the server, and a client has asked us to
@@ -225,8 +226,8 @@ static int rcs_lockfd = -1;
  *  the Attic was found but no matching files were found in the Attic or its
  *  parent.
  */
-static char *
-locate_rcs (const char *repository, const char *file, int *inattic)
+char *
+locate_rcs (const char *repository, const char *file, bool *inattic)
 {
     char *retval;
 
@@ -241,8 +242,7 @@ locate_rcs (const char *repository, const char *file, int *inattic)
     sprintf (retval, "%s/%s%s", repository, file, RCSEXT);
     if (isreadable (retval))
     {
-	if (inattic)
-	    *inattic = 0;
+	if (inattic) *inattic = false;
 	return retval;
     }
 
@@ -250,8 +250,7 @@ locate_rcs (const char *repository, const char *file, int *inattic)
     sprintf (retval, "%s/%s/%s%s", repository, CVSATTIC, file, RCSEXT);
     if (isreadable (retval))
     {
-	if (inattic)
-	    *inattic = 1;
+	if (inattic) *inattic = true;
 	return retval;
     }
     free (retval);
@@ -291,17 +290,17 @@ RCS_parse (const char *file, const char *repos)
     FILE *fp;
     RCSNode *retval = NULL;
     char *rcsfile;
-    int inattic;
+    bool inattic;
 
     /* We're creating a new RCSNode, so there is no hope of finding it
        in the cache.  */
-    rcsbuf_cache_close ();
+    rcsbuf_cache_close();
 
     if (!(rcsfile = locate_rcs (repos, file, &inattic)))
     {
 	/* Handle the error cases */
     }
-    else if ((fp = CVS_FOPEN (rcsfile, FOPEN_BINARY_READ))) 
+    else if (fp = CVS_FOPEN (rcsfile, FOPEN_BINARY_READ))
     {
 	rcs = RCS_parsercsfile_i (fp, rcsfile);
 	if (rcs)
@@ -317,7 +316,7 @@ RCS_parse (const char *file, const char *repos)
     else
     {
 	if (!existence_error (errno))
-	    error (0, errno, "cannot open `%s'", rcsfile);
+	    error (0, errno, "cannot open %s", quote (rcsfile));
 	free (rcsfile);
     }
 
@@ -2347,11 +2346,11 @@ RCS_gettag (RCSNode *rcs, const char *symtag, int force_tag_match,
 {
     char *tag;
 
-    if (simple_tag != NULL)
+    if (simple_tag)
 	*simple_tag = 0;
 
     /* make sure we have something to look at... */
-    assert (rcs != NULL);
+    assert (rcs);
 
     /* XXX this is probably not necessary, --jtc */
     if (rcs->flags & PARTIAL) 
@@ -2372,7 +2371,7 @@ RCS_gettag (RCSNode *rcs, const char *symtag, int force_tag_match,
 
 	/* If we got a symbolic tag, resolve it to a numeric */
 	version = translate_symtag (rcs, symtag);
-	if (version != NULL)
+	if (version)
 	{
 	    int dots;
 	    char *magic, *branch, *cp;
@@ -2394,15 +2393,15 @@ RCS_gettag (RCSNode *rcs, const char *symtag, int force_tag_match,
 
 		/* see if we have .magic-branch. (".0.") */
 		magic = xmalloc (strlen (tag) + 1);
-		(void) sprintf (magic, ".%d.", RCS_MAGIC_BRANCH);
+		sprintf (magic, ".%d.", RCS_MAGIC_BRANCH);
 		if (STRNEQ (magic, cp, strlen (magic)))
 		{
 		    /* it's magic.  See if the branch exists */
 		    *cp = '\0';		/* turn it into a revision */
-		    (void) sprintf (magic, "%s.%s", tag, branch);
+		    sprintf (magic, "%s.%s", tag, branch);
 		    branch = RCS_getbranch (rcs, magic, 1);
 		    free (magic);
-		    if (branch != NULL)
+		    if (branch)
 		    {
 			free (tag);
 			return branch;
@@ -2436,7 +2435,7 @@ RCS_gettag (RCSNode *rcs, const char *symtag, int force_tag_match,
     while (tag[strlen (tag) - 1] == '.')
 	tag[strlen (tag) - 1] = '\0';
 
-    if ((numdots (tag) & 1) == 0)
+    if (!(numdots (tag) & 1))
     {
 	char *branch;
 
@@ -2451,7 +2450,7 @@ RCS_gettag (RCSNode *rcs, const char *symtag, int force_tag_match,
 
 	/* we have a revision tag, so make sure it exists */
 	p = findnode (rcs->versions, tag);
-	if (p != NULL)
+	if (p)
 	{
 	    /* We have found a numeric revision for the revision tag.
 	       To support expanding the RCS keyword Name, if
@@ -2460,7 +2459,7 @@ RCS_gettag (RCSNode *rcs, const char *symtag, int force_tag_match,
 	       there other cases in which we should set this?  In
 	       particular, what if we expand RCS keywords internally
 	       without calling co?  */
-	    if (simple_tag != NULL)
+	    if (simple_tag)
 		*simple_tag = 1;
 	    return tag;
 	}

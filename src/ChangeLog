@@ -1,5 +1,10 @@
 2008-09-22  Derek R. Price  <derek@ximbiot.com>
 
+	* log.c, main.c, remove.c: Some cleanup.
+	* rcs.c: Likewise.
+	(locate_rcs): Export.  Change int arg to bool.
+	* rcs.h (locate_rcs): Add prototype.
+
 	* stack.c (unshift_string_array, init_string_list): New utility
 	functions.
 	* stack.h (unshift_string_array, init_string_list): Prototypes for
