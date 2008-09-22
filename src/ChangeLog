@@ -1,5 +1,10 @@
 2008-09-22  Derek R. Price  <derek@ximbiot.com>
 
+	* stack.c (unshift_string_array, init_string_list): New utility
+	functions.
+	* stack.h (unshift_string_array, init_string_list): Prototypes for
+	same.
+
 	* edit.c (ncheck_fileproc): Rename to...
 	(ncheck_filesdoneproc): ...this and call the new function...
 	(send_notifications): ...here for efficiency.  Some cleanup.
