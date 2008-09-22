@@ -1,6 +1,7 @@
 2008-09-22  Derek R. Price  <derek@ximbiot.com>
 
 	* repos.c (Name_Repository): Clean up and simplify.
+	* sanity.sh: Update to compensate for changed error messages.
 
 	* log.c, main.c, remove.c: Some cleanup.
 	* rcs.c: Likewise.
