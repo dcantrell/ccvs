@@ -112,8 +112,8 @@ cvsremove (int argc, char **argv)
 	       in doing the following checks.  */
 	}
 
-	start_server ();
-	ign_setup ();
+	start_server();
+	ign_setup();
 	if (local)
 	    send_arg("-l");
 	send_arg ("--");
@@ -122,7 +122,7 @@ cvsremove (int argc, char **argv)
 	send_file_names (argc, argv, 0);
 	free_names (&argc, argv);
 	send_to_server ("remove\012", 0);
-        return get_responses_and_close ();
+        return get_responses_and_close();
     }
 #endif
 
@@ -132,8 +132,12 @@ cvsremove (int argc, char **argv)
 			   CVS_LOCK_READ, NULL, 1, NULL);
 
     if (removed_files && !really_quiet)
-	error (0, 0, "use `%s commit' to remove %s permanently", program_name,
+    {
+	char *cmd = Xasprintf ("%s commit", program_name);
+	error (0, 0, "use %s to remove %s permanently", quote (cmd),
 	       (removed_files == 1) ? "this file" : "these files");
+	free (cmd);
+    }
 
     if (existing_files)
 	error (0, 0,
@@ -142,11 +146,12 @@ cvsremove (int argc, char **argv)
 		"%d files exist; remove them first"),
 	       existing_files);
 
-    return (err);
+    return err;
 }
 
-#ifdef CLIENT_SUPPORT
 
+
+#ifdef CLIENT_SUPPORT
 /*
  * This is called via start_recursion if we are running as the client
  * and the -f option was used.  We just physically remove the file.
@@ -156,12 +161,13 @@ cvsremove (int argc, char **argv)
 static int
 remove_force_fileproc (void *callerdat, struct file_info *finfo)
 {
-    if (CVS_UNLINK (finfo->file) < 0 && ! existence_error (errno))
+    if (CVS_UNLINK (finfo->file) < 0 && !existence_error (errno))
 	error (0, errno, "unable to remove %s", quote (finfo->fullname));
     return 0;
 }
-
 #endif
+
+
 
 /*
  * remove the file, only if it has already been physically removed
@@ -216,17 +222,18 @@ remove_fileproc (void *callerdat, struct file_info *finfo)
 
 #ifdef SERVER_SUPPORT
 	if (server_active)
-	    server_checked_in (finfo->file, finfo->update_dir, finfo->repository);
+	    server_checked_in (finfo->file, finfo->update_dir,
+			       finfo->repository);
 #endif
 	free (fname);
     }
     else if (vers->vn_user[0] == '-')
     {
 	if (!quiet)
-	    error (0, 0, "file `%s' already scheduled for removal",
-		   finfo->fullname);
+	    error (0, 0, "file %s already scheduled for removal",
+		   quote (finfo->fullname));
     }
-    else if (vers->tag != NULL && isdigit ((unsigned char) *vers->tag))
+    else if (vers->tag && isdigit ((unsigned char) *vers->tag))
     {
 	/* Commit will just give an error, and so there seems to be
 	   little reason to allow the remove.  I mean, conflicts that
@@ -238,17 +245,16 @@ remove_fileproc (void *callerdat, struct file_info *finfo)
 	   tag means to delete the tag from the file.  I'm not sure that
 	   is a good behavior, but until it is changed, we need to allow
 	   it.  */
-	error (0, 0, "\
-cannot remove file `%s' which has a numeric sticky tag of `%s'",
-	       finfo->fullname, vers->tag);
+	error (0, 0,
+	       "cannot remove file %s which has a numeric sticky tag of %s",
+	       quote_n (0, finfo->fullname), quote_n (1, vers->tag));
     }
-    else if (vers->date != NULL)
+    else if (vers->date)
     {
 	/* Commit will just give an error, and so there seems to be
 	   little reason to allow the remove.  */
-	error (0, 0, "\
-cannot remove file `%s' which has a sticky date of `%s'",
-	       finfo->fullname, vers->date);
+	error (0, 0, "cannot remove file %s which has a sticky date of %s",
+	       quote_n (0, finfo->fullname), quote_n (1, vers->date));
     }
     else
     {
@@ -269,7 +275,7 @@ cannot remove file `%s' which has a sticky date of `%s'",
     }
 
     freevers_ts (&vers);
-    return (0);
+    return 0;
 }
 
 
@@ -283,6 +289,6 @@ remove_dirproc (void *callerdat, const char *dir, const char *repos,
                 const char *update_dir, List *entries)
 {
     if (!quiet)
-	error (0, 0, "Removing %s", update_dir);
-    return (R_PROCESS);
+	error (0, 0, "Removing %s", NULL2DOT (update_dir));
+    return R_PROCESS;
 }

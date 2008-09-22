@@ -1199,10 +1199,8 @@ cause intermittent sandbox corruption.");
 	     * specified on the command line, set the root from the
 	     * CVS/Root file.
 	     */
-	    if (!CVSroot_parsed
-		&& !(cm->attr & CVS_CMD_IGNORE_ADMROOT)
-	       )
-		CVSroot_parsed = Name_Root (NULL, NULL);
+	    if (!CVSroot_parsed && !(cm->attr & CVS_CMD_IGNORE_ADMROOT))
+		CVSroot_parsed = Name_Root (NULL, "");
 
 	    /* Now, if there is no root on the command line and we didn't find
 	     * one in a file, set it via the $CVSROOT env var.

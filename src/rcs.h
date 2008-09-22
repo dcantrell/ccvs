@@ -319,5 +319,6 @@ bool contains_keyword (char *buf, size_t len);
 void RCS_output_diff_options (int diff_argc, char * const *diff_argv,
 			      bool devnull, const char *rev1, const char *rev2,
 			      const char *workfile);
+char *locate_rcs (const char *repository, const char *file, bool *inattic);
 
 #endif /* RCS_H */
