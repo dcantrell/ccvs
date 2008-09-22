@@ -15,3 +15,5 @@ char *pop_string (List *_stack);
 void unshift_string (List *_stack, char *_elem);
 char *shift_string (List *_stack);
 int isempty (List *_stack);
+void unshift_string_array (List *list, char **argv, int argc);
+List *init_string_list (char **argv, int argc);

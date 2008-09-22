@@ -167,3 +167,32 @@ isempty (List *stack)
 	return 1;
     return 0;
 }
+
+
+
+/* Copy the elements of ARGV to the beginning of a List.  For example,
+ * With an array containing "a", "b", "c", and a List containing "e", "f", "g",
+ * in those orders, calling this function would cause the list to contain "a",
+ * "b", "c", "d", "e", "f".
+ *
+ * INPUT
+ *   list		The List to modify.
+ *   argv		The array to insert the contents of.
+ *   argc		The number of elements in ARGV.
+ */
+void
+unshift_string_array (List *list, char **argv, int argc)
+{
+    while (argc-- > 0)
+	unshift_string (list, xstrdup (argv[argc]));
+}
+
+
+
+List *
+init_string_list (char **argv, int argc)
+{
+    List *newlist = getlist();
+    unshift_string_array (newlist, argv, argc);
+    return newlist;
+}
