@@ -162,13 +162,11 @@ dummy_fileproc (void *callerdat, struct file_info *finfo)
 
 
 
-/* Check for and process notifications.  Local only.  I think that doing
-   this as a fileproc is the only way to catch all the
-   cases (e.g. foo/bar.c), even though that means checking over and over
-   for the same CVSADM_NOTIFY file which we removed the first time we
-   processed the directory.  */
+/* Check for and process notifications.  Local only.
+ */
 static int
-ncheck_fileproc (void *callerdat, struct file_info *finfo)
+ncheck_filesdoneproc (void *callerdat, int err, const char *repository,
+		      const char *update_dir, List *entries)
 {
     int notif_type;
     char *filename;
@@ -220,8 +218,8 @@ ncheck_fileproc (void *callerdat, struct file_info *finfo)
 	    continue;
 	*cp = '\0';
 
-	notify_do (notif_type, filename, finfo->update_dir, getcaller(), val,
-		   watches, finfo->repository);
+	notify_do (notif_type, filename, update_dir, getcaller(), val,
+		   watches, repository);
     }
     free (line);
 
@@ -253,8 +251,8 @@ send_notifications (int argc, char **argv, int local)
     {
 	if (!STREQ (cvs_cmd_name, "release"))
 	{
-	    start_server ();
-	    ign_setup ();
+	    start_server();
+	    ign_setup();
 	}
 
 	err += start_recursion (dummy_fileproc, NULL, NULL, NULL, NULL, argc,
@@ -262,19 +260,19 @@ send_notifications (int argc, char **argv, int local)
 
 	send_to_server ("noop\012", 0);
 	if (STREQ (cvs_cmd_name, "release"))
-	    err += get_server_responses ();
+	    err += get_server_responses();
 	else
-	    err += get_responses_and_close ();
+	    err += get_responses_and_close();
     }
     else
 #endif
     {
 	/* Local.  */
 
-	err += start_recursion (ncheck_fileproc, NULL, NULL, NULL, NULL, argc,
-				argv, local, W_LOCAL, 0, CVS_LOCK_WRITE, NULL,
-				0, NULL);
-	Lock_Cleanup ();
+	err += start_recursion (NULL, ncheck_filesdoneproc, NULL, NULL, NULL,
+				argc, argv, local, W_LOCAL, 0, CVS_LOCK_WRITE,
+				NULL, 0, NULL);
+	Lock_Cleanup();
     }
     return err;
 }

@@ -1,5 +1,9 @@
 2008-09-22  Derek R. Price  <derek@ximbiot.com>
 
+	* edit.c (ncheck_fileproc): Rename to...
+	(ncheck_filesdoneproc): ...this and call the new function...
+	(send_notifications): ...here for efficiency.  Some cleanup.
+
 	* find_names.c (find_dirs): Export function.
 	* find-names.h (find_dirs): Add prototype.
 
