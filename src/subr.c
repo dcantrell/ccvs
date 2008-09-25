@@ -2399,8 +2399,7 @@ cvs_xmkdirs (const char *name, mode_t mode, const char *update_dir,
 
 /* Append BASE to DIR and return it in allocated memory.  This is slightly more
  * sophisticated than file_name_concat because it is smart enough to ignore
- * both DIR and BASE when they are both empty and to ignore BASE when it is "."
- * and return the original DIR or BASE as needed.
+ * both DIR and BASE when either is empty and to ignore BASE when it is ".".
  *
  * A NULL DIR is treated like the empty string.  No BASE may be NULL since that
  * terminates the va_arg processing.
@@ -2424,15 +2423,23 @@ dir_append_dirs (const char *dir, ...)
 
     va_start (args, dir);
 
-    retval = xstrdup (dir ? dir : "");
+    retval = xstrdup (NULL2MT (dir));
     while ((append = va_arg (args, const char *)) != NULL)
     {
 	char *new;
 
 	TRACE (TRACE_DATA, "dir_append_dirs (%s, %s)", dir, append);
 
-	if (!strlen (append) || STREQ (append, "."))
-	    continue;
+	/* Ignore append of empty string.  */
+	if (!*append) continue;
+
+	/* Ignore append of . with any number of training slashes.  */
+	if (*append == '.')
+	{
+	    const char *t = append;
+	    while (ISSLASH (*++t));
+	    if (!*t) continue;
+	}
 
 	if (!strlen (retval))
 	{

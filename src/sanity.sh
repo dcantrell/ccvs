@@ -3531,7 +3531,7 @@ $CPROG \[commit aborted\]: correct above errors first!"
 "${SPROG}"' add: scheduling file `ssfile'\'' for addition
 '"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
 	  dotest_fail basica-4a "$testcvs tag tag0 ssfile" \
-"$SPROG tag: Nothing known about \`ssfile'
+"$SPROG tag: Nothing known about \`ssfile' (did you neglect to commit it$QUESTION)
 $SPROG \[tag aborted\]: correct the above errors first!"
 	  cd ../..
 
