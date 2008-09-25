@@ -79,14 +79,14 @@ cvsstatus (int argc, char **argv)
     argc -= optind;
     argv += optind;
 
-    wrap_setup ();
+    wrap_setup();
 
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root->isremote)
     {
-	start_server ();
+	start_server();
 
-	ign_setup ();
+	ign_setup();
 
 	if (long_format)
 	    send_arg("-v");
@@ -112,7 +112,7 @@ cvsstatus (int argc, char **argv)
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 
 	send_to_server ("status\012", 0);
-	err = get_responses_and_close ();
+	err = get_responses_and_close();
 
 	return err;
     }
@@ -123,8 +123,10 @@ cvsstatus (int argc, char **argv)
 			   NULL, NULL, argc, argv, local, W_LOCAL,
 			   0, CVS_LOCK_READ, NULL, 1, NULL);
 
-    return (err);
+    return err;
 }
+
+
 
 /*
  * display the status of a file
@@ -194,9 +196,17 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 	    break;
     }
 
-    cvs_output ("\
-===================================================================\n", 0);
-    if (vers->ts_user == NULL)
+    cvs_output (
+"===================================================================\n",
+		0);
+    if (vers->ts_user)
+    {
+	char *buf;
+	buf = Xasprintf ("File: %-17s\tStatus: %s\n\n", finfo->file, sstat);
+	cvs_output (buf, 0);
+	free (buf);
+    }
+    else
     {
 	cvs_output ("File: no file ", 0);
 	cvs_output (finfo->file, 0);
@@ -204,21 +214,14 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 	cvs_output (sstat, 0);
 	cvs_output ("\n\n", 0);
     }
-    else
-    {
-	char *buf;
-	buf = Xasprintf ("File: %-17s\tStatus: %s\n\n", finfo->file, sstat);
-	cvs_output (buf, 0);
-	free (buf);
-    }
 
-    if (vers->vn_user == NULL)
+    if (!vers->vn_user)
     {
 	cvs_output ("   Working revision:\tNo entry for ", 0);
 	cvs_output (finfo->file, 0);
 	cvs_output ("\n", 0);
     }
-    else if (vers->vn_user[0] == '0' && vers->vn_user[1] == '\0')
+    else if (STREQ (vers->vn_user, "0"))
 	cvs_output ("   Working revision:\tNew file!\n", 0);
     else
     {
@@ -241,7 +244,7 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 	cvs_output ("\n", 0);
     }
 
-    if (vers->vn_rcs == NULL)
+    if (!vers->vn_rcs)
 	cvs_output ("   Repository revision:\tNo revision control file\n", 0);
     else
     {
@@ -251,18 +254,17 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 	cvs_output (vers->srcfile->print_path, 0);
 	cvs_output ("\n", 0);
 
-	node = findnode(vers->srcfile->versions,vers->vn_rcs);
+	node = findnode (vers->srcfile->versions, vers->vn_rcs);
 	if (node)
 	{
-	    RCSVers *v;
-	    v=(RCSVers*)node->data;
-	    node = findnode(v->other_delta,"commitid");
-	    cvs_output("   Commit Identifier:\t", 0);
-	    if(node && node->data)
-	        cvs_output(node->data, 0);
+	    RCSVers *v = node->data;
+	    node = findnode (v->other_delta,"commitid");
+	    cvs_output ("   Commit Identifier:\t", 0);
+	    if (node && node->data)
+	        cvs_output (node->data, 0);
 	    else
-	        cvs_output("(none)",0);
-	    cvs_output("\n",0);
+	        cvs_output ("(none)",0);
+	    cvs_output ("\n",0);
 	}
     }
 
@@ -273,7 +275,7 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 	edata = vers->entdata;
 	if (edata->tag)
 	{
-	    if (vers->vn_rcs == NULL)
+	    if (!vers->vn_rcs)
 	    {
 		cvs_output ("   Sticky Tag:\t\t", 0);
 		cvs_output (edata->tag, 0);
@@ -337,7 +339,7 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 	if (symbols)
 	{
 	    xrcsnode = finfo->rcs;
-	    (void) walklist (symbols, tag_list_proc, NULL);
+	    walklist (symbols, tag_list_proc, NULL);
 	}
 	else
 	    cvs_output ("\tNo Tags Exist\n", 0);
@@ -345,7 +347,7 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 
     cvs_output ("\n", 0);
     freevers_ts (&vers);
-    return (0);
+    return 0;
 }
 
 
@@ -359,8 +361,8 @@ status_dirproc (void *callerdat, const char *dir, const char *repos,
                 const char *update_dir, List *entries)
 {
     if (!quiet)
-	error (0, 0, "Examining %s", update_dir);
-    return (R_PROCESS);
+	error (0, 0, "Examining %s", NULL2DOT (update_dir));
+    return R_PROCESS;
 }
 
 
@@ -375,7 +377,7 @@ tag_list_proc (Node *p, void *closure)
     char *buf;
 
     if (RCS_nodeisbranch (xrcsnode, p->key))
-	branch = RCS_whatbranch(xrcsnode, p->key) ;
+	branch = RCS_whatbranch (xrcsnode, p->key);
 
     buf = Xasprintf ("\t%-25s\t(%s: %s)\n", p->key,
 		     branch ? "branch" : "revision",
@@ -386,5 +388,5 @@ tag_list_proc (Node *p, void *closure)
     if (branch)
 	free (branch);
 
-    return (0);
+    return 0;
 }

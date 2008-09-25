@@ -1,3 +1,12 @@
+2008-09-25  Derek R. Price  <derek@ximbiot.com>
+
+	* status.c, update.c: Some cleanup.
+	* subr.c (dir_append_dirs): Extend to ignore ./*.  Improve header block
+	comment.
+	* tag.c: Some cleanup.
+	(check_fileproc): Improve error message.
+	* sanity.sh (basica-4a): Update to compensate for new error message.
+
 2008-09-22  Derek R. Price  <derek@ximbiot.com>
 
 	* repos.c (Name_Repository): Clean up and simplify.

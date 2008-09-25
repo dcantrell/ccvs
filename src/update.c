@@ -817,19 +817,16 @@ update_fileproc (void *callerdat, struct file_info *finfo)
  * files that should NOT be ignored.
  */
 static void
-update_ignproc (const char *file, const char *dir)
+update_ignproc (const char *file, const char *update_dir)
 {
     struct file_info finfo;
     char *tmp;
 
     memset (&finfo, 0, sizeof (finfo));
     finfo.file = file;
-    finfo.update_dir = dir;
+    finfo.update_dir = update_dir;
 
-    finfo.fullname = tmp = Xasprintf ("%s%s%s",
-				      dir[0] == '\0' ? "" : dir,
-				      dir[0] == '\0' ? "" : "/",
-				      file);
+    finfo.fullname = tmp = dir_append (update_dir, file);
     write_letter (&finfo, '?');
     free (tmp);
 }

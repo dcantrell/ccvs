@@ -178,4 +178,7 @@ strneq (const char *a, const char *b, size_t n)
  */
 #define NULL2DOT(u) (u && *u ? u : ".")
 
+/* Convenience macro for equating a NULL pointer and the empty string.  */
+#define NULL2MT(s) (s ? s : "")
+
 #endif /* !SUBR_H */

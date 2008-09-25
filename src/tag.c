@@ -22,15 +22,15 @@
 # include <config.h>
 #endif
 
-/* GNULIB headers.  */
+/* GNULIB */
+#include "quote.h"
 #include "save-cwd.h"
 
-/* CVS headers.  */
+/* CVS */
 #include "classify.h"
 #include "ignore.h"
 #include "lock.h"
 #include "parseinfo.h"
-#include "quote.h"
 #include "recurse.h"
 #include "repos.h"
 
@@ -268,7 +268,6 @@ cvstag (int argc, char **argv)
 	else
 	{
 	    send_files (argc, argv, local, 0,
-
 			/* I think the -c case is like "cvs status", in
 			 * which we really better be correct rather than
 			 * being fast; it is just too confusing otherwise.
@@ -408,11 +407,11 @@ tag_filesdoneproc (void *callerdat, int err, const char *repository,
 
     mtlist = callerdat;
     p = findnode (mtlist, update_dir);
-    if (p != NULL)
+    if (p)
         tlist = ((struct master_lists *) p->data)->tlist;
     else
         tlist = NULL;
-    if (tlist == NULL || tlist->list->next == tlist->list)
+    if (list_isempty (tlist))
         return err;
 
     ppd.tlist = tlist;
@@ -634,7 +633,9 @@ check_fileproc (void *callerdat, struct file_info *finfo)
     if (!vers->srcfile)
     {
         if (!really_quiet)
-	    error (0, 0, "Nothing known about %s", quote (finfo->file));
+	    error (0, 0,
+		   "Nothing known about %s (did you neglect to commit it?)",
+		   quote (finfo->fullname));
 	freevers_ts (&vers);
 	freenode (p);
 	return 1;
@@ -647,17 +648,17 @@ check_fileproc (void *callerdat, struct file_info *finfo)
     p->data = ti = xmalloc (sizeof (struct tag_info));
     memset (ti, 0, sizeof (struct tag_info));
     ti->tag = xstrdup (numtag ? numtag : vers->tag);
-    if (!is_rtag && numtag == NULL && date == NULL)
+    if (!is_rtag && !numtag && !date)
 	ti->rev = xstrdup (vers->vn_user);
     else
 	ti->rev = RCS_getversion (vers->srcfile, numtag, date,
 				  force_tag_match, NULL);
 
-    if (ti->rev != NULL)
+    if (ti->rev)
     {
         ti->oldrev = RCS_getversion (vers->srcfile, symtag, NULL, 1, NULL);
 
-	if (ti->oldrev == NULL)
+	if (!ti->oldrev)
         {
             if (delete_flag)
             {
@@ -690,7 +691,7 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 	p->data = NULL;
     }
     freevers_ts (&vers);
-    (void)addnode (tlist, p);
+    addnode (tlist, p);
     return 0;
 }
 
@@ -815,11 +816,11 @@ check_filesdoneproc (void *callerdat, int err, const char *repos,
 	   err, repos, update_dir);
 
     p = findnode (mtlist, update_dir);
-    if (p != NULL)
+    if (p)
         tlist = ((struct master_lists *) p->data)->tlist;
     else
         tlist = NULL;
-    if (tlist == NULL || tlist->list->next == tlist->list)
+    if (list_isempty (tlist))
         return err;
 
     ppd.tlist = tlist;
@@ -1399,7 +1400,7 @@ tag_dirproc (void *callerdat, const char *dir, const char *repos,
 
     if (!quiet)
 	error (0, 0, "%s %s", delete_flag ? "Untagging" : "Tagging",
-               update_dir);
+               NULL2DOT (update_dir));
     return R_PROCESS;
 }
 
