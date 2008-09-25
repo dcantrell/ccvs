@@ -2220,13 +2220,9 @@ mkdir_i (const char *name, mode_t mode,
 
     if (err && !(flags & MD_EXIST_OK && (errno == EEXIST || isdir (name)))
 	&& (flags & MD_FATAL || !(flags & MD_QUIET)))
-    {
-	bool uud = update_dir && strlen (update_dir)
-		   && !STREQ (update_dir, ".");
-	errno = saved_errno;
-	error (flags & MD_FATAL, errno, "cannot make directory `%s%s%s'",
-	       uud ? update_dir : "", uud ? "/" : "", name);
-    }
+	error (flags & MD_FATAL, saved_errno, "cannot make directory %s",
+	       quote (update_dir ? update_dir : name));
+    errno = saved_errno;
     return !err;
 }
 

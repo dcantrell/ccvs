@@ -690,8 +690,6 @@ RCS_setattic (RCSNode *rcs, int toattic)
 
     if (toattic)
     {
-	mode_t omask;
-
 	if (rcs->flags & INATTIC)
 	    return 0;
 
@@ -702,10 +700,7 @@ RCS_setattic (RCSNode *rcs, int toattic)
 	strcpy (newpath + (p - rcs->path), CVSATTIC);
 
 	/* Create the Attic directory if it doesn't exist.  */
-	omask = umask (cvsumask);
-	if (CVS_MKDIR (newpath, 0777) < 0 && errno != EEXIST)
-	    error (0, errno, "cannot make directory %s", newpath);
-	(void) umask (omask);
+	cvs_mkdir (newpath, NULL, MD_REPO | MD_EXIST_OK); /* Prints errors.  */
 
 	strcat (newpath, "/");
 	strcat (newpath, p);
