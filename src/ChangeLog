@@ -1,5 +1,9 @@
 2008-09-25  Derek R. Price  <derek@ximbiot.com>
 
+	* create_adm.c: Some quoting and cleanup.
+	* repos.c (Short_Repository): Improve header comment.  Assert truths.
+	Strip all trailing slashes.
+
 	* checkout.c: Some Traces.  Some cleanup.
 	(checkout_proc): Pass empty update_dir to build_one_dir.
 	* create_adm.c: Some cleanup.

@@ -45,8 +45,8 @@ Create_Admin (const char *dir, const char *update_dir, const char *repository,
               int dotemplate)
 {
     FILE *fout;
-    char *cp;
     char *reposcopy;
+    const char *short_repos;
     char *tmp, *ud;
 
     TRACE (TRACE_FUNCTION, "Create_Admin (%s, %s, %s, %s, %s, %d, %d, %d)",
@@ -59,7 +59,8 @@ Create_Admin (const char *dir, const char *update_dir, const char *repository,
     /* A leading "./" looks bad in error messages.  */
     tmp = dir_append (dir, CVSADM);
     if (isfile (tmp))
-	error (1, 0, "there is a version in %s already", quote (update_dir));
+	error (1, 0, "there is a version in %s already",
+	       quote (NULL2DOT (update_dir)));
 
     ud = dir_append (update_dir, CVSADM);
     if (!cvs_mkdir (tmp, ud, warn ? 0 : MD_FATAL))
@@ -86,23 +87,12 @@ Create_Admin (const char *dir, const char *update_dir, const char *repository,
     reposcopy = xstrdup (repository);
     Sanitize_Repository_Name (reposcopy);
 
-    cp = reposcopy;
-
-    /*
-     * If the Repository file is to hold a relative path, try to strip off
-     * the leading CVSroot argument.
+    /* The Repository file is to hold a relative path, so strip off any
+     * leading CVSroot argument.
      */
-    if (STRNEQ (cp, current_parsed_root->directory,
-		strlen (current_parsed_root->directory)))
-    {
-	cp += strlen (current_parsed_root->directory);
-	if (ISSLASH (*cp))
-	    cp += 1;
-	else if (*cp)
-	    cp = reposcopy;
-    }
+    short_repos = Short_Repository (reposcopy);
 
-    if (fprintf (fout, "%s\n", NULL2DOT (cp)) < 0)
+    if (fprintf (fout, "%s\n", NULL2DOT (short_repos)) < 0)
 	error (1, errno, "write to %s failed",
 	       quote (dir_append (update_dir, CVSADM_REP)));
     if (fclose (fout) == EOF)
