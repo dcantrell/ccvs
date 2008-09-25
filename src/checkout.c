@@ -43,6 +43,9 @@
 # include <config.h>
 #endif
 
+/* GNULIB */
+#include "quote.h"
+
 /* CVS */
 #include "ignore.h"
 #include "parseinfo.h"
@@ -574,6 +577,9 @@ build_one_dir (char *repository, char *dirpath, int sticky)
 {
     FILE *fp;
 
+    TRACE (TRACE_FUNCTION, "build_one_dir (%s, %s, %d)",
+	   repository, dirpath, sticky);
+
     if (isfile (CVSADM))
     {
 	if (m_type == EXPORT)
@@ -630,14 +636,11 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
     char *oldupdate = NULL;
     char *where;
 
+    assert (argc);
+
     TRACE (TRACE_FUNCTION, "checkout_proc (%s, %s, %s, %d, %d, %s, %s)\n",
-	   where_orig ? where_orig : "(null)",
-	   mwhere ? mwhere : "(null)",
-	   mfile ? mfile : "(null)",
-	   shorten, local_specified,
-	   omodule ? omodule : "(null)",
-	   msg ? msg : "(null)"
-	  );
+	   TRACE_NULL (where_orig), TRACE_NULL (mwhere), TRACE_NULL (mfile),
+	   shorten, local_specified, TRACE_NULL (omodule), TRACE_NULL (msg));
 
     /*
      * OK, so we're doing the checkout! Our args are as follows: 
@@ -652,12 +655,7 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
     /* Set up the repository (maybe) for the bottom directory.
        Allocate more space than we need so we don't need to keep
        reallocating this string. */
-    repository = xmalloc (strlen (current_parsed_root->directory)
-			  + strlen (argv[0])
-			  + (mfile == NULL ? 0 : strlen (mfile))
-			  + 10);
-    (void) sprintf (repository, "%s/%s",
-                    current_parsed_root->directory, argv[0]);
+    repository = Xasprintf ("%s/%s", current_parsed_root->directory, argv[0]);
     Sanitize_Repository_Name (repository);
 
 
@@ -685,28 +683,22 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
     
     if (shorten)
     {
-	if (where_orig != NULL)
-	{
+	if (where_orig)
 	    /* If the user has specified a directory with `-d' on the
-	       command line, use it preferentially, even over the `-d'
-	       flag in the modules file. */
-    
-	    (void) strcpy (where, where_orig);
-	}
-	else if (mwhere != NULL)
-	{
+	     * command line, use it preferentially, even over the `-d'
+	     * flag in the modules file.
+	     */
+	    strcpy (where, where_orig);
+	else if (mwhere)
 	    /* Second preference is the value of mwhere, which is from
-	       the `-d' flag in the modules file. */
-
-	    (void) strcpy (where, mwhere);
-	}
+	     * the `-d' flag in the modules file.
+	     */
+	    strcpy (where, mwhere);
 	else
-	{
 	    /* Third preference is the directory specified in argv[0]
-	       which is this module'e directory in the repository. */
-	    
-	    (void) strcpy (where, argv[0]);
-	}
+	     * which is this module'e directory in the repository.
+	     */
+	    strcpy (where, argv[0]);
     }
     else
     {
@@ -715,10 +707,10 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
 
 	*where = '\0';
 
-	if (where_orig != NULL)
+	if (where_orig)
 	{
-	    (void) strcat (where, where_orig);
-	    (void) strcat (where, "/");
+	    strcat (where, where_orig);
+	    strcat (where, "/");
 	}
 
 	/* If the -d flag in the modules file specified an absolute
@@ -726,9 +718,9 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
            -d option. */
 
 	if (mwhere && !ISABSOLUTE (mwhere))
-	    (void) strcat (where, mwhere);
+	    strcat (where, mwhere);
 	else
-	    (void) strcat (where, argv[0]);
+	    strcat (where, argv[0]);
     }
     strip_trailing_slashes (where); /* necessary? */
 
@@ -737,7 +729,7 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
        directory from within a module.  In that case, we should modify
        where, repository, and argv as appropriate. */
 
-    if (mfile != NULL)
+    if (mfile)
     {
 	/* The mfile variable can have one or more path elements.  If
 	   it has multiple elements, we want to tack those onto both
@@ -754,24 +746,21 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
 
 
 	/* Paranoia check. */
-
-	if (mfile[strlen (mfile) - 1] == '/')
-	{
+	if (ISSLASH (mfile[strlen (mfile) - 1]))
 	    error (0, 0, "checkout_proc: trailing slash on mfile (%s)!",
-		   mfile);
-	}
+		   quote (mfile));
 
 
 	/* Does mfile have multiple path elements? */
-
 	cp = strrchr (mfile, '/');
-	if (cp != NULL)
+	if (cp)
 	{
 	    *cp = '\0';
-	    (void) strcat (repository, "/");
-	    (void) strcat (repository, mfile);
-	    (void) strcat (where, "/");
-	    (void) strcat (where, mfile);
+	    xrealloc (repository, strlen (repository) + strlen (mfile) + 2);
+	    strcat (repository, "/");
+	    strcat (repository, mfile);
+	    strcat (where, "/");
+	    strcat (where, mfile);
 	    mfile = cp + 1;
 	}
 	
@@ -783,11 +772,11 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
 	{
 	    /* It's a directory, so tack it on to repository and
                where, as we did above. */
-
-	    (void) strcat (repository, "/");
-	    (void) strcat (repository, mfile);
-	    (void) strcat (where, "/");
-	    (void) strcat (where, mfile);
+	    xrealloc (repository, strlen (repository) + strlen (mfile) + 2);
+	    strcat (repository, "/");
+	    strcat (repository, mfile);
+	    strcat (where, "/");
+	    strcat (where, mfile);
 	}
 	else
 	{
@@ -801,11 +790,11 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
 	free (path);
     }
 
-    if (preload_update_dir != NULL)
+    if (preload_update_dir)
     {
 	preload_update_dir =
 	    xrealloc (preload_update_dir,
-		      strlen (preload_update_dir) + strlen (where) + 5);
+		      strlen (preload_update_dir) + strlen (where) + 2);
 	strcat (preload_update_dir, "/");
 	strcat (preload_update_dir, where);
     }
@@ -834,8 +823,8 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
 
 	if (!STRNEQ (repository, current_parsed_root->directory,
 		     strlen (current_parsed_root->directory)))
-	    error (1, 0, "\
-internal error: %s doesn't start with %s in checkout_proc",
+	    error (1, 0,
+"internal error: %s doesn't start with %s in checkout_proc",
 		   repository, current_parsed_root->directory);
 
 	/* We always create at least one directory, which corresponds to
@@ -860,7 +849,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    struct dir_to_build *new;
 
 	    cp = findslash (where, cp - 1);
-	    if (cp == NULL)
+	    if (!cp)
 		break;		/* we're done */
 
 	    new = xmalloc (sizeof (struct dir_to_build));
@@ -878,7 +867,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    else
 	    {
 		/* where should always be at least one character long. */
-		assert (where[0] != '\0');
+		assert (*where);
 		strcpy (new->dirpath, "/");
 	    }
 	    new->next = head;
@@ -905,7 +894,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    {
 		/* We can't walk up past CVSROOT.  Instead, the
                    repository should be Emptydir. */
-		new->repository = emptydir_name ();
+		new->repository = emptydir_name();
 	    }
 	    else
 	    {
@@ -916,24 +905,13 @@ internal error: %s doesn't start with %s in checkout_proc",
 		/* We'll always be below CVSROOT, but check for
 		   paranoia's sake. */
 		rp = strrchr (reposcopy, '/');
-		if (rp == NULL)
+		if (!rp)
 		    error (1, 0,
 			   "internal error: %s doesn't contain a slash",
 			   reposcopy);
 			   
 		*rp = '\0';
-		    
-		if (STREQ (reposcopy, current_parsed_root->directory))
-		{
-		    /* Special case -- the repository name needs
-		       to be "/path/to/repos/." (the trailing dot
-		       is important).  We might be able to get rid
-		       of this after the we check out the other
-		       code that handles repository names. */
-		    new-> repository = Xasprintf ("%s/.", reposcopy);
-		}
-		else
-		    new->repository = xstrdup (reposcopy);
+		new->repository = xstrdup (reposcopy);
 	    }
 	}
 
@@ -956,7 +934,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	{
 	    /* It may be argued that we shouldn't set any sticky
 	       bits for the top-level repository.  FIXME?  */
-	    build_one_dir (current_parsed_root->directory, ".", argc <= 1);
+	    build_one_dir (current_parsed_root->directory, "", argc <= 1);
 
 #ifdef SERVER_SUPPORT
 	    /* We _always_ want to have a top-level admin
@@ -978,7 +956,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	   contain a CVS subdir yet, but all the others contain
 	   CVS and Entries.Static files */
 
-	if (build_dirs_and_chdir (head, argc <= 1) != 0)
+	if (build_dirs_and_chdir (head, argc <= 1))
 	{
 	    error (0, 0, "ignoring module %s", omodule);
 	    err = 1;

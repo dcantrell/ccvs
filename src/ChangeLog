@@ -1,5 +1,12 @@
 2008-09-25  Derek R. Price  <derek@ximbiot.com>
 
+	* checkout.c: Some Traces.  Some cleanup.
+	(checkout_proc): Pass empty update_dir to build_one_dir.
+	* create_adm.c: Some cleanup.
+	* rcs.c (RCS_setattic): Simplify via cvs_mkdir().
+	* repos.c (Sanitize_Repository_Name): Strip any number of /.?
+	* subr.c (mkdir_i): Assume UPDATE_DIR is a full path when set.
+
 	* status.c, update.c: Some cleanup.
 	* subr.c (dir_append_dirs): Extend to ignore ./*.  Improve header block
 	comment.

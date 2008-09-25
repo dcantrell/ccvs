@@ -21,7 +21,10 @@
 # include <config.h>
 #endif
 
-/* CVS Headers.  */
+/* GNULIB */
+#include "quote.h"
+
+/* CVS */
 #include "repos.h"
 
 #include "cvs.h"
@@ -44,62 +47,44 @@ Create_Admin (const char *dir, const char *update_dir, const char *repository,
     FILE *fout;
     char *cp;
     char *reposcopy;
-    char *tmp;
-    bool ud;
+    char *tmp, *ud;
 
     TRACE (TRACE_FUNCTION, "Create_Admin (%s, %s, %s, %s, %s, %d, %d, %d)",
-	   dir, update_dir, repository, tag ? tag : "",
-	   date ? date : "", nonbranch, warn, dotemplate);
+	   dir, update_dir, repository, TRACE_NULL (tag),
+	   TRACE_NULL (date), nonbranch, warn, dotemplate);
 
     if (noexec)
 	return 0;
 
     /* A leading "./" looks bad in error messages.  */
-    ud = STREQ (dir, ".");
-    tmp = Xasprintf ("%s%s%s", ud ? "" : dir, ud ? "" : "/", CVSADM);
+    tmp = dir_append (dir, CVSADM);
     if (isfile (tmp))
-	error (1, 0, "there is a version in %s already", update_dir);
+	error (1, 0, "there is a version in %s already", quote (update_dir));
 
-    if (!cvs_mkdir (tmp, update_dir, warn ? 0 : MD_FATAL))
+    ud = dir_append (update_dir, CVSADM);
+    if (!cvs_mkdir (tmp, ud, warn ? 0 : MD_FATAL))
     {
 	free (tmp);
-	tmp = NULL;
+	free (ud);
 	return 1;
     }
     /* else */
 
     free (tmp);
-    tmp = NULL;
+    free (ud);
 
     /* record the current cvs root for later use */
 
     Create_Root (dir, original_parsed_root->original);
-    if (dir != NULL)
-	tmp = Xasprintf ("%s/%s", dir, CVSADM_REP);
-    else
-	tmp = xstrdup (CVSADM_REP);
+
+    tmp = dir_append (dir, CVSADM_REP);
     fout = CVS_FOPEN (tmp, "w+");
-    if (fout == NULL)
-    {
-	if (update_dir[0] == '\0')
-	    error (1, errno, "cannot open %s", tmp);
-	else
-	    error (1, errno, "cannot open %s/%s", update_dir, CVSADM_REP);
-    }
+    if (!fout)
+	error (1, errno, "cannot open %s",
+	       quote (dir_append (update_dir, CVSADM_REP)));
+
     reposcopy = xstrdup (repository);
     Sanitize_Repository_Name (reposcopy);
-
-    /* The top level of the repository is a special case -- we need to
-       write it with an extra dot at the end.  This trailing `.' stuff
-       rubs me the wrong way -- on the other hand, I don't want to
-       spend the time making sure all of the code can handle it if we
-       don't do it. */
-
-    if (STREQ (reposcopy, current_parsed_root->directory))
-    {
-	reposcopy = xrealloc (reposcopy, strlen (reposcopy) + 3);
-	strcat (reposcopy, "/.");
-    }
 
     cp = reposcopy;
 
@@ -107,48 +92,33 @@ Create_Admin (const char *dir, const char *update_dir, const char *repository,
      * If the Repository file is to hold a relative path, try to strip off
      * the leading CVSroot argument.
      */
+    if (STRNEQ (cp, current_parsed_root->directory,
+		strlen (current_parsed_root->directory)))
     {
-	char *path = Xasprintf ("%s/", current_parsed_root->directory);
-	if (STRNEQ (cp, path, strlen (path)))
-	    cp += strlen (path);
-	free (path);
+	cp += strlen (current_parsed_root->directory);
+	if (ISSLASH (*cp))
+	    cp += 1;
+	else if (*cp)
+	    cp = reposcopy;
     }
 
-    if (fprintf (fout, "%s\n", cp) < 0)
-    {
-	if (update_dir[0] == '\0')
-	    error (1, errno, "write to %s failed", tmp);
-	else
-	    error (1, errno, "write to %s/%s failed", update_dir, CVSADM_REP);
-    }
+    if (fprintf (fout, "%s\n", NULL2DOT (cp)) < 0)
+	error (1, errno, "write to %s failed",
+	       quote (dir_append (update_dir, CVSADM_REP)));
     if (fclose (fout) == EOF)
-    {
-	if (update_dir[0] == '\0')
-	    error (1, errno, "cannot close %s", tmp);
-	else
-	    error (1, errno, "cannot close %s/%s", update_dir, CVSADM_REP);
-    }
+	error (1, errno, "cannot close %s",
+	       quote (dir_append (update_dir, CVSADM_REP)));
 
     /* now, do the Entries file */
-    if (dir != NULL)
-	(void) sprintf (tmp, "%s/%s", dir, CVSADM_ENT);
-    else
-	(void) strcpy (tmp, CVSADM_ENT);
+    free (tmp);
+    tmp = dir_append (dir, CVSADM_ENT);
     fout = CVS_FOPEN (tmp, "w+");
-    if (fout == NULL)
-    {
-	if (update_dir[0] == '\0')
-	    error (1, errno, "cannot open %s", tmp);
-	else
-	    error (1, errno, "cannot open %s/%s", update_dir, CVSADM_ENT);
-    }
+    if (!fout)
+	error (1, errno, "cannot open %s",
+	       quote (dir_append (update_dir, CVSADM_ENT)));
     if (fclose (fout) == EOF)
-    {
-	if (update_dir[0] == '\0')
-	    error (1, errno, "cannot close %s", tmp);
-	else
-	    error (1, errno, "cannot close %s/%s", update_dir, CVSADM_ENT);
-    }
+	    error (1, errno, "cannot close %s",
+		   quote (dir_append (update_dir, CVSADM_ENT)));
 
     /* Create a new CVS/Tag file */
     WriteTag (dir, tag, date, nonbranch, update_dir, repository);

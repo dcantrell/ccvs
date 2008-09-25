@@ -186,15 +186,23 @@ Sanitize_Repository_Name (char *repository)
 {
     size_t len;
 
-    assert (repository != NULL);
+    assert (repository);
 
     strip_trailing_slashes (repository);
-
     len = strlen (repository);
-    if (len >= 2
-	&& repository[len - 1] == '.'
-	&& ISSLASH (repository[len - 2]))
+    while (len >= 2
+	   && repository[len - 1] == '.'
+	   && ISSLASH (repository[len - 2]))
     {
-	repository[len - 2] = '\0';
+	/* Beware the case where the string is exactly "/." or "//.".
+	 * Paths with a leading "//" are special on some early UNIXes.
+	 */
+	if (strlen (repository) == 2
+	    || strlen (repository) == 3 && ISSLASH (*repository))
+	    repository[strlen (repository) - 1] = '\0';
+	else
+	    repository[strlen (repository) - 2] = '\0';
+	strip_trailing_slashes (repository);
+	len = strlen (repository);
     }
 }
