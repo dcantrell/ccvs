@@ -1,5 +1,13 @@
 2008-09-25  Derek R. Price  <derek@ximbiot.com>
 
+	* client.c (send_repository, send_dirent_proc), recurse.c
+	(do_file_proc): Cleanup.  Try harder to preserve update_dir.
+	* server.c: Cleanup.
+	(output_dir): Become wrapper for...
+	(output_dir_i): ...this new function used...
+	(serve_notify): ...here to avoid code duplication.
+	* sanity.sh (server): Compensate for correct notify repository line.
+
 	* create_adm.c: Some quoting and cleanup.
 	* repos.c (Short_Repository): Improve header comment.  Assert truths.
 	Strip all trailing slashes.

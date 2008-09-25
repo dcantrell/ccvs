@@ -215,20 +215,21 @@ create_adm_p (char *base_dir, char *dir)
 
     /* Allocate some space for our directory-munging string. */
     p = xmalloc (strlen (dir) + 1);
-    if (p == NULL)
+    if (!p)
 	return ENOMEM;
 
     dir_where_cvsadm_lives = xmalloc (strlen (base_dir) + strlen (dir) + 100);
-    if (dir_where_cvsadm_lives == NULL)
+    if (!dir_where_cvsadm_lives)
     {
 	free (p);
 	return ENOMEM;
     }
 
     /* Allocate some space for the temporary string in which we will
-       construct filenames. */
+     * construct filenames.
+     */
     tmp = xmalloc (strlen (base_dir) + strlen (dir) + 100);
-    if (tmp == NULL)
+    if (!tmp)
     {
 	free (p);
 	free (dir_where_cvsadm_lives);
@@ -237,11 +238,12 @@ create_adm_p (char *base_dir, char *dir)
 
 
     /* We make several passes through this loop.  On the first pass,
-       we simply create the CVSADM directory in the deepest directory.
-       For each subsequent pass, we try to remove the last path
-       element from DIR, create the CVSADM directory in the remaining
-       pathname, and register the subdirectory in the newly created
-       CVSADM directory. */
+     * we simply create the CVSADM directory in the deepest directory.
+     * For each subsequent pass, we try to remove the last path
+     * element from DIR, create the CVSADM directory in the remaining
+     * pathname, and register the subdirectory in the newly created
+     * CVSADM directory.
+     */
 
     retval = done = 0;
 
@@ -254,7 +256,7 @@ create_adm_p (char *base_dir, char *dir)
     while (1)
     {
 	/* Create CVSADM. */
-	(void) sprintf (tmp, "%s/%s", dir_where_cvsadm_lives, CVSADM);
+	sprintf (tmp, "%s/%s", dir_where_cvsadm_lives, CVSADM);
 	if ((CVS_MKDIR (tmp, 0777) < 0) && (errno != EEXIST))
 	{
 	    retval = errno;
@@ -262,8 +264,8 @@ create_adm_p (char *base_dir, char *dir)
 	}
 
 	/* Create CVSADM_REP. */
-	(void) sprintf (tmp, "%s/%s", dir_where_cvsadm_lives, CVSADM_REP);
-	if (! isfile (tmp))
+	sprintf (tmp, "%s/%s", dir_where_cvsadm_lives, CVSADM_REP);
+	if (!isfile (tmp))
 	{
 	    /* Use Emptydir as the placeholder until the client sends
 	       us the real value.  This code is similar to checkout.c
@@ -271,22 +273,22 @@ create_adm_p (char *base_dir, char *dir)
 	       differently.  */
 
 	    char *empty;
-	    empty = xmalloc (strlen (current_parsed_root->directory)
+	    empty = malloc (strlen (current_parsed_root->directory)
 			    + sizeof (CVSROOTADM)
 			    + sizeof (CVSNULLREPOS)
 			    + 3);
-	    if (! empty)
+	    if (!empty)
 	    {
 		retval = ENOMEM;
 		goto finish;
 	    }
 
 	    /* Create the directory name. */
-	    (void) sprintf (empty, "%s/%s/%s", current_parsed_root->directory,
-			    CVSROOTADM, CVSNULLREPOS);
+	    sprintf (empty, "%s/%s/%s", current_parsed_root->directory,
+		     CVSROOTADM, CVSNULLREPOS);
 
 	    /* Create the directory if it doesn't exist. */
-	    if (! isfile (empty))
+	    if (!isfile (empty))
 	    {
 		mode_t omask;
 		omask = umask (cvsumask);
@@ -296,11 +298,11 @@ create_adm_p (char *base_dir, char *dir)
 		    free (empty);
 		    goto finish;
 		}
-		(void) umask (omask);
+		umask (omask);
 	    }
 
 	    f = CVS_FOPEN (tmp, "w");
-	    if (f == NULL)
+	    if (!f)
 	    {
 		retval = errno;
 		free (empty);
@@ -327,9 +329,9 @@ create_adm_p (char *base_dir, char *dir)
 
 	/* Create CVSADM_ENT.  We open in append mode because we
 	   don't want to clobber an existing Entries file.  */
-	(void) sprintf (tmp, "%s/%s", dir_where_cvsadm_lives, CVSADM_ENT);
+	sprintf (tmp, "%s/%s", dir_where_cvsadm_lives, CVSADM_ENT);
 	f = CVS_FOPEN (tmp, "a");
-	if (f == NULL)
+	if (!f)
 	{
 	    retval = errno;
 	    goto finish;
@@ -340,7 +342,7 @@ create_adm_p (char *base_dir, char *dir)
 	    goto finish;
 	}
 
-	if (dir_to_register != NULL)
+	if (dir_to_register)
 	{
 	    /* FIXME: Yes, this results in duplicate entries in the
 	       Entries.Log file, but it doesn't currently matter.  We
@@ -354,19 +356,19 @@ create_adm_p (char *base_dir, char *dir)
 	    break;
 
 	dir_to_register = strrchr (p, '/');
-	if (dir_to_register == NULL)
-	{
-	    dir_to_register = p;
-	    strcpy (dir_where_cvsadm_lives, base_dir);
-	    done = 1;
-	}
-	else
+	if (dir_to_register)
 	{
 	    *dir_to_register = '\0';
 	    dir_to_register++;
 	    strcpy (dir_where_cvsadm_lives, base_dir);
 	    strcat (dir_where_cvsadm_lives, "/");
 	    strcat (dir_where_cvsadm_lives, p);
+	}
+	else
+	{
+	    dir_to_register = p;
+	    strcpy (dir_where_cvsadm_lives, base_dir);
+	    done = 1;
 	}
     }
 
@@ -948,22 +950,22 @@ serve_root (char *arg)
 	    int status;
 	    int i = 0;
 
-	    server_temp_dir = xmalloc (strlen (get_cvs_tmp_dir ()) + 80);
+	    server_temp_dir = xmalloc (strlen (get_cvs_tmp_dir()) + 80);
 	    if (!server_temp_dir)
 	    {
 		/* Strictly speaking, we're not supposed to output anything
 		 * now.  But we're about to exit(), give it a try.
 		 */
-		printf ("E Fatal server error, aborting.\n\
-error ENOMEM Virtual memory exhausted.\n");
+		printf ("E Fatal server error, aborting.\n"
+		        "error ENOMEM Virtual memory exhausted.\n");
 
 		exit (EXIT_FAILURE);
 	    }
-	    strcpy (server_temp_dir, get_cvs_tmp_dir ());
+	    strcpy (server_temp_dir, get_cvs_tmp_dir());
 
 	    /* Remove a trailing slash from TMPDIR if present.  */
 	    p = server_temp_dir + strlen (server_temp_dir) - 1;
-	    if (*p == '/')
+	    if (ISSLASH (*p))
 		*p = '\0';
 
 	    /* I wanted to use cvs-serv/PID, but then you have to worry about
@@ -1196,10 +1198,10 @@ dirswitch (char *dir, char *repos)
     FILE *f;
     size_t dir_len;
 
-    TRACE (TRACE_FUNCTION, "dirswitch (%s, %s)", dir ? dir : "(null)",
-	   repos ? repos : "(null)");
+    TRACE (TRACE_FUNCTION, "dirswitch (%s, %s)",
+	   TRACE_NULL (dir), TRACE_NULL (repos));
 
-    server_write_entries ();
+    server_write_entries();
 
     if (error_pending()) return;
 
@@ -1216,51 +1218,60 @@ dirswitch (char *dir, char *repos)
     }
     if (pathname_levels (dir) > max_dotdot_limit)
     {
-	push_pending_error (0, "E protocol error: `%s' has too many ..", dir);
+	push_pending_error (0, "E protocol error: %s has too many ..",
+			    quote (dir));
 	return;
     }
 
     dir_len = strlen (dir);
 
     /* Check for a trailing '/'.  This is not ISSLASH because \ in the
-       protocol is an ordinary character, not a directory separator (of
-       course, it is perhaps unwise to use it in directory names, but that
-       is another issue).  */
-    if (dir_len > 0
-	&& dir[dir_len - 1] == '/')
+     * protocol is an ordinary character, not a directory separator (of
+     * course, it is perhaps unwise to use it in directory names, but that
+     * is another issue).
+     */
+    if (dir_len && dir[dir_len - 1] == '/')
     {
 	push_pending_error (0,
-"E protocol error: invalid directory syntax in %s",
-			    dir);
+			    "E protocol error: invalid directory syntax in %s",
+			    quote (dir));
 	return;
     }
 
-    if (gDirname != NULL)
+    if (gDirname)
 	free (gDirname);
-    if (gupdate_dir != NULL)
+    if (gupdate_dir)
 	free (gupdate_dir);
 
-    if (STREQ (dir, "."))
+    if (!supported_response ("OpenPGP-signature") && STREQ (dir, "."))
+	/* See the comment above output_dir - old clients didn't send the
+	 * correct update_dir.
+	 */
 	gupdate_dir = xstrdup ("");
     else
 	gupdate_dir = xstrdup (dir);
 
-    gDirname = xmalloc (strlen (server_temp_dir) + dir_len + 40);
-    if (gDirname == NULL)
+    /* This is like dir_append(), but dir_append() doesn't know how to report
+     * errors here.
+     */
+    gDirname = malloc (strlen (server_temp_dir) + dir_len +2);
+    if (!gDirname)
     {
 	pending_error = ENOMEM;
 	return;
     }
-
     strcpy (gDirname, server_temp_dir);
-    strcat (gDirname, "/");
-    strcat (gDirname, dir);
+    if (*dir && !STREQ (dir, "."))
+    {
+    	if (!ISSLASH (server_temp_dir[strlen (server_temp_dir)]))
+	    strcat (gDirname, "/");
+    	strcat (gDirname, dir);
+    }
 
     status = mkdir_p (gDirname);
-    if (status != 0
-	&& status != EEXIST)
+    if (status && status != EEXIST)
     {
-	push_pending_error (status, "E cannot mkdir %s", gDirname);
+	push_pending_error (status, "E cannot mkdir %s", quote (gDirname));
 	return;
     }
 
@@ -1270,8 +1281,8 @@ dirswitch (char *dir, char *repos)
        already-sent "Directory xxx" command.  See recurse.c
        (start_recursion) for a big discussion of this.  */
 
-    status = create_adm_p (server_temp_dir, dir);
-    if (status != 0)
+    status = create_adm_p (server_temp_dir, NULL2DOT (dir));
+    if (status)
     {
 	push_pending_error (status, "E cannot create_adm_p %s", gDirname);
 	return;
@@ -1298,7 +1309,7 @@ dirswitch (char *dir, char *repos)
        correct value. */
 
     f = CVS_FOPEN (CVSADM_REP, "w");
-    if (f == NULL)
+    if (!f)
     {
 	push_pending_error (errno, "E cannot open %s/%s", gDirname,
 			    CVSADM_REP);
@@ -1310,21 +1321,6 @@ dirswitch (char *dir, char *repos)
 			    CVSADM_REP);
 	fclose (f);
 	return;
-    }
-    /* Non-remote CVS handles a module representing the entire tree
-       (e.g., an entry like ``world -a .'') by putting /. at the end
-       of the Repository file, so we do the same.  */
-    if (STREQ (dir, ".")
-	&& current_parsed_root && current_parsed_root->directory
-	&& STREQ (current_parsed_root->directory, repos))
-    {
-	if (fprintf (f, "/.") < 0)
-	{
-	    push_pending_error (errno, "E error writing %s/%s",
-				gDirname, CVSADM_REP);
-	    fclose (f);
-	    return;
-	}
     }
     if (fprintf (f, "\n") < 0)
     {
@@ -1375,7 +1371,7 @@ serve_directory (char *arg)
     int status;
     char *repos;
 
-    TRACE (TRACE_FUNCTION, "serve_directory (%s)", arg ? arg : "(null)");
+    TRACE (TRACE_FUNCTION, "serve_directory (%s)", TRACE_NULL (arg));
 
 
     /* The data needs to be read into the secondary log regardless, but
@@ -1400,8 +1396,7 @@ serve_directory (char *arg)
 	    char *short_repos;
 
 	    short_repos = repos;
-	    repos = Xasprintf ("%s/%s",
-	                      current_parsed_root->directory, short_repos);
+	    repos = dir_append (current_parsed_root->directory, short_repos);
 	    free (short_repos);
 	}
 	else
@@ -1416,28 +1411,13 @@ serve_directory (char *arg)
 	free (repos);
     }
     else if (status == -2)
-    {
 	pending_error = ENOMEM;
-    }
-    else if (status != 0)
-    {
-	pending_error_text = xmalloc (80 + strlen (arg));
-	if (pending_error_text == NULL)
-	{
-	    pending_error = ENOMEM;
-	}
-	else if (status == -1)
-	{
-	    sprintf (pending_error_text,
-		     "E end of file reading mode for %s", arg);
-	}
-	else
-	{
-	    sprintf (pending_error_text,
-		     "E error reading mode for %s", arg);
-	    pending_error = status;
-	}
-    }
+    else if (status == -1)
+	push_pending_error (0, "E end of file reading mode for %s",
+			    NULL2DOT (arg));
+    else /* STATUS NOT IN (-2, -1, 0) */
+	push_pending_error (status, "E error reading mode for %s",
+			    NULL2DOT (arg));
 }
 
 
@@ -2983,9 +2963,68 @@ serve_localdir (char *arg)
 
 
 
+/* Beginning with 1.12.14, the same release that began supporting PGP
+ * signatures, this function attempts to preserve the difference between ""
+ * and "." in UPDATE_DIR.  This corrects some old problems with incorrect
+ * directories being reported in error messages.
+ */
+static void
+output_dir_i (struct buffer *buf, const char *update_dir,
+	      const char *repository)
+{
+    /* Set up SHORT_REPOS.  */
+    const char *short_repos = Short_Repository (repository);
+
+    /* Send the update_dir/repos.  */
+    if (server_dir)
+    {
+	buf_output0 (buf, server_dir);
+	buf_append_char (buf, '/');
+    }
+    if (!*update_dir && !supported_response ("OpenPGP-signature"))
+	buf_append_char (buf, '.');
+    else
+	buf_output0 (buf, update_dir);
+    if (!supported_response ("OpenPGP-signature"))
+	buf_append_char (buf, '/');
+    buf_append_char (buf, '\n');
+    if (!*short_repos)
+	buf_append_char (buf, '.');
+    else
+	buf_output0 (buf, short_repos);
+    buf_append_char (buf, '/');
+}
+
+
+
+static struct buffer *protocol = NULL;
+
+/* This is the output which we are saving up to send to the server, in the
+ * child process.  We will push it through, via the `protocol' buffer, when
+ * we have a complete line.u
+ */
+static struct buffer *saved_output;
+
+/* Likewise, but stuff which will go to stderr.  */
+static struct buffer *saved_outerr;
+
+
+
+/* Simple wrapper for output_dir_i() that assumes the global PROTOCOL
+ * for BUF.
+ */
+static void
+output_dir (const char *update_dir, const char *repository)
+{
+    output_dir_i (protocol, update_dir, repository);
+}
+
+
+
 /* Process all the Notify requests that we have stored up.  Returns 0
-   if successful, if not prints error message (via error()) and
-   returns negative value.  */
+ * if successful, if not prints error message (via error()) and
+ * returns negative value.
+ */
 static int
 server_notify (void)
 {
@@ -2994,7 +3033,7 @@ server_notify (void)
 
     TRACE (TRACE_FUNCTION, "server_notify()");
 
-    while (notify_list != NULL)
+    while (notify_list)
     {
 	if (CVS_CHDIR (notify_list->dir) < 0)
 	{
@@ -3012,17 +3051,7 @@ server_notify (void)
 		   notify_list->watches, repos);
 
 	buf_output0 (buf_to_net, "Notified ");
-	{
-	    char *dir = notify_list->dir + strlen (server_temp_dir) + 1;
-	    if (dir[0] == '\0')
-		buf_append_char (buf_to_net, '.');
-	    else
-		buf_output0 (buf_to_net, dir);
-	    buf_append_char (buf_to_net, '/');
-	    buf_append_char (buf_to_net, '\n');
-	}
-	buf_output0 (buf_to_net, repos);
-	buf_append_char (buf_to_net, '/');
+	output_dir_i (buf_to_net, notify_list->update_dir, repos);
 	buf_output0 (buf_to_net, notify_list->filename);
 	buf_append_char (buf_to_net, '\n');
 	free (repos);
@@ -3308,7 +3337,7 @@ serve_questionable (char *arg)
 	initted = 1;
     }
 
-    if (gDirname == NULL)
+    if (!gDirname)
     {
 	push_pending_error (0, "E Protocol error: `Directory' missing");
 	return;
@@ -3319,31 +3348,16 @@ serve_questionable (char *arg)
 
     if (!ign_name (arg))
     {
-	char *update_dir;
-
 	buf_output (buf_to_net, "M ? ", 4);
-	update_dir = gDirname + strlen (server_temp_dir) + 1;
-	if (!(update_dir[0] == '.' && update_dir[1] == '\0'))
+	if (*gupdate_dir)
 	{
-	    buf_output0 (buf_to_net, update_dir);
+	    buf_output0 (buf_to_net, gupdate_dir);
 	    buf_output (buf_to_net, "/", 1);
 	}
 	buf_output0 (buf_to_net, arg);
 	buf_output (buf_to_net, "\n", 1);
     }
 }
-
-
-
-static struct buffer *protocol = NULL;
-
-/* This is the output which we are saving up to send to the server, in the
-   child process.  We will push it through, via the `protocol' buffer, when
-   we have a complete line.  */
-static struct buffer *saved_output;
-
-/* Likewise, but stuff which will go to stderr.  */
-static struct buffer *saved_outerr;
 
 
 
@@ -3603,7 +3617,7 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 	    if (lookup_command_attribute (cmd_name)
 		    & CVS_CMD_MODIFIES_REPOSITORY)
 	    {
-		become_proxy ();
+		become_proxy();
 		exit (EXIT_SUCCESS);
 	    }
 	    else if (/* serve_co may have called this already and missing logs
@@ -3636,9 +3650,9 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
     protocol_pipe[0] = -1;
     protocol_pipe[1] = -1;
 
-    server_write_entries ();
+    server_write_entries();
 
-    if (print_pending_error ())
+    if (print_pending_error())
 	goto free_args_and_return;
 
     /* Global `cvs_cmd_name' is probably "server" right now -- only
@@ -3658,7 +3672,7 @@ error  \n");
     }
     cvs_cmd_name = cmd_name;
 
-    (void) server_notify ();
+    server_notify();
 
     /*
      * We use a child process which actually does the operation.  This
@@ -3747,12 +3761,12 @@ error  \n");
 	/* At this point we should no longer be using buf_to_net and
 	   buf_from_net.  Instead, everything should go through
 	   protocol.  */
-	if (buf_to_net != NULL)
+	if (buf_to_net)
 	{
 	    buf_free (buf_to_net);
 	    buf_to_net = NULL;
 	}
-	if (buf_from_net != NULL)
+	if (buf_from_net)
 	{
 	    buf_free (buf_from_net);
 	    buf_from_net = NULL;
@@ -3802,7 +3816,8 @@ error  \n");
 	   protocol doesn't support anything better.  */
 	if (! buf_empty_p (saved_output))
 	{
-	    buf_output0 (protocol, supported_response ("MT") ? "MT text " : "M ");
+	    buf_output0 (protocol,
+			 supported_response ("MT") ? "MT text " : "M ");
 	    buf_append_buffer (protocol, saved_output);
 	    buf_output (protocol, "\n", 1);
 	    buf_send_counted (protocol);
@@ -4173,17 +4188,17 @@ error  \n");
 	 * anything left on stdoutbuf or stderrbuf (this could only
 	 * happen if there was no trailing newline), send it over.
 	 */
-	if (! buf_empty_p (stdoutbuf))
+	if (!buf_empty_p (stdoutbuf))
 	{
 	    buf_append_char (stdoutbuf, '\n');
 	    buf_copy_lines (buf_to_net, stdoutbuf, 'M');
 	}
-	if (! buf_empty_p (stderrbuf))
+	if (!buf_empty_p (stderrbuf))
 	{
 	    buf_append_char (stderrbuf, '\n');
 	    buf_copy_lines (buf_to_net, stderrbuf, 'E');
 	}
-	if (! buf_empty_p (protocol_inbuf))
+	if (!buf_empty_p (protocol_inbuf))
 	    buf_output0 (buf_to_net,
 			 "E Protocol error: uncounted data discarded\n");
 
@@ -4394,39 +4409,6 @@ server_pause_check(void)
 
 /* This variable commented in server.h.  */
 char *server_dir = NULL;
-
-
-
-/* Beginning with 1.12.14, the same release that began supporting PGP
- * signatures, this function attempts to preserve the difference between ""
- * and "." in UPDATE_DIR.  This corrects some old problems with incorrect
- * directories being reported in error messages.
- */
-static void
-output_dir (const char *update_dir, const char *repository)
-{
-    /* Set up SHORT_REPOS.  */
-    const char *short_repos = Short_Repository (repository);
-
-    /* Send the update_dir/repos.  */
-    if (server_dir)
-    {
-	buf_output0 (protocol, server_dir);
-	buf_append_char (protocol, '/');
-    }
-    if (!*update_dir && !supported_response ("OpenPGP-signature"))
-	buf_append_char (protocol, '.');
-    else
-	buf_output0 (protocol, update_dir);
-    if (!supported_response ("OpenPGP-signature"))
-	buf_append_char (protocol, '/');
-    buf_append_char (protocol, '\n');
-    if (!*short_repos)
-	buf_append_char (protocol, '.');
-    else
-	buf_output0 (protocol, short_repos);
-    buf_append_char (protocol, '/');
-}
 
 
 
@@ -4892,13 +4874,14 @@ serve_noop (char *arg)
 
 # ifdef PROXY_SUPPORT
     /* The portions below need not be handled until reprocessing anyhow since
-     * there should be no entries or notifications prior to that.  */
+     * there should be no entries or notifications prior to that.
+     */
     if (!proxy_log)
 # endif /* PROXY_SUPPORT */
     {
-	server_write_entries ();
+	server_write_entries();
 	if (!pe)
-	    (void) server_notify ();
+	    server_notify();
     }
 
     if (!pe
