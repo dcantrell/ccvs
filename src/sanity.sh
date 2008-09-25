@@ -32765,7 +32765,7 @@ ok" <session.dat
 	    # OK, here are some notify tests.
 	    dotest server-6 "${servercvs} server" \
 "Notified \./
-${TESTDIR}/crerepos/dir1/file1
+dir1/file1
 ok" <<EOF
 Root ${TESTDIR}/crerepos
 Directory .
@@ -32780,11 +32780,11 @@ EOF
 	    dotest server-7 "${servercvs} server" \
 "M file1	$username	Fri May  7 13:21:09 1999 -0000	myhost	some-work-dir
 Notified \./
-${TESTDIR}/crerepos/dir1/file1
+dir1/file1
 ok
 M file1	$username	Fri May  7 13:21:09 1999 -0000	myhost	some-work-dir
 Notified \./
-${TESTDIR}/crerepos/dir1/file1
+dir1/file1
 ok" <<EOF
 Root ${TESTDIR}/crerepos
 Directory .
@@ -32803,7 +32803,7 @@ EOF
 "M file1	$username	The 57th day of Discord in the YOLD 3165	myhost	some-work-dir
 E $CPROG server: invalid character in editor value
 Notified \./
-${TESTDIR}/crerepos/dir1/file1
+dir1/file1
 ok" <<EOF
 Root ${TESTDIR}/crerepos
 Directory .
@@ -32858,7 +32858,7 @@ EOF
 	    # Now do an unedit.
 	    dotest server-13 "${servercvs} server" \
 "Notified \./
-${TESTDIR}/crerepos/dir1/file1
+dir1/file1
 ok" <<EOF
 Root ${TESTDIR}/crerepos
 Directory .

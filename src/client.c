@@ -3066,8 +3066,6 @@ static char *last_update_dir;
 static void
 send_repository (const char *dir, const char *repos, const char *update_dir)
 {
-    char *adm_name;
-
     TRACE (TRACE_FUNCTION, "send_repository (%s, %s, %s)",
 	   dir, repos, update_dir);
 
@@ -3090,11 +3088,8 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
            this down right now. */
         error (1, 0, "no repository");
 
-    if (!update_dir || !*update_dir)
-	update_dir = ".";
-
     if (last_repos && STREQ (repos, last_repos)
-	&& last_update_dir && STREQ (update_dir, last_update_dir))
+	&& last_update_dir && STREQ (NULL2DOT (update_dir), last_update_dir))
 	/* We've already sent it.  */
 	return;
 
@@ -3103,28 +3098,35 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
 
     /* Add a directory name to the list of those sent to the
        server. */
-    if (!STREQ (update_dir, ".")
-	&& !findnode (dirs_sent_to_server, update_dir))
+    if (!STREQ (NULL2DOT (update_dir), ".")
+	&& !findnode (dirs_sent_to_server, NULL2DOT (update_dir)))
     {
 	Node *n;
-	n = getnode ();
+	n = getnode();
 	n->type = NT_UNKNOWN;
-	n->key = xstrdup (update_dir);
+	n->key = xstrdup (NULL2DOT (update_dir));
 	n->data = NULL;
 
 	if (addnode (dirs_sent_to_server, n))
 	    error (1, 0, "cannot add directory %s to list", n->key);
     }
 
-    /* 80 is large enough for any of CVSADM_*.  */
-    adm_name = xmalloc (strlen (dir) + 80);
-
     send_to_server ("Directory ", 0);
     {
 	/* Send the directory name.  I know that this
-	   sort of duplicates code elsewhere, but each
-	   case seems slightly different...  */
-	const char *p = update_dir;
+	 * sort of duplicates code elsewhere, but each
+	 * case seems slightly different...
+	 */
+	const char *p;
+
+	/* Old servers don't support preserving update_dir in the Directory
+	 * request.  See the comment aboce output_dir() for more.
+	 */
+	if (supported_request ("Signature"))
+	    p = NULL2MT (update_dir);
+	else
+	    p = NULL2DOT (update_dir);
+
 	while (*p)
 	{
 	    assert (*p != '\012');
@@ -3145,37 +3147,26 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
     if (!STREQ (cvs_cmd_name, "import")
 	&& supported_request ("Static-directory"))
     {
-	adm_name[0] = '\0';
-	if (dir[0] != '\0')
-	{
-	    strcat (adm_name, dir);
-	    strcat (adm_name, "/");
-	}
-	strcat (adm_name, CVSADM_ENTSTAT);
+	char *adm_name = dir_append (dir, CVSADM_ENTSTAT);
 	if (isreadable (adm_name))
-	{
 	    send_to_server ("Static-directory\012", 0);
-	}
+	free (adm_name);
     }
     if (!STREQ (cvs_cmd_name, "import")
 	&& supported_request ("Sticky"))
     {
-	FILE *f;
-	if (dir[0] == '\0')
-	    strcpy (adm_name, CVSADM_TAG);
-	else
-	    sprintf (adm_name, "%s/%s", dir, CVSADM_TAG);
-
-	f = CVS_FOPEN (adm_name, "r");
+	char *adm_name = dir_append (dir, CVSADM_TAG);
+	FILE *f = CVS_FOPEN (adm_name, "r");
 	if (!f)
 	{
-	    if (! existence_error (errno))
-		error (1, errno, "reading %s", adm_name);
+	    if (!existence_error (errno))
+		error (1, errno, "reading %s",
+		       quote (dir_append (update_dir, CVSADM_TAG)));
 	}
 	else
 	{
 	    char line[80];
-	    char *nl = NULL;
+	    const char *nl = NULL;
 	    send_to_server ("Sticky ", 0);
 	    while (fgets (line, sizeof (line), f))
 	    {
@@ -3187,14 +3178,18 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
 	    if (!nl)
                 send_to_server ("\012", 1);
 	    if (fclose (f) == EOF)
-		error (0, errno, "closing %s", adm_name);
+	    {
+		char *fn = dir_append (update_dir, CVSADM_TAG);
+		error (0, errno, "closing %s", quote (fn));
+		free (fn);
+	    }
 	}
+	free (adm_name);
     }
-    free (adm_name);
     if (last_repos) free (last_repos);
     if (last_update_dir) free (last_update_dir);
     last_repos = xstrdup (repos);
-    last_update_dir = xstrdup (update_dir);
+    last_update_dir = xstrdup (NULL2DOT (update_dir));
 }
 
 
@@ -5499,11 +5494,11 @@ send_dirent_proc (void *callerdat, const char *dir, const char *repository,
     TRACE (TRACE_FLOW, "send_dirent_proc (%s, %s, %s)",
 	   dir, repository, update_dir);
 
-    if (ignore_directory (update_dir))
+    if (ignore_directory (NULL2DOT (update_dir)))
     {
 	/* print the warm fuzzy message */
 	if (!quiet)
-	    error (0, 0, "Ignoring %s", update_dir);
+	    error (0, 0, "Ignoring %s", NULL2DOT (update_dir));
         return R_SKIP_ALL;
     }
 
