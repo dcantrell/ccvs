@@ -133,26 +133,30 @@ Name_Repository (const char *dir, const char *update_dir)
 
 
 
-/*
- * Return a pointer to the repository name relative to CVSROOT from a
+/* Return a pointer to the repository name relative to CVSROOT from a
  * possibly fully qualified repository
+ *
+ * Given NULL, return NULL.
  */
 const char *
 Short_Repository (const char *repository)
 {
-    if (repository == NULL)
-	return NULL;
+    const char *rep;
 
-    /* If repository matches CVSroot at the beginning, strip off CVSroot */
-    /* And skip leading '/' in rep, in case CVSroot ended with '/'. */
-    if (STRNEQ (original_parsed_root->directory, repository,
-		strlen (original_parsed_root->directory)))
-    {
-	const char *rep = repository + strlen (original_parsed_root->directory);
-	return (*rep == '/') ? rep+1 : rep;
-    }
-    else
+    if (!repository || !ISABSOLUTE (repository))
 	return repository;
+
+    /* Strip off a leading CVSroot from the beginning of repository.  */
+    assert (STRNEQ (original_parsed_root->directory, repository,
+		    strlen (original_parsed_root->directory)));
+
+    rep = repository + strlen (original_parsed_root->directory);
+    assert (!*rep || ISSLASH (*rep));
+
+    /* Skip leading slashes in rep, in case CVSroot ended with a slash.  */
+    while (ISSLASH (*rep)) rep++;
+
+    return rep;
 }
 
 
