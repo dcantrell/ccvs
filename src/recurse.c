@@ -925,8 +925,6 @@ do_file_proc (Node *p, void *closure)
     int ret;
     char *tmp;
 
-    TRACE (TRACE_FLOW, "do_file_proc (%s, %s)", finfo->update_dir, p->key);
-
     finfo->file = p->key;
     tmp = dir_append (finfo->update_dir, finfo->file);
 
@@ -1021,7 +1019,27 @@ but CVS uses %s for its own purposes; skipping %s directory",
     }
 
     saved_update_dir = update_dir;
-    update_dir = dir_append (saved_update_dir, dir);
+    update_dir = xmalloc (strlen (saved_update_dir)
+			  + strlen (dir)
+			  + 5);
+    strcpy (update_dir, saved_update_dir);
+
+    /* set up update_dir - skip dots if not at start */
+    if (STREQ (dir, "."))
+    {
+	if (update_dir[0] == '\0')
+	    strcpy (update_dir, dir);
+    }
+    else
+    {
+	if (update_dir[0])
+	{
+	    strcat (update_dir, "/");
+	    strcat (update_dir, dir);
+	}
+	else
+	    strcpy (update_dir, dir);
+    }
 
     /* Here we need a plausible repository name for the sub-directory.  We
      * create one by concatenating the new directory name onto the previous
