@@ -1,3 +1,8 @@
+2008-09-28  Derek R. Price  <derek@ximbiot.com>
+
+	* recurse.c: Back out previous accidental, undocumented, and broken
+	commit.
+
 2008-09-25  Derek R. Price  <derek@ximbiot.com>
 
 	* client.c (send_repository, send_dirent_proc), recurse.c
