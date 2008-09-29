@@ -1,5 +1,11 @@
 2008-09-28  Derek R. Price  <derek@ximbiot.com>
 
+	Fixes recurse.c error from two commits back by correctly preserving
+	and composing update_dir.  Incidentally fixes a few other minor bugs.
+	* commit.c (commit_direntproc): Handle corrected update_dir.
+	* recurse.c (do_dir_proc): Preserve update_dir.  Clean up.
+	* sanity.sh: Compensate for correctly preserved update_dir.
+
 	* ls.c (ls_dirleaveproc): Reindent, add quoting in error message.
 
 	* find_names.c (Find_Directories): Output returned list in traces.

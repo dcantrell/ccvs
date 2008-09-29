@@ -3783,7 +3783,7 @@ initial revision: 1\.1"
 	  cd ..
 	  rm -r 1
 	  mkdir 2; cd 2
-	  dotest basicb-0d "${testcvs} -q co -l ." "U topfile"
+	  dotest basicb-0d "$testcvs -q co -l ." "U \./topfile"
 	  # Now test the ability to run checkout on an existing working
 	  # directory without having it lose its mind.  I don't know
 	  # whether this is tested elsewhere in sanity.sh.  A more elaborate
@@ -3933,7 +3933,7 @@ U sub1/sub2/sdir2/sfile2"
 	  # Create a second directory.
 	  mkdir 1
 	  cd 1
-	  dotest basicb-14 "${testcvs} -q co -l ." 'U topfile'
+	  dotest basicb-14 "$testcvs -q co -l ." 'U \./topfile'
 	  mkdir second-dir
 	  dotest basicb-15 "${testcvs} add second-dir" \
 "Directory ${CVSROOT_DIRNAME}/second-dir added to the repository"
@@ -8103,9 +8103,6 @@ preproxy
 rcsinfo
 taginfo
 verifymsg
-Emptydir
-
-CVSROOT/Emptydir:
 
 first-dir:
 file1
@@ -8134,9 +8131,6 @@ CVSROOT:
 ---- $ISO8601DATE 1\.[0-9][0-9]*        rcsinfo
 ---- $ISO8601DATE 1\.[0-9][0-9]*        taginfo
 ---- $ISO8601DATE 1\.[0-9][0-9]*        verifymsg
-d--- $ISO8601DATE            Emptydir
-
-CVSROOT/Emptydir:
 
 first-dir:
 ---- $ISO8601DATE 1\.1        file1
@@ -8165,9 +8159,6 @@ CVSROOT:
 /rcsinfo/1\.[0-9][0-9]*/$DATE//
 /taginfo/1\.[0-9][0-9]*/$DATE//
 /verifymsg/1\.[0-9][0-9]*/$DATE//
-D/Emptydir////
-
-CVSROOT/Emptydir:
 
 first-dir:
 /file1/1\.1/$DATE//
@@ -8195,9 +8186,6 @@ preproxy
 rcsinfo
 taginfo
 verifymsg
-Emptydir
-
-CVSROOT/Emptydir:
 
 first-dir:
 file1
@@ -8210,9 +8198,6 @@ d--- $ISO8601DATE            CVSROOT
 d--- $ISO8601DATE            first-dir
 
 CVSROOT:
-d--- $ISO8601DATE            Emptydir
-
-CVSROOT/Emptydir:
 
 first-dir:
 ---- $ISO8601DATE 1\.1        file1
@@ -8227,9 +8212,6 @@ d--- $ISO8601DATE            CVSROOT
 d--- $ISO8601DATE            first-dir
 
 CVSROOT:
-d--- $ISO8601DATE            Emptydir
-
-CVSROOT/Emptydir:
 
 first-dir:
 ---- $ISO8601DATE 1\.1        file1
@@ -13538,21 +13520,22 @@ $SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config \[[1-9][0-9]*\]: LocalKeyword ign
 	  ############################################################
 	  # Check out the whole repository
 	  mkdir 1; cd 1
-	  dotest modules-1 "${testcvs} -q co ." 'U CVSROOT/checkoutlist
-U CVSROOT/commitinfo
-U CVSROOT/config
-U CVSROOT/cvswrappers
-U CVSROOT/loginfo
-U CVSROOT/modules
-U CVSROOT/notify
-U CVSROOT/postadmin
-U CVSROOT/postproxy
-U CVSROOT/posttag
-U CVSROOT/postwatch
-U CVSROOT/preproxy
-U CVSROOT/rcsinfo
-U CVSROOT/taginfo
-U CVSROOT/verifymsg'
+	  dotest modules-1 "$testcvs -q co ." \
+'U \./CVSROOT/checkoutlist
+U \./CVSROOT/commitinfo
+U \./CVSROOT/config
+U \./CVSROOT/cvswrappers
+U \./CVSROOT/loginfo
+U \./CVSROOT/modules
+U \./CVSROOT/notify
+U \./CVSROOT/postadmin
+U \./CVSROOT/postproxy
+U \./CVSROOT/posttag
+U \./CVSROOT/postwatch
+U \./CVSROOT/preproxy
+U \./CVSROOT/rcsinfo
+U \./CVSROOT/taginfo
+U \./CVSROOT/verifymsg'
 	  echo "# made a change" >>CVSROOT/modules
 	  dotest modules-1d "${testcvs} -q ci -m add-modules" \
 "$CVSROOT_DIRNAME/CVSROOT/modules,v  <--  CVSROOT/modules
@@ -13829,10 +13812,10 @@ first-dir"
 	  # Test checking out everything.
 	  mkdir 1
 	  cd 1
-	  dotest modules-155b "${testcvs} -q co world" \
-"U CVSROOT/${DOTSTAR}
-U first-dir/subdir/a
-U first-dir/subdir/b"
+	  dotest modules-155b "$testcvs -q co world" \
+"U \./CVSROOT/$DOTSTAR
+U \./first-dir/subdir/a
+U \./first-dir/subdir/b"
 	  cd ..
 	  rm -rf 1
 
@@ -31834,7 +31817,7 @@ ${SPROG} update: Updating dir1/sdir/ssdir"
  *-> Name_Repository ((null), )
  *-> fileattr_startdir ($TESTDIR/root1)
  *-> fileattr_write ($TESTDIR/root1)
- *-> Write_Template (\., ${TESTDIR}/root1)
+ *-> Write_Template (, ${TESTDIR}/root1)
 ${CPROG} update: Updating \.
  *-> Name_Repository ((null), )
  *-> fileattr_startdir ($TESTDIR/root1)
