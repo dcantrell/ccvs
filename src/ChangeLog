@@ -1,5 +1,8 @@
 2008-09-29  Derek R. Price  <derek@ximbiot.com>
 
+	* client.c (is_cvsroot_level): Replace a conditional with an
+	assertion.
+
 	* log.c (rlog_proc): Avoid adding trailing /. to repository.  Some
 	cleanup.
 	* recurse.c (repository, struct recursion_frame, start_recursion):
