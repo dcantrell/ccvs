@@ -391,6 +391,12 @@ Find_Directories (const char *repository, const char *update_dir,
 
     /* sort the list into alphabetical order and return it */
     sortlist (dirlist, fsortcmp);
+
+    if (trace >= TRACE_MINUTIA)
+    {
+	TRACE (TRACE_MINUTIA, "Find_Directories returning dirlist:");
+	printlist (dirlist);
+    }
     return dirlist;
 }
 
