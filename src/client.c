@@ -2798,14 +2798,24 @@ handle_removed (char *args, size_t len)
 
 
 
-/* Is this the top level (directory containing CVSROOT)?  */
+/* Does relative path specification PATHNAME specify the top level repository
+ * directory (directory containing the configuration project, CVSROOT) for the
+ * current repository?
+ */
 static bool
 is_cvsroot_level (char *pathname)
 {
+    /* If the current TOPLEVEL_REPOS isn't for the current root, return
+     * false.  The server can sometimes set TOPLEVEL_REPOS to a subpath of
+     * CURRENT_PARSED_ROOT->directory.
+     */
     if (!STREQ (toplevel_repos, current_parsed_root->directory))
 	return false;
 
-    return STREQ (pathname, "")
+    /* An empty (relative) repository, or one trailing ./, specifies the top
+     * level.
+     */
+    return !*pathname
 	   /* or PATHNAME == "./" */
 	   || pathname[0] == '.' && ISSLASH (pathname[1]) && !pathname[2];
 }
