@@ -70,5 +70,6 @@ void delnode (Node *p);
 void freenode (Node *p);
 void sortlist (List *list, int (*)(const Node *, const Node *));
 int fsortcmp (const Node *p, const Node *q);
+void printlist (List *list);
 
 #endif /* HASH_H */

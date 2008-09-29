@@ -619,11 +619,7 @@ do_recursion (struct recursion_frame *frame)
     int locktype;
     bool process_this_directory = true;
 
-#ifdef HAVE_PRINT_PTR
-    TRACE (TRACE_FLOW, "do_recursion ( frame=%p )", (void *) frame);
-#else
-    TRACE (TRACE_FLOW, "do_recursion ( frame=%lx )", (unsigned long) frame);
-#endif
+    TRACE (TRACE_FLOW, "do_recursion (%s)", frame->repository);
 
     /* do nothing if told */
     if (frame->flags == R_SKIP_ALL)
@@ -890,13 +886,7 @@ do_recursion (struct recursion_frame *frame)
 	free (srepository);
     repository = NULL;
 
-#ifdef HAVE_PRINT_PTR
-    TRACE (TRACE_FLOW, "Leaving do_recursion (frame=%p)", (void *)frame);
-#else
-    TRACE (TRACE_FLOW, "Leaving do_recursion (frame=%lx)",
-	   (unsigned long)frame);
-#endif
-
+    TRACE (TRACE_FLOW, "Leaving do_recursion (%s)", frame->repository);
     return err;
 }
 
@@ -924,6 +914,8 @@ do_file_proc (Node *p, void *closure)
     struct file_info *finfo = frfile->finfo;
     int ret;
     char *tmp;
+
+    TRACE (TRACE_FLOW, "do_file_proc (%s, %s)", finfo->update_dir, p->key);
 
     finfo->file = p->key;
     tmp = dir_append (finfo->update_dir, finfo->file);
@@ -984,6 +976,8 @@ do_dir_proc (Node *p, void *closure)
     struct saved_cwd cwd;
     char *saved_update_dir;
     bool process_this_directory = true;
+
+    TRACE (TRACE_FLOW, "do_dir_proc (%s, %s)", update_dir, p->key);
 
     if (fncmp (dir, CVSADM) == 0)
     {

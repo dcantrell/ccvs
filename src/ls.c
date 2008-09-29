@@ -460,6 +460,9 @@ ls_direntproc (void *callerdat, const char *dir, const char *repos,
     Dtype retval;
     Node *p;
 
+    TRACE (TRACE_FUNCTION, "ls_direntproc (%s, %s, %s)",
+	   dir, repos, update_dir);
+
     /* Due to the way we called start_recursion() from ls_proc() with a single
      * argument at a time, we can assume that if we don't yet have a parent
      * directory in DIRS then this directory should be processed.
