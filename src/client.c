@@ -2812,12 +2812,11 @@ is_cvsroot_level (char *pathname)
     if (!STREQ (toplevel_repos, current_parsed_root->directory))
 	return false;
 
-    /* An empty (relative) repository, or one trailing ./, specifies the top
-     * level.
-     */
-    return !*pathname
-	   /* or PATHNAME == "./" */
-	   || pathname[0] == '.' && ISSLASH (pathname[1]) && !pathname[2];
+    /* A "./" should no longer be possible.  */
+    assert (pathname[0] != '.' || !ISSLASH (pathname[1]) || pathname[2]);
+
+    /* An empty (relative) repository specifies the top level.  */
+    return !*pathname;
 }
 
 
