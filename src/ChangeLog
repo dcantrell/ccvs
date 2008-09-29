@@ -1,5 +1,7 @@
 2008-09-28  Derek R. Price  <derek@ximbiot.com>
 
+	* ls.c (ls_dirleaveproc): Reindent, add quoting in error message.
+
 	* find_names.c (Find_Directories): Output returned list in traces.
 	* hash.h (printlist): Add prototype.
 	* ls.c (ls_direntproc): Add function trace.

@@ -15,10 +15,13 @@
 # include <config.h>
 #endif
 
-/* ANSI C headers.  */
+/* Standards  */
 #include <stdbool.h>
 
-/* CVS headers.  */
+/* GNULIB */
+#include "quote.h"
+
+/* CVS */
 #include "ignore.h"
 #include "recurse.h"
 #include "wrapper.h"
@@ -554,26 +557,29 @@ static int
 ls_dirleaveproc (void *callerdat, const char *dir, int err,
                  const char *update_dir, List *entries)
 {
-	if (created_dir && STREQ (created_dir, update_dir))
+    TRACE (TRACE_FUNCTION, "ls_dirleaveproc (%s, %d, %s)",
+	   dir, err, update_dir);
+
+    if (created_dir && STREQ (created_dir, update_dir))
+    {
+	if (set_tag)
 	{
-		if (set_tag)
-		{
-		    if (show_tag) free (show_tag);
-		    if (show_date) free (show_date);
-		    show_tag = show_date = NULL;
-		    set_tag = false;
-		}
-
-		(void)CVS_CHDIR ("..");
-		if (unlink_file_dir (dir))
-		    error (0, errno, "Failed to remove directory `%s'",
-			   created_dir);
-		Subdir_Deregister (entries, NULL, dir);
-
-		free (created_dir);
-		created_dir = NULL;
+	    if (show_tag) free (show_tag);
+	    if (show_date) free (show_date);
+	    show_tag = show_date = NULL;
+	    set_tag = false;
 	}
-	return err;
+
+	CVS_CHDIR ("..");
+	if (unlink_file_dir (dir))
+	    error (0, errno, "Failed to remove directory %s",
+		   quote (created_dir));
+	Subdir_Deregister (entries, NULL, dir);
+
+	free (created_dir);
+	created_dir = NULL;
+    }
+    return err;
 }
 
 
