@@ -69,6 +69,8 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     const char *regex_err;
 
     assert (repository);
+    TRACE (TRACE_FUNCTION, "Parse_Info (%s, %s, %d)",
+	   infofile, repository, opt);
 
     if (!current_parsed_root)
     {
