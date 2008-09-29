@@ -1737,7 +1737,7 @@ commit_direntproc (void *callerdat, const char *dir, const char *repos,
 	return R_SKIP_ALL;
 
     /* find the update list for this dir */
-    p = findnode (mulist, update_dir);
+    p = findnode (mulist, NULL2DOT (update_dir));
     if (p != NULL)
 	ulist = ((struct master_lists *) p->data)->ulist;
     else

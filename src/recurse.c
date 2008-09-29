@@ -971,7 +971,6 @@ do_dir_proc (Node *p, void *closure)
     List *sdirlist;
     char *srepository;
     Dtype dir_return = R_PROCESS;
-    int stripped_dot = 0;
     int err = 0;
     struct saved_cwd cwd;
     char *saved_update_dir;
@@ -1013,27 +1012,7 @@ but CVS uses %s for its own purposes; skipping %s directory",
     }
 
     saved_update_dir = update_dir;
-    update_dir = xmalloc (strlen (saved_update_dir)
-			  + strlen (dir)
-			  + 5);
-    strcpy (update_dir, saved_update_dir);
-
-    /* set up update_dir - skip dots if not at start */
-    if (STREQ (dir, "."))
-    {
-	if (update_dir[0] == '\0')
-	    strcpy (update_dir, dir);
-    }
-    else
-    {
-	if (update_dir[0])
-	{
-	    strcat (update_dir, "/");
-	    strcat (update_dir, dir);
-	}
-	else
-	    strcpy (update_dir, dir);
-    }
+    update_dir = dir_append (update_dir, dir);
 
     /* Here we need a plausible repository name for the sub-directory.  We
      * create one by concatenating the new directory name onto the previous
@@ -1058,19 +1037,11 @@ but CVS uses %s for its own purposes; skipping %s directory",
     {
 	char *cvsadmdir;
 
-	cvsadmdir = xmalloc (strlen (dir)
-			     + sizeof (CVSADM_REP)
-			     + sizeof (CVSADM_ENT)
-			     + 80);
-
-	strcpy (cvsadmdir, dir);
-	strcat (cvsadmdir, "/");
-	strcat (cvsadmdir, CVSADM);
+	cvsadmdir = dir_append (dir, CVSADM);
 	if (isdir (cvsadmdir))
 	{
-	    strcpy (cvsadmdir, dir);
-	    strcat (cvsadmdir, "/");
-	    strcat (cvsadmdir, CVSADM_REP);
+	    free (cvsadmdir);
+	    cvsadmdir = dir_append (dir, CVSADM_REP);
 	    if (!isfile (cvsadmdir))
 	    {
 		/* Some commands like update may have printed "? foo" but
@@ -1084,9 +1055,8 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	    /* Likewise for CVS/Entries.  */
 	    if (dir_return != R_SKIP_ALL)
 	    {
-		strcpy (cvsadmdir, dir);
-		strcat (cvsadmdir, "/");
-		strcat (cvsadmdir, CVSADM_ENT);
+		free (cvsadmdir);
+		cvsadmdir = dir_append (dir, CVSADM_ENT);
 		if (!isfile (cvsadmdir))
 		{
 		    /* Some commands like update may have printed "? foo" but
@@ -1182,13 +1152,6 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	if (frame->flags == R_SKIP_DIRS)
 	    dir_return = R_SKIP_DIRS;
 
-	/* remember if the `.' will be stripped for subsequent dirs */
-	if (STREQ (update_dir, "."))
-	{
-	    update_dir[0] = '\0';
-	    stripped_dot = 1;
-	}
-
 	/* make the recursive call */
 	xframe = *frame;
 	xframe.flags = dir_return;
@@ -1197,12 +1160,7 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	 * CVS/Repository to figure it out per directory.
 	 */
 	if (repository)
-	{
-	    if (STREQ (dir, "."))
-		xframe.repository = xstrdup (repository);
-	    else
-		xframe.repository = Xasprintf ("%s/%s", repository, dir);
-	}
+	    xframe.repository = dir_append (repository, dir);
 	else
 	    xframe.repository = NULL;
 	err += do_recursion (&xframe);
@@ -1211,10 +1169,6 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	    free (xframe.repository);
 	    xframe.repository = NULL;
 	}
-
-	/* put the `.' back if necessary */
-	if (stripped_dot)
-	    (void) strcpy (update_dir, ".");
 
 	/* call-back dir leave proc (if any) */
 	if (process_this_directory && frame->dirleaveproc != NULL)
