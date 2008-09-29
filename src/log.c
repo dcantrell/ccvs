@@ -497,57 +497,38 @@ rlog_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
     char *myargv[2];
     int err = 0;
     int which;
-    char *repository = NULL;
+    char *repository;
     char *where;
 
     if (is_rlog)
     {
-	repository = xmalloc (strlen (current_parsed_root->directory)
-                              + strlen (argv[0])
-			      + (mfile == NULL ? 0 : strlen (mfile) + 1) + 2);
-	(void)sprintf (repository, "%s/%s",
-                       current_parsed_root->directory, argv[0]);
-	where = xmalloc (strlen (argv[0])
-                         + (mfile == NULL ? 0 : strlen (mfile) + 1)
-			 + 1);
-	(void)strcpy (where, argv[0]);
+	repository = dir_append (current_parsed_root->directory, argv[0]);
+	where = xstrdup (argv[0]);
 
 	/* If mfile isn't null, we need to set up to do only part of theu
          * module.
          */
-	if (mfile != NULL)
+	if (mfile)
 	{
-	    char *cp;
-	    char *path;
-
 	    /* If the portion of the module is a path, put the dir part on
              * repos.
              */
-	    if ((cp = strrchr (mfile, '/')) != NULL)
-	    {
-		*cp = '\0';
-		(void)strcat (repository, "/");
-		(void)strcat (repository, mfile);
-		(void)strcat (where, "/");
-		(void)strcat (where, mfile);
-		mfile = cp + 1;
-	    }
-
-	    /* take care of the rest */
-	    path = Xasprintf ("%s/%s", repository, mfile);
+	    char *path = dir_append (repository, mfile);
 	    if (isdir (path))
 	    {
-		/* directory means repository gets the dir tacked on */
-		(void)strcpy (repository, path);
-		(void)strcat (where, "/");
-		(void)strcat (where, mfile);
+		REPLACE (repository, dir_append (repository, mfile));
+		REPLACE (where, dir_append (repository, mfile));
 	    }
 	    else
 	    {
+		char *d = dir_name (mfile);
+		REPLACE (repository, dir_append (repository, d));
+		REPLACE (where, dir_append (where, d));
 		myargv[0] = argv[0];
-		myargv[1] = mfile;
+		myargv[1] = last_component (mfile);
 		argc = 2;
 		argv = myargv;
+		free (d);
 	    }
 	    free (path);
 	}
@@ -555,7 +536,7 @@ rlog_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 	/* cd to the starting repository */
 	if (CVS_CHDIR (repository) < 0)
 	{
-	    error (0, errno, "cannot chdir to %s", repository);
+	    error (0, errno, "cannot chdir to %s", quote (repository));
 	    free (repository);
 	    free (where);
 	    return 1;
@@ -576,7 +557,7 @@ rlog_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 			   argc - 1, argv + 1, local, which, 0, CVS_LOCK_READ,
 			   where, 1, repository);
 
-    if (!(which & W_LOCAL)) free (repository);
+    if (repository) free (repository);
     if (where) free (where);
 
     return err;

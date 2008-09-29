@@ -45,7 +45,7 @@ static int unroll_files_proc (Node *p, void *closure);
 static void addfile (List **listp, char *dir, char *file);
 
 static char *update_dir;
-static char *repository = NULL;
+static const char *repository = NULL;
 static List *filelist = NULL; /* holds list of files on which to operate */
 static List *dirlist = NULL; /* holds list of directories on which to operate */
 
@@ -60,7 +60,7 @@ struct recursion_frame {
     int aflag;
     enum cvs_lock_type locktype;
     int dosrcs;
-    char *repository;			/* Keep track of repository for rtag */
+    const char *repository;		/* Keep track of repository for rtag */
 };
 
 static int do_recursion (struct recursion_frame *frame);
@@ -193,7 +193,7 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
                  void *callerdat, int argc, char **argv, int local,
                  int which, int aflag, enum cvs_lock_type locktype,
                  const char *update_preload, int dosrcs,
-		 char *repository_in)
+		 const char *repository_in)
 {
     int i, err = 0;
 #ifdef CLIENT_SUPPORT
@@ -208,7 +208,7 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
       "                      callerdat=%s, argc=%d, argv=%s,\n"
       "                      local=%d, which=%d, aflag=%d,\n"
       "                      locktype=%d, update_preload=%s\n"
-      "                      dosrcs=%d, repository_in=%s )",
+      "                      dosrcs=%d, repository_in=%s)",
 	   TRACE_PTR (fileproc, 0), TRACE_PTR (filesdoneproc, 1),
 	   TRACE_PTR (direntproc, 2), TRACE_PTR (dirleaveproc, 3),
 	   TRACE_PTR (callerdat, 4), argc, TRACE_PTR (argv, 5),
@@ -227,24 +227,14 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
     frame.locktype = locktype;
     frame.dosrcs = dosrcs;
 
-    /* If our repository_in has a trailing "/.", remove it before storing it
-     * for do_recursion().
-     *
-     * FIXME: This is somewhat of a hack in the sense that many of our callers
-     * painstakingly compute and add the trailing '.' we now remove.
+    /* Callers used to painstakingly append a '/.' to toplevel repository
+     * references, which was then removed here.  Verify this won't happen
+     * anymore.
      */
-    while (repository_in && strlen (repository_in) >= 2
-           && repository_in[strlen (repository_in) - 2] == '/'
-           && repository_in[strlen (repository_in) - 1] == '.')
-    {
-	/* Beware the case where the string is exactly "/." or "//.".
-	 * Paths with a leading "//" are special on some early UNIXes.
-	 */
-	if (strlen (repository_in) == 2 || strlen (repository_in) == 3)
-	    repository_in[strlen (repository_in) - 1] = '\0';
-	else
-	    repository_in[strlen (repository_in) - 2] = '\0';
-    }
+    assert (!repository_in || strlen (repository_in) < 2
+	    || !ISSLASH (repository_in[strlen (repository_in) - 2])
+	    || repository_in[strlen (repository_in) - 1] != '.');
+
     frame.repository = repository_in;
 
     expand_wild (argc, argv, &argc, &argv);
@@ -254,12 +244,6 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
     else
 	update_dir = xstrdup (update_preload);
 
-    /* clean up from any previous calls to start_recursion */
-    if (repository)
-    {
-	free (repository);
-	repository = NULL;
-    }
     if (filelist)
 	dellist (&filelist); /* FIXME-krp: no longer correct. */
     if (dirlist)
@@ -722,17 +706,15 @@ do_recursion (struct recursion_frame *frame)
     if (frame->which & W_LOCAL)
     {
 	if (isdir (CVSADM))
-	{
-	    repository = Name_Repository (NULL, update_dir);
-	    srepository = repository;		/* remember what to free */
-	}
+	    /* Use SREPOSITORY to remember what to free.  */
+	    repository = srepository = Name_Repository (NULL, update_dir);
 	else
 	    repository = NULL;
     }
     else
     {
 	repository = frame->repository;
-	assert (repository != NULL);
+	assert (repository);
     }
 
     fileattr_startdir (repository);
@@ -968,11 +950,8 @@ do_dir_proc (Node *p, void *closure)
     struct recursion_frame xframe;
     char *dir = p->key;
     char *newrepos;
-    List *sdirlist;
-    char *srepository;
     Dtype dir_return = R_PROCESS;
     int err = 0;
-    struct saved_cwd cwd;
     char *saved_update_dir;
     bool process_this_directory = true;
 
@@ -1137,11 +1116,13 @@ but CVS uses %s for its own purposes; skipping %s directory",
     /* only process the dir if the return code was 0 */
     if (dir_return != R_SKIP_ALL)
     {
+	const char *srepository = repository;
+	List *sdirlist = dirlist;
+	struct saved_cwd cwd;
+
 	/* save our current directory and static vars */
         if (save_cwd (&cwd))
 	    error (1, errno, "Failed to save current directory.");
-	sdirlist = dirlist;
-	srepository = repository;
 	dirlist = NULL;
 
 	/* cd to the sub-directory */
@@ -1166,12 +1147,15 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	err += do_recursion (&xframe);
 	if (xframe.repository)
 	{
-	    free (xframe.repository);
+	    /* If this is set, then it is okay to free it because we just
+	     * allocated it a few lines up.
+	     */
+	    free ((void *)xframe.repository);
 	    xframe.repository = NULL;
 	}
 
 	/* call-back dir leave proc (if any) */
-	if (process_this_directory && frame->dirleaveproc != NULL)
+	if (process_this_directory && frame->dirleaveproc)
 	    err = frame->dirleaveproc (frame->callerdat, dir, err, update_dir,
 				       frent->entries);
 
@@ -1189,6 +1173,8 @@ but CVS uses %s for its own purposes; skipping %s directory",
 
     return err;
 }
+
+
 
 /*
  * Add a node to a list allocating the list if necessary.
