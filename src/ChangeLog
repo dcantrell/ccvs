@@ -1,5 +1,8 @@
 2008-09-28  Derek R. Price  <derek@ximbiot.com>
 
+	* checkout.c (checkout): Minor cleanup.
+	* parseinfo.c (Parse_Info): Add function trace.
+
 	Fixes recurse.c error from two commits back by correctly preserving
 	and composing update_dir.  Incidentally fixes a few other minor bugs.
 	* commit.c (commit_direntproc): Handle corrected update_dir.

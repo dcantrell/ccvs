@@ -347,9 +347,7 @@ checkout (int argc, char **argv)
 	send_arg ("--");
 
 	if (expand_modules)
-	{
 	    client_send_expansions (local, where, 1);
-	}
 	else
 	{
 	    int i;
