@@ -63,6 +63,7 @@ int start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 		     DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc,
 		     void *callerdat, int argc, char *argv[], int local,
 		     int which, int aflag, enum cvs_lock_type locktype,
-		     const char *update_preload, int dosrcs, char *repository);
+		     const char *update_preload, int dosrcs,
+		     const char *repository);
 
 #endif /* RECURSE_H */

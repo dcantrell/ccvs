@@ -482,14 +482,12 @@ do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate,
 
     TRACE (TRACE_FUNCTION,
 "do_update (%s, %s, %s, %d, %d, %d, %d, %d, %d, %d, %s, %s, %s, %s, %s, %d, %s)",
-           xoptions ? xoptions : "(null)", xtag ? xtag : "(null)",
-	   xdate ? xdate : "(null)", xforce, local, xbuild, xaflag, xprune,
-	   xpipeout, which, xjoin_rev1 ? xjoin_rev1 : "(null)",
-	   xjoin_date1 ? xjoin_date1 : "(null)",
-	   xjoin_rev2 ? xjoin_rev2 : "(null)",
-	   xjoin_date2 ? xjoin_date2 : "(null)",
-	   preload_update_dir ? preload_update_dir : "(null)", xdotemplate,
-	   repository ? repository : "(null)");
+           TRACE_NULL (xoptions), TRACE_NULL (xtag),
+	   TRACE_NULL (xdate), xforce, local, xbuild, xaflag, xprune,
+	   xpipeout, which, TRACE_NULL (xjoin_rev1), TRACE_NULL (xjoin_date1),
+	   TRACE_NULL (xjoin_rev2), TRACE_NULL (xjoin_date2),
+	   TRACE_NULL (preload_update_dir), xdotemplate,
+	   TRACE_NULL (repository));
 
     /* Set globals.  */
     if (server_active && server_use_bases ())

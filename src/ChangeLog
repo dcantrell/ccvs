@@ -1,5 +1,14 @@
 2008-09-29  Derek R. Price  <derek@ximbiot.com>
 
+	* log.c (rlog_proc): Avoid adding trailing /. to repository.  Some
+	cleanup.
+	* recurse.c (repository, struct recursion_frame, start_recursion):
+	Declare repository const char *.
+	(do_recursion, do_dir_proc): Ditto.  Some cleanup.
+	* recurse.h (start_recursion): Update prototype to match.
+	* subr.h (REPLACE): New convenience macro.
+	* update.c (do_update): Cleanup traces.
+
 	* client.c (is_cvsroot_level): Improve commenting, minor cleanup.
 
 2008-09-28  Derek R. Price  <derek@ximbiot.com>

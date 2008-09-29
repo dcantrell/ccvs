@@ -181,4 +181,9 @@ strneq (const char *a, const char *b, size_t n)
 /* Convenience macro for equating a NULL pointer and the empty string.  */
 #define NULL2MT(s) (s ? s : "")
 
+/* Replace pointer D with S, freeing D afterwards.  This is useful when S
+ * is an expression containing D.
+ */
+#define REPLACE(d, s)	{void *tmp = (d); d = (s); free (tmp);}
+
 #endif /* !SUBR_H */
