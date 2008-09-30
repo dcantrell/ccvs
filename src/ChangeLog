@@ -1,3 +1,10 @@
+2008-09-30  Derek R. Price  <derek@ximbiot.com>
+
+	* checkout.c (preload_update_dir): Eliminate global.  It was used in
+	only one function which restored its state on exit, and it even
+	uselessly duplicated the value of another variable within that
+	function.
+
 2008-09-29  Derek R. Price  <derek@ximbiot.com>
 
 	* client.c (is_cvsroot_level): Replace a conditional with an

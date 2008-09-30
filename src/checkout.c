@@ -113,7 +113,6 @@ static char *date;
 static char *join_rev1, *join_date1;
 static char *join_rev2, *join_date2;
 static bool join_tags_validated;
-static char *preload_update_dir;
 static char *history_name;
 static enum mtype m_type;
 
@@ -140,7 +139,7 @@ checkout (int argc, char **argv)
 	options = NULL;
     }
     tag = date = join_rev1 = join_date1 = join_rev2 = join_date2 =
-	  join_orig1 = join_orig2 = preload_update_dir = NULL;
+	  join_orig1 = join_orig2 = NULL;
     history_name = NULL;
     tag_validated = join_tags_validated = false;
 
@@ -631,7 +630,6 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
     int which;
     char *cp;
     char *repository;
-    char *oldupdate = NULL;
     char *where;
 
     assert (argc);
@@ -655,12 +653,6 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
        reallocating this string. */
     repository = Xasprintf ("%s/%s", current_parsed_root->directory, argv[0]);
     Sanitize_Repository_Name (repository);
-
-
-    /* save the original value of preload_update_dir */
-    if (preload_update_dir != NULL)
-	oldupdate = xstrdup (preload_update_dir);
-
 
     /* Allocate space and set up the where variable.  We allocate more
        space than necessary here so that we don't have to keep
@@ -787,17 +779,6 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
 	}
 	free (path);
     }
-
-    if (preload_update_dir)
-    {
-	preload_update_dir =
-	    xrealloc (preload_update_dir,
-		      strlen (preload_update_dir) + strlen (where) + 2);
-	strcat (preload_update_dir, "/");
-	strcat (preload_update_dir, where);
-    }
-    else
-	preload_update_dir = xstrdup (where);
 
     /*
      * At this point, where is the directory we want to build, repository is
@@ -972,7 +953,7 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
 		if (!isdir (repository))
 		    error (1, 0, "there is no repository %s", repository);
 
-		Create_Admin (".", preload_update_dir, repository,
+		Create_Admin (".", where, repository,
 			      NULL, NULL, 0, 0, m_type == CHECKOUT);
 		fp = xfopen (CVSADM_ENTSTAT, "w+");
 		if (fclose (fp) == EOF)
@@ -988,7 +969,7 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
 		if (!isdir (repository))
 		    error (1, 0, "there is no repository %s", repository);
 
-		Create_Admin (".", preload_update_dir, repository, tag, date,
+		Create_Admin (".", where, repository, tag, date,
 
 			      /* FIXME?  This is a guess.  If it is important
 				 for nonbranch to be set correctly here I
@@ -1007,7 +988,7 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
 		error (1, 0, "cannot export into working directory");
 
 	    /* get the contents of the previously existing repository */
-	    repos = Name_Repository (NULL, preload_update_dir);
+	    repos = Name_Repository (NULL, where);
 	    if (fncmp (repository, repos) != 0)
 	    {
 		char *prepos = xstrdup (primary_root_inverse_translate (repos));
@@ -1080,32 +1061,28 @@ checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
     if (!(local_specified || argc > 1))
     {
 	if (!pipeout)
-	    history_write (m_type == CHECKOUT ? 'O' : 'E', preload_update_dir,
+	    history_write (m_type == CHECKOUT ? 'O' : 'E', where,
 			   history_name, where, repository);
 	err += do_update (0, NULL, options, tag, date,
 			  force_tag_match, false /* !local */ ,
 			  true /* update -d */ , aflag, checkout_prune_dirs,
 			  pipeout, which, join_rev1, join_date1,
-			  join_rev2, join_date2,
-			  preload_update_dir, m_type == CHECKOUT,
+			  join_rev2, join_date2, where, m_type == CHECKOUT,
 			  repository);
 	goto out;
     }
 
     /* Don't log "export", just regular "checkouts" */
     if (m_type == CHECKOUT && !pipeout)
-	history_write ('O', preload_update_dir, history_name, where,
-		       repository);
+	history_write ('O', where, history_name, where, repository);
 
     /* go ahead and call update now that everything is set */
     err += do_update (argc - 1, argv + 1, options, tag, date,
 		      force_tag_match, local_specified, true /* update -d */,
 		      aflag, checkout_prune_dirs, pipeout, which, join_rev1,
-		      join_date1, join_rev2, join_date2, preload_update_dir,
+		      join_date1, join_rev2, join_date2, where,
 		      m_type == CHECKOUT, repository);
 out:
-    free (preload_update_dir);
-    preload_update_dir = oldupdate;
     free (where);
     free (repository);
     return err;
