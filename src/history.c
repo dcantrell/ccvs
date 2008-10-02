@@ -20,6 +20,7 @@
 #include "history.h"
 
 /* GNULIB */
+#include "quote.h"
 #include "save-cwd.h"
 
 /* CVS */
@@ -222,19 +223,19 @@ static struct hrec
     char *mod;		/* The module within which the file is contained */
     time_t date;	/* Calculated from date stored in record */
     long idx;		/* Index of record, for "stable" sort. */
+    unsigned long version;	   /* Version number for line
+				    * interpretation.
+				    */
     const char *source_file_name;  /* For error messages.  */
     long source_line_num;	   /* For error messages.  */
 } *hrec_head;
 static long hrec_idx;
 
 
-static void fill_hrec (const char *source_file_name, long source_line_num,
-		       char *line, struct hrec * hr);
 static int accept_hrec (struct hrec * hr, struct hrec * lr);
 static int select_hrec (struct hrec * hr);
 static int sort_order (const void *l, const void *r);
 static int within (char *find, char *string);
-static void expand_modules (void);
 static void read_hrecs (List *flist);
 static void report_hrecs (void);
 static void save_file (char *dir, char *name, char *module);
@@ -396,9 +397,9 @@ sort_order (const void *l, const void *r)
 
 
 /* Get the name of the history log, either from CVSROOT/config, or via the
- * hard-coded default.
+ * hard-coded default.  Return the result in freshly allocated memory.
  */
-static const char *
+static char *
 get_history_log_name (time_t now)
 {
     char *log_name;
@@ -420,14 +421,9 @@ get_history_log_name (time_t now)
     }
 
     if (!config->HistoryLogPath)
-    {
 	/* Use the default.  */
-	log_name = xmalloc (strlen (current_parsed_root->directory)
-			    + sizeof (CVSROOTADM)
-			    + sizeof (CVSROOTADM_HISTORY) + 3);
-	sprintf (log_name, "%s/%s/%s", current_parsed_root->directory,
-		 CVSROOTADM, CVSROOTADM_HISTORY);
-    }
+	log_name = dir_append_dirs (current_parsed_root->directory, CVSROOTADM,
+				    CVSROOTADM_HISTORY, NULL);
 
     return log_name;
 }
@@ -690,15 +686,12 @@ history (int argc, char **argv)
     if (all_users)
 	save_user ("");
 
-    if (mod_list)
-	expand_modules ();
-
     if (tag_report)
     {
 	if (!strchr (rec_types, 'T'))
 	{
 	    rec_types = xrealloc (rec_types, strlen (rec_types) + 5);
-	    (void) strcat (rec_types, "T");
+	    strcat (rec_types, "T");
 	}
     }
     else if (extract || extract_all)
@@ -789,11 +782,10 @@ history (int argc, char **argv)
     read_hrecs (flist);
     if (hrec_count > 0)
 	qsort (hrec_head, hrec_count, sizeof (struct hrec), sort_order);
-    report_hrecs ();
-    free_hrecs ();
+    report_hrecs();
+    free_hrecs();
     dellist (&flist);
-    if (since_date != NULL)
-	free (since_date);
+    if (since_date) free (since_date);
     free (since_rev);
     free (since_tag);
     free (backto);
@@ -812,19 +804,21 @@ history_write (int type, const char *update_dir, const char *revs,
 {
     char *fname = NULL;
     char *workdir;
-    char *username = getcaller ();
+    char *username = getcaller();
     int fd;
     char *line;
-    char *slash = "", *cp;
+    char *cp;
     const char *cp2, *repos;
     int i;
     static char *tilde = "";
     static char *PrCurDir = NULL;
     time_t now;
+#define HISTORY_VERSION 1l
 
-    if (logoff)			/* History is turned off by noexec or
-				 * readonlyfs.
-				 */
+    TRACE (TRACE_FUNCTION, "history_write (%d, %s, %s, %s, %s)",
+	   type, update_dir, TRACE_NULL (revs), name, repository);
+
+    if (logoff)		/* History is turned off by noexec or readonlyfs.  */
 	return;
     if (!strchr (config->logHistory, type))	
 	return;
@@ -838,9 +832,9 @@ history_write (int type, const char *update_dir, const char *revs,
     {
 	char *pwdir;
 
-	pwdir = get_homedir ();
+	pwdir = get_homedir();
 	PrCurDir = CurDir;
-	if (pwdir != NULL)
+	if (pwdir)
 	{
 	    /* Assumes neither CurDir nor pwdir ends in '/' */
 	    i = strlen (pwdir);
@@ -858,7 +852,7 @@ history_write (int type, const char *update_dir, const char *revs,
 		if (save_cwd (&cwd))
 		    error (1, errno, "Failed to save current directory.");
 
-		if (CVS_CHDIR (pwdir) < 0 || (homedir = xgetcwd ()) == NULL)
+		if (CVS_CHDIR (pwdir) < 0 || !(homedir = xgetcwd()))
 		    homedir = pwdir;
 
 		if (restore_cwd (&cwd))
@@ -880,17 +874,7 @@ history_write (int type, const char *update_dir, const char *revs,
 	}
     }
 
-    if (type == 'T')
-    {
-	repos = update_dir;
-	update_dir = "";
-    }
-    else if (update_dir && *update_dir)
-	slash = "/";
-    else
-	update_dir = "";
-
-    workdir = Xasprintf ("%s%s%s%s", tilde, PrCurDir, slash, update_dir);
+    workdir = dir_append_dirs (tilde, PrCurDir, update_dir, NULL);
 
     /*
      * "workdir" is the directory where the file "name" is. ("^~" == $HOME)
@@ -930,6 +914,8 @@ history_write (int type, const char *update_dir, const char *revs,
      * "repos".  On the other hand, we *can* run off the top of "repos".
      *
      * Only "compress" if we save characters.
+     *
+     * As of CVS 1.12.14, the 7th field is a hex version number 1.
      */
 
     cp = workdir + strlen (workdir) - 1;
@@ -940,16 +926,15 @@ history_write (int type, const char *update_dir, const char *revs,
     if (i > 2)
     {
 	i = strlen (repos) - i;
-	(void) sprintf ((cp + 1), "*%x", i);
+	sprintf (cp + 1, "*%x", i);
     }
 
-    if (!revs)
-	revs = "";
     now = time (NULL);
-    line = Xasprintf ("%c%08lx|%s|%s|%s|%s|%s\n", type, (long) now,
-		      username, workdir, repos, revs, name);
+    line = Xasprintf ("%c%08lx|%s|%s|%s|%s|%s|%lx\n", type,
+		      (long) now, username, workdir, repos, NULL2MT (revs),
+		      name, HISTORY_VERSION);
 
-    fname = (char *) get_history_log_name (now);
+    fname = get_history_log_name (now);
 
     if (!history_lock (current_parsed_root->directory))
 	/* history_lock() will already have printed an error on failure.  */
@@ -960,11 +945,12 @@ history_write (int type, const char *update_dir, const char *revs,
     {
 	if (!really_quiet)
             error (0, errno,
-		   "warning: cannot open history file `%s' for write", fname);
+		   "warning: cannot open history file %s for write",
+		   quote (fname));
         goto out;
     }
 
-    TRACE (TRACE_FUNCTION, "open (`%s', a)", fname);
+    TRACE (TRACE_FUNCTION, "open (%s, a)", quote (fname));
 
     /* Lessen some race conditions on non-Posix-compliant hosts.
      *
@@ -975,18 +961,18 @@ history_write (int type, const char *update_dir, const char *revs,
      * unnecessary.
      */
     if (lseek (fd, (off_t) 0, SEEK_END) == -1)
-	error (1, errno, "cannot seek to end of history file: %s", fname);
+	error (1, errno, "cannot seek to end of history file: %s",
+	       quote (fname));
 
     if (write (fd, line, strlen (line)) < 0)
-	error (1, errno, "cannot write to history file: %s", fname);
+	error (1, errno, "cannot write to history file: %s", quote (fname));
     free (line);
-    if (close (fd) != 0)
-	error (1, errno, "cannot close history file: %s", fname);
+    if (close (fd))
+	error (1, errno, "cannot close history file: %s", quote (fname));
     free (workdir);
  out:
-    if (fname)
-	free (fname);
-    clear_history_lock ();
+    if (fname) free (fname);
+    clear_history_lock();
 }
 
 
@@ -1011,6 +997,8 @@ save_user (char *name)
     }
     user_list[user_count++] = xstrdup (name);
 }
+
+
 
 /*
  * save_file() adds file name and associated module to the file list to select.
@@ -1059,6 +1047,8 @@ save_file (char *dir, char *name, char *module)
     }
 }
 
+
+
 static void
 save_module (char *module)
 {
@@ -1076,10 +1066,7 @@ save_module (char *module)
     mod_list[mod_count++] = xstrdup (module);
 }
 
-static void
-expand_modules (void)
-{
-}
+
 
 /* fill_hrec
  *
@@ -1089,14 +1076,13 @@ expand_modules (void)
  *
  * Split it into 7 parts and drop the parts into a "struct hrec".
  * Return a pointer to the character following the newline.
- * 
  */
 
 #define NEXT_BAR(here) do { \
 	while (isspace (*line)) line++; \
 	hr->here = line; \
 	while ((c = *line++) && c != '|') ; \
-	if (!c) return; line[-1] = '\0'; \
+	if (!c) goto done_reading; line[-1] = '\0'; \
 	} while (0)
 
 static void
@@ -1105,9 +1091,11 @@ fill_hrec (const char *source_file_name, long source_line_num,
 {
     char *cp;
     int c;
+    static bool warned_version;
 
-    hr->type = hr->user = hr->dir = hr->repos = hr->rev = hr->file =
-	hr->end = hr->mod = NULL;
+    /* initialize new records */
+    memset (hr, 0, sizeof (struct hrec));
+
     hr->date = -1;
     hr->idx = ++hrec_idx;
     hr->source_file_name = source_file_name;
@@ -1119,11 +1107,11 @@ fill_hrec (const char *source_file_name, long source_line_num,
     hr->type = line++;
     hr->date = strtoul (line, &cp, 16);
     if (cp == line || *cp != '|')
-	return;
+	goto done_reading;
     line = cp + 1;
     NEXT_BAR (user);
     NEXT_BAR (dir);
-    if ((cp = strrchr (hr->dir, '*')) != NULL)
+    if (cp = strrchr (hr->dir, '*'))
     {
 	*cp++ = '\0';
 	hr->end = line + strtoul (cp, NULL, 16);
@@ -1136,7 +1124,50 @@ fill_hrec (const char *source_file_name, long source_line_num,
 	hr->mod = line;
 
     NEXT_BAR (file);
+
+    /* There is a version number.  This started in CVS 1.12.14.  */
+    hr->version = strtoul (line, &cp, 16);
+    if (cp == line || *cp != '|')
+	goto done_reading;
+    line = cp + 1;
+
+done_reading:
+    /* Post-process the history record based on the version number.
+     *
+     * If each case converts the record into the state required for the
+     * next version up, it may eventually become a little processor intensive,
+     * but it's going to be very easy to maintain.
+     */
+    switch (hr->version)
+    {
+	case 0:
+	    /* Prior to version 1, tag records had the tag op stored in the
+	     * repository field and a toplevel repository stored in the module
+	     * field.
+	     */
+	    if (*hr->type == 'T')
+	    {
+		char *tmp = hr->mod;
+		hr->mod = hr->repos;
+		hr->repos = tmp;
+	    }
+	    /* Done converting to version 1.  Fall through in case we need to
+	     * continue converting to a later version.
+	     */
+	case 1:
+	    /* This contains what we currently expect.  */
+	    break;
+	default:
+	    if (!really_quiet && !warned_version)
+	    {
+		error (0, 0, "unrecognized history record version: %ul",
+		       hr->version);
+		warned_version = true;
+	    }
+	    break;
+    }
 }
+
 
 
 #ifndef STAT_BLOCKSIZE
@@ -1172,19 +1203,19 @@ read_hrecs_file (Node *p, void *closure)
 
     if ((fd = CVS_OPEN (fname, O_RDONLY | OPEN_BINARY)) < 0)
     {
-	error (0, errno, "cannot open history file `%s'", fname);
+	error (0, errno, "cannot open history file %s", quote (fname));
 	return 0;
     }
 
     if (fstat (fd, &st_buf) < 0)
     {
-	error (0, errno, "can't stat history file `%s'", fname);
+	error (0, errno, "can't stat history file %s", quote (fname));
 	return 0;
     }
 
     if (!(st_buf.st_size))
     {
-	error (0, 0, "history file `%s' is empty", fname);
+	error (0, 0, "history file %s is empty", quote (fname));
 	return 0;
     }
 
@@ -1201,10 +1232,9 @@ read_hrecs_file (Node *p, void *closure)
 	if (nl >= cpend)
 	{
 	    if (nl - cp >= STAT_BLOCKSIZE (st_buf))
-	    {
-		error(1, 0, "line %ld of history file `%s' too long (> %lu)",
-		      line_num, fname, (unsigned long) STAT_BLOCKSIZE(st_buf));
-	    }
+		error(1, 0, "line %ld of history file %s too long (> %lu)",
+		      line_num, quote (fname),
+		      (unsigned long) STAT_BLOCKSIZE(st_buf));
 	    if (nl > cp)
 		memmove (cpstart, cp, nl - cp);
 	    nl = cpstart + (nl - cp);
@@ -1237,9 +1267,6 @@ read_hrecs_file (Node *p, void *closure)
 		error (1, 0, "Too many history records in history file.");
 
 	    hrec_head = xnrealloc (hrec_head, hrec_max, sizeof (struct hrec));
-	    /* initialize newly added records */
-	    memset (&hrec_head[hrec_count], 0,
-		    HREC_INCREMENT * sizeof (struct hrec));
 	    if (last_since_tag)
 		last_since_tag = hrec_head + (last_since_tag - old_head);
 	    if (last_backto)
@@ -1536,6 +1563,8 @@ select_hrec (struct hrec *hr)
     return 1;		/* Select this record unless rejected above. */
 }
 
+
+
 /* The "sort_order" routine (when handed to qsort) has arranged for the
  * hrecs files to be in the right order for the report.
  *
@@ -1553,17 +1582,17 @@ report_hrecs (void)
 
     if (*since_tag && !last_since_tag)
     {
-	(void) printf ("No tag found: %s\n", since_tag);
+	printf ("No tag found: %s\n", since_tag);
 	return;
     }
     else if (*backto && !last_backto)
     {
-	(void) printf ("No module, file or repository with: %s\n", backto);
+	printf ("No module, file or repository with: %s\n", backto);
 	return;
     }
     else if (hrec_count < 1)
     {
-	(void) printf ("No records selected.\n");
+	printf ("No records selected.\n");
 	return;
     }
 
@@ -1583,23 +1612,20 @@ report_hrecs (void)
 
 	ty = *(lr->type);
 	repos = xstrdup (lr->repos);
-	if ((cp = strrchr (repos, '/')) != NULL)
+	user_len = MAX (user_len, strlen (lr->user));
+	if (ty != 'T')
 	{
-	    if (lr->mod && STREQ (++cp, lr->mod))
+	    if (cp = strrchr (repos, '/'))
 	    {
-		(void) strcpy (cp, "*");
+		if (lr->mod && STREQ (++cp, lr->mod))
+		    strcpy (cp, "*");
 	    }
+	    file_len = MAX (file_len, strlen (lr->file));
+	    repos_len = MAX (repos_len, strlen (repos));
+	    rev_len = MAX (rev_len, strlen (lr->rev));;
+	    if (lr->mod)
+		mod_len = MAX (mod_len, strlen (lr->mod));
 	}
-	if ((i = strlen (lr->user)) > user_len)
-	    user_len = i;
-	if ((i = strlen (lr->file)) > file_len)
-	    file_len = i;
-	if (ty != 'T' && (i = strlen (repos)) > repos_len)
-	    repos_len = i;
-	if (ty != 'T' && (i = strlen (lr->rev)) > rev_len)
-	    rev_len = i;
-	if (lr->mod && (i = strlen (lr->mod)) > mod_len)
-	    mod_len = i;
 	free (repos);
     }
 
@@ -1631,46 +1657,40 @@ report_hrecs (void)
 	else
 	    tm = localtime (&(lr->date));
 
-	(void) printf ("%c %04d-%02d-%02d %02d:%02d %s %-*s", ty,
-		  tm->tm_year+1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour,
-		  tm->tm_min, tz_name, user_len, lr->user);
+	printf ("%c %04d-%02d-%02d %02d:%02d %s %-*s", ty,
+		tm->tm_year+1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour,
+		tm->tm_min, tz_name, user_len, lr->user);
 
 	workdir = xmalloc (strlen (lr->dir) + strlen (lr->end) + 10);
-	(void) sprintf (workdir, "%s%s", lr->dir, lr->end);
-	if ((cp = strrchr (workdir, '/')) != NULL)
+	sprintf (workdir, "%s%s", lr->dir, lr->end);
+	if (cp = strrchr (workdir, '/'))
 	{
 	    if (lr->mod && STREQ (++cp, lr->mod))
-	    {
-		(void) strcpy (cp, "*");
-	    }
+		strcpy (cp, "*");
 	}
 	repos = xmalloc (strlen (lr->repos) + 10);
-	(void) strcpy (repos, lr->repos);
-	if ((cp = strrchr (repos, '/')) != NULL)
+	strcpy (repos, lr->repos);
+	if (cp = strrchr (repos, '/'))
 	{
 	    if (lr->mod && STREQ (++cp, lr->mod))
-	    {
-		(void) strcpy (cp, "*");
-	    }
+		strcpy (cp, "*");
 	}
 
 	switch (ty)
 	{
 	    case 'T':
-		/* 'T'ag records: repository is a "tag type", rev is the tag */
-		(void) printf (" %-*s [%s:%s]", mod_len, lr->mod, lr->rev,
-			       repos);
+		/* 'T'ag records: module is a "tag type", rev is the tag */
+		printf (" %-*s [%s:%s]", repos_len, repos, lr->rev, lr->mod);
 		if (working)
-		    (void) printf (" {%s}", workdir);
+		    printf (" {%s}", workdir);
 		break;
 	    case 'F':
 	    case 'E':
 	    case 'O':
 		if (lr->rev && *(lr->rev))
-		    (void) printf (" [%s]", lr->rev);
-		(void) printf (" %-*s =%s%-*s %s", repos_len, repos, lr->mod,
-			       mod_len + 1 - (int) strlen (lr->mod),
-			       "=", workdir);
+		    printf (" [%s]", lr->rev);
+		printf (" %-*s =%s%-*s %s", repos_len, repos, lr->mod,
+			mod_len + 1 - (int) strlen (lr->mod), "=", workdir);
 		break;
 	    case 'W':
 	    case 'U':
@@ -1681,15 +1701,15 @@ report_hrecs (void)
 	    case 'A':
 	    case 'R':
 	    case 'X':
-		(void) printf (" %-*s %-*s %-*s =%s= %s", rev_len, lr->rev,
-			       file_len, lr->file, repos_len, repos,
-			       lr->mod ? lr->mod : "", workdir);
+		printf (" %-*s %-*s %-*s =%s= %s", rev_len, lr->rev,
+			file_len, lr->file, repos_len, repos,
+			NULL2MT (lr->mod), workdir);
 		break;
 	    default:
-		(void) printf ("Hey! What is this junk? RecType[0x%2.2x]", ty);
+		printf ("Hey! What is this junk? RecType[0x%2.2x]", ty);
 		break;
 	}
-	(void) putchar ('\n');
+	putchar ('\n');
 	free (workdir);
 	free (repos);
     }
