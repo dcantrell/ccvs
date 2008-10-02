@@ -1,3 +1,7 @@
+2008-10-02  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note new tag/rtag history logging behavior.
+
 2008-09-16  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: No longer need to detect signal manipulation functions.
