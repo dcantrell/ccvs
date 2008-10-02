@@ -226,9 +226,9 @@ cvstag (int argc, char **argv)
     if (current_parsed_root->isremote)
     {
 	/* We're the client side.  Fire up the remote server.  */
-	start_server ();
+	start_server();
 	
-	ign_setup ();
+	ign_setup();
 
 	if (attic_too)
 	    send_arg ("-a");
@@ -277,7 +277,7 @@ cvstag (int argc, char **argv)
 	    send_to_server ("tag\012", 0);
 	}
 
-        return get_responses_and_close ();
+        return get_responses_and_close();
     }
 #endif
 
@@ -285,12 +285,9 @@ cvstag (int argc, char **argv)
     {
 	DBM *db;
 	int i;
-	db = open_module ();
+	db = open_module();
 	for (i = 0; i < argc; i++)
 	{
-	    /* XXX last arg should be repository, but doesn't make sense here */
-	    history_write ('T', (delete_flag ? "D" : (numtag ? numtag :
-			   (date ? date : "A"))), symtag, argv[i], "");
 	    err += do_module (db, argv[i], TAG,
 			      delete_flag ? "Untagging" : "Tagging",
 			      rtag_proc, NULL, 0, local, run_module_prog,
@@ -413,6 +410,19 @@ tag_filesdoneproc (void *callerdat, int err, const char *repository,
         tlist = NULL;
     if (list_isempty (tlist))
         return err;
+
+    /* FIXME: This is more information than used to be logged about tags, but
+     * it still isn't enough to distinguish between a tag of everything in the
+     * directory and a tags of a subset of the files.
+     *
+     * I was thinking maybe a new 't' history type that logged individual
+     * tagged files, including the revision that was tagged.  This would make
+     * it possible to recover deleted branches and tags using the history
+     * file and `cvs admin'.
+     */
+    history_write ('T', update_dir, symtag,
+		   delete_flag ? "D" : numtag ? numtag : date ? date : "A",
+		   repository);
 
     ppd.tlist = tlist;
     ppd.delete_flag = delete_flag;
@@ -1000,7 +1010,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
     {
 	/* If -a specified, clean up any old tags */
 	if (attic_too)
-	    (void)rtag_delete (rcsfile);
+	    rtag_delete (rcsfile);
 
 	if (!quiet && !force_tag_match)
 	{
@@ -1043,7 +1053,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 	 */
 	rev = branch_mode ? RCS_magicrev (rcsfile, version) : version;
 	oversion = RCS_getversion (rcsfile, symtag, NULL, 1, NULL);
-	if (oversion != NULL)
+	if (oversion)
 	{
 	    int isbranch = RCS_nodeisbranch (finfo->rcs, symtag);
 
@@ -1085,18 +1095,15 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 	    free (oversion);
 	}
 	retcode = RCS_settag (rcsfile, symtag, rev);
-	if (retcode == 0)
+	if (!retcode)
 	    RCS_rewrite (rcsfile, NULL, NULL);
     }
 
-    if (retcode != 0)
-    {
+    if (retcode)
 	error (1, retcode == -1 ? errno : 0,
-	       "failed to set tag `%s' to revision `%s' in `%s'",
-	       symtag, rev, rcsfile->path);
-        retval = 1;
-	goto free_vars_and_return;
-    }
+	       "failed to set tag %s to revision %s in %s",
+	       quote_n (0, symtag), quote_n (1, rev),
+	       quote_n (2, rcsfile->path));
 
 free_vars_and_return:
     if (branch_mode && rev) free (rev);
@@ -1401,6 +1408,7 @@ tag_dirproc (void *callerdat, const char *dir, const char *repos,
     if (!quiet)
 	error (0, 0, "%s %s", delete_flag ? "Untagging" : "Tagging",
                NULL2DOT (update_dir));
+
     return R_PROCESS;
 }
 

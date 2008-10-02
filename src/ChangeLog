@@ -1,5 +1,20 @@
 2008-10-02  Derek R. Price  <derek@ximbiot.com>
 
+	* history.c: Some cleanup.
+	(expand_modules): Removed this stub function.
+	(get_history_log_name): Don't return const since it is freshly
+	allocated.
+	(history_write): Add version number to history records.  Use tag
+	fields like other record types.
+	(fill_hrec): Load version number & postprocess history records as
+	needed.  Zero records with memset.
+	(read_hrecs_file): Don't zero records redundantly with fill_hrec().
+	(report_hrecs): Find tag data in the same place as other record types.
+	* sanity.sh (basic2-64): Expect new tag records.
+	* tag.c: Some cleanup.
+	(cvstag): Move history log call to...
+	(tag_filesdoneproc): ...here, where we have more information.
+
 	* modules.c (my_module): Clean up TRACE.
 	* subr.h [NULL2DOT, NULL2MT]: Add parens for safety.
 

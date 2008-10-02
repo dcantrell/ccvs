@@ -5275,53 +5275,81 @@ ${SPROG} update: Updating dir1/dir2"
 		# ditch that notion and require GNU expr (or dejagnu or....)
 		# since it seems to be so painful.
 
-		dotest basic2-64 "${testcvs} his -x TOFWUPCGMAR -a" \
-"O [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir           =first-dir= ${TESTDIR}/\*
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir           == ${TESTDIR}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir           == ${TESTDIR}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1      == ${TESTDIR}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1      == ${TESTDIR}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1/dir2 == ${TESTDIR}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1/dir2 == ${TESTDIR}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir           == ${TESTDIR}
-M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == ${TESTDIR}
-R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir           == ${TESTDIR}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1      == ${TESTDIR}
-M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1      == ${TESTDIR}
-R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1      == ${TESTDIR}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1/dir2 == ${TESTDIR}
-M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1/dir2 == ${TESTDIR}
-R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1/dir2 == ${TESTDIR}
-F [0-9-]* [0-9:]* ${PLUS}0000 ${username}                     =first-dir= ${TESTDIR}/\*
-T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-head:A\]
-T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-tag:rtagged-by-head\]
-T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
-O [0-9-]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= ${TESTDIR}/\*
-U [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == ${TESTDIR}/first-dir
-W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == ${TESTDIR}/first-dir" \
-"O [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir           =first-dir= <remote>/\*
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir           == <remote>
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir           == <remote>
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1      == <remote>
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1      == <remote>
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1/dir2 == <remote>
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1/dir2 == <remote>
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir           == <remote>
-M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == <remote>
-R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir           == <remote>
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1      == <remote>
-M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1      == <remote>
-R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1      == <remote>
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1/dir2 == <remote>
-M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1/dir2 == <remote>
-R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1/dir2 == <remote>
-F [0-9-]* [0-9:]* ${PLUS}0000 ${username}                     =first-dir= <remote>/\*
-T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-head:A\]
-T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-tag:rtagged-by-head\]
-T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
-O [0-9-]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= <remote>/\*
-[UP] [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == <remote>
-W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == <remote>"
+		dotest basic2-64 "$testcvs history -x TOFWUPCGMAR -a" \
+"O [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           =first-dir= $TESTDIR/\*
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file6     first-dir           == $TESTDIR
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file7     first-dir           == $TESTDIR
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file6     first-dir/dir1      == $TESTDIR
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file7     first-dir/dir1      == $TESTDIR
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file6     first-dir/dir1/dir2 == $TESTDIR
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file7     first-dir/dir1/dir2 == $TESTDIR
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           \[second-dive:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1      \[second-dive:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1/dir2 \[second-dive:A\]
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file14    first-dir           == $TESTDIR
+M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.2 file6     first-dir           == $TESTDIR
+R [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.2 file7     first-dir           == $TESTDIR
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file14    first-dir/dir1      == $TESTDIR
+M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.2 file6     first-dir/dir1      == $TESTDIR
+R [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.2 file7     first-dir/dir1      == $TESTDIR
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file14    first-dir/dir1/dir2 == $TESTDIR
+M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.2 file6     first-dir/dir1/dir2 == $TESTDIR
+R [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.2 file7     first-dir/dir1/dir2 == $TESTDIR
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           \[third-dive:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1      \[third-dive:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1/dir2 \[third-dive:A\]
+F [0-9-]* [0-9:]* ${PLUS}0000 $username                     =first-dir= $TESTDIR/\*
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           \[rtagged-by-head:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1      \[rtagged-by-head:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1/dir2 \[rtagged-by-head:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           \[rtagged-by-tag:rtagged-by-head\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1      \[rtagged-by-tag:rtagged-by-head\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1/dir2 \[rtagged-by-tag:rtagged-by-head\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           \[rtagged-by-revision:1.1\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1      \[rtagged-by-revision:1.1\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1/dir2 \[rtagged-by-revision:1.1\]
+O [0-9-]* [0-9:]* ${PLUS}0000 $username \[1\.1\] first-dir           =first-dir= $TESTDIR/\*
+U [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.2 file6     first-dir           == $TESTDIR/first-dir
+W [0-9-]* [0-9:]* ${PLUS}0000 $username     file7     first-dir           == $TESTDIR/first-dir
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           \[rtagged-by-revision:D\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           \[rtagged-by-revision:A\]" \
+"O [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           =first-dir= <remote>/\*
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file6     first-dir           == <remote>
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file7     first-dir           == <remote>
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file6     first-dir/dir1      == <remote>
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file7     first-dir/dir1      == <remote>
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file6     first-dir/dir1/dir2 == <remote>
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file7     first-dir/dir1/dir2 == <remote>
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           \[second-dive:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1      \[second-dive:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1/dir2 \[second-dive:A\]
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file14    first-dir           == <remote>
+M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.2 file6     first-dir           == <remote>
+R [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.2 file7     first-dir           == <remote>
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file14    first-dir/dir1      == <remote>
+M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.2 file6     first-dir/dir1      == <remote>
+R [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.2 file7     first-dir/dir1      == <remote>
+A [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.1 file14    first-dir/dir1/dir2 == <remote>
+M [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.2 file6     first-dir/dir1/dir2 == <remote>
+R [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.2 file7     first-dir/dir1/dir2 == <remote>
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           \[third-dive:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1      \[third-dive:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1/dir2 \[third-dive:A\]
+F [0-9-]* [0-9:]* ${PLUS}0000 $username                     =first-dir= <remote>/\*
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           \[rtagged-by-head:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1      \[rtagged-by-head:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1/dir2 \[rtagged-by-head:A\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           \[rtagged-by-tag:rtagged-by-head\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1      \[rtagged-by-tag:rtagged-by-head\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1/dir2 \[rtagged-by-tag:rtagged-by-head\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           \[rtagged-by-revision:1.1\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1      \[rtagged-by-revision:1.1\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir/dir1/dir2 \[rtagged-by-revision:1.1\]
+O [0-9-]* [0-9:]* ${PLUS}0000 $username \[1\.1\] first-dir           =first-dir= <remote>/\*
+[UP] [0-9-]* [0-9:]* ${PLUS}0000 $username 1\.2 file6     first-dir           == <remote>
+W [0-9-]* [0-9:]* ${PLUS}0000 $username     file7     first-dir           == <remote>
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           \[rtagged-by-revision:D\]
+T [0-9-]* [0-9:]* ${PLUS}0000 $username first-dir           \[rtagged-by-revision:A\]"
 	  fi
 
 	  dokeep
