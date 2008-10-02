@@ -3,6 +3,9 @@ Changes since 1.12.13:
 
 NEW FEATURES
 
+* Both tag and rtag now create history entries for every directory with newly
+  tagged files.
+
 * :gserver:luser@host:/path is now supported in addition to
   :gserver:host:/path in CVSROOT. (CVS bug #17083.)
 
