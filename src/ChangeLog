@@ -1,3 +1,7 @@
+2008-10-15  Derek R. Price  <derek@ximbiot.com>
+
+	* checkout.c (findslash): Declare inputs const.  Use ISSLASH().
+
 2008-10-02  Derek R. Price  <derek@ximbiot.com>
 
 	* history.c: Some cleanup.
