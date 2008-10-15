@@ -1095,7 +1095,7 @@ findslash (const char *start, const char *p)
 {
     for (;;)
     {
-	if (ISSLASH (*p)) return (void *)p;
+	if (ISSLASH (*p)) return (char *)p;
 	if (p == start) break;
 	--p;
     }
