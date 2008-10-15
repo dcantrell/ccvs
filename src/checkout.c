@@ -57,7 +57,7 @@
 
 
 
-static char *findslash (char *start, char *p);
+static char *findslash (const char *start, const char *p);
 static int checkout_proc (int argc, char **argv, char *where,
 		          char *mwhere, char *mfile, int shorten,
 		          int local_specified, char *omodule,
@@ -1091,11 +1091,11 @@ out:
 
 
 static char *
-findslash (char *start, char *p)
+findslash (const char *start, const char *p)
 {
     for (;;)
     {
-	if (*p == '/') return p;
+	if (ISSLASH (*p)) return (void *)p;
 	if (p == start) break;
 	--p;
     }
