@@ -60,7 +60,7 @@ static int commit_filesdoneproc (void *callerdat, int err,
                                  const char *repository,
 				 const char *update_dir, List *entries);
 static int finaladd (struct file_info *finfo, char *revision, char *tag,
-		     char *options);
+		     char *options, char *msg);
 static int findmaxrev (Node * p, void *closure);
 static int lock_RCS (const char *user, RCSNode *rcs, const char *rev,
                      const char *repository);
@@ -85,6 +85,10 @@ struct master_lists
     List *cilist;			/* list with commit_info structs */
 };
 
+struct commit_data
+{
+    char *saved_message;
+};
 static int check_valid_edit = 0;
 static int force_ci = 0;
 static int got_message;
@@ -94,7 +98,6 @@ static char *write_dirtag;
 static int write_dirnonbranch;
 static char *logfile;
 static List *mulist;
-static char *saved_message;
 static time_t last_register_time;
 
 static const char *const commit_usage[] =
@@ -363,6 +366,7 @@ commit (int argc, char **argv)
     int c;
     int err = 0;
     int local = 0;
+    struct commit_data commit_data;
 
 #ifdef CLIENT_SUPPORT
     int flags;
@@ -374,6 +378,8 @@ commit (int argc, char **argv)
 #else /* !SERVER_SUPPORT */
     const char short_options[] = COMMIT_OPTIONS;
 #endif /* SERVER_SUPPORT */
+
+    memset(&commit_data, 0, sizeof commit_data);
 
     if (argc == -1)
 	usage (commit_usage);
@@ -423,13 +429,13 @@ commit (int argc, char **argv)
 #else
 		use_editor = 0;
 #endif
-		if (saved_message)
+		if (commit_data.saved_message)
 		{
-		    free (saved_message);
-		    saved_message = NULL;
+		    free (commit_data.saved_message);
+		    commit_data.saved_message = NULL;
 		}
 
-		saved_message = xstrdup (optarg);
+		commit_data.saved_message = xstrdup (optarg);
 		break;
 	    case 'r':
 		if (saved_tag)
@@ -481,10 +487,11 @@ commit (int argc, char **argv)
     {
 	size_t size = 0, len;
 
-	if (saved_message)
+	if (commit_data.saved_message)
 	    error (1, 0, "cannot specify both a message and a log file");
 
-	get_file (logfile, logfile, "r", &saved_message, &size, &len);
+	get_file (logfile, logfile, "r", &commit_data.saved_message,
+		  &size, &len);
     }
 
 #ifdef CLIENT_SUPPORT
@@ -553,10 +560,12 @@ commit (int argc, char **argv)
 	 * The protocol is designed this way.  This is a feature.
 	 */
 	if (use_editor)
-	    do_editor (NULL, &saved_message, NULL, find_args.ulist);
-
+	    do_editor (NULL, &commit_data.saved_message, NULL,
+		       find_args.ulist);
+	
 	/* We always send some sort of message, even if empty.  */
-	option_with_arg ("-m", saved_message ? saved_message : "");
+	option_with_arg ("-m", commit_data.saved_message
+			 ? commit_data.saved_message : "");
 
 	/* OK, now process all the questionable files we have been saving
 	   up.  */
@@ -646,7 +655,7 @@ commit (int argc, char **argv)
 
 	send_to_server ("ci\012", 0);
 	err = get_responses_and_close ();
-	if (err != 0 && use_editor && saved_message != NULL)
+	if (err != 0 && use_editor && commit_data.saved_message != NULL)
 	{
 	    /* If there was an error, don't nuke the user's carefully
 	       constructed prose.  This is something of a kludge; a better
@@ -664,8 +673,9 @@ commit (int argc, char **argv)
 	    if (fp == NULL)
 		error (1, 0, "cannot create temporary file %s",
 		       fname ? fname : "(null)");
-	    if (fwrite (saved_message, 1, strlen (saved_message), fp)
-		!= strlen (saved_message))
+	    if (fwrite (commit_data.saved_message, 1,
+			strlen (commit_data.saved_message), fp)
+		!= strlen (commit_data.saved_message))
 		error (1, errno, "cannot write temporary file %s", fname);
 	    if (fclose (fp) < 0)
 		error (0, errno, "cannot close temporary file %s", fname);
@@ -710,7 +720,8 @@ commit (int argc, char **argv)
      * Run the recursion processor to verify the files are all up-to-date
      */
     if (start_recursion (check_fileproc, check_filesdoneproc,
-			 check_direntproc, NULL, NULL, argc, argv, local,
+			 check_direntproc, NULL, &commit_data,
+			 argc, argv, local,
 			 W_LOCAL, aflag, CVS_LOCK_NONE, NULL, 1, NULL))
 	error (1, 0, "correct above errors first!");
 
@@ -720,7 +731,8 @@ commit (int argc, char **argv)
     write_dirnonbranch = 0;
     if (noexec == 0)
 	err = start_recursion (commit_fileproc, commit_filesdoneproc,
-                               commit_direntproc, commit_dirleaveproc, NULL,
+                               commit_direntproc, commit_dirleaveproc,
+			       &commit_data,
                                argc, argv, local, W_LOCAL, aflag,
                                CVS_LOCK_WRITE, NULL, 1, NULL);
 
@@ -729,6 +741,12 @@ commit (int argc, char **argv)
      */
     Lock_Cleanup ();
     dellist (&mulist);
+
+    if (commit_data.saved_message)
+    {
+	free (commit_data.saved_message);
+	commit_data.saved_message = NULL;
+    }
 
     /* see if we need to sleep before returning to avoid time-stamp races */
     if (!server_active && last_register_time)
@@ -1381,6 +1399,7 @@ check_filesdoneproc (void *callerdat, int err, const char *repos,
     int n;
     Node *p;
     List *saved_ulist;
+    struct commit_data *commit_data = callerdat;
 
     TRACE (TRACE_FLOW, "check_filesdoneproc (%d, %s, %s, %s)",
 	   err, repos, update_dir, TRACE_BOOL (use_editor));
@@ -1413,9 +1432,10 @@ check_filesdoneproc (void *callerdat, int err, const char *repos,
      */
     got_message = 1;
     if (!server_active && use_editor)
-	do_editor (update_dir, &saved_message, repos, saved_ulist);
+	do_editor (update_dir, &commit_data->saved_message, repos,
+		   saved_ulist);
 
-    err += do_verify (&saved_message, repos, saved_ulist);
+    err += do_verify (&commit_data->saved_message, repos, saved_ulist);
 
     return err;
 }
@@ -1436,6 +1456,7 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
     int err = 0;
     List *ulist, *cilist;
     struct commit_info *ci;
+    struct commit_data *commit_data = callerdat;
 
     /* Keep track of whether write_dirtag is a branch tag.
        Note that if it is a branch tag in some files and a nonbranch tag
@@ -1510,7 +1531,7 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
 		free (ci->rev);
 	    ci->rev = RCS_whatbranch (finfo->rcs, ci->tag);
 	    err = Checkin ('A', finfo, ci->rev,
-			   ci->tag, ci->options, saved_message);
+			   ci->tag, ci->options, commit_data->saved_message);
 	    if (err != 0)
 	    {
 		unlockrcs (finfo->rcs);
@@ -1548,14 +1569,16 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
 	}
 
 	/* XXX - an added file with symbolic -r should add tag as well */
-	err = finaladd (finfo, ci->rev ? ci->rev : xrev, ci->tag, ci->options);
+	err = finaladd (finfo, ci->rev ? ci->rev : xrev, ci->tag, ci->options,
+			commit_data->saved_message);
+
 	if (xrev)
 	    free (xrev);
     }
     else if (ci->status == T_MODIFIED)
     {
 	err = Checkin ('M', finfo, ci->rev, ci->tag,
-		       ci->options, saved_message);
+		       ci->options, commit_data->saved_message);
 
 	(void) time (&last_register_time);
 
@@ -1567,7 +1590,7 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
     }
     else if (ci->status == T_REMOVED)
     {
-	err = remove_file (finfo, ci->tag, saved_message);
+	err = remove_file (finfo, ci->tag, commit_data->saved_message);
 #ifdef SERVER_SUPPORT
 	if (server_active)
 	{
@@ -1647,6 +1670,7 @@ commit_filesdoneproc (void *callerdat, int err, const char *repository,
 {
     Node *p;
     List *ulist;
+    struct commit_data *commit_data = callerdat;
 
     assert (repository);
 
@@ -1715,7 +1739,7 @@ commit_filesdoneproc (void *callerdat, int err, const char *repository,
      * A more general solution I have been considering is calling a generic
      * "postwrite" hook from the remove write lock routine.
      */
-    Update_Logfile (repository, saved_message, NULL, ulist);
+    Update_Logfile (repository, commit_data->saved_message, NULL, ulist);
 
     return err;
 }
@@ -1966,11 +1990,12 @@ remove_file (struct file_info *finfo, char *tag, char *message)
  * Do the actual checkin for added files
  */
 static int
-finaladd (struct file_info *finfo, char *rev, char *tag, char *options)
+finaladd (struct file_info *finfo, char *rev, char *tag, char *options,
+	  char *msg)
 {
     int ret;
 
-    ret = Checkin ('A', finfo, rev, tag, options, saved_message);
+    ret = Checkin ('A', finfo, rev, tag, options, msg);
     if (ret == 0)
     {
 	char *tmp = Xasprintf ("%s/%s%s", CVSADM, finfo->file, CVSEXT_LOG);
