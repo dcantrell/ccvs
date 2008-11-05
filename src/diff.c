@@ -445,6 +445,8 @@ diff (int argc, char **argv)
 	if ((!suppress_bases && supported_request ("Base-diff"))
 	    || diff_rev2 || diff_date2)
 	    flags |= SEND_NO_CONTENTS;
+	else if (options[0] != '\0')
+	    flags |= SEND_FORCE;
 
 	send_files (argc, argv, local, 0, flags);
 

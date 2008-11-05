@@ -26540,6 +26540,18 @@ xx "'\$'"Log"'\$'
 	  dotest keyword-24 "cat file1" '\$'"Name:  "'\$'"
 change"
 
+	  dotest_fail keyword-25 "${testcvs} diff -kk file1" \
+"Index: file1
+===================================================================
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+retrieving revision 1\.3
+diff -r1\.3 file1
+1c1
+< \$Name\$
+---
+> \$Name$"
+	  dotest keyword-26 "${testcvs} diff -kkv file1" ""
+
 	  dokeep
 	  cd ../..
 	  rm -rf 1
@@ -30921,6 +30933,91 @@ ${CVSROOT2_DIRNAME}/mod2-1/file2-1,v  <--  mod2-1/file2-1
 new revision: 1.2; previous revision: 1.1
 ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v  <--  mod2-2/file2-2
 new revision: 1.2; previous revision: 1.1"
+
+	  echo Extra-line >> mod1-1/file1-1
+	  echo Extra-line >> mod2-2/file2-2
+	  echo 'Using a message file.' >log-message.txt
+	  dotest multiroot-commit-2 \
+"${testcvs} commit -F log-message.txt mod1-1/file1-1 mod2-2/file2-2" \
+"${CVSROOT1_DIRNAME}/mod1-1/file1-1,v  <--  mod1-1/file1-1
+new revision: 1\.3; previous revision: 1\.2
+${CVSROOT2_DIRNAME}/mod2-2/file2-2,v  <--  mod2-2/file2-2
+new revision: 1\.3; previous revision: 1\.2"
+
+	  dotest multiroot-update-join-1 \
+"${testcvs} update -j1.3 -j1.2 mod1-1/file1-1 mod2-2/file2-2" \
+"${CPROG} update: Replacing \`mod1-1/file1-1' with contents of revision 1\.2\.
+M mod1-1/file1-1
+${CPROG} update: Replacing \`mod2-2/file2-2' with contents of revision 1\.2\.
+M mod2-2/file2-2"
+	  dotest multiroot-update-join-2 \
+"${testcvs} -Q update -C mod1-1/file1-1 mod2-2/file2-2" \
+""
+	  
+	  rm log-message.txt
+	  dotest multiroot-admin-1 "${testcvs} admin -o1.3 mod1-1/file1-1" \
+"RCS file: ${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
+deleting revision 1.3
+done"
+	  # FIXME: For $remote operation, an error like:
+	  # cvs [admin aborted]: no such directory `mod2-2'
+	  # will happen if the CVS/Root has $CVSROOT1 in it.
+	  # If CVS is missing and there is no CVSROOT environment
+	  # variable, there is also a "No CVSROOT specified!"
+	  # error which really needs to be fixed too.
+          dotest multiroot-admin-2 \
+"${testcvs} -d ${CVSROOT2} admin -o1.3 mod2-2/file2-2" \
+"RCS file: ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+deleting revision 1.3
+done"
+
+	  if $remote; then
+	    # FIXME: Just becuase CVS/Root does not have a mod2-2
+	    # directory does not mean that recurse should print an
+	    # error.
+	    dotest multiroot-admin-3ra "${testcvs} status mod2-2/file2-2" \
+"${CPROG} \[status aborted\]: no such directory \`mod2-2'
+===================================================================
+File: file2-2          	Status: Needs Patch
+
+   Working revision:	1\.3
+   Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+   Commit Identifier:	${commitid}
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+
+	    dotest_fail multiroot-admin-3rb \
+"${testcvs} update mod1-1/file1-1 mod2-2/file2-2" \
+"${CPROG} \[update aborted\]: could not find desired version 1\.3 in ${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
+${CPROG} \[update aborted\]: could not find desired version 1\.3 in ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v"
+
+	    # FIXME. For client/server, the removal of revisoin 1.3 is not
+	    # directly recoverable without hacking CVS/Entries here.
+	    mv mod1-1/CVS/Entries mod1-1/CVS/Entries.bad
+            grep -v file1-1 < mod1-1/CVS/Entries.bad > mod1-1/CVS/Entries
+	    mv mod2-2/CVS/Entries mod2-2/CVS/Entries.bad
+            grep -v file2-2 < mod2-2/CVS/Entries.bad > mod2-2/CVS/Entries
+	    rm mod1-1/CVS/Entries.bad mod2-2/CVS/Entries.bad
+	    rm mod1-1/file1-1 mod2-2/file2-2
+	  else
+	    dotest multiroot-admin-3 "${testcvs} status mod2-2/file2-2" \
+"===================================================================
+File: file2-2          	Status: Needs Patch
+
+   Working revision:	1\.3.*
+   Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+   Commit Identifier:	${commitid}
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  fi
+
+	  dotest multiroot-admin-4 \
+"${testcvs} update mod1-1/file1-1 mod2-2/file2-2" \
+"U mod1-1/file1-1
+U mod2-2/file2-2"
+
 
 	  dotest multiroot-update-2 "${testcvs} update" \
 "${CPROG} update: Updating \.

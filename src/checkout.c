@@ -128,6 +128,7 @@ checkout (int argc, char **argv)
     int shorten = -1;
     char *where = NULL;
     const char *valid_options;
+    int jrev_count = 0;
     const char *const *valid_usage;
     char *join_orig1, *join_orig2;
 
@@ -235,15 +236,15 @@ checkout (int argc, char **argv)
 		checkout_prune_dirs = 1;
 		break;
 	    case 'j':
-		if (join_rev2 || join_date2)
+		jrev_count++;
+		if (jrev_count > 2)
 		    error (1, 0, "only two -j options can be specified");
-		if (join_rev1 || join_date1)
-		{
+		if (jrev_count == 2) {
 		    if (join_orig2) free (join_orig2);
 		    join_orig2 = xstrdup (optarg);
 		    parse_tagdate (&join_rev2, &join_date2, optarg);
 		}
-		else
+		else if (jrev_count == 1)
 		{
 		    if (join_orig1) free (join_orig1);
 		    join_orig1 = xstrdup (optarg);

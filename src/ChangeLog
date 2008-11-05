@@ -1,3 +1,25 @@
+2008-11-05  Mark D. Baushke  <mdb@gnu.org>
+
+	*diff.c (diff): Use SEND_FORCE on files when a -k option is used
+	with diff to avoid client/server not finding the requested file.
+	* sanity.sh (keyword): Add tests for this.
+
+	* checkout.c (checkout): For multiroot checkout/update operations,
+	do not assume that the static join_rev1 and join_rev2 strings will
+	not be seen again with another repository.
+	* update.c (update): Ditto.
+	* commit.c (commit): For multiroot commits with -F logmessage
+	do not generate "cannot specify both a message and a log file"
+	errors. Track the use of -m as an argument explicitly.
+	(finaladd): API change to pass the saved_message.
+	(check_fileproc, commit_fileproc, commit_filesdoneproc): Pass the
+	saved_message via the callerdat block.
+	(commit_direntproc): Ditto.
+	* sanity.sh (multiroot-{commit-2,update-join-{1,2},admin-{1,2,3,4}}):
+	Do commits with -F logmessage to test above and also look at other
+	broken behavior which needs to be fixed. There are some FIXME
+	tests here which should be addressed.
+
 2008-10-15  Derek R. Price  <derek@ximbiot.com>
 
 	* checkout.c (findslash): Declare inputs const.  Use ISSLASH().

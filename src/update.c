@@ -165,6 +165,7 @@ update (int argc, char **argv)
     int c, err;
     int local = 0;			/* recursive by default */
     int which;				/* where to look for files and dirs */
+    int jrev_count = 0;			/* multiple cvsroot w/ -j options */
     char *xjoin_rev1, *xjoin_date1,
 	 *xjoin_rev2, *xjoin_date2,
 	 *join_orig1, *join_orig2;
@@ -237,14 +238,15 @@ update (int argc, char **argv)
 		noexec = 1;		/* so no locks will be created */
 		break;
 	    case 'j':
-		if (join_orig2)
+		jrev_count++;
+		if (jrev_count > 2)
 		    error (1, 0, "only two -j options can be specified");
-		if (join_orig1)
+		if (jrev_count == 2)
 		{
 		    join_orig2 = xstrdup (optarg);
 		    parse_tagdate (&xjoin_rev2, &xjoin_date2, optarg);
 		}
-		else
+		else if (jrev_count == 1)
 		{
 		    join_orig1 = xstrdup (optarg);
 		    parse_tagdate (&xjoin_rev1, &xjoin_date1, optarg);
