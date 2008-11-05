@@ -115,6 +115,7 @@ checkout (argc, argv)
     int shorten = -1;
     char *where = NULL;
     char *valid_options;
+    int jrev_count = 0;
     const char *const *valid_usage;
 
     /* initialize static options */
@@ -219,11 +220,12 @@ checkout (argc, argv)
 		checkout_prune_dirs = 1;
 		break;
 	    case 'j':
-		if (join_rev2)
+		jrev_count++;
+		if (jrev_count > 2)
 		    error (1, 0, "only two -j options can be specified");
-		if (join_rev1)
+		if (jrev_count == 2)
 		    join_rev2 = optarg;
-		else
+		else if (jrev_count == 1)
 		    join_rev1 = optarg;
 		break;
 	    case '?':

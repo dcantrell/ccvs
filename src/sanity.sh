@@ -23157,6 +23157,17 @@ done"
 	  dotest keyword-23 "$testcvs update -A file1" "U file1"
 	  dotest keyword-24 "cat file1" '\$'"Name:  "'\$'"
 change"
+	  dotest_fail keyword-25 "${testcvs} diff -kk file1" \
+"Index: file1
+===================================================================
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+retrieving revision 1\.3
+diff -r1\.3 file1
+1c1
+< \$Name\$
+---
+> \$Name$"
+	  dotest keyword-26 "${testcvs} diff -kkv file1" ""
 
 	  cd ../..
 	  rm -r 1
@@ -27606,6 +27617,77 @@ Checking in mod2-2/file2-2;
 ${TESTDIR}/root2/mod2-2/file2-2,v  <--  file2-2
 new revision: 1.2; previous revision: 1.1
 done"
+
+	  echo Extra-line >> mod1-1/file1-1
+	  echo Extra-line >> mod2-2/file2-2
+	  echo 'Using a message file.' >log-message.txt
+	  dotest multiroot-commit-2 \
+"${testcvs} commit -F log-message.txt mod1-1/file1-1 mod2-2/file2-2" \
+"Checking in mod1-1/file1-1;
+${CVSROOT1_DIRNAME}/mod1-1/file1-1,v  <--  file1-1
+new revision: 1\.3; previous revision: 1\.2
+done
+Checking in mod2-2/file2-2;
+${CVSROOT2_DIRNAME}/mod2-2/file2-2,v  <--  file2-2
+new revision: 1\.3; previous revision: 1\.2
+done"
+	  dotest multiroot-update-join-1 \
+"${testcvs} update -j1.3 -j1.2 mod1-1/file1-1 mod2-2/file2-2" \
+"RCS file: ${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
+retrieving revision 1\.3
+retrieving revision 1\.2
+Merging differences between 1\.3 and 1\.2 into file1-1
+RCS file: ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+retrieving revision 1\.3
+retrieving revision 1\.2
+Merging differences between 1\.3 and 1\.2 into file2-2"
+	  dotest multiroot-update-join-2 \
+"${testcvs} -Q update -C mod1-1/file1-1 mod2-2/file2-2" \
+""
+	  
+	  rm log-message.txt
+	  dotest multiroot-admin-1 "${testcvs} admin -o1.3 mod1-1/file1-1" \
+"RCS file: ${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
+deleting revision 1\.3
+done"
+	  # FIXME: For $remote operation, an error like:
+	  # cvs [admin aborted]: no such directory `mod2-2'
+	  # will happen if the CVS/Root has $CVSROOT1 in it.
+	  # If CVS is missing and there is no CVSROOT environment
+	  # variable, there is also a "No CVSROOT specified!"
+	  # error which really needs to be fixed too.
+          dotest multiroot-admin-2 \
+"${testcvs} -d ${CVSROOT2} admin -o1.3 mod2-2/file2-2" \
+"RCS file: ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+deleting revision 1\.3
+done"
+
+	  # FIXME: Just becuase CVS/Root does not have a mod2-2
+	  # directory does not mean that recurse should print that
+	  # error.
+	  dotest multiroot-admin-3 "${testcvs} status mod2-2/file2-2" \
+"===================================================================
+File: file2-2          	Status: Needs Patch
+
+   Working revision:	1\.3	${DATE}
+   Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)" \
+"${PROG} \[status aborted\]: no such directory \`mod2-2'
+===================================================================
+File: file2-2          	Status: Needs Patch
+
+   Working revision:	1\.3
+   Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+
+	  dotest multiroot-admin-4 \
+"${testcvs} update mod1-1/file1-1 mod2-2/file2-2" \
+"U mod1-1/file1-1
+U mod2-2/file2-2"
 
 	  dotest multiroot-update-2 "${testcvs} update" \
 "${PROG} update: Updating \.
