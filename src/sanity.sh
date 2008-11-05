@@ -26541,11 +26541,7 @@ xx "'\$'"Log"'\$'
 change"
 
 	  dotest_fail keyword-25 "${testcvs} diff -kk file1" \
-"Index: file1
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
-retrieving revision 1\.3
-diff -r1\.3 file1
+"diff -r1\.3 file1
 1c1
 < \$Name\$
 ---
