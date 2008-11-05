@@ -51,7 +51,7 @@ static int commit_filesdoneproc PROTO ((void *callerdat, int err,
                                         const char *update_dir,
                                         List *entries));
 static int finaladd PROTO((struct file_info *finfo, char *revision, char *tag,
-			   char *options));
+			   char *options, char *msg));
 static int findmaxrev PROTO((Node * p, void *closure));
 static int lock_RCS PROTO((const char *user, RCSNode *rcs, const char *rev,
 			   const char *repository));
@@ -78,6 +78,10 @@ struct master_lists
     List *cilist;			/* list with commit_info structs */
 };
 
+struct commit_data
+{
+    char *saved_message;
+};
 static int force_ci = 0;
 static int got_message;
 static int aflag;
@@ -87,7 +91,6 @@ static int write_dirnonbranch;
 static char *logfile;
 static List *mulist;
 static List *saved_ulist;
-static char *saved_message;
 static time_t last_register_time;
 
 static const char *const commit_usage[] =
@@ -376,6 +379,9 @@ commit (argc, argv)
     int c;
     int err = 0;
     int local = 0;
+    struct commit_data commit_data;
+
+    memset(&commit_data, 0, sizeof commit_data);
 
     if (argc == -1)
 	usage (commit_usage);
@@ -421,13 +427,13 @@ commit (argc, argv)
 #else
 		use_editor = 0;
 #endif
-		if (saved_message)
+		if (commit_data.saved_message)
 		{
-		    free (saved_message);
-		    saved_message = NULL;
+		    free (commit_data.saved_message);
+		    commit_data.saved_message = NULL;
 		}
 
-		saved_message = xstrdup(optarg);
+		commit_data.saved_message = xstrdup(optarg);
 		break;
 	    case 'r':
 		if (saved_tag)
@@ -478,10 +484,11 @@ commit (argc, argv)
     {
 	size_t size = 0, len;
 
-	if (saved_message)
+	if (commit_data.saved_message)
 	    error (1, 0, "cannot specify both a message and a log file");
 
-	get_file (logfile, logfile, "r", &saved_message, &size, &len);
+	get_file (logfile, logfile, "r", &commit_data.saved_message,
+		  &size, &len);
     }
 
 #ifdef CLIENT_SUPPORT
@@ -551,10 +558,12 @@ commit (argc, argv)
 	 * The protocol is designed this way.  This is a feature.
 	 */
 	if (use_editor)
-	    do_editor (".", &saved_message, (char *)NULL, find_args.ulist);
+	    do_editor (".", &commit_data.saved_message, NULL,
+		       find_args.ulist);
 
 	/* We always send some sort of message, even if empty.  */
-	option_with_arg ("-m", saved_message ? saved_message : "");
+	option_with_arg ("-m", commit_data.saved_message
+			 ? commit_data.saved_message : "");
 
 	/* OK, now process all the questionable files we have been saving
 	   up.  */
@@ -627,7 +636,7 @@ commit (argc, argv)
 
 	send_to_server ("ci\012", 0);
 	err = get_responses_and_close ();
-	if (err != 0 && use_editor && saved_message != NULL)
+	if (err != 0 && use_editor && commit_data.saved_message != NULL)
 	{
 	    /* If there was an error, don't nuke the user's carefully
 	       constructed prose.  This is something of a kludge; a better
@@ -645,8 +654,9 @@ commit (argc, argv)
 	    if (fp == NULL)
 		error (1, 0, "cannot create temporary file %s",
 		       fname ? fname : "(null)");
-	    if (fwrite (saved_message, 1, strlen (saved_message), fp)
-		!= strlen (saved_message))
+	    if (fwrite (commit_data.saved_message, 1,
+			strlen (commit_data.saved_message), fp)
+		!= strlen (commit_data.saved_message))
 		error (1, errno, "cannot write temporary file %s", fname);
 	    if (fclose (fp) < 0)
 		error (0, errno, "cannot close temporary file %s", fname);
@@ -691,8 +701,8 @@ commit (argc, argv)
      */
     err = start_recursion (check_fileproc, check_filesdoneproc,
 			   check_direntproc, (DIRLEAVEPROC) NULL, NULL, argc,
-			   argv, local, W_LOCAL, aflag, CVS_LOCK_NONE,
-			   (char *) NULL, 1, (char *) NULL);
+			   argv, local, W_LOCAL, aflag,
+			   CVS_LOCK_NONE, (char *) NULL, 1, (char *) NULL);
     if (err)
     {
 	Lock_Cleanup ();
@@ -705,15 +715,22 @@ commit (argc, argv)
     write_dirnonbranch = 0;
     if (noexec == 0)
 	err = start_recursion (commit_fileproc, commit_filesdoneproc,
-			       commit_direntproc, commit_dirleaveproc, NULL,
-			       argc, argv, local, W_LOCAL, aflag, CVS_LOCK_NONE,
-			       (char *) NULL, 1, (char *) NULL);
+			       commit_direntproc, commit_dirleaveproc,
+			       &commit_data,
+			       argc, argv, local, W_LOCAL, aflag,
+			       CVS_LOCK_NONE, (char *) NULL, 1, (char *) NULL);
 
     /*
      * Unlock all the dirs and clean up
      */
     Lock_Cleanup ();
     dellist (&mulist);
+
+    if (commit_data.saved_message)
+    {
+	free(commit_data.saved_message);
+	commit_data.saved_message = NULL;
+    }
 
     if (server_active)
 	return err;
@@ -835,6 +852,7 @@ check_fileproc (callerdat, finfo)
     Vers_TS *vers;
     struct commit_info *ci;
     struct logfile_info *li;
+    struct commit_data *commit_data = callerdat;
 
     size_t cvsroot_len = strlen (current_parsed_root->directory);
 
@@ -1237,6 +1255,7 @@ commit_fileproc (callerdat, finfo)
     int err = 0;
     List *ulist, *cilist;
     struct commit_info *ci;
+    struct commit_data *commit_data = callerdat;
 
     /* Keep track of whether write_dirtag is a branch tag.
        Note that if it is a branch tag in some files and a nonbranch tag
@@ -1276,9 +1295,9 @@ commit_fileproc (callerdat, finfo)
     {
 	got_message = 1;
 	if (!server_active && use_editor)
-	    do_editor (finfo->update_dir, &saved_message,
+	    do_editor (finfo->update_dir, &commit_data->saved_message,
 		       finfo->repository, ulist);
-	do_verify (&saved_message, finfo->repository);
+	do_verify (&commit_data->saved_message, finfo->repository);
     }
 
     p = findnode (cilist, finfo->file);
@@ -1325,7 +1344,7 @@ commit_fileproc (callerdat, finfo)
 		free (ci->rev);
 	    ci->rev = RCS_whatbranch (finfo->rcs, ci->tag);
 	    err = Checkin ('A', finfo, ci->rev,
-			   ci->tag, ci->options, saved_message);
+			   ci->tag, ci->options, commit_data->saved_message);
 	    if (err != 0)
 	    {
 		unlockrcs (finfo->rcs);
@@ -1363,14 +1382,15 @@ commit_fileproc (callerdat, finfo)
 	}
 
 	/* XXX - an added file with symbolic -r should add tag as well */
-	err = finaladd (finfo, ci->rev ? ci->rev : xrev, ci->tag, ci->options);
+	err = finaladd (finfo, ci->rev ? ci->rev : xrev, ci->tag, ci->options,
+			commit_data->saved_message);
 	if (xrev)
 	    free (xrev);
     }
     else if (ci->status == T_MODIFIED)
     {
 	err = Checkin ('M', finfo, ci->rev, ci->tag,
-		       ci->options, saved_message);
+		       ci->options, commit_data->saved_message);
 
 	(void) time (&last_register_time);
 
@@ -1382,7 +1402,7 @@ commit_fileproc (callerdat, finfo)
     }
     else if (ci->status == T_REMOVED)
     {
-	err = remove_file (finfo, ci->tag, saved_message);
+	err = remove_file (finfo, ci->tag, commit_data->saved_message);
 #ifdef SERVER_SUPPORT
 	if (server_active) {
 	    server_scratch_entry_only ();
@@ -1460,6 +1480,7 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
 {
     Node *p;
     List *ulist;
+    struct commit_data *commit_data = callerdat;
 
     assert (repository);
 
@@ -1471,7 +1492,8 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
 
     got_message = 0;
 
-    Update_Logfile (repository, saved_message, (FILE *) 0, ulist);
+    Update_Logfile (repository, commit_data->saved_message,
+		    (FILE *) 0, ulist);
 
     /* Build the administrative files if necessary.  */
     {
@@ -1535,6 +1557,7 @@ commit_direntproc (callerdat, dir, repos, update_dir, entries)
     Node *p;
     List *ulist;
     char *real_repos;
+    struct commit_data *commit_data = callerdat;
 
     if (!isdir (dir))
 	return R_SKIP_ALL;
@@ -1554,8 +1577,9 @@ commit_direntproc (callerdat, dir, repos, update_dir, entries)
     real_repos = Name_Repository (dir, update_dir);
     got_message = 1;
     if (!server_active && use_editor)
-	do_editor (update_dir, &saved_message, real_repos, ulist);
-    do_verify (&saved_message, real_repos);
+	do_editor (update_dir, &commit_data->saved_message,
+		   real_repos, ulist);
+    do_verify (&commit_data->saved_message, real_repos);
     free (real_repos);
     return R_PROCESS;
 }
@@ -1782,15 +1806,16 @@ remove_file (finfo, tag, message)
  * Do the actual checkin for added files
  */
 static int
-finaladd (finfo, rev, tag, options)
+finaladd (finfo, rev, tag, options, lmsg)
     struct file_info *finfo;
     char *rev;
     char *tag;
     char *options;
+    char *lmsg;
 {
     int ret;
 
-    ret = Checkin ('A', finfo, rev, tag, options, saved_message);
+    ret = Checkin ('A', finfo, rev, tag, options, lmsg);
     if (ret == 0)
     {
 	char *tmp = xmalloc (strlen (finfo->file) + sizeof (CVSADM)

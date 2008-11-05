@@ -144,6 +144,7 @@ update (argc, argv)
     int c, err;
     int local = 0;			/* recursive by default */
     int which;				/* where to look for files and dirs */
+    int jrev_count = 0;			/* multiple cvsroot w/ -j options */
 
     if (argc == -1)
 	usage (update_usage);
@@ -210,11 +211,12 @@ update (argc, argv)
 		noexec = 1;		/* so no locks will be created */
 		break;
 	    case 'j':
-		if (join_rev2)
+		jrev_count++;
+		if (jrev_count > 2)
 		    error (1, 0, "only two -j options can be specified");
-		if (join_rev1)
+		if (jrev_count == 2)
 		    join_rev2 = optarg;
-		else
+		else if (jrev_count == 1)
 		    join_rev1 = optarg;
 		break;
 	    case 'u':

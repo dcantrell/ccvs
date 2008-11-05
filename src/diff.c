@@ -413,7 +413,10 @@ diff (argc, argv)
 	options = xstrdup ("");
 
 #ifdef CLIENT_SUPPORT
-    if (current_parsed_root->isremote) {
+    if (current_parsed_root->isremote)
+    {
+	int flags;
+
 	/* We're the client side.  Fire up the remote server.  */
 	start_server ();
 	
@@ -437,10 +440,13 @@ diff (argc, argv)
 	send_arg ("--");
 
 	/* Send the current files unless diffing two revs from the archive */
-	if (diff_rev2 == NULL && diff_date2 == NULL)
-	    send_files (argc, argv, local, 0, 0);
-	else
-	    send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
+	flags = 0;
+	if (diff_rev2 != NULL || diff_date2 != NULL)
+	    flags |= SEND_NO_CONTENTS;
+	else if (options[0] != '\0')
+	    flags |= SEND_FORCE;
+
+	send_files (argc, argv, local, 0, flags);
 
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 
