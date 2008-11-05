@@ -1,5 +1,7 @@
 2008-11-05  Mark D. Baushke  <mdb@gnu.org>
 
+	* sanity.sh (keyword-25): Fix merge from cvs 1.11.x problem.
+
 	*diff.c (diff): Use SEND_FORCE on files when a -k option is used
 	with diff to avoid client/server not finding the requested file.
 	* sanity.sh (keyword): Add tests for this.
