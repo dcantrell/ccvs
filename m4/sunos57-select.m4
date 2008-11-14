@@ -13,12 +13,14 @@ dnl function that works around the problem.
 
 AC_DEFUN([ccvs_FUNC_SELECT],
 [
+ AC_REQUIRE([gl_HEADER_SYS_TIME_H])
  AC_CHECK_HEADERS([fcntl.h])
  AC_CACHE_CHECK([whether select hangs on /dev/null fd when timeout is NULL],
   ccvs_cv_func_select_hang,
   [AC_RUN_IFELSE([AC_LANG_PROGRAM([[
 #include <stdio.h>
 #include <sys/select.h>
+#include <sys/time.h>
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
 #endif

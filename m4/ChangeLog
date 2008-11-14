@@ -1,3 +1,7 @@
+2008-11-13  Larry Jones  <lawrence.jones@siemens.com>
+
+	* sunos57-select.m4: Need <sys/time.h> for struct timeval.
+
 2008-09-15  Derek Price  <derek@ximbiot.com>
 
 	Update from GNULIB.
