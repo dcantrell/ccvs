@@ -113,9 +113,9 @@ valid_timezone ()
 	NTZ=`TZ=$1 date +%Z`
 	if test "$NTZ" = "$UTZ" || test "$NTZ" = "$1"; then
 		skipreason="$1 is not a recognized timezone on this system"
-		return `false`
+		return 1
 	else
-		return `:`
+		return 0
 	fi
 }
 

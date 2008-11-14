@@ -38,11 +38,11 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <sys/time.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
 #include "minmax.h"
-#include "xtime.h"
 
 static struct stat devnull;
 static int devnull_set = -1;
