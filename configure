@@ -732,9 +732,6 @@ MAKE_TARGETS_IN_VPATH_FALSE
 LIBOBJS
 INCLUDE_NEXT
 PRAGMA_SYSTEM_HEADER
-NEXT_SYS_SELECT_H
-HAVE_SYS_SELECT_H
-SYS_SELECT_H
 NEXT_SYS_TIME_H
 HAVE_SYS_TIME_H
 HAVE_STRUCT_TIMEVAL
@@ -1008,6 +1005,9 @@ HAVE_STRCASECMP
 HAVE_DECL_STRNCASECMP
 NEXT_STRING_H
 NEXT_STRINGS_H
+NEXT_SYS_SELECT_H
+HAVE_SYS_SELECT_H
+SYS_SELECT_H
 HAVE_LSTAT
 NEXT_SYS_STAT_H
 SYS_STAT_H
@@ -2152,7 +2152,6 @@ echo "$as_me: creating cache $cache_file" >&6;}
   >$cache_file
 fi
 
-ac_header_list="$ac_header_list sys/select.h"
 ac_header_list="$ac_header_list sys/time.h"
 ac_header_list="$ac_header_list arpa/inet.h"
 ac_header_list="$ac_header_list sys/param.h"
@@ -2200,6 +2199,7 @@ ac_header_list="$ac_header_list inttypes.h"
 ac_func_list="$ac_func_list lchmod"
 ac_func_list="$ac_func_list fchmod"
 ac_func_list="$ac_func_list alarm"
+ac_header_list="$ac_header_list sys/select.h"
 ac_func_list="$ac_func_list fdopendir"
 ac_func_list="$ac_func_list mbsinit"
 ac_header_list="$ac_header_list locale.h"
@@ -7276,6 +7276,81 @@ done
 #
 # Special hack for a SunOS 5.7 (aka Solaris 7) select() problem.
 #
+{ echo "$as_me:$LINENO: checking for C/C++ restrict keyword" >&5
+echo $ECHO_N "checking for C/C++ restrict keyword... $ECHO_C" >&6; }
+if test "${ac_cv_c_restrict+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_cv_c_restrict=no
+   # The order here caters to the fact that C++ does not require restrict.
+   for ac_kw in __restrict __restrict__ _Restrict restrict; do
+     cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+typedef int * int_ptr;
+	int foo (int_ptr $ac_kw ip) {
+	return ip[0];
+       }
+int
+main ()
+{
+int s[1];
+	int * $ac_kw t = s;
+	t[0] = 0;
+	return foo(t)
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ac_cv_c_restrict=$ac_kw
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+     test "$ac_cv_c_restrict" != no && break
+   done
+
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_c_restrict" >&5
+echo "${ECHO_T}$ac_cv_c_restrict" >&6; }
+
+
+ case $ac_cv_c_restrict in
+   restrict) ;;
+   no) cat >>confdefs.h <<\_ACEOF
+#define restrict
+_ACEOF
+ ;;
+   *)  cat >>confdefs.h <<_ACEOF
+#define restrict $ac_cv_c_restrict
+_ACEOF
+ ;;
+ esac
+
 
 
   { echo "$as_me:$LINENO: checking whether the preprocessor supports include_next" >&5
@@ -7501,196 +7576,6 @@ done
 
 
 
-  { echo "$as_me:$LINENO: checking whether <sys/select.h> is self-contained" >&5
-echo $ECHO_N "checking whether <sys/select.h> is self-contained... $ECHO_C" >&6; }
-if test "${gl_cv_header_sys_select_h_selfcontained+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-
-      cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <sys/select.h>
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (ac_try="$ac_compile"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
-  (eval "$ac_compile") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest.$ac_objext; then
-  gl_cv_header_sys_select_h_selfcontained=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	gl_cv_header_sys_select_h_selfcontained=no
-fi
-
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
-fi
-{ echo "$as_me:$LINENO: result: $gl_cv_header_sys_select_h_selfcontained" >&5
-echo "${ECHO_T}$gl_cv_header_sys_select_h_selfcontained" >&6; }
-  if test $gl_cv_header_sys_select_h_selfcontained = yes; then
-    SYS_SELECT_H=''
-  else
-    SYS_SELECT_H='sys/select.h'
-
-
-
-
-
-
-
-
-
-
-     if test $gl_cv_have_include_next = yes; then
-       gl_cv_next_sys_select_h='<'sys/select.h'>'
-     else
-       { echo "$as_me:$LINENO: checking absolute name of <sys/select.h>" >&5
-echo $ECHO_N "checking absolute name of <sys/select.h>... $ECHO_C" >&6; }
-if test "${gl_cv_next_sys_select_h+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-
-	  if test $ac_cv_header_sys_select_h = yes; then
-	    cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <sys/select.h>
-
-_ACEOF
-	    	    	    	    gl_cv_next_sys_select_h='"'`(eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-	       sed -n '\#/sys/select.h#{
-		 s#.*"\(.*/sys/select.h\)".*#\1#
-		 s#^/[^/]#//&#
-		 p
-		 q
-	       }'`'"'
-	  else
-	    gl_cv_next_sys_select_h='<'sys/select.h'>'
-	  fi
-
-fi
-{ echo "$as_me:$LINENO: result: $gl_cv_next_sys_select_h" >&5
-echo "${ECHO_T}$gl_cv_next_sys_select_h" >&6; }
-     fi
-     NEXT_SYS_SELECT_H=$gl_cv_next_sys_select_h
-
-
-
-    if test $ac_cv_header_sys_select_h = yes; then
-      HAVE_SYS_SELECT_H=1
-    else
-      HAVE_SYS_SELECT_H=0
-    fi
-
-  fi
-
-
-{ echo "$as_me:$LINENO: checking for C/C++ restrict keyword" >&5
-echo $ECHO_N "checking for C/C++ restrict keyword... $ECHO_C" >&6; }
-if test "${ac_cv_c_restrict+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_cv_c_restrict=no
-   # The order here caters to the fact that C++ does not require restrict.
-   for ac_kw in __restrict __restrict__ _Restrict restrict; do
-     cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-typedef int * int_ptr;
-	int foo (int_ptr $ac_kw ip) {
-	return ip[0];
-       }
-int
-main ()
-{
-int s[1];
-	int * $ac_kw t = s;
-	t[0] = 0;
-	return foo(t)
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (ac_try="$ac_compile"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
-  (eval "$ac_compile") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest.$ac_objext; then
-  ac_cv_c_restrict=$ac_kw
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-
-fi
-
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-     test "$ac_cv_c_restrict" != no && break
-   done
-
-fi
-{ echo "$as_me:$LINENO: result: $ac_cv_c_restrict" >&5
-echo "${ECHO_T}$ac_cv_c_restrict" >&6; }
-
-
- case $ac_cv_c_restrict in
-   restrict) ;;
-   no) cat >>confdefs.h <<\_ACEOF
-#define restrict
-_ACEOF
- ;;
-   *)  cat >>confdefs.h <<_ACEOF
-#define restrict $ac_cv_c_restrict
-_ACEOF
- ;;
- esac
-
-
-
-
 
 
 
@@ -7815,7 +7700,6 @@ echo "${ECHO_T}$gl_cv_sys_struct_timeval" >&6; }
   else
     SYS_TIME_H=
   fi
-
 
 
 
@@ -16563,6 +16447,8 @@ _ACEOF
   REPLACE_NANOSLEEP=GNULIB_PORTCHECK;
   REPLACE_STRPTIME=GNULIB_PORTCHECK;
   REPLACE_TIMEGM=GNULIB_PORTCHECK;
+
+
 
 
 
@@ -51028,9 +50914,6 @@ MAKE_TARGETS_IN_VPATH_FALSE!$MAKE_TARGETS_IN_VPATH_FALSE$ac_delim
 LIBOBJS!$LIBOBJS$ac_delim
 INCLUDE_NEXT!$INCLUDE_NEXT$ac_delim
 PRAGMA_SYSTEM_HEADER!$PRAGMA_SYSTEM_HEADER$ac_delim
-NEXT_SYS_SELECT_H!$NEXT_SYS_SELECT_H$ac_delim
-HAVE_SYS_SELECT_H!$HAVE_SYS_SELECT_H$ac_delim
-SYS_SELECT_H!$SYS_SELECT_H$ac_delim
 NEXT_SYS_TIME_H!$NEXT_SYS_TIME_H$ac_delim
 HAVE_SYS_TIME_H!$HAVE_SYS_TIME_H$ac_delim
 HAVE_STRUCT_TIMEVAL!$HAVE_STRUCT_TIMEVAL$ac_delim
@@ -51118,6 +51001,9 @@ GNULIB_FSEEKO!$GNULIB_FSEEKO$ac_delim
 GNULIB_FTELL!$GNULIB_FTELL$ac_delim
 GNULIB_FTELLO!$GNULIB_FTELLO$ac_delim
 GNULIB_FFLUSH!$GNULIB_FFLUSH$ac_delim
+GNULIB_GETDELIM!$GNULIB_GETDELIM$ac_delim
+GNULIB_GETLINE!$GNULIB_GETLINE$ac_delim
+GNULIB_PERROR!$GNULIB_PERROR$ac_delim
 _ACEOF
 
   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
@@ -51159,9 +51045,6 @@ _ACEOF
 ac_delim='%!_!# '
 for ac_last_try in false false false false false :; do
   cat >conf$$subs.sed <<_ACEOF
-GNULIB_GETDELIM!$GNULIB_GETDELIM$ac_delim
-GNULIB_GETLINE!$GNULIB_GETLINE$ac_delim
-GNULIB_PERROR!$GNULIB_PERROR$ac_delim
 REPLACE_FPRINTF!$REPLACE_FPRINTF$ac_delim
 REPLACE_VFPRINTF!$REPLACE_VFPRINTF$ac_delim
 REPLACE_PRINTF!$REPLACE_PRINTF$ac_delim
@@ -51256,6 +51139,9 @@ GNULIB_SETENV!$GNULIB_SETENV$ac_delim
 GNULIB_STRTOD!$GNULIB_STRTOD$ac_delim
 GNULIB_UNSETENV!$GNULIB_UNSETENV$ac_delim
 HAVE_CALLOC_POSIX!$HAVE_CALLOC_POSIX$ac_delim
+HAVE_GETSUBOPT!$HAVE_GETSUBOPT$ac_delim
+HAVE_MKDTEMP!$HAVE_MKDTEMP$ac_delim
+HAVE_REALLOC_POSIX!$HAVE_REALLOC_POSIX$ac_delim
 _ACEOF
 
   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
@@ -51297,9 +51183,6 @@ _ACEOF
 ac_delim='%!_!# '
 for ac_last_try in false false false false false :; do
   cat >conf$$subs.sed <<_ACEOF
-HAVE_GETSUBOPT!$HAVE_GETSUBOPT$ac_delim
-HAVE_MKDTEMP!$HAVE_MKDTEMP$ac_delim
-HAVE_REALLOC_POSIX!$HAVE_REALLOC_POSIX$ac_delim
 HAVE_RPMATCH!$HAVE_RPMATCH$ac_delim
 HAVE_SETENV!$HAVE_SETENV$ac_delim
 HAVE_STRTOD!$HAVE_STRTOD$ac_delim
@@ -51386,6 +51269,9 @@ HAVE_STRCASECMP!$HAVE_STRCASECMP$ac_delim
 HAVE_DECL_STRNCASECMP!$HAVE_DECL_STRNCASECMP$ac_delim
 NEXT_STRING_H!$NEXT_STRING_H$ac_delim
 NEXT_STRINGS_H!$NEXT_STRINGS_H$ac_delim
+NEXT_SYS_SELECT_H!$NEXT_SYS_SELECT_H$ac_delim
+HAVE_SYS_SELECT_H!$HAVE_SYS_SELECT_H$ac_delim
+SYS_SELECT_H!$SYS_SELECT_H$ac_delim
 HAVE_LSTAT!$HAVE_LSTAT$ac_delim
 NEXT_SYS_STAT_H!$NEXT_SYS_STAT_H$ac_delim
 SYS_STAT_H!$SYS_STAT_H$ac_delim
