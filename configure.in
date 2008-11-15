@@ -339,7 +339,7 @@ else
                           [Define if long int is the first integer type
 		           detected with its size.])
 	fi
-	if test $ac_cv_type_long_long != no; then
+	if test $ac_cv_type_long_long_int != no; then
 		AC_CHECK_SIZEOF(long long)
 		AC_CACHE_CHECK(for uniquely sized long long,
 			ccvs_cv_unique_int_type_long_long,
