@@ -334,7 +334,7 @@ Find_Directories (const char *repository, const char *update_dir,
     List *dirlist;
 
     TRACE (TRACE_FUNCTION, "Find_Directories (%s, %s, %d)",
-	   repository, update_dir, which);
+	   TRACE_NULL(repository), update_dir, which);
 
     /* make a list for the directories */
     dirlist = getlist();
