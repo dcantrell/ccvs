@@ -6635,10 +6635,11 @@ static int
 findmagictag (Node *node, void *arg)
 {
     char *rev = arg;
+    char *dat = node->data;
     size_t len = strlen (rev);
 
-    if (STRNEQ (node->data, rev, len)
-	&& STRNEQ (node->data + len, ".0.", 3))
+    if (STRNEQ (dat, rev, len)
+	&& STRNEQ (dat + len, ".0.", 3))
 	return 1;
     else
 	return 0;

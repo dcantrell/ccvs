@@ -1,3 +1,7 @@
+2008-11-17  Larry Jones  <lawrence.jones@siemens.com>
+
+	* rcs.c (findmagictag): Don't try to do arithmetic on void *.
+
 2008-11-15  Larry Jones  <lawrence.jones@siemens.com>
 
 	* find_names.c (Find_Directories): Use TRACE_NULL for repository.
