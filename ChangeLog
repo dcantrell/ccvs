@@ -1,3 +1,7 @@
+2008-11-17  Larry Jones  <lawrence.jones@siemens.com>
+
+	* configure: Regenerated.
+
 2008-11-14  Larry Jones  <lawrence.jones@siemens.com>
 
 	* configure.in: Use correct macro to check for long long support.
