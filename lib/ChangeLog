@@ -1,3 +1,7 @@
+2008-11-18  Larry Jones  <lawrence.jones@siemens.com>
+
+	* system.h: Restore <signal.h> since many files require it.
+
 2008-11-14  Larry Jones  <lawrence.jones@siemens.com>
 
 	* sunos57-select.c: Replace obsolete "xtime.h" with <sys/time.h>.
