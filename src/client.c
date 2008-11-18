@@ -3017,12 +3017,15 @@ static void
 add_prune_candidate (const char *dir)
 {
     struct save_dir *p;
+    char *q;
 
     if ((dir[0] == '.' && dir[1] == '\0')
 	|| (prune_candidates && STREQ (dir, prune_candidates->dir)))
 	return;
     p = xmalloc (sizeof (struct save_dir));
     p->dir = xstrdup (dir);
+    for (q = p->dir + strlen(p->dir); q > p->dir && ISSLASH(q[-1]); q--) ;
+    *q = '\0';
     p->next = prune_candidates;
     prune_candidates = p;
 }

@@ -1,5 +1,7 @@
 2008-11-18  Larry Jones  <lawrence.jones@siemens.com>
 
+	* client.c (add_prune_candidate): Strip all trailing slashes.
+
 	* client.c commit.c, history.c, logmsg.c, rcs.c, repos.c, tag.c,
 	  update.c, vers_ts.c: Fix gcc -Wall warnings.
 
