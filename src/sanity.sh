@@ -1287,6 +1287,9 @@ if $valgrind; then
   fi
 fi
 
+TR=`find_tool tr ${TR}:gtr version_test tr_tooltest1`
+echo "Using TR=$TR" >>$LOGFILE
+
 
 # In the best of all possible worlds, date +%s prints the number
 # of seconds since the epoch.
@@ -1297,10 +1300,14 @@ date_s_emulate ()
     datenum=`expr $datenum + 1`
     echo $datenum
 }
-case `date +%s` in
-%s) echo "WARNING: date does not support +%s format properly."
-    BINDATE=date_s_emulate;;
-[0-9]+) BINDATE=date;;
+case `date +%s 2>&1 | ${TR} -d '[0-9]'` in
+  "")
+    BINDATE=date
+    ;;
+  *)
+    echo "WARNING: date does not support +%s format properly."
+    BINDATE=date_s_emulate
+    ;;
 esac
 
 valgrind_lastlog=''
@@ -1419,9 +1426,6 @@ fi
 # good, it works
 return 0
 }
-
-TR=`find_tool tr ${TR}:gtr version_test tr_tooltest1`
-echo "Using TR=$TR" >>$LOGFILE
 
 # MacOS X (10.2.8) has a /bin/ls that does not work correctly in that
 # it will return true even if the wildcard argument does not match any
