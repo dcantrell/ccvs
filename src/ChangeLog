@@ -1,6 +1,6 @@
 2008-11-18  Larry Jones  <lawrence.jones@siemens.com>
 
-	commit.c, update.c: Fix gcc -Wall warnings.
+	* commit.c, update.c: Fix gcc -Wall warnings.
 
 2008-11-05  Mark D. Baushke  <mdb@gnu.org>
 
