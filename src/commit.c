@@ -852,7 +852,6 @@ check_fileproc (callerdat, finfo)
     Vers_TS *vers;
     struct commit_info *ci;
     struct logfile_info *li;
-    struct commit_data *commit_data = callerdat;
 
     size_t cvsroot_len = strlen (current_parsed_root->directory);
 

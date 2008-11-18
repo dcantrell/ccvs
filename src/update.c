@@ -2280,7 +2280,7 @@ join_file (finfo, vers)
 	    || /* destination branch modified in repository */
 	       strcmp (rev1, vers->vn_user)
 	    || /* locally modified */
-	       vers->ts_user && strcmp (vers->ts_user, vers->ts_rcs))
+	       (vers->ts_user && strcmp (vers->ts_user, vers->ts_rcs)))
 	{
 	    /* The removal should happen if either the file has never changed
 	     * on the destination or the file has changed to be identical to
