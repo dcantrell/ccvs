@@ -26,6 +26,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
+#include <signal.h>
 #include <stdio.h>
 
 /* A GNULIB wrapper for these C89 headers is supplied to solve problems in
