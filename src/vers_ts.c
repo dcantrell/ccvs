@@ -297,7 +297,6 @@ static void
 time_stamp_server (const char *file, Vers_TS *vers_ts, Entnode *entdata)
 {
     struct stat sb;
-    char *cp;
 
     TRACE (TRACE_FUNCTION, "time_stamp_server (%s, %s, %s, %s)",
 	   file,

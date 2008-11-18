@@ -208,11 +208,11 @@ rcsinfo_proc (const char *repository, const char *template,
 
     if ((tfp = CVS_FOPEN (template, "r")) != NULL)
     {
-	char *line = NULL;
-	size_t line_chars_allocated = 0;
+	char *buff = NULL;
+	size_t buff_chars_allocated = 0;
 
-	while (getline (&line, &line_chars_allocated, tfp) >= 0)
-	    (void) fputs (line, fp);
+	while (getline (&buff, &buff_chars_allocated, tfp) >= 0)
+	    (void) fputs (buff, fp);
 	if (ferror (tfp))
 	    error (0, errno, "%s:%d: warning: cannot read %s",
 		   file, line, quote (template));
@@ -220,8 +220,8 @@ rcsinfo_proc (const char *repository, const char *template,
 	    error (0, errno,
 		   "%s:%d: warning: cannot close %s",
 		   file, line, quote (template));
-	if (line)
-	    free (line);
+	if (buff)
+	    free (buff);
 	return (0);
     }
     else
@@ -350,8 +350,8 @@ do_editor (const char *update_dir, char **messagep, const char *repository,
     /* run the editor */
     run_setup (Editor);
     run_add_arg (fname);
-    if (retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
-			    RUN_NORMAL | RUN_SIGIGNORE))
+    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
+			     RUN_NORMAL | RUN_SIGIGNORE)) != 0)
 	error (0, retcode == -1 ? errno : 0, "warning: editor session failed");
 
     /* put the entire message back into the *messagep variable */
@@ -630,8 +630,8 @@ do_verify (char **messagep, const char *repository, List *changes)
     data.message = *messagep;
     data.fname = NULL;
     data.changes = changes;
-    if (err = Parse_Info (CVSROOTADM_VERIFYMSG, repository,
-			  verifymsg_proc, 0, &data))
+    if ((err = Parse_Info (CVSROOTADM_VERIFYMSG, repository,
+			  verifymsg_proc, 0, &data)) != 0)
     {
 	int saved_errno = errno;
 	/* Since following error() exits, delete the temp file now.  */

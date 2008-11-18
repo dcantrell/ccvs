@@ -812,7 +812,7 @@ call_in_directory (const char *pathname,
 
     if (!*pathname
 	/* or PATHNAME == "./" */
-	|| pathname[0] == '.' && ISSLASH (pathname[1]) && !pathname[2])
+	|| (pathname[0] == '.' && ISSLASH (pathname[1]) && !pathname[2]))
     {
 	/* Old servers always send a trailing '/' on PATHNAME and normalize an
 	 * UPDATE_DIR of "" or "." to "./".  We have to assume something in
@@ -845,8 +845,7 @@ call_in_directory (const char *pathname,
 
     pdir = dir_name (dir);
     if (!STREQ (pdir, ".") /* Make an exception for the top level directory.  */
-	&& (!STREQ (cvs_cmd_name, "export") && !hasAdmin (pdir)
-            || STREQ (cvs_cmd_name, "export") && !isdir (pdir)))
+	&& !(STREQ (cvs_cmd_name, "export") ? isdir (pdir) : hasAdmin (pdir)))
 	error (1, 0, "cannot create directory %s outside working directory",
 	       quote (dir));
 
@@ -2116,7 +2115,6 @@ client_base_checkout (void *data_arg, const struct file_info *finfo)
 
     /* The base file to be created.  */
     char *basefile;
-    char *update_dir;
     char *fullbase;
 
     /* File buf from net.  May be an RCS diff from PREV to REV.  */

@@ -101,7 +101,7 @@ Name_Repository (const char *dir, const char *update_dir)
 	error (0, errno, "cannot close %s", quote (tmp));
     free (tmp);
 
-    if (cp = strrchr (repos, '\n'))
+    if ((cp = strrchr (repos, '\n')) != NULL)
 	*cp = '\0';			/* strip the newline */
 
     /* If this is a relative repository pathname, turn it into an absolute
@@ -202,7 +202,7 @@ Sanitize_Repository_Name (char *repository)
 	 * Paths with a leading "//" are special on some early UNIXes.
 	 */
 	if (strlen (repository) == 2
-	    || strlen (repository) == 3 && ISSLASH (*repository))
+	    || (strlen (repository) == 3 && ISSLASH (*repository)))
 	    repository[strlen (repository) - 1] = '\0';
 	else
 	    repository[strlen (repository) - 2] = '\0';

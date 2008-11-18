@@ -727,7 +727,7 @@ pretag_proc (const char *repository, const char *filter,
     const char *srepos = Short_Repository (repository);
     struct pretag_proc_data *ppd = closure;
 
-    TRACE (TRACE_FUNCTION, "pretag_proc (%s, %s, %s, %s)",
+    TRACE (TRACE_FUNCTION, "pretag_proc (%s, %s, %s, %d)",
 	   repository, filter, file, line);
 
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
