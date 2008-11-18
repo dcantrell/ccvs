@@ -2196,7 +2196,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	    || /* destination branch modified in repository */
 	       !STREQ (rev1, vers->vn_user)
 	    || /* locally modified */
-	       vers->ts_user && !STREQ (vers->ts_user, vers->ts_rcs))
+	       (vers->ts_user && !STREQ (vers->ts_user, vers->ts_rcs)))
 	{
 	    /* The removal should happen if either the file has never changed
 	     * on the destination or the file has changed to be identical to

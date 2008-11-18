@@ -1,5 +1,9 @@
 2008-11-18  Larry Jones  <lawrence.jones@siemens.com>
 
+	commit.c, update.c: Fix gcc -Wall warnings.
+
+2008-11-18  Larry Jones  <lawrence.jones@siemens.com>
+
 	* sanity.sh: Fix nonportable ``date +%s'' test.
 
 2008-11-17  Larry Jones  <lawrence.jones@siemens.com>
