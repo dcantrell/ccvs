@@ -300,7 +300,7 @@ RCS_parse (const char *file, const char *repos)
     {
 	/* Handle the error cases */
     }
-    else if (fp = CVS_FOPEN (rcsfile, FOPEN_BINARY_READ))
+    else if ((fp = CVS_FOPEN (rcsfile, FOPEN_BINARY_READ)) != NULL)
     {
 	rcs = RCS_parsercsfile_i (fp, rcsfile);
 	if (rcs)

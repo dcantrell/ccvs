@@ -1111,7 +1111,7 @@ fill_hrec (const char *source_file_name, long source_line_num,
     line = cp + 1;
     NEXT_BAR (user);
     NEXT_BAR (dir);
-    if (cp = strrchr (hr->dir, '*'))
+    if ((cp = strrchr (hr->dir, '*')) != NULL)
     {
 	*cp++ = '\0';
 	hr->end = line + strtoul (cp, NULL, 16);
@@ -1160,7 +1160,7 @@ done_reading:
 	default:
 	    if (!really_quiet && !warned_version)
 	    {
-		error (0, 0, "unrecognized history record version: %ul",
+		error (0, 0, "unrecognized history record version: %lu",
 		       hr->version);
 		warned_version = true;
 	    }
@@ -1576,7 +1576,7 @@ report_hrecs (void)
 {
     struct hrec *hr, *lr;
     struct tm *tm;
-    int i, count, ty;
+    int count, ty;
     char *cp;
     int user_len, file_len, rev_len, mod_len, repos_len;
 
@@ -1615,7 +1615,7 @@ report_hrecs (void)
 	user_len = MAX (user_len, strlen (lr->user));
 	if (ty != 'T')
 	{
-	    if (cp = strrchr (repos, '/'))
+	    if ((cp = strrchr (repos, '/')) != NULL)
 	    {
 		if (lr->mod && STREQ (++cp, lr->mod))
 		    strcpy (cp, "*");
@@ -1663,14 +1663,14 @@ report_hrecs (void)
 
 	workdir = xmalloc (strlen (lr->dir) + strlen (lr->end) + 10);
 	sprintf (workdir, "%s%s", lr->dir, lr->end);
-	if (cp = strrchr (workdir, '/'))
+	if ((cp = strrchr (workdir, '/')) != NULL)
 	{
 	    if (lr->mod && STREQ (++cp, lr->mod))
 		strcpy (cp, "*");
 	}
 	repos = xmalloc (strlen (lr->repos) + 10);
 	strcpy (repos, lr->repos);
-	if (cp = strrchr (repos, '/'))
+	if ((cp = strrchr (repos, '/')) != NULL)
 	{
 	    if (lr->mod && STREQ (++cp, lr->mod))
 		strcpy (cp, "*");
