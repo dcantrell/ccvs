@@ -26547,9 +26547,9 @@ change"
 	  dotest_fail keyword-25 "${testcvs} diff -kk file1" \
 "diff -r1\.3 file1
 1c1
-< \$Name\$
+< "'\$'"Name"'\$'"
 ---
-> \$Name$"
+> "'\$'"Name:  "'\$'
 	  dotest keyword-26 "${testcvs} diff -kkv file1" ""
 
 	  dokeep
