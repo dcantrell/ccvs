@@ -1,3 +1,11 @@
+2008-11-19  Larry Jones  <lawrence.jones@siemens.com>
+
+	* entries.c (WriteTag): Remove any exiting file and recreate
+	rather than trying to overwrite (to avoid permission problems).
+
+	* sanity.sh (keyword-25): Protect keywords against accidental
+	expansion in sanity.sh itself.
+
 2008-11-18  Larry Jones  <lawrence.jones@siemens.com>
 
 	* client.c (add_prune_candidate): Strip all trailing slashes.
