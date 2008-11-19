@@ -1,3 +1,8 @@
+2008-11-19  Larry Jones  <lawrence.jones@siemens.com>
+
+	* sanity.sh (keyword-25): Protect keywords against accidental
+	expansion in sanity.sh itself.
+
 2008-11-18  Larry Jones  <lawrence.jones@siemens.com>
 
 	* commit.c, update.c: Fix gcc -Wall warnings.

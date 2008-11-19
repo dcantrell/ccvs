@@ -23164,9 +23164,9 @@ RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 retrieving revision 1\.3
 diff -r1\.3 file1
 1c1
-< \$Name\$
+< "'\$'"Name"'\$'"
 ---
-> \$Name$"
+> "'\$'"Name:  "'\$'
 	  dotest keyword-26 "${testcvs} diff -kkv file1" ""
 
 	  cd ../..
