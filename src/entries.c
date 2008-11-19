@@ -670,21 +670,16 @@ WriteTag (dir, tag, date, nonbranch, update_dir, repository)
     else
 	(void) sprintf (tmp, "%s/%s", dir, CVSADM_TAG);
 
+    if (unlink_file (tmp) < 0 && ! existence_error (errno))
+	error (1, errno, "cannot remove %s", tmp);
+
     if (tag || date)
     {
-	fout = open_file (tmp, "w+");
+	fout = open_file (tmp, "w");
 	if (tag)
 	{
-	    if (nonbranch)
-	    {
-		if (fprintf (fout, "N%s\n", tag) < 0)
-		    error (1, errno, "write to %s failed", tmp);
-	    }
-	    else
-	    {
-		if (fprintf (fout, "T%s\n", tag) < 0)
-		    error (1, errno, "write to %s failed", tmp);
-	    }
+	    if (fprintf (fout, "%c%s\n", nonbranch ? 'N' : 'T', tag) < 0)
+		error (1, errno, "write to %s failed", tmp);
 	}
 	else
 	{
@@ -694,9 +689,6 @@ WriteTag (dir, tag, date, nonbranch, update_dir, repository)
 	if (fclose (fout) == EOF)
 	    error (1, errno, "cannot close %s", tmp);
     }
-    else
-	if (unlink_file (tmp) < 0 && ! existence_error (errno))
-	    error (1, errno, "cannot remove %s", tmp);
     free (tmp);
 #ifdef SERVER_SUPPORT
     if (server_active)
