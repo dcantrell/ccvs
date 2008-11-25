@@ -1,3 +1,7 @@
+2008-11-25  Larry Jones  <lawrence.jones@siemens.com>
+
+	* Makefile.in: Regenerated with Autoconf 2.63.
+
 2006-03-19  Mark D. Baushke  <mdb@juniper.net>
 
 	* Makefile.in: Regenerated.

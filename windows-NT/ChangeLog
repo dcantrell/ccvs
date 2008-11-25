@@ -1,3 +1,7 @@
+2008-11-25  Larry Jones  <lawrence.jones@siemens.com>
+
+	* Makefile.in: Regenerated with Autoconf 2.63.
+
 2007-09-15  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am: Compensate for new GNULIB header file names.

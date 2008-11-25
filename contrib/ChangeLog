@@ -1,3 +1,7 @@
+2008-11-25  Larry Jones  <lawrence.jones@siemens.com>
+
+	* Makefile.in: Regenerated with Autoconf 2.63.
+
 2008-03-16  Derek Price  <derek@ximbiot.com>
 
 	* validate_repo.pl: Fix minor typos in doc.
