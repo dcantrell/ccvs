@@ -113,6 +113,9 @@ BUG FIXES
 
 DEVELOPER ISSUES
 
+* We've standardized on Autoconf version 2.63 to get a bug fix that notes
+  that _LARGFILE_SOURCE is needed on HP-UX.
+
 * We've standardized on Autoconf version 2.61 to get a bug fix that notes
   that the AIX C compiler's default mode isn't quite C89 and sets the
   correct mode instead.

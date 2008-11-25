@@ -1,3 +1,9 @@
+2008-11-25  Larry Jones  <lawrence.jones@siemens.com>
+
+	* HACKING, NEWS: Note update to Autoconf 2.63.
+	* Makefile.in, aclocal.m4, config.h.in, configure: Regenerated with
+	Autoconf 2.63.
+
 2008-11-17  Larry Jones  <lawrence.jones@siemens.com>
 
 	* configure: Regenerated.
