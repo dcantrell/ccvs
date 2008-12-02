@@ -426,7 +426,8 @@ walklist (List *list, int (*proc) (Node *, void *), void *closure)
     int err = 0;
 
     TRACE (TRACE_FLOW, "walklist (list=%s, proc=%s, closure=%s)",
-	   TRACE_PTR (list, 0), TRACE_PTR (proc, 1), TRACE_PTR (closure, 2));
+	   TRACE_PTR (list, 0), TRACE_PTR ((void *)proc, 1),
+	   TRACE_PTR (closure, 2));
 
     if (!list) return 0;
 

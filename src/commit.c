@@ -91,7 +91,6 @@ struct commit_data
 };
 static int check_valid_edit = 0;
 static int force_ci = 0;
-static int got_message;
 static int aflag;
 static char *saved_tag;
 static char *write_dirtag;
@@ -1430,7 +1429,6 @@ check_filesdoneproc (void *callerdat, int err, const char *repos,
      * check_dirent_proc() and once in commit_fileproc, but putting it here
      * covers both cases (recursion and files specified on the command line).
      */
-    got_message = 1;
     if (!server_active && use_editor)
 	do_editor (update_dir, &commit_data->saved_message, repos,
 		   saved_ulist);
@@ -1682,8 +1680,6 @@ commit_filesdoneproc (void *callerdat, int err, const char *repository,
 	return err;
 
     ulist = ((struct master_lists *) p->data)->ulist;
-
-    got_message = 0;
 
     /* Build the administrative files if necessary.  */
     {

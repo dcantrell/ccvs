@@ -1,3 +1,12 @@
+2008-12-02  Larry Jones  <lawrence.jones@siemens.com>
+
+	* commit.c: Remove defunct variable (got_message).
+	* edit.c (send_notifications, edit, unedit): Use CVS_LOCK_NONE instead
+	of 0 in calls to start_recursion to avoid compiler warnings.
+	* parseinfo.c: Remove duplicate definition of config (from main.c).
+	* hash.c (walklist): Cast function pointers to void * for tracing.
+	* recurse.c (start_recursion): Ditto.
+
 2008-11-25  Larry Jones  <lawrence.jones@siemens.com>
 
 	* Makefile.in: Regenerated with Autoconf 2.63.

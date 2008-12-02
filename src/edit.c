@@ -256,7 +256,8 @@ send_notifications (int argc, char **argv, int local)
 	}
 
 	err += start_recursion (dummy_fileproc, NULL, NULL, NULL, NULL, argc,
-				argv, local, W_LOCAL, 0, 0, NULL, 0, NULL);
+				argv, local, W_LOCAL, 0, CVS_LOCK_NONE, NULL,
+				0, NULL);
 
 	send_to_server ("noop\012", 0);
 	if (STREQ (cvs_cmd_name, "release"))
@@ -633,7 +634,7 @@ edit (int argc, char **argv)
 	   setting_tedit, setting_tunedit, setting_tcommit, check_edited);
 
     err = start_recursion (edit_fileproc, NULL, NULL, NULL, NULL, argc, argv,
-			   local, W_LOCAL, 0, 0, NULL, 0, NULL);
+			   local, W_LOCAL, 0, CVS_LOCK_NONE, NULL, 0, NULL);
 
     err += send_notifications (argc, argv, local);
 
@@ -794,7 +795,7 @@ unedit (int argc, char **argv)
     /* No need to readlock since we aren't doing anything to the
        repository.  */
     err = start_recursion (unedit_fileproc, NULL, NULL, NULL, NULL, argc, argv,
-			   local, W_LOCAL, 0, 0, NULL, 0, NULL);
+			   local, W_LOCAL, 0, CVS_LOCK_NONE, NULL, 0, NULL);
 
     err += send_notifications (argc, argv, local);
 

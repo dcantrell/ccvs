@@ -32,16 +32,6 @@ char *make_UserAdminOptions (const char *infopath, unsigned int ln,
 			     const char *s);
 
 
-
-/***
- ***
- ***   CVSROOT/config options
- ***
- ***/
-struct config *config;
-
-
-
 /*
  * Parse the INFOFILE file for the specified REPOSITORY.  Invoke CALLPROC for
  * the first line in the file that matches the REPOSITORY, or if ALL != 0, any
