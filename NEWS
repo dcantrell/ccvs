@@ -50,6 +50,9 @@ NEW FEATURES
 
 BUG FIXES
 
+* Time stamps are set correctly on systems where time() and gettimeofday()
+  return times with different values for the current second.
+
 * Changing keyword substitution mode no longer interferes with conflict
   tracking (fixes bug #17565).
 
