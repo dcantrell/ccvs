@@ -911,21 +911,30 @@ sleep_past (desttime)
 #ifdef HAVE_GETTIMEOFDAY
 	struct timeval tv;
 	gettimeofday (&tv, NULL);
-	if (tv.tv_sec > desttime)
-	    break;
-	s = desttime - tv.tv_sec;
-	if (tv.tv_usec > 0)
-	    us = 1000000 - tv.tv_usec;
-	else
-	{
-	    s++;
-	    us = 0;
+	if (tv.tv_sec <= desttime) {
+	    s = desttime - tv.tv_sec;
+	    if (tv.tv_usec > 0)
+		us = 1000000 - tv.tv_usec;
+	    else
+	    {
+		s++;
+		us = 0;
+	    }
 	}
-#else
-	/* default to 20 ms increments */
-	s = (long)(desttime - t);
-	us = 20000;
+	else
 #endif
+	{
+	    /* On at least one Linux 2.6.24 system, time() lags behind
+	     * gettimeofday() by up to 10 msec, and file time stamps use
+	     * time().  For example, time() might return 1247677670 while
+	     * gettimeofday() returns 1247677671.000060, so we always sleep
+	     * at least 20ms and retry the test using time(), like we do when
+	     * gettimeofday() is not available.
+ 	     */
+	    /* default to 20 ms increments */
+	    us = 20000;
+	    s = (long)(desttime - t);
+	}
 
 #if defined(HAVE_NANOSLEEP)
 	{
