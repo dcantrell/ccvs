@@ -58,7 +58,7 @@ sub keyword_mode
 	my ($keyword, $file) = @_;
 
 	return "\\fR"
-		if $keyword =~ /^(|r|t)$/;
+		if $keyword =~ /^(|r|t|asis)$/;
 	return "\\fB"
 		if $keyword =~ /^(strong|sc|code|file|samp)$/;
 	return "\\fI"

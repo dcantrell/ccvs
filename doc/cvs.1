@@ -3094,6 +3094,84 @@ Show records for user \fIname\fR.
 Show times in the selected records using the specified
 time zone instead of UTC.
 .SP
+.SH "history output"
+.SP
+\fBhistory\fR prints a line for each selected history record.
+Each line begins with a character indicating the record type
+(see node `history options\(aq in the CVS manual),
+followed by a timestamp (in the format \fBYYYY-MM-DD HH:MM ZZZZ\fR),
+then the name of the user who performed the action.
+The remainder of the line depends on the record type:
+.SP
+.SP
+.IP "" 0
+\fR\fBT\fR\fR
+.IP "" 2
+The relative path to the directory in the repository;
+then the description of the tag in the format
+\fB[\fIName\fB:\fIOpt\fB]\fR where \fIName\fR is the tag name and
+\fIOpt\fR is \fBD\fR for \fBtag -d\fR, the specified revision for
+\fBtag -r\fR, the specified date for \fBtag -D\fR, or \fBA\fR for a
+plain \fBtag\fR.
+.SP
+.IP "" 0
+\fR\fBF\fR, \fBE\fR, \fBO\fR\fR
+.IP "" 2
+The tag/revision/date checked out, if any, enclosed in \fB[\fR and \fB]\fR;
+the relative path to the directory in the repository, if any;
+the associated module name, enclosed in \fB=\fR and \fB=\fR;
+then the absolute path to the local working directory or \fB<remote>\fR.
+.SP
+.IP "" 0
+\fR\fBW\fR, \fBU\fR, \fBP\fR, \fBC\fR, \fBG\fR, \fBM\fR, \fBA\fR, \fBR\fR, \fBX\fR\fR
+.IP "" 2
+The revision checked out;
+the file name;
+the relative path to the directory in the repository, if any;
+the associated module name, enclosed in \fB=\fR and \fB=\fR;
+then the absolute path to the local working directory or \fB<remote>\fR.
+.SP
+.SP
+\fB~\fR at the beginning of a working directory means the
+user\(aqs home directory.
+\fB*\fR at the end of a repository or working directory
+means the associated module name.
+.SP
+.SH "history examples"
+.SP
+.PD 0
+.SP
+.IP "" 2
+$ cvs history -e
+.SP
+.IP "" 2
+A 2009-07-21 20:21 +0000 bach  1.1 tc.1       yoyodyne/tc/man == ~/tc/man
+.IP "" 2
+M 2009-07-21 20:22 +0000 bach  1.2 backend.c  yoyodyne/tc     == ~/tc
+.IP "" 2
+M 2009-07-21 20:27 +0000 bach  1.5 frontend.c yoyodyne/tc     == ~/tc
+.IP "" 2
+T 2009-07-21 20:27 +0000 bach  yoyodyne/tc [rel_0_3:A]
+.IP "" 2
+O 2009-07-21 20:28 +0000 cedar [rel_0_1] yoyodyne/*         =tc= <remote>/*
+.IP "" 2
+C 2009-07-21 20:29 +0000 cedar 1.3 driver.c   yoyodyne/tc     == <remote>
+.IP "" 2
+U 2009-07-21 20:29 +0000 cedar 1.5 frontend.c yoyodyne/tc     == <remote>
+.IP "" 2
+F 2009-07-21 20:31 +0000 bach                      =yoyodyne=    ~/*
+.IP "" 2
+E 2009-07-21 20:33 +0000 bach  [rel_0_3] yoyodyne/tc     =.=       /foo/*
+.IP "" 2
+O 2009-07-21 20:37 +0000 bach  yoyodyne/*          =tc=          ~/*
+.IP "" 2
+R 2009-07-21 20:37 +0000 bach  1.2 test2.t yoyodyne/tc/testing == ~/tc/testing
+.IP "" 2
+E 2009-07-21 20:38 +0000 bach  [2009.07.21.20.38.48] yoyodyne/*  =tc=  /foo
+
+.PD
+.IP "" 0
+.SP
 .SH "import"
 .SS "Import sources into CVS, using vendor branches"
 .IX "import (subcommand)"
