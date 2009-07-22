@@ -10054,6 +10054,8 @@ normal use inside @sc{cvs} (@pxref{Common options}).}
 
 @menu
 * history options::             history options
+* history output::              history output
+* history examples::            history examples
 @end menu
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -10200,14 +10202,67 @@ Show times in the selected records using the specified
 time zone instead of UTC.
 @end table
 
-@ignore
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@c @node history examples
+@node history output
+@appendixsubsec history output
+
+@code{history} prints a line for each selected history record.
+Each line begins with a character indicating the record type
+(@pxref{history options}),
+followed by a timestamp (in the format @samp{YYYY-MM-DD HH:MM ZZZZ}),
+then the name of the user who performed the action.
+The remainder of the line depends on the record type:
+
+@table @asis
+
+@item @code{T}
+The relative path to the directory in the repository;
+then the description of the tag in the format
+@code{[@var{Name}:@var{Opt}]} where @var{Name} is the tag name and
+@var{Opt} is @code{D} for @samp{tag -d}, the specified revision for
+@samp{tag -r}, the specified date for @samp{tag -D}, or @code{A} for a
+plain @samp{tag}.
+
+@item @code{F}, @code{E}, @code{O}
+The tag/revision/date checked out, if any, enclosed in @code{[} and @code{]};
+the relative path to the directory in the repository, if any;
+the associated module name, enclosed in @code{=} and @code{=};
+then the absolute path to the local working directory or @samp{<remote>}.
+
+@item @code{W}, @code{U}, @code{P}, @code{C}, @code{G}, @code{M}, @code{A}, @code{R}
+The revision checked out;
+the file name;
+the relative path to the directory in the repository, if any;
+the associated module name, enclosed in @code{=} and @code{=};
+then the absolute path to the local working directory or @samp{<remote>}.
+
+@end table
+
+@code{~} at the beginning of a working directory means the
+user's home directory.
+@code{*} at the end of a repository or working directory
+means the associated module name.
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node history examples
 @appendixsubsec history examples
 
-Contributed examples will gratefully be accepted.
-@c -- Examples here!
-@end ignore
+@example
+$ cvs history -e
+
+A 2009-07-21 20:21 +0000 bach  1.1 tc.1       yoyodyne/tc/man == ~/tc/man
+M 2009-07-21 20:22 +0000 bach  1.2 backend.c  yoyodyne/tc     == ~/tc
+M 2009-07-21 20:27 +0000 bach  1.5 frontend.c yoyodyne/tc     == ~/tc
+T 2009-07-21 20:27 +0000 bach  yoyodyne/tc [rel_0_3:A]
+O 2009-07-21 20:28 +0000 cedar [rel_0_1] yoyodyne/*         =tc= <remote>/*
+C 2009-07-21 20:29 +0000 cedar 1.3 driver.c   yoyodyne/tc     == <remote>
+U 2009-07-21 20:29 +0000 cedar 1.5 frontend.c yoyodyne/tc     == <remote>
+F 2009-07-21 20:31 +0000 bach                      =yoyodyne=    ~/*
+E 2009-07-21 20:33 +0000 bach  [rel_0_3] yoyodyne/tc     =.=       /foo/*
+O 2009-07-21 20:37 +0000 bach  yoyodyne/*          =tc=          ~/*
+R 2009-07-21 20:37 +0000 bach  1.2 test2.t yoyodyne/tc/testing == ~/tc/testing
+E 2009-07-21 20:38 +0000 bach  [2009.07.21.20.38.48] yoyodyne/*  =tc=  /foo
+@end example
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node import
