@@ -3,6 +3,9 @@ Changes since 1.12.13:
 
 NEW FEATURES
 
+* A problem finding alternate config files specified to the server has been
+  fixed.
+
 * Both tag and rtag now create history entries for every directory with newly
   tagged files.
 
