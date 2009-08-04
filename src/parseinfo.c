@@ -19,6 +19,9 @@
 /* Verify interface.  */
 #include "parseinfo.h"
 
+/* GNULIB includes.  */
+#include "quote.h"
+
 /* CVS includes.  */
 #include "history.h"
 #include "logmsg.h"
@@ -441,13 +444,33 @@ parse_config (const char *cvsroot, const char *path)
 	{
 	    char *nprefix;
 
+	    /* Allowed prefix == "/" is a special case.  */
+	    if (STREQ (*prefix, "/")) {
+		approved = true;
+		break;
+	    }
+
 	    if (!isreadable (*prefix)) continue;
 	    nprefix = xcanonicalize_file_name (*prefix);
-	    if (STRNEQ (nprefix, npath, strlen (nprefix))
-		&& (((*prefix)[strlen (*prefix)] != '/'
-		     && strlen (npath) == strlen (nprefix))
-		    || ((*prefix)[strlen (*prefix)] == '/'
-			&& npath[strlen (nprefix)] == '/')))
+	    if (/* Strings equal to length of allowed prefix.  */
+		STRNEQ (nprefix, npath, strlen (nprefix))
+		&& (   /* The allowed prefix specifies a file (it does not have
+			* a trailing slash).
+			*/
+		       (*prefix)[strlen (*prefix) - 1] != '/'
+		       /* ...and has the same length as the user specified file
+			* (which means it is an exact match since it matched to
+			* the length of nprefix, above).
+			*/
+		       && strlen (npath) == strlen (nprefix)
+		    || /* The allowed prefix specifies a directory (it has a
+			* trailing slash).
+			*/
+		       (*prefix)[strlen (*prefix) - 1] == '/'
+		       /* ...and the user specified path is under the tree
+			* specified by prefix.
+			*/
+		       && npath[strlen (nprefix)] == '/'))
 		approved = true;
 	    free (nprefix);
 	    if (approved) break;
