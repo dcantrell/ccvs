@@ -3,6 +3,9 @@ Changes since 1.12.13:
 
 NEW FEATURES
 
+* Removed inaccurate warnings about multiple LogHistory entries when multiple
+  repositories are enabled on the server.
+
 * A problem finding alternate config files specified to the server has been
   fixed.
 
