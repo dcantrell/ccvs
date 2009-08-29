@@ -27,7 +27,10 @@ struct config
     void *keywords;
     bool top_level_admin;
     char *lock_dir;
+
     char *logHistory;
+    bool usingDefaultLogHistory;
+
     char *HistoryLogPath;
     char *HistorySearchPath;
     char *TmpDir;

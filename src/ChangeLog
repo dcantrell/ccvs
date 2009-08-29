@@ -1,3 +1,10 @@
+2009-08-29  Derek R. Price  <derek@ximbiot.com>
+
+	* parseinfo.c (new_config): Initialize new property.
+	(parse_config): Store existence of user-specified LogHistory directive
+	per config file rather than globally.
+	* parseinfo.h (struct config): Add new usingDefaultLogHistory boolean.
+
 2009-08-03  Derek R. Price  <derek@ximbiot.com>
 
 	* parseinfo.c (parse_config): Find alternate config files correctly.
