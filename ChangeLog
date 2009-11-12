@@ -1,3 +1,7 @@
+2009-11-11  Derek R. Price  <derek@ximbiot.com>
+
+	* NEWS: Note default taginfo format string fix.
+
 2009-08-29  Derek R. Price  <derek@ximbiot.com>
 
 	* NEWS: Note more accurate warnings about duplicate LogHistory
