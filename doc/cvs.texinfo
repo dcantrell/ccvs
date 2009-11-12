@@ -14294,7 +14294,7 @@ the following strings to each active command line template in each file:
 @item editinfo
 @samp{ %l}
 @item taginfo
-@samp{ %t %o %p %@{sv@}}
+@samp{ %t %o %r/%p %@{sv@}}
 @item verifymsg
 @samp{ %l}
 @end table
@@ -14848,7 +14848,7 @@ For example, some valid format strings are @samp{%%}, @samp{%p}, @samp{%t},
 @cindex taginfo (admin file), updating legacy repositories
 @cindex compatibility notes, taginfo admin file
 Currently, if no format strings are specified, a default
-string of @samp{ %t %o %p %@{sv@}} will be appended to the command
+string of @samp{ %t %o %r/%p %@{sv@}} will be appended to the command
 line template before replacement is performed, but this
 feature is deprecated.  It is simply in place so that legacy
 repositories will remain compatible with the new @sc{cvs} application.
