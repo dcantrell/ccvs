@@ -733,7 +733,7 @@ pretag_proc (const char *repository, const char *filter,
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
     if (!strchr (filter, '%'))
     {
-	const char *default_format = " %t %o %p %{sv}";
+	const char *default_format = " %t %o %r/%p %{sv}";
 	error (0,0,
 "%s:%d: warning: taginfo line contains no format strings.\n"
 "Filling in old defaults (%s), but please be aware that this\n"

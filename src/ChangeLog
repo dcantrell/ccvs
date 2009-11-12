@@ -1,3 +1,8 @@
+2009-11-11  Derek R. Price  <derek@ximbiot.com>
+
+	* tag.c (pretag_proc): Use a default string expansion matching 1.11.x.
+	* sanity.sh (taginfo): Update to compensate.
+
 2009-08-29  Derek R. Price  <derek@ximbiot.com>
 
 	* parseinfo.c (new_config): Initialize new property.

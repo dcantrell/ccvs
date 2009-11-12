@@ -21026,12 +21026,12 @@ individual command lines and scripts to handle the new format at your
 leisure\."
 	  dotest taginfo-6 "$testcvs -q tag tag1" \
 "$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
-Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
+Filling in old defaults (\` %t %o %r/%p %{sv}'), but please be aware that this
 usage is deprecated\.
 T file1"
 	  dotest taginfo-7 "$testcvs -q tag -b br" \
 "$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
-Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
+Filling in old defaults (\` %t %o %r/%p %{sv}'), but please be aware that this
 usage is deprecated\.
 T file1"
 	  dotest taginfo-8 "$testcvs -q update -r br" 'U file1'
@@ -21049,13 +21049,13 @@ individual command lines and scripts to handle the new format at your
 leisure\."
 	  dotest taginfo-10 "$testcvs -q tag -F -c brtag" \
 "$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
-Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
+Filling in old defaults (\` %t %o %r/%p %{sv}'), but please be aware that this
 usage is deprecated\.
 T file1"
 
 	  dotest_fail taginfo-11 "$testcvs -q tag rejectme" \
 "$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
-Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
+Filling in old defaults (\` %t %o %r/%p %{sv}'), but please be aware that this
 usage is deprecated\.
 $SPROG tag: Pre-tag check failed
 $SPROG \[tag aborted\]: correct the above errors first!"
@@ -21065,7 +21065,7 @@ $SPROG \[tag aborted\]: correct the above errors first!"
 	  # the allow/disallow functionality is working as expected.
 	  dotest taginfo-12 "$testcvs -nq tag rejectme" \
 "$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
-Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
+Filling in old defaults (\` %t %o %r/%p %{sv}'), but please be aware that this
 usage is deprecated\.
 T file1"
 
@@ -21074,7 +21074,7 @@ T file1"
 	  # specified or not.
 	  dotest taginfo-13 "$testcvs -nq tag would-be-tag" \
 "$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
-Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
+Filling in old defaults (\` %t %o %r/%p %{sv}'), but please be aware that this
 usage is deprecated\.
 T file1"
 
@@ -21082,26 +21082,26 @@ T file1"
 	  # or it didn't exist.
 	  dotest taginfo-14 "$testcvs -q tag -d tag1" \
 "$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
-Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
+Filling in old defaults (\` %t %o %r/%p %{sv}'), but please be aware that this
 usage is deprecated\.
 D file1"
 	  dotest taginfo-15 "$testcvs -q tag -d tag1" \
 "$SPROG tag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
-Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
+Filling in old defaults (\` %t %o %r/%p %{sv}'), but please be aware that this
 usage is deprecated\."
 
 	  # Likewise with rtag.
 	  dotest taginfo-16 "$testcvs -q rtag tag1 first-dir" \
 "$SPROG rtag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
-Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
+Filling in old defaults (\` %t %o %r/%p %{sv}'), but please be aware that this
 usage is deprecated\."
 	  dotest taginfo-17 "$testcvs -q rtag -d tag1 first-dir" \
 "$SPROG rtag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
-Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
+Filling in old defaults (\` %t %o %r/%p %{sv}'), but please be aware that this
 usage is deprecated\."
 	  dotest taginfo-18 "$testcvs -q rtag -d tag1 first-dir" \
 "$SPROG rtag: taginfo:[0-9]*: warning: taginfo line contains no format strings\.
-Filling in old defaults (\` %t %o %p %{sv}'), but please be aware that this
+Filling in old defaults (\` %t %o %r/%p %{sv}'), but please be aware that this
 usage is deprecated\."
 
 	  # The "br" example should be passing 1.1.2 or 1.1.0.2.
@@ -21116,14 +21116,14 @@ usage is deprecated\."
 	  # I suppose passing "1.1.branch" or "branch" for "br"
 	  # would be an improvement.
 	  dotest taginfo-examine-1 "cat ${TESTDIR}/1/taglog" \
-"tag1 add first-dir file1 1\.1
-br add first-dir file1 1\.1
-brtag mov first-dir file1 1\.1\.2\.1
-tag1 del first-dir file1 1\.1
-tag1 del first-dir
-tag1 add first-dir file1 1\.1
-tag1 del first-dir file1 1\.1
-tag1 del first-dir"
+"tag1 add $CVSROOT_DIRNAME/first-dir file1 1\.1
+br add $CVSROOT_DIRNAME/first-dir file1 1\.1
+brtag mov $CVSROOT_DIRNAME/first-dir file1 1\.1\.2\.1
+tag1 del $CVSROOT_DIRNAME/first-dir file1 1\.1
+tag1 del $CVSROOT_DIRNAME/first-dir
+tag1 add $CVSROOT_DIRNAME/first-dir file1 1\.1
+tag1 del $CVSROOT_DIRNAME/first-dir file1 1\.1
+tag1 del $CVSROOT_DIRNAME/first-dir"
 
 	  # now that we've tested the default operation, try a new
 	  # style fmt string.
