@@ -56,6 +56,10 @@ NEW FEATURES
 
 BUG FIXES
 
+* The default taginfo string expansion now matches what 1.11.x does.  This can
+  be important when running a 1.11.x and a 1.12.x server against the same
+  repository.
+
 * Time stamps are set correctly on systems where time() and gettimeofday()
   return times with different values for the current second.
 
