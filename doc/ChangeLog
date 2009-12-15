@@ -1,3 +1,9 @@
+2009-12-15  Larry Jones  <lawrence.jones@siemens.com>
+
+	* cvs.texinfo (commitinfo): Add example.
+	* cvs.texinfo: Minor tweaks for consistency.
+	* cvs.1, stamp-vti, version.texi: Regenerated.
+
 2009-11-11  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Updating Commit Files): Update default taginfo string.
