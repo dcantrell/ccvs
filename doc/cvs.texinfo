@@ -2381,7 +2381,7 @@ to have @code{inetd} run a shell script which then invokes
 @sc{cvs} with the necessary arguments:
 
 @example
-#! /bin/sh
+#!/bin/sh
 exec /usr/local/bin/cvs -f \
      --allow-root=/repo1 \
      --allow-root=/repo2 \
@@ -12948,6 +12948,41 @@ to the command.
 @c general CVS security in "Password authentication
 @c security" (the bit which is not pserver-specific).
 
+The following is a little silly example of a
+@file{commitinfo} file and a verification script
+that prevents commiting files named @samp{thumbs.db}
+(case insensitive).
+
+The script @file{/usr/cvssupport/names.verify} is used to
+evaluate the names of the files being committed.
+
+@example
+#!/bin/sh
+#
+#       names.verify repos file...
+#
+#  Verifies that the file names are all acceptable
+#
+shift
+for file
+do
+    case "$file" in
+    [Tt][Hh][Uu][Mm][Bb][Ss].[Dd][Bb])
+        echo "Disallowed file name: $file"
+        exit 1
+        ;;
+    esac
+done
+exit 0
+@end example
+
+The @file{commitinfo} file contains this line:
+
+@example
+^tc     /usr/cvssupport/names.verify
+@end example
+
+
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node verifymsg
 @appendixsubsec Verifying log messages
@@ -13035,7 +13070,7 @@ validation of that value as being allowed is made.
 
 The following is a little silly example of a
 @file{verifymsg} file, together with the corresponding
-@file{rcsinfo} file, the log message template and an
+@file{rcsinfo} file, the log message template and a
 verification  script.  We begin with the log message template.
 We want to always record a bug-id number on the first
 line of the log message.  The rest of log message is
