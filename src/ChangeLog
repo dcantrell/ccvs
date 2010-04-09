@@ -1,3 +1,8 @@
+2010-04-08  Larry Jones  <lawrence.jones@siemens.com>
+
+	* myndbm.c (mydbm_load_file): Initialize line_size.
+	(Patch from Carlos Monti <slaytanic@gfxnstuff.com.ar>.)
+
 2009-11-11  Derek R. Price  <derek@ximbiot.com>
 
 	* tag.c (pretag_proc): Use a default string expansion matching 1.11.x.

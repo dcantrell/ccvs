@@ -215,7 +215,7 @@ static void
 mydbm_load_file (FILE *fp, List *list, char *filename)
 {
     char *line = NULL;
-    size_t line_size;
+    size_t line_size = 0;
     char *value;
     size_t value_allocated;
     char *cp, *vp;
