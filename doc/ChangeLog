@@ -1,3 +1,9 @@
+2010-06-02  Larry Jones  <lawrence.jones@siemens.com>
+
+	*cvs.texinfo (Error messages): Add "Cannot initialize repository
+	under existing CVSROOT".
+	* cvs.1, stamp-vti, version.texi: Regenerated.
+
 2009-12-15  Larry Jones  <lawrence.jones@siemens.com>
 
 	* cvs.texinfo (commitinfo): Add example.
