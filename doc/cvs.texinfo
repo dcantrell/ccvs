@@ -14324,6 +14324,15 @@ temporary directory.
 @item cannot commit files as 'root'
 See @samp{'root' is not allowed to commit files}.
 
+@item cvs [init aborted]: Cannot initialize repository under existing CVSROOT: @var{dir}
+This message indicates that the directory (which is a parent
+of the specified @sc{cvs} root) contains a @file{CVSROOT}
+subdirectory and thus appears to be a repository.
+You are not allowed to create a repository inside another repository.
+This message can also occur if you try to create a repository that
+is named @file{CVSROOT};
+you should use a different name.
+
 @c For one example see basica-1a10 in the testsuite
 @c For another example, "cvs co ." on NT; see comment
 @c at windows-NT/filesubr.c (expand_wild).
