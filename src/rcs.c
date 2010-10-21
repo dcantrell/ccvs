@@ -7467,7 +7467,7 @@ apply_rcs_changes (struct linevector *orig_lines, const char *diffbuf,
     struct deltafrag *dfhead;
     struct deltafrag **dftail;
     struct deltafrag *df;
-    unsigned long numlines, lastmodline, offset;
+    unsigned long numlines, offset;
     struct linevector lines;
     int err;
 
@@ -7541,12 +7541,12 @@ apply_rcs_changes (struct linevector *orig_lines, const char *diffbuf,
 
     /* New temp data structure to hold new org before
        copy back into original structure. */
-    lines.nlines = lines.lines_alloced = numlines;
+    lines.lines_alloced = numlines;
     lines.vector = xnmalloc (numlines, sizeof *lines.vector);
 
     /* We changed the list order to first to last -- so the
        list never gets larger than the size numlines. */
-    lastmodline = 0; 
+    lines.nlines = 0; 
 
     /* offset created when adding/removing lines
        between new and original structure */
@@ -7555,25 +7555,24 @@ apply_rcs_changes (struct linevector *orig_lines, const char *diffbuf,
     for (df = dfhead; df != NULL; )
     {
 	unsigned int ln;
-	unsigned long deltaend;
+	unsigned long newpos = df->pos - offset;
 
-	if (df->pos > orig_lines->nlines)
+	if (newpos < lines.nlines || newpos > numlines)
 	    err = 1;
 
 	/* On error, just free the rest of the list.  */
 	if (!err)
 	{
-	    /* Here we need to get to the line where the next insert will
+	    /* Here we need to get to the line where the next change will
 	       begin, which is DF->pos in ORIG_LINES.  We will fill up to
 	       DF->pos - OFFSET in LINES with original items.  */
-	    for (deltaend = df->pos - offset;
-		 lastmodline < deltaend;
-		 lastmodline++)
+	    while (lines.nlines < newpos)
 	    {
 		/* we need to copy from the orig structure into new one */
-		lines.vector[lastmodline] =
-			orig_lines->vector[lastmodline + offset];
-		lines.vector[lastmodline]->refcount++;
+		lines.vector[lines.nlines] =
+			orig_lines->vector[lines.nlines + offset];
+		lines.vector[lines.nlines]->refcount++;
+		lines.nlines++;
 	    }
 
 	    switch (df->type)
@@ -7585,7 +7584,12 @@ apply_rcs_changes (struct linevector *orig_lines, const char *diffbuf,
 		    struct line *q;
 		    int nextline_newline;
 		    size_t nextline_len;
-		
+
+		    if (newpos + df->nlines > numlines)
+		    {
+			err = 1;
+			break;
+		    }
 		    textend = df->new_lines + df->len;
 		    nextline_newline = 0;
 		    nextline_text = df->new_lines;
@@ -7610,8 +7614,7 @@ apply_rcs_changes (struct linevector *orig_lines, const char *diffbuf,
 			    q->has_newline = nextline_newline;
 			    q->refcount = 1;
 			    memcpy (q->text, nextline_text, nextline_len);
-			    lines.vector[lastmodline++] = q;
-			    offset--;
+			    lines.vector[lines.nlines++] = q;
 		    
 			    nextline_text = (char *)p + 1;
 			    nextline_newline = 0;
@@ -7625,11 +7628,11 @@ apply_rcs_changes (struct linevector *orig_lines, const char *diffbuf,
 		    q->has_newline = nextline_newline;
 		    q->refcount = 1;
 		    memcpy (q->text, nextline_text, nextline_len);
-		    lines.vector[lastmodline++] = q;
+		    lines.vector[lines.nlines++] = q;
 
 		    /* For each line we add the offset between the #'s
 		       decreases. */
-		    offset--;
+		    offset -= df->nlines;
 		    break;
 		}
 
@@ -7640,14 +7643,20 @@ apply_rcs_changes (struct linevector *orig_lines, const char *diffbuf,
 		    if (df->pos + df->nlines > orig_lines->nlines)
 			err = 1;
 		    else if (delvers)
+		    {
 			for (ln = df->pos; ln < df->pos + df->nlines; ++ln)
+			{
 			    if (orig_lines->vector[ln]->refcount > 1)
+			    {
 				/* Annotate needs this but, since the original
 				 * vector is disposed of before returning from
 				 * this function, we only need keep track if
 				 * there are multiple references.
 				 */
 				orig_lines->vector[ln]->vers = delvers;
+			    }
+			}
+		    }
 		    break;
 	    }
 	}
@@ -7667,21 +7676,20 @@ apply_rcs_changes (struct linevector *orig_lines, const char *diffbuf,
     else
     {
 	/* add the rest of the remaining lines to the data vector */
-	for (; lastmodline < numlines; lastmodline++)
+	while (lines.nlines < numlines)
 	{
 	    /* we need to copy from the orig structure into new one */
-	    lines.vector[lastmodline] = orig_lines->vector[lastmodline
+	    lines.vector[lines.nlines] = orig_lines->vector[lines.nlines
 							   + offset];
-	    lines.vector[lastmodline]->refcount++;
+	    lines.vector[lines.nlines]->refcount++;
+	    lines.nlines++;
 	}
 
 	/* Move the lines vector to the original structure for output,
 	 * first deleting the old.
 	 */
 	linevector_free (orig_lines);
-	orig_lines->vector = lines.vector;
-	orig_lines->lines_alloced = numlines;
-	orig_lines->nlines = lines.nlines;
+	*orig_lines = lines;
     }
 
     return !err;
