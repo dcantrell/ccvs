@@ -1,3 +1,9 @@
+2010-10-21  Larry Jones  <lawrence.jones@siemens.com>
+
+	* rcs.c (apply_rcs_changes): Correct deltatext position sanity
+	checks.  Keep lines in sync so that linevector_free() doesn't
+	try to free garbage.
+
 2009-07-18  Derek R. Price  <derek@ximbiot.com>
 
 	* subr.c (sleep_past): Don't assume that time() called after
