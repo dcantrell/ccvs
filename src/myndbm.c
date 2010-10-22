@@ -213,7 +213,7 @@ mydbm_load_file (fp, list, filename)
     char *filename;	/* Used in error messages. */
 {
     char *line = NULL;
-    size_t line_size;
+    size_t line_size = 0;
     char *value;
     size_t value_allocated;
     char *cp, *vp;
