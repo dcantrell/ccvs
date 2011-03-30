@@ -403,8 +403,8 @@ parse_signature_subpacket (struct buffer *bpin,
   uint32_t splen;
   size_t raw_idx = 0;
 
-  /* Enough to store the subpacket length.  */
-  spout->raw = xmalloc (4);
+  /* Enough to store the subpacket header.  */
+  spout->raw = xmalloc (5);
 
   if ((rc = read_u8 (bpin, &c)))
     return rc;
@@ -435,7 +435,7 @@ parse_signature_subpacket (struct buffer *bpin,
     error (1, 0, "Received zero length subpacket in OpenPGP signature.");
 
   /* Allocate enough bytes for the rest of the subpacket.  */
-  spout->raw = xrealloc (spout->raw, splen);
+  spout->raw = xrealloc (spout->raw, raw_idx + splen);
 
   /* Read the subpacket type.  */
   if ((rc = read_u8 (bpin, &c)))
