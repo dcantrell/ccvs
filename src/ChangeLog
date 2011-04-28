@@ -1,3 +1,10 @@
+2011-04-28  Mark D. Baushke  <mdb@gnu.org>
+
+	* sanity.sh (basicb-21): The getopt() in glibc 2.9 thru 2.13 are
+	not posix.2 compliant. They use "%s: invalid option -- '%c'\n"
+	instead of "%s: illegal option -- %c\n", so adjust the expr.
+	(Reported by David Taylor <dtaylor@emc.com>.)
+	
 2011-03-30  Larry Jones  <lawrence.jones@siemens.com>
 
 	* gpg.c (parse_signature_subpacket): Correct spout->raw memory
