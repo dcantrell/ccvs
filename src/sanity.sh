@@ -3980,9 +3980,9 @@ ${SPROG} \[admin aborted\]: attempt to delete all revisions"
 	  # lib/getopt.c will use POSIX when __posixly_correct
 	  # otherwise the other, so accept both of them. -- mdb
 	  dotest_fail basicb-21 "${testcvs} -q admin -H" \
-"admin: invalid option -- H
+"admin: invalid option -- ${DOTSTAR}H${DOTSTAR}
 ${CPROG} \[admin aborted\]: specify ${CPROG} -H admin for usage information" \
-"admin: illegal option -- H
+"admin: illegal option -- ${DOTSTAR}H${DOTSTAR}
 ${CPROG} \[admin aborted\]: specify ${CPROG} -H admin for usage information"
 	  cd ..
 	  rmdir 1
